@@ -20,10 +20,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ContentFixChanges } from "../_components/content-fix-changes";
-import { RevertForm, ReviewBar, ReviewBarSkeleton } from "../_components/content-fix-decision";
+import { ReviewBar, ReviewBarSkeleton } from "../_components/content-fix-decision";
 import { ContentFixEffects } from "../_components/content-fix-effects";
 import { ContentFixTechnicalDetails, proposalFacts } from "../_components/content-fix-facts";
-import { ContentFixMedia } from "../_components/content-fix-media";
+import { ContentFixMedia, MediaWaitingNote } from "../_components/content-fix-media";
+import { RevertForm } from "../_components/content-fix-revert";
 import {
   contentFixState,
   contentFixStatusLabels,
@@ -129,6 +130,13 @@ function Where({ fix }: { fix: ContentFixDetail }) {
                 {id}
               </DetailField>
             ),
+        )}
+        {fix.changes.map((change) =>
+          change.model === "Lesson" && change.op === "setScreens" ? (
+            <DetailField key={`${change.id}:version`} label="Screen version">
+              {change.before.version} → {change.after.version}
+            </DetailField>
+          ) : null,
         )}
         {[...fix.names].map(([id, name]) => (
           <DetailField key={id} label={name}>
@@ -249,6 +257,7 @@ function Outcome({ fix, viewer }: { fix: ContentFixDetail; viewer: ContentFixVie
 async function ContentFixContent({ params }: Pick<Props, "params">) {
   const [fix, viewer] = await Promise.all([readFix(params), readContentFixViewer()]);
   const isProposed = fix.status === "proposed";
+  const mediaOwed = isProposed && fix.mediaOwedAt !== null;
 
   return (
     <>
@@ -269,10 +278,11 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
               approveLabel="Approve with passkey"
               batchId={fix.batchId}
               finishing={isProposed ? 0 : 1}
-              fixIds={isProposed && !fix.mediaOwedAt ? [fix.id] : []}
+              fixIds={isProposed ? [fix.id] : []}
               hasPasskey={viewer.hasPasskey}
               reject={isProposed ? { fixId: fix.id } : undefined}
               settingsUrl={getMainPageUrl({ locale: "en", path: "/profile" })}
+              waiting={mediaOwed ? <MediaWaitingNote media={fix.media} /> : undefined}
             />
           ) : null
         }
@@ -290,13 +300,16 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
             <ContentFixEffects fix={fix} />
           </AdminSection>
 
-          {fix.status === "proposed" && !fix.mediaOwedAt ? (
+          {isProposed ? (
             <p className="text-muted-foreground text-compact max-w-2xl text-pretty">
               Approving applies exactly the changes above and takes a passkey, so only you can apply
               a fix. Rejecting changes nothing.
             </p>
           ) : null}
         </AdminDetailColumns>
+
+        {/* The bar's note is drawn over the page's end, so the end leaves it a line. */}
+        {mediaOwed ? <div aria-hidden="true" className="h-10" /> : null}
       </AdminDetailBody>
     </>
   );

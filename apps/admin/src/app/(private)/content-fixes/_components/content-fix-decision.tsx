@@ -1,17 +1,14 @@
 "use client";
 
-import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
 import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { signWithPasskey } from "@zoonk/auth/passkey-browser";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Button, ButtonSkeleton } from "@zoonk/ui/components/button";
 import { EnterButton, EnterLink, type EnterLinkHostProps } from "@zoonk/ui/components/enter-button";
-import { Input } from "@zoonk/ui/components/input";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { Undo2Icon } from "lucide-react";
-import { useActionState, useId, useState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import {
   type ApprovalOutcome,
@@ -20,7 +17,6 @@ import {
   rejectContentFixAction,
   rejectContentFixBatchAction,
   resumeContentFixesAction,
-  revertContentFixAction,
   startContentFixApprovalAction,
 } from "../_actions/content-fix-actions";
 import { ADD_PASSKEY, ApproveWords } from "./approve-words";
@@ -78,7 +74,7 @@ async function approve(selection: Selection): Promise<ApprovalNotice | null> {
   return toNotice(await approveContentFixesAction({ assertion, batchId: selection.batchId }));
 }
 
-const INITIAL_STATE = { error: null, submissionId: 0 };
+export const INITIAL_STATE = { error: null, submissionId: 0 };
 
 /** Passkeys are added in Main's settings, another app, so a plain link. */
 function SettingsLink({ children, ...props }: EnterLinkHostProps) {
@@ -220,12 +216,15 @@ export function ReviewBar({
   hasPasskey,
   reject,
   settingsUrl,
+  waiting,
 }: Selection & {
   approveLabel: string;
   finishing?: number;
   hasPasskey: boolean;
   reject?: Reject;
   settingsUrl: string;
+  /** Why approving can't start yet, such as media still being made; approving shows, unavailable. */
+  waiting?: React.ReactNode;
 }) {
   // The note speaks for the action pressed last, so an older one's message never hides it.
   const [lastAction, setLastAction] = useState<"approve" | "finish">("approve");
@@ -254,7 +253,9 @@ export function ReviewBar({
           <p className="text-destructive-text" role="alert">
             {NOTICES[notice]}
           </p>
-        ) : null
+        ) : (
+          waiting
+        )
       }
     >
       <BottomBarActions>
@@ -277,13 +278,19 @@ export function ReviewBar({
           </form>
         )}
 
-        {fixIds.length > 0 && needsPasskey && (
+        {waiting ? (
+          <EnterButton className={approveClass} disabled size="xl" type="button">
+            <ApproveWords approveLabel={approveLabel} shown={approveLabel} />
+          </EnterButton>
+        ) : null}
+
+        {!waiting && fixIds.length > 0 && needsPasskey && (
           <EnterLink className={approveClass} href={settingsUrl} link={SettingsLink} size="xl">
             <ApproveWords approveLabel={approveLabel} shown={ADD_PASSKEY} />
           </EnterLink>
         )}
 
-        {fixIds.length > 0 && !needsPasskey && (
+        {!waiting && fixIds.length > 0 && !needsPasskey && (
           <form action={approveAction} className="contents">
             <EnterButton busy={isApproving} className={approveClass} size="xl" type="submit">
               <ApproveWords approveLabel={approveLabel} shown={approveLabel} />
@@ -325,47 +332,5 @@ export function ReviewBarSkeleton({ batch = false }: { batch?: boolean }) {
         </EnterButton>
       </BottomBarActions>
     </BottomBar>
-  );
-}
-
-export function RevertForm({ fixId }: { fixId: string }) {
-  const reasonId = useId();
-
-  // React resets uncontrolled fields after a form action, and a refused undo keeps what was typed.
-  // An accepted one opens the new fix's page.
-  const [reason, setReason] = useState("");
-
-  const [, formAction] = useAdminActionState({
-    action: revertContentFixAction,
-    initialState: INITIAL_STATE,
-  });
-
-  return (
-    <div className="flex max-w-2xl flex-col gap-2">
-      <form action={formAction} className="flex flex-wrap items-end gap-2">
-        <input name="fixId" type="hidden" value={fixId} />
-        <div className="flex min-w-64 flex-1 flex-col gap-1">
-          <label className="text-sm font-medium" htmlFor={reasonId}>
-            Why undo it?
-          </label>
-          <Input
-            id={reasonId}
-            maxLength={2000}
-            name="reason"
-            onChange={(event) => setReason(event.target.value)}
-            required
-            value={reason}
-          />
-        </div>
-        <AdminActionSubmitButton icon={<Undo2Icon />} size="lg">
-          Propose undoing it
-        </AdminActionSubmitButton>
-      </form>
-
-      <p className="text-muted-foreground text-sm text-pretty">
-        Undoing is a new fix that puts back what this one replaced. It waits for review and changes
-        nothing until it&apos;s approved with a passkey.
-      </p>
-    </div>
   );
 }
