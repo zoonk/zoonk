@@ -7,6 +7,7 @@ enum PracticeAPIError: Error, Equatable, Sendable {
   case invalid(code: String?)
   case limit(HelpLimit)
   case plusRequired
+  case preparing
 
   /// Main's `requestQuestionWriting`: Plus required only when the refusal says `PLUS_REQUIRED`;
   /// every other 402, 403 or 429 is the learner's help limit.
@@ -125,6 +126,7 @@ struct PracticeAPI: Sendable {
         path: .init(sessionId: sessionId, blockId: blockId), body: .json(.init(timeZone: timeZone)))
       {
       case .ok: return
+      case .accepted: throw PracticeAPIError.preparing
       case .unauthorized: throw APIError.unauthorized
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)

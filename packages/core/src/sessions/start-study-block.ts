@@ -41,6 +41,7 @@ export type StartStudyBlockResult =
   | { reason: "challenge" | "lessons"; status: "earlierFirst" }
   | { status: "notFound" }
   | { status: "plusRequired" }
+  | { status: "preparing" }
   | { status: "questionsNeeded" }
   | { status: "unauthorized" };
 
@@ -255,7 +256,7 @@ export async function startStudyBlock({
       }
 
       if (sitting === "preparing") {
-        return { status: "questionsNeeded" as const };
+        return { status: "preparing" as const };
       }
 
       if (sitting === "finished") {
@@ -309,7 +310,7 @@ export async function startStudyBlock({
               elapsedMs: getBlockElapsedMs({ block: filledBlock, now }),
             },
           },
-          startedAt: current.startedAt ?? now,
+          startedAt: filledBlock.startedAt ?? now,
           status: "active",
         },
         select: { id: true, kind: true, lessonId: true, startedAt: true, status: true },

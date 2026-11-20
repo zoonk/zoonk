@@ -11,6 +11,8 @@ import { mockPurposeSchema } from "./mock-exam";
 import { mockLeftOutSchema } from "./mock-left-out";
 import { mockSizeSourceSchema } from "./mock-parts";
 
+export const preparingMockResponseSchema = z.object({ status: z.literal("preparing") });
+
 const estimatedMinutesSchema = z
   .number()
   .int()

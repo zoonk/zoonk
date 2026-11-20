@@ -16,6 +16,7 @@ import {
   checkpointMoveResponseSchema,
   checkpointResponseSchema,
 } from "../schemas/checkpoints";
+import { preparingMockResponseSchema } from "../schemas/mocks";
 import {
   challengeMovePathParamsSchema,
   challengePathParamsSchema,
@@ -156,7 +157,7 @@ export const checkpointPaths = {
           description: "Where it's played",
         },
         "202": {
-          content: { "application/json": { schema: z.object({ status: z.literal("preparing") }) } },
+          content: { "application/json": { schema: preparingMockResponseSchema } },
           description: "The mock needs questions",
         },
         "400": validationErrorResponse,

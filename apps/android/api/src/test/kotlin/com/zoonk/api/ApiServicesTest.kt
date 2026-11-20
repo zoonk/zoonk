@@ -80,6 +80,16 @@ class ApiServicesTest {
         }
 
     @Test
+    fun aStudyBlockStartCanStillBePreparing() =
+        runTest {
+            server.enqueue(json("""{"status":"preparing"}""", code = 202))
+            val answer =
+                runCatching { services.studySessions.createStudyBlockStart(goalId, goalId, StudyBlockStart(timeZone = "UTC")) }
+                    .exceptionOrNull()
+            assertTrue(answer is PreparingAnswer)
+        }
+
+    @Test
     fun aFinishedAnswerIsReadAsTheOperationsOwn() =
         runTest {
             server.enqueue(json("""{"conversationId":"$goalId"}""", code = 201))

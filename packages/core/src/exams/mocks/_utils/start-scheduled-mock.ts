@@ -46,6 +46,15 @@ export async function startScheduledSitting({
 
   if (existing) {
     await tx.mockExam.update({ data: { blockId: null }, where: { id: existing.id } });
+
+    await tx.studySessionBlock.update({
+      data: {
+        payload: { ...payload, itemIds: [], timing: { activeAt: null, clock: null, elapsedMs: 0 } },
+        startedAt: null,
+        status: "pending",
+      },
+      where: { id: block.id },
+    });
   }
 
   const blueprint = goal.examBlueprintId

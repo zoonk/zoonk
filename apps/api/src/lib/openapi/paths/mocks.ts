@@ -13,6 +13,7 @@ import {
   anytimeMockResponseSchema,
   mockOptionsResponseSchema,
   mockPlanOfferResultSchema,
+  preparingMockResponseSchema,
 } from "../schemas/mocks";
 import { goalPathParamsSchema, mockPathParamsSchema } from "../schemas/paths";
 import {
@@ -186,7 +187,7 @@ export const mockPaths = {
       requestParams: { path: mockPathParamsSchema },
       responses: {
         "200": {
-          content: { "application/json": { schema: z.object({ status: z.literal("preparing") }) } },
+          content: { "application/json": { schema: preparingMockResponseSchema } },
           description: "The scheduled mock needs questions before it can start",
         },
         "204": { description: "Running" },

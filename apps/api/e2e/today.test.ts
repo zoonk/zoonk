@@ -17,6 +17,7 @@ import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { preparingMockResponseSchema } from "../src/lib/openapi/schemas/mocks";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { planRevealTodayResponseSchema } from "../src/lib/openapi/schemas/study-day";
@@ -407,6 +408,24 @@ test.describe("Today API", () => {
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: opened.target?.id } }),
     ).resolves.toMatchObject({ kind: "review", status: "active" });
+
+    const mock = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "checkpoint", sessionId: opened.sessionId },
+    });
+
+    const preparing = await readBody({
+      response: await api.post(`/v1/study-sessions/${opened.sessionId}/blocks/${mock.id}/starts`, {
+        data: { timeZone: "UTC" },
+      }),
+      schema: preparingMockResponseSchema,
+      status: 202,
+    });
+
+    expect(preparing).toStrictEqual({ status: "preparing" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mock.id } }),
+    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
 
     await expect(prisma.mockExam.count({ where: { goalId: goal.id, userId } })).resolves.toBe(0);
 

@@ -25,12 +25,8 @@ async function startScheduledBlock({
 }): Promise<StartMockResult> {
   const started = await startStudyBlock({ blockId: block.id, input, sessionId: block.sessionId });
 
-  if (started.status === "questionsNeeded") {
-    return { status: "preparing" };
-  }
-
-  if (started.status === "earlierFirst") {
-    throw new Error(`Mock block ${block.id} was refused as a phase challenge: ${started.status}.`);
+  if (started.status === "earlierFirst" || started.status === "questionsNeeded") {
+    throw new Error(`Mock block ${block.id} was refused by the session start: ${started.status}.`);
   }
 
   return { status: started.status };

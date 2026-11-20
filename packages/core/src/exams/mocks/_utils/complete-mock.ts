@@ -103,7 +103,10 @@ async function keepAskedQuestions({ blockId, mock }: { blockId: string; mock: Mo
     const block = await tx.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
     const payload = readBlockPayload(block);
 
-    if (asked.length === payload.itemIds.length) {
+    if (
+      asked.length === payload.itemIds.length &&
+      asked.every((id, index) => id === payload.itemIds[index])
+    ) {
       return unchanged(null);
     }
 
