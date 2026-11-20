@@ -31,9 +31,7 @@ async function claude(args: string[], cwd: string, input: string) {
     child.once("close", resolve);
   });
 
-  child.stdin.on("error", () => {
-    /* empty */
-  });
+  child.stdin.on("error", () => null);
 
   child.stdin.end(input);
   const code = await done;
