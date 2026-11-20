@@ -14,6 +14,7 @@ import {
   manifestSchema,
   verificationAttemptSchema,
 } from "./schemas";
+import { compactSnapshot, expandSnapshot } from "./snapshot";
 import type z from "zod";
 
 export function directory(taskId: string, id: string) {
@@ -29,8 +30,10 @@ function absent(entry: unknown) {
   return entry instanceof Error && "code" in entry && entry.code === "ENOENT";
 }
 export async function readOptional<T>(file: string, schema: z.ZodType<T>): Promise<T | null> {
+  let raw: string;
+
   try {
-    return schema.parse(JSON.parse(await fs.readFile(file, "utf8")));
+    raw = await fs.readFile(file, "utf8");
   } catch (error) {
     if (absent(error)) {
       return null;
@@ -38,6 +41,29 @@ export async function readOptional<T>(file: string, schema: z.ZodType<T>): Promi
 
     throw error;
   }
+
+  return parseRecord(file, raw, schema);
+}
+
+async function parseRecord<T>(file: string, raw: string, schema: z.ZodType<T>) {
+  const value: unknown = JSON.parse(raw);
+
+  if (
+    value &&
+    typeof value === "object" &&
+    "snapshotVersion" in value &&
+    value.snapshotVersion === 2 &&
+    "data" in value
+  ) {
+    const verification = path.basename(path.dirname(file)) === "verifications";
+    const root = verification ? path.dirname(path.dirname(file)) : path.dirname(file);
+
+    return schema.parse(
+      await expandSnapshot(value.data, verification, (key) => readBlob(root, key)),
+    );
+  }
+
+  return schema.parse(value);
 }
 export async function writeBytes(file: string, bytes: string | Buffer, replace = false) {
   await fs.mkdir(path.dirname(file), { recursive: true });
@@ -74,7 +100,21 @@ export async function writeRecord<T>(
   replace = false,
 ) {
   const parsed = schema.parse(value);
-  await writeBytes(file, `${JSON.stringify(parsed, null, 2)}\n`, replace);
+  const verification = path.basename(path.dirname(file)) === "verifications";
+  let stored: unknown = parsed;
+
+  if (verification || ["selection.json", "manifest.json"].includes(path.basename(file))) {
+    const root = verification ? path.dirname(path.dirname(file)) : path.dirname(file);
+    const { blobs, snapshot } = compactSnapshot(parsed, verification);
+
+    await Promise.all(
+      [...blobs].map(([key, bytes]) => writeBytes(path.join(root, "outputs", key), bytes)),
+    );
+
+    stored = snapshot;
+  }
+
+  await writeBytes(file, `${JSON.stringify(stored, null, 2)}\n`, replace);
   return parsed;
 }
 async function entries(dir: string) {
@@ -112,7 +152,7 @@ async function records<T>(dir: string, schema: z.ZodType<T>) {
 
   return Promise.all(
     files.map(async (file) =>
-      schema.parse(JSON.parse(await fs.readFile(path.join(dir, file), "utf8"))),
+      parseRecord(path.join(dir, file), await fs.readFile(path.join(dir, file), "utf8"), schema),
     ),
   );
 }
