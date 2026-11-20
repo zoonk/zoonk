@@ -17,6 +17,18 @@ const UPSC_CSE_2026_NOTICE = {
   url: "https://www.upsc.gov.in/sites/default/files/Notif-CSP-2026-Engl-060226Rev.pdf",
 };
 
+/** An invented notice whose written test states its lines but no scale or grading rule. */
+const NO_SCALE_NOTICE = `PREFEITURA MUNICIPAL DE VALE ALTO
+EDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO
+
+5 DAS PROVAS
+5.1 O concurso será composto de prova objetiva e de prova discursiva, aplicadas no mesmo dia, com duração total de 4 horas.
+5.2 A prova objetiva terá 40 questões de múltipla escolha, com cinco alternativas cada, sobre Língua Portuguesa (15 questões), Noções de Informática (10 questões) e Conhecimentos Específicos (15 questões).
+5.3 A prova discursiva consistirá na redação de um texto dissertativo, com extensão máxima de 30 linhas, sobre tema de atualidade relacionado à administração pública municipal.
+5.4 A prova discursiva será corrigida apenas para os candidatos classificados na prova objetiva até a 50ª posição.
+6 DO CRONOGRAMA
+6.1 As provas serão aplicadas em 15 de março de 2027.`;
+
 export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
@@ -32,6 +44,32 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "totalMinimum", minimum: { unit: "points", value: 78 } },
         { kind: "finalShare", parts: ["P1", "P2", "P3"], share: 0.5 },
         { kind: "finalShare", parts: ["discursiva"], share: 0.5 },
+        { kind: "session", mentions: "manhã" },
+        { kind: "session", mentions: "tarde" },
+        {
+          count: 1,
+          criterionPoints: [30],
+          grading: "points",
+          handwritten: true,
+          kind: "writtenTask",
+          language: { factor: 6, method: "errorsPerLine" },
+          lines: 30,
+          points: 30,
+          rounding: false,
+          zeroing: true,
+        },
+        {
+          count: 1,
+          criterionPoints: [70],
+          grading: "points",
+          handwritten: true,
+          kind: "writtenTask",
+          language: { factor: 14, method: "errorsPerLine" },
+          lines: 60,
+          points: 70,
+          rounding: false,
+          zeroing: true,
+        },
       ],
     },
     id: "cgu-2026-affc-ti-points",
@@ -80,6 +118,15 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "timeLimit", minutes: 330 },
         { kind: "timeLimit", minutes: 300 },
         { kind: "testedLanguage", language: null },
+        { kind: "sharedClock" },
+        {
+          count: 1,
+          grading: "enem",
+          kind: "writtenTask",
+          lines: null,
+          points: 1000,
+          zeroing: true,
+        },
       ],
     },
     id: "enem-2026",
@@ -271,6 +318,68 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
       exam: "47º Exame de Ordem Unificado (OAB)",
+    },
+  },
+  {
+    expected: {
+      facts: [
+        { kind: "section", minutes: 300 },
+        { kind: "session", mentions: "13" },
+        {
+          count: 1,
+          grading: "oab",
+          handwritten: true,
+          kind: "writtenTask",
+          language: null,
+          lines: null,
+          points: 5,
+          rounding: true,
+          zeroing: true,
+        },
+        {
+          count: 4,
+          grading: "oab",
+          handwritten: true,
+          kind: "writtenTask",
+          lines: 30,
+          points: 1.25,
+        },
+      ],
+    },
+    id: "oab-47-2a-fase-written",
+    language: "pt",
+    userInput: {
+      documents: [
+        {
+          title: "Edital de abertura do 47º Exame de Ordem Unificado",
+          url: "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf",
+        },
+      ],
+      exam: "47º Exame de Ordem Unificado (OAB), 2ª fase: prova prático-profissional",
+    },
+  },
+  {
+    expected: {
+      facts: [
+        {
+          count: 1,
+          criterionPoints: [],
+          grading: null,
+          handwritten: null,
+          kind: "writtenTask",
+          language: null,
+          lines: 30,
+          points: null,
+        },
+        { kind: "section", minutes: 240, questions: 40 },
+        { kind: "sharedClock" },
+      ],
+    },
+    id: "municipal-notice-written-no-scale",
+    language: "pt",
+    userInput: {
+      documents: [{ text: NO_SCALE_NOTICE, title: "Edital nº 3/2026 – Prefeitura de Vale Alto" }],
+      exam: "Concurso da Prefeitura de Vale Alto, Assistente Administrativo",
     },
   },
   {
