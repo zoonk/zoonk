@@ -6,7 +6,6 @@
   "profile_questions_activities_title": "476e9670979bb098f4706c3837fe42947f57703706c66fe5f1811bcc9980120c",
   "profile_questions_add": "ae2c0b9b21af3e9609b5f63ae611574edf0b81603c06fb0fa19f715f6704c66e",
   "profile_questions_address_title": "3d2bcb096439c110d24c108e436ec0f7c84e2beb9041236105d9fdd1cfcc75b9",
-  "profile_questions_cap": "da7e186d98419ace31df1961b1dfa7a46efda65b136aa1db35126908ef2897e8",
   "profile_questions_condition_note": "76522f184770230755d7be3f40717040041a18d1cae99186f43c8b4e1c7bc537",
   "profile_questions_conditions_description": "349fe0e5532c43a3815ccca94762305d8c60aa01fcbd2c2f0ae6b7692b057e61",
   "profile_questions_conditions_description_settings": "8abe097b9debf16ceca455ac93c1f634f7be15480e3cfd30345fd83a095c26a4",
@@ -16,7 +15,6 @@
   "profile_questions_earlier_answer": "db03489c94dcc62d96cbceebcb1284bf4038f88319bc14e7c1eb6714ed8e2535",
   "profile_questions_for_fun": "7610c12486196101942815f86379413f320c213a5a2da2b61dc588b06c41b145",
   "profile_questions_how_learn": "df88b54eccdd3bab95ce98be35cff23866e90e2e776f3ae7004f732b1754070b",
-  "profile_questions_interest_description": "66ee61ebe06e98fb7ea218b3ea025db56c123e6f549ea69e0651c2408cd3fd52",
   "profile_questions_job": "b0c7b049ce0517580296e8aec0538f7b8e631967b9c530dd48da65d712e6c0e0",
   "profile_questions_job_placeholder": "2e1fcca03f2d210682fd261da02b7961f42d69a2a086d253ebcaceba3c690ab8",
   "profile_questions_lesson_ready": "e789fb8861f2e977ed77e03cd31c526e44927db84ac1f87ceae2775811727469",
@@ -35,6 +33,7 @@
   "profile_questions_read_favorites": "9219c2f5ad40e8d7bd17073b303d4b8ac636bce2d3f0d74f593e1206b3eac480",
   "profile_questions_read_placeholder": "be347631712ab28402540922b4cb2c29b2ec4341549a2c272a36828661703a5a",
   "profile_questions_read_title": "77932b0b3d35f6a3bd41e7cfe61a8b0c1837311341ad43f49f0fac30bae14850",
+  "profile_questions_remove_tool": "094f3aac8f990fc00836ee97e914acd1390ebcd65e989a8bb8941838ddf8715e",
   "profile_questions_row_activities": "8794ee4c4fb92c2318704af82127fff0b9efef07d1106e69f47fb070311a0a5e",
   "profile_questions_row_address": "f3de4ef0e4c938314dfca257d10a9cfb87a12cec94d91c3308b03b5997964582",
   "profile_questions_row_conditions": "a1e17b7483a4aac5f2f5aa58db0dbd34794f1ea1f417c74a836dc67059ba73c4",
@@ -52,7 +51,7 @@
   "profile_questions_skip_all_label": "c89b18f798a838766ca99ddd2fe1491f545c6bd1f5f8033f50b3eb185d64e6cd",
   "profile_questions_something_else": "c44c7f602d8cae2b1d86e899dad3bb0c53241b2bbb4929418ab93670662d0668",
   "profile_questions_start_lesson": "e9cc58c5f46759f2739d07bd82830c8a4d30f838c2ed27588f3555f085cf4b25",
-  "profile_questions_studies_description": "6e2e76c8c0e6cf252e932c0117ae5653c299f4fdc6dc60f44f8bd310a36f4e3a",
+  "profile_questions_studies_description": "00ad59272fdcc5fd8ad31249f23da6effafe6efb5c06d152e5ffbd3927e94628",
   "profile_questions_studies_title": "1a6ffe128fb61ce920d0d0a1ce165c25a3e121fa4599fd392642b0370f99abf8",
   "profile_questions_subject": "d0d8491b519b6b784564b2866dddb2369f41d541340083a57a73c6f8b5688a17",
   "profile_questions_subject_placeholder": "347e6b05e5ff8125c6319481a3afe2e25e0697d00d406ab420d25205152b5489",
@@ -64,7 +63,6 @@
   "profile_questions_support_placeholder": "4c3d3290f3442eab382a10866cf5c2d36152fa0e2c553c84f0d617d11253a323",
   "profile_questions_support_title": "ba489165b8c8fa53a89ce1c253c57ae55d4e630de6b7d337a91c191a221546d3",
   "profile_questions_title": "ed64658e0cb0c9079569a27a6a96335b8bd1a3d522aa9a6cf752f633fef18cda",
-  "profile_questions_tools_description": "e322312182601b80df76386c6932c2a1bb2fb55e43f46176070bfecfe90e20a6",
   "profile_questions_tools_other": "2869af2e128638debb51787d95450d06baaf2dee15c2edc4fc435f6d2e705702",
   "profile_questions_tools_placeholder": "bcfeb8dd5029df3bfcadfed9ecf1e781358f353628256a51c2d7e756a1d444de",
   "profile_questions_tools_title": "175cc9a816e4515842a6efb1fbf775047a97465d3e74e464aa261d3299c93394",
@@ -85,7 +83,6 @@
     <string name="profile_questions_skip_all_label">Pular o resto das perguntas sobre você</string>
     <string name="profile_questions_never_ask">Não me faça essas perguntas de novo</string>
     <string name="profile_questions_never_ask_help">Você ainda pode responder quando quiser em Configurações › Sobre você.</string>
-    <string name="profile_questions_cap">Escolha até 3.</string>
     <string name="profile_questions_work_title">O que você faz atualmente?</string>
     <string name="profile_questions_work_description">A gente vai usar situações do seu dia a dia nos seus exemplos.</string>
     <string name="profile_questions_job">Sua profissão (opcional)</string>
@@ -93,15 +90,13 @@
     <string name="profile_questions_earlier_answer">Da sua resposta anterior</string>
     <string name="profile_questions_prefer_not">Prefiro não dizer</string>
     <string name="profile_questions_tools_title">Quais aplicativos e ferramentas você mais usa?</string>
-    <string name="profile_questions_tools_description">Escolha até 3. A gente vai usar nos seus exemplos.</string>
     <string name="profile_questions_tools_other">Outros (opcional)</string>
     <string name="profile_questions_tools_placeholder">Ex.: Photoshop, Python, SAP</string>
     <string name="profile_questions_studies_title">O que você já estudou?</string>
-    <string name="profile_questions_studies_description">Vale o que você estuda ou já estudou, mesmo sem terminar. Pode ser diferente do seu trabalho.</string>
+    <string name="profile_questions_studies_description">No passado ou no presente, concluído ou não.</string>
     <string name="profile_questions_subject">%1$s: curso ou matéria (opcional)</string>
     <string name="profile_questions_which_field">Qual área?</string>
     <string name="profile_questions_subject_placeholder">Ex.: jornalismo</string>
-    <string name="profile_questions_interest_description">Escolha até 3. A gente vai usar nos exemplos das suas aulas.</string>
     <string name="profile_questions_watch_title">O que você gosta de assistir?</string>
     <string name="profile_questions_watch_favorites">Séries, filmes, times ou canais favoritos (opcional)</string>
     <string name="profile_questions_watch_placeholder">Ex.: Star Trek, Fórmula 1</string>
@@ -159,6 +154,8 @@
     <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Salva</string>
     <string name="profile_questions_add">Adicionar</string>
+    <!-- Removes a tool the learner typed. {tool} is its name, such as Photoshop. -->
+    <string name="profile_questions_remove_tool">Remover %1$s</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d salva</item>
         <item quantity="many">%1$d salvas</item>

@@ -77,7 +77,7 @@
     <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Saved</string>
     <string name="profile_questions_add">Add</string>
-    <!-- Removes a tool the learner typed, like "Remove ClinicalKey". -->
+    <!-- Removes a tool the learner typed. {tool} is its name, such as Photoshop. -->
     <string name="profile_questions_remove_tool">Remove %1$s</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d saved</item>
