@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import path from "node:path";
 import { hash, hashJson } from "./identity";
 import {
@@ -47,8 +47,7 @@ function ownerPacket({
   incumbent: PacketOutput | null;
   reader: Reader;
 }): SealedPacket {
-  const seed = hashJson([selection.id, testCase.id, "owner"]);
-  const incumbentFirst = incumbent !== null && Number.parseInt(seed[0] ?? "0", 16) < 8;
+  const incumbentFirst = incumbent !== null && randomInt(2) === 0;
   const pairId = randomUUID();
 
   const packet = {

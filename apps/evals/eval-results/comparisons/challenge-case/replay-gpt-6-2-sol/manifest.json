@@ -688,220 +688,6 @@
         "reverse": true
       },
       {
-        "id": "af7abd5b40b41fa64913d9dc0f181dcfe46d0d800919ddb848a0238202a853c3",
-        "mapping": [
-          {
-            "caseId": "en-ab-test-work",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "57bb100f-ea45-4b36-bd5f-713a8ce70937",
-            "run": 1
-          },
-          {
-            "caseId": "en-ab-test-work",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "59267536-1847-4e33-ace4-621f5de7f9ea",
-            "run": 1
-          },
-          {
-            "caseId": "en-ab-test-work",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "f312b209-ac61-43b5-84f5-5692efb98fe4",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a1993c4dce4af9c0aed187c8953332171f6100d545e3891c0de0198d5e2b3b3e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cb370277e247f7ff66dba6f0d51941dcdafb9adc0e05a6c6ebd654a7f3755479",
-                "format": "text"
-              },
-              "pairId": "57bb100f-ea45-4b36-bd5f-713a8ce70937"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
-                "format": "text"
-              },
-              "pairId": "59267536-1847-4e33-ace4-621f5de7f9ea"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a1993c4dce4af9c0aed187c8953332171f6100d545e3891c0de0198d5e2b3b3e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a1993c4dce4af9c0aed187c8953332171f6100d545e3891c0de0198d5e2b3b3e",
-                "format": "text"
-              },
-              "pairId": "f312b209-ac61-43b5-84f5-5692efb98fe4"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "3db1969172d4c5a09697f4f5b3b7b622de420a0103dcd291f0f6d5c22cd65f49",
-        "mapping": [
-          {
-            "caseId": "en-ab-test-work",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "7b83781d-59d2-4351-9c54-4ca144706322",
-            "run": 1
-          },
-          {
-            "caseId": "en-ab-test-work",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "836e9908-8cba-4218-b60c-95ebb2d1cf5c",
-            "run": 1
-          },
-          {
-            "caseId": "en-ab-test-work",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "c320b61b-b936-4a6b-843b-c3c2c8262452",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a1993c4dce4af9c0aed187c8953332171f6100d545e3891c0de0198d5e2b3b3e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a1993c4dce4af9c0aed187c8953332171f6100d545e3891c0de0198d5e2b3b3e",
-                "format": "text"
-              },
-              "pairId": "7b83781d-59d2-4351-9c54-4ca144706322"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "cb370277e247f7ff66dba6f0d51941dcdafb9adc0e05a6c6ebd654a7f3755479",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a1993c4dce4af9c0aed187c8953332171f6100d545e3891c0de0198d5e2b3b3e",
-                "format": "text"
-              },
-              "pairId": "836e9908-8cba-4218-b60c-95ebb2d1cf5c"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
-                "format": "text"
-              },
-              "pairId": "c320b61b-b936-4a6b-843b-c3c2c8262452"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "70b0eeaeea9d1c1c2d8fb5134088ded287a450eece5b975b5a64c86f2e3cc58a",
         "mapping": [
           {
@@ -1542,220 +1328,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "18baa8e64ef60ab4a51bf7b934588956f47b2db19cea138b3320c09c66fd370d",
-        "mapping": [
-          {
-            "caseId": "en-ab-test-work",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "26ca5ba8-ddc3-4264-934d-76c2d95a1f49",
-            "run": 2
-          },
-          {
-            "caseId": "en-ab-test-work",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "2a5e451e-d94e-48ad-8355-cebcd301de97",
-            "run": 2
-          },
-          {
-            "caseId": "en-ab-test-work",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "99808014-fecc-4be2-a4d4-e5aed3f6ff98",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "9d13ee33497ba074e3c5202dffe2c175cd87edeff2a7e6da05c1756d0e3ed128",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "9d13ee33497ba074e3c5202dffe2c175cd87edeff2a7e6da05c1756d0e3ed128",
-                "format": "text"
-              },
-              "pairId": "26ca5ba8-ddc3-4264-934d-76c2d95a1f49"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
-                "format": "text"
-              },
-              "pairId": "2a5e451e-d94e-48ad-8355-cebcd301de97"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "54ec02a699967cb4b61b1e3cd97e7566ff17057a7fd1fc1d227dc657385891bc",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "9d13ee33497ba074e3c5202dffe2c175cd87edeff2a7e6da05c1756d0e3ed128",
-                "format": "text"
-              },
-              "pairId": "99808014-fecc-4be2-a4d4-e5aed3f6ff98"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "60e6b444ef59f55b790e1adabb5649e09bd571628e2b42de2ec61d9eda993984",
-        "mapping": [
-          {
-            "caseId": "en-ab-test-work",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "4935ef93-2a95-4c1b-abe9-327ed1949452",
-            "run": 2
-          },
-          {
-            "caseId": "en-ab-test-work",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "6830afbc-bb61-4589-aa9b-7127fa95d868",
-            "run": 2
-          },
-          {
-            "caseId": "en-ab-test-work",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "8fe67d30-2939-4a6a-a804-bdef2614be6e",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "9d13ee33497ba074e3c5202dffe2c175cd87edeff2a7e6da05c1756d0e3ed128",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "9d13ee33497ba074e3c5202dffe2c175cd87edeff2a7e6da05c1756d0e3ed128",
-                "format": "text"
-              },
-              "pairId": "4935ef93-2a95-4c1b-abe9-327ed1949452"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
-                "format": "text"
-              },
-              "pairId": "6830afbc-bb61-4589-aa9b-7127fa95d868"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "9d13ee33497ba074e3c5202dffe2c175cd87edeff2a7e6da05c1756d0e3ed128",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "54ec02a699967cb4b61b1e3cd97e7566ff17057a7fd1fc1d227dc657385891bc",
-                "format": "text"
-              },
-              "pairId": "8fe67d30-2939-4a6a-a804-bdef2614be6e"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -2404,220 +1976,6 @@
         "reverse": true
       },
       {
-        "id": "d3a50799b1e8400e3c2b49f2586cf87f3549469e235666d82f5a9cdad0b606b1",
-        "mapping": [
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "6dcee3e9-e1b1-4f18-a63c-37ca03da0fb8",
-            "run": 1
-          },
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "e9e74f7b-d880-41a4-ad6d-858111ed6ab5",
-            "run": 1
-          },
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "f6eccc9a-dcc7-4030-b78c-db68adb9d5a9",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
-                "format": "text"
-              },
-              "input": {
-                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
-                "format": "json"
-              },
-              "B": {
-                "blob": "92dc278b451999e633b45b54164b7a25afcbd07154fc6595af9d73f672877022",
-                "format": "text"
-              },
-              "pairId": "6dcee3e9-e1b1-4f18-a63c-37ca03da0fb8"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "430b84ee167717941fc01cf9d81de4399aa2f9477a84be6b966908f922ad6692",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "19c3f56d061d0d454eab079fd4aeb0da19828aaa559a32a06f47be5685c5998d",
-                "format": "text"
-              },
-              "pairId": "e9e74f7b-d880-41a4-ad6d-858111ed6ab5"
-            },
-            {
-              "expectations": {
-                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
-                "format": "text"
-              },
-              "input": {
-                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
-                "format": "text"
-              },
-              "pairId": "f6eccc9a-dcc7-4030-b78c-db68adb9d5a9"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "63ab94448c56371144c6ce2034bed40a8f8245a491c7cc04aa50b7c6d0c2c07a",
-        "mapping": [
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "2825e80c-5f0f-4701-a664-b25e28581a0d",
-            "run": 1
-          },
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "9cc2ddc5-9602-40eb-a4a1-a30078b39d58",
-            "run": 1
-          },
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "e6af2312-3429-4f67-9500-f2ae506e214f",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
-                "format": "text"
-              },
-              "A": {
-                "blob": "92dc278b451999e633b45b54164b7a25afcbd07154fc6595af9d73f672877022",
-                "format": "text"
-              },
-              "input": {
-                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
-                "format": "text"
-              },
-              "pairId": "2825e80c-5f0f-4701-a664-b25e28581a0d"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "37fc9032b6a781173784f6a7122068f733fcac82c532eae18b6210bac0ff8cfb",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "3375a362652438876dc7a7431cd23cf24ae94b22bf29028cf27db1b58e16d782",
-                "format": "text"
-              },
-              "pairId": "9cc2ddc5-9602-40eb-a4a1-a30078b39d58"
-            },
-            {
-              "expectations": {
-                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
-                "format": "text"
-              },
-              "input": {
-                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
-                "format": "text"
-              },
-              "pairId": "e6af2312-3429-4f67-9500-f2ae506e214f"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "256cf734729d4c04773162d852c940e327df4fec9e0f5ca42ec6c7eb862b621c",
         "mapping": [
           {
@@ -3258,220 +2616,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "5939f2798d498154d7e6eb9c00a7e683e6fe2cead0272bd1a3e0a2f7d889b906",
-        "mapping": [
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "5c548da4-422e-4aae-977a-54ef54d23c30",
-            "run": 2
-          },
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "6a694909-3886-48b6-b9d3-e5ae39bf4d9c",
-            "run": 2
-          },
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "b79fbc5d-6ff5-4d32-a097-3729aa04858e",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "37fc9032b6a781173784f6a7122068f733fcac82c532eae18b6210bac0ff8cfb",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "3375a362652438876dc7a7431cd23cf24ae94b22bf29028cf27db1b58e16d782",
-                "format": "text"
-              },
-              "pairId": "5c548da4-422e-4aae-977a-54ef54d23c30"
-            },
-            {
-              "expectations": {
-                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
-                "format": "text"
-              },
-              "A": {
-                "blob": "750cbf99cfce9b53a22ae0a9b17e818d9ffb0a4882dce592427a5f6d2b14de86",
-                "format": "text"
-              },
-              "input": {
-                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
-                "format": "json"
-              },
-              "B": {
-                "blob": "d477508c93e24ed3ff91adecd3b012e67b843697086e9ad08d0ab3cb3138e92f",
-                "format": "text"
-              },
-              "pairId": "6a694909-3886-48b6-b9d3-e5ae39bf4d9c"
-            },
-            {
-              "expectations": {
-                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
-                "format": "text"
-              },
-              "A": {
-                "blob": "d477508c93e24ed3ff91adecd3b012e67b843697086e9ad08d0ab3cb3138e92f",
-                "format": "text"
-              },
-              "input": {
-                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
-                "format": "json"
-              },
-              "B": {
-                "blob": "d477508c93e24ed3ff91adecd3b012e67b843697086e9ad08d0ab3cb3138e92f",
-                "format": "text"
-              },
-              "pairId": "b79fbc5d-6ff5-4d32-a097-3729aa04858e"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "85c23379304a6edca692f25f547cc71f54e1edc1015f78bc6c20c83aefbbee98",
-        "mapping": [
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "77b915e0-c391-4a8f-b1f1-200d00381fe3",
-            "run": 2
-          },
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "ae4ad651-4434-4f99-9fab-f6afaf477924",
-            "run": 2
-          },
-          {
-            "caseId": "pt-quantum-what-if",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "d05079ec-b823-4a2c-a52b-8b2cfdcfeef8",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
-                "format": "text"
-              },
-              "A": {
-                "blob": "d477508c93e24ed3ff91adecd3b012e67b843697086e9ad08d0ab3cb3138e92f",
-                "format": "text"
-              },
-              "input": {
-                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
-                "format": "json"
-              },
-              "B": {
-                "blob": "750cbf99cfce9b53a22ae0a9b17e818d9ffb0a4882dce592427a5f6d2b14de86",
-                "format": "text"
-              },
-              "pairId": "77b915e0-c391-4a8f-b1f1-200d00381fe3"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "430b84ee167717941fc01cf9d81de4399aa2f9477a84be6b966908f922ad6692",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "19c3f56d061d0d454eab079fd4aeb0da19828aaa559a32a06f47be5685c5998d",
-                "format": "text"
-              },
-              "pairId": "ae4ad651-4434-4f99-9fab-f6afaf477924"
-            },
-            {
-              "expectations": {
-                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
-                "format": "text"
-              },
-              "A": {
-                "blob": "d477508c93e24ed3ff91adecd3b012e67b843697086e9ad08d0ab3cb3138e92f",
-                "format": "text"
-              },
-              "input": {
-                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
-                "format": "json"
-              },
-              "B": {
-                "blob": "d477508c93e24ed3ff91adecd3b012e67b843697086e9ad08d0ab3cb3138e92f",
-                "format": "text"
-              },
-              "pairId": "d05079ec-b823-4a2c-a52b-8b2cfdcfeef8"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -4120,220 +3264,6 @@
         "reverse": true
       },
       {
-        "id": "477d676312083c79d20a99012382f4c098273f019e853575209f19e7d87e6a44",
-        "mapping": [
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "0a657786-9dcf-4e0c-834d-4edb01d42c85",
-            "run": 1
-          },
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "9413153a-c6a6-4f9e-91ef-462dccd509a0",
-            "run": 1
-          },
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "96c5259c-5fda-4007-9b84-576c29c536f2",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "44414750a083dc188a3411875bdb584be365c46558b401a4cdec0f301ef4dab3",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "44414750a083dc188a3411875bdb584be365c46558b401a4cdec0f301ef4dab3",
-                "format": "text"
-              },
-              "pairId": "0a657786-9dcf-4e0c-834d-4edb01d42c85"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "430b84ee167717941fc01cf9d81de4399aa2f9477a84be6b966908f922ad6692",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "19c3f56d061d0d454eab079fd4aeb0da19828aaa559a32a06f47be5685c5998d",
-                "format": "text"
-              },
-              "pairId": "9413153a-c6a6-4f9e-91ef-462dccd509a0"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "44414750a083dc188a3411875bdb584be365c46558b401a4cdec0f301ef4dab3",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "d8e0cd29e8941b2243d994b261700ec22fe424d1d1293292e4c3bf9e1f74201a",
-                "format": "text"
-              },
-              "pairId": "96c5259c-5fda-4007-9b84-576c29c536f2"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "0764acc65166d77e6b526319e8709bee36f4a726397b35e0e32c23dffc0bcb0d",
-        "mapping": [
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "1ac19e5d-8a1e-487d-8b64-09fc515af796",
-            "run": 1
-          },
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "4bface66-73ac-44a9-a09b-4bd1b29ea17b",
-            "run": 1
-          },
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "a93afa27-5f11-44ae-a305-1e3b9106abc6",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "44414750a083dc188a3411875bdb584be365c46558b401a4cdec0f301ef4dab3",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "44414750a083dc188a3411875bdb584be365c46558b401a4cdec0f301ef4dab3",
-                "format": "text"
-              },
-              "pairId": "1ac19e5d-8a1e-487d-8b64-09fc515af796"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "37fc9032b6a781173784f6a7122068f733fcac82c532eae18b6210bac0ff8cfb",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "3375a362652438876dc7a7431cd23cf24ae94b22bf29028cf27db1b58e16d782",
-                "format": "text"
-              },
-              "pairId": "4bface66-73ac-44a9-a09b-4bd1b29ea17b"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "d8e0cd29e8941b2243d994b261700ec22fe424d1d1293292e4c3bf9e1f74201a",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "44414750a083dc188a3411875bdb584be365c46558b401a4cdec0f301ef4dab3",
-                "format": "text"
-              },
-              "pairId": "a93afa27-5f11-44ae-a305-1e3b9106abc6"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "af6f7a705c38f307b67dbfe09de54fc01c6bc142be7c8b99fa2016b04867ea3a",
         "mapping": [
           {
@@ -4974,220 +3904,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "0a46b372b3a8fdef48c602db516526e4d9561918efdd8469041224c2f2b72bbd",
-        "mapping": [
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "01131165-d1e9-4b30-853b-1982fdfa82b2",
-            "run": 2
-          },
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "32c376c5-80cf-42f8-b6d9-1e4d6151c3c8",
-            "run": 2
-          },
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "e557409b-6cd4-48c0-abe5-7157c4c44a44",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "7b77a3ac0a9cfd285ddf442bb441844ebfc417145ba83297ffeb5dfa48118ec6",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "57ea1b521a9493a41b59187a9f6fa3bbd49a2f953721dacef8186688a2c448a5",
-                "format": "text"
-              },
-              "pairId": "01131165-d1e9-4b30-853b-1982fdfa82b2"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "57ea1b521a9493a41b59187a9f6fa3bbd49a2f953721dacef8186688a2c448a5",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "57ea1b521a9493a41b59187a9f6fa3bbd49a2f953721dacef8186688a2c448a5",
-                "format": "text"
-              },
-              "pairId": "32c376c5-80cf-42f8-b6d9-1e4d6151c3c8"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "37fc9032b6a781173784f6a7122068f733fcac82c532eae18b6210bac0ff8cfb",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "3375a362652438876dc7a7431cd23cf24ae94b22bf29028cf27db1b58e16d782",
-                "format": "text"
-              },
-              "pairId": "e557409b-6cd4-48c0-abe5-7157c4c44a44"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "d5d517e9bdb085d9f0c24e17c8e1bde27c8b1d1d2ea2b83eb57abcc273dde6e3",
-        "mapping": [
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "4344b395-71ca-427a-9b83-ee929c425a9e",
-            "run": 2
-          },
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "610d1387-b84d-49a0-b180-092f2af35d41",
-            "run": 2
-          },
-          {
-            "caseId": "pt-nursing-dose-work",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "c1a38c1f-391d-4bd9-b80a-abcb2588942e",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "430b84ee167717941fc01cf9d81de4399aa2f9477a84be6b966908f922ad6692",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "19c3f56d061d0d454eab079fd4aeb0da19828aaa559a32a06f47be5685c5998d",
-                "format": "text"
-              },
-              "pairId": "4344b395-71ca-427a-9b83-ee929c425a9e"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "57ea1b521a9493a41b59187a9f6fa3bbd49a2f953721dacef8186688a2c448a5",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "57ea1b521a9493a41b59187a9f6fa3bbd49a2f953721dacef8186688a2c448a5",
-                "format": "text"
-              },
-              "pairId": "610d1387-b84d-49a0-b180-092f2af35d41"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "57ea1b521a9493a41b59187a9f6fa3bbd49a2f953721dacef8186688a2c448a5",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "7b77a3ac0a9cfd285ddf442bb441844ebfc417145ba83297ffeb5dfa48118ec6",
-                "format": "text"
-              },
-              "pairId": "c1a38c1f-391d-4bd9-b80a-abcb2588942e"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -5836,220 +4552,6 @@
         "reverse": true
       },
       {
-        "id": "57e025f721c89ece7bdc6228209352a0727b98f47017f19ed88e14670c1f3021",
-        "mapping": [
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "3ec69f57-747c-4f43-9c7c-0e6580125aa2",
-            "run": 1
-          },
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "65e4d11d-2661-49f4-adf6-bc8da64ed6d7",
-            "run": 1
-          },
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "b54498ce-a46b-43b6-9056-ebd9e415158a",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
-                "format": "text"
-              },
-              "input": {
-                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
-                "format": "json"
-              },
-              "B": {
-                "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
-                "format": "text"
-              },
-              "pairId": "3ec69f57-747c-4f43-9c7c-0e6580125aa2"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
-                "format": "text"
-              },
-              "pairId": "65e4d11d-2661-49f4-adf6-bc8da64ed6d7"
-            },
-            {
-              "expectations": {
-                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
-                "format": "text"
-              },
-              "input": {
-                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
-                "format": "json"
-              },
-              "B": {
-                "blob": "2e81785bf63c083a6506d42282c758a9f2d47a01b404e20b2c605950ac625cd4",
-                "format": "text"
-              },
-              "pairId": "b54498ce-a46b-43b6-9056-ebd9e415158a"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "4424f89e43edef575ef85f9eb22cfcef4506f63921d177596d79cdfefaf844c4",
-        "mapping": [
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "934861ce-3817-404c-8cfe-fe166226212e",
-            "run": 1
-          },
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "b37fa90d-9906-4a85-97fe-4c3748bb9276",
-            "run": 1
-          },
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "ebc62a1e-ee98-4a1f-b34e-0a5cf555f88b",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
-                "format": "text"
-              },
-              "input": {
-                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
-                "format": "json"
-              },
-              "B": {
-                "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
-                "format": "text"
-              },
-              "pairId": "934861ce-3817-404c-8cfe-fe166226212e"
-            },
-            {
-              "expectations": {
-                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "2e81785bf63c083a6506d42282c758a9f2d47a01b404e20b2c605950ac625cd4",
-                "format": "text"
-              },
-              "input": {
-                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
-                "format": "json"
-              },
-              "B": {
-                "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
-                "format": "text"
-              },
-              "pairId": "b37fa90d-9906-4a85-97fe-4c3748bb9276"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
-                "format": "text"
-              },
-              "pairId": "ebc62a1e-ee98-4a1f-b34e-0a5cf555f88b"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "8259c7f2686154b4aaf093ea069a3fb44d288e11a794e44054581a7d38db8f9b",
         "mapping": [
           {
@@ -6690,220 +5192,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "d4dd7342e1a638e5db110412b695089cb8911cad4217d2024fdde1ebf11203a1",
-        "mapping": [
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "962db7a7-3f44-4471-b7a4-415dc62bc174",
-            "run": 2
-          },
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "9e7212e5-b12e-4062-9c20-e04c1195df0c",
-            "run": 2
-          },
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "f9260dc9-f819-4fd1-bc75-a0a0e90d9326",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "cd492e3362f77be2aae59826f73350423ec068b2057a34a9cb792664cf4b72fd",
-                "format": "text"
-              },
-              "input": {
-                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cd492e3362f77be2aae59826f73350423ec068b2057a34a9cb792664cf4b72fd",
-                "format": "text"
-              },
-              "pairId": "962db7a7-3f44-4471-b7a4-415dc62bc174"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
-                "format": "text"
-              },
-              "pairId": "9e7212e5-b12e-4062-9c20-e04c1195df0c"
-            },
-            {
-              "expectations": {
-                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "9df85ddac24ac8ede603a042fbdb217c963f7cd923935c990b248b1cd95a0e1b",
-                "format": "text"
-              },
-              "input": {
-                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cd492e3362f77be2aae59826f73350423ec068b2057a34a9cb792664cf4b72fd",
-                "format": "text"
-              },
-              "pairId": "f9260dc9-f819-4fd1-bc75-a0a0e90d9326"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "df8c8f7f88a3e8871bd3546dc578f47007db811fff74860a43b04f89708e1ece",
-        "mapping": [
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "532b083d-c86c-4d8e-bb7a-592718004efd",
-            "run": 2
-          },
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "9ba9cecc-ce55-40d5-935a-a705ddc4962c",
-            "run": 2
-          },
-          {
-            "caseId": "en-career-change-data-cleaning",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "b63e6110-cf6d-4052-8262-81054fcad1aa",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "cd492e3362f77be2aae59826f73350423ec068b2057a34a9cb792664cf4b72fd",
-                "format": "text"
-              },
-              "input": {
-                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
-                "format": "json"
-              },
-              "B": {
-                "blob": "9df85ddac24ac8ede603a042fbdb217c963f7cd923935c990b248b1cd95a0e1b",
-                "format": "text"
-              },
-              "pairId": "532b083d-c86c-4d8e-bb7a-592718004efd"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
-                "format": "text"
-              },
-              "pairId": "9ba9cecc-ce55-40d5-935a-a705ddc4962c"
-            },
-            {
-              "expectations": {
-                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "cd492e3362f77be2aae59826f73350423ec068b2057a34a9cb792664cf4b72fd",
-                "format": "text"
-              },
-              "input": {
-                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cd492e3362f77be2aae59826f73350423ec068b2057a34a9cb792664cf4b72fd",
-                "format": "text"
-              },
-              "pairId": "b63e6110-cf6d-4052-8262-81054fcad1aa"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -7552,220 +5840,6 @@
         "reverse": true
       },
       {
-        "id": "07c0141f1ded2bb96e98816f0e26f4629e853ab0dbdbde81458bad9129b0cc86",
-        "mapping": [
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "0856a9bd-da41-4913-955e-056951d8599b",
-            "run": 1
-          },
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "1d8de881-d409-4098-99b5-5fde4918f425",
-            "run": 1
-          },
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "611896bc-abeb-424c-a40f-e0331d345759",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
-                "format": "text"
-              },
-              "pairId": "0856a9bd-da41-4913-955e-056951d8599b"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b57190a7a5e56e420ef4fc3a0453287b154d451e0e00fcdca22f100d4e72ece7",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b57190a7a5e56e420ef4fc3a0453287b154d451e0e00fcdca22f100d4e72ece7",
-                "format": "text"
-              },
-              "pairId": "1d8de881-d409-4098-99b5-5fde4918f425"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b57190a7a5e56e420ef4fc3a0453287b154d451e0e00fcdca22f100d4e72ece7",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "3046b32898c4096f722652c932e6419c236c16fb98d303dc07c5d0cd99fc41be",
-                "format": "text"
-              },
-              "pairId": "611896bc-abeb-424c-a40f-e0331d345759"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "e844de1c8543920ec4a3112198351438d01edb83842e140f4979dc42e31a8c98",
-        "mapping": [
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "01a4bbd5-dc5b-4056-8a13-d312b05d5a77",
-            "run": 1
-          },
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "cb8da648-df4b-477b-bf23-60071e829431",
-            "run": 1
-          },
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "d53a08a4-093b-4203-a216-20a44f88f2b7",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
-                "format": "text"
-              },
-              "pairId": "01a4bbd5-dc5b-4056-8a13-d312b05d5a77"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b57190a7a5e56e420ef4fc3a0453287b154d451e0e00fcdca22f100d4e72ece7",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b57190a7a5e56e420ef4fc3a0453287b154d451e0e00fcdca22f100d4e72ece7",
-                "format": "text"
-              },
-              "pairId": "cb8da648-df4b-477b-bf23-60071e829431"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "3046b32898c4096f722652c932e6419c236c16fb98d303dc07c5d0cd99fc41be",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b57190a7a5e56e420ef4fc3a0453287b154d451e0e00fcdca22f100d4e72ece7",
-                "format": "text"
-              },
-              "pairId": "d53a08a4-093b-4203-a216-20a44f88f2b7"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "df00c84e2e04c841cf90a052e21030644e8b5671f2ec4b9fb933ce60e846fbba",
         "mapping": [
           {
@@ -8406,220 +6480,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "faee57a95af0b610a14b951847770c19f146802db5f72e4fe7f7f6df70ffe649",
-        "mapping": [
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "08a7c6b5-2f71-483d-9825-31e9e7c5f3f7",
-            "run": 2
-          },
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "90264785-63d2-4626-af1e-d47f80cd8964",
-            "run": 2
-          },
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "fffbcbbd-c4c3-46d3-a49a-6215d9f7ff3f",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "402197dbf10aab4e8238ffaeb43aa3f0d2ba5b2a020cf75917b7b406376beb98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "402197dbf10aab4e8238ffaeb43aa3f0d2ba5b2a020cf75917b7b406376beb98",
-                "format": "text"
-              },
-              "pairId": "08a7c6b5-2f71-483d-9825-31e9e7c5f3f7"
-            },
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
-                "format": "text"
-              },
-              "pairId": "90264785-63d2-4626-af1e-d47f80cd8964"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "ed185f3b680482eb3932d671264620ed7b54215ea5b2f2c4abbe10175fa85d20",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "402197dbf10aab4e8238ffaeb43aa3f0d2ba5b2a020cf75917b7b406376beb98",
-                "format": "text"
-              },
-              "pairId": "fffbcbbd-c4c3-46d3-a49a-6215d9f7ff3f"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "f7264ac3c521ca018002cd391cffef3babb279c3d8ba055f3df17b1ad7f183fb",
-        "mapping": [
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "404d7f29-3932-41a0-b76d-c6b0568c2dd1",
-            "run": 2
-          },
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "9659e73d-f26b-4fb4-9cb1-d8ee65e128b6",
-            "run": 2
-          },
-          {
-            "caseId": "en-statistics-field-nursing",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "f67c6bdd-594b-4948-9894-0bdc3bdd4724",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "402197dbf10aab4e8238ffaeb43aa3f0d2ba5b2a020cf75917b7b406376beb98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "ed185f3b680482eb3932d671264620ed7b54215ea5b2f2c4abbe10175fa85d20",
-                "format": "text"
-              },
-              "pairId": "404d7f29-3932-41a0-b76d-c6b0568c2dd1"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
-                "format": "text"
-              },
-              "pairId": "9659e73d-f26b-4fb4-9cb1-d8ee65e128b6"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "402197dbf10aab4e8238ffaeb43aa3f0d2ba5b2a020cf75917b7b406376beb98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "402197dbf10aab4e8238ffaeb43aa3f0d2ba5b2a020cf75917b7b406376beb98",
-                "format": "text"
-              },
-              "pairId": "f67c6bdd-594b-4948-9894-0bdc3bdd4724"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -9268,220 +7128,6 @@
         "reverse": true
       },
       {
-        "id": "cac62e745c96f6dc1deb489939957dcb025bec317092165e1450011c24245654",
-        "mapping": [
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "8d6078da-3c30-43b4-b7bf-b623fa311eb2",
-            "run": 1
-          },
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "b80f68f7-0b20-493a-ac11-976960c45388",
-            "run": 1
-          },
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "cbf8fd47-5019-413f-b021-e56f2a97b2a2",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "430b84ee167717941fc01cf9d81de4399aa2f9477a84be6b966908f922ad6692",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "19c3f56d061d0d454eab079fd4aeb0da19828aaa559a32a06f47be5685c5998d",
-                "format": "text"
-              },
-              "pairId": "8d6078da-3c30-43b4-b7bf-b623fa311eb2"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a232029d9c77d873e71e49aee3c22c2bda9f4f7adc56438ab118e9c8a0ae4c00",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "0a6115cc8ee3f6e58eda2338f17ed364692bd1caf5dc9e77d593f78d4034bd50",
-                "format": "text"
-              },
-              "pairId": "b80f68f7-0b20-493a-ac11-976960c45388"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a232029d9c77d873e71e49aee3c22c2bda9f4f7adc56438ab118e9c8a0ae4c00",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a232029d9c77d873e71e49aee3c22c2bda9f4f7adc56438ab118e9c8a0ae4c00",
-                "format": "text"
-              },
-              "pairId": "cbf8fd47-5019-413f-b021-e56f2a97b2a2"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "03db760d869288aca10a3439ceb30cab13d7ee8ba4251ba9634d2bd17bafe97e",
-        "mapping": [
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "ab37b6fc-0f38-4ba2-bef4-6ed6ba79a3df",
-            "run": 1
-          },
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "be283564-3b8f-45a0-824e-4f4cfd7cd98d",
-            "run": 1
-          },
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "f8e68fae-ad58-46f2-923a-ec4a5c77929a",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a232029d9c77d873e71e49aee3c22c2bda9f4f7adc56438ab118e9c8a0ae4c00",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a232029d9c77d873e71e49aee3c22c2bda9f4f7adc56438ab118e9c8a0ae4c00",
-                "format": "text"
-              },
-              "pairId": "ab37b6fc-0f38-4ba2-bef4-6ed6ba79a3df"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0a6115cc8ee3f6e58eda2338f17ed364692bd1caf5dc9e77d593f78d4034bd50",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a232029d9c77d873e71e49aee3c22c2bda9f4f7adc56438ab118e9c8a0ae4c00",
-                "format": "text"
-              },
-              "pairId": "be283564-3b8f-45a0-824e-4f4cfd7cd98d"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "37fc9032b6a781173784f6a7122068f733fcac82c532eae18b6210bac0ff8cfb",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "3375a362652438876dc7a7431cd23cf24ae94b22bf29028cf27db1b58e16d782",
-                "format": "text"
-              },
-              "pairId": "f8e68fae-ad58-46f2-923a-ec4a5c77929a"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "9d4ae29b28d2c1da5110f641f16430f563d6b145d1e5c238566cd436f24d4961",
         "mapping": [
           {
@@ -10122,220 +7768,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "34a660cc3a0289bea89fada8fb7d3e2a1c0ac032ad8c77ba6b25c8f598dca189",
-        "mapping": [
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "1b19ce3b-ecff-4720-8a42-34c22495a4df",
-            "run": 2
-          },
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "757e4ecc-a7bc-49f4-bedd-c18a6a3542a4",
-            "run": 2
-          },
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "a106340f-6da7-4bcb-a97d-c20859dd7e12",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "bc31519bfbea5609ee563404cbd97fb6704f7e77dc8cffbec98e063ab1c9db92",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "075b06063d8245bcc270298162212451171de1aa76d28e5952207233bc7818a4",
-                "format": "text"
-              },
-              "pairId": "1b19ce3b-ecff-4720-8a42-34c22495a4df"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "37fc9032b6a781173784f6a7122068f733fcac82c532eae18b6210bac0ff8cfb",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "3375a362652438876dc7a7431cd23cf24ae94b22bf29028cf27db1b58e16d782",
-                "format": "text"
-              },
-              "pairId": "757e4ecc-a7bc-49f4-bedd-c18a6a3542a4"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "075b06063d8245bcc270298162212451171de1aa76d28e5952207233bc7818a4",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "075b06063d8245bcc270298162212451171de1aa76d28e5952207233bc7818a4",
-                "format": "text"
-              },
-              "pairId": "a106340f-6da7-4bcb-a97d-c20859dd7e12"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "c06aa296c5c05051651f1ff5e38f1f459fbc234ae4c761b135bc68d5fdefab4e",
-        "mapping": [
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "49733b6d-da83-4858-913a-ad624dc2fc05",
-            "run": 2
-          },
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "8eb7c740-9603-4226-a58a-270394d012b1",
-            "run": 2
-          },
-          {
-            "caseId": "pt-porcentagem-field-retail",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "f07203ce-5353-4ba6-a3d9-263d639f6d45",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "075b06063d8245bcc270298162212451171de1aa76d28e5952207233bc7818a4",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "bc31519bfbea5609ee563404cbd97fb6704f7e77dc8cffbec98e063ab1c9db92",
-                "format": "text"
-              },
-              "pairId": "49733b6d-da83-4858-913a-ad624dc2fc05"
-            },
-            {
-              "expectations": {
-                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
-                "format": "text"
-              },
-              "A": {
-                "blob": "075b06063d8245bcc270298162212451171de1aa76d28e5952207233bc7818a4",
-                "format": "text"
-              },
-              "input": {
-                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
-                "format": "json"
-              },
-              "B": {
-                "blob": "075b06063d8245bcc270298162212451171de1aa76d28e5952207233bc7818a4",
-                "format": "text"
-              },
-              "pairId": "8eb7c740-9603-4226-a58a-270394d012b1"
-            },
-            {
-              "expectations": {
-                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
-                "format": "text"
-              },
-              "A": {
-                "blob": "430b84ee167717941fc01cf9d81de4399aa2f9477a84be6b966908f922ad6692",
-                "format": "text"
-              },
-              "input": {
-                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
-                "format": "json"
-              },
-              "B": {
-                "blob": "19c3f56d061d0d454eab079fd4aeb0da19828aaa559a32a06f47be5685c5998d",
-                "format": "text"
-              },
-              "pairId": "f07203ce-5353-4ba6-a3d9-263d639f6d45"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -10984,220 +8416,6 @@
         "reverse": true
       },
       {
-        "id": "90c4af0fb3a643e2054b627860f08174f6ea241207fe48f79f7fb4602dcfe3b3",
-        "mapping": [
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "06b29655-50aa-40c2-86d4-49ad9af83e17",
-            "run": 1
-          },
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "08d051ac-bdca-4503-998d-1fc0e8b32ffb",
-            "run": 1
-          },
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "92510623-97a4-4cfc-9bc5-bc1adc0d237b",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
-                "format": "text"
-              },
-              "input": {
-                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
-                "format": "json"
-              },
-              "B": {
-                "blob": "88a1b88eae1f264bb97386ff633ab850a6ac88c086fbb6022115cb927cdf4279",
-                "format": "text"
-              },
-              "pairId": "06b29655-50aa-40c2-86d4-49ad9af83e17"
-            },
-            {
-              "expectations": {
-                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
-                "format": "text"
-              },
-              "input": {
-                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
-                "format": "text"
-              },
-              "pairId": "08d051ac-bdca-4503-998d-1fc0e8b32ffb"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
-                "format": "text"
-              },
-              "pairId": "92510623-97a4-4cfc-9bc5-bc1adc0d237b"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "d7ee09dd995abd913e5dac95e1aa311a56f29bd6d35eeb9f298e976dd8b7aa90",
-        "mapping": [
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "30d29f17-8f5d-4495-9ac4-7229a0dc4d7b",
-            "run": 1
-          },
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "93d0b128-e791-4c48-b158-0974a408be55",
-            "run": 1
-          },
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "ac4c60cf-9618-4631-a522-b5874e6e2908",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
-                "format": "text"
-              },
-              "pairId": "30d29f17-8f5d-4495-9ac4-7229a0dc4d7b"
-            },
-            {
-              "expectations": {
-                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
-                "format": "text"
-              },
-              "A": {
-                "blob": "88a1b88eae1f264bb97386ff633ab850a6ac88c086fbb6022115cb927cdf4279",
-                "format": "text"
-              },
-              "input": {
-                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
-                "format": "text"
-              },
-              "pairId": "93d0b128-e791-4c48-b158-0974a408be55"
-            },
-            {
-              "expectations": {
-                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
-                "format": "text"
-              },
-              "input": {
-                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
-                "format": "text"
-              },
-              "pairId": "ac4c60cf-9618-4631-a522-b5874e6e2908"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "5fbce518b1554051977ad63d3525aa50edc528e85a24a47f3ad3f0ae484523ae",
         "mapping": [
           {
@@ -11842,220 +9060,6 @@
         "reverse": true
       },
       {
-        "id": "74830f7a6e4a1472071f44b9ef2fd254ff10a00ee6469b9a8b3603fb0cdb812a",
-        "mapping": [
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "plainLanguage",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "3fb7a5e5-6d4b-453f-9d29-c2d7f1ddfbd4",
-            "run": 2
-          },
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "b1183c02-eae1-4bc0-8653-42d701a6bb1d",
-            "run": 2
-          },
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "e2d6582d-10e6-41f4-8563-9703a2daa740",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
-                "format": "text"
-              },
-              "A": {
-                "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
-                "format": "json"
-              },
-              "B": {
-                "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
-                "format": "text"
-              },
-              "pairId": "3fb7a5e5-6d4b-453f-9d29-c2d7f1ddfbd4"
-            },
-            {
-              "expectations": {
-                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
-                "format": "text"
-              },
-              "A": {
-                "blob": "05ec4aefce19947ecfcc9f6976adf54eaeeb372137e19a858ec8d414d112d384",
-                "format": "text"
-              },
-              "input": {
-                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
-                "format": "json"
-              },
-              "B": {
-                "blob": "05ec4aefce19947ecfcc9f6976adf54eaeeb372137e19a858ec8d414d112d384",
-                "format": "text"
-              },
-              "pairId": "b1183c02-eae1-4bc0-8653-42d701a6bb1d"
-            },
-            {
-              "expectations": {
-                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
-                "format": "text"
-              },
-              "A": {
-                "blob": "038a2919d8dea9cde9110d31da93dba3b1c5979d96fb0670cb74a32bc9db24ce",
-                "format": "text"
-              },
-              "input": {
-                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
-                "format": "json"
-              },
-              "B": {
-                "blob": "05ec4aefce19947ecfcc9f6976adf54eaeeb372137e19a858ec8d414d112d384",
-                "format": "text"
-              },
-              "pairId": "e2d6582d-10e6-41f4-8563-9703a2daa740"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "dd818dad2c9a1db77bab02987de8696b1cd4d6c237ac212a5d4dcc282b4a613f",
-        "mapping": [
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "30e24663-62de-44ea-b20b-a13bd8126a01",
-            "run": 2
-          },
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "3520452e-7e42-4450-8610-fef225d435f2",
-            "run": 2
-          },
-          {
-            "caseId": "en-plot-reading-field-research",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "fc7be639-350f-46df-85dc-94f5c95f83f0",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
-                "format": "text"
-              },
-              "A": {
-                "blob": "05ec4aefce19947ecfcc9f6976adf54eaeeb372137e19a858ec8d414d112d384",
-                "format": "text"
-              },
-              "input": {
-                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
-                "format": "json"
-              },
-              "B": {
-                "blob": "05ec4aefce19947ecfcc9f6976adf54eaeeb372137e19a858ec8d414d112d384",
-                "format": "text"
-              },
-              "pairId": "30e24663-62de-44ea-b20b-a13bd8126a01"
-            },
-            {
-              "expectations": {
-                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
-                "format": "text"
-              },
-              "A": {
-                "blob": "05ec4aefce19947ecfcc9f6976adf54eaeeb372137e19a858ec8d414d112d384",
-                "format": "text"
-              },
-              "input": {
-                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
-                "format": "json"
-              },
-              "B": {
-                "blob": "038a2919d8dea9cde9110d31da93dba3b1c5979d96fb0670cb74a32bc9db24ce",
-                "format": "text"
-              },
-              "pairId": "3520452e-7e42-4450-8610-fef225d435f2"
-            },
-            {
-              "expectations": {
-                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
-                "format": "text"
-              },
-              "A": {
-                "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
-                "format": "json"
-              },
-              "B": {
-                "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
-                "format": "text"
-              },
-              "pairId": "fc7be639-350f-46df-85dc-94f5c95f83f0"
-            }
-          ],
-          "reads": "A learner plays the case and reads its debrief"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "2b7ef8de82615c2a4df31f2b42ce23266f47ae3cbbaad253bad5e56b1f1d560b",
         "mapping": [
           {
@@ -12270,6 +9274,342 @@
           "reserve": true
         },
         "reverse": true
+      },
+      {
+        "id": "b8a7a347a708ae3bb849260fb069198f5a6ef6f26b6e198306e814d3141a12a0",
+        "mapping": [
+          {
+            "caseId": "en-ab-test-work",
+            "clean": null,
+            "criterion": null,
+            "first": "incumbent",
+            "kind": "real",
+            "pairId": "e7d67f6d-3fcd-4ae7-b279-0a0f129efa6c",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
+                "format": "text"
+              },
+              "A": {
+                "blob": "cb370277e247f7ff66dba6f0d51941dcdafb9adc0e05a6c6ebd654a7f3755479",
+                "format": "text"
+              },
+              "input": {
+                "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
+                "format": "json"
+              },
+              "B": {
+                "blob": "a1993c4dce4af9c0aed187c8953332171f6100d545e3891c0de0198d5e2b3b3e",
+                "format": "text"
+              },
+              "pairId": "e7d67f6d-3fcd-4ae7-b279-0a0f129efa6c"
+            }
+          ],
+          "reads": "A learner plays the case and reads its debrief"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "e9b5bf50734838d20719463aea13ad184ebc32e6c4fb213b4e38c1082bc91b13",
+        "mapping": [
+          {
+            "caseId": "pt-quantum-what-if",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "24f22cd2-d001-4b21-809a-75f6f73c2ecf",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
+                "format": "text"
+              },
+              "A": {
+                "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
+                "format": "text"
+              },
+              "input": {
+                "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
+                "format": "json"
+              },
+              "B": {
+                "blob": "92dc278b451999e633b45b54164b7a25afcbd07154fc6595af9d73f672877022",
+                "format": "text"
+              },
+              "pairId": "24f22cd2-d001-4b21-809a-75f6f73c2ecf"
+            }
+          ],
+          "reads": "A learner plays the case and reads its debrief"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "2003c6f0bc98dbf0e952edd146c6a875c19fb6f1ddd71fcfe6a85764acc757ad",
+        "mapping": [
+          {
+            "caseId": "pt-nursing-dose-work",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "b4c7a25e-68f8-48ab-9409-683c91405681",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "31d317311a4d68d481cbeab13d667d93e123e92b850c4bb17ffce3177fa28f15",
+                "format": "text"
+              },
+              "A": {
+                "blob": "44414750a083dc188a3411875bdb584be365c46558b401a4cdec0f301ef4dab3",
+                "format": "text"
+              },
+              "input": {
+                "blob": "632b9c5ca8efdb50ed43f7252a3e61111b4df15652f780e27ac1fa88fbe4cb4b",
+                "format": "json"
+              },
+              "B": {
+                "blob": "d8e0cd29e8941b2243d994b261700ec22fe424d1d1293292e4c3bf9e1f74201a",
+                "format": "text"
+              },
+              "pairId": "b4c7a25e-68f8-48ab-9409-683c91405681"
+            }
+          ],
+          "reads": "A learner plays the case and reads its debrief"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "223d37ab90408c8859e831a49f032caec30c010c3245e06c28c655b233143dfa",
+        "mapping": [
+          {
+            "caseId": "en-career-change-data-cleaning",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "ae8aff35-7b1f-47d5-901f-adc65a877bb0",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
+                "format": "text"
+              },
+              "A": {
+                "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
+                "format": "text"
+              },
+              "input": {
+                "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
+                "format": "json"
+              },
+              "B": {
+                "blob": "2e81785bf63c083a6506d42282c758a9f2d47a01b404e20b2c605950ac625cd4",
+                "format": "text"
+              },
+              "pairId": "ae8aff35-7b1f-47d5-901f-adc65a877bb0"
+            }
+          ],
+          "reads": "A learner plays the case and reads its debrief"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "6b546fe9220751a3481f3612c0332f3799b1a207650bb020697fb526a65c0e57",
+        "mapping": [
+          {
+            "caseId": "en-statistics-field-nursing",
+            "clean": null,
+            "criterion": null,
+            "first": "incumbent",
+            "kind": "real",
+            "pairId": "ceb4f692-92a0-45a5-bcde-336d947aaaef",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
+                "format": "text"
+              },
+              "A": {
+                "blob": "3046b32898c4096f722652c932e6419c236c16fb98d303dc07c5d0cd99fc41be",
+                "format": "text"
+              },
+              "input": {
+                "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
+                "format": "json"
+              },
+              "B": {
+                "blob": "b57190a7a5e56e420ef4fc3a0453287b154d451e0e00fcdca22f100d4e72ece7",
+                "format": "text"
+              },
+              "pairId": "ceb4f692-92a0-45a5-bcde-336d947aaaef"
+            }
+          ],
+          "reads": "A learner plays the case and reads its debrief"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "c884cd4b30962f2e51bc5d9200d598570207663d53197df30ab3047171d86d59",
+        "mapping": [
+          {
+            "caseId": "pt-porcentagem-field-retail",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "787ef5e7-9770-4eb9-8eec-d6d3d3ecb58e",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
+                "format": "text"
+              },
+              "A": {
+                "blob": "a232029d9c77d873e71e49aee3c22c2bda9f4f7adc56438ab118e9c8a0ae4c00",
+                "format": "text"
+              },
+              "input": {
+                "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
+                "format": "json"
+              },
+              "B": {
+                "blob": "0a6115cc8ee3f6e58eda2338f17ed364692bd1caf5dc9e77d593f78d4034bd50",
+                "format": "text"
+              },
+              "pairId": "787ef5e7-9770-4eb9-8eec-d6d3d3ecb58e"
+            }
+          ],
+          "reads": "A learner plays the case and reads its debrief"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "88e3cc6352ea2f5a001998541519e5ca7120d36a7ef8681c576e1be764f67174",
+        "mapping": [
+          {
+            "caseId": "en-plot-reading-field-research",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "af1629db-4a9a-46e8-b8ef-5237638c9cc1",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "c8eb23efb5ef5a73a62902940948f8b49f207153ffa791244cacead1f2800875",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
+                "format": "text"
+              },
+              "A": {
+                "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
+                "format": "text"
+              },
+              "input": {
+                "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
+                "format": "json"
+              },
+              "B": {
+                "blob": "88a1b88eae1f264bb97386ff633ab850a6ac88c086fbb6022115cb927cdf4279",
+                "format": "text"
+              },
+              "pairId": "af1629db-4a9a-46e8-b8ef-5237638c9cc1"
+            }
+          ],
+          "reads": "A learner plays the case and reads its debrief"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
       }
     ],
     "runsCompared": [

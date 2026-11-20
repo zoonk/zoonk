@@ -672,220 +672,6 @@
         "reverse": true
       },
       {
-        "id": "69c8cca1c87dccde43aad98af6465582b61290620ddc0b1a04e8b972230e70de",
-        "mapping": [
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "8e337dca-fc9a-423c-adad-481576113491",
-            "run": 1
-          },
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "aadfb029-d275-4a64-81a6-8b4069060c83",
-            "run": 1
-          },
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "f365286e-e15e-4734-9547-9a9f4b3c5ad4",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
-                "format": "text"
-              },
-              "A": {
-                "blob": "c8ba9c8f52858bac14770894d0bf1dd9ffc52172a7b2a98025a743b109b8ea6e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
-                "format": "json"
-              },
-              "B": {
-                "blob": "c8ba9c8f52858bac14770894d0bf1dd9ffc52172a7b2a98025a743b109b8ea6e",
-                "format": "text"
-              },
-              "pairId": "8e337dca-fc9a-423c-adad-481576113491"
-            },
-            {
-              "expectations": {
-                "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
-                "format": "text"
-              },
-              "A": {
-                "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "pairId": "aadfb029-d275-4a64-81a6-8b4069060c83"
-            },
-            {
-              "expectations": {
-                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
-                "format": "text"
-              },
-              "A": {
-                "blob": "c8ba9c8f52858bac14770894d0bf1dd9ffc52172a7b2a98025a743b109b8ea6e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
-                "format": "json"
-              },
-              "B": {
-                "blob": "de9179ec49b3ce87d921766705ebd3072b3c7c8668d88d346b27d642b8b15cc2",
-                "format": "text"
-              },
-              "pairId": "f365286e-e15e-4734-9547-9a9f4b3c5ad4"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "f9c6020fa5c803fbdf890de0bd4f40753d5d25b98647db8ef133be1215b89b55",
-        "mapping": [
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "2b402dcb-c753-4a22-b498-5d3690e0b389",
-            "run": 1
-          },
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "clarity",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "8e6447d8-1132-4411-bd2f-fcbe600408bf",
-            "run": 1
-          },
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "b8c5ff45-b8bf-4eca-ae72-25ef86dce1bf",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
-                "format": "text"
-              },
-              "A": {
-                "blob": "c8ba9c8f52858bac14770894d0bf1dd9ffc52172a7b2a98025a743b109b8ea6e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
-                "format": "json"
-              },
-              "B": {
-                "blob": "c8ba9c8f52858bac14770894d0bf1dd9ffc52172a7b2a98025a743b109b8ea6e",
-                "format": "text"
-              },
-              "pairId": "2b402dcb-c753-4a22-b498-5d3690e0b389"
-            },
-            {
-              "expectations": {
-                "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
-                "format": "text"
-              },
-              "A": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
-                "format": "text"
-              },
-              "pairId": "8e6447d8-1132-4411-bd2f-fcbe600408bf"
-            },
-            {
-              "expectations": {
-                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
-                "format": "text"
-              },
-              "A": {
-                "blob": "de9179ec49b3ce87d921766705ebd3072b3c7c8668d88d346b27d642b8b15cc2",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
-                "format": "json"
-              },
-              "B": {
-                "blob": "c8ba9c8f52858bac14770894d0bf1dd9ffc52172a7b2a98025a743b109b8ea6e",
-                "format": "text"
-              },
-              "pairId": "b8c5ff45-b8bf-4eca-ae72-25ef86dce1bf"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "96c82ded0171c5aaa7b27687e86fbfe51ff7af73722b8d9f8e91dcfef196a8cd",
         "mapping": [
           {
@@ -1526,220 +1312,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "01b789a62553e8de5263a64ae3fc046e3b89d60e973ed9d4602aa92d4addbe88",
-        "mapping": [
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "clarity",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "559e0130-3551-404f-8551-25da6164007d",
-            "run": 2
-          },
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "a2ef3e93-2d16-4808-892e-889c4619a597",
-            "run": 2
-          },
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "a6f1ae2b-f332-4a80-b858-de0331297dc9",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
-                "format": "text"
-              },
-              "A": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
-                "format": "text"
-              },
-              "pairId": "559e0130-3551-404f-8551-25da6164007d"
-            },
-            {
-              "expectations": {
-                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
-                "format": "text"
-              },
-              "A": {
-                "blob": "2023456b63205865b9742558dc8b60849dcbfda2ad92ce0dbf3c37cdc956bd98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
-                "format": "json"
-              },
-              "B": {
-                "blob": "2023456b63205865b9742558dc8b60849dcbfda2ad92ce0dbf3c37cdc956bd98",
-                "format": "text"
-              },
-              "pairId": "a2ef3e93-2d16-4808-892e-889c4619a597"
-            },
-            {
-              "expectations": {
-                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0268ce8d4e23e6fa09793b11f8f48f43eaa0c6196acffab02accff458cb6af38",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
-                "format": "json"
-              },
-              "B": {
-                "blob": "2023456b63205865b9742558dc8b60849dcbfda2ad92ce0dbf3c37cdc956bd98",
-                "format": "text"
-              },
-              "pairId": "a6f1ae2b-f332-4a80-b858-de0331297dc9"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "f3cd4ec976bbd833911a78eef05c2eb6cdd74d05c942479f526d224651797804",
-        "mapping": [
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "736f416f-049a-49f0-b1ab-6d44dd01e630",
-            "run": 2
-          },
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "ab6dd6fc-c5a6-4b76-881e-a385fd0d3463",
-            "run": 2
-          },
-          {
-            "caseId": "en-ux-goals-spot-ai",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "f249c6a0-43c1-430d-abe7-d8bbfbf16247",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
-                "format": "text"
-              },
-              "A": {
-                "blob": "2023456b63205865b9742558dc8b60849dcbfda2ad92ce0dbf3c37cdc956bd98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
-                "format": "json"
-              },
-              "B": {
-                "blob": "2023456b63205865b9742558dc8b60849dcbfda2ad92ce0dbf3c37cdc956bd98",
-                "format": "text"
-              },
-              "pairId": "736f416f-049a-49f0-b1ab-6d44dd01e630"
-            },
-            {
-              "expectations": {
-                "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
-                "format": "text"
-              },
-              "A": {
-                "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "pairId": "ab6dd6fc-c5a6-4b76-881e-a385fd0d3463"
-            },
-            {
-              "expectations": {
-                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
-                "format": "text"
-              },
-              "A": {
-                "blob": "2023456b63205865b9742558dc8b60849dcbfda2ad92ce0dbf3c37cdc956bd98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
-                "format": "json"
-              },
-              "B": {
-                "blob": "0268ce8d4e23e6fa09793b11f8f48f43eaa0c6196acffab02accff458cb6af38",
-                "format": "text"
-              },
-              "pairId": "f249c6a0-43c1-430d-abe7-d8bbfbf16247"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -2388,220 +1960,6 @@
         "reverse": true
       },
       {
-        "id": "70397b1c47fabc5cec75e6b60060133ca9f8554453ae10b781bd3bbb6df2466c",
-        "mapping": [
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "6e4cbb69-cf26-473e-ac09-927c06a96ab8",
-            "run": 1
-          },
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "9100ae7d-34e9-4620-8deb-fef56c5803f8",
-            "run": 1
-          },
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "a00dba5e-7f0f-4397-aabe-9bf4a47ca2f8",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
-                "format": "text"
-              },
-              "A": {
-                "blob": "6962385f7de90189da759092fa927abbfc0de29e590cc13a4fac1a75509505b3",
-                "format": "text"
-              },
-              "input": {
-                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
-                "format": "json"
-              },
-              "B": {
-                "blob": "6962385f7de90189da759092fa927abbfc0de29e590cc13a4fac1a75509505b3",
-                "format": "text"
-              },
-              "pairId": "6e4cbb69-cf26-473e-ac09-927c06a96ab8"
-            },
-            {
-              "expectations": {
-                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
-                "format": "text"
-              },
-              "A": {
-                "blob": "6962385f7de90189da759092fa927abbfc0de29e590cc13a4fac1a75509505b3",
-                "format": "text"
-              },
-              "input": {
-                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
-                "format": "json"
-              },
-              "B": {
-                "blob": "3da0e3df2dfc01ccb83650c829eda92afcff54aa6638441391c5973489612c96",
-                "format": "text"
-              },
-              "pairId": "9100ae7d-34e9-4620-8deb-fef56c5803f8"
-            },
-            {
-              "expectations": {
-                "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
-                "format": "text"
-              },
-              "A": {
-                "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "pairId": "a00dba5e-7f0f-4397-aabe-9bf4a47ca2f8"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "a82ab60ac5e1b340f8503907f60e74fed732789624373ba4d5126de74753e4f3",
-        "mapping": [
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "clarity",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "31482e4d-3ae8-4ceb-b330-b2d1eb24a6dd",
-            "run": 1
-          },
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "526c2321-7065-490b-bab9-79601a595099",
-            "run": 1
-          },
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "86a664ec-c028-4c83-bc9a-405e2abe16c8",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
-                "format": "text"
-              },
-              "A": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
-                "format": "text"
-              },
-              "pairId": "31482e4d-3ae8-4ceb-b330-b2d1eb24a6dd"
-            },
-            {
-              "expectations": {
-                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
-                "format": "text"
-              },
-              "A": {
-                "blob": "6962385f7de90189da759092fa927abbfc0de29e590cc13a4fac1a75509505b3",
-                "format": "text"
-              },
-              "input": {
-                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
-                "format": "json"
-              },
-              "B": {
-                "blob": "6962385f7de90189da759092fa927abbfc0de29e590cc13a4fac1a75509505b3",
-                "format": "text"
-              },
-              "pairId": "526c2321-7065-490b-bab9-79601a595099"
-            },
-            {
-              "expectations": {
-                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
-                "format": "text"
-              },
-              "A": {
-                "blob": "3da0e3df2dfc01ccb83650c829eda92afcff54aa6638441391c5973489612c96",
-                "format": "text"
-              },
-              "input": {
-                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
-                "format": "json"
-              },
-              "B": {
-                "blob": "6962385f7de90189da759092fa927abbfc0de29e590cc13a4fac1a75509505b3",
-                "format": "text"
-              },
-              "pairId": "86a664ec-c028-4c83-bc9a-405e2abe16c8"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "b826b5d93ba354f6b6786047a0a917c06380fca270e6fa1701acc5804b4e7564",
         "mapping": [
           {
@@ -3242,220 +2600,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "fd3543a7148298aeb309b9facd868dd287d4df36985072ff636da2d1ce94208c",
-        "mapping": [
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "5d3bbaa9-ca8f-499e-8265-4c2e1263553c",
-            "run": 2
-          },
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "9faa065c-d25d-4725-86ef-f8f54756caaf",
-            "run": 2
-          },
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "clarity",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "ca04d63e-ce5e-4941-a91d-8e49cb046aca",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0d5eb95e7dc7706d85432a9952901b6854bef112063de950a2fe5678d58bf1a1",
-                "format": "text"
-              },
-              "input": {
-                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
-                "format": "json"
-              },
-              "B": {
-                "blob": "4e67d095cec03a09469218be89cbd6dabafe6c66a170201efe07d887dc8e5377",
-                "format": "text"
-              },
-              "pairId": "5d3bbaa9-ca8f-499e-8265-4c2e1263553c"
-            },
-            {
-              "expectations": {
-                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
-                "format": "text"
-              },
-              "A": {
-                "blob": "4e67d095cec03a09469218be89cbd6dabafe6c66a170201efe07d887dc8e5377",
-                "format": "text"
-              },
-              "input": {
-                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
-                "format": "json"
-              },
-              "B": {
-                "blob": "4e67d095cec03a09469218be89cbd6dabafe6c66a170201efe07d887dc8e5377",
-                "format": "text"
-              },
-              "pairId": "9faa065c-d25d-4725-86ef-f8f54756caaf"
-            },
-            {
-              "expectations": {
-                "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
-                "format": "text"
-              },
-              "A": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
-                "format": "text"
-              },
-              "pairId": "ca04d63e-ce5e-4941-a91d-8e49cb046aca"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "d045e1f6cea27f287ce19ac2ec2d0364f74712016dc4beb69f18b8560a191a4b",
-        "mapping": [
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "5b74d846-7506-47d0-891e-e90b75bd96d8",
-            "run": 2
-          },
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "8d6a0095-93e3-4b50-9e33-04cf2bbe1aec",
-            "run": 2
-          },
-          {
-            "caseId": "en-python-range-beginner",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "93ab6014-698e-4c7d-b04d-343937a6068e",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
-                "format": "text"
-              },
-              "A": {
-                "blob": "4e67d095cec03a09469218be89cbd6dabafe6c66a170201efe07d887dc8e5377",
-                "format": "text"
-              },
-              "input": {
-                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
-                "format": "json"
-              },
-              "B": {
-                "blob": "0d5eb95e7dc7706d85432a9952901b6854bef112063de950a2fe5678d58bf1a1",
-                "format": "text"
-              },
-              "pairId": "5b74d846-7506-47d0-891e-e90b75bd96d8"
-            },
-            {
-              "expectations": {
-                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
-                "format": "text"
-              },
-              "A": {
-                "blob": "4e67d095cec03a09469218be89cbd6dabafe6c66a170201efe07d887dc8e5377",
-                "format": "text"
-              },
-              "input": {
-                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
-                "format": "json"
-              },
-              "B": {
-                "blob": "4e67d095cec03a09469218be89cbd6dabafe6c66a170201efe07d887dc8e5377",
-                "format": "text"
-              },
-              "pairId": "8d6a0095-93e3-4b50-9e33-04cf2bbe1aec"
-            },
-            {
-              "expectations": {
-                "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
-                "format": "text"
-              },
-              "A": {
-                "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "pairId": "93ab6014-698e-4c7d-b04d-343937a6068e"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -4104,220 +3248,6 @@
         "reverse": true
       },
       {
-        "id": "4b45c29d20020b72f85d369e0f6900cb37babab2e3bc96076910991076c906e0",
-        "mapping": [
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "234bf63b-7a1a-4255-b4ab-6fbbb6b67716",
-            "run": 1
-          },
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "300de9cb-5003-44ef-b8b1-6f060686118f",
-            "run": 1
-          },
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "38db2037-c67c-4e05-91c3-2b3f210348f3",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
-                "format": "text"
-              },
-              "A": {
-                "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
-                "format": "text"
-              },
-              "input": {
-                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
-                "format": "json"
-              },
-              "B": {
-                "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
-                "format": "text"
-              },
-              "pairId": "234bf63b-7a1a-4255-b4ab-6fbbb6b67716"
-            },
-            {
-              "expectations": {
-                "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
-                "format": "text"
-              },
-              "A": {
-                "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
-                "format": "text"
-              },
-              "input": {
-                "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
-                "format": "json"
-              },
-              "B": {
-                "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
-                "format": "text"
-              },
-              "pairId": "300de9cb-5003-44ef-b8b1-6f060686118f"
-            },
-            {
-              "expectations": {
-                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
-                "format": "text"
-              },
-              "A": {
-                "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
-                "format": "text"
-              },
-              "input": {
-                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cbd91bfcd22fdbd4cb730d6ce2db0018883929710d0be438c07540378eb5cfb2",
-                "format": "text"
-              },
-              "pairId": "38db2037-c67c-4e05-91c3-2b3f210348f3"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "0aebc0268574a8d8f0dea9c736e49b1d78487018047e7841e73e068dcea4f835",
-        "mapping": [
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "15832ced-098d-415c-9caa-7500248bf8ca",
-            "run": 1
-          },
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "fitAndApplication",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "65d50ff5-4e0a-4568-af3a-9c56832a8a8d",
-            "run": 1
-          },
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "79ba9200-5753-4a75-98da-e913c7349928",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
-                "format": "text"
-              },
-              "A": {
-                "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
-                "format": "text"
-              },
-              "input": {
-                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
-                "format": "json"
-              },
-              "B": {
-                "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
-                "format": "text"
-              },
-              "pairId": "15832ced-098d-415c-9caa-7500248bf8ca"
-            },
-            {
-              "expectations": {
-                "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
-                "format": "text"
-              },
-              "input": {
-                "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
-                "format": "json"
-              },
-              "B": {
-                "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
-                "format": "text"
-              },
-              "pairId": "65d50ff5-4e0a-4568-af3a-9c56832a8a8d"
-            },
-            {
-              "expectations": {
-                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
-                "format": "text"
-              },
-              "A": {
-                "blob": "cbd91bfcd22fdbd4cb730d6ce2db0018883929710d0be438c07540378eb5cfb2",
-                "format": "text"
-              },
-              "input": {
-                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
-                "format": "json"
-              },
-              "B": {
-                "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
-                "format": "text"
-              },
-              "pairId": "79ba9200-5753-4a75-98da-e913c7349928"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "63e14204547e89d30365c7cf955c610327579055134b0d1ded3eafcb421dbd15",
         "mapping": [
           {
@@ -4958,220 +3888,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "7e780c4e924a9a0d98eaf8850d8385bb88dbdbb58cf6180f6f25009beee4dc21",
-        "mapping": [
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "2bf76979-57f8-4182-b087-f2ecc3a05eeb",
-            "run": 2
-          },
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "de908424-2a8d-4995-81cf-53bdc45fd157",
-            "run": 2
-          },
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "fitAndApplication",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "ec6e9843-4c22-4205-8835-06867a7ddb39",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
-                "format": "text"
-              },
-              "A": {
-                "blob": "03210417a88b676ba30249b370392e2f6cd92f7e086b779cc6f063401ec30452",
-                "format": "text"
-              },
-              "input": {
-                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
-                "format": "json"
-              },
-              "B": {
-                "blob": "04cefeaa1ea50cd5e38eb40657bb7ffcf5ede806cac8be9890cd7f46ff0e13d8",
-                "format": "text"
-              },
-              "pairId": "2bf76979-57f8-4182-b087-f2ecc3a05eeb"
-            },
-            {
-              "expectations": {
-                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
-                "format": "text"
-              },
-              "A": {
-                "blob": "04cefeaa1ea50cd5e38eb40657bb7ffcf5ede806cac8be9890cd7f46ff0e13d8",
-                "format": "text"
-              },
-              "input": {
-                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
-                "format": "json"
-              },
-              "B": {
-                "blob": "04cefeaa1ea50cd5e38eb40657bb7ffcf5ede806cac8be9890cd7f46ff0e13d8",
-                "format": "text"
-              },
-              "pairId": "de908424-2a8d-4995-81cf-53bdc45fd157"
-            },
-            {
-              "expectations": {
-                "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
-                "format": "text"
-              },
-              "input": {
-                "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
-                "format": "json"
-              },
-              "B": {
-                "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
-                "format": "text"
-              },
-              "pairId": "ec6e9843-4c22-4205-8835-06867a7ddb39"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "3e759debfb9834d2f12ee6fb65131996cf67ddbcdbfaf738ecea8bdf6db6f81d",
-        "mapping": [
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "6b06f483-61d8-4e18-a78b-8f123e281fed",
-            "run": 2
-          },
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "7e6f7a90-4d8d-421e-9285-2d58981a0d8f",
-            "run": 2
-          },
-          {
-            "caseId": "pt-glicolise-from-slides",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "f4afef7e-e5f6-4674-b318-751d98417085",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
-                "format": "text"
-              },
-              "A": {
-                "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
-                "format": "text"
-              },
-              "input": {
-                "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
-                "format": "json"
-              },
-              "B": {
-                "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
-                "format": "text"
-              },
-              "pairId": "6b06f483-61d8-4e18-a78b-8f123e281fed"
-            },
-            {
-              "expectations": {
-                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
-                "format": "text"
-              },
-              "A": {
-                "blob": "04cefeaa1ea50cd5e38eb40657bb7ffcf5ede806cac8be9890cd7f46ff0e13d8",
-                "format": "text"
-              },
-              "input": {
-                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
-                "format": "json"
-              },
-              "B": {
-                "blob": "03210417a88b676ba30249b370392e2f6cd92f7e086b779cc6f063401ec30452",
-                "format": "text"
-              },
-              "pairId": "7e6f7a90-4d8d-421e-9285-2d58981a0d8f"
-            },
-            {
-              "expectations": {
-                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
-                "format": "text"
-              },
-              "A": {
-                "blob": "04cefeaa1ea50cd5e38eb40657bb7ffcf5ede806cac8be9890cd7f46ff0e13d8",
-                "format": "text"
-              },
-              "input": {
-                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
-                "format": "json"
-              },
-              "B": {
-                "blob": "04cefeaa1ea50cd5e38eb40657bb7ffcf5ede806cac8be9890cd7f46ff0e13d8",
-                "format": "text"
-              },
-              "pairId": "f4afef7e-e5f6-4674-b318-751d98417085"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -5820,220 +4536,6 @@
         "reverse": true
       },
       {
-        "id": "a61f006bbc4d3100f2a69744ac3ca34c7ada3e9efa7dd04eed9a87f2a255cf7e",
-        "mapping": [
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "1ec973dc-b635-4389-802c-e792c33ee8a0",
-            "run": 1
-          },
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "94fe76a4-bb2b-46ed-b71b-e29d84dafd4c",
-            "run": 1
-          },
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "dbc7a3e5-f970-4366-b01d-897dfa834fd9",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
-                "format": "text"
-              },
-              "A": {
-                "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "pairId": "1ec973dc-b635-4389-802c-e792c33ee8a0"
-            },
-            {
-              "expectations": {
-                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
-                "format": "text"
-              },
-              "A": {
-                "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
-                "format": "text"
-              },
-              "input": {
-                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
-                "format": "json"
-              },
-              "B": {
-                "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
-                "format": "text"
-              },
-              "pairId": "94fe76a4-bb2b-46ed-b71b-e29d84dafd4c"
-            },
-            {
-              "expectations": {
-                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
-                "format": "text"
-              },
-              "A": {
-                "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
-                "format": "text"
-              },
-              "input": {
-                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
-                "format": "json"
-              },
-              "B": {
-                "blob": "143064c4bd0b04d7c58235ecffc4f5eb2f808336d44336c1b29849f7fd91d763",
-                "format": "text"
-              },
-              "pairId": "dbc7a3e5-f970-4366-b01d-897dfa834fd9"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "50215fa4ea881f3bc3d262afab1b73fee68f096da67af7275a26833e70d176a2",
-        "mapping": [
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "19c4483a-79ba-494f-a62a-5d72080b2311",
-            "run": 1
-          },
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "clarity",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "71a379c2-5039-4fb9-9b90-4cfd2a4cd2ef",
-            "run": 1
-          },
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "90d5a79e-ea65-422f-b9a7-3350ae850e2d",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
-                "format": "text"
-              },
-              "A": {
-                "blob": "143064c4bd0b04d7c58235ecffc4f5eb2f808336d44336c1b29849f7fd91d763",
-                "format": "text"
-              },
-              "input": {
-                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
-                "format": "json"
-              },
-              "B": {
-                "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
-                "format": "text"
-              },
-              "pairId": "19c4483a-79ba-494f-a62a-5d72080b2311"
-            },
-            {
-              "expectations": {
-                "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
-                "format": "text"
-              },
-              "A": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
-                "format": "text"
-              },
-              "pairId": "71a379c2-5039-4fb9-9b90-4cfd2a4cd2ef"
-            },
-            {
-              "expectations": {
-                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
-                "format": "text"
-              },
-              "A": {
-                "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
-                "format": "text"
-              },
-              "input": {
-                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
-                "format": "json"
-              },
-              "B": {
-                "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
-                "format": "text"
-              },
-              "pairId": "90d5a79e-ea65-422f-b9a7-3350ae850e2d"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "97b4b7b49fd53e697e5acd7914a46652bbfe8a2a60339a58f9a6c97e381043d0",
         "mapping": [
           {
@@ -6674,220 +5176,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "6457cd0f1760f023ed94375d3ae0e489a3f9f1f44251a30077c31737a865eaaa",
-        "mapping": [
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "2ef11ca6-85c4-4677-ba84-9a3c56de657b",
-            "run": 2
-          },
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "4df5390b-8057-47d8-b63c-c9e984e54041",
-            "run": 2
-          },
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "clarity",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "7a2f88b3-1fed-4280-87f4-a548a071224f",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
-                "format": "text"
-              },
-              "A": {
-                "blob": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
-                "format": "text"
-              },
-              "input": {
-                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
-                "format": "json"
-              },
-              "B": {
-                "blob": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
-                "format": "text"
-              },
-              "pairId": "2ef11ca6-85c4-4677-ba84-9a3c56de657b"
-            },
-            {
-              "expectations": {
-                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
-                "format": "text"
-              },
-              "A": {
-                "blob": "c0460e6737b7b59cbc992e2edac270e8780f697d45e221275bce7ad07c66286b",
-                "format": "text"
-              },
-              "input": {
-                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
-                "format": "json"
-              },
-              "B": {
-                "blob": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
-                "format": "text"
-              },
-              "pairId": "4df5390b-8057-47d8-b63c-c9e984e54041"
-            },
-            {
-              "expectations": {
-                "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
-                "format": "text"
-              },
-              "A": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
-                "format": "text"
-              },
-              "pairId": "7a2f88b3-1fed-4280-87f4-a548a071224f"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "c5d1aa2896db7b9562f771ede5d20bc14572e5f41e3cd5046ea594810f46af96",
-        "mapping": [
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "6c9b1a4a-05fb-4d08-9f9a-aaa5ef18a5c1",
-            "run": 2
-          },
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "8738252c-2382-4a10-b136-a16869a57de4",
-            "run": 2
-          },
-          {
-            "caseId": "en-particle-in-a-box-advanced",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "9bd06f56-c551-46ec-ac43-16b0641232fe",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
-                "format": "text"
-              },
-              "A": {
-                "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
-                "format": "text"
-              },
-              "input": {
-                "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
-                "format": "json"
-              },
-              "B": {
-                "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
-                "format": "text"
-              },
-              "pairId": "6c9b1a4a-05fb-4d08-9f9a-aaa5ef18a5c1"
-            },
-            {
-              "expectations": {
-                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
-                "format": "text"
-              },
-              "A": {
-                "blob": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
-                "format": "text"
-              },
-              "input": {
-                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
-                "format": "json"
-              },
-              "B": {
-                "blob": "c0460e6737b7b59cbc992e2edac270e8780f697d45e221275bce7ad07c66286b",
-                "format": "text"
-              },
-              "pairId": "8738252c-2382-4a10-b136-a16869a57de4"
-            },
-            {
-              "expectations": {
-                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
-                "format": "text"
-              },
-              "A": {
-                "blob": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
-                "format": "text"
-              },
-              "input": {
-                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
-                "format": "json"
-              },
-              "B": {
-                "blob": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
-                "format": "text"
-              },
-              "pairId": "9bd06f56-c551-46ec-ac43-16b0641232fe"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -7536,220 +5824,6 @@
         "reverse": true
       },
       {
-        "id": "47f511090951dae6ac90803a7add8aa48fe2fecaf692ce97b2e04b58ead03cb0",
-        "mapping": [
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "0ac7c18d-1b33-4d3e-bd18-af7fc0da61ef",
-            "run": 1
-          },
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "5a667a17-ae0a-4068-ab65-22f914845646",
-            "run": 1
-          },
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "5eafa7b9-660c-4c59-80d4-256605bdefc9",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
-                "format": "json"
-              },
-              "B": {
-                "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
-                "format": "text"
-              },
-              "pairId": "0ac7c18d-1b33-4d3e-bd18-af7fc0da61ef"
-            },
-            {
-              "expectations": {
-                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
-                "format": "json"
-              },
-              "B": {
-                "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
-                "format": "text"
-              },
-              "pairId": "5a667a17-ae0a-4068-ab65-22f914845646"
-            },
-            {
-              "expectations": {
-                "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
-                "format": "text"
-              },
-              "A": {
-                "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
-                "format": "text"
-              },
-              "input": {
-                "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
-                "format": "json"
-              },
-              "B": {
-                "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
-                "format": "text"
-              },
-              "pairId": "5eafa7b9-660c-4c59-80d4-256605bdefc9"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "d17381741bdde843ee1177e15e926c2e49ec7514957392721041068195be4d5f",
-        "mapping": [
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "11a9c9c5-111d-4242-8066-877e3f7b67d4",
-            "run": 1
-          },
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "2566bf4a-358e-470f-aa8d-0623b61d6828",
-            "run": 1
-          },
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "fitAndApplication",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "c13f3d81-351b-46a9-bffa-cf563adc2320",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
-                "format": "json"
-              },
-              "B": {
-                "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
-                "format": "text"
-              },
-              "pairId": "11a9c9c5-111d-4242-8066-877e3f7b67d4"
-            },
-            {
-              "expectations": {
-                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
-                "format": "json"
-              },
-              "B": {
-                "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
-                "format": "text"
-              },
-              "pairId": "2566bf4a-358e-470f-aa8d-0623b61d6828"
-            },
-            {
-              "expectations": {
-                "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
-                "format": "text"
-              },
-              "input": {
-                "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
-                "format": "json"
-              },
-              "B": {
-                "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
-                "format": "text"
-              },
-              "pairId": "c13f3d81-351b-46a9-bffa-cf563adc2320"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "544f87b1f20a3d20e32ca4a167644cf2ec62bc2d7a164aec93f21cb2f65f75b5",
         "mapping": [
           {
@@ -8390,220 +6464,6 @@
           "channel": "gateway",
           "family": "openai",
           "model": "openai/gpt-6-luna"
-        },
-        "reverse": true
-      },
-      {
-        "id": "9f7658290c5832f7db07fc8f0bc3a9f960bec83e2b749db19026a82c55a7755c",
-        "mapping": [
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "4d7ffe15-14b3-4b7e-9a58-7796ff46772d",
-            "run": 2
-          },
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "bf5e6125-fe21-41c2-8002-77800816a46e",
-            "run": 2
-          },
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "fitAndApplication",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "fd044bff-89e5-4a69-a97b-03c98c98c7ae",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "6691f1454c695eca1c07f21ba87f7cbace2363009b236210828d168a33cdebec",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
-                "format": "json"
-              },
-              "B": {
-                "blob": "61c365f8cc9eb2d4a241b6a8853b6322f9f58c2474426a921e240319363b54ab",
-                "format": "text"
-              },
-              "pairId": "4d7ffe15-14b3-4b7e-9a58-7796ff46772d"
-            },
-            {
-              "expectations": {
-                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "61c365f8cc9eb2d4a241b6a8853b6322f9f58c2474426a921e240319363b54ab",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
-                "format": "json"
-              },
-              "B": {
-                "blob": "61c365f8cc9eb2d4a241b6a8853b6322f9f58c2474426a921e240319363b54ab",
-                "format": "text"
-              },
-              "pairId": "bf5e6125-fe21-41c2-8002-77800816a46e"
-            },
-            {
-              "expectations": {
-                "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
-                "format": "text"
-              },
-              "input": {
-                "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
-                "format": "json"
-              },
-              "B": {
-                "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
-                "format": "text"
-              },
-              "pairId": "fd044bff-89e5-4a69-a97b-03c98c98c7ae"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "e7ee5931d1cab80807b46a2511c6f29b90a1984ecf9b6003f8b4fff5621fc30b",
-        "mapping": [
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "1b0ea2a4-8615-434d-969c-0ba77293b6ba",
-            "run": 2
-          },
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "cf46850e-2350-49d7-8326-a84927415089",
-            "run": 2
-          },
-          {
-            "caseId": "pt-estabilidade-sourced",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "f36a77e3-5911-46a2-b09f-093377312935",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "61c365f8cc9eb2d4a241b6a8853b6322f9f58c2474426a921e240319363b54ab",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
-                "format": "json"
-              },
-              "B": {
-                "blob": "61c365f8cc9eb2d4a241b6a8853b6322f9f58c2474426a921e240319363b54ab",
-                "format": "text"
-              },
-              "pairId": "1b0ea2a4-8615-434d-969c-0ba77293b6ba"
-            },
-            {
-              "expectations": {
-                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
-                "format": "text"
-              },
-              "A": {
-                "blob": "61c365f8cc9eb2d4a241b6a8853b6322f9f58c2474426a921e240319363b54ab",
-                "format": "text"
-              },
-              "input": {
-                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
-                "format": "json"
-              },
-              "B": {
-                "blob": "6691f1454c695eca1c07f21ba87f7cbace2363009b236210828d168a33cdebec",
-                "format": "text"
-              },
-              "pairId": "cf46850e-2350-49d7-8326-a84927415089"
-            },
-            {
-              "expectations": {
-                "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
-                "format": "text"
-              },
-              "A": {
-                "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
-                "format": "text"
-              },
-              "input": {
-                "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
-                "format": "json"
-              },
-              "B": {
-                "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
-                "format": "text"
-              },
-              "pairId": "f36a77e3-5911-46a2-b09f-093377312935"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
         },
         "reverse": true
       },
@@ -9252,220 +7112,6 @@
         "reverse": true
       },
       {
-        "id": "951c74700d7b7e7464a4eb445460915325aa88261fb3b1f95114415e084841dc",
-        "mapping": [
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "351af98d-52e4-4320-91dd-aaf49e2873e6",
-            "run": 1
-          },
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "5cb7edf0-1b63-4ee2-ad74-72cde7cb76ad",
-            "run": 1
-          },
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "920d30b7-30aa-4a3c-af55-2f0c39817f21",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
-                "format": "text"
-              },
-              "A": {
-                "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
-                "format": "json"
-              },
-              "B": {
-                "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
-                "format": "text"
-              },
-              "pairId": "351af98d-52e4-4320-91dd-aaf49e2873e6"
-            },
-            {
-              "expectations": {
-                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
-                "format": "text"
-              },
-              "A": {
-                "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
-                "format": "json"
-              },
-              "B": {
-                "blob": "842ff38fda3cb7225947513036bb15cd3fc9c2e70880347602a9c3fbd7ffccfe",
-                "format": "text"
-              },
-              "pairId": "5cb7edf0-1b63-4ee2-ad74-72cde7cb76ad"
-            },
-            {
-              "expectations": {
-                "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
-                "format": "text"
-              },
-              "A": {
-                "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
-                "format": "text"
-              },
-              "input": {
-                "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
-                "format": "json"
-              },
-              "B": {
-                "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
-                "format": "text"
-              },
-              "pairId": "920d30b7-30aa-4a3c-af55-2f0c39817f21"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "95511b52ea1a23bd21a805a381223a648ce148bf8700ad0a0d28f55dfd119c3d",
-        "mapping": [
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "0dd514b8-3f83-4d57-8605-aebd0eab9e6d",
-            "run": 1
-          },
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "fitAndApplication",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "18585229-9921-4f91-a347-6009a0494248",
-            "run": 1
-          },
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "cc6a5679-152a-424c-ad5e-a40b3345383f",
-            "run": 1
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
-                "format": "text"
-              },
-              "A": {
-                "blob": "842ff38fda3cb7225947513036bb15cd3fc9c2e70880347602a9c3fbd7ffccfe",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
-                "format": "json"
-              },
-              "B": {
-                "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
-                "format": "text"
-              },
-              "pairId": "0dd514b8-3f83-4d57-8605-aebd0eab9e6d"
-            },
-            {
-              "expectations": {
-                "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
-                "format": "text"
-              },
-              "input": {
-                "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
-                "format": "json"
-              },
-              "B": {
-                "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
-                "format": "text"
-              },
-              "pairId": "18585229-9921-4f91-a347-6009a0494248"
-            },
-            {
-              "expectations": {
-                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
-                "format": "text"
-              },
-              "A": {
-                "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
-                "format": "json"
-              },
-              "B": {
-                "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
-                "format": "text"
-              },
-              "pairId": "cc6a5679-152a-424c-ad5e-a40b3345383f"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "2bca8cd351459175616b72d894f6df9f48189d2afce0bf89ae9a33168a9ed7bb",
         "mapping": [
           {
@@ -10110,220 +7756,6 @@
         "reverse": true
       },
       {
-        "id": "38fe0fa3c7165c21a2e0436c4a959292277fa19979bd37fb34a74a1fd327fd0e",
-        "mapping": [
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": {
-              "blob": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
-              "format": "text"
-            },
-            "criterion": "fitAndApplication",
-            "first": "incumbent",
-            "kind": "defect",
-            "pairId": "276bba66-0a7b-4657-8783-81b0c4d6e12e",
-            "run": 2
-          },
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "identical",
-            "pairId": "95e41237-2f37-4e54-86ac-61584d277adb",
-            "run": 2
-          },
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": null,
-            "criterion": null,
-            "first": "incumbent",
-            "kind": "real",
-            "pairId": "ddc57e80-b88a-4444-a32d-56953544f6ae",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
-                "format": "text"
-              },
-              "A": {
-                "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
-                "format": "text"
-              },
-              "input": {
-                "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
-                "format": "json"
-              },
-              "B": {
-                "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
-                "format": "text"
-              },
-              "pairId": "276bba66-0a7b-4657-8783-81b0c4d6e12e"
-            },
-            {
-              "expectations": {
-                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
-                "format": "text"
-              },
-              "pairId": "95e41237-2f37-4e54-86ac-61584d277adb"
-            },
-            {
-              "expectations": {
-                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
-                "format": "text"
-              },
-              "A": {
-                "blob": "5d2e63c7789074e4bfb70fc72cd5e4d2c7e54e90ca9c1fff366a30e70406df44",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
-                "format": "text"
-              },
-              "pairId": "ddc57e80-b88a-4444-a32d-56953544f6ae"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": false
-      },
-      {
-        "id": "47ae0eaa9dbd1fe9d8e232dc35affb66e46bfea31eea12687a1fc053d55a4884",
-        "mapping": [
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "real",
-            "pairId": "55b0f76f-46f3-4ef7-ad54-04bbbe65512c",
-            "run": 2
-          },
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": null,
-            "criterion": null,
-            "first": "challenger",
-            "kind": "identical",
-            "pairId": "774a6c78-ca2f-4886-8e12-d56c5f7a3455",
-            "run": 2
-          },
-          {
-            "caseId": "pt-patrimonio-liquido-dense-brief",
-            "clean": {
-              "blob": "df7e70e5021544f4834bbee64a9e3789febc4be81470df629cad6ddb03320a5c",
-              "format": "text"
-            },
-            "criterion": "accuracy",
-            "first": "challenger",
-            "kind": "defect",
-            "pairId": "bb7fe383-f0e1-4042-bac2-b15127153175",
-            "run": 2
-          }
-        ],
-        "packet": {
-          "criteria": {
-            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
-            "format": "json"
-          },
-          "pairs": [
-            {
-              "expectations": {
-                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
-                "format": "json"
-              },
-              "B": {
-                "blob": "5d2e63c7789074e4bfb70fc72cd5e4d2c7e54e90ca9c1fff366a30e70406df44",
-                "format": "text"
-              },
-              "pairId": "55b0f76f-46f3-4ef7-ad54-04bbbe65512c"
-            },
-            {
-              "expectations": {
-                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
-                "format": "text"
-              },
-              "A": {
-                "blob": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
-                "format": "text"
-              },
-              "input": {
-                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
-                "format": "json"
-              },
-              "B": {
-                "blob": "b567e24b3febdc7d7178692172424d5ed4e572255f39f68ecb4e3d1781495d5b",
-                "format": "text"
-              },
-              "pairId": "774a6c78-ca2f-4886-8e12-d56c5f7a3455"
-            },
-            {
-              "expectations": {
-                "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
-                "format": "text"
-              },
-              "A": {
-                "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
-                "format": "text"
-              },
-              "input": {
-                "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
-                "format": "json"
-              },
-              "B": {
-                "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
-                "format": "text"
-              },
-              "pairId": "bb7fe383-f0e1-4042-bac2-b15127153175"
-            }
-          ],
-          "reads": "A learner reads the lesson"
-        },
-        "reader": {
-          "channel": "owner",
-          "family": "owner",
-          "model": "owner"
-        },
-        "reverse": true
-      },
-      {
         "id": "6a848a3c357d62acdf81e6b42a8e9a17ebfd4a76155d0a0aea2d23e64987106a",
         "mapping": [
           {
@@ -10538,6 +7970,294 @@
           "reserve": false
         },
         "reverse": true
+      },
+      {
+        "id": "19044ad228a5848235bd17639ec8a75c7886d06d76fafba94674030179fb4387",
+        "mapping": [
+          {
+            "caseId": "en-ux-goals-spot-ai",
+            "clean": null,
+            "criterion": null,
+            "first": "incumbent",
+            "kind": "real",
+            "pairId": "733d2b2c-e3a6-4ace-bdaa-c0253c2be6ad",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "f4813ab42abc6a9122751b339a5d964763e87e4b8e640d9829c144c19911b2ac",
+                "format": "text"
+              },
+              "A": {
+                "blob": "de9179ec49b3ce87d921766705ebd3072b3c7c8668d88d346b27d642b8b15cc2",
+                "format": "text"
+              },
+              "input": {
+                "blob": "b1b0a4748f6f2439905f5c72cc04d6e4ad7e04b200ae48caaa0fe1810cc2b12d",
+                "format": "json"
+              },
+              "B": {
+                "blob": "c8ba9c8f52858bac14770894d0bf1dd9ffc52172a7b2a98025a743b109b8ea6e",
+                "format": "text"
+              },
+              "pairId": "733d2b2c-e3a6-4ace-bdaa-c0253c2be6ad"
+            }
+          ],
+          "reads": "A learner reads the lesson"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "48d16439dc9db1faf2fd679c85310eb273f14601b9a4dc51ebace57c5e518f34",
+        "mapping": [
+          {
+            "caseId": "en-python-range-beginner",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "339276c2-d82b-4bd9-a527-eba163e0f59d",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
+                "format": "text"
+              },
+              "A": {
+                "blob": "6962385f7de90189da759092fa927abbfc0de29e590cc13a4fac1a75509505b3",
+                "format": "text"
+              },
+              "input": {
+                "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
+                "format": "json"
+              },
+              "B": {
+                "blob": "3da0e3df2dfc01ccb83650c829eda92afcff54aa6638441391c5973489612c96",
+                "format": "text"
+              },
+              "pairId": "339276c2-d82b-4bd9-a527-eba163e0f59d"
+            }
+          ],
+          "reads": "A learner reads the lesson"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "23bfe276f7f9148554dabb75d0d06a084090133b0e603b1dfa344be07765e69c",
+        "mapping": [
+          {
+            "caseId": "pt-glicolise-from-slides",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "1603e704-f03f-4918-a12b-2c7065efb06e",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
+                "format": "text"
+              },
+              "A": {
+                "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
+                "format": "text"
+              },
+              "input": {
+                "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
+                "format": "json"
+              },
+              "B": {
+                "blob": "cbd91bfcd22fdbd4cb730d6ce2db0018883929710d0be438c07540378eb5cfb2",
+                "format": "text"
+              },
+              "pairId": "1603e704-f03f-4918-a12b-2c7065efb06e"
+            }
+          ],
+          "reads": "A learner reads the lesson"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "ccb74dab862622600704c220e030734f10625fb5aca386e51b458c1a9f3e00ba",
+        "mapping": [
+          {
+            "caseId": "en-particle-in-a-box-advanced",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "2db149df-ff3d-443b-9ec3-3051cfda8b8b",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
+                "format": "text"
+              },
+              "A": {
+                "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
+                "format": "text"
+              },
+              "input": {
+                "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
+                "format": "json"
+              },
+              "B": {
+                "blob": "143064c4bd0b04d7c58235ecffc4f5eb2f808336d44336c1b29849f7fd91d763",
+                "format": "text"
+              },
+              "pairId": "2db149df-ff3d-443b-9ec3-3051cfda8b8b"
+            }
+          ],
+          "reads": "A learner reads the lesson"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "74bc907c5c87ffa09f115789a91b59f9172a2c3eac4e92b21b5085523fc7af9d",
+        "mapping": [
+          {
+            "caseId": "pt-estabilidade-sourced",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "f3fe6fb7-9c67-4cbf-979d-c56a3e5b97eb",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
+                "format": "text"
+              },
+              "A": {
+                "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+                "format": "text"
+              },
+              "input": {
+                "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
+                "format": "json"
+              },
+              "B": {
+                "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+                "format": "text"
+              },
+              "pairId": "f3fe6fb7-9c67-4cbf-979d-c56a3e5b97eb"
+            }
+          ],
+          "reads": "A learner reads the lesson"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
+      },
+      {
+        "id": "ff6b55566155d1dc137c454da9993effa19d4121effefb71e5e657acb26072bc",
+        "mapping": [
+          {
+            "caseId": "pt-patrimonio-liquido-dense-brief",
+            "clean": null,
+            "criterion": null,
+            "first": "challenger",
+            "kind": "real",
+            "pairId": "39ea7566-af98-4a6e-abcd-4091a2d15e51",
+            "run": 1
+          }
+        ],
+        "packet": {
+          "criteria": {
+            "blob": "96fff3fd1b6d9b9f87ae6127332153df8cb37d53ff0df673cbb90be3b7da8e48",
+            "format": "json"
+          },
+          "pairs": [
+            {
+              "expectations": {
+                "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
+                "format": "text"
+              },
+              "A": {
+                "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
+                "format": "text"
+              },
+              "input": {
+                "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
+                "format": "json"
+              },
+              "B": {
+                "blob": "842ff38fda3cb7225947513036bb15cd3fc9c2e70880347602a9c3fbd7ffccfe",
+                "format": "text"
+              },
+              "pairId": "39ea7566-af98-4a6e-abcd-4091a2d15e51"
+            }
+          ],
+          "reads": "A learner reads the lesson"
+        },
+        "reader": {
+          "channel": "owner",
+          "family": "owner",
+          "model": "owner"
+        },
+        "reverse": false
       }
     ],
     "runsCompared": [
