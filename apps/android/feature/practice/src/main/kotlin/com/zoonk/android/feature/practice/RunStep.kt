@@ -484,7 +484,6 @@ internal fun RunAskButton(
         TutorScope.Item(question.itemId, blockId, answered = checked != null, mistakeId = question.mistakeId),
         app,
         navigator,
-        worded = checked?.feedback?.isCorrect == false,
     )
 }
 

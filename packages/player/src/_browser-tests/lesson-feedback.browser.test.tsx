@@ -158,7 +158,7 @@ describe("lesson feedback", () => {
     await expect.element(page.getByText("Your answer")).not.toBeInTheDocument();
   });
 
-  it("has Previous on every screen after the first, back to an answered question's result", async () => {
+  it("has Previous on every screen, back to an answered question's result, off on the first", async () => {
     const lesson = buildLesson([
       teachingStep("hook"),
       teachingStep("explanation"),
@@ -168,7 +168,7 @@ describe("lesson feedback", () => {
     renderLessonPlayer({ lesson });
 
     const previous = page.getByRole("button", { name: "Previous screen" });
-    await expect.element(previous).not.toBeInTheDocument();
+    await expect.element(previous).toHaveAttribute("aria-disabled", "true");
 
     await answer("No", "Good guess!", /^See answer/u);
     await next();
@@ -181,7 +181,7 @@ describe("lesson feedback", () => {
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
     await previous.click();
     await expect.element(verdict("Good guess!")).toBeVisible();
-    await expect.element(previous).not.toBeInTheDocument();
+    await expect.element(previous).toHaveAttribute("aria-disabled", "true");
   });
 
   it("goes back from a result to earlier screens, an answered question read-only", async () => {
@@ -204,7 +204,7 @@ describe("lesson feedback", () => {
     await previous.click();
 
     await expect.element(verdict("Not quite")).toBeVisible();
-    await expect.element(previous).not.toBeInTheDocument();
+    await expect.element(previous).toHaveAttribute("aria-disabled", "true");
 
     const wrong = page.getByRole("radio", { name: WRONG_OPTION });
     await expect.element(wrong).toMatchTextContent(/Your answer/u);

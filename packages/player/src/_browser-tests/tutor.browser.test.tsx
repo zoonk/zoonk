@@ -187,7 +187,7 @@ describe("asking the tutor", () => {
 
     await expect
       .element(page.getByRole("button", { name: "Previous screen" }))
-      .not.toBeInTheDocument();
+      .toHaveAttribute("aria-disabled", "true");
 
     await openTutor();
     await expect.element(sheet.getByText(first.question)).toBeVisible();
@@ -2001,7 +2001,7 @@ describe("docked beside the lesson", () => {
 
     await expect
       .element(page.getByRole("button", { name: "Previous screen" }))
-      .not.toBeInTheDocument();
+      .toHaveAttribute("aria-disabled", "true");
 
     await expect.element(dockedConversation()).not.toBeInTheDocument();
     await expect.element(asideComposer()).not.toHaveFocus();

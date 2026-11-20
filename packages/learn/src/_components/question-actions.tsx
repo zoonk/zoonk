@@ -74,7 +74,10 @@ export function QuestionActions({ className, ...props }: React.ComponentProps<ty
   );
 }
 
-/** A task's way back one screen (←), at the start of its bar; `label` names what it goes back to. */
+/**
+ * A task's way back one screen (←), at the start of its bar; `label` names what it goes back to.
+ * Where there's no screen to go back to, it's disabled rather than left out, so the row never moves.
+ */
 export function QuestionBack({
   className,
   label,
@@ -91,6 +94,7 @@ export function QuestionBack({
         aria-keyshortcuts={shortcutKeys("previous")}
         className={cn(TASK_BACK_ACTION_CLASS, className)}
         data-slot="question-back"
+        focusableWhenDisabled
         size="icon"
         variant="outline"
         {...props}

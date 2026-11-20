@@ -217,8 +217,8 @@ internal fun PlayingLesson(
     val guest = (session as? SessionState.SignedIn)?.isGuest == true
     val tutor =
         remember(identity, suggestions, guest) {
-            LessonTutor(identity, suggestions, canAsk = !guest) { scope, worded, open, offer, onOfferTaken, onOpenChange ->
-                TutorAskButton(scope, app, navigator, worded, open, onOpenChange, suggestions, offer, onOfferTaken)
+            LessonTutor(identity, suggestions, canAsk = !guest) { scope, open, offer, onOfferTaken, onOpenChange ->
+                TutorAskButton(scope, app, navigator, open, onOpenChange, suggestions, offer, onOfferTaken)
             }
         }
 

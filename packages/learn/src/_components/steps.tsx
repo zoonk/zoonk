@@ -173,7 +173,9 @@ export function Steps({
           <>
             <TaskActions>
               <BackWithSecondAction
-                back={phone.back !== -1 && <QuestionBack label={t("Back")} onClick={back} />}
+                back={
+                  <QuestionBack disabled={phone.back === -1} label={t("Back")} onClick={back} />
+                }
               >
                 {isLastWide && <WideOnly when={!isLastHere}>{final.second}</WideOnly>}
               </BackWithSecondAction>
