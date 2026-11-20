@@ -8,7 +8,7 @@ import { captureAiGeneration } from "../../provenance/ai-generation-sink";
 import { combineTaskProvenance } from "../../provenance/combine-task-provenance";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { type ServiceTier } from "../../provider-options";
-import { type EncodableAudio, decodeSpeechWav, encodeMp3 } from "./convert-wav-to-mp3";
+import { decodeSpeechWav, encodeMp3 } from "./convert-wav-to-mp3";
 import { type AudioResult } from "./generate-language-audio";
 import { joinSpeech, splitSpokenText } from "./listening-audio-parts";
 import {
@@ -34,30 +34,70 @@ const LISTENING_SPEECH_MODELS: readonly SpeechModelName[] = [
 
 export type ListeningLine = { accent: string; text: string; voice: TTSVoice };
 
-type VoicedPart = { audio: EncodableAudio; provenance: TaskProvenance };
+export type ListeningPart = ListeningLine & { turn: number };
+
+export { getListeningVoicePromptVersion } from "./listening-voice-prompt";
+export { type SpeechModelName, isSpeechModelName } from "./speech-models";
+
+type ListeningScript = { language: string; lines: readonly ListeningLine[] };
+
+export function splitListeningParts({ language, lines }: ListeningScript): ListeningPart[] {
+  const locale = getBaseLanguage(language);
+
+  return lines.flatMap((line, turn) =>
+    splitSpokenText({ locale, text: line.text }).map((text) => ({ ...line, text, turn })),
+  );
+}
 
 type PartInput = {
   analytics?: AiGenerationContext;
-  instructions: string;
+  attempt: number;
   language: string;
-  requestedModel: SpeechModelName;
+  part: ListeningPart;
   serviceTier?: ServiceTier;
-  text: string;
-  voice: TTSVoice;
 };
 
-async function voicePartWithModel({
-  analytics,
-  requestedModel,
-  ...input
-}: PartInput & { model: SpeechModelName }) {
-  const { instructions, model, text } = input;
-  const maxSeconds = getMaxSeconds(text);
-  const startedAt = performance.now();
-  const { audio, providerMetadata } = await generateSpeechWithProvider(input);
+function listeningModels(language: string) {
+  return getSpeakingModels({ candidates: LISTENING_SPEECH_MODELS, language });
+}
 
+type RecordedPart = { audio: Uint8Array; text: string; model: SpeechModelName; turn: number };
+
+function decodePart({ audio, model, text }: Omit<RecordedPart, "turn">) {
+  const maxSeconds = getMaxSeconds(text);
   assertExpectedAudioSize({ audio, maxSeconds, model });
-  const decoded = decodeSpeechWav({ audio, maxSeconds, model });
+  return decodeSpeechWav({ audio, maxSeconds, model });
+}
+
+async function voicePartWithModels({
+  analytics,
+  attempt,
+  language,
+  models,
+  part,
+  serviceTier,
+}: PartInput & { models: readonly SpeechModelName[] }) {
+  const [requestedModel] = models;
+  const model = models[(attempt - 1) % models.length];
+
+  if (!model || !requestedModel) {
+    throw new Error(`No listening speech model for ${language} on attempt ${attempt}`);
+  }
+
+  const { accent, text, voice } = part;
+  const instructions = getListeningVoiceInstructions({ accent, language });
+  const startedAt = performance.now();
+
+  const { audio, providerMetadata } = await generateSpeechWithProvider({
+    instructions,
+    language,
+    model,
+    serviceTier,
+    text,
+    voice,
+  });
+
+  const decoded = decodePart({ audio, model, text });
 
   const provenance = buildSpeechProvenance({
     instructions,
@@ -74,84 +114,51 @@ async function voicePartWithModel({
   });
 
   await captureAiGeneration({ context: analytics, provenance, task: TASK });
-  return { audio: decoded, provenance };
+  return { audio, model, provenance };
 }
 
-/** Tries each model once: malformed, silent or overlong audio moves on like a failed call. */
-async function voicePart(
+export function voiceListeningPart(
   input: PartInput,
-  models: readonly SpeechModelName[] = LISTENING_SPEECH_MODELS,
-): Promise<VoicedPart> {
-  const [model, ...rest] = models;
-
-  if (!model) {
-    throw new Error("No speech model configured");
-  }
-
-  try {
-    return await voicePartWithModel({ ...input, model });
-  } catch (error) {
-    if (rest.length > 0) {
-      return voicePart(input, rest);
-    }
-
-    throw error;
-  }
+): Promise<{ audio: Uint8Array; provenance: TaskProvenance }> {
+  return voicePartWithModels({ ...input, models: listeningModels(input.language) });
 }
 
-/** A part that fails on every model fails the recording: voiced again later, not with a gap. */
+export async function joinListeningParts(parts: readonly RecordedPart[]) {
+  const joined = joinSpeech(parts.map((part) => ({ audio: decodePart(part), turn: part.turn })));
+  const { audio, durationSeconds } = await encodeMp3(joined);
+  return { audio, durationMs: Math.round(durationSeconds * MS_PER_SECOND), format: "mp3" as const };
+}
+
 export async function voiceListeningScript({
   analytics,
   language,
   lines,
   model,
   serviceTier,
-}: {
+}: ListeningScript & {
   analytics?: AiGenerationContext;
-  language: string;
-  lines: readonly ListeningLine[];
   /** One model for every line, with a second try each, instead of the automatic order (evals). */
   model?: SpeechModelName;
   serviceTier?: ServiceTier;
 }): Promise<SafeReturn<AudioResult>> {
-  const models = model
-    ? [model, model]
-    : getSpeakingModels({ candidates: LISTENING_SPEECH_MODELS, language });
-
-  const locale = getBaseLanguage(language);
-
-  const parts = lines.flatMap((line, turn) =>
-    splitSpokenText({ locale, text: line.text }).map((text) => ({ line, text, turn })),
-  );
+  const models = model ? [model, model] : listeningModels(language);
+  const parts = splitListeningParts({ language, lines });
 
   const result = await safeAsync(async () => {
     const voiced = await Promise.all(
-      parts.map(({ line, text }) =>
-        voicePart(
-          {
-            analytics,
-            instructions: getListeningVoiceInstructions({ accent: line.accent, language }),
-            language,
-            requestedModel: models[0] ?? speechModels.geminiFlashLite,
-            serviceTier,
-            text,
-            voice: line.voice,
-          },
-          models,
-        ),
-      ),
-    );
+      parts.map(async (part) => {
+        const input = { analytics, language, models, part, serviceTier };
 
-    const joined = joinSpeech(
-      voiced.map(({ audio }, index) => ({ audio, turn: parts[index]?.turn ?? index })),
-    );
+        const output = await voicePartWithModels({ ...input, attempt: 1 }).catch(() =>
+          voicePartWithModels({ ...input, attempt: 2 }),
+        );
 
-    const { audio, durationSeconds } = await encodeMp3(joined);
+        return { ...output, text: part.text, turn: part.turn };
+      }),
+    );
 
     return {
-      audio,
-      durationMs: Math.round(durationSeconds * MS_PER_SECOND),
-      format: "mp3" as const,
+      ...(await joinListeningParts(voiced)),
       provenance: combineTaskProvenance(voiced.map((part) => part.provenance)),
     };
   });
