@@ -31,7 +31,9 @@ extension PracticeHooks {
             scope: .item(
               itemId: target.itemId, blockId: target.blockId, answered: target.answered,
               missed: target.missed, mistakeId: target.mistakeId),
-            quote: target.question))
+            quote: target.question
+          )
+          .tutorAskIcon())
       },
       checkpointCall: PracticeCheckpointCall(
         read: { blockId, token in
