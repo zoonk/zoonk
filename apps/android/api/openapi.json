@@ -86439,7 +86439,7 @@
           "mockAndReview",
           "lightReview"
         ],
-        "description": "What a day of a plan for a test days away is for: the exam map and gaps, practice, a class test's short mock, or a public exam's light review"
+        "description": "What a day of a plan for a test days away is for: the exam map and gaps, practice, a public exam's mock then practice, the mock alone (`mockAndReview`: a class test's short mock, or a public exam's mock when it is the whole practice phase), or a public exam's light review"
       },
       "PlanMockSchedule": {
         "nullable": true,
