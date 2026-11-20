@@ -3620,19 +3620,19 @@ msgid "{answered, number} of {questions, number} answered"
 msgstr "{answered, number}문제 답변 완료 (전체 {questions, number}문제)"
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "5wOk8O"
-msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged."
-msgstr "모의고사에서 표시하지 않은 문제는 {sureRight, plural, =0 {#개를 맞혔어요(총 {sureAnswered}개)} other {#개를 맞혔어요(총 {sureAnswered}개)}}. 표시한 문제는 {unsureRight, plural, =0 {#개를 맞혔어요(총 {unsureAnswered}개)} other {#개를 맞혔어요(총 {unsureAnswered}개)}}."
+msgctxt "FvTaDr"
+msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
+msgstr ""
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "d5aD04"
-msgid "Your flagged answers cost more than they earn: leave those blank."
-msgstr "표시한 문제는 얻는 점수보다 잃는 점수가 더 많아요. 답을 비워 두세요."
+msgctxt "kJlaFe"
+msgid "When you're not sure, leave it blank: those answers cost more than they earn."
+msgstr ""
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "8ghbty"
-msgid "Your flagged answers still earn points: keep answering them."
-msgstr "표시한 문제에서도 점수를 얻고 있어요. 계속 풀어 보세요."
+msgctxt "FxZzRf"
+msgid "When you're not sure, still answer: those answers earn points."
+msgstr ""
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -7778,6 +7778,12 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {답한 문제 #개} other {답한 문제 #개}}"
 
+#. On the mock exam's answer sheet: how many answers the learner marked with the "Not sure" button.
+#: src/mock/mock-answer-sheet.tsx
+msgctxt "q_puC8"
+msgid "{unsure, plural, one {# not sure} other {# not sure}}"
+msgstr ""
+
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "7SPhv2"
 msgid "Later questions"
@@ -7943,23 +7949,23 @@ msgctxt "P-hmyB"
 msgid "An answer wasn't saved."
 msgstr "답변이 저장되지 않았어요."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "Beu7ZD"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
-msgstr "{blank, plural, other {빈 문제 #개}}, {flagged, plural, other {표시한 문제 #개}}입니다."
+msgctxt "INKJBm"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
+msgstr ""
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
 msgctxt "h5Iipv"
 msgid "{count, plural, one {# question is blank.} other {# questions are blank.}}"
 msgstr "{count, plural, other {답하지 않은 문제가 #개 있어요.}}"
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "GCYYkV"
-msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
-msgstr "{count, plural, other {표시한 문제 #개입니다.}}"
+msgctxt "MVVQnK"
+msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
+msgstr ""
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -7987,6 +7993,12 @@ msgstr "제출하면 답안을 수정할 수 없어요."
 msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "계속 풀기"
+
+#. A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed.
+#: src/mock/mock-labels.tsx
+msgctxt "BsQPJC"
+msgid "Not sure"
+msgstr ""
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8192,6 +8204,7 @@ msgid "Partly right"
 msgstr "부분 정답"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8301,24 +8314,24 @@ msgid "You missed {count, plural, one {# easy question} other {# easy questions}
 msgstr "쉬운 문제 {count, plural, other {#개}}를 틀렸어요. 이 문제부터 복습해 보세요."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "Gac05z"
-msgid "Flagged answers"
-msgstr "표시한 문제"
+msgctxt "v-WZ1x"
+msgid "Answers you weren't sure of"
+msgstr ""
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "EnpXr5"
-msgid "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "표시 안 함: {sureRight, plural, =0 {정답 #개 / 전체 {sureAnswered}개} other {정답 #개 / 전체 {sureAnswered}개}}. 표시함: {unsureRight, plural, =0 {정답 #개 / 전체 {unsureAnswered}개} other {정답 #개 / 전체 {unsureAnswered}개}}."
+msgctxt "eQCLMt"
+msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
+msgstr ""
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "1yogM5"
-msgid "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}."
-msgstr "표시한 문제에 답하지 않았다면 {points, plural, other {#점}}을 더 받았을 거예요."
+msgctxt "BxnoFo"
+msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
+msgstr ""
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "ZkBfTU"
-msgid "Your flagged answers still earned points, so keep answering them."
-msgstr "표시한 문제에서도 점수를 얻었으니 계속 답해 보세요."
+msgctxt "riHnND"
+msgid "The answers you weren't sure of still earned points, so keep answering them."
+msgstr ""
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8568,14 +8581,9 @@ msgid "{number} of {total}"
 msgstr "{number} / {total}"
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "bSCV9J"
-msgid "Flag"
-msgstr "표시하기"
-
-#: src/mock/mock-runner-view.tsx
-msgctxt "sflabU"
-msgid "Remove flag"
-msgstr "표시 해제"
+msgctxt "d9n-z1"
+msgid "Check it again before you hand in. Your result shows how these answers went."
+msgstr ""
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8720,11 +8728,11 @@ msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "더 공부할 부분: {worst}."
 
-#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "ETtb7q"
-msgid "{question}, flagged"
-msgstr "{question} (표시)"
+msgctxt "n8sv3N"
+msgid "{question}, not sure"
+msgstr ""
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"

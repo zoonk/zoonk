@@ -3620,19 +3620,19 @@ msgid "{answered, number} of {questions, number} answered"
 msgstr "{answered, number}問に回答済み（全{questions, number}問）"
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "5wOk8O"
-msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged."
-msgstr "模試の結果：見直しなしは{sureRight, plural, =0 {#問正解（全{sureAnswered}問）} other {#問正解（全{sureAnswered}問）}}、見直しありは{unsureRight, plural, =0 {#問正解（全{unsureAnswered}問）} other {#問正解（全{unsureAnswered}問）}}でした。"
+msgctxt "FvTaDr"
+msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
+msgstr ""
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "d5aD04"
-msgid "Your flagged answers cost more than they earn: leave those blank."
-msgstr "見直しにした問題では、得点より失点が多くなっています。そうした問題は空欄にしておきましょう。"
+msgctxt "kJlaFe"
+msgid "When you're not sure, leave it blank: those answers cost more than they earn."
+msgstr ""
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "8ghbty"
-msgid "Your flagged answers still earn points: keep answering them."
-msgstr "見直しにした問題でも、得点が失点を上回っています。引き続き答えましょう。"
+msgctxt "FxZzRf"
+msgid "When you're not sure, still answer: those answers earn points."
+msgstr ""
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -7778,6 +7778,12 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {#問に回答済み} other {#問に回答済み}}"
 
+#. On the mock exam's answer sheet: how many answers the learner marked with the "Not sure" button.
+#: src/mock/mock-answer-sheet.tsx
+msgctxt "q_puC8"
+msgid "{unsure, plural, one {# not sure} other {# not sure}}"
+msgstr ""
+
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "7SPhv2"
 msgid "Later questions"
@@ -7943,23 +7949,23 @@ msgctxt "P-hmyB"
 msgid "An answer wasn't saved."
 msgstr "答えを保存できませんでした。"
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "Beu7ZD"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
-msgstr "{blank, plural, =1 {#問が空欄です} other {空欄の問題が#問あります}}、{flagged, plural, =1 {#問を見直しにしています} other {見直し対象の問題が#問あります}}。"
+msgctxt "INKJBm"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
+msgstr ""
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
 msgctxt "h5Iipv"
 msgid "{count, plural, one {# question is blank.} other {# questions are blank.}}"
 msgstr "{count, plural, other {未回答の問題が#問あります。}}"
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "GCYYkV"
-msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
-msgstr "{count, plural, =1 {#問を見直しにしています。} other {見直し対象の問題が#問あります。}}"
+msgctxt "MVVQnK"
+msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
+msgstr ""
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -7987,6 +7993,12 @@ msgstr "提出後は回答を変更できません。"
 msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "解答を続ける"
+
+#. A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed.
+#: src/mock/mock-labels.tsx
+msgctxt "BsQPJC"
+msgid "Not sure"
+msgstr ""
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8192,6 +8204,7 @@ msgid "Partly right"
 msgstr "一部正解"
 
 #: src/mock/mock-result-answers.tsx
+#: src/mock/mock-review.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
@@ -8301,24 +8314,24 @@ msgid "You missed {count, plural, one {# easy question} other {# easy questions}
 msgstr "簡単な問題で{count, plural, other {#問}}間違いがありました。まずはその問題から復習しましょう。"
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "Gac05z"
-msgid "Flagged answers"
-msgstr "見直しの印を付けた解答"
+msgctxt "v-WZ1x"
+msgid "Answers you weren't sure of"
+msgstr ""
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "EnpXr5"
-msgid "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "見直しなし：{sureRight, plural, =0 {#問正解（{sureAnswered}問中）} other {#問正解（{sureAnswered}問中）}}。見直しあり：{unsureRight, plural, =0 {#問正解（{unsureAnswered}問中）} other {#問正解（{unsureAnswered}問中）}}。"
+msgctxt "eQCLMt"
+msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
+msgstr ""
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "1yogM5"
-msgid "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}."
-msgstr "見直しの印を付けた問題を空欄にしていれば、スコアは{points, plural, other {#点}}高くなっていました。"
+msgctxt "BxnoFo"
+msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
+msgstr ""
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "ZkBfTU"
-msgid "Your flagged answers still earned points, so keep answering them."
-msgstr "見直しの印を付けた問題も得点につながっています。これからも答えていきましょう。"
+msgctxt "riHnND"
+msgid "The answers you weren't sure of still earned points, so keep answering them."
+msgstr ""
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8568,14 +8581,9 @@ msgid "{number} of {total}"
 msgstr "{number} / {total}"
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "bSCV9J"
-msgid "Flag"
-msgstr "見直し"
-
-#: src/mock/mock-runner-view.tsx
-msgctxt "sflabU"
-msgid "Remove flag"
-msgstr "見直しを解除する"
+msgctxt "d9n-z1"
+msgid "Check it again before you hand in. Your result shows how these answers went."
+msgstr ""
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8720,11 +8728,11 @@ msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "{worst}に力を入れましょう。"
 
-#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#. A cell of the mock exam's answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "ETtb7q"
-msgid "{question}, flagged"
-msgstr "{question}（見直し）"
+msgctxt "n8sv3N"
+msgid "{question}, not sure"
+msgstr ""
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
