@@ -88,7 +88,10 @@ function PageTopRow({
       )}
 
       <div
-        className={cn("ms-auto flex shrink-0 items-center justify-end gap-2", middle && "grow basis-0")}
+        className={cn(
+          "ms-auto flex shrink-0 items-center justify-end gap-2",
+          middle && "grow basis-0",
+        )}
         data-slot="page-top-end"
       >
         {actions}
