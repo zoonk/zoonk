@@ -126,6 +126,10 @@ test.describe("Exam goal", () => {
       const review = page.getByRole("region", { name: "Questions to review" });
 
       await expect(
+        review.getByRole("button", { name: /Question 1\b.+Wrong.+Not sure$/u }),
+      ).toBeVisible();
+
+      await expect(
         review.getByRole("button", { name: /Question 2\b.+Right.+Not sure$/u }),
       ).toBeVisible();
     });

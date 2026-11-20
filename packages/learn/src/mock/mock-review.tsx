@@ -32,12 +32,17 @@ import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
-import { UnsureMark, useUnsureLabel } from "./mock-labels";
+import { UnsureFact } from "./mock-labels";
 
+/**
+ * A right answer shows once, as the learner gave it: a typed question can accept more than one.
+ * Any other shows theirs over the right one.
+ */
 function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
   const { answerText } = useTrueFalseLabels(labels);
-  const yours = entry.outcome === "right" ? null : entry.learnerAnswer;
-  const right = entry.correctAnswer;
+  const isRight = entry.outcome === "right";
+  const yours = isRight ? null : entry.learnerAnswer;
+  const right = isRight ? (entry.learnerAnswer ?? entry.correctAnswer) : entry.correctAnswer;
 
   const line = (text: string) =>
     entry.format === "typed" ? (
@@ -54,28 +59,17 @@ function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: True
   );
 }
 
-/** The row says which question it is and how it went; a wrong answer needs no word, the list is of them. */
+/** The row says which question it is and how it went, in a word for every outcome: the list holds right answers marked "Not sure" too. */
 function useEntryFacts() {
   const t = useExtracted();
 
   return (entry: MockReviewEntry): (string | null)[] => [
     t("Question {number}", { number: String(entry.number) }),
     entry.area,
-    { blank: t("Blank"), partial: t("Partly right"), right: t("Right"), wrong: null }[
+    { blank: t("Blank"), partial: t("Partly right"), right: t("Right"), wrong: t("Wrong") }[
       entry.outcome
     ],
   ];
-}
-
-function UnsureFact() {
-  const label = useUnsureLabel();
-
-  return (
-    <span className="text-warning-text inline-flex items-center gap-1">
-      <UnsureMark />
-      {label}
-    </span>
-  );
 }
 
 function ReviewEntryBody({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {

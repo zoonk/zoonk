@@ -46,11 +46,14 @@ export function EssayGradeCard({
   children,
   closed,
   grade,
+  mark,
   rubric,
 }: {
   children?: React.ReactNode;
   closed?: boolean;
   grade: Grade;
+  /** A mark the learner put on the essay, under its score. */
+  mark?: React.ReactNode;
   rubric: string;
 }) {
   const t = useExtracted();
@@ -83,6 +86,7 @@ export function EssayGradeCard({
             mono: renderStepNumber,
           })}
         </StepDetail>
+        {mark}
       </StepHeader>
       <CriteriaRows grade={grade} rubric={rubric} />
       {children}

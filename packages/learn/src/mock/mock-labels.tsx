@@ -37,6 +37,18 @@ export function UnsureMark({ className }: { className?: string }) {
   return <BookmarkIcon aria-hidden="true" className={cn("size-3 fill-current", className)} />;
 }
 
+/** A fact on a line of facts: its words sit on the line's baseline, as the others do, and its mark centers on them. */
+export function UnsureFact({ className }: { className?: string }) {
+  const label = useUnsureLabel();
+
+  return (
+    <span className={cn("text-warning-text inline-flex items-baseline gap-1", className)}>
+      <UnsureMark className="self-center" />
+      {label}
+    </span>
+  );
+}
+
 /** A one-subject mock exam is told apart by its subject; a full or half one needs no label. */
 export function getMockSubject({ shape }: { shape: MockShape | null }): string {
   return shape?.kind === "area" ? (shape.area ?? "") : "";
