@@ -4,18 +4,20 @@ export const BAD_REQUEST = 400;
 export const UNAUTHORIZED = 401;
 export const FORBIDDEN = 403;
 
-/** Other commands wait 30 s for the credentials lock, so a token request holding it ends sooner. */
+/** Other commands wait 30 s for the credentials lock, so a refresh and its one retry holding it end sooner. */
 const OAUTH_TIMEOUT_MS = 10_000;
 
 const ERROR_CODE_PATTERN = /^[A-Z][A-Z0-9_]*$/u;
 
-/** No address or no connection: the request never left this machine. */
+/** No address, no connection, or a sandbox denied the connection: the request never left this machine. */
 const UNSENT_CODES = new Set([
+  "EACCES",
   "EAI_AGAIN",
   "ECONNREFUSED",
   "EHOSTUNREACH",
   "ENETUNREACH",
   "ENOTFOUND",
+  "EPERM",
 ]);
 
 export type HttpResult = { body: unknown; ok: boolean; status: number };
@@ -62,19 +64,29 @@ function failureReason(error: unknown, code: string | null): string {
   return code ? ` (${code})` : "";
 }
 
-/** Every request carries a credential, and following a redirect could send it somewhere unencrypted. */
-export async function sendRequest(url: URL, init: RequestInit): Promise<HttpResult> {
-  try {
-    const response = await fetch(url, { ...init, redirect: "manual" });
-    return { body: parseJson(await response.text()), ok: response.ok, status: response.status };
-  } catch (error) {
-    const code = errorCode(error);
+function requestError(url: URL, error: unknown, beforeAnswer: boolean): RequestError {
+  const code = errorCode(error);
 
-    throw new RequestError(
-      `Couldn't complete the request to ${url.origin}${failureReason(error, code)}.`,
-      !code || !UNSENT_CODES.has(code),
-    );
-  }
+  return new RequestError(
+    `Couldn't complete the request to ${url.origin}${failureReason(error, code)}.`,
+    !beforeAnswer || !code || !UNSENT_CODES.has(code),
+  );
+}
+
+/**
+ * Every request carries a credential, and following a redirect could send it somewhere unencrypted.
+ * A failure while reading the answer always counts as sent, whatever its code.
+ */
+export async function sendRequest(url: URL, init: RequestInit): Promise<HttpResult> {
+  const response = await fetch(url, { ...init, redirect: "manual" }).catch((error: unknown) => {
+    throw requestError(url, error, true);
+  });
+
+  const text = await response.text().catch((error: unknown) => {
+    throw requestError(url, error, false);
+  });
+
+  return { body: parseJson(text), ok: response.ok, status: response.status };
 }
 
 export function postForm(url: URL, fields: Record<string, string>): Promise<HttpResult> {

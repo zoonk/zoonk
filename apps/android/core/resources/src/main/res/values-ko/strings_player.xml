@@ -121,6 +121,7 @@
   "player_opening_map_hint": "9846055835d876425a0cddc24b524dcbfa275171c57e32b36cef082a5e74331e",
   "player_opening_map_idea": "ba4033b2f2dc2133e1c08fb0fddf82376890ab914149f19f1feea26df6366b34",
   "player_opening_map_show": "eeaf907949be242fb93afa853ac80b4c0696023539b4f755fbcf2f19e9716ace",
+  "player_opening_map_title": "19fdbca3d1e3f9f219d238db1122630320741f20733fe1f34f2df20085e9cba2",
   "player_part_of": "da683991d2b6a583fbffd98ab2d3a1201ed78462ebff6eb9b132c8cf6cc83e5f",
   "player_phase_draw": "be77300cce4ba36e21c2f912cb0decb87cb3d21a6046a86ef7f2d58111438420",
   "player_phase_draw_line_1": "81285dba1826392a6dc9382458d5829aaf66843533907ca959611007ea464709",
@@ -201,6 +202,8 @@
     <string name="player_idea_position">개념 %1$s/%2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">예시</string>
+    <!-- Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach. -->
+    <string name="player_opening_map_title">이 레슨에서 배울 내용</string>
     <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
     <string name="player_opening_map_hint">개념을 눌러 어떤 내용을 다루는지 확인해 보세요</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->

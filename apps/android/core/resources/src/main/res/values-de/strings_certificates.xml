@@ -63,8 +63,8 @@
   "certificates_meaning_plan": "462c5b8fd8980425a8ad0882aae677c1f5b1dedc18d24fff316e8f091364a17d",
   "certificates_meaning_record": "11a42f6438bd197e755e8032e6cd8b0afdfaaaaefa9dbf5b17855c180365d812",
   "certificates_meaning_title": "d9169dcc2d4e607efd7772ec9566365e994336c0edebb9449c17ba5d4ad44cb1",
-  "certificates_name_hint": "a0b54f78cf1bc092b93448e6a94aed154709c531f2518407b2b10cdfe7fd1bc0",
-  "certificates_name_hint_new": "94c0a0023f17b4f32fe5f74131a7e744cee1128a75a19a71e3f6996544f488eb",
+  "certificates_name_hint": "454277dda6658717b96eee44e4664565039c5391ea8e9e123eb43992a69da95a",
+  "certificates_name_hint_new": "a88e673b3989a09eb6f283521bc8ced06b501c5f3afbde28453033714129bd1d",
   "certificates_name_label": "664cc5920eabfbbfbabe8156217cd81fa1e514f7e4fd842bb010f58843a9681f",
   "certificates_name_label_new": "fbbedce28f931108b64f89e3c852ff9e32359118dca3a57a3b504d07aafa25d0",
   "certificates_name_placeholder": "9c4a637b67042ce1454a25df88acd02aaf3376aa74b28acc087fd44e958bd335",
@@ -131,8 +131,8 @@
     <!-- The label of the field with the learner's current name, when they change it. -->
     <string name="certificates_name_label">Name auf deinen Zertifikaten</string>
     <string name="certificates_name_placeholder">Dein vollständiger Name</string>
-    <string name="certificates_name_hint_new">Dieser Name steht auf deinen Zertifikaten. Dein Kumpel nennt dich auch so. Du kannst ihn jederzeit ändern.</string>
-    <string name="certificates_name_hint">Dieser Name steht auf deinen Zertifikaten. Dein Kumpel nennt dich auch so.</string>
+    <string name="certificates_name_hint_new">Dieser Name steht auf deinen Zertifikaten. Dein Buddy nennt dich auch so. Du kannst ihn jederzeit ändern.</string>
+    <string name="certificates_name_hint">Dieser Name steht auf deinen Zertifikaten. Dein Buddy nennt dich auch so.</string>
     <string name="certificates_save">Speichern</string>
     <string name="certificates_cancel">Abbrechen</string>
     <string name="certificates_name_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>

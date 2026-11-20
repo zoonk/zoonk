@@ -303,7 +303,7 @@ internal fun MockResult(
                         if (result != null && hasDetails(view, result, about)) {
                             TextButton(onClick = { detailsOpen = true }) { Text(stringResource(R.string.mock_result_details)) }
                         }
-                        Box(Modifier.barButtonEnd()) { TutorAskButton(TutorScope.Mock(blockId), app, navigator, worded = false) }
+                        Box(Modifier.barButtonEnd()) { TutorAskButton(TutorScope.Mock(blockId), app, navigator) }
                     },
                     bottomBar = actions.takeUnless { nextAfterFold },
                     aside =

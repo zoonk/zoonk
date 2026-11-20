@@ -150,7 +150,7 @@ internal class LessonPlayerHarness(
                                         TutorIdentity("Sam", look = null),
                                         LESSON_SUGGESTIONS,
                                         canAsk = tutorCanAsk,
-                                    ) { _, _, open, _, _, onOpenChange ->
+                                    ) { _, open, _, _, onOpenChange ->
                                         androidx.compose.runtime.SideEffect { tutorOpen = open }
                                         TextButton(onClick = { onOpenChange(true) }) { Text("Ask buddy") }
                                     }

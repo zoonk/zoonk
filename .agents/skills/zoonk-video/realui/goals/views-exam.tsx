@@ -5,7 +5,7 @@ import { Mock } from "./mock";
 import { ExamPlan } from "./plan";
 import { ExamSubject } from "./subject";
 
-export type View = (p: { lang: Lang; state: string; q: URLSearchParams }) => any;
+export type View = (p: { lang: Lang; state: string; q: URLSearchParams }) => React.ReactNode;
 
 /** `scroll=<px>` scrolls the page once it has painted, for a still further down. */
 function Scrolled({ children, q }: { children: React.ReactNode; q: URLSearchParams }) {

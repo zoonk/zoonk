@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
 import { type ContentFixUnit, type Plan, type TransactionClient, prisma } from "@zoonk/db";
@@ -31,7 +30,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
-import { storeBlobUploads } from "../_test-utils/blob-uploads";
 import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import {
   ENGLISH,
@@ -88,7 +86,9 @@ import {
 import { createLibraryLesson } from "./lessons/create-library-lesson";
 import { deleteRetiredSteps } from "./lessons/lesson-versions";
 import { placeChapterLessons } from "./lessons/place-chapter-lessons";
-import { voiceListeningSet } from "./listening/voice-listening-set";
+import { getListeningAudioKey } from "./listening/listening-audio-key";
+import { listeningContentSchema } from "./listening/listening-content";
+import { prepareListeningRecording } from "./listening/voice-listening-set";
 import { removeImageAsset } from "./media/check-image-asset";
 import { temperatureSpec, writtenTemperatureLesson } from "./quality/_test-utils/written-lessons";
 import { setAsidePublishedLesson } from "./quality/set-aside-published-lesson";
@@ -505,6 +505,27 @@ const REGISTRY: Record<string, Registration[]> = {
       verdict: "marks",
       why: "whole-set replacement changes bank picks under the content-fix plan lock",
       writes: ["itemSet.create", "item.create", "item.updateMany"],
+    },
+  ],
+  "staff/content-fixes/handlers/lesson-plan.ts": [
+    {
+      verdict: "marks",
+      why: "changing the lesson estimate changes plans that schedule it",
+      writes: ["lesson.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/lesson-screens/apply.ts": [
+    {
+      verdict: "marks",
+      why: "adds and restores bank items under the content-fix plan lock",
+      writes: ["item.createMany", "item.updateMany"],
+    },
+    {
+      fields: ["summary"],
+      readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
+      verdict: "excluded",
+      why: "updates the lesson map",
+      writes: ["lesson.update"],
     },
   ],
   "staff/content-fixes/handlers/practice.ts": [
@@ -1443,25 +1464,9 @@ async function listeningCase(): Promise<WriterCase> {
   await itemFixture({ setId: set.id, skillId: skill.id });
   const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
 
-  storeBlobUploads();
-
-  vi.mocked(voiceListeningScript).mockResolvedValue({
-    data: {
-      audio: new Uint8Array([1, 2, 3]),
-      durationMs: 48_000,
-      format: "mp3",
-      provenance: {
-        generatedAt: new Date().toISOString(),
-        latencyMs: 9000,
-        model: "google/gemini-3.8-flash-lite-tts",
-        promptVersion: "test-listening-voice",
-        provider: "vertex",
-        requestedModel: "google/gemini-3.8-flash-lite-tts",
-        runId: randomUUID(),
-        usage: { audioSeconds: 48 },
-      },
-    },
-    error: null,
+  await mediaAssetFixture({
+    kind: "audio",
+    reuseKey: getListeningAudioKey(listeningContentSchema.parse(set.content)),
   });
 
   return {
@@ -1471,7 +1476,7 @@ async function listeningCase(): Promise<WriterCase> {
       }),
     plan,
     root: skillRoot(skill.id),
-    write: () => voiceListeningSet({ setId: set.id }),
+    write: () => prepareListeningRecording(set.id),
   };
 }
 
@@ -1746,8 +1751,89 @@ function writeFix({
   return writePlanInputs(async (tx) => {
     await lockFixPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
-    await applyFixChanges(tx, { changes, context: { fixId: randomUUID(), now: new Date() }, unit });
+
+    await applyFixChanges(tx, {
+      changes,
+      context: { fixId: randomUUID(), media: new Map(), now: new Date() },
+      unit,
+    });
   });
+}
+
+async function lessonEstimateFixCase(): Promise<WriterCase> {
+  const spec = temperatureSpec();
+
+  const lesson = await libraryLessonFixture({
+    contentStatus: "completed",
+    estimatedMinutes: spec.estimatedMinutes,
+    spec,
+  });
+
+  const plan = await planOnLesson(lesson.id);
+
+  const screens = spec.screens.flatMap((screen) =>
+    screen.kind === "workedExample" ? [screen, screen, screen] : [screen],
+  );
+
+  const resolved = await prepareProposedChange(prisma, {
+    id: lesson.id,
+    model: "Lesson",
+    setPlan: { ...spec, screens },
+  });
+
+  if (!resolved.ok) {
+    throw new Error(resolved.problem);
+  }
+
+  const changes = contentFixChangesSchema.parse([resolved.stored]);
+
+  return {
+    expectWritten: async () => {
+      await expect(
+        prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      ).resolves.toMatchObject({ estimatedMinutes: 5 });
+    },
+    plan,
+    root: lessonRoot(lesson.id),
+    write: () => writeFix({ changes, unit: resolved.unit }),
+  };
+}
+
+async function lessonScreenItemFixCase(): Promise<WriterCase> {
+  const { lesson, skill } = await publishedLesson();
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+  const numeric = writtenTemperatureLesson().screens.find((screen) => screen.kind === "mathCheck");
+
+  if (numeric?.kind !== "mathCheck") {
+    throw new Error("Expected a numeric screen");
+  }
+
+  const { context, correctReason, math, question } = numeric;
+
+  const resolved = await prepareProposedChange(prisma, {
+    id: lesson.id,
+    model: "Lesson",
+    setScreens: {
+      screens: [
+        { kind: "check", numeric: { context, correctReason, math, question }, skillId: skill.id },
+      ],
+      version: 1,
+    },
+  });
+
+  if (!resolved.ok) {
+    throw new Error(resolved.problem);
+  }
+
+  const changes = contentFixChangesSchema.parse([resolved.stored]);
+
+  return {
+    expectWritten: () =>
+      expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(1),
+    plan,
+    root: skillRoot(skill.id),
+    write: () => writeFix({ changes, unit: resolved.unit }),
+  };
 }
 
 async function textFixCase(
@@ -2089,7 +2175,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "deleteRetiredSteps (a question only deleted screens asked)": retiredQuestionCase,
   },
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },
-  "library/listening/voice-listening-set.ts": { voiceListeningSet: listeningCase },
+  "library/listening/voice-listening-set.ts": { prepareListeningRecording: listeningCase },
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
@@ -2101,6 +2187,8 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "restore replaced item": () => itemContentCase("restore"),
   },
   "staff/content-fixes/handlers/item-set.ts": { itemSetReplace: () => sharedFixCase("ItemSet") },
+  "staff/content-fixes/handlers/lesson-plan.ts": { estimate: lessonEstimateFixCase },
+  "staff/content-fixes/handlers/lesson-screens/apply.ts": { numeric: lessonScreenItemFixCase },
   "staff/content-fixes/handlers/practice.ts": {
     "restore item": () => itemFixCase("unretire"),
     "retire item": () => itemFixCase("retire"),

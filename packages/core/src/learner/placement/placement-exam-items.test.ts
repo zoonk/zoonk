@@ -97,6 +97,7 @@ describe("placement questions for an exam goal", () => {
       order: index,
       phase: index,
       prerequisiteIds: [],
+      removed: false,
       sectionTitle: null,
     }));
 
@@ -200,6 +201,7 @@ describe("placement questions for an exam goal", () => {
       order: index,
       phase: 0,
       prerequisiteIds: [],
+      removed: false,
       sectionTitle: area,
     }));
 

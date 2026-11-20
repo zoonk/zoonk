@@ -5,7 +5,6 @@ import {
   listListeningPartsToPrepare,
   writePartSet,
 } from "@zoonk/core/exams/listening/prepare";
-import { voiceListeningSet } from "@zoonk/core/library/listening/voice";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { storeKeyCheckedItemSet } from "../../_shared/item-set-steps";
 
@@ -58,19 +57,4 @@ export async function preparePartSet(input: PartStepInput): Promise<string | nul
     set: await writePartSetStep(input),
     wait: input.wait,
   });
-}
-
-export async function voiceListeningSetStep({
-  setId,
-  ...input
-}: Omit<PartStepInput, "exam" | "part"> & { setId: string }): Promise<boolean> {
-  "use step";
-
-  const recording = await voiceListeningSet({
-    analytics: toAnalytics(input),
-    serviceTier: chooseServiceTier({ wait: input.wait }),
-    setId,
-  });
-
-  return recording !== null;
 }

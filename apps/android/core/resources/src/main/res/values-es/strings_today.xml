@@ -11,7 +11,6 @@
   "today_building_plan_goal": "72880af68cd0bdf34230a3ea08b20605266bdf637e808435c3cd4a89dce874f8",
   "today_choose_focus": "4e8e8a0ead3da50a9121504da409f4e8ad69a79c76ddd4e53b990a60c9727bf2",
   "today_coming_not_written": "0fe15608631e67826866865fe1cb473595fd7bf3e8e15b01796108c34a790243",
-  "today_coming_stalled": "e037f3384a4252158d78f19e2f51abdfa300ab8a39e1a5c18a838c3f2cb4c60c",
   "today_coming_title": "604bbb0d65ca1a1175db12f7fb438ea056524daa1083c5e45559ec960f6fb9d1",
   "today_coming_writing": "2d0c028cc81e681a2dd70066897f98c7731a9e3d28e940390f8f0c06a0ba2600",
   "today_completed_lessons_line": "bd75a6c8bf60aaa124a78f938e07dac359926960664609b8ba79516fc5f5d212",
@@ -29,7 +28,6 @@
   "today_exam_speaking_detail": "7cdb6ac705dc673969df28eb399ff43ac31d3a1c3384b84e44e6bf67968e8c09",
   "today_finished_goal": "9ba0579e736d0430ab4393f8b9f6645f22639af30759e0dd66f8bf6c6e37d50d",
   "today_get_lessons": "d2786dd5d073923802f349973a31a057a678cce6274d9f2dbd0139cf4a3d4fbc",
-  "today_get_them_now": "5fa5584bf9c1baee1953851a6bf0b956d19c6fef6d5e45e638e55210f6ce5e8c",
   "today_insight_add_it": "b8fc331f97d84e870e412530cc5aa21586807f240ec6b5fb9b9805ac7c571d32",
   "today_insight_got_it": "c38955229e0be0bd63a3d4935b0693d613a8773d28825ad38355773f0a3cd955",
   "today_insight_keep_it": "fcbf2abd88c5a567369a4f0276da4024b8d9b6abcbefc6b69cd395122a73ef10",
@@ -131,8 +129,6 @@
   "today_unfinished_setup": "4ba0201ad0e73586ad031e8c088066f3d538bb033c0241315591f115dc043989",
   "today_up_next": "4e24dc6e3b0339f1873264fcfcf6fe0bf824e1b446dbd3390e46771d6261fa31",
   "today_waiting": "5b8065f8cd458691016515b1e60b8b35cb42d35c3a1913b363a1e1223fad4d49",
-  "today_waiting_stalled": "e778d4e21ef1fba2318a1fc74ceac0666f0bac638eb2ba474637cc545fd91386",
-  "today_waiting_stalled_detail": "8c99770e42aac26dc910ee4a95539549a6e6a6db0d13099f27e5d59e20198a93",
   "today_week_after_date": "598dcdad440c1245f3ab75fe92ffd13b2c0a6d918cbb34e88a1b37c31ed5f833",
   "today_week_after_exam": "40783dde1d75d088289e6852b9b7e72299f2b270531ad3d611c60ccdffa2a0a1",
   "today_week_before_plan": "59b648d753c3198bc531a9c68f062b16f0eae708188a2f13dcf441c0428f4625",
@@ -219,8 +215,6 @@
     <string name="today_rest_next_lessons">Tus próximas lecciones están abajo si quieres estudiar.</string>
     <string name="today_rest_enjoy">¡Disfruta tu día de descanso!</string>
     <string name="today_waiting">Preparando las lecciones de hoy…</string>
-    <string name="today_waiting_stalled">Las lecciones de hoy están tardando más de lo habitual.</string>
-    <string name="today_waiting_stalled_detail">Vuelve en unos minutos.</string>
     <string name="today_nothing_new">Ya estás al día.</string>
     <string name="today_up_next">Lo que sigue en tu plan</string>
     <string name="today_start_session">Empezar</string>
@@ -364,8 +358,6 @@
     <string name="today_coming_title">Tus próximas lecciones</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">En preparación…</string>
-    <!-- Under "Your next lessons" when their writing has taken a while. -->
-    <string name="today_coming_stalled">Está tardando más de lo habitual</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">Aún no están listas</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
@@ -387,7 +379,6 @@
     <string name="today_week_day_planned">Tiempo planeado: %1$s</string>
     <string name="today_plan_finished">Completaste tu plan.</string>
     <string name="today_week_after_exam">después de tu examen</string>
-    <string name="today_get_them_now">Prepararlas ahora</string>
     <string name="today_resume">Reanudar</string>
     <!-- Lessons planned for earlier days that didn't fit in today's list; the learner can add them to today. -->
     <plurals name="today_earlier_lessons">

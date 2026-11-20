@@ -1,6 +1,7 @@
 import { unfundedMoveSchema } from "@zoonk/core/plans/plan-error-contract";
 import { z } from "zod";
 import { errorSchema } from "./common";
+import { conflictResponse } from "./responses";
 
 const planChangeInvalidErrorSchema = errorSchema
   .extend({
@@ -92,3 +93,11 @@ export const goalUpdateInvalidResponse = {
   },
   description: `${planDateChangeInvalidResponse.description} TARGET_REGION_NOT_OFFERED: the \`targetRegion\` isn't one of the goal's \`regionChoices\`, or the goal isn't a language goal. Nothing was saved. CONTENT_COUNTRY_NOT_OFFERED: content countries cannot be changed on exam or language goals.`,
 } as const;
+
+export const PLAN_CHANGED_WHILE_SAVING =
+  "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle";
+
+export const planChangedWhileSavingResponse = {
+  ...conflictResponse,
+  description: PLAN_CHANGED_WHILE_SAVING,
+};

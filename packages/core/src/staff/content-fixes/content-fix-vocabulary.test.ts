@@ -1,5 +1,5 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { prisma } from "@zoonk/db";
+import { prisma, sql } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
   languageLessonFixture,
@@ -8,7 +8,6 @@ import {
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { describe, expect, it, vi } from "vitest";
-import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { listOwed } from "../../_test-utils/follow-ups";
 import {
   approve,
@@ -18,32 +17,24 @@ import {
   signInApprover,
   signInProposer,
 } from "./_test-utils/content-fix-steps";
+import { SPEECH_PROVENANCE, mockVoice } from "./_test-utils/mock-fix-voice";
+import { clipMediaKey, readContentFixMedia } from "./media-schema";
+import { listPendingFixMedia, recordFixClip, recordFixMedia } from "./prepare-content-fix-media";
 import { proposeContentFix } from "./propose-content-fix";
-import { failContentFixVoice, voiceContentFix } from "./voice-content-fix";
 
-const SPEECH_PROVENANCE = {
-  generatedAt: "2026-11-13T12:00:00.000Z",
-  latencyMs: 1,
-  model: "openai/gpt-voice",
-  promptVersion: "test",
-  provider: "openai",
-  requestedModel: "openai/gpt-voice",
-  runId: "speech-run",
-  usage: {},
-};
+async function pendingClip(fixId: string) {
+  const pending = await listPendingFixMedia(fixId);
+  const need = pending.find((entry) => entry.kind === "clip");
 
-function mockVoice() {
-  storeBlobUploads();
+  if (!need) {
+    throw new Error("Expected a pending clip");
+  }
 
-  vi.mocked(generateLanguageAudio).mockResolvedValue({
-    data: {
-      audio: new Uint8Array([1, 2, 3]),
-      durationMs: 900,
-      format: "mp3",
-      provenance: SPEECH_PROVENANCE,
-    },
-    error: null,
-  });
+  return need;
+}
+
+async function voiceContentFix({ fixId }: { fixId: string }) {
+  await recordFixClip({ fixId, need: await pendingClip(fixId) });
 }
 
 /** Proposes a fix, records its clip as the API workflow would, and approves it. */
@@ -94,9 +85,9 @@ describe("word and sentence fixes", () => {
           op: "set",
         },
       ],
+      media: [{ need: { kind: "clip", text: "rental" }, result: null }],
+      mediaOwed: true,
       unit: "word",
-      voice: null,
-      voiceOwed: true,
     });
 
     expect(fix.effects).toStrictEqual(
@@ -108,7 +99,7 @@ describe("word and sentence fixes", () => {
     );
 
     await expect(listOwed(proposer.id)).resolves.toStrictEqual([
-      { input: { fixId: fix.id }, key: fix.id, kind: "voiceContentFix" },
+      { input: { fixId: fix.id }, key: fix.id, kind: "prepareContentFixMedia" },
     ]);
 
     await signInApprover();
@@ -120,8 +111,13 @@ describe("word and sentence fixes", () => {
     const voiced = await prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } });
 
     expect(voiced).toMatchObject({
-      voice: { status: "voiced", text: "rental", url: expect.stringContaining("blob.test") },
-      voiceOwedAt: null,
+      media: [
+        {
+          need: { kind: "clip", text: "rental" },
+          result: { kind: "clip", url: expect.stringContaining("blob.test") },
+        },
+      ],
+      mediaOwedAt: null,
     });
 
     const { key } = await signInApprover();
@@ -132,7 +128,7 @@ describe("word and sentence fixes", () => {
 
     await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
       audioRunId: SPEECH_PROVENANCE.runId,
-      audioUrl: (voiced.voice as { url: string }).url,
+      audioUrl: expect.stringContaining("blob.test"),
       word: "rental",
     });
 
@@ -149,16 +145,138 @@ describe("word and sentence fixes", () => {
       reason: "The clip says another word.",
     });
 
-    expect(fix).toMatchObject({ changes: [{ op: "revoice", text: "rent" }], voiceOwed: true });
+    expect(fix).toMatchObject({ changes: [{ op: "revoice", text: "rent" }], mediaOwed: true });
 
-    await failContentFixVoice({ fixId: fix.id });
+    const need = await pendingClip(fix.id);
+    await recordFixMedia({ fixId: fix.id, key: need.key, result: "failed" });
 
     await expect(
       prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } }),
-    ).resolves.toMatchObject({ voice: { status: "failed" }, voiceOwedAt: expect.any(Date) });
+    ).resolves.toMatchObject({ media: [{ result: "failed" }], mediaOwedAt: expect.any(Date) });
 
     await signInApprover();
     await expect(optionsFor(fix.id)).resolves.toStrictEqual({ status: "changed" });
+  });
+
+  it("keeps approval gated until both clips are ready and leaves a completed clip alone on retry", async () => {
+    const { word } = await languageLessonFixture();
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [{ id: word.id, model: "Word", revoice: true }],
+      reason: "The clip says another word.",
+    });
+
+    // A lesson handler can owe multiple clips. Until that handler lands, extend a real proposal's media.
+    const first = await pendingClip(fix.id);
+    const secondClip = { ...first, text: "lease" };
+    const second = { ...secondClip, key: clipMediaKey(secondClip) };
+
+    await prisma.contentFix.update({
+      data: { media: [first, second].map((need) => ({ need, result: null })) },
+      where: { id: fix.id },
+    });
+
+    mockVoice();
+
+    await vi.mocked(generateLanguageAudio).withImplementation(
+      async ({ text }) =>
+        text === second.text
+          ? { data: null, error: new Error("The speech provider is unavailable") }
+          : {
+              data: {
+                audio: new Uint8Array([1, 2, 3]),
+                durationMs: 900,
+                format: "mp3",
+                provenance: SPEECH_PROVENANCE,
+              },
+              error: null,
+            },
+      async () => {
+        const attempt = await Promise.allSettled([
+          recordFixClip({ fixId: fix.id, need: second }),
+          recordFixClip({ fixId: fix.id, need: first }),
+        ]);
+
+        expect(attempt.map(({ status }) => status)).toStrictEqual(["rejected", "fulfilled"]);
+      },
+    );
+
+    await signInApprover();
+    await expect(optionsFor(fix.id)).resolves.toStrictEqual({ status: "changed" });
+    await expect(listPendingFixMedia(fix.id)).resolves.toStrictEqual([second]);
+
+    await Promise.all([
+      recordFixClip({ fixId: fix.id, need: first }),
+      recordFixClip({ fixId: fix.id, need: second }),
+    ]);
+
+    const stored = await prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } });
+    const media = readContentFixMedia(stored.media);
+
+    expect(media).toMatchObject([
+      { need: first, result: { key: first.key, url: expect.stringContaining("rent") } },
+      { need: second, result: { key: second.key, url: expect.stringContaining("lease") } },
+    ]);
+
+    expect(stored.mediaOwedAt).toBeNull();
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(3);
+    await expect(optionsFor(fix.id)).resolves.toMatchObject({ status: "ready" });
+  });
+
+  it("approves a single-clip row converted from the outgoing release without recording it again", async () => {
+    const { word } = await languageLessonFixture();
+    await signInProposer();
+
+    const proposal = await proposeFix({
+      changes: [{ id: word.id, model: "Word", revoice: true }],
+      reason: "The clip says another word.",
+    });
+
+    const legacyId = crypto.randomUUID();
+
+    const legacyClip = {
+      provenance: SPEECH_PROVENANCE,
+      status: "voiced",
+      text: word.word,
+      url: "https://blob.test/already-recorded.mp3",
+    };
+
+    await prisma.$executeRaw(sql`
+      INSERT INTO content_fixes (id, batch_id, changes, effects, proposer_client_id, reason, unit, unit_id, voice)
+      VALUES (
+        ${legacyId}::uuid, ${legacyId}::uuid, ${JSON.stringify(proposal.changes)}::jsonb,
+        ${JSON.stringify(proposal.effects)}::jsonb, 'test', 'A legacy proposal',
+        'word', ${word.id}::uuid, ${JSON.stringify(legacyClip)}::jsonb
+      )`);
+
+    await prisma.$executeRaw(
+      sql`UPDATE content_fixes SET media = NULL WHERE id = ${legacyId}::uuid`,
+    );
+
+    await prisma.$executeRaw(sql`
+      UPDATE content_fixes SET voice = voice WHERE media IS NULL AND id = ${legacyId}::uuid`);
+
+    const stored = await prisma.contentFix.findUniqueOrThrow({ where: { id: legacyId } });
+
+    expect(readContentFixMedia(stored.media)).toMatchObject([
+      {
+        need: { kind: "clip", model: "Word", text: word.word },
+        result: { kind: "clip", url: legacyClip.url },
+      },
+    ]);
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: legacyId, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
+      audioUrl: legacyClip.url,
+    });
+
+    expect(generateLanguageAudio).not.toHaveBeenCalled();
   });
 
   it("re-records a clip whose text is right", async () => {
@@ -202,7 +320,7 @@ describe("word and sentence fixes", () => {
       throw new Error(`Expected a revert, got ${revert.status}`);
     }
 
-    expect(revert.fix).toMatchObject({ voiceOwed: false });
+    expect(revert.fix).toMatchObject({ mediaOwed: false });
 
     const { key } = await signInApprover();
 
@@ -268,7 +386,7 @@ describe("word and sentence fixes", () => {
       throw new Error(`Expected a revert, got ${revert.status}`);
     }
 
-    expect(revert.fix).toMatchObject({ voiceOwed: false });
+    expect(revert.fix).toMatchObject({ mediaOwed: false });
     expect(revert.fix.effects).not.toContainEqual(expect.objectContaining({ kind: "voiceOwed" }));
 
     const { key } = await signInApprover();
@@ -406,14 +524,14 @@ describe("word and sentence fixes", () => {
         changes: [{ id: word.id, model: "Word", set: { romanization: "rent" } }],
         reason: "Missing romanization.",
       }),
-    ).resolves.toMatchObject({ voiceOwed: false });
+    ).resolves.toMatchObject({ mediaOwed: false });
 
     await expect(
       proposeFix({
         changes: [{ id: word.id, model: "Word", set: { word: text.toUpperCase() } }],
         reason: "The word is an acronym.",
       }),
-    ).resolves.toMatchObject({ voiceOwed: true });
+    ).resolves.toMatchObject({ mediaOwed: true });
   });
 
   it("updates the lessons whose reading and fill-in-the-blank tiles show a word", async () => {
@@ -655,8 +773,8 @@ describe("word and sentence fixes", () => {
 
     expect(wordFix).toMatchObject({
       changes: [{ id: word.id, lessonId: lesson.id, model: "LessonWord" }],
+      mediaOwed: false,
       unit: "word",
-      voiceOwed: false,
     });
 
     expect(sentenceFix?.effects).toStrictEqual(

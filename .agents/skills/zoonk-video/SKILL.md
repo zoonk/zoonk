@@ -1,6 +1,6 @@
 ---
 name: zoonk-video
-description: Make Zoonk product videos (launch films, feature promos, social cuts) in US English and Brazilian Portuguese from the app's real screens. Covers the story taken from the code, the real components rendered outside Next in either language, motion from a frame-exact renderer, narration and music generated through AI Gateway, and MP4s ready for YouTube, Reels and TikTok. Use when asked for a product, launch, feature, promo or social video, or to update one.
+description: Make Zoonk product videos (launch films, feature promos, social cuts), silent feature demos and social post images in US English and Brazilian Portuguese from the app's real screens. Covers the story taken from the code, the real components rendered outside Next in either language, composed into stills and one-shot demos, motion from a frame-exact renderer, narration and music generated through AI Gateway, and MP4s and PNGs ready for YouTube, X, LinkedIn, Reels and TikTok. Use when asked for a product, launch, feature, promo or social video, a demo clip or a post image, or to update one.
 license: MIT
 metadata:
   author: zoonk
@@ -12,8 +12,8 @@ metadata:
 A Zoonk video shows the real product, says only what the code backs, and ships in both of the brand's languages. The studio in this folder covers each step:
 
 - **Real screens:** renders the app's own components with either locale's catalog.
-- **Animation:** animates them in HTML with GSAP, then captures every frame from a paused timeline, so nothing depends on how fast the machine is.
-- **Sound:** mixes narration, music and the app's own sounds.
+- **Films:** animates captured screens in HTML with GSAP, then captures every frame from a paused timeline, so nothing depends on how fast the machine is. Narration, music and the app's own sounds are mixed in.
+- **Stills and demos:** a stage places live components on a canvas, one in focus and one behind it, for post images ([social stills](references/social-stills.md)) and silent one-shot clips ([feature demos](references/feature-demo.md)). They skip the story, sound and capture steps below.
 
 ## Workflow
 
@@ -26,9 +26,11 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
    - Take goals per locale from the landing page's example sets.
    - Write every line for someone who has never opened Zoonk: their problem and how Zoonk solves it, in everyday words, with only claims that last ([first-time viewers](references/story.md#write-for-someone-who-has-never-opened-zoonk)).
    - Write the plan as a scene table with the text for both languages side by side, and get it approved before building.
-3. **Studio.** Run `node .agents/skills/zoonk-video/scripts/init.mjs <work-dir>`.
-   - Use a scratch folder outside the repo; nothing a video produces is committed.
-   - It copies the engine, the harness, the scripts and the example film (`films/zoonk-2/`), installs GSAP, Lucide and Geist, links the repo's React, Vite, AI SDK and Playwright, and builds the icon and font files.
+3. **Studio.** Run `node .agents/skills/zoonk-video/scripts/init.mjs <work-dir> [--port 5199]`.
+   - Use a scratch folder outside the repo and a free port; nothing a video produces is committed.
+   - It copies the engine, the harness, the scripts and the examples (`films/zoonk-2/`, `films/launch/`), installs GSAP, Lucide and Geist, links the repo's React, Vite, AI SDK and Playwright, and builds the icon and font files.
+   - It ends with `npm run typecheck`: every view against the app's current contracts. Fix a drifted view before filming, since it draws wrong numbers. Run it again after pulling.
+   - Running it again over a studio adds what's missing and never overwrites a file. A studio made before the stage has no `typecheck`, and init stops there: make a fresh folder and copy its `films/` across.
    - It needs FFmpeg, Python 3 with NumPy, and the Chromium the repo's E2E tests use (`pnpm exec playwright install chromium`); it stops early if FFmpeg or NumPy is missing.
    - Then, in the studio: `npm run harness` (keep it running), and `node scripts/export-art.mjs` for the buddy and Trickster SVGs.
 4. **Real screens.** Follow [real screens](references/real-screens.md).
@@ -56,7 +58,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
      - Frames sampled across the video and at every transition.
    - Fix, then re-render only what changed. When only the sound changed, remux the new mix instead of re-rendering.
 8. **Deliver.**
-   - Put the files where the user asked; the default is `~/Documents/<Video name>/{en-US,pt-BR}/`, which syncs through iCloud.
+   - Put the files where the user asked; the default is `~/Documents/<Video name>/{en-US,pt-BR}/`.
    - Move earlier versions into a `vN (…)` subfolder rather than deleting them.
    - Report what you verified and what you could not: you can't listen, so the judge stands in.
 
@@ -87,25 +89,20 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
 ## Files
 
 - `scripts/`
-  - Setup: `init.mjs` builds a studio; `export-art.mjs` saves the buddy SVGs.
+  - Setup: `init.mjs` builds a studio; `typecheck.mjs` checks the views; `export-art.mjs` saves the buddy SVGs.
   - Captures: `snap.mjs` (stills), `seq.mjs` (interactions), `typing.mjs`, `manifests.py`; `story-clock.mjs` pins their clock to the story's date.
-  - Video: `render.mjs` turns a page into frames, then an MP4 or stills; `cues.mjs` lists a page's sound cues.
-  - Audio:
-    - `narration.py`: spec, fit and captions.
-    - `gen-audio.mjs`, `transcribe.mjs`, `judge-audio.mjs` and `rank-audio.mjs`: AI Gateway.
-    - `mix.py` and `sfx.py`: the mix and the UI sounds.
+  - Video: `render.mjs` turns a page or a stage scene (`--url`, `--scheme dark`) into an MP4 or stills, failing a stage frame that cuts what it shows; `stills.mjs` renders a set's post images in every size, scheme and language; `cues.mjs` lists a page's sound cues.
+  - Audio: `narration.py` (spec, fit and captions); `gen-audio.mjs`, `transcribe.mjs`, `judge-audio.mjs` and `rank-audio.mjs` (AI Gateway); `mix.py` and `sfx.py` (the mix and the UI sounds).
 - `engine/`: the page runtime.
   - `engine.js`: the timeline, the frame-exact seek, text reveals, typing and sound cues.
   - `kit.js`: scenes, text, cards, the phone, and real-screen stills, sequences, taps and auto-fit.
   - `common.css`: Zoonk's tokens and the base styles.
 - `realui/`: the harness that renders app components outside Next.
   - The Vite config, which compiles translations with next-intl's own loaders, as Main's build does.
-  - Views for the player (`player.tsx`), the learn screens (`learn/`) and the exam, language and progress screens (`goals/`).
+  - Views for the player (`player.tsx`), the learn screens (`learn/`) and the goal screens (`goals/`).
   - `art.tsx`: the brand art.
-  - `story.ts`: the sample learner per locale.
-- `example/zoonk-2/`: the 2.0 launch film. Copy it, then change what the new video needs.
-  - Pages: `long`, `short` and `thumb`, as `.html` and `.js`.
-  - `copy.js`: the on-screen words in both languages.
-  - `stills.json`: the screens to capture.
-  - `narration.py`: lines, voice and sample words.
-  - `music.json`: the prompts for the two beds.
+  - `story.ts`: the films' sample learner per locale.
+  - `learners/`: the stage's sample learners, built into the app's view models with no `any`.
+  - `stage/`: the stage page, its kit and the catalog of pieces (`pieces.ts`).
+- `example/zoonk-2/`: the 2.0 launch film, to copy for a new one: pages (`long`, `short`, `thumb`), `copy.js` (the words per language), `stills.json` (the screens to capture), `narration.py` and `music.json`.
+- `example/launch/scenes.ts`: the 2.0 launch stills and the goal-to-plan demo.

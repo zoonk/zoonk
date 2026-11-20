@@ -2,11 +2,7 @@
 
 Use these links as entry points, then verify the current page content from Google before making or reviewing Android UI decisions.
 
-Source indexes:
-
-- https://developer.android.com/design
-- https://developer.android.com/design/ui
-- https://m3.material.io/sitemap.xml
+Source indexes: the Android Design links below and https://m3.material.io/sitemap.xml
 
 ## Android Design
 
@@ -39,6 +35,11 @@ Source indexes:
 - [Build adaptive navigation](https://developer.android.com/develop/ui/compose/layouts/adaptive/build-adaptive-navigation): the navigation suite's defaults, tabletop included
 - [Compose Material 3 adaptive releases](https://developer.android.com/jetpack/androidx/releases/compose-material3-adaptive)
 - Samsung: [large screens and foldables](https://developer.samsung.com/one-ui/largescreen-and-foldable/intro.html), [designing for foldables](https://developer.samsung.com/one-ui/largescreen-and-foldable/designing_for_foldable.html), [Flex mode](https://developer.samsung.com/galaxy-z/flex-mode.html) and [app continuity](https://developer.samsung.com/galaxy-z/app-continuity.html)
+
+## Keyboard, pointer and desktop
+
+- [Keyboard commands](https://developer.android.com/develop/ui/compose/touch-input/keyboard-input/commands) and the [shortcuts helper](https://developer.android.com/develop/ui/compose/touch-input/keyboard-input/keyboard-shortcuts-helper)
+- [Tooltips](https://developer.android.com/develop/ui/compose/components/tooltip) and [pointer input](https://developer.android.com/develop/ui/compose/touch-input/pointer-input) (hover icons)
 
 ## Material Design 3
 

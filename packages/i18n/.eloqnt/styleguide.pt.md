@@ -54,7 +54,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Parceiro”; “your buddy”: “seu parceiro”
+- “Buddy”: “Colega”, like a classmate you study with; “your buddy”: “seu colega”; “study buddy”: “colega de estudos”; “AI study buddy”: “colega de estudos com IA”. It takes the masculine whatever the buddy, next to its name too (“Escolha seu colega”, “Oi! Sou {name}, seu colega de estudos com IA”). Never “parceiro” or “companheiro”, which read as a romantic partner
 - Mission names (missions list, first steps): infinitive: “Concluir sua primeira aula”
 - “call” (speaking practice): “conversa”, not “chamada” or “ligação”
 - “Mistakes notebook”: “Caderno de erros”

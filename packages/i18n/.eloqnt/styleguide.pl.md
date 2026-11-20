@@ -15,7 +15,7 @@
 
 ## Placeholders
 
-- Name and title placeholders can't decline: keep them in the nominative, as the subject or after a colon: “Napisz do: {name}”. To ask the buddy, give it its own clause: “Zapytaj o ten rozdział. Odpowie {buddy}”.
+- Name, title and language-name placeholders can't decline (a language comes as “angielski”): keep them in the nominative, as the subject or after a colon: “Napisz do: {name}”, “Język lekcji: {language}”. To ask the buddy, give it its own clause: “Zapytaj o ten rozdział. Odpowie {buddy}”.
 
 ## Glossary
 

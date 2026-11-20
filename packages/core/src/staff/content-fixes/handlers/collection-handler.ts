@@ -14,6 +14,7 @@ export type CollectionState = {
 };
 
 export function collectionHandler<Model extends string, Operation extends string>(spec: {
+  example?: Json;
   model: Model;
   op: Operation;
   table: Sql;
@@ -75,6 +76,7 @@ export function collectionHandler<Model extends string, Operation extends string
     op: spec.op,
     planRoots: (stored) => stored.roots,
     proposal: {
+      example: spec.example,
       rules: spec.rules,
       schema: z
         .strictObject({ id: idSchema, model: z.literal(spec.model), [spec.op]: z.json() })

@@ -14,7 +14,7 @@ type SessionPreparationStart =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** The contract names no run for a guest's ask: theirs writes only their next lesson, not their sessions'. */
+/** Guest responses leave the preparation run ID null. */
 function toStarted({ guest, runId }: { guest: boolean; runId: string }): SessionPreparationStart {
   return { preparationId: guest ? null : runId, status: "started" };
 }

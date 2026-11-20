@@ -38,6 +38,7 @@ type StartTarget = {
   chapter: { id: string; title: string } | null;
   course: { id: string; quickTestMinutes: number; title: string };
   dailyMinutes: number | null;
+  languageNote: string | null;
 };
 
 type PlanChapter = { id: string; lessons: number; title: string };
@@ -90,6 +91,7 @@ function StartHeading({
   chapter,
   course,
   gate,
+  languageNote,
 }: Omit<StartTarget, "dailyMinutes"> & { asksLevel: boolean; gate: LimitWords | null }) {
   const t = useExtracted();
 
@@ -128,6 +130,7 @@ function StartHeading({
       <OnboardingHeading>
         <OnboardingSubject>{course.title}</OnboardingSubject>
         <OnboardingTitle>{t("How much do you already know?")}</OnboardingTitle>
+        {languageNote && <OnboardingDescription>{languageNote}</OnboardingDescription>}
       </OnboardingHeading>
     );
   }
@@ -136,7 +139,7 @@ function StartHeading({
     <OnboardingHeading>
       <OnboardingTitle>{course.title}</OnboardingTitle>
       <OnboardingDescription>
-        {t("Your plan follows this course, in the time you have each day.")}
+        {languageNote ?? t("Your plan follows this course, in the time you have each day.")}
       </OnboardingDescription>
     </OnboardingHeading>
   );
@@ -149,6 +152,7 @@ function CourseStartForm({
   course,
   dailyMinutes,
   initialFailure,
+  languageNote,
   level,
   note,
 }: StartTarget & {
@@ -217,6 +221,7 @@ function CourseStartForm({
         chapter={chapter}
         course={course}
         gate={blocked ? gate : null}
+        languageNote={languageNote}
       />
 
       <form action={startCourseFormAction} className="flex flex-1 flex-col gap-6" id={formId}>
@@ -249,6 +254,7 @@ function CourseLevelStart({
   course,
   dailyMinutes,
   initialFailure,
+  languageNote,
   note,
 }: Omit<StartTarget, "chapter"> & {
   initialFailure: CourseStartFailure | null;
@@ -262,6 +268,7 @@ function CourseLevelStart({
       course={course}
       dailyMinutes={dailyMinutes}
       initialFailure={initialFailure}
+      languageNote={languageNote}
       level={level}
       note={note}
     >
@@ -277,6 +284,7 @@ export function CourseStartScreen({
   course,
   dailyMinutes,
   initialFailure,
+  languageNote,
   note,
 }: StartTarget & {
   chapters: PlanChapter[];
@@ -291,6 +299,7 @@ export function CourseStartScreen({
           course={course}
           dailyMinutes={dailyMinutes}
           initialFailure={initialFailure}
+          languageNote={languageNote}
           note={note}
         >
           <PlanPreview chapters={chapters} />
@@ -300,6 +309,7 @@ export function CourseStartScreen({
           course={course}
           dailyMinutes={dailyMinutes}
           initialFailure={initialFailure}
+          languageNote={languageNote}
           note={note}
         />
       )}

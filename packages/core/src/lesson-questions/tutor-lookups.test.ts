@@ -12,6 +12,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { type MockConditions, type MockResult } from "../exams/mocks/mock-contract";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answer-lifecycle";
@@ -120,6 +121,31 @@ function mockResult(): MockResult {
 describe(lookUpTutorData, () => {
   beforeEach(() => {
     mockSession(null);
+  });
+
+  it("leaves a removed subject's mistakes out of its progress and the mistakes the buddy finds", async () => {
+    const { goal, library, user } = await plannedLearner();
+    const biology = library.skills[1]?.id ?? "";
+
+    await mistakeFixture({ skillId: biology, userId: user.id });
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ areas: ["Biology"], kind: "skipAreas" }] },
+        trackAnalytics: false,
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    const asked = await answering(goal.id);
+
+    await expect(
+      lookUp(asked, { area: "Biology", what: "subjectProgress" }),
+    ).resolves.toMatchObject({ subjects: [{ openMistakes: 0 }] });
+
+    await expect(lookUp(asked, { what: "mistakes" })).resolves.toMatchObject({
+      status: "notFound",
+    });
   });
 
   it("reads a subject's progress from the learner's own answers and mistakes, its lessons' finer skills included", async () => {

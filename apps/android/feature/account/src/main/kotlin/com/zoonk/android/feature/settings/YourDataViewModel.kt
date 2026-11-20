@@ -47,6 +47,8 @@ class YourDataViewModel(
         private set
     var code by mutableStateOf("")
         private set
+    private var rejectedCode by mutableStateOf<String?>(null)
+    val isCodeRejected get() = code == rejectedCode
 
     /** Writes the download to the file the learner picked at [to]; it's written even after the page goes. */
     fun export(to: Uri) {
@@ -74,25 +76,33 @@ class YourDataViewModel(
         deletionStep = DeletionStep.None
         deletionFailure = null
         code = ""
+        rejectedCode = null
     }
 
     fun onCodeChange(value: String) {
         code = value.filter(Char::isDigit).take(CODE_LENGTH)
+        if (isCodeRejected) {
+            deletionFailure = AccountFailure.WrongCode
+            return
+        }
         if (deletionFailure == AccountFailure.WrongCode) deletionFailure = null
     }
 
     fun delete() {
         if (isDeleting) return
-        val usesCode = deletionStep == DeletionStep.Code
-        if (usesCode && code.length != CODE_LENGTH) {
-            deletionFailure = AccountFailure.WrongCode
-            return
+        val submittedCode = code.takeIf { deletionStep == DeletionStep.Code }
+        if (submittedCode != null) {
+            if (isCodeRejected) return
+            if (submittedCode.length != CODE_LENGTH) {
+                deletionFailure = AccountFailure.WrongCode
+                return
+            }
         }
         isDeleting = true
         deletionFailure = null
         viewModelScope.launch {
             try {
-                when (val result = account.deleteAccount(session, email, code.takeIf { usesCode })) {
+                when (val result = account.deleteAccount(session, email, submittedCode)) {
                     is AccountDeletion.Deleted -> {
                         deletionStep = if (result.appleAuthorizationRevoked == false) DeletionStep.AppleNote else DeletionStep.Deleted
                     }
@@ -103,7 +113,12 @@ class YourDataViewModel(
                     }
 
                     is AccountDeletion.Failed -> {
-                        deletionFailure = result.failure
+                        if (result.failure == AccountFailure.WrongCode && submittedCode != null) {
+                            rejectedCode = submittedCode
+                            deletionFailure = result.failure.takeIf { code == submittedCode }
+                        } else {
+                            deletionFailure = result.failure
+                        }
                     }
 
                     AccountDeletion.Obsolete -> {
@@ -123,6 +138,7 @@ class YourDataViewModel(
             try {
                 code = ""
                 deletionFailure = account.sendDeletionCode(session, email)
+                if (deletionFailure == null) rejectedCode = null
             } finally {
                 isDeleting = false
             }

@@ -74,6 +74,7 @@ const timeZoneSchema = z
 const CORE_DETAILS_KEYS: ReadonlySet<string> = new Set([
   "contentCountrySource",
   "countryDependent",
+  "courseStart",
   "focusTest",
   "levelTest",
   "noticeFormats",

@@ -352,19 +352,14 @@ internal fun MindMapStudy(
             bottomBar = {
                 TaskActionBar {
                     TaskActions(
-                        back =
-                            if (page > 0) {
-                                {
-                                    OutlinedIconButton(onClick = { previous() }) {
-                                        Icon(
-                                            painterResource(R.drawable.ic_chevron_left),
-                                            contentDescription = stringResource(R.string.mindmaps_previous),
-                                        )
-                                    }
-                                }
-                            } else {
-                                null
-                            },
+                        back = {
+                            OutlinedIconButton(onClick = { previous() }, enabled = page > 0) {
+                                Icon(
+                                    painterResource(R.drawable.ic_chevron_left),
+                                    contentDescription = stringResource(R.string.mindmaps_previous),
+                                )
+                            }
+                        },
                     ) { main ->
                         Button(
                             onClick = { next() },

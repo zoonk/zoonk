@@ -67,10 +67,13 @@ function parseLogin(body: unknown): StoredLogin | null {
     return null;
   }
 
+  const replaySeconds = body.refresh_token_reuse_seconds;
+
   return {
     accessToken: body.access_token,
     expiresAt: Date.now() + body.expires_in * 1000,
     refreshToken: body.refresh_token,
+    ...(typeof replaySeconds === "number" && replaySeconds > 0 && { replaySeconds }),
   };
 }
 

@@ -52,7 +52,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Compañero”
+- “Buddy”: “Compa”; “your buddy”: “tu compa”; “study buddy”: “compa de estudio”; “AI study buddy”: “compa de estudio con IA”. Never “compañero”, which can read as a romantic partner
 - Mission names (missions list, first steps) and activity badges (what the learner does, above the prompt): “tú” imperative: “Completa tu primera lección”, “Lee la gráfica”, “Ordena”
 - “essay”: “redacción”, not “ensayo”; “Writing practice” (essays): “Práctica de redacción”
 - “Mistakes notebook”: “Cuaderno de errores”; “Practice mistakes”: “Practicar errores”; “Practice your mistakes”: “Practicar tus errores”

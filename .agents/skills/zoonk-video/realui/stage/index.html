@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      /* The ground is the app's own background (--background, from the app's globals), so a component sits
+         on the canvas as it sits in the app, not in a box. The rest is the stage's light. */
+      :root {
+        --shade: oklch(0.955 0.003 286);
+        --lift:
+          0 1px 2px oklch(0.2 0.01 286 / 5%), 0 12px 28px -8px oklch(0.2 0.01 286 / 10%),
+          0 40px 80px -24px oklch(0.2 0.01 286 / 12%);
+        --touch: oklch(0.2 0.004 286 / 16%);
+        --touch-edge: oklch(0.2 0.004 286 / 22%);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --shade: #000;
+          --lift: 0 0 0 1px oklch(1 0 0 / 5%), 0 24px 60px -12px #000, 0 60px 120px -30px #000;
+          --touch: oklch(1 0 0 / 22%);
+          --touch-edge: oklch(1 0 0 / 34%);
+        }
+      }
+      html,
+      body {
+        margin: 0;
+        overflow: clip;
+        background: var(--background);
+      }
+      #frame {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform-origin: 0 0;
+        overflow: clip;
+        background: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-geist-sans), sans-serif;
+      }
+      #ground {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse 78% 92% at var(--light-x, 50%) var(--light-y, 34%),
+          transparent 0%,
+          transparent 38%,
+          var(--shade) 100%
+        );
+      }
+      #view {
+        position: absolute;
+        inset: 0;
+      }
+      #world {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform-origin: 0 0;
+      }
+      .piece {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform-origin: 0 0;
+      }
+      .piece > .clip {
+        position: absolute;
+        inset: 0;
+        overflow: clip;
+      }
+      .piece iframe {
+        position: absolute;
+        border: 0;
+        background: transparent;
+        color-scheme: light dark;
+      }
+      .piece.lift {
+        box-shadow: var(--lift);
+      }
+      .touch {
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 50%;
+        background: var(--touch);
+        box-shadow: inset 0 0 0 1.5px var(--touch-edge);
+      }
+      #cover {
+        position: absolute;
+        inset: 0;
+        background: var(--background);
+        opacity: 0;
+      }
+      #end {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.34em;
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1;
+        opacity: 0;
+      }
+      #end svg {
+        width: 1.08em;
+        height: 1.08em;
+        flex: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="frame">
+      <div id="ground"></div>
+      <div id="view"><div id="world"></div></div>
+      <div id="cover"></div>
+      <div id="end"></div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

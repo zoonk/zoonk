@@ -12,6 +12,7 @@ import {
 export async function findGoalCourses({
   analytics,
   courses,
+  examCourseStart,
   goal,
   product,
   provenance,
@@ -23,6 +24,7 @@ export async function findGoalCourses({
   analytics?: ContentAnalytics;
   courses: readonly { key: string; title: string; countrySpecific?: boolean }[];
   goal: { kind: GoalKind };
+  examCourseStart?: boolean;
   /** The product the graph was told about, so a graph built without it gets no product course. */
   product: GoalProduct | null;
   provenance: Parameters<typeof findGoalCourseStep>[0]["provenance"];
@@ -62,6 +64,7 @@ export async function findGoalCourses({
         product,
         provenance,
         searchTerms,
+        wholeExam: Boolean(examCourseStart && courses.length === 1),
       });
 
       return [key, id] as const;

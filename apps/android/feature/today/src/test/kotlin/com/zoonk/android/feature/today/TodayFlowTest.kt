@@ -228,6 +228,12 @@ class TodayFlowTest {
             node.config.getOrNull(SemanticsProperties.Text)?.any { it.text.replace('\u00a0', ' ') == text } == true
         }
 
+    private val placeholder =
+        buildJsonObject {
+            put("title", "Negotiating a raise")
+            put("minutes", 15)
+        }
+
     private fun timeLeft(left: Double) =
         buildJsonObject {
             put("dailyGoal", 240)
@@ -288,7 +294,9 @@ class TodayFlowTest {
     @Config(qualifiers = "w411dp-h1000dp-xxhdpi")
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun renderComingLessonsOnAPhone() =
-        render("today-coming-not-written-phone") { show("blocks" to practiceOnly(), "lessonsToPrepare" to true) }
+        render("today-coming-not-written-phone") {
+            show("blocks" to practiceOnly(), "lessonsToPrepare" to true, "lessonPlaceholder" to placeholder, "minutes" to timeLeft(23.0))
+        }
 
     @Test
     @Config(qualifiers = "pt-rBR-w411dp-h1000dp-xxhdpi")
@@ -503,14 +511,15 @@ class TodayFlowTest {
     }
 
     @Test
-    fun aDayLeftOpenAsksWhetherItChangedUntilTheLearnersAskLapsesThenSaysItsTakingLonger() {
+    fun aDayLeftOpenAsksWhetherItChangedUntilTheLearnersAskLapsesThenOffersToGetTheLessons() {
         show("blocks" to practiceOnly(), "lessonsComing" to true)
 
         rule.mainClock.advanceTimeBy(10.minutes.plus(30.seconds).inWholeMilliseconds)
         rule.onNodeWithText("Getting ready…").assertExists()
 
         rule.mainClock.advanceTimeBy(5.minutes.inWholeMilliseconds)
-        rule.onNodeWithText("Taking longer than usual").assertExists()
+        rule.onNodeWithText("Not ready yet").assertExists()
+        rule.onNodeWithText("Get lessons").assertExists()
         val asks = todayApi.asked.size
         assertTrue("asked $asks times", asks >= 180)
         assertEquals(1, todayApi.reads)
@@ -531,7 +540,7 @@ class TodayFlowTest {
         rule.onNodeWithText("Getting ready…").assertExists()
 
         rule.mainClock.advanceTimeBy(6.minutes.inWholeMilliseconds)
-        rule.onNodeWithText("Taking longer than usual").assertExists()
+        rule.onNodeWithText("Not ready yet").assertExists()
     }
 
     @Test
@@ -645,6 +654,12 @@ class TodayFlowTest {
             sessionId: UUID,
             timeZone: String,
         ): StudySessionSummary = error("Not used")
+
+        override suspend fun recordSummaryVisit(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            visitId: UUID,
+        ): Boolean = error("Not used")
 
         override suspend fun addExtraBlock(
             session: AuthenticatedSession,

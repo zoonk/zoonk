@@ -1,10 +1,13 @@
 // The mistake pattern screen (/pattern/[patternId]) before its drill, from story.language.pattern.
 import { LanguagePatternScreen } from "@repo/packages/learn/src/language/pattern/language-pattern-screen.tsx";
+import { type ComponentProps } from "react";
+import { actions } from "../learn/common";
 import { story, type Lang } from "../story";
 import { LangLearn } from "./lang-frame";
-import { NOOP_ASYNC } from "./shell";
 
-export function patternView(lang: Lang) {
+type Props = ComponentProps<typeof LanguagePatternScreen>;
+
+export function patternView(lang: Lang): Props["pattern"] {
   const pattern = story[lang].language.pattern;
 
   return {
@@ -28,14 +31,14 @@ export function patternView(lang: Lang) {
     practiced: false,
     rule: pattern.rule,
     title: pattern.title,
-  } as any;
+  };
 }
 
 export function Pattern({ lang }: { lang: Lang }) {
   return (
     <LangLearn>
       <LanguagePatternScreen
-        actions={{ dismiss: NOOP_ASYNC, practice: NOOP_ASYNC }}
+        actions={actions<Props["actions"]>({})}
         buddy={null}
         exitHref="/today"
         pattern={patternView(lang)}

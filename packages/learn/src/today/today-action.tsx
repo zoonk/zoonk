@@ -265,8 +265,9 @@ function useTodayActionKind(): keyof typeof TODAY_ACTIONS | null {
     return today.goal.kind === "exam" ? "examOver" : "seePlan";
   }
 
+  // A started day asks from its list's row for the lessons to come.
   if (state === "prepare") {
-    return "prepare";
+    return today.session.blocks.length === 0 ? "prepare" : null;
   }
 
   if (keepLearning) {

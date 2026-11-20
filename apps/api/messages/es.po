@@ -93,9 +93,9 @@ msgid "Wait a minute, then ask for a new code."
 msgstr "Espera un minuto y luego pide un código nuevo."
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "s0lBqy"
-msgid "We sent you a new code."
-msgstr "Te enviamos un código nuevo."
+msgctxt "eHPJeo"
+msgid "We emailed you again."
+msgstr "Te enviamos otro correo."
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "_8e0dn"
@@ -388,4 +388,4 @@ msgstr "Abajo tienes tus estadísticas."
 #: src/lib/tutor-confirmation.ts
 msgctxt "v3uUXk"
 msgid "Below you can choose that variety for your buddy and practice calls."
-msgstr "Más abajo puedes elegir esa variante para tu compañero y tus llamadas de práctica."
+msgstr "Más abajo puedes elegir esa variante para tu compa y tus llamadas de práctica."

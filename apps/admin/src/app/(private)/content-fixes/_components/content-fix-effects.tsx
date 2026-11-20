@@ -1,7 +1,11 @@
 import { AdminSectionEmpty } from "@/components/admin-section";
+import { screenKindLabel } from "@/components/screen-words";
 import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
+import { formatMinutes } from "@/lib/format-duration";
 import { type ContentFixEffect } from "@zoonk/core/staff/content-fixes/contract";
 import { TriangleAlertIcon } from "lucide-react";
+import { readMapIdeas } from "./content-fix-map";
+import { readScreenRows } from "./screen-list";
 
 function countOf({ count, many, one }: { count: number; many: string; one: string }): string {
   return `${String(count)} ${count === 1 ? one : many}`;
@@ -70,6 +74,8 @@ function describeEffect({
       return "The outline changes right away. Its old picture comes off and a new one is drawn soon after; learners who have the map open keep what they see.";
     case "lessonVersion":
       return "Learners who open the lesson next get the fixed version.";
+    case "planChanged":
+      return "When this lesson's screens are checked or written again, they follow the fixed plan.";
     case "answerExplanationsDeleted":
     case "tutorAnswersDeleted":
       return describeWrittenFromScreen({
@@ -114,39 +120,131 @@ function describeEffect({
   }
 }
 
+type Line = { text: string; warning: boolean };
+
+function screenName(row: { position: number; screen: { content: unknown; kind: string } }) {
+  return `screen ${String(row.position)} · ${screenKindLabel(row.screen)}`;
+}
+
+function screenListLines(changes: ContentFixDetail["changes"]): Line[] {
+  return changes.flatMap((change) => {
+    if (change.model !== "Lesson" || change.op !== "setScreens") {
+      return [];
+    }
+
+    const rows = readScreenRows(change);
+
+    const answerKeys = rows.flatMap((row) =>
+      row.status === "changed" && row.answerKey
+        ? [
+            {
+              text: `Which answer counts as right changes on ${screenName(row)}. Learners who started the lesson before the fix aren't marked wrong for it.`,
+              warning: true,
+            },
+          ]
+        : [],
+    );
+
+    const summary =
+      readMapIdeas(change).some((idea) => idea.status !== "same") &&
+      change.after.screens.some((screen) => screen.kind === "summary");
+
+    return [
+      ...answerKeys,
+      ...(summary
+        ? [{ text: "The summary screen shows the map's new ideas.", warning: false }]
+        : []),
+    ];
+  });
+}
+
+function planLines(changes: ContentFixDetail["changes"]): Line[] {
+  return changes.flatMap((change) => {
+    if (change.model !== "Lesson" || change.op !== "setPlan") {
+      return [];
+    }
+
+    const [, minutes] = change.fields;
+
+    return minutes
+      ? [
+          {
+            text: `The lesson's time goes from ${formatMinutes(minutes.before)} to ${formatMinutes(minutes.after)}.`,
+            warning: false,
+          },
+        ]
+      : [];
+  });
+}
+
 /** A change to what counts as right, which staff should look at before approving. */
 function isWarning(effect: ContentFixDetail["effects"][number]): boolean {
   return effect.kind === "answerKeyChanged" || effect.kind === "itemReplaced";
+}
+
+function effectLines(fix: Pick<ContentFixDetail, "changes" | "effects" | "rowLabels">): Line[] {
+  const screenList = fix.changes.some(
+    (change) => change.model === "Lesson" && change.op === "setScreens",
+  );
+
+  const planOnly = fix.effects.every((effect) => effect.kind === "planChanged");
+
+  const stored = fix.effects.map((effect) => {
+    const text = describeEffect({ effect, rowLabels: fix.rowLabels });
+    const warning = isWarning(effect);
+
+    if (effect.kind === "lessonVersion" && screenList) {
+      return {
+        text: `${text} Learners in the lesson now finish the version they started.`,
+        warning,
+      };
+    }
+
+    return {
+      text:
+        effect.kind === "planChanged" && planOnly
+          ? `The screens don't change, so learners see nothing new. ${text}`
+          : text,
+      warning,
+    };
+  });
+
+  const lines = [...stored, ...screenListLines(fix.changes), ...planLines(fix.changes)].filter(
+    (line) => line.text,
+  );
+
+  return [...lines.filter((line) => line.warning), ...lines.filter((line) => !line.warning)];
 }
 
 /** One effect is a sentence; several are a list. */
 export function ContentFixEffects({
   fix,
 }: {
-  fix: Pick<ContentFixDetail, "effects" | "rowLabels">;
+  fix: Pick<ContentFixDetail, "changes" | "effects" | "rowLabels">;
 }) {
-  const [only, ...others] = fix.effects;
+  const lines = effectLines(fix);
+  const [only] = lines;
 
   if (!only) {
     return <AdminSectionEmpty>Nothing else changes.</AdminSectionEmpty>;
   }
 
-  if (others.length === 0 && !isWarning(only)) {
-    return <p className="text-sm">{describeEffect({ effect: only, rowLabels: fix.rowLabels })}</p>;
+  if (lines.length === 1 && !only.warning) {
+    return <p className="text-sm">{only.text}</p>;
   }
 
   return (
     <ul className="flex flex-col gap-2 text-sm">
-      {fix.effects.map((effect) => (
-        <li className="flex gap-2" key={JSON.stringify(effect)}>
-          {isWarning(effect) ? (
+      {lines.map((line) => (
+        <li className="flex gap-2" key={line.text}>
+          {line.warning ? (
             <TriangleAlertIcon aria-hidden="true" className="text-warning mt-0.5 size-4 shrink-0" />
           ) : (
             <span aria-hidden="true" className="text-muted-foreground w-4 shrink-0 text-center">
               ·
             </span>
           )}
-          {describeEffect({ effect, rowLabels: fix.rowLabels })}
+          {line.text}
         </li>
       ))}
     </ul>

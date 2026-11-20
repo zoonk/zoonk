@@ -84,7 +84,7 @@ function ScheduleTime({
   const marked = getMarkedTimes(found.found);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" data-slot="schedule-time">
       <OnboardingQuestionShown step="schedule" />
 
       <DailyTimePicker

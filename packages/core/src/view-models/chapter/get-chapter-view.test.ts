@@ -371,4 +371,37 @@ describe(getChapterView, () => {
       { ideas: ["Atoms are mostly empty."], lessonId: lessons[0]?.id, title: "Lesson about Atom" },
     ]);
   });
+
+  it("counts no mistakes from a subject the learner took out of the plan", async () => {
+    const { chapters, plan, skills, user } = await signedInCourseGoal({
+      statuses: ["done", "done", "todo", "todo"],
+    });
+
+    await Promise.all([
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ name: "Removed" }, { name: "Kept" }],
+            skills: skills.map((skill, index) => ({
+              lessons: 1,
+              name: skill.name,
+              phase: Math.floor(index / 2),
+              skillId: skill.id,
+            })),
+          },
+          settings: { skippedAreas: ["Removed"] },
+        },
+        where: { id: plan.id },
+      }),
+      mistakeFixture({ skillId: skills[0]?.id, userId: user.id }),
+      mistakeFixture({ skillId: skills[2]?.id, userId: user.id }),
+    ]);
+
+    const [removed, kept] = await Promise.all(
+      chapters.map((chapter) => getChapterView({ chapterId: chapter.id })),
+    );
+
+    expect(removed?.status === "ready" && removed.chapter.mistakes).toStrictEqual({ open: 0 });
+    expect(kept?.status === "ready" && kept.chapter.mistakes).toStrictEqual({ open: 1 });
+  });
 });

@@ -1,6 +1,11 @@
 import { getGlassesProgress } from "@repo/packages/core/src/milestones/milestone-rules.ts";
 import { BRAIN_POWER_BONUS } from "@repo/packages/core/src/sessions/brain-power.ts";
-import { BuddyScreen, useBuddyTutor } from "@repo/packages/learn/src/buddies/buddy-screen.tsx";
+import {
+  BuddyScreen,
+  type BuddyStatusView,
+  useBuddyTutor,
+} from "@repo/packages/learn/src/buddies/buddy-screen.tsx";
+import { type TutorToolActions } from "@repo/packages/learn/src/conversation/tutor-tool-offer.tsx";
 import { TutorConversation } from "@repo/packages/player/src/questions/tutor-conversation.tsx";
 import { calculateBeltLevel, getBeltStartBrainPower } from "@repo/packages/utils/src/belt-level.ts";
 import {
@@ -8,11 +13,13 @@ import {
   getBuddyStage,
   getNextBuddyStage,
 } from "@repo/packages/utils/src/buddy.ts";
-import { useEffect } from "react";
+import { type ComponentProps, useEffect } from "react";
 // The Buddy tab: header with the Energy chip, the buddy and the tutor conversation.
-import { Link } from "../learn/common";
+import { Link, MISSION_LINKS, actions } from "../learn/common";
 import { type Lang, story } from "../story";
-import { AppFrame, NOOP, NOOP_ASYNC } from "./shell";
+import { AppFrame, NOOP } from "./shell";
+
+type BuddyActions = ComponentProps<typeof BuddyScreen>["actions"];
 
 export const DEFAULT_BP = 4340;
 
@@ -41,7 +48,7 @@ export function buddyStatus({
   energy: number | null;
   lang: Lang;
   studied: boolean;
-}) {
+}): BuddyStatusView {
   return {
     ...buddyGrowth(bp),
     buddy: { glasses: "round", kind: "zu", name: story[lang].buddyName, picked: true },
@@ -75,10 +82,10 @@ export function buddyStatus({
             { done: 0, kind: "fixMistake", minutes: 4, status: "todo", total: 1 },
           ],
     },
-  } as any;
+  };
 }
 
-export function tabBuddy(status: any) {
+export function tabBuddy(status: BuddyStatusView) {
   return {
     beltColor: status.belt.color,
     energy: status.energy.current,
@@ -106,17 +113,12 @@ const TUTOR = {
   canAsk: true,
   connection: { apiUrl: "http://localhost:9", getHeaders: async () => ({}) },
   navigation: { linkComponent: Link, loginHref: "/login", subscriptionHref: "/subscription" },
-} as any;
+};
 
 function Conversation() {
   const content = useBuddyTutor();
   return (
-    <TutorConversation
-      goalId="exam"
-      initialThread={EMPTY_THREAD as any}
-      tutor={TUTOR}
-      {...(content as any)}
-    />
+    <TutorConversation goalId="exam" initialThread={EMPTY_THREAD} tutor={TUTOR} {...content} />
   );
 }
 
@@ -126,7 +128,7 @@ export function BuddyTab({ lang, q }: { lang: Lang; q: URLSearchParams }) {
   const studied = (q.get("studied") ?? "1") === "1";
   const bp = Number(q.get("bp") ?? DEFAULT_BP);
   const status = buddyStatus({ bp, energy, lang, studied });
-  const missions = status.today.missions;
+  const missions = status.today?.missions ?? [];
 
   return (
     <AppFrame
@@ -134,18 +136,17 @@ export function BuddyTab({ lang, q }: { lang: Lang; q: URLSearchParams }) {
       goal="exam"
       lang={lang}
       missions={{
-        done: missions.filter((m: any) => m.status === "done").length,
+        done: missions.filter((m) => m.status === "done").length,
         total: missions.length,
       }}
       tab="buddy"
     >
       <BuddyScreen
-        actions={{
-          decidePlanChange: NOOP_ASYNC,
-          missionLinks: { askBuddy: NOOP } as any,
-          saveBuddy: NOOP_ASYNC,
-          tools: { choose: NOOP_ASYNC } as any,
-        }}
+        actions={actions<BuddyActions>({
+          missionLinks: { ...MISSION_LINKS, askBuddy: NOOP },
+          saveBuddy: async () => true,
+          tools: actions<TutorToolActions>({}),
+        })}
         hrefs={{ energy: "/energy", logbook: "/logbook", memory: "/settings/memory" }}
         memoryCount={4}
         situation={{ hasMistake: true, hasToday: true }}

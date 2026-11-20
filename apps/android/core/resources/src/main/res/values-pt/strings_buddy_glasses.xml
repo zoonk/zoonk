@@ -8,7 +8,7 @@
   "buddy_glasses_earn_cat_eye": "61cbc06fe897ad66026860f2eb4a373622a42f9a95d51d2f78b5e11e28e89442",
   "buddy_glasses_earn_monocle": "24db2e4c37ddd0ffbb45dee22f32ad36da32c79286333e3451b7f7402f48dbf2",
   "buddy_glasses_earn_retro": "01f9d2b8cde8d02946be34ee17160089c447566224c563e797a537d0b0837ad3",
-  "buddy_glasses_earn_round": "376fcbcaccd7183ca317deb37305c58823d9c599285f49b7bb0f9477be821133",
+  "buddy_glasses_earn_round": "61f6a843673f70a7f42072fe2f140f6695991e1e74eebfbad378881fe763e63f",
   "buddy_glasses_earn_star": "d3164ef93e04a62de3127542e4a12facba3b8a8b6143867e06840a38d036d8ce",
   "buddy_glasses_monocle": "7977968ab1c058f51a775d1cde03622beef3a1854aacf9fabe0b2115cae05e67",
   "buddy_glasses_retro": "a3c8ac8f4a089c4b4b01fb86eb4864b41c30c5614f8058081f65cdafab175001",
@@ -39,7 +39,7 @@
     <string name="buddy_glasses_worn_cat_eye">Óculos gatinho</string>
     <string name="buddy_glasses_worn_retro">Óculos retrô</string>
     <string name="buddy_glasses_worn_monocle">Um monóculo</string>
-    <string name="buddy_glasses_earn_round">Vem com seu parceiro</string>
+    <string name="buddy_glasses_earn_round">Vêm com seu colega</string>
     <string name="buddy_glasses_earn_star">Vencer seu primeiro desafio</string>
     <string name="buddy_glasses_earn_aviator">Conclua seu primeiro desafio semanal</string>
     <string name="buddy_glasses_earn_cat_eye">Conclua todas as missões em 7 dias diferentes</string>

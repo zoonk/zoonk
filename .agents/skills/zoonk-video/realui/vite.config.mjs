@@ -7,7 +7,8 @@ import catalogLoader from "next-intl/extractor/catalogLoader";
 import extractionLoader from "next-intl/extractor/extractionLoader";
 
 const studio = path.dirname(import.meta.dirname);
-const { repo } = JSON.parse(readFileSync(path.join(studio, "studio.json"), "utf8"));
+const studioConfig = JSON.parse(readFileSync(path.join(studio, "studio.json"), "utf8"));
+const { repo } = studioConfig;
 const shims = path.join(repo, "packages/player/src/_test-utils/shims");
 
 /** Runs one of next-intl's webpack loaders, the ones Main's build uses. */
@@ -56,5 +57,10 @@ export default {
     dedupe: ["react", "react-dom"],
   },
   // Overlays and reloads blank the frame mid-capture.
-  server: { fs: { strict: false }, hmr: { overlay: false }, port: 5199, strictPort: true },
+  server: {
+    fs: { strict: false },
+    hmr: { overlay: false },
+    port: studioConfig.port,
+    strictPort: true,
+  },
 };

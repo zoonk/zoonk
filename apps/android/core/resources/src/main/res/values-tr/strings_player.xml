@@ -121,6 +121,7 @@
   "player_opening_map_hint": "ad461cf9b70fb83f822466580e5948624bc1da59c52b0daf532ea736bc37fb89",
   "player_opening_map_idea": "cc65cd7e78ee6a1f042bec83f20ab3dec58796fe862677cce22341c80b14181e",
   "player_opening_map_show": "ae0b195ed02462fc0e80c0cbb7221dcb67f3ffc668e33cac6e25db6d93abdf36",
+  "player_opening_map_title": "8f29a9332bd82e3d0c49ab5695066c41746ce0b84123b71c9f29eb48f7afa7ea",
   "player_part_of": "c9d745c1a3c7affefaecc365a89d28eacab7de5bfbd34e4709b693536252a865",
   "player_phase_draw": "d9dc454637ae1726131338e10da07261f471963c8f83560810f78652722cc1f7",
   "player_phase_draw_line_1": "ed8c00d727270e18f4fb2f460314b3387b07687298623e7bfc577015fbf5743c",
@@ -201,6 +202,8 @@
     <string name="player_idea_position">Kavram %1$s / %2$s</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">Örnek</string>
+    <!-- Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach. -->
+    <string name="player_opening_map_title">Bu derste öğreneceklerin</string>
     <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
     <string name="player_opening_map_hint">Neleri kapsadığını görmek için bir kavrama dokun</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->

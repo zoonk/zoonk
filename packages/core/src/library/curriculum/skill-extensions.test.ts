@@ -353,14 +353,24 @@ describe("skill extensions", () => {
     ).resolves.toStrictEqual([]);
   });
 
-  it("asks for nothing while the course's outline is being written", async () => {
-    const { course, goal } = await setup();
+  it("asks for the next chapter while another outline is writing the course", async () => {
+    const { chapter, course, goal, skill } = await setup();
 
     await prisma.course.update({ data: { outlineStatus: "running" }, where: { id: course.id } });
 
-    await expect(
-      listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id }),
-    ).resolves.toStrictEqual([]);
+    const requests = await listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id });
+
+    expect(
+      requests.flatMap((request) =>
+        request.bands.flatMap((band) =>
+          (band.extend ?? []).map((extension) => [
+            request.courseId,
+            extension.skill.id,
+            extension.afterChapterId,
+          ]),
+        ),
+      ),
+    ).toStrictEqual([[course.id, skill.id, chapter.id]]);
   });
 
   it("asks for a long stand-in's next chapter from its first day, not the last one it spans", async () => {

@@ -4,7 +4,7 @@ import { BuddyTab } from "./buddy-energy";
 import { BuddyGrew } from "./buddy-grew";
 import { EnergyStatsPage, LevelPage } from "./buddy-stats";
 
-export type View = (p: { lang: Lang; state: string; q: URLSearchParams }) => any;
+export type View = (p: { lang: Lang; state: string; q: URLSearchParams }) => React.ReactNode;
 
 export const views: Record<string, View> = {
   energy: ({ lang, q }) => <BuddyTab lang={lang} q={q} />,

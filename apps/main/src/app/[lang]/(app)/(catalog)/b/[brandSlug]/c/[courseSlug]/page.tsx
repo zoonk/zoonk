@@ -6,7 +6,7 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { getCourseStaticParams } from "@/data/catalog/catalog-static-params";
 import { type LibraryCourseRoute, resolveCourseRoute } from "@/data/catalog/resolve-catalog-route";
 import { getCourseUrl } from "@/lib/public/public-canonical";
-import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
+import { listCourseEditionLinks } from "@zoonk/core/courses/published-editions";
 import { getContentLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -29,7 +29,7 @@ export async function generateStaticParams({ params }: { params: { lang: string 
 
 /** Editions in other languages have their own slugs, so each is listed as an explicit alternate. */
 async function getEditionAlternates(courseId: string): Promise<Record<string, string>> {
-  const editions = await listPublishedCourseEditions({ courseId });
+  const editions = await listCourseEditionLinks(courseId);
 
   return Object.fromEntries(
     editions.map((edition) => [

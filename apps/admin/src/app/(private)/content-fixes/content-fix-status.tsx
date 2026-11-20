@@ -35,6 +35,17 @@ export function findAppliedRevert(fix: {
     : null;
 }
 
+/** What else the fix does, said for where it stands: still to decide, applied, or turned down. */
+export const contentFixEffectsTitles: Record<ContentFixState, string> = {
+  applied: "What else it changed",
+  approved: "What else approving does",
+  proposed: "What else approving does",
+  rejected: "What else approving would have done",
+  reverted: "What else it changed",
+  stale: "What else approving would have done",
+  withdrawn: "What else approving would have done",
+};
+
 export function contentFixState(fix: {
   revertedBy: readonly RevertRef[];
   status: ContentFixStatus;

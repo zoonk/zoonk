@@ -8,6 +8,7 @@ import {
   type WrittenVersion,
   readLessonSources,
 } from "../../lessons/_utils/checked-version";
+import { readLessonRepairBase } from "../../lessons/_utils/lesson-repair-base";
 import {
   type LessonWritingInputs,
   loadPublishedLessonInputs,
@@ -17,7 +18,6 @@ import {
   type LessonScreenToSave,
   type ScreenProvenance,
 } from "../../lessons/_utils/save-lesson-content";
-import { readCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { getPictureKey } from "../../media/_utils/step-image-request";
 
 export const BACKGROUND_TIER = chooseServiceTier({ wait: "later" });
@@ -36,6 +36,7 @@ export type PublishedDraftState = {
   gate: LessonGate;
   version: WrittenVersion;
   replaces: number;
+  repairBase: string;
 };
 
 export type PublishedFix =
@@ -72,14 +73,19 @@ export async function loadCheck({
   context: CheckContext;
   version: number;
   writerModel: string;
-}): Promise<{ gate: LessonGate; inputs: LessonWritingInputs } | null> {
-  const [inputs, current, analytics] = await Promise.all([
+}): Promise<{ gate: LessonGate; inputs: LessonWritingInputs; repairBase: string } | null> {
+  const repairBase = await readLessonRepairBase({ lessonId: context.lessonId, version });
+
+  if (!repairBase) {
+    return null;
+  }
+
+  const [inputs, analytics] = await Promise.all([
     loadPublishedLessonInputs(context.lessonId),
-    readCurrentLessonVersion(context.lessonId),
     toTaskAnalytics(context),
   ]);
 
-  if (!inputs || current !== version) {
+  if (!inputs) {
     return null;
   }
 
@@ -92,6 +98,7 @@ export async function loadCheck({
       writerModel,
     },
     inputs,
+    repairBase,
   };
 }
 

@@ -33,7 +33,7 @@
   "account_name_required": "d2263a53dd605e83453e0d6fba640ee2bb223d183aa43cfcdca62ef87b2328d5",
   "account_name_too_long": "097d61277cca2dd3b6e22a84d03c4160c556afc32e9182c58178ca688e446393",
   "account_new_code_failed": "b0f17daf116254d6c8483e0f461e4fece62dd6ca671833f13e433168b30cef00",
-  "account_new_code_sent": "44f922d7e20c9c4e9247d8a6300d00be3d2c50a36745487360366504bb1de7af",
+  "account_new_code_sent": "d5225d515b7995c588ea010eb5fce0cea4b9e09ac9992a4ed03ebc765248fea6",
   "account_new_code_wait": "377b84d27e1a0a891a9a440d8e38c22eba8acdddbc79977b770f059b3986197e",
   "account_or": "040cb0febf0678cbf9fbb38bd8050b1a78ef2d7d2b4b32b48271a9df838bdc32",
   "account_privacy": "278e339112b8315e5ecfbd3acf6fd982f732abe3239ab79f60ee2a72f4f2b958",
@@ -82,7 +82,7 @@
     <string name="account_send_again">再送信する</string>
     <string name="account_change_email">メールアドレスを変更する</string>
     <!-- %1$s is an email address. -->
-    <string name="account_new_code_sent">%1$sに新しいコードを送信しました。</string>
+    <string name="account_new_code_sent">%1$sにメールを再送しました。</string>
     <string name="account_new_code_wait">コードの再送は1分待ってからお試しください。</string>
     <string name="account_new_code_failed">新しいコードを送信できませんでした。もう一度お試しください。</string>
     <string name="account_failure_invalid_email">有効なメールアドレスを入力してください</string>

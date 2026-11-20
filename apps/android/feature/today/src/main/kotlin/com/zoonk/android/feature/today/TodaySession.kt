@@ -45,11 +45,12 @@ import com.zoonk.android.feature.session.SessionBar
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.drawsDayProgress
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -98,7 +99,7 @@ private fun LazyListScope.sessionQueue(
     val queue = model.day.queue
     val foldsDone = queue.done.size > DONE_ROWS
     val moreOpen = viewModel.moreOpen
-    val coming = if (next != null && (model.day.lessonsComing || model.day.lessonsToPrepare)) 1 else 0
+    val coming = if (model.day.lessonsComing || model.day.lessonsToPrepare) 1 else 0
     val upcoming = queue.after.size + coming
     val shown = shownUpcomingRows(upcoming)
     val more = upcoming - shown
@@ -186,8 +187,8 @@ private fun LazyListState.keepFoldInView(hidden: Int) {
 }
 
 /**
- * Holds the place of the day's lessons that aren't written yet: Today reads again until they land
- * while they're outlined, and asks the learner for them while nobody is.
+ * Main's `ComingLessonsRow`: holds the place of the day's lessons that aren't written yet, named by
+ * their plan topic, with their time, or the ask for them while nobody is writing them.
  */
 @Composable
 private fun ComingLessonsRow(
@@ -197,45 +198,50 @@ private fun ComingLessonsRow(
     modifier: Modifier,
     divider: Boolean,
 ) {
+    val asks = model.comingAsks
+    val failed = asks && viewModel.failed == TodayTap.Prepare
+
     DayQueueRow(
         onClick = null,
         modifier = modifier,
         divider = divider,
         leading = { KindMark(LearnKind.Lesson) },
-        supporting = { ComingLessonsLine(model, viewModel, actions) },
+        supporting = {
+            Column {
+                Text(stringResource(comingNote(asks)), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                if (failed) {
+                    Text(
+                        stringResource(R.string.today_save_failed),
+                        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
+        },
+        meta = {
+            if (asks) {
+                OutlinedButton(
+                    onClick = actions.prepare,
+                    busy = viewModel.pending == TodayTap.Prepare,
+                    enabled = viewModel.pending == null || viewModel.pending == TodayTap.Prepare,
+                    size = ButtonSize.Small,
+                ) {
+                    Text(stringResource(R.string.today_get_lessons))
+                }
+            } else if (model.day.heldMinutes > 0) {
+                DayMinutes(model.day.heldMinutes)
+            }
+        },
     ) {
-        Text(text = stringResource(R.string.today_coming_title), maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(text = comingTitle(model), maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
+/** Main's `useComingLessons`: the held time is named by the plan topic it's for. */
 @Composable
-private fun ComingLessonsLine(
-    model: TodayDayModel,
-    viewModel: TodayViewModel,
-    actions: TodayActionHandlers,
-) {
-    if (!model.day.lessonsToPrepare) {
-        Text(
-            stringResource(if (model.writingStalled) R.string.today_coming_stalled else R.string.today_coming_writing),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        return
-    }
+internal fun comingTitle(model: TodayDayModel): String = model.day.lessonPlaceholderTitle ?: stringResource(R.string.today_coming_title)
 
-    Column {
-        TextButton(onClick = actions.prepare, enabled = viewModel.pending != TodayTap.Prepare) {
-            Text(stringResource(R.string.today_get_them_now))
-        }
-        if (viewModel.failed == TodayTap.Prepare) {
-            Text(
-                stringResource(R.string.today_save_failed),
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-            )
-        }
-    }
-}
+internal fun comingNote(asks: Boolean): Int = if (asks) R.string.today_coming_not_written else R.string.today_coming_writing
 
 private fun LazyListScope.upNext(
     lessons: List<StudyExtraTimeLessonsInner>,
@@ -381,12 +387,15 @@ private fun TodayDayStatus(
         return
     }
 
+    // A started day's lessons to come have their own row in its list, which says how they're doing.
+    val listHolds = day.steps.isNotEmpty()
+
     when (model.state) {
         StudySession.State.DONE -> {
             val link =
                 if (model.keepLearning) {
                     statusLink(stringResource(R.string.today_see_summary)) {
-                        actions.navigate(AppRoute.Session(goalId = (day.goalId ?: model.today.goal.id).toString()))
+                        actions.navigate(model.summaryRoute)
                     }
                 } else {
                     null
@@ -402,25 +411,18 @@ private fun TodayDayStatus(
         }
 
         StudySession.State.WAITING -> {
-            if (model.writingStalled) {
-                TodayStatusLine(
-                    R.drawable.ic_schedule,
-                    stringResource(R.string.today_waiting_stalled),
-                    stringResource(R.string.today_waiting_stalled_detail),
-                    modifier,
-                )
-            } else {
-                TodayStatusLine(
-                    icon = null,
-                    sentence = stringResource(R.string.today_waiting),
-                    clause = null,
-                    modifier = modifier,
-                    leading = { CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) },
-                )
-            }
+            if (listHolds) return
+            TodayStatusLine(
+                icon = null,
+                sentence = stringResource(R.string.today_waiting),
+                clause = null,
+                modifier = modifier,
+                leading = { CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) },
+            )
         }
 
         StudySession.State.PREPARE -> {
+            if (listHolds) return
             TodayStatusLine(R.drawable.ic_schedule, stringResource(R.string.today_lessons_not_written), null, modifier)
         }
 

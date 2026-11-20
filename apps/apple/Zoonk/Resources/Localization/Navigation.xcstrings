@@ -428,25 +428,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kumpel"
+            "value" : "Buddy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compañero"
+            "value" : "Compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compagnon"
+            "value" : "Binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compagno"
+            "value" : "Socio"
           }
         },
         "ja" : {
@@ -470,7 +470,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parceiro"
+            "value" : "Colega"
           }
         },
         "tr" : {
@@ -3378,25 +3378,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel beantwortet deine Fragen und passt deinen Plan an."
+            "value" : "Dein Buddy beantwortet deine Fragen und passt deinen Plan an."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero responde tus preguntas y ajusta tu plan."
+            "value" : "Tu compa responde tus preguntas y ajusta tu plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon répond à tes questions et ajuste ton plan."
+            "value" : "Ton binôme répond à tes questions et ajuste ton plan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno risponde alle tue domande e adatta il tuo piano."
+            "value" : "Il tuo socio risponde alle tue domande e adatta il tuo piano."
           }
         },
         "ja" : {
@@ -3420,7 +3420,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro responde suas perguntas e ajusta seu plano."
+            "value" : "Seu colega responde às suas perguntas e ajusta seu plano."
           }
         },
         "tr" : {

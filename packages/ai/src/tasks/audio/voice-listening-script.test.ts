@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createWavAudio } from "./_test-utils/wav-fixture";
 import { type generateSpeechWithProvider } from "./speech-provider";
-import { voiceListeningScript } from "./voice-listening-script";
+import { voiceListeningPart, voiceListeningScript } from "./voice-listening-script";
 
 const { generateSpeechWithProviderMock } = vi.hoisted(() => ({
   generateSpeechWithProviderMock: vi.fn<typeof generateSpeechWithProvider>(),
@@ -115,5 +115,34 @@ describe(voiceListeningScript, () => {
 
     expect(data).toBeNull();
     expect(error?.message).toBe("Unavailable");
+  });
+});
+
+describe(voiceListeningPart, () => {
+  it("uses one speech call per durable attempt and preserves the original WAV on recovery", async () => {
+    const part = { ...LINES[0], turn: 0 };
+    const response = speaks(1);
+
+    generateSpeechWithProviderMock
+      .mockReset()
+      .mockRejectedValueOnce(new Error("Unavailable"))
+      .mockResolvedValueOnce(response);
+
+    await expect(voiceListeningPart({ attempt: 1, language: "en", part })).rejects.toThrow(
+      "Unavailable",
+    );
+
+    expect(generateSpeechWithProviderMock).toHaveBeenCalledOnce();
+
+    const recovered = await voiceListeningPart({ attempt: 2, language: "en", part });
+    expect(recovered.audio).toBe(response.audio);
+    expect(recovered.provenance).toMatchObject({ model: FLASH, requestedModel: FLASH_LITE });
+
+    expect(
+      generateSpeechWithProviderMock.mock.calls.map(([input]) => [input.model, input.voice]),
+    ).toStrictEqual([
+      [FLASH_LITE, part.voice],
+      [FLASH, part.voice],
+    ]);
   });
 });

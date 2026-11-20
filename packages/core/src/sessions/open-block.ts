@@ -150,9 +150,23 @@ async function openNext({
     return openingResult({ kind: "changed" });
   }
 
-  return next
-    ? openSessionBlock({ block: next, sessionId: session.id, timeZone, userId })
-    : openingResult({ blockId: null, kind: "session", sessionId: session.id });
+  if (next) {
+    return openSessionBlock({ block: next, sessionId: session.id, timeZone, userId });
+  }
+
+  const seenWithoutPendingRewards = await prisma.studySummaryVisit.findUnique({
+    select: { visitId: true },
+    where: {
+      user: { certificates: { none: { shownAt: null } }, milestones: { none: { shownAt: null } } },
+      userDate: { localDate: owned.session.localDate, userId },
+    },
+  });
+
+  return openingResult(
+    seenWithoutPendingRewards
+      ? { kind: "today" }
+      : { blockId: null, kind: "session", sessionId: session.id },
+  );
 }
 
 async function openTappedBlock({

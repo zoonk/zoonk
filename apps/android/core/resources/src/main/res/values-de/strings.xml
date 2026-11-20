@@ -53,7 +53,7 @@
   "load_failed_title": "ad734dc11ee9cc209cc4573be45c70b1f3607946b31ff91ae805cabd23337d43",
   "load_failed_try_again": "66c55caebd82532c7b8ac874b156c93fa6f73401887624769384c590c0ba5cce",
   "navigation_back": "991c560fdb8edd1501e082cdc5e49c3efa7cf513e1700404512bf8cfec77c65f",
-  "navigation_buddy": "ba1cd1244098c498a98569ba446cb636f9c6bbc3bd0e69445b0077ccbd8a8043",
+  "navigation_buddy": "0a4c0246d70328e49f405cd83619102c7527b308aa51a19846fb1b780b448d52",
   "navigation_completed_lessons": "90906344d4a6abdda7bc69acd55049cf635341e07a0300aad75d039bc07509c0",
   "navigation_exam": "f093e8df8c208761b85153ec9e2a7385cd2d659f00a8af270866c16971f2895c",
   "navigation_mind_maps": "0f6332d21ef00b88cc190534244ab1c578c29ec9aee6a7dca8d9fcf12ed15a4a",
@@ -84,7 +84,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="navigation_today">Heute</string>
     <string name="navigation_plan">Plan</string>
-    <string name="navigation_buddy">Kumpel</string>
+    <string name="navigation_buddy">Buddy</string>
     <string name="navigation_study">Lernen</string>
     <string name="navigation_mistakes">Fehlerheft</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
