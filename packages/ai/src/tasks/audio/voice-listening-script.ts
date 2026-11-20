@@ -32,12 +32,12 @@ const LISTENING_SPEECH_MODELS: readonly SpeechModelName[] = [
   speechModels.geminiFlash,
 ];
 
-export type ListeningLine = { accent: string; text: string; voice: TTSVoice };
+type ListeningLine = { accent: string; text: string; voice: TTSVoice };
 
 export type ListeningPart = ListeningLine & { turn: number };
 
 export { getListeningVoicePromptVersion } from "./listening-voice-prompt";
-export { type SpeechModelName, isSpeechModelName } from "./speech-models";
+export { isSpeechModelName } from "./speech-models";
 
 type ListeningScript = { language: string; lines: readonly ListeningLine[] };
 
@@ -129,6 +129,7 @@ export async function joinListeningParts(parts: readonly RecordedPart[]) {
   return { audio, durationMs: Math.round(durationSeconds * MS_PER_SECOND), format: "mp3" as const };
 }
 
+/** @internal Whole-script entry point for voice evaluations. */
 export async function voiceListeningScript({
   analytics,
   language,

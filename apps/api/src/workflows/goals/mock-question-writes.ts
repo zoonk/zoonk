@@ -1,10 +1,6 @@
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import {
-  listListeningPartsToPrepareStep,
-  preparePartSet,
-  voiceListeningSetStep,
-} from "../listening/steps/listening-sets-steps";
+import { prepareListeningRecordings } from "../listening/listening-sets-workflow";
 import { type PlacementItemsWritten, preparePlacementItems } from "./placement-items";
 import { prepareSkillExamFormatItems } from "./steps/exam-format-items-step";
 import { loadMockWritingSkillsStep } from "./steps/mock-question-steps";
@@ -103,20 +99,10 @@ export async function prepareMockRecordings({
   goalId: string;
   workflowRunId: string;
 }): Promise<number> {
-  const unready = await listListeningPartsToPrepareStep({ goalId });
-
-  if (!unready) {
-    return 0;
-  }
-
-  const context = { analytics, wait: "learner" as const, workflowRunId };
-
-  const voiced = await Promise.allSettled(
-    unready.parts.map(async (part) => {
-      const setId = await preparePartSet({ ...context, exam: unready.exam, part });
-      return setId ? voiceListeningSetStep({ ...context, setId }) : false;
-    }),
+  const { voiced } = await prepareListeningRecordings(
+    { analytics, goalId, wait: "learner" },
+    workflowRunId,
   );
 
-  return voiced.filter((result) => result.status === "fulfilled" && result.value).length;
+  return voiced;
 }
