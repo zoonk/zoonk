@@ -7,6 +7,7 @@ import {
 import { type OnboardingStep } from "@repo/packages/core/src/view-models/onboarding/onboarding-contract.ts";
 import { StepDots } from "@repo/packages/learn/src/_components/step-dots.tsx";
 import { getSetupProgress } from "@repo/packages/learn/src/onboarding/_utils/setup-progress.ts";
+import { type OnboardingActions } from "@repo/packages/learn/src/onboarding/onboarding-actions.ts";
 import { BAR_MIDDLE_CLASS } from "@repo/packages/learn/src/onboarding/onboarding-bar.tsx";
 import { OnboardingFrame } from "@repo/packages/learn/src/onboarding/onboarding-frame.tsx";
 import { OnboardingRailProvider } from "@repo/packages/learn/src/onboarding/onboarding-rail.tsx";
@@ -17,7 +18,7 @@ import { PlanReveal } from "@repo/packages/learn/src/onboarding/steps/plan-revea
 import { ScheduleStep } from "@repo/packages/learn/src/onboarding/steps/schedule-step.tsx";
 import { UnderstoodScreen } from "@repo/packages/learn/src/onboarding/understood/understood-screen.tsx";
 import { type ReactNode, useEffect } from "react";
-import { OnboardingShell, S, noop, type ViewProps } from "./common";
+import { OnboardingShell, S, actions, noop, type ViewProps } from "./common";
 import { ACTIONS as PLAN_ACTIONS, careerPlan, careerSyllabus } from "./plan";
 
 export const CAREER_ID = "goal-career";
@@ -312,13 +313,11 @@ function RevealView({ lang }: ViewProps) {
       <OnboardingRailProvider rail={null}>
         <OnboardingFrame bar={{ end: null, middle: null, onBack: undefined }}>
           <PlanReveal
-            actions={
-              {
-                getPlan: async () => ({ status: "ready", ...revealed }),
-                markPlanRevealed: async () => true,
-                readWarmUp: async () => null,
-              } as any
-            }
+            actions={actions<OnboardingActions>({
+              getPlan: async () => ({ status: "ready", ...revealed }),
+              markPlanRevealed: async () => true,
+              readWarmUp: async () => null,
+            })}
             firstLesson={null}
             focusTestHref="/focus-test"
             goal={{ displayName: c.title, kind: "learn" }}
@@ -327,7 +326,7 @@ function RevealView({ lang }: ViewProps) {
             isGuest={false}
             lessonHref={(id) => `/learn/${id}`}
             library={null}
-            planActions={PLAN_ACTIONS as any}
+            planActions={PLAN_ACTIONS}
             planLinkHref={(id) => `/plans/${id}`}
             run={null}
             signUpHref="/login"
@@ -339,7 +338,7 @@ function RevealView({ lang }: ViewProps) {
   );
 }
 
-export const views: Record<string, (p: ViewProps) => any> = {
+export const views: Record<string, (p: ViewProps) => React.ReactNode> = {
   understood: UnderstoodView,
   diagnostic: DiagnosticView,
   schedule: ScheduleView,

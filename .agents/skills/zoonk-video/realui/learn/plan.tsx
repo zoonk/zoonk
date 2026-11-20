@@ -1,10 +1,12 @@
 // Plan tab views (plan-career, plan-learn, tools): the real JourneyScreen / SubjectScreen with view models built from story.ts.
+import { countSkillStates } from "@repo/packages/core/src/learner/mastery-state.ts";
 import {
   type PlanView,
   type PlanPhaseView,
   type PlanChapterView,
   type PlanDayView,
 } from "@repo/packages/core/src/plans/plan-view-contract.ts";
+import { measurePreparation } from "@repo/packages/core/src/preparation/section-preparation.ts";
 import {
   type SyllabusView,
   type SyllabusSubject,
@@ -28,6 +30,13 @@ import { toSyllabusSection } from "@repo/packages/learn/src/syllabus/syllabus-se
 import { AskTutor } from "@repo/packages/player/src/questions/ask-tutor.tsx";
 import { useEffect, useMemo, type ReactNode } from "react";
 import { ADAPTERS, CAREER_GOAL_ID, LEARN_GOAL_ID, S, TabShell, ZU, type ViewProps } from "./common";
+
+declare global {
+  interface Window {
+    /** Set once a view's scripted taps have run, so a capture waits for them. */
+    __scripted?: boolean;
+  }
+}
 
 const TODAY = "2026-11-03";
 const WEEK_START = "2026-11-02";
@@ -275,7 +284,7 @@ export function careerSyllabus(lang: "en" | "pt"): SyllabusView {
     return {
       areas: [module.name],
       chapters: [],
-      displayWeight: null as any,
+      displayWeight: null,
       group: null,
       imageUrl: null,
       key: slug(module.name),
@@ -394,16 +403,34 @@ const LINKS: JourneyLinks = {
   subject: (key) => `/plan/${key}`,
 };
 
+/** A learner on the plan's first day: core's measure of no studied skills yet. */
 function standingFor(
+  goalId: string,
   lessons: SyllabusView["lessons"] | null,
   topics: PlanTopics | null,
 ): JourneyStanding {
+  const measured = measurePreparation({
+    answers: [],
+    asOf: new Date(`${TODAY}T12:00:00Z`),
+    mocks: [],
+    skills: [],
+  });
+
   return {
     forExam: false,
     kind: "preparation",
     lessons,
-    preparation: { value: 0, weekGain: 0 } as any,
-    stillNeeded: [] as any,
+    preparation: {
+      ...measured,
+      areas: [],
+      estimatedScore: null,
+      goalId,
+      skills: countSkillStates([]),
+      status: null,
+      weakestAreaId: null,
+      weekGain: 0,
+    },
+    stillNeeded: { areas: [], left: 0, minutes: 0, rule: "solid" },
     topics,
   };
 }
@@ -478,7 +505,7 @@ function CareerModulePage({ lang }: { lang: "en" | "pt" }) {
       canAsk: true,
       connection: { apiUrl: "/__no-tutor", getHeaders: async () => ({}) },
       navigation: {
-        linkComponent: TutorLink as any,
+        linkComponent: TutorLink,
         loginHref: "/login",
         subscriptionHref: "/subscription",
       },
@@ -521,16 +548,16 @@ function CareerPlan({
       tab="journey"
     >
       <JourneyScreen
-        actions={ACTIONS as any}
+        actions={ACTIONS}
         end={{ certificates: null, next: null }}
         goal={{ displayName: career.title, kind: "learn" }}
-        goalStatus={{ onSetStatus: async () => "saved", resume: false, status: "active" } as any}
+        goalStatus={{ onSetStatus: async () => "saved", resume: false, status: "active" }}
         links={LINKS}
         openAdjust={openAdjust}
         plan={careerPlan(lang, tools)}
         refresh={() => {}}
         shareHref="/plan-link/plan"
-        standing={standingFor(syllabus.lessons, getPlanTopics(syllabus))}
+        standing={standingFor(CAREER_GOAL_ID, syllabus.lessons, getPlanTopics(syllabus))}
         syllabus={toSyllabusSection(syllabus)}
         tutor={{ buddy: ZU, href: "/buddy" }}
       />
@@ -565,16 +592,16 @@ function PlanLearnView({ lang, q, state }: ViewProps) {
       tab="journey"
     >
       <JourneyScreen
-        actions={ACTIONS as any}
+        actions={ACTIONS}
         end={{ certificates: null, next: null }}
         goal={{ displayName: learn.title, kind: "learn" }}
-        goalStatus={{ onSetStatus: async () => "saved", resume: false, status: "active" } as any}
+        goalStatus={{ onSetStatus: async () => "saved", resume: false, status: "active" }}
         links={LINKS}
         openAdjust={state === "adjust"}
         plan={learnPlan(lang)}
         refresh={() => {}}
         shareHref="/plan-link/plan"
-        standing={standingFor({ done: 4, known: 0, total: 19 }, null)}
+        standing={standingFor(LEARN_GOAL_ID, { done: 4, known: 0, total: 19 }, null)}
         syllabus={null}
         tutor={{ buddy: ZU, href: "/buddy" }}
       />
@@ -608,7 +635,7 @@ function useScript(script: () => Promise<void>) {
     void script()
       .catch((error) => console.error(error))
       .finally(() => {
-        (window as any).__scripted = true;
+        window.__scripted = true;
       });
   }, []);
 }
@@ -684,7 +711,7 @@ function ToolsView(props: ViewProps) {
   return <CareerPlan {...props} openAdjust tools={tools} />;
 }
 
-export const views: Record<string, (p: ViewProps) => any> = {
+export const views: Record<string, (p: ViewProps) => React.ReactNode> = {
   "plan-career": PlanCareerView,
   "plan-learn": PlanLearnView,
   tools: ToolsView,

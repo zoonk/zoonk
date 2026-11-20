@@ -446,12 +446,14 @@ function Tutored({ lang, finish = false }: { finish?: boolean; lang: Lang }) {
   );
 }
 
-export const views: Record<string, (p: { lang: Lang; state: string; q: URLSearchParams }) => any> =
-  {
-    activity: ({ q, state }) => <Activity id={q.get("id")!} state={state} />,
-    act: ({ lang, q, state }) => <Act k={q.get("k")!} lang={lang} state={state} />,
-    averages: ({ lang }) => <Averages lang={lang} />,
-    word: ({ lang }) => <Word lang={lang} />,
-    tutor: ({ lang }) => <Tutored lang={lang} />,
-    complete: ({ lang }) => <Tutored finish lang={lang} />,
-  };
+export const views: Record<
+  string,
+  (p: { lang: Lang; state: string; q: URLSearchParams }) => React.ReactNode
+> = {
+  activity: ({ q, state }) => <Activity id={q.get("id")!} state={state} />,
+  act: ({ lang, q, state }) => <Act k={q.get("k")!} lang={lang} state={state} />,
+  averages: ({ lang }) => <Averages lang={lang} />,
+  word: ({ lang }) => <Word lang={lang} />,
+  tutor: ({ lang }) => <Tutored lang={lang} />,
+  complete: ({ lang }) => <Tutored finish lang={lang} />,
+};

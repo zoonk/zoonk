@@ -9,11 +9,12 @@ import {
   type BuddyStatusView,
   useBuddyTutor,
 } from "@repo/packages/learn/src/buddies/buddy-screen.tsx";
+import { type TutorToolActions } from "@repo/packages/learn/src/conversation/tutor-tool-offer.tsx";
 import { type LessonTutorConfig } from "@repo/packages/player/src/lesson/tutor/lesson-tutor-context.ts";
 import { TutorConversation } from "@repo/packages/player/src/questions/tutor-conversation.tsx";
 import { useEffect, useMemo } from "react";
 import { buddyGrowth } from "../goals/buddy-energy";
-import { CAREER_GOAL_ID, S, TabShell, type ViewProps } from "./common";
+import { CAREER_GOAL_ID, S, TabShell, actions, type ViewProps } from "./common";
 
 const TODAY_ISO = "2026-11-03";
 
@@ -49,7 +50,7 @@ function buddyStatus(): BuddyStatusView {
         { done: 0, kind: "askBuddy", opens: { kind: "buddy" }, status: "todo", total: 1 },
       ],
     },
-  } as BuddyStatusView;
+  };
 }
 
 function planChange(applied: boolean): PlanChangeView {
@@ -71,12 +72,13 @@ function planChange(applied: boolean): PlanChangeView {
     lessonsSkipped: 0,
     officialDate: null,
     operations: [{ kind: "addLightWeek", startDate: TODAY_ISO }],
+    quote: "light-week-2026-11-03",
     reason: null,
     seen: false,
     source: "tutor",
     status: applied ? "applied" : "proposed",
     todaySession: applied ? "changed" : null,
-  } as PlanChangeView;
+  };
 }
 
 function question(lang: "en" | "pt", applied: boolean): LessonQuestionResource {
@@ -84,7 +86,7 @@ function question(lang: "en" | "pt", applied: boolean): LessonQuestionResource {
 
   return {
     answer: REPLY[lang],
-    context: { kind: "plan" } as any,
+    context: { kind: "plan" },
     createdAt: at,
     id: "0b6f8f62-5f0e-4f8e-8f7a-6a3f0e1c2d34",
     planChange: planChange(applied),
@@ -188,8 +190,10 @@ function ZuTab({ lang, q, state }: ViewProps) {
     >
       <BuddyScreen
         actions={{
-          decidePlanChange: async ({ status: decided }) =>
-            ({ ...planChange(decided === "applied"), status: decided }) as PlanChangeView,
+          decidePlanChange: async ({ status: decided }) => {
+            const change = planChange(decided === "applied");
+            return decided === "seen" ? { ...change, seen: true } : { ...change, status: decided };
+          },
           missionLinks: {
             hrefs: {
               areaPractice: noopHref,
@@ -203,7 +207,7 @@ function ZuTab({ lang, q, state }: ViewProps) {
             openBlock: async () => false,
           },
           saveBuddy: async () => true,
-          tools: {
+          tools: actions<TutorToolActions>({
             hrefs: {
               chooseFocus: "#",
               chooseMock: "#",
@@ -216,7 +220,7 @@ function ZuTab({ lang, q, state }: ViewProps) {
               stats: "/stats",
               subject: noopHref,
             },
-          } as any,
+          }),
         }}
         hrefs={{
           energy: "/energy",
@@ -234,4 +238,4 @@ function ZuTab({ lang, q, state }: ViewProps) {
   );
 }
 
-export const views: Record<string, (p: ViewProps) => any> = { "zu-tab": ZuTab };
+export const views: Record<string, (p: ViewProps) => React.ReactNode> = { "zu-tab": ZuTab };

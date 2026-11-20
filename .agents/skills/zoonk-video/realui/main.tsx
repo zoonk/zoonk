@@ -8,7 +8,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { createRoot } from "react-dom/client";
 import { TODAY } from "./story";
 
-type View = (p: { lang: "en" | "pt"; state: string; q: URLSearchParams }) => any;
+type View = (p: { lang: "en" | "pt"; state: string; q: URLSearchParams }) => React.ReactNode;
 
 // A module that no longer compiles against the app only loses its own views. `views=<module>` loads only
 // that one, so a stage with many pieces doesn't load every screen's code once per piece.
