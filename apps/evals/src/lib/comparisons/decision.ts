@@ -302,7 +302,10 @@ function choose({
         (!item.legacyOwner || item.legacyOwner === "split" || Object.keys(item.votes).length < 2),
     )
   ) {
-    return result("insufficient evidence", "Unresolved cases need an independent read.");
+    return {
+      ...result("insufficient evidence", "Your blind read can settle the unresolved cases."),
+      reasonCode: "owner_blind_read_required" as const,
+    };
   }
 
   const pending = claims.filter(

@@ -41,6 +41,7 @@ export const decisionSchema = z.object({
     }),
   ),
   reason: z.string(),
+  reasonCode: z.literal("owner_blind_read_required").optional(),
   rows: z.array(
     z.object({
       attempted: z.int(),
