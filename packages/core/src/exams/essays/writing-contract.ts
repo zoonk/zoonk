@@ -1,5 +1,6 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
 import { writtenGradingSchema } from "../../library/exams/written-grading";
 
 export const MAX_ESSAY_CHARACTERS = 48_000;
@@ -16,6 +17,12 @@ export const writingPromptSchema = z
     keySource: z.enum(["notice", "publishedStandard", "practiceKey"]),
     lines,
     minimumWords: z.int().nonnegative(),
+    partMinimum: z
+      .object({ max: z.number().positive().nullable(), minimum: pointsMinimumSchema })
+      .optional()
+      .describe(
+        "The written test’s overall minimum and maximum recorded when the prompt was issued",
+      ),
     points,
     taskKey,
     title: z.string().min(1),
@@ -53,7 +60,21 @@ export const writingStartSchema = z
   .discriminatedUnion("status", [
     z.object({ admissionId: uuidSchema(), status: z.literal("ready") }),
     z.object({ runId: z.string(), status: z.literal("writing") }),
-    z.object({ returnsOn: z.iso.date(), status: z.literal("limitReached") }),
+    z.object({
+      returnsOn: z.iso.date(),
+      status: z.literal("limitReached"),
+      task: z
+        .object({
+          description: z.string(),
+          lines,
+          minutes: z.int().positive(),
+          points,
+          taskKey,
+          unit,
+        })
+        .optional()
+        .describe("The writing task and its estimated practice time in minutes"),
+    }),
   ])
   .meta({ id: "WritingStart" });
 
@@ -70,6 +91,11 @@ export const writingBlockSchema = z.object({
   taskKey,
   unit,
 });
+
+export const writingAvailabilitySchema = z.discriminatedUnion("status", [
+  z.object({ status: z.enum(["available", "continue"]) }),
+  z.object({ returnsOn: z.iso.date(), status: z.literal("tomorrow") }),
+]);
 
 const writingConditionsSchema = z.object({
   admissionId: uuidSchema(),
@@ -104,6 +130,11 @@ const feedback = z.object({
         .describe("UTF-16 code units from the start of the submitted text"),
     }),
   ),
+  estimatedLines: z
+    .int()
+    .nonnegative()
+    .optional()
+    .describe("Approximate lines in the submitted text"),
   ignoredFrom: z
     .int()
     .nonnegative()
@@ -154,6 +185,10 @@ export type WritingPrompt = z.infer<typeof writingPromptSchema>;
 export type WritingPacing = z.infer<typeof writingPacingSchema>;
 
 export type WritingConditions = z.infer<typeof writingConditionsSchema>;
+export type WritingTaskSummary = NonNullable<
+  Extract<z.infer<typeof writingStartSchema>, { status: "limitReached" }>["task"]
+>;
+
 export type WritingResult = z.infer<typeof writingResultSchema>;
 
 export const writingBlockInputSchema = z.strictObject({ taskKey: z.string().min(1).optional() });

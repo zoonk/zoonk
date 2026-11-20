@@ -1,6 +1,7 @@
 "use client";
 
 import { loadCountries } from "@/lib/countries/load-countries";
+import { useWriteNow } from "@/lib/essays/use-write-now";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
@@ -24,10 +25,15 @@ const MAIN_LEARN_ADAPTERS: LearnAdapters = {
 
 export function MainLearnProvider({ children }: { children: React.ReactNode }) {
   const signUp = useSignUpHref();
+  const writeNow = useWriteNow();
 
   const adapters = useMemo(
-    () => ({ ...MAIN_LEARN_ADAPTERS, routes: { ...MAIN_LEARN_ADAPTERS.routes, signUp } }),
-    [signUp],
+    (): LearnAdapters => ({
+      ...MAIN_LEARN_ADAPTERS,
+      routes: { ...MAIN_LEARN_ADAPTERS.routes, signUp },
+      writeNow,
+    }),
+    [signUp, writeNow],
   );
 
   return (

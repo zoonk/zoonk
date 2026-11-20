@@ -23,6 +23,8 @@ msgstr "Poprawna odpowiedź"
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
 #: src/questions/typed-answer-field.tsx
+#: src/writing/writing-result.tsx
+#: src/writing/writing-write-screen.tsx
 msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "Twoja odpowiedź"
@@ -270,6 +272,8 @@ msgstr "{days, plural, one {Został mniej więcej # dzień} few {Zostały mniej 
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
 #: src/today/today-action.tsx
+#: src/writing/writing-refused.tsx
+#: src/writing/writing-screen.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Kontynuuj"
@@ -540,6 +544,7 @@ msgstr "{done, number} z {total, number}"
 #: src/session/open-next-step.tsx
 #: src/speech/speech-parts.tsx
 #: src/topic-outline/far-topic-sheet.tsx
+#: src/writing/writing-start.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Spróbuj ponownie"
@@ -637,7 +642,7 @@ msgid "Next"
 msgstr "Przejdź dalej"
 
 #: src/_components/question-actions.tsx
-#: src/essay/essay-feedback.tsx
+#: src/writing/writing-next-step.tsx
 msgctxt "d-qgix"
 msgid "Next step"
 msgstr "Następny krok"
@@ -773,7 +778,6 @@ msgid "View"
 msgstr "Zobacz"
 
 #: src/_components/task-close.tsx
-#: src/essay/essay-screen.tsx
 #: src/mock/mock-runner-view.tsx
 msgctxt "fnihsY"
 msgid "Leave"
@@ -2087,7 +2091,6 @@ msgid "Next time you study"
 msgstr "Gdy wrócisz do nauki"
 
 #: src/challenge/challenge-footer.tsx
-#: src/essay/essay-feedback.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -2229,8 +2232,6 @@ msgstr "Wynik zobaczysz na końcu."
 
 #: src/challenge/challenge-labels.tsx
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/journey/schedule-details.tsx
@@ -2246,6 +2247,7 @@ msgstr "Wynik zobaczysz na końcu."
 #: src/today/today-lessons-card.tsx
 #: src/today/today-preparing.tsx
 #: src/today/today-shell.tsx
+#: src/writing/writing-screen.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Dziś"
@@ -3024,254 +3026,10 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "Zaawansowany"
 
-#: src/essay/essay-closed.tsx
-msgctxt "af7HsK"
-msgid "You skipped this essay."
-msgstr "Pominięto to wypracowanie."
-
-#: src/essay/essay-criteria-rows.tsx
-msgctxt "H9233U"
-msgid "Score by criterion"
-msgstr "Wyniki według kryteriów"
-
-#: src/essay/essay-criteria-rows.tsx
-msgctxt "LLXwbj"
-msgid "{score} of {max}"
-msgstr "{score} z {max}"
-
-#: src/essay/essay-feedback.tsx
-#: src/essay/essay-rewrite-guide.tsx
-#: src/mock/mock-result-essays.tsx
-msgctxt "fGmDCR"
-msgid "Too short to grade"
-msgstr "Za krótkie do oceny"
-
-#: src/essay/essay-feedback.tsx
-#: src/essay/essay-rewrite-guide.tsx
-msgctxt "j5eiKQ"
-msgid "Write the whole essay, then send it again."
-msgstr "Napisz całe wypracowanie, a potem wyślij je ponownie."
-
-#: src/essay/essay-feedback.tsx
-#: src/mock/mock-result-speaking.tsx
-msgctxt "T735yK"
-msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
-msgstr "Szacunkowy wynik w skali od <mono>0</mono> do <mono>{max}</mono>"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "vtwv7b"
-msgid "See comments"
-msgstr "Zobacz komentarze"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "wCgTu5"
-msgid "Comments"
-msgstr "Komentarze"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "BQrBD9"
-msgid "Nothing left to work on"
-msgstr "Nie ma już nic do poprawy"
-
-#: src/essay/essay-feedback.tsx
-#: src/essay/essay-rewrite-guide.tsx
-msgctxt "J_Pd5R"
-msgid "Every criterion has full marks in this estimate."
-msgstr "Szacowany wynik to komplet punktów za każde kryterium."
-
-#: src/essay/essay-feedback.tsx
-msgctxt "TvkYzM"
-msgid "What to rewrite"
-msgstr "Co poprawić"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "HiVJjN"
-msgid "For example: {example}"
-msgstr "Na przykład: {example}"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "qSEmp5"
-msgid "The five elements of the proposal"
-msgstr "Pięć elementów propozycji"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "FsnkPB"
-msgid ", present"
-msgstr ", uwzględniono"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "CVIpBb"
-msgid ", missing"
-msgstr ", brak"
-
-#: src/essay/essay-feedback.tsx
-msgctxt "scAuEr"
-msgid "Rewrite"
-msgstr "Popraw"
-
-#: src/essay/essay-labels.tsx
-msgctxt "CNjg8R"
-msgid "Formal writing"
-msgstr "Styl formalny"
-
-#. Enem essay competence 2: addressing the set topic and drawing on outside knowledge.
-#: src/essay/essay-labels.tsx
-msgctxt "smqOAn"
-msgid "Topic and references"
-msgstr "Temat i odwołania"
-
-#: src/essay/essay-labels.tsx
-msgctxt "egqw9P"
-msgid "Argument"
-msgstr "Argumentacja"
-
-#: src/essay/essay-labels.tsx
-msgctxt "8Gywzk"
-msgid "Cohesion"
-msgstr "Spójność tekstu"
-
-#: src/essay/essay-labels.tsx
-msgctxt "q4WQag"
-msgid "Intervention proposal"
-msgstr "Propozycja rozwiązania problemu"
-
-#: src/essay/essay-labels.tsx
-msgctxt "I0dPmd"
-msgid "Addressing and parties"
-msgstr "Adresat i strony"
-
-#: src/essay/essay-labels.tsx
-msgctxt "UGBZgL"
-msgid "Facts"
-msgstr "Stan faktyczny"
-
-#: src/essay/essay-labels.tsx
-msgctxt "F9N5v5"
-msgid "Legal basis"
-msgstr "Podstawa prawna"
-
-#: src/essay/essay-labels.tsx
-msgctxt "MNFqIW"
-msgid "Requests"
-msgstr "Żądania"
-
-#: src/essay/essay-labels.tsx
-msgctxt "RsqK9g"
-msgid "Closing and form"
-msgstr "Zakończenie i forma"
-
-#: src/essay/essay-labels.tsx
-msgctxt "Exhbbb"
-msgid "Who acts"
-msgstr "Kto działa"
-
-#: src/essay/essay-labels.tsx
-msgctxt "FT4a4Y"
-msgid "What they do"
-msgstr "Co robi"
-
-#: src/essay/essay-labels.tsx
-msgctxt "rj0QcN"
-msgid "By what means"
-msgstr "Jakimi środkami"
-
-#: src/essay/essay-labels.tsx
-msgctxt "35xKDl"
-msgid "To what end"
-msgstr "W jakim celu"
-
-#: src/essay/essay-labels.tsx
-msgctxt "fV2ZAc"
-msgid "A detail"
-msgstr "Szczegół"
-
 #: src/essay/essay-labels.tsx
 msgctxt "EWD_9X"
 msgid "Your essay"
 msgstr "Twoje wypracowanie"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "iyKTfM"
-msgid "Free response · AP scoring guidelines"
-msgstr "Zadanie otwarte · kryteria oceniania AP"
-
-#: src/essay/essay-prompt.tsx
-#: src/session/use-block-copy.ts
-msgctxt "Jo0iJd"
-msgid "Writing practice"
-msgstr "Ćwiczenie pisania"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "OJsoa4"
-msgid "Essay · ENEM rubric"
-msgstr "Wypracowanie · kryteria oceniania ENEM"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "mQS0Tq"
-msgid "Supporting texts"
-msgstr "Teksty pomocnicze"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "69RO1g"
-msgid "Motivating texts"
-msgstr "Teksty inspirujące"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "rUq4jt"
-msgid "The case"
-msgstr "Opis sprawy"
-
-#: src/essay/essay-prompt.tsx
-msgctxt "2rkYNm"
-msgid "What to write"
-msgstr "Temat wypracowania"
-
-#. The grade of the learner's last essay draft.
-#: src/essay/essay-rewrite-guide.tsx
-#: src/essay/essay-screen.tsx
-msgctxt "OAkBl1"
-msgid "Your last grade"
-msgstr "Twoja ostatnia ocena"
-
-#: src/essay/essay-rewrite-guide.tsx
-msgctxt "LKg1Qt"
-msgid "Next step: {criterion}"
-msgstr "Kolejny krok: {criterion}"
-
-#: src/essay/essay-rewrite-guide.tsx
-msgctxt "--EUMg"
-msgid "See the grade"
-msgstr "Zobacz ocenę"
-
-#: src/essay/essay-screen.tsx
-msgctxt "othn-n"
-msgid "Rewrite what needs work"
-msgstr "Popraw fragmenty, które tego wymagają"
-
-#: src/essay/essay-screen.tsx
-msgctxt "osZlj7"
-msgid "Grade rewrite"
-msgstr "Oceń poprawione wypracowanie"
-
-#: src/essay/essay-screen.tsx
-msgctxt "KVfx1c"
-msgid "Grade essay"
-msgstr "Oceń wypracowanie"
-
-#: src/essay/essay-screen.tsx
-msgctxt "xNSBn4"
-msgid "Keep writing"
-msgstr "Pisz dalej"
-
-#: src/essay/essay-screen.tsx
-msgctxt "QnB_s5"
-msgid "Your text stays on this device, here when you come back."
-msgstr "Twój tekst zostanie na tym urządzeniu i będzie tu, gdy wrócisz."
-
-#: src/essay/essay-screen.tsx
-msgctxt "-D1SOt"
-msgid "Leave for now?"
-msgstr "Wyjść na razie?"
 
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
@@ -3314,6 +3072,7 @@ msgid "Reading your essay against each criterion. It can take up to 30 seconds."
 msgstr "Sprawdzamy twoje wypracowanie według każdego kryterium. Może to potrwać do 30 sekund."
 
 #: src/essay/essay-word-count.tsx
+#: src/writing/writing-editor.tsx
 msgctxt "-8LNI4"
 msgid "{count, plural, one {# word} other {# words}}"
 msgstr "{count, plural, one {# słowo} many {# słów} other {# słowa}}"
@@ -3458,6 +3217,7 @@ msgstr "Według przedmiotów"
 
 #: src/exam/exam-mock-progress.tsx
 #: src/journey/journey-hero.tsx
+#: src/syllabus/subject-written-score.tsx
 msgctxt "dcRwV1"
 msgid "Your progress"
 msgstr "Twoje postępy"
@@ -4641,6 +4401,31 @@ msgid "Picking what to ask in each subject…"
 msgstr "Wybieramy tematy pytań z każdego przedmiotu…"
 
 #: src/generation/use-generation-copy.ts
+msgctxt "xwzlmV"
+msgid "Writing your question"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "A-XHEK"
+msgid "Writing a question like your exam's"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "wbqmxC"
+msgid "Choosing the topic…"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "Xtb_S_"
+msgid "Writing the support text…"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "XssWee"
+msgid "Checking it against the exam's criteria…"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
 msgid "Adding a setup lesson"
 msgstr "Dodajemy lekcję o konfiguracji"
@@ -5093,7 +4878,9 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, one {Na podstawie twojego ostatniego egzaminu próbnego} other {Na podstawie twoich ostatnich # egzaminów próbnych}}"
 
 #: src/journey/preparation/preparation-details.tsx
+#: src/journey/preparation/written-projection.tsx
 #: src/mock/mock-result-view.tsx
+#: src/syllabus/subject-written-score.tsx
 msgctxt "Psgvhk"
 msgid "Estimated score"
 msgstr "Szacowany wynik"
@@ -5206,6 +4993,61 @@ msgstr "Podejdź do pierwszego egzaminu próbnego"
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "Podejmij pierwsze wyzwanie tygodnia"
+
+#: src/journey/preparation/written-projection.tsx
+#: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/syllabus/subject-written-score.tsx
+msgctxt "st8F-L"
+msgid "{range} of {max}"
+msgstr "{range} z {max}"
+
+#: src/journey/preparation/written-projection.tsx
+#: src/syllabus/subject-written-score.tsx
+msgctxt "dau4p7"
+msgid "Not measured yet"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "5Ty5D6"
+msgid "Above the {minimum} points it asks for"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "ofINne"
+msgid "{points} points below the {minimum} it asks for"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "zFi3gB"
+msgid "Close to the {minimum} points it asks for"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "WcpbzU"
+msgid "It asks for {minimum} points, whatever your other scores."
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "i5xuVH"
+msgid "Below the minimum: {part}"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "XmqNXc"
+msgid "{part} isn't measured yet."
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+#: src/syllabus/subject-screen.tsx
+#: src/writing/writing-screen.tsx
+msgctxt "k2veDA"
+msgid "Write"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "r70P1f"
+msgid "Objective test"
+msgstr ""
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx
@@ -6122,11 +5964,6 @@ msgstr "egzaminator (AI)"
 msgctxt "OO7BQP"
 msgid "{range} of {max} points"
 msgstr "{range} z {max} pkt"
-
-#: src/language/exam-speaking/exam-speaking-labels.ts
-msgctxt "st8F-L"
-msgid "{range} of {max}"
-msgstr "{range} z {max}"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "RREmDO"
@@ -7865,9 +7702,19 @@ msgid "We're writing questions like the exam's for you. It starts here as soon a
 msgstr "Przygotowujemy dla ciebie pytania podobne do tych na egzaminie. Egzamin próbny rozpocznie się tutaj, gdy tylko będą gotowe."
 
 #: src/mock/mock-chooser.tsx
+msgctxt "aDMxKM"
+msgid "{count, plural, other {Your exam has # tests}}"
+msgstr ""
+
+#: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
 msgid "The exam"
 msgstr "Egzamin"
+
+#: src/mock/mock-chooser.tsx
+msgctxt "9yIpY-"
+msgid "Shorter, objective questions only"
+msgstr ""
 
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-option-labels.ts
@@ -8111,6 +7958,11 @@ msgid "{count, plural, one {# question was a repeat.} other {# questions were re
 msgstr "{count, plural, one {# pytanie się powtórzyło.} few {# pytania się powtórzyły.} other {# pytań się powtórzyło.}}"
 
 #: src/mock/mock-option-labels.ts
+msgctxt "EZ8FbD"
+msgid "{count, plural, =2 {Both tests} other {All # tests}}"
+msgstr ""
+
+#: src/mock/mock-option-labels.ts
 msgctxt "8ChI8a"
 msgid "Half of day {day}"
 msgstr "Połowa dnia {day}"
@@ -8252,11 +8104,6 @@ msgstr "Oceniamy według kryteriów egzaminu. Może to potrwać do 30 sek."
 msgctxt "S2mivZ"
 msgid "It hasn't been graded yet."
 msgstr "Nie zostało jeszcze ocenione."
-
-#: src/mock/mock-result-essays.tsx
-msgctxt "jBUMUv"
-msgid "You've used today's essay grades. Try again tomorrow."
-msgstr "Wykorzystano już dzisiejszy limit ocen wypracowań. Spróbuj ponownie jutro."
 
 #: src/mock/mock-result-essays.tsx
 msgctxt "BtvKCA"
@@ -8504,6 +8351,12 @@ msgstr "Nieukończone"
 msgctxt "-U9tBB"
 msgid "No estimate"
 msgstr "Brak szacunkowego wyniku"
+
+#: src/mock/mock-result-speaking.tsx
+#: src/writing/writing-result.tsx
+msgctxt "T735yK"
+msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
+msgstr "Szacunkowy wynik w skali od <mono>0</mono> do <mono>{max}</mono>"
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "xQAJsr"
@@ -8765,6 +8618,7 @@ msgstr "Utwórz bezpłatne konto, by dodać do swojego celu plik PDF, zdjęcie n
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-attachments.tsx
 #: src/onboarding/understood/use-understood-rows.ts
+#: src/writing/writing-text.tsx
 msgctxt "Uby0eW"
 msgid "Your text"
 msgstr "Twój tekst"
@@ -12561,6 +12415,11 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nowa lekcja"
 
+#: src/session/use-block-copy.ts
+msgctxt "Jo0iJd"
+msgid "Writing practice"
+msgstr "Ćwiczenie pisania"
+
 #. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
 #: src/session/use-block-copy.ts
 msgctxt "60PbK5"
@@ -12594,6 +12453,16 @@ msgstr "Dodatkowe ćwiczenia"
 msgctxt "MbAJ4_"
 msgid "Mixed practice"
 msgstr "Ćwiczenia z różnych tematów"
+
+#: src/session/use-block-copy.ts
+msgctxt "HZs6ar"
+msgid "Back tomorrow: today's extra grades are used"
+msgstr ""
+
+#: src/session/use-block-copy.ts
+msgctxt "0cmsKD"
+msgid "Your draft is saved"
+msgstr ""
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -12951,6 +12820,56 @@ msgstr ", do nauki"
 msgctxt "sUFAfD"
 msgid "{total, plural, one {{done, number} of # topic studied} other {{done, number} of # topics studied}}"
 msgstr "{total, plural, one {Przerobiono {done, number} z # tematu} other {Przerobiono {done, number} z # tematów}}"
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "B96Fmq"
+msgid "Minimum to pass: {minimum}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "Ycseyb"
+msgid "{count, plural, one {last answer} other {last # answers}}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-result.tsx
+msgctxt "Jq3FDz"
+msgid "Content"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "j1okGc"
+msgid "Presentation and structure"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-result.tsx
+#: src/writing/writing-text.tsx
+msgctxt "a7of83"
+msgid "Language errors"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-result.tsx
+#: src/writing/writing-text.tsx
+msgctxt "VXgrSB"
+msgid "{count, plural, one {# error} other {# errors}}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "5m07cc"
+msgid "Your answers"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "AFTxeG"
+msgid "{count, plural, one {# line} other {# lines}}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "a0Vmlb"
+msgid "{count, plural, one {# version} other {# versions}}"
+msgstr ""
 
 #: src/syllabus/syllabus-chapter-row.tsx
 msgctxt "PPs9To"
@@ -13703,3 +13622,263 @@ msgstr "Największy postęp"
 msgctxt "HZneUP"
 msgid "{topic} · {from} to {to}"
 msgstr "{topic} · od {from} do {to}"
+
+#: src/writing/points-readout.tsx
+msgctxt "j8q20J"
+msgid "of {max}"
+msgstr ""
+
+#: src/writing/writing-editor.tsx
+msgctxt "nqmPlF"
+msgid "about {used} of {lines} lines · the board won't read past line {lines}"
+msgstr ""
+
+#: src/writing/writing-editor.tsx
+msgctxt "sKcJTn"
+msgid "about {used} of {lines} lines"
+msgstr ""
+
+#: src/writing/writing-header.ts
+msgctxt "eRWD_e"
+msgid "Writing drill"
+msgstr ""
+
+#: src/writing/writing-header.ts
+#: src/writing/writing-start.tsx
+msgctxt "neJLv4"
+msgid "Written answer"
+msgstr ""
+
+#. A criterion of a written answer fully met.
+#: src/writing/writing-labels.ts
+msgctxt "U78NhE"
+msgid "Complete"
+msgstr ""
+
+#. A criterion of a written answer mostly met.
+#: src/writing/writing-labels.ts
+msgctxt "6xap9L"
+msgid "Good"
+msgstr ""
+
+#. A criterion of a written answer half met.
+#: src/writing/writing-labels.ts
+msgctxt "B0ZRIZ"
+msgid "Partly"
+msgstr ""
+
+#. A criterion of a written answer not met.
+#: src/writing/writing-labels.ts
+msgctxt "DkkVJF"
+msgid "Missing"
+msgstr ""
+
+#: src/writing/writing-next-step.tsx
+msgctxt "BQrBD9"
+msgid "Nothing left to work on"
+msgstr "Nie ma już nic do poprawy"
+
+#: src/writing/writing-next-step.tsx
+msgctxt "J_Pd5R"
+msgid "Every criterion has full marks in this estimate."
+msgstr "Szacowany wynik to komplet punktów za każde kryterium."
+
+#: src/writing/writing-next-step.tsx
+msgctxt "HiVJjN"
+msgid "For example: {example}"
+msgstr "Na przykład: {example}"
+
+#: src/writing/writing-question.tsx
+msgctxt "U413N1"
+msgid "{lines, plural, one {Up to # line} other {Up to # lines}}"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "wHT3hs"
+msgid "{points} points"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "1g9mZ7"
+msgid "about {time}"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "h5Dspx"
+msgid "From the exam notice."
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "1MSsHI"
+msgid "From the exam notice. The answer key is ours, for practice."
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "qPK58Y"
+msgid "How the {points} points are split"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "GHkFy1"
+msgid "What the answer is judged on"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "gsRERV"
+msgid "Grading criteria"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "guQrMp"
+msgid "Support text"
+msgstr ""
+
+#: src/writing/writing-question.tsx
+msgctxt "2rkYNm"
+msgid "What to write"
+msgstr "Temat wypracowania"
+
+#: src/writing/writing-refused.tsx
+msgctxt "K9ytBU"
+msgid "Left for tomorrow"
+msgstr ""
+
+#: src/writing/writing-refused.tsx
+msgctxt "5WNc7Y"
+msgid "No more grading today"
+msgstr ""
+
+#: src/writing/writing-refused.tsx
+msgctxt "rMmqh8"
+msgid "You'll have more tomorrow."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "gPyDLV"
+msgid "{count, plural, one {about # line} other {about # lines}}"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "TvkYzM"
+msgid "What to rewrite"
+msgstr "Co poprawić"
+
+#: src/writing/writing-result.tsx
+msgctxt "RwlK46"
+msgid "Since your last version"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "P2923Q"
+msgid "Fixed: {criteria}"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "8Fj-Q0"
+msgid "Still to work on: {criteria}"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "G_D1yr"
+msgid "The exam notice doesn't say how many points each criterion is worth."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "JrF1rx"
+msgid "Criteria and points from the exam notice."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "dMVJUV"
+msgid "Criteria and points from the exam notice. The answer key is ours, for practice."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "xZdNA0"
+msgid "Criteria"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "H9233U"
+msgid "Score by criterion"
+msgstr "Wyniki według kryteriów"
+
+#: src/writing/writing-result.tsx
+msgctxt "LLXwbj"
+msgid "{score} of {max}"
+msgstr "{score} z {max}"
+
+#: src/writing/writing-result.tsx
+msgctxt "vtwv7b"
+msgid "See comments"
+msgstr "Zobacz komentarze"
+
+#: src/writing/writing-result.tsx
+msgctxt "wCgTu5"
+msgid "Comments"
+msgstr "Komentarze"
+
+#: src/writing/writing-screen.tsx
+msgctxt "scAuEr"
+msgid "Rewrite"
+msgstr "Popraw"
+
+#: src/writing/writing-start.tsx
+msgctxt "xj8ORz"
+msgid "Writing your question…"
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "_zs7ro"
+msgid "A new question, like the ones on your exam. It opens here when it's ready."
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "drzL_F"
+msgid "We couldn't write your question"
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "EY8lh9"
+msgid "Nothing was lost. Try again in a moment."
+msgstr ""
+
+#: src/writing/writing-text.tsx
+msgctxt "LRemim"
+msgid "Past line {lines}: the board won't read from here"
+msgstr ""
+
+#: src/writing/writing-text.tsx
+msgctxt "cGktPJ"
+msgid "Past the limit: the board won't read from here"
+msgstr ""
+
+#: src/writing/writing-text.tsx
+msgctxt "agrPL7"
+msgid ", language error"
+msgstr ""
+
+#: src/writing/writing-text.tsx
+msgctxt "7rMeeQ"
+msgid "You wrote “{quote}” · {kind}"
+msgstr ""
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "kgOBET"
+msgid "Question"
+msgstr ""
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "osZlj7"
+msgid "Grade rewrite"
+msgstr "Oceń poprawione wypracowanie"
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "QIqC-9"
+msgid "Grade answer"
+msgstr ""
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "othn-n"
+msgid "Rewrite what needs work"
+msgstr "Popraw fragmenty, które tego wymagają"

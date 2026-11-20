@@ -8,6 +8,8 @@ import {
   type MockQuestionsStepName,
   type SetupLessonStepName,
   type TestOutQuestionsStepName,
+  WRITING_PROMPT_KIND,
+  type WritingPromptStepName,
 } from "@zoonk/core/library/generation/steps";
 import { type GenerationStepTimes } from "./generation-run";
 import { challenge, lesson } from "./lesson-kinds";
@@ -155,6 +157,11 @@ const mockQuestions = {
   steps: { joinMockQuestions: "join", mockQuestionsReady: "done", writeMockQuestions: "questions" },
 } as const satisfies GenerationKindDefinition<MockQuestionsStepName, "questions">;
 
+const writingPrompt = {
+  phases: [{ id: "question", seconds: 45 }],
+  steps: { ready: "done", signUpRequired: "done", writeWritingPrompt: "question" },
+} as const satisfies GenerationKindDefinition<WritingPromptStepName, "question">;
+
 const challengeQuestions = {
   phases: [{ id: "questions", seconds: 32 }],
   steps: {
@@ -208,6 +215,7 @@ const setupLesson = {
 } as const satisfies GenerationKindDefinition<SetupLessonStepName, "write">;
 
 const GENERATION_KINDS = {
+  [WRITING_PROMPT_KIND]: writingPrompt,
   challenge,
   challengeQuestions,
   conversationCall,

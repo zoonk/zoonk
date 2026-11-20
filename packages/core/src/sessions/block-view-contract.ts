@@ -1,6 +1,7 @@
 import { StudyBlockKind, StudyBlockStatus } from "@zoonk/db/enums";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { writingAvailabilitySchema } from "../exams/essays/writing-contract";
 import { checkpointRefSchema, dayBlockRefSchema, dayBlockScreenSchema } from "./day-block";
 
 const idSchema = uuidSchema();
@@ -131,11 +132,6 @@ export const studyBlockSchema = z
         description:
           "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty",
       }),
-    writingAvailability: z
-      .discriminatedUnion("status", [
-        z.object({ status: z.enum(["available", "continue"]) }),
-        z.object({ returnsOn: z.iso.date(), status: z.literal("tomorrow") }),
-      ])
-      .optional(),
+    writingAvailability: writingAvailabilitySchema.optional(),
   })
   .meta({ id: "StudyBlock" });

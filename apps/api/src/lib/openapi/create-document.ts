@@ -78,6 +78,7 @@ import { warmUpPaths } from "./paths/warm-ups";
 import { writingGradePaths } from "./paths/writing-grades";
 import { writingPracticePaths } from "./paths/writing-practice";
 import { internalErrorResponse } from "./schemas/responses";
+import { writingPromptStepSchema } from "./schemas/workflows";
 import { SECURITY_SCHEMES, createSecuritySchemes } from "./security";
 
 function withInternalErrorResponse(
@@ -212,6 +213,7 @@ export function createOpenAPIDocument({
         schemas: {
           SaveWritingDraft: saveWritingDraftSchema,
           WritingAttempt: writingAttemptSchema,
+          WritingPromptStep: writingPromptStepSchema,
           WritingResult: writingResultSchema,
           WritingStart: writingStartSchema,
           WritingStartInput: writingStartInputSchema,

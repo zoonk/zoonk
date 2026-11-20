@@ -1,21 +1,66 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getLearnerModelCacheTag } from "../../cache/tags";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { getStoredBlockWait } from "../../sessions/block-wait";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { getSession } from "../../users/get-session";
+import { listPracticeWritingTasks } from "./_utils/practice-writing-tasks";
 import {
   InvalidWritingRewriteError,
   admitWriting,
   readWritingExtraLimit,
 } from "./writing-admission";
+import { type WritingTaskSummary } from "./writing-contract";
 import { findWritingPrompts } from "./writing-supply";
+
+async function describeRefusedTask({
+  block,
+  examBlueprintId,
+  tx,
+  userId,
+  writing,
+}: {
+  block: { estimatedMinutes: number | null };
+  examBlueprintId: string | null;
+  tx: TransactionClient;
+  userId: string;
+  writing: { taskKey: string; unit: WritingTaskSummary["unit"] };
+}): Promise<WritingTaskSummary | undefined> {
+  if (!examBlueprintId || !block.estimatedMinutes) {
+    return undefined;
+  }
+
+  const blueprint = await tx.examBlueprint.findFirst({
+    where: { OR: [{ ownerId: userId }, { visibility: "public" }], id: examBlueprintId },
+  });
+
+  const task =
+    blueprint &&
+    listPracticeWritingTasks({
+      classTest: Boolean(blueprint.ownerId),
+      structure: readBlueprintContent(blueprint).structure,
+    }).find(({ key }) => key === writing.taskKey);
+
+  return task
+    ? {
+        description: task.description,
+        lines: task.lines,
+        minutes: block.estimatedMinutes,
+        points: task.points,
+        taskKey: task.key,
+        unit: writing.unit,
+      }
+    : undefined;
+}
 
 export async function startWriting({
   blockId,
@@ -69,6 +114,7 @@ export async function startWriting({
       if (!previousAttemptId && writing.admissionId) {
         return {
           admissionId: writing.admissionId,
+          admitted: false,
           sessionId: block.sessionId,
           status: "ready" as const,
         };
@@ -92,13 +138,27 @@ export async function startWriting({
           userId,
         });
 
-        return allowed.status === "ready" ? { ...allowed, sessionId: block.sessionId } : allowed;
+        return allowed.status === "ready"
+          ? {
+              ...allowed,
+              admitted: allowed.admissionId !== writing.admissionId,
+              sessionId: block.sessionId,
+            }
+          : allowed;
       }
 
       const refusal = extra ? await readWritingExtraLimit({ localDate, tx, userId }) : null;
 
       if (refusal) {
-        return refusal;
+        const task = await describeRefusedTask({
+          block,
+          examBlueprintId: goal.examBlueprintId,
+          tx,
+          userId,
+          writing,
+        });
+
+        return { ...refusal, ...(task && { task }) };
       }
 
       const request = {
@@ -124,7 +184,7 @@ export async function startWriting({
       });
 
       return admission.status === "ready"
-        ? { ...admission, sessionId: block.sessionId }
+        ? { ...admission, admitted: true, sessionId: block.sessionId }
         : admission;
     }),
   );
@@ -139,6 +199,10 @@ export async function startWriting({
 
   if (started.status !== "ready") {
     return started;
+  }
+
+  if (started.admitted) {
+    revalidateCacheTags([getLearnerModelCacheTag(userId)]);
   }
 
   const opened = await startStudyBlock({ blockId, input: {}, sessionId: started.sessionId });

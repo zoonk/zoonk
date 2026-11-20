@@ -105,7 +105,7 @@ export async function loadSyllabusInput(
     Goal,
     "createdAt" | "examBlueprintId" | "id" | "kind" | "language" | "targetDate" | "userId"
   > &
-    Partial<Pick<Goal, "details" | "primaryCourseId">>,
+    Partial<Pick<Goal, "details" | "primaryCourseId" | "timezone">>,
   {
     blueprint,
     readClaims,
@@ -165,7 +165,7 @@ export async function loadSyllabusInput(
       }),
     loadNotice(goal, knownBlueprint, picks),
     loadWrittenPracticeView({
-      goal,
+      goal: { ...goal, timezone: goal.timezone ?? null },
       graph,
       settings: parsePlanSettings(plan.settings),
       structure: knownBlueprint

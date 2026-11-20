@@ -4,13 +4,16 @@ import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted, useFormatter } from "next-intl";
+import { useState } from "react";
 import {
+  DETAIL_PRIMARY_CLASS,
   DetailAside,
   DetailContent,
   DetailContinueLink,
   DetailLayout,
   useDoneShare,
 } from "../_components/detail-page";
+import { EnterButton } from "../_components/enter-button";
 import {
   PageSection,
   PageSectionDetail,
@@ -27,6 +30,7 @@ import { SubjectMatrix } from "./subject-matrix";
 import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
 import { SubjectTopics } from "./subject-topics";
 import { SubjectWrittenPractice } from "./subject-written-practice";
+import { SubjectWrittenScore, findWrittenSubject } from "./subject-written-score";
 import { TopicFrequencySource } from "./syllabus-notes";
 import { getSubjectBar, getSubjectShare, useKnownLine } from "./use-subject-progress";
 
@@ -34,6 +38,8 @@ const TOPICS_TITLE_ID = "subject-topics-title";
 
 type SubjectHrefs = {
   adjust: string;
+  /** A past written answer's page; without it the written part lists no answers. */
+  answer?: (attemptId: string) => string;
   back: string;
   chapter: (chapterId: string) => string;
   mindMaps?: (subjectKey: string) => string;
@@ -114,6 +120,33 @@ function SubjectFacts({
       {known && <DetailFacts className="pt-0 font-sans">{known}</DetailFacts>}
       {alsoIn && <DetailFacts className="pt-0 font-sans">{alsoIn}</DetailFacts>}
     </>
+  );
+}
+
+/** A written part's main action is writing: its lessons are a small part of its time. */
+function WriteBottomBar({ write }: { write: () => Promise<boolean> }) {
+  const t = useExtracted();
+  const [busy, setBusy] = useState(false);
+
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        <EnterButton
+          busy={busy}
+          className={DETAIL_PRIMARY_CLASS}
+          onClick={async () => {
+            setBusy(true);
+
+            if (!(await write())) {
+              setBusy(false);
+            }
+          }}
+          size="lg"
+        >
+          {t("Write")}
+        </EnterButton>
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
@@ -222,6 +255,7 @@ export function SubjectScreen({
   >;
 }) {
   const t = useExtracted();
+  const written = findWrittenSubject({ practice: syllabus.writtenPractice, subject });
 
   return (
     <DetailLayout
@@ -236,7 +270,13 @@ export function SubjectScreen({
           <ReportProblemMenu label={t("Subject options")} screen="subject" />
         </LearnPageBar>
       }
-      bottomBar={<SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />}
+      bottomBar={
+        written && actions.write ? (
+          <WriteBottomBar write={actions.write} />
+        ) : (
+          <SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />
+        )
+      }
       data-slot="subject"
     >
       <DetailAside>
@@ -256,6 +296,10 @@ export function SubjectScreen({
       </DetailAside>
 
       <DetailContent>
+        {written && hrefs.answer && (
+          <SubjectWrittenScore answerHref={hrefs.answer} written={written} />
+        )}
+
         <SubjectChapters
           chapterHref={hrefs.chapter}
           chapters={subject.chapters}

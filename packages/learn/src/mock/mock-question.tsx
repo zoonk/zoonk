@@ -16,6 +16,7 @@ import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { isMultiPick } from "../questions/pick-rule";
+import { WritingLineCount } from "../writing/writing-editor";
 import { useMockScreen } from "./mock-context";
 import { MockOptions, MockPicks, useLocked } from "./mock-options";
 
@@ -106,7 +107,11 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
         readOnly={runner.pending}
         value={text}
       />
-      <EssayWordCount id={`${textId}-count`} words={words} />
+      {question.writing ? (
+        <WritingLineCount id={`${textId}-count`} text={text} writing={question.writing} />
+      ) : (
+        <EssayWordCount id={`${textId}-count`} words={words} />
+      )}
     </section>
   );
 }
