@@ -1,9 +1,7 @@
 import { type ProfileQuestion } from "@zoonk/db/enums";
 import { type ServerAnalyticsEvent } from "../../../analytics/events";
-import { PROFILE_OPTION_IDS } from "../profile-option-ids";
+import { GENERAL_TOOL_IDS } from "../profile-option-ids";
 import { type ProfileAnswerInput } from "../profile-question-contract";
-
-const GENERAL_TOOL_IDS = new Set<string>(PROFILE_OPTION_IDS.tools);
 
 function answerMetrics(input: ProfileAnswerInput) {
   switch (input.question) {

@@ -412,7 +412,7 @@
     },
     "/me/profile-questions/answers": {
       "post": {
-        "description": "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Typed memory facts start sensitive until a follow-up checks them.",
+        "description": "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Facts with typed text or custom tool names start sensitive until a follow-up checks them.",
         "operationId": "answerCurrentUserProfileQuestion",
         "security": [
           {
@@ -25666,10 +25666,13 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Distinct tool option ids offered for this learner or already saved",
+                    "description": "Distinct tool names or general tool option ids",
+                    "maxItems": 100,
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
                     }
                   }
                 },
@@ -31450,10 +31453,13 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Distinct tool option ids offered for this learner or already saved",
+                    "description": "Distinct tool names or general tool option ids",
+                    "maxItems": 100,
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
                     }
                   }
                 },
@@ -33598,7 +33604,7 @@
                 },
                 "id": {
                   "type": "string",
-                  "description": "Option id accepted by the answer input. Personalized tool ids are their names"
+                  "description": "Option id accepted by the answer input. Tools use the general id for matching labels, or the tool's name"
                 },
                 "label": {
                   "type": "string",
