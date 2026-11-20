@@ -26456,6 +26456,12 @@
             "minimum": 5,
             "maximum": 1440
           },
+          "language": {
+            "description": "The language the learner studies in. When omitted, the course’s language is used",
+            "type": "string",
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
+          },
           "level": {
             "description": "The learner's level in the course, asked before the start: null for a quick test (placement finds it). Absent, onboarding asks it",
             "nullable": true,

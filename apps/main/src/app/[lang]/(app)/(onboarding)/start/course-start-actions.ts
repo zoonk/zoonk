@@ -46,18 +46,21 @@ export async function startCourseAction({
   chapterId,
   courseId,
   dailyMinutes,
+  language,
   level,
   timeZone,
 }: {
   chapterId?: string | null;
   courseId: string;
   dailyMinutes?: number | null;
+  language: string;
   level?: OnboardingOwnLevel | null;
   timeZone?: string;
 }): Promise<CourseStartOutcome> {
   const input = courseGoalStartInputSchema.safeParse({
     chapterId: chapterId ?? undefined,
     dailyMinutes: dailyMinutes ?? undefined,
+    language,
     level,
     timeZone,
   });
@@ -85,7 +88,7 @@ export async function startCourseAction({
     return { goalId: goal.id, next: "steps", status: "started" };
   }
 
-  const existing = await findCourseGoalStart(courseId);
+  const existing = await findCourseGoalStart(courseId, language);
 
   return { goalId: goal.id, next: existing?.inOnboarding ? "steps" : "today", status: "started" };
 }
@@ -125,7 +128,13 @@ export async function startCourseFormAction(formData: FormData): Promise<void> {
   const minutes = readDailyMinutes(readField(formData, MINUTES_PARAM) ?? undefined);
 
   const locale = await getAppLocale();
-  const outcome = await startCourseAction({ chapterId, courseId, dailyMinutes: minutes });
+
+  const outcome = await startCourseAction({
+    chapterId,
+    courseId,
+    dailyMinutes: minutes,
+    language: locale,
+  });
 
   redirect({
     href: getFormDestination({

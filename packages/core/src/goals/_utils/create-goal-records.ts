@@ -9,7 +9,9 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
+import { type CourseStart } from "../course-start-details";
 import { type GoalCreateInput, type GoalDraft, withoutCoreDetails } from "../goal-contract";
+import { type CourseGoalLookup, findCourseGoal } from "./find-course-goal";
 import { resolveNewGoalCountry } from "./goal-content-country";
 import { defaultDisplayName } from "./goal-display-name";
 import { saveMetadataInTransaction } from "./goal-metadata";
@@ -36,7 +38,10 @@ function toScopeSettings(value: unknown): { examSubjects?: string[] } {
   return subjects.length > 0 ? { examSubjects: subjects } : {};
 }
 
+export type CourseGoalOrigin = { details: CourseStart; lookup: CourseGoalLookup };
+
 type GoalRecord = {
+  courseStart?: CourseGoalOrigin;
   dailyMinutes: number;
   draft: GoalDraft;
   id: string;
@@ -49,6 +54,7 @@ type GoalRecord = {
 export async function insertGoalWithPlan(
   tx: TransactionClient,
   {
+    courseStart,
     dailyMinutes,
     draft,
     id,
@@ -65,7 +71,14 @@ export async function insertGoalWithPlan(
 ): Promise<void> {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
   const { examSubjects, ...details } = draft.details ?? {};
-  const country = await resolveNewGoalCountry({ draft, tx, userId });
+
+  const country = await resolveNewGoalCountry({
+    courseStart: courseStart?.details,
+    draft,
+    tx,
+    userId,
+  });
+
   const answered = Array.isArray(details.answered) ? details.answered : [];
 
   const countryDetails =
@@ -83,7 +96,11 @@ export async function insertGoalWithPlan(
     data: {
       contentCountry: country.contentCountry,
       dailyMinutes,
-      details: { ...withoutCoreDetails(details), ...countryDetails },
+      details: {
+        ...withoutCoreDetails(details),
+        ...countryDetails,
+        ...toCourseStartDetails(courseStart),
+      },
       displayName: draft.displayName ?? defaultDisplayName(draft),
       examBlueprintId: draft.examBlueprintId ?? null,
       id,
@@ -116,6 +133,19 @@ export async function insertGoalWithPlan(
   });
 }
 
+function toCourseStartDetails(courseStart: CourseGoalOrigin | undefined) {
+  if (!courseStart) {
+    return {};
+  }
+
+  return {
+    courseStart: courseStart.details,
+    ...(courseStart.lookup.primaryCourseId
+      ? {}
+      : { courseStartSourceId: courseStart.lookup.sourceCourseId }),
+  };
+}
+
 async function pauseGoal(
   tx: TransactionClient,
   { goalId, userId }: { goalId?: string; userId: string },
@@ -138,29 +168,43 @@ async function pauseGoal(
  */
 export async function createGoal(
   record: GoalRecord & { input: GoalCreateInput; viewer: EntitlementViewer },
-): Promise<UsageDecision> {
+): Promise<UsageDecision | { goalId: string; status: "existing" }> {
   const { draft, id, input, userId, viewer } = record;
   const isExplanation = draft.kind === "explain";
 
-  return writeLearnerChange({ planInputs: true, userId }, async (transaction) => {
-    if (!isExplanation) {
-      await pauseGoal(transaction, { goalId: input.pauseGoalId, userId });
-    }
+  return writeLearnerChange<UsageDecision, UsageDecision | { goalId: string; status: "existing" }>(
+    { planInputs: true, userId },
+    async (transaction) => {
+      if (record.courseStart) {
+        const existing = await findCourseGoal(transaction, {
+          ...record.courseStart.lookup,
+          userId,
+        });
 
-    const claims = [
-      { generated: isExplanation, kind: isExplanation ? "explanation" : "goal", targetId: id },
-    ] as const;
+        if (existing) {
+          return unchanged({ goalId: existing.id, status: "existing" });
+        }
+      }
 
-    const ledger = await openUsageLedgerInWrite({ claims, now: new Date(), transaction, viewer });
-    const { decision } = await claimBundleInWrite({ claims, ledger, transaction });
+      if (!isExplanation) {
+        await pauseGoal(transaction, { goalId: input.pauseGoalId, userId });
+      }
 
-    if (decision.status !== "allowed") {
-      return unchanged(decision);
-    }
+      const claims = [
+        { generated: isExplanation, kind: isExplanation ? "explanation" : "goal", targetId: id },
+      ] as const;
 
-    await insertGoalWithPlan(transaction, record);
-    return decision;
-  });
+      const ledger = await openUsageLedgerInWrite({ claims, now: new Date(), transaction, viewer });
+      const { decision } = await claimBundleInWrite({ claims, ledger, transaction });
+
+      if (decision.status !== "allowed") {
+        return unchanged(decision);
+      }
+
+      await insertGoalWithPlan(transaction, record);
+      return decision;
+    },
+  );
 }
 
 export async function setActiveGoal(

@@ -20,7 +20,12 @@ export async function prepareCourseGoalPlan({
 
   const start = goal && isJsonObject(goal.details) ? readCourseStart(goal.details) : null;
 
-  if (!goal || !start || !goal.primaryCourseId) {
+  if (
+    !goal ||
+    !start ||
+    !goal.primaryCourseId ||
+    (isJsonObject(goal.details) && goal.details.courseStartSourceId)
+  ) {
     return;
   }
 

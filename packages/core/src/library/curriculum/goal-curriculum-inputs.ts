@@ -331,7 +331,7 @@ export async function loadGoalCurriculumInputs(
     sharedContext: toSharedContext(details),
     startedCourse: toStartedCourse({
       country,
-      course: goal.primaryCourse,
+      course: details.courseStartSourceId ? null : goal.primaryCourse,
       details,
       kind: goal.kind,
     }),
