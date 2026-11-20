@@ -11643,7 +11643,7 @@ msgstr "P. ej., hacer pan, autos, astronomía"
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "2_2yg-"
 msgid "Add"
-msgstr ""
+msgstr "Agregar"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
@@ -11679,7 +11679,7 @@ msgstr "P. ej., periodismo"
 #: src/profile-questions/profile-chips.tsx
 msgctxt "VKAcMO"
 msgid "Remove {tool}"
-msgstr ""
+msgstr "Quitar {tool}"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11751,7 +11751,7 @@ msgstr "Usamos esto para elegir ejemplos que te interesen."
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "bofvjf"
 msgid "Past or present, finished or not."
-msgstr ""
+msgstr "Del pasado o del presente, hayas terminado o no."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"

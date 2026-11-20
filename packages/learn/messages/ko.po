@@ -11643,7 +11643,7 @@ msgstr "예: 빵 굽기, 자동차, 천문학"
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "2_2yg-"
 msgid "Add"
-msgstr ""
+msgstr "추가"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
@@ -11679,7 +11679,7 @@ msgstr "예: 언론학"
 #: src/profile-questions/profile-chips.tsx
 msgctxt "VKAcMO"
 msgid "Remove {tool}"
-msgstr ""
+msgstr "{tool} 삭제"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11751,7 +11751,7 @@ msgstr "이 정보를 바탕으로 관심이 갈 만한 예시를 골라요."
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "bofvjf"
 msgid "Past or present, finished or not."
-msgstr ""
+msgstr "과거든 현재든, 끝났든 아니든."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"

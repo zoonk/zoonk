@@ -11643,7 +11643,7 @@ msgstr "例：パン作り、車、天文学"
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "2_2yg-"
 msgid "Add"
-msgstr ""
+msgstr "追加"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
@@ -11679,7 +11679,7 @@ msgstr "例：ジャーナリズム"
 #: src/profile-questions/profile-chips.tsx
 msgctxt "VKAcMO"
 msgid "Remove {tool}"
-msgstr ""
+msgstr "{tool}を削除"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11751,7 +11751,7 @@ msgstr "興味を持てる例を選ぶために使います。"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "bofvjf"
 msgid "Past or present, finished or not."
-msgstr ""
+msgstr "過去のことでも現在のことでも、終わっていてもいなくても。"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"

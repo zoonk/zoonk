@@ -11643,7 +11643,7 @@ msgstr "Örn. ekmek yapmak, arabalar, astronomi"
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "2_2yg-"
 msgid "Add"
-msgstr ""
+msgstr "Ekle"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
@@ -11679,7 +11679,7 @@ msgstr "Örn. gazetecilik"
 #: src/profile-questions/profile-chips.tsx
 msgctxt "VKAcMO"
 msgid "Remove {tool}"
-msgstr ""
+msgstr "{tool} öğesini kaldır"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11751,7 +11751,7 @@ msgstr "Bu bilgiyle ilgini çekecek örnekler seçiyoruz."
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "bofvjf"
 msgid "Past or present, finished or not."
-msgstr ""
+msgstr "Geçmişte ya da şu anda, tamamlanmış olsun ya da olmasın."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"

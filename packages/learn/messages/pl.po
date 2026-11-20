@@ -11643,7 +11643,7 @@ msgstr "Np. pieczenie chleba, samochody, astronomia"
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "2_2yg-"
 msgid "Add"
-msgstr ""
+msgstr "Dodaj"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
@@ -11679,7 +11679,7 @@ msgstr "Np. dziennikarstwo"
 #: src/profile-questions/profile-chips.tsx
 msgctxt "VKAcMO"
 msgid "Remove {tool}"
-msgstr ""
+msgstr "Usuń {tool}"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11751,7 +11751,7 @@ msgstr "Dzięki temu dobieramy przykłady, które cię zainteresują."
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "bofvjf"
 msgid "Past or present, finished or not."
-msgstr ""
+msgstr "Dawniej lub obecnie, ukończone lub nie."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
