@@ -288,7 +288,7 @@ object AppLink {
 
                     "checkpoint" -> AppRoute.Checkpoint(blockId = second, sessionId = session)
 
-                    "essay" -> AppRoute.Essay(blockId = second)
+                    "essay" -> AppRoute.Essay(blockId = second, writing = query["writing"])
 
                     "conversation" -> AppRoute.Conversation(conversationId = second, from = query["from"], mock = query["mock"])
 
@@ -305,6 +305,7 @@ object AppLink {
             3 -> {
                 when {
                     first == "settings" && second == "about-you" -> AppRoute.ProfileQuestionEdit(third)
+                    first == "essay" && second == "answers" -> AppRoute.WritingAnswer(attemptId = third)
                     first == "content" && second == "chapters" -> AppRoute.Chapter(chapterId = third)
                     first == "content" && second == "units" -> AppRoute.LanguageUnit(chapterId = third)
                     first == "start" && second == "course" -> courseStart(third, query)

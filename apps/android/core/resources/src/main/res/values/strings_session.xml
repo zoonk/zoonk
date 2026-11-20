@@ -11,6 +11,10 @@
     <string name="session_block_what_you_know">What you already know</string>
     <string name="session_block_new_lesson">New lesson</string>
     <string name="session_block_writing_practice">Writing practice</string>
+    <!-- Under a written task on Today: the day's extra grades are used, so it waits for tomorrow. -->
+    <string name="session_block_writing_tomorrow">Back tomorrow: today\'s extra grades are used</string>
+    <!-- Under a written task on Today: the learner's unsent text is kept, ready to continue. -->
+    <string name="session_block_writing_draft_saved">Your draft is saved</string>
     <string name="session_block_practice_mistakes">Practice mistakes</string>
     <string name="session_block_bonus_practice">Bonus practice</string>
     <string name="session_block_mixed_practice">Mixed practice</string>

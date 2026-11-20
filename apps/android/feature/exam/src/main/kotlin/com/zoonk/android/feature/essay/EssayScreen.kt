@@ -1,39 +1,25 @@
 package com.zoonk.android.feature.essay
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRowScope
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,25 +27,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -67,24 +44,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
-import com.zoonk.android.feature.mock.runner.StepDetail
-import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.RunColumn
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
-import com.zoonk.android.feature.questions.ItemText
-import com.zoonk.android.feature.questions.NoteRow
 import com.zoonk.android.feature.questions.QuestionTitle
-import com.zoonk.android.feature.questions.isLongText
 import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -92,38 +67,33 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.StepDots
-import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
-import com.zoonk.android.ui.components.statusLink
-import com.zoonk.android.ui.components.stepHeading
-import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.format.spaceAfterSentence
-import com.zoonk.android.ui.scaffold.PageFold
-import com.zoonk.android.ui.scaffold.PageSpan
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.android.ui.scaffold.ResultPages
-import com.zoonk.android.ui.scaffold.ResultScreen
-import com.zoonk.android.ui.scaffold.TaskExitConfirmation
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pagePadding
-import com.zoonk.android.ui.scaffold.spreadFold
-import com.zoonk.android.ui.scaffold.supportingPaneBeside
+import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.scaffold.taskAsideBeside
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Essay
-import com.zoonk.api.models.EssayGrade
+import com.zoonk.api.models.WritingPromptOutput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -139,6 +109,7 @@ fun EssayScreen(
     val signedIn = (session as? SessionState.SignedIn)?.session
     val close = navigator::closeTask
     val blockId = remember(route.blockId) { runCatching { UUID.fromString(route.blockId) }.getOrNull() }
+    val before = remember(route.writing) { WritingBefore.of(route.writing) }
 
     if (blockId == null) {
         TaskNotFound(navigator)
@@ -149,7 +120,7 @@ fun EssayScreen(
         return
     }
 
-    val scope = rememberCoroutineScope()
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
     val loaded by app.essays.essays[blockId].collectShown()
     when (val read = loaded) {
         is LoadState.Loaded -> {
@@ -157,15 +128,82 @@ fun EssayScreen(
         }
 
         is LoadState.Failed -> {
-            if (read.error == ApiError.NotFound) {
-                TaskNotFound(navigator)
-            } else {
-                RunLoadFailed(close, onRetry = { scope.launch { app.essays.essays[blockId].refresh() } })
+            when {
+                // A written question appears once its start admits it; until then the start's answer shows.
+                read.error == ApiError.NotFound && before != null -> WritingStart(blockId, before, signedIn, app, navigator)
+                read.error == ApiError.NotFound -> TaskNotFound(navigator)
+                else -> RunLoadFailed(close, onRetry = { scope.launch { app.essays.essays[blockId].refresh() } })
             }
         }
 
         else -> {
             RunLoading(close)
+        }
+    }
+}
+
+@Composable
+private fun WritingStart(
+    blockId: UUID,
+    before: WritingBefore,
+    signedIn: AuthenticatedSession,
+    app: AppContainer,
+    navigator: AppNavigator,
+) {
+    val viewModel =
+        viewModel(key = "writing-start:$blockId:${signedIn.localId}") {
+            WritingStartViewModel(blockId, before, app.essays, LiveGenerationSource(app.api, signedIn))
+        }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val asking by viewModel.asking.collectAsStateWithLifecycle()
+    val run by viewModel.run.collectAsStateWithLifecycle()
+
+    when (val shown = state) {
+        WritingStartState.LimitReached -> {
+            WritingRefused(task = null, busy = false, onContinue = navigator::closeTask, onClose = navigator::closeTask)
+        }
+
+        WritingStartState.Ready -> {
+            RunLoading(navigator::closeTask)
+        }
+
+        is WritingStartState.Writing -> {
+            TrackShown(AnalyticsEvent.WritingPromptWaitViewed(shown.generationId, AnalyticsEvent.WritingSurface.Practice))
+            TaskScaffold(onClose = navigator::closeTask, title = { BarTitle(stringResource(R.string.essay_written_answer)) }) { padding ->
+                RunColumn(Modifier.padding(padding)) {
+                    GenerationWait(kind = com.zoonk.android.data.GenerationKind.WritingPrompt, run = run, onRetry = viewModel::retryRun) {
+                        Text(stringResource(R.string.essay_writing_question), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            stringResource(R.string.essay_writing_question_detail),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            }
+        }
+
+        WritingStartState.Failed -> {
+            RunPage(
+                onClose = navigator::closeTask,
+                title = { BarTitle(stringResource(R.string.essay_written_answer)) },
+                bottomBar = {
+                    TaskActionBar {
+                        TaskActions { width ->
+                            Button(onClick = viewModel::retry, modifier = width, busy = asking) { Text(stringResource(R.string.essay_try_again)) }
+                        }
+                    }
+                },
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.essay_question_failed), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        stringResource(R.string.essay_nothing_lost),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
         }
     }
 }
@@ -179,7 +217,7 @@ private fun EssayLoaded(
 ) {
     val viewModel =
         viewModel(key = "essay:${essay.blockId}:${signedIn.localId}") {
-            EssayViewModel(essay.blockId, essay.sessionId, app.essays, app.essays.unsentText(signedIn, essay.blockId), app.studyOpener)
+            EssayViewModel(essay.blockId, essay.sessionId, app.essays, app.essays.keptText(signedIn, essay.blockId), app.studyOpener)
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     val move by viewModel.move.collectAsStateWithLifecycle()
@@ -189,335 +227,218 @@ private fun EssayLoaded(
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
 
     val saveReport = rememberSaveFailureReport(app, "essay")
-    val grade = ui.grade
     val finishing = ui.finishing || move.busy
     val finishFailures = maxOf(ui.finishFailures, if (move.failed != null) 1 else 0)
+    val latest = ui.latest
+
     when {
-        ui.drafts == null -> {
+        ui.results == null -> {
             RunLoading(navigator::closeTask)
         }
 
-        ui.closed && grade == null -> {
+        ui.closed && latest == null -> {
             SkippedEssay(essay, navigator)
         }
 
-        (ui.mode == EssayMode.Grade || ui.closed) && grade != null -> {
-            EssayGradeSteps(
-                essay,
-                grade,
-                ui.finished,
-                ui.closed,
-                ui.switched,
-                finishing,
-                finishFailures,
-                viewModel,
-                navigator,
-                onReportSaveFailure = saveReport::open,
+        ui.mode == WritingMode.Refused -> {
+            WritingRefused(
+                task = essay.writing.title to essay.pacing.minutes.toInt(),
+                busy = finishing,
+                onContinue = viewModel::finish,
+                onClose = navigator::closeTask,
             )
         }
 
+        (ui.mode == WritingMode.Result || ui.closed) && latest != null -> {
+            WritingResultScreen(essay, ui, latest, finishing, finishFailures, viewModel, navigator, saveReport::open)
+        }
+
+        ui.mode == WritingMode.Write -> {
+            WriteScreen(essay, ui, viewModel, navigator)
+        }
+
         else -> {
-            EssayWrite(essay, ui, finishing, finishFailures, viewModel, navigator, onReportSaveFailure = saveReport::open)
+            WritingQuestionScreen(essay, ui, viewModel, navigator)
         }
     }
 }
 
 @Composable
-internal fun EssayWrite(
+private fun BarTitle(title: String) {
+    Text(title, maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, style = MaterialTheme.typography.titleSmall)
+}
+
+@Composable
+internal fun WritingQuestionScreen(
     essay: Essay,
     ui: EssayUi,
-    finishing: Boolean,
-    finishFailures: Int,
     viewModel: EssayViewModel,
     navigator: AppNavigator,
-    onReportSaveFailure: () -> Unit = {},
 ) {
-    val rubric = EssayRubric.of(essay.rubric.value)
-    val texts = essay.context?.takeIf { isLongText(it) }
-    val lastGrade = ui.grade?.takeUnless { it.zeroReason == EssayGrade.ZeroReason.TOO_SHORT }
-    val rewriting = ui.drafts.orEmpty().isNotEmpty()
-    val box = remember { FocusRequester() }
-    val moveFocus = rememberMoveFocus()
-    // The learner's cursor and scroll outlive the layouts that move the field.
-    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(ui.text)) }
-    val scroll = rememberScrollState()
-    val boxScroll = rememberScrollState()
+    TaskScaffold(
+        onClose = navigator::closeTask,
+        title = { BarTitle(writingLabel(essay.writing)) },
+        bottomBar = {
+            TaskActionBar {
+                TaskActions { width ->
+                    Button(onClick = viewModel::startWriting, modifier = width, enabled = !ui.closed) {
+                        Text(stringResource(if (ui.text.isNotBlank()) R.string.essay_continue else R.string.essay_write))
+                    }
+                }
+            }
+        },
+    ) { padding ->
+        RunColumn(Modifier.padding(padding)) {
+            WritingQuestionPage(essay.writing, essay.pacing, essay.context, essay.question)
+        }
+    }
+}
 
-    LaunchedEffect(Unit) { if (ui.switched) moveFocus(box) }
+/** The field fills the screen; the question is one tap away on a phone and beside it where there's room. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun WriteScreen(
+    essay: Essay,
+    ui: EssayUi,
+    viewModel: EssayViewModel,
+    navigator: AppNavigator,
+) {
+    var questionOpen by rememberSaveable { mutableStateOf(false) }
+    val field = remember { FocusRequester() }
+    val moveFocus = rememberMoveFocus()
+    val rewrite = ui.results.orEmpty().isNotEmpty()
+    val fieldLabel = stringResource(if (rewrite) R.string.essay_rewrite_label else R.string.essay_your_answer)
+    // The learner's cursor outlives the layouts that move the field.
+    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(ui.text)) }
+
+    LaunchedEffect(Unit) { if (ui.switched) moveFocus(field) }
 
     TaskScaffold(
         onClose = navigator::closeTask,
-        title = { EssayTitle(promptLabel(rubric)) },
-        exitConfirmation =
-            if (ui.unsent) {
-                TaskExitConfirmation(
-                    title = stringResource(R.string.essay_leave_title),
-                    description = stringResource(R.string.essay_leave_description),
-                    confirm = stringResource(R.string.task_leave),
-                    cancel = stringResource(R.string.essay_keep_writing),
-                )
-            } else {
-                null
+        title = { BarTitle(writingLabel(essay.writing)) },
+        actions = {
+            if (!taskAsideBeside()) {
+                TextButton(onClick = { questionOpen = true }) { Text(stringResource(R.string.essay_question)) }
+            }
+        },
+        aside =
+            TaskAside(title = essay.writing.title) {
+                WritingQuestionBody(essay.context, essay.question)
+                WritingCriteriaSection(essay.writing)
             },
         bottomBar = {
             TaskActionBar {
-                StatusLine(ui.send, ui.gradesLeft, navigator)
-                if (finishFailures > 0 && !finishing) SaveErrorText(finishFailures, viewModel::finish, onReport = onReportSaveFailure)
+                StatusLine(ui.send)
                 TaskActions { width ->
-                    if (ui.send == EssaySend.SignUpRequired) {
+                    if (ui.send == WritingSend.SignUpRequired) {
                         // Sending again would only meet the gate, so its way on is the bar's one action.
                         Button(onClick = { navigator.open(AppRoute.Login) }, modifier = width) {
                             Text(stringResource(R.string.limit_create_account))
                         }
                         return@TaskActions
                     }
-                    if (rewriting) {
-                        OutlinedButton(
-                            busy = finishing,
-                            onClick = viewModel::finish,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-                        ) {
-                            Text(stringResource(R.string.essay_skip_rewrite))
-                        }
-                    }
-                    val pending = ui.send == EssaySend.Pending
                     Button(
-                        busy = pending,
+                        busy = ui.send == WritingSend.Pending,
                         onClick = viewModel::send,
                         modifier = width,
-                        enabled = ui.canSend && !finishing,
+                        enabled = ui.canSend,
                     ) {
-                        Text(stringResource(if (rewriting) R.string.essay_grade_rewrite else R.string.essay_send))
+                        Text(stringResource(if (rewrite) R.string.essay_grade_rewrite else R.string.essay_grade_answer))
                     }
                 }
             }
         },
     ) { padding ->
-        var span by remember { mutableStateOf<PageSpan?>(null) }
+        val beside = taskAsideBeside()
+        LaunchedEffect(beside) { if (beside) questionOpen = false }
 
-        BoxWithConstraints(Modifier.padding(padding).onPageSpan { span = it }) {
-            val fold = spreadFold(maxWidth, span)
-            // Across a fold the essay is a spread, so the texts lead with the prompt rather than beside the box.
-            val hasAside = fold == null && (texts != null || lastGrade != null)
-
-            PageWithSupportingPane(
-                supportingPane =
-                    if (hasAside) {
-                        { EssayAside(texts, lastGrade, rubric) }
-                    } else {
-                        null
+        Column(
+            Modifier.padding(padding).fillMaxSize().padding(vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(Modifier.taskColumn().weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = value.copy(text = ui.text),
+                    onValueChange = {
+                        value = it
+                        if (it.text != ui.text) viewModel.write(it.text)
                     },
-            ) { beside ->
-                EssayWriteColumn(
-                    essay,
-                    ui,
-                    rubric,
-                    inlineTexts = texts.takeUnless { beside },
-                    fill = beside,
-                    fold,
-                    box,
-                    value,
-                    onValueChange = { value = it },
-                    scroll,
-                    boxScroll,
-                    viewModel,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .heightIn(min = FIELD_MIN_HEIGHT)
+                            .focusRequester(field)
+                            .semantics { contentDescription = fieldLabel },
+                    readOnly = ui.send == WritingSend.Pending,
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 )
+                WritingLineCount(ui.text, essay.writing)
+            }
+        }
+    }
+
+    if (questionOpen) {
+        ModalBottomSheet(onDismissRequest = { questionOpen = false }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+            SheetColumn {
+                Text(essay.writing.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+                WritingQuestionBody(essay.context, essay.question)
+                WritingCriteriaSection(essay.writing)
             }
         }
     }
 }
 
-/**
- * Beside the texts on a tall enough window, the box takes the column's rest, as main's on wide
- * screens. Across a [fold] the prompt leads and the box faces it, above its Send.
- */
+/** "about 23 of 30 lines": the count stays in view under the field, and what's past the limit says so. */
 @Composable
-private fun EssayWriteColumn(
-    essay: Essay,
-    ui: EssayUi,
-    rubric: EssayRubric,
-    inlineTexts: String?,
-    fill: Boolean,
-    fold: PageFold?,
-    box: FocusRequester,
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    scroll: ScrollState,
-    boxScroll: ScrollState,
-    viewModel: EssayViewModel,
-) {
-    val prompt: @Composable ColumnScope.() -> Unit = {
-        inlineTexts?.let {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                SectionHeader(textsLabel(rubric))
-                QuotedText(it)
-            }
-        }
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            essay.context?.takeUnless { isLongText(it) }?.let { QuotedText(it) }
-            QuestionTitle(essay.question)
-        }
-    }
-    val guide: @Composable ColumnScope.() -> Unit = { ui.grade?.let { RewriteGuide(it, gradeBeside = fill, viewModel::seeGrade) } }
-    BoxWithConstraints {
-        if (fill && maxHeight >= FILL_HEIGHT) {
-            Column(Modifier.fillMaxSize().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Column(Modifier.taskColumn().weight(1f), verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                    prompt()
-                    guide()
-                    EssayBox(ui, rubric, box, value, onValueChange, viewModel::write, Modifier.weight(1f).heightIn(min = BOX_MIN_HEIGHT))
-                }
-            }
-        } else {
-            RunColumn(
-                if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true },
-                if (fold == null) scroll else boxScroll,
-            ) {
-                if (fold == null) prompt()
-                guide()
-                EssayBox(ui, rubric, box, value, onValueChange, viewModel::write, Modifier.heightIn(min = BOX_HEIGHT))
-            }
-            if (fold != null) RunColumn(Modifier.width(fold.start).semantics { isTraversalGroup = true }, content = prompt)
-        }
-    }
-}
-
-@Composable
-private fun EssayTitle(title: String) {
-    Text(title, maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, style = MaterialTheme.typography.titleSmall)
-}
-
-@Composable
-private fun QuotedText(
+internal fun WritingLineCount(
     text: String,
+    writing: WritingPromptOutput,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        VerticalDivider(Modifier.fillMaxHeight(), thickness = 2.dp)
-        ItemText(text, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+    val limit = writing.lines?.toInt()
+    val style = MaterialTheme.typography.labelMedium.withTabularFigures()
+    if (limit == null) {
+        val words = com.zoonk.android.feature.player.language.countWords(text)
+        Text(
+            androidx.compose.ui.res.pluralStringResource(R.plurals.essay_words, words, words),
+            modifier,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = style,
+        )
+        return
     }
-}
-
-/** A too-short grade still names a criterion to work on, with nothing to say about it, so length is what it brings up. */
-@Composable
-private fun RewriteGuide(
-    grade: EssayGrade,
-    gradeBeside: Boolean,
-    onSeeGrade: () -> Unit,
-) {
-    val nextStep = grade.nextStep
-    val criterion = grade.criteria.firstOrNull { it.id == nextStep?.criterionId }
-    val tooShort = grade.zeroReason == EssayGrade.ZeroReason.TOO_SHORT
-    val lead =
-        when {
-            tooShort -> stringResource(R.string.essay_too_short)
-            criterion != null -> stringResource(R.string.essay_next_step_named, criterionName(criterion))
-            else -> null
-        }
-    val detail =
-        when {
-            tooShort -> stringResource(R.string.essay_too_short_detail)
-            nextStep != null -> nextStep.text
-            else -> stringResource(R.string.essay_full_marks)
-        }
-
-    NoteRow(R.drawable.ic_lightbulb) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                buildAnnotatedString {
-                    lead?.let {
-                        withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)) { append(it) }
-                        append("\n")
-                    }
-                    append(detail)
-                },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            if (essayGradeLinkVisible(
-                    hasGrade = true,
-                    tooShort = tooShort,
-                    beside = gradeBeside,
-                )
-            ) {
-                OutlinedButton(onClick = onSeeGrade, size = ButtonSize.Small) {
-                    Text(stringResource(R.string.essay_see_grade))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun EssayBox(
-    ui: EssayUi,
-    rubric: EssayRubric,
-    focus: FocusRequester,
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    onWrite: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val label = if (ui.drafts.orEmpty().isNotEmpty()) stringResource(R.string.essay_rewrite_label) else writingName(rubric)
-    OutlinedTextField(
-        value = value.copy(text = ui.text),
-        onValueChange = {
-            onValueChange(it)
-            if (it.text != ui.text) onWrite(it.text)
-        },
-        modifier = modifier.fillMaxWidth().focusRequester(focus),
-        label = label,
-        supportingText = {
-            if (ui.words >
-                0
-            ) {
-                Text(
-                    pluralStringResource(R.plurals.essay_words, ui.words, ui.words),
-                    style = LocalTextStyle.current.withTabularFigures(),
-                )
-            }
-        },
-        textStyle = MaterialTheme.typography.bodyLarge,
-        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+    val used = remember(text, writing.charactersPerLine, limit) { countWritingLines(text, writing.charactersPerLine.toInt(), limit).estimated }
+    val over = used > limit
+    Text(
+        stringResource(if (over) R.string.essay_lines_over else R.string.essay_lines_used, used, limit),
+        modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        color = if (over) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurfaceVariant,
+        style = style,
     )
 }
 
 @Composable
-private fun StatusLine(
-    send: EssaySend,
-    gradesLeft: Int,
-    navigator: AppNavigator,
-) {
-    if (send == EssaySend.SignUpRequired) {
+private fun StatusLine(send: WritingSend) {
+    if (send == WritingSend.SignUpRequired) {
         val words = limitWords(Limit.SignUpRequired, LimitSubject.Help)
         GateWords(words.title, words.line, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
         return
     }
     var slow by remember(send) { mutableStateOf(false) }
     LaunchedEffect(send) {
-        if (send == EssaySend.Pending) {
+        if (send == WritingSend.Pending) {
             delay(SLOW_GRADING)
             slow = true
         }
     }
-    val failed = send == EssaySend.Failed
+    val failed = send == WritingSend.Failed
     val line =
         when {
-            failed -> {
-                AnnotatedString(stringResource(R.string.essay_send_failed))
-            }
-
-            send == EssaySend.LimitReached || gradesLeft == 0 -> {
-                AnnotatedString(stringResource(R.string.essay_limit_reached))
-            }
-
-            send == EssaySend.Pending -> {
-                AnnotatedString(stringResource(if (slow) R.string.essay_grading_slow else R.string.essay_grading))
-            }
-
-            else -> {
-                return
-            }
+            failed -> stringResource(R.string.essay_send_failed)
+            send == WritingSend.Pending -> stringResource(if (slow) R.string.essay_grading_slow else R.string.essay_grading)
+            else -> return
         }
     Text(
         line,
@@ -528,174 +449,130 @@ private fun StatusLine(
 }
 
 @Composable
-private fun EssayAside(
-    texts: String?,
-    lastGrade: EssayGrade?,
-    rubric: EssayRubric,
-) {
-    val label = if (texts != null) textsLabel(rubric) else stringResource(R.string.essay_last_grade)
-
-    Row {
-        VerticalDivider()
-        Column(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    horizontal =
-                        com.zoonk.android.ui.scaffold
-                            .pageMargin(),
-                    vertical = 24.dp,
-                ).semantics { paneTitle = label },
-            verticalArrangement = Arrangement.spacedBy(28.dp),
-        ) {
-            texts?.let {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    SectionHeader(textsLabel(rubric))
-                    ItemText(it, style = MaterialTheme.typography.bodyMedium)
-                }
-            }
-            lastGrade?.let {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SectionHeader(stringResource(R.string.essay_last_grade))
-                    CriteriaRows(it, rubric)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-internal fun EssayGradeSteps(
+internal fun WritingResultScreen(
     essay: Essay,
-    grade: EssayGrade,
-    finished: Boolean,
-    closed: Boolean,
-    announce: Boolean,
+    ui: EssayUi,
+    latest: GradedAnswer,
     finishing: Boolean,
     finishFailures: Int,
     viewModel: EssayViewModel,
     navigator: AppNavigator,
-    onReportSaveFailure: () -> Unit = {},
+    onReportSaveFailure: () -> Unit,
 ) {
-    ResultScreen {
-        val rubric = EssayRubric.of(essay.rubric.value)
-        val tooShort = grade.zeroReason == EssayGrade.ZeroReason.TOO_SHORT
-        val count = if (tooShort) 1 else 2
-        var index by rememberSaveable { mutableIntStateOf(0) }
-        val shown = index.coerceIn(0, count - 1)
-        var comments by rememberSaveable { mutableStateOf(false) }
-        val heading = remember { FocusRequester() }
-        val moveFocus = rememberMoveFocus()
-        var announced by rememberSaveable { mutableIntStateOf(if (announce) NOT_YET else shown) }
+    val heading = remember { FocusRequester() }
+    val moveFocus = rememberMoveFocus()
+    val grade = remember(latest.grade) { latest.grade.toGrade() }
 
-        // Main's `focusStepTitle`: a new step takes TalkBack to its heading, and so does the grade once it's in or asked for.
-        LaunchedEffect(shown) {
-            if (shown != announced) {
-                announced = shown
-                moveFocus(heading)
+    LaunchedEffect(latest) { if (ui.switched) moveFocus(heading) }
+
+    TaskScaffold(
+        onClose = navigator::closeTask,
+        title = { BarTitle(writingLabel(essay.writing)) },
+        bottomBar = {
+            TaskActionBar {
+                if (ui.rewriteFailed && !ui.rewriting) {
+                    Text(
+                        stringResource(R.string.essay_finish_failed),
+                        Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                if (finishFailures > 0 && !finishing) {
+                    SaveErrorText(
+                        failures = finishFailures,
+                        firstFailureMessage = stringResource(R.string.essay_finish_failed),
+                        liveRegion = LiveRegionMode.Assertive,
+                        onReport = onReportSaveFailure,
+                    )
+                }
+                TaskActions { width ->
+                    if (ui.closed) {
+                        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
+                            Text(stringResource(R.string.essay_back_to_today))
+                        }
+                    } else {
+                        OutlinedButton(busy = finishing, onClick = viewModel::finish, leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) }) {
+                            Text(stringResource(R.string.essay_skip_rewrite))
+                        }
+                        Button(onClick = viewModel::rewrite, modifier = width, busy = ui.rewriting, enabled = !ui.finished) {
+                            Text(stringResource(R.string.essay_rewrite))
+                        }
+                    }
+                }
+            }
+        },
+    ) { padding ->
+        CompositionLocalProvider(LocalStepHeading provides heading) {
+            RunColumn(Modifier.padding(padding)) {
+                WritingResultView(grade, essay.writing, latest.text)
             }
         }
+    }
+}
 
-        var span by remember { mutableStateOf<PageSpan?>(null) }
-        // Above both layouts, so folding back to the steps finds the reading place the learner left.
-        val stepScroll = rememberScrollState()
-
-        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-            // An open book shows both steps at once: the grade with its comments before the fold, the next step after it.
-            val pages = !tooShort && spreadFold(maxWidth, span) != null
-            val beside = !tooShort && supportingPaneBeside(maxWidth)
-            val step: @Composable (Modifier) -> Unit = { modifier ->
-                CompositionLocalProvider(LocalStepHeading provides heading) {
-                    RunColumn(modifier, stepScroll) {
-                        when {
-                            tooShort -> TooShort(closed)
-                            shown == 0 -> EssayGradeCard(grade, rubric, onComments = { comments = true }.takeUnless { beside })
-                            else -> NextStep(grade)
-                        }
-                    }
+/**
+ * Refused before writing: the day's extra grades are used, and the task waits for tomorrow, so
+ * nothing written is ever lost to a limit. [task] is its title and minutes, when it's known.
+ */
+@Composable
+internal fun WritingRefused(
+    task: Pair<String, Int>?,
+    busy: Boolean,
+    onContinue: () -> Unit,
+    onClose: () -> Unit,
+) {
+    RunPage(
+        onClose = onClose,
+        bottomBar = {
+            TaskActionBar {
+                TaskActions { width ->
+                    Button(onClick = onContinue, modifier = width, busy = busy) { Text(stringResource(R.string.essay_continue)) }
                 }
             }
-            val finalActions: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
-                if (closed) {
-                    Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) {
-                        Text(stringResource(R.string.essay_back_to_today))
-                    }
-                } else {
-                    OutlinedButton(busy = finishing, onClick = viewModel::finish, leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) }) {
-                        Text(stringResource(R.string.essay_skip_rewrite))
-                    }
-                    Button(
-                        onClick = viewModel::rewrite,
-                        enabled = !finished,
-                        modifier = main,
-                    ) { Text(stringResource(R.string.essay_rewrite)) }
-                }
-            }
-
-            TaskScaffold(
-                onClose = navigator::closeTask,
-                title = { if (!pages) StepDots(count, shown) },
-                bottomBar = {
-                    TaskActionBar {
-                        if (pages) {
-                            TaskActions(content = finalActions)
-                        } else {
-                            StepPagerActions(count, shown, onIndexChange = { index = it }, finalAction = finalActions)
-                        }
-                        if (pages || shown == count - 1) {
-                            if (finishFailures > 0 && !finishing) {
-                                SaveErrorText(
-                                    failures = finishFailures,
-                                    firstFailureMessage = stringResource(R.string.essay_finish_failed),
-                                    liveRegion = LiveRegionMode.Assertive,
-                                    onReport = onReportSaveFailure,
-                                )
-                            }
-                        }
-                    }
-                },
-            ) { padding ->
-                when {
-                    tooShort -> {
-                        step(Modifier.padding(padding))
-                    }
-
-                    pages -> {
-                        ResultPages(
-                            modifier = Modifier.padding(padding),
-                            withMoment = false,
-                            columnModifier = Modifier.taskColumn(),
-                            done = {
-                                CompositionLocalProvider(LocalStepHeading provides heading) { EssayGradeCard(grade, rubric) }
-                                Comments(grade)
-                            },
-                            next = { NextStep(grade) },
-                        )
-                    }
-
-                    else -> {
-                        PageWithSupportingPane(
-                            supportingPane = { CommentsAside(grade) },
-                            modifier = Modifier.padding(padding),
-                        ) { step(Modifier) }
-                    }
+        },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(
+                painterResource(R.drawable.ic_schedule),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(stringResource(R.string.essay_no_more_grading), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+            Text(
+                stringResource(R.string.essay_more_tomorrow),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+        task?.let { (title, minutes) ->
+            Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                SectionHeader(stringResource(R.string.essay_left_for_tomorrow))
+                Column {
+                    HorizontalDivider()
+                    ListRow(
+                        headline = { Text(title) },
+                        leading = { KindMark(LearnKind.Essay) },
+                        meta = {
+                            Text(formatMinutes(minutes, currentLocale()), style = MaterialTheme.typography.labelMedium.withTabularFigures())
+                        },
+                    )
+                    HorizontalDivider()
                 }
             }
         }
-
-        if (comments) CommentsSheet(grade) { comments = false }
     }
 }
 
 @Composable
-internal fun SkippedEssay(
+private fun SkippedEssay(
     essay: Essay,
     navigator: AppNavigator,
 ) {
     RunPage(
         onClose = navigator::closeTask,
-        title = { EssayTitle(promptLabel(EssayRubric.of(essay.rubric.value))) },
+        title = { BarTitle(writingLabel(essay.writing)) },
         bottomBar = {
             TaskActionBar {
                 TaskActions { width ->
@@ -706,7 +583,7 @@ internal fun SkippedEssay(
             }
         },
     ) {
-        QuestionTitle(essay.question)
+        QuestionTitle(essay.writing.title)
         Text(
             stringResource(R.string.essay_skipped),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -715,159 +592,42 @@ internal fun SkippedEssay(
     }
 }
 
+/** A past answer from the written part's page, read as its result was. */
 @Composable
-private fun TooShort(closed: Boolean) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        StepTitle(stringResource(R.string.essay_too_short), Modifier.stepHeading())
-        if (!closed) StepDetail(stringResource(R.string.essay_too_short_detail))
-    }
-}
-
-@Composable
-private fun NextStep(grade: EssayGrade) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        NextStepComment(grade)
-    }
-    ProposalElements(grade)
-}
-
-@Composable
-private fun ProposalElements(grade: EssayGrade) {
-    val elements = grade.enemInterventionElements ?: return
-    val present =
-        listOf(
-            R.string.essay_element_agent to elements.agent,
-            R.string.essay_element_action to elements.action,
-            R.string.essay_element_means to elements.means,
-            R.string.essay_element_effect to elements.effect,
-            R.string.essay_element_detail to elements.detail,
-        )
-    if (present.all { it.second }) return
-    val presentLabel = stringResource(R.string.essay_element_present)
-    val missingLabel = stringResource(R.string.essay_element_missing)
-
-    Column {
-        SectionHeader(stringResource(R.string.essay_proposal_elements), Modifier.padding(bottom = 8.dp))
-        present.forEachIndexed { index, (name, there) ->
-            if (index > 0) HorizontalDivider()
-            Row(
-                Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics(mergeDescendants = true) {
-                    stateDescription = if (there) presentLabel else missingLabel
-                },
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painterResource(if (there) R.drawable.ic_check else R.drawable.ic_radio_button_unchecked),
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                    tint = if (there) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    stringResource(name),
-                    color = if (there) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun CommentsAside(grade: EssayGrade) {
-    val label = stringResource(R.string.essay_comments)
-
-    Row {
-        VerticalDivider()
-        Column(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(pagePadding())
-                .semantics { paneTitle = label },
-        ) { Comments(grade) }
-    }
-}
-
-@Composable
-private fun Comments(grade: EssayGrade) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SectionHeader(stringResource(R.string.essay_comments))
-        CriterionComments(grade)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CommentsSheet(
-    grade: EssayGrade,
-    onDismiss: () -> Unit,
+fun WritingAnswerScreen(
+    route: AppRoute.WritingAnswer,
+    app: AppContainer,
+    navigator: AppNavigator,
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
-        Column(
-            Modifier.verticalScroll(rememberScrollState()).padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Text(stringResource(R.string.essay_comments), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            CriterionComments(grade)
-        }
+    val attemptId = remember(route.attemptId) { runCatching { UUID.fromString(route.attemptId) }.getOrNull() }
+    if (attemptId == null) {
+        TaskNotFound(navigator)
+        return
     }
-}
-
-@Composable
-private fun ColumnScope.CriterionComments(grade: EssayGrade) {
-    grade.criteria.forEach { criterion ->
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                criterionName(criterion),
-                Modifier.semantics { heading() },
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-            )
-            criterion.quote?.let { quote ->
-                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    VerticalDivider(Modifier.fillMaxHeight(), thickness = 2.dp)
-                    Text(
-                        quote,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontStyle = FontStyle.Italic,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val loaded by app.essays.attempts[attemptId].collectShown()
+    when (val read = loaded) {
+        is LoadState.Loaded -> {
+            val answer = read.value
+            val grade = remember(answer.grade) { answer.grade.toGrade() }
+            RunPage(onClose = navigator::closeTask, title = { BarTitle(answer.writing.title) }) {
+                WritingResultView(grade, answer.writing, answer.text)
             }
-            Text(criterion.comment, style = MaterialTheme.typography.bodyMedium)
+        }
+
+        is LoadState.Failed -> {
+            if (read.error == ApiError.NotFound) {
+                TaskNotFound(navigator)
+            } else {
+                RunLoadFailed(navigator::closeTask, onRetry = { scope.launch { app.essays.attempts[attemptId].refresh() } })
+            }
+        }
+
+        else -> {
+            RunLoading(navigator::closeTask)
         }
     }
 }
 
-@Composable
-private fun promptLabel(rubric: EssayRubric): String =
-    stringResource(
-        when (rubric) {
-            EssayRubric.Ap -> R.string.essay_title_ap
-            EssayRubric.Enem -> R.string.essay_title_enem
-            EssayRubric.Oab, EssayRubric.Custom -> R.string.essay_title
-        },
-    )
-
-@Composable
-private fun textsLabel(rubric: EssayRubric): String =
-    stringResource(
-        when (rubric) {
-            EssayRubric.Enem -> R.string.essay_motivating_texts
-            EssayRubric.Oab -> R.string.essay_the_case
-            EssayRubric.Ap, EssayRubric.Custom -> R.string.essay_supporting_texts
-        },
-    )
-
-private val BOX_HEIGHT = 288.dp
-private val BOX_MIN_HEIGHT = 144.dp
-private val FILL_HEIGHT = 560.dp
-private const val NOT_YET = -1
-private val SLOW_GRADING = 20.seconds
-
-internal fun essayGradeLinkVisible(
-    hasGrade: Boolean,
-    tooShort: Boolean,
-    beside: Boolean,
-): Boolean = hasGrade && !tooShort && !beside
+private val FIELD_MIN_HEIGHT = 160.dp
+private val SLOW_GRADING = 30.seconds

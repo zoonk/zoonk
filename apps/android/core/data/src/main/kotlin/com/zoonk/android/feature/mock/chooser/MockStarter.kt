@@ -10,9 +10,12 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.AnytimeMockInput
+import com.zoonk.api.models.AnytimeMockInputShape
+import com.zoonk.api.models.AnytimeMockInputShapeAnyOf
 import com.zoonk.api.models.MockQuestionsGeneration
 import com.zoonk.api.models.MockQuestionsInput
 import com.zoonk.api.models.MockShape
+import com.zoonk.api.models.WrittenTestShape
 import kotlinx.coroutines.delay
 import java.time.Instant
 import java.util.UUID
@@ -40,6 +43,9 @@ sealed interface MockStartOutcome {
     data object NotEnoughQuestions : MockStartOutcome
 
     data object PlusRequired : MockStartOutcome
+
+    /** A written test is admitted as it starts, and the day's extra grades are used: it starts tomorrow. */
+    data object GradesUsed : MockStartOutcome
 }
 
 sealed interface QuestionWriting {
@@ -91,7 +97,7 @@ class LiveMockStartApi(
         api.clients(session).exams.startAnytimeMock(
             goalId,
             AnytimeMockInput(
-                shape = shape,
+                shape = shape.input(),
                 acceptFewer = ask == MockStartAsk.AcceptFewer,
                 afterWriting = ask == MockStartAsk.AfterWriting,
             ),
@@ -105,10 +111,20 @@ class LiveMockStartApi(
     ) = perform {
         api.clients(session).exams.createMockQuestionsGeneration(
             goalId,
-            MockQuestionsInput(shape = shape),
+            MockQuestionsInput(shape = shape.input()),
         )
     }
 }
+
+/** The written test is a shape of its own on the wire; every other option names its kind, day and subject. */
+private fun MockShape.input(): AnytimeMockInputShape =
+    if (kind == MockShape.Kind.WRITTEN) {
+        AnytimeMockInputShape.WrittenTestShapeValue(WrittenTestShape(area = null, day = day, kind = WrittenTestShape.Kind.WRITTEN))
+    } else {
+        AnytimeMockInputShape.AnytimeMockInputShapeAnyOfValue(
+            AnytimeMockInputShapeAnyOf(area, day, AnytimeMockInputShapeAnyOf.Kind.entries.first { it.value == kind.value }),
+        )
+    }
 
 /**
  * Starts a mock taken any time, as main's chooser does: only from the learner's tap, since asking
@@ -128,9 +144,10 @@ class MockStarter(
                 try {
                     outcome(api.start(session, goalId, shape, ask))
                 } catch (e: ApiException) {
-                    when (e.code) {
-                        PLUS_REQUIRED -> MockStartOutcome.PlusRequired
-                        NOT_ENOUGH_QUESTIONS -> MockStartOutcome.NotEnoughQuestions
+                    when {
+                        e.code == PLUS_REQUIRED -> MockStartOutcome.PlusRequired
+                        e.code == NOT_ENOUGH_QUESTIONS -> MockStartOutcome.NotEnoughQuestions
+                        e.status == TOO_MANY_REQUESTS && e.code == null -> MockStartOutcome.GradesUsed
                         else -> throw e
                     }
                 }
@@ -192,6 +209,9 @@ class MockStarter(
     private companion object {
         const val PLUS_REQUIRED = "PLUS_REQUIRED"
         const val NOT_ENOUGH_QUESTIONS = "NOT_ENOUGH_QUESTIONS"
+
+        /** Its body is `{status: "limitReached", returnsOn}`, not an error's. */
+        const val TOO_MANY_REQUESTS = 429
         const val PREPARING_TRIES = 60
         val PREPARING_RETRY = 3.seconds
     }

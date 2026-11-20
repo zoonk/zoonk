@@ -640,6 +640,11 @@ class TodayFlowTest {
             timeZone: String,
         ) = Unit
 
+        override suspend fun startWriting(
+            session: AuthenticatedSession,
+            blockId: UUID,
+        ): String? = null
+
         override suspend fun summary(
             session: AuthenticatedSession,
             sessionId: UUID,

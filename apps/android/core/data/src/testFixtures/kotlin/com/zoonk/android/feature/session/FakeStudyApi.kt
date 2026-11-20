@@ -35,6 +35,10 @@ class FakeStudyApi : StudyApi {
     var targetStatus = "resolved"
     var dayOpening: JsonObject? = null
 
+    /** What opening a written block's start leaves for its route; the blocks it started, in order. */
+    var writingStart: String? = null
+    val writingStarts = mutableListOf<UUID>()
+
     /** The answer to each block opening, in order; the last one answers the rest. */
     var openings = listOf(opening("session", "blockId" to null, "sessionId" to SESSION.toString()))
 
@@ -44,6 +48,14 @@ class FakeStudyApi : StudyApi {
     var generation = LessonGeneration(generationId = "run-1", status = LessonGeneration.Status.GENERATING)
     var session: StudySession = decodeFixture("study-session")
     var studySummary: StudySessionSummary = decodeFixture("study-session-summary")
+
+    override suspend fun startWriting(
+        session: AuthenticatedSession,
+        blockId: UUID,
+    ): String? {
+        writingStarts += blockId
+        return writingStart
+    }
 
     override suspend fun openDay(
         session: AuthenticatedSession,

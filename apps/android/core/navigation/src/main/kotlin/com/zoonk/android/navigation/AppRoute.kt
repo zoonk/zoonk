@@ -253,9 +253,17 @@ sealed interface AppRoute : NavKey {
         val sessionId: String? = null,
     ) : AppRoute
 
+    /** [writing]: what stood before the question when its start answered (the run writing it, the day's limit, a failure). */
     @Serializable
     data class Essay(
         val blockId: String,
+        val writing: String? = null,
+    ) : AppRoute
+
+    /** A past written answer, read as its result was. */
+    @Serializable
+    data class WritingAnswer(
+        val attemptId: String,
     ) : AppRoute
 
     @Serializable
@@ -404,7 +412,7 @@ val AppRoute.presentation: Presentation
 
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook, is AppRoute.Lesson,
             is AppRoute.MistakePractice, is AppRoute.Pattern, is AppRoute.TestOut,
-            is AppRoute.FocusTest, is AppRoute.Challenge, is AppRoute.Checkpoint, is AppRoute.Essay,
+            is AppRoute.FocusTest, is AppRoute.Challenge, is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.WritingAnswer,
             is AppRoute.Mock, is AppRoute.MindMap, is AppRoute.MindMapStudy, is AppRoute.Pronunciation,
             is AppRoute.Conversation, is AppRoute.Explain, is AppRoute.PlanLink, AppRoute.Login,
             -> Presentation.Task
@@ -426,7 +434,7 @@ val AppRoute.requirement: Requirement
             AppRoute.StatsPatterns, is AppRoute.GoalSetup,
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook,
             is AppRoute.MistakePractice, is AppRoute.Pattern, is AppRoute.Challenge,
-            is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.Mock, is AppRoute.Pronunciation,
+            is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.WritingAnswer, is AppRoute.Mock, is AppRoute.Pronunciation,
             is AppRoute.Conversation, is AppRoute.Explain, AppRoute.Certificates, is AppRoute.Certificate,
             -> Requirement.Account
 

@@ -22,6 +22,7 @@ import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamCurrentPlaysInner
 import com.zoonk.api.models.MockExamCurrentQuestionsInner
+import com.zoonk.api.models.WritingPromptOutput
 import com.zoonk.api.models.MockExamSectionsInner
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -34,9 +35,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -54,6 +52,8 @@ data class MockQuestion(
     val question: Question,
     val number: Int,
     val essay: Boolean,
+    /** A written test's question: its line limit, counted as the answer is typed. */
+    val writing: WritingPromptOutput? = null,
 ) {
     val itemId: String get() = question.itemId
 }
@@ -66,12 +66,12 @@ fun MockExamCurrentQuestionsInner.toMockQuestion(): MockQuestion {
         ApiJson.decodeFromJsonElement<Question>(
             JsonObject(json + ("format" to JsonPrimitive(if (essay) "typed" else format.value))),
         )
-    return MockQuestion(question, number.toInt(), essay)
+    return MockQuestion(question, number.toInt(), essay, writing)
 }
 
 enum class MockStep { Submit, EndBreak, StartSpeaking, Finish }
 
-enum class EssayGrading { Idle, Grading, Failed, LimitReached }
+enum class EssayGrading { Idle, Grading, Failed }
 
 /** The running mock as the learner sees it; [view] is the mock as the server last answered. */
 data class MockRun(
@@ -139,7 +139,6 @@ class MockRunnerViewModel(
     private var timedOutDuringStep = false
     private var away = false
     private val grading = MutableStateFlow(EssayGrading.Idle)
-    private var gradesUsedOn: LocalDate? = null
 
     val state: StateFlow<MockRun> = run.asStateFlow()
 
@@ -318,15 +317,13 @@ class MockRunnerViewModel(
     fun gradeEssays() {
         if (grading.value == EssayGrading.Grading) return
         grading.value = EssayGrading.Grading
-        val askedOn = today()
         viewModelScope.launch {
             val result = withTimeoutOrNull(ESSAY_GRADING_TIMEOUT) { store.gradeEssays(blockId) }
             val graded = (result as? MutationResult.Done)?.value
-            if (graded != null) reset(graded.mock)
-            if (graded?.limitReached == true) gradesUsedOn = askedOn
+            if (graded != null) reset(graded)
             grading.value =
                 when {
-                    graded != null -> if (graded.limitReached) EssayGrading.LimitReached else EssayGrading.Idle
+                    graded != null -> EssayGrading.Idle
                     result == MutationResult.Obsolete -> EssayGrading.Idle
                     else -> EssayGrading.Failed
                 }
@@ -341,15 +338,11 @@ class MockRunnerViewModel(
     fun onStart() {
         if (!away) return
         away = false
-        // The day's essay grades come back at the learner's midnight.
-        if (grading.value == EssayGrading.LimitReached && today() != gradesUsedOn) grading.value = EssayGrading.Idle
         watchDeadline(run.value.view)
         val current = run.value.view.current ?: return
         val abandoned = clock.now() > current.deadline + ABANDONMENT_DELAY
         if (current.kind == MockExamCurrent.Kind.SPEAKING || abandoned) viewModelScope.launch { reread() }
     }
-
-    private fun today() = clock.todayIn(TimeZone.of(store.timeZone()))
 
     /** Off screen, what's typed reaches the disk now rather than after the pause. */
     fun onStop() {

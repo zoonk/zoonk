@@ -73,18 +73,6 @@ class MockRunApiTest {
             assertEquals(PlayOutcome.UsedUp, api.play(ana, RUN_BLOCK, ITEM_TWO))
         }
 
-    @Test
-    fun todaysEssayGradesUsedUpIsALimitNotAFailure() =
-        runTest {
-            server.enqueue(error(429, "ESSAY_LIMIT_REACHED"))
-
-            assertEquals(EssayGradeOutcome.LimitReached, api.gradeEssays(ana, RUN_BLOCK, "America/Sao_Paulo"))
-
-            val request = server.takeRequest(5, TimeUnit.SECONDS)!!
-            assertEquals("/v1/mocks/$RUN_BLOCK/essay-grades", request.url.encodedPath)
-            assertEquals("""{"timeZone":"America/Sao_Paulo"}""", request.body!!.utf8())
-        }
-
     private fun error(
         code: Int,
         errorCode: String,

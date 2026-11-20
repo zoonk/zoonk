@@ -148,7 +148,11 @@ fun blockDetail(step: DayStep): String? {
         }
 
         step.kind == StudyBlock.Kind.PRODUCE -> {
-            step.canDo
+            when (step.writing) {
+                WritingRow.Tomorrow -> stringResource(R.string.session_block_writing_tomorrow)
+                WritingRow.Continue -> stringResource(R.string.session_block_writing_draft_saved)
+                null -> step.canDo
+            }
         }
 
         step.fullReview -> {

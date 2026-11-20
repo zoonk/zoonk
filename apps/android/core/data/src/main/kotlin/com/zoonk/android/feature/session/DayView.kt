@@ -3,6 +3,8 @@ package com.zoonk.android.feature.session
 import androidx.compose.runtime.Immutable
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockWritingAvailability
+import com.zoonk.api.models.StudyBlockWritingAvailabilityOneOf
 import com.zoonk.api.models.StudyBlockCapsulesInner
 import com.zoonk.api.models.StudyCheckpoint
 import com.zoonk.api.models.StudyDay
@@ -59,6 +61,19 @@ data class SessionBar(
     val total: Int,
 )
 
+enum class WritingRow { Continue, Tomorrow }
+
+private fun StudyBlockWritingAvailability.toWritingRow(): WritingRow? =
+    when (this) {
+        is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOfValue -> {
+            WritingRow.Continue.takeIf { value.status == StudyBlockWritingAvailabilityOneOf.Status.CONTINUE }
+        }
+
+        is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value -> {
+            WritingRow.Tomorrow
+        }
+    }
+
 enum class EmptyDay { LessonsComing, LessonsToPrepare, NothingNew }
 
 enum class FreshStart { WelcomeBack, NewWeek, NewPhase }
@@ -103,6 +118,8 @@ data class DayStep(
     val weakest: Boolean,
     val opensInPlayer: Boolean = false,
     val waitReason: StudyBlock.WaitReason?,
+    /** A written task's row: its saved draft goes on, or today's extra grades are used and it waits for tomorrow. */
+    val writing: WritingRow? = null,
 ) {
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
@@ -307,6 +324,7 @@ fun StudyBlock.toDayStep(): DayStep =
         weakest = weakest,
         opensInPlayer = opensInPlayer,
         waitReason = waitReason,
+        writing = writingAvailability?.toWritingRow(),
     )
 
 private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
@@ -341,6 +359,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         weakest = weakest,
         opensInPlayer = opensInPlayer,
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
+        writing = writingAvailability?.toWritingRow(),
     )
 
 fun StudyMission.toDayMission(): DayMission =

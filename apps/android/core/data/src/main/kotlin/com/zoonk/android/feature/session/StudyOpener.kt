@@ -91,6 +91,12 @@ interface StudyApi {
         sessionId: UUID,
         timeZone: String,
     )
+
+    /** Opening a written block is its start: what its essay's route carries ([com.zoonk.android.feature.essay.routeValue]). */
+    suspend fun startWriting(
+        session: AuthenticatedSession,
+        blockId: UUID,
+    ): String?
 }
 
 /**
@@ -206,7 +212,12 @@ class StudyOpener(
     private suspend fun follow(
         session: AuthenticatedSession,
         opening: StudyBlockOpening,
-    ): AppRoute? = if (opening is StudyBlockOpening.UnwrittenlessonWrapper) unwritten(session, opening.value) else opening.route()
+    ): AppRoute? =
+        when (opening) {
+            is StudyBlockOpening.UnwrittenlessonWrapper -> unwritten(session, opening.value)
+            is StudyBlockOpening.EssayWrapper -> AppRoute.Essay(opening.value.blockId.toString(), api.startWriting(session, opening.value.blockId))
+            else -> opening.route()
+        }
 
     /**
      * Main's `useOpenUnwrittenLesson`: the tap asks once for the lesson, and the session waits on the

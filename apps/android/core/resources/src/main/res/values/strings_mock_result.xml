@@ -183,12 +183,10 @@
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">You left it blank.</string>
     <string name="mock_result_written_part">Written part · %1$d of %2$d</string>
-    <string name="mock_result_too_short">Too short to grade</string>
     <string name="mock_result_grading">Grading it with the exam\'s rubric. It can take up to 30 seconds.</string>
     <string name="mock_result_grading_slow">Still grading. This is taking longer than usual.</string>
     <string name="mock_result_grading_failed">That didn\'t go through. Try again in a moment.</string>
     <string name="mock_result_not_graded">It hasn\'t been graded yet.</string>
-    <string name="mock_result_grading_limit">You\'ve used today\'s essay grades. Try again tomorrow.</string>
     <string name="mock_result_grade_it">Grade it</string>
     <string name="mock_result_no_estimate">No estimate</string>
     <!-- %1$s is the estimated points, %2$s the paper's total. -->
