@@ -46,6 +46,9 @@
   "mock_next_section": "953ee7b107af6dd2e8eb6dac7679fd57bac86728f9378c0468518e66a00c59dd",
   "mock_place": "1982a8fba9c61fe3b24030e3bfb432df40a7747d72c94fde219c2775ce23a73a",
   "mock_points_of": "f61ab2f0e606d6dcb55a4a4b055c97079707c99daf59a6c257dfd97882897c54",
+  "mock_preparing_keep_studying": "03d39c23125cbe64420d458e4b535047758495f145bd30de28f9775496c482ec",
+  "mock_preparing_line": "5d3f1d0450386c9fccdbf61800e28fdb5d43d647f52b466e09d17d39f36a3f62",
+  "mock_preparing_title": "fcf08e6470a6bc6a7af478878f19b115d2d254705ff800673ea5f2665f34c197",
   "mock_progress_label": "f718a74efe747e04ab176be13ef626c7a6693c3cffa7e94dbd841e4fdadae9d0",
   "mock_question_number": "b1e0d982ef6411979b70529f9426f4eefdff195019f416e349a367365b68240a",
   "mock_question_place": "8ce3a4825bc44a868f278a2872a29462b8554f226fdcbf1c680efa98aa80ed83",
@@ -256,4 +259,7 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Hai completato tutti i compiti. Dopo la consegna, non potrai ripeterli in questa simulazione.</string>
     <string name="mock_keep_going">Continua</string>
+    <string name="mock_preparing_title">Stiamo preparando la tua simulazione</string>
+    <string name="mock_preparing_line">Torna su questa pagina per iniziare.</string>
+    <string name="mock_preparing_keep_studying">Continua a studiare</string>
 </resources>

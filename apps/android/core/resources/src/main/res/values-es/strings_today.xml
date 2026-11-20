@@ -13,7 +13,7 @@
   "today_coming_not_written": "0fe15608631e67826866865fe1cb473595fd7bf3e8e15b01796108c34a790243",
   "today_coming_stalled": "e037f3384a4252158d78f19e2f51abdfa300ab8a39e1a5c18a838c3f2cb4c60c",
   "today_coming_title": "604bbb0d65ca1a1175db12f7fb438ea056524daa1083c5e45559ec960f6fb9d1",
-  "today_coming_writing": "2d0c028cc81e681a2dd70066897f98c7731a9e3d28e940390f8f0c06a0ba2600",
+  "today_coming_writing": "2fca9485ac1bd8bbe8730f08e39f107a4cb9025e7d2f0a59cf02de9e67a7e91d",
   "today_completed_lessons_line": "bd75a6c8bf60aaa124a78f938e07dac359926960664609b8ba79516fc5f5d212",
   "today_continue_draft": "db06a63ad8f456d980f4fb9f243db57d4f5c10b4697ef1ea6cd57379fe6745ca",
   "today_continue_mock": "06ea3d1c29301880a9d8869a105e9bd6dcc49d2a79336f5c81467615aebbbf1f",
@@ -131,6 +131,7 @@
   "today_unfinished_setup": "4ba0201ad0e73586ad031e8c088066f3d538bb033c0241315591f115dc043989",
   "today_up_next": "4e24dc6e3b0339f1873264fcfcf6fe0bf824e1b446dbd3390e46771d6261fa31",
   "today_waiting": "5b8065f8cd458691016515b1e60b8b35cb42d35c3a1913b363a1e1223fad4d49",
+  "today_waiting_mock": "20fae81966990b3ca10056a41152185cabe6cce4fdd7bfc81d657cc2e400ca77",
   "today_waiting_stalled": "e778d4e21ef1fba2318a1fc74ceac0666f0bac638eb2ba474637cc545fd91386",
   "today_waiting_stalled_detail": "8c99770e42aac26dc910ee4a95539549a6e6a6db0d13099f27e5d59e20198a93",
   "today_week_after_date": "598dcdad440c1245f3ab75fe92ffd13b2c0a6d918cbb34e88a1b37c31ed5f833",
@@ -219,6 +220,7 @@
     <string name="today_rest_next_lessons">Tus próximas lecciones están abajo si quieres estudiar.</string>
     <string name="today_rest_enjoy">¡Disfruta tu día de descanso!</string>
     <string name="today_waiting">Preparando las lecciones de hoy…</string>
+    <string name="today_waiting_mock">Se está preparando tu simulacro.</string>
     <string name="today_waiting_stalled">Las lecciones de hoy están tardando más de lo habitual.</string>
     <string name="today_waiting_stalled_detail">Vuelve en unos minutos.</string>
     <string name="today_nothing_new">Ya estás al día.</string>
@@ -362,8 +364,7 @@
     </plurals>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">Tus próximas lecciones</string>
-    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
-    <string name="today_coming_writing">En preparación…</string>
+    <string name="today_coming_writing">Preparando…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
     <string name="today_coming_stalled">Está tardando más de lo habitual</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->

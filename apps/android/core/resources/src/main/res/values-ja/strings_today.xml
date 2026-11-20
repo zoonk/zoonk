@@ -13,7 +13,7 @@
   "today_coming_not_written": "7385ea98b5b1ebc5386c2cda84c5e2148b8c368c79a88a0c5fff0221384cff70",
   "today_coming_stalled": "52fb5f13e375b9db02daf66a63ccdfc89a859bc99c2da185ee7536c7ac4ae65b",
   "today_coming_title": "d08551f3e4e150b1c9850a92071412b09ba238e3c2e54eb0a9e55042f6b6119e",
-  "today_coming_writing": "c1a38e3d11328673cbdb39832e4c6ca0d068610508275ae7de9dd4651f7317ca",
+  "today_coming_writing": "c9cfb77f9fd2e93bbaf960ebe1a6022220090a7f524b69dfd0bf80962281cf68",
   "today_completed_lessons_line": "9d375dd15df2835f996af97ae3850359acf3b3cde5662097fb10c2f5d1670571",
   "today_continue_draft": "35dd0e42d2c8c8ea15b7c6594d250e55bac6530aea6d6dec0da9a0302501ca13",
   "today_continue_mock": "7bb401467570af21befccd878950526697506279042ce5b2e226de52ec1554f5",
@@ -131,6 +131,7 @@
   "today_unfinished_setup": "95d15b88902da2c27407db296529be0b4bb215fe7665a6fd792825e618c7e772",
   "today_up_next": "5014edaffd17bfd3af73bf0d5cc0c63fdda334adec39d85fb8f238c9691694a7",
   "today_waiting": "d0ebcd7767046656d5111582a195a741496a3e187f0ecc55c104215b90c9869b",
+  "today_waiting_mock": "aac5cb4cf45139b2a0a693ac61c38bac65fd5d197888afe6ea82448d395db3b5",
   "today_waiting_stalled": "c0579bdb3f88b73b28837812c31b24e5e88aac8d3a8f6aecd6affb027cada94f",
   "today_waiting_stalled_detail": "45e544fabccf238fbfc200e037f2d21d29bbc98b59b5eb92cbc118264e3c16b1",
   "today_week_after_date": "374a6fab7fbe715fda8555023ce0e182f9d9a89b5c543c91af66208cf8cdccfb",
@@ -207,6 +208,7 @@
     <string name="today_rest_next_lessons">学習したいときは、下にある次のレッスンに進めます。</string>
     <string name="today_rest_enjoy">お休みを楽しんでください！</string>
     <string name="today_waiting">今日のレッスンを準備しています…</string>
+    <string name="today_waiting_mock">模試を準備しています。</string>
     <string name="today_waiting_stalled">今日のレッスンの作成に、いつもより時間がかかっています。</string>
     <string name="today_waiting_stalled_detail">数分後にまた見に来てください。</string>
     <string name="today_nothing_new">予定のところまで学習が終わりました。</string>
@@ -342,8 +344,7 @@
     </plurals>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">次のレッスン</string>
-    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
-    <string name="today_coming_writing">作成しています…</string>
+    <string name="today_coming_writing">準備しています…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
     <string name="today_coming_stalled">いつもより時間がかかっています</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->

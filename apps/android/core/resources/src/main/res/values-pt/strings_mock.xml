@@ -46,6 +46,9 @@
   "mock_next_section": "7dc00763fa180dd8859f3cc3ebed44c14e78e7d2ae440907926041a9eb879464",
   "mock_place": "4b5b7e09a78303ddca94df9a847bf54afa007747d930b3e25c42a920982778fa",
   "mock_points_of": "a13acef34ba69cf00f2c398bba677991350a4153ca10805e4427785b3d3de4ff",
+  "mock_preparing_keep_studying": "4efb31e32bd801a8117ab4bca6d4074201abea3037d432ed176f42a4213676d7",
+  "mock_preparing_line": "6d5b1621f0be236b3ccd51f5fd9e665be3931a28cc5972177f51efd34b77f2bb",
+  "mock_preparing_title": "b0e248023226734cc542e269233eb205132b093d876fa64a4c1e08334f65abc2",
   "mock_progress_label": "f82abb3130af1c21a87114a645b19ac71208f9c6dacfdaa5cd25a3455b917ca2",
   "mock_question_number": "46a502360822873bd86041f53cd891361896cf2fec14edd6b48c0269d87d1eab",
   "mock_question_place": "d323b81c9b59356522db78746209c68afa573c08b48b5b150882985c2bea4a50",
@@ -256,4 +259,7 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Você concluiu todas as tarefas. Depois de entregar, não dá para fazer elas de novo neste simulado.</string>
     <string name="mock_keep_going">Continuar</string>
+    <string name="mock_preparing_title">Seu simulado está sendo preparado</string>
+    <string name="mock_preparing_line">Volte a esta página para começar o simulado.</string>
+    <string name="mock_preparing_keep_studying">Continuar estudando</string>
 </resources>

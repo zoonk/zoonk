@@ -46,6 +46,9 @@
   "mock_next_section": "bfa3e6ee5502569bbaf87be606ac356dcf4d197446027339bebd51af63b5452f",
   "mock_place": "bfd44e514b37acddfd1cba0b38791b1360749df5d1dc3eeb8818889f3944d4bf",
   "mock_points_of": "ca41e3ca261b4ede73f3a487fc59f004c22b08e824658c49b6cfac0c6f8eb614",
+  "mock_preparing_keep_studying": "76049aea7c047b708ff2bd23319ed5af69f19d10de6adebd3b3b8676f8387b6e",
+  "mock_preparing_line": "b205f71af6e15f2067a6840eb7f68c45272802e394551b52b27cf1db54666fcd",
+  "mock_preparing_title": "4d504ae5342aa38a4bfb6c02c1b63a16827b8dc5aae285584b6a5d458b1383d1",
   "mock_progress_label": "b2fe95a753be7a84831b820738c5ea21eaf7670b4793a9d4dd8a2512c90a6bce",
   "mock_question_number": "102733cd553620570579c3b33ba4331f091896f3f44abb6074e3336b5ebfb41b",
   "mock_question_place": "186267aa771ed84615cd940f5f7cf79a568fe10116200911f823845dbd54d1cd",
@@ -256,4 +259,7 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Toutes les tâches sont terminées. Une fois cet examen blanc rendu, tu ne pourras plus les refaire.</string>
     <string name="mock_keep_going">Continuer</string>
+    <string name="mock_preparing_title">Ton examen blanc est en préparation</string>
+    <string name="mock_preparing_line">Reviens sur cette page pour le commencer.</string>
+    <string name="mock_preparing_keep_studying">Continuer à étudier</string>
 </resources>

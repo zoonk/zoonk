@@ -131,6 +131,7 @@
   "today_unfinished_setup": "bcc0149bab9e7923fde051a09ae1e9e5909cfddc104106da11ec48505a1b2124",
   "today_up_next": "2f88890bfef819e471b8c45ac9b400f76c580e3ef2193565d3ebee309fb33485",
   "today_waiting": "5342eea02dfaebdca242ba1260aee3410f0c5b011b734f2bb2a37bdba1b3c31c",
+  "today_waiting_mock": "cb539f8295dfbbe69192baefcbe8ae7da88c9993b7f4dfd3c30588f7759eb277",
   "today_waiting_stalled": "982a8e7cd4f4a8f488168d041c160ea076fcbac011fee5061c73de92a7e14d52",
   "today_waiting_stalled_detail": "a69356a783a470902f4cdedbe8d97a854977154b99ac6f612b90f2d5e63873cc",
   "today_week_after_date": "03671420930f7f74ae2e782fdefe78c7369fb4f8dee2f9f519527fc60ad8117f",
@@ -219,6 +220,7 @@
     <string name="today_rest_next_lessons">Tes prochaines leçons sont ci-dessous si tu veux étudier.</string>
     <string name="today_rest_enjoy">Profite de ta journée de repos !</string>
     <string name="today_waiting">Préparation des leçons du jour…</string>
+    <string name="today_waiting_mock">Ton examen blanc est en préparation.</string>
     <string name="today_waiting_stalled">La préparation des leçons du jour prend plus de temps que d’habitude.</string>
     <string name="today_waiting_stalled_detail">Reviens dans quelques minutes.</string>
     <string name="today_nothing_new">Tu es à jour.</string>
@@ -362,7 +364,6 @@
     </plurals>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">Tes prochaines leçons</string>
-    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">Préparation en cours…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
     <string name="today_coming_stalled">Ça prend plus de temps que d’habitude</string>

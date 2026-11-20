@@ -26,7 +26,6 @@
   "limit_mind_maps_day": "5998bc7d953896148da18a7f8b97b1a13d65cd655356b00ee57d90ea07a845c2",
   "limit_mind_maps_guest": "617db76d9b297dca1bd3ba0cb48eed4fce00535a8396904070fd1c185a63f239",
   "limit_mind_maps_used": "6fe6787df6a3841673327bff30cfe2122781a826789da67d881e337a8749026e",
-  "limit_mock_exams_used": "b87c98ea8ebf71e4bef2259563ffa5e2dd246768c5838bb68eb48092e2cfe40f",
   "limit_more_later_today": "e8a2e25e5bff63cdc286135eb4f95becbe495dffe1f2248acd9fff32e28fefd6",
   "limit_more_later_today_or_subscribe": "0720f1ea998d65eecba486b250b783846972ff412db9b1bf62bf705c534f53d1",
   "limit_more_on": "a7edcf1b33225d4336a29d3bec8c34add79cb9f1249928d76e91dda5733385c6",
@@ -83,7 +82,6 @@
     <string name="limit_call_time_used">Tu as utilisé tout ton temps d’appel</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Tu as de nouveau du temps d’appel</string>
-    <string name="limit_mock_exams_used">Tu as atteint ta limite d’examens blancs</string>
     <string name="limit_lessons_guest">Il te faut un compte pour d’autres leçons</string>
     <string name="limit_lessons_free">Tu as utilisé toutes tes leçons gratuites</string>
     <string name="limit_lessons_day">Tu n’as plus de nouvelles leçons pour aujourd’hui</string>

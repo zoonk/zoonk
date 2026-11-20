@@ -131,6 +131,7 @@
   "today_unfinished_setup": "63552fcd908f127e7b7f53b480d9d4a5b01c644527a676d3b907f919e2fc3b6d",
   "today_up_next": "f37cfd888b3f92d712ab251d6c02628a3a5c56db1acd30c03137b6d7e763c1fd",
   "today_waiting": "b8ee94a1a389470fe17c6ae0030dafeb8192595ccfb5fe32b754da8a8b93130f",
+  "today_waiting_mock": "3a348b63311153a614a4c2877714d3c4339e5ef3db4c81f10f0122239dc8174d",
   "today_waiting_stalled": "9e66b97d39ea59a6dbfdc3411b63e399c1e7585de52503699e60f767cfcf5126",
   "today_waiting_stalled_detail": "0087af8b5fe921ea1e06e7c0688fe4121e43bc3927042b75be01bb86b12e7c64",
   "today_week_after_date": "6071c8c5f20bba48e6d66f453568ed322f2fb874d0b95c16db7530e1a7216691",
@@ -213,6 +214,7 @@
     <string name="today_rest_next_lessons">Çalışmak istersen sıradaki derslerin aşağıda.</string>
     <string name="today_rest_enjoy">Dinlenme gününün tadını çıkar!</string>
     <string name="today_waiting">Bugünkü dersleri hazırlıyoruz…</string>
+    <string name="today_waiting_mock">Deneme sınavın hazırlanıyor.</string>
     <string name="today_waiting_stalled">Bugünkü dersleri hazırlamamız normalden uzun sürüyor.</string>
     <string name="today_waiting_stalled_detail">Birkaç dakika sonra tekrar gel.</string>
     <string name="today_nothing_new">Planın yolunda.</string>
@@ -352,7 +354,6 @@
     </plurals>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">Sıradaki derslerin</string>
-    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">Hazırlıyoruz…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
     <string name="today_coming_stalled">Her zamankinden uzun sürüyor</string>

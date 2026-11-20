@@ -46,6 +46,9 @@
   "mock_next_section": "b5db20232403377ed300a790a1f6c31254537dae31f6558ef55540fb54b867fd",
   "mock_place": "3c62648fa7cdc44e34015b2293ac8325bfbb48b1e822a7c6586aed1ebcb86a22",
   "mock_points_of": "f6d4efe6c4a7c9b41ca0da4c83f1721b6b46f7626122e49127f08f0ffb121e0b",
+  "mock_preparing_keep_studying": "e84ca99370d363d688e55bcb8ba41194f5b91d3140f226394efa57f571af963a",
+  "mock_preparing_line": "6b091c7b6cbd4f4b36368044390047b7999d981b8096d203a8cee70b6741347e",
+  "mock_preparing_title": "0f9edba0d70c9b4878824902aaa0425ab78595543792c5e12f00a34e883ba794",
   "mock_progress_label": "b6cbf22d9e1486fb12a7c99ef358f520323098370a3a5c6ccc1f448e686390b3",
   "mock_question_number": "c78e2fa2c0f46cb62149d040166d180c44c4ff312e1e007e40d2dab0ec851e92",
   "mock_question_place": "335e66a79cf088e0e6922f5b250ba141ee92915987c10a96789b4fc8beaf6550",
@@ -256,4 +259,7 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Completaste todas las tareas. Después de esto, no podrás repetirlas en este simulacro.</string>
     <string name="mock_keep_going">Seguir</string>
+    <string name="mock_preparing_title">Se está preparando tu simulacro</string>
+    <string name="mock_preparing_line">Vuelve a esta página para iniciar el simulacro.</string>
+    <string name="mock_preparing_keep_studying">Seguir estudiando</string>
 </resources>

@@ -131,6 +131,7 @@
   "today_unfinished_setup": "85dcdcafa7e48b83388f8bde6faea000d00c9d61560687c14fa7ff385a10f04d",
   "today_up_next": "989522126e11780a87ae7bc195efaddcddff5e8e6ae6c9b7b481029c4848712b",
   "today_waiting": "5740fd39040f8797db8c02d660b253ca4cb911568ee654d808df51aad8ae9b17",
+  "today_waiting_mock": "c01ef491ac3dacf55ec47944761858c0bbe1ab859308289a1526f6d29276afea",
   "today_waiting_stalled": "7df30a32a0c9c5ab9ab8dfba3016f0b57970e17467835541aac71f7a8c36dea2",
   "today_waiting_stalled_detail": "2f07d7c3e423af311f3af5506f0991f87cf201fd82017f4d86e508668a9eac6b",
   "today_week_after_date": "da91fb680d48ccd498ced228e157a54919498d6fe964ac9a23fe0c6657d6d56b",
@@ -207,6 +208,7 @@
     <string name="today_rest_next_lessons">공부하고 싶다면 아래에서 다음 레슨을 시작해 보세요.</string>
     <string name="today_rest_enjoy">편히 쉬세요!</string>
     <string name="today_waiting">오늘 레슨을 준비하고 있어요…</string>
+    <string name="today_waiting_mock">모의고사를 준비하고 있어요.</string>
     <string name="today_waiting_stalled">오늘 레슨을 준비하는 데 평소보다 시간이 더 걸리고 있어요.</string>
     <string name="today_waiting_stalled_detail">몇 분 뒤에 다시 와 보세요.</string>
     <string name="today_nothing_new">오늘까지의 학습을 모두 마쳤어요.</string>
@@ -342,7 +344,6 @@
     </plurals>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">다음 레슨</string>
-    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">준비하고 있어요…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
     <string name="today_coming_stalled">평소보다 오래 걸리고 있어요</string>
