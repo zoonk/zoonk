@@ -5018,25 +5018,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sieh dir an, was sich dein Kumpel über dich merkt, korrigiere oder lösche es."
+            "value" : "Sieh dir an, was dein Buddy über dich weiß, und korrigiere oder lösche es."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulta, corrige o elimina lo que tu compañero recuerda de ti."
+            "value" : "Consulta, corrige o elimina lo que tu compa recuerda de ti."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulte, corrige ou supprime ce que ton compagnon retient de toi."
+            "value" : "Consulte, corrige ou supprime ce que ton binôme retient sur toi."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vedi, correggi o elimina quello che il tuo compagno ricorda di te."
+            "value" : "Vedi, correggi o elimina ciò che il tuo socio ricorda di te."
           }
         },
         "ja" : {
@@ -5060,7 +5060,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Veja, corrija ou apague o que seu parceiro lembra sobre você."
+            "value" : "Veja, corrija ou apague o que sua dupla lembra sobre você."
           }
         },
         "tr" : {
@@ -7620,25 +7620,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel und die Übungsgespräche verwenden %@."
+            "value" : "Dein Buddy und die Übungsgespräche verwenden %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero y las llamadas de práctica usan %@."
+            "value" : "Tu compa y las llamadas de práctica usan %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon et tes appels d’entraînement utilisent %@."
+            "value" : "Ton binôme et tes appels d’entraînement utilisent %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno e le conversazioni di allenamento usano %@."
+            "value" : "Il tuo socio e le conversazioni di allenamento usano %@."
           }
         },
         "ja" : {
@@ -7662,7 +7662,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro e as conversas de prática usam %@."
+            "value" : "Sua dupla e as conversas de prática usam %@."
           }
         },
         "tr" : {

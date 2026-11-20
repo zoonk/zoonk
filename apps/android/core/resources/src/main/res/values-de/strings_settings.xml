@@ -31,9 +31,9 @@
   "settings_memory": "87614bec22d87ee5b1c5c999602a653be92c0a52cfa7350d8b3939db1bd74531",
   "settings_preferences": "b72807f260eae87cf6ac7faf9220b4ad1483fe6aea1708129e95073b56ed2708",
   "settings_preferences_app_language": "34651fdb09eb3cdee6dc7925727d960cff8e283d08ce08de61a007cf257eeb03",
-  "settings_preferences_buddy": "a5c70da54a8d7a15d322a32c53daf45c2481f61852021856e168a9fed23a189f",
+  "settings_preferences_buddy": "6161967ae92b7b514b9d469fdfd40a4b37852c64eaca6f43c0e932da0fd3ce57",
   "settings_preferences_change": "43bcbc53a761ef69add36d11196e002787ef7c2d7909be82befda3e6838f1cb4",
-  "settings_preferences_choose_buddy": "8beb67fa01fbd849a5c1756b277df5c53f462b1751a1199f7da961c463227037",
+  "settings_preferences_choose_buddy": "1c21734b789d5f4b816ad4efcdabd2a254653c0341626de473eef9cad15cd8fd",
   "settings_preferences_language": "7f5b8aae09b32cfbcdca92669804472ab1aa7cda99eaf3dfd225d4d2c21168da",
   "settings_preferences_lessons": "14d36aa72a2644f3bfb51ede00e8456935309c8966ae296e780c3d0988305b6d",
   "settings_preferences_save_failed": "aa787d4049acddb890477ed7ac84fddf791e873ceff393380ad372974c606297",
@@ -84,9 +84,9 @@
     <string name="settings_apple_not_revoked">Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass Zoonk von deiner Apple-ID entfernt wurde. Entferne Zoonk unter „Mit Apple anmelden“, um den Vorgang abzuschließen.</string>
     <string name="settings_manage_apple">„Mit Apple anmelden“ verwalten</string>
     <string name="settings_done">Fertig</string>
-    <string name="settings_preferences_buddy">Dein Kumpel</string>
+    <string name="settings_preferences_buddy">Dein Buddy</string>
     <string name="settings_preferences_change">Ändern</string>
-    <string name="settings_preferences_choose_buddy">Wähle deinen Kumpel</string>
+    <string name="settings_preferences_choose_buddy">Wähle deinen Buddy</string>
     <string name="settings_preferences_lessons">Lektionen</string>
     <string name="settings_preferences_sounds">Töne</string>
     <string name="settings_preferences_sounds_description">Bei richtigen Antworten oder wenn du fertig bist</string>

@@ -29,7 +29,7 @@
   "account_menu_settings": "6e64a560ae1b78a7906e7aadc0c72d4a9437502222a9ddd5a5cd03104e107af4",
   "account_menu_subscription": "6fc7e8b67c8708e362352f7d32570ff2a8e38283aac3897b3f0f4ced62c437e4",
   "account_name": "91a49014b7ccbcabbfb7ebfc2f676c7971eadb653526fd1cbe09414b473c0e41",
-  "account_name_description": "bb643a89f077b89995a9cb4521b2d45b69e3dd9b77768f6aaad6bd38a1089d6d",
+  "account_name_description": "97b14ccb9cbc6d4be5089158f7ef5a80adeb8a3500f6d23b79376eca4fbd301a",
   "account_name_required": "054cd6049a487dfb840ee32abc3a0fdba8f2dcdee780945de6951e3c1a38d839",
   "account_name_too_long": "cd2152259df0e7e3f31884a3b357989eeb269faac0d90c86d99c1336f254f782",
   "account_new_code_failed": "34ef696b347a885f18afa7f8bc4bcf2d5646b01e7c4464822837b24a094bdf21",
@@ -95,7 +95,7 @@
     <string name="account_failure_sign_in">Não foi possível entrar. Tente de novo ou envie um e-mail para contato@zoonk.com.</string>
     <string name="account_setup_title">Como podemos te chamar?</string>
     <string name="account_name">Nome</string>
-    <string name="account_name_description">Seu parceiro e todos os seus certificados usam esse nome.</string>
+    <string name="account_name_description">Sua dupla e todos os seus certificados usam esse nome.</string>
     <string name="account_name_too_long">Use até 150 caracteres.</string>
     <string name="account_username">Nome de usuário</string>
     <!-- %1$s is a username. -->

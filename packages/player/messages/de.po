@@ -3916,7 +3916,7 @@ msgstr "Mit einem kostenlosen Konto kannst du in einer Lektion alles fragen."
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"
 msgid "{name} is an AI study buddy and can make mistakes."
-msgstr "{name} ist ein KI-Lernkumpel und kann Fehler machen."
+msgstr "{name} ist ein KI-Lernbuddy und kann Fehler machen."
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"

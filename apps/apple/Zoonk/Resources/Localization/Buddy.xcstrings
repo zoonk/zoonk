@@ -1348,25 +1348,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle deinen Kumpel"
+            "value" : "Wähle deinen Buddy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir tu compañero"
+            "value" : "Elegir tu compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis ton compagnon"
+            "value" : "Choisis ton binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli il tuo compagno"
+            "value" : "Scegli il tuo socio"
           }
         },
         "ja" : {
@@ -1390,7 +1390,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha seu parceiro"
+            "value" : "Escolha sua dupla"
           }
         },
         "tr" : {
@@ -1407,25 +1407,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ist bei deinem Kumpel dabei"
+            "value" : "Dein Buddy bringt sie mit"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vienen con tu compañero"
+            "value" : "Vienen con tu compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incluses avec ton compagnon"
+            "value" : "Incluses avec ton binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inclusi con il tuo compagno"
+            "value" : "Inclusi con il tuo socio"
           }
         },
         "ja" : {
@@ -1449,7 +1449,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vem com seu parceiro"
+            "value" : "Vêm com sua dupla"
           }
         },
         "tr" : {
@@ -2469,25 +2469,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Frag mich, was du möchtest, oder sag mir, was ich an deinem Plan ändern soll."
+            "value" : "Hallo! Ich bin %@, dein KI-Lernbuddy. Frag mich, was du möchtest, oder sag mir, was sich an deinem Plan ändern soll."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. Pregúntame lo que quieras o dime qué cambiar en tu plan."
+            "value" : "¡Hola! Soy %@, tu compa de estudio con IA. Pregúntame lo que quieras o dime qué quieres cambiar en tu plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salut ! Moi, c’est %@, ton compagnon d’étude IA. Pose-moi toutes tes questions ou dis-moi quoi changer dans ton plan."
+            "value" : "Salut ! Moi, c’est %@, ton binôme d’étude IA. Pose-moi toutes tes questions ou dis-moi ce que tu veux changer dans ton plan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ciao! Sono %@, il tuo compagno di studio con l’IA. Chiedimi quello che vuoi o dimmi cosa cambiare nel tuo piano."
+            "value" : "Ciao! Sono %@, il tuo socio di studio con l’IA. Chiedimi quello che vuoi o dimmi cosa cambiare nel tuo piano."
           }
         },
         "ja" : {
@@ -2511,7 +2511,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, uma IA que te ajuda a estudar. Pergunte o que quiser ou me diga o que mudar no seu plano."
+            "value" : "Oi! Sou %@, sua dupla de estudos com IA. Pergunte o que quiser ou me conte o que mudar no seu plano."
           }
         },
         "tr" : {
@@ -2528,25 +2528,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Sag mir, was du lernen möchtest, und ich erstelle deinen Plan."
+            "value" : "Hallo! Ich bin %@, dein KI-Lernbuddy. Sag mir, was du lernen möchtest, und ich erstelle deinen Plan."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. Dime qué quieres aprender y prepararé tu plan."
+            "value" : "¡Hola! Soy %@, tu compa de estudio con IA. Dime qué quieres aprender y crearé tu plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salut ! Moi, c’est %@, ton compagnon d’étude IA. Dis-moi ce que tu veux apprendre et je créerai ton plan."
+            "value" : "Salut ! Moi, c’est %@, ton binôme d’étude IA. Dis-moi ce que tu veux apprendre et je préparerai ton plan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ciao! Sono %@, il tuo compagno di studio con l’IA. Dimmi cosa vuoi imparare e creerò il tuo piano."
+            "value" : "Ciao! Sono %@, il tuo socio di studio con l’IA. Dimmi cosa vuoi imparare e creerò il tuo piano."
           }
         },
         "ja" : {
@@ -2570,7 +2570,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, uma IA que te ajuda a estudar. Me diga o que você quer aprender e eu monto seu plano."
+            "value" : "Oi! Sou %@, sua dupla de estudos com IA. Me conte o que você quer aprender e eu monto seu plano."
           }
         },
         "tr" : {
@@ -4592,25 +4592,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten deinen Kumpel nicht speichern. Versuch es noch einmal."
+            "value" : "Wir konnten deinen Buddy nicht speichern. Versuch es noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No pudimos guardar tu compañero. Inténtalo de nuevo."
+            "value" : "No pudimos guardar tu compa. Inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’enregistrer ton compagnon. Réessaie."
+            "value" : "Impossible d’enregistrer ton binôme. Réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non siamo riusciti a salvare il tuo compagno. Riprova."
+            "value" : "Non siamo riusciti a salvare il tuo socio. Riprova."
           }
         },
         "ja" : {
@@ -4634,7 +4634,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos salvar seu parceiro. Tente de novo."
+            "value" : "Não conseguimos salvar sua dupla. Tente de novo."
           }
         },
         "tr" : {
@@ -5240,25 +5240,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel"
+            "value" : "Dein Buddy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero"
+            "value" : "Tu compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon"
+            "value" : "Ton binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno"
+            "value" : "Il tuo socio"
           }
         },
         "ja" : {
@@ -5282,7 +5282,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro"
+            "value" : "Sua dupla"
           }
         },
         "tr" : {

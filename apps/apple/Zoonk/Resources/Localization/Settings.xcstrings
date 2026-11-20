@@ -901,25 +901,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle deinen Kumpel"
+            "value" : "Wähle deinen Buddy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elegir tu compañero"
+            "value" : "Elegir tu compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis ton compagnon"
+            "value" : "Choisis ton binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli il tuo compagno"
+            "value" : "Scegli il tuo socio"
           }
         },
         "ja" : {
@@ -943,7 +943,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha seu parceiro"
+            "value" : "Escolha sua dupla"
           }
         },
         "tr" : {
@@ -960,25 +960,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit deinem Kumpel freigeschaltet"
+            "value" : "Dein Buddy bringt sie mit"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vienen con tu compañero"
+            "value" : "Vienen con tu compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incluses avec ton compagnon"
+            "value" : "Incluses avec ton binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In dotazione con il tuo compagno"
+            "value" : "Inclusi con il tuo socio"
           }
         },
         "ja" : {
@@ -1002,7 +1002,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vêm com seu parceiro"
+            "value" : "Vêm com sua dupla"
           }
         },
         "tr" : {
@@ -4489,25 +4489,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel"
+            "value" : "Dein Buddy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero"
+            "value" : "Tu compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon"
+            "value" : "Ton binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno"
+            "value" : "Il tuo socio"
           }
         },
         "ja" : {
@@ -4531,7 +4531,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro"
+            "value" : "Sua dupla"
           }
         },
         "tr" : {

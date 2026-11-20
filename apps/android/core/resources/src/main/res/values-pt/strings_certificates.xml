@@ -63,8 +63,8 @@
   "certificates_meaning_plan": "77b9ca64ab71a1e428809d99a9b4d981eef2430e1e20b2d177770b05bde451d6",
   "certificates_meaning_record": "79c2cecf34eecb41230a6fd2d8878c2b4c40ba94089f38987ce6ce8e84d9b357",
   "certificates_meaning_title": "410792190ac10c765031e931b43ff7d1ca15f1a1b86b526d7913ab92a7b29978",
-  "certificates_name_hint": "84995d997e766cd8d2a9680baee15fd704b651a5d36d3a5f295fb7b429c0cba4",
-  "certificates_name_hint_new": "1e48b53776a83fc5eeaec0d2383471e2f243cd47e4eb166933721aeadbe63da3",
+  "certificates_name_hint": "38ebad728d94f32621035902628079c71da0dd7ce44d03fef7166caba757008a",
+  "certificates_name_hint_new": "ca3a39e2737801829962bf0282e17f496a5559b5dfc16242090331baf2f9c017",
   "certificates_name_label": "fa843270dfea4ae9ef907aec8651beb705a9c614cf3a6bb8a21c5c5a1fd36647",
   "certificates_name_label_new": "1532796e15e20753e768475db9e0d95ca2b4ccecc23a1b34b7f9925881e8ca9d",
   "certificates_name_placeholder": "313293facd288ad069f7e9a147eb971276429b8819ef39f9515dac70a88b847e",
@@ -132,8 +132,8 @@
     <!-- The label of the field with the learner's current name, when they change it. -->
     <string name="certificates_name_label">Nome nos seus certificados</string>
     <string name="certificates_name_placeholder">Seu nome completo</string>
-    <string name="certificates_name_hint_new">Seus certificados e seu parceiro usam esse nome. Você pode mudar quando quiser.</string>
-    <string name="certificates_name_hint">Seus certificados e seu parceiro usam esse nome.</string>
+    <string name="certificates_name_hint_new">Seus certificados e sua dupla usam esse nome. Você pode mudar quando quiser.</string>
+    <string name="certificates_name_hint">Seus certificados e sua dupla usam esse nome.</string>
     <string name="certificates_save">Salvar</string>
     <string name="certificates_cancel">Cancelar</string>
     <string name="certificates_name_save_failed">Não foi possível salvar. Tente de novo.</string>

@@ -249,25 +249,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kumpel"
+            "value" : "Buddy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compañero"
+            "value" : "Compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compagnon"
+            "value" : "Binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compagno"
+            "value" : "Socio"
           }
         },
         "ja" : {
@@ -291,7 +291,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parceiro"
+            "value" : "Dupla"
           }
         },
         "tr" : {

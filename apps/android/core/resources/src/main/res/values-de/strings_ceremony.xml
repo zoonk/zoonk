@@ -12,7 +12,7 @@
   "ceremony_glasses_monocle": "8ffd37d072592f81981040e2475b57d3139e2f8535ced05ef4396218d0da3d78",
   "ceremony_glasses_monocle_detail": "44bc788f2fc7737c5c013d42b2c139a49825d8494169f67b679f04d8577c67df",
   "ceremony_glasses_new": "06ac7ba28d844069d9133daf24a601efd60767c8240fd2e0f5ce5908396b8ab2",
-  "ceremony_glasses_new_detail": "497e57d5818f5d40f3ea27c354ea9997f1f8330dd5c7c4a34f6ce75e77896795",
+  "ceremony_glasses_new_detail": "114cb371b708029ce0936530bd8b747e74ae5560adc6a4a0500370b611e1dfb1",
   "ceremony_glasses_retro": "9a54d8a77a3e70766ee70deb064cba04e503bba4843e8cfa811d4a174adec178",
   "ceremony_glasses_retro_detail": "98a947a20dcf944487b7711b3ec416405543e407c4a5263ab60a44e73ea2a0fd",
   "ceremony_glasses_star": "b7d36bcbc79165df8e6a40dccc14dab76b1014be48c633d589bac62dd27422ee",
@@ -49,7 +49,7 @@
     <string name="ceremony_glasses_monocle">Ein Monokel!</string>
     <string name="ceremony_glasses_monocle_detail">Für deinen Sieg bei der letzten Herausforderung.</string>
     <string name="ceremony_glasses_new">Eine neue Brille!</string>
-    <string name="ceremony_glasses_new_detail">Sie gehört zu deinem Kumpel.</string>
+    <string name="ceremony_glasses_new_detail">Die Brille gehört zu deinem Buddy.</string>
     <string name="ceremony_continue">Weiter</string>
     <!-- Button after earning glasses: puts them on the learner's buddy. -->
     <string name="ceremony_wear">Aufsetzen</string>

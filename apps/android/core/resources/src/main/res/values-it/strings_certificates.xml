@@ -63,8 +63,8 @@
   "certificates_meaning_plan": "3e506191120d3c70808cd13e042b8189649d38f40a64456208da27af5dca2371",
   "certificates_meaning_record": "d08b99236495957d314ddbb67c07fbab8b86e1e13f95b7d6068d4790f28f14fb",
   "certificates_meaning_title": "8558761f80f9056d31770363aa883a4eda65e46e623e0093ce1728d419928dc3",
-  "certificates_name_hint": "3f828adfb01c289ce733d2fd1689b65db59e886b2985adbe2ff0a5f261fef0c5",
-  "certificates_name_hint_new": "678e5c89cdd4bcbb17add57af81f401b41bc13da6954e256d4cc76d476fc00f6",
+  "certificates_name_hint": "4fc098aac441b165bff34e9787ba3ba56f8572bd4dc569445d2b8ad3fb5f188c",
+  "certificates_name_hint_new": "d908f24ee7a44519f46ac2b07ba2653a721a7fa468f86259ea0970298b456ffd",
   "certificates_name_label": "6c0cf48f277faee6016e368bab8e315ef6ec87aa1825dddc82514cdd61ca8cc6",
   "certificates_name_label_new": "9e794476fcae03ef82dbe504d4561a681a6ccf9222604cf7385c59120e35dde0",
   "certificates_name_placeholder": "68a3a65fac847311e471ae33352f5d82e2c1103452f0752dd1dadcc28f7bb838",
@@ -132,8 +132,8 @@
     <!-- The label of the field with the learner's current name, when they change it. -->
     <string name="certificates_name_label">Nome sui tuoi certificati</string>
     <string name="certificates_name_placeholder">Nome e cognome</string>
-    <string name="certificates_name_hint_new">È il nome che appare sui tuoi certificati e con cui ti chiama il tuo compagno. Puoi cambiarlo quando vuoi.</string>
-    <string name="certificates_name_hint">È il nome che appare sui tuoi certificati e con cui ti chiama il tuo compagno.</string>
+    <string name="certificates_name_hint_new">È il nome che appare sui tuoi certificati e con cui ti chiama il tuo socio. Puoi cambiarlo quando vuoi.</string>
+    <string name="certificates_name_hint">È il nome che appare sui tuoi certificati e con cui ti chiama il tuo socio.</string>
     <string name="certificates_save">Salva</string>
     <string name="certificates_cancel">Annulla</string>
     <string name="certificates_name_save_failed">Il salvataggio non è riuscito. Riprova.</string>

@@ -6735,25 +6735,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die bekommst du zusammen mit deinem Kumpel."
+            "value" : "Die Brille gehört zu deinem Buddy."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vienen con tu compañero."
+            "value" : "Vienen con tu compa."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elles sont offertes avec ton compagnon."
+            "value" : "Elles accompagnent ton binôme."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Li ricevi insieme al tuo compagno."
+            "value" : "Li ricevi insieme al tuo socio."
           }
         },
         "ja" : {
@@ -6777,7 +6777,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eles vêm com seu parceiro."
+            "value" : "Eles vêm com sua dupla."
           }
         },
         "tr" : {

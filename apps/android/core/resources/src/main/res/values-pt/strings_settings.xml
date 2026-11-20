@@ -31,9 +31,9 @@
   "settings_memory": "b26ad80748ef1f65f98051eea9262ac7289642114abdd171ef67439d0fc02b87",
   "settings_preferences": "6237b6960c5e03446ca07a24d401d6a5bfd3f477ca4c04b93a064eed661a5ba1",
   "settings_preferences_app_language": "a26a9f74c772c9014b3041c94014540062f73f0d16ec567444a47495339a01d7",
-  "settings_preferences_buddy": "5d229e18b14b4f9d1112ff70c1b8c9dfcb0056f944e009c3196162e8e9d4393f",
+  "settings_preferences_buddy": "336b98407f190b2f1c0c361cd86fafa5de66cf9c4159f29f430f326a15bb63d6",
   "settings_preferences_change": "ff44a8afc5b03cff9f8fdcb7f11a6683eabff82d8ddb1a5705308593750d4d49",
-  "settings_preferences_choose_buddy": "85b5c3f0e8461c8a85b841fd3c0718c2e2392984d6c1051e21acebb0cc530bd8",
+  "settings_preferences_choose_buddy": "851a849a1f66f2ecc17880cf8968be45d5cda486c622cfa4b631e6f9908fc21b",
   "settings_preferences_language": "26424878c11d9db5d2ca709eddf0b2bb7479a036f4cc075898fd09ddf5fefcbe",
   "settings_preferences_lessons": "3acaf6bef42cdc6071b9fb136c2d86e3e91a9f170dc0847b35be56ec7fa1a17f",
   "settings_preferences_save_failed": "2133eb17c035b4a6f3b99fc91990813db74349c8b80a25d39bfeb6beb8334209",
@@ -84,9 +84,9 @@
     <string name="settings_apple_not_revoked">Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que o Zoonk foi removido da sua Conta Apple. Para terminar, remova o Zoonk de Iniciar sessão com a Apple.</string>
     <string name="settings_manage_apple">Gerenciar Iniciar sessão com a Apple</string>
     <string name="settings_done">Concluir</string>
-    <string name="settings_preferences_buddy">Seu parceiro</string>
+    <string name="settings_preferences_buddy">Sua dupla</string>
     <string name="settings_preferences_change">Alterar</string>
-    <string name="settings_preferences_choose_buddy">Escolha seu parceiro</string>
+    <string name="settings_preferences_choose_buddy">Escolha sua dupla</string>
     <string name="settings_preferences_lessons">Aulas</string>
     <string name="settings_preferences_sounds">Sons</string>
     <string name="settings_preferences_sounds_description">Quando você acerta ou termina</string>
