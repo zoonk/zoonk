@@ -33,7 +33,12 @@ type FixHandlerSpec<Model extends string, Proposed, Stored extends { id: string 
   /** The key a proposal carries (`set`, `retire`…) and the stored change's `op`. */
   op: string;
   /** Present for an operation the CLI may propose; an operation only a revert builds has none. */
-  proposal?: { fields?: readonly string[]; rules: string; schema: z.ZodType<Proposed> };
+  proposal?: {
+    example?: Json;
+    fields?: readonly string[];
+    rules: string;
+    schema: z.ZodType<Proposed>;
+  };
   stored: z.ZodType<Stored>;
   /** Where the rows this handler writes live, so approval locks them before checking them. */
   table: Sql;
@@ -54,7 +59,7 @@ export type FixHandler<Model extends string = string, Stored = unknown> = {
   op: string;
   planRoots: (stored: unknown) => PlanRoots;
   propose: (db: TransactionClient, proposed: unknown) => Promise<Resolution<unknown>>;
-  proposal: { fields: readonly string[]; rules: string } | null;
+  proposal: { example?: Json; fields: readonly string[]; rules: string } | null;
   reprepare: (db: TransactionClient, stored: unknown) => Promise<Resolution<unknown>>;
   revert: (db: TransactionClient, stored: unknown) => Promise<Resolution<unknown>>;
   stored: z.ZodType<Stored>;
@@ -87,7 +92,11 @@ export function defineFixHandler<Model extends string, Proposed, Stored extends 
     op: spec.op,
     planRoots: (stored) => spec.planRoots?.(read(stored)) ?? {},
     proposal: spec.proposal
-      ? { fields: spec.proposal.fields ?? [], rules: spec.proposal.rules }
+      ? {
+          ...(spec.proposal.example === undefined ? {} : { example: spec.proposal.example }),
+          fields: spec.proposal.fields ?? [],
+          rules: spec.proposal.rules,
+        }
       : null,
     propose: async (db, proposed) => {
       const parsed = spec.proposal?.schema.safeParse(proposed);

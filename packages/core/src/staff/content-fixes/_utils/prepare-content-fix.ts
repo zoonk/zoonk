@@ -7,6 +7,7 @@ import { type FixTarget } from "../handlers/fix-handler";
 import { numericScreenProblem } from "../handlers/numeric-screen";
 import { findStoredHandler, prepareProposedChange } from "../handlers/registry";
 import { lessonProblem } from "./lesson-problem";
+import { changesLearnerLesson } from "./lesson-version-effect";
 import { type FixUnit, type Json, type Refusal, type Resolution, refuse } from "./resolved-change";
 import { isVocabularyUnit, vocabularyEffects } from "./vocabulary-unit";
 
@@ -278,7 +279,9 @@ export async function prepareContentFix(
   }
 
   const lessonVersion: ContentFixEffect[] =
-    first.unit.kind === "lesson" ? [{ kind: "lessonVersion", lessonId: first.unit.id }] : [];
+    first.unit.kind === "lesson" && stored.some((change) => changesLearnerLesson(change))
+      ? [{ kind: "lessonVersion", lessonId: first.unit.id }]
+      : [];
 
   const effects = [
     ...lessonVersion,
