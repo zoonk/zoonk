@@ -15,6 +15,7 @@ import {
 } from "../mocks/mock-contract";
 import { type ExamResultView } from "../results/exam-result-contract";
 import { type ExamScale } from "../scoring/exam-scales";
+import { type WrittenProjection } from "../scoring/written-points-contract";
 
 export const DAY_BEFORE_PLANS = ["learn", "learnAndMock", "light", "mock", "review"] as const;
 
@@ -85,6 +86,7 @@ export type ExamView = {
   daysEstimated: boolean;
   daysLeft: number | null;
   estimate: EstimatedScore | null;
+  writtenProjection?: WrittenProjection;
   examDocument: ExamDocument;
   examName: string;
   format: ExamFormatDay[];

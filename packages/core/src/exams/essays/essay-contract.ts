@@ -2,6 +2,18 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
+import {
+  type WritingDraft,
+  type WritingPacing,
+  type WritingPrompt,
+  writingPromptSchema,
+  writtenAnswerSchema,
+} from "./writing-contract";
+
+export const writingAttemptSchema = writtenAnswerSchema
+  .pick({ grade: true, text: true })
+  .extend({ attemptId: uuidSchema(), submittedAt: z.iso.datetime(), writing: writingPromptSchema })
+  .meta({ id: "WritingAttempt" });
 
 export const MAX_ESSAY_CHARACTERS = 12_000;
 
@@ -23,17 +35,25 @@ export const essaySubmissionInputSchema = z
 
 export type EssaySubmissionInput = z.infer<typeof essaySubmissionInputSchema>;
 
-export type EssayDraft = { grade: EssayGradeView; submittedAt: string; text: string };
+export type EssayDraft = {
+  attemptId?: string;
+  grade: EssayGradeView;
+  submittedAt: string;
+  text: string;
+};
 
 export type EssayView = {
   blockId: string;
+  draft?: WritingDraft | null;
   context: string | null;
   drafts: EssayDraft[];
   gradesLeft: number;
+  pacing?: WritingPacing;
   question: string;
   rubric: "ap" | "custom" | "enem" | "oab";
   sessionId: string;
   status: StudySessionBlock["status"];
+  writing?: WritingPrompt;
 };
 
 const scoreSchema = z.object({ maxScore: z.number(), score: z.number() });

@@ -2,6 +2,7 @@ import { unshownCertificatesSchema } from "@zoonk/core/certificates/contract";
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { essayGradeSchema } from "@zoonk/core/exams/essays/contract";
+import { writingPromptSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { mockAnswerSchema } from "@zoonk/core/exams/mocks/answer-contract";
 import {
   MOCK_PURPOSES,
@@ -82,6 +83,7 @@ const mockEssaySchema = z
           "`pending`: written and not graded yet: POST /v1/mocks/{blockId}/essay-grades right after hand-in, while the objective result already shows. `blank`: left blank",
       }),
     text: z.string().nullable(),
+    writing: writingPromptSchema.optional(),
   })
   .meta({ id: "MockEssay" });
 

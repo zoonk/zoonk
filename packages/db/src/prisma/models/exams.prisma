@@ -99,3 +99,16 @@ model EssayGradeClaim {
   @@index([userId, localDate])
   @@map("essay_grade_claims")
 }
+
+model WritingAdmission {
+  id        String   @id @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  localDate DateTime @map("local_date") @db.Date
+  extra     Boolean
+  itemIds   String[] @map("item_ids") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, localDate, extra])
+  @@map("writing_admissions")
+}

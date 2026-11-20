@@ -62,6 +62,10 @@ export const mockShapeSchema = z
   .strict()
   .meta({ id: "MockShape" });
 
+export const writtenTestShapeSchema = mockShapeSchema
+  .extend({ area: z.null(), kind: z.literal("written") })
+  .meta({ id: "WrittenTestShape" });
+
 export type MockShape = z.infer<typeof mockShapeSchema>;
 
 const routingSchema = z.object({ easier: z.array(z.string()), harder: z.array(z.string()) });
@@ -95,6 +99,7 @@ export const mockConditionsSchema = z.object({
   timeZone: z.string().nullable(),
   timedOutSections: z.array(z.int()),
   unpicked: z.array(z.string()).optional(),
+  writingAdmissionId: uuidSchema().optional(),
   wrongPenalty: z.number().min(0).max(1),
 });
 
@@ -271,8 +276,19 @@ export const anytimeMockInputSchema = anytimeMockChoiceSchema
 
 export type AnytimeMockInput = z.infer<typeof anytimeMockInputSchema>;
 
+export const mockOptionSectionsSchema = z.array(
+  z.object({
+    kind: z.enum(["objective", "written", "listening", "speaking", "practical"]),
+    minutes: z.int().positive().nullable(),
+    name: z.string(),
+    questions: z.int().nonnegative().nullable(),
+    session: z.string().nullable(),
+  }),
+);
+
 export type MockOptionView = MockShape & {
   areas: string[];
+  sections?: z.infer<typeof mockOptionSectionsSchema>;
   covers: string[] | null;
   estimatedMinutes: number;
   minutes: number;

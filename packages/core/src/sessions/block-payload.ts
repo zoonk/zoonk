@@ -2,6 +2,7 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { writingBlockSchema } from "../exams/essays/writing-contract";
 import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
 import { CAPSULE_FORMATS } from "./capsules";
@@ -109,6 +110,7 @@ const blockPayloadSchema = z.object({
   topics: z.array(z.string()).default([]),
   /** Nothing is due; use weak studied topics rather than leaving the day empty. */
   weakest: z.boolean().default(false),
+  writing: writingBlockSchema.optional(),
 });
 
 export type BlockPayload = z.infer<typeof blockPayloadSchema>;

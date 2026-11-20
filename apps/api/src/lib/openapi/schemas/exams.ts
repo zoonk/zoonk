@@ -7,6 +7,7 @@ import {
   netCalibrationSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { examResultScaleSchema } from "@zoonk/core/exams/results/contract";
+import { writtenProjectionSchema } from "@zoonk/core/exams/scoring/written-points-contract";
 import {
   DAY_BEFORE_PLANS,
   type ExamMomentView,
@@ -305,5 +306,6 @@ export const examViewResponseSchema = z
         description:
           "What the notice lets candidates use or gives them (calculator, formula sheet, legislation), for exam day's checklist",
       }),
+    writtenProjection: writtenProjectionSchema.optional(),
   })
   .meta({ id: "ExamView" }) satisfies z.ZodType<ExamView>;

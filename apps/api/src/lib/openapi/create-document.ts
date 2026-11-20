@@ -1,3 +1,11 @@
+import { writingAttemptSchema } from "@zoonk/core/exams/essays/contract";
+import {
+  saveWritingDraftSchema,
+  writingResultSchema,
+  writingStartInputSchema,
+  writingStartSchema,
+} from "@zoonk/core/exams/essays/writing-contract";
+import { writtenTestShapeSchema } from "@zoonk/core/exams/mocks/contract";
 import {
   type CreateDocumentOptions,
   type ZodOpenApiOperationObject,
@@ -192,7 +200,17 @@ export function createOpenAPIDocument({
 
   const document = createDocument(
     {
-      components: { securitySchemes },
+      components: {
+        schemas: {
+          SaveWritingDraft: saveWritingDraftSchema,
+          WritingAttempt: writingAttemptSchema,
+          WritingResult: writingResultSchema,
+          WritingStart: writingStartSchema,
+          WritingStartInput: writingStartInputSchema,
+          WrittenTestShape: writtenTestShapeSchema,
+        },
+        securitySchemes,
+      },
       info: {
         description: "API for the Zoonk learning platform",
         title: "Zoonk API",

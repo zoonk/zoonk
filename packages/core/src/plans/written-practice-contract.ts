@@ -1,5 +1,31 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { writingRangeSchema } from "../exams/essays/writing-contract";
+import { writtenPartPointsSchema } from "../exams/scoring/written-points-contract";
 import { WRITTEN_CADENCES } from "./planner/plan-state";
+
+const writtenSubjectSchema = z.object({
+  answers: z.array(
+    z.object({
+      attemptId: uuidSchema(),
+      date: z.iso.date(),
+      lines: z.int().positive().nullable(),
+      range: writingRangeSchema.nullable(),
+      taskKey: z.string(),
+      title: z.string(),
+      versions: z.int().positive(),
+    }),
+  ),
+  points: writtenPartPointsSchema,
+  trend: z.array(
+    z.object({
+      contentShare: z.number().min(0).max(1).nullable(),
+      date: z.iso.date(),
+      errors: z.int().nonnegative(),
+      presentationShare: z.number().min(0).max(1).nullable(),
+    }),
+  ),
+});
 
 export const writtenPracticeSchema = z
   .object({
@@ -19,6 +45,7 @@ export const writtenPracticeSchema = z
     parts: z
       .array(z.string())
       .meta({ description: "The written tests, as the plan's areas name them" }),
+    subjects: z.array(writtenSubjectSchema).optional(),
   })
   .meta({ id: "WrittenPractice" });
 

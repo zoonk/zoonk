@@ -32495,6 +32495,109 @@
         ],
         "additionalProperties": false
       },
+      "WritingRange": {
+        "type": "object",
+        "properties": {
+          "high": {
+            "type": "number"
+          },
+          "low": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "high",
+          "low"
+        ]
+      },
+      "WritingPrompt": {
+        "type": "object",
+        "properties": {
+          "charactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "points": {
+                  "nullable": true,
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMinimum": true
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "points"
+              ]
+            }
+          },
+          "keySource": {
+            "type": "string",
+            "enum": [
+              "notice",
+              "publishedStandard",
+              "practiceKey"
+            ]
+          },
+          "lines": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "minimumWords": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "points": {
+            "nullable": true,
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "taskKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "drill",
+              "answer"
+            ]
+          }
+        },
+        "required": [
+          "charactersPerLine",
+          "criteria",
+          "keySource",
+          "lines",
+          "minimumWords",
+          "points",
+          "taskKey",
+          "title",
+          "unit"
+        ]
+      },
       "__schema0": {
         "anyOf": [
           {
@@ -32526,6 +32629,346 @@
             }
           }
         ]
+      },
+      "WritingResult": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "criteria": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": "string",
+                      "enum": [
+                        "missing",
+                        "partial",
+                        "strong",
+                        "complete"
+                      ]
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "comment",
+                    "id",
+                    "level",
+                    "name",
+                    "quote"
+                  ]
+                }
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "correction": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "UTF-16 code units from the start of the submitted text"
+                    }
+                  },
+                  "required": [
+                    "correction",
+                    "kind",
+                    "quote",
+                    "start"
+                  ]
+                }
+              },
+              "ignoredFrom": {
+                "nullable": true,
+                "description": "UTF-16 offset where text exceeds the line limit",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "nextStep": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "criterionId": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "quote": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "criterionId",
+                  "example",
+                  "quote",
+                  "text"
+                ]
+              },
+              "progress": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "fixed": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "persists": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "fixed",
+                  "persists"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "levels"
+                ]
+              }
+            },
+            "required": [
+              "criteria",
+              "errors",
+              "ignoredFrom",
+              "nextStep",
+              "progress",
+              "kind"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "criteria": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": "string",
+                      "enum": [
+                        "missing",
+                        "partial",
+                        "strong",
+                        "complete"
+                      ]
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "comment",
+                    "id",
+                    "level",
+                    "name",
+                    "quote"
+                  ]
+                }
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "correction": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "UTF-16 code units from the start of the submitted text"
+                    }
+                  },
+                  "required": [
+                    "correction",
+                    "kind",
+                    "quote",
+                    "start"
+                  ]
+                }
+              },
+              "ignoredFrom": {
+                "nullable": true,
+                "description": "UTF-16 offset where text exceeds the line limit",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "nextStep": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "criterionId": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "quote": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "criterionId",
+                  "example",
+                  "quote",
+                  "text"
+                ]
+              },
+              "progress": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "fixed": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "persists": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "fixed",
+                  "persists"
+                ]
+              },
+              "content": {
+                "$ref": "#/components/schemas/WritingRange"
+              },
+              "deduction": {
+                "description": "Nonnegative points deducted for language",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/WritingRange"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "points"
+                ]
+              },
+              "max": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "earned": {
+                      "type": "number"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "max": {
+                      "type": "number",
+                      "minimum": 0,
+                      "exclusiveMinimum": true
+                    }
+                  },
+                  "required": [
+                    "earned",
+                    "id",
+                    "max"
+                  ]
+                }
+              },
+              "total": {
+                "$ref": "#/components/schemas/WritingRange"
+              },
+              "zeroReason": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "criteria",
+              "errors",
+              "ignoredFrom",
+              "nextStep",
+              "progress",
+              "content",
+              "deduction",
+              "kind",
+              "max",
+              "rows",
+              "total",
+              "zeroReason"
+            ]
+          }
+        ],
+        "type": "object"
       },
       "MeDeletionResponse": {
         "type": "object",
@@ -39779,11 +40222,24 @@
             "nullable": true,
             "type": "string"
           },
+          "draft": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingDraft"
+              }
+            ]
+          },
           "drafts": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
+                "attemptId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
                 "grade": {
                   "$ref": "#/components/schemas/EssayGrade"
                 },
@@ -39808,6 +40264,13 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
+          },
+          "pacing": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingPacing"
+              }
+            ]
           },
           "question": {
             "type": "string"
@@ -39835,6 +40298,13 @@
               "completed",
               "skipped"
             ]
+          },
+          "writing": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingPromptOutput"
+              }
+            ]
           }
         },
         "required": [
@@ -39846,6 +40316,30 @@
           "rubric",
           "sessionId",
           "status"
+        ],
+        "additionalProperties": false
+      },
+      "WritingDraft": {
+        "type": "object",
+        "properties": {
+          "admissionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "admissionId",
+          "revision",
+          "text"
         ],
         "additionalProperties": false
       },
@@ -39993,6 +40487,31 @@
           "range",
           "total",
           "zeroReason"
+        ],
+        "additionalProperties": false
+      },
+      "WritingPacing": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "official",
+              "estimated",
+              "personal",
+              "practice"
+            ]
+          }
+        },
+        "required": [
+          "minutes",
+          "source"
         ],
         "additionalProperties": false
       },
@@ -40428,6 +40947,13 @@
               "type": "string"
             },
             "description": "What the notice lets candidates use or gives them (calculator, formula sheet, legislation), for exam day's checklist"
+          },
+          "writtenProjection": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WrittenProjection"
+              }
+            ]
           }
         },
         "required": [
@@ -41391,6 +41917,152 @@
           "stimulus",
           "criteria",
           "lastTry"
+        ],
+        "additionalProperties": false
+      },
+      "WrittenProjection": {
+        "type": "object",
+        "properties": {
+          "combined": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingRangeOutput"
+              }
+            ]
+          },
+          "max": {
+            "nullable": true,
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "objective": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingRangeOutput"
+              }
+            ]
+          },
+          "objectiveMax": {
+            "nullable": true,
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WrittenPartPoints"
+            }
+          }
+        },
+        "required": [
+          "combined",
+          "max",
+          "objective",
+          "objectiveMax",
+          "parts"
+        ],
+        "additionalProperties": false
+      },
+      "WrittenPartPoints": {
+        "type": "object",
+        "properties": {
+          "max": {
+            "nullable": true,
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "minimum": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "points",
+                  "percent"
+                ]
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              }
+            },
+            "required": [
+              "unit",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "name": {
+            "type": "string"
+          },
+          "range": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingRangeOutput"
+              }
+            ]
+          },
+          "standing": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "unmeasured",
+              "below",
+              "overlaps",
+              "met"
+            ]
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "max": {
+                  "nullable": true,
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMinimum": true
+                },
+                "name": {
+                  "type": "string"
+                },
+                "range": {
+                  "nullable": true,
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/WritingRangeOutput"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "key",
+                "max",
+                "name",
+                "range"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "max",
+          "minimum",
+          "name",
+          "range",
+          "standing",
+          "tasks"
         ],
         "additionalProperties": false
       },
@@ -80673,6 +81345,13 @@
             "minimum": -1,
             "maximum": 1,
             "description": "Preparation gained since the start of the learner's week (Monday, in their time zone)"
+          },
+          "writtenProjection": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WrittenProjection"
+              }
+            ]
           }
         },
         "required": [
@@ -84529,6 +85208,115 @@
               "type": "string"
             },
             "description": "The written tests, as the plan's areas name them"
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "answers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "attemptId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "date": {
+                        "type": "string",
+                        "format": "date",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      },
+                      "lines": {
+                        "nullable": true,
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "maximum": 9007199254740991
+                      },
+                      "range": {
+                        "nullable": true,
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/WritingRangeOutput"
+                          }
+                        ]
+                      },
+                      "taskKey": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "versions": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "attemptId",
+                      "date",
+                      "lines",
+                      "range",
+                      "taskKey",
+                      "title",
+                      "versions"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "points": {
+                  "$ref": "#/components/schemas/WrittenPartPoints"
+                },
+                "trend": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "contentShare": {
+                        "nullable": true,
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "date": {
+                        "type": "string",
+                        "format": "date",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      },
+                      "errors": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "presentationShare": {
+                        "nullable": true,
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "contentShare",
+                      "date",
+                      "errors",
+                      "presentationShare"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "answers",
+                "points",
+                "trend"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [
@@ -89549,6 +90337,52 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "objective",
+                    "written",
+                    "listening",
+                    "speaking",
+                    "practical"
+                  ]
+                },
+                "minutes": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMinimum": true,
+                  "maximum": 9007199254740991
+                },
+                "name": {
+                  "type": "string"
+                },
+                "questions": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "session": {
+                  "nullable": true,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "kind",
+                "minutes",
+                "name",
+                "questions",
+                "session"
+              ],
+              "additionalProperties": false
+            }
+          },
           "written": {
             "type": "array",
             "items": {
@@ -90674,6 +91508,13 @@
           "text": {
             "nullable": true,
             "type": "string"
+          },
+          "writing": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingPromptOutput"
+              }
+            ]
           }
         },
         "required": [
@@ -91124,6 +91965,12 @@
               "additionalProperties": false
             },
             "description": "Minimums this mock couldn't check, so they're still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all"
+          },
+          "written": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WrittenPartPoints"
+            }
           }
         },
         "required": [
@@ -95089,6 +95936,9 @@
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
                     },
+                    "session": {
+                      "type": "string"
+                    },
                     "tasks": {
                       "type": "array",
                       "items": {
@@ -95102,11 +95952,211 @@
                           "description": {
                             "type": "string"
                           },
+                          "grading": {
+                            "type": "object",
+                            "properties": {
+                              "criteria": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "citation": {
+                                      "type": "object",
+                                      "properties": {
+                                        "passage": {
+                                          "type": "string"
+                                        },
+                                        "sourceId": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "passage",
+                                        "sourceId"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "text": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "id": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    },
+                                    "points": {
+                                      "nullable": true,
+                                      "type": "number",
+                                      "minimum": 0,
+                                      "exclusiveMinimum": true
+                                    }
+                                  },
+                                  "required": [
+                                    "citation",
+                                    "text",
+                                    "id",
+                                    "points"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "enem",
+                                  "oab",
+                                  "points",
+                                  "levels"
+                                ]
+                              },
+                              "language": {
+                                "nullable": true,
+                                "type": "object",
+                                "properties": {
+                                  "citation": {
+                                    "type": "object",
+                                    "properties": {
+                                      "passage": {
+                                        "type": "string"
+                                      },
+                                      "sourceId": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "passage",
+                                      "sourceId"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "text": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "factor": {
+                                    "nullable": true,
+                                    "type": "number",
+                                    "minimum": 0
+                                  },
+                                  "formula": {
+                                    "nullable": true,
+                                    "type": "string"
+                                  },
+                                  "method": {
+                                    "type": "string",
+                                    "enum": [
+                                      "perError",
+                                      "errorsPerLine",
+                                      "other"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "citation",
+                                  "text",
+                                  "factor",
+                                  "formula",
+                                  "method"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "rounding": {
+                                "nullable": true,
+                                "type": "object",
+                                "properties": {
+                                  "citation": {
+                                    "type": "object",
+                                    "properties": {
+                                      "passage": {
+                                        "type": "string"
+                                      },
+                                      "sourceId": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "passage",
+                                      "sourceId"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "text": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "citation",
+                                  "text"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "zeroing": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "citation": {
+                                      "type": "object",
+                                      "properties": {
+                                        "passage": {
+                                          "type": "string"
+                                        },
+                                        "sourceId": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "passage",
+                                        "sourceId"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "text": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  },
+                                  "required": [
+                                    "citation",
+                                    "text"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "criteria",
+                              "kind",
+                              "language",
+                              "rounding",
+                              "zeroing"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "handwritten": {
+                            "type": "boolean"
+                          },
+                          "key": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "lines": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "exclusiveMinimum": true,
+                            "maximum": 9007199254740991
+                          },
                           "plays": {
                             "nullable": true,
                             "type": "integer",
                             "minimum": 1,
                             "maximum": 2
+                          },
+                          "points": {
+                            "type": "number",
+                            "minimum": 0,
+                            "exclusiveMinimum": true
                           }
                         },
                         "required": [
@@ -98090,6 +99140,112 @@
           }
         ]
       },
+      "WritingPromptOutput": {
+        "type": "object",
+        "properties": {
+          "charactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "points": {
+                  "nullable": true,
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMinimum": true
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "points"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "keySource": {
+            "type": "string",
+            "enum": [
+              "notice",
+              "publishedStandard",
+              "practiceKey"
+            ]
+          },
+          "lines": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "minimumWords": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "points": {
+            "nullable": true,
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "taskKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "drill",
+              "answer"
+            ]
+          }
+        },
+        "required": [
+          "charactersPerLine",
+          "criteria",
+          "keySource",
+          "lines",
+          "minimumWords",
+          "points",
+          "taskKey",
+          "title",
+          "unit"
+        ],
+        "additionalProperties": false
+      },
+      "WritingRangeOutput": {
+        "type": "object",
+        "properties": {
+          "high": {
+            "type": "number"
+          },
+          "low": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "high",
+          "low"
+        ],
+        "additionalProperties": false
+      },
       "PlanOperationOutput": {
         "oneOf": [
           {
@@ -99477,6 +100633,522 @@
           }
         ],
         "type": "object"
+      },
+      "WritingResultOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "criteria": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": "string",
+                      "enum": [
+                        "missing",
+                        "partial",
+                        "strong",
+                        "complete"
+                      ]
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "comment",
+                    "id",
+                    "level",
+                    "name",
+                    "quote"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "correction": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "UTF-16 code units from the start of the submitted text"
+                    }
+                  },
+                  "required": [
+                    "correction",
+                    "kind",
+                    "quote",
+                    "start"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "ignoredFrom": {
+                "nullable": true,
+                "description": "UTF-16 offset where text exceeds the line limit",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "nextStep": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "criterionId": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "quote": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "criterionId",
+                  "example",
+                  "quote",
+                  "text"
+                ],
+                "additionalProperties": false
+              },
+              "progress": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "fixed": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "persists": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "fixed",
+                  "persists"
+                ],
+                "additionalProperties": false
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "levels"
+                ]
+              }
+            },
+            "required": [
+              "criteria",
+              "errors",
+              "ignoredFrom",
+              "nextStep",
+              "progress",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "criteria": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": "string",
+                      "enum": [
+                        "missing",
+                        "partial",
+                        "strong",
+                        "complete"
+                      ]
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "comment",
+                    "id",
+                    "level",
+                    "name",
+                    "quote"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "correction": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "start": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "UTF-16 code units from the start of the submitted text"
+                    }
+                  },
+                  "required": [
+                    "correction",
+                    "kind",
+                    "quote",
+                    "start"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "ignoredFrom": {
+                "nullable": true,
+                "description": "UTF-16 offset where text exceeds the line limit",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "nextStep": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "criterionId": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "quote": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "criterionId",
+                  "example",
+                  "quote",
+                  "text"
+                ],
+                "additionalProperties": false
+              },
+              "progress": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "fixed": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "persists": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "fixed",
+                  "persists"
+                ],
+                "additionalProperties": false
+              },
+              "content": {
+                "$ref": "#/components/schemas/WritingRangeOutput"
+              },
+              "deduction": {
+                "description": "Nonnegative points deducted for language",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/WritingRangeOutput"
+                  }
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "points"
+                ]
+              },
+              "max": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "earned": {
+                      "type": "number"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "max": {
+                      "type": "number",
+                      "minimum": 0,
+                      "exclusiveMinimum": true
+                    }
+                  },
+                  "required": [
+                    "earned",
+                    "id",
+                    "max"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "total": {
+                "$ref": "#/components/schemas/WritingRangeOutput"
+              },
+              "zeroReason": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "criteria",
+              "errors",
+              "ignoredFrom",
+              "nextStep",
+              "progress",
+              "content",
+              "deduction",
+              "kind",
+              "max",
+              "rows",
+              "total",
+              "zeroReason"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "type": "object"
+      },
+      "SaveWritingDraft": {
+        "type": "object",
+        "properties": {
+          "admissionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "admissionId",
+          "revision",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "WritingAttempt": {
+        "type": "object",
+        "properties": {
+          "grade": {
+            "$ref": "#/components/schemas/WritingResultOutput"
+          },
+          "text": {
+            "type": "string"
+          },
+          "attemptId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "writing": {
+            "$ref": "#/components/schemas/WritingPromptOutput"
+          }
+        },
+        "required": [
+          "grade",
+          "text",
+          "attemptId",
+          "submittedAt",
+          "writing"
+        ],
+        "additionalProperties": false
+      },
+      "WritingStart": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "admissionId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ready"
+                ]
+              }
+            },
+            "required": [
+              "admissionId",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "runId": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "writing"
+                ]
+              }
+            },
+            "required": [
+              "runId",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "returnsOn": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "limitReached"
+                ]
+              }
+            },
+            "required": [
+              "returnsOn",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "type": "object"
+      },
+      "WritingStartInput": {
+        "type": "object",
+        "properties": {
+          "previousAttemptId": {
+            "description": "The graded attempt the learner chose to rewrite",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WrittenTestShape": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              null
+            ]
+          },
+          "day": {
+            "nullable": true,
+            "description": "For `full` and `half`: the exam day it copies, when there are several",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "written"
+            ]
+          }
+        },
+        "required": [
+          "area",
+          "day",
+          "kind"
+        ],
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

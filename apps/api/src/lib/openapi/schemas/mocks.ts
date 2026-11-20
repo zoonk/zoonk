@@ -3,6 +3,7 @@ import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
   type MockOptionView,
   type MockOptionsView,
+  mockOptionSectionsSchema,
   mockShapeSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -45,6 +46,7 @@ const mockOptionSchema = mockShapeSchema
           "The exam day also has a written part (an essay, a discursive test) this mock leaves out",
       }),
     questions: z.number().int().min(0),
+    sections: mockOptionSectionsSchema.optional(),
     written: z
       .array(z.string())
       .meta({
