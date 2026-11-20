@@ -147,6 +147,10 @@ class TodayScreenshots {
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun focusTestNoticeDark() = captureFocusTestNotice("today-dark", dark = true)
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun missedDaysNotice() = captureFocusTestNotice("today-behind-light", day = "notice-behind")
+
     /** Beside the day, the suggestion opens as a panel with what a phone's sheet shows; the sheet's dialog window isn't captured. */
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")

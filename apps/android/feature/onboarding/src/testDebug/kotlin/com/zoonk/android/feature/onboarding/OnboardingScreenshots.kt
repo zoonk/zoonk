@@ -468,6 +468,17 @@ class OnboardingScreenshots {
                             setup = {
                                 setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08")
                             }
+                            cover = { coverOf(recommended = 805, focus = 240, reachedShare = 0.8) }
+                            advice = { adviceOf(0.6) }
+                        },
+                    )
+                },
+                "setup-schedule-every-topic" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = {
+                                setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08")
+                            }
                             cover = { coverOf(recommended = 805, focus = 240) }
                             advice = { adviceOf(0.6) }
                         },

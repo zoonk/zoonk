@@ -209,7 +209,7 @@ fun feasibilityOf(
     deepensMostAsked: Boolean = true,
 ) = """
     {"coreFits":$coreFits,"coveredShare":0.8,"deadline":"${LocalDate.now().plusDays(53)}",
-     "deepensMostAsked":$deepensMostAsked,"fits":false,"measure":"exam","timeCovers":false}
+     "deepensMostAsked":$deepensMostAsked,"fits":false,"measure":"exam","reachedShare":${if (coreFits) 1.0 else 0.9},"timeCovers":false}
     """.trimIndent()
 
 fun subjectOf(
