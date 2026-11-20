@@ -22,8 +22,6 @@
   "mock_chooser_short_line": "13fee417741b4d776d589096a9a55d81d240e899d9661f9117e67cb37083c345",
   "mock_chooser_short_on": "c14a0cd892ad518c5f32fea3575998cbbaea5e45883d6987c1bb1ae230a4f663",
   "mock_chooser_short_title": "031ecbc9143b5510ed96657b5ff4f75c673b685a26b69ce8e72f6b7bc817ab6d",
-  "mock_chooser_size_latest_exam": "6ea8d941b3f274d7a73084f46e3de7241d480c56e1509d23cb2863b69a5ca114",
-  "mock_chooser_size_past_edition": "7d25e6e0667ba198427340aebef4d8865a6f516f1b9bce256745492df3144e66",
   "mock_chooser_start": "80a37114fade7fff5078ca7bb3916a332d94d0f2ab5b2b1604b36101f8f51273",
   "mock_chooser_the_exam": "20359cfff94b5e9c396166be434915b16dad272d3dc416c803b290cba2bf70a6",
   "mock_chooser_title": "f15e80cbd0b099315380d2d9dae80afd2dfdf34d5ea8476de78ddaf777450c8f",
@@ -78,8 +76,4 @@
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">meistens %1$s</string>
     <string name="mock_chooser_last_mock">Deine letzte Probeprüfung</string>
-    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_past_edition">Fragen pro Fach in %1$s, gezählt von %2$s.</string>
-    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_latest_exam">Fragen pro Fach in der letzten Prüfung, gezählt von %1$s.</string>
 </resources>

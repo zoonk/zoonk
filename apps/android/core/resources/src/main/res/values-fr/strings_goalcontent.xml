@@ -52,8 +52,8 @@
   "goalcontent_progress": "e309e83c9db5d135d5b02311f8e5557a94a7d2a2f819b8ff88284131f3427d3e",
   "goalcontent_question_count": "cd1fdb413bbdaba3aa9f337a1a3aaf14fa9eabfd4780828b23700e3bbd113236",
   "goalcontent_questions": "7697da50a7dffedb691258036f77a70182f7c00c6e7f6f1b7e9ed543faed2b8f",
-  "goalcontent_questions_source_edition": "7cab756b6003991e7a86955d8867d058a44e9e5db55d62834d599fe919980858",
-  "goalcontent_questions_source_latest": "e9b46445cef2b7c87081e297e3bb2379ca70f3db2f7008007356077fef6858e7",
+  "goalcontent_questions_source_edition": "1fcdfef891400148c69eaf2bb2d0ad4ecaf74d1cf6e219c1fb0824898092c67b",
+  "goalcontent_questions_source_latest": "74638fddec26f927e6341751aad14a521ffef3b31bdb6c18124f2451df4ad99b",
   "goalcontent_save_failed": "af0a00389dae73c8b5deb7763fd81afb0fe22f7e5bb376b733e36b12b04d5903",
   "goalcontent_see_all": "e00b920319e041e1a88b8010462446b2a153080faabbe0b75d44305c3b72d665",
   "goalcontent_share_of_exam": "a6b7cc6517f53797bcb27ebf758d2154ef77a3d3b120c53aca3193f61bea587d",
@@ -153,9 +153,10 @@
     <string name="goalcontent_not_in_plan">Pas dans ton plan</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Aussi dans ton plan</string>
-    <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">Questions par matière dans %1$s, selon le décompte de %2$s.</string>
-    <string name="goalcontent_questions_source_latest">Questions par matière au dernier examen, selon le décompte de %1$s.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_edition">Nombre de questions par matière pour %1$s, selon le décompte de %2$s.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_latest">Nombre de questions par matière au dernier examen, selon le décompte de %1$s.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s, à %2$s, compte %3$s de plus, alors ton plan leur consacre plus de temps. Pondérations fournies par %4$s.</string>
     <string name="goalcontent_course_weights_even">%1$s, à %2$s, accorde le même poids à chaque partie de l’examen. Pondérations fournies par %3$s.</string>

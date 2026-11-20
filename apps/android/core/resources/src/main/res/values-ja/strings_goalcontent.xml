@@ -52,8 +52,8 @@
   "goalcontent_progress": "0094243557a14063d901db0e725b22b338a35592a50d2e25481a46e01ec90c19",
   "goalcontent_question_count": "5cf58bfd01a5ec38507ea4f9b32348a1e4a3ecae9bb4d2e207a4e3bbffecf5b9",
   "goalcontent_questions": "35738415ade61cacc6c1c5ca3769ee757dd04739b974d08a84722278b951ea18",
-  "goalcontent_questions_source_edition": "f3e5ae0e5f991cf7aded2bb79cb8c50506dc7f741eacf3ea68de5514853f653b",
-  "goalcontent_questions_source_latest": "95c6f814a43cc8344d2c203526a482453634b77118e083f3fdb7b5e00c9dac5c",
+  "goalcontent_questions_source_edition": "29bd875c420d81d42e50bb9f5770525adcda8c0737d013fc179eec636bc0dbfd",
+  "goalcontent_questions_source_latest": "311f98c7709e8c963b27167589bcafde8918b43d70277052b903d0c0af2a150f",
   "goalcontent_save_failed": "b25c8c814a3de421ba9977fe6987ffca4f09e7828338cedac07a13dc09ca0296",
   "goalcontent_see_all": "fcf6c3a689cb37f024fa71121d339c7a5d6a574eaa42090fe4db168e5cca1ed4",
   "goalcontent_share_of_exam": "28f0a75bbcbda2f3dc51acc87c7dcd818868f4f198f0c6d006cf23f37909c414",
@@ -135,9 +135,10 @@
     <string name="goalcontent_not_in_plan">学習計画に含まれていません</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">学習計画の追加項目</string>
-    <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">%1$sの科目別問題数です。%2$sの集計に基づいています。</string>
-    <string name="goalcontent_questions_source_latest">最新の試験の科目別問題数です。%1$sの集計に基づいています。</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_edition">%1$sの科目別問題数は、%2$sの集計に基づいています。</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_latest">直近の試験の科目別問題数は、%1$sの集計に基づいています。</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s（%2$s）では%3$sの比重が高いため、学習計画でもより多くの時間を割り当てています。配点の出典：%4$s。</string>
     <string name="goalcontent_course_weights_even">%1$s（%2$s）では、試験の各分野の比重は同じです。配点の出典：%3$s。</string>

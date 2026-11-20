@@ -52,7 +52,7 @@
   "goalcontent_progress": "42f3dc89ad615bc3ca4a0eafd7a18b56c4080017b04f51ef78bb1f36c900168b",
   "goalcontent_question_count": "28490415f917210813c767539a8c266a213bc97ce9531a3c4e023cfdd58ef08e",
   "goalcontent_questions": "86540e1adc4818d36606c5e90a3db365338eb639659d04facdac2df5f4570b51",
-  "goalcontent_questions_source_edition": "f3d7e360f494f90ca6d4042ed072ff23c87c53b5e4602a38547b9a3071fd6330",
+  "goalcontent_questions_source_edition": "69668faca98dc39f6a2b6296e2926146401dade09273808d709560919a491b34",
   "goalcontent_questions_source_latest": "2b53b41fcf450bb98b931db8409dacb92831faab384c632c4ed623551122a530",
   "goalcontent_save_failed": "e53050f18dcb98e96d0c8d26e2c7f389382647d53971f857b7284d4d9eade100",
   "goalcontent_see_all": "cc79c433736c9b3bc20261fa87b01828303e01ceed41011c0a435fc5c4ded417",
@@ -153,8 +153,9 @@
     <string name="goalcontent_not_in_plan">No está en tu plan</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">También en tu plan</string>
-    <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">Preguntas por materia en el %1$s, según el conteo de %2$s.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_edition">Preguntas por materia en %1$s, según el conteo de %2$s.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_latest">Preguntas por materia en el examen más reciente, según el conteo de %1$s.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s en %2$s da más peso a %3$s, así que tu plan les dedica más tiempo. Fuente: %4$s.</string>

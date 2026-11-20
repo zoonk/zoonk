@@ -52,8 +52,8 @@
   "goalcontent_progress": "229dbf4adb2ec74e9d41fe614b6a554f1cba6c0c1aa5d1d12ba5cc5900270e43",
   "goalcontent_question_count": "984711d2f4b5bff8ad5407c5f460982a756bde28909d6ae50e7dfbb430d46e2e",
   "goalcontent_questions": "511bf9a9bdb309e9e9a7ab02492722c98e36db28c27d4fe128763d0f4288eee7",
-  "goalcontent_questions_source_edition": "a0668d7e18443dc642097fa160f8f9cb61b91e4bb1637cd02a8c0200bfbe5e64",
-  "goalcontent_questions_source_latest": "196610e2ed0fab69c896a0e211bcf7265de2ea9c3df5e585295f09e739cf85f0",
+  "goalcontent_questions_source_edition": "737201664d210b3c6bab408117576b8b5031c2dbe3c5c6fac23f31c37f75eab6",
+  "goalcontent_questions_source_latest": "581a7c216e7819b466d1399d7f802246d62c6ac23c25dee95fa193fa84d5de69",
   "goalcontent_save_failed": "194e5f52f60f698a2fb1d1e25e1b8e132cc842adac3b48af8b0c44ddb8fde73b",
   "goalcontent_see_all": "ca8eefefce494fc1df1943a659e56d4faac532d686db681e6ab823c0b0d232fd",
   "goalcontent_share_of_exam": "335c7493dec17ac97922251983cedd865c0ef9c276ebc42d1bf4d0cb869651ff",
@@ -162,9 +162,10 @@
     <string name="goalcontent_not_in_plan">Poza twoim planem</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Także w twoim planie</string>
-    <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">Liczba pytań z poszczególnych przedmiotów na egzaminie %1$s. Źródło wyliczeń: %2$s.</string>
-    <string name="goalcontent_questions_source_latest">Liczba pytań z poszczególnych przedmiotów na ostatnim egzaminie. Źródło wyliczeń: %1$s.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_edition">Liczba pytań z każdego przedmiotu. Edycja: %1$s. Zestawienie: %2$s.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_latest">Liczba pytań z każdego przedmiotu w ostatniej edycji egzaminu. Zestawienie: %1$s.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s (%2$s): większą wagę mają %3$s, więc twój plan przeznacza na nie więcej czasu. Źródło wag: %4$s.</string>
     <string name="goalcontent_course_weights_even">%1$s (%2$s): każda część egzaminu ma taką samą wagę. Źródło wag: %3$s.</string>

@@ -114,8 +114,8 @@ private fun pastEditionLine(source: MockSizeSourcePastEdition): AnnotatedString 
     val url = source.url.toString()
     val publisher = source.url.host?.removePrefix("www.") ?: url
     val text =
-        source.edition?.let { stringResource(R.string.mock_chooser_size_past_edition, it, publisher) }
-            ?: stringResource(R.string.mock_chooser_size_latest_exam, publisher)
+        source.edition?.let { stringResource(R.string.goalcontent_questions_source_edition, it, publisher) }
+            ?: stringResource(R.string.goalcontent_questions_source_latest, publisher)
     val start = text.lastIndexOf(publisher)
 
     return buildAnnotatedString {

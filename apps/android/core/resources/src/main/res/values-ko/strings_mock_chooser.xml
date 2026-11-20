@@ -22,8 +22,6 @@
   "mock_chooser_short_line": "039c047fa0843576c3be678f274c6217417aff315bcb583799cbd05015da6aef",
   "mock_chooser_short_on": "a3b91f1098a1e8ed28928346a3e0a3cf95e8f3be058d32738f07c3c5360f1769",
   "mock_chooser_short_title": "a69fe302eba2bf1c5f9aee4c6bec3f38a9ad965f2aed4214308af19e8dd79bf1",
-  "mock_chooser_size_latest_exam": "ddad4f18251cbfeee51b671a1d9b32a5c638d20072fca749d00939fbbdd6f24f",
-  "mock_chooser_size_past_edition": "1b3237e90d3fa785003ea8d4d8d6c6e07314d2b40bf7224bb698b2ed8c1a211f",
   "mock_chooser_start": "d9503f3c347b873925fbe36a228211f591701404193c3ae726479d1064616aa7",
   "mock_chooser_the_exam": "131cc03d39e89aa83d86d24b8c0837482a9fb08ba850d1cd8e12ddb0bdc04340",
   "mock_chooser_title": "374b1e8a7cdbc974af1754f911897365247525d8808a4cb7602876ca86e1cb75",
@@ -77,8 +75,4 @@
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">보통 %1$s</string>
     <string name="mock_chooser_last_mock">최근 모의고사</string>
-    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_past_edition">%1$s의 과목별 문제 수예요. %2$s에서 집계했어요.</string>
-    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_latest_exam">가장 최근 시험의 과목별 문제 수예요. %1$s에서 집계했어요.</string>
 </resources>

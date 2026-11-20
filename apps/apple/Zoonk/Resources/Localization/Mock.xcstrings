@@ -9596,7 +9596,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen pro Fach in %1$@, gezählt von %2$@."
+            "value" : "Fragen pro Fach für %1$@, gezählt von %2$@."
           }
         },
         "en" : {
@@ -9608,49 +9608,49 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preguntas por materia en el %1$@, según el conteo de %2$@."
+            "value" : "Preguntas por materia en %1$@, según el conteo de %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nombre de questions par matière dans %1$@, selon le décompte de %2$@."
+            "value" : "Nombre de questions par matière pour %1$@, selon le décompte de %2$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Domande per materia in %1$@, secondo il conteggio di %2$@."
+            "value" : "Domande per materia (%1$@), secondo il conteggio di %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@の科目ごとの問題数です。%2$@の集計に基づいています。"
+            "value" : "%1$@の科目別問題数は、%2$@の集計に基づいています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@의 과목별 문제 수로, %2$@의 집계 결과예요."
+            "value" : "%1$@의 과목별 문제 수로, %2$@에서 집계한 수치예요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Liczba pytań z każdego przedmiotu (egzamin: %1$@), według zestawienia: %2$@."
+            "value" : "Liczba pytań z każdego przedmiotu. Edycja: %1$@. Zestawienie: %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas por matéria em %1$@, conforme a contagem de %2$@."
+            "value" : "Perguntas por matéria na edição %1$@, segundo a contagem de %2$@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Branş başına soru sayıları, %1$@ için %2$@ sayımından alındı."
+            "value" : "%1$@ için branş başına soru sayısı, %2$@ sayımına dayanır."
           }
         }
       }
@@ -9673,7 +9673,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nombre de questions par matière dans le dernier examen, selon le décompte de %@."
+            "value" : "Nombre de questions par matière au dernier examen, selon le décompte de %@."
           }
         },
         "it" : {
@@ -9685,31 +9685,31 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "直近の試験の科目ごとの問題数です。%@の集計に基づいています。"
+            "value" : "直近の試験の科目別問題数は、%@の集計に基づいています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "가장 최근 시험의 과목별 문제 수로, %@의 집계 결과예요."
+            "value" : "가장 최근 시험의 과목별 문제 수로, %@에서 집계한 수치예요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Liczba pytań z każdego przedmiotu na ostatnim egzaminie, według zestawienia: %@."
+            "value" : "Liczba pytań z każdego przedmiotu w ostatniej edycji egzaminu. Zestawienie: %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas por matéria na prova mais recente, conforme a contagem de %@."
+            "value" : "Perguntas por matéria na prova mais recente, segundo a contagem de %@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Son sınavın branş başına soru sayıları, %@ sayımından alındı."
+            "value" : "Son sınavdaki branş başına soru sayısı, %@ sayımına dayanır."
           }
         }
       }

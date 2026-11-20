@@ -52,7 +52,7 @@
   "goalcontent_progress": "95fe430ecd2cefd6971d36975e12842591842cc96dc1ecba957285a68d326a08",
   "goalcontent_question_count": "6c8db55045e201ac60c70309d62c1b1b95c0525edb3a1271facdc09725ff3ecd",
   "goalcontent_questions": "bad331c4479d4a2c815ad3796cf39d9a8361d245b88a5f7b352090623a2742cb",
-  "goalcontent_questions_source_edition": "cadb26ccc39526bc0d20009ca850846aeb6347bd592741fdb75a54c6005ea0bb",
+  "goalcontent_questions_source_edition": "d9873f3c955aef284dfbc5f9d2c6c9a57d123fcaa1b6eb266af8019f6e9ef7f1",
   "goalcontent_questions_source_latest": "0f434d707bbe2adca9e38a40601a802594c88c5a88ae1d9e37dcc2d201639352",
   "goalcontent_save_failed": "19c0474d2e9a74dd9da8f57cdd417b4d141101a68a3d96f70503cdf425b1b86a",
   "goalcontent_see_all": "a6d0ff5be922d08f6b4bb803821e9866386a7b0cbf30606461ccedc87972f983",
@@ -144,8 +144,9 @@
     <string name="goalcontent_not_in_plan">Nicht in deinem Plan</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Auch in deinem Plan</string>
-    <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">Fragen pro Fach in der Ausgabe %1$s, gezählt von %2$s.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_edition">Fragen pro Fach für %1$s, gezählt von %2$s.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_latest">Fragen pro Fach in der letzten Prüfung, gezählt von %1$s.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">Für %1$s an %2$s werden %3$s stärker gewichtet. Deshalb sieht dein Plan dafür mehr Zeit vor. Gewichtung laut %4$s.</string>

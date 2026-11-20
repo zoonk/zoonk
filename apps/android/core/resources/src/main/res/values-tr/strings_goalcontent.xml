@@ -52,8 +52,8 @@
   "goalcontent_progress": "370eee6fa346833cf94b212d9fc3ab2be242737d8ab8169612b78bf3c5f1afed",
   "goalcontent_question_count": "f672f348f2c59ad696ee3f4e96602b4a400286364d3657e6a0ab6296b964fdf9",
   "goalcontent_questions": "61a48d375e996ca9bb616d4670e99daa83f0cff07b0b1ff0a1ddc15f3c77699d",
-  "goalcontent_questions_source_edition": "2199fe7dc6f87c8eced2ac10c5eb2f1ee74f3d91f5eba3c31ea137d4bd04b05d",
-  "goalcontent_questions_source_latest": "a422b33a18f06f17af612a11ffda1224870721084a7918f4ed5543d7ce69c2e5",
+  "goalcontent_questions_source_edition": "8ec5af33908d934a389e998b29eed3bed81b75ffc5b96b778435d2d31a7ac69a",
+  "goalcontent_questions_source_latest": "8c3561899da0c0c32be62a78a55aed2826d5d81c90435eaf271cf1e4a4dbfd24",
   "goalcontent_save_failed": "3622d3d6c61a27177592b8aa029cc598e1f6f097129b42d16aabacbc6934191e",
   "goalcontent_see_all": "d15382a6e1855dca0077f291de8574b440f0a3e45c8ed34efe852c8457d68a7f",
   "goalcontent_share_of_exam": "37ebcb387da2021d5be4b7d9e22ab95ff4596936b6f57da87d9e5161031acff7",
@@ -144,9 +144,10 @@
     <string name="goalcontent_not_in_plan">Planında yok</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Planında da var</string>
-    <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">%1$s sınavında branş başına soru sayısı (%2$s sayımına göre).</string>
-    <string name="goalcontent_questions_source_latest">Son sınavda branş başına soru sayısı (%1$s sayımına göre).</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_edition">%1$s için branş başına soru sayısı, %2$s sayımına dayanır.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_latest">Son sınavdaki branş başına soru sayısı, %1$s sayımına dayanır.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s bölümü için %2$s şu alanlara daha fazla ağırlık verir: %3$s. Bu yüzden planın bu alanlara daha fazla zaman ayırır. Ağırlıkların kaynağı: %4$s.</string>
     <string name="goalcontent_course_weights_even">%1$s bölümü için %2$s sınavın tüm alanlarına eşit ağırlık verir. Ağırlıkların kaynağı: %3$s.</string>

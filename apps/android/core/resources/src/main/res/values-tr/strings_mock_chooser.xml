@@ -22,8 +22,6 @@
   "mock_chooser_short_line": "967bd5a7b99f3757f6dcd18577323d0a444dbf58fe01bfd664f8ccfae81f82f9",
   "mock_chooser_short_on": "c7f946baabafc5e0f8bad73cb91006ef4d1e5c478ecc82d6d1408938866ae55d",
   "mock_chooser_short_title": "7a128bcc97a28155ddcc78825f7ed2942ab63933f301d8c05837367ce386a5ea",
-  "mock_chooser_size_latest_exam": "3054e57a1ad963d922d12280ae290c09ae9c11310d5183ae56b3a80a3c36b347",
-  "mock_chooser_size_past_edition": "a7c88dd5c8e159f6aa73b54393dbe2b6abd761942aa94890306b3357aadfd57d",
   "mock_chooser_start": "3be2e8fcd8004e3c2989fa2571c2c30b23fe5807ab55b303f025b43b460e8beb",
   "mock_chooser_the_exam": "bc74d6b5734deec884a09d687d36659fd013a600788acd5f96ae5b11fac832f7",
   "mock_chooser_title": "2d2ae11539adeaac9512256e3993a3271af5fa8c4773c2c8969197cb4b97701d",
@@ -78,8 +76,4 @@
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">genellikle %1$s</string>
     <string name="mock_chooser_last_mock">Son deneme sınavın</string>
-    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_past_edition">%1$s için branş başına soru sayıları %2$s sayımına dayanıyor.</string>
-    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_latest_exam">Son sınavdaki branş başına soru sayıları %1$s sayımına dayanıyor.</string>
 </resources>

@@ -52,7 +52,7 @@
   "goalcontent_progress": "c295556b181b4fb01a31a41adc0a239c6e021962d96bb80396ea30902a2fe5e1",
   "goalcontent_question_count": "f24a767d570e88f06adadae62edd0da4ecd48cee74639fb5594f3ef8215a4417",
   "goalcontent_questions": "0f3c03fa1399d583b4bf9ea3eca1492d6169a26c858f10affba3bbc4503f7873",
-  "goalcontent_questions_source_edition": "05d3e72fc28c4120f8a3dcb397cb11478e219f12f482438322add21984108add",
+  "goalcontent_questions_source_edition": "2ab06282e7adf76088e85d1e315533a1bef16a933b87bfaa806fce573719b955",
   "goalcontent_questions_source_latest": "26ffe85199e1c8657a57bdeba5d32f88645b6f5e6332d8b873766f9614c73585",
   "goalcontent_save_failed": "a1f113d6723141765b789ec02587e078cd8e6b5dbc420548cc4e2d16b595f424",
   "goalcontent_see_all": "26f5ea24ddb02583ed68a868fd7685b4bfec5de2d1c03c3c630e6d773ad8a607",
@@ -153,8 +153,9 @@
     <string name="goalcontent_not_in_plan">Non è nel tuo piano</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Anche nel tuo piano</string>
-    <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">Domande per materia nell’edizione %1$s, secondo il conteggio di %2$s.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_edition">Domande per materia (%1$s), secondo il conteggio di %2$s.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_latest">Domande per materia nell’ultimo esame, secondo il conteggio di %1$s.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">Per %1$s, %2$s dà più peso a %3$s, quindi il tuo piano dedica più tempo a queste parti. Pesi indicati da %4$s.</string>

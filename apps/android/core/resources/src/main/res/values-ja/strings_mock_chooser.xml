@@ -22,8 +22,6 @@
   "mock_chooser_short_line": "2f2251b1882b35e237ecd909de72ebd56d3fc392d1fe9daed8d73ae2df1d5020",
   "mock_chooser_short_on": "0ebe8db8f9f177a9cd43dd3e7c734b1c74f04640a818e21fb6909975d0c6bd65",
   "mock_chooser_short_title": "62d7ce3b4eaf15ed10f16cbddbb646f29681643d8db022dec39cc820f818efec",
-  "mock_chooser_size_latest_exam": "a3a21dc6387db822834b66889aa96629eed80d02d58e023dbf940d6dde198110",
-  "mock_chooser_size_past_edition": "f32688ba2743d17d61a9cc0c033793116cd78677124017f59e1418cbd36670ce",
   "mock_chooser_start": "d8ea5868138ea2bf2fc4d361e2f99400494fa030b534cf38048b3438a62c9f25",
   "mock_chooser_the_exam": "03f44920bc0dc8e93a6314a8ff53302b04766023fa6ad331a690f12ad49a43e9",
   "mock_chooser_title": "3827d1234522d6bcede8e4f14069f3482d474d9b975bd7157ce667d4797451df",
@@ -77,8 +75,4 @@
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">通常%1$sほど</string>
     <string name="mock_chooser_last_mock">前回の模試</string>
-    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_past_edition">%1$sの科目別の問題数です。%2$sの集計に基づいています。</string>
-    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_latest_exam">最新の試験の科目別の問題数です。%1$sの集計に基づいています。</string>
 </resources>

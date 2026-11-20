@@ -22,8 +22,6 @@
   "mock_chooser_short_line": "6c6ec6551be317a0bb2ecfc5cd28554dc09f05f9a060451506a8f1913728b678",
   "mock_chooser_short_on": "48073eeecceb8e01546acb6e3a22707c97ee6739ac53e3be0eeda402957a5a15",
   "mock_chooser_short_title": "96ec2a9f2f3836be3028ffdc3796827375b7d138750687943b2b24f412ef036b",
-  "mock_chooser_size_latest_exam": "f0f34d285af8b9e02bed05a13fa73ff70c2f4ba7be8456ae9854397fb6461827",
-  "mock_chooser_size_past_edition": "e5407351a6cabd3431be35a43637a3fd314eab8967a3086622740acf2b2aa9c3",
   "mock_chooser_start": "c1f87f1be888a3c40b1bd8ab7bf91c09639baa563d65041f7d854d1fdebd0ea7",
   "mock_chooser_the_exam": "ed675343269a8d5188b4f851c5c3ce94961c626bd81f4fc54836db6ba671f884",
   "mock_chooser_title": "133464ce20d0a8f0db0eddbcdfa060f98145d58ae7ab9fd1e1efc0a7cec737cf",
@@ -79,8 +77,4 @@
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">normalmente %1$s</string>
     <string name="mock_chooser_last_mock">Tu último simulacro de examen</string>
-    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_past_edition">Preguntas por materia en el %1$s, según el conteo de %2$s.</string>
-    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_latest_exam">Preguntas por materia en el examen más reciente, según el conteo de %1$s.</string>
 </resources>

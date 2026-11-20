@@ -52,8 +52,8 @@
   "goalcontent_progress": "70c4ff37e037a19143796690dbd4a40d50b14539f8dab9195f7a98b484ccfe6a",
   "goalcontent_question_count": "a814932e3b8e9c087cb6d3867bd93e1e51d7f965aa4100242252c6a5659c5a89",
   "goalcontent_questions": "893cc946b28975739257552f1de4b9c66df7f5321d8ed790662fdd420aa2307c",
-  "goalcontent_questions_source_edition": "a16fecf8c200d503923448e152adc499852efbfdc2dcc7378ab3997d9eb1c4b0",
-  "goalcontent_questions_source_latest": "a6e189dbd6408437c420f5f0a572975b8b8081e6a255a2a76b361db365144659",
+  "goalcontent_questions_source_edition": "2a9b51c6ad1a4bd5da315e0b4ed48ebd9110a04c7a9b854f948d30fa2da1dc97",
+  "goalcontent_questions_source_latest": "d9146f2ae98a53f611ff2aa28f98122cfc05ea4d4ef33b05cf415083eda91ae3",
   "goalcontent_save_failed": "2bca953906ef41a23d8401bfd1ffee41f701d25e4ed95e86335673f2160be123",
   "goalcontent_see_all": "f82fb34c5e09975b70ebe76b83d1e75b21ce710f27929123abc688a5967ecfab",
   "goalcontent_share_of_exam": "266091dda0e1670e6b007271b99234fd8e1c905c9f20d42eda6204143c4e6b11",
@@ -135,9 +135,10 @@
     <string name="goalcontent_not_in_plan">계획에 없어요</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">내 계획에도 포함</string>
-    <!-- %1$s is a link to the site that counted the questions. -->
-    <string name="goalcontent_questions_source_edition">%1$s의 과목별 문제 수를 %2$s에서 집계했어요.</string>
-    <string name="goalcontent_questions_source_latest">가장 최근 시험의 과목별 문제 수를 %1$s에서 집계했어요.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_edition">%1$s의 과목별 문제 수로, %2$s에서 집계한 수치예요.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="goalcontent_questions_source_latest">가장 최근 시험의 과목별 문제 수로, %1$s에서 집계한 수치예요.</string>
     <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
     <string name="goalcontent_course_weights_heavier">%1$s 과정은 %2$s에서 %3$s에 더 높은 가중치를 두기 때문에 계획에서도 해당 영역에 시간을 더 배정해요. 가중치는 %4$s의 자료를 기준으로 해요.</string>
     <string name="goalcontent_course_weights_even">%1$s 과정은 %2$s에서 모든 시험 영역에 같은 가중치를 적용해요. 가중치는 %3$s의 자료를 기준으로 해요.</string>
