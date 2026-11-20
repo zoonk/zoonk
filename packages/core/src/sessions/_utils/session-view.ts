@@ -6,6 +6,7 @@ import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
 import { type SessionMinutes } from "../session-minutes";
+import { type BlockSubject } from "./block-subjects";
 import { toDayBlockView } from "./day-block-view";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
@@ -14,7 +15,7 @@ import { type StudySessionRow } from "./study-session-access";
 export type StudyBlockView = z.infer<typeof studyBlockSchema>;
 
 const NO_SKILLS: ReadonlySet<string> = new Set();
-const NO_SUBJECTS: ReadonlyMap<number, string> = new Map();
+const NO_SUBJECTS: ReadonlyMap<number, BlockSubject> = new Map();
 
 export function toStudyBlockView(
   input: Omit<Parameters<typeof toDayBlockView>[0], "block"> & { block: StudySessionBlock },
@@ -94,7 +95,7 @@ export function getNextBlockId(blocks: readonly StudySessionBlock[]): string | n
 export function toStudySessionView(
   input: Omit<DayViewFieldsInput, "session" | "missions" | "sessionBar"> & {
     blockViews?: StudyBlockView[];
-    blockSubjects?: ReadonlyMap<number, string>;
+    blockSubjects?: ReadonlyMap<number, BlockSubject>;
     blockedTestOutChapters?: ReadonlySet<string>;
     missions: Mission[];
     oftenTestedSkillIds?: ReadonlySet<string>;
@@ -121,7 +122,7 @@ export function toStudySessionView(
           blockedTestOutChapters,
           blocks: session.blocks,
           oftenTestedSkillIds,
-          subject: blockSubjects.get(block.position) ?? null,
+          ...blockSubjects.get(block.position),
         }),
       ),
     id: session.id,

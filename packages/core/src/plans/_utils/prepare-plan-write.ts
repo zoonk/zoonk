@@ -3,8 +3,8 @@ import { prisma } from "@zoonk/db";
 import { PHASE_DATES_SOURCE } from "../plan-change-contract";
 import { getFullCourseEnd } from "../planner/after-exam";
 import { fromIsoDate } from "../planner/plan-calendar";
-import { computeChange } from "./compute-change";
 import { toComputedPlanWrite } from "./computed-plan-write";
+import { computeCheckedChange, loadExtraOffer } from "./extra-offer";
 import { loadFitOffer } from "./fit-offer";
 import { applyChangeOperations } from "./part-areas";
 import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
@@ -66,10 +66,13 @@ async function prepareReadModel({
     prepareProposalPreviews({ baseline: computed, context: saved, replacement }),
   ]);
 
+  const extraOffer = fitOffer ? null : await loadExtraOffer({ baseline: computed, context: saved });
+
   return {
     previews,
     summary: toPlanSummary({
       advice: {
+        extraOffer,
         feasibility: toFeasibilityView(feasibility),
         fitOffer,
         fullCourseEndDate: getFullCourseEnd({
@@ -121,14 +124,14 @@ async function prepareProposalPreviews({
       const change =
         "error" in result
           ? null
-          : await computeChange({
+          : await computeCheckedChange({
               baseline,
               context,
               operations: result.operations,
               state: result.state,
             });
 
-      const effect = change && !change.unchanged ? change.effect : null;
+      const effect = change && !("error" in change) && !change.unchanged ? change.effect : null;
 
       return {
         id: proposal.id,

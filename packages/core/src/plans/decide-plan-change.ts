@@ -7,7 +7,7 @@ import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-c
 import { keepTestFocus } from "../learner/placement/_utils/focus-test-record";
 import { FOCUS_TEST_SOURCE } from "../learner/placement/focus-test-contract";
 import { commitPlan } from "./_utils/commit-plan";
-import { computeChange } from "./_utils/compute-change";
+import { computeCheckedChange } from "./_utils/extra-offer";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
@@ -100,12 +100,17 @@ async function acceptProposal({
     return { error: result.error, status: "invalid" as const };
   }
 
-  const {
-    bringsBackSetAside,
-    computed,
-    effect,
-    unchanged: changesNothing,
-  } = await computeChange({ context, operations: result.operations, state: result.state });
+  const checked = await computeCheckedChange({
+    context,
+    operations: result.operations,
+    state: result.state,
+  });
+
+  if ("error" in checked) {
+    return { ...checked, status: "invalid" as const };
+  }
+
+  const { bringsBackSetAside, computed, effect, unchanged: changesNothing } = checked;
 
   const repriced = await repriceProposal({
     change,

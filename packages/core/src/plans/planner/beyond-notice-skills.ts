@@ -16,12 +16,12 @@ export function findBeyondNoticeSkillIds(graph: PlanGraph): Set<string> {
     graph.skills
       .filter(
         (skill) =>
-          !hasTopics(skill) &&
-          // Unknown topics (an outline older than notice topics) aren't a declared absence; an
-          // empty list is.
-          !(skill.outlined && skill.topics === undefined) &&
-          !skill.outcome &&
-          listed.has(getSkillArea({ graph, skill })),
+          skill.extra ||
+          (!hasTopics(skill) &&
+            !(skill.outlined && skill.topics === undefined) &&
+            !skill.outcome &&
+            (listed.has(getSkillArea({ graph, skill })) ||
+              (listed.size > 0 && skill.topics?.length === 0))),
       )
       .map((skill) => skill.skillId),
   );

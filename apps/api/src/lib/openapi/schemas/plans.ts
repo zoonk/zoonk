@@ -21,7 +21,7 @@ import { planBasesSchema } from "./plan-bases";
 import { planFeasibilitySchema } from "./plan-feasibility";
 import { planItemSchema } from "./plan-items";
 import { planMockScheduleSchema } from "./plan-mock-schedule";
-import { planFitOfferSchema } from "./plan-offers";
+import { planExtraOfferSchema, planFitOfferSchema } from "./plan-offers";
 import { planPhaseSchema } from "./plan-phases";
 import { planWeekShapeSchema } from "./plan-week-shape";
 import { planStatusSchema } from "./preparation";
@@ -132,6 +132,7 @@ export const planResponseSchema = z
           "The exam's choices (ENEM's foreign language: English or Spanish), each with its options and the one the learner takes (null until picked), which POST /v1/goals/{goalId}/plan/exam-choices changes; the plan studies only the picked options. Empty without choices",
       }),
     examDocument: examDocumentSchema,
+    extraOffer: planExtraOfferSchema,
     feasibility: planFeasibilitySchema.nullable(),
     fitOffer: planFitOfferSchema,
     focusTest: focusTestSummarySchema
@@ -146,6 +147,10 @@ export const planResponseSchema = z
         "Actual future todo mock items whose saved funding has started, with their real duration. Move them using the existing plan operation and item ID.",
       ),
     goalId: uuidSchema(),
+    hasNotice: z
+      .boolean()
+      .optional()
+      .describe("Whether the exam has a source guide or the learner supplied test material."),
     languageAim: languageAimViewSchema.nullable(),
     notice: z
       .enum(["reading", "usual"])
@@ -161,7 +166,6 @@ export const planResponseSchema = z
     phases: z.array(planPhaseSchema),
     planId: uuidSchema(),
     ready: z.boolean().meta({ description: "False while the planner is building the plan" }),
-
     schedule: z.object({
       dailyMinutes: z.int(),
       dailyTimes: dailyTimesSchema,

@@ -17,6 +17,7 @@ const KEYED_FIELDS = {
   bringBackSetAside: "Only a learner's change brings set-aside work back, and its plan holds it.",
   carryOver: "What earlier days left, which the plan the run saved already lays out first.",
   examWindows: "The exam's phases as the saved plan shows them: that plan's own dates.",
+  extras: true,
   finishedOn: true,
   fullMockMinutes: true,
   goal: true,
@@ -146,6 +147,9 @@ function readKeyedInput(input: BuildPlanInput) {
       listeningSkillIds: input.bossFacts.listeningSkillIds,
       survivors: input.bossFacts.survivors,
     },
+    extras: input.extras?.activeItemIds.size
+      ? [...input.extras.activeItemIds].toSorted()
+      : undefined,
     graph: input.graph && withoutPlannedLessons(input.graph),
     lessons: input.lessons && toKeyedLessons(input.lessons),
     settings: input.settings && { ...input.settings, checkpointOverflow: [] },

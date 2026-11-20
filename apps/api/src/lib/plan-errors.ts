@@ -19,6 +19,7 @@ const OPERATION_MESSAGES = {
   badMove: "A weekly challenge can move to a later day within a week",
   baseChoiceClosed:
     "That prerequisite isn't open to that choice: one whose core the learner studied can only be studied in depth",
+  extraUnavailable: "The requested optional study is no longer available for this plan.",
   mockCollision: "That day already has a weekly challenge or mock exam. Pick another day.",
   moveBeforeNextMonday:
     "Pick a day on or after next Monday to move a weekly challenge or mock exam.",

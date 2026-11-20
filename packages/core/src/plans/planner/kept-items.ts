@@ -51,7 +51,9 @@ export function splitExistingItems({
     : [];
 
   const finished = input.items.filter(
-    (item) => item.status !== "todo" && !setAsideBefore.includes(item),
+    (item) =>
+      (item.status !== "todo" || input.extras?.activeItemIds.has(item.id)) &&
+      !setAsideBefore.includes(item),
   );
 
   const planned = new Set(input.items.flatMap((item) => item.lessonId ?? []));
@@ -64,7 +66,9 @@ export function splitExistingItems({
   const written = (skillId: string) =>
     (bySkill.get(skillId) ?? []).flatMap((unit) => (unit.lessonId ? [unit.lessonId] : []));
 
-  const thisWeek = listThisWeekItems({ input, keepsRest });
+  const thisWeek = listThisWeekItems({ input, keepsRest }).filter(
+    (item) => !input.extras?.activeItemIds.has(item.id),
+  );
 
   const landed = thisWeek.filter(
     (item) =>

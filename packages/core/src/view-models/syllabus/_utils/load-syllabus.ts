@@ -19,7 +19,12 @@ import {
   parsePlanSettings,
 } from "../../../plans/planner/plan-state";
 import { loadAreaCourses, loadChapterTitles, withSkills } from "./syllabus-content";
-import { type SyllabusInput, type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
+import {
+  type SyllabusInput,
+  type SyllabusItem,
+  type SyllabusSkill,
+  hasSyllabusNotice,
+} from "./syllabus-input";
 import { getPastBasicsSkillIds, withTestedOutSkills } from "./syllabus-known-skills";
 import { loadNotice } from "./syllabus-notice";
 import { getSkillSubjects } from "./syllabus-subjects";
@@ -56,6 +61,7 @@ function toSyllabusItem(item: SyllabusItem): SyllabusItem {
 function toSkills(graph: PlanGraph): SyllabusSkill[] {
   return graph.skills.map((skill) => ({
     area: getSkillArea({ graph, skill }),
+    ...(skill.extra && { extra: true }),
     name: skill.name,
     skillId: skill.skillId,
     topics: skill.topics ?? [],
@@ -185,11 +191,11 @@ export async function loadSyllabusInput(
   };
 }
 
-async function loadPlanSubjects(
+export async function loadPlanSubjects(
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind">,
   blueprint?: ExamBlueprint | null,
   savedPlan?: Pick<SavedPlan, "graph" | "settings"> | null,
-): Promise<{ graph: PlanGraph; subjects: Map<string, string> }> {
+): Promise<{ graph: PlanGraph; hasNotice: boolean; subjects: Map<string, string> }> {
   const [plan, notice] = await Promise.all([
     savedPlan === undefined
       ? prisma.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
@@ -199,12 +205,23 @@ async function loadPlanSubjects(
 
   const graph = parsePlanGraph(plan?.graph);
 
+  const hasNotice = hasSyllabusNotice(notice);
+
   if (graph.skills.length === 0) {
-    return { graph, subjects: new Map() };
+    return { graph, hasNotice, subjects: new Map() };
   }
 
   const areaCourses = await loadAreaCourses(graph, savedPlan === undefined ? prisma : "shared");
-  return { graph, subjects: getSkillSubjects({ areaCourses, notice, skills: toSkills(graph) }) };
+
+  return {
+    graph,
+    hasNotice,
+    subjects: getSkillSubjects({
+      areaCourses,
+      notice,
+      skills: toSkills(graph).filter((skill) => !skill.extra),
+    }),
+  };
 }
 
 /** Returns no labels with fewer than two subjects; GET callers should share their blueprint and saved plan. */

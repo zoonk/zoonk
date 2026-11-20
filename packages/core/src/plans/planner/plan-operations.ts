@@ -11,6 +11,7 @@ import { applyStudyOperation, isStudyOperation } from "./study-operations";
 export type PlanOperationError =
   | "badMove"
   | "baseChoiceClosed"
+  | "extraUnavailable"
   | "mockCollision"
   | "moveBeforeNextMonday"
   | "noStudyDays"
@@ -100,7 +101,9 @@ function addSkills({
   skills: readonly AddedSkill[];
   state: PlanState;
 }): PlanState {
-  const present = new Set(state.graph.skills.map((skill) => skill.skillId));
+  const present = new Set(
+    [...state.graph.skills, ...(state.graph.extraSkills ?? [])].map((skill) => skill.skillId),
+  );
 
   const graphSkills = skills
     .filter((added) => !present.has(added.skillId))
@@ -119,6 +122,7 @@ function addSkills({
         name: added.name,
         phase: anchor?.phase ?? 0,
         skillId: added.skillId,
+        topics: [],
         weight: anchor?.weight ?? null,
       };
 

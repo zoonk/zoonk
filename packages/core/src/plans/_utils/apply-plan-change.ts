@@ -1,22 +1,17 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
-import {
-  type OfficialExamDate,
-  findOfficialDateConflict,
-  loadExamNoticeFacts,
-} from "../../exams/_utils/exam-notice-facts";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { type PlanOperation } from "../plan-contract";
 import { getFocusTargets } from "../planner/focus-targets";
-import { toIsoDate } from "../planner/plan-calendar";
 import { needsApproval } from "../planner/plan-effect";
 import { type PlanChangeRefusal } from "../planner/plan-operations";
 import { type PlanGraph, type PlanState } from "../planner/plan-state";
 import { commitPlan } from "./commit-plan";
-import { computeChange } from "./compute-change";
+import { computeCheckedChange } from "./extra-offer";
 import { followPlanToday } from "./follow-plan-today";
 import { markPlanWrite } from "./mark-plan-write";
 import { findUnfundedMove, hasMissingWeeklyMove } from "./missing-weekly-move";
+import { findOfficialDate } from "./official-date-conflict";
 import { applyChangeOperations } from "./part-areas";
 import {
   type PlanChangePayload,
@@ -177,6 +172,14 @@ async function computeRequest(
   }
 
   if (!isPlanReady(context)) {
+    if (
+      operations.some(
+        (operation) => operation.kind === "setExtras" && operation.skillIds.length > 0,
+      )
+    ) {
+      return { error: "extraUnavailable", status: "invalid" };
+    }
+
     await savePlanState({ ...request, state: result.state });
     revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
@@ -184,11 +187,15 @@ async function computeRequest(
 
   await ensureQuickBaseLessons(result.state.settings);
 
-  const change = await computeChange({
+  const change = await computeCheckedChange({
     context,
     operations: result.operations,
     state: result.state,
   });
+
+  if ("error" in change) {
+    return { ...change, status: "invalid" };
+  }
 
   if (hasMissingWeeklyMove({ items: change.computed.built.items, operations })) {
     const unfundedMove = findUnfundedMove({
@@ -257,28 +264,6 @@ export async function applySteeringNow(
   return commitEdit({ ...request, change });
 }
 
-async function findOfficialDate({
-  context,
-  operations,
-}: {
-  context: PlanContext;
-  operations: readonly PlanOperation[];
-}): Promise<OfficialExamDate | null> {
-  const dateChange = operations.findLast((operation) => operation.kind === "setTargetDate");
-
-  if (dateChange?.kind !== "setTargetDate" || dateChange.targetDate === null) {
-    return null;
-  }
-
-  const facts = await loadExamNoticeFacts(context.goal);
-
-  return findOfficialDateConflict({
-    facts,
-    targetDate: dateChange.targetDate,
-    today: toIsoDate(context.today),
-  });
-}
-
 export type NoticeChange = {
   edition: string | null;
   graph: PlanGraph | null;
@@ -313,9 +298,13 @@ export async function proposeChange({
   await ensureQuickBaseLessons(result.state.settings);
 
   const [change, officialDate] = await Promise.all([
-    computeChange({ context, operations: result.operations, state: result.state }),
+    computeCheckedChange({ context, operations: result.operations, state: result.state }),
     findOfficialDate({ context, operations }),
   ]);
+
+  if ("error" in change) {
+    return { ...change, status: "invalid" };
+  }
 
   if (change.unchanged) {
     const areas = getAskedAreas({ focused: context.state.settings.focusAreas, operations });
