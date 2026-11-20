@@ -12,7 +12,7 @@ import {
   normalizeWordKey,
 } from "../../player/contracts/build-word-bank-options";
 import { type LibraryProvenance } from "../_utils/library-rows";
-import { finishLibraryGeneration } from "../claims/generation-claim";
+import { holdBackUnusableLesson } from "../claims/generation-claim";
 import { cleanLanguageLesson } from "./_utils/clean-language-lesson";
 import { fillMissingAudio } from "./_utils/language-audio";
 import {
@@ -188,11 +188,12 @@ export async function writeLanguageLessonDraft({
   const lesson = cleanWrittenLanguageLesson({ content: written.data, inputs });
 
   if (!lesson) {
-    await finishLibraryGeneration({
-      id: lessonId,
-      status: "failed",
-      target: "lessonContent",
+    await holdBackUnusableLesson({
+      code: "insufficientLanguageContent",
+      lessonId,
+      problem: "The lesson could not supply enough usable language exercises.",
       workflowRunId,
+      writerRunId: written.provenance.runId,
     });
 
     return { status: "heldBack" };

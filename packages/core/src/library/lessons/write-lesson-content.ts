@@ -4,6 +4,10 @@ import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { logError } from "@zoonk/utils/logger";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
+import {
+  type QualityEvidence,
+  recordLessonQualityDecision,
+} from "../quality/lesson-quality-decision";
 import { type LessonGateProblem, runLessonQualityGate } from "../quality/lesson-quality-gate";
 import { repairWrittenLesson } from "../quality/lesson-repairs";
 import {
@@ -31,6 +35,7 @@ export type LessonCheckPlan = {
   review: boolean;
   version: number;
   writerModel: string;
+  writerRunId?: string;
 };
 
 type LessonContentOutcome =
@@ -47,6 +52,7 @@ export type LessonDraftState = {
   remainingFixes: number;
   review: boolean;
   version: WrittenVersion;
+  writerRunId?: string;
 };
 
 export type LessonDraftToFix = { draft: LessonDraftState; first: GateResult; status: "needsFix" };
@@ -118,6 +124,7 @@ export async function writeLessonContent({
         }),
         provenanceByScreen: draft.data.screens.map(() => ({ ...draft.provenance, sources })),
       },
+      writerRunId: draft.provenance.runId,
     },
     status: "drafted",
   };
@@ -154,14 +161,28 @@ export async function checkLessonContent({
     ? await checkFixedLesson({ fixed: written.lesson, gate, review: false })
     : await runLessonQualityGate({ ...gate, lesson: written.lesson, review: false });
 
+  const writerRunId = draft.writerRunId ?? written.provenanceByScreen[0]?.runId;
+
+  const evidence: QualityEvidence | undefined = writerRunId
+    ? {
+        attemptKey: workflowRunId,
+        blocking: checked.blocking,
+        minor: checked.minor,
+        phase: previous ? "codeRecheck" : "codeCheck",
+        writerRunId,
+      }
+    : undefined;
+
   if (checked.blocking.length > 0) {
     if (draft.remainingFixes > 0) {
+      await recordLessonQualityDecision({ evidence, lessonId, outcome: "needsFix" });
       return { draft, first: checked, status: "needsFix" };
     }
 
     logError(`[lessons] Lesson ${lessonId} held back after its fix pass:`, checked.blocking);
 
     await holdBackLessonDraft({
+      evidence,
       lessonId,
       model: gate.writerModel,
       problems: checked.blocking.map(({ problem, screen }) => ({ problem, screen })),
@@ -179,6 +200,7 @@ export async function checkLessonContent({
   });
 
   const version = await saveLessonContent({
+    evidence,
     language: inputs.language,
     lessonId,
     screens,
@@ -189,7 +211,14 @@ export async function checkLessonContent({
   return version === null
     ? { status: "notClaimed" }
     : {
-        check: { cite, lesson: written.lesson, review, version, writerModel: gate.writerModel },
+        check: {
+          cite,
+          lesson: written.lesson,
+          review,
+          version,
+          writerModel: gate.writerModel,
+          writerRunId,
+        },
         fixed: previous !== null,
         status: "published",
         stepCount: screens.length,

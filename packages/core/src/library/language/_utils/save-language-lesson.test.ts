@@ -103,6 +103,17 @@ describe(saveLanguageLesson, () => {
     await expect(saveLanguageLesson(input)).resolves.toBe(true);
     await expect(saveLanguageLesson(input)).resolves.toBe(false);
 
+    await expect(
+      prisma.lessonQualityDecision.findMany({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject([
+      {
+        outcome: "published",
+        phase: "disposition",
+        version: 1,
+        writerRunId: input.provenance.runId,
+      },
+    ]);
+
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       sourceVersion: plan.sourceVersion + 1,
     });

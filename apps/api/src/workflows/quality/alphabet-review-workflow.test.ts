@@ -154,6 +154,12 @@ describe(alphabetReviewWorkflow, () => {
 
     await expect(alphabetReviewWorkflow({ lessonId, version: 1 })).resolves.toBe("passed");
 
+    await expect(
+      prisma.lessonQualityDecision.findMany({ where: { lessonId, phase: "firstReview" } }),
+    ).resolves.toMatchObject([
+      { outcome: "passed", reviewerRunId: expect.any(String), version: 1 },
+    ]);
+
     expect(checkLessonQuality).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         alphabet: true,

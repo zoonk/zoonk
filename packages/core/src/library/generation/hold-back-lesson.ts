@@ -10,6 +10,10 @@ import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { oweStartedDaySettlements } from "../../sessions/_utils/owe-started-day-settlements";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
+import {
+  type QualityEvidence,
+  recordLessonQualityDecision,
+} from "../quality/lesson-quality-decision";
 import { type HeldBackDraft, getLessonDraftLimit, parseHeldBackDrafts } from "./held-back-drafts";
 
 const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
@@ -162,11 +166,13 @@ export async function refreshPlansWithoutLesson(planIds: readonly string[]): Pro
 }
 
 export async function holdBackLessonDraft({
+  evidence,
   lessonId,
   model,
   problems,
   workflowRunId,
 }: {
+  evidence?: QualityEvidence;
   lessonId: string;
   model: string;
   problems: HeldBackDraft["problems"];
@@ -221,6 +227,13 @@ export async function holdBackLessonDraft({
       if (count === 0) {
         throw new LessonClaimLostError();
       }
+
+      await recordLessonQualityDecision({
+        db: tx,
+        evidence,
+        lessonId,
+        outcome: setAside ? "setAside" : "heldBack",
+      });
 
       return { planIds, setAside };
     }),

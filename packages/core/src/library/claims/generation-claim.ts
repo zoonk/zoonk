@@ -9,6 +9,7 @@ import {
 import { writePlanInputs } from "../_utils/plan-input-write";
 import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
 import { retireUnaskedQuestions, startLessonVersion } from "../lessons/lesson-versions";
+import { recordLessonQualityDecision } from "../quality/lesson-quality-decision";
 
 export type LibraryGenerationTarget =
   | "chapterOutline"
@@ -25,7 +26,10 @@ type ClaimTargetOps = {
   /** Runs each time the run holds the claim, so a retried step repeats it. */
   afterClaim?: (id: string) => Promise<unknown>;
   claim: (db: TransactionClient, input: ClaimInput) => Promise<{ count: number }>;
-  finish: (input: ClaimInput & { status: "completed" | "failed" }) => Promise<{ count: number }>;
+  finish: (
+    db: TransactionClient,
+    input: ClaimInput & { status: "completed" | "failed" },
+  ) => Promise<{ count: number }>;
   read: (db: TransactionClient, id: string) => Promise<ClaimState | null>;
   reset?: (db: TransactionClient, id: string) => Promise<unknown>;
   tags: (id: string) => Promise<string[]> | string[];
@@ -40,8 +44,8 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
         data: { outlineRunId: workflowRunId, outlineStatus: "running" },
         where: { id, outlineStatus: { in: CLAIMABLE_STATUSES } },
       }),
-    finish: ({ id, status, workflowRunId }) =>
-      prisma.chapter.updateMany({
+    finish: (db, { id, status, workflowRunId }) =>
+      db.chapter.updateMany({
         data: { outlineStatus: status },
         where: { id, outlineRunId: workflowRunId, outlineStatus: "running" },
       }),
@@ -57,8 +61,8 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
         data: { outlineRunId: workflowRunId, outlineStatus: "running" },
         where: { OR: [{ outlineStatus: { in: CLAIMABLE_STATUSES } }, { outlineStatus: null }], id },
       }),
-    finish: ({ id, status, workflowRunId }) =>
-      prisma.course.updateMany({
+    finish: (db, { id, status, workflowRunId }) =>
+      db.course.updateMany({
         data: { outlineStatus: status },
         where: { id, outlineRunId: workflowRunId, outlineStatus: "running" },
       }),
@@ -76,8 +80,8 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
         data: { contentRunId: workflowRunId, contentStatus: "running" },
         where: { contentStatus: { in: CLAIMABLE_STATUSES }, id },
       }),
-    finish: ({ id, status, workflowRunId }) =>
-      prisma.lesson.updateMany({
+    finish: (db, { id, status, workflowRunId }) =>
+      db.lesson.updateMany({
         data: { contentStatus: status },
         where: { contentRunId: workflowRunId, contentStatus: "running", id },
       }),
@@ -98,8 +102,8 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
         data: { specRunId: workflowRunId, specStatus: "running" },
         where: { id, specStatus: { in: CLAIMABLE_STATUSES } },
       }),
-    finish: ({ id, status, workflowRunId }) =>
-      prisma.lesson.updateMany({
+    finish: (db, { id, status, workflowRunId }) =>
+      db.lesson.updateMany({
         data: { specStatus: status },
         where: { id, specRunId: workflowRunId, specStatus: "running" },
       }),
@@ -193,11 +197,51 @@ export async function finishLibraryGeneration({
   target: LibraryGenerationTarget;
 }): Promise<boolean> {
   const ops = CLAIM_TARGETS[target];
-  const { count } = await ops.finish({ id, status, workflowRunId });
+  const { count } = await ops.finish(prisma, { id, status, workflowRunId });
 
   if (count > 0) {
     await revalidateCourseContent(await ops.tags(id));
   }
 
   return count > 0;
+}
+
+export async function holdBackUnusableLesson({
+  code,
+  lessonId,
+  problem,
+  workflowRunId,
+  writerRunId,
+}: {
+  code: string;
+  lessonId: string;
+  problem: string;
+  workflowRunId: string;
+  writerRunId: string;
+}): Promise<void> {
+  const ops = CLAIM_TARGETS.lessonContent;
+
+  const { count } = await prisma.$transaction(async (tx) => {
+    const result = await ops.finish(tx, { id: lessonId, status: "failed", workflowRunId });
+
+    if (result.count > 0) {
+      await recordLessonQualityDecision({
+        db: tx,
+        evidence: {
+          attemptKey: workflowRunId,
+          blocking: [{ code, problem, screen: null, source: "code" }],
+          phase: "codeCheck",
+          writerRunId,
+        },
+        lessonId,
+        outcome: "heldBack",
+      });
+    }
+
+    return result;
+  });
+
+  if (count > 0) {
+    await revalidateCourseContent(await ops.tags(lessonId));
+  }
 }

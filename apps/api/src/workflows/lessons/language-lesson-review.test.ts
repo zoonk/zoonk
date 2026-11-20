@@ -90,6 +90,13 @@ describe("a language lesson's review", () => {
 
     expect(result).toStrictEqual({ lessonId, status: "ready" });
 
+    await expect(
+      prisma.lessonQualityDecision.findMany({ orderBy: { id: "asc" }, where: { lessonId } }),
+    ).resolves.toMatchObject([
+      { outcome: "passed", phase: "firstReview", reviewerRunId: expect.any(String), version: null },
+      { outcome: "published", phase: "disposition", version: 1 },
+    ]);
+
     expect(checkLanguageLesson).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         learnerLanguage: "pt",
@@ -171,6 +178,14 @@ describe("a language lesson's review", () => {
     expect(result.status).toBe("heldBack");
 
     const held = await readLesson(lessonId);
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({ orderBy: { id: "asc" }, where: { lessonId } }),
+    ).resolves.toMatchObject([
+      { outcome: "needsFix", phase: "firstReview" },
+      { outcome: "heldBack", phase: "recheck", reviewerRunId: expect.any(String) },
+      { outcome: "heldBack", phase: "disposition" },
+    ]);
 
     expect(held.contentStatus).not.toBe("completed");
     expect(held.words).toStrictEqual([]);

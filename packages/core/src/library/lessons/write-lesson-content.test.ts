@@ -150,13 +150,32 @@ describe(writeLessonContent, () => {
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
     expect(result).toStrictEqual({
-      check: { cite: false, lesson: written, review: true, version: 1, writerModel: draft.model },
+      check: {
+        cite: false,
+        lesson: written,
+        review: true,
+        version: 1,
+        writerModel: draft.model,
+        writerRunId: draft.runId,
+      },
       fixed: false,
       status: "published",
       stepCount: 8,
     });
 
     expect(checkLessonQuality).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject([
+      {
+        outcome: "publishUnchecked",
+        phase: "codeCheck",
+        reviewerRunId: null,
+        version: 1,
+        writerRunId: draft.runId,
+      },
+    ]);
 
     const [steps, stored] = await Promise.all([
       listSteps(lesson.id),
@@ -282,6 +301,25 @@ describe(writeLessonContent, () => {
 
     expect(fixLessonDraft).toHaveBeenCalledOnce();
     expect(stored.setAsideAt).toBeNull();
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({
+        orderBy: { id: "asc" },
+        where: { lessonId: lesson.id },
+      }),
+    ).resolves.toMatchObject([
+      {
+        blocking: [expect.objectContaining({ screen: 4, source: "code" })],
+        outcome: "needsFix",
+        phase: "codeCheck",
+      },
+      {
+        blocking: [expect.objectContaining({ screen: 4, source: "code" })],
+        outcome: "heldBack",
+        phase: "codeRecheck",
+        version: null,
+      },
+    ]);
   });
 
   it("gives a private lesson only one fix pass", async () => {
@@ -401,6 +439,10 @@ describe(writeLessonContent, () => {
     expect(stored.contentStatus).toBe("failed");
     expect(stored.setAsideAt).toBeInstanceOf(Date);
     expect(planItem.status).toBe("skipped");
+
+    await expect(
+      prisma.lessonQualityDecision.count({ where: { lessonId: lesson.id } }),
+    ).resolves.toBe(0);
   });
 
   it("never reviews a private lesson, even one with math that a rewrite asks to review", async () => {
@@ -452,6 +494,7 @@ describe(writeLessonContent, () => {
     expect(result).toStrictEqual({
       problems: [
         {
+          code: "activityProgram",
           problem: String.raw`fields.expectedOutput: The solution prints "2\n"; the expected output must be exactly what it prints`,
           screen: 5,
           source: "code",
@@ -473,6 +516,15 @@ describe(writeLessonContent, () => {
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { fixed: false, status: "published" },
     );
+
+    await expect(
+      prisma.lessonQualityDecision.findFirstOrThrow({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject({
+      blocking: [],
+      minor: expect.arrayContaining([
+        expect.objectContaining({ code: "readingLevel", source: "code" }),
+      ]),
+    });
   });
 
   it("publishes advisory term order without a fix", async () => {

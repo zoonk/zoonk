@@ -1,0 +1,36 @@
+enum LessonQualityPhase {
+  codeCheck
+  codeRecheck
+  firstReview
+  recheck
+  disposition
+}
+
+enum LessonQualityOutcome {
+  needsFix
+  passed
+  publishUnchecked
+  staged
+  published
+  heldBack
+  setAside
+}
+
+model LessonQualityDecision {
+  id            String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  lessonId      String               @map("lesson_id") @db.Uuid
+  lesson        Lesson               @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  attemptKey    String               @map("attempt_key")
+  version       Int?                 @db.SmallInt
+  phase         LessonQualityPhase
+  outcome       LessonQualityOutcome
+  writerRunId   String               @map("writer_run_id")
+  reviewerRunId String?              @map("reviewer_run_id")
+  blocking      Json
+  minor         Json
+  createdAt     DateTime             @default(now()) @map("created_at")
+
+  @@unique([lessonId, attemptKey, phase])
+  @@index([phase, createdAt])
+  @@map("lesson_quality_decisions")
+}

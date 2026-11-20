@@ -14,10 +14,15 @@ import { getLibraryLessonCacheTag } from "../../../cache/tags";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
-import { claimLibraryGeneration, finishLibraryGeneration } from "../../claims/generation-claim";
+import {
+  claimLibraryGeneration,
+  finishLibraryGeneration,
+  holdBackUnusableLesson,
+} from "../../claims/generation-claim";
 import { toStepData } from "../../lessons/_utils/step-data";
 import { createLibraryLesson } from "../../lessons/create-library-lesson";
 import { startLessonVersion } from "../../lessons/lesson-versions";
+import { recordLessonQualityDecision } from "../../quality/lesson-quality-decision";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { getAlphabetIdentityKey } from "./alphabet-identity";
 import { ALPHABET_LESSON_MINUTES } from "./alphabet-lesson-check";
@@ -174,6 +179,14 @@ export async function publishAlphabetLesson({
         steps: steps.map((step) => ({ ...step, provenance })),
       });
 
+      await recordLessonQualityDecision({
+        db: tx,
+        evidence: { attemptKey: workflowRunId, phase: "codeCheck", writerRunId: provenance.runId },
+        lessonId,
+        outcome: "publishUnchecked",
+        version,
+      });
+
       await oweFollowUps({
         db: tx,
         followUps: [{ input: { lessonId, version }, kind: "reviewAlphabetLesson" }],
@@ -264,7 +277,14 @@ async function writeClaimedLesson({
   const steps = buildAlphabetLessonSteps({ audioUrls: new Map(), content: data });
 
   if (!steps.some((step) => step.kind === "alphabet")) {
-    await failAlphabetLesson({ lessonId, workflowRunId });
+    await holdBackUnusableLesson({
+      code: "emptyAlphabet",
+      lessonId,
+      problem: "The lesson did not contain any usable alphabet symbols.",
+      workflowRunId,
+      writerRunId: provenance.runId,
+    });
+
     return { lessonId, status: "heldBack" };
   }
 

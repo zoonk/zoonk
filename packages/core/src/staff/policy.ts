@@ -41,6 +41,7 @@ const reviewedFields: Readonly<Record<string, readonly string[]>> = {
   Item: ["sourceHash"],
   LanguageSkillGraph: ["promptKey"],
   Lesson: ["identityKey"],
+  LessonQualityDecision: ["attemptKey"],
   LessonQuestionThread: ["subjectKey"],
   MediaAsset: ["reuseKey"],
   MemoryInsight: ["inputHash"],
