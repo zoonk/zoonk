@@ -39,21 +39,23 @@ function toGlassesOptions(available: BuddyGlasses[]): BuddyGlassesOption[] {
   return BUDDY_GLASSES.map((glasses) => ({ earned: available.includes(glasses), glasses }));
 }
 
-type BuddyDraftInput = {
-  glasses?: BuddyGlassesOption[];
+type SavedBuddy = {
   initial: BuddyChoice;
-  look: BuddyLook;
   /** Whether the learner chose this buddy; one they were given can be saved as it is. */
   picked: boolean;
 };
 
-function useBuddyDraft({ initial, picked }: Pick<BuddyDraftInput, "initial" | "picked">) {
+type BuddyLooks = { glasses?: BuddyGlassesOption[]; look: BuddyLook };
+
+function useBuddyDraft({ initial, picked }: SavedBuddy) {
   const defaultName = useDefaultBuddyName();
 
-  const [choice, setChoice] = useState(() => ({
-    ...initial,
-    name: initial.name || defaultName(initial.kind),
-  }));
+  const fromSaved = (saved: BuddyChoice) => ({
+    ...saved,
+    name: saved.name || defaultName(saved.kind),
+  });
+
+  const [choice, setChoice] = useState(() => fromSaved(initial));
 
   const trimmedName = choice.name.trim();
   const name = initial.name || trimmedName !== defaultName(choice.kind) ? trimmedName : "";
@@ -64,14 +66,20 @@ function useBuddyDraft({ initial, picked }: Pick<BuddyDraftInput, "initial" | "p
     choice.glasses !== initial.glasses ||
     name !== initial.name;
 
-  return { changed, choice, setChoice, showDefaultName: !initial.name, value: { ...choice, name } };
+  return {
+    changed,
+    choice,
+    /** Starts over from `saved`: the buddy as it is, or as a save just made it. */
+    reset: (saved: BuddyChoice) => setChoice(fromSaved(saved)),
+    setChoice,
+    showDefaultName: !initial.name,
+    value: { ...choice, name },
+  };
 }
 
-function BuddyFields({
-  draft,
-  glasses,
-  look,
-}: Pick<BuddyDraftInput, "glasses" | "look"> & { draft: ReturnType<typeof useBuddyDraft> }) {
+type BuddyDraft = ReturnType<typeof useBuddyDraft>;
+
+function BuddyFields({ draft, glasses, look }: BuddyLooks & { draft: BuddyDraft }) {
   const t = useExtracted();
 
   return (
@@ -105,11 +113,7 @@ function BuddyForm({
   id,
   onSave,
   ...fields
-}: Pick<BuddyDraftInput, "glasses" | "look"> & {
-  draft: ReturnType<typeof useBuddyDraft>;
-  id: string;
-  onSave: (choice: BuddyChoice) => void;
-}) {
+}: BuddyLooks & { draft: BuddyDraft; id: string; onSave: (choice: BuddyChoice) => void }) {
   return (
     <form
       className="flex flex-col gap-5"
@@ -127,14 +131,17 @@ function BuddyForm({
   );
 }
 
-export function BuddyEditor({
+type BuddyEditorProps = BuddyLooks & { onClose: () => void; onSave: (choice: BuddyChoice) => void };
+
+function BuddyDialog({
+  draft,
+  glasses,
+  look,
   onClose,
   onSave,
-  ...input
-}: BuddyDraftInput & { onClose: () => void; onSave: (choice: BuddyChoice) => void }) {
+}: BuddyEditorProps & { draft: BuddyDraft }) {
   const t = useExtracted();
   const formId = useId();
-  const draft = useBuddyDraft(input);
 
   return (
     <Drawer
@@ -151,13 +158,7 @@ export function BuddyEditor({
         </SheetHeader>
 
         <DrawerContent className="pt-2">
-          <BuddyForm
-            draft={draft}
-            glasses={input.glasses}
-            id={formId}
-            look={input.look}
-            onSave={onSave}
-          />
+          <BuddyForm draft={draft} glasses={glasses} id={formId} look={look} onSave={onSave} />
         </DrawerContent>
 
         <DrawerFooter>
@@ -170,18 +171,25 @@ export function BuddyEditor({
   );
 }
 
+/** The editor as a dialog that starts from the saved buddy each time it opens. */
+export function BuddyEditor({ initial, picked, ...props }: BuddyEditorProps & SavedBuddy) {
+  const draft = useBuddyDraft({ initial, picked });
+  return <BuddyDialog draft={draft} {...props} />;
+}
+
 /**
  * The buddy's place beside Preferences' rows where a detail has a pane (`LIST_DETAIL_GRID_CLASS`):
  * always open, so looking at the buddies needs no step, its Save in the page's bar as About you's is.
  */
 function BuddyPane({
+  draft,
+  glasses,
+  look,
   onSave,
-  ...input
-}: BuddyDraftInput & { onSave: (choice: BuddyChoice) => void }) {
+}: BuddyLooks & { draft: BuddyDraft; onSave: (choice: BuddyChoice) => void }) {
   const t = useExtracted();
   const titleId = useId();
   const formId = useId();
-  const draft = useBuddyDraft(input);
 
   return (
     <section
@@ -198,13 +206,7 @@ function BuddyPane({
             <PageSectionTitle id={titleId}>{t("Your buddy")}</PageSectionTitle>
           </PageSectionHeader>
 
-          <BuddyForm
-            draft={draft}
-            glasses={input.glasses}
-            id={formId}
-            look={input.look}
-            onSave={onSave}
-          />
+          <BuddyForm draft={draft} glasses={glasses} id={formId} look={look} onSave={onSave} />
         </PageSection>
 
         <BottomBar>
@@ -265,12 +267,15 @@ export function BuddySettings({
   const t = useExtracted();
   const [isEditing, setIsEditing] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
+  const saved = { glasses: buddy.glasses, kind: buddy.kind, name: buddy.name ?? "" };
+  const glasses = toGlassesOptions(availableGlasses);
 
-  const editor = {
-    glasses: toGlassesOptions(availableGlasses),
-    initial: { glasses: buddy.glasses, kind: buddy.kind, name: buddy.name ?? "" },
-    look,
-    picked: buddy.picked,
+  // One draft for the dialog and the pane, so a resize between them keeps the edit and the save.
+  const draft = useBuddyDraft({ initial: saved, picked: buddy.picked });
+
+  const save = (choice: BuddyChoice, onSaved?: () => void) => {
+    draft.reset(choice);
+    onSave(toAppearanceBuddy(choice), onSaved);
   };
 
   const close = () => {
@@ -304,19 +309,26 @@ export function BuddySettings({
       </PageSection>
 
       {isEditing && (
-        <BuddyEditor
-          {...editor}
-          onClose={close}
+        <BuddyDialog
+          draft={draft}
+          glasses={glasses}
+          look={look}
+          onClose={() => {
+            draft.reset(saved);
+            close();
+          }}
           onSave={(choice) => {
             close();
-            onSave(toAppearanceBuddy(choice));
+            save(choice);
           }}
         />
       )}
 
       <BuddyPane
-        {...editor}
-        onSave={(choice) => onSave(toAppearanceBuddy(choice), () => showSuccessToast(t("Saved.")))}
+        draft={draft}
+        glasses={glasses}
+        look={look}
+        onSave={(choice) => save(choice, () => showSuccessToast(t("Saved.")))}
       />
     </>
   );

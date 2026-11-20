@@ -199,3 +199,45 @@ test("the buddy editor is open beside Preferences' rows on a wide screen and a d
   await page.getByRole("button", { exact: true, name: "Change" }).click();
   await expect(page.getByRole("dialog", { name: "Your buddy" })).toBeVisible();
 });
+
+test("the buddy dialog and the wide pane edit one buddy: a save or an unsaved edit carries across a resize", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const savedBuddy = () =>
+    prisma.userLearningProfile.findUnique({
+      select: { buddyKind: true, buddyName: true },
+      where: { userId: noProgressUser.id },
+    });
+
+  await page.setViewportSize({ height: 900, width: 1024 });
+  await page.goto("/settings/appearance");
+
+  const choose = page.getByRole("button", { name: "Choose your buddy" });
+  await expectHydrated(choose);
+  await choose.click();
+
+  const dialog = page.getByRole("dialog", { name: "Your buddy" });
+  await dialog.getByRole("textbox", { name: "Name" }).fill("Bea");
+  await dialog.getByRole("textbox", { name: "Name" }).press("Enter");
+  await expect(dialog).toBeHidden();
+  await expect.poll(savedBuddy).toMatchObject({ buddyName: "Bea" });
+
+  await page.setViewportSize({ height: 900, width: 1440 });
+  const pane = page.getByRole("region", { name: "Your buddy" });
+  const paneName = pane.getByRole("textbox", { name: "Name" });
+  const paneSave = pane.getByRole("button", { exact: true, name: "Save" });
+  await expect(paneName).toHaveValue("Bea");
+  await expect(paneSave).toBeDisabled();
+
+  await pane.getByRole("radio", { name: /^Noodle/u }).click();
+  await paneSave.click();
+  await expect(paneSave).toBeDisabled();
+  await expect.poll(savedBuddy).toEqual({ buddyKind: "noodle", buddyName: "Bea" });
+
+  await paneName.fill("Cleo");
+  await page.setViewportSize({ height: 900, width: 1024 });
+  await page.getByRole("button", { exact: true, name: "Change" }).click();
+  await expect(dialog.getByRole("textbox", { name: "Name" })).toHaveValue("Cleo");
+  await expect(dialog.getByRole("radio", { name: /^Noodle/u })).toBeChecked();
+});
