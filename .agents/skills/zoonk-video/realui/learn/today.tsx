@@ -1,9 +1,30 @@
+import {
+  type CatchUpView,
+  type SessionWeek,
+} from "@repo/packages/core/src/sessions/_utils/session-view.ts";
 import { BRAIN_POWER_BONUS } from "@repo/packages/core/src/sessions/brain-power.ts";
+import { type DayBlockView, type DayView } from "@repo/packages/core/src/sessions/day-view.ts";
+import { type Mission } from "@repo/packages/core/src/sessions/missions.ts";
+import { type TodayView } from "@repo/packages/core/src/view-models/today/get-today-view.ts";
+import { type MissionView } from "@repo/packages/learn/src/missions/mission-links.ts";
 import { TodayChangeNotice } from "@repo/packages/learn/src/today/today-change-notice.tsx";
 // Today (/today) on a phone for the career goal, from the repo's TodayScreen with a realistic TodayView.
+import {
+  type TodayActions,
+  type TodayHostNotices,
+} from "@repo/packages/learn/src/today/today-context.tsx";
 import { TodayScreen } from "@repo/packages/learn/src/today/today-screen.tsx";
 import { useEffect } from "react";
-import { CAREER_GOAL_ID, S, TabShell, ZU, type ViewProps } from "./common";
+import {
+  CAREER_GOAL_ID,
+  MISSION_LINKS,
+  S,
+  TabShell,
+  ZU,
+  actions,
+  noop,
+  type ViewProps,
+} from "./common";
 
 const DAY_MS = 86_400_000;
 const utc = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
@@ -23,16 +44,16 @@ function careerLessons(lang: "en" | "pt"): Lesson[] {
 }
 
 type BlockSpec =
-  | { kind: "learn"; lesson: Lesson; status: "pending" | "active" | "completed" }
+  | { kind: "learn"; lesson: Lesson; status: DayBlockView["status"] }
   | {
       kind: "review";
       minutes: number;
       questions: number;
       topics: string[];
-      status: "pending" | "active" | "completed";
+      status: DayBlockView["status"];
     };
 
-function toBlock(spec: BlockSpec, position: number, started: boolean) {
+function toBlock(spec: BlockSpec, position: number): DayBlockView {
   const base = {
     answered: 0,
     areaId: null,
@@ -40,15 +61,6 @@ function toBlock(spec: BlockSpec, position: number, started: boolean) {
     brainPower: spec.status === "completed" ? 14 : 0,
     canDo: null,
     canTestOut: false,
-    capsules: [] as {
-      format: string;
-      key: string;
-      lessonId: string | null;
-      opened: boolean;
-      questions: number;
-      title: string;
-    }[],
-    chapterId: null as string | null,
     checkpoint: null,
     estimatedBrainPower: 15,
     extra: false,
@@ -56,51 +68,53 @@ function toBlock(spec: BlockSpec, position: number, started: boolean) {
     mistakesOnly: false,
     netScored: false,
     oftenTested: false,
+    opensInPlayer: true,
     planItemKey: null,
     position,
     refresh: false,
     reinforcement: false,
     status: spec.status,
-    topics: [] as string[],
+    topics: [],
     waitReason: null,
     weakest: false,
   };
 
-  const block =
-    spec.kind === "learn"
-      ? {
-          ...base,
-          chapterId: `chapter-${spec.lesson.module}`,
-          estimatedMinutes: spec.lesson.minutes,
-          kind: "learn" as const,
-          lessonId: `lesson-${spec.lesson.index}`,
-          planItemId: `item-${spec.lesson.index}`,
-          questions: 8,
-          screen: "lesson" as const,
-          subject: spec.lesson.module,
-          title: spec.lesson.title,
-        }
-      : {
-          ...base,
-          capsules: spec.topics.map((title, index) => ({
-            format: "flashcards",
-            key: `capsule-${index}`,
-            lessonId: null,
-            opened: false,
-            questions: Math.ceil(spec.questions / spec.topics.length),
-            title,
-          })),
-          estimatedMinutes: spec.minutes,
-          kind: "review" as const,
-          lessonId: null,
-          planItemId: null,
-          questions: spec.questions,
-          screen: "session" as const,
-          subject: null,
-          title: null,
-        };
+  if (spec.kind === "learn") {
+    return {
+      ...base,
+      capsules: [],
+      chapterId: `chapter-${spec.lesson.module}`,
+      estimatedMinutes: spec.lesson.minutes,
+      kind: "learn",
+      lessonId: `lesson-${spec.lesson.index}`,
+      planItemId: `item-${spec.lesson.index}`,
+      questions: 8,
+      screen: "lesson",
+      subject: spec.lesson.module,
+      title: spec.lesson.title,
+    };
+  }
 
-  return started ? { ...block, id: `block-${position}` } : block;
+  return {
+    ...base,
+    capsules: spec.topics.map((title, index) => ({
+      format: "rapidFire",
+      key: `capsule-${index}`,
+      lessonId: null,
+      opened: false,
+      questions: Math.ceil(spec.questions / spec.topics.length),
+      title,
+    })),
+    chapterId: null,
+    estimatedMinutes: spec.minutes,
+    kind: "review",
+    lessonId: null,
+    planItemId: null,
+    questions: spec.questions,
+    screen: "session",
+    subject: null,
+    title: null,
+  };
 }
 
 type WeekPlan = {
@@ -111,7 +125,7 @@ type WeekPlan = {
   hitGoal?: boolean;
 }[];
 
-function toWeek({ days, today }: { days: WeekPlan; today: string }) {
+function toWeek({ days, today }: { days: WeekPlan; today: string }): SessionWeek {
   const weekDays = days.map((day) => ({
     date: utc(day.date),
     goalMinutes: day.kind === "study" ? 60 : 0,
@@ -126,29 +140,17 @@ function toWeek({ days, today }: { days: WeekPlan; today: string }) {
     days: weekDays,
     nextStudyDate:
       weekDays.find((day) => day.date > utc(today) && day.kind === "study")?.date ?? null,
-    time: {
-      studiedMinutes: weekDays.reduce((sum, day) => sum + day.minutes, 0),
-      targetMinutes: weekDays.reduce((sum, day) => sum + day.goalMinutes, 0),
-    },
   };
 }
 
-type Mission = {
-  kind: string;
-  done: number;
-  total: number;
-  status: "done" | "todo";
-  detail?: Record<string, unknown>;
-  opens?: unknown;
-  minutes?: number;
-};
+const blockId = (block: Pick<DayBlockView, "position">) => `block-${block.position}`;
 
 function buildToday({
   blocks: specs,
   catchUp = null,
   date,
+  chapter,
   lang,
-  missions,
   notice = null,
   planChange = null,
   progressStatus,
@@ -156,73 +158,84 @@ function buildToday({
   week,
 }: {
   blocks: BlockSpec[];
-  catchUp?: {
-    positions: number[];
-    later: { lessons: number; minutes: number; offered: boolean };
-    lessonsLeft: number;
-  } | null;
+  catchUp?: Omit<CatchUpView, "blockIds"> | null;
   date: string;
+  /** The chapter the day works on, which a mission asks the learner to finish. */
+  chapter: string;
   lang: "en" | "pt";
-  missions: (blocks: ReturnType<typeof toBlock>[]) => Mission[];
-  notice?: string | null;
-  planChange?: unknown;
-  progressStatus: unknown;
+  notice?: TodayView["notice"];
+  planChange?: TodayView["planChange"];
+  progressStatus: NonNullable<TodayView["progress"]>["status"];
   sourceChange?: string | null;
   week: WeekPlan;
-}) {
+}): { dayMissions: MissionView[]; today: TodayView } {
   const career = S(lang).career;
   const started = specs.some((spec) => spec.status !== "pending");
-  const blocks = specs.map((spec, position) => toBlock(spec, position, started));
+  const blocks = specs.map((spec, position) => toBlock(spec, position));
   const next = blocks.find((block) => block.status !== "completed") ?? null;
   const done = blocks.filter((block) => block.status === "completed");
   const localDate = utc(date);
   const target = utc(career.date);
-  const dayMissions = missions(blocks);
+  const planned = blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0);
+  const doneMinutes = done.reduce((sum, block) => sum + block.estimatedMinutes, 0);
+  const unstartedMissions = careerMissions({ blocks, chapter, opens: unstartedOpens });
 
-  const session = {
-    blocks,
+  const day = {
     brainPower: done.reduce((sum, block) => sum + block.brainPower, 0),
-    catchUp:
-      catchUp &&
-      (started ? { ...catchUp, blockIds: catchUp.positions.map((p) => `block-${p}`) } : catchUp),
     current: true,
     dayEndsAt: localDate.getTime() + DAY_MS + 3 * 3_600_000,
     emptyDay: null,
     examAccess: { includesMockExams: true, trialEnded: false },
     examTomorrow: false,
-    extraTime: { available: false, lessons: [], minutes: 15, reason: "sessionNotFinished" },
+    extraTime: {
+      available: false as const,
+      lessons: [],
+      minutes: 15,
+      reason: "sessionNotFinished" as const,
+    },
     freshStart: null,
     fullMeal: {
       bonus: BRAIN_POWER_BONUS.fullMeal,
-      earned: dayMissions.every((m) => m.status === "done"),
+      earned: unstartedMissions.every((mission) => mission.status === "done"),
       ready: false,
     },
     goalId: CAREER_GOAL_ID,
     hyperdrive: { level: 0, streak: 0 },
-    id: "session-1",
     lessonsComing: false,
     lessonsToPrepare: false,
     localDate,
     minutes: {
       dailyGoal: 60,
-      done: done.reduce((sum, block) => sum + block.estimatedMinutes, 0),
-      planned: blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+      done: doneMinutes,
+      left: Math.max(0, planned - doneMinutes),
+      planned,
     },
-    missions: dayMissions,
-    nextBlockId: next && started ? `block-${next.position}` : null,
     nextPosition: next?.position ?? null,
     pauseSuggested: false,
-    plusLessons: [],
     sessionBar: { completed: done.length, total: blocks.length },
-    state: next ? "underway" : "done",
-    status: started ? "active" : "unstarted",
+    state: next ? ("underway" as const) : ("done" as const),
     week: toWeek({ days: week, today: date }),
   };
+
+  const session: DayView = started
+    ? {
+        ...day,
+        blocks: blocks.map((block) => ({ ...block, id: blockId(block) })),
+        catchUp: catchUp && {
+          ...catchUp,
+          blockIds: catchUp.positions.map((position) => blockId({ position })),
+        },
+        id: "session-1",
+        missions: careerMissions({ blocks, chapter, opens: startedOpens }),
+        nextBlockId: next ? blockId(next) : null,
+        status: "active",
+      }
+    : { ...day, blocks, catchUp, missions: unstartedMissions, status: "unstarted" };
 
   const daysLeft = Math.round((target.getTime() - localDate.getTime()) / DAY_MS);
   const lessonsDone = 4 + done.length;
 
-  const today = {
+  const today: TodayView = {
     earlierWork: [],
     exam: null,
     examChoice: null,
@@ -230,6 +243,7 @@ function buildToday({
     goal: {
       dateEstimated: false,
       daysLeft,
+      displayName: career.title,
       id: CAREER_GOAL_ID,
       kind: "learn",
       targetDate: target,
@@ -237,7 +251,7 @@ function buildToday({
     },
     insight: null,
     lessonStatus: Object.fromEntries(
-      blocks.flatMap((block) => (block.lessonId ? [[block.lessonId, "ready"]] : [])),
+      blocks.flatMap((block) => (block.lessonId ? [[block.lessonId, "ready"] as const] : [])),
     ),
     mockFunding: null,
     notice,
@@ -259,126 +273,101 @@ function buildToday({
     weeklyChallenge: null,
   };
 
-  return { dayMissions, today };
+  return { dayMissions: session.missions, today };
 }
 
-function opensBlock(block: ReturnType<typeof toBlock> | undefined) {
-  if (!block) {
-    return undefined;
-  }
+const startedOpens = (block: DayBlockView) => ({ blockId: blockId(block), kind: "block" as const });
 
-  return "id" in block
-    ? { blockId: block.id, kind: "block" }
-    : {
-        kind: "block",
-        ref: {
-          areaId: null,
-          chapterId: block.chapterId,
-          checkpoint: null,
-          flags: {
-            extra: false,
-            fullReview: false,
-            mistakesOnly: false,
-            refresh: false,
-            reinforcement: false,
-            weakest: false,
-          },
-          kind: block.kind,
-          lessonId: block.lessonId,
-          planItemKey: null,
-          position: block.position,
+const unstartedOpens = (block: DayBlockView) => ({
+  kind: "block" as const,
+  ref: {
+    areaId: null,
+    chapterId: block.chapterId,
+    checkpoint: null,
+    flags: {
+      extra: false,
+      fullReview: false,
+      mistakesOnly: false,
+      refresh: false,
+      reinforcement: false,
+      weakest: false,
+    },
+    kind: block.kind,
+    lessonId: block.lessonId,
+    planItemKey: null,
+    position: block.position,
+  },
+});
+
+/**
+ * Do a new lesson, finish the chapter the day works on, and ask the buddy something. A started day's
+ * missions open its blocks by id; an unstarted day's open the work the block will be.
+ */
+function careerMissions<Opens>({
+  blocks,
+  chapter,
+  opens,
+}: {
+  blocks: DayBlockView[];
+  chapter: string;
+  opens: (block: DayBlockView) => Opens;
+}): (Omit<Mission, "opens"> & { opens?: Opens | { kind: "buddy" } })[] {
+  const lessons = blocks.filter((block) => block.kind === "learn");
+  const firstNew = lessons.find((block) => block.status !== "completed");
+  const chapterBlocks = lessons.filter((block) => block.subject === chapter);
+  const chapterLeft = chapterBlocks.filter((block) => block.status !== "completed");
+  const chapterNext = chapterLeft[0];
+  const newDone = lessons.some((block) => block.status === "completed");
+
+  return [
+    newDone || !firstNew
+      ? { done: 1, kind: "somethingNew", status: "done", total: 1 }
+      : {
+          done: 0,
+          kind: "somethingNew",
+          minutes: firstNew.estimatedMinutes,
+          opens: opens(firstNew),
+          status: "todo",
+          total: 1,
         },
-      };
+    chapterNext
+      ? {
+          detail: { chapterTitle: chapter },
+          done: chapterBlocks.length - chapterLeft.length,
+          kind: "finishChapter",
+          minutes: chapterLeft.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+          opens: opens(chapterNext),
+          status: "todo",
+          total: chapterBlocks.length,
+        }
+      : {
+          detail: { chapterTitle: chapter },
+          done: chapterBlocks.length,
+          kind: "finishChapter",
+          status: "done",
+          total: chapterBlocks.length,
+        },
+    { done: 0, kind: "askBuddy", opens: { kind: "buddy" }, status: "todo", total: 1 },
+  ];
 }
 
-/** Do a new lesson, finish the chapter the day works on, and ask the buddy something. */
-function careerMissions(chapter: string) {
-  return (blocks: ReturnType<typeof toBlock>[]): Mission[] => {
-    const lessons = blocks.filter((block) => block.kind === "learn");
-    const firstNew = lessons.find((block) => block.status !== "completed");
-    const chapterBlocks = lessons.filter((block) => block.subject === chapter);
-    const chapterNext = chapterBlocks.find((block) => block.status !== "completed");
-    const newDone = lessons.some((block) => block.status === "completed");
-
-    return [
-      newDone
-        ? { done: 1, kind: "somethingNew", status: "done", total: 1 }
-        : {
-            done: 0,
-            kind: "somethingNew",
-            minutes: firstNew?.estimatedMinutes,
-            opens: opensBlock(firstNew),
-            status: "todo",
-            total: 1,
-          },
-      chapterNext
-        ? {
-            detail: { chapterTitle: chapter },
-            done:
-              chapterBlocks.length -
-              chapterBlocks.filter((block) => block.status !== "completed").length,
-            kind: "finishChapter",
-            minutes: chapterBlocks
-              .filter((block) => block.status !== "completed")
-              .reduce((sum, block) => sum + block.estimatedMinutes, 0),
-            opens: opensBlock(chapterNext),
-            status: "todo",
-            total: chapterBlocks.length,
-          }
-        : {
-            detail: { chapterTitle: chapter },
-            done: chapterBlocks.length,
-            kind: "finishChapter",
-            status: "done",
-            total: chapterBlocks.length,
-          },
-      { done: 0, kind: "askBuddy", opens: { kind: "buddy" }, status: "todo", total: 1 },
-    ];
-  };
-}
-
-const ACTIONS = {
-  addExtraTime: async () => true,
+const ACTIONS = actions<TodayActions>({
   adjustTimeHref: "/plan?focus=time",
-  answerInsight: async () => true,
-  answerSuggestedGoal: async () => true,
   buddyHref: "/buddy",
-  catchUp: async () => true,
   challengeHref: (id: string) => `/challenge/${id}`,
-  changePlan: async () => null,
-  chooseExamOption: async () => null,
   chooseFocusHref: "/plan?focus=choose",
   completedLessonsHref: "/completed-lessons",
   continueHref: null,
-  continueSession: async () => true,
-  decidePlanChange: async () => null,
-  dismissFocusTest: async () => true,
   examHref: "/exam",
-  focusTestHref: "/focus-test",
   lessonAgainHref: (id: string) => `/learn/${id}`,
   lessonHref: () => null,
-  missionLinks: {
-    hrefs: {
-      areaPractice: (areaId: string) => `/practice/${areaId}`,
-      buddy: "/buddy",
-      call: (chapterId: string) => `/call/${chapterId}`,
-      mistakesPractice: "/mistakes/practice",
-      mockChooser: "/mock/new",
-      pattern: (patternId: string) => `/pattern/${patternId}`,
-      pronunciation: "/pronunciation",
-    },
-    openBlock: async () => true,
-    openStep: async () => true,
-  },
+  missionLinks: MISSION_LINKS,
   mistakesHref: "/mistakes",
-  openBlock: async () => true,
   plusHref: "/subscription",
-  prepareLessons: async () => true,
-  refresh: () => {},
-  startTestOut: async () => ({ status: "failed" }) as any,
+  refresh: noop,
   studyEverythingHref: "/plan?focus=everything",
   summaryHref: "/session",
-};
+});
 
 /** Moves the page so a part below the first screen shows, as a learner scrolling to it would. */
 function useScrollTo(q: URLSearchParams, selector: string | null) {
@@ -395,7 +384,7 @@ function useScrollTo(q: URLSearchParams, selector: string | null) {
         return;
       }
 
-      const target = selector && document.querySelector(selector);
+      const target = selector ? document.querySelector(selector) : null;
       target?.scrollIntoView({ block: "center" });
     }, 300);
 
@@ -410,7 +399,7 @@ function Screen({
 }: {
   lang: "en" | "pt";
   built: ReturnType<typeof buildToday>;
-  notices?: any;
+  notices?: TodayHostNotices;
 }) {
   const career = S(lang).career;
   const { dayMissions, today } = built;
@@ -430,14 +419,14 @@ function Screen({
       tab="today"
     >
       <TodayScreen
-        actions={ACTIONS as any}
+        actions={ACTIONS}
         buddy={{ ...ZU, studiedToday: today.studiedToday }}
         completedLessons
-        missions={{ fullMeal: today.session.fullMeal, missions: dayMissions as any }}
+        missions={{ fullMeal: today.session.fullMeal, missions: dayMissions }}
         notices={notices}
         planEnd={career.date}
         readAt={0}
-        today={today as any}
+        today={today}
       />
     </TabShell>
   );
@@ -458,7 +447,7 @@ function TodayView({ lang, q }: ViewProps) {
       })),
     date: "2026-11-03",
     lang,
-    missions: careerMissions(lessons[1]!.module),
+    chapter: lessons[1]!.module,
     progressStatus: { kind: "onTrack" },
     week: [
       { date: "2026-11-02", kind: "beforeStart", minutes: 0 },
@@ -511,7 +500,7 @@ function TodayChangedView({ lang, q }: ViewProps) {
     },
     date: "2026-11-05",
     lang,
-    missions: careerMissions(lessons[4]!.module),
+    chapter: lessons[4]!.module,
     notice: source ? "sourceChange" : card === "behind" ? "planChange" : null,
     planChange:
       card === "behind"
@@ -534,6 +523,7 @@ function TodayChangedView({ lang, q }: ViewProps) {
             lessonsSkipped: 0,
             officialDate: null,
             operations: [],
+            quote: "missed-2026-11-04",
             reason: null,
             seen: false,
             source: "system",
@@ -569,7 +559,7 @@ function TodayChangedView({ lang, q }: ViewProps) {
   );
 }
 
-export const views: Record<string, (p: ViewProps) => any> = {
+export const views: Record<string, (p: ViewProps) => React.ReactNode> = {
   today: TodayView,
   "today-changed": TodayChangedView,
 };

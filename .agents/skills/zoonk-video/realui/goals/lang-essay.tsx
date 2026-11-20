@@ -1,14 +1,17 @@
 // The Enem essay's grade on the five competências (/essay/[blockId]), from story.pt.exam.essay.
 import { EssayScreen } from "@repo/packages/learn/src/essay/essay-screen.tsx";
+import { type ComponentProps } from "react";
+import { actions } from "../learn/common";
 import { story } from "../story";
 import { LangLearn } from "./lang-frame";
-import { NOOP_ASYNC } from "./shell";
+
+type Props = ComponentProps<typeof EssayScreen>;
 
 const COMPETENCE_MAX = 200;
 /** The estimate's half width around the story's total (760 reads "720–800"). */
 const RANGE_SPREAD = 40;
 
-export function essayView(q: URLSearchParams) {
+export function essayView(q: URLSearchParams): Props["essay"] {
   const essay = story.pt.exam.essay;
   const comps = essay.comps as readonly number[];
   const weakest = comps.indexOf(Math.min(...comps));
@@ -46,14 +49,14 @@ export function essayView(q: URLSearchParams) {
     rubric: "enem",
     sessionId: "00000000-0000-4000-8000-000000000006",
     status: "active",
-  } as any;
+  };
 }
 
 export function Essay({ q }: { q: URLSearchParams }) {
   return (
     <LangLearn>
       <EssayScreen
-        actions={{ finish: NOOP_ASYNC, submit: NOOP_ASYNC }}
+        actions={actions<Props["actions"]>({})}
         essay={essayView(q)}
         hrefs={{ exit: "/today" }}
       />

@@ -7,6 +7,7 @@ import {
 import { type OnboardingStep } from "@repo/packages/core/src/view-models/onboarding/onboarding-contract.ts";
 import { StepDots } from "@repo/packages/learn/src/_components/step-dots.tsx";
 import { getSetupProgress } from "@repo/packages/learn/src/onboarding/_utils/setup-progress.ts";
+import { type OnboardingActions } from "@repo/packages/learn/src/onboarding/onboarding-actions.ts";
 import { BAR_MIDDLE_CLASS } from "@repo/packages/learn/src/onboarding/onboarding-bar.tsx";
 import { OnboardingFrame } from "@repo/packages/learn/src/onboarding/onboarding-frame.tsx";
 import { OnboardingRailProvider } from "@repo/packages/learn/src/onboarding/onboarding-rail.tsx";
@@ -17,7 +18,7 @@ import { PlanReveal } from "@repo/packages/learn/src/onboarding/steps/plan-revea
 import { ScheduleStep } from "@repo/packages/learn/src/onboarding/steps/schedule-step.tsx";
 import { UnderstoodScreen } from "@repo/packages/learn/src/onboarding/understood/understood-screen.tsx";
 import { type ReactNode, useEffect } from "react";
-import { OnboardingShell, S, noop, noopAsync, type ViewProps } from "./common";
+import { OnboardingShell, S, actions, noop, type ViewProps } from "./common";
 import { ACTIONS as PLAN_ACTIONS, careerPlan, careerSyllabus } from "./plan";
 
 export const CAREER_ID = "goal-career";
@@ -27,6 +28,8 @@ export function careerGoal(lang: "en" | "pt", extra: Partial<GoalView> = {}): Go
   const c = S(lang).career;
 
   return {
+    contentCountry: null,
+    countryDependent: false,
     createdAt: "2026-11-03T15:00:00.000Z",
     dailyMinutes: c.minutesPerDay,
     details: {
@@ -34,19 +37,27 @@ export function careerGoal(lang: "en" | "pt", extra: Partial<GoalView> = {}): Go
       purpose: "careerChange",
       targetPosition: c.title,
     },
+    displayName: c.title,
     examBlueprintId: null,
+    examCountry: null,
+    examplesCountry: null,
     id: CAREER_ID,
     isActive: true,
     kind: "learn",
     language: lang === "pt" ? "pt" : "en",
+    languageCountry: null,
+    languageFlag: null,
     plan: null,
     primaryCourseId: null,
     prompt: c.goalText,
+    regionChoices: [],
     status: "active",
     studyDays: [1, 2, 3, 4, 5],
     studyTime: null,
+    suggested: [],
     targetDate: c.date,
     targetLanguage: null,
+    targetRegion: null,
     timezone: "America/Sao_Paulo",
     title: c.title,
     ...extra,
@@ -130,6 +141,7 @@ function DiagnosticView({ lang, state, q }: ViewProps) {
         steps={["placement", "plan"]}
       >
         <PlacementQuestionScreen
+          failures={0}
           number={Number(q.get("number") ?? 3)}
           onAnswer={noop}
           onStop={noop}
@@ -210,15 +222,18 @@ function ScheduleView({ lang, state }: ViewProps) {
           firstLesson={null}
           getTimeAdvice={async (week) => timeAdvice(lang, week.dailyMinutes)}
           goal={goal}
+          languageAim={null}
           lessonHref={(id) => `/learn/${id}`}
           library={null}
           onAnswer={noop}
+          onChangeAim={async () => true}
           onChangeDate={noop}
           pending={false}
           planReadiness={{ readingNotice: false, ready: true }}
           readWarmUp={async () => null}
           recommendedMinutes={60}
           run={null}
+          startsOnRecommended={false}
           together={{ count: 1, place: 0 }}
         />
       </StepsBar>
@@ -249,6 +264,8 @@ function UnderstoodView({ lang }: ViewProps) {
                     role: CURRENT_ROLE[lang],
                     targetPosition: c.title,
                   },
+                  // The name the goal keeps on every later screen (careerGoal's displayName).
+                  displayName: c.title,
                   kind: "learn",
                   language: lang,
                   prompt: c.goalText,
@@ -256,6 +273,8 @@ function UnderstoodView({ lang }: ViewProps) {
                   title: c.title,
                 },
                 examDates: [],
+                languageAim: null,
+                regionChoices: [],
               },
             ],
             lockedGoals: [],
@@ -266,9 +285,11 @@ function UnderstoodView({ lang }: ViewProps) {
               studyTime: null,
               studyTimeNote: null,
             },
+            timeZone: "America/Sao_Paulo",
           }}
           error={null}
           goal={c.goalText}
+          hasAccount
           isCreating={false}
           material={[]}
           onConfirm={noop}
@@ -285,32 +306,28 @@ function UnderstoodView({ lang }: ViewProps) {
 
 function RevealView({ lang }: ViewProps) {
   const c = S(lang).career;
-  const revealed = { plan: careerPlan(lang), syllabus: careerSyllabus(lang) };
+  const revealed = { plan: careerPlan(lang), reveal: null, syllabus: careerSyllabus(lang) };
 
   return (
     <OnboardingShell>
       <OnboardingRailProvider rail={null}>
         <OnboardingFrame bar={{ end: null, middle: null, onBack: undefined }}>
           <PlanReveal
-            actions={
-              {
-                getPlan: async () => ({ status: "ready", ...revealed }),
-                markPlanRevealed: async () => true,
-                readWarmUp: async () => null,
-              } as any
-            }
-            buddy={null}
+            actions={actions<OnboardingActions>({
+              getPlan: async () => ({ status: "ready", ...revealed }),
+              markPlanRevealed: async () => true,
+              readWarmUp: async () => null,
+            })}
             firstLesson={null}
             focusTestHref="/focus-test"
-            goal={{ kind: "learn", title: c.title }}
+            goal={{ displayName: c.title, kind: "learn" }}
             goalId={CAREER_ID}
             initialPlan={revealed}
             isGuest={false}
             lessonHref={(id) => `/learn/${id}`}
             library={null}
-            planActions={PLAN_ACTIONS as any}
+            planActions={PLAN_ACTIONS}
             planLinkHref={(id) => `/plans/${id}`}
-            planRevealed={false}
             run={null}
             signUpHref="/login"
             toToday={noop}
@@ -321,7 +338,7 @@ function RevealView({ lang }: ViewProps) {
   );
 }
 
-export const views: Record<string, (p: ViewProps) => any> = {
+export const views: Record<string, (p: ViewProps) => React.ReactNode> = {
   understood: UnderstoodView,
   diagnostic: DiagnosticView,
   schedule: ScheduleView,

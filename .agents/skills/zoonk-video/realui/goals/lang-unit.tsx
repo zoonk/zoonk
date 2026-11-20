@@ -1,9 +1,13 @@
 import { LanguageUnitScreen } from "@repo/packages/learn/src/language/unit/language-unit-screen.tsx";
 import { AskTutor } from "@repo/packages/player/src/questions/ask-tutor.tsx";
+import { type ComponentProps } from "react";
 // The language goal's unit page (/content/units/[chapterId]) for story.language.units[0].
 import { Link } from "../learn/common";
+import { actions } from "../learn/common";
 import { story, type Lang } from "../story";
-import { AppFrame, DEFAULT_BUDDY_VIEW, NOOP_ASYNC } from "./shell";
+import { AppFrame, DEFAULT_BUDDY_VIEW } from "./shell";
+
+type Props = ComponentProps<typeof LanguageUnitScreen>;
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 
@@ -17,11 +21,11 @@ export const FAKE_TUTOR = {
     renderMemoryUpdate: () => null,
     subscriptionHref: "/subscription",
   },
-} as any;
+};
 
-export function unitView(lang: Lang, index = 0) {
+export function unitView(lang: Lang, index = 0): Props["unit"] {
   const language = story[lang].language;
-  const [title, objective] = language.units[index];
+  const [title, objective] = language.units[index] ?? language.units[0];
 
   return {
     canTestOut: false,
@@ -49,7 +53,7 @@ export function unitView(lang: Lang, index = 0) {
       title,
     },
     words: { count: language.call.words.length, sample: [...language.call.words] },
-  } as any;
+  };
 }
 
 export function LanguageUnit({ lang, q }: { lang: Lang; q: URLSearchParams }) {
@@ -59,11 +63,11 @@ export function LanguageUnit({ lang, q }: { lang: Lang; q: URLSearchParams }) {
   return (
     <AppFrame goal="language" lang={lang} tab="journey" topBar={false}>
       <LanguageUnitScreen
-        actions={{ startConversation: NOOP_ASYNC, startTestOut: NOOP_ASYNC }}
+        actions={actions<Props["actions"]>({})}
         ask={
           <AskTutor
             size="bar"
-            target={{ chapterId: unit.unit.chapterId, kind: "chapter" } as any}
+            target={{ chapterId: unit.unit.chapterId, kind: "chapter" }}
             tutor={FAKE_TUTOR}
           />
         }
