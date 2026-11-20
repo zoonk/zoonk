@@ -43,7 +43,12 @@ async function readLesson(lessonId: string) {
               sentence: { select: { sentence: true } },
               sentenceId: true,
               skillId: true,
-              variants: { orderBy: { id: "asc" }, select: { content: true, id: true } },
+              sourceId: true,
+              sourcePage: true,
+              variants: {
+                orderBy: { id: "asc" },
+                select: { content: true, id: true, key: true, kind: true },
+              },
               version: true,
               word: { select: { word: true } },
               wordId: true,
@@ -81,12 +86,15 @@ async function readLesson(lessonId: string) {
     ideas: ideas.map(({ label, text }) => ({ label, text })),
     language,
     plan: parseChallengeLessonSpec(spec) ?? parseStoredLessonSpec(spec),
-    screens: steps.map(({ marks, sentence, version: _version, word, ...step }) => ({
-      ...step,
-      ideaIndex: readSavedStepMarks(marks)?.ideaIndex ?? null,
-      sentence: sentence?.sentence ?? null,
-      word: word?.word ?? null,
-    })),
+    screens: steps.map(
+      ({ marks, sentence, sourceId, sourcePage, version: _version, word, ...step }) => ({
+        ...step,
+        citation: sourceId ? { page: sourcePage, sourceId } : null,
+        ideaIndex: readSavedStepMarks(marks)?.ideaIndex ?? null,
+        sentence: sentence?.sentence ?? null,
+        word: word?.word ?? null,
+      }),
+    ),
     sentences: sentences.map(({ sentence: { audioUrl, ...sentence }, ...row }) => ({
       ...row,
       ...sentence,

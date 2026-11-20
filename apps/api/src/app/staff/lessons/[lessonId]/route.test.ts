@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
+import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it } from "vitest";
 import { signInStaff } from "../../_test-utils/requests";
 import { sendStaffAuthorization } from "../../_test-utils/staff-authorization";
@@ -23,8 +24,18 @@ describe("GET /staff/lessons/:lessonId", () => {
   });
 
   it("returns the staff lesson as JSON", async () => {
-    const [lesson] = await Promise.all([libraryLessonFixture(), signInStaff()]);
-    const step = await libraryStepFixture({ lessonId: lesson.id, position: 0 });
+    const [lesson, source] = await Promise.all([
+      libraryLessonFixture(),
+      sourceFixture(),
+      signInStaff(),
+    ]);
+
+    const step = await libraryStepFixture({
+      lessonId: lesson.id,
+      position: 0,
+      sourceId: source.id,
+      sourcePage: 7,
+    });
 
     const variant = await stepVariantFixture({
       content: { text: "A worked example for nurses." },
@@ -39,7 +50,15 @@ describe("GET /staff/lessons/:lessonId", () => {
       id: lesson.id,
       ideas: [],
       plan: null,
-      screens: [{ id: step.id, variants: [{ content: variant.content, id: variant.id }] }],
+      screens: [
+        {
+          citation: { page: 7, sourceId: source.id },
+          id: step.id,
+          variants: [
+            { content: variant.content, id: variant.id, key: variant.key, kind: variant.kind },
+          ],
+        },
+      ],
       sentences: [],
       version: step.version,
       words: [],

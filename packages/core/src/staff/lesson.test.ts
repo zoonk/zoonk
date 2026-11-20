@@ -112,6 +112,7 @@ describe("staff lesson", () => {
     expect(result.screens.map(({ id }) => id)).toStrictEqual(steps.map(({ id }) => id));
 
     expect(result.screens[0]).toMatchObject({
+      citation: null,
       content: {},
       ideaIndex: 0,
       kind: "vocabulary",
@@ -120,7 +121,7 @@ describe("staff lesson", () => {
     });
 
     expect(result.screens[0]?.variants).toStrictEqual([
-      { content: variant.content, id: variant.id },
+      { content: variant.content, id: variant.id, key: variant.key, kind: variant.kind },
     ]);
 
     expect(result.screens[2]).toMatchObject({

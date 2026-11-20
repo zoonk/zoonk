@@ -2944,6 +2944,28 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "citation": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "page": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "sourceId": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              }
+                            },
+                            "required": [
+                              "page",
+                              "sourceId"
+                            ],
+                            "additionalProperties": false
+                          },
                           "content": {
                             "description": "Stored JSON for this screen kind"
                           },
@@ -3000,11 +3022,23 @@
                                   "type": "string",
                                   "format": "uuid",
                                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "key": {
+                                  "type": "string"
+                                },
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "field",
+                                    "tool"
+                                  ]
                                 }
                               },
                               "required": [
                                 "content",
-                                "id"
+                                "id",
+                                "key",
+                                "kind"
                               ],
                               "additionalProperties": false
                             }
@@ -3021,6 +3055,7 @@
                           }
                         },
                         "required": [
+                          "citation",
                           "content",
                           "id",
                           "ideaIndex",

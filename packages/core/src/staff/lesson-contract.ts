@@ -1,3 +1,4 @@
+import { StepVariantKind } from "@zoonk/db/enums";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
@@ -7,6 +8,8 @@ const text = z.string();
 const screenVariantSchema = z.object({
   content: z.unknown().meta({ description: "Stored JSON for this variant" }),
   id,
+  key: text,
+  kind: z.enum(StepVariantKind),
 });
 
 export const staffLessonParamsSchema = z.strictObject({ lessonId: id });
@@ -27,6 +30,7 @@ export const staffLessonSchema = z.object({
   plan: z.unknown().meta({ description: "The editable lesson plan, or null if none is saved" }),
   screens: z.array(
     z.object({
+      citation: z.object({ page: z.int().nullable(), sourceId: id }).nullable(),
       content: z.unknown().meta({ description: "Stored JSON for this screen kind" }),
       id,
       ideaIndex: z.int().nullable(),
