@@ -34541,10 +34541,6 @@
             "nullable": true,
             "type": "string"
           },
-          "supportsEditions": {
-            "description": "Whether this course can be started in another content language.",
-            "type": "boolean"
-          },
           "editions": {
             "type": "array",
             "items": {
@@ -34687,6 +34683,10 @@
           },
           "slug": {
             "type": "string"
+          },
+          "supportsEditions": {
+            "description": "Whether this course can be started in another content language.",
+            "type": "boolean"
           },
           "targetLanguage": {
             "nullable": true,
