@@ -69,6 +69,47 @@ describe(createRequestLane, () => {
     expect(sent).toStrictEqual(["every weekday", "no Friday"]);
   });
 
+  it("consumes an answer that settled between polls once, then sends the next poll", async () => {
+    vi.useFakeTimers();
+    const sent: string[] = [];
+    const ask = askAbout(createRequestLane<string>(), sent);
+    const slow = Promise.withResolvers<string>();
+    const { signal } = new AbortController();
+
+    const first = ask("week", slow.promise, signal);
+    await vi.advanceTimersByTimeAsync(45_000);
+    await expect(first).resolves.toBeNull();
+
+    slow.resolve("still preparing");
+    await vi.advanceTimersByTimeAsync(3000);
+
+    await expect(ask("week", Promise.resolve("duplicate"), signal)).resolves.toBe(
+      "still preparing",
+    );
+
+    await expect(ask("week", Promise.resolve("ready"), signal)).resolves.toBe("ready");
+    expect(sent).toStrictEqual(["week", "week"]);
+  });
+
+  it("asks afresh for the same choice when the round that timed out has ended", async () => {
+    vi.useFakeTimers();
+    const sent: string[] = [];
+    const ask = askAbout(createRequestLane<string>(), sent);
+    const slow = Promise.withResolvers<string>();
+    const previous = new AbortController();
+
+    const first = ask("week", slow.promise, previous.signal);
+    await vi.advanceTimersByTimeAsync(45_000);
+    await expect(first).resolves.toBeNull();
+
+    previous.abort();
+    slow.resolve("old answer");
+    await vi.advanceTimersByTimeAsync(3000);
+
+    await expect(ask("week", Promise.resolve("current answer"))).resolves.toBe("current answer");
+    expect(sent).toStrictEqual(["week", "week"]);
+  });
+
   it("tells a week queued behind a search that never settles it's too slow, 45 seconds after it asked", async () => {
     vi.useFakeTimers();
     const sent: string[] = [];
