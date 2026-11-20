@@ -29,6 +29,7 @@ export const levelTestBankTask: Task<GenerateLevelTestBankParams, GenerateLevelT
     reason: "One bank per language pair places every learner of the pair",
     waits: "Prepared ahead in a workflow, before a learner needs it",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreLevelTestBank,
   scoreCategories: LEVEL_TEST_BANK_SCORE_CATEGORIES,
   testCases: TEST_CASES,

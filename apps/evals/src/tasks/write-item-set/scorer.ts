@@ -1,5 +1,5 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type WriteItemSetParams,
   type WrittenItemSet,
@@ -14,7 +14,8 @@ type WriteItemSetCase = Pick<WriteItemSetParams, "examFormat" | "format" | "lang
 
 const SET_CHECKS = 1;
 
-function checkWriteItemSetOutput(output: string, input: WriteItemSetCase): CodeCheckResult {
+export const checkWriteItemSetOutput: TaskCodeChecks = ({ output, testCase }) => {
+  const input = testCase.userInput as WriteItemSetCase;
   const set = repairWrittenItemSet(JSON.parse(output) as WrittenItemSet);
   const check = checkWrittenItemSet({ set, skillCount: input.skills.length });
 
@@ -50,11 +51,11 @@ function checkWriteItemSetOutput(output: string, input: WriteItemSetCase): CodeC
     problems: [...check.set, ...checked.flatMap((entry) => entry.problems)],
     total: checked.length + SET_CHECKS,
   };
-}
+};
 
 export const scoreWriteItemSet: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkWriteItemSetOutput(value, testCase.userInput as WriteItemSetCase),
+    check: (value) => checkWriteItemSetOutput({ output: value, testCase }),
     output,
     scoreCategories: WRITE_ITEM_SET_SCORE_CATEGORIES,
     testCase,

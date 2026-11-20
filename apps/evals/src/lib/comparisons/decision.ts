@@ -1,6 +1,6 @@
 import { type Decision, decisionSchema } from "./decision-schema";
 import { deliveryTable } from "./delivery-table";
-import { acceptedReads, caseVotes, readerRecords, settle, verifiedClaims } from "./evidence";
+import { acceptedReads, caseVotes, readerRecords, settle, sides, verifiedClaims } from "./evidence";
 import { type Comparison } from "./schemas";
 
 export { decisionSchema, type Decision } from "./decision-schema";
@@ -24,7 +24,16 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
   const missing = rows.some((row) => row.missingMatches > 0);
   const languages = [...new Set(cases.map((item) => item.language))];
 
-  const choice = choose({ cases, claims, languages, manifest, missing, rows, rules });
+  const choice = choose({
+    cases,
+    claims,
+    languages,
+    manifest,
+    missing,
+    rows,
+    rules,
+    uncheckedKeys: uncheckedAnswerKeys(comparison).length > 0,
+  });
 
   const classified = rows.map((row) => {
     if (row.status === "disqualified" || choice.outcome === "insufficient evidence") {
@@ -219,9 +228,42 @@ type Facts = {
   missing: boolean;
   languages: string[];
   rules: Comparison["manifest"]["priorities"]["comparison"];
+  uncheckedKeys: boolean;
 };
 
-function choose({ manifest, rows, cases, claims, missing, languages, rules }: Facts) {
+export function uncheckedAnswerKeys({ manifest, checks }: Comparison) {
+  if (!manifest.requiresAnswerKeyCheck) {
+    return [];
+  }
+
+  return manifest.runsCompared.flatMap(({ caseId, run, ...slots }) =>
+    sides
+      .filter(
+        (side) =>
+          slots[side] &&
+          !checks.some(
+            (check) =>
+              check.name === "answer keys" &&
+              check.caseId === caseId &&
+              check.run === run &&
+              check.side === side &&
+              check.total > 0,
+          ),
+      )
+      .map((side) => ({ caseId, run, side })),
+  );
+}
+
+function choose({
+  manifest,
+  rows,
+  cases,
+  claims,
+  missing,
+  languages,
+  rules,
+  uncheckedKeys,
+}: Facts) {
   const incumbent = rows.find((record) => record.side === "incumbent");
   const challenger = rows.find((record) => record.side === "challenger");
 
@@ -243,6 +285,10 @@ function choose({ manifest, rows, cases, claims, missing, languages, rules }: Fa
     return incumbent.status === "disqualified"
       ? result("neither qualifies", "Both variants failed a hard requirement.")
       : result("retain", "The challenger failed a hard requirement.");
+  }
+
+  if (uncheckedKeys) {
+    return result("insufficient evidence", "Some answer keys are unchecked.");
   }
 
   if (missing || !rules || manifest.criteria.some((item) => !rules.criteria[item.id])) {

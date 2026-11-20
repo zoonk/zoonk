@@ -191,6 +191,7 @@ async function freeze(options: PrepareOptions) {
     protocols: { reader: readerProtocol, verifier: verifierProtocol },
     question: options.question,
     readers,
+    requiresAnswerKeyCheck: task.requiresAnswerKeyCheck,
     reserveCap: options.reserveCap,
     runs: options.runs,
     taskId: task.id,

@@ -209,6 +209,7 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   evaluate?: (input: TaskGenerateInput<TInput>) => Promise<TaskResult<TOutput>>;
   score?: TaskScorer<TExpected>;
   codeChecks?: TaskCodeChecks<TExpected>;
+  requiresAnswerKeyCheck?: true;
   scoreCategories?: ScoreCategory[];
   criteria?: Pick<ScoreCategory, "id" | "label" | "expectations">[];
   priorities?: TaskPriorities;

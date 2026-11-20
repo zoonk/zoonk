@@ -1,3 +1,4 @@
+import { uncheckedAnswerKeys } from "./decision";
 import { type Decision } from "./decision-schema";
 import { type Comparison } from "./schemas";
 
@@ -37,6 +38,9 @@ export function formatDecision(decision: Decision, comparison: Comparison) {
     ...comparison.checks.map(
       (check) =>
         `${check.caseId}-${check.run} ${check.side} ${check.name}: ${check.passed}/${check.total}. ${check.problems.join(" ")}`,
+    ),
+    ...uncheckedAnswerKeys(comparison).map(
+      ({ caseId, run, side }) => `${caseId}-${run} ${side} answer keys: unchecked.`,
     ),
     `Delivery sample frozen ${manifest.date}.\n`,
   ].join("\n");

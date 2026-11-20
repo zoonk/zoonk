@@ -1,5 +1,5 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type GeneratedItem,
   type ItemFormat,
@@ -19,7 +19,8 @@ type GenerateItemsCase = {
   language: string;
 };
 
-function checkGeneratedItems(output: string, input: GenerateItemsCase): CodeCheckResult {
+export const checkGeneratedItems: TaskCodeChecks = ({ output, testCase }) => {
+  const input = testCase.userInput as GenerateItemsCase;
   const { items } = JSON.parse(output) as { items: GeneratedItem[] };
 
   if (items.length === 0) {
@@ -55,11 +56,11 @@ function checkGeneratedItems(output: string, input: GenerateItemsCase): CodeChec
     problems: checked.flatMap((entry) => entry.problems),
     total: items.length,
   };
-}
+};
 
 export const scoreGeneratedItems: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkGeneratedItems(value, testCase.userInput as GenerateItemsCase),
+    check: (value) => checkGeneratedItems({ output: value, testCase }),
     output,
     scoreCategories: GENERATE_ITEMS_SCORE_CATEGORIES,
     testCase,

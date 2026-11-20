@@ -1,5 +1,5 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { findListeningSetProblems } from "@zoonk/ai/tasks/listening/checks";
 import { toListeningItem } from "@zoonk/ai/tasks/listening/schema";
 import {
@@ -19,10 +19,8 @@ type WriteListeningSetCase = Pick<
 
 const SET_CHECKS = 1;
 
-function checkWriteListeningSetOutput(
-  output: string,
-  input: WriteListeningSetCase,
-): CodeCheckResult {
+export const checkWriteListeningSetOutput: TaskCodeChecks = ({ output, testCase }) => {
+  const input = testCase.userInput as WriteListeningSetCase;
   const { set } = JSON.parse(output) as WriteListeningSetOutput;
 
   const request = {
@@ -65,12 +63,11 @@ function checkWriteListeningSetOutput(
     problems: [...setProblems, ...checked.flatMap((entry) => entry.problems)],
     total: checked.length + SET_CHECKS,
   };
-}
+};
 
 export const scoreWriteListeningSet: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) =>
-      checkWriteListeningSetOutput(value, testCase.userInput as WriteListeningSetCase),
+    check: (value) => checkWriteListeningSetOutput({ output: value, testCase }),
     output,
     scoreCategories: WRITE_LISTENING_SET_SCORE_CATEGORIES,
     testCase,

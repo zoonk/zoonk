@@ -1,5 +1,5 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type ExtractPastQuestionsParams,
   type PastQuestion,
@@ -7,7 +7,8 @@ import {
 import { checkPastQuestion } from "@zoonk/core/library/items/past-question-checks";
 import { PAST_QUESTIONS_SCORE_CATEGORIES } from "./score-categories";
 
-function checkQuestions(output: string, input: ExtractPastQuestionsParams): CodeCheckResult {
+export const checkQuestions: TaskCodeChecks = ({ output, testCase }) => {
+  const input = testCase.userInput as ExtractPastQuestionsParams;
   const { questions } = JSON.parse(output) as { questions: PastQuestion[] };
 
   const checked = questions.map((written, index) => {
@@ -42,11 +43,11 @@ function checkQuestions(output: string, input: ExtractPastQuestionsParams): Code
     problems: checked.flatMap((entry) => entry.problems),
     total: Math.max(questions.length, 1),
   };
-}
+};
 
 export const scorePastQuestions: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkQuestions(value, testCase.userInput as ExtractPastQuestionsParams),
+    check: (value) => checkQuestions({ output: value, testCase }),
     output,
     scoreCategories: PAST_QUESTIONS_SCORE_CATEGORIES,
     testCase,

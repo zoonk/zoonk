@@ -1,5 +1,5 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type PlacementItemsParams,
   type PlacementSkillItems,
@@ -59,7 +59,8 @@ function checkRole({
   };
 }
 
-function checkPlacementItems(output: string, input: PlacementItemsCase): CodeCheckResult {
+export const checkPlacementItems: TaskCodeChecks = ({ output, testCase }) => {
+  const input = testCase.userInput as PlacementItemsCase;
   const { skills } = JSON.parse(output) as { skills: PlacementSkillItems[] };
 
   const optionCount =
@@ -111,11 +112,11 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
     problems: roles.flatMap((role) => role.problems),
     total: roles.reduce((total, role) => total + role.wanted, 0),
   };
-}
+};
 
 export const scorePlacementItems: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkPlacementItems(value, testCase.userInput as PlacementItemsCase),
+    check: (value) => checkPlacementItems({ output: value, testCase }),
     output,
     scoreCategories: GENERATE_ITEMS_SCORE_CATEGORIES,
     testCase,

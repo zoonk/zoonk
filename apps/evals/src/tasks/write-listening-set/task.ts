@@ -5,13 +5,14 @@ import {
 } from "@zoonk/ai/tasks/listening/write-set";
 import { readCriteria } from "../plain-language-criterion";
 import { WRITE_LISTENING_SET_SCORE_CATEGORIES } from "./score-categories";
-import { scoreWriteListeningSet } from "./scorer";
+import { checkWriteListeningSetOutput, scoreWriteListeningSet } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 export const writeListeningSetTask: Task<
   WriteListeningSetParams,
   Awaited<ReturnType<typeof writeListeningSet>>["data"]
 > = {
+  codeChecks: checkWriteListeningSetOutput,
   criteria: readCriteria(WRITE_LISTENING_SET_SCORE_CATEGORIES),
   description:
     "Write one listening exam recording (speakers with accents, turns) and its questions with the script words that answer them: code checks (evidence heard word for word, typed answers said, order, count, speakers, length, item checks), then a judge on exam realism, natural speech and fair questions",
@@ -30,6 +31,7 @@ export const writeListeningSetTask: Task<
     reason: "Shared sets; the chosen model beat a pricier one",
     waits: "Prepared ahead in a workflow, before a learner needs it",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreWriteListeningSet,
   scoreCategories: WRITE_LISTENING_SET_SCORE_CATEGORIES,
   testCases: TEST_CASES,

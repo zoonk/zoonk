@@ -130,6 +130,7 @@ export const selectionSchema = z.object({
   protocols: z.object({ reader: text, verifier: text }),
   question: text,
   readers: z.array(readerSchema),
+  requiresAnswerKeyCheck: z.literal(true).optional(),
   reserveCap: z.int().nonnegative().optional(),
   runs: z.int().positive(),
   taskId: identifier,
