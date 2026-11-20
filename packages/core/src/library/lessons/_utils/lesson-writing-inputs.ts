@@ -18,6 +18,8 @@ import { loadLessonExams, loadLessonShortAnswers } from "./lesson-exams";
 import { loadLessonDocuments } from "./lesson-sources";
 import { parseStoredLessonSpec } from "./stored-lesson-spec";
 
+const MAX_LESSON_SITUATIONS = 32;
+
 export type LessonWritingInputs = {
   country: string | null;
   activityTemplates: WriterActivityTemplate[];
@@ -130,7 +132,10 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       }),
       sources,
       spec,
-      usedSituations: [...new Set([...usedSituations.values()].flat())],
+      usedSituations: [...new Set([...usedSituations.values()].flat())].slice(
+        0,
+        MAX_LESSON_SITUATIONS,
+      ),
     },
     status: "ready",
   };
