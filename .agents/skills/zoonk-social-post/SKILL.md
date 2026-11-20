@@ -1,6 +1,6 @@
 ---
 name: zoonk-social-post
-description: Write Zoonk's social media posts for X, LinkedIn and Instagram in US English and Brazilian Portuguese, for Zoonk's accounts and the owner's personal account, with images and silent demo clips made from the app's real screens. Covers picking the one thing a post shows from a release or feature, the voice, what each platform needs, making the media with the video studio, checking, storing the campaign in the marketing repository and handing the owner a page to review. Use when asked for a social post, a launch thread, a carousel, post copy or post images, or to review or update one.
+description: Write Zoonk's social media posts for X, LinkedIn and Instagram in US English and Brazilian Portuguese, for Zoonk's accounts and the owner's personal account, with images and silent demo clips made from the app's real screens. Covers picking the one thing a post shows from a release or feature, the voice, what each platform needs, making the media with the video studio, checking, and storing the campaign in the marketing repository, where the owner reviews it. Use when asked for a social post, a launch thread, a carousel, post copy or post images, or to review or update one.
 license: MIT
 metadata:
   author: zoonk
@@ -22,7 +22,7 @@ Read [voice](references/voice.md) before drafting and [platforms](references/pla
 5. **Choose the media.** A demo clip when the point is a change (a sentence becoming a plan, a day adjusting); a still when it's one moment or one answer (what an hour covers). A launch's lead post gets a clip. Instagram gets a carousel of stills, its second slide standing alone.
 6. **Make the media with the studio** ([zoonk-video](../zoonk-video/SKILL.md)): [social stills](../zoonk-video/references/social-stills.md) and [feature demos](../zoonk-video/references/feature-demo.md). Both languages, light by default, black for a launch's lead and images that are mostly large type. A screen the studio can't draw yet gets a typed view and a catalog piece; never a screenshot pasted on a ground or a redrawn screen.
 7. **Check.** Every claim against the code again; each post's first line said out loud on its own; lengths and link placement against [platforms](references/platforms.md); every image at full size and at 400 px wide, in both languages; alt text that says what the picture shows, including the words in it.
-8. **Store the campaign** in the private marketing repository (below), then **hand the owner a page to review**: each post as it will appear, per account, platform and language, with its media beside it and one line on why it's built that way. The owner posts; nothing goes out from an agent.
+8. **Store the campaign** in the private marketing repository (below). Its posts files are what the owner reviews and edits, from any device: each post as it will appear, per account and platform, with its media shown under it and one line on why it's built that way. Hand the owner the link. The owner posts; nothing goes out from an agent.
 9. **After posting,** record in the campaign what went out (link, date, account) and how it did (views, likes, reposts, saves, clicks) a few days later, so the next campaign starts from evidence.
 
 ## The marketing repository
@@ -31,8 +31,8 @@ Finished assets live in the private `zoonk/marketing` repository, one folder per
 
 ```text
 <yyyy-mm>-<campaign>/              such as 2026-11-zoonk-2
-  README.md                        what it announces, the Zoonk commit the media was rendered from
-  posts.md                         drafts per account, platform and language; then what was posted, when, and how it did
+  README.md                        what it announces, what to check before posting, the Zoonk commit the media was rendered from
+  posts-en.md  posts-pt.md         every post per account and platform, its media under it; then what was posted, when, and how it did
   en/  pt/                         final images and clips: <scene>-<16x9|4x5>-<light|black>.png, <name>-<16x9|4x5|9x16>[-black].mp4
   source/                          the scenes file and any learner data the set needs to be drawn again
 ```
