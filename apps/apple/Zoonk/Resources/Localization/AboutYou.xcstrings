@@ -4226,7 +4226,7 @@
       }
     },
     "Your day" : {
-      "comment" : "About you group: work, tools, studies",
+      "comment" : "About you group: work, studies, tools",
       "localizations" : {
         "de" : {
           "stringUnit" : {

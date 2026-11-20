@@ -7,6 +7,11 @@ struct AboutYouView: View {
   let openMemory: () -> Void
 
   @Environment(SettingsStore.self) private var settings
+  @Environment(\.stacksContent) private var isStacked
+  /// Main's `max-w-[55%]`: a long answer cuts off at about half the row. A row's value keeps its
+  /// whole width otherwise, and a long one would push the row wider than the screen. Stacked, it
+  /// has the words' column under them.
+  @ScaledMetric(relativeTo: .body) private var summaryWidth = 160
 
   var body: some View {
     ZoonkList {
@@ -35,8 +40,8 @@ struct AboutYouView: View {
         }
 
         group(
-          Text("Your day", tableName: "AboutYou", comment: "About you group: work, tools, studies"),
-          [.work, .tools, .studies], in: profile)
+          Text("Your day", tableName: "AboutYou", comment: "About you group: work, studies, tools"),
+          [.work, .studies, .tools], in: profile)
         group(
           Text(
             "For fun", tableName: "AboutYou", comment: "About you group: what the learner likes"),
@@ -76,6 +81,9 @@ struct AboutYouView: View {
               AboutYouCopy.summary(view)
                 .typeStyle(.meta)
                 .lineLimit(1)
+                .frame(
+                  maxWidth: isStacked ? .infinity : summaryWidth,
+                  alignment: isStacked ? .leading : .trailing)
             }
             .disclosureChevron()
           }
@@ -256,9 +264,7 @@ private enum AboutYouCopy {
 
     let label = { (id: String) in view.options.first { $0.id == id }?.label ?? id }
     let saved = view.saved
-    let favorites = saved.text.split(separator: ",").map {
-      $0.trimmingCharacters(in: .whitespaces)
-    }
+    let favorites = ProfileDraft.favorites(in: saved.text)
 
     let parts: [String] =
       switch view.id {
