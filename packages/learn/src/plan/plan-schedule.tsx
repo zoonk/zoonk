@@ -10,7 +10,7 @@ import { TimeAnswer } from "../_components/time-answer";
 import { WeekdayGrid, WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime, getMissingDays } from "../_components/weekend-time";
 import { useGoalDateValues } from "../_utils/iso-date";
-import { getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
+import { getMarkedTimes, getTimeLine } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { MoveDateSwitch, useCanMoveDate } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
@@ -73,7 +73,11 @@ function DailyCoverage({
   const found = answer.answered;
 
   const line = getTimeLine({
-    advice: { coveredShare: feasibility.fits ? 1 : feasibility.coveredShare, endDate: null },
+    advice: {
+      coveredShare: feasibility.fits ? 1 : feasibility.coveredShare,
+      endDate: null,
+      reachedShare: feasibility.reachedShare,
+    },
     askFailed: false,
     dated: true,
     findFailed: false,
@@ -112,9 +116,9 @@ function DailyCoverage({
           <TimeAnswer
             date={date}
             exam={goal.kind === "exam"}
+            found={found}
             line={line}
             minutes={minutes}
-            offer={getOffer({ found, line, minutes })}
             onRetry={answer.retry}
             onUseOffer={onUseTime}
           />

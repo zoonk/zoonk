@@ -247,7 +247,7 @@ export function useAnswerOffer() {
               answerTexts.timeCovers({
                 exam: goal.kind === "exam",
                 minutes: answer.minutes,
-                value: answer.coveredShare,
+                value: answer.reachedShare,
               }),
             ],
             operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],

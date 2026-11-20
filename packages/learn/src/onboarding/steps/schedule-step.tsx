@@ -10,7 +10,7 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { DailyTimePicker } from "../../_components/daily-time-picker";
 import { type GoalDate, TimeAnswer } from "../../_components/time-answer";
-import { getMarkedTimes, getOffer } from "../../_utils/time-answer";
+import { getMarkedTimes } from "../../_utils/time-answer";
 import { type GenerationFirstLesson, type GenerationRun } from "../../generation/generation-run";
 import { type OnboardingActions } from "../onboarding-actions";
 import { OnboardingQuestionShown } from "../onboarding-clock";
@@ -108,9 +108,9 @@ function ScheduleTime({
         aim={aim}
         date={getGoalDate(schedule)}
         exam={exam}
+        found={shown.found}
         line={shown.line}
         minutes={minutes}
-        offer={getOffer({ found: shown.found, line: shown.line, minutes })}
         onRetry={found.failed ? found.covering.restart : schedule.timeAdvice.restart}
         onUseOffer={(offer) =>
           setPicked(toPickedMinutes({ first: found.first, found: found.found, minutes: offer }))

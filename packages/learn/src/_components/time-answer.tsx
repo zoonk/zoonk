@@ -1,14 +1,15 @@
 "use client";
 
 import { type DaySplit } from "@zoonk/core/goals/daily-budget";
+import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSentenceSpace } from "../_utils/locale";
-import { type TimeLine, type TimeOffer, isBusyLine } from "../_utils/time-answer";
+import { type TimeLine, getEverythingTakes, getOffer, isBusyLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { LineWords } from "./time-answer-lines";
-import { type GoalDate } from "./time-answer-texts";
+import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
 
 export { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
 
@@ -29,35 +30,19 @@ function DaySplitWords({ split }: { split: DaySplit }) {
     : t("This goal gets {main} a day and your other goals {other} together.", { main, other });
 }
 
-function OfferLabel({ offer }: { offer: TimeOffer }) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const time = formatDuration(offer.minutes);
-
-  switch (offer.kind) {
-    case "everything":
-      return t("Use {time} to cover everything", { time });
-    case "suggested":
-      return t("Use the suggested {time}", { time });
-    case "more":
-      return t("Use {time} to cover more", { time });
-    default:
-      return offer.kind satisfies never;
-  }
-}
-
 /**
- * What the time picked gets the learner: one line under the picker, whose number is its subject,
- * and at most one answer that names another time.
+ * What the time picked gets the learner: one line under the picker, whose number is its subject.
+ * What covering everything takes keeps its room under a time that covers everything, so nothing
+ * moves as times change.
  */
 export function TimeAnswer({
   action,
   aim = null,
   date,
   exam,
+  found,
   line,
   minutes,
-  offer,
   onRetry,
   onUseOffer,
   split = null,
@@ -68,18 +53,22 @@ export function TimeAnswer({
   aim?: string | null;
   date: GoalDate | null;
   exam: boolean;
+  /** The plan's answer for the days shown, null while it's being asked for. */
+  found: PlanTimeToCover | null;
   line: TimeLine;
   minutes: number | null;
-  offer: TimeOffer | null;
   onRetry: () => void;
   onUseOffer: (minutes: number) => void;
   split?: DaySplit | null;
   updating?: boolean;
 }) {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const texts = useTimeAnswerTexts();
   const space = useSentenceSpace();
   const failed = FAILED_KINDS.has(line.kind);
-  const offered = offer && !failed ? offer : null;
+  const offer = failed ? null : getOffer({ found, line, minutes });
+  const full = getEverythingTakes(found);
 
   return (
     <div className="flex min-h-15 flex-col gap-2 sm:min-h-10">
@@ -94,6 +83,13 @@ export function TimeAnswer({
         <span>
           <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
         </span>
+
+        {full !== undefined && date && (
+          <span className={cn(line.kind === "everything" && "invisible")}>
+            {space}
+            {texts.everythingTakes({ date, full })}
+          </span>
+        )}
 
         {split && (
           <>
@@ -116,16 +112,16 @@ export function TimeAnswer({
           </>
         )}
 
-        {offered && (
+        {offer !== null && (
           <>
             {space}
             <Button
               className={TIME_ANSWER_BUTTON_CLASS}
-              onClick={() => onUseOffer(offered.minutes)}
+              onClick={() => onUseOffer(offer)}
               size="sm"
               variant="outline"
             >
-              <OfferLabel offer={offered} />
+              {t("Use {time} to cover everything", { time: formatDuration(offer) })}
             </Button>
           </>
         )}

@@ -91,7 +91,7 @@ function RevealPlan({ onAdjust }: { onAdjust: (section: PlanEditorSection) => vo
   return (
     <div className="flex min-w-0 flex-col gap-5" data-slot="reveal-plan">
       <RevealReadouts />
-      <RevealCoverage onAddTime={() => onAdjust("time")} />
+      <RevealCoverage />
       <PlanChoiceLines choices={plan.examChoices} onChange={() => onAdjust("choices")} />
       <RevealNoticeDay />
       {plan.notice === "usual" && <UsualStructureNote />}

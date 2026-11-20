@@ -6,11 +6,11 @@ import { useFormatDuration } from "../_utils/time-format";
 import { useFinishSentence } from "./finish-sentence";
 import { type GoalDate } from "./time-answer-texts";
 
-type DatedLine = Extract<TimeLine, { kind: "everything" | "focus" | "pastDate" | "share" }>;
+type DatedLine = Extract<TimeLine, { kind: "everything" | "pastDate" | "share" }>;
 
 type FinishLine = Extract<TimeLine, { kind: "finish" | "noFinish" }>;
 
-const DATED_KINDS = new Set<TimeLine["kind"]>(["everything", "focus", "pastDate", "share"]);
+const DATED_KINDS = new Set<TimeLine["kind"]>(["everything", "pastDate", "share"]);
 const FINISH_KINDS = new Set<TimeLine["kind"]>(["finish", "noFinish"]);
 
 function isDatedLine(line: TimeLine): line is DatedLine {
@@ -21,14 +21,36 @@ function isFinishLine(line: TimeLine): line is FinishLine {
   return FINISH_KINDS.has(line.kind);
 }
 
-/** Under a time picker, whose number is the sentence's subject; the share stands out in it. */
-function ShareWords({ date, exam, value }: { date: GoalDate; exam: boolean; value: number }) {
+/**
+ * Under a time picker, whose number is the sentence's subject: the first lessons it reaches, of
+ * every topic or of a share that stands out.
+ */
+function ReachedWords({ date, exam, value }: { date: GoalDate; exam: boolean; value: number }) {
   const t = useExtracted();
   const goalDate = useGoalDateValues();
   const formatShare = useFormatShare();
+  const shown = goalDate(date);
+
+  if (value >= 1) {
+    return exam
+      ? t({
+          description:
+            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message:
+            "{dateKind, select, month {Covers the first lessons of every exam topic by {date}.} other {Covers the first lessons of every exam topic by {date}.}}",
+          values: shown,
+        })
+      : t({
+          description:
+            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          message:
+            "{dateKind, select, month {Covers the first lessons of every part of your goal by {date}.} other {Covers the first lessons of every part of your goal by {date}.}}",
+          values: shown,
+        });
+  }
 
   const values = {
-    ...goalDate(date),
+    ...shown,
     b: (chunks: React.ReactNode) => <strong className="font-semibold">{chunks}</strong>,
     share: formatShare(value),
   };
@@ -38,14 +60,14 @@ function ShareWords({ date, exam, value }: { date: GoalDate; exam: boolean; valu
         description:
           'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
         message:
-          "{dateKind, select, month {Covers about <b>{share}</b> of your exam topics by {date}.} other {Covers about <b>{share}</b> of your exam topics by {date}.}}",
+          "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.}}",
         values,
       })
     : t.rich({
         description:
           'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
         message:
-          "{dateKind, select, month {Covers about <b>{share}</b> of your goal by {date}.} other {Covers about <b>{share}</b> of your goal by {date}.}}",
+          "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your goal by {date}.} other {Covers the first lessons of about <b>{share}</b> of your goal by {date}.}}",
         values,
       });
 }
@@ -72,10 +94,8 @@ function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line:
               "{dateKind, select, month {Covers your whole goal by {date}.} other {Covers your whole goal by {date}.}}",
             values: shown,
           });
-    case "focus":
-      return <ShareWords date={date} exam={exam} value={line.coveredShare} />;
     case "share":
-      return <ShareWords date={date} exam={exam} value={line.share} />;
+      return <ReachedWords date={date} exam={exam} value={line.share} />;
     case "pastDate":
       return t({
         description:

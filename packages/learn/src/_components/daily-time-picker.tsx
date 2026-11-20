@@ -113,12 +113,31 @@ type DailyTimeProps = {
   suggested?: number | null;
 };
 
-function TimeOptionLabel({ minutes, suggested }: { minutes: number; suggested: number | null }) {
+function TimeOptionLabel({
+  full,
+  minutes,
+  suggested,
+}: {
+  full: number | null;
+  minutes: number;
+  suggested: number | null;
+}) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const time = formatDuration(minutes);
 
-  return minutes === suggested ? t("{time} (suggested)", { time }) : time;
+  if (minutes === suggested) {
+    return t("{time} (suggested)", { time });
+  }
+
+  return minutes === full
+    ? t({
+        description:
+          'A daily study time in a list of times: the one that covers the learner\'s whole goal by its date. {time} is like "10 h".',
+        message: "{time} (covers everything)",
+        values: { time },
+      })
+    : time;
 }
 
 function DailyTimeReadout({
@@ -161,7 +180,7 @@ function DailyTimeReadout({
       >
         {times.map((time) => (
           <option key={time} value={time}>
-            <TimeOptionLabel minutes={time} suggested={suggested} />
+            <TimeOptionLabel full={full} minutes={time} suggested={suggested} />
           </option>
         ))}
       </select>

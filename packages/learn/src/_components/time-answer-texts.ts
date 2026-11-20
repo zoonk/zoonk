@@ -12,7 +12,7 @@ export function useTimeAnswerTexts() {
   const formatShare = useFormatShare();
   const goalDate = useGoalDateValues();
 
-  /** For a card with no picker above it, where nothing else says how long everything takes. */
+  /** What covering everything takes, said as a fact beside a suggestion that doesn't cover it. */
   const everythingTakes = ({ date, full }: { date: GoalDate; full: FullTime | null }) => {
     if (!full) {
       return t({
@@ -34,7 +34,7 @@ export function useTimeAnswerTexts() {
         });
   };
 
-  /** The same fact where no picker shows the time. */
+  /** What the time reaches, where no picker shows it: the first lessons of every topic or of a share. */
   const timeCovers = ({
     exam,
     minutes,
@@ -44,11 +44,22 @@ export function useTimeAnswerTexts() {
     minutes: number;
     value: number;
   }) => {
-    const values = { share: formatShare(value), time: formatDuration(minutes) };
+    const time = formatDuration(minutes);
+
+    if (value >= 1) {
+      return exam
+        ? t("{time} a day covers the first lessons of every exam topic", { time })
+        : t("{time} a day covers the first lessons of every part of your goal", { time });
+    }
+
+    const values = { share: formatShare(value), time };
 
     return exam
-      ? t("{time} a day covers about {share} of your exam topics", values)
-      : t("{time} a day covers about {share} of your goal", values);
+      ? t(
+          "{time} a day covers the first lessons of about {share} of your exam, most-asked topics first",
+          values,
+        )
+      : t("{time} a day covers the first lessons of about {share} of your goal", values);
   };
 
   return {
