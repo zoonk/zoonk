@@ -11,7 +11,6 @@
   "today_building_plan_goal": "9430e4a9f9fd21013b7160da654e0553c491d019912b703f037dde45058ab9eb",
   "today_choose_focus": "c34c6c17b4dc5cce7991c5e6ae54e03e0d9cdce5246802ecb799660bcfedaa74",
   "today_coming_not_written": "6a4486ff77c0fc616a7a6e4dad9d09c86ded9daad2100841ea2d6f53735b4948",
-  "today_coming_stalled": "28d928b5bb680b9d0e7f2e247fce4f146afb30ff0620d428342294da72598177",
   "today_coming_title": "512f82b773b2897c6ac20ca6bae3b75dbd535e98b2adc166b9de7f70a138bdee",
   "today_coming_writing": "7e50a68e9b29c62273c31698fee151600e8c1e9100ffefb95f4b1702afdeb7dd",
   "today_completed_lessons_line": "cd218eff1372cb05c79c48d08cbffd83b547eeacba6ef5a61a0978297f876ddc",
@@ -29,7 +28,6 @@
   "today_exam_speaking_detail": "5ef9f32253d5151d7a24cfdad4e53bda464c7a1fb160a38836add700e6267e5f",
   "today_finished_goal": "ac89596f5f64633a7d33322519f15ce9e6a77e5686a6df0a9571a46593f7962e",
   "today_get_lessons": "cb03d4d37c813187f5603397caf69cd896fecb9d3fc5dec1a3c165fe44e7ff50",
-  "today_get_them_now": "2bb9fedd6e0ed55f04ff004991e31045dde0970ce4e3e051ad07aabedba77700",
   "today_insight_add_it": "861dd9ce157d193fc8162362583dedf9cf86f3e0f9100a98bff98e429998a669",
   "today_insight_got_it": "b86f4ed9155e4d940c0cff0a9e3a714a8fff79a7a5ad9dfe36d4efd8c02eecb9",
   "today_insight_keep_it": "de54110a9b5aeeb0fd7a0f776c44a063a4268dae831a5b49760cafa3097f0631",
@@ -131,8 +129,6 @@
   "today_unfinished_setup": "39c3b651bc9b4e99ccf947ce8b903d9cf6b4b4293ed889be4016b907baa56bbd",
   "today_up_next": "bd73e61b58a80b7eca81c0ef3e680e9065e2c0d7a0932b12c308405889d93a05",
   "today_waiting": "8d2e08418a6b43f0a7723fcdd5130e1d32726dbf06f333b4b43e164a012b31c3",
-  "today_waiting_stalled": "6b6c421a347842a365792a06be110babd3015014ee06ae237706885c33af133d",
-  "today_waiting_stalled_detail": "de0e3874139c6b9dce96fd6f0f561fae8952642327bd6972b6b0e6a8da22cde2",
   "today_week_after_date": "6e2e2318d35a477de7847586ec3244d6c1d763cf53a627d3335eebe3e6359766",
   "today_week_after_exam": "c7e009db3fa5ffd429a71255c95b9cd9e136ec8537378387e1a148eec509ec08",
   "today_week_before_plan": "64a62a2ee070b1c367f9d1fdf382f3e55aaacca51d529e82270dfafb84fa364d",
@@ -219,8 +215,6 @@
     <string name="today_rest_next_lessons">Se vuoi studiare, trovi le prossime lezioni qui sotto.</string>
     <string name="today_rest_enjoy">Goditi il tuo giorno di riposo!</string>
     <string name="today_waiting">Stiamo preparando le lezioni di oggi…</string>
-    <string name="today_waiting_stalled">Ci stiamo mettendo più del solito a preparare le lezioni di oggi.</string>
-    <string name="today_waiting_stalled_detail">Torna tra qualche minuto.</string>
     <string name="today_nothing_new">Sei al passo con il piano.</string>
     <string name="today_up_next">Le prossime tappe del tuo piano</string>
     <string name="today_start_session">Inizia</string>
@@ -364,8 +358,6 @@
     <string name="today_coming_title">Le tue prossime lezioni</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">Le stiamo preparando…</string>
-    <!-- Under "Your next lessons" when their writing has taken a while. -->
-    <string name="today_coming_stalled">Ci stiamo mettendo più tempo del solito</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">Non ancora pronte</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
@@ -387,7 +379,6 @@
     <string name="today_week_day_planned">%1$s in programma</string>
     <string name="today_plan_finished">Hai completato il tuo piano.</string>
     <string name="today_week_after_exam">dopo il tuo esame</string>
-    <string name="today_get_them_now">Preparale ora</string>
     <string name="today_resume">Riprendi</string>
     <!-- Lessons planned for earlier days that didn't fit in today's list; the learner can add them to today. -->
     <plurals name="today_earlier_lessons">

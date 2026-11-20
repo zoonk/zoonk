@@ -22,8 +22,11 @@ export async function withPlanRetry<T>(run: () => Promise<T>): Promise<T> {
   }
 }
 
-/** Inputs must already be durable: a competing plan writer can replace this derived work. */
-export async function afterPlanInputWrite<T>(run: () => Promise<T>): Promise<T | null> {
+/**
+ * Null when another plan writer won, which saves nothing: fine for derived work once its inputs are
+ * durable, since that writer replaces it, and for a learner's request they can send again.
+ */
+export async function unlessPlanConflict<T>(run: () => Promise<T>): Promise<T | null> {
   try {
     return await run();
   } catch (error) {

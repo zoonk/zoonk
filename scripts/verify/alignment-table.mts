@@ -292,10 +292,10 @@ export const EXCEPTIONS: AlignmentException[] = [
   },
   {
     configuration: "laptop keys",
-    issue: 2955,
+    issue: 2944,
     piece: "page",
     reason:
-      "A two-line phase name on the Plan's roadmap can leave its last word alone, on main too",
+      "An out-of-plan subject's facts line wraps in the meter's column on the Plan, on main too",
     relation: "lone-word",
     scenario: "/plan",
   },
