@@ -40,10 +40,11 @@ function isSameDraft(first: MockDraft, second: MockDraft | undefined): boolean {
 
 /** One key per question avoids cross-tab read-modify-write races on a shared array. */
 export function keepUnsentMockDraft({ blockId, draft }: { blockId: string; draft: MockDraft }) {
-  deviceStorage.set(
-    getDraftKey({ blockId, itemId: draft.itemId }),
-    JSON.stringify({ draft, savedAt: nextSavedAt() }),
-  );
+  const key = getDraftKey({ blockId, itemId: draft.itemId });
+  const existing = storedMockDraftSchema.safeParse(deviceStorage.getJson(key));
+  const savedAt = existing.success ? existing.data.savedAt : nextSavedAt();
+
+  deviceStorage.set(key, JSON.stringify({ draft, savedAt }));
 }
 
 /** Removes the question's entry only if storage still holds this exact version. */
@@ -84,7 +85,9 @@ export function restoreUnsentMockDrafts({
     return [];
   }
 
-  const questionIds = new Set(view.current.questions.map((question) => question.itemId));
+  const questionIndex = new Map(
+    view.current.questions.map((question, index) => [question.itemId, index]),
+  );
 
   const storedByItem = storedDrafts
     ? new Map(Object.entries(storedDrafts))
@@ -96,12 +99,17 @@ export function restoreUnsentMockDrafts({
       const parsed = storedMockDraftSchema.safeParse(deviceStorage.getJson(key));
       return parsed.success ? [{ ...parsed.data, key }] : [];
     })
-    .toSorted((first, second) => first.savedAt - second.savedAt);
+    .toSorted(
+      (first, second) =>
+        first.savedAt - second.savedAt ||
+        (questionIndex.get(first.draft.itemId) ?? 0) -
+          (questionIndex.get(second.draft.itemId) ?? 0),
+    );
 
   const kept: MockDraft[] = [];
 
   for (const entry of entries) {
-    if (questionIds.has(entry.draft.itemId)) {
+    if (questionIndex.has(entry.draft.itemId)) {
       if (isSameDraft(entry.draft, storedByItem.get(entry.draft.itemId))) {
         deviceStorage.remove(entry.key);
       } else {

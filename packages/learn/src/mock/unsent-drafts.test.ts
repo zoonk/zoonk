@@ -117,13 +117,13 @@ describe("unsent mock drafts", () => {
       q2,
     ]);
 
-    // Replacing q1 while q1v1 is in flight keeps q1v2 when q1v1 finishes storing.
+    // Replacing q1 while q1v1 is in flight keeps q1v2 in its original enqueue slot when q1v1 finishes storing.
     keepUnsentMockDraft({ blockId: "mock-1", draft: q1v2 });
     dropUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
 
     expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
-      q2,
       q1v2,
+      q2,
     ]);
 
     dropUnsentMockDraft({ blockId: "mock-1", draft: q1v2 });
@@ -253,5 +253,59 @@ describe("unsent mock drafts", () => {
     } as unknown as MockView;
 
     expect(getForwardOnlyKeptReached({ kept, view: freeView })).toBe(-1);
+  });
+
+  it("preserves original enqueue order when reviewing earlier forward-only questions offline", () => {
+    const q1: MockDraft = {
+      answer: { selectedIndex: 0 },
+      durationMs: 1000,
+      flagged: false,
+      itemId: "q1",
+    };
+
+    const q2: MockDraft = {
+      answer: { selectedIndex: 1 },
+      durationMs: 1000,
+      flagged: false,
+      itemId: "q2",
+    };
+
+    const q3: MockDraft = {
+      answer: { selectedIndex: 0 },
+      durationMs: 1000,
+      flagged: false,
+      itemId: "q3",
+    };
+
+    // Offline learner answers q1 -> q2 -> q3, then reviews q1 and q2 (updating duration on leave).
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q1 });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q2 });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q3 });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: { ...q1, durationMs: 2500 } });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: { ...q2, durationMs: 3000 } });
+
+    const restored = restoreUnsentMockDrafts({
+      blockId: "mock-1",
+      view: makeView({ questionIds: ["q1", "q2", "q3"] }),
+    });
+
+    expect(restored.map((draft) => draft.itemId)).toStrictEqual(["q1", "q2", "q3"]);
+
+    // When q1 and q2 were already saved on the server and dropped, an offline q3 followed by a
+    // review change on q1 replays q3 first so the section reaches review before q1 is changed.
+    dropUnsentMockDraft({ blockId: "mock-1", draft: { ...q1, durationMs: 2500 } });
+    dropUnsentMockDraft({ blockId: "mock-1", draft: { ...q2, durationMs: 3000 } });
+
+    keepUnsentMockDraft({
+      blockId: "mock-1",
+      draft: { ...q1, answer: { selectedIndex: 1 }, durationMs: 4000 },
+    });
+
+    const afterReviewChange = restoreUnsentMockDrafts({
+      blockId: "mock-1",
+      view: makeView({ drafts: [q1, q2], questionIds: ["q1", "q2", "q3"] }),
+    });
+
+    expect(afterReviewChange.map((draft) => draft.itemId)).toStrictEqual(["q3", "q1"]);
   });
 });
