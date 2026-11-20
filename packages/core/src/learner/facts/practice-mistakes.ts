@@ -5,7 +5,7 @@ import {
   type PracticeMistake,
   loadPracticeMistakes,
 } from "../../mistakes/mistake-practice-eligibility";
-import { getSkillOwners } from "../_utils/goal-skill-graph";
+import { getMistakeSkillIds } from "../_utils/goal-skill-graph";
 import { readGoalPlan } from "../_utils/read-goal-plan";
 import { readOwnedGoal } from "./owned-goal";
 
@@ -24,5 +24,5 @@ export async function readPracticeMistakes(
     return [];
   }
 
-  return loadPracticeMistakes({ skillIds: [...getSkillOwners(plan.skills).keys()], userId });
+  return loadPracticeMistakes({ skillIds: getMistakeSkillIds(plan.skills), userId });
 }

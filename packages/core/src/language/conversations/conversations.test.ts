@@ -1053,6 +1053,7 @@ describe("language conversations", () => {
                 order: item.position,
                 phase: item.phase,
                 prerequisiteIds: [],
+                removed: false,
                 sectionTitle: null,
               },
             ]

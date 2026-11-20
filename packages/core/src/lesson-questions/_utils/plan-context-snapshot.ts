@@ -8,7 +8,7 @@ import { loadExamNoticeFacts } from "../../exams/_utils/exam-notice-facts";
 import { toCountryChoice } from "../../goals/_utils/content-country-view";
 import { getGoalContentCountry } from "../../goals/_utils/goal-content-country";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
-import { loadGoalMemberSkillIds } from "../../learner/_utils/goal-skill-graph";
+import { loadGoalMistakeSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getLibraryCourse } from "../../library/courses/get-library-course";
 import { readMistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { getGoalPlan } from "../../plans/get-goal-plan";
@@ -153,7 +153,7 @@ function shorten(text: string | null | undefined): string | null {
 
 /** Fixed ones too: a learner who fixed a mistake still asks about it. */
 async function loadRecentMistakes(goal: Goal): Promise<NonNullable<PlanScopeContext["mistakes"]>> {
-  const skillIds = await loadGoalMemberSkillIds(goal.id);
+  const skillIds = await loadGoalMistakeSkillIds(goal.id);
 
   if (skillIds.length === 0) {
     return [];

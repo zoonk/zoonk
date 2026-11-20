@@ -3,7 +3,7 @@ import { type Sql, type TransactionClient, prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import {
   type GoalPlan,
-  getMemberSkillIds,
+  getMistakeSkillIds,
   loadGoalPlan,
 } from "../../learner/_utils/goal-skill-graph";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
@@ -76,7 +76,7 @@ async function loadMistakeSkillIds({
   }
 
   const plan = await readPlan(goalId);
-  return getMemberSkillIds(plan.skills);
+  return getMistakeSkillIds(plan.skills);
 }
 
 export async function queryDayProgress(

@@ -1,4 +1,5 @@
-import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { getSkillArea } from "../../plans/planner/graph-areas";
+import { type PlanGraph, parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 
 export type ProjectedPlanItem = {
   chapterId: string | null;
@@ -112,4 +113,47 @@ export function projectPlanSkills({
     ),
     skillIds: firstPerSkill(entries).map((entry) => entry.skillId),
   };
+}
+
+/**
+ * A graph skill is in its own area; a lesson's finer skill is in the area of the first plan item
+ * that teaches it alongside a graph skill.
+ */
+export function listRemovedSkillIds({
+  entries,
+  graph,
+  settings,
+  survivorOf,
+}: {
+  entries: readonly SkillEntry[];
+  graph: PlanGraph;
+  settings: unknown;
+  survivorOf: (skillId: string) => string;
+}): Set<string> {
+  const skipped = new Set(parsePlanSettings(settings).skippedAreas);
+
+  const graphAreas = new Map(
+    graph.skills.map((skill) => [survivorOf(skill.skillId), getSkillArea({ graph, skill })]),
+  );
+
+  const itemAreas = new Map(
+    entries
+      .flatMap((entry) => {
+        const area = graphAreas.get(entry.skillId);
+        return area === undefined ? [] : [[entry.planItemId, area] as const];
+      })
+      .toReversed(),
+  );
+
+  return new Set(
+    [...Map.groupBy(entries, (entry) => entry.skillId)].flatMap(([skillId, skillEntries]) => {
+      const area =
+        graphAreas.get(skillId) ??
+        skillEntries
+          .map((entry) => itemAreas.get(entry.planItemId))
+          .find((itemArea) => itemArea !== undefined);
+
+      return area !== undefined && skipped.has(area) ? [skillId] : [];
+    }),
+  );
 }
