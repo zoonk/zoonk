@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { findCodeFenceLines, readCodeFence, removeCodeFences } from "./code-fence";
+import {
+  findCodeFenceLines,
+  readCodeFence,
+  readWholeCodeFence,
+  removeCodeFences,
+} from "./code-fence";
 
 const TEXT = [
   "O que aparece no console?",
@@ -52,5 +57,14 @@ describe(findCodeFenceLines, () => {
 describe(removeCodeFences, () => {
   it("keeps the prose around code", () => {
     expect(removeCodeFences(TEXT)).toBe("O que aparece no console?\nEscolha uma opção.");
+  });
+});
+
+describe(readWholeCodeFence, () => {
+  it("reads a text that is one closed block and nothing else", () => {
+    expect(readWholeCodeFence(" ```js\nf();\n```\n")?.code).toBe("f();");
+    expect(readWholeCodeFence("Rode:\n```js\nf();\n```")).toBeNull();
+    expect(readWholeCodeFence("```js\nf();\n```\nE depois?")).toBeNull();
+    expect(readWholeCodeFence("```js\nf();")).toBeNull();
   });
 });

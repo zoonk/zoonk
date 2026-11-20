@@ -70,7 +70,7 @@ describe(findUnrenderedMarkdown, () => {
     expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([]);
   });
 
-  it("finds a code block that never closes, and one where only a line shows", () => {
+  it("finds a code block that never closes, and one with words around it where one line shows", () => {
     const open = "Veja:\n```js\nconsole.log(1);\nO console mostra 1.";
 
     expect(findUnrenderedMarkdown({ layout: "blocks", text: open })).toStrictEqual([
@@ -78,8 +78,14 @@ describe(findUnrenderedMarkdown, () => {
     ]);
 
     expect(
-      findUnrenderedMarkdown({ layout: "inline", text: "```js\nconsole.log(1);\n```" }),
+      findUnrenderedMarkdown({ layout: "inline", text: "Rode:\n```js\nconsole.log(1);\n```" }),
     ).toStrictEqual([expect.stringContaining("code fence"), expect.stringContaining("code fence")]);
+  });
+
+  it("passes an option that is one code block and nothing else", () => {
+    const option = "```python\nif x_1 > 0:\n    print(**dados)\n```";
+
+    expect(findUnrenderedMarkdown({ layout: "inline", text: option })).toStrictEqual([]);
   });
 
   it("finds a table in a field that shows one line, and rows without a header row", () => {

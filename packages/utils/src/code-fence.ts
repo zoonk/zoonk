@@ -47,6 +47,14 @@ export function readCodeFence(lines: readonly string[], index: number): CodeFenc
   };
 }
 
+/** A text that is one closed code block and nothing else, such as an answer option that is code. */
+export function readWholeCodeFence(text: string): CodeFence | null {
+  const lines = text.trim().split(/\r?\n/u);
+  const fence = readCodeFence(lines, 0);
+
+  return fence?.closed && fence.end === lines.length ? fence : null;
+}
+
 /** Every fence in order, with `start` at its opening line. */
 export function findCodeFences(lines: readonly string[]): (CodeFence & { start: number })[] {
   return lines.reduce<(CodeFence & { start: number })[]>((found, _, index) => {

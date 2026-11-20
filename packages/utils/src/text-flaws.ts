@@ -1,4 +1,9 @@
-import { findCodeFenceLines, findCodeFences, removeCodeFences } from "./code-fence";
+import {
+  findCodeFenceLines,
+  findCodeFences,
+  readWholeCodeFence,
+  removeCodeFences,
+} from "./code-fence";
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { collectJsonStrings } from "./json";
 import { findMarkdownTableLines, splitTableCells } from "./markdown-table";
@@ -6,9 +11,14 @@ import { hideMath, splitAtMath } from "./math-spans";
 
 /**
  * `blocks` keeps lines, lists and tables (a screen's body); `inline` shows one line, whatever its
- * line breaks (an option, a title).
+ * line breaks (an option, a title), unless it's one code block and nothing else (an option that is
+ * code), which keeps its lines.
  */
 export type TextLayout = "blocks" | "inline";
+
+export function keepsLines({ layout, text }: { layout: TextLayout; text: string }): boolean {
+  return layout === "blocks" || readWholeCodeFence(text) !== null;
+}
 
 const LIST_MARK = /^\s*(?:[-*•]|\d{1,3}[.)])\s+/u;
 
@@ -182,7 +192,7 @@ export function findUnrenderedMarkdown({
   layout: TextLayout;
   text: string;
 }): string[] {
-  return layout === "blocks" ? findBlockProblems(text) : findInlineProblems(text);
+  return keepsLines({ layout, text }) ? findBlockProblems(text) : findInlineProblems(text);
 }
 
 /** Quoted source text keeps its punctuation, so callers leave it out. */

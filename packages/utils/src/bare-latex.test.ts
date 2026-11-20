@@ -155,6 +155,11 @@ describe(wrapBareLatex, () => {
     );
 
     expect(find("```python\nx_1 = a^b\n```")).toStrictEqual([]);
+
+    const option = "```python\nx_1 = 10^3\n```";
+
+    expect(wrapBareLatex({ layout: "inline", text: option })).toBe(option);
+    expect(findBareLatex({ layout: "inline", text: option })).toStrictEqual([]);
   });
 
   it("wraps a number raised to a number in math, leaving the words around it as text", () => {

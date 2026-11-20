@@ -1,7 +1,7 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { mapTextCells, readTextCells } from "./markdown-table";
 import { type MathSpan, findMathSpans, hideMath, toOneLine } from "./math-spans";
-import { type TextLayout } from "./text-flaws";
+import { type TextLayout, keepsLines } from "./text-flaws";
 
 /**
  * A caret between two characters, a braced script, or one letter with a subscript (`C_A0=2`,
@@ -154,7 +154,7 @@ function wrapLine(line: string): string {
 
 /** The player reads block text line by line and each table cell on its own, and never reads code as math. */
 function toLines({ layout, text }: { layout: TextLayout; text: string }): string[] {
-  return layout === "inline" ? [toOneLine(text)] : readTextCells(text);
+  return keepsLines({ layout, text }) ? readTextCells(text) : [toOneLine(text)];
 }
 
 function describe({ latex, written }: Pick<BareLatex, "latex" | "written">): string {
@@ -184,7 +184,7 @@ export function findBareLatexText({
 
 /** An inline field comes back on one line, as the player shows it, only when something was wrapped. */
 export function wrapBareLatex({ layout, text }: { layout: TextLayout; text: string }): string {
-  if (layout === "inline") {
+  if (!keepsLines({ layout, text })) {
     const line = toOneLine(text);
     const wrapped = wrapLine(line);
     return wrapped === line ? text : wrapped;
