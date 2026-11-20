@@ -75,10 +75,12 @@ function SessionNotFound() {
 
 async function SessionSummaryView({
   facts,
+  requested,
   session,
   stopped,
 }: {
   facts: SessionFacts;
+  requested: boolean;
   session: StudySession;
   stopped: boolean;
 }) {
@@ -97,6 +99,8 @@ async function SessionSummaryView({
       goalKind={facts.goal.kind}
       isGuest={Boolean(viewer?.user.isAnonymous)}
       buddy={buddy}
+      requested={requested}
+      key={session.id}
       sessionId={session.id}
       stopped={stopped}
       summary={result.summary}
@@ -192,6 +196,7 @@ async function SavedDayView({
   blockId,
   facts,
   next,
+  requested,
   screen,
   session,
   stopped,
@@ -200,11 +205,12 @@ async function SavedDayView({
   facts: SessionFacts;
   next: NextStopFacts | null;
   screen: ScreenRequest;
+  requested: boolean;
   session: StudySession;
   stopped: boolean;
 }) {
   if (stopped) {
-    return <SessionSummaryView facts={facts} session={session} stopped />;
+    return <SessionSummaryView facts={facts} requested={false} session={session} stopped />;
   }
 
   const opened = findOpenedBlock({ blockId, session });
@@ -237,7 +243,9 @@ async function SavedDayView({
   const step = opened ?? session.blocks.find((block) => block.id === session.nextBlockId);
 
   if (!step) {
-    return <SessionSummaryView facts={facts} session={session} stopped={false} />;
+    return (
+      <SessionSummaryView facts={facts} requested={requested} session={session} stopped={false} />
+    );
   }
 
   return (
@@ -282,6 +290,7 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
         blockId={blockId}
         facts={result}
         next={result.next}
+        requested={search.summary === "1"}
         screen={readScreenRequest(search)}
         session={result.session}
         stopped={readSessionStoppedParam(search[SESSION_STOPPED_PARAM])}

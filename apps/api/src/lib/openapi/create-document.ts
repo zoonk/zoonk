@@ -62,6 +62,7 @@ import { speechClipPaths } from "./paths/speech-clips";
 import { staffPaths } from "./paths/staff";
 import { studyReminderPaths } from "./paths/study-reminder";
 import { studySessionPaths } from "./paths/study-sessions";
+import { studySummaryVisitPaths } from "./paths/study-summary-visits";
 import { subscriptionPaths } from "./paths/subscriptions";
 import { todayPaths } from "./paths/today";
 import { usernamePaths } from "./paths/usernames";
@@ -159,6 +160,7 @@ const paths = withInternalErrorResponses({
   ...researchSourcePaths,
   ...studyReminderPaths,
   ...studySessionPaths,
+  ...studySummaryVisitPaths,
   ...todayPaths,
   ...warmUpPaths,
 });

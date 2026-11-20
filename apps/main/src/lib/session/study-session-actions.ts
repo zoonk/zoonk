@@ -19,6 +19,8 @@ import {
 } from "@zoonk/core/sessions/open-block-contract";
 import { saveDayForMission } from "@zoonk/core/sessions/save-for-mission";
 import { stopStudySession } from "@zoonk/core/sessions/stop";
+import { claimStudySessionSummaryVisit } from "@zoonk/core/sessions/summary-visit";
+import { studySessionSummaryVisitInputSchema } from "@zoonk/core/sessions/summary-visit-contract";
 import { type StudyFinishOutcome } from "@zoonk/learn/session/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
@@ -103,6 +105,26 @@ export async function finishStudyBlockAction(input: BlockInput): Promise<StudyFi
   }
 
   return { moment: serializeStudyBlockCompletion(result.completion), status: "finished" };
+}
+
+export async function claimSummaryVisitAction(
+  sessionId: string,
+  visitId: string,
+): Promise<boolean | "unavailable" | null> {
+  const id = uuidSchema().safeParse(sessionId);
+  const input = studySessionSummaryVisitInputSchema.safeParse({ visitId });
+
+  if (!id.success || !input.success) {
+    return null;
+  }
+
+  const result = await claimStudySessionSummaryVisit({ input: input.data, sessionId: id.data });
+
+  if (result.status === "summaryNotReady") {
+    return "unavailable";
+  }
+
+  return result.status === "ready" ? result.first : null;
 }
 
 export async function stopStudySessionAction(input: SessionInput): Promise<boolean> {

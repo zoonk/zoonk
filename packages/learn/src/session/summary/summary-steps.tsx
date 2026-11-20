@@ -2,7 +2,7 @@
 
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { focusStepTitle } from "../../_components/steps";
 import { TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
@@ -23,7 +23,6 @@ import {
 import { useIsStopped, useSessionSummary } from "./summary-context";
 import { DoneStep } from "./summary-parts";
 import { EarnedToday } from "./summary-rewards";
-import { useFirstSummaryVisit } from "./use-first-summary-visit";
 
 function SummaryButtons({ keepGoing }: { keepGoing: ReturnType<typeof useKeepGoing> }) {
   const stopped = useIsStopped();
@@ -41,30 +40,19 @@ function SummaryButtons({ keepGoing }: { keepGoing: ReturnType<typeof useKeepGoi
   );
 }
 
-/** One screen: the day's numbers, what it earned, tomorrow, and Finish. */
 export function SummarySteps() {
   const t = useExtracted();
-  const stopped = useIsStopped();
-  const { actions, ceremony, exitHref, summary } = useSessionSummary();
-  const stepRef = useRef<HTMLDivElement>(null);
-  const keepGoing = useKeepGoing();
-  const firstVisit = useFirstSummaryVisit(summary);
-
-  // "Stop for today" left with the screen before it, so a screen reader starts at the title.
-  const shown = stopped || summary.finished;
-
-  useEffect(() => {
-    if (shown && isFocusLost(document.activeElement)) {
-      focusStepTitle(stepRef.current);
-    }
-  }, [shown]);
+  const { actions, ceremony, exitHref, stopped, summary } = useSessionSummary();
 
   if (!stopped && !summary.finished) {
     return (
       <OpenNextStep
         exitHref={exitHref}
         header={<SessionHeader exitHref={exitHref} />}
-        readNext={actions.refresh}
+        openNextStep={async () => {
+          actions.refresh();
+          return true;
+        }}
         status={t("Getting it ready…")}
       />
     );
@@ -72,32 +60,82 @@ export function SummarySteps() {
 
   return (
     <MomentAfterCeremony moments={summary} render={ceremony}>
-      <TaskFrame
-        aside={{
-          children: (
-            <CelebrationScope play={firstVisit}>
-              <EarnedToday />
-            </CelebrationScope>
-          ),
-          label: t("Earned today"),
-          title: t("Earned today"),
-        }}
-        exitHref={exitHref}
-        footer={
-          <>
-            <SummaryButtons keepGoing={keepGoing} />
-            <SummaryOptions />
-          </>
-        }
-        footerNote={keepGoing.failed && <NextStepFailed />}
-        headerTitle={<TaskHeaderTitle title={t("Today")} />}
-      >
-        <CelebrationScope play={firstVisit}>
-          <div className="flex flex-col gap-4" data-slot="steps-step" ref={stepRef}>
-            <DoneStep />
-          </div>
-        </CelebrationScope>
-      </TaskFrame>
+      <SummaryVisit />
     </MomentAfterCeremony>
+  );
+}
+
+function SummaryVisit() {
+  const t = useExtracted();
+  const { actions, exitHref } = useSessionSummary();
+  const visitId = useRef<string | null>(null);
+  const [firstVisit, setFirstVisit] = useState<boolean | null>(null);
+
+  if (firstVisit !== null) {
+    return <DailySummary firstVisit={firstVisit} />;
+  }
+
+  return (
+    <OpenNextStep
+      exitHref={exitHref}
+      header={<SessionHeader exitHref={exitHref} />}
+      openNextStep={async () => {
+        visitId.current ??= crypto.randomUUID();
+        const result = await actions.visit(visitId.current);
+
+        if (result === null) {
+          return false;
+        }
+
+        if (result !== "left") {
+          setFirstVisit(result);
+        }
+
+        return true;
+      }}
+      status={t("Getting it ready…")}
+    />
+  );
+}
+
+function DailySummary({ firstVisit }: { firstVisit: boolean }) {
+  const t = useExtracted();
+  const { exitHref } = useSessionSummary();
+  const stepRef = useRef<HTMLDivElement>(null);
+  const keepGoing = useKeepGoing();
+
+  useEffect(() => {
+    if (isFocusLost(document.activeElement)) {
+      focusStepTitle(stepRef.current);
+    }
+  }, []);
+
+  return (
+    <TaskFrame
+      aside={{
+        children: (
+          <CelebrationScope play={firstVisit}>
+            <EarnedToday />
+          </CelebrationScope>
+        ),
+        label: t("Earned today"),
+        title: t("Earned today"),
+      }}
+      exitHref={exitHref}
+      footer={
+        <>
+          <SummaryButtons keepGoing={keepGoing} />
+          <SummaryOptions />
+        </>
+      }
+      footerNote={keepGoing.failed && <NextStepFailed />}
+      headerTitle={<TaskHeaderTitle title={t("Today")} />}
+    >
+      <CelebrationScope play={firstVisit}>
+        <div className="flex flex-col gap-4" data-slot="steps-step" ref={stepRef}>
+          <DoneStep />
+        </div>
+      </CelebrationScope>
+    </TaskFrame>
   );
 }
