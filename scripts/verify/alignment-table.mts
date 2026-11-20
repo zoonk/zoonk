@@ -1,3 +1,5 @@
+import { type PAGE_RULES } from "./alignment-capture.mts";
+
 /**
  * The shared pieces whose parts must line up, and how. Each piece names its parts by the
  * `data-slot`s the pieces carry; Android and Apple name the same parts and relationships.
@@ -275,8 +277,17 @@ export type AlignmentException = {
   configuration: string;
   piece: string;
   reason: string;
-  relation: Relation | "one-filled";
+  relation: Relation | "one-filled" | (typeof PAGE_RULES)[number];
   scenario: string;
 } & ({ grantedBy: "user" } | { issue: number });
 
-export const EXCEPTIONS: AlignmentException[] = [];
+export const EXCEPTIONS: AlignmentException[] = [
+  {
+    configuration: "phone touch",
+    issue: 2929,
+    piece: "page",
+    reason: "A far topic's row gives its title only the width its start line leaves, on main too",
+    relation: "lone-word",
+    scenario: "/plan/matematica-e-suas-tecnologias",
+  },
+];

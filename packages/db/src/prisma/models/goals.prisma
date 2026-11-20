@@ -130,6 +130,7 @@ model Goal {
   subjectThreads        LessonQuestionThread[] @relation("SubjectQuestionThreads")
   tutorQuestions        LessonQuestion[]       @relation("TutorQuestionGoal")
   certificates          Certificate[]
+  skillOutlineAsks      SkillOutlineAsk[]
 
   @@index([userId, status])
   @@index([examBlueprintId])
@@ -192,6 +193,19 @@ model Plan {
 
   @@index([sourceSkillIds], type: Gin)
   @@map("plans")
+}
+
+/// A learner's ask to write a topic's lessons ahead of the plan. The topic reads as being written
+/// while the ask is fresh and no chapter teaches it yet; the outline run it started deletes it when
+/// that run ends.
+model SkillOutlineAsk {
+  goalId  String   @map("goal_id") @db.Uuid
+  goal    Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  skillId String   @map("skill_id") @db.Uuid
+  askedAt DateTime @map("asked_at")
+
+  @@id([goalId, skillId])
+  @@map("skill_outline_asks")
 }
 
 model PlanItem {

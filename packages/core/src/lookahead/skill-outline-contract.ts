@@ -19,7 +19,7 @@ export const skillOutlineSchema = z
       .enum(["available", "writing", "ready"])
       .meta({
         description:
-          "`ready`: its chapters exist. `writing`: its course's outline is being written, or was just asked for; read it again every few seconds (about half a minute for the first chapter). `available`: nothing is written yet; POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now, or the plan writes it as it gets close",
+          "`ready`: its chapters exist. `writing`: the learner asked for it and it's being written; read it again every few seconds (about half a minute for the first chapter), and it's `ready` once written or `available` again if that ended without its chapters. `available`: nothing is written yet; POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now, or the plan writes it as it gets close",
       }),
   })
   .meta({ id: "SkillOutline" });
