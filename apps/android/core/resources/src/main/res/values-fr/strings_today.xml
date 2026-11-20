@@ -11,7 +11,6 @@
   "today_building_plan_goal": "f466b3679c5ad5a164dcd23fb273c9639fd53ddb3926317f85271e10c7238260",
   "today_choose_focus": "1b19568b66f06a4bcccbe5e381e4737484c66f0aa7c76dac7320d02f5727b8d5",
   "today_coming_not_written": "c9c6b72a48b44843512d255744d4753d8fb86793b5fafc5b620e57fa2877d837",
-  "today_coming_stalled": "dd69f59ae2b061a641b0bc9e52db86560b85a8fc54e529b32f391a138f5a3979",
   "today_coming_title": "980878d5649b82d3861c10cf3ed61ec6629e7d6732aa554aa04374c9643c941b",
   "today_coming_writing": "86af6bfeb38d88a4483d7e379affb81831a3c65893b2ad140ea78ac93f9d1db4",
   "today_completed_lessons_line": "6869d240e69adcdd2ffa94a80fca2fcac4f49731ac1c5b999ce9f599d9ef4ae0",
@@ -29,7 +28,6 @@
   "today_exam_speaking_detail": "d3b79f7656efdf1c3d5a74779f492e2d02bddc8ee1e8be7096c9f12127bb8230",
   "today_finished_goal": "5c6fb32d13eb4d00c0a0a747715ec1b4f2b63c6360cf2bd573534b45b19ee6a0",
   "today_get_lessons": "42d711efe633838a96be601bdf5b1742b0cd7d97da962c4257105fa3e520b6bd",
-  "today_get_them_now": "dc7fe411d91caa30756f1b55b99a2e1354979505981d5e13eb452510ee76df7f",
   "today_insight_add_it": "f5681e4c1d531bac01a5f4f8b28c3e95af9815a7a45aa5652927eb4f4164ac44",
   "today_insight_got_it": "98c9816c5fa06040d65dda9c7bf8c765e033e38fd8014d70779c2092e3137146",
   "today_insight_keep_it": "3487e4d74d89b9e1c5c8f2cd6de92ea6a6e6cde2947bd7a7b5c79fc47bf7a44a",
@@ -131,9 +129,6 @@
   "today_unfinished_setup": "bcc0149bab9e7923fde051a09ae1e9e5909cfddc104106da11ec48505a1b2124",
   "today_up_next": "2f88890bfef819e471b8c45ac9b400f76c580e3ef2193565d3ebee309fb33485",
   "today_waiting": "5342eea02dfaebdca242ba1260aee3410f0c5b011b734f2bb2a37bdba1b3c31c",
-  "today_waiting_mock": "e04a540b279d59d898c510de51ea110175b4cb0ba46901a029f24bd80c65397f",
-  "today_waiting_stalled": "982a8e7cd4f4a8f488168d041c160ea076fcbac011fee5061c73de92a7e14d52",
-  "today_waiting_stalled_detail": "a69356a783a470902f4cdedbe8d97a854977154b99ac6f612b90f2d5e63873cc",
   "today_week_after_date": "03671420930f7f74ae2e782fdefe78c7369fb4f8dee2f9f519527fc60ad8117f",
   "today_week_after_exam": "7c892dd24199b503c58ad30ec1355e6cb70d90e44b6a812e54901c9741ab9aef",
   "today_week_before_plan": "b62eef913eaf38b74e6cfc83d92399adb6d18dc322a9d0ae00daf0f663ce2b06",
@@ -220,10 +215,6 @@
     <string name="today_rest_next_lessons">Tes prochaines leçons sont ci-dessous si tu veux étudier.</string>
     <string name="today_rest_enjoy">Profite de ta journée de repos !</string>
     <string name="today_waiting">Préparation des leçons du jour…</string>
-    <!-- On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions. -->
-    <string name="today_waiting_mock">Ton examen blanc est en cours de préparation.</string>
-    <string name="today_waiting_stalled">La préparation des leçons du jour prend plus de temps que d’habitude.</string>
-    <string name="today_waiting_stalled_detail">Reviens dans quelques minutes.</string>
     <string name="today_nothing_new">Tu es à jour.</string>
     <string name="today_up_next">À venir dans ton plan</string>
     <string name="today_start_session">Commencer</string>
@@ -365,9 +356,8 @@
     </plurals>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->
     <string name="today_coming_title">Tes prochaines leçons</string>
+    <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">Préparation en cours…</string>
-    <!-- Under "Your next lessons" when their writing has taken a while. -->
-    <string name="today_coming_stalled">Ça prend plus de temps que d’habitude</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">Pas encore prêtes</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
@@ -389,7 +379,6 @@
     <string name="today_week_day_planned">Durée prévue : %1$s</string>
     <string name="today_plan_finished">Tu as terminé ton plan.</string>
     <string name="today_week_after_exam">après ton examen</string>
-    <string name="today_get_them_now">Les préparer maintenant</string>
     <string name="today_resume">Reprendre</string>
     <!-- Lessons planned for earlier days that didn't fit in today's list; the learner can add them to today. -->
     <plurals name="today_earlier_lessons">

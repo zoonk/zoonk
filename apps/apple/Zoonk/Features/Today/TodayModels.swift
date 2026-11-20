@@ -202,6 +202,12 @@ struct TodayView: Decodable, Equatable, Sendable {
   var isAwaitingOutlines: Bool {
     session.lessonsComing || session.state == .waiting
   }
+
+  /// Main's `useDayState`: a wait for the day's lessons that ran out asks for them, as a day nobody
+  /// is preparing does.
+  func shownState(writingStalled: Bool) -> DayState {
+    session.state == .waiting && writingStalled ? .prepare : session.state
+  }
 }
 
 enum UploadAnswer: Equatable, Sendable {

@@ -13002,6 +13002,7 @@ msgstr "{minutes}분 연습하기"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "레슨 준비하기"
@@ -13034,12 +13035,6 @@ msgid "What changed"
 msgstr "변경 사항"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "지금 레슨 준비하기"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "다음 레슨"
@@ -13050,12 +13045,6 @@ msgstr "다음 레슨"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "아직 준비되지 않았어요"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "평소보다 오래 걸리고 있어요"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13098,21 +13087,6 @@ msgid "Enjoy your day off!"
 msgstr "편히 쉬세요!"
 
 #. On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions.
-#: src/today/today-day-status.tsx
-msgctxt "N-0-Mq"
-msgid "Your mock exam is being prepared."
-msgstr "모의고사를 준비하고 있어요."
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "오늘 레슨을 준비하는 데 평소보다 시간이 더 걸리고 있어요."
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "몇 분 뒤에 다시 와 보세요."
-
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"
 msgid "Getting today's lessons ready…"

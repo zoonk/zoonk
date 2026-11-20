@@ -105,6 +105,7 @@ const NOT_FIXED: Record<string, string> = {
   SavedMindMap: ONE_LEARNERS,
   Session: SIGN_IN,
   "Skill: creating, deleting or merging": "Structure fixes rearrange existing rows only.",
+  SkillOutlineAsk: ONE_LEARNERS,
   SourceUpload: ONE_LEARNERS,
   "Step: a new picture option": "Every picture option needs a generated picture.",
   "Step: a new screen picture": "A fix stores no image; it can only detach a wrong one.",

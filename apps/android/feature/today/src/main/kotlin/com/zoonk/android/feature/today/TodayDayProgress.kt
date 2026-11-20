@@ -72,17 +72,10 @@ private fun HeldSegment(
     model: TodayDayModel,
     minutes: Double,
 ) {
-    val note =
-        when {
-            model.day.lessonsToPrepare -> R.string.today_coming_not_written
-            model.writingStalled -> R.string.today_coming_stalled
-            else -> R.string.today_coming_writing
-        }
-
     Segment(
-        title = stringResource(R.string.today_coming_title),
+        title = comingTitle(model),
         facts = formatMinutes(minutes, currentLocale()),
-        note = stringResource(note),
+        note = stringResource(comingNote(model.comingAsks)),
         kind = LearnKind.Lesson,
     )
 }

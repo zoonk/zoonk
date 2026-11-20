@@ -69,15 +69,18 @@ async function listStandInsStartingBy({
   );
 }
 
-/** Plan items due within `days` of the goal's local today, and the stand-ins that take time in those days. */
-export async function getOutlineWindow({ days, goalId }: { days: number; goalId: string }) {
+type OutlineWindowInput = { days: number; goalId: string; skillIds?: string[] };
+
+/** Includes stand-ins allocated during the horizon and skills in the selected preparation window. */
+export async function getOutlineWindow({ days, goalId, skillIds = [] }: OutlineWindowInput) {
   const goal = await prisma.goal.findUnique({ select: { timezone: true }, where: { id: goalId } });
   const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
   const until = addDays(today, days);
-  const dueBy = { scheduledFor: { lte: until } };
   const started = await listStandInsStartingBy({ goalId, today, until });
 
-  return started.length > 0 ? { OR: [dueBy, { id: { in: started } }] } : dueBy;
+  return {
+    OR: [{ scheduledFor: { lte: until } }, { id: { in: started } }, { skillId: { in: skillIds } }],
+  };
 }
 
 export type OutlineWindow = Awaited<ReturnType<typeof getOutlineWindow>>;

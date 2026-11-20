@@ -99,6 +99,8 @@ msgid "Keyboard shortcuts"
 msgstr "Raccourcis clavier"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(settings)/_components/follow-us.tsx
+#: src/components/public/public-footer.tsx
 msgctxt "tv5FG3"
 msgid "Blog"
 msgstr "Blog"

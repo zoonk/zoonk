@@ -13002,6 +13002,7 @@ msgstr "{minutes}分練習する"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "レッスンを用意する"
@@ -13034,12 +13035,6 @@ msgid "What changed"
 msgstr "変更内容"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "今すぐ準備する"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "次のレッスン"
@@ -13050,12 +13045,6 @@ msgstr "次のレッスン"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "まだ準備ができていません"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "いつもより時間がかかっています"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13098,21 +13087,6 @@ msgid "Enjoy your day off!"
 msgstr "お休みを楽しんでください！"
 
 #. On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions.
-#: src/today/today-day-status.tsx
-msgctxt "N-0-Mq"
-msgid "Your mock exam is being prepared."
-msgstr "模試を準備しています。"
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "今日のレッスンの作成に、いつもより時間がかかっています。"
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "数分後にまた見に来てください。"
-
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"
 msgid "Getting today's lessons ready…"
