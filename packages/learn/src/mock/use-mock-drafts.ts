@@ -11,9 +11,10 @@ import {
   createDraftSaveQueue,
 } from "./draft-save-queue";
 import {
+  type ForwardOnlyKeptRecovery,
   clearHandedInMockDrafts,
   dropUnsentMockDraft,
-  getForwardOnlyKeptReached,
+  getForwardOnlyKeptRecovery,
   keepUnsentMockDraft,
   restoreUnsentMockDrafts,
 } from "./unsent-drafts";
@@ -62,11 +63,11 @@ function restoreKeptForView({
 
   return {
     keptCount: kept.length,
-    keptReached: getForwardOnlyKeptReached({ kept, view }),
     merged:
       kept.length > 0
         ? { ...base, ...Object.fromEntries(kept.map((draft) => [draft.itemId, draft])) }
         : base,
+    recovery: getForwardOnlyKeptRecovery({ kept, view }),
   };
 }
 
@@ -117,7 +118,7 @@ function useUnsentDraftSync({
   activeViewRef: React.RefObject<MockView>;
   blockId: string;
   draftsRef: React.RefObject<Drafts>;
-  onRestore: (merged: Drafts, keptReached: number) => void;
+  onRestore: (merged: Drafts, recovery: ForwardOnlyKeptRecovery) => void;
   queue: DraftQueue;
   savedDrafts: Drafts;
   textTimer: React.RefObject<ReturnType<typeof setTimeout> | null>;
@@ -129,7 +130,7 @@ function useUnsentDraftSync({
     const view = activeViewRef.current;
     queue.start();
 
-    const { keptCount, keptReached, merged } = restoreKeptForView({
+    const { keptCount, merged, recovery } = restoreKeptForView({
       base: draftsRef.current,
       blockId,
       queue,
@@ -139,7 +140,7 @@ function useUnsentDraftSync({
 
     if (keptCount > 0) {
       draftsRef.current = merged;
-      handleRestore(merged, keptReached);
+      handleRestore(merged, recovery);
     }
 
     const retry = () => queue.retryNow();
@@ -154,11 +155,11 @@ function useUnsentDraftSync({
 }
 
 export function useMockDrafts({
-  onRestoreReached,
+  onRestoreRecovery,
   save,
   view,
 }: {
-  onRestoreReached?: (reached: number) => void;
+  onRestoreRecovery?: (recovery: ForwardOnlyKeptRecovery) => void;
   save: (input: MockAnswerInput) => Promise<DraftSaveOutcome>;
   view: MockView;
 }) {
@@ -185,12 +186,9 @@ export function useMockDrafts({
     activeViewRef,
     blockId,
     draftsRef,
-    onRestore: (merged, keptReached) => {
+    onRestore: (merged, recovery) => {
       setDrafts(merged);
-
-      if (keptReached >= 0) {
-        onRestoreReached?.(keptReached);
-      }
+      onRestoreRecovery?.(recovery);
     },
     queue,
     savedDrafts,
@@ -250,7 +248,7 @@ export function useMockDrafts({
         shown.current = null;
       }
     },
-    reset: (next: MockView): number => {
+    reset: (next: MockView): ForwardOnlyKeptRecovery => {
       clearTextTimer(textTimer);
       const previous = activeViewRef.current;
       unsavedText.current = null;
@@ -260,7 +258,7 @@ export function useMockDrafts({
       clearHandedInMockDrafts({ blockId, next, previous });
       queue.forgetRefusals();
 
-      const { keptReached, merged } = restoreKeptForView({
+      const { merged, recovery } = restoreKeptForView({
         base: serverDrafts,
         blockId,
         queue,
@@ -272,7 +270,7 @@ export function useMockDrafts({
       setDrafts(merged);
       setFailedDrafts({});
       setSavedDrafts(serverDrafts);
-      return keptReached;
+      return recovery;
     },
     retry: () => queue.retryNow(),
     saveStatus,

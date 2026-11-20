@@ -29,8 +29,21 @@ function isSameAnswer(first: MockAnswer | null, second: MockAnswer | null): bool
   return JSON.stringify(first) === JSON.stringify(second);
 }
 
-function hasPendingEssays(view: MockView): boolean {
-  return view.essays.some((essay) => essay.status === "pending");
+function shouldGradeEssays({
+  kind,
+  next,
+  previous,
+}: {
+  kind: MockStep;
+  next: MockView;
+  previous: MockView;
+}): boolean {
+  return (
+    (kind === "submit" || kind === "finish") &&
+    next.status === "finished" &&
+    previous.status !== "finished" &&
+    next.essays.some((essay) => essay.status === "pending")
+  );
 }
 
 function withPlayed({
@@ -187,9 +200,15 @@ export function useMockRunner({
   const slow = useTakingLong({ active: busy !== null, afterMs: STEP_BOUNDS.slowMs });
 
   const drafts = useMockDrafts({
-    onRestoreReached: (keptReached) => {
-      setPosition((current) => Math.max(current, keptReached));
-      setReached((current) => Math.max(current, keptReached));
+    onRestoreRecovery: ({ changed: keptChanged, reached: keptReached }) => {
+      if (keptReached >= 0) {
+        setPosition((current) => Math.max(current, keptReached));
+        setReached((current) => Math.max(current, keptReached));
+      }
+
+      if (keptChanged.length > 0) {
+        setChanged((current) => [...new Set([...current, ...keptChanged])]);
+      }
     },
     save: actions.answer,
     view,
@@ -243,19 +262,15 @@ export function useMockRunner({
       return;
     }
 
-    const nextPosition = Math.max(next.current?.resume ?? 0, drafts.reset(next));
+    const recovery = drafts.reset(next);
+    const nextPosition = Math.max(next.current?.resume ?? 0, recovery.reached);
     setPosition(nextPosition);
     setReached(nextPosition);
-    setChanged([]);
+    setChanged([...recovery.changed]);
     setQuestionTimeUp(false);
     setView(next);
 
-    if (
-      (kind === "submit" || kind === "finish") &&
-      next.status === "finished" &&
-      view.status !== "finished" &&
-      hasPendingEssays(next)
-    ) {
+    if (shouldGradeEssays({ kind, next, previous: view })) {
       void gradeEssays();
     }
   }
@@ -297,14 +312,8 @@ export function useMockRunner({
     return true;
   }
 
-  function answer(next: MockAnswer | null) {
-    if (question && canAnswer(next)) {
-      drafts.answer(question.itemId, next);
-    }
-  }
-
   return {
-    answer,
+    answer: (next) => question && canAnswer(next) && drafts.answer(question.itemId, next),
     busy,
     drafts: drafts.drafts,
     endBreak: () => step("endBreak", actions.endBreak),
@@ -330,10 +339,6 @@ export function useMockRunner({
     timeUp,
     toggleFlag: () => question && drafts.toggleFlag(question.itemId),
     view,
-    write: (next) => {
-      if (question && canAnswer(next)) {
-        drafts.write(question.itemId, next);
-      }
-    },
+    write: (next) => question && canAnswer(next) && drafts.write(question.itemId, next),
   };
 }

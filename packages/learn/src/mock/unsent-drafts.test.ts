@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   clearHandedInMockDrafts,
   dropUnsentMockDraft,
-  getForwardOnlyKeptReached,
+  getForwardOnlyKeptRecovery,
   keepUnsentMockDraft,
   restoreUnsentMockDrafts,
 } from "./unsent-drafts";
@@ -223,36 +223,94 @@ describe("unsent mock drafts", () => {
     expect(globalThis.localStorage).toHaveLength(0);
   });
 
-  it("advances reached to the furthest recovered draft in forward-only sections only", () => {
+  it("recovers forward-only reached position and review changes without over-counting", () => {
+    const q1: MockDraft = {
+      answer: { selectedIndex: 0 },
+      durationMs: 1000,
+      flagged: false,
+      itemId: "q1",
+    };
+
+    const q2: MockDraft = {
+      answer: { selectedIndex: 0 },
+      durationMs: 1000,
+      flagged: false,
+      itemId: "q2",
+    };
+
+    const q3: MockDraft = {
+      answer: { selectedIndex: 0 },
+      durationMs: 1000,
+      flagged: false,
+      itemId: "q3",
+    };
+
+    const forwardSection = {
+      breakAfterMinutes: null,
+      essays: 0,
+      index: 0,
+      minutes: 30,
+      name: "Part 1",
+      navigation: { answerChanges: 1, forwardOnly: true, itemSeconds: null, mustAnswer: false },
+      questions: 3,
+      status: "current" as const,
+      tools: null,
+    };
+
     const view = {
       ...makeView({ questionIds: ["q1", "q2", "q3"] }),
-      sections: [
-        {
-          breakAfterMinutes: null,
-          essays: 0,
-          index: 0,
-          minutes: 30,
-          name: "Part 1",
-          navigation: { answerChanges: 0, forwardOnly: true, itemSeconds: null, mustAnswer: false },
-          questions: 3,
-          status: "current" as const,
-          tools: null,
-        },
-      ],
+      sections: [forwardSection],
     } as unknown as MockView;
 
-    const kept: MockDraft[] = [
-      { answer: { selectedIndex: 0 }, durationMs: 1000, flagged: false, itemId: "q2" },
-    ];
+    // Answering q1 -> q2 -> q3 offline consumes no review changes.
+    expect(getForwardOnlyKeptRecovery({ kept: [q1, q2, q3], view })).toStrictEqual({
+      changed: [],
+      reached: 2,
+    });
 
-    expect(getForwardOnlyKeptReached({ kept, view })).toBe(1);
+    // Using a review change offline while already in review marks that question as changed.
+    const reviewView = {
+      ...makeView({ drafts: [q1, q2, q3], questionIds: ["q1", "q2", "q3"] }),
+      sections: [forwardSection],
+    } as unknown as MockView;
+
+    expect(
+      getForwardOnlyKeptRecovery({
+        kept: [{ ...q1, answer: { selectedIndex: 1 } }],
+        view: reviewView,
+      }),
+    ).toStrictEqual({ changed: [0], reached: 0 });
+
+    // Leaving a reviewed question without changing its answer does not spend a review change.
+    expect(
+      getForwardOnlyKeptRecovery({
+        kept: [{ ...q1, durationMs: 5000, flagged: true }],
+        view: reviewView,
+      }),
+    ).toStrictEqual({ changed: [], reached: 0 });
+
+    // Finishing q3 offline and then changing q1 in review recovers both reached and changed.
+    const partialView = {
+      ...makeView({ drafts: [q1, q2], questionIds: ["q1", "q2", "q3"] }),
+      sections: [forwardSection],
+    } as unknown as MockView;
+
+    expect(
+      getForwardOnlyKeptRecovery({
+        kept: [q3, { ...q1, answer: { selectedIndex: 1 } }],
+        view: partialView,
+      }),
+    ).toStrictEqual({ changed: [0], reached: 2 });
 
     const freeView = {
       ...view,
-      sections: [{ ...view.sections[0], navigation: null }],
+      sections: [{ ...forwardSection, navigation: null }],
     } as unknown as MockView;
 
-    expect(getForwardOnlyKeptReached({ kept, view: freeView })).toBe(-1);
+    expect(getForwardOnlyKeptRecovery({ kept: [q2], view: freeView })).toStrictEqual({
+      changed: [],
+      reached: -1,
+    });
   });
 
   it("preserves original enqueue order when reviewing earlier forward-only questions offline", () => {

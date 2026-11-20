@@ -200,12 +200,31 @@ final class MockRun {
     }
 
     if view.currentSection?.navigation?.forwardOnly == true,
-      let keptReached = kept.compactMap({ draft in
-        view.current?.questions.firstIndex { $0.itemId == draft.itemId }
-      }).max()
+      let questions = view.current?.questions
     {
-      position = max(position, keptReached)
-      reached = max(reached, keptReached)
+      let indexByItem = Dictionary(
+        uniqueKeysWithValues: questions.enumerated().map { ($1.itemId, $0) })
+      var simulatedReached = initiallyStored.keys.compactMap { indexByItem[$0] }.max() ?? -1
+      var keptReached = -1
+
+      for draft in kept {
+        guard let index = indexByItem[draft.itemId] else { continue }
+        keptReached = max(keptReached, index)
+
+        if index >= simulatedReached {
+          simulatedReached = index
+        } else if simulatedReached == questions.count - 1,
+          initiallyStored[draft.itemId]?.answer != draft.answer,
+          !changed.contains(index)
+        {
+          changed.append(index)
+        }
+      }
+
+      if keptReached >= 0 {
+        position = max(position, keptReached)
+        reached = max(reached, keptReached)
+      }
     }
 
     for draft in kept {

@@ -449,6 +449,7 @@ final class MockRunOfflinePersistenceTests: XCTestCase {
   private static let blockId = "01a18235-e60e-7dbb-a938-b0ae54987c58"
   private static let itemOne = "11111111-1111-4111-8111-111111111111"
   private static let itemTwo = "22222222-2222-4222-8222-222222222222"
+  private static let itemThree = "55555555-5555-4555-8555-555555555555"
 
   private func makeDefaults() -> (UserDefaults, String) {
     let suite = "MockRunOfflinePersistenceTests.\(UUID().uuidString)"
@@ -634,6 +635,55 @@ final class MockRunOfflinePersistenceTests: XCTestCase {
     let savedOnServer = await transport.savedAnswers()
     XCTAssertTrue(savedOnServer.isEmpty)
   }
+
+  func testReopeningAfterOfflineReviewChangeRestoresReviewAllowance() async throws {
+    let (defaults, suite) = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: suite) }
+
+    let initialDrafts = [
+      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: Self.itemOne),
+      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: Self.itemTwo),
+      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: Self.itemThree),
+    ]
+
+    let transport = MockOfflineTransport(
+      blockId: Self.blockId,
+      itemIds: [Self.itemOne, Self.itemTwo, Self.itemThree],
+      forwardOnly: true,
+      answerChanges: 1,
+      changesLeft: 1,
+      initialDrafts: initialDrafts,
+      resume: 2
+    )
+    let store = makeStore(transport: transport)
+
+    let firstRun = MockRun(store: store, blockId: Self.blockId, defaults: defaults)
+    await firstRun.mock.load()
+    firstRun.adopt(try XCTUnwrap(firstRun.view))
+    firstRun.go(to: 0)
+    firstRun.show(Self.itemOne)
+
+    await transport.setOffline(true)
+    firstRun.answer(.choice(1))
+    _ = try? await waitForTestCondition("First run did not enter retrying") {
+      firstRun.queue.status == .retrying
+    }
+    firstRun.queue.stop()
+
+    await transport.setOffline(false)
+    let reopened = MockRun(store: store, blockId: Self.blockId, defaults: defaults)
+    await reopened.mock.load()
+    reopened.adopt(try XCTUnwrap(reopened.view))
+
+    XCTAssertEqual(reopened.moves.changesLeft, 0)
+    XCTAssertTrue(reopened.moves.canChange(0))
+    XCTAssertFalse(reopened.moves.canChange(1))
+
+    await reopened.queue.idle()
+    let savedOnServer = await transport.savedAnswers()
+    XCTAssertEqual(savedOnServer.last?.itemId, Self.itemOne)
+    XCTAssertEqual(savedOnServer.last?.answer, .choice(1))
+  }
 }
 
 private actor MockOfflineTransport: ClientTransport {
@@ -641,6 +691,10 @@ private actor MockOfflineTransport: ClientTransport {
   private let itemIds: [String]
   private let format: String
   private let forwardOnly: Bool
+  private let answerChanges: Int?
+  private let changesLeft: Int?
+  private let initialDrafts: [MockDraft]
+  private let resume: Int
   private let status: String
   private var offline = false
   private var saved: [MockDraft] = []
@@ -651,12 +705,20 @@ private actor MockOfflineTransport: ClientTransport {
     itemIds: [String],
     format: String = "multipleChoice",
     forwardOnly: Bool = false,
+    answerChanges: Int? = nil,
+    changesLeft: Int? = nil,
+    initialDrafts: [MockDraft] = [],
+    resume: Int = 0,
     status: String = "running"
   ) {
     self.blockId = blockId
     self.itemIds = itemIds
     self.format = format
     self.forwardOnly = forwardOnly
+    self.answerChanges = answerChanges
+    self.changesLeft = changesLeft
+    self.initialDrafts = initialDrafts
+    self.resume = resume
     self.status = status
   }
 
@@ -705,10 +767,15 @@ private actor MockOfflineTransport: ClientTransport {
   }
 
   private func mockJSON() -> String {
+    let answerChangesJSON = answerChanges.map(String.init) ?? "null"
+    let changesLeftJSON = changesLeft.map(String.init) ?? "null"
     let navigationJSON =
       forwardOnly
-      ? #"{"answerChanges":null,"forwardOnly":true,"itemSeconds":null,"mustAnswer":false}"#
+      ? #"{"answerChanges":\#(answerChangesJSON),"forwardOnly":true,"itemSeconds":null,"mustAnswer":false}"#
       : "null"
+    let draftsJSON =
+      (try? JSONEncoder().encode(initialDrafts))
+      .flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
     let optionsJSON = format == "multipleChoice" ? #"["Alpha","Beta"]"# : "null"
     let questionsJSON = itemIds.enumerated().map { index, id in
       """
@@ -718,7 +785,7 @@ private actor MockOfflineTransport: ClientTransport {
     let currentJSON =
       status == "running"
       ? """
-      {"changesLeft":null,"deadline":"2030-01-01T00:00:00.000Z","drafts":[],"kind":null,"plays":[],"questions":[\(questionsJSON)],"resume":0,"section":0}
+      {"changesLeft":\(changesLeftJSON),"deadline":"2030-01-01T00:00:00.000Z","drafts":\(draftsJSON),"kind":null,"plays":[],"questions":[\(questionsJSON)],"resume":\(resume),"section":0}
       """
       : "null"
 

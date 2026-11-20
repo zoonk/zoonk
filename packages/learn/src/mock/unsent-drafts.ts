@@ -141,25 +141,57 @@ export function clearHandedInMockDrafts({
   }
 }
 
-/** Furthest question index reached by recovered drafts in a forward-only section, or -1. */
-export function getForwardOnlyKeptReached({
+export type ForwardOnlyKeptRecovery = { changed: readonly number[]; reached: number };
+
+/**
+ * Computes the furthest reached question and review-change positions consumed by replaying `kept`
+ * in order for a forward-only section, matching `judgeForwardOnlySave`.
+ */
+export function getForwardOnlyKeptRecovery({
   kept,
   view,
 }: {
   kept: readonly MockDraft[];
   view: MockView;
-}): number {
-  const forwardOnly =
-    view.sections.find((section) => section.status === "current")?.navigation?.forwardOnly ?? false;
+}): ForwardOnlyKeptRecovery {
+  const navigation = view.sections.find((section) => section.status === "current")?.navigation;
 
-  if (!forwardOnly || !view.current) {
-    return -1;
+  if (!navigation?.forwardOnly || !view.current) {
+    return { changed: [], reached: -1 };
   }
 
-  return Math.max(
+  const questions = view.current.questions;
+  const questionIndex = new Map(questions.map((question, index) => [question.itemId, index]));
+  const serverDrafts = new Map(view.current.drafts.map((draft) => [draft.itemId, draft]));
+
+  let simulatedReached = Math.max(
     -1,
-    ...kept.map(
-      (draft) => view.current?.questions.findIndex((item) => item.itemId === draft.itemId) ?? -1,
-    ),
+    ...view.current.drafts.map((draft) => questionIndex.get(draft.itemId) ?? -1),
   );
+
+  let reached = -1;
+  const changed: number[] = [];
+
+  for (const draft of kept) {
+    const index = questionIndex.get(draft.itemId);
+
+    if (index !== undefined) {
+      reached = Math.max(reached, index);
+
+      if (index >= simulatedReached) {
+        simulatedReached = index;
+      } else if (simulatedReached === questions.length - 1) {
+        const storedAnswer = serverDrafts.get(draft.itemId)?.answer ?? null;
+
+        if (
+          JSON.stringify(storedAnswer) !== JSON.stringify(draft.answer) &&
+          !changed.includes(index)
+        ) {
+          changed.push(index);
+        }
+      }
+    }
+  }
+
+  return { changed, reached };
 }
