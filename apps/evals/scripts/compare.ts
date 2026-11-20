@@ -38,6 +38,8 @@ import z from "zod";
 const string = { type: "string" } as const;
 const flag = { type: "boolean" } as const;
 const multiple = { multiple: true, type: "string" } as const;
+const DEFAULT_CLAUDE_READER = "anthropic/claude-haiku-5.5";
+const DEFAULT_GPT_READER = "openai/gpt-6-luna";
 
 const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [options]
 
@@ -46,6 +48,9 @@ const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [
   --case <id>              Limit to a case (repeatable)
   --runs <n>               Runs per case (default 2)
   --reader <channel:model> A reader such as seat:anthropic/claude-haiku-5.5 (repeatable, one per family)
+  --claude-reader <model> Full Anthropic model ID (default ${DEFAULT_CLAUDE_READER})
+  --gpt-reader <model>    Full OpenAI model ID (default ${DEFAULT_GPT_READER})
+                         Choose models that passed the control packets. Use --reader to choose channels.
   --reserve <model|none>   Choose the reserve gateway model when sealing, or skip reserve reads
   --reserve-cap <n>        Maximum reserve calls across attempts (default ${DEFAULT_RESERVE_READ_CAP})
   --seal-only              Freeze and seal saved outputs for free, without generation or reads
@@ -69,9 +74,11 @@ const { values: options } = parseArgs({
     bank: string,
     case: multiple,
     challenger: string,
+    "claude-reader": string,
     confirm: flag,
     "cost-usd": string,
     export: string,
+    "gpt-reader": string,
     help: flag,
     id: string,
     import: string,
@@ -110,10 +117,26 @@ const limit = z.coerce
 const reserveCap = z.coerce.number().int().nonnegative().optional().parse(options["reserve-cap"]);
 const current = () => loadComparison(taskId, id);
 
+const claudeReader = z
+  .string()
+  .regex(/^anthropic\/[\w.-]+$/u)
+  .optional()
+  .parse(options["claude-reader"]);
+
+const gptReader = z
+  .string()
+  .regex(/^openai\/[\w.-]+$/u)
+  .optional()
+  .parse(options["gpt-reader"]);
+
+if (options.reader && (claudeReader || gptReader)) {
+  throw new Error("Choose --reader or the family-specific reader options.");
+}
+
 function readers(image: boolean) {
   const defaultReaders = [
-    `${image ? "gateway" : "seat"}:anthropic/claude-haiku-5.5`,
-    "gateway:openai/gpt-6-luna",
+    `${image ? "gateway" : "seat"}:${claudeReader ?? DEFAULT_CLAUDE_READER}`,
+    `gateway:${gptReader ?? DEFAULT_GPT_READER}`,
   ];
 
   const selected = (options.reader ?? defaultReaders).map((raw) => {
@@ -354,16 +377,22 @@ async function getManifest() {
   });
 }
 
-async function forecastFirstRead(manifest: Manifest) {
-  const comparison = await current();
-
-  if (comparison.attempts.some((record) => record.reader.channel !== "owner")) {
-    return;
-  }
+async function forecastFirstRead(manifest: Manifest, needsForecast: boolean) {
+  const comparison = needsForecast && !options.confirm ? await current() : null;
 
   const selected = manifest.readers.filter(
     (reader) => !reader.reserve || options.reserve !== "none",
   );
+
+  if (!comparison || comparison.attempts.some((record) => record.reader.channel !== "owner")) {
+    const cap = reserveCap ?? manifest.reserveCap ?? DEFAULT_RESERVE_READ_CAP;
+
+    process.stdout.write(
+      `${JSON.stringify({ forecast: { readers: selected, reserveCap: cap } })}\n`,
+    );
+
+    return;
+  }
 
   const byReader = await forecastReads(
     { ...manifest, readers: selected, reserveCap: reserveCap ?? manifest.reserveCap },
@@ -376,7 +405,7 @@ async function forecastFirstRead(manifest: Manifest) {
   confirmForecast(byReader, 0, limit, false);
 }
 
-function checkReserveModel(manifest: Manifest) {
+function checkReaderConfiguration(manifest: Manifest) {
   if (
     options.reserve &&
     options.reserve !== "none" &&
@@ -384,6 +413,17 @@ function checkReserveModel(manifest: Manifest) {
   ) {
     throw new Error(
       "The chosen reserve model differs from this sealed comparison. Start a new comparison to change readers.",
+    );
+  }
+
+  if (
+    [claudeReader, gptReader].some(
+      (model) =>
+        model && !manifest.readers.some((reader) => !reader.reserve && reader.model === model),
+    )
+  ) {
+    throw new Error(
+      "The chosen reader differs from this sealed comparison. Start a new comparison to change readers.",
     );
   }
 }
@@ -396,15 +436,15 @@ async function run() {
     return;
   }
 
-  checkReserveModel(manifest);
+  checkReaderConfiguration(manifest);
 
   if (options.export || options.import) {
     await exchange(manifest);
     return;
   }
 
-  if (sealed && !options.confirm && options["stop-after"] !== "checks") {
-    await forecastFirstRead(sealed);
+  if (options["stop-after"] !== "checks") {
+    await forecastFirstRead(manifest, sealed !== null);
   }
 
   if (!(await readOptional(path.join(dir, "checks-complete.json"), z.literal(true)))) {
