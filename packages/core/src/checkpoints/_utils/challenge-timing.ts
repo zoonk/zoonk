@@ -65,9 +65,8 @@ export function getChallengeTimings({
     canHoldPhaseChallenges({
       mockOnlyDay: isMockOnlyDay({
         goal,
-        hasMock: items.some(
-          (item) => item.kind === "mock" && item.scheduledFor?.getTime() === date.getTime(),
-        ),
+        hasMock: true,
+        items,
         planSettings: settings,
         today: date,
       }),

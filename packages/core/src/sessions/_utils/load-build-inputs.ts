@@ -117,6 +117,8 @@ async function finalizeBuildInput({
 type SessionBuildContext = BuildContext & {
   /** A day retaining blocks is not empty and must not get a weakest-topic fallback review. */
   keepsBlocks?: boolean;
+  /** A finished mock isn't loaded as a checkpoint again, so a rebuilt mock day learns of it from the blocks it keeps. */
+  keepsMock?: boolean;
   /** Look ahead past retained lessons rather than letting them consume new-lesson slots. */
   keptLessonIds?: ReadonlySet<string>;
   selection?: SelectedDayPlan;
@@ -247,7 +249,8 @@ export async function loadSessionBuildInput(
     lessons,
     mockReplacesDay: isMockOnlyDay({
       goal,
-      hasMock: checkpoints.some((checkpoint) => checkpoint.mock),
+      hasMock: context.keepsMock || checkpoints.some((checkpoint) => checkpoint.mock),
+      items: plan.items,
       planSettings: plan.settings,
       today: localDate,
     }),

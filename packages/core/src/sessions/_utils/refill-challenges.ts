@@ -143,6 +143,7 @@ export async function fitRefillStretch({
     mockOnlyDay: isMockOnlyDay({
       goal: session.goal,
       hasMock: blocks.some((block) => readBlockPayload(block).checkpoint?.mock),
+      items: plan.items,
       planSettings: plan.settings,
       today: session.localDate,
     }),
