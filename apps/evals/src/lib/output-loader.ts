@@ -4,7 +4,6 @@ import { cache } from "react";
 import { getBaseTestCaseId, getTestCaseRunProgress } from "./test-case-runs";
 import {
   type ModelOutputs,
-  type OutputEntry,
   type RegisteredTask,
   type TaskModelOutputResults,
   type TestCase,
@@ -168,45 +167,4 @@ export async function getAllOutputsForTask(taskId: string): Promise<Map<string, 
   }
 
   return outputsMap;
-}
-
-function getCompleteModelId({
-  modelId,
-  outputs,
-  runsPerTestCase,
-  testCases,
-}: {
-  modelId: string;
-  outputs: ModelOutputs;
-  runsPerTestCase: number;
-  testCases: Pick<TestCase, "id">[];
-}): string[] {
-  const { completedRuns, totalRuns } = getTestCaseRunProgress({
-    completedRunIds: outputs.outputs.map((output) => output.testCaseId),
-    runsPerTestCase,
-    testCases,
-  });
-
-  return totalRuns > 0 && completedRuns === totalRuns ? [modelId] : [];
-}
-
-export async function getModelsWithCompleteOutputs({
-  runsPerTestCase,
-  task,
-}: {
-  runsPerTestCase: number;
-  task: Pick<RegisteredTask, "id" | "testCases">;
-}): Promise<string[]> {
-  const allOutputs = await getAllOutputsForTask(task.id);
-
-  return [...allOutputs.entries()].flatMap(([modelId, outputs]) =>
-    getCompleteModelId({ modelId, outputs, runsPerTestCase, testCases: task.testCases }),
-  );
-}
-
-export function getOutputForTestCase(
-  outputs: ModelOutputs,
-  testCaseId: string,
-): OutputEntry | null {
-  return outputs.outputs.find((output) => output.testCaseId === testCaseId) ?? null;
 }

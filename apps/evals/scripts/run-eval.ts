@@ -1,8 +1,4 @@
 import { parseArgs } from "node:util";
-import { compareWithinJudges } from "@/lib/battle-head-to-head";
-import { buildBattleLeaderboard, sumJudgeCost } from "@/lib/battle-loader";
-import { formatBattleReport } from "@/lib/battle-report";
-import { removeBattleMatchups, runBattleMode } from "@/lib/battle-runner";
 import {
   type LanguageSummary,
   REQUIRED_LANGUAGES,
@@ -10,7 +6,7 @@ import {
   getTestCaseLanguage,
   summarizeByLanguage,
 } from "@/lib/case-languages";
-import { getCallsCost, getFailedRunsCost, getRunCost } from "@/lib/cost";
+import { getCallsCost } from "@/lib/cost";
 import { getTaskResults, removeModelResultRuns, runEval } from "@/lib/eval-runner";
 import {
   type EvalSummary,
@@ -30,7 +26,7 @@ import {
 import { meetsLatencyBudget } from "@/lib/latency";
 import { type ModelConfig, getModelById, getModelDisplayName } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
-import { getAllOutputsForTask, removeModelOutputRuns } from "@/lib/output-loader";
+import { removeModelOutputRuns } from "@/lib/output-loader";
 import {
   getMeteredCalls,
   isPricedFromOutputs,
@@ -40,13 +36,7 @@ import {
 } from "@/lib/spend-meter";
 import { type TaskStats, getSpent, getStatsFromResults } from "@/lib/stats";
 import { getTestCaseRunIds } from "@/lib/test-case-runs";
-import {
-  type ModelOutputs,
-  type RegisteredTask,
-  type TaskEvalResults,
-  type TestCase,
-  supportsJudgeMode,
-} from "@/lib/types";
+import { type RegisteredTask, type TaskEvalResults, type TestCase } from "@/lib/types";
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { zoonkDefaultProvider } from "@zoonk/ai/gateway";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
@@ -66,31 +56,9 @@ function fail(message: string): never {
   throw new Error(message);
 }
 
-/** Every check runs before anything is deleted, written or paid for. */
-function validateBattle({ modelIds, tasks }: { modelIds: string[]; tasks: RegisteredTask[] }) {
-  const ineligible = tasks.find((task) => !supportsJudgeMode(task));
-
-  if (ineligible) {
-    fail(
-      `Task ${ineligible.id} can't battle: it needs judge expectations on every case, text outputs, and, with its own scorer, the code checks that scorer runs.`,
-    );
-  }
-
-  if (modelIds.length < 2) {
-    fail("A battle needs at least two --model.");
-  }
-
-  const notWriter = modelIds.find((modelId) => getModelById(modelId)?.kind !== "generation");
-
-  if (notWriter) {
-    fail(`Model ${notWriter} doesn't write outputs, so it can't battle.`);
-  }
-}
-
 function parseCliArgs() {
   const { values } = parseArgs({
     options: {
-      battle: { default: false, type: "boolean" },
       case: { multiple: true, type: "string" },
       fresh: { default: false, type: "boolean" },
       language: { multiple: true, type: "string" },
@@ -98,7 +66,6 @@ function parseCliArgs() {
       model: { multiple: true, type: "string" },
       runs: { type: "string" },
       saved: { default: false, type: "boolean" },
-      swap: { default: false, type: "boolean" },
       task: { multiple: true, type: "string" },
     },
   });
@@ -120,22 +87,13 @@ function parseCliArgs() {
     fail("Pass --saved or --fresh, not both: --saved reads results without calling any model.");
   }
 
-  if (!values.battle && values.swap) {
-    fail("--swap applies only to --battle.");
-  }
-
   const runs = values.runs === undefined ? RUNS_PER_TEST_CASE : Number(values.runs);
 
   if (!Number.isInteger(runs) || runs < 1) {
     fail(`--runs takes a whole number from 1: ${values.runs}`);
   }
 
-  if (values.battle) {
-    validateBattle({ modelIds, tasks });
-  }
-
   return {
-    battle: values.battle,
     caseIds: values.case ?? [],
     fresh: values.fresh,
     languages: values.language ?? [],
@@ -143,7 +101,6 @@ function parseCliArgs() {
     modelIds,
     runs,
     saved: values.saved,
-    swapped: values.swap,
     tasks,
   };
 }
@@ -383,124 +340,7 @@ async function runTask({
   );
 }
 
-function onlyRuns({
-  modelIds,
-  outputs,
-  runIds,
-}: {
-  modelIds: string[];
-  outputs: Map<string, ModelOutputs>;
-  runIds: Set<string>;
-}): Map<string, ModelOutputs> {
-  return new Map(
-    modelIds.flatMap((modelId): [string, ModelOutputs][] => {
-      const modelOutputs = outputs.get(modelId);
-
-      return modelOutputs
-        ? [
-            [
-              modelId,
-              {
-                ...modelOutputs,
-                failedRuns: modelOutputs.failedRuns?.filter((run) => runIds.has(run.testCaseId)),
-                outputs: modelOutputs.outputs.filter((output) => runIds.has(output.testCaseId)),
-              },
-            ],
-          ]
-        : [];
-    }),
-  );
-}
-
-/**
- * Writes the sampled cases with every model (`runs` times each), then has one judge per family rank
- * them, each judge skipping its own family's models, instead of scoring each output with the single
- * judge. With `saved`, it reports saved outputs and judgments without calling any model.
- */
-async function runBattle({
-  filters,
-  fresh,
-  limit,
-  modelIds,
-  runs,
-  saved,
-  swapped,
-  task,
-}: {
-  filters: CaseFilters;
-  fresh: boolean;
-  limit?: number;
-  modelIds: string[];
-  runs: number;
-  saved: boolean;
-  swapped: boolean;
-  task: RegisteredTask;
-}): Promise<{ report: string; spent: number }> {
-  const sampledTask = {
-    ...task,
-    testCases: sampleTestCases({ filters, limit, testCases: task.testCases }),
-  };
-
-  const runIds = getRunIds(sampledTask.testCases, runs);
-
-  if (fresh) {
-    await Promise.all([
-      removeBattleMatchups({ taskId: task.id, testCaseIds: [...runIds] }),
-      ...modelIds.map((modelId) => removeModelOutputRuns({ modelId, runIds, taskId: task.id })),
-    ]);
-  }
-
-  const writing = await meterWork(async () => {
-    if (!saved) {
-      await Promise.all(
-        modelIds.map((modelId) => generateOutputs(sampledTask, modelId, { runsPerTestCase: runs })),
-      );
-    }
-  });
-
-  const judging = await meterWork(() =>
-    runBattleMode(sampledTask, { modelIds, runsPerTestCase: runs, saved, swapped }),
-  );
-
-  const { matchups, unjudged } = judging.result;
-  const outputs = onlyRuns({ modelIds, outputs: await getAllOutputsForTask(task.id), runIds });
-
-  const costOf = (modelId: string) => {
-    const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
-    const modelOutputs = outputs.get(modelId);
-
-    return (modelOutputs?.outputs ?? []).reduce(
-      (total, run) => total + getRunCost({ model, prices: GATEWAY_PRICES, run }),
-      getFailedRunsCost({ failedRuns: modelOutputs?.failedRuns, prices: GATEWAY_PRICES }),
-    );
-  };
-
-  const generationSpent = saved
-    ? modelIds.reduce((total, modelId) => total + costOf(modelId), 0)
-    : getCallsCost({ calls: writing.calls, prices: GATEWAY_PRICES });
-
-  const judgeSpent = saved
-    ? sumJudgeCost(matchups)
-    : getCallsCost({ calls: judging.calls, prices: GATEWAY_PRICES });
-
-  const report = formatBattleReport({
-    caseRuns: runIds.size,
-    cost: costOf,
-    failed: (modelId) => runIds.size - (outputs.get(modelId)?.outputs.length ?? 0),
-    generationSpent,
-    headToHead: compareWithinJudges(matchups),
-    judgeSpent,
-    leaderboard: buildBattleLeaderboard({ allOutputs: outputs, matchups }),
-    saved,
-    task,
-    unjudged,
-  });
-
-  return { report, spent: generationSpent + judgeSpent };
-}
-
 async function runEvals({
-  battle,
   caseIds,
   fresh,
   languages,
@@ -508,29 +348,10 @@ async function runEvals({
   modelIds,
   runs,
   saved,
-  swapped,
   tasks,
 }: ReturnType<typeof parseCliArgs>) {
   const filters = { caseIds, languages };
   const prices = GATEWAY_PRICES;
-
-  if (battle) {
-    const battles = await tasks.reduce<Promise<{ report: string; spent: number }[]>>(
-      async (previous, task) => [
-        ...(await previous),
-        await runBattle({ filters, fresh, limit, modelIds, runs, saved, swapped, task }),
-      ],
-      Promise.resolve([]),
-    );
-
-    const spent = battles.reduce((total, result) => total + result.spent, 0);
-
-    process.stdout.write(
-      `${battles.map((result) => result.report).join("\n")}\n\n${saved ? "Saved runs cost" : "Total spent"}: ${formatDollars(spent)}.\n`,
-    );
-
-    return;
-  }
 
   const reports = await tasks.reduce<Promise<{ rows: ReportRow[]; task: RegisteredTask }[]>>(
     async (previous, task) => [

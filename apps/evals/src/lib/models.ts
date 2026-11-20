@@ -199,12 +199,3 @@ export function getModelVariantId({
   const configuredModelId = parseReasoningVariantId(modelId)?.configuredModelId ?? modelId;
   return reasoning === DEFAULT_REASONING ? configuredModelId : `${configuredModelId}:${reasoning}`;
 }
-
-function getFamilyFromId(modelId: string): string {
-  const model = getModelById(modelId);
-  return model ? getModelFamily(model) : (modelId.split("/")[0] ?? modelId);
-}
-
-export function canJudge({ judgeId, modelId }: { judgeId: string; modelId: string }): boolean {
-  return getFamilyFromId(judgeId) !== getFamilyFromId(modelId);
-}

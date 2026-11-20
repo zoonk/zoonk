@@ -18,8 +18,6 @@ import {
 } from "./types";
 
 /**
- * Scoring mode keeps one judge so scores stay comparable across runs. Battle
- * mode is where several judges from other model families compare outputs.
  * Rejudging 64 blind-read outputs (18 Nov 2026), GPT-6.2 Astra matched 9 of 32 blind verdicts to
  * GPT-6 Astra's 5 and picked the opposite winner as often (11 to 10), at about $0.09 a judgment
  * against $0.13 and half the wait. It scores about 0.19 lower, so compare a task's models only on
