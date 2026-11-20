@@ -8,13 +8,13 @@ import {
 } from "@zoonk/ai/tasks/language/check-word-pronunciation";
 import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
 import { matchSpokenAnswer } from "@zoonk/core/library/language/spoken-answer-match";
+import { listeningVerdict } from "./listening-verdict";
 import { type LanguageAudioInput, type LookAlike } from "./test-cases";
 
 export type LanguageAudioOutput = { audioPath: string; costUsd: number | null; durationMs: number };
 
 const PRONUNCIATION_MODEL = "google/gemini-3.8-flash";
-const MAX_SCORE = 10;
-const MIN_SCORE = 1;
+const TRANSCRIPTION_MODEL = "openai/gpt-transcribe";
 
 async function judgeLookAlike({
   audio,
@@ -57,7 +57,7 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
   const audio = await readEvalAudio(audioPath);
 
   const [transcript, pronunciation, lookAlike] = await Promise.all([
-    transcribeSpeech({ audio, language: input.language, model: "openai/gpt-transcribe" }),
+    transcribeSpeech({ audio, language: input.language, model: TRANSCRIPTION_MODEL }),
     assessPronunciation({
       audio,
       expectedText: input.text,
@@ -87,31 +87,21 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
     .filter((word) => word.status !== "correct")
     .map((word) => word.text);
 
-  const flags = [misheard, unclear, lookAlike?.verdict.soundsNative === false ? [input.text] : []];
-  const votes = new Map<string, number>();
-
-  for (const words of flags) {
-    const normalized = new Set(
-      words.map((word) => word.normalize("NFC").toLocaleLowerCase(input.language)),
-    );
-
-    normalized.forEach((word) => votes.set(word, (votes.get(word) ?? 0) + 1));
-  }
-
-  const confirmed = [...votes].filter(([, count]) => count >= 2).map(([word]) => word);
-  const unconfirmed = [...votes].filter(([, count]) => count === 1).map(([word]) => word);
-  const total = match.words.length;
-  const readRight = confirmed.length === 0;
-
-  const heardRight =
-    total === 0 ? Number(readRight) : (total - Math.min(confirmed.length, total)) / total;
-
-  const score = Math.max(MIN_SCORE, Math.round(MAX_SCORE * heardRight * 10) / 10);
-  const pendingStatus = unconfirmed.length > 0 ? "Needs a listen" : "Read right";
-  const status = readRight ? pendingStatus : "Confirmed misread";
+  const { readRight, score, status, unconfirmed } = listeningVerdict({
+    flags: [
+      { model: TRANSCRIPTION_MODEL, words: misheard },
+      { model: PRONUNCIATION_MODEL, words: unclear },
+      {
+        model: PRONUNCIATION_MODEL,
+        words: lookAlike?.verdict.soundsNative === false ? [input.text] : [],
+      },
+    ],
+    language: input.language,
+    wordCount: match.words.length,
+  });
 
   const listening = `${status}: eval-results/audio/${audioPath}.${
-    unconfirmed.length > 0 ? ` Single-check flags: ${unconfirmed.join(", ")}.` : ""
+    unconfirmed.length > 0 ? ` Single-provider flags: ${unconfirmed.join(", ")}.` : ""
   }`;
 
   const lookAlikeConclusion = lookAlike
