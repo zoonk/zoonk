@@ -681,6 +681,11 @@
     text-wrap-style: pretty;
   }
 
+  /* Pretty wrapping counts a sentence's closing link button as one lone word and splits the sentence to sit beside it. */
+  :has(> [class~="[--button-variant:link]"]:last-child) {
+    text-wrap-style: auto;
+  }
+
   /* Preflight sets bold text to `bolder`, which is 700; the heaviest weight here is 600. */
   b,
   strong {
