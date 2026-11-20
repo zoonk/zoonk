@@ -148,7 +148,16 @@ async function take(page: Page, step: Step) {
     const field = page.getByLabel(step.fill.field).or(page.getByPlaceholder(step.fill.field));
     await field.first().fill(step.fill.value);
   } else {
-    await page.evaluate(() => globalThis.scrollTo(0, document.documentElement.scrollHeight));
+    // A full-screen task (the lesson player) scrolls inside its own element, not the document.
+    await page.evaluate(() => {
+      const scrollers = [...document.querySelectorAll("*")].filter((element) =>
+        ["auto", "scroll"].includes(getComputedStyle(element).overflowY),
+      );
+
+      for (const element of [document.documentElement, ...scrollers]) {
+        element.scrollTop = element.scrollHeight;
+      }
+    });
   }
 }
 
