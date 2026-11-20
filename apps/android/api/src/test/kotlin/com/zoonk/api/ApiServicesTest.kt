@@ -3,6 +3,7 @@ package com.zoonk.api
 import com.zoonk.api.models.LanguageConversationStartInput
 import com.zoonk.api.models.LanguageConversationStartInputOneOf2
 import com.zoonk.api.models.MeUpdate
+import com.zoonk.api.models.StudyBlockStart
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
@@ -68,6 +69,14 @@ class ApiServicesTest {
             server.enqueue(json("""{"generationId":"wrun_1","status":"generating"}""", code = 202))
             val answer = runCatching { services.language.startLanguageConversation(speakingMock()) }.exceptionOrNull()
             assertEquals("wrun_1", (answer as ContentWritingAnswer).generationId)
+        }
+
+    @Test
+    fun aStartStillPreparedArrivesAsItsAnswer() =
+        runTest {
+            server.enqueue(json("""{"status":"preparing"}""", code = 202))
+            val answer = runCatching { services.studySessions.startChallenge(goalId, StudyBlockStart(timeZone = "UTC")) }.exceptionOrNull()
+            assertTrue(answer is PreparingAnswer)
         }
 
     @Test

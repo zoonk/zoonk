@@ -54,6 +54,7 @@ import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.checkpoint.checkpointName
 import com.zoonk.android.feature.conversation.ChecklistRow
+import com.zoonk.android.feature.mock.MockPreparingNote
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.RunLoadFailed
@@ -734,6 +735,10 @@ private fun ChallengeFooter(
                     StatusLine(R.drawable.ic_calendar_clock, stringResource(R.string.challenge_opens_after_lessons))
                 }
 
+                challenge.access == Challenge.Access.PREPARING -> {
+                    PreparingActions(ui, movable, actions)
+                }
+
                 challenge.status == Challenge.Status.READY -> {
                     StartActions(challenge, ui, movable, actions)
                 }
@@ -846,6 +851,27 @@ private fun StartActions(
         ) {
             Text(stringResource(if (challenge.mock) R.string.challenge_mock_start else R.string.challenge_start))
         }
+    }
+}
+
+/** A mock whose questions are still written: no Start until it's ready, and the learner goes on with the day. */
+@Composable
+private fun PreparingActions(
+    ui: ChallengeUi,
+    movable: Boolean,
+    actions: ChallengeActions,
+) {
+    MockPreparingNote()
+    MoveFailed(ui)
+    TaskActions { width ->
+        if (movable) {
+            OutlinedButton(
+                busy = ui.moving,
+                onClick = actions.viewModel::moveToMonday,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+            ) { Text(stringResource(R.string.challenge_move)) }
+        }
+        Button(onClick = actions::toToday, modifier = width) { Text(stringResource(R.string.mock_preparing_keep_studying)) }
     }
 }
 

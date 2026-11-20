@@ -103,12 +103,14 @@ data class DayStep(
     val weakest: Boolean,
     val opensInPlayer: Boolean = false,
     val waitReason: StudyBlock.WaitReason?,
+    /** A mock whose questions are still written: it shows its time and opens once they're ready. */
+    val preparing: Boolean = false,
 ) {
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
 
     val canOpen: Boolean
-        get() = !isFinished && waitReason == null
+        get() = !isFinished && waitReason == null && !preparing
 
     /**
      * A finished lesson opens again on its own, outside the session. A skipped one comes back in the
@@ -307,6 +309,7 @@ fun StudyBlock.toDayStep(): DayStep =
         weakest = weakest,
         opensInPlayer = opensInPlayer,
         waitReason = waitReason,
+        preparing = preparing,
     )
 
 private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
@@ -341,6 +344,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         weakest = weakest,
         opensInPlayer = opensInPlayer,
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
+        preparing = preparing,
     )
 
 fun StudyMission.toDayMission(): DayMission =

@@ -52,7 +52,7 @@ class ChallengeViewModelTest {
     private val starts = mutableListOf<StudyBlockStart>()
     private var reads = 0
     private var missing = false
-    private var start: (StudyBlockStart) -> ChallengeStart = { ChallengeStart(blockId, ChallengeStart.Kind.CHECKPOINT, sessionId) }
+    private var start: (StudyBlockStart) -> ChallengeStart? = { ChallengeStart(blockId, ChallengeStart.Kind.CHECKPOINT, sessionId) }
     private var write: () -> ChallengeGeneration = { ChallengeGeneration("gen-1", ChallengeGeneration.Status.GENERATING) }
     private var move: () -> ChallengeMove = { ChallengeMove(UUID.randomUUID(), LocalDate(2026, 11, 2), null, null) }
 
@@ -128,6 +128,24 @@ class ChallengeViewModelTest {
 
             assertEquals(listOf(false, true), starts.map { it.afterWriting })
             assertEquals(AppRoute.Mock(blockId.toString(), sessionId.toString()), viewModel.ui.value.opening)
+        }
+
+    /** The mock's questions ran short after the intro was read: nothing opens, and the intro is read again to say so. */
+    @Test
+    fun aMockStillPreparedOpensNothingAndReadsTheIntroAgain() =
+        runTest(dispatcher) {
+            start = { null }
+            val viewModel = viewModel()
+            viewModel.challenge.load()
+            val before = reads
+
+            viewModel.start()
+            advanceUntilIdle()
+
+            assertNull(viewModel.ui.value.opening)
+            assertEquals(null, viewModel.ui.value.problem)
+            assertEquals(false, viewModel.ui.value.starting)
+            assertEquals(before + 1, reads)
         }
 
     @Test
