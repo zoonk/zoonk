@@ -1,4 +1,3 @@
-import fs from "node:fs/promises";
 import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
@@ -21,8 +20,8 @@ import {
   selectionSchema,
   variantSchema,
 } from "./schemas";
-import { resolveModel, source, variantFor } from "./sources";
-import { directory, readOptional, writeBytes, writeRecord } from "./storage";
+import { readRunOutput, resolveModel, source, variantFor } from "./sources";
+import { directory, readBlob, readOptional, readOutputs, writeBytes, writeRecord } from "./storage";
 
 const plannedSelection = selectionSchema.extend({
   challengerModel: z.string(),
@@ -68,19 +67,7 @@ export async function prepare(options: PrepareOptions) {
     Promise.resolve<Run[]>([]),
   );
 
-  const hashes = new Set(
-    runsCompared.flatMap((run) =>
-      [run.incumbent, run.challenger].flatMap((slot) => (slot ? [slot.hash] : [])),
-    ),
-  );
-
-  const blobs = await Promise.all(
-    [...hashes].map(
-      async (key) => [key, await fs.readFile(path.join(dir, "outputs", key), "utf8")] as const,
-    ),
-  );
-
-  const outputs = Object.fromEntries(blobs);
+  const outputs = await readOutputs(dir, { controls: frozen.controls, runsCompared });
 
   const variant =
     frozen.variants.challenger ??
@@ -100,6 +87,49 @@ export async function prepare(options: PrepareOptions) {
     variants,
   });
 }
+async function controlBlobs(controls: z.infer<typeof controlsSchema>, image: boolean) {
+  const blobs = new Map<string, string | Buffer>();
+
+  await Promise.all(
+    controls.pairs.flatMap(({ clean, flawed }) =>
+      [clean, flawed].map(async (item) => {
+        if ((typeof item !== "string") !== image) {
+          throw new TypeError("The control bank needs the same output type as the task.");
+        }
+
+        if (typeof item !== "string") {
+          const data = await readBlob(path.join("eval-results", "controls"), item.image);
+          blobs.set(item.image, data);
+        }
+      }),
+    ),
+  );
+
+  return blobs;
+}
+
+function assertOutputType({
+  challenger,
+  image,
+  incumbent,
+  readers,
+}: {
+  challenger: Awaited<ReturnType<typeof source>>;
+  image: boolean;
+  incumbent: Awaited<ReturnType<typeof source>> | null;
+  readers: Reader[];
+}) {
+  if (
+    [challenger, incumbent].some((variant) => variant && (variant.model.kind === "image") !== image)
+  ) {
+    throw new Error("Choose a model that generates the task’s output type.");
+  }
+
+  if (image && readers.some((reader) => reader.channel === "seat")) {
+    throw new Error("Image packets require gateway model readers.");
+  }
+}
+
 async function freeze(options: PrepareOptions) {
   const { task } = options;
 
@@ -129,13 +159,17 @@ async function freeze(options: PrepareOptions) {
     throw new Error("Select an existing incumbent or omit it for an audit.");
   }
 
+  const image = task.output === "image";
+
+  assertOutputType({ challenger, image, incumbent, readers: options.readers });
+
   const readers = withReserve(options.readers, challenger.model.id, incumbent?.model.id);
 
   const selection = plannedSelection.parse({
     cases,
     challengerModel: challenger.model.id,
     controls,
-    criteria: task.criteria ?? [],
+    criteria: task.criteria ?? (image ? task.scoreCategories : []) ?? [],
     date: new Date().toISOString(),
     id: options.id,
     latencyBudget: task.latencyBudget ?? null,
@@ -158,7 +192,7 @@ async function freeze(options: PrepareOptions) {
     throw new Error("The control bank needs to match the task criteria.");
   }
 
-  const blobs = new Map<string, string>();
+  const blobs = await controlBlobs(selection.controls, image);
 
   const slots = cases.flatMap((tc) =>
     Array.from({ length: options.runs }, (_, index) => {
@@ -210,7 +244,7 @@ async function freeze(options: PrepareOptions) {
   });
 
   const inputTokens =
-    Math.max(1000, ...[...blobs.values()].map((slot) => slot.length)) +
+    (image ? 6 * 2000 : Math.max(1000, ...[...blobs.values()].map((slot) => slot.length))) +
     JSON.stringify(selection.controls).length +
     JSON.stringify(selection.criteria).length;
 
@@ -357,14 +391,17 @@ async function generateSlot({
         await writeRecord(path.join(dir, "challenger.json"), variantSchema, produced);
       }
 
+      const output = await readRunOutput(entry.output, task.output === "image");
+
       run.challenger = {
         costUsd,
         durationMs: entry.duration,
-        hash: hash(entry.output),
+        hash: hash(output),
+        ...(task.output === "image" ? { mediaType: "image/webp" as const } : {}),
         userPromptHash: hash(entry.userPrompt),
       };
 
-      await writeBytes(path.join(dir, "outputs", run.challenger.hash), entry.output);
+      await writeBytes(path.join(dir, "outputs", run.challenger.hash), output);
     } else {
       run.failures.push({
         costUsd,

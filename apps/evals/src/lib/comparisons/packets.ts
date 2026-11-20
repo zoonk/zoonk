@@ -2,7 +2,9 @@ import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { hash, hashJson } from "./identity";
 import {
+  type Comparison,
   type Manifest,
+  type PacketOutput,
   type Reader,
   type SealedPacket,
   attemptSchema,
@@ -10,6 +12,7 @@ import {
   identifier,
   manifestSchema,
   responseSchema,
+  type runSchema,
 } from "./schemas";
 import { directory, readOptional, writeRecord } from "./storage";
 import type z from "zod";
@@ -25,14 +28,27 @@ type PacketInput = Pick<
   | "variants"
   | "protocols"
 >;
+
+function toPacketOutput(
+  slot: z.infer<typeof runSchema>["challenger"],
+  outputs: Comparison["outputs"],
+): PacketOutput | null {
+  if (!slot) {
+    return null;
+  }
+
+  const output = outputs[slot.hash];
+  return Buffer.isBuffer(output) ? { image: slot.hash } : (output ?? null);
+}
+
 export function buildPackets(
   selection: PacketInput,
-  outputs: Record<string, string>,
+  outputs: Comparison["outputs"],
 ): SealedPacket[] {
   return selection.runsCompared.flatMap((run, index) => {
     const testCase = selection.cases.find((criterion) => criterion.id === run.caseId);
-    const challenger = run.challenger && outputs[run.challenger.hash];
-    const incumbent = run.incumbent && outputs[run.incumbent.hash];
+    const challenger = toPacketOutput(run.challenger, outputs);
+    const incumbent = toPacketOutput(run.incumbent, outputs);
 
     if (!testCase || !challenger || (selection.variants.incumbent && !incumbent)) {
       return [];

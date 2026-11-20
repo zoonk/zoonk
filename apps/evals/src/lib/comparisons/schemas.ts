@@ -63,14 +63,18 @@ export const verificationSchema = z.object({
 const input = z.record(z.string(), z.unknown());
 const firstLabel = "A";
 const secondLabel = "B";
-export function blindOutputs(first: string, second: string | null) {
+const imageOutput = z.object({ image: digest });
+const packetOutput = z.union([text, imageOutput]);
+export type PacketOutput = z.infer<typeof packetOutput>;
+
+export function blindOutputs(first: PacketOutput, second: PacketOutput | null) {
   return { [firstLabel]: first, [secondLabel]: second };
 }
 const pairContent = z.object({
   expectations: text,
-  [firstLabel]: text,
+  [firstLabel]: packetOutput,
   input,
-  [secondLabel]: text.nullable(),
+  [secondLabel]: packetOutput.nullable(),
 });
 export const packetSchema = z.object({
   criteria: z.array(criterionSchema),
@@ -82,12 +86,12 @@ export const controlsSchema = z.object({
   pairs: z
     .array(
       z.object({
-        clean: text,
+        clean: packetOutput,
         criterion: text,
         defect: text,
         expectations: text,
         falseAllegation: text,
-        flawed: text,
+        flawed: packetOutput,
         input,
         provenance: text,
       }),
@@ -106,6 +110,7 @@ const slotSchema = z.object({
   costUsd: z.number().nonnegative(),
   durationMs: z.number().nonnegative(),
   hash: digest,
+  mediaType: z.literal("image/webp").optional(),
   userPromptHash: digest,
 });
 
@@ -197,7 +202,7 @@ export const verificationAttemptSchema = z.object({
 });
 export type Comparison = {
   manifest: Manifest;
-  outputs: Record<string, string>;
+  outputs: Record<string, string | Buffer>;
   attempts: Attempt[];
   checks: z.infer<typeof checkSchema>[];
   verifications: z.infer<typeof verificationAttemptSchema>[];

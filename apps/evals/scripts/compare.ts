@@ -5,9 +5,10 @@ import { checkRuns } from "@/lib/comparisons/checks";
 import { decide, decisionSchema } from "@/lib/comparisons/decision";
 import { importVerdicts, saveResponse } from "@/lib/comparisons/packets";
 import { prepare } from "@/lib/comparisons/prepare";
-import { readPacket } from "@/lib/comparisons/readers";
+import { imageContent, readPacket } from "@/lib/comparisons/readers";
 import { formatDecision } from "@/lib/comparisons/report";
 import {
+  type Comparison,
   type Manifest,
   type SealedPacket,
   identifier,
@@ -15,7 +16,13 @@ import {
   readerSchema,
   responseSchema,
 } from "@/lib/comparisons/schemas";
-import { directory, loadComparison, readOptional, writeRecord } from "@/lib/comparisons/storage";
+import {
+  directory,
+  loadComparison,
+  readBlob,
+  readOptional,
+  writeRecord,
+} from "@/lib/comparisons/storage";
 import { verifyClaims } from "@/lib/comparisons/verify";
 import { runInOrder } from "@/lib/concurrency";
 import { getTaskById } from "@/tasks";
@@ -57,8 +64,11 @@ globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
 
 const current = () => loadComparison(taskId, id);
 
-function readers() {
-  const defaultReaders = ["seat:anthropic/claude-haiku-5.5", "gateway:openai/gpt-6-luna"];
+function readers(image: boolean) {
+  const defaultReaders = [
+    `${image ? "gateway" : "seat"}:anthropic/claude-haiku-5.5`,
+    "gateway:openai/gpt-6-luna",
+  ];
 
   if (
     [options.incumbent, options.challenger].some((model) => model?.startsWith("openai/")) &&
@@ -114,10 +124,26 @@ async function exchange(manifest: Manifest) {
   }
 
   if (options.export) {
+    const keys = new Set(
+      packet.packet.pairs.flatMap((pair) =>
+        [pair.A, pair.B].flatMap((item) => (item && typeof item !== "string" ? [item.image] : [])),
+      ),
+    );
+
+    const images = Object.fromEntries(
+      await Promise.all(
+        [...keys].map(async (key) => {
+          const data = await readBlob(dir, key);
+          return [key, `data:image/webp;base64,${data.toString("base64")}`] as const;
+        }),
+      ),
+    );
+
     await fs.writeFile(
       options.export,
       JSON.stringify(
         {
+          ...(Object.keys(images).length > 0 ? { images } : {}),
           packet: packet.packet,
           protocol: manifest.protocols.reader,
           schema: z.toJSONSchema(responseSchema),
@@ -150,10 +176,13 @@ async function exchange(manifest: Manifest) {
   }
 }
 
-async function readOne(packet: SealedPacket, protocol: string) {
+async function readOne(packet: SealedPacket, { manifest, outputs }: Comparison) {
+  const { pairs, ...header } = packet.packet;
+
   const { response, costUsd, channel } = await readPacket({
+    content: imageContent({ entries: pairs, header, identify: (entry) => entry.pairId, outputs }),
     packet: JSON.stringify(packet.packet),
-    protocol,
+    protocol: manifest.protocols.reader,
     reader: packet.reader,
     schema: responseSchema,
   });
@@ -203,11 +232,11 @@ async function readOrder(reverse: boolean, reserve = false) {
   const first = pending.at(0);
 
   if (options["stop-after"] === "packet" && first) {
-    await readOne(first, manifest.protocols.reader);
+    await readOne(first, comparison);
     return true;
   }
 
-  await runInOrder(pending, (packet) => readOne(packet, manifest.protocols.reader));
+  await runInOrder(pending, (packet) => readOne(packet, comparison));
 
   return false;
 }
@@ -232,7 +261,7 @@ async function getManifest() {
       .nonnegative()
       .parse(options["limit-usd"] ?? 1),
     question: options.question ?? "Which variant better serves the learner?",
-    readers: readers(),
+    readers: readers(task.output === "image"),
     runs: z.coerce
       .number()
       .int()

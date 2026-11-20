@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import z from "zod";
 import { getFailedRunsCost, getRunCost } from "../cost";
+import { readEvalImage } from "../image-files";
 import { DEFAULT_REASONING, getModelById } from "../models";
 import { loadModelOutputs } from "../output-loader";
 import { type OutputEntry } from "../types";
@@ -13,8 +14,8 @@ import { loadComparison, readOptional } from "./storage";
 export function resolveModel(modelId: string) {
   const model = getModelById(modelId);
 
-  if (!model || model.kind !== "generation") {
-    throw new Error(`Unknown text generation variant ${modelId}`);
+  if (!model || (model.kind !== "generation" && model.kind !== "image")) {
+    throw new Error(`Unknown generation variant ${modelId}`);
   }
 
   return model;
@@ -57,7 +58,7 @@ type Delivery = {
   inputHash?: string;
   input: unknown;
   slot: NonNullable<z.infer<typeof runSchema>["challenger"]>;
-  output: string;
+  output: string | Buffer;
 };
 
 type Failure = { runId: string; costUsd: number; reason: string };
@@ -106,6 +107,15 @@ async function sealedSource(taskId: string, spec: string): Promise<Source> {
     variant,
   };
 }
+
+const imagePathSchema = z.object({ imagePath: z.string() });
+
+export async function readRunOutput(output: string, image: boolean) {
+  return image
+    ? Buffer.from(await readEvalImage(imagePathSchema.parse(JSON.parse(output)).imagePath))
+    : output;
+}
+
 export async function source(taskId: string, spec: string): Promise<Source> {
   if (spec.startsWith("sealed:")) {
     return sealedSource(taskId, spec);
@@ -148,26 +158,61 @@ export async function source(taskId: string, spec: string): Promise<Source> {
 
   const costs = outputs.map((run) => getRunCost({ model, prices: GATEWAY_PRICES, run }));
 
-  const deliveries = outputs.flatMap((entry, index) => {
-    if (!isDeepStrictEqual(variantFor(model.id, entry), variant)) {
-      return [];
-    }
+  const image = model.kind === "image";
 
-    return [
-      {
-        input: inputs.get(entry.testCaseId),
-        inputHash: entry.caseInputHash,
-        output: entry.output,
-        runId: entry.testCaseId,
-        slot: {
+  const imagePaths = image
+    ? outputs.map((entry) => imagePathSchema.parse(JSON.parse(entry.output)).imagePath)
+    : [];
+
+  const ambiguous = new Set(imagePaths.filter((file, index) => imagePaths.indexOf(file) !== index));
+
+  const delivered = await Promise.all(
+    outputs.map(async (entry, index): Promise<Delivery | Failure | null> => {
+      if (!isDeepStrictEqual(variantFor(model.id, entry), variant)) {
+        return null;
+      }
+
+      const imagePath = imagePaths[index];
+
+      if (imagePath && ambiguous.has(imagePath)) {
+        return {
           costUsd: costs[index] ?? 0,
-          durationMs: entry.duration,
-          hash: hash(entry.output),
-          userPromptHash: hash(entry.userPrompt),
-        },
-      },
-    ];
-  });
+          reason: "Several saved runs share the same image file.",
+          runId: entry.testCaseId,
+        };
+      }
+
+      try {
+        const output = await readRunOutput(entry.output, image);
+
+        return {
+          input: inputs.get(entry.testCaseId),
+          inputHash: entry.caseInputHash,
+          output,
+          runId: entry.testCaseId,
+          slot: {
+            costUsd: costs[index] ?? 0,
+            durationMs: entry.duration,
+            hash: hash(output),
+            ...(image ? { mediaType: "image/webp" as const } : {}),
+            userPromptHash: hash(entry.userPrompt),
+          },
+        };
+      } catch (error) {
+        if (!image || !(error instanceof Error && "code" in error && error.code === "ENOENT")) {
+          throw error;
+        }
+
+        return {
+          costUsd: costs[index] ?? 0,
+          reason: "Saved image file is missing.",
+          runId: entry.testCaseId,
+        };
+      }
+    }),
+  );
+
+  const deliveries = delivered.filter((entry) => entry !== null);
 
   const failures = (data?.failedRuns ?? []).map((fail) => ({
     costUsd: getFailedRunsCost({ failedRuns: [fail], prices: GATEWAY_PRICES }),
@@ -175,5 +220,11 @@ export async function source(taskId: string, spec: string): Promise<Source> {
     runId: fail.testCaseId,
   }));
 
-  return { costs, deliveries, failures, model, variant };
+  return {
+    costs,
+    deliveries: deliveries.filter((entry) => "slot" in entry),
+    failures: [...failures, ...deliveries.filter((entry) => "reason" in entry)],
+    model,
+    variant,
+  };
 }

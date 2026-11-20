@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
-export const hash = (value: string) => createHash("sha256").update(value).digest("hex");
+export const hash = (value: string | Uint8Array) =>
+  createHash("sha256").update(value).digest("hex");
 export function hashJson(value: unknown) {
   const canonical = JSON.stringify(value, (_key, nested: unknown) => {
     if (!nested || typeof nested !== "object" || Array.isArray(nested)) {

@@ -3,12 +3,12 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describeStep } from "@zoonk/ai/task-provenance";
-import { Output, generateText } from "ai";
+import { Output, type UserContent, generateText } from "ai";
 import z from "zod";
 import { getCallCost } from "../cost";
 import { toModelCall } from "../types";
 import { pricesFor } from "./reader-prices";
-import { type Reader } from "./schemas";
+import { type Comparison, type PacketOutput, type Reader, blindOutputs } from "./schemas";
 
 async function claude(args: string[], cwd: string, input: string) {
   const child = spawn("claude", args, {
@@ -153,15 +153,69 @@ class SeatLimitError extends Error {
     this.resetsAt = resetsAt;
   }
 }
+
+function attached(item: PacketOutput) {
+  return typeof item === "string" ? item : "See attached image.";
+}
+
+export function imageContent<T extends ReturnType<typeof blindOutputs>>({
+  entries,
+  header,
+  identify,
+  outputs,
+}: {
+  entries: T[];
+  header?: object;
+  identify: (entry: T) => string;
+  outputs: Comparison["outputs"];
+}): UserContent | undefined {
+  const images = entries.flatMap((entry) =>
+    (["A", "B"] as const).flatMap((label) => {
+      const item = entry[label];
+
+      if (!item || typeof item === "string") {
+        return [];
+      }
+
+      const bytes = outputs[item.image];
+
+      if (!Buffer.isBuffer(bytes)) {
+        throw new TypeError("Missing archived packet image.");
+      }
+
+      return [
+        { text: `Image ${label} for ${identify(entry)}:`, type: "text" as const },
+        { data: bytes, mediaType: "image/webp", type: "file" as const },
+      ];
+    }),
+  );
+
+  if (images.length === 0) {
+    return undefined;
+  }
+
+  const brief = entries.map((entry) => ({
+    ...entry,
+    ...blindOutputs(attached(entry.A), entry.B === null ? null : attached(entry.B)),
+  }));
+
+  return [
+    { text: JSON.stringify(header ? { ...header, pairs: brief } : brief), type: "text" },
+    ...images,
+  ];
+}
+
 export async function readPacket<T>({
   reader,
   protocol,
   packet,
+  content,
   schema,
 }: {
   reader: Reader;
   protocol: string;
   packet: string;
+  content?: UserContent;
   schema: z.ZodType<T>;
 }) {
   if (reader.channel === "owner") {
@@ -169,6 +223,10 @@ export async function readPacket<T>({
   }
 
   if (reader.channel === "seat") {
+    if (content) {
+      throw new TypeError("Image packets require gateway model readers.");
+    }
+
     try {
       return await seatRead(reader, protocol, packet, schema);
     } catch (error) {
@@ -203,7 +261,7 @@ export async function readPacket<T>({
     maxRetries: 0,
     model: reader.model,
     output: Output.object({ schema }),
-    prompt: packet,
+    ...(content ? { messages: [{ content, role: "user" as const }] } : { prompt: packet }),
   });
 
   const costUsd = result.steps.reduce(

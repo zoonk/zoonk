@@ -2,7 +2,7 @@ import path from "node:path";
 import { runInOrder } from "../concurrency";
 import { majorClaims } from "./decision";
 import { hash } from "./identity";
-import { readPacket } from "./readers";
+import { imageContent, readPacket } from "./readers";
 import {
   type Comparison,
   blindOutputs,
@@ -83,6 +83,11 @@ export async function verifyClaims(comparison: Comparison, attempt: string) {
     const packet = JSON.stringify(batch);
 
     const { response, costUsd, channel } = await readPacket({
+      content: imageContent({
+        entries: batch,
+        identify: (entry) => entry.claimId,
+        outputs: comparison.outputs,
+      }),
       packet,
       protocol: manifest.protocols.verifier,
       reader,

@@ -5,6 +5,7 @@ import { decisionSchema } from "./decision";
 import { hash } from "./identity";
 import {
   type Comparison,
+  type Manifest,
   attemptSchema,
   checkSchema,
   digest,
@@ -37,7 +38,7 @@ export async function readOptional<T>(file: string, schema: z.ZodType<T>): Promi
     throw error;
   }
 }
-export async function writeBytes(file: string, bytes: string, replace = false) {
+export async function writeBytes(file: string, bytes: string | Buffer, replace = false) {
   await fs.mkdir(path.dirname(file), { recursive: true });
   const temp = `${file}.${randomUUID()}.tmp`;
   await fs.writeFile(temp, bytes, { flag: "wx" });
@@ -51,10 +52,13 @@ export async function writeBytes(file: string, bytes: string, replace = false) {
     try {
       await fs.link(temp, file);
     } catch (error) {
-      if (
-        !(error instanceof Error && "code" in error && error.code === "EEXIST") ||
-        (await fs.readFile(file, "utf8")) !== bytes
-      ) {
+      if (!(error instanceof Error && "code" in error && error.code === "EEXIST")) {
+        throw error;
+      }
+
+      const existing = await fs.readFile(file);
+
+      if (!existing.equals(Buffer.from(bytes))) {
         throw error;
       }
     }
@@ -111,6 +115,46 @@ async function records<T>(dir: string, schema: z.ZodType<T>) {
     ),
   );
 }
+export async function readBlob(dir: string, key: string) {
+  const bytes = await fs.readFile(path.join(dir, "outputs", digest.parse(key)));
+
+  if (hash(bytes) !== key) {
+    throw new Error("Compared output no longer matches its sealed digest.");
+  }
+
+  return bytes;
+}
+
+export async function readOutputs(
+  dir: string,
+  { controls, runsCompared }: Pick<Manifest, "controls" | "runsCompared">,
+) {
+  const formats = new Map(
+    runsCompared.flatMap((run) =>
+      [run.challenger, run.incumbent].flatMap((slot) =>
+        slot ? [[slot.hash, slot.mediaType] as const] : [],
+      ),
+    ),
+  );
+
+  controls.pairs.forEach(({ clean, flawed }) => {
+    for (const item of [clean, flawed]) {
+      if (typeof item !== "string") {
+        formats.set(item.image, "image/webp");
+      }
+    }
+  });
+
+  return Object.fromEntries(
+    await Promise.all(
+      [...formats].map(async ([key, mediaType]) => {
+        const bytes = await readBlob(dir, key);
+        return [key, mediaType ? bytes : bytes.toString("utf8")] as const;
+      }),
+    ),
+  );
+}
+
 export async function loadComparison(taskId: string, id: string): Promise<Comparison> {
   const dir = directory(taskId, id);
   const manifest = await readOptional(path.join(dir, "manifest.json"), manifestSchema);
@@ -119,30 +163,14 @@ export async function loadComparison(taskId: string, id: string): Promise<Compar
     throw new Error("Comparison has no matching sealed manifest.");
   }
 
-  const hashes = new Set(
-    manifest.runsCompared.flatMap((run) =>
-      [run.challenger, run.incumbent].flatMap((slot) => (slot ? [slot.hash] : [])),
-    ),
-  );
-
-  const [pairs, attempts, checks, verifications] = await Promise.all([
-    Promise.all(
-      [...hashes].map(async (key) => {
-        const bytes = await fs.readFile(path.join(dir, "outputs", digest.parse(key)), "utf8");
-
-        if (hash(bytes) !== key) {
-          throw new Error("Compared output no longer matches its sealed digest.");
-        }
-
-        return [key, bytes] as const;
-      }),
-    ),
+  const [outputs, attempts, checks, verifications] = await Promise.all([
+    readOutputs(dir, manifest),
     records(path.join(dir, "verdicts"), attemptSchema),
     records(path.join(dir, "checks"), checkSchema),
     records(path.join(dir, "verifications"), verificationAttemptSchema),
   ]);
 
-  return { attempts, checks, manifest, outputs: Object.fromEntries(pairs), verifications };
+  return { attempts, checks, manifest, outputs, verifications };
 }
 export function loadDecision(taskId: string, id: string) {
   return readOptional(path.join(directory(taskId, id), "decision.json"), decisionSchema);

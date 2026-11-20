@@ -1,6 +1,7 @@
 import path from "node:path";
 import z from "zod";
 import { runInOrder } from "../concurrency";
+import { checkImageEdges } from "../image-edges";
 import { solveAnswerKeys } from "../key-check";
 import { type RegisteredTask } from "../types";
 import { hash } from "./identity";
@@ -16,7 +17,7 @@ export async function checkRuns(task: RegisteredTask, comparison: Comparison) {
 
   const check = task.codeChecks;
 
-  if (!check) {
+  if (!check && task.output !== "image") {
     await writeRecord(doneFile, z.literal(true), true);
     return;
   }
@@ -54,6 +55,23 @@ export async function checkRuns(task: RegisteredTask, comparison: Comparison) {
 
       if (output === undefined) {
         throw new Error("Missing sealed output.");
+      }
+
+      if (Buffer.isBuffer(output)) {
+        const edges = await checkImageEdges(output);
+
+        await writeRecord(`${prefix}.json`, checkSchema, {
+          ...base,
+          ...edges,
+          costUsd: 0,
+          name: "background and frame",
+        });
+
+        return;
+      }
+
+      if (!check) {
+        return;
       }
 
       const checks = await check({ output, testCase } as never);
