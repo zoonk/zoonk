@@ -54,7 +54,10 @@ const CELL_FILLED_CLASS =
 const CELL_CURRENT_CLASS =
   "after:bg-foreground after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full";
 
-/** A "Not sure" mark is a tint in its own color, never a ring; an answered one keeps its number in ink. */
+/**
+ * An answered "Not sure" question is a tint in its own color, never a ring, with its number in ink.
+ * A blank one keeps the blank look, so the badge alone says it's marked.
+ */
 const CELL_UNSURE_CLASS =
   "bg-warning/14 enabled:hover:bg-warning/14 contrast-more:ring-warning ring-transparent contrast-more:ring-2";
 
@@ -83,8 +86,8 @@ function QuestionCell({
       className={cn(
         "focus-visible:outline-ring/50 text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-3 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
         isAnswered && CELL_FILLED_CLASS,
-        unsure && cn(CELL_UNSURE_CLASS, !isAnswered && "text-warning-text"),
-        isCurrent && cn(CELL_CURRENT_CLASS, !unsure && "text-foreground"),
+        unsure && isAnswered && CELL_UNSURE_CLASS,
+        isCurrent && cn(CELL_CURRENT_CLASS, "text-foreground"),
       )}
       disabled={!runner.moves.canOpen(index)}
       onClick={() => onPick(index)}
