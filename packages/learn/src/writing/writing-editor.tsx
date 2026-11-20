@@ -10,7 +10,15 @@ import { useId } from "react";
 import { ESSAY_FIELD_CLASS } from "../essay/essay-labels";
 
 /** "about 23 of 30 lines": the count stays in view under the field, and what's past the limit says so. */
-function LineCount({ id, text, writing }: { id: string; text: string; writing: WritingPrompt }) {
+export function WritingLineCount({
+  id,
+  text,
+  writing,
+}: {
+  id: string;
+  text: string;
+  writing: WritingPrompt;
+}) {
   const t = useExtracted();
 
   if (writing.lines === null) {
@@ -78,7 +86,7 @@ export function WritingEditor({
         spellCheck={false}
         value={text}
       />
-      <LineCount id={`${id}-count`} text={text} writing={writing} />
+      <WritingLineCount id={`${id}-count`} text={text} writing={writing} />
     </section>
   );
 }

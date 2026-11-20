@@ -48,6 +48,7 @@
     "./enter-button": "./src/_components/enter-button.tsx",
     "./essay": "./src/essay/essay-screen.tsx",
     "./writing": "./src/writing/writing-screen.tsx",
+    "./writing/answer": "./src/writing/writing-answer.tsx",
     "./writing/result": "./src/writing/writing-result.tsx",
     "./writing/start": "./src/writing/writing-start.tsx",
     "./exam": "./src/exam/exam-screen.tsx",

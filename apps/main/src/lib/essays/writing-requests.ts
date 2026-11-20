@@ -75,3 +75,28 @@ export async function saveWritingDraftFromBrowser({
 
   return { draft: saved.data, status: response.ok ? "saved" : "conflict" };
 }
+
+/** A written task the learner asked for: its block, then its start, as the tap's one request chain. */
+export async function writeNowFromBrowser({
+  goalId,
+  taskKey,
+}: {
+  goalId: string;
+  taskKey?: string;
+}): Promise<{ answer: WritingStartAnswer; blockId: string } | null> {
+  const created = await sendFromBrowser({
+    body: taskKey ? { taskKey } : {},
+    method: "POST",
+    path: `/v1/goals/${encodeURIComponent(goalId)}/writing-blocks`,
+  });
+
+  const body: unknown = await created?.json().catch(() => null);
+  const blockId = created?.ok ? getString(body, "blockId") : null;
+
+  if (!blockId) {
+    return null;
+  }
+
+  const answer = await startWritingFromBrowser({ blockId });
+  return { answer: answer === "notWriting" ? { status: "failed" } : answer, blockId };
+}

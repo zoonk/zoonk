@@ -21,6 +21,7 @@ type BlockCopyInput = Pick<
   | "title"
   | "topics"
   | "weakest"
+  | "writingAvailability"
 >;
 
 /** A challenge's row has one name, from what the learner does in it. */
@@ -141,6 +142,15 @@ export function useBlockDetail() {
   const t = useExtracted();
   const shortList = useShortList();
 
+  /** A written task's row says when it waits for tomorrow, or that its draft is kept. */
+  function writingDetail({ writingAvailability }: BlockCopyInput): string | null {
+    if (writingAvailability?.status === "tomorrow") {
+      return t("Back tomorrow: today's extra grades are used");
+    }
+
+    return writingAvailability?.status === "continue" ? t("Your draft is saved") : null;
+  }
+
   function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null {
     if (hasCapsules(block) && block.weakest) {
       return t(
@@ -164,7 +174,7 @@ export function useBlockDetail() {
     }
 
     if (block.kind === "produce") {
-      return block.canDo;
+      return writingDetail(block) ?? block.canDo;
     }
 
     // A call has no questions to count, and its name says what it is.

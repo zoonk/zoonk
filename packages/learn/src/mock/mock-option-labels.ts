@@ -4,12 +4,41 @@ import { type MockOptionView } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 
+/** An exam of several tests (an objective test in the morning, a written one in the afternoon). */
+export function getExamTests(options: readonly MockOptionView[]): number {
+  const full = options.find((option) => option.kind === "full");
+  return full?.sections?.length ?? 0;
+}
+
+/** One test of an exam of several is named as the notice names it; all of them, by their count. */
+function getTestName(
+  option: MockOptionView,
+): { kind: "one"; name: string } | { count: number; kind: "tests" } | null {
+  const sections = option.sections ?? [];
+  const [section] = sections;
+
+  if ((option.kind === "objective" || option.kind === "written") && section) {
+    return { kind: "one", name: section.name };
+  }
+
+  return option.kind === "full" && sections.length > 1
+    ? { count: sections.length, kind: "tests" }
+    : null;
+}
+
 export function useMockOptionName() {
   const t = useExtracted();
   const format = useFormatter();
 
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
     const day = String(option.day ?? 1);
+    const testName = severalDays ? null : getTestName(option);
+
+    if (testName) {
+      return testName.kind === "tests"
+        ? t("{count, plural, =2 {Both tests} other {All # tests}}", { count: testName.count })
+        : testName.name;
+    }
 
     if (option.kind === "area") {
       return option.areas[0] ?? option.area ?? t("One subject");
@@ -41,6 +70,12 @@ export function useMockOptionDetail() {
   const format = useFormatter();
 
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
+    const sessions = (option.sections ?? []).flatMap(({ session }) => (session ? [session] : []));
+
+    if ((option.sections?.length ?? 0) > 0 && option.kind !== "half" && sessions.length > 0) {
+      return format.list(sessions, { type: "conjunction" });
+    }
+
     const subjects = severalDays && option.kind !== "area" ? option.areas : [];
     const parts = option.covers ?? [...subjects, ...option.written];
 
@@ -70,17 +105,26 @@ function usualMinutes({
   return estimatedMinutes < minutes && rounded < minutes ? rounded : null;
 }
 
+/** A written test's questions are its tasks, which the objective count leaves out. */
+function countQuestions(option: Pick<MockOptionView, "questions" | "sections">): number {
+  const sections = option.sections ?? [];
+
+  return sections.length > 0
+    ? sections.reduce((sum, section) => sum + (section.questions ?? 0), 0)
+    : option.questions;
+}
+
 /** The mock's questions and time limit, as the exam page and the plan show them. */
 function useMockOptionSize() {
   const t = useExtracted();
   const duration = useFormatDuration();
 
-  return (option: Pick<MockOptionView, "minutes" | "questions">): string =>
+  return (option: Pick<MockOptionView, "minutes" | "questions" | "sections">): string =>
     t({
       description: "A mock exam's size: its number of questions, then its time limit.",
       id: "mockQuestionsAndTime",
       message: "{count, plural, one {# question} other {# questions}} · {time}",
-      values: { count: option.questions, time: duration(option.minutes) },
+      values: { count: countQuestions(option), time: duration(option.minutes) },
     });
 }
 
@@ -90,7 +134,9 @@ export function useMockOptionSizeFacts() {
   const duration = useFormatDuration();
   const size = useMockOptionSize();
 
-  return (option: Pick<MockOptionView, "estimatedMinutes" | "minutes" | "questions">): string[] => {
+  return (
+    option: Pick<MockOptionView, "estimatedMinutes" | "minutes" | "questions" | "sections">,
+  ): string[] => {
     const usual = usualMinutes(option);
 
     return usual === null
