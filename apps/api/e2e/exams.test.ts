@@ -302,7 +302,7 @@ test.describe("Exams API", () => {
       createBearerLearner({ baseURL, prefix: "anytime-mock-other" }),
     ]);
 
-    const { goal } = await createExamGoal(userId);
+    const { goal } = await createExamGoal(userId, 2 * MOCK_QUESTIONS);
     const mocksPath = `/v1/goals/${goal.id}/mocks`;
     const half = { area: null, day: null, kind: "half" } as const;
 
