@@ -40,16 +40,15 @@ vi.mock("@zoonk/auth", async () => {
       advanced: { ...baseAuthConfig.advanced, disableOriginCheck: false },
       plugins: [
         ...baseAuthPlugins,
-        createEmailOTPPlugin({ storeOTP: "hashed" }),
+        createEmailOTPPlugin({ storeOTP: "encrypted" }),
         bearer(),
         guestPlugin(),
       ],
       rateLimit: { enabled: true, storage: "database" },
-      secret: "native-email-code-api-test-secret",
     }),
     reauthorizeEmailForAccountDeletion: createEmailDeletionReauthentication({
       rateLimit: { enabled: true, storage: "database" },
-      storeOTP: "hashed",
+      storeOTP: "encrypted",
     }),
   };
 });

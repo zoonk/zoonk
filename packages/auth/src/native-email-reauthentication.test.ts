@@ -22,7 +22,7 @@ const auth = betterAuth({
   baseURL: BASE_URL,
   plugins: [
     ...baseAuthPlugins,
-    createEmailOTPPlugin({ storeOTP: "hashed" }),
+    createEmailOTPPlugin({ storeOTP: "encrypted" }),
     bearer(),
     guestPlugin(),
   ],

@@ -2,7 +2,6 @@ import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isCountryCode } from "@zoonk/utils/countries";
 import { isJsonObject } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
-import { readCourseStart } from "../course-start-details";
 import { type GoalDraft } from "../goal-contract";
 
 type CountrySource = "said" | "home" | "picked" | "default";
@@ -47,10 +46,12 @@ function getOnboardingId(draft: GoalDraft): string | null {
 }
 
 export async function resolveNewGoalCountry({
+  courseCountry,
   draft,
   tx,
   userId,
 }: {
+  courseCountry?: string | null;
   draft: GoalDraft;
   tx: TransactionClient;
   userId: string;
@@ -60,15 +61,13 @@ export async function resolveNewGoalCountry({
   source: CountrySource;
 }> {
   if (draft.kind !== "learn") {
-    return { contentCountry: null, countryDependent: null, source: "default" };
+    return { contentCountry: courseCountry ?? null, countryDependent: null, source: "default" };
   }
 
-  if (draft.primaryCourseId && readCourseStart(draft.details ?? {})) {
-    const course = await tx.course.findUniqueOrThrow({ where: { id: draft.primaryCourseId } });
-
+  if (courseCountry !== undefined) {
     return {
-      contentCountry: course.country,
-      countryDependent: course.country ? true : null,
+      contentCountry: courseCountry,
+      countryDependent: courseCountry ? true : null,
       source: "picked",
     };
   }

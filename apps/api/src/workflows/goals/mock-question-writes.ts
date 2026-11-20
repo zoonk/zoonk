@@ -1,6 +1,7 @@
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import { preparePartSet, voiceListeningSetStep } from "../listening/steps/listening-sets-steps";
+import { preparePartSet } from "../listening/steps/listening-sets-steps";
+import { voiceListeningRecording } from "../listening/voice-listening-recording";
 import { type PlacementItemsWritten } from "./placement-items";
 import { prepareSkillExamFormatItems } from "./steps/exam-format-items-step";
 import { loadMockWritingSkillsStep } from "./steps/mock-question-steps";
@@ -124,7 +125,7 @@ export async function prepareMockRecordings({
     });
 
     if (setId) {
-      await voiceListeningSetStep({ setId, wait, workflowRunId });
+      await voiceListeningRecording({ setId, wait, workflowRunId });
     }
   }
   /* oxlint-enable no-await-in-loop */

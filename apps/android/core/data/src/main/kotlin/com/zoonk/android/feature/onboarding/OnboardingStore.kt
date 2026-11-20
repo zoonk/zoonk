@@ -257,9 +257,10 @@ class OnboardingStore(
         chapterId: String?,
         dailyMinutes: Int?,
         level: LevelChoice?,
+        language: String,
     ): WriteOutcome<CourseStarted> {
         startAsGuest()?.let { return it }
-        val body = courseStartBody(chapterId, dailyMinutes, level, TimeZone.getDefault().id)
+        val body = courseStartBody(chapterId, dailyMinutes, level, language, TimeZone.getDefault().id)
         val started =
             write(setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.Allowance)) {
                 api.startCourse(it, courseId, body).id.toString()
@@ -652,10 +653,12 @@ internal fun courseStartBody(
     chapterId: String?,
     dailyMinutes: Int?,
     level: LevelChoice?,
+    language: String,
     timeZone: String,
 ) = buildJsonObject {
     chapterId?.let { put("chapterId", it) }
     dailyMinutes?.let { put("dailyMinutes", it) }
+    put("language", language)
     when (level) {
         is LevelChoice.Own -> {
             put("level", level.level.value)

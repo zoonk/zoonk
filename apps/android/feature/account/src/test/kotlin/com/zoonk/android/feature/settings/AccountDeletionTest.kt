@@ -96,6 +96,12 @@ class AccountDeletionTest {
             assertEquals(AccountFailure.WrongCode, profile.deletionFailure)
             assertTrue(sessions.state.value is SessionState.SignedIn)
 
+            profile.onCodeChange("111 111")
+            profile.delete()
+            advanceUntilIdle()
+            assertTrue(api.deletions.isEmpty())
+            assertEquals(AccountFailure.WrongCode, profile.deletionFailure)
+
             profile.onCodeChange("123456")
             profile.delete()
             advanceUntilIdle()

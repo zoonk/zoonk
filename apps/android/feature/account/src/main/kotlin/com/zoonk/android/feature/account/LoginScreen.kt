@@ -259,7 +259,12 @@ fun CodeEntry(
             onClick = signIn::resendCode,
         )
     } else {
-        WorkingButton(stringResource(R.string.account_continue), isWorking = work == SignInWork.CheckCode, onClick = signIn::checkCode)
+        WorkingButton(
+            stringResource(R.string.account_continue),
+            isWorking = work == SignInWork.CheckCode,
+            onClick = signIn::checkCode,
+            enabled = !signIn.isCodeRejected,
+        )
     }
 
     FlowRow {

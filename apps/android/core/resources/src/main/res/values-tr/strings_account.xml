@@ -33,7 +33,7 @@
   "account_name_required": "57e346af27bdc068a8e1ddc8a26779653bbd062a2767021d2df96e349e86972d",
   "account_name_too_long": "f63019b62a7a63d3136edc302f48c721b1409bd3fd0193e8f962dc71bf241b74",
   "account_new_code_failed": "edd975b301424acd76170bde276fe73339a2910ef11799f564473968adadfe67",
-  "account_new_code_sent": "7e54006401c7c74c18946743b590f385c8c819f9c998c4ab2b2927baece89844",
+  "account_new_code_sent": "4af0a4e90cab257e5a4adcbd305957f0ea4c33c989ca0a2887016fca6a27ddd3",
   "account_new_code_wait": "ea1b08e0e24ac568dbac0cde34a55a2ed525775347f16742f99280a8832f4649",
   "account_or": "5d89a0ccc3fc499e49e7147167808c85ec473cb17fd97d782fb502c659f1ad1d",
   "account_privacy": "de1d6fd33fbd835658e56817b5f86c640a63aa03fda30378bd40e3f1be9ce17b",
@@ -82,7 +82,7 @@
     <string name="account_send_again">Tekrar gönder</string>
     <string name="account_change_email">E-posta adresini değiştir</string>
     <!-- %1$s is an email address. -->
-    <string name="account_new_code_sent">%1$s adresine yeni bir kod gönderdik.</string>
+    <string name="account_new_code_sent">%1$s adresine tekrar e-posta gönderdik.</string>
     <string name="account_new_code_wait">Yeni bir kod istemeden önce bir dakika bekle.</string>
     <string name="account_new_code_failed">Yeni bir kod gönderemedik. Tekrar dene.</string>
     <string name="account_failure_invalid_email">Geçerli bir e-posta adresi gir</string>
