@@ -6,7 +6,7 @@ import {
   contentFixChangesSchema,
   contentFixEffectsSchema,
 } from "@zoonk/core/staff/content-fixes/contract";
-import { contentFixVoiceSchema } from "@zoonk/core/staff/content-fixes/voice-schema";
+import { readContentFixMedia } from "@zoonk/core/staff/content-fixes/media-schema";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -154,8 +154,15 @@ async function loadRowLabels(changes: readonly StoredChange[]): Promise<Map<stri
     loadVocabularyLabels(changes),
   ]);
 
+  const versionedScreens = changes.flatMap((change) =>
+    change.op === "setScreens" ? change.before.screens : [],
+  );
+
   return new Map([
-    ...steps.map((step): [string, string] => [step.id, screenLabel(step)]),
+    ...[...steps, ...versionedScreens].map((step): [string, string] => [
+      step.id,
+      screenLabel(step),
+    ]),
     ...variants.map((variant): [string, string] => [
       variant.id,
       `${screenLabel(variant.step)} · ${toWords(variant.kind)}${variant.key ? ` ${variant.key}` : ""} version`,
@@ -193,14 +200,16 @@ async function toDetails(fixes: readonly FixRow[]) {
     loadStructureNames(changes.flat()),
   ]);
 
+  const labels = new Map([...names, ...rowLabels]);
+
   return fixes.map((fix, index) => ({
     ...fix,
     changes: changes[index] ?? [],
     effects: contentFixEffectsSchema.parse(fix.effects),
     location: locate(fix),
+    media: readContentFixMedia(fix.media),
     names,
-    rowLabels: new Map([...names, ...rowLabels]),
-    voice: contentFixVoiceSchema.nullable().parse(fix.voice),
+    rowLabels: labels,
   }));
 }
 

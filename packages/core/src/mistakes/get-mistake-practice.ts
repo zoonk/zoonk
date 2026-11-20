@@ -7,6 +7,7 @@ import { type ItemSetView } from "../library/items/item-set-view";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { type SessionQuestion } from "../sessions/_utils/session-items";
 import { getSession } from "../users/get-session";
+import { narrowToSkill } from "./_utils/mistake-scope";
 import { resolvePracticeScope } from "./_utils/practice-scope";
 import { MAX_PRACTICE_ANSWERS, type MistakePracticeInput } from "./contract";
 import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
@@ -42,20 +43,6 @@ export type MistakePracticeResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-function getPracticeSkillIds({
-  scopeSkillIds,
-  skillId,
-}: {
-  scopeSkillIds: string[] | null;
-  skillId: string | undefined;
-}): string[] | null {
-  if (!skillId) {
-    return scopeSkillIds;
-  }
-
-  return !scopeSkillIds || scopeSkillIds.includes(skillId) ? [skillId] : [];
-}
-
 /** Every ready mistake a run holds, oldest first with skill breadth, one question each. Submit each answer to answerMistakePractice. */
 export async function getMistakePractice(
   input: MistakePracticeInput,
@@ -83,7 +70,7 @@ export async function getMistakePractice(
   await io();
   const today = getDateInTimeZone({ date: new Date(), timeZone });
 
-  const skillIds = getPracticeSkillIds({ scopeSkillIds: scope.skillIds, skillId: input.skillId });
+  const skillIds = narrowToSkill({ scopeSkillIds: scope.skillIds, skillId: input.skillId });
 
   const open = await prisma.mistake.findMany({
     orderBy: [{ createdAt: "asc" }, { id: "asc" }],

@@ -8,6 +8,8 @@ import { blueprintSet, cutoffSet, weightsSet } from "./exam-facts";
 import { type FixHandler } from "./fix-handler";
 import { itemReplace, itemRestore, itemSet } from "./item-content";
 import { itemSetReplace, itemSetRestore } from "./item-set";
+import { lessonPlanSet } from "./lesson-plan";
+import { lessonSetScreens } from "./lesson-screens/handler";
 import { lessonSentenceSet, lessonWordSet } from "./lesson-vocabulary";
 import { levelTestSet } from "./level-test";
 import { mindMapSet } from "./mind-map";
@@ -60,6 +62,8 @@ export const FIX_HANDLERS = [
   courseSet,
   chapterSet,
   lessonSet,
+  lessonPlanSet,
+  lessonSetScreens,
   stepSet,
   stepDetachPicture,
   stepAttachPicture,
@@ -100,7 +104,7 @@ export const FIX_HANDLERS = [
 /** What `pnpm zoonk staff models` tells an agent it may propose for each model. */
 export const FIXABLE_MODELS: ReadonlyMap<
   string,
-  { fields: readonly string[]; operation: string; rules: string }[]
+  (NonNullable<FixHandler["proposal"]> & { operation: string })[]
 > = new Map(
   [...new Set(FIX_HANDLERS.map((handler) => handler.model))].map((model) => [
     model,

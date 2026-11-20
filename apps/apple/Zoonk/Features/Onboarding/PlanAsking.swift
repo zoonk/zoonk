@@ -81,11 +81,12 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Du
       }
     }
 
+    var pending: Task<Answer, Error>?
     var failures = 0
 
     while true {
       do {
-        guard let next = try await send(key, request) else {
+        guard let next = try await send(key, pending: &pending, request) else {
           guard !Task.isCancelled else {
             return
           }
@@ -129,18 +130,26 @@ final class PlanAsking<Key: Hashable & Sendable, Answer: PlanAnswer, C: Clock<Du
 
   /// Nil once the ask was cancelled (another choice is on screen) or went unanswered for `timeout`,
   /// waiting for the lane included; the request it sent runs on and holds the lane until it settles.
-  private func send(_ key: Key, _ request: @escaping @MainActor () async throws -> Answer)
-    async throws -> Answer?
-  {
+  private func send(
+    _ key: Key, pending: inout Task<Answer, Error>?,
+    _ request: @escaping @MainActor () async throws -> Answer
+  ) async throws -> Answer? {
     let deadline = clock.now.advanced(by: timeout)
 
-    while let out, out.key != key {
+    while pending == nil, let out, out.key != key {
       guard await settled(out.answer, before: deadline) != nil, !Task.isCancelled else {
         return nil
       }
     }
 
-    return try await settled(out?.answer ?? lane(key, request), before: deadline)?.get()
+    let sent = pending ?? out?.answer ?? lane(key, request)
+    guard let result = await settled(sent, before: deadline) else {
+      pending = sent
+      return nil
+    }
+
+    pending = nil
+    return try result.get()
   }
 
   /// Stops waiting at `deadline` or on cancellation; `task` itself runs on.

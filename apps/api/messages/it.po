@@ -388,4 +388,4 @@ msgstr "Qui sotto trovi le tue statistiche."
 #: src/lib/tutor-confirmation.ts
 msgctxt "v3uUXk"
 msgid "Below you can choose that variety for your buddy and practice calls."
-msgstr "Qui sotto puoi scegliere questa varietà linguistica per il tuo compagno e le conversazioni di allenamento."
+msgstr "Qui sotto puoi scegliere questa varietà linguistica per il tuo socio e le conversazioni di allenamento."

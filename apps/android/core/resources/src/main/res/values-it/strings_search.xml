@@ -6,7 +6,7 @@
   "search_ask_detail": "7af46f99fb6e6c918c2215b79d6cd329f5abc638a3d736a14bdeaa07b04a534a",
   "search_ask_question": "6aac47416275e0f0c9163579602c0dbeb60faf3fe286c94695fdbed8bfa96b8a",
   "search_blog": "1d4f9da174a07e9cc3e18c109cda2b1f3453678748b6358bed963855915b2fb9",
-  "search_buddy_keyword": "8de1371ff352f20c52cdeabcb1ff52f1f11ffb78e343a59b82a991a97f894fe2",
+  "search_buddy_keyword": "62c536eb2a25d53de5b89300db5e96ceeeab794dffedec554bdcd927c1961cbf",
   "search_clear": "9fdba3f4ad380ce87c9ab0b1c0ce6fddb64bde8b8dc5144db7a240146fce2354",
   "search_close": "9505b56b011a5b260ad3901765ea1f6aa22274c6876a2570aa228bfb2a003588",
   "search_continue": "1a671192aeeafea7f4e77d910b39b024469dbcc56fea4e3035738487e51111ef",
@@ -71,7 +71,7 @@
     <string name="search_practice_mistakes">Esercitati sui tuoi errori</string>
     <string name="search_ask_buddy">Chiedi a %1$s…</string>
     <string name="search_start_new_goal">Inizia un nuovo obiettivo</string>
-    <string name="search_buddy_keyword">Compagno</string>
+    <string name="search_buddy_keyword">Socio</string>
     <string name="search_mistakes_notebook">Quaderno degli errori</string>
     <string name="search_logbook">Diario di bordo</string>
     <string name="search_switch_goal">Passa a %1$s</string>

@@ -23,7 +23,7 @@ import com.zoonk.android.R
 /**
  * Main's `Steps`: a few steps one at a time, with back (a button and the system's back) and Continue,
  * and the last step's own action in place of Continue, each the bar's main action. The screen shows
- * [StepDots] in its top bar. Back from the first step leaves as the screen does.
+ * [StepDots] in its top bar. Back from the first step leaves as the screen does; its button stays, disabled.
  */
 @Composable
 fun StepPagerActions(
@@ -34,7 +34,7 @@ fun StepPagerActions(
 ) {
     BackHandler(enabled = index > 0) { onIndexChange(index - 1) }
 
-    TaskActions(back = if (index > 0) ({ StepBackButton(onClick = { onIndexChange(index - 1) }) }) else null) { main ->
+    TaskActions(back = { StepBackButton(onClick = { onIndexChange(index - 1) }, enabled = index > 0) }) { main ->
         if (index < count - 1) {
             Button(onClick = { onIndexChange(index + 1) }, modifier = main) { Text(stringResource(R.string.steps_continue)) }
         } else {
@@ -45,8 +45,11 @@ fun StepPagerActions(
 
 /** Main's `QuestionBack`: a task's way back one screen, a chevron as on every task's bar (the page's back is the arrow). */
 @Composable
-fun StepBackButton(onClick: () -> Unit) {
-    OutlinedIconButton(onClick = onClick) {
+fun StepBackButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
+    OutlinedIconButton(onClick = onClick, enabled = enabled) {
         Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.navigation_back))
     }
 }

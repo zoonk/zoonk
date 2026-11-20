@@ -34,7 +34,11 @@ export function useTimeToCover() {
 
   return {
     answered: state.status === "answered" ? state.time : null,
-    find: () => timeToCover.find(() => requestWithin(() => actions.findTimeToCover())),
+    find: () =>
+      timeToCover.find(async () => {
+        const result = await requestWithin(() => actions.findTimeToCover());
+        return result.status === "settled" ? result.value : null;
+      }),
     state,
   };
 }

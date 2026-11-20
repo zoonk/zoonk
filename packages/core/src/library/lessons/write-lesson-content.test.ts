@@ -150,7 +150,14 @@ describe(writeLessonContent, () => {
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
     expect(result).toStrictEqual({
-      check: { cite: false, lesson: written, review: true, version: 1, writerModel: draft.model },
+      check: {
+        cite: false,
+        lesson: written,
+        repairBase: expect.any(String),
+        review: true,
+        version: 1,
+        writerModel: draft.model,
+      },
       fixed: false,
       status: "published",
       stepCount: 8,

@@ -997,25 +997,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein KI-Lernkumpel, der dir hilft, wenn du nicht weiterkommst"
+            "value" : "Ein KI-Lernbuddy, der dir hilft, wenn du nicht weiterkommst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compañero de estudio con IA cuando no sepas cómo seguir"
+            "value" : "Un compa de estudio con IA cuando no sepas cómo seguir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compagnon d’étude avec IA quand tu bloques"
+            "value" : "Un binôme d’étude IA quand tu bloques"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compagno di studio con l’IA ogni volta che ti blocchi"
+            "value" : "Un socio di studio con l’IA ogni volta che ti blocchi"
           }
         },
         "ja" : {
@@ -1039,7 +1039,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um parceiro de estudos com IA para quando você precisar de ajuda"
+            "value" : "Um colega de estudos com IA para quando você precisar de ajuda"
           }
         },
         "tr" : {
@@ -1059,13 +1059,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ein KI-Lernkumpel: %lld Nachricht pro Tag"
+                  "value" : "Ein KI-Lernbuddy: %lld Nachricht pro Tag"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ein KI-Lernkumpel: %lld Nachrichten pro Tag"
+                  "value" : "Ein KI-Lernbuddy: %lld Nachrichten pro Tag"
                 }
               }
             }
@@ -1095,13 +1095,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un compañero de estudio con IA: %lld mensaje al día"
+                  "value" : "Un compa de estudio con IA: %lld mensaje al día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un compañero de estudio con IA: %lld mensajes al día"
+                  "value" : "Un compa de estudio con IA: %lld mensajes al día"
                 }
               }
             }
@@ -1113,13 +1113,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un compagnon d’étude IA : %lld message par jour"
+                  "value" : "Un binôme d’étude IA : %lld message par jour"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un compagnon d’étude IA : %lld messages par jour"
+                  "value" : "Un binôme d’étude IA : %lld messages par jour"
                 }
               }
             }
@@ -1131,13 +1131,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un compagno di studio con l’IA: %lld messaggio al giorno"
+                  "value" : "Un socio di studio con l’IA: %lld messaggio al giorno"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un compagno di studio con l’IA: %lld messaggi al giorno"
+                  "value" : "Un socio di studio con l’IA: %lld messaggi al giorno"
                 }
               }
             }
@@ -1191,13 +1191,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Um parceiro de estudos com IA: %lld mensagem por dia"
+                  "value" : "Um colega de estudos com IA: %lld mensagem por dia"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Um parceiro de estudos com IA: %lld mensagens por dia"
+                  "value" : "Um colega de estudos com IA: %lld mensagens por dia"
                 }
               }
             }
@@ -1222,7 +1222,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein KI-Lernkumpel: %1$lld Nachrichten am Tag, bis zu %2$lld im Monat"
+            "value" : "Ein KI-Lernbuddy: %1$lld Nachrichten am Tag, bis zu %2$lld im Monat"
           }
         },
         "en" : {
@@ -1234,19 +1234,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compañero de estudio con IA: %1$lld mensajes al día, hasta %2$lld al mes"
+            "value" : "Un compa de estudio con IA: %1$lld mensajes al día, hasta %2$lld al mes"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compagnon d’étude IA : %1$lld messages par jour, jusqu’à %2$lld par mois"
+            "value" : "Un binôme d’étude IA : %1$lld messages par jour, jusqu’à %2$lld par mois"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compagno di studio con l’IA: %1$lld messaggi al giorno, fino a %2$lld al mese"
+            "value" : "Un socio di studio con l’IA: %1$lld messaggi al giorno, fino a %2$lld al mese"
           }
         },
         "ja" : {
@@ -1270,7 +1270,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um parceiro de estudos com IA: %1$lld mensagens por dia, até %2$lld por mês"
+            "value" : "Um colega de estudos com IA: %1$lld mensagens por dia, até %2$lld por mês"
           }
         },
         "tr" : {
@@ -1876,25 +1876,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für normales Lernen: ja. Für Lektionen, Ziele und den KI-Kumpel gibt es nur Limits, die Bots und automatisierte Tools stoppen. Für Gespräche zum Sprechtraining gelten tägliche und monatliche Limits, die höher sind als bei Free."
+            "value" : "Für normales Lernen: ja. Für Lektionen, Ziele und den KI-Lernbuddy gibt es nur Limits, die Bots und automatisierte Tools stoppen. Für Gespräche zum Sprechtraining gelten tägliche und monatliche Limits, die höher sind als bei Free."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para estudiar normalmente, sí. Las lecciones, los objetivos y el Compañero de IA solo tienen límites para evitar el uso de bots y herramientas automatizadas. Las llamadas de práctica de expresión oral tienen límites diarios y mensuales, más altos que en Gratis."
+            "value" : "Para estudiar normalmente, sí. Las lecciones, los objetivos y el compa de estudio con IA solo tienen límites para evitar el uso de bots y herramientas automatizadas. Las llamadas de práctica de expresión oral tienen límites diarios y mensuales, más altos que en Gratis."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour étudier normalement, oui. Les leçons, les objectifs et le compagnon d’étude IA ont seulement des limites qui empêchent les bots et les outils automatisés. Les appels d’entraînement à l’oral sont soumis à des limites quotidiennes et mensuelles, plus élevées que dans la formule gratuite."
+            "value" : "Pour étudier normalement, oui. Les leçons, les objectifs et le binôme d’étude IA ont seulement des limites qui empêchent les bots et les outils automatisés. Les appels d’entraînement à l’oral sont soumis à des limites quotidiennes et mensuelles, plus élevées que dans la formule gratuite."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per il normale studio, sì. Le lezioni, gli obiettivi e il compagno di studio con l’IA hanno solo limiti che servono a fermare bot e strumenti automatici. Le conversazioni di allenamento per l’esercitazione orale hanno limiti giornalieri e mensili, più alti rispetto a Free."
+            "value" : "Per il normale studio, sì. Le lezioni, gli obiettivi e il socio di studio con l’IA hanno solo limiti che servono a fermare bot e strumenti automatici. Le conversazioni di allenamento per l’esercitazione orale hanno limiti giornalieri e mensili, più alti rispetto a Free."
           }
         },
         "ja" : {
@@ -1918,7 +1918,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para quem está estudando, sim. As aulas, os objetivos e o parceiro de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas de prática têm limites diários e mensais, maiores que no Grátis."
+            "value" : "Para quem está estudando, sim. As aulas, os objetivos e o colega de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas de prática têm limites diários e mensais, maiores que no Grátis."
           }
         },
         "tr" : {

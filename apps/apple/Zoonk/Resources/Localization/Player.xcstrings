@@ -199,12 +199,6 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "**%arg** poprawna odpowiedź z %2$lld"
-                    }
-                  },
                   "few" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -215,6 +209,12 @@
                     "stringUnit" : {
                       "state" : "translated",
                       "value" : "**%arg** poprawnych odpowiedzi z %2$lld"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "**%arg** poprawna odpowiedź z %2$lld"
                     }
                   },
                   "other" : {
@@ -1995,25 +1995,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frag deinen Kumpel"
+            "value" : "Frag deinen Buddy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preguntar a tu compañero"
+            "value" : "Preguntar a tu compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Demander à ton compagnon"
+            "value" : "Demander à ton binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chiedi al tuo compagno"
+            "value" : "Chiedi al tuo socio"
           }
         },
         "ja" : {
@@ -2037,7 +2037,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pergunte para seu parceiro"
+            "value" : "Pergunte para seu colega"
           }
         },
         "tr" : {
@@ -5963,6 +5963,7 @@
       }
     },
     "Log in" : {
+      "comment" : "A visitor signs in to play a lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6018,8 +6019,7 @@
             "value" : "Giriş yap"
           }
         }
-      },
-      "comment" : "A visitor signs in to play a lesson"
+      }
     },
     "Made with AI. It may contain mistakes." : {
       "comment" : "In the lesson's menu",
@@ -9981,25 +9981,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Brauchst du noch etwas Zeit? Dein Kumpel kann es dir anders erklären."
+            "value" : "Brauchst du noch etwas Zeit? Dein Buddy kann es dir anders erklären."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Necesitas más tiempo? Tu compañero puede explicarlo de otra manera."
+            "value" : "¿Necesitas más tiempo? Tu compa puede explicarlo de otra manera."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu prends ton temps ? Ton compagnon peut te l’expliquer autrement."
+            "value" : "Tu prends ton temps ? Ton binôme peut te l’expliquer autrement."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ci stai pensando? Puoi chiedere al tuo compagno una spiegazione diversa."
+            "value" : "Ci stai pensando? Puoi chiedere al tuo socio una spiegazione diversa."
           }
         },
         "ja" : {
@@ -10023,7 +10023,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pensando com calma? Seu parceiro pode explicar de outro jeito."
+            "value" : "Pensando com calma? Seu colega pode explicar de outro jeito."
           }
         },
         "tr" : {
@@ -10627,25 +10627,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das ist knifflig. Dein Kumpel kann es dir anders erklären."
+            "value" : "Das ist knifflig. Dein Buddy kann es dir anders erklären."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta pregunta es complicada. Tu compañero puede explicarlo de otra manera."
+            "value" : "Esta pregunta es complicada. Tu compa puede explicarlo de otra manera."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "C’est un peu difficile. Ton compagnon peut te l’expliquer autrement."
+            "value" : "C’est un peu difficile. Ton binôme peut te l’expliquer autrement."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa è difficile. Il tuo compagno può spiegartela in un altro modo."
+            "value" : "Questa è difficile. Il tuo socio può spiegartela in un altro modo."
           }
         },
         "ja" : {
@@ -10669,7 +10669,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa é difícil. Seu parceiro pode explicar de outra forma."
+            "value" : "Essa é difícil. Seu colega pode explicar de outra forma."
           }
         },
         "tr" : {
@@ -12094,6 +12094,65 @@
         }
       }
     },
+    "What you'll learn in this lesson" : {
+      "comment" : "Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das lernst du in dieser Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que aprenderás en esta lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu vas apprendre dans cette leçon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cosa imparerai in questa lezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このレッスンで学ぶこと"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 레슨에서 배울 내용"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czego nauczysz się na tej lekcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você vai aprender nesta aula"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu derste öğreneceklerin"
+          }
+        }
+      }
+    },
     "What's next" : {
       "comment" : "Header over where a lesson leads",
       "localizations" : {
@@ -13279,25 +13338,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel erklärt dir diese Seite einfacher"
+            "value" : "Dein Buddy erklärt dir diese Seite einfacher"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero te explica esta pantalla de forma más sencilla"
+            "value" : "Tu compa te explica esta pantalla de forma más sencilla"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon t’explique cet écran plus simplement"
+            "value" : "Ton binôme t’explique cet écran plus simplement"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno di studio ti spiega questa schermata in modo più semplice"
+            "value" : "Il tuo socio ti spiega questa schermata in modo più semplice"
           }
         },
         "ja" : {
@@ -13321,7 +13380,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro explica essa tela de um jeito mais simples"
+            "value" : "Seu colega explica essa tela de um jeito mais simples"
           }
         },
         "tr" : {

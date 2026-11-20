@@ -406,8 +406,8 @@
   "plan_short_full_review_and_practice": "d77897cf7540fbd526a3bce91393ef3c8e4fe7ddb40d52a45e3e715aa8ac0b2e",
   "plan_short_light_review": "88e5e92860c53970053a2c3e7884ae29649a76ab1cb38e1e10aeb1b01497b676",
   "plan_short_map_and_gaps": "30d4ced1e5e57a5a0db4e6a54b0e27a2b8050b692273ec8ee49c27db316eccfc",
+  "plan_short_mock": "bc068e50ef0815d8f4a74e2972eafa17f64a6efdd6fe4a6d1d2cc4a372de02da",
   "plan_short_mock_and_practice": "dd6441dc6273781495a2e82e64fcde1f30892b3cfee6e020f53367da9ef45f96",
-  "plan_short_mock_and_review": "b27a51b07b81be669217286fe1acb112dc19c28f4924c3eb0c7a5a0f607466b1",
   "plan_show_fewer_chapters": "4f504d1bb98609708c58dbe292d0587951fa36e7792fc28b3cd5d2f606ccfe0b",
   "plan_show_fewer_units": "9645b15eabf2164111069432c14229b5206976fb64739936a6afec2528a92a85",
   "plan_skills_you_know": "25d280be6eb31e4eb9f197572375065f1f0a51d1147e400ff0b339eaa1f4d0af",
@@ -607,7 +607,7 @@
     <string name="plan_short_map_and_gaps">시험 개요와 부족한 부분</string>
     <string name="plan_short_mock_and_practice">모의고사와 연습</string>
     <string name="plan_short_full_review_and_practice">총복습과 연습</string>
-    <string name="plan_short_mock_and_review">짧은 모의고사와 복습</string>
+    <string name="plan_short_mock">짧은 모의고사</string>
     <string name="plan_short_full_review">총복습</string>
     <string name="plan_short_light_review">가벼운 복습</string>
     <string name="plan_short_day">%1$d일차(총 %2$d일)</string>

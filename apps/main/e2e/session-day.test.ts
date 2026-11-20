@@ -8,6 +8,7 @@ import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import {
   answerRight,
+  carryLessons,
   createStudyDay,
   openAs,
   pressUntil,
@@ -79,7 +80,7 @@ async function playCapsules(page: Page) {
   await answerRight(page, /^Capsule two/u);
 }
 
-async function playLesson(page: Page, started: Promise<unknown>) {
+async function finishLesson(page: Page, started: Promise<unknown>) {
   await expect(page).toHaveURL(/\/learn\/[\w-]+\?session=[\w-]+$/u);
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
   await page.keyboard.press("2");
@@ -94,6 +95,10 @@ async function playLesson(page: Page, started: Promise<unknown>) {
   await page.keyboard.press("Enter");
 
   await expectMoment(page, "Lesson complete");
+}
+
+async function playLesson(page: Page, started: Promise<unknown>) {
+  await finishLesson(page, started);
 
   await pressUntil(
     () =>
@@ -225,6 +230,45 @@ test.describe("Today's session", () => {
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
     await replayFromToday(page, lesson);
+    await page.context().close();
+  });
+
+  test("finishing extra study returns to Today and the summary can still be opened on purpose", async ({
+    browser,
+  }) => {
+    const { goal, session, user } = await createStudyDay();
+
+    await prisma.studySessionBlock.updateMany({
+      data: { status: "completed" },
+      where: { sessionId: session.id },
+    });
+
+    await prisma.studySession.update({
+      data: { endedAt: new Date(), status: "completed" },
+      where: { id: session.id },
+    });
+
+    const [bonus] = await carryLessons({ count: 1, goalId: goal.id });
+
+    if (!bonus) {
+      throw new Error("Missing extra lesson");
+    }
+
+    const page = await openAs(browser, user);
+    await page.goto("/session");
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
+    const started = waitForLessonStart(page, bonus.id);
+    await page.getByRole("button", { name: "Keep learning" }).click();
+    await finishLesson(page, started);
+
+    const proceed = page
+      .getByRole("link", { name: /^Continue/u })
+      .or(page.getByRole("button", { name: /^Continue/u }));
+
+    await pressUntil(() => proceed.click(), proceed, { visible: false });
+    await expect(page).toHaveURL(/\/today$/u);
+    await page.getByRole("link", { name: "See summary" }).click();
+    await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.context().close();
   });
 

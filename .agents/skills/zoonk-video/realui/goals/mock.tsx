@@ -1,7 +1,12 @@
 // A mock exam (/mock/[blockId]): in progress, and its result, from story.exam.mock.
 import { MockScreen } from "@repo/packages/learn/src/mock/mock-screen.tsx";
+import { type ComponentProps } from "react";
+import { actions } from "../learn/common";
 import { story, type Lang } from "../story";
-import { Learn, NOOP, NOOP_ASYNC } from "./shell";
+import { Learn, NOOP } from "./shell";
+
+type Props = ComponentProps<typeof MockScreen>;
+type Mock = Props["mock"];
 
 /** The question on screen, its options worked out from the story's question. */
 const QUESTION: Record<
@@ -23,7 +28,7 @@ const QUESTION: Record<
 };
 
 /** en: a two-part SAT practice test; pt: Enem's second day, one 5-hour block. */
-function sections(lang: Lang, running: boolean) {
+function sections(lang: Lang, running: boolean): Mock["sections"] {
   const { mock } = story[lang].exam;
   const total = mock.right + mock.wrong + mock.blank;
 
@@ -70,7 +75,7 @@ function sections(lang: Lang, running: boolean) {
   ];
 }
 
-function runningSection(lang: Lang) {
+function runningSection(lang: Lang): NonNullable<Mock["current"]> {
   const { mock } = story[lang].exam;
   const total = mock.right + mock.wrong + mock.blank;
   const count = lang === "pt" ? total : total / 2;
@@ -78,8 +83,9 @@ function runningSection(lang: Lang) {
   const at = lang === "pt" ? 46 : 6;
   const question = QUESTION[lang];
   const otherArea = lang === "pt" ? mock.areas[0][0] : question.area;
+  type Question = NonNullable<Mock["current"]>["questions"][number];
 
-  const questions = Array.from({ length: count }, (_, index) => {
+  const questions = Array.from({ length: count }, (_, index): Question => {
     const own = index === at;
     return {
       area: lang === "pt" ? (index < 45 ? otherArea : question.area) : question.area,
@@ -113,7 +119,7 @@ function runningSection(lang: Lang) {
       answer: { selectedIndex: question.picked },
       durationMs: 40_000,
       flagged: false,
-      itemId: questions[at].itemId,
+      itemId: questions[at]?.itemId ?? "",
     });
   }
 
@@ -131,7 +137,7 @@ function runningSection(lang: Lang) {
   };
 }
 
-function result(lang: Lang) {
+function result(lang: Lang): NonNullable<Mock["result"]> {
   const { mock } = story[lang].exam;
   const total = mock.right + mock.wrong + mock.blank;
   const half = Math.round(total / 2);
@@ -141,7 +147,7 @@ function result(lang: Lang) {
 
   return {
     areas: mock.areas.map(([name, areaLow, areaHigh], index) => ({
-      correct: rights[index],
+      correct: rights[index] ?? 0,
       name,
       score: { high: areaHigh, low: areaLow, score: Math.round((areaLow + areaHigh) / 2) },
       secondsPerQuestion: lang === "pt" ? 175 : 92,
@@ -169,7 +175,7 @@ function result(lang: Lang) {
   };
 }
 
-function mockView(lang: Lang, state: "running" | "finished") {
+function mockView(lang: Lang, state: "running" | "finished"): Mock {
   const exam = story[lang].exam;
   const running = state === "running";
   const total = exam.mock.right + exam.mock.wrong + exam.mock.blank;
@@ -181,6 +187,7 @@ function mockView(lang: Lang, state: "running" | "finished") {
     breakUntil: null,
     canMove: false,
     ceremony: null,
+    certificates: [],
     checklist: [],
     current: running ? runningSection(lang) : null,
     date: "2026-11-03",
@@ -196,7 +203,7 @@ function mockView(lang: Lang, state: "running" | "finished") {
     minutes: lang === "pt" ? 300 : 67,
     missionMoment: null,
     mistakes: [
-      { cause: "contentGap", count: 4 },
+      { cause: "gap", count: 4 },
       { cause: "misread", count: 3 },
       { cause: "trap", count: 2 },
     ],
@@ -230,21 +237,12 @@ function mockView(lang: Lang, state: "running" | "finished") {
     startTime: null,
     status: running ? "running" : "finished",
     timeZone: "America/Sao_Paulo",
-    trueFalseLabels: { false: "False", true: "True" },
-  } as any;
+    trueFalseLabels: "trueFalse",
+    verdict: null,
+  };
 }
 
-const ACTIONS = {
-  adapt: NOOP_ASYNC,
-  answer: NOOP_ASYNC,
-  endBreak: NOOP_ASYNC,
-  finish: NOOP_ASYNC,
-  gradeEssays: NOOP_ASYNC,
-  play: NOOP_ASYNC,
-  refresh: NOOP,
-  startSpeaking: NOOP_ASYNC,
-  submit: NOOP_ASYNC,
-} as any;
+const ACTIONS = actions<Props["actions"]>({ refresh: NOOP });
 
 const HREFS = {
   again: "/challenge/mock-item",

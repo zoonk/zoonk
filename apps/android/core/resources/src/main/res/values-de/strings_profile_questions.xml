@@ -12,7 +12,7 @@
   "profile_questions_conditions_description_settings": "d564817ec75b1071b6b9a934e4194e1e1ebefb7c89f17c5170e79f9cc71bf82d",
   "profile_questions_conditions_saved": "aab2c5c87dbcceadc28c28fb26535f0905f5a37d283e8cff168f332fb5c2ee37",
   "profile_questions_conditions_title": "ef93abd7458af85bb6ece2f06c99891f0ac6f1978bbaf78f068268f5536d0ac4",
-  "profile_questions_description": "95cd7e28d4db70e734b891dfbe1edc8545e2572a9e865856c55111d1fde15748",
+  "profile_questions_description": "7231df635ae2b3570f5ed38a7cd08c13c3de254d07fe98c5fadd4a49e50575bc",
   "profile_questions_earlier_answer": "a86197e622ef28ba27096f566be987bb4b56efd8334bee55631f22cf8bd660e2",
   "profile_questions_for_fun": "6f8248563a67e46dd041c7f63a828ae91fb42855b3a377e7f5f5c86194e9c5de",
   "profile_questions_how_learn": "5e53b7dbca054de531ed47f218fd22ad29a9c55c158f1681d65f316a720cf4df",
@@ -80,7 +80,7 @@
 -->
 <resources>
     <string name="profile_questions_title">Über dich</string>
-    <string name="profile_questions_description">Mit deinen Angaben stimmen wir deine Beispiele und deinen Kumpel auf dich ab. Alle Angaben sind freiwillig.</string>
+    <string name="profile_questions_description">Mit deinen Angaben stimmen wir deine Beispiele und deinen Buddy auf dich ab. Alle Angaben sind freiwillig.</string>
     <string name="profile_questions_skip_all">Alle überspringen</string>
     <string name="profile_questions_skip_all_label">Restliche Fragen zu dir überspringen</string>
     <string name="profile_questions_never_ask">Diese Fragen nicht noch einmal stellen</string>

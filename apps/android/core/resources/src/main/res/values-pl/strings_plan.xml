@@ -406,8 +406,8 @@
   "plan_short_full_review_and_practice": "b6762a0d10cc6a972ca1a4cfd8acd1a1436f35277e5609a88e023cf78e7a026c",
   "plan_short_light_review": "90e0b77b49a216f64ac1299e820004f191f98c6462c9289caf0662bd453da094",
   "plan_short_map_and_gaps": "f2815b4a1c83939f1208091727e31d3af501da618c5809a98328c12588a4dcc1",
+  "plan_short_mock": "aa238196e399115aa2d001e85264bfc1ee3c0495b527cfc5a2681f938dea4238",
   "plan_short_mock_and_practice": "3b8bd473f9d5fa8fa1127dd6bac8bb67153dfb0039151323ece20642cdbc8d13",
-  "plan_short_mock_and_review": "745ed7163f3497acf4887ffcfaa7c0fd419eb7039ee86709537393e796cab5d6",
   "plan_show_fewer_chapters": "af400bad352410461e4a6896028982702492f7930676e2db6f6d5d163c907a7f",
   "plan_show_fewer_units": "1547f5479de09640c3b7f859a8171c42249cee659dbb84cba146fc56c8d57fe2",
   "plan_skills_you_know": "d035d951866d68e9a0750d9969db17cc9c17513d07c13a054d0f9f0171255f5e",
@@ -619,7 +619,7 @@
     <string name="plan_short_map_and_gaps">Zakres egzaminu i luki w wiedzy</string>
     <string name="plan_short_mock_and_practice">Egzamin próbny i ćwiczenia</string>
     <string name="plan_short_full_review_and_practice">Pełna powtórka i ćwiczenia</string>
-    <string name="plan_short_mock_and_review">Krótki egzamin próbny i powtórka</string>
+    <string name="plan_short_mock">Krótki egzamin próbny</string>
     <string name="plan_short_full_review">Pełna powtórka</string>
     <string name="plan_short_light_review">Lekka powtórka</string>
     <string name="plan_short_day">Dzień %1$d z %2$d</string>

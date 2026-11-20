@@ -74,6 +74,30 @@ test("source deletion prunes generated keys in every catalog without retranslati
   assert.equal(await readFile(file("strings_today", "es"), "utf8"), today);
 });
 
+test("check reports a fingerprint left after a hand deletion until the offline prune removes it", async () => {
+  const { file, root } = await fixture();
+  const path = file("strings", "es");
+  const removed = '<string name="removed">Old</string>';
+  const translated = await readFile(path, "utf8");
+  const previous = translated.replace(removed, "");
+  assert.notEqual(previous, translated);
+  await writeFile(file("strings", "en"), SOURCE.replace(removed, ""));
+  await writeFile(path, previous);
+
+  const options = { locales: ["en", "es"], root };
+
+  await assert.rejects(
+    synchronizeCatalogs({ ...options, check: true }),
+    (error) => error instanceof Error && error.message.includes(path),
+  );
+
+  assert.equal(await readFile(path, "utf8"), previous);
+
+  await synchronizeCatalogs(options);
+  assert.doesNotMatch(await readFile(path, "utf8"), /removed/u);
+  await synchronizeCatalogs({ ...options, check: true });
+});
+
 test("synchronization cannot bless stale translations in any catalog and changes no file", async () => {
   const { file, root } = await fixture();
   const strings = await readFile(file("strings", "es"), "utf8");

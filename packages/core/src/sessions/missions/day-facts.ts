@@ -8,7 +8,11 @@ import {
   loadUsageTotals,
 } from "../../entitlements/_utils/usage-counts";
 import { readExamPicks } from "../../exams/choices/exam-choices";
-import { type GoalPlan, getSkillOwners, loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
+import {
+  type GoalPlan,
+  getMistakeSkillIds,
+  loadGoalPlan,
+} from "../../learner/_utils/goal-skill-graph";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
 import { listReadyMistakes } from "../../mistakes/mistake-availability";
 import {
@@ -111,7 +115,7 @@ async function readyMistakes({
 }) {
   const mistakes = readMistakes
     ? await readMistakes()
-    : await loadPracticeMistakes({ skillIds: [...getSkillOwners(goalPlan.skills).keys()], userId });
+    : await loadPracticeMistakes({ skillIds: getMistakeSkillIds(goalPlan.skills), userId });
 
   return listReadyMistakes({ localDate, mistakes, timeZone });
 }

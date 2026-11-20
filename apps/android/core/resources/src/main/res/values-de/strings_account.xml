@@ -29,7 +29,7 @@
   "account_menu_settings": "7a972522746e0afb7d2296754c1e23c6169dca363ebbb062fccc81391126dee8",
   "account_menu_subscription": "19cf487a1f7d14a8d33903d6b4f90e8bd6436d894f1fb5b5ec5994b131db11b4",
   "account_name": "53c31f36b0d11eec2f9ab0daf3fd55ddf069bd8178b36519ab0dc42792d79052",
-  "account_name_description": "08874a05c871e367e095a624ceaa44f72b168362fa2001574c3d2542e3db6426",
+  "account_name_description": "ef70a11e5f143f6d005606ec772ed9e4ed90a01d67619418072c37c9d51e1d63",
   "account_name_required": "d5edfb9af95d91ef3a1cecde1f3a8289c181f7bb5f9887f6b3540d8273296904",
   "account_name_too_long": "88599f27c6e9860851a50989068a41bb3a7eb21242d4ca12fa2856cf3344baeb",
   "account_new_code_failed": "862693e386a592cca3c50744615b1971c48e2e4c23edbde7b96e7f92ffb75f97",
@@ -95,7 +95,7 @@
     <string name="account_failure_sign_in">Wir konnten dich nicht anmelden. Versuch es noch einmal oder schreib an hello@zoonk.com.</string>
     <string name="account_setup_title">Wie sollen wir dich nennen?</string>
     <string name="account_name">Name</string>
-    <string name="account_name_description">Dein Kumpel nutzt diesen Namen, der auch auf all deinen Zertifikaten steht.</string>
+    <string name="account_name_description">Dein Buddy nennt dich so, und dieser Name steht auf all deinen Zertifikaten.</string>
     <string name="account_name_too_long">Gib höchstens 150 Zeichen ein.</string>
     <string name="account_username">Benutzername</string>
     <!-- %1$s is a username. -->

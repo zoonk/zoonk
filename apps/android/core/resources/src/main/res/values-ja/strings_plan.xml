@@ -406,8 +406,8 @@
   "plan_short_full_review_and_practice": "3027e9d92e5a30dc06017a173fdef10dda0834db713a14299d96200b1f15809d",
   "plan_short_light_review": "e1dabba9218d940e8fb86fe4f45a901e4f5fe61e4cc73d11943c335eca459cf2",
   "plan_short_map_and_gaps": "e1ceba178991af170616acb10669ec2583b73a969f279d50beeba55c5156415b",
+  "plan_short_mock": "176f9ed5fffe9790dbe6b8e0715e1ce2338926fe352dcec5efafffa2149adc00",
   "plan_short_mock_and_practice": "1a3843e44ba816c6a9d3c6810d87edf0944bb6a14b2651a3181602cec34cc2b7",
-  "plan_short_mock_and_review": "a5c37162ef3becb7457f1e65b8ce811616f4f4c7c685e440fc5ab3e0480ce640",
   "plan_show_fewer_chapters": "f967a7eea2ea8177d80b1c5e1e4f823099a73a6a5854b172e8f76421c84ea751",
   "plan_show_fewer_units": "86b4669c8bc32ae169b7b9d3b69f45f62dea420eb6fe02e96c4539e3cf678011",
   "plan_skills_you_know": "09150d9b7313d9a1dffd3d701caf658299b96017e7a7f21fb31e437c00d5efb6",
@@ -607,7 +607,7 @@
     <string name="plan_short_map_and_gaps">試験の全体像と苦手分野</string>
     <string name="plan_short_mock_and_practice">模試と練習</string>
     <string name="plan_short_full_review_and_practice">総復習と練習</string>
-    <string name="plan_short_mock_and_review">短時間の模試と復習</string>
+    <string name="plan_short_mock">短時間の模試</string>
     <string name="plan_short_full_review">総復習</string>
     <string name="plan_short_light_review">軽めの復習</string>
     <string name="plan_short_day">%1$d日目 / %2$d日間</string>

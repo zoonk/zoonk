@@ -4,7 +4,18 @@ import { dirname, join } from "node:path";
 import { DatabaseSync, type SQLOutputValue } from "node:sqlite";
 import { CliError } from "./errors.ts";
 
-export type StoredLogin = { accessToken: string; expiresAt: number; refreshToken: string };
+/**
+ * `maybeRotatedAt`: when a refresh whose answer never arrived was sent, so the server may have
+ * rotated `refreshToken` already. `replaySeconds`: how long the server answers a rotated refresh
+ * token with the same new pair, as its last token response said.
+ */
+export type StoredLogin = {
+  accessToken: string;
+  expiresAt: number;
+  maybeRotatedAt?: number;
+  refreshToken: string;
+  replaySeconds?: number;
+};
 
 export type LoginPlace = { file: string; origin: string };
 
@@ -22,17 +33,29 @@ const CREATE_LOGINS = `
     origin TEXT PRIMARY KEY,
     access_token TEXT NOT NULL,
     refresh_token TEXT NOT NULL,
-    expires_at INTEGER NOT NULL
+    expires_at INTEGER NOT NULL,
+    maybe_rotated_at INTEGER,
+    replay_seconds INTEGER
   ) STRICT`;
 
-const SELECT_LOGIN = "SELECT access_token, refresh_token, expires_at FROM logins WHERE origin = ?";
+/** Columns added after the table first shipped, which files made before them lack. */
+const ADDED_COLUMNS = ["maybe_rotated_at", "replay_seconds"];
+
+const SELECT_LOGIN = `
+  SELECT access_token, refresh_token, expires_at, maybe_rotated_at, replay_seconds
+  FROM logins WHERE origin = ?`;
 
 const UPSERT_LOGIN = `
-  INSERT INTO logins (origin, access_token, refresh_token, expires_at) VALUES (?, ?, ?, ?)
+  INSERT INTO logins (
+    origin, access_token, refresh_token, expires_at, maybe_rotated_at, replay_seconds
+  )
+  VALUES (?, ?, ?, ?, ?, ?)
   ON CONFLICT (origin) DO UPDATE SET
     access_token = excluded.access_token,
     refresh_token = excluded.refresh_token,
-    expires_at = excluded.expires_at`;
+    expires_at = excluded.expires_at,
+    maybe_rotated_at = excluded.maybe_rotated_at,
+    replay_seconds = excluded.replay_seconds`;
 
 export function credentialsPath(environment: NodeJS.ProcessEnv): string {
   const configHome = environment.XDG_CONFIG_HOME || join(homedir(), ".config");
@@ -54,10 +77,16 @@ function toStoredLogin(row: Record<string, SQLOutputValue> | undefined): StoredL
     return null;
   }
 
-  return {
+  const login = {
     accessToken: row.access_token,
     expiresAt: row.expires_at,
     refreshToken: row.refresh_token,
+  };
+
+  return {
+    ...login,
+    ...(typeof row.maybe_rotated_at === "number" && { maybeRotatedAt: row.maybe_rotated_at }),
+    ...(typeof row.replay_seconds === "number" && { replaySeconds: row.replay_seconds }),
   };
 }
 
@@ -80,11 +109,33 @@ function restrictToOwner(file: string) {
     .forEach((sideFile) => chmodSync(sideFile, OWNER_ONLY_FILE));
 }
 
+function hasColumn(database: DatabaseSync, name: string): boolean {
+  return database
+    .prepare("SELECT name FROM pragma_table_info('logins')")
+    .all()
+    .some((column) => column.name === name);
+}
+
+/** An older file gets the newer columns on its next open, from whichever command opens it first. */
+function addMissingColumns(database: DatabaseSync) {
+  for (const name of ADDED_COLUMNS.filter((column) => !hasColumn(database, column))) {
+    try {
+      database.exec(`ALTER TABLE logins ADD COLUMN ${name} INTEGER`);
+    } catch (error) {
+      if (!hasColumn(database, name)) {
+        throw error;
+      }
+    }
+  }
+}
+
 function openCredentials(file: string): DatabaseSync {
   restrictToOwner(file);
 
   const database = new DatabaseSync(file, { timeout: BUSY_TIMEOUT_MS });
   database.exec(CREATE_LOGINS);
+
+  addMissingColumns(database);
 
   return database;
 }
@@ -109,7 +160,14 @@ function writeLogin({
 
   database
     .prepare(UPSERT_LOGIN)
-    .run(origin, login.accessToken, login.refreshToken, login.expiresAt);
+    .run(
+      origin,
+      login.accessToken,
+      login.refreshToken,
+      login.expiresAt,
+      login.maybeRotatedAt ?? null,
+      login.replaySeconds ?? null,
+    );
 }
 
 function isBusy(error: unknown): boolean {

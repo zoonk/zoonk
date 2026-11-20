@@ -62,10 +62,7 @@ describe(createExamDays, () => {
     });
 
     expect(dayShape(fromIsoDate("2026-10-01"))).toMatchObject({
-      events: [
-        { kind: "mock", minutes: 30, replacesDay: true },
-        { kind: "review", minutes: 15 },
-      ],
+      events: [{ kind: "mock", minutes: 30, replacesDay: true }],
       minutes: 45,
       open: false,
     });

@@ -2,7 +2,7 @@ import { type TransactionClient } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { z } from "zod";
 import { type Resolution, changedFields, refuse } from "../_utils/resolved-change";
-import { readFixClip } from "../_utils/vocabulary-voice";
+import { readFixClip, vocabularyClipNeed } from "../_utils/vocabulary-voice";
 import { findLessonsWithWordTiles } from "../_utils/word-tile-lessons";
 import {
   type FieldChange,
@@ -25,6 +25,7 @@ import {
   clipSchema,
   loadClip,
   loadRow,
+  romanizationSchema,
   toClipData,
 } from "./vocabulary-row";
 
@@ -85,7 +86,7 @@ async function tilesProblem(
 }
 
 const setValuesSchema = z.strictObject({
-  romanization: z.string().trim().min(1).nullable().optional(),
+  romanization: romanizationSchema,
   sentence: z.string().optional(),
   word: z.string().optional(),
 });
@@ -196,8 +197,19 @@ async function resolveSet<Model extends VocabularyModel>(
   const before = changesText ? await loadClip(db, { id, model }) : null;
   const clip = before ? { clip: { after: restoredClip ?? null, before } } : {};
 
+  const media =
+    changesText && !restoredClip
+      ? vocabularyClipNeed({
+          language: row.targetLanguage,
+          model,
+          orgSlug: row.organization.slug,
+          text,
+        })
+      : [];
+
   return {
-    effects: [],
+    effects: media.length > 0 ? [{ id, kind: "voiceOwed", model }] : [],
+    media,
     ok: true,
     stored: { ...clip, fields, id, model, op: "set" },
     unit: { id, kind: UNIT_KIND[model] },
@@ -212,15 +224,19 @@ function setValues(fields: readonly FieldChange[]) {
  * New text takes the clip the fix voiced for it, or the one a revert puts back; a language with no
  * voice keeps no clip, since an old one would say the old text.
  */
-async function clipData(
-  tx: TransactionClient,
-  {
-    after,
-    context,
-    row,
-    text,
-  }: { after: Clip | null; context: FixContext; row: VocabularyRow; text: string },
-) {
+function clipData({
+  after,
+  context,
+  model,
+  row,
+  text,
+}: {
+  after: Clip | null;
+  context: FixContext;
+  model: VocabularyModel;
+  row: VocabularyRow;
+  text: string;
+}) {
   if (after) {
     return toClipData(after);
   }
@@ -235,7 +251,7 @@ async function clipData(
     };
   }
 
-  return readFixClip(tx, { fixId: context.fixId, text });
+  return readFixClip(context, { language: row.targetLanguage, model, text });
 }
 
 async function applySet(
@@ -257,7 +273,7 @@ async function applySet(
 
   const voiced =
     typeof text === "string" && stored.clip
-      ? await clipData(tx, { after: stored.clip.after, context, row, text })
+      ? clipData({ after: stored.clip.after, context, model: stored.model, row, text })
       : {};
 
   if (stored.model === "Word") {

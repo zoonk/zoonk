@@ -25,9 +25,12 @@ import java.util.UUID
 
 enum class SessionAction { Start, Stop, KeepGoing, ExtraTime }
 
+internal enum class SummaryVisit { First, Repeat, Failed }
+
+internal enum class SummaryExit { Repeat, DayChanged }
+
 /**
- * The session screen's taps, one at a time, and what the screen keeps across a rotation. Opening
- * the screen writes nothing.
+ * The session screen's actions and their outcomes across a rotation.
  */
 class SessionViewModel(
     private val opener: StudyOpener,
@@ -68,12 +71,22 @@ class SessionViewModel(
     val run: StateFlow<GenerationRun> = follower.run
 
     /** A tap's answer that comes back after the learner left the screen opens and says nothing. */
-    private val visit = Visit()
+    internal val visit = Visit()
 
     /** Where a tap leads, in place of the session screen. */
     val route = visit.outcome<AppRoute>()
 
     private val failure = visit.outcome<SessionAction>()
+    private var claimingSummary: Job? = null
+    internal val summaryOpening =
+        visit.opening {
+            claimingSummary?.cancel()
+            claimingSummary = null
+        }
+    private val visitResult = summaryOpening.outcome<SummaryVisit>()
+    internal val summaryExit = summaryOpening.outcome<SummaryExit>()
+
+    internal val summaryVisit get() = visitResult.value
 
     /** The action that failed on this visit. */
     val failed get() = failure.value
@@ -82,8 +95,39 @@ class SessionViewModel(
     private var ceremonyClosed by mutableStateOf(false)
     private var rereading: Job? = null
 
-    /** The screen left for real (a task over it): what its taps would open or say belongs to that visit. */
-    fun endVisit() = visit.end()
+    internal fun recordSummaryVisit(
+        sessionId: UUID,
+        visitId: UUID,
+        requested: Boolean,
+    ) {
+        if (claimingSummary?.isActive == true || summaryExit.value != null) return
+        if (summaryVisit == SummaryVisit.First || summaryVisit == SummaryVisit.Repeat) return
+
+        visitResult.clear()
+        val started = summaryOpening.number
+        claimingSummary =
+            viewModelScope.launch {
+                when (val result = sessions.recordSummaryVisit(sessionId, visitId)) {
+                    is MutationResult.Done -> {
+                        if (!result.value && !requested) {
+                            summaryExit.send(started, SummaryExit.Repeat)
+                        } else {
+                            visitResult.send(started, if (result.value) SummaryVisit.First else SummaryVisit.Repeat)
+                        }
+                    }
+
+                    is MutationResult.Failed -> {
+                        if (result.code == "STUDY_SUMMARY_NOT_READY") {
+                            summaryExit.send(started, SummaryExit.DayChanged)
+                        } else {
+                            visitResult.send(started, SummaryVisit.Failed)
+                        }
+                    }
+
+                    MutationResult.Obsolete -> {}
+                }
+            }
+    }
 
     /**
      * The ceremony to show over a summary whose read has [read], held from [holdCeremony] until

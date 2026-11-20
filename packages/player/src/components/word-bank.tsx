@@ -1,9 +1,11 @@
 "use client";
 
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { placeKeepingFocus } from "./_utils/word-bank-focus";
+import { WORD_BANK_AT_BOTTOM_CLASS } from "./step-layouts";
 import { WordBankOptionButton } from "./word-bank-option-content";
 
 type WordBankTile = { isUsed: boolean; key: string; option: WordBankOption };
@@ -27,7 +29,7 @@ export function WordBank<Tile extends WordBankTile>({
   const added = use(WordBankCheckContext);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={cn("flex flex-col gap-4", WORD_BANK_AT_BOTTOM_CLASS)}>
       <div
         aria-label={t("Word bank")}
         className="flex flex-wrap gap-2"

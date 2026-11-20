@@ -12,7 +12,7 @@
   "ceremony_glasses_monocle": "231a085cfa03c17162ca66da4f093848a466b28589afbb364871eb57870b9e4c",
   "ceremony_glasses_monocle_detail": "6c4ba268a0c3ad5461063dea2948a283c951e8169cecaf8adf05fefb9d4230a6",
   "ceremony_glasses_new": "e4f7e8e4144f645b464f399cebcce3478f5243f70c3ba5f70bd16303a06bfca9",
-  "ceremony_glasses_new_detail": "34ee3a375891a4a8a4db55c84995c33474088dfc0b0b0c6baabff7f50e785e2d",
+  "ceremony_glasses_new_detail": "db6ada4eec424a0bb83de57205a6da82311a671c0f89b54cd3ff7f5fbaa5f56d",
   "ceremony_glasses_retro": "8954477724f346219addee6fc08ebb15f9aa8d4eb1ab60832f715d17dac05fa6",
   "ceremony_glasses_retro_detail": "5b5418829b1955c85a091853e24b8eb664c33e875309a712aad4ceefa2ba2f67",
   "ceremony_glasses_star": "0532fa1cf59f1158b56e4557495efc7a7c264bf4e9d0dd2c39802ca9a46ddddb",
@@ -49,7 +49,7 @@
     <string name="ceremony_glasses_monocle">¡Un monóculo!</string>
     <string name="ceremony_glasses_monocle_detail">Por ganar el desafío final.</string>
     <string name="ceremony_glasses_new">¡Lentes nuevos!</string>
-    <string name="ceremony_glasses_new_detail">Vienen con tu compañero.</string>
+    <string name="ceremony_glasses_new_detail">Vienen con tu compa.</string>
     <string name="ceremony_continue">Continuar</string>
     <!-- Button after earning glasses: puts them on the learner's buddy. -->
     <string name="ceremony_wear">Ponérselos</string>

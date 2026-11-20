@@ -406,8 +406,8 @@
   "plan_short_full_review_and_practice": "67b95374740f79c160fdd5e251dfde6c186d59b8d4bb58ae99c3d84c9d088113",
   "plan_short_light_review": "41670be283fcd698e7d4c7f140d1f214fd1798f2b6f1cbbc52a766912108a91f",
   "plan_short_map_and_gaps": "6e4ddcdf2236506dde74a201c9244b49edebbb184df257a5267441459d58baff",
+  "plan_short_mock": "2752895b6663e2921bb67f653131be37b1bd0ddb0da9a41ffbc101efc0ce361f",
   "plan_short_mock_and_practice": "5b9df78603f275d3e6bf24f93124a4f24cfd63ab888d6bab939b736ac3e07d0b",
-  "plan_short_mock_and_review": "2861a7575d8828e7b0d80306334f054c59cf72065cb0dcc38a81a67ee94c2d06",
   "plan_show_fewer_chapters": "ae7da92c32bb4d244a9c314e41a2963dae9b0a2d9d354ecae961e843ba5850e7",
   "plan_show_fewer_units": "7967b430d722cc17a2f4635fd97a9a22fcc8a7d33f792f613cb79e82698e9881",
   "plan_skills_you_know": "3a2c75dfae77c1ea5b42414552c9b7423270c5e175dc593e4bcffa375ae5193a",
@@ -615,7 +615,7 @@
     <string name="plan_short_map_and_gaps">Vue d’ensemble de l’examen et lacunes</string>
     <string name="plan_short_mock_and_practice">Examen blanc et entraînement</string>
     <string name="plan_short_full_review_and_practice">Révision complète et entraînement</string>
-    <string name="plan_short_mock_and_review">Examen blanc court et révision</string>
+    <string name="plan_short_mock">Examen blanc court</string>
     <string name="plan_short_full_review">Révision complète</string>
     <string name="plan_short_light_review">Révision légère</string>
     <string name="plan_short_day">Jour %1$d sur %2$d</string>

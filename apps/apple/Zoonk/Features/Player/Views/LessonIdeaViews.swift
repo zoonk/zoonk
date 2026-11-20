@@ -147,13 +147,23 @@ struct LessonOpeningMap: View {
       }
       .frame(width: size.width, height: size.height)
 
-      Text(
-        "Tap an idea to see what it covers", tableName: "Player",
-        comment:
-          "Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers."
-      )
-      .typeStyle(.body)
-      .foregroundStyle(.mutedForeground)
+      VStack(spacing: 2) {
+        Text(
+          "What you'll learn in this lesson", tableName: "Player",
+          comment:
+            "Under the lesson map on a lesson's opening screen: says the ideas drawn above are what this lesson will teach."
+        )
+        .typeStyle(.body.weight(.medium))
+        .foregroundStyle(Color(.foreground))
+
+        Text(
+          "Tap an idea to see what it covers", tableName: "Player",
+          comment:
+            "Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers."
+        )
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+      }
       .multilineTextAlignment(.center)
     }
     .padding(.top, 8)

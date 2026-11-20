@@ -4,6 +4,7 @@
 import { mkdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { HARNESS } from "./harness.mjs";
 import { pinStoryClock } from "./story-clock.mjs";
 
 const [list, ...only] = process.argv.slice(2);
@@ -34,7 +35,7 @@ for (const [name, entry] of stills) {
     const out = fileURLToPath(new URL(`../assets/real/${lang}/`, import.meta.url));
     mkdirSync(out, { recursive: true });
     errors = [];
-    await page.goto(`http://localhost:5199/?${query}&lang=${lang}`, { waitUntil: "networkidle" });
+    await page.goto(`${HARNESS}/?${query}&lang=${lang}`, { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(settle);
     await page.screenshot({ path: `${out}${name}.png` });

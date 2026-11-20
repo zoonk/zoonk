@@ -3471,25 +3471,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle deinen Kumpel"
+            "value" : "Wähle deinen Buddy"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige a tu compañero"
+            "value" : "Elegir tu compa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis ton compagnon"
+            "value" : "Choisis ton binôme"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli il tuo compagno"
+            "value" : "Scegli il tuo socio"
           }
         },
         "ja" : {
@@ -3513,7 +3513,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha seu parceiro"
+            "value" : "Escolha seu colega"
           }
         },
         "tr" : {
@@ -23723,25 +23723,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel wächst, während du lernst."
+            "value" : "Dein Buddy wächst, während du lernst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero crece a medida que aprendes."
+            "value" : "Tu compa crece mientras aprendes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon grandit au fil de tes apprentissages."
+            "value" : "Ton binôme grandit à mesure que tu apprends."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno cresce mentre impari."
+            "value" : "Il tuo socio cresce mentre impari."
           }
         },
         "ja" : {
@@ -23765,7 +23765,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro cresce enquanto você aprende."
+            "value" : "Seu colega cresce enquanto você aprende."
           }
         },
         "tr" : {

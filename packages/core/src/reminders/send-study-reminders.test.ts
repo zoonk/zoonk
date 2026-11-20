@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   studySessionBlockFixture,
@@ -136,6 +137,34 @@ describe("claiming a study reminder", () => {
       prisma.studyReminder.findUniqueOrThrow({ where: { userId: user.id } }),
     ).resolves.toMatchObject({ processedOn: TODAY });
   });
+
+  it.each([
+    ["lesson", "library", "18:00:00.000", "skipped"],
+    ["review", "library", "18:59:59.999", "skipped"],
+    ["review", "capsule", "18:59:59.999", "claimed"],
+    ["lesson", "library", "17:59:59.999", "claimed"],
+  ] as const)(
+    "handles a %s of kind %s finished at %s for a 19:00 reminder",
+    async (kind, lessonKind, time, status) => {
+      const { user } = await learnerWithReminder();
+
+      await learningEventFixture({
+        contentIds: { lessonId: randomUUID() },
+        endedAt: new Date(`2026-10-07T${time}Z`),
+        kind,
+        lessonKind,
+        userId: user.id,
+      });
+
+      await expect(
+        claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id }),
+      ).resolves.toMatchObject({ status });
+
+      await expect(listDueStudyReminders(new Date("2026-10-07T19:55:00Z"))).resolves.not.toContain(
+        user.id,
+      );
+    },
+  );
 
   it("defers while the learner is studying, without marking the day", async () => {
     const { goal, user } = await learnerWithReminder();
@@ -334,6 +363,30 @@ describe("reading a study reminder's delivery", () => {
         channel: "push",
         claim: CLAIM,
         now: AT_SEVEN_TEN,
+        userId: user.id,
+      }),
+    ).resolves.toBeNull();
+  });
+
+  it("skips delivery when a standalone lesson finishes after the claim", async () => {
+    const { user } = await learnerWithReminder();
+
+    await expect(claimStudyReminder({ now: AT_SEVEN_TEN, userId: user.id })).resolves.toMatchObject(
+      { status: "claimed" },
+    );
+
+    await learningEventFixture({
+      contentIds: { lessonId: randomUUID() },
+      endedAt: new Date("2026-10-07T19:20:00Z"),
+      lessonKind: "library",
+      userId: user.id,
+    });
+
+    await expect(
+      readStudyReminderDelivery({
+        channel: "email",
+        claim: CLAIM,
+        now: new Date("2026-10-07T19:55:00Z"),
         userId: user.id,
       }),
     ).resolves.toBeNull();

@@ -6,7 +6,7 @@
   "search_ask_detail": "d40b466af5d682641e9fd28202fe5d6a96e865c629490402b50fd3bc4ab0cdd5",
   "search_ask_question": "a644da3b8321a9f1f7deb73db210b55d6ad83f0ebf2a98ec256d21edead9856b",
   "search_blog": "dc013f0414b752a69f8b0052be2ddfbbc5639fa52273ab3fa21561078c931c32",
-  "search_buddy_keyword": "fb396cc539464812313db94199f1d24e77f28c2329bad8996fefb76c92fd7741",
+  "search_buddy_keyword": "15c2e05cc04cfce6ea0cac23803942be6a3630db7a02950d1d05d7fa9fbe8bef",
   "search_clear": "063aea3d2b74ac622fc235a0a41b76edb6df38aefbbad545b0cd7eba40168cd7",
   "search_close": "6a2364db159d61b89c1ab61e4c9b3d33a4e51afe7c07bd29c623a196c81616f0",
   "search_continue": "7140c96c161e39f0a63e60d755afdc3be668feaa080fc793fd500d756183acc3",
@@ -71,7 +71,7 @@
     <string name="search_practice_mistakes">Deine Fehler üben</string>
     <string name="search_ask_buddy">Frag %1$s…</string>
     <string name="search_start_new_goal">Ein neues Ziel starten</string>
-    <string name="search_buddy_keyword">Kumpel</string>
+    <string name="search_buddy_keyword">Buddy</string>
     <string name="search_mistakes_notebook">Fehlerheft</string>
     <string name="search_logbook">Logbuch</string>
     <string name="search_switch_goal">Zu %1$s wechseln</string>
