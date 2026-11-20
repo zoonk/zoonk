@@ -48,10 +48,12 @@ export function RulingForm({
       <input name="caseId" type="hidden" value={caseId} />
 
       <div className="flex flex-col gap-1">
-        <p className="font-medium">Settle this case</p>
+        <p className="font-medium">Rule on this case</p>
         <p className="text-muted-foreground text-sm">
-          Every reader has read it and they still disagree, so your ruling decides it. You can see
-          which model wrote each answer, so this isn’t a blind read.
+          {blindRead
+            ? "The readers disagree, so your blind read settled this case. A ruling replaces it."
+            : "The readers disagree, so your read decides this case. Read it blind first if you can."}{" "}
+          Here you can see which model wrote each answer, so a ruling isn’t blind.
         </p>
       </div>
 
@@ -70,7 +72,7 @@ export function RulingForm({
       )}
 
       <Button busy={pending} className="self-start" type="submit" variant="outline">
-        Settle the case
+        Save ruling
       </Button>
     </form>
   );

@@ -72,7 +72,9 @@ function OwnerStatus({ route }: { route: ComparisonRoute }) {
               </a>
             </span>
           ))}
-          . Open {needCall.length === 1 ? "it" : "each"} to settle it with your ruling.
+          , so your blind read settles {needCall.length === 1 ? "it" : "them"}. You can also rule on{" "}
+          {needCall.length === 1 ? "it" : "each"} with the model names shown; the later of the two
+          counts.
         </p>
       )}
     </>
