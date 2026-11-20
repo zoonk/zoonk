@@ -1,11 +1,12 @@
 import { Fold } from "@/components/fold";
+import { FoldRowTitle } from "@/components/fold-row-title";
 import { type Decision } from "@/lib/comparisons/decision";
 import { canAdjudicate } from "@/lib/comparisons/evidence";
 import { type Comparison } from "@/lib/comparisons/schemas";
 import { CaseInput } from "../_components/case-input";
 import { CaseRuns, caseVotesLine } from "../_components/case-view";
 import { caseRuns, orderCases } from "../_utils/case-evidence";
-import { DIRECTION_LABELS, languageName } from "../_utils/labels";
+import { DIRECTION_LABELS } from "../_utils/labels";
 import { RulingForm } from "./ruling-form";
 
 type Case = Decision["cases"][number];
@@ -18,11 +19,6 @@ function resultText(item: Case): string {
   return item.owner
     ? `${DIRECTION_LABELS[item.result]}, your blind read: ${DIRECTION_LABELS[item.owner]}`
     : DIRECTION_LABELS[item.result];
-}
-
-function caseTitle(item: Case, audit: boolean): string {
-  const parts = [item.caseId, languageName(item.language)];
-  return audit ? parts.join(" · ") : [...parts, resultText(item)].join(" · ");
 }
 
 function CaseVotes({ item }: { item: Case }) {
@@ -83,7 +79,11 @@ export function CasesSection({
             >
               <Fold
                 isOpen={!unread.includes(item.caseId) && item.result !== "tie"}
-                title={caseTitle(item, audit)}
+                title={
+                  <FoldRowTitle title={item.caseId}>
+                    {!audit && <span className="font-sans">{resultText(item)}</span>}
+                  </FoldRowTitle>
+                }
               >
                 <div className="flex flex-col gap-6 pt-2 pb-6">
                   {!audit && <CaseVotes item={item} />}
