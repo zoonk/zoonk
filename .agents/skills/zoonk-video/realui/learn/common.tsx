@@ -237,7 +237,12 @@ export function TabShell({
           <LearnShellContent>
             <TopBar goal={goal} />
             <LearnShellMain>{children}</LearnShellMain>
-            <LearnBottomNavigation activeTab={tab} buddy={buddy} missions={missions} />
+            <LearnBottomNavigation
+              activeTab={tab}
+              buddy={buddy}
+              missions={missions}
+              onSearch={() => {}}
+            />
           </LearnShellContent>
         </LearnShell>
       </DayStepOpenerProvider>

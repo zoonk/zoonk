@@ -155,7 +155,7 @@ const TAB_ITEM_CLASS =
  */
 const BOTTOM_TAB_ITEM_CLASS = cn(
   TAB_ITEM_CLASS,
-  "text-2xs row-span-4 grid min-w-0 grid-cols-1 grid-rows-subgrid justify-items-center rounded-xl px-1 @max-xs/tabs:min-w-[44px]",
+  "text-2xs row-span-4 grid min-w-0 grid-cols-1 grid-rows-subgrid content-center justify-items-center rounded-xl px-1 @max-xs/tabs:min-w-[44px]",
 );
 
 const BOTTOM_TAB_ICON_CLASS = "row-start-2 flex h-6 items-center justify-center";
@@ -237,7 +237,7 @@ function TabBarSearch({ onSearch }: { onSearch: () => void }) {
       <span className={BOTTOM_TAB_ICON_CLASS}>
         <SearchIcon aria-hidden="true" className="size-5" />
       </span>
-      <span className={BOTTOM_TAB_TITLE_CLASS} data-slot="tab-title">
+      <span className={cn(BOTTOM_TAB_TITLE_CLASS, "@max-xs/tabs:sr-only")} data-slot="tab-title">
         {t({
           description: "The search item at the end of the phone's tab bar, after the tabs.",
           message: "Search",
@@ -292,7 +292,8 @@ const BOTTOM_TAB_SLOT_CLASS = "row-span-4 grid min-w-0 grid-cols-1 grid-rows-sub
 
 /**
  * Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). On a narrow bar the
- * buddy's column takes what Today, the Plan and search leave.
+ * buddy's column takes what Today, the Plan and search leave, and search keeps only its icon: with
+ * large text, four titles don't fit across a phone.
  */
 export function LearnBottomNavigation({
   onSearch,
@@ -307,7 +308,7 @@ export function LearnBottomNavigation({
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
-      <ul className="mx-auto grid h-16 auto-cols-18 grid-flow-col grid-rows-[1fr_auto_auto_1fr] justify-between px-(--page-gutter) py-1 sm:max-w-3xl @max-xs/tabs:grid-cols-[max-content_max-content_minmax(0,1fr)_max-content] @max-xs/tabs:gap-x-1 @max-xs/tabs:px-2 @max-xs/tabs:py-0">
+      <ul className="mx-auto grid h-16 auto-cols-18 grid-flow-col grid-rows-[1fr_auto_auto_1fr] justify-between px-(--page-gutter) py-1 sm:max-w-3xl @max-xs/tabs:grid-cols-[max-content_max-content_minmax(--spacing(11),1fr)_max-content] @max-xs/tabs:gap-x-1 @max-xs/tabs:px-2 @max-xs/tabs:py-0">
         {LEARN_TABS.map((tab) => (
           <li className={BOTTOM_TAB_SLOT_CLASS} key={tab}>
             <BottomTab {...props} tab={tab} />

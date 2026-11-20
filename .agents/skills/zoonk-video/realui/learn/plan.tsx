@@ -507,7 +507,12 @@ function PushedShell({ children }: { children: ReactNode }) {
       <LearnShell className="overflow-x-clip">
         <LearnShellContent>
           <LearnShellMain>{children}</LearnShellMain>
-          <LearnBottomNavigation activeTab="journey" buddy={ZU} missions={{ done: 1, total: 3 }} />
+          <LearnBottomNavigation
+            activeTab="journey"
+            buddy={ZU}
+            missions={{ done: 1, total: 3 }}
+            onSearch={() => {}}
+          />
         </LearnShellContent>
       </LearnShell>
     </LearnProvider>
