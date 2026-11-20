@@ -17,7 +17,8 @@ type DayStatus = { state: DayState; waitingFor: (typeof DAY_WAIT_REASONS)[number
 /**
  * A day with no blocks is a rest day, one still being outlined (`waiting`), one whose lessons wait
  * for the learner to ask for them (`prepare`), or one with nothing new (`ahead`): never a finished
- * session.
+ * session. A started day whose time holds lessons not written yet waits only while someone is
+ * outlining them; otherwise it asks, so it never waits on nobody.
  */
 function getDayState(day: DayStateInput): DayStatus {
   const empty = day.blocks.length === 0;
@@ -40,8 +41,12 @@ function getDayState(day: DayStateInput): DayStatus {
     return { state: "waiting", waitingFor: "mock" };
   }
 
-  if (day.lessonsComing || day.lessonsToPrepare) {
+  if (day.lessonsComing) {
     return { state: "waiting", waitingFor: "lessons" };
+  }
+
+  if (day.lessonsToPrepare) {
+    return { state: "prepare", waitingFor: null };
   }
 
   if (studyDay) {

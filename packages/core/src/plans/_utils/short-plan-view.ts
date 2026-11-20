@@ -54,11 +54,16 @@ export function toShortPhaseView({
     return null;
   }
 
-  return {
-    firstDay: daysBetween(shape.planStart, fromIsoDate(phase.startDate)) + 1,
-    focus: getShortExamFocus({ kind: phase.kind, shortMockMinutes: shape.shortMockMinutes }),
-    lastDay: daysBetween(shape.planStart, fromIsoDate(phase.endDate)) + 1,
-  };
+  const firstDay = daysBetween(shape.planStart, fromIsoDate(phase.startDate)) + 1;
+  const lastDay = daysBetween(shape.planStart, fromIsoDate(phase.endDate)) + 1;
+
+  const focus = getShortExamFocus({
+    days: lastDay - firstDay + 1,
+    kind: phase.kind,
+    shortMockMinutes: shape.shortMockMinutes,
+  });
+
+  return { firstDay, focus, lastDay };
 }
 
 type ShortPlanToday = { phases: readonly PlanPhase[]; shape: ShortPlanShape | null; today: Date };

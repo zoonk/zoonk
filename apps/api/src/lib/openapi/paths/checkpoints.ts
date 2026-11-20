@@ -23,7 +23,7 @@ import {
   checkpointMovePathParamsSchema,
   checkpointPathParamsSchema,
 } from "../schemas/paths";
-import { planChangeInvalidResponse } from "../schemas/plan-errors";
+import { PLAN_CHANGED_WHILE_SAVING, planChangeInvalidResponse } from "../schemas/plan-errors";
 import {
   conflictResponse,
   guestRefusalResponse,
@@ -108,7 +108,7 @@ export const checkpointPaths = {
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,
-          description: "It isn't a weekly challenge, it started, or its day is past",
+          description: `It isn't a weekly challenge, it started, or its day is past. ${PLAN_CHANGED_WHILE_SAVING}`,
         },
         "422": planChangeInvalidResponse,
       },
@@ -237,7 +237,7 @@ export const checkpointPaths = {
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,
-          description: "It already started, or isn't a weekly challenge",
+          description: `It already started, or isn't a weekly challenge. ${PLAN_CHANGED_WHILE_SAVING}`,
         },
         "422": planChangeInvalidResponse,
       },

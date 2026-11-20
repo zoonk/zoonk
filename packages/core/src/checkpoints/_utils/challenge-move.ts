@@ -32,7 +32,7 @@ export type ChallengeMove = {
 export type ApplyChallengeMoveResult =
   | { move: ChallengeMove; status: "moved" }
   | PlanChangeRefusal
-  | { status: "notFound" | "unauthorized" };
+  | { status: "conflict" | "notFound" | "unauthorized" };
 
 function getNextMonday(date: Date): Date {
   const days = (MONDAY - date.getUTCDay() + DAYS_PER_WEEK) % DAYS_PER_WEEK || DAYS_PER_WEEK;

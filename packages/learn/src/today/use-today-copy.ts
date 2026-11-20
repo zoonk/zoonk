@@ -33,9 +33,12 @@ export function useSessionState() {
   };
 }
 
+/** A wait for the day's lessons that ran out asks for them, as a day nobody is preparing does. */
 export function useDayState(): DayState {
-  const { today } = useTodayScreen();
-  return today.session.state;
+  const { today, writingStalled } = useTodayScreen();
+  const { state } = today.session;
+
+  return state === "waiting" && writingStalled ? "prepare" : state;
 }
 
 type PastDate = Extract<
