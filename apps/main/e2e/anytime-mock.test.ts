@@ -258,7 +258,16 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText("Come back to this page to start it.")).toBeVisible();
     await expect(keepStudying).toHaveAttribute("href", /\/today$/u);
     await expect(start).toBeHidden();
-    expect(await keepStudying.boundingBox()).toEqual(startBox);
+
+    // The bar's main action keeps its row and its edge; only its label changes.
+    const keepBox = await keepStudying.boundingBox();
+
+    expect(keepBox?.y).toBe(startBox?.y);
+
+    expect((keepBox?.x ?? 0) + (keepBox?.width ?? 0)).toBe(
+      (startBox?.x ?? 0) + (startBox?.width ?? 0),
+    );
+
     await expect(mocks()).resolves.toBe(0);
 
     await exam.getByText("Half the exam", { exact: true }).click();

@@ -12,9 +12,9 @@ import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
+import { z } from "zod";
 import { answerForMockHeading } from "./anytime-mock-fixtures";
 
-const MOCK_QUESTIONS = 6;
 const PASS_MARK = 4;
 
 const MOCK_PLAN_POSITION = 10_000;
@@ -52,33 +52,81 @@ function readOptions(content: unknown): ChoiceOption[] {
   return Array.isArray(options) ? options.filter((option) => isChoiceOption(option)) : [];
 }
 
+const LOWERCASE_A_CODE_POINT = 97;
+
+/** Letters only: the question's text typesets digit runs, which would change its lookup key. */
+function letterId() {
+  return randomUUID().replaceAll(/\d/gu, (digit) =>
+    String.fromCodePoint(LOWERCASE_A_CODE_POINT + Number(digit)),
+  );
+}
+
+/** Every area of the plan holds this many unseen mock-only questions, more than any mock asks of it. */
+const RESERVE_PER_AREA = 45;
+
+const planSkillsSchema = z.object({
+  skills: z.array(z.object({ area: z.string().nullish(), skillId: z.string().nullish() })),
+});
+
+/**
+ * Scheduled mocks draw only on the mock-only reserve, so the persona's plan gets a full one, each
+ * question a copy of one of the exam's own with a new question line, so it keeps the exam's shape.
+ */
+async function fillMockReserve({
+  examBlueprintId,
+  graph,
+}: {
+  examBlueprintId: string | null;
+  graph: unknown;
+}) {
+  const { skills } = planSkillsSchema.parse(graph);
+
+  const templates = await prisma.item.findMany({
+    orderBy: { id: "asc" },
+    where: { examBlueprintId, format: "multipleChoice", mockOnly: false },
+  });
+
+  const areas = Map.groupBy(
+    skills.flatMap(({ area, skillId }) => (skillId ? [{ area, skillId }] : [])),
+    ({ area }) => area,
+  );
+
+  return Promise.all(
+    [...areas.values()].flatMap((areaSkills) =>
+      Array.from({ length: RESERVE_PER_AREA }, (_, index) => {
+        const skillId = areaSkills[index % areaSkills.length]?.skillId ?? "";
+        const template = templates[index % templates.length]?.content ?? {};
+        const question = `Mock question ${letterId()}?`;
+
+        return itemFixture({
+          content: Object.fromEntries([...Object.entries(template), ["question", question]]),
+          examBlueprintId,
+          mockOnly: true,
+          skillId,
+        });
+      }),
+    ),
+  );
+}
+
 export async function addTodayMock({ goalId, userId }: { goalId: string; userId: string }) {
-  const [goal, session, seen, plan] = await Promise.all([
+  const [goal, session, plan] = await Promise.all([
     prisma.goal.findUniqueOrThrow({ where: { id: goalId } }),
     findTodaySession({ goalId, userId }),
-    prisma.attempt.findMany({ select: { itemId: true }, where: { userId } }),
     prisma.plan.findUniqueOrThrow({ where: { goalId } }),
   ]);
 
-  const planItem = await planItemFixture({
-    kind: "mock",
-    phase: 0,
-    planId: plan.id,
-    position: MOCK_PLAN_POSITION,
-    scheduledFor: session.localDate,
-    titleSnapshot: "",
-  });
-
-  const seenIds = new Set(seen.flatMap((attempt) => (attempt.itemId ? [attempt.itemId] : [])));
-
-  const bank = await prisma.item.findMany({
-    orderBy: { id: "asc" },
-    where: { examBlueprintId: goal.examBlueprintId, format: "multipleChoice" },
-  });
-
-  const items = bank
-    .toSorted((first, second) => Number(seenIds.has(first.id)) - Number(seenIds.has(second.id)))
-    .slice(0, MOCK_QUESTIONS);
+  const [planItem, items] = await Promise.all([
+    planItemFixture({
+      kind: "mock",
+      phase: 0,
+      planId: plan.id,
+      position: MOCK_PLAN_POSITION,
+      scheduledFor: session.localDate,
+      titleSnapshot: "",
+    }),
+    fillMockReserve({ examBlueprintId: goal.examBlueprintId, graph: plan.graph }),
+  ]);
 
   const block = await studySessionBlockFixture({
     estimatedMinutes: 20,
@@ -95,7 +143,7 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
       },
       // This injected mock is extra work; Start keeps it when refreshing the scheduled queue.
       extra: true,
-      itemIds: items.map((item) => item.id),
+      itemIds: [],
       planItemId: planItem.id,
       skillIds: [...new Set(items.map((item) => item.skillId))],
       title: "Mock exam",
@@ -103,8 +151,13 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
     sessionId: session.id,
   });
 
+  // Earlier runs may have left questions in the shared reserve, so every one of them gets an answer.
+  const reserve = await prisma.item.findMany({
+    where: { examBlueprintId: goal.examBlueprintId, format: "multipleChoice", mockOnly: true },
+  });
+
   const answers = new Map(
-    items.map((item) => {
+    reserve.map((item) => {
       const options = readOptions(item.content);
 
       return [
