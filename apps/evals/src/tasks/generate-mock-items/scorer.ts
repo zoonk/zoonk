@@ -40,9 +40,9 @@ const judgeSchema = z.object({
 
 type Judgment = z.infer<typeof judgeSchema>["questions"][number];
 
-function toBlindQuestion(item: GeneratedItem): ReleasedQuestion | null {
+function toBlindQuestion(item: GeneratedItem, command: string): ReleasedQuestion | null {
   if (item.format === "trueFalse") {
-    const text = [item.context, item.statement].filter(Boolean).join("\n");
+    const text = [item.context ?? command, item.statement].join("\n");
     return { key: item.isTrue ? "true" : "false", text };
   }
 
@@ -52,7 +52,7 @@ function toBlindQuestion(item: GeneratedItem): ReleasedQuestion | null {
     );
 
     const right = item.options.findIndex((option) => option.isCorrect);
-    const text = [item.context, item.question, ...options].filter(Boolean).join("\n");
+    const text = [item.context ?? command, item.question, ...options].join("\n");
     return { key: OPTION_LETTERS[right] ?? "", text };
   }
 
@@ -137,7 +137,7 @@ export const scoreMockItems: TaskScorer<GenerateMockItemsExpected> = async ({
   testCase,
 }) => {
   const input = testCase.userInput as MockItemsCase & { examFormat?: { name: string | null } };
-  const released = testCase.expected?.released;
+  const { command = "", released } = testCase.expected ?? {};
 
   if (!released?.length) {
     throw new Error(`Test case ${testCase.id} needs released questions to compare.`);
@@ -145,7 +145,7 @@ export const scoreMockItems: TaskScorer<GenerateMockItemsExpected> = async ({
 
   const checked = checkGeneratedItems(output, input);
   const { items } = JSON.parse(checked.judgedOutput) as { items: GeneratedItem[] };
-  const written = items.flatMap((item) => toBlindQuestion(item) ?? []);
+  const written = items.flatMap((item) => toBlindQuestion(item, command) ?? []);
 
   if (written.length === 0) {
     return createFixedScore({

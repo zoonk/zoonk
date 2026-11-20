@@ -9,8 +9,11 @@ type GenerateMockItemsInput = Omit<
 /** A released question as printed, with its official key: "true" or "false", or an option's letter. */
 export type ReleasedQuestion = { text: string; key: string };
 
-/** Released questions the writer never sees, which the blind judge reads mixed with the written ones. */
-export type GenerateMockItemsExpected = { released: ReleasedQuestion[] };
+/**
+ * Released questions the writer never sees, which the blind judge reads mixed with the written
+ * ones, and the paper's command the written ones go under, since every released one shows its own.
+ */
+export type GenerateMockItemsExpected = { command: string; released: ReleasedQuestion[] };
 
 const COUNT = 5;
 
@@ -67,6 +70,7 @@ export const TEST_CASES: TestCase<GenerateMockItemsExpected, GenerateMockItemsIn
   {
     expectations: EXPECTATIONS,
     expected: {
+      command: BUDGET_COMMAND,
       released: [
         released(
           BUDGET_COMMAND,
@@ -120,6 +124,7 @@ export const TEST_CASES: TestCase<GenerateMockItemsExpected, GenerateMockItemsIn
   {
     expectations: EXPECTATIONS,
     expected: {
+      command: JUDICIAL_REVIEW_COMMAND,
       released: [
         released(
           JUDICIAL_REVIEW_COMMAND,
@@ -178,6 +183,7 @@ export const TEST_CASES: TestCase<GenerateMockItemsExpected, GenerateMockItemsIn
   {
     expectations: EXPECTATIONS,
     expected: {
+      command: PROCUREMENT_COMMAND,
       released: [
         released(
           PROCUREMENT_COMMAND,
@@ -236,6 +242,7 @@ export const TEST_CASES: TestCase<GenerateMockItemsExpected, GenerateMockItemsIn
   {
     expectations: EXPECTATIONS,
     expected: {
+      command: AUDIT_COMMAND,
       released: [
         released(
           AUDIT_COMMAND,
