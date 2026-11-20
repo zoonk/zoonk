@@ -168,46 +168,34 @@ enum LineCrossingLabelLayout {
     // Every pass from here walks the plot point by point and needs a `safe` box, most a `named`
     // one, so those are found once: a name with no place left fails every pass, and the learner
     // waits for all of them when an answer is revealed.
-    var foundSafe: [CGRect]?
-    func safeBoxes() -> [CGRect] {
-      if let foundSafe { return foundSafe }
-      let found = boxes(spacing: 1).filter(safe)
-      foundSafe = found
-      return found
-    }
-    var foundNamed: [CGRect]?
-    func namedBoxes() -> [CGRect] {
-      if let foundNamed { return foundNamed }
-      let found = safeBoxes().filter(belongsToLine)
-      foundNamed = found
-      return found
-    }
+    let safeBoxes = boxes(spacing: 1).filter(safe)
+    let namedBoxes = safeBoxes.filter(belongsToLine)
     func edgeBoxes() -> [CGRect] { boxes(spacing: 0.25, edgesOnly: true) }
 
     let preferred =
-      nearest(namedBoxes(), { clearsStrokes($0) && avoidsMarks($0) && fits($0) })
-      ?? nearest(namedBoxes(), { offLine($0) && fits($0) })
-      ?? nearest(namedBoxes(), { avoidsMarks($0) && fits($0) })
+      nearest(namedBoxes, { clearsStrokes($0) && avoidsMarks($0) && fits($0) })
+      ?? nearest(namedBoxes, { offLine($0) && fits($0) })
+      ?? nearest(namedBoxes, { avoidsMarks($0) && fits($0) })
     if label.isOptional && origin == nil {
       return preferred
         ?? nearest(edgeBoxes(), { avoidsMarks($0) && fits($0) })
-        ?? nearest(namedBoxes(), { offLine($0) && nearerThanGuides($0) })
-        ?? nearest(namedBoxes(), offLine)
+        ?? nearest(namedBoxes, { offLine($0) && nearerThanGuides($0) })
+        ?? nearest(namedBoxes, offLine)
     }
 
     if let owned = preferred
       ?? nearest(
-        namedBoxes(),
+        namedBoxes,
         { box in
           let halo = padded(box)
           return !touches(halo, label.segment) && obstacles.allSatisfy { !halo.intersects($0) }
             && fits(box)
         })
-      ?? nearest(namedBoxes(), fits)
+      ?? nearest(namedBoxes, fits)
       ?? nearest(edgeBoxes(), fits)
-      ?? nearest(namedBoxes(), nearerThanGuides)
-      ?? nearest(namedBoxes(), avoidsMarks)
-      ?? nearest(namedBoxes(), { _ in true })
+      ?? nearest(namedBoxes, nearerThanGuides)
+      ?? nearest(namedBoxes, avoidsMarks)
+      ?? nearest(namedBoxes, { _ in true })
     {
       return owned
     }
@@ -218,10 +206,10 @@ enum LineCrossingLabelLayout {
 
     func fallback(_ accepts: (CGRect) -> Bool) -> CGRect? {
       nearest(
-        safeBoxes(), preferOwnLine: true,
+        safeBoxes, preferOwnLine: true,
         { accepts($0) && onNamedSide($0) && avoidsMarks($0) })
-        ?? nearest(safeBoxes(), preferOwnLine: true, { accepts($0) && onNamedSide($0) })
-        ?? nearest(safeBoxes(), accepts)
+        ?? nearest(safeBoxes, preferOwnLine: true, { accepts($0) && onNamedSide($0) })
+        ?? nearest(safeBoxes, accepts)
     }
 
     return fallback(nearerThanGuides) ?? fallback({ _ in true })
