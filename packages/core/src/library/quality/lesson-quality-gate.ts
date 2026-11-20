@@ -13,6 +13,7 @@ import {
   toReviewedLesson,
 } from "./lesson-code-checks";
 import { checkLessonPrograms } from "./lesson-program-checks";
+import { toReviewProblems } from "./lesson-review-problems";
 
 export type LessonWritingContext = Pick<
   WriteLessonDraftParams,
@@ -84,14 +85,7 @@ async function reviewLesson({
     writerModel,
   });
 
-  return {
-    problems: data.issues.map((issue) => ({
-      problem: `${issue.problem} Fix: ${issue.fix}`,
-      screen: issue.screen,
-      source: "review" as const,
-    })),
-    runId: provenance.runId,
-  };
+  return { problems: toReviewProblems(data.issues), runId: provenance.runId };
 }
 
 export async function runLessonQualityGate({

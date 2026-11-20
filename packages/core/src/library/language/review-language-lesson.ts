@@ -9,6 +9,7 @@ import {
 import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import { recordLessonQualityDecision } from "../quality/lesson-quality-decision";
+import { toReviewProblems } from "../quality/lesson-review-problems";
 import { listLanguageReviewScreens } from "./_utils/language-review-screens";
 import {
   type LanguageLessonDraft,
@@ -57,14 +58,7 @@ async function checkLanguageDraft(context: ReviewContext) {
     writerModel: draft.provenance.model,
   });
 
-  return {
-    problems: data.issues.map((issue) => ({
-      problem: `${issue.problem} Fix: ${issue.fix}`,
-      screen: issue.screen,
-      source: "review" as const,
-    })),
-    reviewerRunId: provenance.runId,
-  };
+  return { problems: toReviewProblems(data.issues), reviewerRunId: provenance.runId };
 }
 
 function toEvidenceProblem({ problem, screen, source }: LessonProblem) {
