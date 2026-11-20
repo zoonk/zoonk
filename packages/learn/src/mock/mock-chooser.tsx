@@ -31,21 +31,28 @@ function useMockChoices({
   objectiveTitled = false,
   options,
   severalDays,
+  tests = 0,
 }: {
   objectiveTitled?: boolean;
   options: readonly MockOptionView[];
   severalDays: boolean;
+  tests?: number;
 }) {
   const name = useMockOptionName();
   const detail = useMockOptionDetail();
   const sizeFacts = useMockOptionSizeFacts();
 
-  return options.map((option) => ({
-    description: (!objectiveTitled && detail({ option, severalDays })) || undefined,
-    label: name({ option, severalDays }),
-    trailing: <FactSegments facts={sizeFacts(option)} />,
-    value: getMockOptionKey(option),
-  }));
+  return options.map((option) => {
+    // An exam taken as one test reads its options as it always did; its sections say nothing new.
+    const shown = tests > 1 ? option : { ...option, sections: undefined };
+
+    return {
+      description: (!objectiveTitled && detail({ option: shown, severalDays })) || undefined,
+      label: name({ option: shown, severalDays, tests }),
+      trailing: <FactSegments facts={sizeFacts(shown)} />,
+      value: getMockOptionKey(option),
+    };
+  });
 }
 
 function OptionGroup({
@@ -103,7 +110,7 @@ function MockOptionLists({
 
   const exam = view.options.filter((option) => leads(option));
   const rest = view.options.filter((option) => !leads(option));
-  const examChoices = useMockChoices({ options: exam, severalDays });
+  const examChoices = useMockChoices({ options: exam, severalDays, tests });
   const restChoices = useMockChoices({ objectiveTitled: tests > 1, options: rest, severalDays });
 
   const examTitle =

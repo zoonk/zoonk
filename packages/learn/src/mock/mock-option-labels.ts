@@ -7,12 +7,14 @@ import { useFormatDuration } from "../_utils/time-format";
 /** An exam of several tests (an objective test in the morning, a written one in the afternoon). */
 export function getExamTests(options: readonly MockOptionView[]): number {
   const full = options.find((option) => option.kind === "full");
-  return full?.sections?.length ?? 0;
+  const offersEachTest = options.some(({ kind }) => kind === "objective" || kind === "written");
+  return offersEachTest ? (full?.sections?.length ?? 0) : 0;
 }
 
 /** One test of an exam of several is named as the notice names it; all of them, by their count. */
 function getTestName(
   option: MockOptionView,
+  tests: number,
 ): { kind: "one"; name: string } | { count: number; kind: "tests" } | null {
   const sections = option.sections ?? [];
   const [section] = sections;
@@ -21,18 +23,24 @@ function getTestName(
     return { kind: "one", name: section.name };
   }
 
-  return option.kind === "full" && sections.length > 1
-    ? { count: sections.length, kind: "tests" }
-    : null;
+  return option.kind === "full" && tests > 1 ? { count: tests, kind: "tests" } : null;
 }
 
 export function useMockOptionName() {
   const t = useExtracted();
   const format = useFormatter();
 
-  return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
+  return ({
+    option,
+    severalDays,
+    tests = 0,
+  }: {
+    option: MockOptionView;
+    severalDays: boolean;
+    tests?: number;
+  }): string => {
     const day = String(option.day ?? 1);
-    const testName = severalDays ? null : getTestName(option);
+    const testName = severalDays ? null : getTestName(option, tests);
 
     if (testName) {
       return testName.kind === "tests"
@@ -72,7 +80,8 @@ export function useMockOptionDetail() {
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
     const sessions = (option.sections ?? []).flatMap(({ session }) => (session ? [session] : []));
 
-    if ((option.sections?.length ?? 0) > 0 && option.kind !== "half" && sessions.length > 0) {
+    // A test of an exam of several says when it happens, if the notice says; its name says the rest.
+    if ((option.sections?.length ?? 0) > 0 && option.kind !== "half") {
       return format.list(sessions, { type: "conjunction" });
     }
 
