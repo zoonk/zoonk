@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getPlanInputsKey, shouldSkipPlanBuild } from "../_utils/plan-inputs-key";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { putLandedLessons } from "./landed-placement";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
@@ -542,6 +543,15 @@ describe("a topic whose first chapter the learner already began", () => {
 
     expect(begunStandIns(next)).toStrictEqual([]);
     expect(written).toHaveLength(rest.length);
+  });
+
+  it("rebuilds a saved plan that still holds the stand-in, though nothing it plans from changed", () => {
+    const { day, opened } = openToday();
+    const lessons = [...begun.lessons, ...rest];
+    const saved = { ...day, items: saveItems(opened), lessons, todayShown: true };
+    const savedKey = getPlanInputsKey({ input: saved, items: opened.items });
+
+    expect(shouldSkipPlanBuild({ input: saved, savedKey, skipUnchangedInputs: true })).toBe(false);
   });
 
   it("never sets the stand-in aside as work left once a missed day passes", () => {
