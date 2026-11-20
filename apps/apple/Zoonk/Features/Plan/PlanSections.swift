@@ -158,7 +158,8 @@ private struct RoadmapCompact: View {
       if let currentIndex {
         let phase = phases[currentIndex]
 
-        RowLayout {
+        // Main's `plan-roadmap`: its value and chevron end on the edge; it has no row's label.
+        RowLayout(piece: .planRoadmap) {
         } words: {
           position(phase: phase, number: currentIndex + 1, count: phases.count)
         } value: {

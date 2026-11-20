@@ -53,6 +53,8 @@
       var scale: CGFloat = 1
       /// A row whose layout put its value under its title (`layoutStacks(_:)`).
       var stacked = false
+      /// The fold whose open rows hold this one (`layoutNest()`), a group of their own.
+      var nest: UUID?
       /// An action drawn disabled: it still counts toward one filled action, and says it's disabled.
       var disabled = false
       /// A view of UIKit's inside this one, whose superviews are the views that really hold it: the
@@ -80,6 +82,7 @@
 
   extension EnvironmentValues {
     @Entry var layoutRowID: UUID?
+    @Entry var layoutNestID: UUID?
     @Entry var layoutSurfaceID: UUID?
     @Entry var layoutAnchor: String?
   }
@@ -216,10 +219,19 @@
     }
   }
 
+  struct LayoutNestReporter: ViewModifier {
+    @State private var id = UUID()
+
+    func body(content: Content) -> some View {
+      content.environment(\.layoutNestID, id)
+    }
+  }
+
   struct LayoutRowReporter: ViewModifier {
     let piece: LayoutPiece
 
     @Environment(\.layoutSurfaceID) private var surface
+    @Environment(\.layoutNestID) private var nest
     @State private var id = UUID()
 
     func body(content: Content) -> some View {
@@ -248,6 +260,7 @@
     private func update(_ change: (inout LayoutRegistry.Record) -> Void) {
       LayoutRegistry.shared.update(id, kind: .row(piece)) {
         $0.surface = surface
+        $0.nest = nest
         change(&$0)
       }
     }
@@ -856,6 +869,19 @@
         "\(cell.section):\(Int(cell.frame.minY))"
       }
 
+      // Declared rows, inside a list's cells or not.
+      let declared = records.compactMap { entry -> (UUID, LayoutRegistry.Record, LayoutPiece)? in
+        guard case .row(let piece) = entry.record.kind else { return nil }
+        return (entry.id, entry.record, piece)
+      }
+      let inCells = declared.map { cells.cell(containing: $0.1.frame) }
+      // A fold's open rows are a group of their own in their section, as the web's are.
+      let nestOfCell = Dictionary(
+        declared.indices.compactMap { index -> (String, UUID)? in
+          guard let cell = inCells[index], let nest = declared[index].1.nest else { return nil }
+          return (cellKey(cell), nest)
+        }, uniquingKeysWith: { first, _ in first })
+
       func group(_ key: String, piece: String, frames: [CGRect], endEdge: CGFloat, source: String?)
         -> String
       {
@@ -876,10 +902,14 @@
       }
 
       func sectionGroup(_ cell: ListCells.Cell, piece: String) -> String {
-        let inSection = cells.cells.filter { $0.section == cell.section }
+        let nest = nestOfCell[cellKey(cell)]
+        let inGroup = cells.cells.filter {
+          $0.section == cell.section && nestOfCell[cellKey($0)] == nest
+        }
         return group(
-          cell.section, piece: piece, frames: inSection.map(\.frame),
-          endEdge: inSection.map(\.contentEnd).max() ?? cell.frame.maxX, source: nil)
+          nest.map { "\(cell.section).\($0.uuidString)" } ?? cell.section, piece: piece,
+          frames: inGroup.map(\.frame),
+          endEdge: inGroup.map(\.contentEnd).max() ?? cell.frame.maxX, source: nil)
       }
 
       func addRow(
@@ -900,12 +930,6 @@
         }
       }
 
-      // Declared rows, inside a list's cells or not.
-      let declared = records.compactMap { entry -> (UUID, LayoutRegistry.Record, LayoutPiece)? in
-        guard case .row(let piece) = entry.record.kind else { return nil }
-        return (entry.id, entry.record, piece)
-      }
-      let inCells = declared.map { cells.cell(containing: $0.1.frame) }
       let declaredPerCell = Dictionary(grouping: inCells.compactMap { $0.map(cellKey) }) { $0 }
         .mapValues(\.count)
       let outside = declared.indices.filter { inCells[$0] == nil }

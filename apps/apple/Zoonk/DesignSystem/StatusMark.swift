@@ -74,7 +74,7 @@ private struct MarkColumn: ViewModifier {
   }
 }
 
-private enum MarkColumnMetrics {
+enum MarkColumnMetrics {
   static let width = 20.0
   static let gap = 12.0
 }

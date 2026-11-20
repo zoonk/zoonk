@@ -89,6 +89,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
   /// A row without a mark starts its words on the list's edge. `ListRow` says so itself: its
   /// mark is styled, and a styled `EmptyView` is another type.
   var hasMark = Mark.self != EmptyView.self
+  var piece = LayoutPiece.listGroup
   @ViewBuilder let mark: Mark
   @ViewBuilder let words: Words
   @ViewBuilder let value: Value
@@ -111,7 +112,7 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
     }
     .modifier(ListRowTrailing())
     .layoutStacks(isStacked)
-    .layoutRow(.listGroup)
+    .layoutRow(piece)
   }
 
   private var column: some View {

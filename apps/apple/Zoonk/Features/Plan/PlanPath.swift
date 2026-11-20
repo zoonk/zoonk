@@ -122,6 +122,7 @@ private struct PlanPhaseRow: View {
           byPlace: isExpanded && phase.state != .current
             && phase.chapters.contains { Self.isSameName($0.title, phase.title) })
       }
+      .disclosureGroupStyle(.foldUnderLabel)
     }
   }
 

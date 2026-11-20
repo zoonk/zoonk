@@ -5,6 +5,7 @@ import SwiftUI
 enum LayoutPiece: String {
   case listGroup = "list-group"
   case choiceList = "choice-list"
+  case planRoadmap = "plan-roadmap"
 }
 
 /// A part of a shared piece's row, as every platform's layout captures name it.
@@ -37,6 +38,16 @@ extension View {
   func layoutRow(_ piece: LayoutPiece) -> some View {
     #if DEBUG
       modifier(LayoutRowReporter(piece: piece))
+    #else
+      self
+    #endif
+  }
+
+  /// The rows inside are a group of their own in their list's section, as main's `path-nested`
+  /// is: the rows a fold opens, under the row that opens them.
+  func layoutNest() -> some View {
+    #if DEBUG
+      modifier(LayoutNestReporter())
     #else
       self
     #endif

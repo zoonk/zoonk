@@ -69,6 +69,9 @@ extension View {
 
 extension EnvironmentValues {
   @Entry fileprivate var pageColumnFillsRoom = false
+  /// How far folds moved a row's content in from its column's edge, so the current row's band
+  /// still spans the column.
+  @Entry var rowIndent: CGFloat = 0
 }
 
 private struct PageColumn: ViewModifier {
@@ -97,17 +100,9 @@ private func pageColumnWidth(_ sizeClass: UserInterfaceSizeClass?, fillsRoom: Bo
 
 extension View {
   /// The learner's row, as main's `aria-current`: `muted` behind it, 10pt past the column's edges
-  /// at every margin, without the hairlines that would cross it.
+  /// at every margin, a row a fold indents included, without the hairlines that would cross it.
   func currentRow(_ isCurrent: Bool = true) -> some View {
-    frame(maxWidth: .infinity, alignment: .leading)
-      .background {
-        if isCurrent {
-          RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
-            .fill(.muted)
-            .padding(-10)
-        }
-      }
-      .listRowSeparator(isCurrent ? .hidden : .automatic)
+    modifier(CurrentRow(isCurrent: isCurrent))
   }
 
   /// The learner's pick among a few choices, as main's `ChoiceRows`: the pick's fill where the current
@@ -124,6 +119,26 @@ extension View {
         }
       }
       .modifier(HidesSeparators(isHidden: isPicked))
+  }
+}
+
+private struct CurrentRow: ViewModifier {
+  let isCurrent: Bool
+
+  @Environment(\.rowIndent) private var rowIndent
+
+  func body(content: Content) -> some View {
+    content
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .background {
+        if isCurrent {
+          RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+            .fill(.muted)
+            .padding(-10)
+            .padding(.leading, -rowIndent)
+        }
+      }
+      .listRowSeparator(isCurrent ? .hidden : .automatic)
   }
 }
 
