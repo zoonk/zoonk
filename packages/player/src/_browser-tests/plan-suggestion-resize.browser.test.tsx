@@ -102,7 +102,7 @@ function isSidePanelShown(): boolean {
 }
 
 /** The editor opens as a sheet below 768px and as a side panel from it. */
-function renderEditor() {
+function renderEditor(plan: PlanView = PLAN) {
   const heldChange = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
   const change = vi.fn<PlanActions["change"]>(() => heldChange.promise);
 
@@ -121,7 +121,7 @@ function renderEditor() {
       value={{
         actions,
         goal: { displayName: "Learn Spanish", kind: "learn" },
-        plan: PLAN,
+        plan,
         shareHref: "/plan",
       }}
     >
@@ -371,6 +371,48 @@ describe.each([
 
       await expect.poll(() => isBusy("Save")).toBe(false);
       expect(held.change).toHaveBeenCalledOnce();
+    });
+  });
+});
+
+/** A week with weekdays and a weekend, so "Different time on weekends" shows. */
+const WEEKEND_PLAN = {
+  ...PLAN,
+  schedule: {
+    ...PLAN.schedule,
+    shape: { ...PLAN.schedule.shape, canDiffer: true, weekendDays: [0, 6] },
+    studyDays: 7,
+    weekdayMinutes: [30, 30, 30, 30, 30, 30, 30],
+  },
+} satisfies PlanView;
+
+function topOf(selector: string): number | undefined {
+  return document.querySelector(selector)?.getBoundingClientRect().top;
+}
+
+describe("the Adjust sheet on a phone", () => {
+  afterEach(cleanup);
+
+  it("moves nothing above the weekend switch when it's turned on and off", async () => {
+    await atViewport(PHONE, async () => {
+      renderEditor(WEEKEND_PLAN);
+      const weekends = page.getByRole("switch", { name: "Different time on weekends" });
+      await expect.element(weekends).toBeVisible();
+
+      const tops = () => ({
+        sheet: topOf("[data-slot=drawer-popup]"),
+        switch: weekends.element().getBoundingClientRect().top,
+        title: topOf("[data-slot=drawer-title]"),
+      });
+
+      const before = tops();
+      await weekends.click();
+      await expect.element(page.getByText("Weekend time")).toBeVisible();
+      expect(tops()).toStrictEqual(before);
+
+      await weekends.click();
+      await expect.element(page.getByText("Weekend time")).not.toBeInTheDocument();
+      expect(tops()).toStrictEqual(before);
     });
   });
 });

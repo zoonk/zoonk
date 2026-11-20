@@ -120,12 +120,14 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
 
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
-      <DrawerPopup initialFocus={initialFocus}>
+      {/* Its full height from the start: docked at the bottom, a sheet that grew with a revealed
+      field or a save's note would push its title and every field above up under the finger. */}
+      <DrawerPopup className="h-full" initialFocus={initialFocus}>
         <DrawerHeader closeLabel={t("Close")}>
           <DrawerTitle>{t("Adjust your plan")}</DrawerTitle>
         </DrawerHeader>
 
-        <DrawerContent className="flex min-h-0 flex-col gap-7 pt-2 *:shrink-0 has-[+div[data-slot=drawer-footer]]:border-b-0">
+        <DrawerContent className="flex min-h-0 flex-1 flex-col gap-7 pt-2 *:shrink-0 has-[+div[data-slot=drawer-footer]]:border-b-0">
           <EditorSections />
         </DrawerContent>
 
