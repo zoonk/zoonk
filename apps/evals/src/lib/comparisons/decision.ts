@@ -254,6 +254,30 @@ export function uncheckedAnswerKeys({ manifest, checks }: Comparison) {
   );
 }
 
+function preferenceSettlesOpenEvidence({
+  challenger,
+  claims,
+  incumbent,
+  rules,
+  savings,
+}: {
+  challenger: TableRow;
+  claims: Claims;
+  incumbent: TableRow;
+  rules: NonNullable<Facts["rules"]>;
+  savings: number;
+}) {
+  const pending = claims.filter((claim) => claim.finding === "unsure");
+
+  return (
+    (incumbent.unresolved > 0 || pending.length > 0) &&
+    (rules.preference === "canBlock" || savings === 0) &&
+    incumbent.status !== "disqualified" &&
+    incumbent.wins > challenger.wins + incumbent.unresolved &&
+    !pending.some((claim) => rules.criteria[claim.observation.criterion] === "disqualifies")
+  );
+}
+
 function choose({
   manifest,
   rows,
@@ -295,6 +319,15 @@ function choose({
     return result("insufficient evidence", "Missing matched runs or criterion priorities.");
   }
 
+  const savings = (incumbent.costPer1000 ?? 0) - (challenger.costPer1000 ?? 0);
+
+  if (preferenceSettlesOpenEvidence({ challenger, claims, incumbent, rules, savings })) {
+    return result(
+      "retain",
+      "More cases prefer the incumbent. The open cases and claims can’t change the decision.",
+    );
+  }
+
   if (
     cases.some(
       (item) =>
@@ -316,7 +349,6 @@ function choose({
     return result("insufficient evidence", "A pending claim could disqualify the challenger.");
   }
 
-  const savings = (incumbent.costPer1000 ?? 0) - (challenger.costPer1000 ?? 0);
   const seconds = (incumbent.p95 ?? 0) - (challenger.p95 ?? 0);
 
   if (incumbent.status === "disqualified") {
