@@ -240,7 +240,7 @@ export function buildPackets(
 }
 type PacketFailure = { code: FailureCode; reason: string };
 
-export function gradePacket(sealed: SealedPacket, response: z.infer<typeof ownerResponseSchema>) {
+function gradePacket(sealed: SealedPacket, response: z.infer<typeof ownerResponseSchema>) {
   const failures: PacketFailure[] = [];
   const keys = sealed.packet.criteria.map((criterion) => criterion.id).toSorted();
 
@@ -298,6 +298,7 @@ export function gradePacket(sealed: SealedPacket, response: z.infer<typeof owner
 
   return failures;
 }
+
 type ImportArgs = {
   taskId: string;
   id: string;

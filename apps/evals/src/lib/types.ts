@@ -15,7 +15,7 @@ const stepSchema = z.object({
 
 export const scoreSchema = z.object({ steps: z.array(stepSchema) });
 
-export const judgeCategoryScoreSchema = z.object({
+const judgeCategoryScoreSchema = z.object({
   categoryId: z.string(),
   reasoning: z.string(),
   score: z.number().min(1).max(10),

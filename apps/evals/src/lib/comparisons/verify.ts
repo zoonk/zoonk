@@ -14,7 +14,7 @@ import { directory, readOptional, writeRecord } from "./storage";
 
 type Claim = ReturnType<typeof decisiveClaims>[number];
 
-export async function verifyBatch(
+async function verifyBatch(
   comparison: Comparison,
   claims: Claim[],
   reader: Reader,

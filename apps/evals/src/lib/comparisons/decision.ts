@@ -4,7 +4,6 @@ import { acceptedReads, caseVotes, readerRecords, settle, sides, verifiedClaims 
 import { type Comparison } from "./schemas";
 
 export { decisionSchema, type Decision } from "./decision-schema";
-export { majorClaims } from "./evidence";
 export function decide(comparison: Comparison): Decision {
   return decisionWith(
     comparison,

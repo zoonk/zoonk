@@ -14,7 +14,8 @@ export const readerSchema = z.object({
 });
 export type Reader = z.infer<typeof readerSchema>;
 const criterionSchema = z.object({ expectations: text, id: text, label: text });
-export const prioritiesSchema = z.object({
+
+const prioritiesSchema = z.object({
   comparison: z
     .object({
       criteria: z.record(text, z.enum(["disqualifies", "counts"])),
@@ -35,7 +36,7 @@ export const prioritiesSchema = z.object({
   waits: text,
 });
 export type TaskPriorities = z.infer<typeof prioritiesSchema>;
-export const observationSchema = z.object({
+const observationSchema = z.object({
   claim: text,
   criterion: text,
   learnerCost: text,
@@ -43,8 +44,10 @@ export const observationSchema = z.object({
   output: label,
   severity: z.enum(["major", "minor"]),
 });
+
 const preferenceSchema = z.object({ preference, reason: text });
-export const verdictSchema = z.object({
+
+const verdictSchema = z.object({
   criteria: z.array(preferenceSchema.extend({ criterion: text })),
   observations: z.array(observationSchema),
   overall: preferenceSchema.nullable(),
@@ -80,7 +83,8 @@ const pairContent = z.object({
   input,
   [secondLabel]: packetOutput.nullable(),
 });
-export const packetSchema = z.object({
+
+const packetSchema = z.object({
   criteria: z.array(criterionSchema),
   pairs: z.array(pairContent.extend({ pairId: text })),
   reads: text,
@@ -153,7 +157,8 @@ const mapping = z.object({
   pairId: text,
   run: z.int(),
 });
-export const sealedPacketSchema = z.object({
+
+const sealedPacketSchema = z.object({
   id: digest,
   mapping: z.array(mapping),
   packet: packetSchema,

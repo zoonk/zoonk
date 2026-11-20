@@ -81,11 +81,13 @@ function majorClaimsIncludingMissingPairs(comparison: Comparison) {
     ),
   );
 }
-export function majorClaims(comparison: Comparison) {
+
+function majorClaims(comparison: Comparison) {
   return majorClaimsIncludingMissingPairs(comparison).flatMap((claim) =>
     claim.pair ? [{ ...claim, pair: claim.pair }] : [],
   );
 }
+
 function summarizeVotes(votes: Direction[]): Direction {
   const directions = sides.filter((subject) => votes.includes(subject));
 

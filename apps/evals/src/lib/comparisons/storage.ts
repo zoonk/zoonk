@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { decisionSchema } from "./decision-schema";
 import { hash } from "./identity";
 import {
   type Comparison,
@@ -213,7 +212,4 @@ export async function loadComparison(taskId: string, id: string): Promise<Compar
   ]);
 
   return { adjudications, attempts, checks, manifest, outputs, verifications };
-}
-export function loadDecision(taskId: string, id: string) {
-  return readOptional(path.join(directory(taskId, id), "decision.json"), decisionSchema);
 }

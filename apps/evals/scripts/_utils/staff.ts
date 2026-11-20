@@ -14,10 +14,9 @@ export function staffList<Row>(
   }: { fields: string; limit: number; offset?: number; order?: string; where: string[] },
 ): { hasMore: boolean; records: Row[] } {
   const output = execFileSync(
-    "pnpm",
+    process.execPath,
     [
-      "--silent",
-      "zoonk",
+      "apps/cli/src/main.ts",
       "staff",
       "list",
       model,
