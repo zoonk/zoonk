@@ -33,16 +33,24 @@ async function readMock(blockId: string): Promise<MockView | null> {
 }
 
 /** Never says whether the answer is right. */
-export async function saveMockAnswerAction(blockId: unknown, answer: unknown): Promise<boolean> {
+export async function saveMockAnswerAction(
+  blockId: unknown,
+  answer: unknown,
+): Promise<"refused" | "saved" | "stopped"> {
   const id = blockIdSchema.safeParse(blockId);
   const input = mockAnswerInputSchema.safeParse(answer);
 
   if (!id.success || !input.success) {
-    return false;
+    return "refused";
   }
 
   const result = await saveMockAnswer({ blockId: id.data, input: input.data });
-  return result.status === "saved";
+
+  if (result.status === "saved") {
+    return "saved";
+  }
+
+  return result.status === "unauthorized" || result.status === "notFound" ? "stopped" : "refused";
 }
 
 export async function submitMockSectionAction(

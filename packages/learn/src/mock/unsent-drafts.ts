@@ -24,8 +24,17 @@ function isSameDraft(first: MockDraft, second: MockDraft | undefined): boolean {
   );
 }
 
+function writeRaw({ blockId, drafts }: { blockId: string; drafts: readonly MockDraft[] }) {
+  if (drafts.length === 0) {
+    deviceStorage.remove(getUnsentKey(blockId));
+    return;
+  }
+
+  deviceStorage.set(getUnsentKey(blockId), JSON.stringify(drafts));
+}
+
 /** Malformed entries are ignored so a corrupt value never blocks reopening the mock. */
-export function readUnsentMockDrafts(blockId: string): MockDraft[] {
+function readUnsentMockDrafts(blockId: string): MockDraft[] {
   const stored = deviceStorage.getJson(getUnsentKey(blockId));
 
   if (!Array.isArray(stored)) {
@@ -38,50 +47,42 @@ export function readUnsentMockDrafts(blockId: string): MockDraft[] {
   });
 }
 
-export function writeUnsentMockDrafts({
-  blockId,
-  drafts,
-}: {
-  blockId: string;
-  drafts: readonly MockDraft[];
-}) {
-  if (drafts.length === 0) {
-    deviceStorage.remove(getUnsentKey(blockId));
-    return;
+/**
+ * Re-reads storage before updating one question's entry, so two open tabs for the same mock never
+ * overwrite each other's unsent answers.
+ */
+export function keepUnsentMockDraft({ blockId, draft }: { blockId: string; draft: MockDraft }) {
+  const current = readUnsentMockDrafts(blockId);
+  const index = current.findIndex((entry) => entry.itemId === draft.itemId);
+
+  if (index === -1) {
+    current.push(draft);
+  } else {
+    current[index] = draft;
   }
 
-  deviceStorage.set(getUnsentKey(blockId), JSON.stringify(drafts));
+  writeRaw({ blockId, drafts: current });
 }
 
-export function clearUnsentMockDrafts(blockId: string) {
+/** Removes an entry only if storage still holds this exact version, keeping any newer edit. */
+export function dropUnsentMockDraft({ blockId, draft }: { blockId: string; draft: MockDraft }) {
+  const current = readUnsentMockDrafts(blockId);
+
+  const next = current.filter(
+    (entry) => !(entry.itemId === draft.itemId && isSameDraft(entry, draft)),
+  );
+
+  if (next.length !== current.length) {
+    writeRaw({ blockId, drafts: next });
+  }
+}
+
+function clearUnsentMockDrafts(blockId: string) {
   deviceStorage.remove(getUnsentKey(blockId));
 }
 
-export function combinePendingMockDrafts({
-  pending,
-  unsavedText,
-}: {
-  pending: readonly MockDraft[];
-  unsavedText: MockDraft | null;
-}): MockDraft[] {
-  if (!unsavedText) {
-    return [...pending];
-  }
-
-  const combined = [...pending];
-  const index = combined.findIndex((draft) => draft.itemId === unsavedText.itemId);
-
-  if (index === -1) {
-    combined.push(unsavedText);
-  } else {
-    combined[index] = unsavedText;
-  }
-
-  return combined;
-}
-
 /** Kept answers that still belong to the section on screen and aren't already stored identically. */
-export function selectKeptDraftsForView({
+function selectKeptDraftsForView({
   kept,
   view,
 }: {
@@ -97,5 +98,55 @@ export function selectKeptDraftsForView({
 
   return kept.filter(
     (draft) => questionIds.has(draft.itemId) && !isSameDraft(draft, storedByItem.get(draft.itemId)),
+  );
+}
+
+/** Drops entries that belong to finished/expired mocks or older sections, returning what remains. */
+export function pruneUnsentMockDrafts({
+  blockId,
+  view,
+}: {
+  blockId: string;
+  view: MockView;
+}): MockDraft[] {
+  if (view.status === "finished" || view.status === "expired") {
+    clearUnsentMockDrafts(blockId);
+    return [];
+  }
+
+  if (view.status !== "running") {
+    return [];
+  }
+
+  const kept = readUnsentMockDrafts(blockId);
+  const keptHere = selectKeptDraftsForView({ kept, view });
+
+  if (kept.length !== keptHere.length) {
+    writeRaw({ blockId, drafts: keptHere });
+  }
+
+  return keptHere;
+}
+
+/** Furthest question index reached by recovered drafts in a forward-only section, or -1. */
+export function getForwardOnlyKeptReached({
+  kept,
+  view,
+}: {
+  kept: readonly MockDraft[];
+  view: MockView;
+}): number {
+  const forwardOnly =
+    view.sections.find((section) => section.status === "current")?.navigation?.forwardOnly ?? false;
+
+  if (!forwardOnly || !view.current) {
+    return -1;
+  }
+
+  return Math.max(
+    -1,
+    ...kept.map(
+      (draft) => view.current?.questions.findIndex((item) => item.itemId === draft.itemId) ?? -1,
+    ),
   );
 }

@@ -2,7 +2,8 @@ import Foundation
 import Observation
 
 /// One learner's mock answers not yet stored on the server, kept on the device so closing the mock
-/// or losing the app offline never loses them.
+/// or losing the app offline never loses them. Each write reads storage again so two open windows
+/// for the same mock never overwrite each other's unsent answers.
 struct UnsentMockDrafts {
   private let key: String
   private let defaults: UserDefaults
@@ -17,34 +18,51 @@ struct UnsentMockDrafts {
       ?? []
   }
 
-  func write(_ drafts: [MockDraft]) {
+  func keep(_ draft: MockDraft) {
+    var current = read()
+
+    if let index = current.firstIndex(where: { $0.itemId == draft.itemId }) {
+      current[index] = draft
+    } else {
+      current.append(draft)
+    }
+
+    write(current)
+  }
+
+  /// Removes an entry only when storage still holds this exact version, keeping any newer edit.
+  func drop(_ draft: MockDraft) {
+    let current = read()
+    let next = current.filter { $0 != draft }
+
+    if next.count != current.count {
+      write(next)
+    }
+  }
+
+  /// Keeps only entries for the current section that differ from what the server already stored.
+  func prune(keeping itemIds: Set<String>, matching stored: [String: MockDraft]) -> [MockDraft] {
+    let current = read()
+    let kept = current.filter { itemIds.contains($0.itemId) && stored[$0.itemId] != $0 }
+
+    if kept.count != current.count {
+      write(kept)
+    }
+
+    return kept
+  }
+
+  func clear() {
+    defaults.removeObject(forKey: key)
+  }
+
+  private func write(_ drafts: [MockDraft]) {
     if drafts.isEmpty {
       defaults.removeObject(forKey: key)
     } else if let data = try? JSONEncoder().encode(drafts) {
       defaults.set(data, forKey: key)
     }
   }
-
-  func clear() {
-    defaults.removeObject(forKey: key)
-  }
-}
-
-/// Keeps the newest draft for each question in queue order, including typed text waiting to send.
-func combinePendingMockDrafts(_ pending: [MockDraft], unsavedText: MockDraft?) -> [MockDraft] {
-  var result: [MockDraft] = []
-  var indexes: [String: Int] = [:]
-
-  for draft in pending + (unsavedText.map { [$0] } ?? []) {
-    if let index = indexes[draft.itemId] {
-      result[index] = draft
-    } else {
-      indexes[draft.itemId] = result.count
-      result.append(draft)
-    }
-  }
-
-  return result
 }
 
 /// Sends answers one after another, so an older answer to a question never lands after a newer one.
@@ -82,7 +100,8 @@ final class MockDraftQueue {
     return draft.answer != failedDrafts[draft.itemId]?.answer || draft.answer == stored?.answer
   }
 
-  @ObservationIgnored var onPendingChange: () -> Void
+  /// Runs once a draft is stored or permanently refused, never on unreachable or stop.
+  @ObservationIgnored var onSettled: (MockDraft) -> Void
   @ObservationIgnored private let save: (MockDraft) async -> Outcome
   @ObservationIgnored private let retryDelay: (Int) -> Duration
   @ObservationIgnored private var waiting: [MockDraft] = []
@@ -97,11 +116,11 @@ final class MockDraftQueue {
     retryDelay: @escaping (Int) -> Duration = { attempt in
       .seconds(min(1 << min(attempt, 4), 15))
     },
-    onPendingChange: @escaping () -> Void = {},
+    onSettled: @escaping (MockDraft) -> Void = { _ in },
     save: @escaping (MockDraft) async -> Outcome
   ) {
     self.retryDelay = retryDelay
-    self.onPendingChange = onPendingChange
+    self.onSettled = onSettled
     self.save = save
   }
 
@@ -109,7 +128,19 @@ final class MockDraftQueue {
 
   /// The newest answer to each question not stored yet, the one going out included, in order.
   var pending: [MockDraft] {
-    combinePendingMockDrafts((sending.map { [$0] } ?? []) + waiting, unsavedText: nil)
+    var result: [MockDraft] = []
+    var indexes: [String: Int] = [:]
+
+    for draft in (sending.map { [$0] } ?? []) + waiting {
+      if let index = indexes[draft.itemId] {
+        result[index] = draft
+      } else {
+        indexes[draft.itemId] = result.count
+        result.append(draft)
+      }
+    }
+
+    return result
   }
 
   func add(_ draft: MockDraft) {
@@ -123,15 +154,17 @@ final class MockDraftQueue {
       waiting.append(draft)
     }
 
-    onPendingChange()
     sendNext()
   }
 
-  /// Returns once every answer so far is stored or refused, or the waiting task is cancelled.
-  func idle() async {
-    while isBusy, !Task.isCancelled {
+  /// Returns true once every answer so far is stored or refused, or false if stopped or cancelled.
+  @discardableResult
+  func idle() async -> Bool {
+    while isBusy, !isStopped, !Task.isCancelled {
       try? await Task.sleep(for: .milliseconds(50))
     }
+
+    return !isStopped && !Task.isCancelled
   }
 
   /// For a section handed in, whose refused answers can't be sent again.
@@ -202,13 +235,13 @@ final class MockDraftQueue {
         failedDrafts[draft.itemId] = nil
         refused.remove(draft.itemId)
         attempt = 0
-        onPendingChange()
+        onSettled(draft)
         sendNext()
       case .refused:
         failedDrafts[draft.itemId] = draft
         refused.insert(draft.itemId)
         attempt = 0
-        onPendingChange()
+        onSettled(draft)
         sendNext()
       }
     }

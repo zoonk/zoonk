@@ -2,11 +2,10 @@ import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  clearUnsentMockDrafts,
-  combinePendingMockDrafts,
-  readUnsentMockDrafts,
-  selectKeptDraftsForView,
-  writeUnsentMockDrafts,
+  dropUnsentMockDraft,
+  getForwardOnlyKeptReached,
+  keepUnsentMockDraft,
+  pruneUnsentMockDrafts,
 } from "./unsent-drafts";
 
 function createMemoryStorage(): Storage {
@@ -84,64 +83,74 @@ describe("unsent mock drafts", () => {
     });
   });
 
-  it("reads back kept drafts, ignores malformed entries, and clears when empty", () => {
-    const kept: MockDraft[] = [
-      { answer: { selectedIndex: 1 }, durationMs: 2500, flagged: true, itemId: "q1" },
-      { answer: { text: "Paris" }, durationMs: 0, flagged: false, itemId: "q2" },
-    ];
-
-    writeUnsentMockDrafts({ blockId: "mock-1", drafts: kept });
-    expect(readUnsentMockDrafts("mock-1")).toStrictEqual(kept);
-
-    globalThis.localStorage.setItem(
-      "mock:mock-1",
-      JSON.stringify([kept[0], { bad: true }, { answer: { selectedIndex: -1 }, itemId: "q2" }]),
-    );
-
-    expect(readUnsentMockDrafts("mock-1")).toStrictEqual([kept[0]]);
-
-    writeUnsentMockDrafts({ blockId: "mock-1", drafts: [] });
-    expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();
-
-    writeUnsentMockDrafts({ blockId: "mock-1", drafts: kept });
-    clearUnsentMockDrafts("mock-1");
-    expect(readUnsentMockDrafts("mock-1")).toStrictEqual([]);
-  });
-
-  it("merges unsaved typed text into pending drafts without losing queue order", () => {
-    const q1: MockDraft = {
+  it("keeps per-question drafts across tabs and drops only the version acknowledged", () => {
+    const q1v1: MockDraft = {
       answer: { selectedIndex: 0 },
       durationMs: 1000,
       flagged: false,
       itemId: "q1",
     };
 
-    const q2Old: MockDraft = {
-      answer: { text: "Par" },
-      durationMs: 0,
-      flagged: false,
-      itemId: "q2",
+    const q1v2: MockDraft = {
+      answer: { selectedIndex: 1 },
+      durationMs: 2500,
+      flagged: true,
+      itemId: "q1",
     };
 
-    const q2New: MockDraft = {
+    const q2: MockDraft = {
       answer: { text: "Paris" },
       durationMs: 0,
       flagged: false,
       itemId: "q2",
     };
 
-    const q3: MockDraft = { answer: { text: "Lyon" }, durationMs: 0, flagged: false, itemId: "q3" };
+    // Two open tabs answering different questions keep both entries.
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q2 });
 
-    expect(combinePendingMockDrafts({ pending: [q1, q2Old], unsavedText: q2New })).toStrictEqual([
-      q1,
-      q2New,
+    expect(pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
+      q1v1,
+      q2,
     ]);
 
-    expect(combinePendingMockDrafts({ pending: [q1], unsavedText: q3 })).toStrictEqual([q1, q3]);
-    expect(combinePendingMockDrafts({ pending: [q1], unsavedText: null })).toStrictEqual([q1]);
+    // Replacing q1 while q1v1 is in flight keeps q1v2 when q1v1 finishes storing.
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q1v2 });
+    dropUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
+
+    expect(pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
+      q1v2,
+      q2,
+    ]);
+
+    dropUnsentMockDraft({ blockId: "mock-1", draft: q1v2 });
+    dropUnsentMockDraft({ blockId: "mock-1", draft: q2 });
+    expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();
   });
 
-  it("keeps only drafts for the current section that differ from what the server already stored", () => {
+  it("ignores malformed entries and clears on finished mocks", () => {
+    const kept: MockDraft = {
+      answer: { selectedIndex: 1 },
+      durationMs: 2500,
+      flagged: true,
+      itemId: "q1",
+    };
+
+    globalThis.localStorage.setItem(
+      "mock:mock-1",
+      JSON.stringify([kept, { bad: true }, { answer: { selectedIndex: -1 }, itemId: "q2" }]),
+    );
+
+    expect(pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([kept]);
+
+    expect(
+      pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "finished" }) }),
+    ).toStrictEqual([]);
+
+    expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();
+  });
+
+  it("prunes drafts for older sections, already-stored answers, and expired mocks", () => {
     const stored: MockDraft = {
       answer: { selectedIndex: 0 },
       durationMs: 1200,
@@ -163,19 +172,57 @@ describe("unsent mock drafts", () => {
       itemId: "q-old",
     };
 
+    keepUnsentMockDraft({ blockId: "mock-1", draft: stored });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: unsent });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: oldSection });
+
     expect(
-      selectKeptDraftsForView({
-        kept: [stored, unsent, oldSection],
+      pruneUnsentMockDrafts({
+        blockId: "mock-1",
         view: makeView({ drafts: [stored], questionIds: ["q1", "q2"] }),
       }),
     ).toStrictEqual([unsent]);
 
-    expect(
-      selectKeptDraftsForView({ kept: [unsent], view: makeView({ status: "finished" }) }),
-    ).toStrictEqual([]);
+    expect(JSON.parse(globalThis.localStorage.getItem("mock:mock-1") ?? "[]")).toStrictEqual([
+      unsent,
+    ]);
 
     expect(
-      selectKeptDraftsForView({ kept: [unsent], view: makeView({ status: "expired" }) }),
+      pruneUnsentMockDrafts({ blockId: "mock-1", view: makeView({ status: "expired" }) }),
     ).toStrictEqual([]);
+
+    expect(globalThis.localStorage.getItem("mock:mock-1")).toBeNull();
+  });
+
+  it("advances reached to the furthest recovered draft in forward-only sections only", () => {
+    const view = {
+      ...makeView({ questionIds: ["q1", "q2", "q3"] }),
+      sections: [
+        {
+          breakAfterMinutes: null,
+          essays: 0,
+          index: 0,
+          minutes: 30,
+          name: "Part 1",
+          navigation: { answerChanges: 0, forwardOnly: true, itemSeconds: null, mustAnswer: false },
+          questions: 3,
+          status: "current" as const,
+          tools: null,
+        },
+      ],
+    } as unknown as MockView;
+
+    const kept: MockDraft[] = [
+      { answer: { selectedIndex: 0 }, durationMs: 1000, flagged: false, itemId: "q2" },
+    ];
+
+    expect(getForwardOnlyKeptReached({ kept, view })).toBe(1);
+
+    const freeView = {
+      ...view,
+      sections: [{ ...view.sections[0], navigation: null }],
+    } as unknown as MockView;
+
+    expect(getForwardOnlyKeptReached({ kept, view: freeView })).toBe(-1);
   });
 });

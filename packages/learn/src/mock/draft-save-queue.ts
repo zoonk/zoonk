@@ -1,6 +1,9 @@
 /** `refused` holds until every refused question's answer is stored. */
 export type DraftSaveStatus = "refused" | "retrying" | "saved" | "saving";
 
+/** What one save attempt came to; `stopped` when the session ended or changed. */
+export type DraftSaveOutcome = "refused" | "saved" | "stopped";
+
 const FIRST_RETRY_MS = 1000;
 const LONGEST_RETRY_MS = 15_000;
 const RETRY_BACKOFF = 2;
@@ -9,39 +12,27 @@ function getRetryDelay(attempt: number): number {
   return Math.min(FIRST_RETRY_MS * RETRY_BACKOFF ** attempt, LONGEST_RETRY_MS);
 }
 
-/** Keeps the newest draft for each key in queue order. */
-function collectPending<TDraft>(
-  items: readonly TDraft[],
-  keyOf: (draft: TDraft) => string,
-): TDraft[] {
-  const result: TDraft[] = [];
-  const indexes = new Map<string, number>();
+function enqueueDraft<TDraft>(waiting: TDraft[], draft: TDraft, keyOf: (draft: TDraft) => string) {
+  const key = keyOf(draft);
+  const index = waiting.findIndex((other) => keyOf(other) === key);
 
-  for (const draft of items) {
-    const key = keyOf(draft);
-    const index = indexes.get(key);
-
-    if (index === undefined) {
-      indexes.set(key, result.length);
-      result.push(draft);
-    } else {
-      result[index] = draft;
-    }
+  if (index === -1) {
+    waiting.push(draft);
+  } else {
+    waiting[index] = draft;
   }
-
-  return result;
 }
 
 type DraftSaveQueueOptions<TDraft> = {
   keyOf: (draft: TDraft) => string;
   /** A refused answer, or one that didn't get through; it stays failed until it's stored. */
   onFailed: (draft: TDraft) => void;
-  /** Runs whenever the unsent drafts change, so the device can keep them. */
-  onPendingChange?: (pending: TDraft[]) => void;
+  /** A permanently refused answer for this mock (locked, time up, or old section). */
+  onRefused?: (draft: TDraft) => void;
   onStatus: (status: DraftSaveStatus) => void;
   onStored: (draft: TDraft) => void;
-  /** True once stored, false when refused; rejects when it didn't get through. */
-  save: (draft: TDraft) => Promise<boolean>;
+  /** `saved` once stored, `refused` when permanently rejected, `stopped` on session loss; rejects offline. */
+  save: (draft: TDraft) => Promise<DraftSaveOutcome>;
 };
 
 /**
@@ -51,20 +42,19 @@ type DraftSaveQueueOptions<TDraft> = {
 export function createDraftSaveQueue<TDraft>({
   keyOf,
   onFailed,
-  onPendingChange,
+  onRefused,
   onStatus,
   onStored,
   save,
 }: DraftSaveQueueOptions<TDraft>) {
   const waiting: TDraft[] = [];
-  const idleWaiters: (() => void)[] = [];
+  const idleWaiters: ((flushed: boolean) => void)[] = [];
   let sending: TDraft | null = null;
   let attempt = 0;
   const refused = new Set<string>();
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
   let stopped = false;
   let generation = 0;
-  let pendingListener = onPendingChange;
 
   function getStatus(): DraftSaveStatus {
     if (retryTimer) {
@@ -82,16 +72,15 @@ export function createDraftSaveQueue<TDraft>({
     return sending !== null || waiting.length > 0;
   }
 
-  /** The newest draft for each key not stored yet, the one going out included, in queue order. */
-  function pending(): TDraft[] {
-    return collectPending(sending === null ? waiting : [sending, ...waiting], keyOf);
+  function resolveIdle(flushed: boolean) {
+    idleWaiters.splice(0).forEach((resolve) => resolve(flushed));
   }
 
   function settle() {
     onStatus(getStatus());
 
     if (!isBusy()) {
-      idleWaiters.splice(0).forEach((resolve) => resolve());
+      resolveIdle(!stopped);
     }
   }
 
@@ -113,13 +102,54 @@ export function createDraftSaveQueue<TDraft>({
     }, delay);
   }
 
-  async function sendNext(): Promise<void> {
-    if (stopped || sending !== null || retryTimer) {
-      settle();
-      return;
+  function halt() {
+    stopped = true;
+    generation += 1;
+
+    if (retryTimer) {
+      clearTimeout(retryTimer);
+      retryTimer = null;
     }
 
-    const draft = waiting.shift();
+    waiting.length = 0;
+    sending = null;
+    attempt = 0;
+    resolveIdle(false);
+  }
+
+  function finishAttempt(draft: TDraft, outcome: DraftSaveOutcome | null): boolean {
+    if (outcome !== "saved") {
+      onFailed(draft);
+    }
+
+    if (outcome === "stopped") {
+      halt();
+      onStatus(getStatus());
+      return false;
+    }
+
+    if (outcome === null) {
+      keepForRetry(draft);
+      scheduleRetry();
+      settle();
+      return false;
+    }
+
+    attempt = 0;
+
+    if (outcome === "saved") {
+      refused.delete(keyOf(draft));
+      onStored(draft);
+    } else {
+      refused.add(keyOf(draft));
+      onRefused?.(draft);
+    }
+
+    return true;
+  }
+
+  async function sendNext(): Promise<void> {
+    const draft = stopped || sending !== null || retryTimer ? undefined : waiting.shift();
 
     if (draft === undefined) {
       settle();
@@ -130,8 +160,8 @@ export function createDraftSaveQueue<TDraft>({
     sending = draft;
     settle();
 
-    const stored = await save(draft).then(
-      (ok) => ok,
+    const outcome = await save(draft).then(
+      (result) => result,
       () => null,
     );
 
@@ -141,28 +171,9 @@ export function createDraftSaveQueue<TDraft>({
 
     sending = null;
 
-    if (!stored) {
-      onFailed(draft);
+    if (finishAttempt(draft, outcome)) {
+      await sendNext();
     }
-
-    if (stored === null) {
-      keepForRetry(draft);
-      scheduleRetry();
-      settle();
-      return;
-    }
-
-    attempt = 0;
-
-    if (stored) {
-      refused.delete(keyOf(draft));
-      onStored(draft);
-    } else {
-      refused.add(keyOf(draft));
-    }
-
-    pendingListener?.(pending());
-    await sendNext();
   }
 
   return {
@@ -171,16 +182,7 @@ export function createDraftSaveQueue<TDraft>({
         return;
       }
 
-      const key = keyOf(draft);
-      const index = waiting.findIndex((other) => keyOf(other) === key);
-
-      if (index === -1) {
-        waiting.push(draft);
-      } else {
-        waiting[index] = draft;
-      }
-
-      pendingListener?.(pending());
+      enqueueDraft(waiting, draft, keyOf);
       void sendNext();
     },
     /** A handed-in section's answers can't be saved again, so its refusals have nothing left to ask. */
@@ -188,10 +190,14 @@ export function createDraftSaveQueue<TDraft>({
       refused.clear();
       settle();
     },
-    /** Resolves once every answer given so far is stored or refused. */
-    idle(): Promise<void> {
+    /** Resolves true once every answer given so far is stored or refused, or false if stopped first. */
+    idle(): Promise<boolean> {
+      if (stopped) {
+        return Promise.resolve(false);
+      }
+
       if (!isBusy()) {
-        return Promise.resolve();
+        return Promise.resolve(true);
       }
 
       return new Promise((resolve) => {
@@ -199,7 +205,6 @@ export function createDraftSaveQueue<TDraft>({
       });
     },
     isBusy,
-    pending,
     retryNow() {
       if (stopped || !retryTimer) {
         return;
@@ -209,26 +214,10 @@ export function createDraftSaveQueue<TDraft>({
       retryTimer = null;
       void sendNext();
     },
-    setPendingListener(listener: ((pending: TDraft[]) => void) | undefined) {
-      pendingListener = listener;
-    },
     start() {
       stopped = false;
     },
     /** Ends this screen's retry loop without clearing what the device already kept. */
-    stop() {
-      stopped = true;
-      generation += 1;
-
-      if (retryTimer) {
-        clearTimeout(retryTimer);
-        retryTimer = null;
-      }
-
-      waiting.length = 0;
-      sending = null;
-      attempt = 0;
-      idleWaiters.splice(0).forEach((resolve) => resolve());
-    },
+    stop: halt,
   };
 }

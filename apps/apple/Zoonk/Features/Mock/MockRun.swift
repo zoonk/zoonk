@@ -53,6 +53,8 @@ final class MockRun {
   @ObservationIgnored private let now: () -> Date
   @ObservationIgnored private let owner: SessionOwner
   @ObservationIgnored private var unsent: UnsentMockDrafts?
+  @ObservationIgnored private var hasRestoredUnsent = false
+  @ObservationIgnored private var editedItemIds: Set<String> = []
   @ObservationIgnored private var adopted: String?
   @ObservationIgnored private var shown: (itemId: String, at: ContinuousClock.Instant)?
   @ObservationIgnored private var unsavedText: MockDraft?
@@ -93,8 +95,8 @@ final class MockRun {
       case .failed: .unreachable
       }
     }
-    queue.onPendingChange = { [weak self] in
-      self?.keepOnDevice()
+    queue.onSettled = { [weak self] draft in
+      self?.resolveUnsent()?.drop(draft)
     }
   }
 
@@ -128,17 +130,13 @@ final class MockRun {
     let key = "\(view.status.rawValue):\(view.current?.section ?? -1)"
 
     guard key != adopted else {
+      restoreUnsentIfReady()
       return
     }
 
-    if owner.session == nil {
-      owner.session = store.cache.session.authenticatedSession
-      unsent = store.cache.session.account.map {
-        UnsentMockDrafts(learnerId: $0.user.id, blockId: blockId, defaults: defaults)
-      }
-    }
-
     adopted = key
+    hasRestoredUnsent = false
+    editedItemIds = []
     textTask?.cancel()
     textTask = nil
     unsavedText = nil
@@ -148,31 +146,67 @@ final class MockRun {
     let serverDrafts = Dictionary(
       (view.current?.drafts ?? []).map { ($0.itemId, $0) }, uniquingKeysWith: { _, last in last })
     initiallyStored = serverDrafts
-
-    var kept: [MockDraft] = []
-
-    if view.status == .finished || view.status == .expired {
-      unsent?.clear()
-    } else if view.status == .running {
-      let questionIds = Set((view.current?.questions ?? []).map(\.itemId))
-      let stored = unsent?.read() ?? []
-      kept = stored.filter { questionIds.contains($0.itemId) && serverDrafts[$0.itemId] != $0 }
-
-      if kept.count != stored.count {
-        unsent?.write(kept)
-      }
-    }
-
     drafts = serverDrafts
-    for draft in kept {
-      drafts[draft.itemId] = draft
-    }
-
     position = view.current?.resume ?? 0
     reached = position
     changed = []
     questionTimeUp = Self.hasExpiredFinalQuestion(view)
     sectionTimeUp = view.current.map { $0.deadline <= now() } ?? false
+
+    restoreUnsent(for: view)
+  }
+
+  /// Binds device storage once account validation finishes after a cold-launch deep link.
+  func restoreUnsentIfReady() {
+    guard let view else { return }
+    restoreUnsent(for: view)
+  }
+
+  private func restoreUnsent(for view: MockView) {
+    guard !hasRestoredUnsent, let unsent = resolveUnsent() else {
+      return
+    }
+
+    hasRestoredUnsent = true
+
+    if view.status == .finished || view.status == .expired {
+      unsent.clear()
+      return
+    }
+
+    guard view.status == .running else {
+      return
+    }
+
+    // Flush any edits made while account validation was still pending.
+    for draft in queue.pending {
+      unsent.keep(draft)
+    }
+
+    if let unsavedText {
+      unsent.keep(unsavedText)
+    }
+
+    let questionIds = Set((view.current?.questions ?? []).map(\.itemId))
+    let kept = unsent.prune(keeping: questionIds, matching: initiallyStored)
+      .filter { !editedItemIds.contains($0.itemId) }
+
+    guard !kept.isEmpty else {
+      return
+    }
+
+    for draft in kept {
+      drafts[draft.itemId] = draft
+    }
+
+    if view.currentSection?.navigation?.forwardOnly == true,
+      let keptReached = kept.compactMap({ draft in
+        view.current?.questions.firstIndex { $0.itemId == draft.itemId }
+      }).max()
+    {
+      position = max(position, keptReached)
+      reached = max(reached, keptReached)
+    }
 
     for draft in kept {
       queue.add(draft)
@@ -209,7 +243,8 @@ final class MockRun {
     draft.answer = answer
     drafts[question.itemId] = draft
     unsavedText = draft
-    keepOnDevice()
+    editedItemIds.insert(draft.itemId)
+    resolveUnsent()?.keep(draft)
     textTask?.cancel()
     textTask = Task { [weak self] in
       try? await Task.sleep(for: Self.textSaveDelay)
@@ -382,7 +417,7 @@ final class MockRun {
     // Answers are saved first, then the step.
     let result: MutationResult<MockStepOutcome?>? = await within(timeout) {
       [queue, store] in
-      await queue.idle()
+      guard await queue.idle() else { return .obsolete }
       return await store.write { api, token in try await request(api, token, blockId) }
     }
 
@@ -463,13 +498,28 @@ final class MockRun {
     _ = await within(Self.leaveWait) { [queue] in await queue.idle() }
   }
 
-  private func keepOnDevice() {
-    guard let unsent, owner.session == store.cache.session.authenticatedSession else { return }
-    unsent.write(combinePendingMockDrafts(queue.pending, unsavedText: unsavedText))
+  private func resolveUnsent() -> UnsentMockDrafts? {
+    let session = store.cache.session
+
+    if owner.session == nil {
+      owner.session = session.authenticatedSession
+    }
+
+    guard owner.session != nil, owner.session == session.authenticatedSession else {
+      return nil
+    }
+
+    if unsent == nil, let learnerId = session.account?.user.id {
+      unsent = UnsentMockDrafts(learnerId: learnerId, blockId: blockId, defaults: defaults)
+    }
+
+    return unsent
   }
 
   private func persist(_ draft: MockDraft) {
     drafts[draft.itemId] = draft
+    editedItemIds.insert(draft.itemId)
+    resolveUnsent()?.keep(draft)
     queue.add(draft)
   }
 

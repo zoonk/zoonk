@@ -5,13 +5,16 @@ import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
-import { type DraftSaveStatus, createDraftSaveQueue } from "./draft-save-queue";
 import {
-  clearUnsentMockDrafts,
-  combinePendingMockDrafts,
-  readUnsentMockDrafts,
-  selectKeptDraftsForView,
-  writeUnsentMockDrafts,
+  type DraftSaveOutcome,
+  type DraftSaveStatus,
+  createDraftSaveQueue,
+} from "./draft-save-queue";
+import {
+  dropUnsentMockDraft,
+  getForwardOnlyKeptReached,
+  keepUnsentMockDraft,
+  pruneUnsentMockDrafts,
 } from "./unsent-drafts";
 
 type Drafts = Record<string, MockDraft>;
@@ -31,53 +34,39 @@ function emptyDraft(itemId: string): MockDraft {
 }
 
 function useUnsentDraftSync({
+  activeViewRef,
   blockId,
   draftsRef,
-  initialView,
-  onPendingChange,
   onRestore,
   queue,
   textTimer,
 }: {
+  activeViewRef: React.RefObject<MockView>;
   blockId: string;
   draftsRef: React.RefObject<Drafts>;
-  initialView: MockView;
-  onPendingChange: (pending: MockDraft[]) => void;
-  onRestore: (drafts: Drafts) => void;
+  onRestore: (merged: Drafts, keptReached: number) => void;
   queue: DraftQueue;
   textTimer: React.RefObject<ReturnType<typeof setTimeout> | null>;
 }) {
-  const initialViewRef = useRef(initialView);
-  const handlePendingChange = useEffectEvent(onPendingChange);
   const handleRestore = useEffectEvent(onRestore);
 
   useEffect(() => {
-    const view = initialViewRef.current;
+    const view = activeViewRef.current;
     queue.start();
-    queue.setPendingListener(handlePendingChange);
 
-    if (view.status === "finished" || view.status === "expired") {
-      clearUnsentMockDrafts(blockId);
-    } else if (view.status === "running") {
-      const kept = readUnsentMockDrafts(blockId);
-      const keptHere = selectKeptDraftsForView({ kept, view });
+    const keptHere = pruneUnsentMockDrafts({ blockId, view });
 
-      if (kept.length !== keptHere.length) {
-        writeUnsentMockDrafts({ blockId, drafts: keptHere });
-      }
+    if (keptHere.length > 0) {
+      const merged = {
+        ...draftsRef.current,
+        ...Object.fromEntries(keptHere.map((draft) => [draft.itemId, draft])),
+      };
 
-      if (keptHere.length > 0) {
-        const merged = {
-          ...draftsRef.current,
-          ...Object.fromEntries(keptHere.map((draft) => [draft.itemId, draft])),
-        };
+      draftsRef.current = merged;
+      handleRestore(merged, getForwardOnlyKeptReached({ kept: keptHere, view }));
 
-        draftsRef.current = merged;
-        handleRestore(merged);
-
-        for (const draft of keptHere) {
-          queue.add(draft);
-        }
+      for (const draft of keptHere) {
+        queue.add(draft);
       }
     }
 
@@ -91,17 +80,18 @@ function useUnsentDraftSync({
       }
 
       globalThis.removeEventListener("online", retry);
-      queue.setPendingListener(undefined);
       queue.stop();
     };
-  }, [blockId, draftsRef, queue, textTimer]);
+  }, [activeViewRef, blockId, draftsRef, queue, textTimer]);
 }
 
 export function useMockDrafts({
+  onRestoreReached,
   save,
   view,
 }: {
-  save: (input: MockAnswerInput) => Promise<boolean>;
+  onRestoreReached?: (reached: number) => void;
+  save: (input: MockAnswerInput) => Promise<DraftSaveOutcome>;
   view: MockView;
 }) {
   const { blockId } = view;
@@ -109,6 +99,7 @@ export function useMockDrafts({
   const [failedDrafts, setFailedDrafts] = useState<Partial<Drafts>>({});
   const [savedDrafts, setSavedDrafts] = useState<Drafts>(drafts);
   const [saveStatus, setSaveStatus] = useState<DraftSaveStatus>("saved");
+  const activeViewRef = useRef(view);
   const draftsRef = useRef<Drafts>(drafts);
   const shown = useRef<{ at: number; itemId: string } | null>(null);
   const unsavedText = useRef<MockDraft | null>(null);
@@ -120,8 +111,10 @@ export function useMockDrafts({
       createDraftSaveQueue<MockDraft>({
         keyOf: (draft) => draft.itemId,
         onFailed: (draft) => setFailedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
+        onRefused: (draft) => dropUnsentMockDraft({ blockId, draft }),
         onStatus: setSaveStatus,
         onStored: (draft) => {
+          dropUnsentMockDraft({ blockId, draft });
           setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft }));
 
           setFailedDrafts((current) =>
@@ -130,22 +123,20 @@ export function useMockDrafts({
         },
         save,
       }),
-    [save],
+    [blockId, save],
   );
 
-  function keepOnDevice(pending: readonly MockDraft[] = queue.pending()) {
-    writeUnsentMockDrafts({
-      blockId,
-      drafts: combinePendingMockDrafts({ pending, unsavedText: unsavedText.current }),
-    });
-  }
-
   useUnsentDraftSync({
+    activeViewRef,
     blockId,
     draftsRef,
-    initialView: view,
-    onPendingChange: keepOnDevice,
-    onRestore: setDrafts,
+    onRestore: (merged, keptReached) => {
+      setDrafts(merged);
+
+      if (keptReached >= 0) {
+        onRestoreReached?.(keptReached);
+      }
+    },
     queue,
     textTimer,
   });
@@ -153,6 +144,7 @@ export function useMockDrafts({
   function persist(draft: MockDraft) {
     draftsRef.current = { ...draftsRef.current, [draft.itemId]: draft };
     setDrafts(draftsRef.current);
+    keepUnsentMockDraft({ blockId, draft });
     queue.add(draft);
   }
 
@@ -214,12 +206,13 @@ export function useMockDrafts({
 
       unsavedText.current = null;
       shown.current = null;
+      activeViewRef.current = next;
       const nextDrafts = toDrafts(next);
       draftsRef.current = nextDrafts;
       setDrafts(nextDrafts);
       setFailedDrafts({});
       setSavedDrafts(nextDrafts);
-      clearUnsentMockDrafts(blockId);
+      pruneUnsentMockDrafts({ blockId, view: next });
       queue.forgetRefusals();
     },
     retry: () => queue.retryNow(),
@@ -245,7 +238,7 @@ export function useMockDrafts({
       draftsRef.current = { ...draftsRef.current, [itemId]: draft };
       setDrafts(draftsRef.current);
       unsavedText.current = draft;
-      keepOnDevice();
+      keepUnsentMockDraft({ blockId, draft });
 
       if (textTimer.current) {
         clearTimeout(textTimer.current);

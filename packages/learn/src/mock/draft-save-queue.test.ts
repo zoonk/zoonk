@@ -1,9 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { type DraftSaveStatus, createDraftSaveQueue } from "./draft-save-queue";
+import {
+  type DraftSaveOutcome,
+  type DraftSaveStatus,
+  createDraftSaveQueue,
+} from "./draft-save-queue";
 
 type Draft = { answer: string; itemId: string };
 
-type PendingSave = { draft: Draft; fail: () => void; refuse: () => void; store: () => void };
+type PendingSave = {
+  draft: Draft;
+  fail: () => void;
+  refuse: () => void;
+  stop: () => void;
+  store: () => void;
+};
 
 function flushPromises() {
   return new Promise<void>((resolve) => {
@@ -15,27 +25,28 @@ function setup() {
   const requests: PendingSave[] = [];
   const statuses: DraftSaveStatus[] = [];
   const stored: Draft[] = [];
+  const refused: Draft[] = [];
   const failed: Draft[] = [];
-  const pendingSnapshots: Draft[][] = [];
 
   const queue = createDraftSaveQueue<Draft>({
     keyOf: (draft) => draft.itemId,
     onFailed: (draft) => failed.push(draft),
-    onPendingChange: (pending) => pendingSnapshots.push(pending),
+    onRefused: (draft) => refused.push(draft),
     onStatus: (status) => statuses.push(status),
     onStored: (draft) => stored.push(draft),
     save: (draft) =>
-      new Promise<boolean>((resolve, reject) => {
+      new Promise<DraftSaveOutcome>((resolve, reject) => {
         requests.push({
           draft,
           fail: () => reject(new Error("Failed to fetch")),
-          refuse: () => resolve(false),
-          store: () => resolve(true),
+          refuse: () => resolve("refused"),
+          stop: () => resolve("stopped"),
+          store: () => resolve("saved"),
         });
       }),
   });
 
-  return { failed, pendingSnapshots, queue, requests, statuses, stored };
+  return { failed, queue, refused, requests, statuses, stored };
 }
 
 describe(createDraftSaveQueue, () => {
@@ -229,53 +240,21 @@ describe(createDraftSaveQueue, () => {
     await flushPromises();
 
     expect(idle).toBe(true);
-    await expect(queue.idle()).resolves.toBeUndefined();
+    await expect(queue.idle()).resolves.toBe(true);
   });
 
-  it("reports unsent answers in order, including the one going out and newer replacements", async () => {
-    const { pendingSnapshots, queue, requests } = setup();
+  it("aborts idle waiters when stopped with unsent work and ignores late results after restart", async () => {
+    const { failed, queue, refused, requests, stored } = setup();
 
     queue.add({ answer: "A", itemId: "q1" });
-    queue.add({ answer: "B", itemId: "q2" });
-    queue.add({ answer: "A2", itemId: "q1" });
-
-    expect(queue.pending()).toStrictEqual([
-      { answer: "A2", itemId: "q1" },
-      { answer: "B", itemId: "q2" },
-    ]);
-
-    expect(pendingSnapshots.at(-1)).toStrictEqual([
-      { answer: "A2", itemId: "q1" },
-      { answer: "B", itemId: "q2" },
-    ]);
-
-    requests[0]?.store();
-    await flushPromises();
-
-    expect(pendingSnapshots.at(-1)).toStrictEqual([
-      { answer: "B", itemId: "q2" },
-      { answer: "A2", itemId: "q1" },
-    ]);
-
-    requests[1]?.store();
-    await flushPromises();
-    requests[2]?.store();
-    await flushPromises();
-    expect(pendingSnapshots.at(-1)).toStrictEqual([]);
-  });
-
-  it("stopping ends retries and ignores late results without clearing what was kept", async () => {
-    const { failed, pendingSnapshots, queue, requests, stored } = setup();
-
-    queue.add({ answer: "A", itemId: "q1" });
+    const idlePromise = queue.idle();
     requests[0]?.fail();
     await flushPromises();
-    expect(pendingSnapshots.at(-1)).toStrictEqual([{ answer: "A", itemId: "q1" }]);
 
-    const beforeStop = pendingSnapshots.length;
     queue.stop();
-    expect(pendingSnapshots).toHaveLength(beforeStop);
+    await expect(idlePromise).resolves.toBe(false);
     expect(vi.getTimerCount()).toBe(0);
+    expect(refused).toStrictEqual([]);
 
     // A StrictMode remount starts the same queue again and ignores an older in-flight send.
     queue.start();
@@ -287,6 +266,23 @@ describe(createDraftSaveQueue, () => {
     await flushPromises();
 
     expect(stored).toStrictEqual([]);
+    expect(failed).toStrictEqual([{ answer: "A", itemId: "q1" }]);
+  });
+
+  it("stops on an expired or changed session without treating the draft as permanently refused", async () => {
+    const { failed, queue, refused, requests, stored } = setup();
+
+    queue.add({ answer: "A", itemId: "q1" });
+    queue.add({ answer: "B", itemId: "q2" });
+    const idlePromise = queue.idle();
+
+    requests[0]?.stop();
+    await flushPromises();
+
+    await expect(idlePromise).resolves.toBe(false);
+    expect(requests).toHaveLength(1);
+    expect(stored).toStrictEqual([]);
+    expect(refused).toStrictEqual([]);
     expect(failed).toStrictEqual([{ answer: "A", itemId: "q1" }]);
   });
 });

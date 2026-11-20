@@ -255,71 +255,70 @@ final class MockDraftQueueTests: XCTestCase {
   func testStoppingDropsAnAnswerStillOnItsWayInsteadOfSendingItAgain() async {
     let gate = Gate()
     var saves = 0
-    var kept: [[MockDraft]] = []
-    var queue: MockDraftQueue?
-    queue = MockDraftQueue(
+    var settled: [MockDraft] = []
+    let queue = MockDraftQueue(
       retryDelay: { _ in .milliseconds(10) },
-      onPendingChange: { kept.append(queue?.pending ?? []) },
+      onSettled: { settled.append($0) },
       save: { _ in
         saves += 1
         await gate.wait()
         return .unreachable
       })
 
-    queue?.add(draft("a", .choice(0)))
+    queue.add(draft("a", .choice(0)))
     _ = try? await waitForTestCondition("Fixture state did not arrive") { !(saves == 0) }
-    let updatesBeforeStop = kept.count
-    queue?.stop()
+    let waitingIdle = Task { await queue.idle() }
+    queue.stop()
     gate.open()
-    await queue?.idle()
+    let flushed = await waitingIdle.value
 
     XCTAssertEqual(saves, 1)
-    XCTAssertEqual(queue?.status, .saved)
-    XCTAssertEqual(kept.count, updatesBeforeStop, "Stopping must not wipe kept device drafts")
-    XCTAssertEqual(kept.last, [draft("a", .choice(0))])
+    XCTAssertEqual(queue.status, .saved)
+    XCTAssertFalse(flushed, "Stopping must abort waiting hand-ins")
+    XCTAssertTrue(settled.isEmpty, "Stopping must not mark pending drafts as settled")
   }
 
   func testPendingKeepsTheNewestAnswerForEachQuestionUntilStored() async {
     let gate = Gate()
-    var kept: [[MockDraft]] = []
-    var queue: MockDraftQueue?
-    queue = MockDraftQueue(
-      onPendingChange: { kept.append(queue?.pending ?? []) },
+    var settled: [MockDraft] = []
+    let queue = MockDraftQueue(
+      onSettled: { settled.append($0) },
       save: { _ in
         await gate.wait()
         return .stored
       })
 
-    queue?.add(draft("a", .choice(0)))
-    queue?.add(draft("b", .choice(1)))
-    queue?.add(draft("a", .choice(2)))
+    queue.add(draft("a", .choice(0)))
+    queue.add(draft("b", .choice(1)))
+    queue.add(draft("a", .choice(2)))
 
-    XCTAssertEqual(queue?.pending, [draft("a", .choice(2)), draft("b", .choice(1))])
-    XCTAssertEqual(kept.last, [draft("a", .choice(2)), draft("b", .choice(1))])
+    XCTAssertEqual(queue.pending, [draft("a", .choice(2)), draft("b", .choice(1))])
 
     gate.open()
-    await queue?.idle()
-    XCTAssertEqual(kept.last, [])
+    let flushed = await queue.idle()
+    XCTAssertTrue(flushed)
+    XCTAssertTrue(queue.pending.isEmpty)
+    XCTAssertEqual(settled.map(\.itemId), ["a", "b", "a"])
   }
 
-  func testASessionChangeStopsTheQueueWithoutClearingKeptAnswers() async {
+  func testASessionChangeStopsTheQueueWithoutSettlingKeptAnswers() async {
     var sent: [String] = []
-    var kept: [[MockDraft]] = []
-    var queue: MockDraftQueue?
-    queue = MockDraftQueue(
-      onPendingChange: { kept.append(queue?.pending ?? []) },
+    var settled: [MockDraft] = []
+    let queue = MockDraftQueue(
+      onSettled: { settled.append($0) },
       save: { draft in
         sent.append(draft.itemId)
         return .stop
       })
 
-    queue?.add(draft("a", .choice(0)))
-    queue?.add(draft("b", .choice(1)))
-    await queue?.idle()
+    queue.add(draft("a", .choice(0)))
+    queue.add(draft("b", .choice(1)))
+    let flushed = await queue.idle()
 
     XCTAssertEqual(sent, ["a"])
-    XCTAssertEqual(kept.last, [draft("a", .choice(0)), draft("b", .choice(1))])
-    XCTAssertEqual(queue?.status, .saved)
+    XCTAssertFalse(flushed)
+    XCTAssertTrue(settled.isEmpty)
+    XCTAssertEqual(queue.status, .saved)
   }
 
   func testABlankDraftIsNotAnswered() {
@@ -551,12 +550,12 @@ final class MockRunOfflinePersistenceTests: XCTestCase {
     let (defaults, suite) = makeDefaults()
     defer { defaults.removePersistentDomain(forName: suite) }
 
-    let kept = MockDraft(answer: .choice(1), durationMs: 4000, flagged: true, itemId: Self.itemOne)
+    let kept = MockDraft(answer: .choice(1), durationMs: 4000, flagged: true, itemId: Self.itemTwo)
     UnsentMockDrafts(
       learnerId: CurrentAccount.mockOfflineTestFixture.user.id,
       blockId: Self.blockId,
       defaults: defaults
-    ).write([kept])
+    ).keep(kept)
 
     let transport = MockOfflineTransport(
       blockId: Self.blockId, itemIds: [Self.itemOne, Self.itemTwo], forwardOnly: true)
@@ -571,7 +570,44 @@ final class MockRunOfflinePersistenceTests: XCTestCase {
 
     let savedOnServer = await transport.savedAnswers()
     XCTAssertEqual(savedOnServer, [kept])
-    XCTAssertEqual(run.drafts[Self.itemOne], kept)
+    XCTAssertEqual(run.drafts[Self.itemTwo], kept)
+    XCTAssertEqual(run.position, 1, "Forward-only reopen advances to the furthest kept question")
+    XCTAssertFalse(run.moves.canChange(0), "Earlier question is locked once question 2 is kept")
+  }
+
+  func testTwoOpenWindowsKeepBothUnsentAnswersWithoutOverwritingEachOther() async throws {
+    let (defaults, suite) = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: suite) }
+
+    let transport = MockOfflineTransport(
+      blockId: Self.blockId, itemIds: [Self.itemOne, Self.itemTwo])
+    let store = makeStore(transport: transport)
+
+    let windowA = MockRun(store: store, blockId: Self.blockId, defaults: defaults)
+    let windowB = MockRun(store: store, blockId: Self.blockId, defaults: defaults)
+    await windowA.mock.load()
+    await windowB.mock.load()
+    windowA.adopt(try XCTUnwrap(windowA.view))
+    windowB.adopt(try XCTUnwrap(windowB.view))
+    windowA.show(Self.itemOne)
+    windowB.go(to: 1)
+    windowB.show(Self.itemTwo)
+
+    await transport.setOffline(true)
+    windowA.answer(.choice(0))
+    windowB.answer(.choice(1))
+    _ = try? await waitForTestCondition("Windows did not enter retrying") {
+      windowA.queue.status == .retrying && windowB.queue.status == .retrying
+    }
+    windowA.queue.stop()
+    windowB.queue.stop()
+
+    let kept = UnsentMockDrafts(
+      learnerId: CurrentAccount.mockOfflineTestFixture.user.id,
+      blockId: Self.blockId,
+      defaults: defaults
+    ).read()
+    XCTAssertEqual(Set(kept.map(\.itemId)), [Self.itemOne, Self.itemTwo])
   }
 
   func testReopeningAFinishedMockClearsKeptAnswers() async throws {
@@ -583,9 +619,8 @@ final class MockRunOfflinePersistenceTests: XCTestCase {
       blockId: Self.blockId,
       defaults: defaults
     )
-    unsent.write([
-      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: Self.itemOne)
-    ])
+    unsent.keep(
+      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: Self.itemOne))
 
     let transport = MockOfflineTransport(
       blockId: Self.blockId, itemIds: [Self.itemOne], status: "finished")

@@ -185,7 +185,16 @@ export function useMockRunner({
   const { essayGrading, gradeEssays } = useEssayGrading({ actions, setView });
   const speaking = useSpeakingStart({ start: actions.startSpeaking, step });
   const slow = useTakingLong({ active: busy !== null, afterMs: STEP_BOUNDS.slowMs });
-  const drafts = useMockDrafts({ save: actions.answer, view: initial });
+
+  const drafts = useMockDrafts({
+    onRestoreReached: (keptReached) => {
+      setPosition((current) => Math.max(current, keptReached));
+      setReached((current) => Math.max(current, keptReached));
+    },
+    save: actions.answer,
+    view,
+  });
+
   const questions = view.current?.questions ?? [];
   const question = questions[position];
   const shownItemId = timeUp ? undefined : question?.itemId;
@@ -220,8 +229,8 @@ export function useMockRunner({
     const settled = await settleWithin({
       ms: STEP_BOUNDS.timeoutMs,
       request: async () => {
-        await drafts.flush();
-        return request();
+        const flushed = await drafts.flush();
+        return flushed ? request() : null;
       },
     }).catch(() => null);
 
