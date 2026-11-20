@@ -176,7 +176,7 @@ function AnswerSpan({ node, ...props }: ComponentProps<"span"> & ExtraProps) {
 const DiagramsReadyContext = createContext(false);
 
 /** What code's parts are called, where no translations load. */
-export type TutorCodeLabels = { code: string; scroll: { left: string; right: string } };
+type TutorCodeLabels = { code: string; scroll: { left: string; right: string } };
 
 const CodeLabelsContext = createContext<TutorCodeLabels | undefined>(undefined);
 
