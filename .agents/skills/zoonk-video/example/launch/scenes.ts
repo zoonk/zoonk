@@ -70,23 +70,30 @@ const time: Scene = async (stage) => {
   ]);
   const x = wide ? 190 : 60;
   const headingS = 2.62;
-  const top = heading ? 132 + (heading.h + 22) * headingS : 96;
-  // As large as the frame allows with every word inside it, down to the sentence under the time behind.
-  const room = stage.size.w - x - 80;
-  const gap = wide ? 18 : 30;
-  const said = after.rect('[data-slot="schedule-time"] p');
-  const tall = answer.h + gap + said.y + said.h;
-  const s = Math.min(wide ? 4.1 : 2.62, room / answer.inkWidth(), (stage.size.h - top - 50) / tall);
-  const behind = wide ? Math.max(0, Math.min(190, room - after.inkWidth() * s)) : 0;
-  heading?.place({ x: x + 10 * headingS, y: 132, s: headingS });
-  answer.place({ x, y: top, s });
+  const headingH = heading ? (heading.h + 22) * headingS : 0;
   const offer = answer.rect('button[data-slot="button"]');
+  const said = after.rect('[data-slot="schedule-time"] p');
+  // The time behind starts a step under the button and ends with the sentence under it.
+  const gap = wide ? 46 : 60;
+  const tall = offer.y + offer.h + gap + said.y + said.h;
+  // As large as the frame allows with every word inside it, and the group centered on the frame.
+  const room = stage.size.w - x - 80;
+  const s = Math.min(
+    wide ? 4.1 : 2.62,
+    room / answer.inkWidth(),
+    (stage.size.h - 2 * 90 - headingH) / tall,
+  );
+  const headingY = (stage.size.h - headingH - tall * s) / 2;
+  const top = headingY + headingH;
+  const behind = wide ? Math.max(0, Math.min(190, room - after.inkWidth() * s)) : 0;
+  heading?.place({ x: x + 10 * headingS, y: headingY, s: headingS });
+  answer.place({ x, y: top, s });
   stage.touch(
     x + (offer.x + offer.w * 0.8) * s,
     top + (offer.y + offer.h * 0.66) * s,
     wide ? 96 : 80,
   );
-  const afterTop = top + (answer.h + gap) * s;
+  const afterTop = top + (offer.y + offer.h + gap) * s;
   after.place({ x: x + behind, y: afterTop, s, o: 0.55 });
   stage.fade(after, "bottom", afterTop / stage.size.h);
   stage.light(44, wide ? 40 : 36);
