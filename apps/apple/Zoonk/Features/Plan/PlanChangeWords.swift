@@ -607,6 +607,39 @@ func planBaseChoicesStatement(_ choices: [BaseChoice]) -> String {
     comment: "Says how the plan studies its prerequisites; the argument lists the choices")
 }
 
+/// A language plan's activities, in the order its settings list them.
+let planActivities = ["vocabulary", "listening", "writing", "speaking"]
+
+/// A weekday every week, as a plan's mock exams come on it; Sunday counted 0.
+func planWeekdays(_ weekday: Int) -> String {
+  switch weekday {
+  case 0:
+    String(
+      localized: "Sundays", table: "Plan", comment: "Every Sunday, as in 'Mock exams: Sundays'")
+  case 1:
+    String(
+      localized: "Mondays", table: "Plan", comment: "Every Monday, as in 'Mock exams: Mondays'")
+  case 2:
+    String(
+      localized: "Tuesdays", table: "Plan", comment: "Every Tuesday, as in 'Mock exams: Tuesdays'")
+  case 3:
+    String(
+      localized: "Wednesdays", table: "Plan",
+      comment: "Every Wednesday, as in 'Mock exams: Wednesdays'")
+  case 4:
+    String(
+      localized: "Thursdays", table: "Plan",
+      comment: "Every Thursday, as in 'Mock exams: Thursdays'")
+  case 5:
+    String(
+      localized: "Fridays", table: "Plan", comment: "Every Friday, as in 'Mock exams: Fridays'")
+  default:
+    String(
+      localized: "Saturdays", table: "Plan",
+      comment: "Every Saturday, as in 'Mock exams: Saturdays'")
+  }
+}
+
 func planActivityName(_ activity: String) -> String {
   switch activity {
   case "vocabulary": String(localized: "New words", table: "Plan", comment: "Practice activity")

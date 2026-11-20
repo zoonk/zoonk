@@ -11,6 +11,8 @@ struct AdjustPlanSheet: View {
     /// Studying everything, which asks as soon as the sheet opens.
     case everything
     case focus
+    /// A language plan's activities.
+    case practice
     case time
     case top
 

@@ -30,6 +30,7 @@ struct AdjustPlanSections: View {
 
     if goal.kind == .language {
       PlanActivitiesSection(editor: editor, plan: plan)
+        .id(AdjustPlanSheet.Section.practice)
     }
 
     if let written = plan.writtenPractice {
@@ -254,7 +255,7 @@ private struct PlanActivitiesSection: View {
     .tint(.success)
   }
 
-  private static let activities = ["vocabulary", "listening", "writing", "speaking"]
+  private static let activities = planActivities
 }
 
 private struct PlanWrittenPracticeSection: View {

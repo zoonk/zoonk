@@ -112,11 +112,13 @@ extension PageSection where Footer == EmptyView {
 struct BlockGridSection<Content: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
+  /// Main's aside: the second block keeps this width beside the first, which takes the rest.
+  var asideWidth: CGFloat?
   @ViewBuilder let content: Content
 
   var body: some View {
     Section {
-      BlockGrid(isStacked: isStacked) {
+      BlockGrid(isStacked: isStacked, asideWidth: asideWidth) {
         content
       }
       .environment(\.isGridBlock, true)
@@ -130,6 +132,7 @@ struct BlockGridSection<Content: View>: View {
 
 private struct BlockGrid: Layout {
   var isStacked: Bool
+  var asideWidth: CGFloat?
   /// About a phone's narrowest column, so a block's rows read as they do on a phone.
   var minimumColumn: CGFloat = 280
   var columnSpacing: CGFloat = 40
@@ -147,14 +150,18 @@ private struct BlockGrid: Layout {
   func placeSubviews(
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
-    let columns = columns(for: bounds.width, count: subviews.count)
+    let columns = columnWidths(for: bounds.width, count: subviews.count)
     var y = bounds.minY
 
     for (row, height) in rowHeights(subviews, width: bounds.width).enumerated() {
-      for column in 0..<columns.count where row * columns.count + column < subviews.count {
+      var x = bounds.minX
+
+      for (column, width) in columns.enumerated()
+      where row * columns.count + column < subviews.count {
         subviews[row * columns.count + column].place(
-          at: CGPoint(x: bounds.minX + CGFloat(column) * (columns.width + columnSpacing), y: y),
-          anchor: .topLeading, proposal: ProposedViewSize(width: columns.width, height: nil))
+          at: CGPoint(x: x, y: y), anchor: .topLeading,
+          proposal: ProposedViewSize(width: width, height: nil))
+        x += width + columnSpacing
       }
 
       y += height + rowSpacing
@@ -162,21 +169,33 @@ private struct BlockGrid: Layout {
   }
 
   /// A lone block takes the whole width, such as the Plan's next steps where the tab bar already
-  /// lists the other places.
-  private func columns(for width: CGFloat, count: Int) -> (count: Int, width: CGFloat) {
-    guard !isStacked, count > 1, width >= minimumColumn * 2 + columnSpacing else {
-      return (1, width)
+  /// lists the other places. With an aside, the first block takes what the aside leaves.
+  private func columnWidths(for width: CGFloat, count: Int) -> [CGFloat] {
+    guard !isStacked, count > 1 else {
+      return [width]
     }
 
-    return (2, (width - columnSpacing) / 2)
+    if let asideWidth {
+      return width >= minimumColumn + asideWidth + columnSpacing
+        ? [width - asideWidth - columnSpacing, asideWidth] : [width]
+    }
+
+    guard width >= minimumColumn * 2 + columnSpacing else {
+      return [width]
+    }
+
+    let half = (width - columnSpacing) / 2
+    return [half, half]
   }
 
   private func rowHeights(_ subviews: Subviews, width: CGFloat) -> [CGFloat] {
-    let columns = columns(for: width, count: subviews.count)
+    let columns = columnWidths(for: width, count: subviews.count)
 
     return stride(from: 0, to: subviews.count, by: columns.count).map { start in
-      subviews[start..<min(start + columns.count, subviews.count)]
-        .map { $0.sizeThatFits(ProposedViewSize(width: columns.width, height: nil)).height }
+      subviews[start..<min(start + columns.count, subviews.count)].enumerated()
+        .map { column, subview in
+          subview.sizeThatFits(ProposedViewSize(width: columns[column], height: nil)).height
+        }
         .max() ?? 0
     }
   }

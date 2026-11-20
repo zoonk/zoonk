@@ -520,64 +520,40 @@ struct PlanEffectDiff: View {
 
 /// "All changes": a quiet disclosure of plain rows, a label and "before → after" or a value.
 private struct PlanChangeRows: View {
-  @State private var isOpen = false
-
   let rows: [PlanChangeRow]
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
-      Button {
-        isOpen.toggle()
-      } label: {
-        HStack(spacing: 4) {
-          Text(
-            "All changes", tableName: "Plan", comment: "Shows every change a plan change makes")
+    QuietDisclosure(
+      label: Text(
+        "All changes", tableName: "Plan", comment: "Shows every change a plan change makes")
+    ) {
+      ForEach(rows) { row in
+        if row.id != rows.first?.id {
+          Divider()
+        }
 
-          Image(systemName: "chevron.down")
-            .imageScale(.small)
-            .rotationEffect(.degrees(isOpen ? 180 : 0))
-            .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 2) {
+          ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: 16) {
+              Text(row.label)
+              Spacer(minLength: 0)
+              value(row)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+              Text(row.label)
+              value(row)
+            }
+          }
+
+          if let detail = row.detail {
+            Text(detail)
+              .foregroundStyle(.mutedForeground)
+          }
         }
         .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .frame(minHeight: 44, alignment: .leading)
-        .contentShape(.rect)
-      }
-      .buttonStyle(.plain)
-      .accessibilityValue(
-        isOpen
-          ? Text("Expanded", tableName: "Plan", comment: "Spoken state of an open disclosure")
-          : Text("Collapsed", tableName: "Plan", comment: "Spoken state of a closed disclosure"))
-
-      if isOpen {
-        ForEach(rows) { row in
-          if row.id != rows.first?.id {
-            Divider()
-          }
-
-          VStack(alignment: .leading, spacing: 2) {
-            ViewThatFits(in: .horizontal) {
-              HStack(alignment: .firstTextBaseline, spacing: 16) {
-                Text(row.label)
-                Spacer(minLength: 0)
-                value(row)
-              }
-
-              VStack(alignment: .leading, spacing: 2) {
-                Text(row.label)
-                value(row)
-              }
-            }
-
-            if let detail = row.detail {
-              Text(detail)
-                .foregroundStyle(.mutedForeground)
-            }
-          }
-          .typeStyle(.note)
-          .padding(.vertical, 8)
-          .accessibilityElement(children: .combine)
-        }
+        .padding(.vertical, 8)
+        .accessibilityElement(children: .combine)
       }
     }
   }

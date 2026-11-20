@@ -569,7 +569,10 @@ struct PlanSyllabusSection: View {
       }
     } footer: {
       SectionFooter {
-        count
+        VStack(alignment: .leading, spacing: 0) {
+          count
+          SyllabusSources(syllabus: syllabus)
+        }
       }
     }
   }
@@ -602,6 +605,78 @@ struct PlanSyllabusSection: View {
 
   private func subjectsText(_ count: Int) -> String {
     String(localized: "\(count) subjects", table: "Plan", comment: "How many subjects the exam has")
+  }
+}
+
+/// Main's quiet "Sources": where the subjects' question counts and the course's weights come from,
+/// for the learner who wants to check.
+private struct SyllabusSources: View {
+  let syllabus: GoalSyllabus
+
+  var body: some View {
+    if syllabus.questionsSource != nil || syllabus.courseWeights?.source != nil {
+      QuietDisclosure(label: Text("Sources", tableName: "Plan")) {
+        VStack(alignment: .leading, spacing: 8) {
+          if let source = syllabus.questionsSource {
+            QuestionsSourceText(edition: source.edition, url: source.url)
+          }
+
+          if let weights = syllabus.courseWeights {
+            CourseWeightsText(subjects: syllabus.subjects, weights: weights)
+          }
+        }
+        .tint(.mutedForeground)
+      }
+    }
+  }
+}
+
+/// Main's `CourseWeightsNote`: how the learner's course weighs the exam's parts, which the plan's
+/// time follows, its source linked.
+private struct CourseWeightsText: View {
+  let subjects: [SyllabusSubject]
+  let weights: GoalSyllabus.CourseWeights
+
+  var body: some View {
+    if let sentence {
+      Text(sentence)
+    }
+  }
+
+  private var sentence: AttributedString? {
+    guard let source = weights.source, let url = URL(string: source.url) else {
+      return nil
+    }
+
+    let publisher = sourceHost(url)
+    let lightest = weights.subjects.map(\.weight).min() ?? 0
+    let heavier = weights.subjects.filter { $0.weight > lightest }.map { part in
+      subjects.first { $0.name == part.name }?.shortName ?? part.name
+    }
+    let sentence =
+      heavier.isEmpty
+      ? String(
+        localized:
+          "\(weights.course) at \(weights.institution) counts every part of the exam the same. Weights from \(publisher).",
+        table: "Plan",
+        comment:
+          "How the learner's course weighs an exam's parts, all the same; the last argument is the source's site"
+      )
+      : String(
+        localized:
+          "\(weights.course) at \(weights.institution) counts \(heavier.formatted(.list(type: .and))) more, so your plan gives them more of your time. Weights from \(publisher).",
+        table: "Plan",
+        comment:
+          "How the learner's course weighs an exam's parts: the ones counted more; the last argument is the source's site"
+      )
+    var text = AttributedString(sentence)
+
+    if let range = text.range(of: publisher, options: .backwards) {
+      text[range].link = url
+      text[range].underlineStyle = .single
+    }
+
+    return text
   }
 }
 
@@ -686,37 +761,49 @@ struct PlanPathLink: View {
 struct SyllabusSubjectRow: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.legibilityWeight) private var legibilityWeight
+  @Environment(\.stacksContent) private var isStacked
 
   let subject: SyllabusSubject
   let isExam: Bool
   var sharedExams: [GoalSyllabus.SharedExam] = []
 
+  /// Main's container widths: the bar beside the name from 32rem, the question count too from 42rem.
+  @State private var width: CGFloat = 0
+  private static let barBesideFrom: CGFloat = 512
+  private static let questionsFrom: CGFloat = 672
+
   var body: some View {
     let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
+    let isWide = !isStacked && width >= Self.barBesideFrom
 
     // The bar is part of the row's words, so the share centers on the row with the chevron the
     // list draws after it, as main's subject row does.
     RowLayout {
     } words: {
-      VStack(alignment: .leading, spacing: 6) {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(subject.shortName)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(
-              subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground
-            )
-            .layoutPart(.label, text: Text(subject.shortName))
+      if isWide {
+        HStack(spacing: 14) {
+          name
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-          AlsoInExams(exams: sharedExams)
+          if width >= Self.questionsFrom {
+            questions
+              .frame(width: 104, alignment: .trailing)
+          }
+
+          if subject.notPlannedReason == nil {
+            Meter(value: share, fill: .success)
+              .frame(width: min(max(width * 0.3, 112), 224))
+              .accessibilityHidden(true)
+          }
         }
+      } else {
+        VStack(alignment: .leading, spacing: 6) {
+          name
 
-        if subject.notPlannedReason != nil {
-          planOutsideReason(subject.notPlannedReason)
-            .typeStyle(.meta)
-            .foregroundStyle(.mutedForeground)
-        } else {
-          Meter(value: share, fill: .success)
-            .accessibilityHidden(true)
+          if subject.notPlannedReason == nil {
+            Meter(value: share, fill: .success)
+              .accessibilityHidden(true)
+          }
         }
       }
     } value: {
@@ -730,7 +817,41 @@ struct SyllabusSubjectRow: View {
             dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
           alignment: .trailing)
     }
+    .onGeometryChange(for: CGFloat.self) {
+      $0.size.width
+    } action: {
+      width = $0
+    }
     .accessibilityElement(children: .combine)
+  }
+
+  /// Its name, the other exams that share it, and why it isn't in the plan.
+  private var name: some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(subject.shortName)
+        .typeStyle(.rowTitle)
+        .foregroundStyle(
+          subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground
+        )
+        .layoutPart(.label, text: Text(subject.shortName))
+
+      AlsoInExams(exams: sharedExams)
+
+      if subject.notPlannedReason != nil {
+        planOutsideReason(subject.notPlannedReason)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
+  }
+
+  @ViewBuilder private var questions: some View {
+    if let count = subject.questions, count > 0 {
+      Text("\(count) questions", tableName: "Plan")
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
+        .lineLimit(1)
+    }
   }
 }
 

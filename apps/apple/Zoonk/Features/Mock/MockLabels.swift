@@ -153,19 +153,8 @@ struct MockSizeNote: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      if let edition = source.pastEdition, let url = URL(string: edition.url) {
-        Link(destination: url) {
-          let publisher = url.host(percentEncoded: false) ?? edition.url
-          if let name = edition.edition {
-            Text(
-              "Questions per subject in the \(name), as counted by \(publisher).",
-              tableName: "Mock", comment: "Where a mock's question counts come from")
-          } else {
-            Text(
-              "Questions per subject in the latest exam, as counted by \(publisher).",
-              tableName: "Mock", comment: "Where a mock's question counts come from")
-          }
-        }
+      if let edition = source.pastEdition {
+        QuestionsSourceText(edition: edition.edition, url: edition.url)
       }
 
       ForEach(lines, id: \.self) { Text($0) }
@@ -200,4 +189,45 @@ struct MockSizeNote: View {
     ]
   }
 
+}
+
+/// Main's `QuestionsSourceText`: where the questions per subject come from, its publisher linked.
+struct QuestionsSourceText: View {
+  let edition: String?
+  let url: String
+
+  var body: some View {
+    if let sentence {
+      Text(sentence)
+    }
+  }
+
+  private var sentence: AttributedString? {
+    guard let link = URL(string: url) else {
+      return nil
+    }
+
+    let publisher = sourceHost(link)
+    var text = AttributedString(
+      edition.map {
+        String(
+          localized: "Questions per subject in the \($0), as counted by \(publisher).",
+          table: "Mock", comment: "Where a mock's question counts come from")
+      }
+        ?? String(
+          localized: "Questions per subject in the latest exam, as counted by \(publisher).",
+          table: "Mock", comment: "Where a mock's question counts come from"))
+
+    if let range = text.range(of: publisher, options: .backwards) {
+      text[range].link = link
+      text[range].underlineStyle = .single
+    }
+
+    return text
+  }
+}
+
+/// Main's `getSourceHost`: a source by its site, without "www.".
+func sourceHost(_ url: URL) -> String {
+  url.host(percentEncoded: false)?.replacing(/^www\./, with: "") ?? url.absoluteString
 }

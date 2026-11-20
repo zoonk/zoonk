@@ -140,6 +140,14 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   }
 
   struct Schedule: Decodable, Equatable, Sendable {
+    struct MockSchedule: Decodable, Equatable, Sendable {
+      let count: Int
+      let everyWeeks: Int?
+      let nextDate: String
+      /// Sunday counted 0.
+      let weekday: Int?
+    }
+
     /// The exam's day its notice gives, when the plan counts down to another.
     struct NoticeDay: Decodable, Equatable, Sendable {
       let date: String
@@ -148,6 +156,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     }
 
     let dailyMinutes: Int
+    /// When the plan's mock exams come: on a weekday, or next on a day.
+    let mocks: MockSchedule?
     /// Core's daily times for the time a day's picker.
     let dailyTimes: [Int]
     let fullCourse: Bool
@@ -559,7 +569,28 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   /// Where the subjects' `questions` come from when the notice gives none.
   struct QuestionsSource: Decodable, Equatable, Sendable {
     let edition: String?
+    let url: String
   }
+
+  /// How the learner's course weighs the exam's parts at their institution, which the plan's time
+  /// follows.
+  struct CourseWeights: Decodable, Equatable, Sendable {
+    struct Part: Decodable, Equatable, Sendable {
+      let name: String
+      let weight: Double
+    }
+
+    struct Source: Decodable, Equatable, Sendable {
+      let url: String
+    }
+
+    let course: String
+    let institution: String
+    let source: Source?
+    let subjects: [Part]
+  }
+
+  let courseWeights: CourseWeights?
 
   let examDocument: ExamDocument
   let fromMaterial: Bool

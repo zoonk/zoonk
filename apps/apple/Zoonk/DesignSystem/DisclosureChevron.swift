@@ -32,11 +32,14 @@ struct DisclosureChevron: View {
 }
 
 extension View {
-  /// A button row drawn like a `NavigationLink`: the content, then the chevron.
+  /// A button row drawn like a `NavigationLink`: the content, then the chevron. The whole row
+  /// takes the tap, as a list's does; a plain button in a grid's block would take it only on its
+  /// words.
   func disclosureChevron() -> some View {
     HStack(spacing: 12) {
       self.environment(\.rowHasChevron, true)
       DisclosureChevron()
     }
+    .contentShape(.rect)
   }
 }

@@ -584,6 +584,8 @@ struct PlanMoreSection: View {
 struct PlanSettingsSection: View {
   let context: PlanContext
 
+  @Environment(\.self) private var environment
+
   var body: some View {
     let schedule = context.plan.schedule
 
@@ -596,13 +598,22 @@ struct PlanSettingsSection: View {
 
       setting(
         label: Text("Daily study time", tableName: "Plan"),
-        value: Text(planDurationText(minutes: Double(schedule.dailyMinutes))).monospacedDigit(),
+        value: Text(planDurationText(minutes: Double(schedule.dailyMinutes))).typeStyle(.data),
         section: .time)
 
       setting(
         label: Text(
           "Study days", tableName: "Plan", comment: "Setting: the days of the week to study"),
         value: Text(studyDaysText(schedule.weekdayMinutes)), section: .days)
+
+      if !context.isPaused, let mocks = schedule.mocks {
+        mockExamsRow(mocks)
+      }
+
+      ForEach(context.plan.examChoices) { choice in
+        setting(
+          label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
+      }
 
       if let variety = context.goal.variety {
         setting(
@@ -616,9 +627,9 @@ struct PlanSettingsSection: View {
 
       countryRows
 
-      ForEach(context.plan.examChoices) { choice in
+      if context.goal.kind == .language, let practiced = practicedText {
         setting(
-          label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
+          label: Text("Practice", tableName: "Plan"), value: Text(practiced), section: .practice)
       }
     } header: {
       SectionTitle(Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings"))
@@ -659,6 +670,68 @@ struct PlanSettingsSection: View {
     } else if let examples = context.goal.examplesCountry {
       fact(label: countryLabel, value: Text(examples.name))
     }
+  }
+
+  /// Mock exams aren't a setting, so the row opens the exam's page, where they are.
+  @ViewBuilder
+  private func mockExamsRow(_ mocks: GoalPlan.Schedule.MockSchedule) -> some View {
+    let label = Text("Mock exams", tableName: "Plan")
+
+    if context.goal.kind == .exam {
+      PageLink(route: .exam) {
+        LabeledContent {
+          mockValue(mocks)
+        } label: {
+          label.foregroundStyle(.primary)
+        }
+      }
+    } else {
+      fact(label: label, value: mockValue(mocks))
+    }
+  }
+
+  /// Main's `MockScheduleValue`: the weekday they come on, else the next one's day.
+  private func mockValue(_ mocks: GoalPlan.Schedule.MockSchedule) -> Text {
+    if let weekday = mocks.weekday {
+      let days = planWeekdays(weekday)
+
+      if let weeks = mocks.everyWeeks, weeks > 1 {
+        return Text(
+          "\(days), every \(weeks) weeks", tableName: "Plan",
+          comment:
+            "When a plan's mock exams come: a weekday, every few weeks, like 'Saturdays, every 2 weeks'"
+        )
+      }
+
+      return Text(verbatim: days)
+    }
+
+    let date = Text(verbatim: PlanDate.text(mocks.nextDate, today: context.plan.today))
+      .font(TypeStyle.data.font(in: environment))
+
+    return mocks.count > 1
+      ? Text(
+        "Next \(date)", tableName: "Plan",
+        comment:
+          "When a plan's next mock exam comes, of several; the argument is a day like 'Dec 13'")
+      : date
+  }
+
+  /// What a language plan practices: everything, or the activities it keeps.
+  private var practicedText: String? {
+    let skipped = Set(context.plan.steering.skippedActivities)
+    let practiced = planActivities.filter { !skipped.contains($0) }
+
+    if practiced.isEmpty {
+      return nil
+    }
+
+    return practiced.count == planActivities.count
+      ? String(
+        localized: "Everything", table: "Plan",
+        comment: "A language plan practices every activity: new words, listening, writing, speaking"
+      )
+      : practiced.map(planActivityName).joinedFacts()
   }
 
   private var countryLabel: Text {

@@ -17,7 +17,6 @@ struct PageLink<Label: View>: View {
         label
           .frame(maxWidth: .infinity, alignment: .leading)
           .disclosureChevron()
-          .contentShape(.rect)
       }
     } else {
       NavigationLink(value: route) {

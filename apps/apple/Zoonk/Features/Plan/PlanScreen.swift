@@ -236,39 +236,38 @@ private struct PlanContent: View {
       if PaneSpace(proxy).pages(primaryShare: 0.5, stacked: isStacked) != nil {
         ZoonkList {
           rebuildNotice
-          BlockGridSection {
-            PageSection {
-              PageHeader(
-                Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"),
-                supporting: daysLeft(context)
-              ) {
-                PlanHeaderActions(context: context)
-              }
-              .rowSeparatorHiddenBelow()
-              PlanRoadmapContent(context: context, structure: structure)
+          // Main's wide page: the plan in the column, and beside it the aside with the numbers,
+          // the suggestion, the plan's settings and the other places.
+          BlockGridSection(asideWidth: 300) {
+            VStack(alignment: .leading, spacing: 32) {
+              PageSection {
+                PageHeader(
+                  Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"),
+                  supporting: daysLeft(context)
+                ) {
+                  PlanHeaderActions(context: context)
+                }
                 .rowSeparatorHiddenBelow()
-              if structure != nil, let focusTest = context.plan.focusTest {
-                PlanFocusTestRow(goalId: goal.id, summary: focusTest)
+                PlanRoadmapContent(context: context, structure: structure)
+                  .rowSeparatorHiddenBelow()
+                if structure != nil, let focusTest = context.plan.focusTest {
+                  PlanFocusTestRow(goalId: goal.id, summary: focusTest)
+                }
+              } header: {
+                EmptyView()
               }
-            } header: {
-              EmptyView()
-            }
-            PlanNumbersSection(context: context, syllabus: syllabus, timeShownBeside: true)
-          }
-          BlockGridSection {
-            VStack(alignment: .leading, spacing: 24) {
+
               structureSections(
                 context: context, structure: structure, namesChoices: false,
                 includesFocusTest: structure == nil)
             }
-            // Main's aside: the numbers, then the suggestion, then the plan's settings.
+
             VStack(alignment: .leading, spacing: 32) {
+              PlanNumbersSection(context: context, syllabus: syllabus, timeShownBeside: true)
               PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
               PlanSettingsSection(context: context)
+              PlanMoreSection(goal: goal)
             }
-          }
-          BlockGridSection {
-            PlanMoreSection(goal: goal)
           }
         }
         .sheetColumn()
