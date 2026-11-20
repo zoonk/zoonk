@@ -48,9 +48,15 @@ class MockChooserViewModel(
             when (val result = starter.start(goalId, shape)) {
                 is MutationResult.Done -> {
                     when (val outcome = result.value) {
-                        is MockStartOutcome.Opened -> mutableOpened.value = outcome.id
+                        is MockStartOutcome.Opened -> {
+                            mutableOpened.value = outcome.id
+                        }
+
                         MockStartOutcome.Preparing -> {}
-                        MockStartOutcome.PlusRequired -> metTheLock()
+
+                        MockStartOutcome.PlusRequired -> {
+                            metTheLock()
+                        }
                     }
                 }
 

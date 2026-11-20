@@ -62,9 +62,18 @@ class MockStarter(
                 }
             }
         when ((result as? MutationResult.Done)?.value) {
-            is MockStartOutcome.Opened -> cache.invalidate(setOf(DataDomain.LearnerModel))
-            MockStartOutcome.Preparing -> mocks.requested(goalId, shape)
-            MockStartOutcome.PlusRequired -> cache.invalidate(setOf(DataDomain.UserSubscription))
+            is MockStartOutcome.Opened -> {
+                cache.invalidate(setOf(DataDomain.LearnerModel))
+            }
+
+            MockStartOutcome.Preparing -> {
+                mocks.requested(goalId, shape)
+            }
+
+            MockStartOutcome.PlusRequired -> {
+                cache.invalidate(setOf(DataDomain.UserSubscription))
+            }
+
             null -> {}
         }
         return result

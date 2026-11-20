@@ -90,8 +90,14 @@ internal fun PracticeChooser(
     val gated = triedLocked && !open
     val mainAction = {
         when {
-            gated -> navigator.open(AppRoute.Subscription)
-            preparing -> navigator.showRoot(AppTab.Today)
+            gated -> {
+                navigator.open(AppRoute.Subscription)
+            }
+
+            preparing -> {
+                navigator.showRoot(AppTab.Today)
+            }
+
             option != null && !busy -> {
                 onStart()
                 if (open) viewModel.start(option.shape) else viewModel.tryLocked()

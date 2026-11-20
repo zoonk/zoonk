@@ -108,7 +108,10 @@ class MockChooserScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun phoneReady() =
-        capture("chooser-phone-ready", options = """$OPTIONS,"requested":{"shape":{"area":null,"day":1,"kind":"full"},"status":"ready"}""") {
+        capture(
+            "chooser-phone-ready",
+            options = """$OPTIONS,"requested":{"shape":{"area":null,"day":1,"kind":"full"},"status":"ready"}""",
+        ) {
             compose.onNodeWithText("Day 1").performClick()
         }
 

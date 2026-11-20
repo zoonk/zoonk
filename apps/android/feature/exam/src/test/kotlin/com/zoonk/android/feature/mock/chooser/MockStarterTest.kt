@@ -66,7 +66,11 @@ class MockStarterTest {
             api.starts = listOf { preparing() }
 
             assertEquals(MutationResult.Done(MockStartOutcome.Preparing), MockStarter(api, cache, store).start(GOAL, full))
-            assertEquals(MockOptionsRequested(full, MockOptionsRequested.Status.PREPARING), options.state.value.value?.requested)
+            assertEquals(
+                MockOptionsRequested(full, MockOptionsRequested.Status.PREPARING),
+                options.state.value.value
+                    ?.requested,
+            )
         }
 
     @Test
