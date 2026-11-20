@@ -30,8 +30,8 @@ export function useNotPlannedReason() {
       case "time":
         return t({
           description:
-            "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it.",
-          message: "Not in your plan · your time doesn't cover it",
+            "Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first.",
+          message: "Not in your plan · other topics come first",
         });
       case "missing":
         return t({

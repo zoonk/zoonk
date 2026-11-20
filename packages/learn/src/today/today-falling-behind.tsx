@@ -21,8 +21,6 @@ import {
   useMainActionVariant,
 } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
-import { useFormatShare } from "../_utils/percent";
-import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useTodayScreen } from "./today-context";
@@ -36,20 +34,11 @@ type Option = "adjustTime" | "focus" | "studyEverything";
 
 function useBehindSentence() {
   const t = useExtracted();
-  const formatShare = useFormatShare();
-  const formatDuration = useFormatDuration();
 
-  return (behind: Behind): string => {
-    const values = {
-      after: formatShare(behind.coveredAfter),
-      before: formatShare(behind.coveredBefore),
-      time: formatDuration(behind.currentMinutes),
-    };
-
-    return behind.measure === "exam"
-      ? t("{time} a day now covers {after} of the exam, down from {before}.", values)
-      : t("{time} a day now covers {after} of your goal, down from {before}.", values);
-  };
+  return (behind: Behind): string =>
+    behind.measure === "exam"
+      ? t("Some lessons no longer fit before your exam.")
+      : t("Some lessons no longer fit before your date.");
 }
 
 /** On a return after a break, nothing that asks for more hours leads. */
