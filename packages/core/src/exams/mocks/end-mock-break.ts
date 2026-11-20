@@ -1,5 +1,6 @@
 import "server-only";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { spendSection } from "./_utils/mock-item-uses";
 import { findOwnedMock } from "./_utils/owned-mock";
 
 export type EndMockBreakResult = { status: "notFound" | "notOnBreak" | "started" | "unauthorized" };
@@ -29,6 +30,15 @@ export async function endMockBreak({ blockId }: { blockId: string }): Promise<En
       },
     });
 
+    if (updated.count)
+      await spendSection({
+        tx,
+        mockExamId: mock.id,
+        section: mock.sectionIndex,
+        conditions: mock.conditions,
+        userId: mock.userId,
+        now,
+      });
     return updated.count > 0 ? updated.count : unchanged(updated.count);
   });
 

@@ -3,6 +3,7 @@ import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/d
 import { safeAsync } from "@zoonk/utils/error";
 import { fillCheckpointQuestions } from "../checkpoints/_utils/fill-checkpoint-questions";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
+import { startScheduledSitting } from "../exams/mocks/_utils/start-scheduled-mock";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
@@ -224,7 +225,26 @@ export async function startStudyBlock({
         throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
       }
 
-      if (!changed && locked.status === "active" && locked.startedAt && isRunningBlock(current)) {
+      const sitting =
+        readBlockPayload(current).checkpoint?.mock && locked.goal
+          ? await startScheduledSitting({
+              tx,
+              block: current,
+              goal: locked.goal,
+              sessionDate: locked.localDate,
+              userId,
+              now,
+            })
+          : null;
+      if (sitting === "preparing") return { status: "questionsNeeded" as const };
+      if (sitting === "finished") return { status: "blockFinished" as const };
+      if (
+        sitting !== "created" &&
+        !changed &&
+        locked.status === "active" &&
+        locked.startedAt &&
+        isRunningBlock(current)
+      ) {
         const { id, kind, lessonId, startedAt, status } = current;
 
         throw new StudyBlockStartUnchangedError({
@@ -292,7 +312,7 @@ export async function startStudyBlock({
 
   const result = attempt.data;
 
-  if (result.status === "blockFinished") {
+  if (result.status !== "ready") {
     return result;
   }
 

@@ -4,7 +4,7 @@ import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-c
 import { writeAlphabetLesson } from "../language/alphabet-lesson";
 import { startLikelyLessons } from "./goal-lookahead";
 import { type GoalRunContext } from "./goal-run-context";
-import { writeMockQuestions } from "./mock-question-writes";
+import { startMockSupply } from "./mock-questions-workflow";
 import {
   pickExamFormatSkillsStep,
   prepareSkillExamFormatItems,
@@ -19,7 +19,6 @@ import {
   prepareFreeResponseItemStep,
 } from "./steps/free-response-items-step";
 import { pickItemSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
-import { listMockPrepWritesStep } from "./steps/mock-question-steps";
 import { importPastQuestionsStep, listPastQuestionPapersStep } from "./steps/past-questions-step";
 import { loadStatuteDrillTargetsStep, prepareLawDrills } from "./steps/statute-drills-step";
 
@@ -163,7 +162,6 @@ async function prepareListeningSets({
 }
 
 async function prepareMockQuestions({
-  context,
   inputs,
 }: {
   context: GoalRunContext;
@@ -176,9 +174,7 @@ async function prepareMockQuestions({
   }
 
   await Promise.allSettled([
-    listMockPrepWritesStep(goal.id).then((writes) =>
-      writeMockQuestions({ ...context, ...writes, goalId: goal.id, later: true }),
-    ),
+    startMockSupply({ goalId: goal.id, examBlueprintId: goal.examBlueprintId, later: true }),
   ]);
 }
 
@@ -205,7 +201,7 @@ export function prepareAhead({
     rebuild ? [] : startLikelyLessons({ context, inputs }),
     rebuild ? null : prepareFieldItems({ context, inputs }),
     rebuild ? null : prepareFreeResponseItems({ context, inputs }),
-    bank.then(() => (rebuild ? null : prepareMockQuestions({ context, inputs }))),
+    bank.then(() => prepareMockQuestions({ context, inputs })),
     prepareStatuteDrills({ context, goalId }),
     prepareListeningSets({ context, inputs }),
     rebuild ? null : prepareAlphabetLesson({ context, goal: inputs.goal }),

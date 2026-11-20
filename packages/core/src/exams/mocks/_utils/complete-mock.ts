@@ -1,8 +1,9 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
+import "server-only";
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
+import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { loadSkillsToRelearn } from "../../../learner/_utils/load-skill-claims";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { bringBackMissedLessons } from "../../../plans/bring-back-missed-lessons";
@@ -227,6 +228,19 @@ export async function completeMock({
       where: { id: mock.id, status: "active" },
     });
 
+    if (count && mock.goalId && mock.conditions.purpose !== "placement") {
+      await tx.mockItemUse.deleteMany({ where: { mockExamId: mock.id, spentAt: null } });
+      await oweFollowUps({
+        db: tx,
+        userId: mock.userId,
+        followUps: [
+          {
+            kind: "prepareMockSupply",
+            input: { goalId: mock.goalId, examBlueprintId: mock.examBlueprintId, later: true },
+          },
+        ],
+      });
+    }
     return count > 0 ? count : unchanged(count);
   });
 

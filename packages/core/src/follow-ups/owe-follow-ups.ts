@@ -14,6 +14,7 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.sessionId;
     case "settleSessionDay":
       return followUp.input.blockId ?? followUp.input.removalId ?? followUp.input.sessionId;
+    case "prepareMockSupply":
     case "prepareGoalLessons":
     case "preparePlacementItems":
     case "rebuildGoalCurriculum":

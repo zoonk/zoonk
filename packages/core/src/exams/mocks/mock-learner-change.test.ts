@@ -122,7 +122,7 @@ describe("mock writes under the learner's lock", () => {
       throw new Error("Expected a full mock option");
     }
 
-    const input = { acceptFewer: true, goal, option, setup, userId: user.id, writesCap: null };
+    const input = { goal, option, setup, userId: user.id };
 
     const held = holdLearnerLock({ userId: user.id });
 
@@ -141,76 +141,6 @@ describe("mock writes under the learner's lock", () => {
     expect(outcomes.map(({ status }) => status).toSorted()).toStrictEqual(["running", "started"]);
     await expect(createAnytimeMock(input)).resolves.toMatchObject({ status: "running" });
   });
-
-  it.each([
-    { acceptFewer: true, status: "notEnoughQuestions" },
-    { acceptFewer: false, status: "needsQuestions" },
-  ] as const)(
-    "rolls back the anytime creation marker for $status",
-    async ({ acceptFewer, status }) => {
-      const { user, mock } = await sittingFixture();
-      const goal = await goalFixture({ kind: "exam", userId: user.id });
-      const setup = await loadAnytimeMockSetup(goal);
-
-      const option = {
-        area: null,
-        areas: [],
-        covers: null,
-        day: null,
-        estimatedMinutes: 20,
-        kind: "full" as const,
-        leftOut: [],
-        minutes: 20,
-        objectiveOnly: true,
-        questions: 20,
-        written: [],
-      };
-
-      await expect(
-        createAnytimeMock({ acceptFewer, goal, option, setup, userId: user.id, writesCap: null }),
-      ).resolves.toStrictEqual({ status });
-
-      await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
-      expect(mock.goalId).toBeNull();
-    },
-  );
-
-  it.each(["day", "rolling30Days"] as const)(
-    "rolls back the anytime creation marker when a short mock needs acceptance at %s",
-    async (period) => {
-      const { goal, user } = await scheduledMockSetup();
-      const setup = await loadAnytimeMockSetup(goal);
-
-      const option = resolveAnytimeOption({
-        choice: { shape: { area: null, day: null, kind: "full" } },
-        setup,
-      });
-
-      if (!option) {
-        throw new Error("Expected a full mock option");
-      }
-
-      await expect(
-        createAnytimeMock({
-          acceptFewer: false,
-          goal,
-          option,
-          setup,
-          userId: user.id,
-          writesCap: {
-            period,
-            ...(period === "rolling30Days" && { availableAt: new Date("2031-02-01T12:00:00Z") }),
-          },
-        }),
-      ).resolves.toMatchObject({
-        limit: period,
-        ...(period === "rolling30Days" && { availableAt: new Date("2031-02-01T12:00:00Z") }),
-        status: "short",
-      });
-
-      await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
-    },
-  );
 
   it("marks a block payload before locking it and leaves a repeated completion unchanged", async () => {
     const { mock, user } = await sittingFixture();

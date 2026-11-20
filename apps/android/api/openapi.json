@@ -2002,6 +2002,28 @@
               }
             }
           },
+          "202": {
+            "description": "The mock needs questions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "preparing"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "400": {
             "description": "Validation error",
             "content": {
@@ -19661,7 +19683,7 @@
         }
       },
       "post": {
-        "description": "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `afterWriting`. A mock still well short of its questions with nothing to write now, or after the run, answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`); `acceptFewer` starts it with those once the learner agreed, so a shorter mock never starts unannounced. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
+        "description": "Starts the full requested option or resumes the running sitting. While a part needs questions, the request is saved and the clock stays stopped. The first ten on-demand sittings in a rolling 30 days use unseen questions. Later sittings may include questions last seen in earlier mocks, oldest first.",
         "operationId": "startAnytimeMock",
         "security": [
           {
@@ -19782,160 +19804,6 @@
           },
           "422": {
             "description": "Not an exam, not one of its mocks, or too few questions for one",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/goals/{goalId}/mocks/generations": {
-      "post": {
-        "description": "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
-        "operationId": "createMockQuestionsGeneration",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Write a mock's questions",
-        "tags": [
-          "Exams"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MockQuestionsInput"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The mock can start (the bank holds its questions, or fair use for new ones is used for now), or the skill map isn't ready yet",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MockQuestionsGeneration"
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "A run is writing the questions",
-            "headers": {
-              "Location": {
-                "required": true,
-                "description": "The run's status URL: GET /generations/{generationId}",
-                "schema": {
-                  "type": "string",
-                  "description": "The run's status URL: GET /generations/{generationId}"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MockQuestionsGeneration"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "Mock exams come with Plus",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Request forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "The request is valid but cannot be applied to the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too many requests",
             "content": {
               "application/json": {
                 "schema": {
@@ -20394,6 +20262,28 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "The scheduled mock needs questions before it can start",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "preparing"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "204": {
             "description": "Running"
           },
@@ -30612,14 +30502,6 @@
                 "$ref": "#/components/schemas/MockShape"
               }
             ]
-          },
-          "acceptFewer": {
-            "description": "Start with the questions there are when the bank holds fewer than the option asks; send it only after the learner agreed to the `short` answer's numbers",
-            "type": "boolean"
-          },
-          "afterWriting": {
-            "description": "This start follows a question-writing run (or a writing request that answered `ready`): never answers `needsQuestions`, so a mock still well short of its questions answers `short`",
-            "type": "boolean"
           }
         },
         "required": [
@@ -30657,23 +30539,6 @@
           "area",
           "day",
           "kind"
-        ],
-        "additionalProperties": false
-      },
-      "MockQuestionsInput": {
-        "type": "object",
-        "properties": {
-          "shape": {
-            "description": "The option picked from GET /v1/goals/{goalId}/mocks",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MockShape"
-              }
-            ]
-          }
-        },
-        "required": [
-          "shape"
         ],
         "additionalProperties": false
       },
@@ -89430,6 +89295,28 @@
             },
             "description": "Each exam day in full, then half of each exam day, then each objective subject, biggest first"
           },
+          "requested": {
+            "nullable": true,
+            "description": "The saved request and whether enough questions are available to start it",
+            "type": "object",
+            "properties": {
+              "shape": {
+                "$ref": "#/components/schemas/MockShape"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "preparing",
+                  "ready"
+                ]
+              }
+            },
+            "required": [
+              "shape",
+              "status"
+            ],
+            "additionalProperties": false
+          },
           "running": {
             "nullable": true,
             "description": "The mock taken any time the learner started and hasn't finished: continue it (GET /v1/mocks/{id}) before starting another",
@@ -89476,6 +89363,7 @@
           "goalId",
           "lastMock",
           "options",
+          "requested",
           "running",
           "sizeSource"
         ],
@@ -89655,85 +89543,24 @@
       "AnytimeMock": {
         "type": "object",
         "properties": {
-          "availableAt": {
-            "description": "For `short` when the rolling question-writing cap stopped it: when the full mock's questions can be written; absent otherwise",
-            "nullable": true,
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "examQuestions": {
-            "description": "For `short`: the questions of what was picked, in the real exam",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
           "id": {
             "nullable": true,
-            "description": "The mock's id (GET /v1/mocks/{id}); null for needsQuestions and short",
+            "description": "The sitting ID, or null while questions are being prepared",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "limit": {
-            "description": "For `short`: the fair use for new mock questions that is used up, so new ones can be written once it renews; null when there's nothing more to write now",
-            "nullable": true,
-            "type": "string",
-            "enum": [
-              "day",
-              "rolling30Days",
-              "total"
-            ]
-          },
-          "minutes": {
-            "description": "For `short`: the mock's time for the questions it can ask",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "questions": {
-            "description": "For `short`: the questions the mock can ask now",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
           },
           "status": {
             "type": "string",
             "enum": [
               "started",
               "running",
-              "needsQuestions",
-              "short"
-            ],
-            "description": "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): it can ask `questions` of `examQuestions`, in `minutes`, and `acceptFewer` starts it with those once the learner agreed"
+              "preparing"
+            ]
           }
         },
         "required": [
           "id",
-          "status"
-        ],
-        "additionalProperties": false
-      },
-      "MockQuestionsGeneration": {
-        "type": "object",
-        "properties": {
-          "generationId": {
-            "nullable": true,
-            "description": "The run writing the questions: stream GET /generations/{generationId}/events",
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ready",
-              "preparing",
-              "generating"
-            ],
-            "description": "`ready`: start the mock now with `afterWriting`: the bank holds its questions, or the plan's fair use for new questions is used for now, so it asks what the bank has or answers `short` (see `startAnytimeMock`). `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `afterWriting`"
-          }
-        },
-        "required": [
-          "generationId",
           "status"
         ],
         "additionalProperties": false
@@ -96280,7 +96107,8 @@
                 "type": "string",
                 "enum": [
                   "open",
-                  "plusRequired"
+                  "plusRequired",
+                  "preparing"
                 ]
               },
               "brainPower": {
@@ -97796,7 +97624,8 @@
                 "type": "string",
                 "enum": [
                   "open",
-                  "plusRequired"
+                  "plusRequired",
+                  "preparing"
                 ]
               },
               "date": {

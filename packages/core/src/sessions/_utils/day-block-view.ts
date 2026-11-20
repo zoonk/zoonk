@@ -45,7 +45,9 @@ function getEstimateOutcome(block: DayBlockInput): { outcome: BlockOutcome; ques
 }
 
 function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["checkpoint"] {
-  return checkpoint ? studyCheckpointSchema.parse(checkpoint) : null;
+  if (!checkpoint) return null;
+  const { mockQuestions: _mockQuestions, ...view } = checkpoint;
+  return studyCheckpointSchema.parse(view);
 }
 
 export function toDayBlockView({
@@ -110,7 +112,9 @@ export function toDayBlockView({
     planItemId: payload.planItemId,
     planItemKey: payload.planItemKey,
     position: block.position,
-    questions: waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length,
+    questions:
+      checkpoint?.mockQuestions ??
+      (waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length),
     refresh: payload.refresh,
     reinforcement: payload.reinforcement,
     screen: getBlockScreen(block),

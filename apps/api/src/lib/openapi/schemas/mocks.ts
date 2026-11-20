@@ -1,4 +1,3 @@
-import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
   type MockOptionView,
@@ -77,6 +76,12 @@ export const mockOptionsResponseSchema = z
         description:
           "Each exam day in full, then half of each exam day, then each objective subject, biggest first",
       }),
+    requested: z
+      .object({ shape: mockShapeSchema, status: z.enum(["preparing", "ready"]) })
+      .nullable()
+      .meta({
+        description: "The saved request and whether enough questions are available to start it",
+      }),
     running: z
       .object({ id: uuidSchema(), purpose: mockPurposeSchema, shape: mockShapeSchema.nullable() })
       .nullable()
@@ -90,70 +95,12 @@ export const mockOptionsResponseSchema = z
 
 export const anytimeMockResponseSchema = z
   .object({
-    availableAt: z.iso
-      .datetime()
-      .nullable()
-      .optional()
-      .meta({
-        description:
-          "For `short` when the rolling question-writing cap stopped it: when the full mock's questions can be written; absent otherwise",
-      }),
-    examQuestions: z
-      .number()
-      .int()
-      .min(0)
-      .optional()
-      .meta({ description: "For `short`: the questions of what was picked, in the real exam" }),
     id: uuidSchema()
       .nullable()
-      .meta({
-        description: "The mock's id (GET /v1/mocks/{id}); null for needsQuestions and short",
-      }),
-    limit: z
-      .enum(USAGE_PERIODS)
-      .nullable()
-      .optional()
-      .meta({
-        description:
-          "For `short`: the fair use for new mock questions that is used up, so new ones can be written once it renews; null when there's nothing more to write now",
-      }),
-    minutes: z
-      .number()
-      .int()
-      .min(0)
-      .optional()
-      .meta({ description: "For `short`: the mock's time for the questions it can ask" }),
-    questions: z
-      .number()
-      .int()
-      .min(0)
-      .optional()
-      .meta({ description: "For `short`: the questions the mock can ask now" }),
-    status: z
-      .enum(["started", "running", "needsQuestions", "short"])
-      .meta({
-        description:
-          "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): it can ask `questions` of `examQuestions`, in `minutes`, and `acceptFewer` starts it with those once the learner agreed",
-      }),
+      .meta({ description: "The sitting ID, or null while questions are being prepared" }),
+    status: z.enum(["started", "running", "preparing"]),
   })
   .meta({ id: "AnytimeMock" });
-
-export const mockQuestionsGenerationSchema = z
-  .object({
-    generationId: z
-      .string()
-      .nullable()
-      .meta({
-        description: "The run writing the questions: stream GET /generations/{generationId}/events",
-      }),
-    status: z
-      .enum(["ready", "preparing", "generating"])
-      .meta({
-        description:
-          "`ready`: start the mock now with `afterWriting`: the bank holds its questions, or the plan's fair use for new questions is used for now, so it asks what the bank has or answers `short` (see `startAnytimeMock`). `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `afterWriting`",
-      }),
-  })
-  .meta({ id: "MockQuestionsGeneration" });
 
 export const mockPlanOfferResultSchema = z
   .object({

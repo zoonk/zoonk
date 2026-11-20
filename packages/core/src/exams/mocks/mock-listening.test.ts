@@ -14,13 +14,13 @@ import { listListeningParts } from "../listening/listening-parts";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
 import { mockConditionsSchema } from "./mock-contract";
+import { listMockPrepWrites } from "./prepare-mock-questions";
 import { recordMockPlay } from "./record-mock-play";
-import { requestMockQuestions } from "./request-mock-questions";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
 
 const FULL = { area: null, day: null, kind: "full" } as const;
-const READING_QUESTIONS = 5;
+const READING_QUESTIONS = 40;
 
 async function listeningSetup({
   readingQuestions = READING_QUESTIONS,
@@ -35,6 +35,7 @@ async function listeningSetup({
       const media = voiced[index] ? await mediaAssetFixture() : null;
 
       const set = await listeningSetFixture({
+        mockOnly: true,
         content: { ...listeningContent(), task: part.task },
         examBlueprintId: blueprint.id,
         mediaAssetId: media?.id ?? null,
@@ -43,6 +44,7 @@ async function listeningSetup({
       const questions = await Promise.all(
         [0, 1].map((position) =>
           itemFixture({
+            mockOnly: true,
             content: choiceItemContent(`Part ${index + 1}, question ${position + 1}?`),
             examBlueprintId: blueprint.id,
             setId: set.id,
@@ -60,6 +62,7 @@ async function listeningSetup({
     planItemFixture({ kind: "lesson", planId: plan.id, position: 0, skillId: reading.id }),
     ...Array.from({ length: readingQuestions }, () =>
       itemFixture({
+        mockOnly: true,
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
         skillId: reading.id,
@@ -88,10 +91,7 @@ describe("a mock's listening section", () => {
 
     expect(full?.leftOut.map((part) => part.part)).not.toContain("listening");
 
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL },
-    });
+    const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
 
     if (started.status !== "started") {
       throw new Error(`Expected a started mock, got ${started.status}`);
@@ -128,30 +128,14 @@ describe("a mock's listening section", () => {
 
     expect(full?.leftOut).not.toContainEqual({ name: "Listening", part: "listening" });
 
-    await expect(
-      requestMockQuestions({ goalId: goal.id, input: { shape: FULL } }),
-    ).resolves.toMatchObject({ listening: true, status: "start" });
-
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL },
+    await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
+      listening: true,
     });
 
-    if (started.status !== "started") {
-      throw new Error(`Expected a started mock, got ${started.status}`);
-    }
+    const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
 
-    const stored = await prisma.mockExam.findUniqueOrThrow({ where: { id: started.id } });
-    const { sections } = mockConditionsSchema.parse(stored.conditions);
-
-    expect(sections.map((section) => section.name)).toStrictEqual(["Reading"]);
-
-    const mock = await getMock(started.id);
-
-    expect(mock.status === "ready" && mock.mock.leftOut).toContainEqual({
-      name: "Listening",
-      part: "listening",
-    });
+    expect(started.status).toBe("preparing");
+    await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
   it("asks for a full mock's missing recording even when the bank holds its written questions", async () => {
@@ -159,19 +143,17 @@ describe("a mock's listening section", () => {
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: FULL } }),
-    ).resolves.toStrictEqual({ status: "needsQuestions" });
+    ).resolves.toStrictEqual({ status: "preparing" });
   });
 
   it("has written questions written only for the other sections' skills: listening is asked on recordings", async () => {
-    const { goal, reading } = await listeningSetup();
+    const { goal, reading } = await listeningSetup({ readingQuestions: 1 });
 
-    const request = await requestMockQuestions({ goalId: goal.id, input: { shape: FULL } });
+    const request = await listMockPrepWrites({ goalId: goal.id });
 
-    expect(request).toMatchObject({ listening: false, status: "start" });
+    expect(request).toMatchObject({ listening: false });
 
-    expect(
-      request.status === "start" && request.writes.flatMap((write) => write.skillIds),
-    ).toStrictEqual([reading.id]);
+    expect(request.writes.flatMap((write) => write.skillIds)).toStrictEqual([reading.id]);
   });
 
   it("counts each recording's plays on the mock, so no other tab or device plays one past the exam's limit", async () => {
@@ -182,10 +164,7 @@ describe("a mock's listening section", () => {
       throw new Error("Expected two recordings");
     }
 
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL },
-    });
+    const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
 
     if (started.status !== "started") {
       throw new Error(`Expected a started mock, got ${started.status}`);

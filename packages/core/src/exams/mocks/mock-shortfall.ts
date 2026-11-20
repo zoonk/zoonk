@@ -9,9 +9,6 @@ import {
   getPlannedItemIds,
 } from "./mock-plan";
 
-/** Avoid making learners wait for generation when only a few questions are missing. */
-const NEAR_FULL_SHARE = 0.9;
-
 const MAX_QUESTIONS_PER_SKILL = 15;
 
 const MAX_ITEM_QUESTIONS_PER_SKILL = 5;
@@ -23,7 +20,7 @@ export function isMockShort({
   option: { questions: number };
   planned: number;
 }): boolean {
-  return planned < Math.ceil(option.questions * NEAR_FULL_SHARE);
+  return planned < option.questions;
 }
 
 /** `isQuantitative` is false for a skill whose numeric questions came back empty. */

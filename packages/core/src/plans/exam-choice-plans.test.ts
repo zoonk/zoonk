@@ -230,7 +230,7 @@ describe("plans of an exam with choices of subject", () => {
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { acceptFewer: true, shape: { area: null, day: 1, kind: "full" } },
+      input: { shape: { area: null, day: 1, kind: "full" } },
     });
 
     if (started.status !== "started") {

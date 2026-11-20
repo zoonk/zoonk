@@ -110,7 +110,7 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
     goal: { day: 10 },
     lessonStart: { fairUseDay: 200 },
     mindMap: { day: 300, rolling30Days: 1200 },
-    mockQuestions: { day: 2, rolling30Days: 10 },
+    mockQuestions: {},
     outline: { fairUseDay: 30 },
     tutorMessage: { fairUseDay: 300 },
     upload: { fairUseDay: 30 },

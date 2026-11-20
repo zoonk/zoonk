@@ -18,6 +18,10 @@ async function postStart(
 
   const result = await startMock({ blockId: path.blockId, input: body });
 
+  if (result.status === "preparing") {
+    return Response.json({ status: result.status });
+  }
+
   if (result.status !== "ready") {
     return examError({ status: result.status });
   }

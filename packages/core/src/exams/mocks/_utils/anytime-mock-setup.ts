@@ -1,12 +1,9 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, type TransactionClient, prisma } from "@zoonk/db";
-import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
 import { findExamSpeakingSetup } from "../../../language/exam-speaking/_utils/exam-speaking-setup";
-import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { readExamPicks } from "../../choices/exam-choices";
 import { loadExamPicks } from "../../choices/load-exam-choices";
@@ -40,28 +37,6 @@ export type AnytimeMockSetup = {
   structure: ExamStructure | null;
 };
 
-async function canBuildMock({
-  blueprint,
-  skillIds,
-}: {
-  blueprint: ExamBlueprint | null;
-  skillIds: readonly string[];
-}): Promise<boolean> {
-  if (blueprint) {
-    return true;
-  }
-
-  const questions = await prisma.item.count({
-    where: {
-      format: { in: [...GRADABLE_ITEM_FORMATS] },
-      skillId: { in: [...skillIds] },
-      ...getItemAudienceFilter({}),
-    },
-  });
-
-  return questions >= MIN_CHECKPOINT_QUESTIONS;
-}
-
 type AnytimeMockPage = {
   essays: Promise<MockEssayCandidate[]>;
   plan: Promise<SavedPlan | null>;
@@ -87,7 +62,7 @@ export async function loadAnytimeMockSetup(
     findExamSpeakingSetup({ goalId: goal.id, userId: goal.userId }),
   ]);
 
-  const buildable = await canBuildMock({ blueprint, skillIds: [...areas.keys()] });
+  const buildable = blueprint !== null || areas.size > 0;
 
   const structure = blueprint ? readMockStructure({ blueprint, picks }) : null;
 

@@ -3,7 +3,7 @@ import "server-only";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { loadScheduledMock } from "../../exams/mocks/_utils/scheduled-mock";
-import { getPlannedItemIds } from "../../exams/mocks/mock-plan";
+import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type MockIdentity, findScheduledMock } from "../../plans/planner/mock-identity";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -94,7 +94,8 @@ async function loadMockItems({
   const plan = await planWeeklyMock({ goal, identity, skillIds, structure, today, userId });
 
   return {
-    itemIds: getPlannedItemIds(plan),
+    itemIds: [],
+    mockQuestions: countPlannedQuestions(plan.outline),
     minutes: plan.minutes,
     mockIdentity: { day: plan.day, fullLength: plan.fullLength },
     timeLimitMinutes: plan.minutes,
@@ -209,7 +210,7 @@ export async function loadSessionWeeklyChallenge({
           today,
           userId,
         })),
-        writable: false,
+        writable: true,
       }
     : await loadMixedItems({ examBlueprintId: goal.examBlueprintId, now, skillIds, userId });
 
@@ -217,7 +218,8 @@ export async function loadSessionWeeklyChallenge({
     return { checkpoint: null, plusRequired: false };
   }
 
-  const questions = isMock ? picked.itemIds.length : getPlannedQuestions(picked.itemIds.length);
+  const questions =
+    "mockQuestions" in picked ? picked.mockQuestions : getPlannedQuestions(picked.itemIds.length);
 
   return {
     checkpoint: {

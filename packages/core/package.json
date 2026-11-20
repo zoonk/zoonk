@@ -109,7 +109,6 @@
     "./exams/mocks/options": "./src/exams/mocks/get-mock-options.ts",
     "./exams/mocks/prep": "./src/exams/mocks/prepare-mock-questions.ts",
     "./exams/mocks/record-play": "./src/exams/mocks/record-mock-play.ts",
-    "./exams/mocks/request-questions": "./src/exams/mocks/request-mock-questions.ts",
     "./exams/mocks/start": "./src/exams/mocks/start-mock.ts",
     "./exams/mocks/start-anytime": "./src/exams/mocks/start-anytime-mock.ts",
     "./exams/mocks/start-speaking": "./src/exams/mocks/start-mock-speaking.ts",

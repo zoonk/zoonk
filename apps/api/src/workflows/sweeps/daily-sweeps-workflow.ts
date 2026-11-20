@@ -5,6 +5,8 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
+import { startMockSupply } from "../goals/mock-questions-workflow";
+import { listDueMockGoalsStep } from "../goals/steps/mock-question-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
 import {
   getLevelTestBankCheckToken,
@@ -195,6 +197,7 @@ async function sweep(): Promise<SweepCounts> {
     writeOwedSentenceOrders(),
     tagOwedSkillLevels(),
     startOwedMindMapRedraws(),
+    listDueMockGoalsStep().then((goals) => Promise.all(goals.map(startMockSupply))),
   ]);
 
   return {

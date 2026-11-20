@@ -1,7 +1,6 @@
 import {
   anytimeMockInputSchema,
   mockPlanOfferInputSchema,
-  mockQuestionsInputSchema,
   mockTimeZoneInputSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { z } from "zod";
@@ -14,12 +13,10 @@ import {
   anytimeMockResponseSchema,
   mockOptionsResponseSchema,
   mockPlanOfferResultSchema,
-  mockQuestionsGenerationSchema,
 } from "../schemas/mocks";
 import { goalPathParamsSchema, mockPathParamsSchema } from "../schemas/paths";
 import {
   conflictResponse,
-  forbiddenResponse,
   notFoundResponse,
   paymentRequiredResponse,
   tooManyRequestsResponse,
@@ -58,7 +55,7 @@ export const mockPaths = {
     },
     post: {
       description:
-        "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `afterWriting`. A mock still well short of its questions with nothing to write now, or after the run, answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`); `acceptFewer` starts it with those once the learner agreed, so a shorter mock never starts unannounced. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
+        "Starts the full requested option or resumes the running sitting. While a part needs questions, the request is saved and the clock stays stopped. The first ten on-demand sittings in a rolling 30 days use unseen questions. Later sittings may include questions last seen in earlier mocks, oldest first.",
       operationId: "startAnytimeMock",
       requestBody: {
         content: { "application/json": { schema: anytimeMockInputSchema } },
@@ -87,42 +84,6 @@ export const mockPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Take a mock now",
-      tags: TAGS,
-    },
-  },
-  "/goals/{goalId}/mocks/generations": {
-    post: {
-      description:
-        "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
-      operationId: "createMockQuestionsGeneration",
-      requestBody: {
-        content: { "application/json": { schema: mockQuestionsInputSchema } },
-        required: true,
-      },
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        "200": {
-          content: { "application/json": { schema: mockQuestionsGenerationSchema } },
-          description:
-            "The mock can start (the bank holds its questions, or fair use for new ones is used for now), or the skill map isn't ready yet",
-        },
-        "202": {
-          content: { "application/json": { schema: mockQuestionsGenerationSchema } },
-          description: "A run is writing the questions",
-          headers: z.object({
-            Location: z
-              .string()
-              .meta({ description: "The run's status URL: GET /generations/{generationId}" }),
-          }),
-        },
-        ...commonErrors,
-        "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
-        "403": forbiddenResponse,
-        "422": unprocessableEntityResponse,
-        "429": tooManyRequestsResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Write a mock's questions",
       tags: TAGS,
     },
   },
@@ -224,6 +185,10 @@ export const mockPaths = {
       },
       requestParams: { path: mockPathParamsSchema },
       responses: {
+        "200": {
+          description: "The scheduled mock needs questions before it can start",
+          content: { "application/json": { schema: z.object({ status: z.literal("preparing") }) } },
+        },
         "204": { description: "Running" },
         ...commonErrors,
         "409": {

@@ -8,7 +8,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { thirdsMath, thirdsQuestion } from "../../library/items/_test-utils/math-problems";
 import { getMock } from "./get-mock";
 import { listMockPrepWrites } from "./prepare-mock-questions";
-import { requestMockQuestions } from "./request-mock-questions";
 import { startAnytimeMock } from "./start-anytime-mock";
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
@@ -110,7 +109,13 @@ async function formatsSetup(bank: Bank) {
     ),
     ...skills.flatMap((skill) =>
       contents.map(({ content, format }) =>
-        itemFixture({ content, examBlueprintId: blueprint.id, format, skillId: skill.id }),
+        itemFixture({
+          mockOnly: true,
+          content,
+          examBlueprintId: blueprint.id,
+          format,
+          skillId: skill.id,
+        }),
       ),
     ),
     prisma.subscription.create({
@@ -156,6 +161,7 @@ describe("a mock in the exam's own mix of formats", () => {
     const [kinematics, probability] = skills;
 
     await itemFixture({
+      mockOnly: true,
       content: NUMBER,
       examBlueprintId: goal.examBlueprintId,
       format: "numeric",
@@ -164,10 +170,10 @@ describe("a mock in the exam's own mix of formats", () => {
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: FULL } }),
-    ).resolves.toStrictEqual({ status: "needsQuestions" });
+    ).resolves.toStrictEqual({ status: "preparing" });
 
-    const request = await requestMockQuestions({ goalId: goal.id, input: { shape: FULL } });
-    const writes = request.status === "start" ? request.writes : [];
+    const request = await listMockPrepWrites({ goalId: goal.id });
+    const writes = request.writes;
 
     expect(
       writes.map(({ format, questionsPerSkill, skillIds, target }) => ({
@@ -192,6 +198,7 @@ describe("a mock in the exam's own mix of formats", () => {
     const [kinematics, probability] = skills;
 
     await itemFixture({
+      mockOnly: true,
       content: NUMBER,
       examBlueprintId: goal.examBlueprintId,
       format: "numeric",

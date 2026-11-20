@@ -17,6 +17,9 @@ async function startChallengeRoute(
 
   const result = await startChallenge({ input: body, planItemId: path.planItemId });
 
+  if (result.status === "preparing")
+    return NextResponse.json({ status: "preparing" }, { status: 202 });
+
   if (result.status === "ready") {
     return NextResponse.json(result.destination);
   }

@@ -79,18 +79,20 @@ function listWrites({
 }
 
 export async function planMockWrites({
+  planned: known,
   goal,
   option,
   setup,
   userId,
 }: {
+  planned?: Awaited<ReturnType<typeof planFromBank>>;
   goal: Goal;
   option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
 }): Promise<MockFormatShortfall[] | null> {
   const [planned, optionSkills] = await Promise.all([
-    planFromBank({ goal, option, setup, userId }),
+    known ?? planFromBank({ goal, option, setup, userId }),
     loadOptionSkills({ goalId: goal.id, option, structure: setup.structure }),
   ]);
 

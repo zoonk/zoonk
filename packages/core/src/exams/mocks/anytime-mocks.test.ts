@@ -3,19 +3,16 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
-import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
-import { getUsageRule } from "../../entitlements/limits";
 import { SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session-goal";
 import { adaptPlanFromMock } from "./adapt-plan-from-mock";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
 import { type MockShape, type MockView, mockConditionsSchema } from "./mock-contract";
-import { requestMockQuestions } from "./request-mock-questions";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 
@@ -100,7 +97,12 @@ async function anytimeSetup({
     ),
     ...skills.flatMap((skill) =>
       Array.from({ length: itemsPerSkill }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+        itemFixture({
+          mockOnly: true,
+          examBlueprintId: blueprint.id,
+          content: choiceItemContent(),
+          skillId: skill.id,
+        }),
       ),
     ),
     plus
@@ -458,316 +460,70 @@ describe("mocks taken any time", () => {
     expect(saved.settings).not.toMatchObject({ focusAreas: ["Languages"] });
   });
 
-  it("asks for the mock's questions first when the bank is short, or starts with fewer", async () => {
-    const { goal, skills } = await anytimeSetup({ itemsPerSkill: 3 });
-
-    await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
-    ).resolves.toStrictEqual({ status: "needsQuestions" });
-
-    await expect(
-      requestMockQuestions({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
-    ).resolves.toMatchObject({
-      quickFormat: "multipleChoice",
-      status: "start",
-      writes: [
-        {
-          format: { writer: { kind: "quick" } },
-          questionsPerSkill: 1,
-          skillIds: skills.slice(0, SKILLS_PER_AREA).map((skill) => skill.id),
-          target: 4,
-        },
-      ],
+  it("saves a short request across devices and starts it only after the reserve is full", async () => {
+    const { goal, skills, user } = await anytimeSetup({ itemsPerSkill: 3 });
+    const input = { shape: MATH_SHAPE };
+    await expect(startAnytimeMock({ goalId: goal.id, input })).resolves.toEqual({
+      status: "preparing",
     });
-
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { acceptFewer: true, shape: MATH_SHAPE },
-    });
-
-    const id = started.status === "started" ? started.id : "";
-
-    await expect(readMock(id)).resolves.toMatchObject({ questions: 6, status: "running" });
-  });
-
-  it("writes a subject's questions when the notice gives it a short name the plan doesn't use", async () => {
-    const { goal, skills } = await anytimeSetup({ itemsPerSkill: 3 });
-
-    await prisma.examBlueprint.update({
-      data: {
-        structure: {
-          ...STRUCTURE,
-          subjects: STRUCTURE.subjects.map((subject) =>
-            subject.name === "Mathematics" ? { ...subject, shortName: "Numeracy" } : subject,
-          ),
-        },
-      },
-      where: { id: goal.examBlueprintId ?? "" },
-    });
-
-    const mathSkillIds = skills.slice(0, SKILLS_PER_AREA).map((skill) => skill.id);
-
-    await expect(
-      requestMockQuestions({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
-    ).resolves.toMatchObject({
-      status: "start",
-      writes: [{ questionsPerSkill: 1, skillIds: mathSkillIds, target: 4 }],
-    });
-
-    const full = { area: null, day: null, kind: "full" } as const;
-    const written = await requestMockQuestions({ goalId: goal.id, input: { shape: full } });
-
-    expect(written).toMatchObject({ status: "start" });
-
-    const writtenSkillIds =
-      written.status === "start" ? written.writes.flatMap((write) => write.skillIds) : [];
-
-    expect(mathSkillIds.every((id) => writtenSkillIds.includes(id))).toBe(true);
-  });
-
-  it("never starts a mock of fewer than five questions", async () => {
-    const { goal } = await anytimeSetup({ itemsPerSkill: 1 });
-
-    await expect(
-      startAnytimeMock({ goalId: goal.id, input: { acceptFewer: true, shape: MATH_SHAPE } }),
-    ).resolves.toStrictEqual({ status: "notEnoughQuestions" });
-  });
-
-  it("offers none while no mock can be built: no notice or material, too few questions", async () => {
-    const { goal, skills } = await anytimeSetup({ itemsPerSkill: 1 });
-
-    await prisma.goal.update({ data: { examBlueprintId: null }, where: { id: goal.id } });
-
-    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
-      view: { options: [] },
-    });
-
-    const full = { area: null, day: null, kind: "full" } as const;
-
-    await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: full } }),
-    ).resolves.toStrictEqual({ status: "invalidOption" });
-
-    await itemFixture({ content: choiceItemContent(), skillId: skills[0]?.id ?? "" });
-
-    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
-      view: { options: [{ kind: "full" }, { kind: "half" }] },
-    });
-  });
-});
-
-async function readMockItemIds(id: string): Promise<string[]> {
-  const mock = await prisma.mockExam.findUniqueOrThrow({ where: { id } });
-  const conditions = mock.conditions as { sections: { itemIds: string[] }[] };
-  return conditions.sections.flatMap((section) => section.itemIds);
-}
-
-async function takeMath(goalId: string) {
-  const id = await startMath(goalId);
-
-  await answerSection({ id, rightOn: new Set() });
-  await finishMock({ blockId: id, input: { timeZone: UTC } });
-
-  return id;
-}
-
-async function useEveryMockWriteToday(userId: string) {
-  const { day } = getUsageRule({ kind: "mockQuestions", tier: "plus" });
-  await usageRecordsFixture({ count: day ?? 0, kind: "mockQuestions", userId });
-}
-
-/** A 16-question exam whose bank holds 10 questions the learner never answered. */
-async function fullMockShortOfQuestions() {
-  const structure = {
-    ...STRUCTURE,
-    mock: {
-      ...STRUCTURE.mock,
-      sections: [
-        { day: null, kind: "objective", minutes: 24, name: "Objective test", questions: 16 },
-      ],
-    },
-    subjects: STRUCTURE.subjects.map((subject) => ({
-      ...subject,
-      questions: subject.name === "Mathematics" ? 10 : 6,
-    })),
-  };
-
-  const { goal, skills, user } = await anytimeSetup({ structure });
-
-  const items = await prisma.item.findMany({
-    orderBy: { id: "asc" },
-    where: { skillId: { in: skills.map((skill) => skill.id) } },
-  });
-
-  const areaOf = (skillId: string) =>
-    skills.findIndex((skill) => skill.id === skillId) < SKILLS_PER_AREA
-      ? "Mathematics"
-      : "Languages";
-
-  const math = items.filter((item) => areaOf(item.skillId) === "Mathematics");
-  const languages = items.filter((item) => areaOf(item.skillId) === "Languages");
-
-  const answered = [...math.slice(0, 2), ...languages.slice(0, 4)];
-
-  await Promise.all(
-    answered.map((item, index) =>
-      attemptFixture({
-        answeredAt: daysAgo(index + 1),
-        isCorrect: false,
-        itemId: item.id,
-        skillId: item.skillId,
-        userId: user.id,
-      }),
-    ),
-  );
-
-  return { answered, goal, items, user };
-}
-
-const FULL_SHAPE = { shape: { area: null, day: null, kind: "full" as const } };
-
-describe("repeating mocks", () => {
-  beforeEach(() => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(SESSION_NOW);
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("asks new questions first, then the ones the learner missed, then the ones answered longest ago", async () => {
-    const { goal, skills, user } = await anytimeSetup({ itemsPerSkill: 6 });
-    const mathSkillIds = new Set(skills.slice(0, SKILLS_PER_AREA).map((skill) => skill.id));
-
-    const mathItems = await prisma.item.findMany({
-      orderBy: { id: "asc" },
-      where: { skillId: { in: [...mathSkillIds] } },
-    });
-
-    const [fresh, missed, right] = [
-      mathItems.slice(0, 2),
-      mathItems.slice(2, 5),
-      mathItems.slice(5),
-    ];
-
-    await Promise.all([
-      ...missed.map((item, index) =>
-        attemptFixture({
-          answeredAt: daysAgo(index + 1),
-          isCorrect: false,
-          itemId: item.id,
-          skillId: item.skillId,
-          userId: user.id,
-        }),
-      ),
-      ...right.map((item, index) =>
-        attemptFixture({
-          answeredAt: daysAgo(index + 1),
-          isCorrect: true,
-          itemId: item.id,
-          skillId: item.skillId,
-          userId: user.id,
-        }),
-      ),
-      useEveryMockWriteToday(user.id),
-    ]);
-
-    const id = await startMath(goal.id);
-    const asked = await readMockItemIds(id);
-
-    expect(new Set(asked)).toStrictEqual(
-      new Set([...fresh, ...missed, ...right.slice(-3)].map((item) => item.id)),
-    );
-
-    await expect(readMock(id)).resolves.toMatchObject({ questions: 8, reusedQuestions: 6 });
-  });
-
-  it("never pads a full mock with answered questions, and says what it lacks before it starts", async () => {
-    const { answered, goal, items, user } = await fullMockShortOfQuestions();
-    await useEveryMockWriteToday(user.id);
-
-    await expect(startAnytimeMock({ goalId: goal.id, input: FULL_SHAPE })).resolves.toStrictEqual({
-      examQuestions: 16,
-      limit: "day",
-      minutes: 15,
-      questions: 10,
-      status: "short",
-    });
-
     await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
-
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { ...FULL_SHAPE, acceptFewer: true },
-    });
-
-    if (started.status !== "started") {
-      throw new Error(`Expected a started mock, got ${started.status}`);
-    }
-
-    const asked = new Set(await readMockItemIds(started.id));
-    const fresh = items.filter((item) => !answered.includes(item));
-
-    expect(asked).toStrictEqual(new Set(fresh.map((item) => item.id)));
-
-    await expect(readMock(started.id)).resolves.toMatchObject({
-      examQuestions: 16,
-      minutes: 15,
-      questions: 10,
-      reusedQuestions: 0,
-    });
-  });
-
-  it("says what a mock still lacks after its questions were written, instead of starting it short", async () => {
-    const { goal } = await fullMockShortOfQuestions();
-
-    await expect(startAnytimeMock({ goalId: goal.id, input: FULL_SHAPE })).resolves.toStrictEqual({
-      status: "needsQuestions",
-    });
-
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { ...FULL_SHAPE, afterWriting: true } }),
-    ).resolves.toStrictEqual({
-      examQuestions: 16,
-      limit: null,
-      minutes: 15,
-      questions: 10,
-      status: "short",
-    });
-
-    await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
-  });
-
-  it("writes new questions for a mock taken again within fair use, and asks answered ones past it", async () => {
-    const { goal, user } = await anytimeSetup();
-    const first = await takeMath(goal.id);
-
-    await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
-    ).resolves.toStrictEqual({ status: "needsQuestions" });
-
-    await expect(
-      requestMockQuestions({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
-    ).resolves.toMatchObject({ status: "start" });
-
-    await expect(
-      prisma.usageRecord.count({ where: { kind: "mockQuestions", userId: user.id } }),
+      prisma.followUp.count({ where: { kind: "prepareMockSupply", userId: user.id } }),
     ).resolves.toBe(1);
-
-    await useEveryMockWriteToday(user.id);
-
-    await expect(
-      requestMockQuestions({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
-    ).resolves.toStrictEqual({ status: "ready" });
-
-    const second = await startMath(goal.id);
-
-    expect(new Set(await readMockItemIds(second))).toStrictEqual(
-      new Set(await readMockItemIds(first)),
+    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
+      view: { requested: { shape: MATH_SHAPE, status: "preparing" } },
+    });
+    await Promise.all(
+      skills
+        .slice(0, 2)
+        .map((skill) =>
+          itemFixture({ mockOnly: true, examBlueprintId: goal.examBlueprintId, skillId: skill.id }),
+        ),
     );
+    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
+      view: { requested: { shape: MATH_SHAPE, status: "ready" }, running: null },
+    });
+    const starts = await Promise.all([
+      startAnytimeMock({ goalId: goal.id, input }),
+      startAnytimeMock({ goalId: goal.id, input }),
+    ]);
+    expect(starts.map((s) => s.status).sort()).toEqual(["running", "started"]);
+    await expect(
+      prisma.mockItemUse.count({ where: { userId: user.id, spentAt: { not: null } } }),
+    ).resolves.toBe(8);
+  });
 
-    await expect(readMock(second)).resolves.toMatchObject({ questions: 8, reusedQuestions: 8 });
+  it("allows full-length reuse after ten on-demand starts and owes only a gap", async () => {
+    const { goal, user } = await anytimeSetup();
+    const input = { shape: { area: null, day: null, kind: "full" as const } };
+    const first = await startAnytimeMock({ goalId: goal.id, input });
+    if (first.status !== "started") throw new Error(first.status);
+    const mock = await prisma.mockExam.update({
+      where: { id: first.id },
+      data: { status: "finished" },
+    });
+    await prisma.mockItemUse.updateMany({
+      where: { userId: user.id },
+      data: { spentAt: new Date() },
+    });
+    await expect(startAnytimeMock({ goalId: goal.id, input })).resolves.toEqual({
+      status: "preparing",
+    });
+    await prisma.mockExam.createMany({
+      data: Array.from({ length: 9 }, () => ({
+        goalId: goal.id,
+        userId: user.id,
+        status: "finished",
+        conditions: mockConditionsSchema.parse(mock.conditions),
+        sectionStartedAt: new Date(),
+      })),
+    });
+    const started = await startAnytimeMock({ goalId: goal.id, input });
+    if (started.status !== "started") throw new Error(started.status);
+    await expect(readMock(started.id)).resolves.toMatchObject({
+      questions: 16,
+      reusedQuestions: 16,
+    });
   });
 });
 

@@ -1,6 +1,5 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
-import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
+import { type TransactionClient, type Goal } from "@zoonk/db";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { type MockIdentity } from "../../../plans/planner/mock-identity";
@@ -13,7 +12,7 @@ import { getSubjectShares } from "../mock-options";
 import {
   type MockCandidate,
   type MockPlan,
-  countPlannedQuestions,
+  outlineMock,
   getMockClock,
   getMockDays,
   planMock,
@@ -74,6 +73,7 @@ async function loadWeeklyMockListening({
 }
 
 export async function planWeeklyMock({
+  client,
   essays,
   finishedMocks,
   goal,
@@ -85,6 +85,7 @@ export async function planWeeklyMock({
   today,
   userId,
 }: {
+  client?: TransactionClient;
   essays?: readonly MockEssayCandidate[];
   /** A GET's finished-mock count; without it, it's counted fresh. */
   finishedMocks?: Promise<number>;
@@ -96,9 +97,9 @@ export async function planWeeklyMock({
   structure: ExamStructure | null;
   today: Date;
   userId: string;
-}): Promise<MockPlan & { candidates: MockCandidate[] }> {
+}): Promise<MockPlan & { outline: MockPlan; candidates: MockCandidate[] }> {
   const [candidates, mockNumber, finalStretchStart, written, listening] = await Promise.all([
-    loadMockCandidates({ goal, itemIds, plan: savedPlan, skillIds, structure, userId }),
+    loadMockCandidates({ client, goal, itemIds, plan: savedPlan, skillIds, structure, userId }),
     finishedMocks ?? countFinishedMocksBefore({ goalId: goal.id }),
     savedPlan
       ? getFinalStretchStart(parsePlanPhases(savedPlan.phases))
@@ -114,39 +115,32 @@ export async function planWeeklyMock({
     identity?.fullLength ??
     isInFinalStretch({ finalStretchStart, targetDate: goal.targetDate, today });
 
-  const clock = identity ? getMockClock({ ...identity, structure }) : undefined;
-
-  const plan = (offset: number) =>
-    planMock({
-      adaptive: structure?.mock?.adaptive ?? false,
-      candidates: bySubject,
-      clock,
-      essays: written,
-      fullLength,
-      listening,
-      mockNumber: mockNumber + offset,
-      structure,
-      subjectShares: getSubjectShares(structure),
-    });
-
-  if (identity) {
-    return {
-      ...plan(Math.max(0, getMockDays(structure).indexOf(identity.day)) - mockNumber),
-      candidates: asked,
-    };
-  }
-
-  const days = new Set((structure?.mock?.sections ?? []).map((section) => section.day)).size;
-  const plans = Array.from({ length: Math.max(1, days) }, (_, offset) => plan(offset));
-
-  const fullest = plans.reduce((best, candidate) =>
-    countPlannedQuestions(candidate) > countPlannedQuestions(best) ? candidate : best,
+  const days = getMockDays(structure);
+  const day = identity ? identity.day : (days[mockNumber % days.length] ?? null);
+  const clock = getMockClock({ day, fullLength, structure });
+  const declaredListening = new Set(
+    (structure?.mock?.sections ?? [])
+      .filter((section) => section.kind === "listening")
+      .map((section) => section.name),
   );
-
-  const chosen = itemIds
-    ? fullest
-    : (plans.find((candidate) => countPlannedQuestions(candidate) >= MIN_CHECKPOINT_QUESTIONS) ??
-      fullest);
-
-  return { ...chosen, candidates: asked };
+  const outline = outlineMock({
+    clock,
+    day,
+    essays: written,
+    fullLength,
+    listening: declaredListening,
+    structure,
+  });
+  const plan = planMock({
+    adaptive: structure?.mock?.adaptive ?? false,
+    candidates: bySubject,
+    clock,
+    essays: written,
+    fullLength,
+    listening,
+    mockNumber: Math.max(0, days.indexOf(day)),
+    structure,
+    subjectShares: getSubjectShares(structure),
+  });
+  return { ...plan, candidates: asked, outline };
 }

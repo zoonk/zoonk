@@ -1,4 +1,5 @@
 import { type ItemFormat } from "@zoonk/db";
+import { roundToTotal } from "@zoonk/utils/apportion";
 import { type ExamStructure, type SectionNavigation } from "../../library/exams/blueprint-contract";
 import { listSectionParts } from "./exam-parts";
 import { fitToClock } from "./mock-clock-fit";
@@ -60,6 +61,14 @@ export type MockPlan = {
   sections: MockSectionPlan[];
   written: MockDayWrittenPart[];
 };
+
+function sectionQuotas(sections: ReturnType<typeof getDaySections>, share: number) {
+  return roundToTotal(
+    sections.map((section) =>
+      section.kind === "speaking" ? 0 : (section.questions ?? DEFAULT_SECTION_QUESTIONS) * share,
+    ),
+  );
+}
 
 function asksAnything(section: MockSectionPlan): boolean {
   return section.questions > 0 || section.essays.length > 0 || section.kind === "speaking";
@@ -125,13 +134,14 @@ export function planMock({
 
   const byArea = areaSections !== null;
 
+  const quotasBySection = sectionQuotas(sections, share);
   const planned = sections.reduce<{
     formatsWanted: Record<string, number>;
     plans: MockSectionPlan[];
     used: Set<string>;
   }>(
     (state, section, index) => {
-      const wanted = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
+      const wanted = quotasBySection[index] ?? 0;
       const recordings = section.kind === "listening" ? listening.get(section.name ?? "") : null;
 
       if (recordings) {
@@ -178,11 +188,7 @@ export function planMock({
         ...toSectionRules(section),
         essays: [],
         itemIds: picked,
-        minutes: sectionMinutes({
-          pace,
-          picked: clock === undefined ? questions : wanted,
-          section,
-        }),
+        minutes: sectionMinutes({ pace, picked: questions, section }),
         name: getSectionName({ allSections, byArea, section }),
         questions,
         routing,
@@ -247,12 +253,13 @@ export function outlineMock({
     structure,
   });
 
-  const asked = daySections.map((section): MockSectionPlan => {
+  const quotasBySection = sectionQuotas(daySections, share);
+  const asked = daySections.map((section, index): MockSectionPlan => {
     if (section.kind === "speaking") {
       return planSpeakingSection(section);
     }
 
-    const questions = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
+    const questions = quotasBySection[index] ?? 0;
 
     return {
       ...toSectionRules(section),
@@ -279,7 +286,7 @@ export function outlineMock({
     fullLength,
     minutes: clock ?? sections.reduce((sum, section) => sum + section.minutes, 0),
     reused: 0,
-    sections,
+    sections: clock === undefined ? sections : fitToClock({ clock, sections }),
     written,
   };
 }

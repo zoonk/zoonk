@@ -32,6 +32,7 @@ const checkpointSchema = z.object({
   /** Weekly Big Challenges of exam goals are mock exams: they feed the estimated score. */
   mock: z.boolean(),
   mockIdentity: mockIdentitySchema.optional(),
+  mockQuestions: z.number().int().nonnegative().optional(),
   passMark: z.number().int(),
   phase: z.number().int().nullable(),
   /** A boss lost on an earlier day, back after reinforcement lessons. */

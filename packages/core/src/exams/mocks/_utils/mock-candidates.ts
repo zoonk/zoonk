@@ -1,25 +1,19 @@
 import "server-only";
 import {
-  type Attempt,
+  type TransactionClient,
   type Goal,
   type ItemFormat,
   type Plan,
   type PlanItem,
   prisma,
-  sql,
 } from "@zoonk/db";
-import { loadAnswerPerItem } from "../../../learner/_utils/answer-per-item";
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { getLessonSkillRows, toIdKey } from "../../../library/_utils/shared-rows";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { fitsExamChoice, getExamChoiceFormats } from "../../../library/exams/exam-choice-format";
-import { getItemAudienceFilter } from "../../../library/items/item-field";
-import { type ItemSetPick, listItemSetsForSkills } from "../../../library/items/item-sets";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
-import { type MockFormat, getItemFormatKey, getMockFormatMix } from "../mock-format-mix";
+import { getItemFormatKey, getMockFormatMix } from "../mock-format-mix";
 import { type MockCandidate } from "../mock-plan";
-
-const MIN_EXAM_ITEMS = 5;
 
 type AreaPlanItem = Pick<PlanItem, "chapterId" | "lessonId" | "skillId">;
 
@@ -126,217 +120,72 @@ export function getFormatFilter(typed: readonly ItemFormat[]) {
   };
 }
 
-async function loadItems({
-  examBlueprintId,
-  itemIds,
-  skillIds,
-  typed,
-}: {
-  examBlueprintId: string | null;
-  itemIds: readonly string[] | null;
-  skillIds: readonly string[];
-  typed: readonly ItemFormat[];
-}) {
-  const where = {
-    ...getFormatFilter(typed),
-    ...(itemIds
-      ? { id: { in: [...itemIds] } }
-      : { skillId: { in: [...skillIds] }, ...getItemAudienceFilter({ examBlueprintId }) }),
-    NOT: { set: { is: { kind: "audio" as const } } },
-  };
-
-  const examItems =
-    examBlueprintId && !itemIds
-      ? await prisma.item.findMany({ orderBy: { id: "asc" }, where: { ...where, examBlueprintId } })
-      : [];
-
-  return examItems.length >= MIN_EXAM_ITEMS
-    ? examItems
-    : prisma.item.findMany({ orderBy: { id: "asc" }, where });
-}
-
-type LastAnswer = Pick<Attempt, "answeredAt" | "isCorrect"> & { itemId: string };
-
-function byReuseOrder(first: LastAnswer, second: LastAnswer): number {
-  if (first.isCorrect !== second.isCorrect) {
-    return first.isCorrect ? 1 : -1;
-  }
-
-  return first.answeredAt.getTime() - second.answeredAt.getTime();
-}
-
-async function loadLastAnswers({
-  itemIds,
-  userId,
-}: {
-  itemIds: readonly string[];
-  userId: string;
-}): Promise<LastAnswer[]> {
-  const answers = await loadAnswerPerItem<LastAnswer>({
-    columns: sql`item_id AS "itemId", answered_at AS "answeredAt", is_correct AS "isCorrect"`,
-    order: "last",
-    userId,
-    where: sql`item_id = ANY(${[...itemIds]}::uuid[])`,
-  });
-
-  return answers.toSorted(byReuseOrder);
-}
-
-type BankItem = Awaited<ReturnType<typeof loadItems>>[number];
-
-type CandidateUnit = { answered: boolean; candidates: MockCandidate[]; key: string };
-
-function toPickedSet({ item, items }: { item: BankItem; items: readonly BankItem[] }) {
-  const { setId } = item;
-
-  return setId
-    ? {
-        id: setId,
-        position: item.setPosition ?? 0,
-        size: items.filter((other) => other.setId === setId).length,
-      }
-    : undefined;
-}
-
-async function loadSetUnits({
-  areas,
-  fits,
-  goal,
-  mix,
-  skillIds,
-  typed,
-  userId,
-}: {
-  areas: ReadonlyMap<string, string>;
-  fits: (item: BankItem) => boolean;
-  goal: Pick<Goal, "examBlueprintId">;
-  mix: readonly MockFormat[];
-  skillIds: readonly string[];
-  typed: readonly ItemFormat[];
-  userId: string;
-}): Promise<CandidateUnit[]> {
-  const listed = await listItemSetsForSkills({
-    examBlueprintId: goal.examBlueprintId,
-    skillIds,
-    userId,
-  });
-
-  const sets = listed.filter((set) => set.kind !== "audio");
-
-  const rows = await prisma.item.findMany({
-    where: {
-      AND: [
-        getFormatFilter(typed),
-        { id: { in: sets.flatMap((set) => set.items.map((item) => item.id)) } },
-      ],
-    },
-  });
-
-  const byId = new Map(rows.map((row) => [row.id, row]));
-
-  return sets.flatMap((set: ItemSetPick): CandidateUnit[] => {
-    const members = set.items.flatMap((item) => byId.get(item.id) ?? []);
-
-    if (members.length < set.items.length || !members.every((member) => fits(member))) {
-      return [];
-    }
-
-    const area = set.skillIds.map((skillId) => areas.get(skillId)).find(Boolean) ?? null;
-    const answered = set.lastAnsweredAt !== null;
-
-    const candidates = members.map((member, position) => ({
-      answered,
-      area,
-      difficulty: member.difficulty,
-      format: getItemFormatKey({ item: member, mix }),
-      itemFormat: member.format,
-      itemId: member.id,
-      set: { id: set.id, position, size: members.length },
-      skillId: member.skillId,
-    }));
-
-    return [{ answered, candidates, key: set.id }];
-  });
-}
-
 export async function loadMockCandidates({
+  client = prisma,
   goal,
   itemIds,
   plan,
   skillIds,
   structure = null,
   userId,
+  reuse = false,
 }: {
+  client?: TransactionClient;
   goal: Pick<Goal, "examBlueprintId"> & { id: string | null };
   itemIds: readonly string[] | null;
   plan?: Parameters<typeof loadSkillAreas>[1];
   skillIds: readonly string[];
   structure?: ExamStructure | null;
   userId: string;
+  reuse?: boolean;
 }): Promise<MockCandidate[]> {
   const typed = listTypedFormats(structure);
   const mix = getMockFormatMix(structure);
-
-  const [loaded, areas] = await Promise.all([
-    loadItems({ examBlueprintId: goal.examBlueprintId, itemIds, skillIds, typed }),
+  const choices = getExamChoiceFormats(structure);
+  const [items, areas] = await Promise.all([
+    client.item.findMany({
+      where: {
+        ...getFormatFilter(typed),
+        ...(itemIds
+          ? { id: { in: [...itemIds] } }
+          : {
+              mockOnly: true,
+              examBlueprintId: goal.examBlueprintId,
+              retiredAt: null,
+              skillId: { in: [...skillIds] },
+              NOT: { set: { is: { kind: "audio" } } },
+            }),
+      },
+      include: {
+        set: { select: { _count: { select: { items: true } } } },
+        mockUses: { where: { userId }, select: { spentAt: true } },
+      },
+      orderBy: { id: "asc" },
+    }),
     goal.id ? loadSkillAreas(goal.id, plan) : new Map<string, string>(),
   ]);
 
-  const choices = getExamChoiceFormats(structure);
-
-  const items = itemIds
-    ? loaded
-    : loaded.filter((item) => typed.includes(item.format) || fitsExamChoice({ choices, item }));
-
-  const [answers, sets] = await Promise.all([
-    loadLastAnswers({ itemIds: items.map((item) => item.id), userId }),
-    itemIds
-      ? []
-      : loadSetUnits({
-          areas,
-          fits: (item) => typed.includes(item.format) || fitsExamChoice({ choices, item }),
-          goal,
-          mix,
-          skillIds,
-          typed,
-          userId,
-        }),
-  ]);
-
-  const answered = new Set(answers.map((answer) => answer.itemId));
-  const byId = new Map(items.map((item) => [item.id, item]));
-
-  const toCandidate = (item: BankItem): MockCandidate => {
-    const set = itemIds ? toPickedSet({ item, items }) : undefined;
-
-    return {
-      answered: answered.has(item.id),
+  return items
+    .filter((item) => {
+      const use = item.mockUses[0];
+      return (
+        itemIds ||
+        ((!use || (reuse && use.spentAt)) &&
+          (typed.includes(item.format) || fitsExamChoice({ choices, item })))
+      );
+    })
+    .toSorted((a, b) => Number(a.mockUses[0]?.spentAt ?? 0) - Number(b.mockUses[0]?.spentAt ?? 0))
+    .map((item) => ({
+      answered: Boolean(item.mockUses[0]?.spentAt),
       area: areas.get(item.skillId) ?? null,
       difficulty: item.difficulty,
       format: getItemFormatKey({ item, mix }),
       itemFormat: item.format,
       itemId: item.id,
-      ...(set ? { set } : {}),
       skillId: item.skillId,
-    };
-  };
-
-  const fresh = [
-    ...items
-      .filter((item) => !answered.has(item.id))
-      .map((item): CandidateUnit => ({
-        answered: false,
-        candidates: [toCandidate(item)],
-        key: item.id,
-      })),
-    ...sets.filter((set) => !set.answered),
-  ].toSorted((first, second) => first.key.localeCompare(second.key));
-
-  return [
-    ...fresh.flatMap((unit) => unit.candidates),
-    ...answers
-      .flatMap((answer) => byId.get(answer.itemId ?? "") ?? [])
-      .map((item) => toCandidate(item)),
-    ...sets.filter((set) => set.answered).flatMap((set) => set.candidates),
-  ];
+      ...(item.set &&
+        item.setId && {
+          set: { id: item.setId, position: item.setPosition ?? 0, size: item.set._count.items },
+        }),
+    }));
 }

@@ -59,7 +59,12 @@ async function readSelectedCard({
     : null;
 
   return {
-    access: isMock && !session.examAccess.includesMockExams ? "plusRequired" : "open",
+    access:
+      isMock && !session.examAccess.includesMockExams
+        ? "plusRequired"
+        : card?.preparing
+          ? "preparing"
+          : "open",
     date: item.scheduledFor,
     kind: isMock ? "mock" : "mixed",
     planItemId: item.id,
@@ -105,7 +110,10 @@ export async function readTodayWeeklyChallenge({
       candidate.questions >= MIN_CHECKPOINT_QUESTIONS,
   );
 
-  if (block?.checkpoint) {
+  if (
+    block?.checkpoint &&
+    (!block.checkpoint.mock || block.status === "active" || block.status === "completed")
+  ) {
     return {
       access:
         block.checkpoint.mock && !session.examAccess.includesMockExams ? "plusRequired" : "open",

@@ -6,6 +6,7 @@ import { routeNextModule } from "../scoring/adaptive-routing";
 import { endMock } from "./_utils/end-mock";
 import { readMockAnswer } from "./_utils/mock-answers";
 import { gradeMockItem } from "./_utils/mock-item-grading";
+import { spendSection } from "./_utils/mock-item-uses";
 import { loadMockItems } from "./_utils/mock-items";
 import { type MockSitting, findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
 import { isMockAnswerPresent } from "./mock-answer-presence";
@@ -124,6 +125,15 @@ export async function submitMockSection({
       where: { id: mock.id, sectionIndex: section, status: "active" },
     });
 
+    if (updated.count)
+      await spendSection({
+        tx,
+        mockExamId: mock.id,
+        section: section + 1,
+        userId: owned.userId,
+        conditions,
+        now: new Date(now.getTime() + breakMs),
+      });
     return updated.count > 0 ? updated.count : unchanged(updated.count);
   });
 

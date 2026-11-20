@@ -19,7 +19,7 @@ import {
 } from "./weekly-challenge-rules";
 
 type WeeklyChallenge = {
-  access: "open" | "plusRequired";
+  access: "open" | "plusRequired" | "preparing";
   brainPower: number;
   checklist: ExamDayChecklistItem[];
   conditions: MockConditions | null;
@@ -97,7 +97,12 @@ export async function getWeeklyChallenge({
 
   return {
     challenge: {
-      access: isMock && !access.includesMockExams ? "plusRequired" : "open",
+      access:
+        isMock && !access.includesMockExams
+          ? "plusRequired"
+          : card?.preparing
+            ? "preparing"
+            : "open",
       brainPower: BRAIN_POWER_BONUS.weeklyChallenge,
       checklist: isMock ? [...EXAM_DAY_CHECKLIST] : [],
       conditions,

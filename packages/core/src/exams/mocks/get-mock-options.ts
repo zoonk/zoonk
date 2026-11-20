@@ -1,4 +1,5 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { readMockEssays } from "../../learner/facts/mock-essays";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
@@ -6,10 +7,15 @@ import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamDocument } from "../exam-document";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
-import { findRunningAnytimeMock, loadAnytimeMockSetup } from "./_utils/anytime-mock-setup";
+import {
+  findRunningAnytimeMock,
+  loadAnytimeMockSetup,
+  resolveAnytimeOption,
+} from "./_utils/anytime-mock-setup";
+import { canReuseMockItems, planFromBank, isCompleteMock } from "./_utils/create-anytime-mock";
 import { findLastMock } from "./_utils/finished-mocks";
 import { getBankTypedParts } from "./_utils/mock-typed-parts";
-import { type MockOptionsView, mockConditionsSchema } from "./mock-contract";
+import { type MockOptionsView, mockConditionsSchema, mockShapeSchema } from "./mock-contract";
 
 export type MockOptionsResult =
   | { status: "ready"; view: MockOptionsView }
@@ -49,9 +55,29 @@ export async function getMockOptions({
 
   const conditions = running ? mockConditionsSchema.safeParse(running.conditions).data : null;
 
+  const shape = mockShapeSchema.safeParse(goal.requestedMock).data;
+  const option = shape && resolveAnytimeOption({ choice: { shape }, setup });
+  const requestedPlan =
+    option &&
+    (await planFromBank({
+      goal,
+      option,
+      setup,
+      userId: goal.userId,
+      reuse: await canReuseMockItems(prisma, goal.userId),
+    }));
   return {
     status: "ready",
     view: {
+      requested:
+        option && shape && requestedPlan
+          ? {
+              shape,
+              status: isCompleteMock({ option, setup, plan: requestedPlan.plan })
+                ? "ready"
+                : "preparing",
+            }
+          : null,
       access,
       examDocument: getExamDocument(goal),
       examName: setup.examName,

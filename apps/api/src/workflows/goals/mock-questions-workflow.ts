@@ -1,40 +1,35 @@
-import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
-import {
-  MOCK_QUESTIONS_READY_STEP,
-  type MockQuestionsStepName,
-} from "@zoonk/core/library/generation/steps";
 import { getWorkflowMetadata } from "workflow";
-import { type ContentAnalytics } from "../_shared/content-analytics";
-import { prepareMockRecordings, writeMockQuestions } from "./mock-question-writes";
-import { type QuestionWritingResult, runQuestionWriting } from "./question-writing-run";
+import { startOnce } from "../_shared/run-token";
+import { writeMockQuestions, prepareMockRecordings } from "./mock-question-writes";
+import {
+  listMockPrepWritesStep,
+  checkMockSupplyStep,
+  listExamSupplyGoalsStep,
+} from "./steps/mock-question-steps";
 
-export type MockQuestionsInput = MockQuestionWrites & {
-  analytics?: ContentAnalytics;
-  goalId: string;
-  listening?: boolean;
-};
+type SupplyRequest = { goalId: string; examBlueprintId: string | null; later: boolean };
 
-export function getMockQuestionsToken(goalId: string): string {
-  return `mock-questions:${goalId}`;
+export function startMockSupply(input: SupplyRequest) {
+  return startOnce(
+    mockSupplyWorkflow,
+    [input],
+    `mock-supply:${input.examBlueprintId ?? input.goalId}`,
+  );
 }
 
-export async function mockQuestionsWorkflow(
-  input: MockQuestionsInput,
-): Promise<QuestionWritingResult> {
+export async function mockSupplyWorkflow(input: SupplyRequest) {
   "use workflow";
-
-  const { analytics, goalId, listening = false, quickFormat, writes } = input;
   const { workflowRunId } = getWorkflowMetadata();
-
-  return runQuestionWriting<MockQuestionsStepName>({
-    steps: { ready: MOCK_QUESTIONS_READY_STEP, write: "writeMockQuestions" },
-    write: async () => {
-      const [{ failed, written }, voiced] = await Promise.all([
-        writeMockQuestions({ analytics, goalId, later: false, quickFormat, workflowRunId, writes }),
-        listening ? prepareMockRecordings({ analytics, goalId, workflowRunId }) : 0,
-      ]);
-
-      return written === 0 && voiced === 0 && (failed > 0 || listening) ? "failed" : "written";
-    },
-  });
+  const goals = await listExamSupplyGoalsStep(input);
+  for (const goalId of goals) {
+    const writes = await listMockPrepWritesStep(goalId);
+    await writeMockQuestions({
+      ...writes,
+      goalId,
+      later: input.later || goalId !== input.goalId,
+      workflowRunId,
+    });
+    if (writes.listening) await prepareMockRecordings({ goalId, workflowRunId });
+    await checkMockSupplyStep(goalId);
+  }
 }

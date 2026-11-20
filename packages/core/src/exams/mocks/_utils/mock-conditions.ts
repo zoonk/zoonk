@@ -1,9 +1,11 @@
-import { type ExamEdition } from "../../../library/exams/blueprint-contract";
+import { type TransactionClient } from "@zoonk/db";
 import "server-only";
+import { type ExamEdition } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { markPlannedItems } from "../mock-marking";
+import { countPlannedQuestions } from "../mock-plan";
 import { listLeftOutChoices } from "../mock-unpicked";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
@@ -28,35 +30,34 @@ export async function buildMockConditions(
     OwnedMock,
     "blueprint" | "goal" | "payload" | "sessionDate" | "structure" | "unpicked" | "userId"
   >,
+  client?: TransactionClient,
 ): Promise<MockConditions> {
   const { blueprint, goal, payload, sessionDate, structure, unpicked, userId } = owned;
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
 
   const identity = payload.checkpoint?.mockIdentity;
 
-  if (!identity) {
-    throw new Error("A scheduled mock is missing its saved exam day and length");
-  }
-
-  const plan = await planWeeklyMock({
+  const bank = await planWeeklyMock({
+    client,
     goal: {
       examBlueprintId: goal?.examBlueprintId ?? null,
       id: goal?.id ?? null,
       targetDate: goal?.targetDate ?? null,
     },
     identity,
-    itemIds: payload.itemIds,
+    itemIds: null,
     skillIds: payload.skillIds,
     structure,
     today: sessionDate,
     userId,
   });
 
+  const plan = client ? bank : bank.outline;
   return {
     day: plan.day,
-    examQuestions: null,
+    examQuestions: countPlannedQuestions(bank.outline),
     fullLength: plan.fullLength,
-    ...markPlannedItems({ candidates: plan.candidates, plan, structure }),
+    ...markPlannedItems({ candidates: bank.candidates, plan, structure }),
     partialCredit: getPartialCredit(structure),
     purpose: "planned",
     reused: plan.reused,

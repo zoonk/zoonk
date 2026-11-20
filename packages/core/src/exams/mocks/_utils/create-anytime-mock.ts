@@ -1,18 +1,22 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
-import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
-import { type AllowanceLimit, type UsagePeriod } from "../../../entitlements/contract";
+import { DbNull, type TransactionClient, prisma, type Goal } from "@zoonk/db";
+import { USAGE_WINDOW_MS } from "../../../entitlements/limits";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
+import { parsePlanSettings } from "../../../plans/planner/plan-state";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
-import { getMockFormatMix } from "../mock-format-mix";
 import { markPlannedItems } from "../mock-marking";
 import { planOptionMock } from "../mock-option-plan";
 import { type MockOption } from "../mock-options";
-import { type MockCandidate, type MockPlan, countPlannedQuestions } from "../mock-plan";
-import { isMockShort, listShortFormats } from "../mock-shortfall";
+import {
+  type MockCandidate,
+  type MockPlan,
+  getPlannedItemIds,
+  countPlannedQuestions,
+} from "../mock-plan";
+import { countReused } from "../mock-reuse";
 import {
   type AnytimeMockSetup,
   findRunningAnytimeMock,
@@ -21,40 +25,43 @@ import {
 } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { getExamStartTime } from "./mock-conditions";
+import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
 
 export type CreateAnytimeMockResult =
   | { id: string; status: "running" | "started" }
-  | { status: "notEnoughQuestions" }
-  | { status: "needsQuestions" }
-  | {
-      availableAt?: Date | null;
-      examQuestions: number;
-      limit: UsagePeriod | null;
-      minutes: number;
-      questions: number;
-      status: "short";
-    };
+  | { status: "preparing" };
 
-function isShortOfNew({
-  candidates,
+export function isCompleteMock({
   option,
-  plan,
   setup,
+  plan,
 }: {
-  candidates: readonly MockCandidate[];
   option: MockOption;
-  plan: MockPlan;
   setup: AnytimeMockSetup;
+  plan: MockPlan;
 }) {
-  const mix = getMockFormatMix(setup.structure);
-
   return (
-    listMissingRecordings({ option, setup }).length > 0 ||
-    listShortFormats({ candidates, mix, option, plan }).length > 0
+    countPlannedQuestions(plan) === option.questions &&
+    !listMissingRecordings({ option, setup }).length &&
+    option.written.length === plan.sections.reduce((sum, section) => sum + section.essays.length, 0)
   );
 }
 
+export async function canReuseMockItems(client: TransactionClient, userId: string) {
+  const count = await client.mockExam.count({
+    where: {
+      userId,
+      startedAt: { gte: new Date(Date.now() - USAGE_WINDOW_MS) },
+      conditions: { path: ["purpose"], equals: "practice" },
+    },
+  });
+  return count >= 10;
+}
+
 export async function planFromBank({
+  client = prisma,
+  reuse = false,
+  exclude,
   goal,
   option,
   setup,
@@ -64,8 +71,13 @@ export async function planFromBank({
   option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
+  client?: TransactionClient;
+  reuse?: boolean;
+  exclude?: ReadonlySet<string>;
 }): Promise<{ candidates: MockCandidate[]; plan: MockPlan }> {
-  const candidates = await loadMockCandidates({
+  const loaded = await loadMockCandidates({
+    client,
+    reuse,
     goal,
     itemIds: null,
     skillIds: await loadMockSkillIds(goal.id),
@@ -73,16 +85,47 @@ export async function planFromBank({
     userId,
   });
 
+  const saved =
+    reuse && !exclude
+      ? await client.plan.findUnique({ where: { goalId: goal.id }, select: { settings: true } })
+      : null;
+  const protectedIds = new Set<string>(exclude);
+  const upcoming = parsePlanSettings(saved?.settings)
+    .mockFunding.filter((entry) => entry.date >= new Date().toISOString().slice(0, 10))
+    .toSorted((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 2);
+  for (const entry of upcoming) {
+    const scheduled = setup.options.find(
+      (candidate) =>
+        candidate.kind === (entry.fullLength ? "full" : "half") &&
+        candidate.day === (entry.day ?? null),
+    );
+    if (scheduled) {
+      const reserved = planOptionMock({
+        ...setup,
+        option: scheduled,
+        candidates: loaded.filter((item) => !item.answered && !protectedIds.has(item.itemId)),
+      });
+      getPlannedItemIds(reserved).forEach((id) => protectedIds.add(id));
+    }
+  }
+  const candidates = loaded.filter((item) => !protectedIds.has(item.itemId));
+  const freshPlan = planOptionMock({
+    ...setup,
+    option,
+    candidates: candidates.filter((item) => !item.answered),
+  });
+  if (!reuse || countPlannedQuestions(freshPlan) === option.questions)
+    return { candidates, plan: freshPlan };
+  // The full-day planner normally excludes repeats. Fair use admits them after reserving the scheduled papers.
+  const plan = planOptionMock({
+    ...setup,
+    option,
+    candidates: candidates.map((item) => ({ ...item, answered: false })),
+  });
   return {
     candidates,
-    plan: planOptionMock({
-      candidates,
-      essays: setup.essays,
-      listening: setup.listening,
-      option,
-      speaking: setup.speaking,
-      structure: setup.structure,
-    }),
+    plan: { ...plan, reused: countReused({ candidates, sections: plan.sections }) },
   };
 }
 
@@ -127,66 +170,47 @@ function toConditions({
   };
 }
 
-/**
- * Reuse a running mock; `needsQuestions` requires preparing questions before retrying with
- * `afterWriting`, which answers `short` when the mock still lacks questions.
- */
 export async function createAnytimeMock({
-  acceptFewer,
-  afterWriting = false,
   goal,
   option,
   setup,
   userId,
-  writesCap,
 }: {
-  acceptFewer: boolean;
-  afterWriting?: boolean;
   goal: Goal;
   option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
-  writesCap: Pick<AllowanceLimit, "period" | "availableAt"> | null;
 }): Promise<CreateAnytimeMockResult> {
-  const { candidates, plan } = await planFromBank({ goal, option, setup, userId });
-  const planned = countPlannedQuestions(plan);
-  const asksEssays = plan.sections.some((section) => section.essays.length > 0);
-  const shortOfNew = !acceptFewer && isShortOfNew({ candidates, option, plan, setup });
-  const asksForNew = !afterWriting && writesCap === null && shortOfNew;
-
-  const short =
-    !acceptFewer &&
-    !asksForNew &&
-    planned >= MIN_CHECKPOINT_QUESTIONS &&
-    isMockShort({ option, planned });
-
   return writeLearnerChange<CreateAnytimeMockResult>({ userId }, async (tx) => {
     const running = await findRunningAnytimeMock({ client: tx, goalId: goal.id, userId });
-
-    if (running) {
-      return unchanged({ id: running.id, status: "running" });
-    }
-
-    if (asksForNew) {
-      return unchanged({ status: "needsQuestions" });
-    }
-
-    if (short) {
-      return unchanged({
-        examQuestions: option.questions,
-        ...(shortOfNew &&
-          writesCap?.period === "rolling30Days" && { availableAt: writesCap.availableAt }),
-        limit: shortOfNew ? (writesCap?.period ?? null) : null,
-        minutes: plan.minutes,
-        questions: planned,
-        status: "short",
+    if (running) return unchanged({ id: running.id, status: "running" });
+    await releaseExpiredMockItems(tx, userId);
+    const reuse = await canReuseMockItems(tx, userId);
+    const { candidates, plan } = await planFromBank({
+      client: tx,
+      goal,
+      option,
+      setup,
+      userId,
+      reuse,
+    });
+    if (!isCompleteMock({ option, setup, plan })) {
+      await tx.goal.update({
+        where: { id: goal.id },
+        data: { requestedMock: { kind: option.kind, area: option.area, day: option.day } },
       });
+      await oweFollowUps({
+        db: tx,
+        userId,
+        followUps: [
+          {
+            kind: "prepareMockSupply",
+            input: { goalId: goal.id, examBlueprintId: goal.examBlueprintId, later: reuse },
+          },
+        ],
+      });
+      return { status: "preparing" };
     }
-
-    if (planned < MIN_CHECKPOINT_QUESTIONS && !(planned === 0 && asksEssays)) {
-      return unchanged({ status: "notEnoughQuestions" });
-    }
-
     const now = new Date();
 
     const conditions = toConditions({ candidates, goal, option, plan, setup });
@@ -202,6 +226,19 @@ export async function createAnytimeMock({
       },
     });
 
+    await claimMockItems({ tx, userId, conditions, now, mockExamId: created.id });
+    await tx.goal.update({ where: { id: goal.id }, data: { requestedMock: DbNull } });
+    if (!reuse)
+      await oweFollowUps({
+        db: tx,
+        userId,
+        followUps: [
+          {
+            kind: "prepareMockSupply",
+            input: { goalId: goal.id, examBlueprintId: goal.examBlueprintId, later: true },
+          },
+        ],
+      });
     // The speaking paper is written while the learner sits the papers before it.
     if (conditions.sections.some((section) => section.kind === "speaking")) {
       await oweFollowUps({

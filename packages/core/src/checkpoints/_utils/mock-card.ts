@@ -5,7 +5,7 @@ import { getExamStartTime } from "../../exams/mocks/_utils/mock-conditions";
 import { getBankTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { readMockStructure } from "../../exams/mocks/_utils/read-mock-structure";
-import { countPlannedQuestions, outlineMock } from "../../exams/mocks/mock-plan";
+import { countPlannedQuestions } from "../../exams/mocks/mock-plan";
 import { type GoalPlanSource } from "../../learner/_utils/goal-plan-source";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { readFinishedMockCount } from "../../learner/facts/finished-mocks";
@@ -17,7 +17,6 @@ import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { getTestSkillIds } from "../../sessions/_utils/review-skills";
-import { MIN_CHECKPOINT_QUESTIONS } from "../checkpoint-rules";
 import { toMockConditions } from "../weekly-challenge-rules";
 
 /** Future mocks show exam conditions, since the bank will grow before their questions are selected. */
@@ -74,20 +73,11 @@ export async function loadMockCard({
     userId: goal.userId,
   });
 
-  const isAhead = date.getTime() > today.getTime();
-
-  const plan =
-    !isAhead && countPlannedQuestions(planned) >= MIN_CHECKPOINT_QUESTIONS
-      ? planned
-      : outlineMock({
-          clock: identity ? planned.minutes : undefined,
-          day: planned.day,
-          essays,
-          fullLength: planned.fullLength,
-          structure,
-        });
-
+  const plan = planned.outline;
   return {
+    preparing:
+      date.getTime() <= today.getTime() &&
+      countPlannedQuestions(planned) !== countPlannedQuestions(plan),
     conditions: toMockConditions({ plan, structure, typed }),
     startTime: getExamStartTime({ day: plan.day, edition: content?.edition ?? null }),
     timeZone: content?.edition.timeZone ?? null,

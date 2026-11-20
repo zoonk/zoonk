@@ -151,6 +151,10 @@ export const checkpointPaths = {
       },
       requestParams: { path: challengePathParamsSchema },
       responses: {
+        "202": {
+          description: "The mock needs questions",
+          content: { "application/json": { schema: z.object({ status: z.literal("preparing") }) } },
+        },
         "200": {
           content: { "application/json": { schema: challengeStartResponseSchema } },
           description: "Where it's played",
