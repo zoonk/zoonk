@@ -1753,7 +1753,12 @@ function writeFix({
   return writePlanInputs(async (tx) => {
     await lockFixPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
-    await applyFixChanges(tx, { changes, context: { fixId: randomUUID(), now: new Date() }, unit });
+
+    await applyFixChanges(tx, {
+      changes,
+      context: { fixId: randomUUID(), media: new Map(), now: new Date() },
+      unit,
+    });
   });
 }
 

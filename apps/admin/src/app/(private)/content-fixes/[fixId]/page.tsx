@@ -23,7 +23,7 @@ import { ContentFixChanges } from "../_components/content-fix-changes";
 import { RevertForm, ReviewBar, ReviewBarSkeleton } from "../_components/content-fix-decision";
 import { ContentFixEffects } from "../_components/content-fix-effects";
 import { ContentFixTechnicalDetails, proposalFacts } from "../_components/content-fix-facts";
-import { ContentFixVoice } from "../_components/content-fix-voice";
+import { ContentFixMedia } from "../_components/content-fix-media";
 import {
   contentFixState,
   contentFixStatusLabels,
@@ -269,7 +269,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
               approveLabel="Approve with passkey"
               batchId={fix.batchId}
               finishing={isProposed ? 0 : 1}
-              fixIds={isProposed && !fix.voiceOwedAt ? [fix.id] : []}
+              fixIds={isProposed && !fix.mediaOwedAt ? [fix.id] : []}
               hasPasskey={viewer.hasPasskey}
               reject={isProposed ? { fixId: fix.id } : undefined}
               settingsUrl={getMainPageUrl({ locale: "en", path: "/profile" })}
@@ -283,14 +283,14 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
 
           <AdminSection title="Changes" titleClassName="text-lg leading-6">
             <ContentFixChanges fix={fix} />
-            {fix.status === "proposed" && <ContentFixVoice fix={fix} />}
+            {fix.status === "proposed" && <ContentFixMedia fix={fix} />}
           </AdminSection>
 
           <AdminSection title="What else approving does">
             <ContentFixEffects fix={fix} />
           </AdminSection>
 
-          {fix.status === "proposed" && !fix.voiceOwedAt ? (
+          {fix.status === "proposed" && !fix.mediaOwedAt ? (
             <p className="text-muted-foreground text-compact max-w-2xl text-pretty">
               Approving applies exactly the changes above and takes a passkey, so only you can apply
               a fix. Rejecting changes nothing.

@@ -8,6 +8,7 @@ export const UNIT_KIND = { Sentence: "sentence", Word: "word" } as const;
 export const TABLE = { Sentence: sql`sentences`, Word: sql`words` } as const;
 
 export type VocabularyRow = {
+  organization: { slug: string };
   organizationId: string;
   romanization: string | null;
   targetLanguage: string;
@@ -18,7 +19,12 @@ export async function loadRow(
   db: TransactionClient,
   { id, model }: { id: string; model: VocabularyModel },
 ): Promise<VocabularyRow | null> {
-  const select = { organizationId: true, romanization: true, targetLanguage: true } as const;
+  const select = {
+    organization: { select: { slug: true } },
+    organizationId: true,
+    romanization: true,
+    targetLanguage: true,
+  } as const;
 
   if (model === "Word") {
     const word = await db.word.findUnique({ select: { ...select, word: true }, where: { id } });

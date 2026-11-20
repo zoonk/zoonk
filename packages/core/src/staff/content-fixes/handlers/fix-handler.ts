@@ -2,6 +2,7 @@ import { type Sql, type TransactionClient } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type Json, type Resolution, refuse } from "../_utils/resolved-change";
+import { type ProducedContentFixMedia } from "../media-schema";
 
 export const idSchema = uuidSchema();
 
@@ -26,7 +27,11 @@ export type PlanRoots = {
   lessonIds?: string[];
 };
 
-export type FixContext = { fixId: string; now: Date };
+export type FixContext = {
+  fixId: string;
+  media: ReadonlyMap<string, ProducedContentFixMedia>;
+  now: Date;
+};
 
 type FixHandlerSpec<Model extends string, Proposed, Stored extends { id: string }> = {
   model: Model;

@@ -2,7 +2,7 @@ import { type ContentFix } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { getContentFixReviewUrl } from "../batches";
 import { contentFixChangesSchema, contentFixEffectsSchema } from "../contract";
-import { contentFixVoiceSchema } from "../voice-schema";
+import { readContentFixMedia } from "../media-schema";
 import { type PreparedFix } from "./prepare-content-fix";
 
 export function describePreparedFix({
@@ -30,6 +30,8 @@ export function toContentFixView(fix: ContentFix) {
     effects: contentFixEffectsSchema.parse(fix.effects),
     feedbackId: fix.feedbackId,
     id: fix.id,
+    media: readContentFixMedia(fix.media),
+    mediaOwed: fix.mediaOwedAt !== null,
     reason: fix.reason,
     revertsId: fix.revertsId,
     reviewUrl: getContentFixReviewUrl(fix.id),
@@ -37,8 +39,6 @@ export function toContentFixView(fix: ContentFix) {
     status: fix.status,
     unit: fix.unit,
     unitId: fix.unitId,
-    voice: contentFixVoiceSchema.nullable().parse(fix.voice),
-    voiceOwed: fix.voiceOwedAt !== null,
   };
 }
 

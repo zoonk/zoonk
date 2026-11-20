@@ -62,11 +62,12 @@ model ContentFix {
   /// The WebAuthn challenge the approval's assertion must sign, cleared once an approval uses it.
   approvalChallenge String?          @map("approval_challenge")
   approvalExpiresAt DateTime?        @map("approval_expires_at")
-  /// Set while the fix waits for the clip of its new word or sentence; approving waits for it too.
-  voiceOwedAt       DateTime?        @map("voice_owed_at")
-  /// Core's `contentFixVoiceSchema`: the clip voiced for the fix's text, which approving writes with
-  /// it, or why it couldn't be voiced.
-  voice             Json?
+  /// Set until all proposal media is ready.
+  mediaOwedAt       DateTime?        @map("voice_owed_at")
+  /// Required once released.
+  media             Json?
+  /// Unused.
+  voice             Json?            @ignore
   createdAt         DateTime         @default(now()) @map("created_at")
   updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at")
 

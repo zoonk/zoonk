@@ -155,20 +155,23 @@ async function submitBatch(
         changes: fix.changes,
         effects: fix.effects,
         feedbackId: proposal.feedbackId,
+        media: fix.media.map((need) => ({ need, result: null })),
+        mediaOwedAt: fix.media.length > 0 ? now : null,
         proposerClientId: actor.clientId,
         proposerId: actor.userId,
         reason: proposal.reason,
         revertsId: proposal.revertsId,
         unit: fix.unit.kind,
         unitId: fix.unit.id,
-        voiceOwedAt: fix.effects.some((effect) => effect.kind === "voiceOwed") ? now : null,
       })),
     });
 
     await oweFollowUps({
       db: tx,
       followUps: created.flatMap((fix) =>
-        fix.voiceOwedAt ? [{ input: { fixId: fix.id }, kind: "voiceContentFix" as const }] : [],
+        fix.mediaOwedAt
+          ? [{ input: { fixId: fix.id }, kind: "prepareContentFixMedia" as const }]
+          : [],
       ),
       userId: actor.userId,
     });

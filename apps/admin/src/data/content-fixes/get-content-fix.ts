@@ -6,7 +6,7 @@ import {
   contentFixChangesSchema,
   contentFixEffectsSchema,
 } from "@zoonk/core/staff/content-fixes/contract";
-import { contentFixVoiceSchema } from "@zoonk/core/staff/content-fixes/voice-schema";
+import { readContentFixMedia } from "@zoonk/core/staff/content-fixes/media-schema";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -190,9 +190,9 @@ async function toDetails(fixes: readonly FixRow[]) {
     changes: changes[index] ?? [],
     effects: contentFixEffectsSchema.parse(fix.effects),
     location: locate(fix),
+    media: readContentFixMedia(fix.media),
     names,
     rowLabels,
-    voice: contentFixVoiceSchema.nullable().parse(fix.voice),
   }));
 }
 

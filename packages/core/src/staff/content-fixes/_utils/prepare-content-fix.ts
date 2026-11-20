@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
@@ -6,12 +7,18 @@ import { type ContentFixEffect, type StoredChange, contentFixChangesSchema } fro
 import { type FixTarget } from "../handlers/fix-handler";
 import { numericScreenProblem } from "../handlers/numeric-screen";
 import { findStoredHandler, prepareProposedChange } from "../handlers/registry";
+import { type ContentFixMediaNeed, normalizeContentFixMediaNeed } from "../media-schema";
 import { lessonProblem } from "./lesson-problem";
 import { changesLearnerLesson } from "./lesson-version-effect";
 import { type FixUnit, type Json, type Refusal, type Resolution, refuse } from "./resolved-change";
 import { isVocabularyUnit, vocabularyEffects } from "./vocabulary-unit";
 
-export type PreparedFix = { changes: StoredChange[]; effects: ContentFixEffect[]; unit: FixUnit };
+export type PreparedFix = {
+  changes: StoredChange[];
+  effects: ContentFixEffect[];
+  media: ContentFixMediaNeed[];
+  unit: FixUnit;
+};
 
 /** Reads what one change touches now and returns what it would write. */
 export type ChangeResolver = (db: TransactionClient) => Promise<Resolution<unknown>>;
@@ -278,6 +285,17 @@ export async function prepareContentFix(
     return refuse(problem);
   }
 
+  const needs = accepted
+    .flatMap((change) => change.media ?? [])
+    .map((need) => normalizeContentFixMediaNeed(need));
+
+  const media = new Map(needs.map((need) => [need.key, need]));
+  const conflicting = needs.find((need) => !isDeepStrictEqual(media.get(need.key), need));
+
+  if (conflicting) {
+    return refuse(`The same media key has different inputs: ${conflicting.key}.`);
+  }
+
   const lessonVersion: ContentFixEffect[] =
     first.unit.kind === "lesson" && stored.some((change) => changesLearnerLesson(change))
       ? [{ kind: "lessonVersion", lessonId: first.unit.id }]
@@ -292,5 +310,13 @@ export async function prepareContentFix(
       : []),
   ];
 
-  return { fix: { changes: stored, effects: uniqueEffects(effects), unit: first.unit }, ok: true };
+  return {
+    fix: {
+      changes: stored,
+      effects: uniqueEffects(effects),
+      media: [...media.values()],
+      unit: first.unit,
+    },
+    ok: true,
+  };
 }
