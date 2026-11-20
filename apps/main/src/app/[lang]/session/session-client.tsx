@@ -288,7 +288,11 @@ export function SessionSummaryClient({
             stayingHere(),
           );
 
-          if (typeof result === "string" || result.answer === null) {
+          if (result === "left") {
+            return "left";
+          }
+
+          if (result === "failed" || result.answer === null) {
             return null;
           }
 

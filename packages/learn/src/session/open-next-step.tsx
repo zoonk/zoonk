@@ -3,7 +3,7 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { TaskBody } from "../_components/task-layout";
 import { LearnLink } from "../learn-link";
 import { useSessionAction } from "./use-session-action";
@@ -23,14 +23,10 @@ export function OpenNextStep({
 
   const { failed, run } = useSessionAction({ action: openNextStep });
 
-  const opened = useRef(false);
   const openNext = useEffectEvent(run);
 
   useEffect(() => {
-    if (!opened.current) {
-      opened.current = true;
-      openNext();
-    }
+    openNext();
   }, []);
 
   return (

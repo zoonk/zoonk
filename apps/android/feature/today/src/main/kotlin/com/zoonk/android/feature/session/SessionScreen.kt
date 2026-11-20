@@ -179,7 +179,9 @@ private fun SavedDay(
     sessionId: UUID,
     todayDay: TodayRead.Day?,
 ) {
-    val read by app.studySessions.day[sessionId].collectShown()
+    val resource = app.studySessions.day[sessionId]
+    val read by resource.collectShown()
+    val fresh by resource.freshState.collectAsStateWithLifecycle()
     val loading = read == LoadState.Idle || read == LoadState.Loading
     // A tap on Today names a step of the saved day Today holds: it shows at once, and the session's read replaces it.
     val held =
@@ -188,7 +190,7 @@ private fun SavedDay(
             ?.session
             ?.saved()
             ?.takeIf { loading && it.id == sessionId && it.opened(route.blockId) != null }
-    val session = read.value ?: held
+    val session = read.value?.takeIf { route.stopped || it.nextBlockId != null || fresh is LoadState.Loaded } ?: held
 
     when {
         session != null -> {
@@ -226,7 +228,7 @@ private fun SavedDay(
             }
         }
 
-        read is LoadState.Failed -> {
+        read is LoadState.Failed || fresh is LoadState.Failed -> {
             TaskScaffold(onClose = navigator::closeTask) { padding ->
                 LoadFailedMessage(onRetry = { app.studySessions.day[sessionId].invalidate() }, modifier = Modifier.padding(padding))
             }
@@ -268,12 +270,14 @@ private fun SessionSummaryContent(
         if (reason == SummaryExit.DayChanged) app.today.today.invalidate()
     }
     val visitId = rememberSaveable(session.id) { UUID.randomUUID() }
-    val read by app.studySessions.summary[session.id].collectShown()
+    val resource = app.studySessions.summary[session.id]
+    val read by resource.collectShown()
+    val fresh by resource.freshState.collectAsStateWithLifecycle()
     val learner by app.learnerSummary.summary.collectShown()
-    val summary = (read as? LoadState.Loaded)?.value
+    val summary = read.value?.takeIf { fresh is LoadState.Loaded }
 
     if (summary == null) {
-        if (read is LoadState.Failed) {
+        if (read is LoadState.Failed || fresh is LoadState.Failed) {
             TaskScaffold(onClose = navigator::closeTask) { padding ->
                 LoadFailedMessage(onRetry = { app.studySessions.summary[session.id].invalidate() }, modifier = Modifier.padding(padding))
             }

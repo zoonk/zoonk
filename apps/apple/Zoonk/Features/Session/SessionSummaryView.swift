@@ -37,18 +37,27 @@ struct SessionSummaryView: View {
   }
 
   var body: some View {
+    let session = store.session(id: sessionID)
     let summary = store.summary(id: sessionID)
+    let dayIsReady = stopped || isExplicit || session.freshValue.map { $0.nextBlock == nil } == true
     let moments = summary.freshValue.map {
       CompletionMoments(certificates: $0.certificates, milestone: $0.ceremony)
     }
-    let isReady = isVisible && moments != nil && moments == recoveredMoments
+    let isReady = isVisible && dayIsReady && moments != nil && moments == recoveredMoments
+    let unfinished = !stopped && summary.freshValue?.finished == false
+    let dayChanged = unfinished || decision == .notReady
+    let leave = dayChanged || (decision == .seen && !isExplicit)
 
     Group {
-      if let decision, decision == .first || isExplicit, let value = summary.value {
+      if let decision, decision == .first || (isExplicit && decision == .seen), !unfinished,
+        let value = summary.value
+      {
         content(value)
           .environment(\.celebrates, decision == .first)
       } else if case .failed = visit.outcome {
         loadFailure { claimVisit() }
+      } else if !dayIsReady, case .failed = session.freshState {
+        loadFailure { await session.refresh() }
       } else if case .failed = summary.freshState {
         loadFailure { await summary.refresh() }
       } else {
@@ -57,14 +66,15 @@ struct SessionSummaryView: View {
       }
     }
     .loads(summary)
-    .completionMoments(isVisible ? moments : nil) { recoveredMoments = $0 }
-    .onChange(of: isReady ? visitID : nil, initial: true) { _, readyVisitID in
+    .completionMoments(isVisible && dayIsReady ? moments : nil) { recoveredMoments = $0 }
+    .onChange(of: isReady && !unfinished ? visitID : nil, initial: true) { _, readyVisitID in
       if readyVisitID != nil, visit.outcome == nil, !visit.isRunning {
         claimVisit()
       }
     }
-    .onChange(of: isReady && !isExplicit && decision != nil && decision != .first) { _, leave in
-      if leave {
+    .onChange(of: isReady && !isBusy && leave, initial: true) { _, shouldLeave in
+      if shouldLeave {
+        if dayChanged { today.today.invalidate() }
         router.openStudy(.today)
       }
     }
