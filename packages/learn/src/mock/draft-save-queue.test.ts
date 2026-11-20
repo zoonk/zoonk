@@ -16,10 +16,12 @@ function setup() {
   const statuses: DraftSaveStatus[] = [];
   const stored: Draft[] = [];
   const failed: Draft[] = [];
+  const pendingSnapshots: Draft[][] = [];
 
   const queue = createDraftSaveQueue<Draft>({
     keyOf: (draft) => draft.itemId,
     onFailed: (draft) => failed.push(draft),
+    onPendingChange: (pending) => pendingSnapshots.push(pending),
     onStatus: (status) => statuses.push(status),
     onStored: (draft) => stored.push(draft),
     save: (draft) =>
@@ -33,7 +35,7 @@ function setup() {
       }),
   });
 
-  return { failed, queue, requests, statuses, stored };
+  return { failed, pendingSnapshots, queue, requests, statuses, stored };
 }
 
 describe(createDraftSaveQueue, () => {
@@ -228,5 +230,63 @@ describe(createDraftSaveQueue, () => {
 
     expect(idle).toBe(true);
     await expect(queue.idle()).resolves.toBeUndefined();
+  });
+
+  it("reports unsent answers in order, including the one going out and newer replacements", async () => {
+    const { pendingSnapshots, queue, requests } = setup();
+
+    queue.add({ answer: "A", itemId: "q1" });
+    queue.add({ answer: "B", itemId: "q2" });
+    queue.add({ answer: "A2", itemId: "q1" });
+
+    expect(queue.pending()).toStrictEqual([
+      { answer: "A2", itemId: "q1" },
+      { answer: "B", itemId: "q2" },
+    ]);
+
+    expect(pendingSnapshots.at(-1)).toStrictEqual([
+      { answer: "A2", itemId: "q1" },
+      { answer: "B", itemId: "q2" },
+    ]);
+
+    requests[0]?.store();
+    await flushPromises();
+
+    expect(pendingSnapshots.at(-1)).toStrictEqual([
+      { answer: "B", itemId: "q2" },
+      { answer: "A2", itemId: "q1" },
+    ]);
+
+    requests[1]?.store();
+    await flushPromises();
+    requests[2]?.store();
+    await flushPromises();
+    expect(pendingSnapshots.at(-1)).toStrictEqual([]);
+  });
+
+  it("stopping ends retries and ignores late results without clearing what was kept", async () => {
+    const { failed, pendingSnapshots, queue, requests, stored } = setup();
+
+    queue.add({ answer: "A", itemId: "q1" });
+    requests[0]?.fail();
+    await flushPromises();
+    expect(pendingSnapshots.at(-1)).toStrictEqual([{ answer: "A", itemId: "q1" }]);
+
+    const beforeStop = pendingSnapshots.length;
+    queue.stop();
+    expect(pendingSnapshots).toHaveLength(beforeStop);
+    expect(vi.getTimerCount()).toBe(0);
+
+    // A StrictMode remount starts the same queue again and ignores an older in-flight send.
+    queue.start();
+    queue.add({ answer: "B", itemId: "q2" });
+    const inFlight = requests[1];
+    queue.stop();
+    queue.start();
+    inFlight?.store();
+    await flushPromises();
+
+    expect(stored).toStrictEqual([]);
+    expect(failed).toStrictEqual([{ answer: "A", itemId: "q1" }]);
   });
 });

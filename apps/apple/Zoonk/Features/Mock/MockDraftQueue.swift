@@ -1,6 +1,52 @@
 import Foundation
 import Observation
 
+/// One learner's mock answers not yet stored on the server, kept on the device so closing the mock
+/// or losing the app offline never loses them.
+struct UnsentMockDrafts {
+  private let key: String
+  private let defaults: UserDefaults
+
+  init(learnerId: String, blockId: String, defaults: UserDefaults = .standard) {
+    key = "mock.unsent.\(learnerId).\(blockId)"
+    self.defaults = defaults
+  }
+
+  func read() -> [MockDraft] {
+    defaults.data(forKey: key).flatMap { try? JSONDecoder().decode([MockDraft].self, from: $0) }
+      ?? []
+  }
+
+  func write(_ drafts: [MockDraft]) {
+    if drafts.isEmpty {
+      defaults.removeObject(forKey: key)
+    } else if let data = try? JSONEncoder().encode(drafts) {
+      defaults.set(data, forKey: key)
+    }
+  }
+
+  func clear() {
+    defaults.removeObject(forKey: key)
+  }
+}
+
+/// Keeps the newest draft for each question in queue order, including typed text waiting to send.
+func combinePendingMockDrafts(_ pending: [MockDraft], unsavedText: MockDraft?) -> [MockDraft] {
+  var result: [MockDraft] = []
+  var indexes: [String: Int] = [:]
+
+  for draft in pending + (unsavedText.map { [$0] } ?? []) {
+    if let index = indexes[draft.itemId] {
+      result[index] = draft
+    } else {
+      indexes[draft.itemId] = result.count
+      result.append(draft)
+    }
+  }
+
+  return result
+}
+
 /// Sends answers one after another, so an older answer to a question never lands after a newer one.
 /// A newer answer to a question still waiting replaces the older one, since each holds everything
 /// about its question. A refused save isn't tried again: nothing would change, and its question stays
@@ -23,6 +69,7 @@ final class MockDraftQueue {
     case stored
     case refused
     case unreachable
+    case stop
   }
 
   private(set) var status: Status = .saved
@@ -35,10 +82,11 @@ final class MockDraftQueue {
     return draft.answer != failedDrafts[draft.itemId]?.answer || draft.answer == stored?.answer
   }
 
+  @ObservationIgnored var onPendingChange: () -> Void
   @ObservationIgnored private let save: (MockDraft) async -> Outcome
   @ObservationIgnored private let retryDelay: (Int) -> Duration
   @ObservationIgnored private var waiting: [MockDraft] = []
-  @ObservationIgnored private var sending = false
+  @ObservationIgnored private var sending: MockDraft?
   @ObservationIgnored private var attempt = 0
   @ObservationIgnored private var refused: Set<String> = []
   @ObservationIgnored private var retryTask: Task<Void, Never>?
@@ -49,13 +97,20 @@ final class MockDraftQueue {
     retryDelay: @escaping (Int) -> Duration = { attempt in
       .seconds(min(1 << min(attempt, 4), 15))
     },
+    onPendingChange: @escaping () -> Void = {},
     save: @escaping (MockDraft) async -> Outcome
   ) {
     self.retryDelay = retryDelay
+    self.onPendingChange = onPendingChange
     self.save = save
   }
 
-  var isBusy: Bool { sending || !waiting.isEmpty }
+  var isBusy: Bool { sending != nil || !waiting.isEmpty }
+
+  /// The newest answer to each question not stored yet, the one going out included, in order.
+  var pending: [MockDraft] {
+    combinePendingMockDrafts((sending.map { [$0] } ?? []) + waiting, unsavedText: nil)
+  }
 
   func add(_ draft: MockDraft) {
     guard !isStopped else {
@@ -68,6 +123,7 @@ final class MockDraftQueue {
       waiting.append(draft)
     }
 
+    onPendingChange()
     sendNext()
   }
 
@@ -85,7 +141,7 @@ final class MockDraftQueue {
   }
 
   func retryNow() {
-    guard let retryTask else {
+    guard !isStopped, let retryTask else {
       return
     }
 
@@ -94,7 +150,7 @@ final class MockDraftQueue {
     sendNext()
   }
 
-  /// For good: its screen is gone, so an answer on its way is dropped, never sent again.
+  /// Ends this screen's retry loop without clearing what the device already kept.
   func stop() {
     isStopped = true
     sendTask?.cancel()
@@ -102,18 +158,18 @@ final class MockDraftQueue {
     retryTask?.cancel()
     retryTask = nil
     waiting.removeAll()
-    sending = false
+    sending = nil
     settle()
   }
 
   private func sendNext() {
-    guard !isStopped, !sending, retryTask == nil, !waiting.isEmpty else {
+    guard !isStopped, sending == nil, retryTask == nil, !waiting.isEmpty else {
       settle()
       return
     }
 
     let draft = waiting.removeFirst()
-    sending = true
+    sending = draft
     settle()
 
     sendTask = Task {
@@ -123,17 +179,17 @@ final class MockDraftQueue {
         return
       }
 
-      sending = false
-      if outcome == .stored {
-        storedDrafts[draft.itemId] = draft
-        failedDrafts[draft.itemId] = nil
-        refused.remove(draft.itemId)
-      } else {
-        failedDrafts[draft.itemId] = draft
-      }
+      sending = nil
 
       switch outcome {
+      case .stop:
+        isStopped = true
+        retryTask?.cancel()
+        retryTask = nil
+        waiting.removeAll()
+        settle()
       case .unreachable:
+        failedDrafts[draft.itemId] = draft
         // Keep it first in line, unless a newer answer to its question replaced it meanwhile.
         if !waiting.contains(where: { $0.itemId == draft.itemId }) {
           waiting.insert(draft, at: 0)
@@ -141,9 +197,18 @@ final class MockDraftQueue {
 
         scheduleRetry()
         settle()
-      case .stored, .refused:
+      case .stored:
+        storedDrafts[draft.itemId] = draft
+        failedDrafts[draft.itemId] = nil
+        refused.remove(draft.itemId)
         attempt = 0
-        if outcome == .refused { refused.insert(draft.itemId) }
+        onPendingChange()
+        sendNext()
+      case .refused:
+        failedDrafts[draft.itemId] = draft
+        refused.insert(draft.itemId)
+        attempt = 0
+        onPendingChange()
         sendNext()
       }
     }

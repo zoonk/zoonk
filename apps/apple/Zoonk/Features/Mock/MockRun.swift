@@ -49,27 +49,52 @@ final class MockRun {
 
   @ObservationIgnored private let store: ExamStore
   @ObservationIgnored private let blockId: String
+  @ObservationIgnored private let defaults: UserDefaults
   @ObservationIgnored private let now: () -> Date
+  @ObservationIgnored private let owner: SessionOwner
+  @ObservationIgnored private var unsent: UnsentMockDrafts?
   @ObservationIgnored private var adopted: String?
   @ObservationIgnored private var shown: (itemId: String, at: ContinuousClock.Instant)?
   @ObservationIgnored private var unsavedText: MockDraft?
   @ObservationIgnored private var textTask: Task<Void, Never>?
   @ObservationIgnored private let taps = ScreenTasks()
 
-  init(store: ExamStore, blockId: String, now: @escaping () -> Date = { .now }) {
+  init(
+    store: ExamStore,
+    blockId: String,
+    defaults: UserDefaults = .standard,
+    now: @escaping () -> Date = { .now }
+  ) {
     self.store = store
     self.blockId = blockId
+    self.defaults = defaults
     self.now = now
     let mock = store.mock(blockId: blockId)
     self.mock = mock
-    queue = MockDraftQueue { [store] draft in
-      switch await store.write({ api, token in
-        try await api.saveAnswer(token: token, blockId: blockId, draft: draft)
-      }) {
+    let session = store.cache.session
+    let owner = SessionOwner(session: session.authenticatedSession)
+    self.owner = owner
+    self.unsent = session.account.map {
+      UnsentMockDrafts(learnerId: $0.user.id, blockId: blockId, defaults: defaults)
+    }
+    queue = MockDraftQueue { [store, owner] draft in
+      if let expected = owner.session, store.cache.session.authenticatedSession != expected {
+        return .stop
+      }
+
+      return
+        switch await store.write({ api, token in
+          try await api.saveAnswer(token: token, blockId: blockId, draft: draft)
+        })
+      {
       case .done(true): .stored
-      case .done(false), .obsolete: .refused
+      case .done(false): .refused
+      case .obsolete: .stop
       case .failed: .unreachable
       }
+    }
+    queue.onPendingChange = { [weak self] in
+      self?.keepOnDevice()
     }
   }
 
@@ -106,17 +131,52 @@ final class MockRun {
       return
     }
 
+    if owner.session == nil {
+      owner.session = store.cache.session.authenticatedSession
+      unsent = store.cache.session.account.map {
+        UnsentMockDrafts(learnerId: $0.user.id, blockId: blockId, defaults: defaults)
+      }
+    }
+
     adopted = key
+    textTask?.cancel()
+    textTask = nil
+    unsavedText = nil
     queue.forgetRefusals()
     shown = nil
-    drafts = Dictionary(
+
+    let serverDrafts = Dictionary(
       (view.current?.drafts ?? []).map { ($0.itemId, $0) }, uniquingKeysWith: { _, last in last })
-    initiallyStored = drafts
+    initiallyStored = serverDrafts
+
+    var kept: [MockDraft] = []
+
+    if view.status == .finished || view.status == .expired {
+      unsent?.clear()
+    } else if view.status == .running {
+      let questionIds = Set((view.current?.questions ?? []).map(\.itemId))
+      let stored = unsent?.read() ?? []
+      kept = stored.filter { questionIds.contains($0.itemId) && serverDrafts[$0.itemId] != $0 }
+
+      if kept.count != stored.count {
+        unsent?.write(kept)
+      }
+    }
+
+    drafts = serverDrafts
+    for draft in kept {
+      drafts[draft.itemId] = draft
+    }
+
     position = view.current?.resume ?? 0
     reached = position
     changed = []
     questionTimeUp = Self.hasExpiredFinalQuestion(view)
-    sectionTimeUp = view.current.map { $0.deadline <= .now } ?? false
+    sectionTimeUp = view.current.map { $0.deadline <= now() } ?? false
+
+    for draft in kept {
+      queue.add(draft)
+    }
   }
 
   /// A partial answer, or text as typed, stays on the device; the mock saves only its answer.
@@ -149,6 +209,7 @@ final class MockRun {
     draft.answer = answer
     drafts[question.itemId] = draft
     unsavedText = draft
+    keepOnDevice()
     textTask?.cancel()
     textTask = Task { [weak self] in
       try? await Task.sleep(for: Self.textSaveDelay)
@@ -169,6 +230,8 @@ final class MockRun {
   /// In a forward-only section a question is saved as reached at once, so the ones before it stay
   /// behind the learner.
   func show(_ itemId: String) {
+    if let view { adopt(view) }
+    guard question?.itemId == itemId else { return }
     shown = (itemId, .now)
 
     if moves.forwardOnly, drafts[itemId] == nil {
@@ -400,6 +463,11 @@ final class MockRun {
     _ = await within(Self.leaveWait) { [queue] in await queue.idle() }
   }
 
+  private func keepOnDevice() {
+    guard let unsent, owner.session == store.cache.session.authenticatedSession else { return }
+    unsent.write(combinePendingMockDrafts(queue.pending, unsavedText: unsavedText))
+  }
+
   private func persist(_ draft: MockDraft) {
     drafts[draft.itemId] = draft
     queue.add(draft)
@@ -457,5 +525,14 @@ func within<Value: Sendable>(
     let first = await group.next() ?? nil
     group.cancelAll()
     return first
+  }
+}
+
+@MainActor
+private final class SessionOwner {
+  var session: AuthenticatedSession?
+
+  init(session: AuthenticatedSession?) {
+    self.session = session
   }
 }
