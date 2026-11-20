@@ -35,4 +35,4 @@ What each platform needs, with where each claim comes from and when it was check
 
 ## Not established
 
-Best posting times and cadence for Zoonk's two audiences, ideal video length, ideal slide count, and whether music helps a carousel. Decide these from Zoonk's own results, recorded in each campaign's `posts.md`.
+Best posting times and cadence for Zoonk's two audiences, ideal video length, ideal slide count, and whether music helps a carousel. Decide these from Zoonk's own results, recorded in each campaign's posts files.
