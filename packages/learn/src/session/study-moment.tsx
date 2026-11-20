@@ -20,12 +20,7 @@ import { MomentToday } from "./moment-today";
 import { pickDayMoment } from "./pick-day-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
-import {
-  BlockRow,
-  SessionQueueAsideContent,
-  SessionQueueSection,
-  useSessionQueueAside,
-} from "./session-queue";
+import { BlockRow, SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView } from "./session-types";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
@@ -35,7 +30,7 @@ function NextBlock({ block }: { block: StudyBlock }) {
   const t = useExtracted();
 
   return (
-    <section className="without-aside:hidden flex flex-col gap-2" data-slot="study-moment-next">
+    <section className="flex flex-col gap-2" data-slot="study-moment-next">
       <PageSectionTitle>{t("Up next")}</PageSectionTitle>
       <ListGroup role="list">
         <BlockRow block={block} state="next" />
@@ -184,12 +179,7 @@ export function StudyMoment({
 
         <DayMoment buddy={buddy} {...dayMoment} />
 
-        {nextBlock && (
-          <>
-            <SessionQueueSection aside={aside} />
-            {testChapterId && onStartTestOut && <NextBlock block={nextBlock} />}
-          </>
-        )}
+        {nextBlock && testChapterId && onStartTestOut && <NextBlock block={nextBlock} />}
 
         {testChapterId && onStartTestOut && (
           <TestOutStartLink onStart={() => onStartTestOut(testChapterId)} />

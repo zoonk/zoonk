@@ -78,17 +78,6 @@ export function useSessionQueueAside(
   return { children, label: t("Today"), title: timeLeft };
 }
 
-export function SessionQueueSection({ aside }: { aside: TaskFrameAside }) {
-  return (
-    <section aria-label={aside.label} className="with-aside:hidden flex flex-col gap-2">
-      {(aside.title || aside.meta) && (
-        <TaskAsideHeader className="h-auto px-0 xl:h-auto" meta={aside.meta} title={aside.title} />
-      )}
-      {aside.children}
-    </section>
-  );
-}
-
 export function SessionQueueAsideContent({ aside }: { aside: TaskFrameAside }) {
   return (
     <TaskAsideContent className="without-aside:hidden with-aside:top-0 with-aside:group-data-aside/task:px-0 with-aside:group-data-aside/task:pt-0">
