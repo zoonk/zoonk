@@ -8131,6 +8131,7 @@ msgid "Leave blank"
 msgstr "답하지 않기"
 
 #: src/mock/mock-preparing.tsx
+#: src/today/today-day-status.tsx
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
 msgstr ""
@@ -13088,6 +13089,11 @@ msgstr "공부하고 싶다면 아래에서 다음 레슨을 시작해 보세요
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "편히 쉬세요!"
+
+#: src/today/today-day-status.tsx
+msgctxt "N-0-Mq"
+msgid "Your mock exam is being prepared."
+msgstr ""
 
 #: src/today/today-day-status.tsx
 msgctxt "Pg7r31"
