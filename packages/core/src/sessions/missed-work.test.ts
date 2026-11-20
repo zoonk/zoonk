@@ -29,8 +29,9 @@ function setToday(isoDate: string) {
   });
 }
 
-async function examGoal(userId: string, dailyMinutes = 30) {
+async function examGoal(userId: string, { chapterPerSkill = false } = {}) {
   const library = await planLibraryFixture({
+    chapterPerSkill,
     skills: [
       { area: "Math", lessons: 20, weight: 5 },
       { area: "Law", lessons: 20, weight: 3 },
@@ -39,7 +40,7 @@ async function examGoal(userId: string, dailyMinutes = 30) {
   });
 
   const { goal, plan } = await unplannedGoalFixture({
-    dailyMinutes,
+    dailyMinutes: 30,
     kind: "exam",
     settings: { startDate: "2020-09-28" },
     targetDate: new Date("2020-11-29T00:00:00Z"),
@@ -252,6 +253,44 @@ describe("work an earlier day left", () => {
     const rest = missed.slice(due.length);
     const thursday = await dueOn("2020-10-01");
     expect(thursday.slice(0, rest.length)).toStrictEqual(rest);
+  });
+
+  it("puts a missed day's lessons first even when today's lessons come earlier in the plan", async () => {
+    const user = await learner();
+    const { goal, plan } = await examGoal(user.id, { chapterPerSkill: true });
+
+    const monday = await openToday(goal.id);
+
+    const mondayItems = await prisma.planItem.findMany({
+      where: { lessonId: { in: lessonIds(monday) }, planId: plan.id },
+    });
+
+    const byLesson = new Map(mondayItems.map((item) => [item.lessonId, item]));
+    const firstSkillId = byLesson.get(lessonIds(monday)[0] ?? "")?.skillId;
+    const movedItems = mondayItems.filter((item) => item.skillId === firstSkillId);
+
+    await prisma.planItem.updateMany({
+      data: { scheduledFor: new Date("2020-09-29T00:00:00Z") },
+      where: { id: { in: movedItems.map((item) => item.id) } },
+    });
+
+    const moved = lessonIds(monday).filter((id) => byLesson.get(id)?.skillId === firstSkillId);
+    const behind = lessonIds(monday).filter((id) => byLesson.get(id)?.skillId !== firstSkillId);
+
+    setToday("2020-09-29");
+    const tuesday = await openToday(goal.id);
+
+    expect(moved.length).toBeGreaterThan(0);
+    expect(behind.length).toBeGreaterThan(0);
+    expect(lessonIds(tuesday).slice(0, behind.length)).toStrictEqual(behind);
+    expect(lessonIds(tuesday)).toStrictEqual(expect.arrayContaining(moved));
+
+    const saved = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: { in: lessonIds(tuesday) }, planId: plan.id },
+    });
+
+    expect(saved.flatMap((item) => item.lessonId ?? [])).toStrictEqual(lessonIds(tuesday));
   });
 
   it("keeps a missed day's lessons when the learner changes their time the next day", async () => {

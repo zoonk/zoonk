@@ -16,6 +16,7 @@ import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/
 import { getGoalDayMinutes } from "./day-minutes";
 import { getSessionChallenges } from "./day-stretch";
 import { loadExamStructure } from "./exam-structure";
+import { putLeftWorkFirst } from "./left-work-first";
 import { loadIdleListeningSkillIds } from "./load-practice";
 import { getDayOutlines } from "./outlining-stand-ins";
 import { type SelectedDayPlan } from "./selected-day-plan";
@@ -98,7 +99,6 @@ export async function loadDayPlan({
     ]);
 
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
-  const items: SessionPlanItem[] = plan?.items ?? [];
   const graph = parsePlanGraph(plan?.graph);
   const phases = parsePlanPhases(plan?.phases);
   const skills = goalPlan.skills.filter((skill) => !skill.removed);
@@ -123,7 +123,11 @@ export async function loadDayPlan({
     idleSkillIds,
     isFirstDay: previousSession === null,
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
-    items,
+    items: putLeftWorkFirst<SessionPlanItem>({
+      items: plan?.items ?? [],
+      left: selection?.left ?? [],
+      prerequisites,
+    }),
     lastSessionChallenges: getSessionChallenges(previousSession?.blocks ?? []),
     lastStudyDate,
     listeningSkillIds,
