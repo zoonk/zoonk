@@ -14,10 +14,12 @@ async function claude(args: string[], cwd: string, input: string) {
   const child = spawn("claude", args, {
     cwd,
     env: {
+      CLAUDE_CONFIG_DIR: process.env.CLAUDE_CONFIG_DIR,
       HOME: os.homedir(),
       LANG: "en_US.UTF-8",
       NODE_ENV: process.env.NODE_ENV,
       PATH: process.env.PATH,
+      USER: process.env.USER,
     },
     stdio: ["pipe", "pipe", "pipe"],
   });
