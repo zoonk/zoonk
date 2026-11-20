@@ -5,6 +5,7 @@ import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getKeptMonthStart } from "../exams/kept-month";
+import { unpinnedCourseSourceId } from "../goals/course-start-details";
 import { type GoalRebuildFollowUp } from "../goals/goal-rebuild-follow-up";
 import {
   getAnsweredQuestions,
@@ -165,7 +166,7 @@ async function planFromGraph({
   const state = {
     goal: { ...context.state.goal, targetDate: target.targetDate },
     graph:
-      firstCoursePlan && !followUp && goal.sourceCourseId
+      firstCoursePlan && !followUp && unpinnedCourseSourceId(goal)
         ? { ...skills, editionCandidate: true }
         : skills,
     settings: { ...context.state.settings, noticeDate: target.noticeDate },

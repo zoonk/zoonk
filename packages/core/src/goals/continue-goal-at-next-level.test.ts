@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -8,6 +9,7 @@ import { trackServerEvent } from "../analytics/server";
 import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-inputs";
 import { courseGoalFixture } from "../view-models/_test-utils/course-goal";
 import { continueGoalAtNextLevel } from "./continue-goal-at-next-level";
+import { startCourseGoal } from "./start-course-goal";
 
 async function setup(options: Omit<Parameters<typeof courseGoalFixture>[0], "userId"> = {}) {
   const user = await userFixture();
@@ -165,36 +167,76 @@ describe(continueGoalAtNextLevel, () => {
     expect(unchanged.status).toBe("active");
   });
 
-  it("the next level of a course-started goal is still a course start", async () => {
-    const user = await userFixture();
+  it.each(["direct", "unlinked"] as const)(
+    "keeps a %s course start at the next level",
+    async (start) => {
+      const user = await userFixture();
 
-    const fixture = await courseGoalFixture({
-      details: { courseStart: { chapterId: null } },
-      statuses: ["done", "done", "testedOut", "done"],
-      userId: user.id,
-    });
+      const fixture = await courseGoalFixture({
+        details: { courseStart: { chapterId: null } },
+        statuses: ["done", "done", "testedOut", "done"],
+        userId: user.id,
+      });
 
-    await learningProfileFixture({
-      activeGoalId: fixture.goal.id,
-      homeCountry: "BR",
-      userId: user.id,
-    });
+      const source =
+        start === "unlinked" ? await courseFixture({ isPublished: true, language: "pt" }) : null;
 
-    mockSession(user.id);
+      await prisma.course.update({ data: { isPublished: true }, where: { id: fixture.course.id } });
 
-    const result = await continueGoalAtNextLevel(fixture.goal.id);
-    const next = result.status === "created" ? result.goal : null;
-    const row = await prisma.goal.findUniqueOrThrow({ where: { id: next?.id ?? "" } });
-    const inputs = await loadGoalCurriculumInputs(row.id);
+      if (source) {
+        const second = await courseFixture({ isPublished: true });
 
-    expect({
-      contentCountry: row.contentCountry,
-      courseStart: (row.details as Record<string, unknown>).courseStart ?? null,
-      startedCourseId: inputs?.startedCourse?.id ?? null,
-    }).toStrictEqual({
-      contentCountry: fixture.course.country,
-      courseStart: { chapterId: null },
-      startedCourseId: fixture.course.id,
-    });
-  });
+        await prisma.goal.update({
+          data: { details: {}, sourceCourseId: source.id },
+          where: { id: fixture.goal.id },
+        });
+
+        await prisma.plan.update({
+          data: {
+            graph: {
+              skills: fixture.skills.map((skill, index) => ({
+                courseIds: [index === 0 ? second.id : fixture.course.id],
+                lessons: 1,
+                name: skill.name,
+                phase: 0,
+                skillId: skill.id,
+              })),
+            },
+          },
+          where: { id: fixture.plan.id },
+        });
+      }
+
+      await learningProfileFixture({
+        activeGoalId: fixture.goal.id,
+        homeCountry: "BR",
+        userId: user.id,
+      });
+
+      mockSession(user.id);
+
+      const result = await continueGoalAtNextLevel(fixture.goal.id);
+      const next = result.status === "created" ? result.goal : null;
+      const row = await prisma.goal.findUniqueOrThrow({ where: { id: next?.id ?? "" } });
+      const inputs = await loadGoalCurriculumInputs(row.id);
+
+      expect({
+        contentCountry: row.contentCountry,
+        courseStart: (row.details as Record<string, unknown>).courseStart ?? null,
+        sourceCourseId: row.sourceCourseId,
+        startedCourseId: inputs?.startedCourse?.id ?? null,
+        unpinnedSource: inputs?.sourceCourse ?? null,
+      }).toStrictEqual({
+        contentCountry: fixture.course.country,
+        courseStart: { chapterId: null },
+        sourceCourseId: source?.id ?? null,
+        startedCourseId: fixture.course.id,
+        unpinnedSource: null,
+      });
+
+      await expect(
+        startCourseGoal({ courseId: source?.id ?? fixture.course.id, input: { language: "pt" } }),
+      ).resolves.toMatchObject({ goal: { id: row.id }, status: "existing" });
+    },
+  );
 });

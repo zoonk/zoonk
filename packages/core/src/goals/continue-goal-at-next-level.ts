@@ -111,7 +111,8 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
         where: { id: goal.id, status: { not: "completed" } },
       });
 
-      const start = isJsonObject(goal.details) && readCourseStart(goal.details);
+      const savedStart = readCourseStart(isJsonObject(goal.details) ? goal.details : {});
+      const start = savedStart ?? (goal.sourceCourseId ? { chapterId: null } : null);
 
       const origin =
         start &&
@@ -119,7 +120,12 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
 
       await insertGoalWithPlan(tx, {
         ...(origin && {
-          courseStart: { country: origin.country, courseId: course.courseId, details: start },
+          courseStart: {
+            country: origin.country,
+            courseId: course.courseId,
+            details: start,
+            sourceCourseId: goal.sourceCourseId ?? undefined,
+          },
         }),
         dailyMinutes: goal.dailyMinutes,
         draft: {

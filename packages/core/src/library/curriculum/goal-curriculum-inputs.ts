@@ -1,11 +1,12 @@
 import "server-only";
 import { type ExamOutline, formatExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type SkillGraphParams } from "@zoonk/ai/tasks/curriculum/skill-graph-calls";
-import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { type Course, type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import { getGoalContentCountry } from "../../goals/_utils/goal-content-country";
+import { unpinnedCourseSourceId } from "../../goals/course-start-details";
 import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
 import { isOwnMaterialTest } from "../../learner/placement/placement-material";
 import { usesTools } from "../../plans/_utils/plan-tools";
@@ -224,6 +225,13 @@ export function getReferenceSyllabusNeed(
     : "notNeeded";
 }
 
+function toSourceCourse(
+  course: Pick<Course, "id" | "title" | "userId"> | null,
+  country: string | null,
+): StartedCourse | null {
+  return course && { country, id: course.id, ownerId: course.userId, title: course.title };
+}
+
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export async function loadGoalCurriculumInputs(
   goalId: string,
@@ -235,7 +243,7 @@ export async function loadGoalCurriculumInputs(
       primaryCourse: {
         select: { country: true, id: true, title: true, userId: true, visibility: true },
       },
-      sourceCourse: { select: { country: true, id: true, title: true, userId: true } },
+      sourceCourse: { select: { id: true, title: true, userId: true } },
       ...GOAL_PRODUCT_SELECT,
       user: { select: { isAnonymous: true } },
     },
@@ -262,6 +270,7 @@ export async function loadGoalCurriculumInputs(
 
   const exams = toGoalCandidateExams({ blueprint: goal.examBlueprint, kind: goal.kind });
   const product = toGoalProduct(goal);
+  const source = unpinnedCourseSourceId(goal) ? goal.sourceCourse : null;
 
   const country = getContentCountryScope({
     country:
@@ -311,14 +320,10 @@ export async function loadGoalCurriculumInputs(
     productChecked: goal.productCheckedAt !== null,
     references,
     sharedContext: toSharedContext(details),
-    sourceCourse: goal.sourceCourse && {
-      ...goal.sourceCourse,
-      country,
-      ownerId: goal.sourceCourse.userId,
-    },
+    sourceCourse: toSourceCourse(source, country),
     startedCourse: toStartedCourse({
       country,
-      course: goal.sourceCourseId ? null : goal.primaryCourse,
+      course: source ? null : goal.primaryCourse,
       details,
       kind: goal.kind,
     }),

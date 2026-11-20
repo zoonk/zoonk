@@ -2,6 +2,7 @@ import "server-only";
 import { DbNull, type Goal, type TransactionClient } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { courseContentLanguage } from "../../courses/_utils/course-edition-family";
+import { unpinnedCourseSourceId } from "../../goals/course-start-details";
 import { getSinglePlanCourseId } from "../../library/curriculum/goal-plan-graph";
 import { type PlanGraph } from "../planner/plan-state";
 
@@ -21,7 +22,7 @@ async function getLocalizedCourseGoalName({
   graph: PlanGraph;
   tx: TransactionClient;
 }) {
-  const sourceId = goal.sourceCourseId;
+  const sourceId = unpinnedCourseSourceId(goal);
 
   if (
     !sourceId ||

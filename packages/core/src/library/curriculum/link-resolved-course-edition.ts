@@ -20,7 +20,7 @@ async function readOrigin(db: TransactionClient, editionId: string) {
       plan: { select: { graph: true } },
       sourceCourse: { select: { country: true, id: true } },
     },
-    where: { primaryCourseId: editionId, sourceCourseId: { not: null } },
+    where: { primaryCourseId: editionId, replacesGoalId: null, sourceCourseId: { not: null } },
   });
 
   const origin = goals[0]?.sourceCourse;
@@ -51,7 +51,7 @@ export async function linkResolvedCourseEdition({
 }): Promise<void> {
   const source = await prisma.goal.findFirst({
     select: { sourceCourseId: true },
-    where: { primaryCourseId: editionId, sourceCourseId: { not: null } },
+    where: { primaryCourseId: editionId, replacesGoalId: null, sourceCourseId: { not: null } },
   });
 
   if (!source?.sourceCourseId) {
