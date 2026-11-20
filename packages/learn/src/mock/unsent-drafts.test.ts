@@ -183,8 +183,34 @@ describe("unsent mock drafts", () => {
       }),
     ).toStrictEqual([unsent]);
 
+    // Reverting back to the opening draft offline stays unsent once a newer draft was stored.
+    const reverted: MockDraft = {
+      answer: { text: "Paris" },
+      durationMs: 0,
+      flagged: false,
+      itemId: "q1",
+    };
+
+    const acknowledged: MockDraft = {
+      answer: { text: "Lyon" },
+      durationMs: 0,
+      flagged: false,
+      itemId: "q1",
+    };
+
+    keepUnsentMockDraft({ blockId: "mock-1", draft: reverted });
+
+    expect(
+      pruneUnsentMockDrafts({
+        blockId: "mock-1",
+        storedDrafts: { q1: acknowledged },
+        view: makeView({ drafts: [reverted], questionIds: ["q1", "q2"] }),
+      }),
+    ).toStrictEqual([unsent, reverted]);
+
     expect(JSON.parse(globalThis.localStorage.getItem("mock:mock-1") ?? "[]")).toStrictEqual([
       unsent,
+      reverted,
     ]);
 
     expect(

@@ -84,9 +84,11 @@ function clearUnsentMockDrafts(blockId: string) {
 /** Kept answers that still belong to the section on screen and aren't already stored identically. */
 function selectKeptDraftsForView({
   kept,
+  storedDrafts,
   view,
 }: {
   kept: readonly MockDraft[];
+  storedDrafts?: Readonly<Record<string, MockDraft>>;
   view: MockView;
 }): MockDraft[] {
   if (view.status !== "running" || !view.current) {
@@ -94,7 +96,10 @@ function selectKeptDraftsForView({
   }
 
   const questionIds = new Set(view.current.questions.map((question) => question.itemId));
-  const storedByItem = new Map(view.current.drafts.map((draft) => [draft.itemId, draft]));
+
+  const storedByItem = storedDrafts
+    ? new Map(Object.entries(storedDrafts))
+    : new Map(view.current.drafts.map((draft) => [draft.itemId, draft]));
 
   return kept.filter(
     (draft) => questionIds.has(draft.itemId) && !isSameDraft(draft, storedByItem.get(draft.itemId)),
@@ -104,9 +109,11 @@ function selectKeptDraftsForView({
 /** Drops entries that belong to finished/expired mocks or older sections, returning what remains. */
 export function pruneUnsentMockDrafts({
   blockId,
+  storedDrafts,
   view,
 }: {
   blockId: string;
+  storedDrafts?: Readonly<Record<string, MockDraft>>;
   view: MockView;
 }): MockDraft[] {
   if (view.status === "finished" || view.status === "expired") {
@@ -119,7 +126,7 @@ export function pruneUnsentMockDrafts({
   }
 
   const kept = readUnsentMockDrafts(blockId);
-  const keptHere = selectKeptDraftsForView({ kept, view });
+  const keptHere = selectKeptDraftsForView({ kept, storedDrafts, view });
 
   if (kept.length !== keptHere.length) {
     writeRaw({ blockId, drafts: keptHere });

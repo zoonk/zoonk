@@ -39,6 +39,7 @@ function useUnsentDraftSync({
   draftsRef,
   onRestore,
   queue,
+  savedDrafts,
   textTimer,
 }: {
   activeViewRef: React.RefObject<MockView>;
@@ -46,15 +47,17 @@ function useUnsentDraftSync({
   draftsRef: React.RefObject<Drafts>;
   onRestore: (merged: Drafts, keptReached: number) => void;
   queue: DraftQueue;
+  savedDrafts: Drafts;
   textTimer: React.RefObject<ReturnType<typeof setTimeout> | null>;
 }) {
   const handleRestore = useEffectEvent(onRestore);
+  const readSavedDrafts = useEffectEvent(() => savedDrafts);
 
   useEffect(() => {
     const view = activeViewRef.current;
     queue.start();
 
-    const keptHere = pruneUnsentMockDrafts({ blockId, view });
+    const keptHere = pruneUnsentMockDrafts({ blockId, storedDrafts: readSavedDrafts(), view });
 
     if (keptHere.length > 0) {
       const merged = {
@@ -138,6 +141,7 @@ export function useMockDrafts({
       }
     },
     queue,
+    savedDrafts,
     textTimer,
   });
 
@@ -212,7 +216,7 @@ export function useMockDrafts({
       setDrafts(nextDrafts);
       setFailedDrafts({});
       setSavedDrafts(nextDrafts);
-      pruneUnsentMockDrafts({ blockId, view: next });
+      pruneUnsentMockDrafts({ blockId, storedDrafts: nextDrafts, view: next });
       queue.forgetRefusals();
     },
     retry: () => queue.retryNow(),
