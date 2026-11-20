@@ -13,6 +13,10 @@ function isRendered(element: Element): boolean {
   return element.getClientRects().length > 0;
 }
 
+function isPressable(element: Element | null): element is HTMLElement {
+  return element instanceof HTMLElement && !element.matches(":disabled, [aria-disabled='true']");
+}
+
 /** Screens the learner left stay mounted, hidden, so a query on the lesson must skip their copies. */
 function queryShown(selector: string, root: ParentNode = document): HTMLElement | null {
   const elements = root.querySelectorAll<HTMLElement>(selector);
@@ -26,10 +30,7 @@ function getShown(id: string): HTMLElement | null {
 export function getReadyLessonPrimary(): HTMLButtonElement | null {
   const primary = getShown(LESSON_PRIMARY_ID);
 
-  return primary instanceof HTMLButtonElement &&
-    !primary.matches(":disabled, [aria-disabled='true']")
-    ? primary
-    : null;
+  return primary instanceof HTMLButtonElement && isPressable(primary) ? primary : null;
 }
 
 export function getLessonFocusTarget(): HTMLElement | null {
@@ -89,7 +90,11 @@ function getFocusAfterTurn(controlId: string): HTMLElement | null {
   const primary = getShown(LESSON_PRIMARY_ID);
   const focusable = primary && !primary.matches(":disabled") ? primary : null;
 
-  return back ?? focusable ?? document.querySelector(`#${LESSON_CONTENT_ID}`);
+  return (
+    (isPressable(back) ? back : null) ??
+    focusable ??
+    document.querySelector(`#${LESSON_CONTENT_ID}`)
+  );
 }
 
 export function pressKeepingFocus(event: Press, press: () => void): void {

@@ -82,6 +82,25 @@ describe("spoken answers", () => {
     await expect.element(page.getByRole("button", { name: /^Record/u })).toHaveFocus();
   });
 
+  it("keeps the way back in place, turned off, while a recording is checked", async () => {
+    allowMicrophone();
+    const pending = Promise.withResolvers<SpokenAnswerOutcome>();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>(() => pending.promise);
+    const lesson = buildLesson([teachingStep("explanation"), spokenAnswerStep()]);
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { gradeSpokenAnswer }), lesson });
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    const previous = page.getByRole("button", { name: "Previous screen" });
+    await expect.element(previous).toHaveAttribute("aria-disabled", "false");
+
+    await sayIt();
+    await expect.poll(() => gradeSpokenAnswer.mock.calls.length).toBe(1);
+    await expect.element(previous).toHaveAttribute("aria-disabled", "true");
+
+    pending.resolve({ status: "failed" });
+    await expect.element(previous).toHaveAttribute("aria-disabled", "false");
+  });
+
   it("never sends a spoken grade when the pending start is refused", async () => {
     allowMicrophone();
     const lesson = buildLesson([spokenSentenceStep(), teachingStep("summary")]);
