@@ -11689,7 +11689,7 @@ msgstr "지금은 어떤 일을 하고 있나요?"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "lxu-IX"
 msgid "Which apps and tools do you use most?"
-msgstr "가장 자주 쓰는 앱과 도구는 무엇인가요?"
+msgstr "어떤 앱과 도구를 가장 자주 쓰나요?"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "McuAl7"

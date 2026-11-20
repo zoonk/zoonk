@@ -11689,7 +11689,7 @@ msgstr "O que você faz atualmente?"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "lxu-IX"
 msgid "Which apps and tools do you use most?"
-msgstr "Quais apps e ferramentas você mais usa?"
+msgstr "Quais aplicativos e ferramentas você mais usa?"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "McuAl7"
