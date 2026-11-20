@@ -48,6 +48,7 @@
   "onboarding_course_chapters": "3006bcdb0bd65e90138b3fcddf249938dd571b0f3127298aff391f87684341cd",
   "onboarding_course_daily_minutes": "89992466dca546d7327f28186f0aec956b00b78d7d305e190c0e1f7bc5ed6ba1",
   "onboarding_course_failed": "164136925b002dd70d61a2a78aebf8bbbb68d7d7ebfc626e150dff60eb6cac8c",
+  "onboarding_course_language_note": "30511ad0d767f42560850305ca77b449ed5161f4ee690cf1f41a51b6d727e6cf",
   "onboarding_course_lessons": "ee2fb9b639c0dca1f992571a29ad91c6584d88fde538c3a7af0440ffb7bd398c",
   "onboarding_course_more_chapters": "885f28f61852822d530b27b0f0bfb7cfbfa57592705944da0aa0412e9799c19e",
   "onboarding_course_start_free": "5de0be2736fcf2c5117e3431695d9ecd72ebe2e14b6ac54f2f16ef06b8f13247",
@@ -680,6 +681,8 @@
     <plurals name="onboarding_course_daily_minutes">
         <item quantity="other">まずは1日%d分です。この後のステップで変更できます。</item>
     </plurals>
+    <!-- Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence -->
+    <string name="onboarding_course_language_note">このコースの言語は%1$sです。レッスンは%2$sで行います。</string>
     <string name="onboarding_course_build">学習計画を作成する</string>
     <!-- Read out while Build my plan starts the course. -->
     <string name="onboarding_course_starting">学習計画を準備しています…</string>

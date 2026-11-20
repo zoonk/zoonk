@@ -1,5 +1,6 @@
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
+import { collectCourseContentTags } from "@zoonk/core/cache/course-content";
 import { prepareCourseGoalPlan } from "@zoonk/core/goals/prepare-course-plan";
 import {
   type GoalRebuildFollowUp,
@@ -7,6 +8,7 @@ import {
 } from "@zoonk/core/goals/rebuild-follow-up";
 import { orderGoalCourses } from "@zoonk/core/library/curriculum/goal-course-bands";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
+import { linkResolvedCourseEdition } from "@zoonk/core/library/curriculum/link-resolved-course-edition";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { isNoticeLandingExpiredError } from "@zoonk/core/plans/notice-wait";
@@ -66,17 +68,23 @@ function toGraphPlan({
 
 export async function createGoalPlanStep({
   followUp,
+  initialCourseStart,
   waitsForNotice,
   ...input
-}: GraphPlanInput & { followUp?: GoalRebuildFollowUp; waitsForNotice: boolean }): Promise<
-  PlanStepOutcome<PlanSetupTask[]>
-> {
+}: GraphPlanInput & {
+  followUp?: GoalRebuildFollowUp;
+  initialCourseStart?: boolean;
+  waitsForNotice: boolean;
+}): Promise<PlanStepOutcome<PlanSetupTask[]>> {
   "use step";
 
   return catchPlanConflict(async () => {
+    const plan = toGraphPlan(input);
+
     const { setupTasks, status } = await createGoalPlan({
-      ...toGraphPlan(input),
+      ...plan,
       followUp,
+      graph: initialCourseStart ? { ...plan.graph, editionCandidate: true } : plan.graph,
       waitsForNotice,
     });
 
@@ -108,6 +116,12 @@ export async function followNoticeStep(input: GraphPlanInput): Promise<PlanStepO
 
     throw reason;
   });
+}
+
+export async function linkGoalCourseEditionStep(courseId: string) {
+  "use step";
+
+  return collectCourseContentTags(() => linkResolvedCourseEdition({ courseId }));
 }
 
 export async function runPlanSetupTaskStep(

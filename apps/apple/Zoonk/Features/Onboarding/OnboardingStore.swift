@@ -408,12 +408,15 @@ final class OnboardingStore {
     }
   }
 
-  func startCourse(courseID: String, chapterID: String?, level: String?) async throws -> String {
+  func startCourse(
+    courseID: String, chapterID: String?, level: String?, language: String
+  ) async throws -> String {
     try await ensureSession()
     return try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
       [api] identity in
       try await api.startCourse(
-        courseID: courseID, chapterID: chapterID, level: level, token: identity.bearerToken)
+        courseID: courseID, chapterID: chapterID, level: level, language: language,
+        token: identity.bearerToken)
     }
   }
 

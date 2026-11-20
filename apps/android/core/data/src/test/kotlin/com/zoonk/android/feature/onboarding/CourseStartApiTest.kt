@@ -32,13 +32,13 @@ class CourseStartApiTest {
     @Test
     fun aQuickTestSendsItsLevelAsNull() =
         runTest {
-            assertEquals("""{"level":null,"timeZone":"UTC"}""", sent(LevelChoice.QuickTest))
+            assertEquals("""{"language":"pt","level":null,"timeZone":"UTC"}""", sent(LevelChoice.QuickTest))
         }
 
     @Test
     fun leavingTheLevelToTheSetupLeavesItOut() =
         runTest {
-            assertEquals("""{"timeZone":"UTC"}""", sent(level = null))
+            assertEquals("""{"language":"pt","timeZone":"UTC"}""", sent(level = null))
         }
 
     private suspend fun sent(level: LevelChoice?): String {
@@ -47,7 +47,7 @@ class CourseStartApiTest {
             api.startCourse(
                 ana,
                 courseId,
-                courseStartBody(chapterId = null, dailyMinutes = null, level = level, timeZone = "UTC"),
+                courseStartBody(chapterId = null, dailyMinutes = null, level = level, language = "pt", timeZone = "UTC"),
             )
         }
         val request = server.takeRequest(5, TimeUnit.SECONDS)!!

@@ -11,6 +11,7 @@ import { getCourseStartHref } from "@/lib/public/public-hrefs";
 import { answerHere, openingAsGuest } from "@/lib/session/tap-answer";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { received, useLiveLimit } from "@zoonk/learn/help-limit";
+import { useAppLocale } from "@zoonk/learn/locale";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
@@ -32,6 +33,7 @@ export function useCourseStart({
   dailyMinutes?: number | null;
   initialFailure?: CourseStartFailure | null;
 }) {
+  const locale = useAppLocale();
   const router = useRouter();
   const navigation = useOnboardingNavigation();
   const [failure, setFailure] = useState<CourseStartFailure | null>(initialFailure);
@@ -56,6 +58,7 @@ export function useCourseStart({
               chapterId,
               courseId,
               dailyMinutes,
+              language: locale,
               level,
               timeZone: getLocalTimeZone(),
             })

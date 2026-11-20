@@ -79,8 +79,10 @@ model Goal {
   timezone              String?
   examBlueprintId       String?                @map("exam_blueprint_id") @db.Uuid
   examBlueprint         ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  sourceCourseId        String?                @map("source_course_id") @db.Uuid
+  sourceCourse          Course?                @relation("CourseStartSource", fields: [sourceCourseId], references: [id], onDelete: SetNull)
   primaryCourseId       String?                @map("primary_course_id") @db.Uuid
-  primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  primaryCourse         Course?                @relation("PrimaryCourse", fields: [primaryCourseId], references: [id], onDelete: SetNull)
   warmUpId              String?                @map("warm_up_id") @db.Uuid
   warmUp                WarmUp?                @relation(fields: [warmUpId], references: [id], onDelete: SetNull)
   /// The goal's run saves its exact opening and lesson once. Retries keep the same skill and
@@ -131,6 +133,7 @@ model Goal {
 
   @@index([userId, status])
   @@index([examBlueprintId])
+  @@index([sourceCourseId])
   @@index([primaryCourseId])
   @@index([warmUpId])
   @@index([openingLessonId])
