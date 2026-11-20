@@ -1,5 +1,6 @@
 import { type PublishedAlphabetLesson } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { type StepKind } from "@zoonk/db";
+import { chunk } from "@zoonk/utils/chunk";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
 
 export type AlphabetStepToSave = { content: object; kind: StepKind };
@@ -50,9 +51,7 @@ function toGroups(letters: readonly Letter[]): Letter[][] {
 
   const size = Math.ceil(letters.length / Math.ceil(letters.length / MAX_GROUP_SIZE));
 
-  return Array.from({ length: Math.ceil(letters.length / size) }, (_, index) =>
-    letters.slice(index * size, (index + 1) * size),
-  );
+  return chunk(letters, size);
 }
 
 export function buildAlphabetLessonSteps({
