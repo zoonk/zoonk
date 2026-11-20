@@ -7,7 +7,7 @@ export type MediaItem = ContentFixDetail["media"][number];
 
 export const PICTURE_HEIGHT = 360;
 export const PICTURE_WIDTH = 480;
-const ICON_SIZE = 24;
+const ICON_SIZE = 40;
 
 export function ClipPlayer({ url }: { url: string }) {
   return (
@@ -61,7 +61,7 @@ export function ScreenPicture({ item }: { item: MediaItem }) {
       {result && result !== "failed" && result.kind === "picture" ? (
         <Image
           alt={need.kind === "picture" ? (need.alt ?? need.request) : ""}
-          className="bg-muted/50 aspect-4/3 h-auto w-full max-w-xs rounded-xl border object-contain"
+          className="h-auto w-full max-w-xs rounded-xl border"
           height={PICTURE_HEIGHT}
           src={result.url}
           unoptimized
@@ -97,10 +97,10 @@ export function IdeaIcon({ item }: { item: MediaItem }) {
   }
 
   return (
-    <span className="flex items-center gap-2">
+    <span className="flex items-center gap-3">
       <Image
         alt=""
-        className="size-6 shrink-0 rounded-md"
+        className="size-10 shrink-0 rounded-md"
         height={ICON_SIZE}
         src={result.url}
         unoptimized

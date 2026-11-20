@@ -26,6 +26,7 @@ import { ContentFixTechnicalDetails, proposalFacts } from "../_components/conten
 import { ContentFixMedia, MediaWaitingNote } from "../_components/content-fix-media";
 import { RevertForm } from "../_components/content-fix-revert";
 import {
+  contentFixEffectsTitles,
   contentFixState,
   contentFixStatusLabels,
   contentFixStatusTones,
@@ -296,7 +297,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
             {fix.status === "proposed" && <ContentFixMedia fix={fix} />}
           </AdminSection>
 
-          <AdminSection title="What else approving does">
+          <AdminSection title={contentFixEffectsTitles[contentFixState(fix)]}>
             <ContentFixEffects fix={fix} />
           </AdminSection>
 

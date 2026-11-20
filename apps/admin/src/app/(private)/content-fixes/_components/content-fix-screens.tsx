@@ -76,15 +76,13 @@ function UnchangedRun({ context, rows }: { context: Context; rows: ScreenRow[] }
           <span className={NUMBER_CLASS}>
             {first === last ? first : `${String(first)}–${String(last)}`}
           </span>
-          <span className="flex items-start gap-1 leading-5">
-            <span>
-              <span className="text-foreground">
-                {formatCount(screens.length, "screen")} unchanged
-              </span>
-              {FACT_SEPARATOR}
-              {kindsInWords(screens)}
+          <span className="leading-5">
+            <span className="text-foreground">
+              {formatCount(screens.length, "screen")} unchanged
             </span>
-            <FoldChevron className="mt-0.5 size-3.5 self-start" inline />
+            {FACT_SEPARATOR}
+            {kindsInWords(screens)}
+            <FoldChevron className="ms-1 inline-block size-3.5 align-[-0.2em]" inline />
           </span>
         </summary>
         <ol className="flex flex-col pb-2 text-sm leading-6">

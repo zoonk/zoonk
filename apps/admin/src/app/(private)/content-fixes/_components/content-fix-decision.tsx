@@ -279,7 +279,7 @@ export function ReviewBar({
         )}
 
         {waiting ? (
-          <EnterButton className={approveClass} disabled size="xl" type="button">
+          <EnterButton className={approveClass} disabled enter="off" size="xl" type="button">
             <ApproveWords approveLabel={approveLabel} shown={approveLabel} />
           </EnterButton>
         ) : null}

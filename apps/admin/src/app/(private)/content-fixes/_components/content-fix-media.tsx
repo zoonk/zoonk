@@ -141,6 +141,9 @@ function mediaInWords(items: readonly MediaItem[], verb: (base: string) => strin
   return phrase.charAt(0).toUpperCase() + phrase.slice(1);
 }
 
+/** A wrapped line starts under the words, past the state's mark and its gap. */
+const HANGING_LINE_CLASS = "ps-[calc(1em+0.375rem)] -indent-[calc(1em+0.375rem)]";
+
 /**
  * Why approving waits, said above the bar while a fix's media is made at proposal time, or
  * what to do when making it failed.
@@ -151,7 +154,7 @@ export function MediaWaitingNote({ media }: { media: readonly MediaItem[] }) {
 
   if (failed.length > 0) {
     return (
-      <p>
+      <p className={HANGING_LINE_CLASS}>
         <StateMark state="failed">{mediaInWords(failed, (verb) => `couldn't ${verb}`)}</StateMark>
         <span className="text-muted-foreground">. Reject this fix and propose it again.</span>
       </p>
@@ -159,7 +162,7 @@ export function MediaWaitingNote({ media }: { media: readonly MediaItem[] }) {
   }
 
   return (
-    <p>
+    <p className={HANGING_LINE_CLASS}>
       <StateMark state="running">
         {pending.length > 0
           ? mediaInWords(pending, (verb) => (verb === "draw" ? "drawing" : "recording"))
