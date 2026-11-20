@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { gradeWritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -8,7 +9,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
-import { gradeWriting } from "../essays/_utils/grade-essay-answer";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
 import { CGU, CGU_WRITTEN_GRADING } from "./_test-utils/cgu-written";
@@ -23,11 +23,8 @@ import { startAnytimeMock } from "./start-anytime-mock";
 import { startMock } from "./start-mock";
 import { submitMockSection } from "./submit-mock-section";
 
-// The sitting uses the real admission and recorder. Returning deterministic feedback avoids an AI call.
-vi.mock(import("../essays/_utils/grade-essay-answer"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  gradeWriting: vi.fn(),
-}));
+// Stub the model provider to keep mock grading off the network.
+vi.mock("@zoonk/ai/tasks/grading/grade-essay", () => ({ gradeWritingEvidence: vi.fn() }));
 
 const FULL = { area: null, day: null, kind: "full" } as const;
 const WRITTEN = { area: null, day: null, kind: "written" } as const;
@@ -35,14 +32,18 @@ const HALF = { area: null, day: null, kind: "half" } as const;
 const UTC = { timeZone: "UTC" };
 const SESSION_LENGTH_MS = 210 * 60_000;
 
-const LEVELS = {
+const EVIDENCE = {
+  aspects: [],
   criteria: [],
   errors: [],
-  ignoredFrom: null,
-  kind: "levels",
   nextStep: null,
-  progress: null,
-} as const;
+  onTopicQuote: null,
+  zeroKind: null,
+  zeroQuote: null,
+  zeroRuleIndex: null,
+};
+
+const PART_MINIMUM = { max: 100, minimum: { unit: "points", value: 50 } } as const;
 
 async function setup({ plus = true, shortOnly = false } = {}) {
   const [user, blueprint, control, writing] = await Promise.all([
@@ -101,6 +102,7 @@ async function setup({ plus = true, shortOnly = false } = {}) {
           keySource: "practiceKey",
           lines: taskKey === "short" ? 30 : 60,
           minimumWords: 1,
+          partMinimum: PART_MINIMUM,
           points: taskKey === "short" ? 30 : 70,
           taskKey,
           title: `Topic for ${taskKey}`,
@@ -173,12 +175,12 @@ describe("written mock sittings", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
-    vi.mocked(gradeWriting).mockResolvedValue({ ...LEVELS, criteria: [], errors: [] });
+    vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValue({ data: EVIDENCE });
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    vi.mocked(gradeWriting).mockReset();
+    vi.mocked(gradeWritingEvidence).mockReset();
   });
 
   it("advertises CGU before prompts exist and refuses a partial full or written sitting even with acceptFewer", async () => {
@@ -260,7 +262,7 @@ describe("written mock sittings", () => {
       status: "notFinished",
     });
 
-    expect(gradeWriting).not.toHaveBeenCalled();
+    expect(gradeWritingEvidence).not.toHaveBeenCalled();
 
     const text = `  ${"Legal argument. ".repeat(900)}\n  End of the answer.  `;
 
@@ -287,7 +289,7 @@ describe("written mock sittings", () => {
       status: "finished",
     });
 
-    expect(gradeWriting).not.toHaveBeenCalled();
+    expect(gradeWritingEvidence).not.toHaveBeenCalled();
 
     await expect(gradeMockEssays({ blockId: id, input: UTC })).resolves.toStrictEqual({
       status: "graded",
@@ -295,11 +297,17 @@ describe("written mock sittings", () => {
 
     await gradeMockEssays({ blockId: id, input: UTC });
 
-    expect(gradeWriting).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ text }));
+    expect(gradeWritingEvidence).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ text: text.slice(0, 30 * 55) }),
+    );
 
     await expect(view(id)).resolves.toMatchObject({
       essays: [
-        { grade: LEVELS, status: "graded" },
+        {
+          grade: { estimatedLines: 263, ignoredFrom: 30 * 55, kind: "levels" },
+          status: "graded",
+          writing: { partMinimum: PART_MINIMUM },
+        },
         { grade: null, status: "blank" },
       ],
     });
@@ -333,7 +341,15 @@ describe("written mock sittings", () => {
         writtenPractice: {
           subjects: [
             {
-              answers: [{ range: null, taskKey: "short", title: "Topic for short", versions: 1 }],
+              answers: [
+                {
+                  estimatedLines: 263,
+                  range: null,
+                  taskKey: "short",
+                  title: "Topic for short",
+                  versions: 1,
+                },
+              ],
               minutes: 210,
               points: { standing: "unmeasured" },
               questions: 2,
@@ -373,9 +389,7 @@ describe("written mock sittings", () => {
     await save({ id, itemId: long?.id ?? "", text: "Long answer" });
     await submitMockSection({ blockId: id, input: UTC, section: 1 });
 
-    vi.mocked(gradeWriting)
-      .mockRejectedValueOnce(new Error("Provider unavailable"))
-      .mockResolvedValueOnce({ ...LEVELS, criteria: [], errors: [] });
+    vi.mocked(gradeWritingEvidence).mockRejectedValueOnce(new Error("Provider unavailable"));
 
     await expect(gradeMockEssays({ blockId: id, input: UTC })).rejects.toThrow(
       "Provider unavailable",
@@ -389,7 +403,7 @@ describe("written mock sittings", () => {
       status: "graded",
     });
 
-    expect(gradeWriting).toHaveBeenCalledTimes(3);
+    expect(gradeWritingEvidence).toHaveBeenCalledTimes(3);
 
     await expect(view(id)).resolves.toMatchObject({
       essays: [{ status: "graded" }, { status: "graded" }],

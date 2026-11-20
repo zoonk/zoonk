@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { WRITING_START_PARAM, readWritingStart } from "@/lib/essays/writing-start-href";
 import { getEssay } from "@zoonk/core/exams/essays/get";
 import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
@@ -10,6 +11,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { EssayClient } from "./essay-client";
+import { WritingStartClient } from "./writing-start-client";
 
 type Props = PageProps<"/[lang]/essay/[blockId]">;
 
@@ -40,13 +42,23 @@ function EssaySkeleton() {
   );
 }
 
-async function EssayContent({ params }: Props) {
-  const { blockId } = await params;
+async function EssayContent({ params, searchParams }: Props) {
+  const [{ blockId }, search] = await Promise.all([params, searchParams]);
 
   const result = await getEssay({ blockId });
+  const start = readWritingStart(search[WRITING_START_PARAM]);
 
   if (result.status === "unauthorized") {
     return <AuthGateScreen next={`/essay/${blockId}`} />;
+  }
+
+  // A written question appears once its start admits it; until then the start's answer shows.
+  if (result.status === "notFound" && start) {
+    return (
+      <MainLearnProvider>
+        <WritingStartClient blockId={blockId} initial={start} />
+      </MainLearnProvider>
+    );
   }
 
   if (result.status !== "ready") {

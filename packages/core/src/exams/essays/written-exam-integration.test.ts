@@ -12,10 +12,14 @@ import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import { getWritingPromptId, writeWritingItem } from "../../library/items/write-writing-item";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
+import { getStudySession } from "../../sessions/get-study-session";
+import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { CGU } from "../mocks/_test-utils/cgu-written";
 import { pickWrittenTestDays } from "../mocks/written-test-schedule";
 import { loadSessionProduce } from "./_utils/load-produce";
+import { createWritingBlock } from "./create-writing-block";
 import { getEssay } from "./get-essay";
+import { getWritingAttempt } from "./get-writing-attempt";
 import { saveWritingDraft } from "./save-writing-draft";
 import { startWriting } from "./start-writing";
 import { submitEssay } from "./submit-essay";
@@ -149,6 +153,92 @@ function useModelFixtures(skillId: string) {
 describe("CGU written exam preparation", () => {
   afterEach(() => vi.useRealTimers());
 
+  it("names a refused extra task before issuing its prompt and marks it unavailable on read", async () => {
+    const { goal, user } = await setup();
+    const scheduled = await openWritingDay(goal.id);
+    const created = await createWritingBlock({ goalId: goal.id, taskKey: "long" });
+
+    if (created.status !== "ready") {
+      throw new Error(created.status);
+    }
+
+    const { blockId } = created;
+    const readSyllabus = () => getSyllabusView({ goalId: goal.id });
+
+    await expect(readSyllabus()).resolves.toMatchObject({
+      syllabus: {
+        writtenPractice: {
+          subjects: [
+            {
+              writeActions: expect.arrayContaining([
+                { availability: { status: "available" }, blockId, taskKey: "long" },
+              ]),
+            },
+          ],
+        },
+      },
+    });
+
+    await prisma.writingAdmission.createMany({
+      data: Array.from({ length: 6 }, () => ({
+        extra: true,
+        id: crypto.randomUUID(),
+        itemIds: [],
+        localDate: new Date("2026-09-30"),
+        userId: user.id,
+      })),
+    });
+
+    await expect(startWriting({ blockId })).resolves.toStrictEqual({
+      returnsOn: "2026-10-01",
+      status: "limitReached",
+      task: {
+        description: "Long question",
+        lines: 60,
+        minutes: 140,
+        points: 70,
+        taskKey: "long",
+        unit: "answer",
+      },
+    });
+
+    await expect(getEssay({ blockId })).resolves.toStrictEqual({ status: "notFound" });
+
+    const tomorrow = { returnsOn: "2026-10-01", status: "tomorrow" };
+
+    await expect(
+      getStudySession({ input: {}, sessionId: scheduled.sessionId }),
+    ).resolves.toMatchObject({
+      session: {
+        blocks: expect.arrayContaining([
+          expect.objectContaining({ id: blockId, writingAvailability: tomorrow }),
+          expect.objectContaining({
+            id: scheduled.block.id,
+            writingAvailability: { status: "available" },
+          }),
+        ]),
+      },
+    });
+
+    await expect(readSyllabus()).resolves.toMatchObject({
+      syllabus: {
+        writtenPractice: {
+          subjects: [
+            {
+              writeActions: expect.arrayContaining([
+                { availability: tomorrow, blockId, taskKey: "long" },
+              ]),
+            },
+          ],
+        },
+      },
+    });
+
+    const stranger = await userFixture();
+    mockSession(stranger.id);
+    await expect(startWriting({ blockId })).resolves.toStrictEqual({ status: "notFound" });
+  });
+
   it("keeps the issued CGU basis, credits only written evidence, and grades a completed block's rewrite once", async () => {
     const { blueprint, goal, user, writing } = await setup();
     useModelFixtures(writing.id);
@@ -195,7 +285,14 @@ describe("CGU written exam preparation", () => {
     ).resolves.toMatchObject({ draft: { revision: 1, text: TEXT }, status: "ready" });
 
     await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
-      essay: { draft: { revision: 1, text: TEXT }, writing: { lines: 30, points: 30 } },
+      essay: {
+        draft: { revision: 1, text: TEXT },
+        writing: {
+          lines: 30,
+          partMinimum: { max: 100, minimum: { unit: "points", value: 50 } },
+          points: 30,
+        },
+      },
       status: "ready",
     });
 
@@ -233,24 +330,44 @@ describe("CGU written exam preparation", () => {
       throw new Error("Expected the CGU short task");
     }
 
+    const part = structure.mock?.scoring.parts?.find(({ name }) => name === "Written test");
+
+    if (part) {
+      part.minimum = { unit: "points", value: 60 };
+    }
+
     task.lines = 1;
     task.points = 12;
     await prisma.examBlueprint.update({ data: { structure }, where: { id: blueprint.id } });
 
-    const input = {
-      admissionId: started.admissionId,
-      durationMs: 1000,
-      text: TEXT,
-      timeZone: "UTC",
-    };
+    const text = [
+      TEXT,
+      ...Array.from({ length: 19 }, () => "The finding supports this recommendation."),
+    ].join("\n");
+
+    const input = { admissionId: started.admissionId, durationMs: 1000, text, timeZone: "UTC" };
 
     await expect(submitEssay({ blockId: block.id, input })).resolves.toMatchObject({
-      grade: { criteria: [{ id: "case", level: "strong" }], ignoredFrom: null, kind: "levels" },
+      grade: {
+        criteria: [{ id: "case", level: "strong" }],
+        estimatedLines: 23,
+        ignoredFrom: null,
+        kind: "levels",
+      },
       status: "writingGraded",
     });
 
     const first = await prisma.attempt.findFirstOrThrow({ where: { itemId, userId: user.id } });
     expect(first.score).toBeNull();
+    expect(first.answer).toMatchObject({ conditions: { estimatedLines: 23 } });
+
+    await expect(getWritingAttempt(first.id)).resolves.toMatchObject({
+      attempt: {
+        grade: { estimatedLines: 23 },
+        writing: { partMinimum: { max: 100, minimum: { unit: "points", value: 50 } } },
+      },
+      status: "ready",
+    });
 
     await expect(prisma.learnerSkill.findUnique({ where: skillRow })).resolves.toMatchObject({
       state: "solid",

@@ -5299,7 +5299,7 @@
               "text/event-stream": {
                 "schema": {
                   "type": "string",
-                  "description": "Server-Sent Events stream. Every data field contains JSON with a required \"status\" and \"step\", plus optional \"entityId\", \"reason\", \"at\" (when the step reported it, in milliseconds since the epoch), \"skillName\" (a skill `buildSkillGraph` just wrote, in a `started` event of its own as each one is written; a graph written again names its skills again), \"lessonId\", \"lessonTitle\" and \"warmUpId\". Once the goal's deck is ready, a `completed` event with step `warmUpReady` carries its `warmUpId`: read GET /warm-ups/{warmUpId} for the deck. When the run ends its deck step without one (the goal gets no deck, the deck failed, or another run's deck wasn't ready in time), a `completed` event with step `warmUpFailed` says so: a wait showing the quiz's skeleton turns to its progress. A run that builds the plan (a first build or a retry before the plan exists) ends its deck step with exactly one of the two, including a reused or already linked deck. A run on an existing plan sends neither. A learn goal whose first lesson is picked before its plan reports it on the same stream: a `started` event with step `writeFirstLesson` carries its `lessonId` and `lessonTitle`, and a `completed` event with step `firstLessonReady` carries its `lessonId` once the learner can start it, before or after `goalReady`. Each is sent at most once per run; after a reconnect, read the onboarding's `firstLesson`.",
+                  "description": "For writing prompt runs, the step name is a WritingPromptStep. Server-Sent Events stream. Every data field contains JSON with a required \"status\" and \"step\", plus optional \"entityId\", \"reason\", \"at\" (when the step reported it, in milliseconds since the epoch), \"skillName\" (a skill `buildSkillGraph` just wrote, in a `started` event of its own as each one is written; a graph written again names its skills again), \"lessonId\", \"lessonTitle\" and \"warmUpId\". Once the goal's deck is ready, a `completed` event with step `warmUpReady` carries its `warmUpId`: read GET /warm-ups/{warmUpId} for the deck. When the run ends its deck step without one (the goal gets no deck, the deck failed, or another run's deck wasn't ready in time), a `completed` event with step `warmUpFailed` says so: a wait showing the quiz's skeleton turns to its progress. A run that builds the plan (a first build or a retry before the plan exists) ends its deck step with exactly one of the two, including a reused or already linked deck. A run on an existing plan sends neither. A learn goal whose first lesson is picked before its plan reports it on the same stream: a `started` event with step `writeFirstLesson` carries its `lessonId` and `lessonTitle`, and a `completed` event with step `firstLessonReady` carries its `lessonId` once the learner can start it, before or after `goalReady`. Each is sent at most once per run; after a reconnect, read the onboarding's `firstLesson`.",
                   "example": "data: {\"at\":1760000000000,\"status\":\"started\",\"step\":\"writeLesson\"}\n\n"
                 }
               }
@@ -33632,6 +33632,43 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "partMinimum": {
+            "description": "The written test’s overall minimum and maximum recorded when the prompt was issued",
+            "type": "object",
+            "properties": {
+              "max": {
+                "nullable": true,
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "minimum": {
+                "type": "object",
+                "properties": {
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "points",
+                      "percent"
+                    ]
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  }
+                },
+                "required": [
+                  "unit",
+                  "value"
+                ]
+              }
+            },
+            "required": [
+              "max",
+              "minimum"
+            ]
+          },
           "points": {
             "nullable": true,
             "type": "number",
@@ -33795,6 +33832,12 @@
                   ]
                 }
               },
+              "estimatedLines": {
+                "description": "Approximate lines in the submitted text",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
               "ignoredFrom": {
                 "nullable": true,
                 "description": "UTF-16 offset where text exceeds the line limit",
@@ -33935,6 +33978,12 @@
                     "start"
                   ]
                 }
+              },
+              "estimatedLines": {
+                "description": "Approximate lines in the submitted text",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
               },
               "ignoredFrom": {
                 "nullable": true,
@@ -43528,6 +43577,13 @@
             "type": "string",
             "minLength": 1,
             "description": "Generation ID"
+          },
+          "kind": {
+            "description": "The generation kind, when identified",
+            "type": "string",
+            "enum": [
+              "writingPrompt"
+            ]
           },
           "status": {
             "type": "string",
@@ -86306,6 +86362,11 @@
                         "format": "date",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
                       },
+                      "estimatedLines": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
                       "lines": {
                         "nullable": true,
                         "type": "integer",
@@ -86402,6 +86463,70 @@
                       "date",
                       "errors",
                       "presentationShare"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "writeActions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "availability": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "available",
+                                  "continue"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "status"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "returnsOn": {
+                                "type": "string",
+                                "format": "date",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "tomorrow"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "returnsOn",
+                              "status"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ],
+                        "type": "object"
+                      },
+                      "blockId": {
+                        "description": "An unfinished extra writing block for this task",
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "taskKey": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "availability",
+                      "taskKey"
                     ],
                     "additionalProperties": false
                   }
@@ -100433,6 +100558,54 @@
                 "enum": [
                   "limitReached"
                 ]
+              },
+              "task": {
+                "description": "The writing task and its estimated practice time in minutes",
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "lines": {
+                    "nullable": true,
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991
+                  },
+                  "points": {
+                    "nullable": true,
+                    "type": "number",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  },
+                  "taskKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "drill",
+                      "answer"
+                    ]
+                  }
+                },
+                "required": [
+                  "description",
+                  "lines",
+                  "minutes",
+                  "points",
+                  "taskKey",
+                  "unit"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -100514,6 +100687,45 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
+          },
+          "partMinimum": {
+            "description": "The written test’s overall minimum and maximum recorded when the prompt was issued",
+            "type": "object",
+            "properties": {
+              "max": {
+                "nullable": true,
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "minimum": {
+                "type": "object",
+                "properties": {
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "points",
+                      "percent"
+                    ]
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  }
+                },
+                "required": [
+                  "unit",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "max",
+              "minimum"
+            ],
+            "additionalProperties": false
           },
           "points": {
             "nullable": true,
@@ -102012,6 +102224,12 @@
                   "additionalProperties": false
                 }
               },
+              "estimatedLines": {
+                "description": "Approximate lines in the submitted text",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
               "ignoredFrom": {
                 "nullable": true,
                 "description": "UTF-16 offset where text exceeds the line limit",
@@ -102158,6 +102376,12 @@
                   "additionalProperties": false
                 }
               },
+              "estimatedLines": {
+                "description": "Approximate lines in the submitted text",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
               "ignoredFrom": {
                 "nullable": true,
                 "description": "UTF-16 offset where text exceeds the line limit",
@@ -102296,6 +102520,15 @@
           }
         ],
         "type": "object"
+      },
+      "WritingPromptStep": {
+        "type": "string",
+        "enum": [
+          "ready",
+          "signUpRequired",
+          "writeWritingPrompt"
+        ],
+        "description": "Step names in the writing prompt generation event stream"
       }
     },
     "securitySchemes": {

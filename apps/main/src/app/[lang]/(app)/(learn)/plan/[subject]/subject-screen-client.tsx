@@ -2,6 +2,7 @@
 
 import { MainTutorScope, type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { useRouter } from "@/i18n/navigation";
+import { useWriteNow } from "@/lib/essays/use-write-now";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
@@ -34,6 +35,7 @@ export function SubjectScreenClient({
   tutor: TutorViewer;
 }) {
   const router = useRouter();
+  const writeNow = useWriteNow();
   const outlineActions = useTopicOutlineActions(goalId);
   const subjectKey = subject.key;
 
@@ -59,10 +61,12 @@ export function SubjectScreenClient({
           actions={{
             restore: (areas) => change([{ areas, kind: "restoreAreas" }]),
             setWrittenCadence: (cadence) => change([{ cadence, kind: "setWrittenCadence" }]),
+            write: () => writeNow({ goalId }),
           }}
           ask={<AskTutorEntry size="bar" />}
           hrefs={{
             adjust: "/plan",
+            answer: (attemptId) => `/essay/answers/${attemptId}`,
             back: "/plan",
             chapter: (chapterId) =>
               `/content/chapters/${chapterId}?from=${encodeURIComponent(subject.key)}`,

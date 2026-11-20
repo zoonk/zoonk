@@ -1,9 +1,15 @@
-import { type Goal } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { namesMatch } from "../../exams/_utils/name-match";
+import { unfinishedExtraWritingWhere } from "../../exams/essays/_utils/extra-writing-blocks";
 import { projectWrittenParts } from "../../exams/estimates/written-projection";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readExtraWritingLimit } from "../../learner/facts/extra-writing";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type WrittenSample, readWrittenSamples } from "../../learner/facts/written-samples";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
+import { readBlockPayload } from "../../sessions/block-payload";
 import { getWrittenTestAreas } from "../planner/graph-areas";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
@@ -73,6 +79,7 @@ function toHistory(samples: readonly WrittenSample[]) {
     .map(({ first, versions }) => ({
       attemptId: first.id,
       date: toIsoDate(first.localDate),
+      estimatedLines: first.answer.conditions.estimatedLines,
       lines: first.prompt.lines,
       range:
         first.numericEligible && first.answer.grade.kind === "points"
@@ -84,6 +91,52 @@ function toHistory(samples: readonly WrittenSample[]) {
     }));
 }
 
+async function loadWriteActions({
+  goal,
+  tasks,
+}: {
+  goal: Pick<Goal, "id" | "timezone" | "userId">;
+  tasks: ReturnType<typeof listWrittenTasks>;
+}) {
+  const { id: goalId, userId } = goal;
+
+  const [blocks, limit] = await Promise.all([
+    prisma.studySessionBlock.findMany({
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      select: { id: true, payload: true },
+      where: {
+        ...unfinishedExtraWritingWhere({ goalId, userId }),
+        OR: tasks.map(({ key }) => ({ payload: { equals: key, path: ["writing", "taskKey"] } })),
+      },
+    }),
+    getRequestInstant().then((date) =>
+      readExtraWritingLimit(
+        userId,
+        toIsoDate(getDateInTimeZone({ date, timeZone: getAnswerTimeZone({ goal }) })),
+      ),
+    ),
+  ]);
+
+  const byTask = Map.groupBy(
+    blocks.map((block) => ({ id: block.id, writing: readBlockPayload(block).writing })),
+    ({ writing }) => writing?.taskKey,
+  );
+
+  return ({ key: taskKey }: ReturnType<typeof listWrittenTasks>[number]) => {
+    const block = byTask.get(taskKey)?.[0];
+
+    if (block?.writing?.admissionId) {
+      return { availability: { status: "continue" as const }, blockId: block.id, taskKey };
+    }
+
+    const availability = limit
+      ? { returnsOn: limit.returnsOn, status: "tomorrow" as const }
+      : { status: "available" as const };
+
+    return { availability, blockId: block?.id, taskKey };
+  };
+}
+
 const TREND_SAMPLES = 4;
 
 export async function loadWrittenPracticeView({
@@ -92,7 +145,7 @@ export async function loadWrittenPracticeView({
   settings,
   structure,
 }: Parameters<typeof getWrittenPracticeView>[0] & {
-  goal: Pick<Goal, "id" | "userId">;
+  goal: Pick<Goal, "id" | "timezone" | "userId">;
   structure: ExamStructure | null;
 }): Promise<WrittenPractice | null> {
   const tasks = listWrittenTasks({ structure });
@@ -108,7 +161,11 @@ export async function loadWrittenPracticeView({
     return base;
   }
 
-  const samples = await readWrittenSamples({ goalId: goal.id, userId: goal.userId });
+  const [samples, writeAction] = await Promise.all([
+    readWrittenSamples({ goalId: goal.id, userId: goal.userId }),
+    loadWriteActions({ goal, tasks }),
+  ]);
+
   const points = projectWrittenParts({ samples, structure });
   const byTask = new Map(tasks.map((task) => [task.key, task.section]));
 
@@ -149,6 +206,7 @@ export async function loadWrittenPracticeView({
             errors: grade.errors.length,
             presentationShare: null,
           })),
+        writeActions: ownTasks.map((task) => writeAction(task)),
       };
     }),
   };

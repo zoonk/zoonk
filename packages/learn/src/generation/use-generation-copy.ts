@@ -233,6 +233,24 @@ function useMockQuestionsCopy(): KindCopy<"mockQuestions"> {
   };
 }
 
+function useWritingPromptCopy(): KindCopy<"writingPrompt"> {
+  const t = useExtracted();
+
+  return {
+    name: t("Writing your question"),
+    phases: {
+      question: {
+        label: t("Writing a question like your exam's"),
+        lines: [
+          t("Choosing the topic…"),
+          t("Writing the support text…"),
+          t("Checking it against the exam's criteria…"),
+        ],
+      },
+    },
+  };
+}
+
 function useSetupLessonCopy(): KindCopy<"setupLesson"> {
   const t = useExtracted();
 
@@ -274,6 +292,7 @@ export function useGenerationCopy(kind: GenerationKind): {
     speakingPaper: useSpeakingPaperCopy(),
     testOutQuestions: useTestOutQuestionsCopy(),
     understanding: useUnderstandingCopy(),
+    writingPrompt: useWritingPromptCopy(),
   } satisfies { [Kind in GenerationKind]: KindCopy<Kind> };
 
   return copy[kind];
