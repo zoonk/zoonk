@@ -16,7 +16,7 @@
 - “goal” (the learner's goal): “obiettivo”
 - “cancel” a subscription: “disdire” (“Disdici l'abbonamento”), not “annullare”
 - “Terms of service”: “Termini di servizio”, the legal page's title
-- “flag” (a mock question to come back to): “contrassegnare”, never “segnalare”, which reports a problem
+- A mock exam's “Not sure” (the button and the mark it leaves on an answer): “In dubbio”
 - “trap” (in a Trickster question): “trappola”; the “Trap hunter” badge: “Caccia alle trappole”
 - “Quick explanation”: “Spiegazione rapida”
 - “speaking practice”: “esercitazione orale”; a practice “call”: “conversazione di allenamento”; “Speaking” as a skill label: “Parlato”, but in sentences “prova orale”, “parte orale” or “come parli”

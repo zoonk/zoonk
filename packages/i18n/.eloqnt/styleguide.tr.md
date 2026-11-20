@@ -44,7 +44,7 @@
 - “share” (personal facts): “anlatmak”
 - “task” (a speaking exam's task): “bölüm”, not “görev” (a mission); its task card: “kart”
 - “hand in” (a mock or one of its parts): “teslim etmek”
-- “flag” (a mock question to come back to): “işaretlemek”
+- A mock exam's “Not sure” (the button and the mark it leaves on an answer): “Emin değilim”
 - “pattern” (a mistake that recurs): “tekrarlayan hata”
 - “link” (between a cause and its effect): “ilişki” (“neden-sonuç ilişkisi”), not “bağlantı”
 - “score”, including an exam's “band”: “puan”, not “not” (an essay's grade)
