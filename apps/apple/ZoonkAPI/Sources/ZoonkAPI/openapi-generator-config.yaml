@@ -89,6 +89,7 @@ filter:
     - createSubjectQuestion
     - createUpload
     - createUploadToken
+    - createWritingBlock
     - decidePlanChange
     - deleteCurrentSession
     - deleteCurrentUser
@@ -183,6 +184,7 @@ filter:
     - getUsernameAvailability
     - getWarmUp
     - getWeeklyChallenge
+    - getWritingAttempt
     - gradeMockEssays
     - joinInstrumentWaitlist
     - leaveInstrumentWaitlist
@@ -221,6 +223,7 @@ filter:
     - reviseGoalUnderstanding
     - saveMindMap
     - saveMockAnswer
+    - saveWritingDraft
     - searchCatalog
     - selectCurrentUserStudyReminderPhone
     - skipAlphabetIntro
@@ -230,6 +233,7 @@ filter:
     - startLanguageConversation
     - startMock
     - startMockSpeaking
+    - startWriting
     - streamGenerationEvents
     - submitChapterTestOut
     - submitEssay

@@ -156,6 +156,22 @@ extension StudyBlock {
       comment: "A short list of topics and how many more")
   }
 
+  /// A written task's row says when it waits for tomorrow, or that its draft is kept.
+  private var writingDetail: String? {
+    switch writingAvailability {
+    case .tomorrow:
+      String(
+        localized: "Back tomorrow: today's extra grades are used", table: "Today",
+        comment: "A written task that waits for tomorrow's grades")
+    case .continue:
+      String(
+        localized: "Your draft is saved", table: "Today",
+        comment: "A written task with a saved, unsent draft")
+    case .available, nil:
+      nil
+    }
+  }
+
   /// The row's line where the block is told on its own, as "Up next" does.
   var detail: String? {
     if hasCapsules && weakest {
@@ -184,7 +200,7 @@ extension StudyBlock {
     }
 
     if kind == .produce {
-      return canDo
+      return writingDetail ?? canDo
     }
 
     if fullReview {

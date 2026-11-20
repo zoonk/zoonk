@@ -89,6 +89,7 @@ private struct SubjectContent: View {
   @State private var showsDoneChapters = false
   @State private var openTopics: Set<SyllabusSubject.Topic.ID> = []
   @State private var restoring = VisitRequest<Bool>()
+  @State private var writeFailed = false
 
   let goal: LearnerGoal
   let syllabus: GoalSyllabus
@@ -115,8 +116,12 @@ private struct SubjectContent: View {
         topics
       }
     }
-    .bottomBar {
-      if let chapterId = nextChapterId {
+    .bottomBar(note: writeNote) {
+      // A written part's main action is writing: its lessons are a small part of its time.
+      if written != nil {
+        WriteNowButton(goalId: goal.id, failed: $writeFailed)
+          .keyboardShortcut(.defaultAction)
+      } else if let chapterId = nextChapterId {
         Button {
           router.open(chapterRoute(chapterId))
         } label: {
@@ -133,6 +138,19 @@ private struct SubjectContent: View {
     .onDisappear {
       restoring.leave()
     }
+  }
+
+  private var written: GoalPlan.WrittenPractice.Subject? {
+    syllabus.writtenPractice?.subject(for: subject)
+  }
+
+  private var writeNote: BarNote? {
+    writeFailed
+      ? BarNote(
+        LocalizedStringResource(
+          "That didn't go through. Try again in a moment.", table: "Plan",
+          comment: "Starting a written answer failed"))
+      : nil
   }
 
   private var nextChapterId: String? {
@@ -226,7 +244,9 @@ private struct SubjectContent: View {
   /// Main's `SubjectCoverage`: the preparation an exam measures, or else the lessons studied.
   @ViewBuilder
   private var numbers: some View {
-    if let preparation = subject.preparation {
+    if let written {
+      SubjectWrittenSections(written: written)
+    } else if let preparation = subject.preparation {
       Section {
         SubjectPreparation(share: preparation, mastery: subject.mastery)
       }

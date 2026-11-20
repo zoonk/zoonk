@@ -5,7 +5,6 @@ import SwiftUI
 private struct MockResultChoices {
   var showsDetails = false
   var opened: Set<String> = []
-  var essayComments: [String: Set<String>] = [:]
   var plan = MockPlanAnswers()
   var speakingTask: MockSpeaking.Task?
   /// The question to review at the top of its list where the learner last left it, nil at the
@@ -201,13 +200,7 @@ struct MockResultView: View {
 
     ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
       MockEssaySections(
-        run: run, essay: essay, number: index + 1, total: view.essays.count,
-        rubric: view.essayRubric ?? .custom,
-        openCriteria: Binding {
-          choices.essayComments[essay.id] ?? []
-        } set: {
-          choices.essayComments[essay.id] = $0
-        })
+        run: run, essay: essay, number: index + 1, total: view.essays.count)
     }
 
     if let speaking = view.speaking {
@@ -824,8 +817,6 @@ private struct MockEssaySections: View {
   let essay: MockEssay
   let number: Int
   let total: Int
-  let rubric: EssayRubric
-  @Binding var openCriteria: Set<String>
 
   var body: some View {
     Section {
@@ -845,9 +836,8 @@ private struct MockEssaySections: View {
       }
     }
 
-    if let grade = essay.grade {
-      EssayGradeSections(grade: grade)
-      EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
+    if let grade = essay.grade, let writing = essay.writing {
+      WritingResultSections(grade: grade, prompt: writing, text: essay.text ?? "")
     }
   }
 
@@ -867,12 +857,6 @@ private struct MockEssaySections: View {
         } icon: {
           ProgressView()
         }
-        .foregroundStyle(.mutedForeground)
-      case .limitReached:
-        Text(
-          "You've used today's essay grades. Try again tomorrow.", tableName: "Mock",
-          comment: "No essay grades left today"
-        )
         .foregroundStyle(.mutedForeground)
       case .failed, .idle:
         if run.essayGrading == .failed {

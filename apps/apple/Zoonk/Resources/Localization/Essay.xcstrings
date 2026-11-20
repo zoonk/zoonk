@@ -66,6 +66,43 @@
         }
       }
     },
+    "%@ points" : {
+      "comment" : "What a written question is worth"
+    },
+    "%@–%@" : {
+      "comment" : "A range of points, low to high, like 16–19",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@–%2$@"
+          }
+        }
+      }
+    },
+    "%lld errors" : {
+      "comment" : "Language errors in an answer",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld error"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld errors"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld words" : {
       "comment" : "An essay's word count",
       "localizations" : {
@@ -298,6 +335,57 @@
         }
       }
     },
+    "A new question, like the ones on your exam. It opens here when it's ready." : {
+      "comment" : "While a written question is being written"
+    },
+    "about %@" : {
+      "comment" : "An estimated time to write an answer"
+    },
+    "about %lld lines" : {
+      "comment" : "An answer's estimated handwritten lines",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "about %lld line"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "about %lld lines"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "about %lld of %lld lines" : {
+      "comment" : "An answer's estimated handwritten lines, of the question's limit",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "about %1$lld of %2$lld lines"
+          }
+        }
+      }
+    },
+    "about %lld of %lld lines · the board won't read past line %lld" : {
+      "comment" : "An answer longer than the question's line limit",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "about %1$lld of %2$lld lines · the board won't read past line %3$lld"
+          }
+        }
+      }
+    },
     "By what means" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -356,6 +444,9 @@
           }
         }
       }
+    },
+    "Checking it against the exam's criteria" : {
+      "comment" : "Under the step of writing a question"
     },
     "Comments" : {
       "comment" : "Comments on each criterion",
@@ -416,6 +507,24 @@
         }
       }
     },
+    "Complete" : {
+      "comment" : "A criterion of a written answer fully met"
+    },
+    "Content" : {
+      "comment" : "A written answer's content points"
+    },
+    "Continue" : {
+      "comment" : "Continues a saved draft\nGoes on after the refusal"
+    },
+    "Criteria" : {
+      "comment" : "A written answer's criteria"
+    },
+    "Criteria and points from the exam notice." : {
+      "comment" : "Where a result's criteria come from"
+    },
+    "Criteria and points from the exam notice. The answer key is ours, for practice." : {
+      "comment" : "Where a result's criteria come from, with Zoonk's practice key"
+    },
     "Essay · ENEM rubric" : {
       "comment" : "An ENEM essay task",
       "localizations" : {
@@ -474,6 +583,9 @@
           }
         }
       }
+    },
+    "Estimated score" : {
+      "comment" : "Under a written answer's range"
     },
     "Estimated score, from 0 to %@" : {
       "comment" : "Under an essay's estimated range",
@@ -593,6 +705,9 @@
         }
       }
     },
+    "Fixed: %@" : {
+      "comment" : "Criteria a rewrite fixed since the last version"
+    },
     "For example: %@" : {
       "comment" : "A rewrite example",
       "localizations" : {
@@ -710,6 +825,18 @@
           }
         }
       }
+    },
+    "From the exam notice." : {
+      "comment" : "Where criteria come from"
+    },
+    "From the exam notice. The answer key is ours, for practice." : {
+      "comment" : "Where criteria come from, with Zoonk's practice key"
+    },
+    "Good" : {
+      "comment" : "A criterion of a written answer mostly met"
+    },
+    "Grade answer" : {
+      "comment" : "Sends an answer to be graded"
     },
     "Grade essay" : {
       "comment" : "Sends a draft",
@@ -829,6 +956,12 @@
         }
       }
     },
+    "Grading criteria" : {
+      "comment" : "Criteria section\nCriteria sheet\nOpens the criteria sheet"
+    },
+    "How the %@ points are split" : {
+      "comment" : "Under the criteria row: how a question's points are split"
+    },
     "Keep writing" : {
       "comment" : "Stays on the essay",
       "localizations" : {
@@ -887,6 +1020,9 @@
           }
         }
       }
+    },
+    "Language errors" : {
+      "comment" : "Points taken off for language"
     },
     "Leave" : {
       "comment" : "Leaves the essay",
@@ -1005,6 +1141,12 @@
           }
         }
       }
+    },
+    "Left for tomorrow" : {
+      "comment" : "The task that waits"
+    },
+    "Missing" : {
+      "comment" : "A criterion of a written answer not met"
     },
     "missing" : {
       "comment" : "A proposal element is missing",
@@ -1242,6 +1384,9 @@
         }
       }
     },
+    "No more grading today" : {
+      "comment" : "Extra grades used up"
+    },
     "Nothing left to work on" : {
       "comment" : "Full marks",
       "localizations" : {
@@ -1300,6 +1445,21 @@
           }
         }
       }
+    },
+    "Nothing was lost. Try again in a moment." : {
+      "comment" : "After a question's writing failed"
+    },
+    "of %@" : {
+      "comment" : "After a score: the question's total, like 'of 30'"
+    },
+    "Partly" : {
+      "comment" : "A criterion of a written answer half met"
+    },
+    "Past line %lld: the board won't read from here" : {
+      "comment" : "Where an answer passes the question's line limit"
+    },
+    "Past the limit: the board won't read from here" : {
+      "comment" : "Where an answer passes the question's limit"
     },
     "present" : {
       "comment" : "A proposal element is there",
@@ -1360,6 +1520,12 @@
         }
       }
     },
+    "Question" : {
+      "comment" : "Opens the question while writing"
+    },
+    "Reading your answer against each criterion. It can take up to a minute." : {
+      "comment" : "Grading an answer"
+    },
     "Reading your essay against each criterion. It can take up to 30 seconds." : {
       "comment" : "Grading a draft",
       "localizations" : {
@@ -1418,6 +1584,9 @@
           }
         }
       }
+    },
+    "Report" : {
+      "comment" : "Reports a save that keeps failing"
     },
     "Rewrite" : {
       "comment" : "Rewrites the essay",
@@ -1596,6 +1765,9 @@
         }
       }
     },
+    "See comments" : {
+      "comment" : "Opens the comment on each criterion"
+    },
     "See the grade" : {
       "comment" : "Back to the last grade",
       "localizations" : {
@@ -1654,6 +1826,9 @@
           }
         }
       }
+    },
+    "Since your last version" : {
+      "comment" : "What a rewrite changed"
     },
     "Skip" : {
       "comment" : "Goes on without rewriting",
@@ -1772,6 +1947,12 @@
           }
         }
       }
+    },
+    "Still to work on: %@" : {
+      "comment" : "Criteria still to fix after a rewrite"
+    },
+    "Support text" : {
+      "comment" : "Text to read before writing"
     },
     "Supporting texts" : {
       "comment" : "Texts to read first",
@@ -1950,6 +2131,9 @@
         }
       }
     },
+    "The answer didn't load" : {
+      "comment" : "Loading failed"
+    },
     "The case" : {
       "comment" : "OAB's case to read first",
       "localizations" : {
@@ -2068,6 +2252,9 @@
         }
       }
     },
+    "The exam notice doesn't say how many points each criterion is worth." : {
+      "comment" : "Under criteria graded by level"
+    },
     "The five elements of the proposal" : {
       "comment" : "ENEM's intervention proposal elements",
       "localizations" : {
@@ -2126,6 +2313,9 @@
           }
         }
       }
+    },
+    "The question didn't load" : {
+      "comment" : "Loading failed"
     },
     "To what end" : {
       "comment" : "ENEM proposal element",
@@ -2304,6 +2494,38 @@
         }
       }
     },
+    "Try again" : {
+      "comment" : "Asks for the question again"
+    },
+    "Up to %lld lines" : {
+      "comment" : "A written question's line limit",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Up to %lld line"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Up to %lld lines"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "We couldn't write your question" : {
+      "comment" : "Writing a question failed"
+    },
+    "What the answer is judged on" : {
+      "comment" : "Under the criteria row of a question without points"
+    },
     "What they do" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -2362,6 +2584,12 @@
           }
         }
       }
+    },
+    "What to rewrite" : {
+      "comment" : "A next step's title"
+    },
+    "What to write" : {
+      "comment" : "A written question's task"
     },
     "Who acts" : {
       "comment" : "ENEM proposal element",
@@ -2422,6 +2650,9 @@
         }
       }
     },
+    "Write" : {
+      "comment" : "Starts writing the answer"
+    },
     "Write the whole essay, then send it again." : {
       "comment" : "What to do with an essay too short to grade",
       "localizations" : {
@@ -2480,6 +2711,12 @@
           }
         }
       }
+    },
+    "Writing a question like your exam's" : {
+      "comment" : "The step of writing a question"
+    },
+    "Writing drill" : {
+      "comment" : "A short writing exercise"
     },
     "Writing practice" : {
       "comment" : "A writing task",
@@ -2540,6 +2777,12 @@
         }
       }
     },
+    "Writing your question…" : {
+      "comment" : "A question being written"
+    },
+    "Written answer" : {
+      "comment" : "An exam's written question"
+    },
     "You skipped this essay." : {
       "comment" : "An essay the learner skipped without sending a draft",
       "localizations" : {
@@ -2598,6 +2841,20 @@
           }
         }
       }
+    },
+    "You wrote “%@” · %@" : {
+      "comment" : "What the learner wrote for a language error, and the kind of error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You wrote “%1$@” · %2$@"
+          }
+        }
+      }
+    },
+    "You'll have more tomorrow." : {
+      "comment" : "When grading comes back"
     },
     "You've used today's essay grades. Your text stays here; send it tomorrow." : {
       "comment" : "No essay grades left today",
@@ -2834,6 +3091,9 @@
           }
         }
       }
+    },
+    "Your text" : {
+      "comment" : "The learner's answer as sent"
     },
     "Your text stays on this device, here when you come back." : {
       "comment" : "Unsent text is kept",

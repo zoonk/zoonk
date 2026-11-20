@@ -14,6 +14,10 @@ struct MockShape: Hashable, Codable, Sendable {
     case full
     case half
     case area
+    /// The whole objective test of an exam held as several tests.
+    case objective
+    /// The written test: every written task, on the official clock.
+    case written
   }
 
   var area: String?
@@ -57,13 +61,15 @@ struct MockQuestion: Identifiable, Hashable, Sendable, Decodable {
   var number: Int
   var question: String
   var set: PracticeItemSet?
+  /// An essay's limits and criteria.
+  var writing: WritingPrompt?
   /// Nil for an essay.
   var practice: PracticeQuestion?
 
   var id: String { itemId }
 
   private enum CodingKeys: String, CodingKey {
-    case area, context, format, itemId, number, question, set
+    case area, context, format, itemId, number, question, set, writing
   }
 
   init(from decoder: any Decoder) throws {
@@ -75,6 +81,7 @@ struct MockQuestion: Identifiable, Hashable, Sendable, Decodable {
     number = try container.decode(Int.self, forKey: .number)
     question = try container.decode(String.self, forKey: .question)
     set = try container.decodeIfPresent(PracticeItemSet.self, forKey: .set)
+    writing = try container.decodeIfPresent(WritingPrompt.self, forKey: .writing)
     practice = format == .essay ? nil : try PracticeQuestion(from: decoder)
   }
 }
@@ -258,6 +265,8 @@ struct MockPoints: Hashable, Decodable, Sendable {
   var short: Double?
   var parts: [Test]
   var unjudged: [Unjudged]
+  /// The sitting's written parts, each on its own scale; nil ranges while grades are pending.
+  var written: [WrittenPartPoints]?
 
   /// Each test, and the tests together when they have a minimum. Misses come first, so what would
   /// eliminate the learner is read before what went fine.
@@ -311,11 +320,12 @@ struct MockEssay: Hashable, Decodable, Sendable, Identifiable {
   }
 
   var area: String?
-  var grade: EssayGrade?
+  var grade: WritingResult?
   var itemId: String
   var question: String
   var status: Status
   var text: String?
+  var writing: WritingPrompt?
 
   var id: String { itemId }
 }
@@ -522,7 +532,6 @@ struct MockView: Hashable, Decodable, Sendable {
   var ceremony: Milestone?
   var certificates: [CertificateFacts]
   var current: MockCurrent?
-  var essayRubric: EssayRubric?
   var essays: [MockEssay]
   var examDocument: ExamDocument
   var examName: String?
@@ -533,6 +542,8 @@ struct MockView: Hashable, Decodable, Sendable {
   var missionMoment: DayResult.MissionMoment?
   var mistakes: [Mistake]
   var number: Int
+  /// `practice` where the exam shares one clock with its essay: the timer is pacing, not the board's.
+  var pacing: Pacing?
   var passMarks: PassMarks?
   var planItemId: String?
   var purpose: MockPurpose
@@ -550,6 +561,11 @@ struct MockView: Hashable, Decodable, Sendable {
   var status: Status
   var trueFalseLabels: PracticeTrueFalseLabels
   var verdict: MockVerdict?
+
+  enum Pacing: String, Decodable, Sendable {
+    case official
+    case practice
+  }
 
   var currentSection: MockSection? {
     sections.first { $0.status == .current }
@@ -576,6 +592,24 @@ enum ExamDocument: String, Decodable, Sendable {
 }
 
 struct MockOption: Hashable, Decodable, Sendable, Identifiable {
+  /// One test of an exam held as several, in the notice's words and order.
+  struct Section: Hashable, Decodable, Sendable {
+    enum Kind: String, Decodable, Sendable {
+      case listening
+      case objective
+      case practical
+      case speaking
+      case written
+    }
+
+    var kind: Kind
+    var minutes: Int?
+    var name: String
+    var questions: Int?
+    /// When it's held ("Morning"), as the notice says.
+    var session: String?
+  }
+
   var area: String?
   var areas: [String]
   var covers: [String]?
@@ -585,12 +619,19 @@ struct MockOption: Hashable, Decodable, Sendable, Identifiable {
   var leftOut: [MockLeftOut]
   var minutes: Int
   var objectiveOnly: Bool
+  var pacing: MockView.Pacing?
   var questions: Int
+  var sections: [Section]?
   var written: [String]
 
   var id: String { [kind.rawValue, day.map(String.init) ?? "", area ?? ""].joined(separator: ":") }
 
   var shape: MockShape { MockShape(area: area, day: day, kind: kind) }
+
+  /// Its start may write questions for a written part.
+  var asksWriting: Bool {
+    kind == .written || (sections ?? []).contains { $0.kind == .written } || !written.isEmpty
+  }
 }
 
 struct ExamMockSummary: Hashable, Decodable, Sendable, Identifiable {

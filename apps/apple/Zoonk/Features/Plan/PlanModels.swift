@@ -115,9 +115,46 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   }
 
   struct WrittenPractice: Decodable, Equatable, Sendable {
+    /// A written part's page: where the learner stands in points, how the answers move, and each
+    /// first answer.
+    struct Subject: Decodable, Equatable, Sendable {
+      struct Answer: Decodable, Equatable, Identifiable, Sendable {
+        let attemptId: String
+        let date: String
+        let lines: Int?
+        let range: WritingRange?
+        let taskKey: String
+        let title: String
+        let versions: Int
+
+        var id: String { attemptId }
+      }
+
+      /// Unknown shares are nil.
+      struct Sample: Decodable, Equatable, Sendable {
+        let contentShare: Double?
+        let date: String
+        let errors: Int
+        let presentationShare: Double?
+      }
+
+      let answers: [Answer]
+      let minutes: Int?
+      let points: WrittenPartPoints
+      let questions: Int?
+      let share: Double?
+      let trend: [Sample]
+    }
+
     /// `weekly`, `biweekly` or `finalWeeks`.
     let cadence: String
     let parts: [String]
+    let subjects: [Subject]?
+
+    /// The written part a subject of the syllabus is, by its area's name.
+    func subject(for subject: SyllabusSubject) -> Subject? {
+      subjects?.first { written in subject.areas.contains(written.points.name) }
+    }
   }
 
   /// An exam plan built before research read its notice: `reading` while the reveal waits for
@@ -605,6 +642,8 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   let topicCount: Int
   /// The plan says which skills teach which topic, so topics have a status.
   let topicsMapped: Bool
+  /// An exam's written parts: their points, trend and past answers.
+  let writtenPractice: GoalPlan.WrittenPractice?
 
   /// Core's `hasSubjectPages`: a language keeps its path; an exam's notice, or more than one
   /// module, has subjects.

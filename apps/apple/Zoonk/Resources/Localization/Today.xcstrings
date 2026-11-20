@@ -3878,6 +3878,9 @@
         }
       }
     },
+    "Back tomorrow: today's extra grades are used" : {
+      "comment" : "A written task that waits for tomorrow's grades"
+    },
     "Beat the Trickster" : {
       "comment" : "Mission: a phase challenge",
       "localizations" : {
@@ -14221,6 +14224,9 @@
           }
         }
       }
+    },
+    "Your draft is saved" : {
+      "comment" : "A written task with a saved, unsent draft"
     },
     "Your end date has passed with %lld lessons left." : {
       "comment" : "A goal's end date passed with lessons left; the number is the lessons",

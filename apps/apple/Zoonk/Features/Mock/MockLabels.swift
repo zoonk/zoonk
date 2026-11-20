@@ -30,7 +30,34 @@ enum MockLabels {
     }
   }
 
-  static func optionName(_ option: MockOption, severalDays: Bool) -> String {
+  /// An exam of several tests: the full option names each, and each can be taken alone.
+  static func examTests(_ options: [MockOption]) -> Int {
+    let offersEachTest = options.contains { $0.kind == .objective || $0.kind == .written }
+    return offersEachTest ? (options.first { $0.kind == .full }?.sections?.count ?? 0) : 0
+  }
+
+  /// A written test's questions are its tasks, which the objective count leaves out.
+  static func questions(_ option: MockOption) -> Int {
+    guard let sections = option.sections, !sections.isEmpty else { return option.questions }
+    return sections.reduce(0) { $0 + ($1.questions ?? 0) }
+  }
+
+  static func optionName(_ option: MockOption, severalDays: Bool, tests: Int = 0) -> String {
+    // One test of an exam of several is named as the notice names it; all of them, by their count.
+    if !severalDays, option.kind == .objective || option.kind == .written,
+      let section = option.sections?.first
+    {
+      return section.name
+    }
+
+    if !severalDays, option.kind == .full, tests > 1 {
+      return tests == 2
+        ? String(localized: "Both tests", table: "Mock", comment: "A mock exam of both tests")
+        : String(
+          localized: "All \(tests) tests", table: "Mock",
+          comment: "A mock exam of every test of an exam")
+    }
+
     if option.kind == .area {
       return option.areas.first ?? option.area
         ?? String(localized: "One subject", table: "Mock", comment: "A one-subject mock")
