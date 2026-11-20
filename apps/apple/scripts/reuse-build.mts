@@ -17,7 +17,6 @@ export function contentTime(blobHash: string): number {
   return EPOCH_SECONDS + Number.parseInt(blobHash.slice(0, HASH_DIGITS), 16);
 }
 
-/** Git's `ls-files --stage -z` output as each file's path and the hash of its content. */
 export function parseStagedFiles(output: string): { file: string; hash: string }[] {
   return output
     .split("\0")
