@@ -90,15 +90,15 @@ jobs:
           path: ${{ runner.temp }}/apple-source-packages
           key: ${{ steps.last.outputs.packages-key }}
 
+      - name: Check String Catalogs
+        run: make -C apps/apple strings-check
+
       - name: Save this build
         if: github.ref == 'refs/heads/main' && steps.last.outputs.build-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/apple/DerivedData/Make
           key: ${{ steps.last.outputs.build-key }}
-
-      - name: Check String Catalogs
-        run: make -C apps/apple strings-check
 
   test:
     needs: changes

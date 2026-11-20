@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { utimesSync } from "node:fs";
+import { lutimesSync } from "node:fs";
 import path from "node:path";
 
 const appleDirectory = path.resolve(import.meta.dirname, "..");
@@ -9,7 +9,10 @@ const appleDirectory = path.resolve(import.meta.dirname, "..");
 const EPOCH_SECONDS = Date.parse("2000-01-01T00:00:00Z") / 1000;
 const HASH_DIGITS = 7;
 
-/** The same content always gets the same time, and changed content gets another. */
+/**
+ * The same content always gets the same time. Changed content gets another, short of two versions
+ * of one file sharing both their size and these digits of their hashes.
+ */
 export function contentTime(blobHash: string): number {
   return EPOCH_SECONDS + Number.parseInt(blobHash.slice(0, HASH_DIGITS), 16);
 }
@@ -20,9 +23,9 @@ export function parseStagedFiles(output: string): { file: string; hash: string }
     .split("\0")
     .filter(Boolean)
     .map((entry) => {
-      const [stage = "", file = ""] = entry.split("\t");
-      const [, hash = ""] = stage.split(" ");
-      return { file, hash };
+      const tab = entry.indexOf("\t");
+      const [, hash = ""] = entry.slice(0, tab).split(" ");
+      return { file: entry.slice(tab + 1), hash };
     });
 }
 
@@ -41,7 +44,7 @@ function reuseBuild() {
 
   for (const { file, hash } of parseStagedFiles(staged)) {
     const time = contentTime(hash);
-    utimesSync(path.join(appleDirectory, file), time, time);
+    lutimesSync(path.join(appleDirectory, file), time, time);
   }
 
   execFileSync("defaults", [
