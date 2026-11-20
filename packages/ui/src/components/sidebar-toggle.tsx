@@ -293,22 +293,17 @@ export function SidebarSearch({
   );
 }
 
-/**
- * The bar's search icon where there is no sidebar: it opens the same palette as `SidebarSearch`.
- * Beside a tab bar's tabs it is `outline`, so it never reads as the current tab's soft fill.
- */
+/** The bar's search icon where there is no sidebar: it opens the same palette as `SidebarSearch`. */
 export function BarSearch({
   className,
   edge,
   label,
   onClick,
-  variant = "ghost",
 }: {
   className?: string;
   edge?: "start" | "end";
   label: string;
   onClick: () => void;
-  variant?: "ghost" | "outline";
 }) {
   return (
     <Button
@@ -318,7 +313,7 @@ export function BarSearch({
       edge={edge}
       onClick={onClick}
       size="icon-bar"
-      variant={variant}
+      variant="ghost"
     >
       <SearchIcon aria-hidden="true" />
       <span className="sr-only">{label}</span>
