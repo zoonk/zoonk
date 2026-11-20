@@ -4,6 +4,7 @@ import { postAsLearner } from "@/lib/api/learner-api";
 import { chooseExamOption } from "@zoonk/core/exams/choices/choose";
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { changeGoalPlan } from "@zoonk/core/plans/change";
+import { unlessPlanConflict } from "@zoonk/core/plans/conflict";
 import { planChangeInputSchema } from "@zoonk/core/plans/contract";
 import { decidePlanChange } from "@zoonk/core/plans/decide-change";
 import {
@@ -51,8 +52,8 @@ export async function previewPlanChangeAction(
     return null;
   }
 
-  const result = await previewPlanChange({ goalId, input: input.data });
-  return result.status === "ready" ? result.preview : null;
+  const result = await unlessPlanConflict(() => previewPlanChange({ goalId, input: input.data }));
+  return result?.status === "ready" ? result.preview : null;
 }
 
 export async function answerPlanChangeAction(
@@ -112,9 +113,9 @@ export async function chooseExamOptionAction(
     return null;
   }
 
-  const result = await chooseExamOption({ goalId, input: parsed.data });
+  const result = await unlessPlanConflict(() => chooseExamOption({ goalId, input: parsed.data }));
 
-  return result.status === "applied" ? { change: result.change } : null;
+  return result?.status === "applied" ? { change: result.change } : null;
 }
 
 export async function continueNextLevelAction(goalId: string): Promise<boolean> {

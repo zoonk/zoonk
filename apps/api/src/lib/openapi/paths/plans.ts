@@ -11,7 +11,11 @@ import {
   planChangePathParamsSchema,
   planLinkPathParamsSchema,
 } from "../schemas/paths";
-import { planChangeInvalidResponse, planDateChangeInvalidResponse } from "../schemas/plan-errors";
+import {
+  planChangeInvalidResponse,
+  planChangedWhileSavingResponse,
+  planDateChangeInvalidResponse,
+} from "../schemas/plan-errors";
 import {
   ownLevelChangeSchema,
   planChangeResultSchema,
@@ -70,6 +74,7 @@ export const planPaths = {
           content: { "application/json": { schema: planChangeResultSchema } },
           description: "The applied change",
         },
+        "409": planChangedWhileSavingResponse,
         "422": planDateChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
