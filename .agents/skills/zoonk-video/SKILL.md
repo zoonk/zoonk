@@ -30,6 +30,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
    - Use a scratch folder outside the repo; nothing a video produces is committed. Pick a free port if another studio runs.
    - It copies the engine, the harness, the scripts and the examples (`films/zoonk-2/`, `films/launch/`), installs GSAP, Lucide and Geist, links the repo's React, Vite, AI SDK and Playwright, and builds the icon and font files.
    - It ends with `npm run typecheck`: every view against the app's current contracts. A failure names the view and field that drifted; fix it before filming, since a drifted view draws wrong numbers. Run it again after pulling.
+   - Running it again over a studio adds what's missing and never overwrites a file. A studio made before the stage has no `typecheck`, and init stops there: make a fresh folder and copy its `films/` across.
    - It needs FFmpeg, Python 3 with NumPy, and the Chromium the repo's E2E tests use (`pnpm exec playwright install chromium`); it stops early if FFmpeg or NumPy is missing.
    - Then, in the studio: `npm run harness` (keep it running), and `node scripts/export-art.mjs` for the buddy and Trickster SVGs.
 4. **Real screens.** Follow [real screens](references/real-screens.md).

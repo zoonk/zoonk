@@ -40,6 +40,15 @@ for (const [command, args, fix] of [
   }
 }
 
+const pkg = path.join(work, "package.json");
+// Init never overwrites a studio's files, so over one made before the stage it would leave the old views and
+// scripts in place. Those folders are scratch: start a fresh one and bring the films across.
+if (existsSync(pkg) && !JSON.parse(readFileSync(pkg, "utf8")).scripts?.typecheck) {
+  throw new Error(
+    `${work} is a studio from before the stage. Make a fresh one (node init.mjs <new-dir>) and copy your films/ into it.`,
+  );
+}
+
 mkdirSync(work, { recursive: true });
 for (const [from, to] of [
   ["engine", "engine"],
@@ -52,7 +61,6 @@ for (const [from, to] of [
 }
 writeFileSync(path.join(work, "studio.json"), `${JSON.stringify({ port, repo }, null, 2)}\n`);
 
-const pkg = path.join(work, "package.json");
 if (!existsSync(pkg)) {
   writeFileSync(
     pkg,
