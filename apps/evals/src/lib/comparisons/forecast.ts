@@ -4,6 +4,12 @@ import { type Manifest, type Reader } from "./schemas";
 
 export const DEFAULT_RESERVE_READ_CAP = 2;
 
+export function forecastReader(reader: Reader) {
+  return reader.channel === "seat"
+    ? { ...reader, channel: "gateway" as const, requestedChannel: "seat" as const }
+    : reader;
+}
+
 const outputTokensByModel: Record<string, number> = {
   "anthropic/claude-haiku-5.5": 10_000,
   "google/gemini-4-neon": 18_000,
@@ -91,10 +97,9 @@ export async function forecastReads(
           });
 
     return {
-      estimatedUsd: reader.channel === "seat" ? 0 : gatewayUsd,
-      gatewayFallbackUsd: reader.channel === "seat" ? gatewayUsd : 0,
+      estimatedUsd: gatewayUsd,
       packets,
-      reader,
+      reader: forecastReader(reader),
       ...(reader.reserve && { reserveCap }),
     };
   };
@@ -117,7 +122,7 @@ export function confirmForecast(
       forecast: {
         byReader,
         conditional:
-          "Estimates reverse reads on half of matched pairs and reserve reads on a third, up to the cap. Answer-key solves, verification and seat fallback are additional.",
+          "Estimates reverse reads on half of matched pairs and reserve reads on a third, up to the cap. Seat requests use gateway and are included. Answer-key solves and verification are additional.",
         generation,
         initialGatewayUsd: usd,
       },

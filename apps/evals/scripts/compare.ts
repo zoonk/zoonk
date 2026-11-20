@@ -6,6 +6,7 @@ import { decide, decisionSchema, decisiveUnresolved } from "@/lib/comparisons/de
 import {
   DEFAULT_RESERVE_READ_CAP,
   confirmForecast,
+  forecastReader,
   forecastReads,
 } from "@/lib/comparisons/forecast";
 import { importVerdicts, ownerPackets, saveResponse } from "@/lib/comparisons/packets";
@@ -47,7 +48,7 @@ const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [
   --incumbent <model>      Incumbent, in the same forms; omit for a single-output audit
   --case <id>              Limit to a case (repeatable)
   --runs <n>               Runs per case (default 2)
-  --reader <channel:model> A reader such as seat:anthropic/claude-haiku-5.5 (repeatable, one per family)
+  --reader <channel:model> A reader such as gateway:anthropic/claude-haiku-5.5 (repeatable, one per family)
   --claude-reader <model> Full Anthropic model ID (default ${DEFAULT_CLAUDE_READER})
   --gpt-reader <model>    Full OpenAI model ID (default ${DEFAULT_GPT_READER})
                          Choose models that passed the control packets. Use --reader to choose channels.
@@ -133,9 +134,9 @@ if (options.reader && (claudeReader || gptReader)) {
   throw new Error("Choose --reader or the family-specific reader options.");
 }
 
-function readers(image: boolean) {
+function readers() {
   const defaultReaders = [
-    `${image ? "gateway" : "seat"}:${claudeReader ?? DEFAULT_CLAUDE_READER}`,
+    `gateway:${claudeReader ?? DEFAULT_CLAUDE_READER}`,
     `gateway:${gptReader ?? DEFAULT_GPT_READER}`,
   ];
 
@@ -363,7 +364,7 @@ async function getManifest() {
     incumbent: options.incumbent,
     limit,
     question: options.question ?? "Which variant better serves the learner?",
-    readers: readers(task.output === "image"),
+    readers: readers(),
     reserve: options.reserve,
     reserveCap: reserveCap ?? DEFAULT_RESERVE_READ_CAP,
     runs: z.coerce
@@ -388,7 +389,7 @@ async function forecastFirstRead(manifest: Manifest, needsForecast: boolean) {
     const cap = reserveCap ?? manifest.reserveCap ?? DEFAULT_RESERVE_READ_CAP;
 
     process.stdout.write(
-      `${JSON.stringify({ forecast: { readers: selected, reserveCap: cap } })}\n`,
+      `${JSON.stringify({ forecast: { readers: selected.map((reader) => forecastReader(reader)), reserveCap: cap } })}\n`,
     );
 
     return;

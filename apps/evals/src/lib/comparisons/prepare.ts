@@ -121,21 +121,15 @@ function assertOutputType({
   challenger,
   image,
   incumbent,
-  readers,
 }: {
   challenger: Awaited<ReturnType<typeof source>>;
   image: boolean;
   incumbent: Awaited<ReturnType<typeof source>> | null;
-  readers: Reader[];
 }) {
   if (
     [challenger, incumbent].some((variant) => variant && (variant.model.kind === "image") !== image)
   ) {
     throw new Error("Choose a model that generates the task’s output type.");
-  }
-
-  if (image && readers.some((reader) => reader.channel === "seat")) {
-    throw new Error("Image packets require gateway model readers.");
   }
 }
 
@@ -170,7 +164,7 @@ async function freeze(options: PrepareOptions) {
 
   const image = task.output === "image";
 
-  assertOutputType({ challenger, image, incumbent, readers: options.readers });
+  assertOutputType({ challenger, image, incumbent });
 
   const readers = withReserve(
     options.readers,
