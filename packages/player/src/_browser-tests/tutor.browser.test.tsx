@@ -124,6 +124,12 @@ function connectionLost() {
   return new TypeError("Failed to fetch");
 }
 
+function codeLines(block: Element): string[] {
+  return [...block.querySelectorAll("[data-slot='code-line'] > div")].map(
+    (line) => line.textContent ?? "",
+  );
+}
+
 function distanceFromBottom(log: Locator) {
   const element = log.element();
   return element.scrollHeight - element.scrollTop - element.clientHeight;
@@ -587,11 +593,9 @@ describe("tutor answers", () => {
       .element(sheet.getByRole("blockquote").getByText("continuous free fall"))
       .toBeVisible();
 
-    await expect.element(sheet.getByText("const orbitalSpeed = 7.8;")).toBeVisible();
-
     await expect
-      .poll(() => sheet.getByRole("code").filter({ hasText: "const orbitalSpeed" }).element())
-      .toHaveProperty("innerText", expect.stringContaining(";\nconsole.log"));
+      .poll(() => codeLines(sheet.getByRole("group", { name: "Code" }).first().element()))
+      .toStrictEqual(["const orbitalSpeed = 7.8;", "console.log(orbitalSpeed);"]);
 
     await expect
       .element(sheet.getByRole("table").getByRole("cell", { name: "km/s" }))
@@ -600,6 +604,39 @@ describe("tutor answers", () => {
     await Promise.all([import("@streamdown/math"), import("@streamdown/mermaid")]);
     await expectCount(sheet.getByRole("math"), 2);
     await expect.element(sheet.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
+  });
+
+  it("draws an answer's code as a lesson does, from a half-written block on", async () => {
+    await atViewport(PHONE, async () => {
+      const { api, lesson } = lessonWithTutor();
+      const stream = tutorAnswerStream();
+      api.next("answer", () => Promise.resolve(stream.response));
+      playLesson({ lesson });
+
+      const sheet = await openTutor();
+      await ask(sheet, "How do I print two lines?");
+      stream.write("Call `print` once per line:\n\n```python\nprint('first')\nprint('sec");
+
+      const code = sheet.getByRole("group", { name: "Code" });
+      await expect.element(code).toBeVisible();
+      await expect.poll(() => codeLines(code.element())[0]).toBe("print('first')");
+
+      stream.write("ond')\n```\n\nEach call ends its line.");
+      stream.finish();
+      stream.close();
+
+      await expect.element(sheet.getByText("Each call ends its line.")).toBeVisible();
+      expect(codeLines(code.element())).toStrictEqual(["print('first')", "print('second')"]);
+      await expect.element(sheet.getByRole("code").filter({ hasText: /^print$/u })).toBeVisible();
+
+      expect(
+        sheet
+          .element()
+          .querySelector("[data-streamdown='code-block'], [data-streamdown='inline-code']"),
+      ).toBeNull();
+
+      expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+    });
   });
 
   it("draws an answer's math without downloading a stylesheet for it", async () => {

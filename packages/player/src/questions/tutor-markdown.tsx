@@ -1,6 +1,7 @@
 "use client";
 
 import { isTutorAppPath, readTutorBlockLink } from "@zoonk/core/lesson-questions/app-links";
+import { CodeBlock, InlineCode } from "@zoonk/learn/code";
 import { DisplayMath } from "@zoonk/learn/rich-text/display-math";
 import {
   AlertDialog,
@@ -22,6 +23,7 @@ import {
   type ExtraProps,
   type LinkSafetyModalProps,
   Streamdown,
+  defaultComponents,
   defaultRehypePlugins,
 } from "streamdown";
 import { type PlayerLinkComponent } from "../player-context";
@@ -170,9 +172,37 @@ function AnswerSpan({ node, ...props }: ComponentProps<"span"> & ExtraProps) {
   return <span {...props} />;
 }
 
-const ANSWER_COMPONENTS: Components = { span: AnswerSpan };
+/** Whether Streamdown can draw a diagram yet; until then its source shows as code. */
+const DiagramsReadyContext = createContext(false);
 
-const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink, span: AnswerSpan };
+const FENCE_LANGUAGE = /language-(?<name>\S+)/u;
+const TRAILING_LINE_BREAKS = /\n+$/u;
+
+/** A fenced block in an answer, drawn as lessons draw code. */
+function AnswerCodeBlock(props: ComponentProps<"code"> & ExtraProps) {
+  const diagramsReady = use(DiagramsReadyContext);
+  const language = FENCE_LANGUAGE.exec(props.className ?? "")?.groups?.name?.toLowerCase() ?? null;
+
+  if (language === "mermaid" && diagramsReady) {
+    return <defaultComponents.code {...props} />;
+  }
+
+  const code = typeof props.children === "string" ? props.children : "";
+
+  return <CodeBlock code={code.replace(TRAILING_LINE_BREAKS, "")} language={language} />;
+}
+
+function AnswerInlineCode({ children }: ComponentProps<"code"> & ExtraProps) {
+  return <InlineCode>{children}</InlineCode>;
+}
+
+const ANSWER_COMPONENTS: Components = {
+  code: AnswerCodeBlock,
+  inlineCode: AnswerInlineCode,
+  span: AnswerSpan,
+};
+
+const TUTOR_ANSWER_COMPONENTS: Components = { ...ANSWER_COMPONENTS, a: TutorAnswerLink };
 
 function BlockOpenFailed() {
   const t = useExtracted();
@@ -198,19 +228,16 @@ function BlockUnavailable() {
   );
 }
 
-// Streamdown's code and table scrollers carry their own border and background, which the sideways
-// fade would fade with them, so their outer card is the one frame. A table keeps its words whole
-// and scrolls instead of breaking them letter by letter. Its lists sit inside their text, so a
-// wrapped item's next line would start under the bullet, and an inline code box split over two
-// lines would leave each half open.
+// Streamdown's table scroller carries its own border and background, which the sideways fade would
+// fade with it, so its outer card is the one frame. A table keeps its words whole and scrolls
+// instead of breaking them letter by letter. Its lists sit inside their text, so a wrapped item's
+// next line would start under the bullet.
 const TUTOR_MARKDOWN_CLASS = cn(
   "min-w-0 wrap-anywhere [&_a]:underline [&_a]:underline-offset-4",
-  "**:data-[streamdown=inline-code]:box-decoration-clone **:data-[streamdown=ordered-list]:list-outside **:data-[streamdown=ordered-list]:ps-5 **:data-[streamdown=unordered-list]:list-outside **:data-[streamdown=unordered-list]:ps-5",
-  "**:data-[streamdown=code-block]:bg-background **:data-[streamdown=code-block-body]:scroll-fade-x **:data-[streamdown=code-block-body]:border-0 **:data-[streamdown=code-block-body]:bg-transparent",
+  "**:data-[streamdown=ordered-list]:list-outside **:data-[streamdown=ordered-list]:ps-5 **:data-[streamdown=unordered-list]:list-outside **:data-[streamdown=unordered-list]:ps-5",
   "**:data-[streamdown=table-wrapper]:bg-background [&_[data-streamdown=table-wrapper]>div:has(>table)]:scroll-fade-x **:data-[streamdown=table-wrapper]:wrap-normal [&_[data-streamdown=table-wrapper]>div:has(>table)]:border-0 [&_[data-streamdown=table-wrapper]>div:has(>table)]:bg-transparent",
 );
 
-/** Admin renders answers without an intl provider, so only parts shown after a click may translate. */
 export function TutorMarkdown({
   answer,
   appLinks,
@@ -255,21 +282,23 @@ export function TutorMarkdown({
 
   return (
     <TutorAnswerLinksContext value={links}>
-      <Streamdown
-        animated={isAnimating}
-        className={TUTOR_MARKDOWN_CLASS}
-        components={appLinks ? TUTOR_ANSWER_COMPONENTS : ANSWER_COMPONENTS}
-        controls={false}
-        disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
-        isAnimating={isAnimating}
-        linkSafety={appLinks ? undefined : LESSON_QUESTION_LINK_SAFETY}
-        mode={isStreaming ? "streaming" : "static"}
-        plugins={plugins}
-        rehypePlugins={appLinks ? BUDDY_REHYPE_PLUGINS : undefined}
-        urlTransform={getSafeLessonQuestionUrl}
-      >
-        {answer}
-      </Streamdown>
+      <DiagramsReadyContext value={plugins.mermaid !== undefined}>
+        <Streamdown
+          animated={isAnimating}
+          className={TUTOR_MARKDOWN_CLASS}
+          components={appLinks ? TUTOR_ANSWER_COMPONENTS : ANSWER_COMPONENTS}
+          controls={false}
+          disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
+          isAnimating={isAnimating}
+          linkSafety={appLinks ? undefined : LESSON_QUESTION_LINK_SAFETY}
+          mode={isStreaming ? "streaming" : "static"}
+          plugins={plugins}
+          rehypePlugins={appLinks ? BUDDY_REHYPE_PLUGINS : undefined}
+          urlTransform={getSafeLessonQuestionUrl}
+        >
+          {answer}
+        </Streamdown>
+      </DiagramsReadyContext>
 
       {opened === false && <BlockOpenFailed />}
 

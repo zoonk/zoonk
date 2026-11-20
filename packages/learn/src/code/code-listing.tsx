@@ -257,6 +257,21 @@ export function CodeSnippet({ code, language }: { code: string; language: string
   );
 }
 
+/**
+ * Code inside a sentence. Its pieces end flush where it splits over two lines, so a long run never
+ * reaches past the column; text splits where a code line would.
+ */
+export function InlineCode({ children }: { children: React.ReactNode }) {
+  return (
+    <code
+      className="bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.85em] leading-tight wrap-break-word"
+      translate="no"
+    >
+      {typeof children === "string" ? withBreakPoints(children) : children}
+    </code>
+  );
+}
+
 /** A fenced block in a lesson's or a question's text. */
 export function CodeBlock({ code, language }: { code: string; language: string | null }) {
   const t = useExtracted();
