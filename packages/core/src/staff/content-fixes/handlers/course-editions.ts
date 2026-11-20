@@ -83,12 +83,14 @@ async function resolve(
 
 function editionHandler(op: EditionOp) {
   return defineFixHandler({
-    apply: async (tx, { detachIds, editionId, id }) => {
+    apply: async (tx, { detachIds, editionId, id, sourceFamilyId }) => {
       if (detachIds) {
-        await tx.$executeRaw`UPDATE plans p SET graph = p.graph - 'editionCandidate' FROM goals g
+        await tx.$executeRaw`UPDATE plans p SET graph = p.graph - 'editionCandidate'
+        FROM goals g, courses member
         WHERE p.goal_id = g.id AND p.graph ? 'editionCandidate'
-          AND ((g.source_course_id = ${id}::uuid AND g.primary_course_id = ${editionId}::uuid)
-            OR (g.source_course_id = ${editionId}::uuid AND g.primary_course_id = ${id}::uuid))`;
+          AND member.family_id = ${sourceFamilyId}::uuid
+          AND ((g.source_course_id = ANY(${detachIds}::uuid[]) AND g.primary_course_id = member.id)
+            OR (g.primary_course_id = ANY(${detachIds}::uuid[]) AND g.source_course_id = member.id))`;
 
         await tx.course.updateMany({ data: { familyId: null }, where: { id: { in: detachIds } } });
         return;

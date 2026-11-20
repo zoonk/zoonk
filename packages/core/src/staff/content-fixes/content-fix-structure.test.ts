@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
   courseChapterFixture,
   libraryChapterFixture,
@@ -13,6 +14,7 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { linkResolvedCourseEdition } from "../../library/curriculum/link-resolved-course-edition";
 import {
   approve,
   proposeFix,
@@ -387,27 +389,54 @@ describe("shared plan graphs", () => {
     });
   });
 
-  it("detaches an edition without a previous staff proposal", async () => {
-    const family = await prisma.courseFamily.create({ data: {} });
+  it("keeps a detached edition separate when it was linked through another family member", async () => {
+    const [family, user] = await Promise.all([
+      prisma.courseFamily.create({ data: {} }),
+      userFixture(),
+    ]);
 
-    const [source, edition] = await Promise.all(
-      ["en", "pt"].map((language) =>
-        courseFixture({ familyId: family.id, isPublished: true, language }),
-      ),
-    );
+    const [anchor, source, edition] = await Promise.all([
+      courseFixture({ familyId: family.id, isPublished: true }),
+      courseFixture({ familyId: family.id, isPublished: true, language: "es" }),
+      courseFixture({ isPublished: true, language: "pt" }),
+    ]);
 
-    if (!source || !edition) {
-      throw new Error("Missing editions");
+    async function candidate(originId: string, course: { id: string; language: string }) {
+      const goal = await goalFixture({
+        language: course.language,
+        primaryCourseId: course.id,
+        sourceCourseId: originId,
+        userId: user.id,
+      });
+
+      return planFixture({
+        goalId: goal.id,
+        graph: {
+          editionCandidate: true,
+          skills: [
+            { courseIds: [course.id], lessons: 1, name: "Study", phase: 0, skillId: randomUUID() },
+          ],
+        },
+      });
     }
 
-    await apply([{ id: source.id, model: "Course", unlinkEdition: edition.id }]);
+    await candidate(source.id, edition);
+    await linkResolvedCourseEdition({ courseId: edition.id });
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: edition.id } }),
+    ).resolves.toMatchObject({ familyId: family.id });
+
+    const retained = await candidate(source.id, anchor);
+    await apply([{ id: anchor.id, model: "Course", unlinkEdition: edition.id }]);
+    await linkResolvedCourseEdition({ courseId: edition.id });
 
     await expect(
       prisma.course.findUniqueOrThrow({ where: { id: edition.id } }),
     ).resolves.toMatchObject({ familyId: null });
 
     await expect(
-      prisma.course.findUniqueOrThrow({ where: { id: source.id } }),
-    ).resolves.toMatchObject({ familyId: family.id });
+      prisma.plan.findUniqueOrThrow({ where: { id: retained.id } }),
+    ).resolves.toHaveProperty("graph.editionCandidate", true);
   });
 });
