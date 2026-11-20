@@ -1,6 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Output, generateText } from "ai";
 import z from "zod";
+import { keyFlawsFor } from "./key-check";
 import keyFlawsPrompt from "./key-flaws-prompt.md";
 import { calculateScore } from "./score-calculation";
 import { formatScoreCategories, resolveCategoryScores } from "./score-categories";
@@ -70,16 +71,12 @@ export async function generateScore(params: {
   `;
 
   if (scoreCategories) {
-    const keyFlawsSchema = keyFlawLocators?.length
-      ? z.array(keyFlawSchema.extend({ itemLocator: z.enum(keyFlawLocators) }))
-      : z.array(keyFlawSchema).length(0);
-
     const { output: result, usage } = await generateText({
       instructions,
       model: SCORING_JUDGE_MODEL_ID,
       output: Output.object({
         schema: keyFlawLocators
-          ? categorizedScoreSchema.extend({ keyFlaws: keyFlawsSchema })
+          ? categorizedScoreSchema.extend({ keyFlaws: keyFlawsFor(keyFlawLocators) })
           : categorizedScoreSchema,
       }),
       prompt: evalPrompt,

@@ -9,6 +9,7 @@
     "dev": "node ../../scripts/dev/run-service.mts evals",
     "dev:app": "next dev",
     "dev:direct": "next dev -p 3201",
+    "eval:compare": "tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/compare.ts",
     "eval:gate-rates": "tsx scripts/gate-rates.ts",
     "eval:languages": "tsx --conditions=react-server --import ./scripts/register-markdown.mts scripts/check-language-coverage.ts",
     "eval:run": "tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/run-eval.ts",

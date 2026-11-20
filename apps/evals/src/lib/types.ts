@@ -3,6 +3,7 @@ import { type GatewayCharge } from "@zoonk/ai/pricing/call-cost";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 import z from "zod";
 import { type RequiredLanguage } from "./case-languages";
+import { type TaskPriorities } from "./comparisons/schemas";
 
 const MIN_SCORE = 6;
 
@@ -208,6 +209,8 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   score?: TaskScorer<TExpected>;
   codeChecks?: TaskCodeChecks<TExpected>;
   scoreCategories?: ScoreCategory[];
+  criteria?: Pick<ScoreCategory, "id" | "label" | "expectations">[];
+  priorities?: TaskPriorities;
   latencyBudget?: LatencyBudget;
   output?: "image" | "realtime" | "speech" | "transcription";
   skippedLanguages?: Partial<Record<RequiredLanguage, string>>;
@@ -224,6 +227,7 @@ export type RegisteredTask = Omit<
 };
 
 export type OutputEntry = TokenUsage & {
+  caseInputHash?: string;
   testCaseId: string;
   output: string;
   /** Calls the eval made around the task, such as a simulated learner: spent, but not run cost. */

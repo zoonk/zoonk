@@ -1,9 +1,12 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { GatewayError } from "@ai-sdk/gateway";
 import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
+import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { APICallError, NoObjectGeneratedError, RetryError } from "ai";
+import { hashJson } from "./comparisons/identity";
 import { settleWithConcurrency } from "./concurrency";
+import { getFailedRunsCost } from "./cost";
 import { DEFAULT_REASONING, type ModelConfig, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
@@ -118,6 +121,7 @@ async function generateOutputForTestCase({
   return {
     ...toTokenUsage(result.usage),
     ...toRunCalls(billed),
+    caseInputHash: hashJson(testCase.userInput),
     duration,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
@@ -269,4 +273,32 @@ export async function generateOutputs(
   logInfo(`Saved ${allOutputs.length} total outputs`);
 
   return newOutputs;
+}
+
+export async function generateComparisonRun(args: {
+  model: ModelConfig;
+  runNumber: number;
+  task: RegisteredTask;
+  testCase: TestCase;
+}) {
+  const failed: FailedAttempt[] = [];
+
+  try {
+    return { output: await generateOutputForTestCase({ ...args, failed }) } as const;
+  } catch (error) {
+    const attempt = failed[0];
+
+    if (!attempt) {
+      throw error;
+    }
+
+    return {
+      costUsd: getFailedRunsCost({
+        failedRuns: [{ testCaseId: attempt.testCaseId, ...toRunCalls(attempt.billed) }],
+        prices: GATEWAY_PRICES,
+      }),
+      output: null,
+      reason: attempt.reason,
+    } as const;
+  }
 }
