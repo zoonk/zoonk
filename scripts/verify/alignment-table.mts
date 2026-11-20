@@ -1,3 +1,5 @@
+import { type PAGE_RULES } from "./alignment-capture.mts";
+
 /**
  * The shared pieces whose parts must line up, and how. Each piece names its parts by the
  * `data-slot`s the pieces carry; Android and Apple name the same parts and relationships.
@@ -275,7 +277,7 @@ export type AlignmentException = {
   configuration: string;
   piece: string;
   reason: string;
-  relation: Relation | "one-filled";
+  relation: Relation | "one-filled" | (typeof PAGE_RULES)[number];
   scenario: string;
 } & ({ grantedBy: "user" } | { issue: number });
 
