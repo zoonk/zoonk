@@ -237,7 +237,8 @@ export function ExamPlan({ lang, state }: { lang: Lang; state?: string }) {
           findTimeToCover: NOOP_ASYNC,
           preview: NOOP_ASYNC,
         }}
-        goal={{ kind: "exam", title: exam.title }}
+        end={{ certificates: null, next: null }}
+        goal={{ displayName: exam.title, kind: "exam" }}
         goalStatus={{ onSetStatus: NOOP_ASYNC, resume: false, status: "active" } as any}
         links={
           {

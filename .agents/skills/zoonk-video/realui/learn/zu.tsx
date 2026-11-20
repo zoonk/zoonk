@@ -1,4 +1,8 @@
+import { type LessonQuestionResource } from "@repo/packages/core/src/lesson-questions/contract.ts";
 import { getGlassesProgress } from "@repo/packages/core/src/milestones/milestone-rules.ts";
+// The buddy tab (/buddy) on a phone: Zu's conversation with "I want to study less this week",
+// Zu's answer, and the real "Change to your plan" card (proposed, or applied with Undo).
+import { type PlanChangeView } from "@repo/packages/core/src/plans/plan-view-contract.ts";
 import { BRAIN_POWER_BONUS } from "@repo/packages/core/src/sessions/brain-power.ts";
 import {
   BuddyScreen,
@@ -7,10 +11,6 @@ import {
 } from "@repo/packages/learn/src/buddies/buddy-screen.tsx";
 import { type LessonTutorConfig } from "@repo/packages/player/src/lesson/tutor/lesson-tutor-context.ts";
 import { TutorConversation } from "@repo/packages/player/src/questions/tutor-conversation.tsx";
-import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
-// The buddy tab (/buddy) on a phone: Zu's conversation with "I want to study less this week",
-// Zu's answer, and the real "Change to your plan" card (proposed, or applied with Undo).
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useEffect, useMemo } from "react";
 import { buddyGrowth } from "../goals/buddy-energy";
 import { CAREER_GOAL_ID, S, TabShell, type ViewProps } from "./common";
@@ -114,7 +114,7 @@ function Link({
 const TUTOR: LessonTutorConfig = {
   buddy: null,
   canAsk: true,
-  connection: { apiUrl: "http://localhost:5199/__no-api/", getHeaders: async () => ({}) },
+  connection: { apiUrl: `${location.origin}/__no-api/`, getHeaders: async () => ({}) },
   navigation: { linkComponent: Link, loginHref: "/login", subscriptionHref: "/subscription" },
 };
 
@@ -179,7 +179,7 @@ function ZuTab({ lang, q, state }: ViewProps) {
       goal={{
         dailyMinutes: 60,
         id: CAREER_GOAL_ID,
-        kind: "career",
+        kind: "learn",
         targetDate: career.date,
         title: career.title,
       }}

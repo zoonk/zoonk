@@ -1,15 +1,33 @@
+// The frames Main composes around the learn routes on a phone, with no-op learn adapters
+// (apps/main/src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx, learn-goal-menu.tsx, learn-bar-end.tsx).
+import { type LearnBuddy } from "@repo/packages/learn/src/buddies/use-buddy-name.ts";
 import {
   type LearnAdapters,
   type LearnLinkComponentProps,
 } from "@repo/packages/learn/src/learn-context.tsx";
-// Shared frame for the learn views: no-op learn adapters and the phone layout Main composes around each route.
 import { LearnProvider } from "@repo/packages/learn/src/learn-provider.tsx";
 import { OnboardingPage } from "@repo/packages/learn/src/onboarding/onboarding-host.tsx";
 import {
+  type DayStepOpenerProps,
+  DayStepOpenerProvider,
+} from "@repo/packages/learn/src/session/day-step-opener.tsx";
+import { type GoalKind } from "@repo/packages/learn/src/shell/goal-menu-row.tsx";
+import { GoalSwitcher } from "@repo/packages/learn/src/shell/goal-switcher.tsx";
+import {
+  LearnBottomNavigation,
+  type LearnTab,
+} from "@repo/packages/learn/src/shell/learn-navigation.tsx";
+import {
+  FRAME_COLUMN_CLASS,
   LearnShell,
   LearnShellContent,
   LearnShellMain,
+  NO_WAY_BACK,
 } from "@repo/packages/learn/src/shell/learn-shell.tsx";
+import { Avatar, AvatarFallback } from "@repo/packages/ui/src/components/avatar.tsx";
+import { BeltIndicator } from "@repo/packages/ui/src/components/belt-indicator.tsx";
+import { PageTopBar } from "@repo/packages/ui/src/components/page-top.tsx";
+import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { story } from "../story";
 
@@ -17,10 +35,11 @@ export function Link({
   href,
   children,
   onClick,
-  prefetch,
-  scroll,
-  lessonWritten,
-  unstable_dynamicOnHover,
+  onNavigate: _onNavigate,
+  prefetch: _prefetch,
+  scroll: _scroll,
+  lessonWritten: _lessonWritten,
+  unstable_dynamicOnHover: _dynamicOnHover,
   ref,
   ...rest
 }: LearnLinkComponentProps) {
@@ -39,9 +58,12 @@ export function Link({
   );
 }
 
+export const noop = () => {};
+
 export const ADAPTERS: LearnAdapters = {
-  analytics: { track: (() => {}) as any },
+  analytics: { track: noop },
   linkComponent: Link,
+  loadCountries: async () => null,
   routes: {
     buddy: "/buddy",
     journey: "/plan",
@@ -51,13 +73,15 @@ export const ADAPTERS: LearnAdapters = {
   },
 };
 
-export const noop = () => {};
-export const noopAsync = async () => ({}) as any;
-
 export type ViewProps = { lang: "en" | "pt"; state: string; q: URLSearchParams };
 
 export function S(lang: "en" | "pt") {
   return story[lang];
+}
+
+/** A still screen opens nothing; Main's WebDayStepOpenerProvider routes to the step. */
+function StillOpener({ children }: DayStepOpenerProps) {
+  return children(async () => true);
 }
 
 /** The learn frame on a phone during onboarding: no top bar, no tab bar. */
@@ -70,32 +94,18 @@ export function OnboardingShell({
 }) {
   return (
     <LearnProvider adapters={ADAPTERS}>
-      <LearnShell className="overflow-x-clip">
-        <LearnShellContent>
-          <LearnShellMain>
-            <OnboardingPage backHref={backHref}>{children}</OnboardingPage>
-          </LearnShellMain>
-        </LearnShellContent>
-      </LearnShell>
+      <DayStepOpenerProvider opener={StillOpener}>
+        <LearnShell className="overflow-x-clip">
+          <LearnShellContent>
+            <LearnShellMain>
+              <OnboardingPage backHref={backHref}>{children}</OnboardingPage>
+            </LearnShellMain>
+          </LearnShellContent>
+        </LearnShell>
+      </DayStepOpenerProvider>
     </LearnProvider>
   );
 }
-
-import { type LearnBuddy } from "@repo/packages/learn/src/buddies/use-buddy-name.ts";
-// ---- Tab pages (Today, Plan, buddy): Main's phone frame = top bar (goal switcher, belt level,
-// avatar, search) + page + bottom tabs. Mirrors apps/main learn-frame.tsx / learn-bar-end.tsx.
-import { GoalSwitcher } from "@repo/packages/learn/src/shell/goal-switcher.tsx";
-import {
-  LearnBottomNavigation,
-  type LearnTab,
-} from "@repo/packages/learn/src/shell/learn-navigation.tsx";
-import { FRAME_COLUMN_CLASS } from "@repo/packages/learn/src/shell/learn-shell.tsx";
-import { Avatar, AvatarFallback } from "@repo/packages/ui/src/components/avatar.tsx";
-import { BeltIndicator } from "@repo/packages/ui/src/components/belt-indicator.tsx";
-import { Button } from "@repo/packages/ui/src/components/button.tsx";
-import { PageTopBar } from "@repo/packages/ui/src/components/page-top.tsx";
-import { SearchIcon, User } from "lucide-react";
-import { useExtracted } from "next-intl";
 
 export const CAREER_GOAL_ID = "goal-career";
 export const LEARN_GOAL_ID = "goal-learn";
@@ -112,39 +122,42 @@ export const ZU: LearnBuddy = {
 export type ShellGoal = {
   id: string;
   title: string;
-  kind: "career" | "learn" | "exam" | "language" | "explain" | "music" | "custom" | string;
+  kind: GoalKind;
   dailyMinutes: number;
   targetDate: string | null;
+  languageFlag?: string | null;
+  targetLanguage?: string | null;
+  targetRegion?: string | null;
 };
 
-function TopBar({ goal }: { goal: ShellGoal }) {
+/** Main's LevelLink (learn-bar-end.tsx) at level 1 on the white belt. */
+function LevelLink() {
   const t = useExtracted();
-  const belt = t(
-    "{color, select, white {White belt} yellow {Yellow belt} orange {Orange belt} green {Green belt} blue {Blue belt} purple {Purple belt} brown {Brown belt} red {Red belt} gray {Gray belt} black {Black belt} other {Belt}}",
-    { color: "white" },
-  );
 
   return (
-    <div className={FRAME_COLUMN_CLASS}>
+    <a
+      className="text-compact text-muted-foreground -ms-2 flex h-9 shrink-0 items-center px-2 whitespace-nowrap tabular-nums"
+      href="/level"
+    >
+      <span className="flex items-center gap-1.5">
+        <BeltIndicator aria-hidden="true" className="size-2.5" color="white" label="White belt" />
+        <span aria-hidden="true">{t("Level {level}", { level: "1" })}</span>
+      </span>
+    </a>
+  );
+}
+
+function TopBar({ goal }: { goal: ShellGoal }) {
+  return (
+    <div className={FRAME_COLUMN_CLASS} data-slot="learn-frame-bar">
       <PageTopBar
+        className={NO_WAY_BACK.computer.bare}
         actions={
           <>
-            <Button className="text-muted-foreground" size="icon-bar" variant="ghost">
-              <SearchIcon aria-hidden="true" />
-              <span className="sr-only">{t("Search")}</span>
-            </Button>
-            <a
-              className="text-muted-foreground hit-area relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono text-[0.8125rem] tabular-nums"
-              href="/stats"
-            >
-              <BeltIndicator aria-hidden="true" className="size-2.5" color="white" label={belt} />
-              <span aria-hidden="true">3</span>
-            </a>
-            <span className="hit-area relative size-7 shrink-0 rounded-full">
+            <LevelLink />
+            <span className="relative size-7 shrink-0 rounded-full">
               <Avatar className="size-full">
-                <AvatarFallback>
-                  <User size={16} />
-                </AvatarFallback>
+                <AvatarFallback>o</AvatarFallback>
               </Avatar>
             </span>
           </>
@@ -159,16 +172,19 @@ function TopBar({ goal }: { goal: ShellGoal }) {
                 dailyMinutes: goal.dailyMinutes,
                 displayName: goal.title,
                 id: goal.id,
-                kind: goal.kind as any,
+                kind: goal.kind,
+                languageFlag: goal.languageFlag ?? null,
                 status: "active",
                 targetDate: goal.targetDate,
                 targetDateEstimated: false,
-                targetLanguage: null,
+                targetLanguage: goal.targetLanguage ?? null,
+                targetRegion: goal.targetRegion ?? null,
               },
             ]}
+            hasAccount
             newGoalHref="/start"
-            onSelect={async () => {}}
-            onStartWaiting={async () => {}}
+            onSelect={async () => true}
+            onStartWaiting={async () => true}
             waitingGoals={[]}
           />
         }
@@ -193,13 +209,15 @@ export function TabShell({
 }) {
   return (
     <LearnProvider adapters={ADAPTERS}>
-      <LearnShell className="overflow-x-clip">
-        <LearnShellContent>
-          <TopBar goal={goal} />
-          <LearnShellMain>{children}</LearnShellMain>
-          <LearnBottomNavigation activeTab={tab} buddy={buddy} missions={missions} />
-        </LearnShellContent>
-      </LearnShell>
+      <DayStepOpenerProvider opener={StillOpener}>
+        <LearnShell className="overflow-x-clip">
+          <LearnShellContent>
+            <TopBar goal={goal} />
+            <LearnShellMain>{children}</LearnShellMain>
+            <LearnBottomNavigation activeTab={tab} buddy={buddy} missions={missions} />
+          </LearnShellContent>
+        </LearnShell>
+      </DayStepOpenerProvider>
     </LearnProvider>
   );
 }

@@ -128,6 +128,7 @@ function basePlan(input: {
   return {
     access: { mocksRequirePlus: false },
     areas: [],
+    languageAim: null,
     bases: null,
     changes: [],
     course: null,
@@ -305,7 +306,7 @@ export function careerSyllabus(lang: "en" | "pt"): SyllabusView {
     courseWeights: null,
     examDocument: "notice",
     fromMaterial: false,
-    goal: { id: CAREER_GOAL_ID, kind: "learn", title: career.title },
+    goal: { displayName: career.title, id: CAREER_GOAL_ID, kind: "learn", title: career.title },
     kind: "modules",
     knownTopicsReturn: "practice",
     lessons: { done: 0, known: 0, total },
@@ -521,7 +522,8 @@ function CareerPlan({
     >
       <JourneyScreen
         actions={ACTIONS as any}
-        goal={{ kind: "learn", title: career.title }}
+        end={{ certificates: null, next: null }}
+        goal={{ displayName: career.title, kind: "learn" }}
         goalStatus={{ onSetStatus: async () => "saved", resume: false, status: "active" } as any}
         links={LINKS}
         openAdjust={openAdjust}
@@ -564,7 +566,8 @@ function PlanLearnView({ lang, q, state }: ViewProps) {
     >
       <JourneyScreen
         actions={ACTIONS as any}
-        goal={{ kind: "learn", title: learn.title }}
+        end={{ certificates: null, next: null }}
+        goal={{ displayName: learn.title, kind: "learn" }}
         goalStatus={{ onSetStatus: async () => "saved", resume: false, status: "active" } as any}
         links={LINKS}
         openAdjust={state === "adjust"}

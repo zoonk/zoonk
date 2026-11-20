@@ -395,7 +395,7 @@ function useScrollTo(q: URLSearchParams, selector: string | null) {
         return;
       }
 
-      const target = selector && document.querySelector(selector);
+      const target = selector ? document.querySelector(selector) : null;
       target?.scrollIntoView({ block: "center" });
     }, 300);
 

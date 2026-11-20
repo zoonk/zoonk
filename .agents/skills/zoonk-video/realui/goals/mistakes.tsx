@@ -43,12 +43,12 @@ const DAYS_AGO = [1, 1, 2, 4, 6];
 
 function notebook(lang: Lang) {
   const mistakes = story[lang].exam.mistakes.map(([question, hint], index) => {
-    const [skill, answer, correctAnswer] = DETAILS[lang][index];
+    const [skill, answer, correctAnswer] = DETAILS[lang][index] ?? ["", "", ""];
     const created = new Date("2026-11-03T12:00:00-03:00");
-    created.setDate(created.getDate() - DAYS_AGO[index]);
+    created.setDate(created.getDate() - (DAYS_AGO[index] ?? 0));
 
     return {
-      cause: CAUSE[hint],
+      cause: CAUSE[hint] ?? "unsorted",
       createdAt: created,
       fixedAt: null,
       id: `mistake-${index}`,
@@ -66,7 +66,7 @@ function notebook(lang: Lang) {
     string,
     number
   >;
-  for (const mistake of mistakes) byCause[mistake.cause] += 1;
+  for (const mistake of mistakes) byCause[mistake.cause] = (byCause[mistake.cause] ?? 0) + 1;
 
   return {
     availability: { ready: mistakes.length, tomorrow: 0 },

@@ -113,7 +113,7 @@ function runningSection(lang: Lang) {
       answer: { selectedIndex: question.picked },
       durationMs: 40_000,
       flagged: false,
-      itemId: questions[at].itemId,
+      itemId: questions[at]?.itemId ?? "",
     });
   }
 
@@ -181,6 +181,7 @@ function mockView(lang: Lang, state: "running" | "finished") {
     breakUntil: null,
     canMove: false,
     ceremony: null,
+    certificates: [],
     checklist: [],
     current: running ? runningSection(lang) : null,
     date: "2026-11-03",

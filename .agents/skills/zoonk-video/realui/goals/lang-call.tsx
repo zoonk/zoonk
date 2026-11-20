@@ -129,13 +129,7 @@ export function CallLive({ lang }: { lang: Lang }) {
 
   return (
     <Learn>
-      <ConversationLive
-        call={live}
-        conversation={conversation}
-        onEnd={NOOP}
-        onHelp={NOOP}
-        usedHelp={false}
-      />
+      <ConversationLive call={live} conversation={conversation} grading={false} onEnd={NOOP} />
     </Learn>
   );
 }

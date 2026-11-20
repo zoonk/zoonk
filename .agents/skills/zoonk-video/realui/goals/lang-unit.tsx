@@ -21,7 +21,7 @@ export const FAKE_TUTOR = {
 
 export function unitView(lang: Lang, index = 0) {
   const language = story[lang].language;
-  const [title, objective] = language.units[index];
+  const [title, objective] = language.units[index] ?? language.units[0];
 
   return {
     canTestOut: false,

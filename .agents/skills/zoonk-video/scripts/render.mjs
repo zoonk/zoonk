@@ -8,7 +8,9 @@ import { pathToFileURL } from "node:url";
 //          --workers 6 --audio films/zoonk-2/audio/mix-long-en.wav --out out/en-US/youtube.mp4
 //        node scripts/render.mjs --page films/zoonk-2/long.html --query lang=pt --stills all --every 2 --outdir out/stills
 // Vertical: --w 1080 --h 1920 --dpr 2 --outw 1080 --outh 1920 renders at 2x and downscales with lanczos.
+// A stage scene: --url "<harness>/stage/?film=launch&scene=clip&lang=en" --scheme dark renders it on black.
 import { chromium } from "playwright-core";
+import { pinStoryClock } from "./story-clock.mjs";
 
 const args = Object.fromEntries(
   process.argv.slice(2).reduce((acc, a, i, arr) => {
@@ -25,7 +27,8 @@ const H = +(args.h ?? 1080);
 const DPR = +(args.dpr ?? 1);
 const FPS = +(args.fps ?? 30);
 const WORKERS = +(args.workers ?? 4);
-const pageUrl = pathToFileURL(path.resolve(args.page)).href + (args.query ? `?${args.query}` : "");
+const pageUrl =
+  args.url ?? pathToFileURL(path.resolve(args.page)).href + (args.query ? `?${args.query}` : "");
 
 async function openPage() {
   const browser = await chromium.launch({
@@ -39,13 +42,16 @@ async function openPage() {
   const ctx = await browser.newContext({
     viewport: { width: W, height: H },
     deviceScaleFactor: DPR,
+    reducedMotion: "reduce",
+    colorScheme: args.scheme ?? "light",
   });
+  await pinStoryClock(ctx);
   const page = await ctx.newPage();
   page.on("console", (m) => {
     if (m.type() === "error" || m.type() === "warning") console.error("[page]", m.text());
   });
   page.on("pageerror", (e) => console.error("[pageerror]", e.message));
-  await page.goto(pageUrl);
+  await page.goto(pageUrl, { waitUntil: "networkidle" });
   await page.evaluate(() => window.__ready);
   const cdp = await ctx.newCDPSession(page);
   const duration = await page.evaluate(() => window.__duration);

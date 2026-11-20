@@ -48,7 +48,9 @@ export function switcherGoals(lang: Lang) {
       kind: "exam",
       status: "active",
       targetDate: s.exam.date,
+      languageFlag: null,
       targetDateEstimated: false,
+      targetRegion: null,
       targetLanguage: null,
     },
     {
@@ -58,7 +60,9 @@ export function switcherGoals(lang: Lang) {
       kind: "language",
       status: "active",
       targetDate: null,
+      languageFlag: null,
       targetDateEstimated: false,
+      targetRegion: null,
       targetLanguage: s.language.target,
     },
     {
@@ -68,7 +72,9 @@ export function switcherGoals(lang: Lang) {
       kind: "learn",
       status: "active",
       targetDate: s.career.date,
+      languageFlag: null,
       targetDateEstimated: false,
+      targetRegion: null,
       targetLanguage: null,
     },
   ];
@@ -126,6 +132,7 @@ export function TopBar({ goal, lang }: { goal: GoalKey; lang: Lang }) {
             explanationHref="/explain"
             exploreHref="/courses"
             goals={switcherGoals(lang) as any}
+            hasAccount
             newGoalHref="/start"
             onSelect={NOOP_ASYNC}
             onStartWaiting={NOOP_ASYNC}

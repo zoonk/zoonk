@@ -22,11 +22,13 @@ const STATUSES = ["studied", "inProgress", "toStudy", "toStudy", "toStudy", "toS
 export function examSubject(lang: Lang, index: number) {
   const subjects = story[lang].exam.subjects;
   const at = Math.min(index, subjects.length - 1);
-  const subject = subjects[at];
+  const subject = subjects[at] ?? subjects[0];
   const base = examSyllabus(lang).subjects[at];
   const often = subject.often.map((name) => ({ frequency: "high", name }));
   const others = (OTHER_TOPICS[lang][at] ?? []).map((name) => ({ frequency: "medium", name }));
-  const ordered = [often[0], others[0], others[1], often[1], ...others.slice(2)].filter(Boolean);
+  const ordered = [often[0], others[0], others[1], often[1], ...others.slice(2)].filter(
+    (topic) => topic !== undefined,
+  );
 
   return {
     ...base,
@@ -65,6 +67,7 @@ export function ExamSubject({ lang, q }: { lang: Lang; q: URLSearchParams }) {
             kind: "notice",
             knownTopicsReturn: "practice",
             questionsSource: null,
+            sharedExams: [],
             writtenPractice: null,
           } as any
         }
