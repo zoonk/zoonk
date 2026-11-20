@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "buddy_page_change": "ce16b780eb2d849fa040daa5290f19e8c15071a27f95ad804e7b70611a346250",
-  "buddy_page_choose": "bc2027fafc88746d1686fd78d5fb14f4661795f95363873c9c58db7ea6f2ebba",
+  "buddy_page_choose": "7c3727894bac0d9c80ffa9e6ffccb5fef0a9203ffdb5d88a70ce0a35a846a0fb",
   "buddy_page_count": "7667921acb46e446c9332dd169c1a8684badfa9390152db5999ebdf98013e56d",
   "buddy_page_earlier_questions": "d60e26692c517a3b781455752727b45fb96f675e72da6a1a4794accbc8188517",
   "buddy_page_energy_named": "2587fde7c2e8329f9c32e8d19d826a5909c607efc0e05bc89d3b4eca3c3a365f",
@@ -24,10 +24,10 @@
   "buddy_page_first_today": "9e8d14224c0719000a032c2e225a8c9d5ff6b3d90fbcace7c57627810a59b5d5",
   "buddy_page_fully_grown": "0eeba867f1b96138a3b49e06d1b59e780633bb7aed4dcaa83b967d7716485e3d",
   "buddy_page_glasses_description": "bc05e509b1c1b9d78aafe012aecc8a90c6b5b8d259f713d7928dd90afddd2451",
-  "buddy_page_goal_greeting": "a9c0624bef77a6cc6444da2441dcdb9eee7bc210723b4b64cbda3034b008ff4d",
+  "buddy_page_goal_greeting": "482e41f66f31ef1091535d5300541e0d73bbe2e9a9019138c4c951524ef13731",
   "buddy_page_goal_label": "b0c81b485214ebcb14e2768d54d88eba2fca8f468a54d128cc3b9b28ac4f3859",
   "buddy_page_goal_placeholder": "8da342f207d6ea27c45c1f572a25b514a3670249e811e89692f898dce00188cd",
-  "buddy_page_greeting": "ad3d3271fb8a3a9209df1cb2957cb38a7346c9782528a8a1c5cba28a331a246f",
+  "buddy_page_greeting": "5d5827091c200fe6929b2cf166017e3cd3ef4d5f78625d4e116af91ce679a910",
   "buddy_page_grows": "0b5caa30fefd5c720337a9a4b3b14e50a1e2ceeacc6444c22dbbdece5b83acbb",
   "buddy_page_missions_count": "cfa985439727c6b899af1b9a1c3258e7b50c87bc127e6b815ae2cda80e778c26",
   "buddy_page_more": "89a7b2a9941e449cfcaa649a8aeddc7554681ebc4d46355dbf61bbc19ef215fa",
@@ -55,17 +55,17 @@
 <resources>
     <string name="buddy_page_more">Más sobre %1$s</string>
     <string name="buddy_page_change">Cambiar a %1$s</string>
-    <string name="buddy_page_choose">Elegir tu compañero</string>
+    <string name="buddy_page_choose">Elegir tu compa</string>
     <string name="buddy_page_weekly_summary">Resumen semanal</string>
     <string name="buddy_page_earlier_questions">Preguntas anteriores</string>
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s de %2$s</string>
     <string name="buddy_page_save_failed">No se pudo guardar. Inténtalo de nuevo.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="buddy_page_greeting">¡Hola! Soy %1$s, una IA que te acompaña a estudiar. Pregúntame lo que quieras o dime qué cambiar en tu plan.</string>
+    <string name="buddy_page_greeting">¡Hola! Soy %1$s, tu compa de estudio con IA. Pregúntame lo que quieras o dime qué quieres cambiar en tu plan.</string>
     <string name="buddy_page_goal_placeholder">Lo que quieres aprender</string>
     <string name="buddy_page_goal_label">Tu objetivo</string>
-    <string name="buddy_page_goal_greeting">¡Hola! Soy %1$s, una IA que te acompaña a estudiar. Dime qué quieres aprender y prepararé tu plan.</string>
+    <string name="buddy_page_goal_greeting">¡Hola! Soy %1$s, tu compa de estudio con IA. Dime qué quieres aprender y crearé tu plan.</string>
     <string name="buddy_page_placeholder">Pregunta lo que quieras</string>
     <string name="buddy_page_suggest_plan_today">¿Qué incluye mi plan de hoy?</string>
     <string name="buddy_page_suggest_lighter">Quiero estudiar menos esta semana</string>

@@ -12720,7 +12720,7 @@ msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "学習タブ"
 
-#. The search button at the end of the phone's tab bar, after the tabs.
+#. The search item at the end of the phone's tab bar, after the tabs.
 #: src/shell/learn-navigation.tsx
 msgctxt "xmcVZ0"
 msgid "Search"

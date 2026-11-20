@@ -3936,25 +3936,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit deinen Angaben hier passen wir deine Beispiele und deinen Kumpel an dich an. Alles ist freiwillig."
+            "value" : "Mit deinen Angaben hier passen wir deine Beispiele und deinen Buddy an dich an. Alles ist freiwillig."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usamos lo que nos cuentes aquí para personalizar tus ejemplos y tu compañero. Todo es opcional."
+            "value" : "Usamos lo que nos cuentes aquí para personalizar tus ejemplos y tu compa. Todo es opcional."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que tu nous dis ici nous aide à adapter tes exemples et ton compagnon. Tout est facultatif."
+            "value" : "Ce que tu nous dis ici nous aide à adapter tes exemples et ton binôme. Tout est facultatif."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con quello che ci racconti qui personalizziamo i tuoi esempi e il tuo compagno. È tutto facoltativo."
+            "value" : "Con quello che ci racconti qui personalizziamo i tuoi esempi e il tuo socio. È tutto facoltativo."
           }
         },
         "ja" : {
@@ -3978,7 +3978,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que você conta aqui ajuda a adaptar seus exemplos e seu parceiro. Tudo é opcional."
+            "value" : "O que você conta aqui ajuda a adaptar seus exemplos e seu colega. Tudo é opcional."
           }
         },
         "tr" : {

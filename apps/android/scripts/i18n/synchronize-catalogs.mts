@@ -1,17 +1,20 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { parseArgs } from "node:util";
 import createAndroidXmlCodec from "@eloqnt/format-android-xml";
-import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
-import { catalogFile, catalogNames } from "./catalogs.mts";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
+import { ANDROID_ROOT, catalogFile, catalogNames } from "./catalogs.mts";
 import { createTrackedAndroidXmlCodec } from "./tracked-android-xml.mts";
 
 /** Eloqnt only writes files that received translations; source-only deletions need an offline prune. */
 export async function synchronizeCatalogs({
   root,
   locales,
+  check = false,
 }: {
   root: string;
   locales: readonly string[];
+  check?: boolean;
 }) {
   const targets = locales.filter((locale) => locale !== DEFAULT_LOCALE);
 
@@ -51,5 +54,22 @@ export async function synchronizeCatalogs({
   const prepared = await Promise.all(catalogNames(root).map((catalog) => prepareCatalog(catalog)));
 
   const changed = prepared.flat().filter((catalog) => catalog.previous !== catalog.xml);
+
+  if (check && changed.length > 0) {
+    throw new Error(
+      `Run pnpm --filter android i18n:prune to synchronize:\n${changed.map(({ file }) => file).join("\n")}`,
+    );
+  }
+
   await Promise.all(changed.map((catalog) => writeFile(catalog.file, catalog.xml)));
+}
+
+if (import.meta.main) {
+  const { values } = parseArgs({ options: { check: { type: "boolean" } } });
+
+  await synchronizeCatalogs({
+    check: values.check,
+    locales: SUPPORTED_LOCALES,
+    root: ANDROID_ROOT,
+  });
 }

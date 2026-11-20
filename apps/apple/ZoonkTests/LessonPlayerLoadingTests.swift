@@ -130,7 +130,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(store.setVisible(false))
     await transport.release()
     await loading.value
-    await store.setVisible(true)?.value
+    store.setVisible(true)
+    await clocksSent(2, transport)
 
     let clocks = await transport.clocks
     XCTAssertEqual(clocks.map(\.sequence).sorted(), [1, 2])

@@ -178,7 +178,12 @@ export function AppFrame({
         <LearnShellContent>
           {topBar && <TopBar goal={goal} lang={lang} />}
           <LearnShellMain>{children}</LearnShellMain>
-          <LearnBottomNavigation activeTab={tab} buddy={buddy} missions={missions} />
+          <LearnBottomNavigation
+            activeTab={tab}
+            buddy={buddy}
+            missions={missions}
+            onSearch={() => {}}
+          />
         </LearnShellContent>
       </LearnShell>
     </Learn>
