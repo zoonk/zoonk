@@ -46,6 +46,7 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.mock.MockPreparingNote
 import com.zoonk.android.feature.mock.MockSummaryRow
+import com.zoonk.android.feature.plan.WhileShown
 import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -63,6 +64,8 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockOption
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockOptionsRequested
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun PracticeChooser(
@@ -72,6 +75,7 @@ internal fun PracticeChooser(
     listState: LazyListState,
     replacementFocus: FocusRequester? = null,
     onStart: () -> Unit = {},
+    readAgain: suspend () -> Unit = {},
 ) {
     val busy by viewModel.busy.collectAsStateWithLifecycle()
     val failed by viewModel.failed.collectAsStateWithLifecycle()
@@ -82,6 +86,13 @@ internal fun PracticeChooser(
     val open = view.access == MockOptions.Access.OPEN
     // The pick the learner asked for while its questions are written: coming back to it, they find it ready or still being prepared.
     val preparing = view.requested?.let { it.status == MockOptionsRequested.Status.PREPARING && it.shape == option?.shape } == true
+    // The questions are written on the server; reading the options again is how the page learns they're ready.
+    WhileShown(preparing) {
+        while (true) {
+            delay(READ_AGAIN)
+            readAgain()
+        }
+    }
     val examChoices = practiceChoices(view.options.filter { it.kind != MockOption.Kind.AREA }, severalDays)
     val subjectChoices = practiceChoices(view.options.filter { it.kind == MockOption.Kind.AREA }, severalDays)
 
@@ -342,3 +353,5 @@ private fun ChoiceSize(
 }
 
 private val STACK_BELOW = 480.dp
+
+private val READ_AGAIN = 15.seconds

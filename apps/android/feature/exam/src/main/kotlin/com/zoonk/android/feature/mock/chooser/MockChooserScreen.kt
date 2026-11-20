@@ -23,7 +23,6 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockStore
-import com.zoonk.android.feature.plan.WhileShown
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -33,11 +32,8 @@ import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.MockOptions
-import com.zoonk.api.models.MockOptionsRequested
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
-import kotlin.time.Duration.Companion.seconds
 
 /** Main's `/mock/new`: a mock of the goal in the switcher, any time. */
 @Composable
@@ -94,14 +90,6 @@ internal fun MockChooser(
             reveal = { listState.scrollToItem(0) },
         )
 
-    // The requested mock's questions are written on the server; reading the options again is how the page learns it's ready.
-    WhileShown(loaded?.requested?.status == MockOptionsRequested.Status.PREPARING) {
-        while (true) {
-            delay(REQUESTED_REFRESH)
-            options.refresh()
-        }
-    }
-
     if (exit != null) {
         Leave(exit, navigator)
         return
@@ -111,12 +99,10 @@ internal fun MockChooser(
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> PageLoading()
-            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
+            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press) { options.refresh() }
         }
     }
 }
-
-private val REQUESTED_REFRESH = 15.seconds
 
 /** Where main redirects instead of showing the chooser. */
 internal sealed interface ChooserExit {

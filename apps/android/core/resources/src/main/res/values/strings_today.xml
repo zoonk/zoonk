@@ -49,8 +49,6 @@
     <string name="today_step_often_tested">Often tested</string>
     <string name="today_step_being_written">Getting ready…</string>
     <string name="today_step_after_lessons">After today\'s lessons</string>
-    <!-- Under a scheduled mock exam in today's list while its questions are still being written; it can't be opened yet. -->
-    <string name="today_step_preparing">Preparing…</string>
 
     <string name="today_done">You\'re done for today.</string>
     <string name="today_done_day_off">You studied on your day off.</string>

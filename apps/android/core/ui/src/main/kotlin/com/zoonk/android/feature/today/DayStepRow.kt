@@ -125,9 +125,8 @@ private fun StepLines(
     val count = step.questions.toInt()
     val line =
         when {
-            !writingStalled && step.isBeingWritten(lessonStatus) -> stringResource(R.string.today_step_being_written)
+            step.preparing || (!writingStalled && step.isBeingWritten(lessonStatus)) -> stringResource(R.string.today_step_being_written)
             step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
-            step.preparing -> stringResource(R.string.today_step_preparing)
             step.practisesTopics -> shortTopicList(step.topics, named = 1)
             step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
             step.fullReview -> stringResource(R.string.today_step_every_topic)
