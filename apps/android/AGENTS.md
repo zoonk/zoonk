@@ -75,7 +75,7 @@ Every read the app shows goes through one pattern in `data/`, so screens are ins
 ## Performance
 
 - Keep composition cheap: lazy lists with `key` and `contentType`, composables below the screen taking values rather than stores, per-frame values read in lambdas (`Modifier.offset { }`, `drawBehind`). Add a package to `compose-stability.conf` only when all its types are immutable.
-- To review Compose code for recomposition, layout, lazy list, animation, effect, drawing or `Modifier` costs (a PR, a file or a screen), use [jetpack-compose-performance](../../.agents/skills/jetpack-compose-performance/SKILL.md).
+- To review Compose code for recomposition, layout, lazy list, animation, effect, drawing or `Modifier` costs (a PR, a file or a screen), use [jetpack-compose-performance](../../.agents/skills/jetpack-compose-performance/SKILL.md), except its pattern of reassigning the same `MutableList` under `neverEqualPolicy()`: a composable handed that list compares it by identity, skips and shows stale items, so publish a new list for each change.
 - LeakCanary runs in debug builds; a retained object it reports is a bug to fix.
 - When a change touches data loading, stores, navigation or long-lived state, measure requests per screen and tab switch, memory, leaks, idle CPU and jank with the [verify skill's Android reference](../../.agents/skills/verify/references/android.md), and report the numbers before and after.
 
