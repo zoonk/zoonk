@@ -471,7 +471,7 @@ struct LessonActionBar: View {
       ) {
         store.goBack()
       }
-      .disabled(!state.canGoBack)
+      .disabled(!state.canGoBack || recordInBar?.isChecking == true)
 
       if let step, step.isRead {
         LessonAudioButton(url: step.promptAudio, style: .bar)
