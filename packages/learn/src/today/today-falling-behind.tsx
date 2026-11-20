@@ -23,6 +23,7 @@ import {
 import { SuggestionMenu } from "../_components/suggestion-menu";
 import { LearnLink } from "../learn-link";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
+import { useTodayDateKind } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { TodaySuggestionCard } from "./today-suggestion-card";
 import { isWelcomeBackDay } from "./use-today-copy";
@@ -178,6 +179,7 @@ export function FallingBehindNotice({
 }) {
   const t = useExtracted();
   const sentence = useBehindSentence();
+  const dateKind = useTodayDateKind();
   const [answer, setAnswer] = useState<Answer>(null);
   const { isPending, keep, superseded } = useKeepTime({ change, onAnswer: setAnswer, onHold });
   const answered = answer !== null && !("failed" in answer);
@@ -206,7 +208,7 @@ export function FallingBehindNotice({
 
       <SuggestionSheet>
         <SuggestionHeader>{title}</SuggestionHeader>
-        <PlanEffectDiff effect={change.effect} summary={false} />
+        <PlanEffectDiff dateKind={dateKind} effect={change.effect} />
 
         {answered ? (
           <SuggestionResult>{result}</SuggestionResult>
