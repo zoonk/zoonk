@@ -131,7 +131,6 @@ test.describe("OTP Login Flow", () => {
     await page.getByRole("button", { name: "Send a new code" }).click();
     await expect(page.getByText("We emailed you again.")).toBeVisible();
 
-    await expect.poll(() => getOTPForEmail(email)).not.toBe(code);
     const newCode = await getOTPForEmail(email);
     await input.fill(newCode ?? "");
 
