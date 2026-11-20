@@ -39,6 +39,7 @@ export type AnytimeMockSetup = {
 };
 
 type AnytimeMockPage = {
+  now?: Date;
   essays: Promise<MockEssayCandidate[]>;
   plan: Promise<SavedPlan | null>;
   typed: Promise<MockTypedPart[]>;
@@ -69,6 +70,7 @@ export async function loadAnytimeMockSetup(
 
   const { recordings, unvoiced, missingParts } = await loadListeningCandidates({
     goalId: goal.id,
+    now: page?.now,
     mix: getMockFormatMix(structure),
     userId: goal.userId,
   });

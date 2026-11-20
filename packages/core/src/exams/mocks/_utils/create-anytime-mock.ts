@@ -42,11 +42,15 @@ export function isCompleteMock({
   );
 }
 
-export async function canReuseMockItems(client: TransactionClient, userId: string) {
+export async function canReuseMockItems(
+  client: TransactionClient,
+  userId: string,
+  now = new Date(),
+) {
   const count = await client.mockExam.count({
     where: {
       conditions: { equals: "practice", path: ["purpose"] },
-      startedAt: { gte: new Date(Date.now() - USAGE_WINDOW_MS), lte: new Date() },
+      startedAt: { gte: new Date(now.getTime() - USAGE_WINDOW_MS), lte: now },
       userId,
     },
   });

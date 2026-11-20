@@ -8,6 +8,7 @@ export async function listMockItemClaims(
   client: TransactionClient,
   userId: string,
   mockIds?: readonly string[],
+  instant = new Date(),
 ) {
   const sittings = await client.mockExam.findMany({
     select: {
@@ -25,7 +26,7 @@ export async function listMockItemClaims(
     },
   });
 
-  const now = Date.now();
+  const now = instant.getTime();
   const expired = new Set<string>();
   const held = new Set<string>();
   const readable = new Map<string, { section: number; since: Date }>();

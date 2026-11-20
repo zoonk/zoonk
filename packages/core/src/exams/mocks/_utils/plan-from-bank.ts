@@ -35,15 +35,25 @@ type MockBank = {
   setup: AnytimeMockSetup;
   userId: string;
   reuse?: boolean;
+  now?: Date;
 };
 
-async function loadAvailableSetup({ client, exclude, goalId, reuse, setup, userId }: MockBank) {
+async function loadAvailableSetup({
+  client,
+  exclude,
+  goalId,
+  reuse,
+  now,
+  setup,
+  userId,
+}: MockBank) {
   if (setup.missingParts.length === 0 && setup.listening.size === 0) {
     return setup;
   }
 
   const audio = await loadListeningCandidates({
     client,
+    now,
     exclude: [...exclude],
     goalId,
     mix: getMockFormatMix(setup.structure),
@@ -66,6 +76,7 @@ export async function planScheduledFromBank({
   option,
   paperPlan,
   scheduledFor,
+  now,
   setup,
 }: {
   client?: TransactionClient;
@@ -74,6 +85,7 @@ export async function planScheduledFromBank({
   option: MockOption;
   paperPlan: { graph: unknown; settings: unknown } | null;
   scheduledFor: Date;
+  now?: Date;
   setup: AnytimeMockSetup;
 }) {
   const structure = readScheduledStructure({
@@ -85,6 +97,7 @@ export async function planScheduledFromBank({
   const plan = await planWeeklyMock({
     client,
     exclude,
+    now,
     essays: setup.essays,
     goal,
     identity: { day: option.day, fullLength: option.kind === "full" },
@@ -115,7 +128,9 @@ async function reserveScheduled({
   client,
   goal,
   setup,
+  now,
 }: {
+  now?: Date;
   client: TransactionClient;
   goal: Goal;
   setup: AnytimeMockSetup;
@@ -136,6 +151,7 @@ async function reserveScheduled({
       goal,
       option,
       paperPlan: plan,
+      now,
       scheduledFor,
       setup,
     });
@@ -149,6 +165,7 @@ async function reserveScheduled({
 
 export async function planFromBank({
   client = prisma,
+  now,
   reuse = false,
   exclude,
   goal,
@@ -162,11 +179,13 @@ export async function planFromBank({
   userId: string;
   client?: TransactionClient;
   reuse?: boolean;
+  now?: Date;
   exclude?: ReadonlySet<string>;
 }): Promise<BankPlan> {
   const loaded = await loadMockCandidates({
     client,
     goal,
+    now,
     itemIds: null,
     reuse,
     skillIds: await loadMockSkillIds(goal.id),
@@ -175,13 +194,14 @@ export async function planFromBank({
   });
 
   const protectedIds =
-    exclude ?? (reuse ? await reserveScheduled({ client, goal, setup }) : new Set<string>());
+    exclude ?? (reuse ? await reserveScheduled({ client, goal, now, setup }) : new Set<string>());
 
   const available =
     reuse || protectedIds.size > 0 || client !== prisma
       ? await loadAvailableSetup({
           client,
           exclude: protectedIds,
+          now,
           goalId: goal.id,
           reuse,
           setup,

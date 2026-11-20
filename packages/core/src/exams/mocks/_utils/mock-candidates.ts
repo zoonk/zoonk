@@ -130,6 +130,7 @@ export async function loadMockCandidates({
   structure = null,
   userId,
   reuse = false,
+  now = new Date(),
 }: {
   client?: TransactionClient;
   goal: Pick<Goal, "examBlueprintId"> & { id: string | null };
@@ -139,6 +140,7 @@ export async function loadMockCandidates({
   structure?: ExamStructure | null;
   userId: string;
   reuse?: boolean;
+  now?: Date;
 }): Promise<MockCandidate[]> {
   const typed = listTypedFormats(structure);
   const mix = getMockFormatMix(structure);
@@ -176,9 +178,9 @@ export async function loadMockCandidates({
   );
 
   const claims =
-    !itemIds && mockIds.size > 0 ? await listMockItemClaims(client, userId, [...mockIds]) : null;
-
-  const now = new Date();
+    !itemIds && mockIds.size > 0
+      ? await listMockItemClaims(client, userId, [...mockIds], now)
+      : null;
 
   const lastRead = (use: (typeof items)[number]["mockUses"][number] | undefined) => {
     if (!use?.spentAt) {

@@ -44,6 +44,7 @@ function loadWeeklyMockEssays({
 async function loadWeeklyMockListening({
   client,
   goalId,
+  now,
   exclude,
   itemIds,
   structure,
@@ -52,6 +53,7 @@ async function loadWeeklyMockListening({
   client?: TransactionClient;
   goalId: string | null;
   exclude?: ReadonlySet<string>;
+  now?: Date;
   itemIds: readonly string[] | null;
   structure: ExamStructure | null;
   userId: string;
@@ -63,6 +65,7 @@ async function loadWeeklyMockListening({
   const audio = await loadListeningCandidates({
     client,
     goalId,
+    now,
     exclude: exclude && [...exclude],
     mix: getMockFormatMix(structure),
     userId,
@@ -91,6 +94,7 @@ type WeeklyPaper = {
   skillIds: readonly string[];
   paperPlan?: { graph: unknown; settings: unknown };
   exclude?: ReadonlySet<string>;
+  now?: Date;
   client?: TransactionClient;
   essays?: readonly MockEssayCandidate[];
   /** A GET's finished-mock count; without it, it's counted fresh. */
@@ -204,10 +208,20 @@ export async function planWeeklyMock(
   const { structure, skillIds } = await scheduledPaper(input);
   const [{ outline, written }, candidates, audio] = await Promise.all([
     outlinePaper({ ...input, structure }),
-    loadMockCandidates({ client, goal, itemIds, plan: savedPlan, skillIds, structure, userId }),
+    loadMockCandidates({
+      client,
+      now: input.now,
+      goal,
+      itemIds,
+      plan: savedPlan,
+      skillIds,
+      structure,
+      userId,
+    }),
     loadWeeklyMockListening({
       client,
       exclude: input.exclude,
+      now: input.now,
       goalId: goal.id,
       itemIds,
       structure,
