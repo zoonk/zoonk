@@ -10,6 +10,7 @@ import { changingFactsTask } from "./changing-facts/task";
 import { checkCitedFactsTask } from "./check-cited-facts/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
 import { checkLevelTestQuestionsTask } from "./check-level-test-questions/task";
+import { checkRecallOverlapTask } from "./check-recall-overlap/task";
 import { checkWordPronunciationTask } from "./check-word-pronunciation/task";
 import { citeMaterialTask } from "./cite-material/task";
 import { compareReleaseLessonsTask } from "./compare-release-lessons/task";
@@ -37,6 +38,7 @@ import { findSubjectQuestionsTask } from "./find-subject-questions/task";
 import { findTargetCutoffTask } from "./find-target-cutoff/task";
 import { findTopicFrequencyTask } from "./find-topic-frequency/task";
 import { generateItemsTask } from "./generate-items/task";
+import { generateMockItemsTask } from "./generate-mock-items/task";
 import { goalOpeningTask } from "./goal-opening/task";
 import { goalSpecificityTask } from "./goal-specificity/task";
 import { goalTutorSearchTask } from "./goal-tutor-search/task";
@@ -191,6 +193,8 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
     name: "Questions and grading",
     tasks: [
       generateItemsTask,
+      generateMockItemsTask,
+      checkRecallOverlapTask,
       placementItemsTask,
       statuteDrillsTask,
       solveItemsTask,
