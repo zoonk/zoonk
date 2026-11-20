@@ -154,7 +154,7 @@ test("the tools question comes last with the learner's own list, takes any numbe
 
       return facts.map((fact) => fact.statement);
     })
-    .toStrictEqual(["Uses MV Soul, Tasy, UpToDate, Whitebook, Medscape and Epocrates"]);
+    .toStrictEqual(["Uses MV Soul, Tasy, UpToDate, Whitebook, Medscape, and Epocrates"]);
 });
 
 function createGoalAtConditions(userId: string) {

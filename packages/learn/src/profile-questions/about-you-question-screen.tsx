@@ -21,7 +21,7 @@ import {
 } from "../_components/page";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { useChangeSaveFailed } from "../_components/save-error";
-import { toProfileDraft, toProfileInput } from "./profile-draft";
+import { toProfileDraft, toProfileInput, toSentDraft } from "./profile-draft";
 import { ProfileQuestionBody } from "./profile-question-body";
 import { useProfileQuestionDescription, useProfileQuestionTitle } from "./profile-question-copy";
 
@@ -78,6 +78,9 @@ export function AboutYouQuestionScreen({
           if (!input || isPending) {
             return;
           }
+
+          // The screen keeps its state after saving, so it shows what was saved.
+          setDraft(toSentDraft({ draft, question }));
 
           startTransition(async () => {
             const { data: saved } = await safeAsync(() => onSave(input));

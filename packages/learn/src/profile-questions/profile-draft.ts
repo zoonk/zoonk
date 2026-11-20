@@ -326,10 +326,18 @@ export function toProfileAnswer({
   return parsed.success ? parsed.data : null;
 }
 
-/**
- * What a screen's Continue or Save sends, or null while it can't send. Text left in the tools field
- * counts as added, so typed text is never lost.
- */
+/** The draft a screen sends: text left in the tools field counts as added, so it's never lost. */
+export function toSentDraft({
+  draft,
+  question,
+}: {
+  draft: ProfileDraft;
+  question: ProfileQuestionView;
+}): ProfileDraft {
+  return question.id === "tools" ? addTypedTools({ draft, options: question.options }) : draft;
+}
+
+/** What a screen's Continue or Save sends, or null while it can't send. */
 export function toProfileInput({
   draft,
   from,
@@ -341,8 +349,7 @@ export function toProfileInput({
   memoryEnabled: boolean;
   question: ProfileQuestionView;
 }): ProfileAnswerInput | null {
-  const sent =
-    question.id === "tools" ? addTypedTools({ draft, options: question.options }) : draft;
+  const sent = toSentDraft({ draft, question });
 
   return canSendProfileDraft({
     draft: sent,
