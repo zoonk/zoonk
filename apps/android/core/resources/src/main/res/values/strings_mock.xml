@@ -148,9 +148,11 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Every task is done. After this, you can\'t do them again in this mock exam.</string>
     <string name="mock_keep_going">Keep going</string>
+    <!-- Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them. -->
     <string name="mock_preparing_title">Your mock exam is being prepared</string>
-    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away. -->
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away. -->
     <string name="mock_preparing_chooser_title">This mock exam is being prepared</string>
+    <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
     <string name="mock_preparing_line">Come back to this page to start it.</string>
     <string name="mock_preparing_keep_studying">Keep studying</string>
 </resources>

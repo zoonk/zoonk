@@ -131,7 +131,7 @@
   "today_unfinished_setup": "39c3b651bc9b4e99ccf947ce8b903d9cf6b4b4293ed889be4016b907baa56bbd",
   "today_up_next": "bd73e61b58a80b7eca81c0ef3e680e9065e2c0d7a0932b12c308405889d93a05",
   "today_waiting": "8d2e08418a6b43f0a7723fcdd5130e1d32726dbf06f333b4b43e164a012b31c3",
-  "today_waiting_mock": "ecee9dc5f50d87ae767236cb94d827493b8fca3e6d32844fbf246e9f019ea813",
+  "today_waiting_mock": "33d0d6b20d27b9658a1dbcfbf500c74e12900eee105074da78e5e438f60cfd73",
   "today_waiting_stalled": "6b6c421a347842a365792a06be110babd3015014ee06ae237706885c33af133d",
   "today_waiting_stalled_detail": "de0e3874139c6b9dce96fd6f0f561fae8952642327bd6972b6b0e6a8da22cde2",
   "today_week_after_date": "6e2e2318d35a477de7847586ec3244d6c1d763cf53a627d3335eebe3e6359766",
@@ -220,7 +220,8 @@
     <string name="today_rest_next_lessons">Se vuoi studiare, trovi le prossime lezioni qui sotto.</string>
     <string name="today_rest_enjoy">Goditi il tuo giorno di riposo!</string>
     <string name="today_waiting">Stiamo preparando le lezioni di oggi…</string>
-    <string name="today_waiting_mock">Stiamo preparando la tua simulazione.</string>
+    <!-- On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions. -->
+    <string name="today_waiting_mock">La tua simulazione è in preparazione.</string>
     <string name="today_waiting_stalled">Ci stiamo mettendo più del solito a preparare le lezioni di oggi.</string>
     <string name="today_waiting_stalled_detail">Torna tra qualche minuto.</string>
     <string name="today_nothing_new">Sei al passo con il piano.</string>

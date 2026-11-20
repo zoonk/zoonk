@@ -220,6 +220,7 @@
     <string name="today_rest_next_lessons">Se quiser estudar, suas próximas aulas estão logo abaixo.</string>
     <string name="today_rest_enjoy">Aproveite seu dia de descanso!</string>
     <string name="today_waiting">Preparando as aulas de hoje…</string>
+    <!-- On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions. -->
     <string name="today_waiting_mock">Seu simulado está sendo preparado.</string>
     <string name="today_waiting_stalled">As aulas de hoje estão demorando mais que o normal.</string>
     <string name="today_waiting_stalled_detail">Volte daqui a alguns minutos.</string>

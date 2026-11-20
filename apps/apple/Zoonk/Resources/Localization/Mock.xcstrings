@@ -5135,11 +5135,12 @@
       }
     },
     "Come back to this page to start it." : {
+      "comment" : "Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Komm auf diese Seite zurück, um sie zu starten."
+            "value" : "Komm zurück auf diese Seite, um sie zu starten."
           }
         },
         "es" : {
@@ -5169,13 +5170,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시작하려면 이 페이지로 다시 오세요."
+            "value" : "이 페이지로 돌아와 시작해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wróć na tę stronę, aby go rozpocząć."
+            "value" : "Wróć na tę stronę, żeby go rozpocząć."
           }
         },
         "pt" : {
@@ -12335,12 +12336,12 @@
       }
     },
     "This mock exam is being prepared" : {
-      "comment" : "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away.",
+      "comment" : "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Probeprüfung wird vorbereitet"
+            "value" : "Wir bereiten diese Probeprüfung vor"
           }
         },
         "es" : {
@@ -12358,7 +12359,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando questa simulazione d’esame"
+            "value" : "Questa simulazione è in preparazione"
           }
         },
         "ja" : {
@@ -12370,13 +12371,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모의고사를 준비하고 있어요"
+            "value" : "이 모의고사를 준비하고 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowujemy ten egzamin próbny"
+            "value" : "Przygotowujemy pytania do tego egzaminu próbnego"
           }
         },
         "pt" : {
@@ -15102,6 +15103,7 @@
       }
     },
     "Your mock exam is being prepared" : {
+      "comment" : "Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -15118,13 +15120,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton examen blanc est en préparation"
+            "value" : "Ton examen blanc est en cours de préparation"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando la tua simulazione"
+            "value" : "La tua simulazione è in preparazione"
           }
         },
         "ja" : {
@@ -15142,7 +15144,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trwa przygotowywanie egzaminu próbnego"
+            "value" : "Przygotowujemy pytania do twojego egzaminu próbnego"
           }
         },
         "pt" : {

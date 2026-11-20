@@ -208,6 +208,7 @@
     <string name="today_rest_next_lessons">学習したいときは、下にある次のレッスンに進めます。</string>
     <string name="today_rest_enjoy">お休みを楽しんでください！</string>
     <string name="today_waiting">今日のレッスンを準備しています…</string>
+    <!-- On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions. -->
     <string name="today_waiting_mock">模試を準備しています。</string>
     <string name="today_waiting_stalled">今日のレッスンの作成に、いつもより時間がかかっています。</string>
     <string name="today_waiting_stalled_detail">数分後にまた見に来てください。</string>

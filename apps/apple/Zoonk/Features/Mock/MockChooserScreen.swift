@@ -390,13 +390,21 @@ private struct MockChooser: View {
 }
 
 enum MockPreparing {
-  static let title = LocalizedStringResource("Your mock exam is being prepared", table: "Mock")
+  static let title = LocalizedStringResource(
+    "Your mock exam is being prepared", table: "Mock",
+    comment:
+      "Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them."
+  )
   static let chooserTitle = LocalizedStringResource(
     "This mock exam is being prepared", table: "Mock",
     comment:
-      "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away."
+      "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away."
   )
-  static let line = LocalizedStringResource("Come back to this page to start it.", table: "Mock")
+  static let line = LocalizedStringResource(
+    "Come back to this page to start it.", table: "Mock",
+    comment:
+      "Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun."
+  )
   static let keepStudying = LocalizedStringResource("Keep studying", table: "Mock")
 }
 

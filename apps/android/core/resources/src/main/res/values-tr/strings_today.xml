@@ -214,6 +214,7 @@
     <string name="today_rest_next_lessons">Çalışmak istersen sıradaki derslerin aşağıda.</string>
     <string name="today_rest_enjoy">Dinlenme gününün tadını çıkar!</string>
     <string name="today_waiting">Bugünkü dersleri hazırlıyoruz…</string>
+    <!-- On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions. -->
     <string name="today_waiting_mock">Deneme sınavın hazırlanıyor.</string>
     <string name="today_waiting_stalled">Bugünkü dersleri hazırlamamız normalden uzun sürüyor.</string>
     <string name="today_waiting_stalled_detail">Birkaç dakika sonra tekrar gel.</string>

@@ -59,7 +59,13 @@ function WaitingStatus({ className }: { className?: string }) {
   if (today.session.waitingFor === "mock") {
     return (
       <TodayStatusLine className={className} icon={<ClockIcon />}>
-        <TodayStatusSentence>{t("Your mock exam is being prepared.")}</TodayStatusSentence>
+        <TodayStatusSentence>
+          {t({
+            description:
+              "On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions.",
+            message: "Your mock exam is being prepared.",
+          })}
+        </TodayStatusSentence>
         <TodayStatusClause>{returnToMock}</TodayStatusClause>
       </TodayStatusLine>
     );

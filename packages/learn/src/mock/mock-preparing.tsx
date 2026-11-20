@@ -3,7 +3,12 @@ import { GateWords } from "../_components/subscribe-gate";
 
 export function useReturnToMockLine() {
   const t = useExtracted();
-  return t("Come back to this page to start it.");
+
+  return t({
+    description:
+      "Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun.",
+    message: "Come back to this page to start it.",
+  });
 }
 
 export function MockPreparingWords({ title }: { title: string }) {

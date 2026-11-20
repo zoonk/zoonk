@@ -714,7 +714,11 @@ struct TodayDayStatus: View {
       link = keepLearning ? session.id.map { .summary(sessionID: $0) } : nil
     case .waiting where session.waitingFor == .mock:
       systemImage = "clock"
-      sentence = String(localized: "Your mock exam is being prepared.", table: "Today")
+      sentence = String(
+        localized: "Your mock exam is being prepared.", table: "Today",
+        comment:
+          "On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions."
+      )
       clause = String(localized: MockPreparing.line)
     case .waiting where writingStalled:
       systemImage = "clock"

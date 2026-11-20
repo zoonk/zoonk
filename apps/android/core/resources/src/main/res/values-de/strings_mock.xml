@@ -46,9 +46,9 @@
   "mock_next_section": "43e7009d87a154e642198b4c8390381f4549aca9562cb30c421f1c2ebf85f08e",
   "mock_place": "a3548fd6737b525c95e7c31890377fb6462ec90d34e26b250ed4d2686f5ca1ff",
   "mock_points_of": "51a9eccb09c7cd652a0230c441f1e992e3356ec099f5546d95f4f51036b0c0b8",
-  "mock_preparing_chooser_title": "a0d6d928037a2a439aabb472ba911eb335d78b1d073fedebdbf3e8b1c5836962",
+  "mock_preparing_chooser_title": "6ee8cde3a326f8a3babc47059e81a7b37b7c4c5ecdc6c9498d131efa2bbe2373",
   "mock_preparing_keep_studying": "78832435814ad0ac34ffb8ef8e321f0571fea16ea0e514c6ead0f5e4b6afe2d0",
-  "mock_preparing_line": "422f70c50c8ae78eb321295e676cf64e4e56a5f416748341b2b86e17f21be829",
+  "mock_preparing_line": "2e53cea29822b012dd14b521406d5d6045dd6be13b2712e2b7d4d0e3984f36c7",
   "mock_preparing_title": "77320eebefeb8b26cdaa08399b31e46e677861c651a30897363dd2c61fe29fff",
   "mock_progress_label": "59533957d73e7d46c57ac8b60f373b9d5571b712f0ec04a6f75eb2bf43a6ff3f",
   "mock_question_number": "1adf7eca95e05e4fc4bcfa73f450bd45f7743a3657f482beb5d7faee43f71a63",
@@ -249,9 +249,11 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Alle Aufgaben sind erledigt. Nach der Abgabe kannst du sie in dieser Probeprüfung nicht noch einmal machen.</string>
     <string name="mock_keep_going">Weiter</string>
+    <!-- Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them. -->
     <string name="mock_preparing_title">Wir bereiten deine Probeprüfung vor</string>
-    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away. -->
-    <string name="mock_preparing_chooser_title">Diese Probeprüfung wird vorbereitet</string>
-    <string name="mock_preparing_line">Komm auf diese Seite zurück, um sie zu starten.</string>
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away. -->
+    <string name="mock_preparing_chooser_title">Wir bereiten diese Probeprüfung vor</string>
+    <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
+    <string name="mock_preparing_line">Komm zurück auf diese Seite, um sie zu starten.</string>
     <string name="mock_preparing_keep_studying">Weiterlernen</string>
 </resources>

@@ -46,9 +46,9 @@
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
   "mock_place": "e9eb53d1a8f80f75c0aff53b6fff21a0aa6b92046162912249e65e7c46c24be9",
   "mock_points_of": "1aa58bf2af61be9fe59464bc294e6e57a013a10c70094b514347408e4fe544a5",
-  "mock_preparing_chooser_title": "4051d287c9f75ccd936e93a10af649e897fe217d8d05881e1e442bd6be6cb8df",
+  "mock_preparing_chooser_title": "4623acdb832808b6b668d483598a5a0e915fd9be270d8eabc9c113a645ae5ccf",
   "mock_preparing_keep_studying": "0c201c242f63fdf174df1f07bc8e01181eb96ddd052342e7a400ba5161132337",
-  "mock_preparing_line": "cbf0ccefabf67eb9ac4fd61077df3a8241d0afa577c2575bfea0129101df7fc2",
+  "mock_preparing_line": "2d52b4230e75c07a34fc703838e6772138150e0116dbfa7277f79291a3f37a81",
   "mock_preparing_title": "d6bffab2c7479d363bdbe90ec261c967ad55d7e8d796862d858b17b788463321",
   "mock_progress_label": "20e066bfe67d7fe655e19a34d7e7e62286a6a323a07662fc095e5c239844d21b",
   "mock_question_number": "aeff24fec0851bc72170a5231efab68d55e3004c76b9249fb72b219294fd1bfa",
@@ -238,9 +238,11 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">모든 과제를 마쳤어요. 제출하면 이 모의고사에서는 과제를 다시 할 수 없어요.</string>
     <string name="mock_keep_going">계속하기</string>
+    <!-- Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them. -->
     <string name="mock_preparing_title">모의고사를 준비하고 있어요</string>
-    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away. -->
-    <string name="mock_preparing_chooser_title">모의고사를 준비하고 있어요</string>
-    <string name="mock_preparing_line">시작하려면 이 페이지로 다시 오세요.</string>
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away. -->
+    <string name="mock_preparing_chooser_title">이 모의고사를 준비하고 있어요</string>
+    <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
+    <string name="mock_preparing_line">이 페이지로 돌아와 시작해 보세요.</string>
     <string name="mock_preparing_keep_studying">계속 공부하기</string>
 </resources>

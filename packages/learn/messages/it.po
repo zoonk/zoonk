@@ -2117,10 +2117,11 @@ msgctxt "L_nv1C"
 msgid "After today's lessons"
 msgstr "Dopo le lezioni di oggi"
 
+#. Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them.
 #: src/challenge/challenge-footer.tsx
 msgctxt "jk5nI6"
 msgid "Your mock exam is being prepared"
-msgstr "Stiamo preparando la tua simulazione"
+msgstr "La tua simulazione è in preparazione"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "X_k-eo"
@@ -7831,11 +7832,11 @@ msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "La tua ultima simulazione d’esame"
 
-#. Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away.
+#. Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away.
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qDtThy"
 msgid "This mock exam is being prepared"
-msgstr "Stiamo preparando questa simulazione d’esame"
+msgstr "Questa simulazione è in preparazione"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
@@ -8141,6 +8142,7 @@ msgctxt "-IhwDy"
 msgid "Leave blank"
 msgstr "Lascia in bianco"
 
+#. Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun.
 #: src/mock/mock-preparing.tsx
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
@@ -13095,10 +13097,11 @@ msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "Goditi il tuo giorno di riposo!"
 
+#. On Today, when the day's mock exam isn't ready to start yet: we're still preparing its questions.
 #: src/today/today-day-status.tsx
 msgctxt "N-0-Mq"
 msgid "Your mock exam is being prepared."
-msgstr "Stiamo preparando la tua simulazione."
+msgstr "La tua simulazione è in preparazione."
 
 #: src/today/today-day-status.tsx
 msgctxt "Pg7r31"

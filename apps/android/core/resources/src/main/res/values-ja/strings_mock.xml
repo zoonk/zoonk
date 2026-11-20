@@ -238,9 +238,11 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">すべてのタスクが終わりました。提出後はこの模試でやり直せません。</string>
     <string name="mock_keep_going">続ける</string>
+    <!-- Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them. -->
     <string name="mock_preparing_title">模試を準備しています</string>
-    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet. Other picks may start right away. -->
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away. -->
     <string name="mock_preparing_chooser_title">この模試を準備しています</string>
+    <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
     <string name="mock_preparing_line">このページに戻ると開始できます。</string>
     <string name="mock_preparing_keep_studying">学習を続ける</string>
 </resources>
