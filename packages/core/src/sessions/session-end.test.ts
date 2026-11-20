@@ -190,6 +190,8 @@ describe("ending a session", () => {
 
     const [first, ...rest] = today.session.blocks;
 
+    expect(first?.kind).toBe("learn");
+
     await Promise.all([
       prisma.studySessionBlock.updateMany({
         data: { status: "skipped" },
@@ -268,6 +270,7 @@ describe("ending a session", () => {
       ["settleSessionDay", first?.id],
       ["refreshStudyDay", today.session.id],
       ["settleSessionPlan", today.session.id],
+      ["prepareMockSupply", goal.id],
     ]);
 
     vi.setSystemTime(SESSION_NOW.getTime() + 60_000);
