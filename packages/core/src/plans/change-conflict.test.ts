@@ -7,10 +7,12 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import * as daySession from "../sessions/_utils/refresh-day-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import * as applyPlanChange from "./_utils/apply-plan-change";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
+import { PlanConflictError } from "./plan-conflict";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
 const SUNDAY = new Date("2020-09-27T12:00:00Z");
@@ -43,11 +45,7 @@ async function setup() {
     });
 
     await Promise.all([
-      chapterLessonFixture({
-        chapterId: library.chapters[0]?.id ?? "",
-        lessonId: lesson.id,
-        position: 500 + Math.floor(Math.random() * 1000),
-      }),
+      chapterLessonFixture({ chapterId: library.chapters[0]?.id ?? "", lessonId: lesson.id }),
       lessonSkillFixture({ lessonId: lesson.id, skillId: library.graph.skills[1]?.skillId ?? "" }),
     ]);
 
@@ -112,5 +110,25 @@ describe("a learner's plan change while background re-plans keep landing", () =>
         input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }], timeZone: "UTC" },
       }),
     ).resolves.toMatchObject({ status: "applied" });
+  });
+
+  it("saves the change once when today's day loses to a later plan write after it commits", async () => {
+    const { goal, plan } = await setup();
+    const apply = vi.spyOn(applyPlanChange, "applyChangeNow");
+
+    // What following today throws once its own retry also lost; the change itself is committed.
+    vi.spyOn(daySession, "followPlanChangeToday").mockRejectedValue(new PlanConflictError());
+
+    const result = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }], timeZone: "UTC" },
+    });
+
+    expect(result).toMatchObject({ status: "applied" });
+    expect(apply).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.planChange.count({ where: { kind: "edited", planId: plan.id } }),
+    ).resolves.toBe(1);
   });
 });

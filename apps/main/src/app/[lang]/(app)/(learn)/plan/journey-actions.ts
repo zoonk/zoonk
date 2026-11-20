@@ -66,9 +66,11 @@ export async function answerPlanChangeAction(
     return null;
   }
 
-  const result = await decidePlanChange({ changeId, goalId, input: input.data });
+  const result = await unlessPlanConflict(() =>
+    decidePlanChange({ changeId, goalId, input: input.data }),
+  );
 
-  if (result.status !== "updated") {
+  if (result?.status !== "updated") {
     return null;
   }
 

@@ -24,7 +24,7 @@ import { replaceWaitingProposals } from "./_utils/replace-waiting-proposals";
 import { revalidatePlanTags } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { undoChange } from "./_utils/undo-change";
-import { PlanConflictError, unlessPlanConflict, withPlanRetry } from "./plan-conflict";
+import { PlanConflictError, withPlanRetry } from "./plan-conflict";
 import { type PlanChangeDecision, type PlanChangeQuote } from "./plan-decision-contract";
 import { type PlanChangeView } from "./plan-view-contract";
 import { type PlanOperationError } from "./planner/plan-operations";
@@ -266,26 +266,17 @@ async function decide({ decision, input }: { decision: Decision; input: PlanChan
   return undoChange(decision);
 }
 
-type PlanChangeDecisionRequest = {
-  changeId: string;
-  goalId: string;
-  input: PlanChangeDecision;
-  trackAnalytics?: boolean;
-};
-
-/** `conflict` too when other plan writes won both tries: nothing was saved. */
-export async function decidePlanChange(
-  request: PlanChangeDecisionRequest,
-): Promise<PlanChangeDecisionResult> {
-  return (await unlessPlanConflict(() => applyDecision(request))) ?? { status: "conflict" };
-}
-
-async function applyDecision({
+export async function decidePlanChange({
   changeId,
   goalId,
   input,
   trackAnalytics = true,
-}: PlanChangeDecisionRequest): Promise<PlanChangeDecisionResult> {
+}: {
+  changeId: string;
+  goalId: string;
+  input: PlanChangeDecision;
+  trackAnalytics?: boolean;
+}): Promise<PlanChangeDecisionResult> {
   return withPlanRetry(async () => {
     const owned = await findOwnedPlan({ goalId, timeZone: input.timeZone });
 
