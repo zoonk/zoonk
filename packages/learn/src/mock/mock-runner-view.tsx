@@ -78,7 +78,6 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
 
 const UNSURE_TIP_SEEN_KEY = "zoonk:mock-unsure-tip-seen";
 
-/** The first time a learner marks an answer on this device, a tip says what the mark is for. */
 function useUnsureTip(itemId: string | undefined) {
   const [tipFor, setTipFor] = useState<string | null>(null);
 

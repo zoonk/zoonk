@@ -145,15 +145,13 @@ async function handInMock(page: Page) {
   await dialog.getByRole("button", { name: "Hand in" }).click();
 }
 
-/** The first answer is wrong and the second right, and the learner isn't sure of either. */
-async function markUnsure(page: Page, number: number) {
-  const button = page.getByRole("button", { name: "Not sure" });
+async function markUnsure(page: Page, { firstPress }: { firstPress: boolean }) {
+  const button = page.getByRole("button", { exact: true, name: "Not sure" });
 
   await button.click();
   await expect(button).toHaveAttribute("aria-pressed", "true");
 
-  // The tip says what the mark is for once on the device, on the first press.
-  await expect(page.getByText(UNSURE_TIP)).toBeVisible({ visible: number === 1 });
+  await expect(page.getByText(UNSURE_TIP)).toBeVisible({ visible: firstPress });
 }
 
 async function answerMockQuestion(
@@ -170,7 +168,7 @@ async function answerMockQuestion(
   await page.getByRole("radio", { name: isFirst ? answer.wrong : answer.right }).click();
 
   if (number <= 2) {
-    await markUnsure(page, number);
+    await markUnsure(page, { firstPress: isFirst });
   }
 
   if (number === total) {

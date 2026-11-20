@@ -23,7 +23,6 @@ export function useMockTitle() {
     t("Mock exam {number}", { number: String(mock.number) });
 }
 
-/** The button that marks an answer the learner isn't sure of, and that mark wherever it shows. */
 export function useUnsureLabel() {
   const t = useExtracted();
 
@@ -34,7 +33,6 @@ export function useUnsureLabel() {
   });
 }
 
-/** The small mark beside a question or an answer the learner marked "Not sure". */
 export function UnsureMark({ className }: { className?: string }) {
   return <BookmarkIcon aria-hidden="true" className={cn("size-3 fill-current", className)} />;
 }
