@@ -14,6 +14,7 @@ import { parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state"
 import { insertGoalWithPlan, setActiveGoal } from "./_utils/create-goal-records";
 import { loadGoalViews } from "./_utils/goal-view";
 import { trackGoalReached } from "./_utils/track-goal-reached";
+import { readCourseStart } from "./course-start-details";
 import { type GoalView } from "./goal-contract";
 
 export type NextLevelResult =
@@ -110,7 +111,16 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
         where: { id: goal.id, status: { not: "completed" } },
       });
 
+      const start = isJsonObject(goal.details) && readCourseStart(goal.details);
+
+      const origin =
+        start &&
+        (await tx.course.findUnique({ select: { country: true }, where: { id: course.courseId } }));
+
       await insertGoalWithPlan(tx, {
+        ...(origin && {
+          courseStart: { country: origin.country, courseId: course.courseId, details: start },
+        }),
         dailyMinutes: goal.dailyMinutes,
         draft: {
           details: buildNextDetails({ goal, level: nextLevel }),

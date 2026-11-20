@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
+import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-inputs";
 import { courseGoalFixture } from "../view-models/_test-utils/course-goal";
 import { continueGoalAtNextLevel } from "./continue-goal-at-next-level";
 
@@ -162,5 +163,38 @@ describe(continueGoalAtNextLevel, () => {
 
     const unchanged = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(unchanged.status).toBe("active");
+  });
+
+  it("the next level of a course-started goal is still a course start", async () => {
+    const user = await userFixture();
+
+    const fixture = await courseGoalFixture({
+      details: { courseStart: { chapterId: null } },
+      statuses: ["done", "done", "testedOut", "done"],
+      userId: user.id,
+    });
+
+    await learningProfileFixture({
+      activeGoalId: fixture.goal.id,
+      homeCountry: "BR",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const result = await continueGoalAtNextLevel(fixture.goal.id);
+    const next = result.status === "created" ? result.goal : null;
+    const row = await prisma.goal.findUniqueOrThrow({ where: { id: next?.id ?? "" } });
+    const inputs = await loadGoalCurriculumInputs(row.id);
+
+    expect({
+      contentCountry: row.contentCountry,
+      courseStart: (row.details as Record<string, unknown>).courseStart ?? null,
+      startedCourseId: inputs?.startedCourse?.id ?? null,
+    }).toStrictEqual({
+      contentCountry: fixture.course.country,
+      courseStart: { chapterId: null },
+      startedCourseId: fixture.course.id,
+    });
   });
 });
