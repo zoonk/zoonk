@@ -17,6 +17,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { getSession } from "../../users/get-session";
 import { oweProfileTools } from "./_utils/owe-profile-tools";
 import { toProfileQuestionSavedEvent } from "./_utils/profile-question-event";
+import { getProfileQuestionOptions } from "./_utils/profile-question-options";
 import {
   getQuestionFacts,
   loadProfileQuestionState,
@@ -24,7 +25,7 @@ import {
   toProfileQuestionView,
 } from "./_utils/profile-question-state";
 import { replaceProfileFacts } from "./_utils/save-profile-facts";
-import { parseProfileAnswer } from "./profile-answer-normalization";
+import { parseProfileAnswer, reconcileToolAnswer } from "./profile-answer-normalization";
 import {
   PROFILE_QUESTION_VERSIONS,
   type ProfileAnswerInput,
@@ -134,21 +135,36 @@ export async function answerProfileQuestion({
     const state = await loadProfileQuestionState({ client: tx, userId });
     const memoryEnabled = state.profile?.memoryEnabled ?? true;
 
-    const input =
+    const permitted =
       !memoryEnabled && submitted.question === "learningSupport"
         ? parseProfileAnswer({ ...submitted, answer: { ...submitted.answer, note: null } })
         : submitted;
 
-    if (!input) {
+    if (!permitted) {
       return unchanged({ status: "invalid" as const });
     }
 
-    if (!memoryEnabled && isBiographyQuestion(input.question)) {
+    if (!memoryEnabled && isBiographyQuestion(permitted.question)) {
       return unchanged({ status: "memoryOff" as const });
     }
 
+    const existing = savedProfileAnswer({ question: permitted.question, state });
+
+    const input =
+      permitted.question === "tools" && existing.question === "tools"
+        ? reconcileToolAnswer({
+            input: permitted,
+            locale,
+            options: getProfileQuestionOptions({
+              locale,
+              picks: existing.answer.picks,
+              question: "tools",
+              suggestedTools: state.profile?.suggestedTools,
+            }),
+          })
+        : permitted;
+
     const row = state.answers.find((answer) => answer.question === input.question);
-    const existing = savedProfileAnswer({ question: input.question, state });
     const sounds = state.profile?.soundsEnabled ?? true;
 
     if (

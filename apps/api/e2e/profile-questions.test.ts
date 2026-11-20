@@ -99,17 +99,24 @@ test("profile answers persist privately, enforce consent and memory settings, an
   await learningProfileFixture({ suggestedTools: picks, userId: user.id });
 
   const tools = await api.post("/v1/me/profile-questions/answers", {
-    data: { answer: { picks }, question: "tools" },
+    data: { answer: { favorites: "tasy", picks }, question: "tools" },
   });
 
   expect(tools.status()).toBe(200);
-  expect(await tools.json()).toMatchObject({ question: { id: "tools", saved: { picks } } });
 
-  const unoffered = await api.post("/v1/me/profile-questions/answers", {
-    data: { answer: { picks: ["Other learner's tool"] }, question: "tools" },
+  expect(await tools.json()).toMatchObject({
+    question: { id: "tools", saved: { picks, text: "" } },
   });
 
-  expect(unoffered.status()).toBe(422);
+  const stale = await api.post("/v1/me/profile-questions/answers", {
+    data: { answer: { picks: ["Tool from an earlier list"] }, question: "tools" },
+  });
+
+  expect(stale.status()).toBe(200);
+
+  expect(await stale.json()).toMatchObject({
+    question: { saved: { picks: ["Tool from an earlier list"] } },
+  });
 
   await api.dispose();
 });
