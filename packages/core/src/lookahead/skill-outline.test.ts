@@ -14,11 +14,12 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { addDays } from "../plans/planner/plan-calendar";
 import { getSkillOutline, requestSkillOutline } from "./skill-outline";
+import { endSkillOutlineAsk } from "./skill-outline-ask";
 
 async function farPlan({ beginner = 2, isAnonymous = false } = {}) {
   const user = await userFixture();
@@ -68,8 +69,12 @@ async function farPlan({ beginner = 2, isAnonymous = false } = {}) {
   return { course, goal, later, skills, user };
 }
 
-function endOutlineRun(courseId: string) {
-  return prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: courseId } });
+function askOf(request: Awaited<ReturnType<typeof requestSkillOutline>>) {
+  if (request.status !== "start") {
+    throw new Error(`Expected the request to start a run, got ${request.status}`);
+  }
+
+  return request.ask;
 }
 
 function countOutlineUses(userId: string) {
@@ -101,32 +106,37 @@ describe(requestSkillOutline, () => {
     await expect(countOutlineUses(user.id)).resolves.toBe(1);
   });
 
-  it("reads as being written from the tap on, before the run it starts takes the course", async () => {
-    const { course, goal, skills, user } = await farPlan();
-    const skillId = skills[0]?.id ?? "";
+  it("reads as being written from the tap on, until the run it started ends or the ask goes stale", async () => {
+    const { goal, skills, user } = await farPlan();
+    const [first, second] = skills;
     mockSession(user.id);
 
-    await expect(requestSkillOutline({ goalId: goal.id, skillId })).resolves.toMatchObject({
-      status: "start",
+    const request = await requestSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" });
+    expect(request).toMatchObject({ ask: { goalId: goal.id, skillId: first?.id }, status: "start" });
+
+    await expect(
+      getSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),
+    ).resolves.toStrictEqual({ outline: { chapters: [], status: "writing" }, status: "ready" });
+
+    await endSkillOutlineAsk(askOf(request));
+
+    await expect(
+      getSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),
+    ).resolves.toStrictEqual({ outline: { chapters: [], status: "available" }, status: "ready" });
+
+    await requestSkillOutline({ goalId: goal.id, skillId: second?.id ?? "" });
+
+    await prisma.skillOutlineAsk.updateMany({
+      data: { askedAt: new Date(Date.now() - 60 * 60 * 1000) },
+      where: { goalId: goal.id },
     });
 
-    await expect(getSkillOutline({ goalId: goal.id, skillId })).resolves.toStrictEqual({
-      outline: { chapters: [], status: "writing" },
-      status: "ready",
-    });
-
-    await prisma.course.update({
-      data: { updatedAt: new Date(Date.now() - 60 * 60 * 1000) },
-      where: { id: course.id },
-    });
-
-    await expect(getSkillOutline({ goalId: goal.id, skillId })).resolves.toStrictEqual({
-      outline: { chapters: [], status: "available" },
-      status: "ready",
-    });
+    await expect(
+      getSkillOutline({ goalId: goal.id, skillId: second?.id ?? "" }),
+    ).resolves.toStrictEqual({ outline: { chapters: [], status: "available" }, status: "ready" });
   });
 
-  it("starts nothing and counts nothing for a topic being written or already outlined", async () => {
+  it("writes a topic while another learner's outline runs on its course, and counts it once", async () => {
     const { course, goal, skills, user } = await farPlan();
     const [first] = skills;
     mockSession(user.id);
@@ -134,17 +144,20 @@ describe(requestSkillOutline, () => {
     await prisma.course.update({ data: { outlineStatus: "running" }, where: { id: course.id } });
 
     await expect(
-      requestSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),
-    ).resolves.toStrictEqual({ status: "writing" });
+      getSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),
+    ).resolves.toStrictEqual({ outline: { chapters: [], status: "available" }, status: "ready" });
 
     await expect(
-      getSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),
-    ).resolves.toStrictEqual({ outline: { chapters: [], status: "writing" }, status: "ready" });
+      requestSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),
+    ).resolves.toMatchObject({ need: { courseId: course.id }, status: "start" });
+
+    await expect(
+      requestSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),
+    ).resolves.toStrictEqual({ status: "writing" });
 
     const [chapter, lesson] = await Promise.all([
       libraryChapterFixture({ title: "Means and medians" }),
       libraryLessonFixture(),
-      prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } }),
     ]);
 
     await Promise.all([
@@ -167,7 +180,33 @@ describe(requestSkillOutline, () => {
       status: "ready",
     });
 
-    await expect(countOutlineUses(user.id)).resolves.toBe(0);
+    await expect(countOutlineUses(user.id)).resolves.toBe(1);
+  });
+
+  it("asks again for free after its run ended, and an earlier run's end leaves the new ask", async () => {
+    freezeClock();
+
+    const { goal, skills, user } = await farPlan();
+    const skillId = skills[0]?.id ?? "";
+    mockSession(user.id);
+
+    const first = askOf(await requestSkillOutline({ goalId: goal.id, skillId }));
+    await endSkillOutlineAsk(first);
+
+    vi.advanceTimersByTime(1000);
+
+    await expect(requestSkillOutline({ goalId: goal.id, skillId })).resolves.toMatchObject({
+      status: "start",
+    });
+
+    await endSkillOutlineAsk(first);
+
+    await expect(getSkillOutline({ goalId: goal.id, skillId })).resolves.toStrictEqual({
+      outline: { chapters: [], status: "writing" },
+      status: "ready",
+    });
+
+    await expect(countOutlineUses(user.id)).resolves.toBe(1);
   });
 
   it("shows a topic its course teaches in part, from a lesson of another chapter, without writing", async () => {
@@ -214,9 +253,6 @@ describe(requestSkillOutline, () => {
     for (const skill of free.skills) {
       // oxlint-disable-next-line no-await-in-loop -- each claim counts the ones before it.
       requests.push(await requestSkillOutline({ goalId: free.goal.id, skillId: skill.id }));
-
-      // oxlint-disable-next-line no-await-in-loop -- the next claim reads the course as it ended.
-      await endOutlineRun(free.course.id);
     }
 
     expect(requests.map((request) => request.status)).toStrictEqual([
@@ -240,8 +276,6 @@ describe(requestSkillOutline, () => {
     await expect(
       requestSkillOutline({ goalId: guest.goal.id, skillId: first?.id ?? "" }),
     ).resolves.toMatchObject({ forGuest: true, status: "start" });
-
-    await endOutlineRun(guest.course.id);
 
     await expect(
       requestSkillOutline({ goalId: guest.goal.id, skillId: second?.id ?? "" }),

@@ -4,6 +4,7 @@ import {
   joinLevelBands,
 } from "@zoonk/core/library/curriculum/scope";
 import { COURSE_OUTLINE_READY_STEP } from "@zoonk/core/library/generation/steps";
+import { type SkillOutlineAskRef } from "@zoonk/core/lookahead/skill-outline-ask";
 import { type StepStreamMessage, WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { type Run, start } from "workflow/api";
@@ -30,9 +31,12 @@ import {
   saveOutlineChapterStep,
   writeOutlineBandStep,
 } from "./steps/course-outline-steps";
+import { endSkillOutlineAskStep } from "./steps/skill-outline-ask-step";
 
 export type CourseOutlineInput = CourseOutlineNeed & {
   analytics?: ContentAnalytics;
+  /** The learner's ask that started this run; the run that ends the chain, written or not, ends it. */
+  ask?: SkillOutlineAskRef;
   waitedSkillId?: string;
   background?: boolean;
   attempt?: number;
@@ -288,9 +292,18 @@ export async function courseOutlineWorkflow(
     );
 
     const result = await outlineCourse({ conflict, context: { ...input, workflowRunId }, input });
+
+    if (input.ask && !("nextRunId" in result && result.nextRunId)) {
+      await endSkillOutlineAskStep(input.ask);
+    }
+
     await courseOutlineProgressStep(getLastEvent(result), { last: true });
     return result;
   } catch (error) {
+    if (input.ask) {
+      await endSkillOutlineAskStep(input.ask);
+    }
+
     await courseOutlineProgressStep(
       { reason: "aiGenerationFailed", status: "error", step: WORKFLOW_ERROR_STEP },
       { last: true },

@@ -1716,6 +1716,50 @@ describe(courseOutlineWorkflow, () => {
     });
   });
 
+  it("ends the learner's topic ask when its run ends, written or failed, and keeps it while the course is busy", async () => {
+    const [{ bandSkills, goal }, course, failing] = await Promise.all([
+      waitingGoal(),
+      courseFixture({ outlineRunId: "other-run", outlineStatus: "running", title: "Immunology" }),
+      courseFixture({ outlineStatus: "pending", title: "Virology" }),
+    ]);
+
+    const skillId = bandSkills[0]?.id ?? "";
+    const askedAt = new Date();
+    const ask = { askedAt: askedAt.getTime(), goalId: goal.id, skillId };
+    const askRows = () => prisma.skillOutlineAsk.count({ where: { goalId: goal.id } });
+    const bands = [{ level: "overview" as const, skills: bandSkills }];
+
+    await prisma.skillOutlineAsk.create({ data: { askedAt, goalId: goal.id, skillId } });
+
+    vi.mocked(getRun).mockReturnValue({
+      exists: Promise.resolve(true),
+      status: Promise.resolve("running"),
+    } as never);
+
+    await expect(
+      courseOutlineWorkflow({ ask, bands, courseId: course.id, scope }),
+    ).resolves.toMatchObject({ nextRunId: "started-run", status: "busy" });
+
+    await expect(askRows()).resolves.toBe(1);
+
+    await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
+
+    await expect(
+      courseOutlineWorkflow({ ask, attempt: 1, bands, courseId: course.id, scope }),
+    ).resolves.toMatchObject({ status: "written" });
+
+    await expect(askRows()).resolves.toBe(0);
+
+    await prisma.skillOutlineAsk.create({ data: { askedAt, goalId: goal.id, skillId } });
+    vi.mocked(generateCourseOutline).mockRejectedValue(new Error("Provider unavailable"));
+
+    await expect(
+      courseOutlineWorkflow({ ask, bands, courseId: failing.id, scope }),
+    ).rejects.toThrow("Provider unavailable");
+
+    await expect(askRows()).resolves.toBe(0);
+  });
+
   it("frees the course for the next goal when a band fails, and counts the failure for the learner", async () => {
     const [{ bandSkills, goal }, course] = await Promise.all([
       waitingGoal(),

@@ -499,6 +499,7 @@
     "./lookahead/session-preparation": "./src/lookahead/session-preparation.ts",
     "./lookahead/short-plan-practice": "./src/lookahead/short-plan-practice.ts",
     "./lookahead/skill-outline": "./src/lookahead/skill-outline.ts",
+    "./lookahead/skill-outline-ask": "./src/lookahead/skill-outline-ask.ts",
     "./lookahead/skill-outline-contract": "./src/lookahead/skill-outline-contract.ts",
     "./lookahead/speculative-lessons": "./src/lookahead/speculative-lessons.ts",
     "./memory/contract": "./src/memory/memory-contract.ts",

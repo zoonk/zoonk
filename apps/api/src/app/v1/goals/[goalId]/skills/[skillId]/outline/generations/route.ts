@@ -60,6 +60,7 @@ async function createOutlineGeneration(
     {
       ...result.need,
       analytics: result.analytics,
+      ask: result.ask,
       forGuest: result.forGuest,
       waitedSkillId: path.skillId,
     },
