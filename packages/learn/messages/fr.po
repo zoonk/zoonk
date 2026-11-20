@@ -2111,16 +2111,16 @@ msgid "Mock exams need a subscription"
 msgstr "Il te faut un abonnement pour les examens blancs"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "jk5nI6"
-msgid "Your mock exam is being prepared"
-msgstr "Ton examen blanc est en préparation"
-
-#: src/challenge/challenge-footer.tsx
 #: src/missions/mission-copy.tsx
 #: src/today/use-row-label.ts
 msgctxt "L_nv1C"
 msgid "After today's lessons"
 msgstr "Après les leçons d’aujourd’hui"
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "jk5nI6"
+msgid "Your mock exam is being prepared"
+msgstr "Ton examen blanc est en préparation"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "X_k-eo"

@@ -2111,16 +2111,16 @@ msgid "Mock exams need a subscription"
 msgstr "모의고사를 보려면 구독이 필요해요"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "jk5nI6"
-msgid "Your mock exam is being prepared"
-msgstr "모의고사를 준비하고 있어요"
-
-#: src/challenge/challenge-footer.tsx
 #: src/missions/mission-copy.tsx
 #: src/today/use-row-label.ts
 msgctxt "L_nv1C"
 msgid "After today's lessons"
 msgstr "오늘 레슨을 마친 뒤"
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "jk5nI6"
+msgid "Your mock exam is being prepared"
+msgstr "모의고사를 준비하고 있어요"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "X_k-eo"

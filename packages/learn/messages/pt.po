@@ -2111,16 +2111,16 @@ msgid "Mock exams need a subscription"
 msgstr "Para fazer simulados, é preciso assinar"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "jk5nI6"
-msgid "Your mock exam is being prepared"
-msgstr "Seu simulado está sendo preparado"
-
-#: src/challenge/challenge-footer.tsx
 #: src/missions/mission-copy.tsx
 #: src/today/use-row-label.ts
 msgctxt "L_nv1C"
 msgid "After today's lessons"
 msgstr "Depois das aulas de hoje"
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "jk5nI6"
+msgid "Your mock exam is being prepared"
+msgstr "Seu simulado está sendo preparado"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "X_k-eo"
