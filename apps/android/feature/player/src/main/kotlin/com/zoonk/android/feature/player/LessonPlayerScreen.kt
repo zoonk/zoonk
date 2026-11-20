@@ -918,21 +918,17 @@ private fun ActionBar(
     // Listening plays its sentence from its own button on the screen.
     val promptUrl = screen.step?.takeIf { it.isReadStep }?.let { promptAudioUrl(it) }
 
-    val back: (@Composable () -> Unit)? =
-        if (screen.canGoBack) {
-            {
-                OutlinedIconButton(onClick = onBack) {
-                    Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.player_previous_screen))
-                }
-            }
-        } else {
-            null
+    // Drawn while it can't go back too, so the bar's buttons keep their places from screen to screen.
+    val back: @Composable () -> Unit = {
+        OutlinedIconButton(onClick = onBack, enabled = screen.canGoBack) {
+            Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.player_previous_screen))
         }
+    }
 
     val step = screen.step
     val records = primary.label == PrimaryLabel.Check && !primary.busy && recordsInBar(step, actions)
 
-    val dontKnowAbove = dontKnow && back != null && !isWideLayout()
+    val dontKnowAbove = dontKnow && !isWideLayout()
     val giveUp: @Composable (Modifier) -> Unit = { modifier ->
         OutlinedButton(
             onClick = { step?.let { actions.dontKnow(it.id) } },
