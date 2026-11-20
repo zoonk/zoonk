@@ -319,7 +319,7 @@ describe("a class test days away", () => {
 
     expect(lastKinds).not.toContain("learn");
 
-    expect(last.session.blocks.at(-1)).toMatchObject({
+    expect(last.session.blocks.find((block) => block.checkpoint?.mock)).toMatchObject({
       checkpoint: { kind: "weekly", mock: true, timeLimitMinutes: 30 },
       kind: "checkpoint",
     });
@@ -712,7 +712,7 @@ describe("a class test days away", () => {
     expect(payloads.flatMap((payload) => payload.placementItemIds)).toStrictEqual([]);
   });
 
-  it("still runs the short mock for a learner who first opens the app the day before", async () => {
+  it("still schedules the short mock for a learner who first opens the app the day before", async () => {
     const { goal } = await setup({ days: 3 });
 
     setClock(2);
@@ -722,12 +722,15 @@ describe("a class test days away", () => {
       throw new Error(`Expected the last day's session, got ${last.status}`);
     }
 
-    expect(last.session.blocks.at(-1)).toMatchObject({
+    const mock = last.session.blocks.find((block) => block.checkpoint?.mock);
+
+    expect(mock).toMatchObject({
       checkpoint: { kind: "weekly", mock: true },
       kind: "checkpoint",
+      preparing: true,
     });
 
-    expect(last.session.blocks.at(-1)?.questions).toBeGreaterThan(0);
+    expect(mock?.questions).toBeGreaterThan(0);
   });
 });
 

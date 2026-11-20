@@ -97,6 +97,7 @@ async function createListeningExamGoal(userId: string) {
         content: { ...listeningContent({ plays: 1 }), task },
         examBlueprintId: blueprint.id,
         mediaAssetId: audio.id,
+        mockOnly: true,
       });
     }),
   );
@@ -107,6 +108,7 @@ async function createListeningExamGoal(userId: string) {
         itemFixture({
           content: choiceItemContent(),
           examBlueprintId: blueprint.id,
+          mockOnly: true,
           setId: recording.id,
           setPosition,
           skillId: skill.id,
@@ -117,6 +119,7 @@ async function createListeningExamGoal(userId: string) {
       itemFixture({
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
+        mockOnly: true,
         skillId: reading.id,
       }),
     ),
