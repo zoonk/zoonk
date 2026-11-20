@@ -15,8 +15,11 @@ import {
   STAFF_READ_SCOPE,
 } from "../cli-login-contract";
 
-/** Agents sharing one login refresh at the same moment; within this window they all get the same new pair. */
-const REFRESH_TOKEN_REUSE_SECONDS = 10;
+/**
+ * Within this window a rotated refresh token gets the same new pair again, so a CLI that lost the
+ * answer keeps its login and recovers the pair on its retry or its next command.
+ */
+const REFRESH_TOKEN_REUSE_SECONDS = 300;
 
 const APPROVAL_URL = new URL(CLI_LOGIN_APPROVAL_PATH, MAIN_URL).toString();
 

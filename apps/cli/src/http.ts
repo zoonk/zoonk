@@ -4,18 +4,20 @@ export const BAD_REQUEST = 400;
 export const UNAUTHORIZED = 401;
 export const FORBIDDEN = 403;
 
-/** Other commands wait 30 s for the credentials lock, so a token request holding it ends sooner. */
+/** Other commands wait 30 s for the credentials lock, so a refresh and its one retry holding it end sooner. */
 const OAUTH_TIMEOUT_MS = 10_000;
 
 const ERROR_CODE_PATTERN = /^[A-Z][A-Z0-9_]*$/u;
 
-/** No address or no connection: the request never left this machine. */
+/** No address, no connection, or a sandbox denied the connection: the request never left this machine. */
 const UNSENT_CODES = new Set([
+  "EACCES",
   "EAI_AGAIN",
   "ECONNREFUSED",
   "EHOSTUNREACH",
   "ENETUNREACH",
   "ENOTFOUND",
+  "EPERM",
 ]);
 
 export type HttpResult = { body: unknown; ok: boolean; status: number };

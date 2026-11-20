@@ -37,7 +37,7 @@ type Revocation = "alreadyRevoked" | "revoked" | "unconfirmed";
 export type TokenResult = { login: StoredLogin; ok: true } | { error: string; ok: false };
 
 /** The server may have rotated the refresh token, but no usable new pair arrived. */
-type RefreshResult = TokenResult | "unconfirmed";
+export type RefreshResult = TokenResult | "unconfirmed";
 
 /** A 5xx can come after the rotation committed, such as a failed insert of the new token. */
 const FIRST_SERVER_ERROR = 500;

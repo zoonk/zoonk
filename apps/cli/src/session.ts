@@ -3,7 +3,7 @@ import { type ApiRequest } from "./args.ts";
 import { type LoginPlace, type StoredLogin, changeLogin, readLogin } from "./credentials.ts";
 import { CliError, EXIT_CODES } from "./errors.ts";
 import { type HttpResult, UNAUTHORIZED, sendRequest } from "./http.ts";
-import { refreshLogin } from "./oauth.ts";
+import { type RefreshResult, refreshLogin } from "./oauth.ts";
 
 const EXPIRY_MARGIN_MS = 60_000;
 
@@ -19,9 +19,30 @@ function isExpiring(login: StoredLogin): boolean {
 }
 
 /**
+ * A lost answer may hide a rotation the server already made. Within its reuse window the provider
+ * answers the same refresh token with the same new pair, so asking once more recovers it. A refusal
+ * then can mean the first refresh is still running, between rotating the token and storing that
+ * answer, so it's no reason to forget the login yet.
+ */
+async function refreshOrReplay(place: {
+  origin: string;
+  refreshToken: string;
+}): Promise<RefreshResult> {
+  const refresh = await refreshLogin(place);
+
+  if (refresh !== "unconfirmed") {
+    return refresh;
+  }
+
+  const replay = await refreshLogin(place);
+  const refused = replay !== "unconfirmed" && !replay.ok && replay.error === "invalid_grant";
+
+  return refused ? "unconfirmed" : replay;
+}
+
+/**
  * Refreshes under the file's lock with the latest saved token: the provider rotates refresh tokens
- * and, past its short reuse window, treats a rotated one as stolen and ends every CLI login of
- * that person.
+ * and, past its reuse window, treats a rotated one as stolen and ends every CLI login of that person.
  */
 async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLogin }) {
   const renewed = await changeLogin<StoredLogin | "unconfirmed" | null>({
@@ -34,11 +55,11 @@ async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLog
         return { result: stored };
       }
 
-      const refresh = await refreshLogin({ origin, refreshToken: stored.refreshToken });
+      const refresh = await refreshOrReplay({ origin, refreshToken: stored.refreshToken });
 
-      // Keeping the old token would send it again after the reuse window, or revoke it at logout.
+      // The next command sends the kept token again, which the reuse window answers with the new pair.
       if (refresh === "unconfirmed") {
-        return { result: refresh, save: null };
+        return { result: refresh };
       }
 
       if (refresh.ok) {
@@ -59,9 +80,7 @@ async function renewLogin({ file, origin, used }: LoginPlace & { used: StoredLog
 
   if (renewed === "unconfirmed") {
     throw new CliError(
-      `Couldn't confirm the login renewal with ${origin}. ` +
-        `Run \`${loginCommand(origin)}\` to log in again.`,
-      EXIT_CODES.notLoggedIn,
+      `Couldn't confirm the login renewal with ${origin}. It's kept; try again shortly.`,
     );
   }
 
