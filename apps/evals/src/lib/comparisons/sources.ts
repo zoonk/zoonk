@@ -133,14 +133,39 @@ export async function source(taskId: string, spec: string): Promise<Source> {
     }),
   );
 
-  const matches = [...variants].filter(([key]) => !suffix || key.startsWith(suffix));
+  const prefixes = suffix?.split("+") ?? [""];
+
+  const matches = [...variants].filter(([key]) =>
+    prefixes.some((prefix) => key.startsWith(prefix)),
+  );
+
   const current = suffix === "current" || (!suffix && outputs.length === 0);
 
-  if (!current && matches.length !== 1) {
-    throw new Error(`Choose a model@variant-hash from ${JSON.stringify([...variants.keys()])}`);
+  if (
+    !current &&
+    (prefixes.some((prefix) => matches.filter(([key]) => key.startsWith(prefix)).length !== 1) ||
+      new Set(matches.map(([, found]) => hashJson({ ...found, systemPromptHash: "" }))).size !== 1)
+  ) {
+    throw new Error(
+      `Choose a model@variant-hash, or several joined by + that differ only in their rendered system prompt, from ${JSON.stringify(
+        [...variants].map(([key, found]) => ({ key, systemPromptHash: found.systemPromptHash })),
+      )}`,
+    );
   }
 
-  const variant = current ? null : (matches[0]?.[1] ?? null);
+  const selected = new Set(matches.map(([key]) => key));
+  const first = matches[0]?.[1];
+
+  const variant =
+    current || !first
+      ? null
+      : {
+          ...first,
+          systemPromptHash:
+            matches.length === 1
+              ? first.systemPromptHash
+              : hashJson(matches.map(([, found]) => found.systemPromptHash).toSorted()),
+        };
 
   const scores = await readOptional(
     path.join(
@@ -160,6 +185,7 @@ export async function source(taskId: string, spec: string): Promise<Source> {
 
   const image = model.kind === "image";
 
+
   const imagePaths = image
     ? outputs.map((entry) => imagePathSchema.parse(JSON.parse(entry.output)).imagePath)
     : [];
@@ -168,7 +194,7 @@ export async function source(taskId: string, spec: string): Promise<Source> {
 
   const delivered = await Promise.all(
     outputs.map(async (entry, index): Promise<Delivery | Failure | null> => {
-      if (!isDeepStrictEqual(variantFor(model.id, entry), variant)) {
+      if (current || !selected.has(hashJson(variantFor(model.id, entry)))) {
         return null;
       }
 
