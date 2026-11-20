@@ -5,6 +5,7 @@ import {
   toOrderCandidates,
 } from "@zoonk/core/library/language/sentence-orders";
 import { isSameLanguage } from "@zoonk/utils/languages";
+import { readCriteria } from "../plain-language-criterion";
 import { SENTENCE_ORDERS_SCORE_CATEGORIES } from "./score-categories";
 import {
   type CheckedSentenceOrders,
@@ -38,11 +39,24 @@ export const languageSentenceOrdersTask: Task<
   SentenceOrdersExpected
 > = {
   codeChecks: checkLanguageSentenceOrders,
+  criteria: readCriteria(SENTENCE_ORDERS_SCORE_CATEGORIES),
   description:
     "Generate other word orders for a lesson's sentences and their translations, keep the buildable ones and review them, so learners building them from tiles aren't marked wrong for a correct order",
   generate: generateCheckedOrders,
   id: "language-sentence-orders",
   name: "Language sentence orders",
+  priorities: {
+    comparison: {
+      criteria: { precision: "disqualifies", recall: "counts" },
+      preference: "canBlock",
+      trade: null,
+    },
+    distribution: "shared",
+    first: "quality",
+    reads: "Code accepts these orders as right answers in an exercise",
+    reason: "A wrong order marks a learner's wrong sentence right for every learner",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreLanguageSentenceOrders,
   scoreCategories: SENTENCE_ORDERS_SCORE_CATEGORIES,
   testCases: TEST_CASES,

@@ -127,6 +127,13 @@ export const mindMapImageTask: Task<MindMapImageInput, MindMapImageOutput> = {
   id: TASK_ID,
   name: "Mind map image",
   output: "image",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "A learner sees the chapter's mind map",
+    reason: "Low image quality lettered every word right for about a cent",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreMindMapImage,
   scoreCategories,
   testCases: TEST_CASES,

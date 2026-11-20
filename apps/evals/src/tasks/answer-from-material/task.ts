@@ -68,6 +68,13 @@ export const answerFromMaterialTask: Task<
   generate: answerFromMaterial,
   id: "answer-from-material",
   name: "Answer from material",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "A learner reads the answer, with citations from their material",
+    reason: "One learner's own material: the cheapest model that answers right",
+    waits: "A learner waits in the request",
+  },
   score: scoreAnswer,
   testCases: TEST_CASES,
 };

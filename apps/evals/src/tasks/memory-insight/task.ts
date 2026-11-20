@@ -131,6 +131,13 @@ export const memoryInsightTask: Task<
   generate: generateMemoryInsight,
   id: "memory-insight",
   name: "Memory insight",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "A learner reads their daily insight",
+    reason: "One short call per active learner per day, so the cheapest capable model",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreMemoryInsight,
   testCases: TEST_CASES,
 };

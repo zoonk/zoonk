@@ -88,7 +88,7 @@ function checkCourseDetails({
   };
 }
 
-const COURSE_DETAILS_SCORE_CATEGORIES = defineScoreCategories([
+export const COURSE_DETAILS_SCORE_CATEGORIES = defineScoreCategories([
   {
     expectations: `Check whether the copy fits this course: the description says what the subject is and what the course covers, naming real parts of the subject that the CHAPTERS and the course title imply, and describes the whole course rather than only the chapters written so far. Outcomes are concrete, observable abilities a learner of this course would build, in order from what the learner does first to the furthest the course goes; four short outcomes can't name every chapter, so judge whether together they show the course's range. Notice generic education copy that would fit any course, outcomes that are topics instead of abilities, and claims about content the course clearly doesn't cover. A description or outcomes that could belong to any course tell the visitor nothing about this one.`,
     id: "fit",

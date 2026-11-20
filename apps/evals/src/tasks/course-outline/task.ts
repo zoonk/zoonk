@@ -3,6 +3,8 @@ import {
   type CourseOutlineParams,
   generateCourseOutline,
 } from "@zoonk/ai/tasks/curriculum/course-outline";
+import { readCriteria } from "../plain-language-criterion";
+import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
 import { type CourseOutlineExpected, scoreCourseOutline } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
@@ -13,11 +15,31 @@ export const courseOutlineTask: Task<
   CourseOutlineOutput,
   CourseOutlineExpected
 > = {
+  criteria: readCriteria(COURSE_OUTLINE_SCORE_CATEGORIES),
   description:
     "Write one level band of a shared course: chapters with objectives and tools, and every lesson's title, description, can-do line, minutes and skills",
   generate: (input) => generateCourseOutline({ ...input, country: input.country ?? null }),
   id: "course-outline",
   name: "Course outline",
+  priorities: {
+    comparison: {
+      criteria: {
+        aiEraSkills: "counts",
+        coverage: "counts",
+        granularity: "counts",
+        levelFit: "counts",
+        noFiller: "counts",
+        order: "counts",
+      },
+      preference: "canBlock",
+      trade: null,
+    },
+    distribution: "shared",
+    first: "quality",
+    reads: "A learner reads the chapters; lesson writers build on them",
+    reason: "Shared courses are reused, so coverage is worth paying for",
+    waits: "A learner waits on the band they start with; other bands are prepared ahead",
+  },
   score: scoreCourseOutline,
   testCases: TEST_CASES,
 };

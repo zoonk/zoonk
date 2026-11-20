@@ -9,6 +9,7 @@ import {
   type WriteWarmUpCardsParams,
   generateWarmUpCards,
 } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
+import { readCriteria } from "../plain-language-criterion";
 import { WARM_UP_CARDS_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
@@ -42,11 +43,25 @@ function checkOutput(output: string): CodeCheckResult {
 }
 
 export const warmUpCardsTask: Task<OptionalCountry<WriteWarmUpCardsParams>, WarmUpCardsOutput> = {
+  criteria: readCriteria(WARM_UP_CARDS_SCORE_CATEGORIES),
   description:
     "Write about 10 guess cards (a question, 2 or 3 options with one right, a short reveal) a new learner plays while their plan is built: the shared validator, then a judge",
   generate: (input) => generateWarmUpCards({ ...input, country: input.country ?? null }),
   id: "warm-up-cards",
   name: "Warm-up cards",
+  priorities: {
+    comparison: {
+      criteria: { accuracy: "counts", format: "counts", language: "counts", pretest: "counts" },
+      preference: "canBlock",
+      trade: null,
+    },
+    distribution: "shared",
+    first: "quality",
+    reads: "A learner plays the warm-up deck",
+    reason:
+      "A deck is shared, and a checker drops doubtful cards; the chosen model is cheap and fast enough",
+    waits: "A learner waits during the goal build",
+  },
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: checkOutput,

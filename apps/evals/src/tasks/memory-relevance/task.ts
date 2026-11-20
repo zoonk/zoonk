@@ -57,6 +57,13 @@ export const memoryRelevanceTask: Task<
   generate: route,
   id: "memory-relevance",
   name: "Memory relevance",
+  priorities: {
+    distribution: "private",
+    first: "latency",
+    reads: "Code picks which facts reach a task's prompt",
+    reason: "It sits in front of calls a learner waits on",
+    waits: "A learner waits: tutor, plans and lessons wait on it",
+  },
   score: scoreMemoryRelevance,
   testCases: [...TEST_CASES, ...PERSONA_TEST_CASES],
 };

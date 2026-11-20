@@ -1,5 +1,6 @@
 import { type Task } from "@/lib/types";
 import { generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
+import { readCriteria } from "../plain-language-criterion";
 import { type SkillGraphCase, toLibraryLookup } from "./library-cases";
 import { SKILL_GRAPH_SCORE_CATEGORIES } from "./score-categories";
 import { type SkillGraphOutput, scoreSkillGraph } from "./scorer";
@@ -12,11 +13,32 @@ async function generate({ library, ...params }: SkillGraphCase) {
 }
 
 export const skillGraphTask: Task<SkillGraphCase, SkillGraphOutput> = {
+  criteria: readCriteria(SKILL_GRAPH_SCORE_CATEGORIES),
   description:
     "Turn a goal into a skill graph: skills with prerequisites, the courses that teach them and phases sized in hours",
   generate,
   id: "skill-graph",
   name: "Skill graph",
+  priorities: {
+    comparison: {
+      criteria: {
+        aiEraSkills: "counts",
+        coverage: "counts",
+        goalFit: "counts",
+        granularity: "counts",
+        noFiller: "counts",
+        orderAndPrerequisites: "counts",
+      },
+      preference: "canBlock",
+      trade: null,
+    },
+    distribution: "shared",
+    first: "quality",
+    reads: "A learner sees their plan's skills as they're named",
+    reason:
+      "Skills are reused across goals; the pricier model kept foundations the cheaper one dropped",
+    waits: "A learner waits: skills stream as they're named",
+  },
   score: scoreSkillGraph,
   scoreCategories: SKILL_GRAPH_SCORE_CATEGORIES,
   testCases: TEST_CASES,

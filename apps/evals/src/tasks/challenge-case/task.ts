@@ -10,6 +10,7 @@ import {
 import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-content";
 import { checkChallengePlan } from "@zoonk/core/library/challenges/plan-check";
+import { PLAIN_LANGUAGE_CRITERION, readCriteria } from "../plain-language-criterion";
 import { CHALLENGE_CASE_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
@@ -49,11 +50,32 @@ function checkOutput(output: string, variant: ChallengeCaseParams["variant"]): C
 }
 
 export const challengeCaseTask: Task<OptionalCountry<ChallengeCaseParams>, WrittenChallengeCase> = {
+  criteria: readCriteria(CHALLENGE_CASE_SCORE_CATEGORIES, PLAIN_LANGUAGE_CRITERION),
   description:
     "Write the challenge that closes a chapter: a work case with a team and decisions that change the state, or a light What if for overview courses. Code checks the decision graph, then a judge",
   generate: (input) => generateFirstChallengeDraft({ ...input, country: input.country ?? null }),
   id: "challenge-case",
   name: "Challenge case",
+  priorities: {
+    comparison: {
+      criteria: {
+        accuracy: "counts",
+        debrief: "counts",
+        decisions: "counts",
+        depth: "counts",
+        plainLanguage: "counts",
+        realism: "counts",
+        team: "counts",
+      },
+      preference: "canBlock",
+      trade: null,
+    },
+    distribution: "shared",
+    first: "quality",
+    reads: "A learner plays the case and reads its debrief",
+    reason: "Shared cases are reused across learners, and the case is the lesson's practice",
+    waits: "Set by the lesson's wait: a learner, soon or later",
+  },
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: (text) => checkOutput(text, (testCase.userInput as ChallengeCaseParams).variant),

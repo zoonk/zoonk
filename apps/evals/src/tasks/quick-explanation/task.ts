@@ -8,6 +8,7 @@ import {
 } from "@zoonk/ai/tasks/explain/quick-explanation";
 import { checkQuickExplanation } from "@zoonk/ai/tasks/explain/quick-explanation-checks";
 import { z } from "zod";
+import { readCriteria } from "../plain-language-criterion";
 import { QUICK_EXPLANATION_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
@@ -27,12 +28,33 @@ export const quickExplanationTask: Task<
   OptionalCountry<QuickExplanationParams>,
   QuickExplanation
 > = {
+  criteria: readCriteria(QUICK_EXPLANATION_SCORE_CATEGORIES),
   description:
     "Answer a question in 4 to 6 short screens with one check, a 'Now you know' recap and a 'Want to go further?' hint: code checks, then a judge",
   generate: (input) => generateQuickExplanation({ ...input, country: input.country ?? null }),
   id: "quick-explanation",
   latencyBudget: QUICK_EXPLANATION_LATENCY_BUDGET,
   name: "Quick explanation",
+  priorities: {
+    comparison: {
+      criteria: {
+        accuracy: "counts",
+        check: "counts",
+        clarity: "counts",
+        ending: "counts",
+        everydayWords: "counts",
+        practicalExample: "counts",
+      },
+      preference: "separates",
+      trade: null,
+    },
+    distribution: "shared",
+    first: "latency",
+    reads: "A learner reads the explanation",
+    reason:
+      "The first screen must arrive fast; a pricier model scored a little higher at eight times the cost",
+    waits: "A learner waits: the first screen should show in about 20 seconds",
+  },
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: checkOutput,

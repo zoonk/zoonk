@@ -87,6 +87,13 @@ export const lessonImageTask: Task<LessonImageInput, LessonImageOutput> = {
   id: TASK_ID,
   name: "Lesson image",
   output: "image",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "A learner sees the picture on a lesson screen",
+    reason: "Low quality is enough for flat scenes, and higher quality costs several times more",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreLessonImage,
   scoreCategories,
   testCases: TEST_CASES,

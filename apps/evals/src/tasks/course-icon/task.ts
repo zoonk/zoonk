@@ -82,6 +82,13 @@ export const courseIconTask: Task<CourseIconInput, CourseIconOutput> = {
   id: TASK_ID,
   name: "Course icon",
   output: "image",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Visitors and learners see the course icon",
+    reason: "A cheap image reused on every course page; quality must clear the bar",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreCourseIcon,
   scoreCategories,
   testCases: TEST_CASES,

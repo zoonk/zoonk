@@ -4,6 +4,7 @@ import { type Task, type TaskScorer, type TestCase } from "@/lib/types";
 import { type ImageSceneInput, generateImageScene } from "@zoonk/ai/tasks/images/scene";
 import { type ImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { getString } from "@zoonk/utils/json";
+import { readCriteria } from "../plain-language-criterion";
 import { type ImageSceneExpected, TEST_CASES } from "./test-cases";
 
 type ImageSceneOutput = Awaited<ReturnType<typeof generateImageScene>>["data"];
@@ -100,10 +101,23 @@ const scoreImageScene: TaskScorer<ImageSceneExpected> = ({ output, testCase }) =
   scoreWithCodeChecks({ check: checkScene(testCase), output, scoreCategories, testCase });
 
 export const imageSceneTask: Task<ImageSceneInput, ImageSceneOutput, ImageSceneExpected> = {
+  criteria: readCriteria(scoreCategories),
   description: "Plan one lesson picture as a structured scene",
   generate: generateImageScene,
   id: "image-scene",
   name: "Image scene",
+  priorities: {
+    comparison: {
+      criteria: { fields: "counts", labels: "counts", simplicity: "counts", teaches: "counts" },
+      preference: "separates",
+      trade: null,
+    },
+    distribution: "shared",
+    first: "cost",
+    reads: "An image model draws from the scene",
+    reason: "It costs little next to the image itself, so the cheaper of two equal models",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreImageScene,
   scoreCategories,
   testCases: TEST_CASES,

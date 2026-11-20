@@ -18,6 +18,7 @@ export const challengeReviewTask: Task<
   ReviewInput,
   Awaited<ReturnType<typeof checkChallengeQuality>>["data"]
 > = {
+  criteria: [],
   description:
     "Errors-only review of saved challenges: 19 confirmed errors and 12 clean controls from the review lane, including six route errors missed by its original labels",
   generate: async ({ written, language, level, field, writerModel, ...options }) => {
@@ -42,6 +43,14 @@ export const challengeReviewTask: Task<
   },
   id: "challenge-review",
   name: "Challenge review",
+  priorities: {
+    comparison: { criteria: {}, preference: "canBlock", trade: null },
+    distribution: "shared",
+    first: "quality",
+    reads: "Code: its findings decide whether to fix or hold back the case",
+    reason: "A missed flaw reaches every learner; a false flag costs a fix call",
+    waits: "Set by the lesson's wait",
+  },
   testCases: cases.map((saved) => ({
     expectations:
       saved.errors.length > 0

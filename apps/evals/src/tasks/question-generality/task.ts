@@ -44,6 +44,13 @@ export const questionGeneralityTask: Task<
   generate: route,
   id: "question-generality",
   name: "Question generality",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code decides whether an explanation is shared",
+    reason: "Code checks the label; the cheapest that matched",
+    waits: "A learner waits in the explanation stream",
+  },
   score: scoreQuestionGenerality,
   testCases: TEST_CASES,
 };

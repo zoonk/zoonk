@@ -4,6 +4,7 @@ import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/schema";
 import { type ChallengeFinding } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-content";
 import { applyChallengeEdits } from "@zoonk/core/library/challenges/edits";
+import { PLAIN_LANGUAGE_CRITERION } from "../plain-language-criterion";
 import cases from "./cases.json";
 
 type FixInput = { findings: ChallengeFinding[]; written: WrittenChallengeCase };
@@ -21,6 +22,7 @@ function describeLabels(labels: Label[]): string {
 }
 
 export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
+  criteria: [PLAIN_LANGUAGE_CRITERION],
   description:
     "Fix what a reviewer found in a held challenge with find/replace edits: the 15 drafts the trade-off lane fixed, with hand labels for each finding",
   generate: async ({ findings, written, ...options }) => {
@@ -44,6 +46,14 @@ export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
   },
   id: "challenge-fix",
   name: "Challenge fix",
+  priorities: {
+    comparison: { criteria: { plainLanguage: "counts" }, preference: "canBlock", trade: null },
+    distribution: "shared",
+    first: "quality",
+    reads: "Code applies the edits to the case a learner plays",
+    reason: "A fix that misses or adds an error reaches every learner of the case",
+    waits: "Set by the lesson's wait",
+  },
   testCases: cases.map((saved) => ({
     expectations: `${describeLabels(saved.labels)}
 Every other word of the case stays as it was: ids, structure, meters, correct numbers, tone and language. Any new error an edit introduces on any route fails the case.`,

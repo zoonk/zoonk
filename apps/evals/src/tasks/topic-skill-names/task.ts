@@ -18,6 +18,13 @@ export const topicSkillNamesTask: Task<
   id: "topic-skill-names",
   latencyBudget: { p50: 3, p95: 6 },
   name: "Topic skill names",
+  priorities: {
+    distribution: "shared",
+    first: "latency",
+    reads: "Code names new shared skills",
+    reason: "The learner waits on it; the cheapest that named skills right",
+    waits: "A learner waits on the buddy's card",
+  },
   score: scoreTopicSkillNames,
   testCases: TEST_CASES,
 };
