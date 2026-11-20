@@ -87,6 +87,7 @@ function buildSystemPrompt(params: WriteLessonDraftParams): string {
       spotAiMistake: params.spec.screens.some(
         (screen) => screen.activityTemplate === FIND_ERROR_TEMPLATE,
       ),
+      usedSituations: Boolean(params.usedSituations?.length),
     },
   });
 
