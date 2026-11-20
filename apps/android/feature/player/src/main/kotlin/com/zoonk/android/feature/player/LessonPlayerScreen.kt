@@ -459,7 +459,6 @@ fun LessonPlayer(
                                         }?.askButton
                                         ?.invoke(
                                             state.tutorScope(screen),
-                                            state.showsMiss(screen) && screen.struggleOffer == null,
                                             asking && (spread || !askedOnSpread),
                                             tutor.suggestions.firstOrNull { it.id == offerId }?.let { TutorOffer(it, offerAsked) },
                                             {
@@ -947,17 +946,17 @@ private fun ActionBar(
         TaskActions(back) { width ->
             if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
             if (dontKnow && !dontKnowAbove) giveUp(Modifier)
-            ask()
             if (records && step != null) {
                 SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
-                return@TaskActions
+            } else {
+                Button(
+                    busy = primary.busy,
+                    onClick = actions::runPrimary,
+                    modifier = width.focusRequester(primaryFocus),
+                    enabled = primary.enabled,
+                ) { Text(stringResource(primary.label.text())) }
             }
-            Button(
-                busy = primary.busy,
-                onClick = actions::runPrimary,
-                modifier = width.focusRequester(primaryFocus),
-                enabled = primary.enabled,
-            ) { Text(stringResource(primary.label.text())) }
+            ask()
         }
     }
 }

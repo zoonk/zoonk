@@ -1,9 +1,6 @@
 package com.zoonk.android.feature.tutor
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,7 +17,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -60,14 +56,7 @@ fun AskTutor(
         }
 
         AskTutorAppearance.Icon -> {
-            IconButton(onClick = { open = true }, modifier = modifier.semantics { contentDescription = label }) {
-                // Main's question bubble (lucide message-circle-question), for a learner without a buddy's face.
-                if (identity.look == null) {
-                    Icon(painterResource(R.drawable.ic_contact_support), contentDescription = null)
-                } else {
-                    TutorAvatar(identity, BUTTON_AVATAR_SIZE)
-                }
-            }
+            IconButton(onClick = { open = true }, modifier = modifier.semantics { contentDescription = label }) { TutorAskIcon(identity) }
         }
     }
 
@@ -75,18 +64,17 @@ fun AskTutor(
 }
 
 /**
- * Main's "Ask {buddy}" beside a task's main action, as on a lesson's screen: an icon, or [worded]
- * after a missed answer, opening the conversation about [scope].
+ * Main's "Ask {buddy}" after a task's main action, as on a lesson's screen: the buddy's face in a
+ * square, its words as the tooltip, opening the conversation about [scope].
  */
 @Composable
 fun TutorAskButton(
     scope: TutorScope,
     app: AppContainer,
     navigator: AppNavigator,
-    worded: Boolean,
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
-    TutorAskButton(scope, app, navigator, worded, open, onOpenChange = { open = it })
+    TutorAskButton(scope, app, navigator, open, onOpenChange = { open = it })
 }
 
 /** The ask button whose conversation the screen also opens from elsewhere, as a lesson's offers do. */
@@ -96,7 +84,6 @@ fun TutorAskButton(
     scope: TutorScope,
     app: AppContainer,
     navigator: AppNavigator,
-    worded: Boolean,
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
     lessonSuggestions: List<TutorSuggestion> = emptyList(),
@@ -107,25 +94,28 @@ fun TutorAskButton(
     val identity = tutorIdentity(summary.value)
     val label = identity.askText()
 
-    if (worded) {
-        OutlinedButton(onClick = { onOpenChange(true) }) {
-            Icon(painterResource(R.drawable.ic_contact_support), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
-            Text(label, Modifier.padding(start = ButtonDefaults.IconSpacing))
-        }
-    } else {
-        TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
-            tooltip = { PlainTooltip { Text(label) } },
-            state = rememberTooltipState(),
-        ) {
-            OutlinedIconButton(onClick = { onOpenChange(true) }) {
-                Icon(painterResource(R.drawable.ic_contact_support), contentDescription = label)
-            }
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+        tooltip = { PlainTooltip { Text(label) } },
+        state = rememberTooltipState(),
+    ) {
+        OutlinedIconButton(onClick = { onOpenChange(true) }, modifier = Modifier.semantics { contentDescription = label }) {
+            TutorAskIcon(identity)
         }
     }
 
     if (open) {
         TutorSheet(scope, app, navigator, identity, onDismiss = { onOpenChange(false) }, lessonSuggestions, offer, onOfferTaken)
+    }
+}
+
+/** The buddy's face, or main's question bubble (lucide message-circle-question) for a learner without one. */
+@Composable
+private fun TutorAskIcon(identity: TutorIdentity) {
+    if (identity.look == null) {
+        Icon(painterResource(R.drawable.ic_contact_support), contentDescription = null)
+    } else {
+        TutorAvatar(identity, BUTTON_AVATAR_SIZE)
     }
 }
 
