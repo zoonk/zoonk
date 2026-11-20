@@ -217,22 +217,6 @@ function useChallengeQuestionsCopy(): KindCopy<"challengeQuestions"> {
   };
 }
 
-function useMockQuestionsCopy(): KindCopy<"mockQuestions"> {
-  const t = useExtracted();
-  const questionLines = useQuestionLines();
-
-  return {
-    name: t("Writing your mock exam"),
-    phases: {
-      questions: {
-        label: t("Writing questions like the exam's"),
-        lines: [t("Picking what to ask in each subject…")],
-        numbered: questionLines({ count: 12 }),
-      },
-    },
-  };
-}
-
 function useSetupLessonCopy(): KindCopy<"setupLesson"> {
   const t = useExtracted();
 
@@ -267,7 +251,6 @@ export function useGenerationCopy(kind: GenerationKind): {
     firstLesson: useFirstLessonCopy(),
     lesson: useLessonCopy(),
     levelTestBank: useLevelTestBankCopy(),
-    mockQuestions: useMockQuestionsCopy(),
     placement: usePlacementCopy(),
     setupLesson: useSetupLessonCopy(),
     speakingMock: useSpeakingMockCopy(),

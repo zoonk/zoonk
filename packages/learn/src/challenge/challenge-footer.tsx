@@ -12,6 +12,7 @@ import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
 import { ChallengeCallGate } from "../language/conversation/challenge-call-gate";
+import { MockPreparingWords } from "../mock/mock-preparing";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { useMoveFailed } from "./challenge-move-failed";
@@ -168,6 +169,17 @@ function ResumeButton() {
   );
 }
 
+function KeepStudyingLink() {
+  const t = useExtracted();
+  const { hrefs } = useChallengeScreen();
+
+  return (
+    <TaskActions>
+      <TaskMainLink href={hrefs.exit}>{t("Keep studying")}</TaskMainLink>
+    </TaskActions>
+  );
+}
+
 function OpenLink({ children }: { children: React.ReactNode }) {
   const { hrefs } = useChallengeScreen();
 
@@ -200,6 +212,10 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
 
   if (start.problem === "plusRequired") {
     return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
+  }
+
+  if (start.problem === "preparing") {
+    return { actions: <KeepStudyingLink />, line: <MockPreparingWords /> };
   }
 
   switch (challenge.status) {

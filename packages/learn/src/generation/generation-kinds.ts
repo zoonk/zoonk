@@ -5,7 +5,6 @@ import {
   type GoalContentStepName,
   type GoalUnderstandingStepName,
   type LevelTestBankStepName,
-  type MockQuestionsStepName,
   type SetupLessonStepName,
   type TestOutQuestionsStepName,
 } from "@zoonk/core/library/generation/steps";
@@ -150,11 +149,6 @@ const testOutQuestions = {
   },
 } as const satisfies GenerationKindDefinition<TestOutQuestionsStepName, "questions">;
 
-const mockQuestions = {
-  phases: [{ id: "questions", seconds: 100 }],
-  steps: { joinMockQuestions: "join", mockQuestionsReady: "done", writeMockQuestions: "questions" },
-} as const satisfies GenerationKindDefinition<MockQuestionsStepName, "questions">;
-
 const challengeQuestions = {
   phases: [{ id: "questions", seconds: 32 }],
   steps: {
@@ -218,7 +212,6 @@ const GENERATION_KINDS = {
   firstLesson,
   lesson,
   levelTestBank,
-  mockQuestions,
   placement,
   setupLesson,
   speakingMock,

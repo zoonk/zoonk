@@ -8,7 +8,7 @@ import { type ChallengeActions } from "./challenge-context";
 /** A retry after the timeout is safe: a started block resumes. */
 const START_BOUNDS = { slowMs: 10_000, timeoutMs: 45_000 } as const;
 
-type StartProblem = "failed" | "plusRequired" | null;
+type StartProblem = "failed" | "plusRequired" | "preparing" | null;
 
 export type ChallengeStartState = {
   busy: boolean;

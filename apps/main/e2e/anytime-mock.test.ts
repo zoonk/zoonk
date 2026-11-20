@@ -1,6 +1,6 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { WRITTEN_ESSAY } from "./anytime-mock-exams";
 import {
   answerMockQuestions,
@@ -11,6 +11,9 @@ import { expect, test } from "./fixtures";
 import { holdActionAnswer } from "./held-action";
 import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
+
+/** The chooser reads itself again this often while the picked mock is being prepared. */
+const MOCK_READ_AGAIN_MS = 15_000;
 
 async function confirmMockHandIn(page: Page) {
   const mockId = new URL(page.url()).pathname.split("/").at(-1);
@@ -228,35 +231,63 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.context().close();
   });
 
-  test("a mock exam that comes out shorter than the one picked starts only once the learner agrees", async ({
+  test("a mock exam still being prepared says so, and Start comes back once it's ready", async ({
     browser,
   }) => {
-    const { user } = await createAnytimeMockLearner({ plus: true, questionsPerSkill: 2 });
-    // Today's question writing is used up, so nothing more can be written for the full exam.
-    await usageRecordsFixture({ count: 2, kind: "mockQuestions", userId: user.id });
+    // Half the full exam's questions: the full exam waits for the rest to be written.
+    const { blueprint, skills, user } = await createAnytimeMockLearner({
+      plus: true,
+      questionsPerSkill: 2,
+    });
+
     const page = await openAs(browser, user);
     const mocks = () => prisma.mockExam.count({ where: { userId: user.id } });
-
+    await page.clock.install();
     await page.goto("/mock/new");
 
     const start = page.getByRole("button", { name: "Start" });
+    const keepStudying = page.getByRole("link", { name: "Keep studying" });
+    const exam = page.getByRole("radiogroup", { name: "The exam" });
     await expect(start).toBeDisabled();
 
-    const exam = page.getByRole("radiogroup", { name: "The exam" });
     await exam.getByText("The full exam", { exact: true }).click();
+    const startBox = await start.boundingBox();
     await start.click();
 
-    const shorter = page.getByRole("alertdialog", { name: "Start a shorter mock exam?" });
-    await expect(shorter).toContainText("8 of its 16 questions");
+    await expect(page.getByText("Your mock exam is being prepared")).toBeVisible();
+    await expect(page.getByText("Come back to this page to start it.")).toBeVisible();
+    await expect(keepStudying).toHaveAttribute("href", /\/today$/u);
+    await expect(start).toBeHidden();
+    expect(await keepStudying.boundingBox()).toEqual(startBox);
+    await expect(mocks()).resolves.toBe(0);
 
-    await shorter.getByRole("button", { name: "Pick another" }).click();
-    await expect(shorter).toBeHidden();
-    await expect(exam.getByRole("radio", { name: /^The full exam/u })).toBeChecked();
+    await exam.getByText("Half the exam", { exact: true }).click();
+    await expect(start).toBeEnabled();
+    await expect(page.getByText("Your mock exam is being prepared")).toBeHidden();
+
+    await exam.getByText("The full exam", { exact: true }).click();
+    await expect(keepStudying).toBeVisible();
+
+    await Promise.all(
+      skills.flatMap((skill) =>
+        [3, 4].map((copy) =>
+          itemFixture({
+            content: choiceItemContent(`${skill.name}, question ${copy}?`),
+            examBlueprintId: blueprint.id,
+            mockOnly: true,
+            skillId: skill.id,
+          }),
+        ),
+      ),
+    );
+
+    // The page reads itself again while the picked mock is being prepared, and never starts it.
+    await page.clock.runFor(MOCK_READ_AGAIN_MS);
+    await expect(start).toBeEnabled();
+    await expect(keepStudying).toBeHidden();
     await expect(mocks()).resolves.toBe(0);
 
     await start.click();
-    await shorter.getByRole("button", { name: "Start" }).click();
-
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
     await expect.poll(mocks).toBe(1);
     await page.context().close();

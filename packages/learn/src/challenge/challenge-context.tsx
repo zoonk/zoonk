@@ -27,6 +27,7 @@ export type ChallengeActions = {
     | "failed"
     | "notToday"
     | "plusRequired"
+    | "preparing"
     | "started"
     | "writing"
   >;

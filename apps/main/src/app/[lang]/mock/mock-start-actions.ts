@@ -1,26 +1,14 @@
 "use server";
 
 import { anytimeMockInputSchema } from "@zoonk/core/exams/mocks/contract";
-import {
-  type StartAnytimeMockResult,
-  startAnytimeMock,
-} from "@zoonk/core/exams/mocks/start-anytime";
+import { startAnytimeMock } from "@zoonk/core/exams/mocks/start-anytime";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
 const goalIdSchema = uuidSchema();
 
 export type MockStartOutcome =
   | { id: string; status: "running" | "started" }
-  | Extract<StartAnytimeMockResult, { status: "short" }>
-  | { status: "failed" | "needsQuestions" | "notEnoughQuestions" };
-
-type KeptRefusal = "needsQuestions" | "notEnoughQuestions";
-
-const KEPT_REFUSALS: readonly KeptRefusal[] = ["needsQuestions", "notEnoughQuestions"];
-
-function isKeptRefusal(status: string): status is KeptRefusal {
-  return KEPT_REFUSALS.some((kept) => kept === status);
-}
+  | { status: "failed" | "preparing" };
 
 export async function startAnytimeMockAction(
   goalId: unknown,
@@ -39,9 +27,5 @@ export async function startAnytimeMockAction(
     return { id: result.id, status: result.status };
   }
 
-  if (result.status === "short") {
-    return result;
-  }
-
-  return isKeptRefusal(result.status) ? { status: result.status } : { status: "failed" };
+  return { status: result.status === "preparing" ? "preparing" : "failed" };
 }
