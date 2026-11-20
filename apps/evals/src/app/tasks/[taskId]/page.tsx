@@ -9,6 +9,7 @@ import { ContainerBody, ContainerDescription } from "@zoonk/ui/components/contai
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { type TaskRouteParams, getTaskRouteFromParams } from "./_utils/task-route";
+import { ComparisonList } from "./comparison-list";
 import { Leaderboard } from "./leaderboard";
 import { ModelList } from "./model-list";
 
@@ -60,6 +61,12 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
   );
 }
 
+async function TaskComparisons({ params }: TaskRouteProps) {
+  const { taskId } = await getTaskRouteFromParams(params);
+
+  return <ComparisonList taskId={taskId} />;
+}
+
 async function TaskModels({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
 
@@ -86,6 +93,7 @@ export default function TaskPage({ params }: TaskRouteProps) {
         <TaskHeader params={params} />
 
         <ContainerBody>
+          <TaskComparisons params={params} />
           <TaskLeaderboard params={params} />
           <TaskModels params={params} />
         </ContainerBody>
