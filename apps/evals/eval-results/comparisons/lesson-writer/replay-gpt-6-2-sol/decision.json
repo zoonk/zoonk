@@ -14,7 +14,7 @@
       "caseId": "en-python-range-beginner",
       "language": "en",
       "owner": null,
-      "result": "unresolved",
+      "result": "incumbent",
       "votes": {
         "anthropic": "incumbent",
         "google": "split",
@@ -104,7 +104,8 @@
       "ownerCompared": 0
     }
   ],
-  "reason": "Unresolved cases need an independent read.",
+  "reason": "Your blind read can settle the unresolved cases.",
+  "reasonCode": "owner_blind_read_required",
   "rows": [
     {
       "attempted": 12,
@@ -225,8 +226,8 @@
       "status": "eligible",
       "succeeded": 12,
       "ties": 0,
-      "unresolved": 6,
-      "wins": 0
+      "unresolved": 5,
+      "wins": 1
     },
     {
       "attempted": 12,
@@ -250,7 +251,7 @@
           "successful": 6
         }
       },
-      "losses": 0,
+      "losses": 1,
       "missingMatches": 0,
       "p50": 23.197736166999995,
       "p95": 72.82296191699999,
@@ -342,7 +343,7 @@
       "status": "eligible",
       "succeeded": 12,
       "ties": 0,
-      "unresolved": 6,
+      "unresolved": 5,
       "wins": 0
     }
   ]

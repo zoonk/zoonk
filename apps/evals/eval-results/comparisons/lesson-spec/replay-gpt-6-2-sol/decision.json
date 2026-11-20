@@ -147,7 +147,7 @@
       }
     }
   ],
-  "outcome": "insufficient evidence",
+  "outcome": "retain",
   "readers": [
     {
       "failedPackets": 10,
@@ -186,7 +186,7 @@
       "ownerCompared": 0
     }
   ],
-  "reason": "Unresolved cases need an independent read.",
+  "reason": "More cases prefer the incumbent. The open cases and claims can’t change the decision.",
   "rows": [
     {
       "attempted": 14,
@@ -295,7 +295,7 @@
         }
       ],
       "side": "incumbent",
-      "status": "eligible",
+      "status": "trade",
       "succeeded": 14,
       "ties": 0,
       "unresolved": 5,
@@ -406,7 +406,7 @@
         }
       ],
       "side": "challenger",
-      "status": "eligible",
+      "status": "trade",
       "succeeded": 14,
       "ties": 0,
       "unresolved": 5,
