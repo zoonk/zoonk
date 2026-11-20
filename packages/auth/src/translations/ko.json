@@ -4,7 +4,7 @@
   "otpDisclaimer": "이 코드를 요청하지 않았다면 이 메일은 무시해도 돼요.",
   "otpExpiry": "이 코드는 5분 후에 만료돼요.",
   "otpIntro": "Zoonk 로그인 코드예요:",
-  "otpSubject": "Zoonk 로그인 코드",
+  "otpSubject": "Zoonk 로그인 코드: {code}",
   "plusAccountLabel": "계정",
   "plusAlreadyActiveSubject": "이미 Zoonk Plus를 이용 중이에요",
   "plusEmailLegal": "구독에는 Zoonk의 {termsLink} 및 {privacyLink}이 적용돼요.",

@@ -5,8 +5,9 @@ export function isResearchedGoalKind(kind: GoalKind): boolean {
 }
 
 export function isResearchedCourseStart(goal: {
+  primaryCourseId: string | null;
   examBlueprintId: string | null;
   kind: GoalKind;
 }): boolean {
-  return goal.kind === "exam" && !goal.examBlueprintId;
+  return !goal.primaryCourseId || (goal.kind === "exam" && !goal.examBlueprintId);
 }

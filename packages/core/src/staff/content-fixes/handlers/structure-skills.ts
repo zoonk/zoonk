@@ -46,6 +46,11 @@ export const chapterSkills = collectionHandler({
 });
 
 export const lessonSkills = collectionHandler({
+  example: {
+    id: "00000000-0000-4000-8000-000000000001",
+    model: "Lesson",
+    setSkills: ["00000000-0000-4000-8000-000000000002"],
+  },
   load: async (db, id, value) => {
     const after = collectionIds.parse(value);
 

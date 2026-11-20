@@ -2,6 +2,7 @@ import { isDeepStrictEqual } from "node:util";
 import { type ContentFixUnit } from "@zoonk/db";
 import { z } from "zod";
 import { type ContentFixEffect } from "../contract";
+import { type ContentFixMediaNeed } from "../media-schema";
 
 export type Json = z.core.util.JSONType;
 
@@ -18,7 +19,13 @@ export type Refusal = { ok: false; problem: string };
 
 export type Resolution<Stored> =
   | Refusal
-  | { effects: ContentFixEffect[]; ok: true; stored: Stored; unit: FixUnit };
+  | {
+      effects: ContentFixEffect[];
+      media?: ContentFixMediaNeed[];
+      ok: true;
+      stored: Stored;
+      unit: FixUnit;
+    };
 
 export function refuse(problem: string): Refusal {
   return { ok: false, problem };

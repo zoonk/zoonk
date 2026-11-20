@@ -1,6 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { put } from "@vercel/blob";
-import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { solveItems } from "@zoonk/ai/tasks/items/solve";
 import { type ListeningSet } from "@zoonk/ai/tasks/listening/schema";
 import { writeListeningSet } from "@zoonk/ai/tasks/listening/write-set";
@@ -10,9 +8,11 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { listeningExamFixture } from "@zoonk/testing/fixtures/listening";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { generateSpeech } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { solveLikeTheKeys } from "../_test-utils/solved-items";
+import { serveListeningAudio } from "./_test-utils/speech";
 import { listeningSetsWorkflow } from "./listening-sets-workflow";
 
 function provenance() {
@@ -63,9 +63,7 @@ async function examGoal(exam: Awaited<ReturnType<typeof listeningExamFixture>>) 
 
 describe(listeningSetsWorkflow, () => {
   beforeEach(() => {
-    vi.mocked(put).mockImplementation(
-      async (pathname) => ({ url: `https://blob.test/${randomUUID()}-${pathname}` }) as never,
-    );
+    serveListeningAudio();
 
     vi.mocked(solveItems).mockReset().mockImplementation(solveLikeTheKeys);
 
@@ -78,18 +76,6 @@ describe(listeningSetsWorkflow, () => {
         usage: {} as never,
         userPrompt: "",
       }));
-
-    vi.mocked(voiceListeningScript)
-      .mockReset()
-      .mockResolvedValue({
-        data: {
-          audio: new Uint8Array([1, 2, 3]),
-          durationMs: 30_000,
-          format: "mp3",
-          provenance: { ...provenance(), usage: { audioSeconds: 30 } },
-        },
-        error: null,
-      });
   });
 
   it("makes one recording per part at the flex tier, and the exam's next learner pays for none", async () => {
@@ -101,14 +87,17 @@ describe(listeningSetsWorkflow, () => {
     );
 
     expect(writeListeningSet).toHaveBeenCalledTimes(2);
-    expect(voiceListeningScript).toHaveBeenCalledTimes(2);
+    expect(generateSpeech).toHaveBeenCalledTimes(2);
 
     for (const [params] of vi.mocked(writeListeningSet).mock.calls) {
       expect(params).toMatchObject({ language: "pt", scriptLanguage: "en", serviceTier: "flex" });
     }
 
-    for (const [params] of vi.mocked(voiceListeningScript).mock.calls) {
-      expect(params).toMatchObject({ language: "en", serviceTier: "flex" });
+    for (const [params] of vi.mocked(generateSpeech).mock.calls) {
+      expect(params).toMatchObject({
+        instructions: expect.stringContaining("English"),
+        providerOptions: { gateway: { serviceTier: "flex" } },
+      });
     }
 
     const sets = await prisma.itemSet.findMany({
@@ -123,7 +112,7 @@ describe(listeningSetsWorkflow, () => {
     ).resolves.toStrictEqual({ status: "none", voiced: 0 });
 
     expect(writeListeningSet).toHaveBeenCalledTimes(2);
-    expect(voiceListeningScript).toHaveBeenCalledTimes(2);
+    expect(generateSpeech).toHaveBeenCalledTimes(2);
   });
 
   it("records no set whose questions' keys the solve, reading its script, doesn't reach", async () => {
@@ -148,7 +137,7 @@ describe(listeningSetsWorkflow, () => {
       });
     }
 
-    expect(voiceListeningScript).not.toHaveBeenCalled();
+    expect(generateSpeech).not.toHaveBeenCalled();
 
     await expect(
       prisma.itemSet.count({ where: { examBlueprintId: exam.blueprint.id } }),
@@ -178,27 +167,6 @@ describe(listeningSetsWorkflow, () => {
     });
 
     expect(writeListeningSet).toHaveBeenCalledTimes(3);
-  });
-
-  it("voices a recording whose voicing failed on the next run, without writing it again", async () => {
-    const exam = await listeningExamFixture();
-    const goal = await examGoal(exam);
-
-    vi.mocked(voiceListeningScript).mockResolvedValueOnce({
-      data: null,
-      error: new Error("All TTS providers failed"),
-    });
-
-    await expect(listeningSetsWorkflow({ goalId: goal.id, wait: "later" })).resolves.toMatchObject({
-      voiced: 1,
-    });
-
-    await expect(listeningSetsWorkflow({ goalId: goal.id, wait: "later" })).resolves.toMatchObject({
-      voiced: 1,
-    });
-
-    expect(writeListeningSet).toHaveBeenCalledTimes(2);
-    expect(voiceListeningScript).toHaveBeenCalledTimes(3);
   });
 
   it("has nothing to make for a goal without listening", async () => {

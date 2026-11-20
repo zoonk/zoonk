@@ -26,23 +26,9 @@ export async function getCourseDetail({ courseId }: { courseId: string }) {
     written: written.includes(level),
   }));
 
-  if (!course.organization) {
-    const quickTestMinutes = await getCourseQuickTestMinutes(course);
-
-    return {
-      ...course,
-      contentCountry,
-      editions: [],
-      exam,
-      examplePlan: null,
-      levels,
-      quickTestMinutes,
-    };
-  }
-
   const [examplePlan, editions, quickTestMinutes] = await Promise.all([
-    getCoursePlanExample(course),
-    listPublishedCourseEditions({ courseId }),
+    course.organization ? getCoursePlanExample(course) : null,
+    course.familyId ? listPublishedCourseEditions({ courseId }) : [],
     getCourseQuickTestMinutes(course),
   ]);
 

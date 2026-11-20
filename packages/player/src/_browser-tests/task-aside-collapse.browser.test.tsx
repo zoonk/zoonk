@@ -73,7 +73,12 @@ function renderSessionSummary() {
   render(
     <LearnProvider adapters={LEARN_ADAPTERS}>
       <SessionSummary
-        actions={{ addExtraTime: vi.fn(), keepGoing: vi.fn(), refresh: vi.fn() }}
+        actions={{
+          addExtraTime: vi.fn(),
+          keepGoing: vi.fn(),
+          refresh: vi.fn(),
+          visit: async () => true,
+        }}
         buddy={null}
         exitHref="/today"
         goalKind="learn"

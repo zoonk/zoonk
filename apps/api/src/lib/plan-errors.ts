@@ -80,12 +80,20 @@ export function targetRegionNotOffered() {
   });
 }
 
-export function planChangeConflict() {
+export function planChangeConflict(
+  message = "This change was already answered, or the plan changed since",
+) {
   return createErrorResponse({
     code: planErrorCodes.planChangeConflict,
-    message: "This change was already answered, or the plan changed since",
+    message,
     status: httpStatus.conflict,
   });
+}
+
+export function planChangedWhileSaving() {
+  return planChangeConflict(
+    "The plan changed while this was saved, so nothing changed. Send it again.",
+  );
 }
 
 export function goalRefusedError(decision: GoalRefusal["decision"]) {

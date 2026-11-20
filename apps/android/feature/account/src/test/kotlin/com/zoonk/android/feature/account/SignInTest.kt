@@ -120,7 +120,7 @@ class SignInTest {
         }
 
     @Test
-    fun aWrongCodeCanBeRetypedButAnExpiredOneNeedsANewCode() =
+    fun aRejectedCodeIsntSentAgainUntilItChanges() =
         runTest {
             val (sessions, account) = stores()
             sessions.restore()
@@ -133,7 +133,62 @@ class SignInTest {
             signIn.onCodeChange("111111")
             advanceUntilIdle()
             assertEquals(AccountFailure.WrongCode, signIn.failure)
-            assertFalse(signIn.needsNewCode)
+
+            api.codeFailure = null
+            signIn.checkCode()
+            advanceUntilIdle()
+            assertTrue(api.signInBearers.isEmpty())
+
+            signIn.onCodeChange("111 111")
+            advanceUntilIdle()
+            assertTrue(api.signInBearers.isEmpty())
+            assertTrue(signIn.isCodeRejected)
+            assertEquals(AccountFailure.WrongCode, signIn.failure)
+
+            signIn.resendCode()
+            advanceUntilIdle()
+            signIn.onCodeChange("111111")
+            advanceUntilIdle()
+            assertEquals(listOf<String?>(null), api.signInBearers)
+        }
+
+    @Test
+    fun editingARejectedCodeChecksItAgainWhenComplete() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            val signIn = SignInViewModel(account, sessions, SavedStateHandle())
+            signIn.onEmailChange("ana@zoonk.test")
+            signIn.sendCode()
+            advanceUntilIdle()
+
+            api.codeFailure = ApiException(ApiError.Unavailable, "EMAIL_SIGN_IN_CODE_INVALID")
+            signIn.onCodeChange("111111")
+            advanceUntilIdle()
+            assertEquals(AccountFailure.WrongCode, signIn.failure)
+
+            api.codeFailure = null
+            signIn.onCodeChange("11111")
+            advanceUntilIdle()
+            assertFalse(signIn.isCodeRejected)
+            assertNull(signIn.failure)
+            assertTrue(api.signInBearers.isEmpty())
+
+            signIn.onCodeChange("111112")
+            advanceUntilIdle()
+            assertEquals(listOf<String?>(null), api.signInBearers)
+            assertTrue(sessions.state.value is SessionState.SignedIn)
+        }
+
+    @Test
+    fun anExpiredCodeNeedsANewCode() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            val signIn = SignInViewModel(account, sessions, SavedStateHandle())
+            signIn.onEmailChange("ana@zoonk.test")
+            signIn.sendCode()
+            advanceUntilIdle()
 
             api.codeFailure = ApiException(ApiError.Unavailable, "EMAIL_SIGN_IN_CODE_EXPIRED")
             signIn.onCodeChange("222222")

@@ -28,6 +28,8 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   var courseChapterID: String? = nil
   /// Set only while the goal follows its course, so that course's page offers to continue it.
   var courseID: String? = nil
+  var startCourseIDs: [String]? = nil
+
   /// The level of the goal's next lesson in that course, where its page opens the outline.
   var courseLevel: CourseLevel? = nil
   let dailyMinutes: Int
@@ -56,6 +58,11 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   var examplesCountry: CountryChoice? = nil
   /// The countries a picker for this goal offers first.
   var suggestedCountries: [CountryChoice] = []
+
+  func opens(for courseID: String) -> Bool {
+    status == .active && kind != .explain
+      && (startCourseIDs?.contains(courseID) ?? (self.courseID == courseID))
+  }
 
   enum Kind: String, Sendable {
     case exam
@@ -232,6 +239,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
       LearnerGoal(
         courseChapterID: goal.courseChapterId,
         courseID: goal.courseId,
+        startCourseIDs: goal.startCourseIds,
         courseLevel: goal.courseLevel.flatMap { CourseLevel(rawValue: $0.rawValue) },
         dailyMinutes: goal.dailyMinutes,
         id: goal.id,

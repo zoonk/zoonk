@@ -157,7 +157,7 @@ private fun courseBlocks(
                     lead = course.description.takeIf { it != promise },
                     openLevel = outlineLevel(detail.chapters, courseId, hasSession, summary),
                     levels = course.levels,
-                    goal = summary.value?.goalOnCourse(courseId),
+                    goal = summary.value?.goals?.firstOrNull { it.courseId?.toString() == courseId },
                     disclosures = layout.disclosures,
                 )
             },

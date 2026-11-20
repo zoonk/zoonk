@@ -1804,7 +1804,7 @@
             }
           },
           "409": {
-            "description": "It isn't a weekly challenge, it started, or its day is past",
+            "description": "It isn't a weekly challenge, it started, or its day is past. PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -2315,7 +2315,7 @@
             }
           },
           "409": {
-            "description": "It already started, or isn't a weekly challenge",
+            "description": "It already started, or isn't a weekly challenge. PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -2876,6 +2876,425 @@
           }
         }
       }
+    },
+    "/staff/lessons/{lessonId}": {
+      "get": {
+        "description": "Reads the lesson plan, map ideas, current screen version and vocabulary. Requires a staff CLI token with staff:read.",
+        "operationId": "getStaffLesson",
+        "security": [
+          {
+            "staffCliAuth": []
+          }
+        ],
+        "summary": "Read a lesson for a content fix",
+        "tags": [
+          "Content fixes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lessonId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The lesson's editable content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "ideas": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "text"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "language": {
+                      "type": "string"
+                    },
+                    "plan": {
+                      "description": "The editable lesson plan, or null if none is saved"
+                    },
+                    "screens": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "citation": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "page": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "sourceId": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              }
+                            },
+                            "required": [
+                              "page",
+                              "sourceId"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "content": {
+                            "description": "Stored JSON for this screen kind"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "ideaIndex": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "mediaAssetId": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "position": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "sentence": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "sentenceId": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "skillId": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "variants": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "content": {
+                                  "description": "Stored JSON for this variant"
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "key": {
+                                  "type": "string"
+                                },
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "field",
+                                    "tool"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "content",
+                                "id",
+                                "key",
+                                "kind"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "word": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "wordId": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          }
+                        },
+                        "required": [
+                          "citation",
+                          "content",
+                          "id",
+                          "ideaIndex",
+                          "kind",
+                          "mediaAssetId",
+                          "position",
+                          "sentence",
+                          "sentenceId",
+                          "skillId",
+                          "variants",
+                          "word",
+                          "wordId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "sentences": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "audioAvailable": {
+                            "type": "boolean"
+                          },
+                          "distractors": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "position": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "romanization": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "translation": {
+                            "type": "string"
+                          },
+                          "explanation": {
+                            "type": "string"
+                          },
+                          "otherSentenceOrders": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "otherTranslationOrders": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "sentence": {
+                            "type": "string"
+                          },
+                          "translationDistractors": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "audioAvailable",
+                          "distractors",
+                          "id",
+                          "position",
+                          "romanization",
+                          "translation",
+                          "explanation",
+                          "otherSentenceOrders",
+                          "otherTranslationOrders",
+                          "sentence",
+                          "translationDistractors"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "targetLanguage": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "nullable": true,
+                      "description": "The current screen version, if published",
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "words": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "audioAvailable": {
+                            "type": "boolean"
+                          },
+                          "distractors": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "position": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "romanization": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "translation": {
+                            "type": "string"
+                          },
+                          "note": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "word": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "audioAvailable",
+                          "distractors",
+                          "id",
+                          "position",
+                          "romanization",
+                          "translation",
+                          "note",
+                          "word"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "ideas",
+                    "language",
+                    "plan",
+                    "screens",
+                    "sentences",
+                    "targetLanguage",
+                    "title",
+                    "version",
+                    "words"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "servers": [
+        {
+          "url": "/"
+        }
+      ]
     },
     "/goals/{goalId}/generations": {
       "get": {
@@ -4683,6 +5102,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -15335,6 +15764,16 @@
               }
             }
           },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "422": {
             "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date. TARGET_REGION_NOT_OFFERED: the `targetRegion` isn't one of the goal's `regionChoices`, or the goal isn't a language goal. Nothing was saved. CONTENT_COUNTRY_NOT_OFFERED: content countries cannot be changed on exam or language goals.",
             "content": {
@@ -16091,6 +16530,16 @@
               }
             }
           },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "422": {
             "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date.",
             "content": {
@@ -16328,6 +16777,16 @@
               }
             }
           },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -16434,6 +16893,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -17127,6 +17596,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -18865,7 +19344,7 @@
     },
     "/goals/{goalId}/skills/{skillId}/outline": {
       "get": {
-        "description": "A topic of the goal's plan as its lesson plan stands. The plan writes each topic's lessons ahead for the next two weeks; a topic further away shows what the plan knows (its lesson count and first day on the Journey and the syllabus) until its course is outlined. `ready` lists the chapters that teach it; `writing` means its course's outline is being written; `available` means nothing is written yet, and POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now. A skill outside the goal's plan isn't found.",
+        "description": "A topic of the goal's plan as its lesson plan stands. The plan writes each topic's lessons ahead for the next two weeks; a topic further away shows what the plan knows (its lesson count and first day on the Journey and the syllabus) until its course is outlined. `ready` lists the chapters that teach it; `writing` means the learner asked for it and it's being written; `available` means nothing is written yet, and POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now. A skill outside the goal's plan isn't found.",
         "operationId": "getSkillOutline",
         "security": [
           {
@@ -18961,7 +19440,7 @@
     },
     "/goals/{goalId}/skills/{skillId}/outline/generations": {
       "post": {
-        "description": "Writes a far topic's lesson plan when the learner asks to see it (never on a screen view). `ready` when its chapters exist. Otherwise the outline of its course's level band is written (its other topics in the plan come with it, the chapter teaching this one first, about half a minute) and the answer is 202; it's shared Library content, so the next learner of the course gets it free. A request while its course is being outlined starts nothing and is 202 without a `generationId`. A new one counts once per topic toward the learner's lesson plans (`resource: outline`: three a day and ten a month on the free plan, one for a guest, fair use with Plus), so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "description": "Writes a far topic's lesson plan when the learner asks to see it (never on a screen view). `ready` when its chapters exist. Otherwise the outline of its course's level band is written (its other topics in the plan come with it, the chapter teaching this one first, about half a minute) and the answer is 202; it's shared Library content, so the next learner of the course gets it free. Another request while the learner's last one for the topic is still being written starts nothing and is 202 without a `generationId`; another learner's outline running on the same course doesn't hold it back. A new one counts once per topic toward the learner's lesson plans (`resource: outline`: three a day and ten a month on the free plan, one for a guest, fair use with Plus), so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
         "operationId": "createSkillOutlineGeneration",
         "security": [
           {
@@ -20332,6 +20811,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "PLAN_CHANGE_CONFLICT when other writes to the plan won while this was planned, such as a new goal's plan filling in with its lessons: nothing changed, and the same request can apply once they settle",
             "content": {
               "application/json": {
                 "schema": {
@@ -25052,6 +25541,110 @@
         }
       }
     },
+    "/study-sessions/{sessionId}/summary/visit": {
+      "post": {
+        "description": "Records the first summary visit across the learner's sessions on the session's local day, once a session has stopped or its work is finished. Retrying the first visit with its original ID returns the same result.",
+        "operationId": "createStudySessionSummaryVisit",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Record a study session summary visit",
+        "tags": [
+          "Study sessions"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Study session ID"
+            },
+            "required": true,
+            "description": "Study session ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudySessionSummaryVisitInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The daily summary visit result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudySessionSummaryVisit"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The session has not been stopped and has no finished queue (STUDY_SUMMARY_NOT_READY)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me/suggested-goals/{suggestionId}": {
       "patch": {
         "description": "Accepts or dismisses a suggested goal from Today. Accepting only records the answer: open onboarding with the suggestion's title as the goal. Either answer closes it, and the next one (if any) shows on Today.",
@@ -26455,6 +27048,12 @@
             "type": "integer",
             "minimum": 5,
             "maximum": 1440
+          },
+          "language": {
+            "description": "The language the learner studies in. When omitted, the course’s language is used",
+            "type": "string",
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
           },
           "level": {
             "description": "The learner's level in the course, asked before the start: null for a quick test (placement finds it). Absent, onboarding asks it",
@@ -32478,6 +33077,21 @@
         ],
         "additionalProperties": false
       },
+      "StudySessionSummaryVisitInput": {
+        "type": "object",
+        "properties": {
+          "visitId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "A unique visit ID, reused on retries of that visit"
+          }
+        },
+        "required": [
+          "visitId"
+        ],
+        "additionalProperties": false
+      },
       "SuggestedGoalAnswer": {
         "type": "object",
         "properties": {
@@ -34677,6 +35291,10 @@
           },
           "slug": {
             "type": "string"
+          },
+          "supportsEditions": {
+            "description": "Whether this course can be started in another content language.",
+            "type": "boolean"
           },
           "targetLanguage": {
             "nullable": true,
@@ -47131,6 +47749,15 @@
               "$ref": "#/components/schemas/RegionChoice"
             },
             "description": "The countries a language goal can set as `targetRegion`, named in the goal's language and sorted by name; empty for other goals and languages without countries"
+          },
+          "startCourseIds": {
+            "description": "Courses whose start opens this goal, including its source and their editions.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
           },
           "status": {
             "type": "string",
@@ -88548,7 +89175,7 @@
               "writing",
               "ready"
             ],
-            "description": "`ready`: its chapters exist. `writing`: its course's outline is being written, or was just asked for; read it again every few seconds (about half a minute for the first chapter). `available`: nothing is written yet; POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now, or the plan writes it as it gets close"
+            "description": "`ready`: its chapters exist. `writing`: the learner asked for it and it's being written; read it again every few seconds (about half a minute for the first chapter), and it's `ready` once written or `available` again if that ended without its chapters. `available`: nothing is written yet; POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now, or the plan writes it as it gets close"
           }
         },
         "required": [
@@ -88590,7 +89217,7 @@
               "ready",
               "writing"
             ],
-            "description": "`ready`: GET the topic's outline now. `writing`: GET it every few seconds until it's `ready` (about half a minute for the topic's first chapter)"
+            "description": "`ready`: GET the topic's outline now. `writing`: GET it every few seconds until it's no longer `writing` (about half a minute for the topic's first chapter)"
           }
         },
         "required": [
@@ -97379,6 +98006,19 @@
         ],
         "additionalProperties": false
       },
+      "StudySessionSummaryVisit": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "boolean",
+            "description": "This visit recorded the first summary visit for the session's local day"
+          }
+        },
+        "required": [
+          "first"
+        ],
+        "additionalProperties": false
+      },
       "SuggestedGoalResult": {
         "type": "object",
         "properties": {
@@ -99530,6 +100170,11 @@
         "in": "cookie",
         "name": "__Secure-better-auth.session_token",
         "type": "apiKey"
+      },
+      "staffCliAuth": {
+        "description": "Zoonk staff CLI access token sent in the Authorization header.",
+        "scheme": "bearer",
+        "type": "http"
       }
     }
   }

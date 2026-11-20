@@ -9,9 +9,8 @@ export const nextServer = { after: vi.fn() };
  * model call a test reaches goes here: a file's own `vi.mock` gives it a worker of its own.
  */
 export const boundaries = {
-  "@vercel/blob": { del: vi.fn(), list: vi.fn(), put: vi.fn() },
+  "@vercel/blob": { del: vi.fn(), get: vi.fn(), head: vi.fn(), list: vi.fn(), put: vi.fn() },
   "@zoonk/ai/tasks/audio": { generateLanguageAudio: vi.fn() },
-  "@zoonk/ai/tasks/audio/listening": { voiceListeningScript: vi.fn() },
   "@zoonk/ai/tasks/challenge/fix": { fixChallengeCase: vi.fn() },
   "@zoonk/ai/tasks/challenge/plan": { generateChallengePlan: vi.fn() },
   "@zoonk/ai/tasks/challenge/script": { generateChallengeScript: vi.fn() },
@@ -109,6 +108,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/warm-up/write-warm-up-cards": { generateWarmUpCards: vi.fn() },
   "@zoonk/core/analytics/server": { trackServerEvent: vi.fn(), trackSystemEvent: vi.fn() },
   "@zoonk/core/images/upload": { uploadImage: vi.fn() },
+  ai: { generateSpeech: vi.fn() },
   "next/headers": { headers: vi.fn(async () => new Headers()) },
   undici: { fetch: vi.fn() },
 };

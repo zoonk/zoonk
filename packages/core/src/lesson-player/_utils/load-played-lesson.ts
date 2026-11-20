@@ -1,4 +1,4 @@
-import { type LearningEvent } from "@zoonk/db";
+import { type LearningEvent, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { findOpenedVersion, findPlayableLessonRow } from "./lesson-rows";
 import { loadProgressRuns } from "./lesson-runs";
@@ -42,7 +42,25 @@ export async function loadPlayedLesson({
       ? await findOpenedVersion({ lessonId, stepIds: skippedWritingStepIds, userId })
       : null);
 
-  const lesson = await findPlayableLessonRow({ lessonId, userId, version });
+  // An excused first answer leaves no attempt to identify the version the learner opened.
+  const retired =
+    version === null &&
+    (await prisma.step.findFirst({
+      orderBy: { retiredAt: "asc" },
+      select: { version: true },
+      where: {
+        createdAt: { lte: run.startedAt },
+        lessonId,
+        retiredAt: { gte: run.startedAt },
+        staged: false,
+      },
+    }));
+
+  const lesson = await findPlayableLessonRow({
+    lessonId,
+    userId,
+    version: version ?? (retired ? retired.version : null),
+  });
 
   return { lesson, sittings, skippedWritingStepIds };
 }

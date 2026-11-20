@@ -3,8 +3,7 @@ import { z } from "zod";
 import { PRIVATE_CONTENT } from "../_utils/resolved-change";
 import { idSchema } from "./fix-handler";
 import { sharedRowHandler } from "./shared-row";
-
-const MAX_SOURCE_PAGE = 32_767;
+import { sourcePageSchema } from "./source-page";
 
 const text = z.string().trim().min(1);
 const sourceFields = { publisher: text.nullable(), title: text, url: z.url().nullable() };
@@ -73,7 +72,7 @@ export const sourceNoticeSet = sharedRowHandler({
 });
 
 export const stepCitationSet = sharedRowHandler({
-  fields: { sourcePage: z.int().min(1).max(MAX_SOURCE_PAGE).nullable() },
+  fields: { sourcePage: sourcePageSchema },
   load: async (db, id) => {
     const row = await db.step.findUnique({
       include: {

@@ -33,7 +33,7 @@
   "account_name_required": "4b7eb6e6df6b98882dcab8cd132e1941780740135e8632fec1cc9debcd9cc8af",
   "account_name_too_long": "01e4c8dd747ebc30308f533593efea2948480d69f8e326a84c7f1896259c4daa",
   "account_new_code_failed": "297d4920115e715ef9a3e33621c6c0ac84991490e28f47240301069d3e8ff56f",
-  "account_new_code_sent": "241fb5d611f2a5e59c48ebefb7978c8f922d36f3d8adef5b1ac0f0e8ad6afce6",
+  "account_new_code_sent": "609d32003f566cc1e5ad6fd982e21674beadcc7eaa877d8b299922aed93275c4",
   "account_new_code_wait": "6df439572b577be16773918ad1ab579d943bfe33c3fdac3c2f2bd0f29e3ad365",
   "account_or": "662be03a8df6212e30e08613c9b79a582b9366a63a8ca908a2e4e83e4add23f0",
   "account_privacy": "9ae69ab9c250849fc884a4d0796ed2e960a4ca194da2d997a96cffa36914b23d",
@@ -82,7 +82,7 @@
     <string name="account_send_again">다시 보내기</string>
     <string name="account_change_email">이메일 변경</string>
     <!-- %1$s is an email address. -->
-    <string name="account_new_code_sent">%1$s에 새 코드를 보냈어요.</string>
+    <string name="account_new_code_sent">이메일을 %1$s에 다시 보냈어요.</string>
     <string name="account_new_code_wait">1분 후에 새 코드를 요청해 보세요.</string>
     <string name="account_new_code_failed">새 코드를 보내지 못했어요. 다시 시도해 보세요.</string>
     <string name="account_failure_invalid_email">올바른 이메일 주소를 입력하세요</string>

@@ -7,7 +7,6 @@ import { type ContentFixEffect, type StoredChange } from "../contract";
 import { type FixContext } from "../handlers/fix-handler";
 import { deleteWrittenFromScreen, writtenFromScreen } from "../handlers/screens";
 import { type FixUnit } from "./resolved-change";
-import { readVoiceTarget } from "./vocabulary-voice";
 import { findLessonsWithWordTiles } from "./word-tile-lessons";
 
 type VocabularyUnit = { id: string; kind: "sentence" | "word" };
@@ -180,19 +179,17 @@ export async function vocabularyEffects(
   db: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: VocabularyUnit },
 ): Promise<ContentFixEffect[]> {
-  const [lessonIds, screens, copying, orders, voice, pronunciations] = await Promise.all([
+  const [lessonIds, screens, copying, orders, pronunciations] = await Promise.all([
     findLessonsShowing(db, unit),
     findShowingScreens(db, changes),
     findCopyingScreens(db, changes),
     findOwedOrders(db, changes),
-    readVoiceTarget(db, changes),
     keptPronunciations(db, changes),
   ]);
 
   const written = await Promise.all(screens.map((stepId) => writtenFromScreen(db, stepId)));
 
   return [
-    ...(voice ? [{ id: voice.id, kind: "voiceOwed" as const, model: voice.model }] : []),
     ...(lessonIds.length > 0 ? [{ kind: "lessonsUpdated" as const, lessonIds }] : []),
     ...(copying.length > 0
       ? [{ kind: "spokenScreensCopied" as const, stepIds: copying.map((step) => step.id) }]

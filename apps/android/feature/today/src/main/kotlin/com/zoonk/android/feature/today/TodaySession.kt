@@ -395,7 +395,7 @@ private fun TodayDayStatus(
             val link =
                 if (model.keepLearning) {
                     statusLink(stringResource(R.string.today_see_summary)) {
-                        actions.navigate(AppRoute.Session(goalId = (day.goalId ?: model.today.goal.id).toString()))
+                        actions.navigate(model.summaryRoute)
                     }
                 } else {
                     null

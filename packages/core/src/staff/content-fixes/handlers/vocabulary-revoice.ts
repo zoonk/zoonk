@@ -3,7 +3,7 @@ import { type TransactionClient } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { z } from "zod";
 import { type Resolution, refuse } from "../_utils/resolved-change";
-import { readFixClip } from "../_utils/vocabulary-voice";
+import { readFixClip, vocabularyClipNeed } from "../_utils/vocabulary-voice";
 import { type FixContext, defineFixHandler, idSchema } from "./fix-handler";
 import {
   type Clip,
@@ -39,7 +39,7 @@ type RestoreProposed<Model extends VocabularyModel> = {
 async function loadVoicedRow(
   db: TransactionClient,
   { id, model }: { id: string; model: VocabularyModel },
-): Promise<{ problem: string } | { clip: Clip; text: string }> {
+): Promise<{ problem: string } | { clip: Clip; language: string; orgSlug: string; text: string }> {
   const [row, clip] = await Promise.all([loadRow(db, { id, model }), loadClip(db, { id, model })]);
 
   if (!row || !clip) {
@@ -52,7 +52,7 @@ async function loadVoicedRow(
     };
   }
 
-  return { clip, text: row.text };
+  return { clip, language: row.targetLanguage, orgSlug: row.organization.slug, text: row.text };
 }
 
 async function resolveRevoice<Model extends VocabularyModel>(
@@ -66,7 +66,13 @@ async function resolveRevoice<Model extends VocabularyModel>(
   }
 
   return {
-    effects: [],
+    effects: [{ id, kind: "voiceOwed", model }],
+    media: vocabularyClipNeed({
+      language: row.language,
+      model,
+      orgSlug: row.orgSlug,
+      text: row.text,
+    }),
     ok: true,
     stored: { before: row.clip, id, model, op: "revoice", text: row.text },
     unit: { id, kind: UNIT_KIND[model] },
@@ -113,7 +119,18 @@ async function applyRevoice(
   tx: TransactionClient,
   { context, stored }: { context: FixContext; stored: RevoiceStored<VocabularyModel> },
 ): Promise<void> {
-  const data = await readFixClip(tx, { fixId: context.fixId, text: stored.text });
+  const row = await loadRow(tx, stored);
+
+  if (!row) {
+    throw new Error(`${stored.model} ${stored.id} is gone`);
+  }
+
+  const data = readFixClip(context, {
+    language: row.targetLanguage,
+    model: stored.model,
+    text: stored.text,
+  });
+
   await writeClip(tx, { data, id: stored.id, model: stored.model });
 }
 

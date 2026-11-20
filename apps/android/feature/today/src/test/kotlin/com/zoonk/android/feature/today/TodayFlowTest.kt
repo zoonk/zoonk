@@ -655,6 +655,12 @@ class TodayFlowTest {
             timeZone: String,
         ): StudySessionSummary = error("Not used")
 
+        override suspend fun recordSummaryVisit(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            visitId: UUID,
+        ): Boolean = error("Not used")
+
         override suspend fun addExtraBlock(
             session: AuthenticatedSession,
             sessionId: UUID,
