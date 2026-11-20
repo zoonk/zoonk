@@ -53,7 +53,9 @@ function toClaimTarget({
     .update(`example-lines:${userId}:${lessonId}:${version}:${contextKey}`)
     .digest("hex");
 
-  return hex.slice(0, UUID_HEX_DIGITS).replace(UUID_GROUPS, "$<time>-$<mid>-$<high>-$<clock>-$<node>");
+  return hex
+    .slice(0, UUID_HEX_DIGITS)
+    .replace(UUID_GROUPS, "$<time>-$<mid>-$<high>-$<clock>-$<node>");
 }
 
 /**
