@@ -87,19 +87,38 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
     .filter((word) => word.status !== "correct")
     .map((word) => word.text);
 
-  const flagged = new Set([...misheard, ...unclear]);
+  const flags = [misheard, unclear, lookAlike?.verdict.soundsNative === false ? [input.text] : []];
+  const votes = new Map<string, number>();
+
+  for (const words of flags) {
+    const normalized = new Set(
+      words.map((word) => word.normalize("NFC").toLocaleLowerCase(input.language)),
+    );
+
+    normalized.forEach((word) => votes.set(word, (votes.get(word) ?? 0) + 1));
+  }
+
+  const confirmed = [...votes].filter(([, count]) => count >= 2).map(([word]) => word);
+  const unconfirmed = [...votes].filter(([, count]) => count === 1).map(([word]) => word);
   const total = match.words.length;
-  const heardRight = total === 0 ? 0 : (total - Math.min(flagged.size, total)) / total;
-  const soundsNative = !lookAlike || lookAlike.verdict.soundsNative;
-  const wordsScore = Math.max(MIN_SCORE, Math.round(MAX_SCORE * heardRight * 10) / 10);
-  const score = soundsNative ? wordsScore : MIN_SCORE;
-  const readRight = flagged.size === 0 && total > 0 && soundsNative;
+  const readRight = confirmed.length === 0;
+
+  const heardRight =
+    total === 0 ? Number(readRight) : (total - Math.min(confirmed.length, total)) / total;
+
+  const score = Math.max(MIN_SCORE, Math.round(MAX_SCORE * heardRight * 10) / 10);
+  const pendingStatus = unconfirmed.length > 0 ? "Needs a listen" : "Read right";
+  const status = readRight ? pendingStatus : "Confirmed misread";
+
+  const listening = `${status}: eval-results/audio/${audioPath}.${
+    unconfirmed.length > 0 ? ` Single-check flags: ${unconfirmed.join(", ")}.` : ""
+  }`;
 
   const lookAlikeConclusion = lookAlike
     ? ` As a look-alike it sounded ${lookAlike.verdict.soundsNative ? "native" : "english"} (called ${lookAlike.verdict.pronunciation}, /${lookAlike.verdict.heard}/).`
     : "";
 
-  const conclusion = `Read "${input.text}". gpt-transcribe heard "${transcript.data.text}" (misheard ${JSON.stringify(misheard)}); the pronunciation check heard "${pronunciation.data.transcript}" (unclear ${JSON.stringify(unclear)}).${lookAlikeConclusion}`;
+  const conclusion = `${listening} Read "${input.text}". gpt-transcribe heard "${transcript.data.text}" (misheard ${JSON.stringify(misheard)}); the pronunciation check heard "${pronunciation.data.transcript}" (unclear ${JSON.stringify(unclear)}).${lookAlikeConclusion}`;
 
   return {
     ...createFixedScore({ conclusion, score }),

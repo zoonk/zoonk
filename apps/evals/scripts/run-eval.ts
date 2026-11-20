@@ -200,7 +200,7 @@ async function runModel({
   runs: number;
   saved: boolean;
   task: RegisteredTask;
-}): Promise<ReportRow> {
+}) {
   const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
   const run = saved ? null : await generateAndScore({ fresh, model, prices, runIds, runs, task });
 
@@ -211,6 +211,21 @@ async function runModel({
     taskId: task.id,
   };
 
+  return { evalResults, modelId, run };
+}
+
+function reportModel({
+  evalResults,
+  modelId,
+  prices,
+  run,
+  sampled,
+  task,
+}: Awaited<ReturnType<typeof runModel>> & {
+  prices: GatewayPrices;
+  sampled: number;
+  task: RegisteredTask;
+}): ReportRow {
   const stats = getStatsFromResults({ evalResults, prices });
 
   return {
@@ -220,7 +235,7 @@ async function runModel({
       latency: { p50: stats.latencyP50, p95: stats.latencyP95 },
     }),
     modelId,
-    sampled: runIds.size,
+    sampled,
     spent: run?.spent ?? getSpent(stats),
     stats,
     summary: aggregateEvalResults(evalResults),
@@ -331,13 +346,60 @@ async function runTask({
 
   const runIds = getRunIds(sampledTask.testCases, runs);
 
-  return modelIds.reduce<Promise<ReportRow[]>>(
-    async (previousRows, modelId) => [
-      ...(await previousRows),
+  const models = await modelIds.reduce<Promise<Awaited<ReturnType<typeof runModel>>[]>>(
+    async (previous, modelId) => [
+      ...(await previous),
       await runModel({ fresh, modelId, prices, runIds, runs, saved, task: sampledTask }),
     ],
     Promise.resolve([]),
   );
+
+  if (task.id !== "language-audio") {
+    return models.map((model) => reportModel({ ...model, prices, sampled: runIds.size, task }));
+  }
+
+  const shared = models.reduce(
+    (cases, { evalResults }) =>
+      cases.intersection(new Set(evalResults.results.map((result) => result.testCase.id))),
+    runIds,
+  );
+
+  process.stdout.write(`Language audio scores use ${shared.size} shared case runs.\n`);
+
+  return models.map((model) => {
+    const { evalResults } = model;
+    const results = evalResults.results.filter((result) => shared.has(result.testCase.id));
+
+    for (const result of evalResults.results) {
+      const conclusion = result.steps[0]?.conclusion ?? "";
+
+      if (conclusion.startsWith("Needs a listen:") || conclusion.startsWith("Confirmed misread:")) {
+        process.stdout.write(`${model.modelId} · ${conclusion}\n`);
+      } else if (result.classification?.predicted === "misread") {
+        const { audioPath } = JSON.parse(result.output) as { audioPath: string };
+        process.stdout.write(`${model.modelId} · Legacy flag: eval-results/audio/${audioPath}\n`);
+      }
+    }
+
+    if (results.some((result) => result.steps[0]?.conclusion.startsWith('Read "'))) {
+      process.stdout.write(
+        `${model.modelId} · Includes saved scores from before the two-check rule.\n`,
+      );
+    }
+
+    return reportModel({
+      ...model,
+      evalResults: {
+        ...evalResults,
+        failedRuns: evalResults.failedRuns?.filter((run) => shared.has(run.testCaseId)),
+        outputs: evalResults.outputs.filter((output) => shared.has(output.testCaseId)),
+        results,
+      },
+      prices,
+      sampled: shared.size,
+      task,
+    });
+  });
 }
 
 async function runEvals({
