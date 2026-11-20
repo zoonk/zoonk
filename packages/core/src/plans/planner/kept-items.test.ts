@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countKeptLessons } from "./kept-items";
+import { countKeptLessons, listKeptLessons } from "./kept-items";
 import { type ExistingPlanItem } from "./plan-items";
 
 function item(attrs: Partial<ExistingPlanItem> & Pick<ExistingPlanItem, "skillId">) {
@@ -25,8 +25,8 @@ describe(countKeptLessons, () => {
       item({ lessonId: "spelling-1", skillId: "spelling", status: "done" }),
     ];
 
-    expect(countKeptLessons({ kept, lessons: [], units: new Map() })).toStrictEqual(
-      new Map([["spelling", 1]]),
-    );
+    expect(
+      countKeptLessons(listKeptLessons({ kept, lessons: [], units: new Map() })),
+    ).toStrictEqual(new Map([["spelling", 1]]));
   });
 });

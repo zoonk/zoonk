@@ -1,7 +1,7 @@
 import { type BuildPlanInput } from "./build-plan";
 import { placeCarriedWork } from "./carry-over";
 import { listQuickBaseIds } from "./chosen-bases";
-import { countKeptLessons } from "./kept-items";
+import { countKeptLessons, listKeptLessons } from "./kept-items";
 import { type LaidOutOrder, scheduleLearnedOrder } from "./learned-order";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type QueueUnit } from "./plan-units";
@@ -64,6 +64,13 @@ export function scheduleCarriedAndRest({
         rest,
       });
 
+    const keptLessons = listKeptLessons({
+      gaps: input.missedSkillIds,
+      kept: listKeptOutside({ kept, units }),
+      lessons: placed.carried,
+      units: unitsByKey,
+    });
+
     const scheduleRanked = () =>
       scheduleRest({
         announcements: input.announcements,
@@ -72,12 +79,8 @@ export function scheduleCarriedAndRest({
         days: placed.days,
         goal: input.goal,
         graph: input.graph,
-        kept: countKeptLessons({
-          gaps: input.missedSkillIds,
-          kept: listKeptOutside({ kept, units }),
-          lessons: placed.carried,
-          units: unitsByKey,
-        }),
+        kept: countKeptLessons(keptLessons),
+        keptLessons,
         knownSkillIds: input.knownSkillIds,
         missedSkillIds: input.missedSkillIds ?? new Set(),
         opening: {
