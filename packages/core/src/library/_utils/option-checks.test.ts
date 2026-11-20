@@ -26,6 +26,26 @@ describe(findEquivalentOptions, () => {
     ).toStrictEqual([expect.stringContaining('"A célula" and "a **celula**."')]);
   });
 
+  it("tells code apart character for character, in a sentence or as a whole block", () => {
+    expect(
+      findEquivalentOptions({
+        language: "pt",
+        texts: ['`print("oi")`', "`print(oi)`", "`Print(oi)`", "`print(5);`", "`print(5)`"],
+      }),
+    ).toStrictEqual([]);
+
+    expect(
+      findEquivalentOptions({
+        language: "pt",
+        texts: ["```java\nRota() {\n  this(6);\n}\n```", "```java\nRota() {\n  this(6)\n}\n```"],
+      }),
+    ).toStrictEqual([]);
+
+    expect(
+      findEquivalentOptions({ language: "pt", texts: ["Use `len(x)`.", "use `len(x)`"] }),
+    ).toStrictEqual([expect.stringContaining("say the same thing")]);
+  });
+
   it("finds the same number written two ways", () => {
     expect(
       findEquivalentOptions({ language: "pt", texts: ["R$ 15", "R$ 15,00", "0,5", "0.50", "15%"] }),
