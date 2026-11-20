@@ -61,48 +61,131 @@ function scheduleSegment<Item extends OrderedItem>({
   const head = lessons.slice(0, lastLeft + 1);
 
   const required = new Map(
-    head.flatMap((item) =>
-      item.skillId
-        ? [[item.skillId, listRequiredSkills({ prerequisites, skillId: item.skillId })]]
-        : [],
-    ),
+    [...new Set(head.flatMap((item) => item.skillId ?? []))].map((skillId) => [
+      skillId,
+      listRequiredSkills({ prerequisites, skillId }),
+    ]),
   );
 
-  const comesFirst = (before: Item, after: Item) =>
-    (before.skillId !== null &&
-      (before.skillId === after.skillId ||
-        required.get(after.skillId ?? "")?.has(before.skillId) === true)) ||
-    (before.chapterId !== null && before.chapterId === after.chapterId);
+  const requiredOf = (item: Item) => required.get(item.skillId ?? "") ?? new Set<string>();
+  const ranks = rankLessons({ head, isLeft, requiredOf });
+  const { unlocks, waits } = linkWaits({ head, requiredOf });
 
-  const ranks = head.reduceRight<Map<Item, number>>((map, item, index) => {
-    if (isLeft(item)) {
-      return map.set(item, LEFT);
-    }
+  const comesBefore = (a: Item, b: Item) =>
+    (ranks.get(a) ?? REST) - (ranks.get(b) ?? REST) || a.position - b.position;
 
-    const needed = head
-      .slice(index + 1)
-      .some((later) => map.get(later) !== REST && comesFirst(item, later));
-
-    return map.set(item, needed ? NEEDED : REST);
-  }, new Map());
-
+  const ready = head.filter((item) => waits.get(item) === 0);
   const ordered: Item[] = [];
-  const waiting = [...head];
 
-  while (waiting.length > 0) {
-    const ready = waiting.filter((item, index) =>
-      waiting.slice(0, index).every((earlier) => !comesFirst(earlier, item)),
-    );
-
-    const next = ready.reduce((best, item) =>
-      (ranks.get(item) ?? REST) < (ranks.get(best) ?? REST) ? item : best,
-    );
-
+  while (ready.length > 0) {
+    const next = ready.reduce((best, item) => (comesBefore(item, best) < 0 ? item : best));
+    ready.splice(ready.indexOf(next), 1);
     ordered.push(next);
-    waiting.splice(waiting.indexOf(next), 1);
+
+    for (const later of unlocks.get(next) ?? []) {
+      const remaining = (waits.get(later) ?? 1) - 1;
+      waits.set(later, remaining);
+
+      if (remaining === 0) {
+        ready.push(later);
+      }
+    }
   }
 
   return [...ordered, ...lessons.slice(lastLeft + 1)];
+}
+
+/**
+ * What each lesson waits for: the lesson before it in its skill and in its chapter, and the last
+ * lesson before it of each skill it builds on. Those lessons wait for the earlier ones in turn.
+ */
+function linkWaits<Item extends OrderedItem>({
+  head,
+  requiredOf,
+}: {
+  head: readonly Item[];
+  requiredOf: (item: Item) => ReadonlySet<string>;
+}): { unlocks: Map<Item, Item[]>; waits: Map<Item, number> } {
+  const lastOfSkill = new Map<string, Item>();
+  const lastOfChapter = new Map<string, Item>();
+  const unlocks = new Map<Item, Item[]>();
+  const waits = new Map<Item, number>();
+
+  for (const item of head) {
+    const before = new Set(
+      [
+        item.skillId === null ? undefined : lastOfSkill.get(item.skillId),
+        item.chapterId === null ? undefined : lastOfChapter.get(item.chapterId),
+        ...[...requiredOf(item)].map((skillId) => lastOfSkill.get(skillId)),
+      ].filter((earlier) => earlier !== undefined),
+    );
+
+    waits.set(item, before.size);
+
+    for (const earlier of before) {
+      const waiting = unlocks.get(earlier) ?? [];
+      waiting.push(item);
+      unlocks.set(earlier, waiting);
+    }
+
+    if (item.skillId !== null) {
+      lastOfSkill.set(item.skillId, item);
+    }
+
+    if (item.chapterId !== null) {
+      lastOfChapter.set(item.chapterId, item);
+    }
+  }
+
+  return { unlocks, waits };
+}
+
+function toRank({ left, needed }: { left: boolean; needed: boolean }): number {
+  if (left) {
+    return LEFT;
+  }
+
+  return needed ? NEEDED : REST;
+}
+
+/** One backward pass: a lesson is needed when a later left or needed lesson must wait for it. */
+function rankLessons<Item extends OrderedItem>({
+  head,
+  isLeft,
+  requiredOf,
+}: {
+  head: readonly Item[];
+  isLeft: (item: Item) => boolean;
+  requiredOf: (item: Item) => ReadonlySet<string>;
+}): Map<Item, number> {
+  const skills = new Set<string>();
+  const chapters = new Set<string>();
+  const ranks = new Map<Item, number>();
+
+  for (const item of head.toReversed()) {
+    const needed =
+      (item.skillId !== null && skills.has(item.skillId)) ||
+      (item.chapterId !== null && chapters.has(item.chapterId));
+
+    const rank = toRank({ left: isLeft(item), needed });
+    ranks.set(item, rank);
+
+    if (rank !== REST) {
+      if (item.skillId) {
+        skills.add(item.skillId);
+      }
+
+      if (item.chapterId) {
+        chapters.add(item.chapterId);
+      }
+
+      for (const skillId of requiredOf(item)) {
+        skills.add(skillId);
+      }
+    }
+  }
+
+  return ranks;
 }
 
 /**
