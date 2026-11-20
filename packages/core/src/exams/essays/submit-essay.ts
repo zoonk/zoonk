@@ -70,6 +70,10 @@ export async function submitEssay({
     return submitAdmittedEssay({ input, owned: found.owned });
   }
 
+  if (input.admissionId) {
+    return { status: "blockNotActive" };
+  }
+
   const attemptId = input.attemptId
     ? getAnswerAttemptId({ key: input.attemptId, questionId: blockId, userId })
     : randomUUID();

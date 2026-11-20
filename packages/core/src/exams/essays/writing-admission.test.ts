@@ -152,6 +152,66 @@ describe("writing receipts and drafts", () => {
     });
   });
 
+  it("uses one extra receipt for a rewrite and refuses a previous version after a newer draft", async () => {
+    const { block, item, session, user } = await setup();
+    mockSession(user.id);
+    const initial = await startWriting({ blockId: block.id });
+
+    if (initial.status !== "ready") {
+      throw new Error(initial.status);
+    }
+
+    async function record(admissionId: string, version: "firstDraft" | "rewrite") {
+      return prisma.attempt.create({
+        data: {
+          answer: {
+            conditions: { admissionId, estimatedLines: 3, origin: "block", timed: false, version },
+            grade: {
+              criteria: [],
+              errors: [],
+              ignoredFrom: null,
+              kind: "levels",
+              nextStep: null,
+              progress: null,
+            },
+            text: "My first attempt",
+          },
+          durationMs: 5000,
+          hour: 12,
+          id: getWritingAttemptId({ admissionId, itemId: item.id }),
+          isCorrect: true,
+          itemId: item.id,
+          localDate: LOCAL_DATE,
+          studySessionId: session.id,
+          userId: user.id,
+          weekday: LOCAL_DATE.getUTCDay(),
+        },
+      });
+    }
+
+    const version = await record(initial.admissionId, "firstDraft");
+    const rewrite = () => startWriting({ blockId: block.id, previousAttemptId: version.id });
+    const [first, second] = await Promise.all([rewrite(), rewrite()]);
+    expect(first).toStrictEqual(second);
+
+    if (first.status !== "ready") {
+      throw new Error(first.status);
+    }
+
+    expect(first.admissionId).not.toBe(initial.admissionId);
+    const rewritten = await record(first.admissionId, "rewrite");
+
+    await expect(
+      startWriting({ blockId: block.id, previousAttemptId: rewritten.id }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(rewrite()).resolves.toStrictEqual({ status: "invalidRewrite" });
+
+    await expect(
+      prisma.writingAdmission.count({ where: { extra: true, userId: user.id } }),
+    ).resolves.toBe(2);
+  });
+
   it("serializes the last extra allowance and always admits a scheduled start", async () => {
     const { goal, item, session, user } = await setup();
 

@@ -39,6 +39,47 @@ const structure = {
 };
 
 describe("writing with an empty prompt bank", () => {
+  it("reserves a private class test's short written response without an essay item", async () => {
+    const user = await userFixture();
+
+    const blueprint = await examBlueprintFixture({
+      ownerId: user.id,
+      structure: {
+        formats: [
+          {
+            citation: { passage: "Write a short answer", sourceId: "worksheet" },
+            description: "Explain your conclusion",
+            kind: "shortAnswer",
+            options: null,
+          },
+        ],
+        mock: null,
+        rules: [],
+        subjects: [],
+      },
+      visibility: "private",
+    });
+
+    const { goal } = await sessionGoalFixture({
+      goal: { examBlueprintId: blueprint.id, kind: "exam" },
+      userId: user.id,
+    });
+
+    await expect(
+      loadSessionProduce({
+        goal,
+        planSettings: null,
+        today: new Date("2026-11-20"),
+        userId: user.id,
+      }),
+    ).resolves.toMatchObject({
+      minutes: 8,
+      pacing: "practice",
+      taskKey: "class-short-answer",
+      title: "Explain your conclusion",
+    });
+  });
+
   it.each([true, false])(
     "plans a whole answer when the blueprint arrived first: %s",
     async (blueprintFirst) => {

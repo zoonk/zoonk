@@ -5,7 +5,9 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickPlacementItemSkills } from "../../lookahead/placement-item-skills";
 import { askPlacement } from "../_test-utils/exam-test-goal";
+import { loadSkillEvidence } from "../_utils/load-skill-claims";
 import { pickSessionPlacementItems } from "./_utils/session-placement-items";
 
 async function examGoalFixture() {
@@ -53,6 +55,106 @@ function examItemFixture({ blueprintId, skillId }: { blueprintId: string; skillI
 }
 
 describe("placement questions for an exam goal", () => {
+  it("keeps written skills out of question writing, placement picks, and objective evidence", async () => {
+    const { blueprint, goal, skill: objective, user } = await examGoalFixture();
+    const written = await skillFixture({ name: "Support an argument" });
+    const writtenArea = "Written response";
+
+    await Promise.all([
+      prisma.examBlueprint.update({
+        data: {
+          structure: {
+            formats: [
+              {
+                citation: { passage: "Write an answer", sourceId: "notice" },
+                description: writtenArea,
+                kind: "essay",
+                options: null,
+              },
+            ],
+            mock: null,
+            rules: [],
+            subjects: [],
+          },
+        },
+        where: { id: blueprint.id },
+      }),
+      prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ milestone: null, name: "Basics" }],
+            skills: [
+              graphSkill("Objective", objective),
+              { ...graphSkill(writtenArea, written), outcome: true },
+            ],
+          },
+        },
+        where: { goalId: goal.id },
+      }),
+    ]);
+
+    const needs = await pickPlacementItemSkills({
+      goalId: goal.id,
+      skillIds: [written.id, objective.id],
+    });
+
+    expect(needs.skills.map(({ id }) => id)).toStrictEqual([objective.id]);
+
+    const [wrongBankItem, objectiveItem] = await Promise.all([
+      examItemFixture({ blueprintId: blueprint.id, skillId: written.id }),
+      examItemFixture({ blueprintId: blueprint.id, skillId: objective.id }),
+    ]);
+
+    const skills = [written, objective].map((node, index) => ({
+      areaId: `phase:${index}`,
+      areaTitle: `Phase ${index + 1}`,
+      id: node.id,
+      memberSkillIds: [node.id],
+      order: index,
+      phase: index,
+      prerequisiteIds: [],
+      removed: false,
+      sectionTitle: null,
+    }));
+
+    await expect(
+      pickSessionPlacementItems({
+        excludeItemIds: new Set(),
+        goal: { details: {}, examBlueprintId: blueprint.id, id: goal.id },
+        limit: 4,
+        quickFormat: "multipleChoice",
+        skills,
+        userId: user.id,
+      }),
+    ).resolves.toStrictEqual([objectiveItem.id]);
+
+    const date = new Date("2026-11-20");
+
+    await prisma.attempt.createMany({
+      data: Array.from({ length: 3 }, () => ({
+        answer: { pick: 0 },
+        durationMs: 5000,
+        hour: 12,
+        isCorrect: true,
+        isPlacement: true,
+        itemId: wrongBankItem.id,
+        localDate: date,
+        skillId: written.id,
+        userId: user.id,
+        weekday: date.getUTCDay(),
+      })),
+    });
+
+    const evidence = await loadSkillEvidence({
+      goalId: goal.id,
+      skillIds: [written.id],
+      userId: user.id,
+    });
+
+    expect(evidence.claims.has(written.id)).toBe(false);
+    expect(evidence.known.has(written.id)).toBe(false);
+  });
+
   it("waits for the exam's question while it's written, then asks it over the general one", async () => {
     const { blueprint, goal, skill } = await examGoalFixture();
 
