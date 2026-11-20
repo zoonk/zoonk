@@ -174,6 +174,7 @@ export async function computePlan({
     bands: loaded.bands,
     goal: context.goal,
     graph: resolved,
+    missedSkillIds: loaded.missedSkillIds,
     settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
     state,
   });

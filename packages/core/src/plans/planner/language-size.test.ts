@@ -125,17 +125,16 @@ describe(sizeLanguageGraph, () => {
     expect(graph.skills).toHaveLength(5);
   });
 
-  it("sizes a plan laid out before aims stopped there across every band, as it was", () => {
+  it("plans every band in a plan laid out before aims stopped there, sizing only the aim's", () => {
     const { planned } = sizeAbove("A2", false);
 
-    expect(idsOf(planned)).toHaveLength(5);
-    expect(total(planned)).toBe(1425);
+    expect(lessonsOf(planned)).toStrictEqual([475, 950, 10, 10, 10]);
   });
 
-  it("keeps the situations it leaves out at the same scale, so a higher aim brings them back", () => {
+  it("keeps the situations it leaves out as they are, so a higher aim sizes them by their band", () => {
     const trip = sizeAbove("A2").graph;
 
-    expect(lessonsOf(trip)).toStrictEqual([475, 950, 475, 475, 475]);
+    expect(lessonsOf(trip)).toStrictEqual([475, 950, 10, 10, 10]);
 
     const talk = sizeLanguageGraph({
       bands: BANDS,
@@ -145,7 +144,79 @@ describe(sizeLanguageGraph, () => {
     });
 
     expect(idsOf(talk.planned)).toStrictEqual(["s1", "s2", "s3", "s4"]);
-    expect(lessonsOf(talk.planned)).toStrictEqual([563, 1125, 563, 562]);
+    expect(lessonsOf(talk.planned)).toStrictEqual([475, 950, 694, 694]);
+  });
+
+  it("gives each band the hours it teaches, so beginner situations get the A1 and A2 hours", () => {
+    const { planned } = sizeAbove("B2");
+
+    expect(lessonsOf(planned)).toStrictEqual([475, 950, 1350, 1350]);
+  });
+
+  it("leaves out the bands below the learner's level, so an A2 learner starts past the basics", () => {
+    const { graph, planned } = sizeLanguageGraph({
+      bands: BANDS,
+      goal: languageGoal("A2"),
+      graph: graphOf([10, 20, 10, 10, 10]),
+      state: aimed("B2"),
+    });
+
+    expect(idsOf(planned)).toStrictEqual(["s3", "s4"]);
+    expect(lessonsOf(planned)).toStrictEqual([1350, 1350]);
+    expect(lessonsOf(graph)).toStrictEqual([10, 20, 1350, 1350, 10]);
+  });
+
+  it("gives a learner inside a band only that band's hours they haven't studied", () => {
+    const { planned } = sizeLanguageGraph({
+      bands: BANDS,
+      goal: languageGoal("A1"),
+      graph: graphOf([10, 20, 10, 10, 10]),
+      state: aimed("B2"),
+    });
+
+    expect(lessonsOf(planned)).toStrictEqual([238, 475, 1350, 1350]);
+  });
+
+  it("keeps a situation below the learner's level when they showed a gap in it", () => {
+    const { planned } = sizeLanguageGraph({
+      bands: BANDS,
+      goal: languageGoal("A2"),
+      graph: graphOf([10, 20, 10, 10, 10]),
+      missedSkillIds: new Set(["s2"]),
+      state: aimed("B2"),
+    });
+
+    expect(idsOf(planned)).toStrictEqual(["s2", "s3", "s4"]);
+    expect(lessonsOf(planned)).toStrictEqual([20, 1350, 1350]);
+  });
+
+  it("gives the same graph when a plan split across bands is sized again", () => {
+    const banded = { bands: BANDS, goal: languageGoal("A1"), state: aimed("B2") } as const;
+    const once = sizeLanguageGraph({ ...banded, graph: graphOf([10, 20, 10, 10, 10]) }).graph;
+
+    expect(sizeLanguageGraph({ ...banded, graph: once }).graph).toStrictEqual(once);
+  });
+
+  it("keeps a covered band when the course has nothing after it to plan", () => {
+    const { planned } = sizeLanguageGraph({
+      bands: BANDS,
+      goal: languageGoal("A2"),
+      graph: graphOf([10, 20]),
+      state: aimed("B2"),
+    });
+
+    expect(idsOf(planned)).toStrictEqual(["s1", "s2"]);
+  });
+
+  it("keeps the aim's own band even when the learner is past it", () => {
+    const { planned } = sizeLanguageGraph({
+      bands: BANDS,
+      goal: languageGoal("A2"),
+      graph: graphOf([10, 20, 10, 10, 10]),
+      state: aimed("A2+"),
+    });
+
+    expect(idsOf(planned)).toStrictEqual(["s1", "s2"]);
   });
 
   it("still stops at an aim the learner already reached, without sizing", () => {
