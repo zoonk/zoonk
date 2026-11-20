@@ -60,6 +60,25 @@ describe("alignment of text and controls", () => {
     );
   });
 
+  it.each(["answer-option", "match-entry"])("allows prose wrapping in %s cards", (slot) => {
+    const option = document.createElement("button");
+    option.dataset.slot = slot;
+    option.dataset.box = "16,0,150,48";
+    option.textContent = "Review the answers";
+    document.body.append(option);
+
+    vi.spyOn(Range.prototype, "getClientRects").mockImplementation(function rects(this: Range) {
+      return rangeRect(new DOMRect(16, this.startOffset < 11 ? 0 : 24, 8, 20));
+    });
+
+    assert.deepEqual(read().elements.find((part) => part.part === "text")?.lineTexts, [
+      "Review the",
+      "answers",
+    ]);
+
+    assert.deepEqual(hits("lone-word"), []);
+  });
+
   it("recognizes the calendar's kit viewport by slot", () => {
     document.body.innerHTML =
       '<div data-slot="contribution-calendar-viewport" style="overflow-x:auto" data-box="16,0,200,100"><div data-box="16,0,600,100">Calendar</div></div>';
