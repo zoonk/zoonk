@@ -34,6 +34,27 @@ const string = { type: "string" } as const;
 const flag = { type: "boolean" } as const;
 const multiple = { multiple: true, type: "string" } as const;
 
+const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [options]
+
+  --challenger <model>     Challenger: model, model@<variant hash>, model@current to generate, or sealed:<comparison id>:<incumbent|challenger>
+  --incumbent <model>      Incumbent, in the same forms; omit for a single-output audit
+  --case <id>              Limit to a case (repeatable)
+  --runs <n>               Runs per case (default 2)
+  --reader <channel:model> A reader such as seat:anthropic/claude-haiku-5.5 (repeatable, one per family)
+  --bank <name>            Control bank in eval-results/controls (default: the task id)
+  --question <text>        The question the comparison answers
+  --limit-usd <amount>     Stop when the forecast passes this amount (default 1)
+  --confirm                Go past the forecast limit
+  --saved-only             Use saved outputs only, never generate
+  --stop-after <stage>     freeze, seal, checks, packet or reads
+  --attempt <name>         Attempt label for reads and imports (default first)
+  --packet <id>            Packet to export or import
+  --export <file>          Write the packet, protocol and response schema to a new file
+  --import <file>          Import a response for --packet
+  --cost-usd <amount>      Measured cost of an imported model response
+  --help                   Show this help
+`;
+
 const { values: options } = parseArgs({
   options: {
     attempt: string,
@@ -43,6 +64,7 @@ const { values: options } = parseArgs({
     confirm: flag,
     "cost-usd": string,
     export: string,
+    help: flag,
     id: string,
     import: string,
     incumbent: string,
@@ -56,6 +78,12 @@ const { values: options } = parseArgs({
     task: string,
   },
 });
+
+if (options.help) {
+  process.stdout.write(usage);
+  // oxlint-disable-next-line no-process-exit -- The rest of the script needs a task and an id.
+  process.exit(0);
+}
 
 const taskId = identifier.parse(options.task);
 const id = identifier.parse(options.id);
