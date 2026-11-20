@@ -219,6 +219,8 @@ export async function sessionPreparationWorkflow(
       claimQuestions: decision.status === "ready" ? decision.claimQuestions : null,
       goalId,
       guest: decision.status === "guest",
+      guestSessionId:
+        decision.status === "guest" && "sessionId" in request ? request.sessionId : undefined,
       lessonsAskedAt,
       timeZone: decision.timeZone,
       userId,

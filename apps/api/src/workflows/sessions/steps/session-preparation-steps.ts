@@ -24,6 +24,10 @@ export async function createSessionGenerationManifestStep(input: {
 }): Promise<PlanStepOutcome<PlanGenerationManifest | null>> {
   "use step";
 
+  if (input.lessonIds.length === 0) {
+    return { conflict: false, value: null };
+  }
+
   return catchPlanConflict(() => createPlanGenerationManifest(input));
 }
 

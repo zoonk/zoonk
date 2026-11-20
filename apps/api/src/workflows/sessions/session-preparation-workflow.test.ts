@@ -151,10 +151,14 @@ describe("session preparation records admission for its children", () => {
     expect(sleep).not.toHaveBeenCalled();
   });
 
-  it.each([true, false])(
-    "prepares only the original next day's window after its outline (lands: %s)",
-    async (lands) => {
-      const { goal, plan, user } = await sessionWithLesson();
+  it.each([
+    { guest: false, lands: true },
+    { guest: false, lands: false },
+    { guest: true, lands: true },
+  ])(
+    "prepares the selected lesson after outlining (guest: $guest, lands: $lands)",
+    async ({ guest, lands }) => {
+      const { goal, item, lesson, plan, user } = await sessionWithLesson();
 
       const [course, skill, first, second, later] = await Promise.all([
         courseFixture(),
@@ -165,14 +169,10 @@ describe("session preparation records admission for its children", () => {
       ]);
 
       const tomorrow = new Date("2026-10-01T00:00:00Z");
+      const scheduledFor = guest ? null : tomorrow;
 
       const [placeholder] = await Promise.all([
-        planItemFixture({
-          planId: plan.id,
-          position: 1,
-          scheduledFor: tomorrow,
-          skillId: skill.id,
-        }),
+        planItemFixture({ planId: plan.id, position: 1, scheduledFor, skillId: skill.id }),
         planItemFixture({
           lessonId: later.id,
           planId: plan.id,
@@ -198,6 +198,8 @@ describe("session preparation records admission for its children", () => {
           },
           where: { id: plan.id },
         }),
+        guest ? prisma.planItem.delete({ where: { id: item.id } }) : null,
+        guest ? prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } }) : null,
       ]);
 
       vi.mocked(start).mockImplementation((workflow: unknown) =>
@@ -229,7 +231,7 @@ describe("session preparation records admission for its children", () => {
               lessonId: second.id,
               planId: plan.id,
               position: 2,
-              scheduledFor: tomorrow,
+              scheduledFor,
               skillId: skill.id,
             }),
           ]);
@@ -242,19 +244,29 @@ describe("session preparation records admission for its children", () => {
 
       await expect(
         sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
-      ).resolves.toMatchObject({ laterLessonIds: lands ? [first.id] : [], status: "prepared" });
+      ).resolves.toMatchObject(
+        guest
+          ? { status: "guest" }
+          : { laterLessonIds: lands ? [first.id] : [], status: "prepared" },
+      );
 
       expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
-        expect.objectContaining({ courseId: course.id }),
+        expect.objectContaining({ courseId: course.id, forGuest: guest }),
       ]);
 
-      expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, [
-        expect.objectContaining({ lessonId: later.id }),
-      ]);
+      const calls: readonly unknown[][] = vi.mocked(start).mock.calls;
+      const children = calls.filter(([workflow]) => workflow === lessonContentWorkflow);
+      const immediate = { lessonId: lesson.id };
+      const afterOutline = { lessonId: first.id, wait: guest ? "learner" : "later" };
+      const expected = [...(guest ? [] : [[immediate]]), ...(lands ? [[afterOutline]] : [])];
+      expect(children.map(([, args]) => args)).toMatchObject(expected);
 
-      expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, [
-        expect.objectContaining({ lessonId: second.id }),
-      ]);
+      await expect(
+        prisma.usageRecord.findMany({
+          select: { targetId: true },
+          where: { kind: "lessonStart", userId: user.id },
+        }),
+      ).resolves.toStrictEqual(guest ? [{ targetId: first.id }] : []);
     },
   );
 

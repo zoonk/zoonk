@@ -156,7 +156,7 @@ describe(getSessionPreparationAccess, () => {
     ]);
 
     const [session, done, current, next, later] = await Promise.all([
-      studySessionFixture({ goalId: goal.id, localDate: today(), userId: guest.id }),
+      studySessionFixture({ goalId: goal.id, localDate: addDays(today(), -1), userId: guest.id }),
       libraryLessonFixture({ contentStatus: "completed" }),
       libraryLessonFixture({ contentStatus: "completed" }),
       libraryLessonFixture(),
@@ -203,7 +203,12 @@ describe(getSessionPreparationAccess, () => {
     ]);
 
     await expect(
-      listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: guest.id }),
+      listSessionPreparation({
+        goalId: goal.id,
+        guestSessionId: session.id,
+        timeZone: TIME_ZONE,
+        userId: guest.id,
+      }),
     ).resolves.toMatchObject({ laterLessonIds: [tomorrow.id], lessonIds: [next.id] });
   });
 });

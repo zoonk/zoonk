@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type PlanItem, type StudySessionBlock, prisma } from "@zoonk/db";
+import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findGoalFor, findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import {
@@ -16,6 +16,7 @@ import {
   findStudySessionFor,
 } from "../sessions/_utils/study-session-access";
 import { getSessionUsedMinutes } from "../sessions/session-minutes";
+import { loadPlanWindowItems } from "./_utils/preparation-window";
 import { loadWindowChallenges } from "./_utils/window-challenges";
 import { getLearnerTier, getLookahead } from "./learner-lookahead";
 
@@ -35,6 +36,7 @@ type PreparationDates = { nextDay: number | null; today: number };
 
 export type SessionPreparation = {
   dates: PreparationDates | null;
+  guestSessionLessonId?: string;
   standInSkillIds: string[];
   forExam: boolean;
   /** Generate these immediately; the learner is only minutes away. */
@@ -145,10 +147,7 @@ export async function getGoalPreparationAccessFor({
   return owned.status === "ready" ? decideGoalAccess(owned) : owned;
 }
 
-type WindowItem = Pick<
-  PlanItem,
-  "chapterId" | "facts" | "kind" | "lessonId" | "scheduledFor" | "skillId"
->;
+type WindowItem = Awaited<ReturnType<typeof loadPlanWindowItems>>[number];
 
 function readStudyDates(item: WindowItem): number[] {
   if (isStandIn(item)) {
@@ -162,40 +161,22 @@ function readStudyDates(item: WindowItem): number[] {
   return item.scheduledFor ? [item.scheduledFor.getTime()] : [];
 }
 
-function loadPlanWindowItems(goalId: string) {
-  return prisma.planItem.findMany({
-    orderBy: { position: "asc" },
-    select: {
-      chapterId: true,
-      facts: true,
-      kind: true,
-      lessonId: true,
-      scheduledFor: true,
-      skillId: true,
-    },
-    where: {
-      OR: [
-        { lessonId: { not: null }, scheduledFor: { not: null } },
-        { chapterId: null, kind: "lesson", lessonId: null, skillId: { not: null } },
-      ],
-      plan: { goalId },
-      status: "todo",
-    },
-  });
-}
-
-function loadTodaySession({
+function loadWindowSession({
   goalId,
+  sessionId,
   today,
   userId,
 }: {
   goalId: string;
+  sessionId?: string;
   today: Date;
   userId: string;
 }) {
   return prisma.studySession.findUnique({
     include: { blocks: { orderBy: { position: "asc" } } },
-    where: { userGoalDate: { goalId, localDate: today, userId } },
+    where: sessionId
+      ? { goalId, id: sessionId, userId }
+      : { userGoalDate: { goalId, localDate: today, userId } },
   });
 }
 
@@ -209,9 +190,14 @@ function listTodayTargets({
 }: {
   guest: boolean;
   planned: readonly (WindowItem & { dates: number[] })[];
-  session: Awaited<ReturnType<typeof loadTodaySession>>;
+  session: Awaited<ReturnType<typeof loadWindowSession>>;
   today: number;
 }): { inSession: Set<string>; open: WindowTarget[] } {
+  if (guest && !session) {
+    const first = planned.find((item) => item.kind === "lesson");
+    return { inSession: new Set(), open: first ? [first] : [] };
+  }
+
   const due = planned.filter(
     (item) =>
       item.dates.includes(today) ||
@@ -271,38 +257,50 @@ async function hasPersonalLayer(goal: Goal) {
   return parsePlanSettings(plan?.settings).tools.length > 0;
 }
 
-/** Workflow bridge: ids must come from getSessionPreparationAccess. Includes the window's chapter challenges and excludes already-written or running content. */
+/** Workflow bridge: ids must come from preparation access. */
 export async function listSessionPreparation({
   dates,
   goalId,
+  guestSessionId,
   timeZone,
   userId,
 }: {
   dates?: PreparationDates | null;
   goalId: string;
+  guestSessionId?: string;
   timeZone: string;
   userId: string;
 }): Promise<SessionPreparation> {
-  const goal = await prisma.goal.findUnique({ where: { id: goalId, userId } });
+  const [goal, tier] = await Promise.all([
+    prisma.goal.findUnique({ where: { id: goalId, userId } }),
+    getLearnerTier(userId),
+  ]);
+
   const today = getDateInTimeZone({ date: new Date(), timeZone });
 
   if (!goal || goal.status !== "active" || (dates && dates.today !== today.getTime())) {
     return NOTHING_TO_PREPARE;
   }
 
-  const [items, session, tier] = await Promise.all([
-    loadPlanWindowItems(goalId),
-    loadTodaySession({ goalId, today, userId }),
-    getLearnerTier(userId),
+  const guest = tier === "guest";
+  const forGuestGoal = guest && !guestSessionId;
+
+  const [items, session] = await Promise.all([
+    loadPlanWindowItems({ goalId, includeUnscheduledLessons: forGuestGoal }),
+    forGuestGoal ? null : loadWindowSession({ goalId, sessionId: guestSessionId, today, userId }),
   ]);
 
-  const guest = tier === "guest";
+  if (guestSessionId && !session) {
+    return NOTHING_TO_PREPARE;
+  }
+
   const lookahead = getLookahead(tier);
   const planned = items.map((item) => ({ ...item, dates: readStudyDates(item) }));
 
   const { inSession, open } = listTodayTargets({ guest, planned, session, today: today.getTime() });
   const todayTargets = open.slice(0, guest ? 1 : 1 + lookahead.lessonsAhead);
   const todayWindow = getWritableWindow(todayTargets);
+  const guestSessionLessonId = guest ? todayWindow.find((id) => inSession.has(id)) : undefined;
 
   const upcoming = planned.filter((item) => !item.lessonId || !inSession.has(item.lessonId));
 
@@ -338,11 +336,17 @@ export async function listSessionPreparation({
   const plannedLessonIds = [...soon, ...later];
   const states = await getLessonGenerationStates(plannedLessonIds);
 
+  // The request for a queued lesson can also recover an abandoned generation run.
+  const lessonIds = guestSessionLessonId
+    ? [guestSessionLessonId]
+    : filterUnwritten({ lessonIds: soon, states });
+
   return {
     dates: { nextDay, today: today.getTime() },
     forExam: goal.kind === "exam",
+    ...(guestSessionLessonId ? { guestSessionLessonId } : {}),
     laterLessonIds: filterUnwritten({ lessonIds: later, states }),
-    lessonIds: filterUnwritten({ lessonIds: soon, states }),
+    lessonIds,
     personalized: !guest && plannedLessonIds.length > 0 && (await hasPersonalLayer(goal)),
     plannedLessonIds,
     standInSkillIds,

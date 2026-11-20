@@ -19,6 +19,7 @@ import {
 export type PlanLessonPreparationInput = {
   goalId: string;
   guest: boolean;
+  guestSessionId?: string;
   lessonsAskedAt: number | null;
   timeZone: string;
   userId: string;
@@ -48,9 +49,11 @@ async function startGuestLesson({
   });
 
   if (lesson) {
+    const plan = planManifest ? { planGoalId: input.goalId, planManifest } : {};
+
     await startOnce(
       lessonContentWorkflow,
-      [{ ...lesson, analytics, planGoalId: input.goalId, planManifest, wait }],
+      [{ ...lesson, ...plan, analytics, wait }],
       getLessonContentHookToken(lessonId),
     );
   }
@@ -73,13 +76,14 @@ async function startLessonWork({
   }
 
   const preparation = await listSessionPreparationStep({ ...input, dates: previous?.dates });
+  const { guestSessionLessonId } = preparation;
   const started = new Set([...(previous?.lessonIds ?? []), ...(previous?.laterLessonIds ?? [])]);
   const lessonIds = preparation.lessonIds.filter((id) => !started.has(id));
   const laterLessonIds = preparation.laterLessonIds.filter((id) => !started.has(id));
 
   const manifest = await createSessionGenerationManifestStep({
     goalId: input.goalId,
-    lessonIds: [...lessonIds, ...laterLessonIds],
+    lessonIds: [...lessonIds.filter((id) => id !== guestSessionLessonId), ...laterLessonIds],
   });
 
   if (manifest.conflict) {
@@ -88,12 +92,25 @@ async function startLessonWork({
 
   const planManifest = manifest.value;
   const admitted = new Set(planManifest?.targets.map((target) => target.lessonId));
-  const soon = lessonIds.filter((id) => admitted.has(id));
-  const later = laterLessonIds.filter((id) => admitted.has(id));
+  const soon = lessonIds.filter((id) => id === guestSessionLessonId || admitted.has(id));
+
+  const later =
+    input.guest && lessonIds.length > 0 && soon.length === 0
+      ? []
+      : laterLessonIds.filter((id) => admitted.has(id));
 
   if (input.guest) {
     // Preserve the guest's remaining starts for today's lesson before tomorrow's.
-    await startGuestLesson({ analytics, input, lessonId: soon[0], planManifest, wait: "learner" });
+    const [next] = soon;
+
+    await startGuestLesson({
+      analytics,
+      input,
+      lessonId: next,
+      planManifest: next === guestSessionLessonId ? null : planManifest,
+      wait: "learner",
+    });
+
     await startGuestLesson({ analytics, input, lessonId: later[0], planManifest, wait: "later" });
   } else {
     const content = {
