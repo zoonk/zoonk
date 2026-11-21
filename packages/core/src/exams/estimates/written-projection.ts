@@ -5,7 +5,9 @@ import { getPartMaxPoints } from "../../library/exams/part-points";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { type EstimatedScore } from "../../preparation/estimated-score";
 import { namesMatch } from "../_utils/name-match";
+import { getWritingDecimals } from "../essays/_utils/writing-decimals";
 import { matchesWritingTaskBasis } from "../essays/_utils/writing-task-basis";
+import { isNumericWritingRubric } from "../essays/writing-rubric-policy";
 import { isWrittenSubject } from "../mocks/written-subject";
 import {
   type WritingRange,
@@ -64,7 +66,31 @@ export function projectWrittenParts({
   samples: readonly WrittenSample[];
   structure: ExamStructure | null;
 }) {
-  return scoreWrittenParts({ rangeForTask: (task) => projectTask(task, samples), structure });
+  const tasks = listWrittenTasks({ structure });
+
+  const numeric = new Set(
+    tasks.filter((task) => isNumericWritingRubric(task)).map(({ key }) => key),
+  );
+
+  const bySection = Map.groupBy(tasks, ({ section }) => section);
+
+  const parts = scoreWrittenParts({
+    rangeForTask: (task) => (numeric.has(task.key) ? projectTask(task, samples) : null),
+    structure,
+    tasks,
+  });
+
+  return parts.map((part) => ({
+    ...part,
+    decimals: getWritingDecimals(
+      part.max,
+      bySection.get(part.name)?.map(({ grading }) => grading),
+      part.tasks.map(({ max }) => max ?? 0),
+    ),
+    scale: part.tasks.every(({ key }) => numeric.has(key))
+      ? ("points" as const)
+      : ("levels" as const),
+  }));
 }
 
 type ScorePart = { max: number | null; name: string; range: WritingRange | null };

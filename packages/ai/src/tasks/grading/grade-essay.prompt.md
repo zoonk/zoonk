@@ -46,6 +46,7 @@ List in `errors` each passage that breaks the formal written standard of the ans
 ## Next step
 
 `nextStep` is the one change that would help this answer most, on a criterion that isn't `complete`: its `criterionId`; `text`, one concrete action for the next draft in `LANGUAGE`, at most 25 words; `quote`, the passage to rewrite, copied exactly and appearing only once, or null when the change is to add something missing; and `example`, how that passage or addition could read, in the answer's language. Null when every criterion is `complete`.
+`title` names the change itself in a few words in the answer's language, as an instruction the writer can act on.
 
 Describe the answer, not the person. Never promise a score, a pass, an approval or a place. No emojis.
 

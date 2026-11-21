@@ -1,5 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { type WritingEvidence, gradeWritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
+import {
+  type WritingEvidence,
+  getWritingGrader,
+  gradeWritingEvidence,
+} from "@zoonk/ai/tasks/grading/grade-essay";
 import { prisma } from "@zoonk/db";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -19,6 +23,7 @@ import {
   buildWritingFeedback,
   createWritingQuoteLookup,
 } from "./_utils/writing-feedback";
+import { passedWritingEvaluations } from "./_utils/writing-rubric-evaluations";
 import {
   getWritingRubricFingerprint,
   getWritingTaskBasis,
@@ -26,7 +31,12 @@ import {
 } from "./_utils/writing-task-basis";
 import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS, essaySubmissionInputSchema } from "./essay-contract";
 import { getWritingAttempt } from "./get-writing-attempt";
-import { type WritingConditions, type WritingResult, writtenItemSchema } from "./writing-contract";
+import {
+  type WritingConditions,
+  type WritingResult,
+  writtenAnswerSchema,
+  writtenItemSchema,
+} from "./writing-contract";
 import { countWritingLines } from "./writing-lines";
 import {
   type WritingArithmetic,
@@ -34,7 +44,12 @@ import {
   isNumericWritingRubric,
 } from "./writing-rubric-policy";
 
-vi.mock("@zoonk/ai/tasks/grading/grade-essay");
+vi.mock(import("@zoonk/ai/tasks/grading/grade-essay"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  gradeWritingEvidence: vi.fn(),
+}));
+
+vi.mock("./_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
 vi.mock("../../learner/written-evidence", () => ({ creditWrittenSkills: vi.fn() }));
 
 const citation = { passage: "Official grading rules", sourceId: "notice" };
@@ -127,18 +142,20 @@ function assess(
     rubric = basis,
     text = eligible,
     gate = arithmetic,
+    ignoredFrom = eligible.length,
   }: {
     context?: string | null;
     rubric?: typeof basis;
     text?: string;
     gate?: typeof arithmetic | null;
+    ignoredFrom?: number | null;
   } = {},
 ) {
   const feedback = buildWritingFeedback({
     basis: rubric,
     eligible: text,
     evidence: assessment,
-    ignoredFrom: eligible.length,
+    ignoredFrom,
     previousNextSteps: ["claim"],
   });
 
@@ -154,6 +171,41 @@ function assess(
 }
 
 describe("writing grades", () => {
+  it.each([null, arithmetic])(
+    "uses the line limit when there is no higher-value instruction",
+    (gate) => {
+      const text = "A claim and its explanation.";
+
+      const full: WritingEvidence = {
+        ...evidence,
+        aspects: [
+          { aspectIndex: 0, criterionId: "claim", earned: true, quote: "A claim" },
+          { aspectIndex: 1, criterionId: "claim", earned: true, quote: "its explanation" },
+        ],
+        criteria: [{ ...evidence.criteria[0]!, level: gate ? "strong" : "complete" }],
+        errors: [],
+        nextStep: {
+          criterionId: "claim",
+          example: null,
+          quote: "its explanation",
+          text: "Finish the explanation.",
+          title: "Finish your explanation",
+        },
+      };
+
+      expect(assess(full, { gate, text })).toMatchObject({
+        nextStep: { kind: "limit", title: null },
+      });
+
+      expect(assess(full, { gate, ignoredFrom: null, text }).nextStep).toBeNull();
+      expect(assess(evidence, { gate })).toMatchObject({ nextStep: { kind: "limit" } });
+
+      expect(assess(evidence, { gate, ignoredFrom: null })).toMatchObject({
+        nextStep: { criterionId: "claim", kind: "criterion" },
+      });
+    },
+  );
+
   it.each([
     { quote: "Em ÁREAS rurais", written: "em áreas rurais" },
     { quote: "A clear claim", written: "A clear\nclaim" },
@@ -174,14 +226,20 @@ describe("writing grades", () => {
         ...evidence,
         aspects: [{ aspectIndex: 0, criterionId: "claim", earned: true, quote }],
         criteria: [{ ...evidence.criteria[0]!, quote }],
-        nextStep: { criterionId: "claim", example: null, quote, text: "Explain the evidence." },
+        nextStep: {
+          criterionId: "claim",
+          example: null,
+          quote,
+          text: "Explain the evidence.",
+          title: "Explain the evidence",
+        },
       },
       { text },
     );
 
     expect(result).toMatchObject({
       criteria: [{ quote: written }],
-      nextStep: { quote: written },
+      nextStep: { kind: "criterion", quote: written, title: "Explain the evidence" },
       rows: [{ earned: 0.3 }],
     });
   });
@@ -199,7 +257,13 @@ describe("writing grades", () => {
         ...evidence,
         aspects: [{ aspectIndex: 0, criterionId: "claim", earned: true, quote }],
         criteria: [{ ...evidence.criteria[0]!, quote }],
-        nextStep: { criterionId: "claim", example: null, quote, text: "Explain the evidence." },
+        nextStep: {
+          criterionId: "claim",
+          example: null,
+          quote,
+          text: "Explain the evidence.",
+          title: "Explain the evidence",
+        },
       },
       { text },
     );
@@ -305,7 +369,9 @@ describe("writing grades", () => {
 
     expect(result(yes)).toMatchObject({
       kind: "points",
+      nextStep: { kind: "zero", title: null },
       total: { high: 0, low: 0 },
+      zeroKind: kind,
       zeroReason: kind,
     });
 
@@ -378,12 +444,18 @@ describe("writing grades", () => {
     ).toMatchObject({ kind: "points", total: { high: 0, low: 0 }, zeroReason: "Blank essay" });
   });
 
-  it.each([5, 1.25])("gates OAB's verified aspect points out of %s", (max) => {
+  it.each([
+    [5, 0, 2],
+    [1.25, 2, 0.5],
+    [9.5, 1, 3.8],
+    [30, 0, 12],
+    [70, 0, 28],
+  ])("returns unrounded points out of %s with %s places for display", (max, decimals, earned) => {
     const rubric = {
       ...basis,
       aspects: [
-        { ...basis.aspects[0]!, points: max * 0.4 },
-        { ...basis.aspects[1]!, points: max * 0.6 },
+        { ...basis.aspects[0]!, points: earned },
+        { ...basis.aspects[1]!, points: max - earned },
       ],
       grading: {
         ...basis.grading,
@@ -399,12 +471,89 @@ describe("writing grades", () => {
     expect(assess(evidence, { gate: null, rubric })).toMatchObject({ kind: "levels" });
 
     expect(assess(evidence, { gate: { ...arithmetic, rounding: null }, rubric })).toMatchObject({
+      decimals,
       deduction: { high: 0, low: 0 },
       kind: "points",
       max,
-      rows: [{ earned: max * 0.4, id: "claim", max }],
-      total: { high: max * 0.4, low: max * 0.4 },
+      rows: [{ decimals, earned, id: "claim", max }],
+      total: { high: earned, low: earned },
     });
+  });
+
+  it("uses the active evaluated grader and withholds points after a provider fallback", async () => {
+    const grader = getWritingGrader("points");
+
+    const provenance = {
+      ...grader,
+      generatedAt: "2026-11-21T00:00:00.000Z",
+      latencyMs: 0,
+      provider: "meta",
+      requestedModel: grader.model,
+      runId: "fixture",
+      usage: {},
+    };
+
+    const writing = { ...basis, grading: { ...basis.grading, rounding: null } };
+    const fingerprint = getWritingRubricFingerprint(writing);
+
+    const input = {
+      content: { ...content, writing },
+      language: "en",
+      previousNextSteps: [],
+      text: original,
+    };
+
+    Object.assign(passedWritingEvaluations, {
+      [fingerprint]: {
+        arithmetic: { rounding: null, zeroRules: [] },
+        corpus: "fixture",
+        model: grader.model,
+        promptRevision: grader.promptVersion,
+      },
+    });
+
+    try {
+      const provider = vi.mocked(gradeWritingEvidence, { partial: true });
+
+      provider.mockResolvedValueOnce({ data: evidence, provenance });
+      await expect(gradeWriting(input)).resolves.toMatchObject({ decimals: 2, kind: "points" });
+
+      provider.mockResolvedValueOnce({
+        data: evidence,
+        provenance: { ...provenance, model: "fallback" },
+      });
+
+      await expect(gradeWriting(input)).resolves.toMatchObject({ kind: "levels" });
+    } finally {
+      Reflect.deleteProperty(passedWritingEvaluations, fingerprint);
+    }
+  });
+
+  it("reads a saved recommendation without requiring an instruction title", () => {
+    const grade = assess(evidence, { gate: null, ignoredFrom: null });
+
+    const nextStep = {
+      criterionId: "claim",
+      example: null,
+      quote: null,
+      text: "Explain the claim.",
+    };
+
+    const saved = writtenAnswerSchema.parse({
+      conditions,
+      grade: { ...grade, nextStep },
+      text: original,
+    });
+
+    expect(saved.grade.nextStep).toStrictEqual({ ...nextStep, kind: "criterion" });
+
+    const overLimit = writtenAnswerSchema.parse({
+      conditions,
+      grade: { ...grade, ignoredFrom: eligible.length, nextStep: null },
+      text: original,
+    });
+
+    expect(overLimit.grade.nextStep).toMatchObject({ kind: "limit", title: null });
   });
 
   it("grades the issued snapshot at levels only and keeps history outside the evidence request", async () => {

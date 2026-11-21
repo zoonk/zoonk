@@ -42,43 +42,40 @@ export async function gradeWriting({
   const eligible = ignoredFrom === null ? text : text.slice(0, ignoredFrom);
 
   if (countWords(eligible) < basis.minimumWords || eligible.trim().length === 0) {
+    const [criterion] = basis.criteria;
+
     const evidence: WritingEvidence = {
       aspects: [],
       criteria: [],
       errors: [],
-      nextStep: null,
+      nextStep:
+        criterion && ignoredFrom === null
+          ? {
+              criterionId: criterion.id,
+              example: null,
+              quote: null,
+              text: "Expand your answer so there is enough writing to assess.",
+              title: "Write a longer answer",
+            }
+          : null,
       onTopicQuote: null,
       zeroKind: null,
       zeroQuote: null,
       zeroRuleIndex: null,
     };
 
-    const [criterion] = basis.criteria;
-
-    const feedback = {
-      criteria: basis.criteria.map(({ id, name }) => ({
-        comment: "",
-        id,
-        level: "missing" as const,
-        name,
-        quote: null,
-      })),
-      errors: [],
+    const feedback = buildWritingFeedback({
+      basis,
+      eligible,
+      evidence,
       ignoredFrom,
-      nextStep: criterion
-        ? {
-            criterionId: criterion.id,
-            example: null,
-            quote: null,
-            text: "Expand your answer so there is enough writing to assess.",
-          }
-        : null,
-      progress: null,
-    };
+      previousNextSteps,
+    });
 
     const result = applyWritingArithmetic({
       arithmetic: getWritingArithmetic(basis),
       basis,
+      belowWordFloor: true,
       context: content.context,
       eligible,
       estimatedLines,
@@ -86,9 +83,7 @@ export async function gradeWriting({
       feedback,
     });
 
-    return result.kind === "points" && result.zeroReason
-      ? { ...result, estimatedLines }
-      : { ...feedback, estimatedLines, kind: "levels" };
+    return { ...result, estimatedLines };
   }
 
   const { data: evidence, provenance } = await gradeWritingEvidence({

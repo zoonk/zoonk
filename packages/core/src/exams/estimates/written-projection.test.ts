@@ -1,8 +1,28 @@
-import { describe, expect, it } from "vitest";
+import { getWritingGrader } from "@zoonk/ai/tasks/grading/grade-essay";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type WrittenSample } from "../../learner/facts/written-samples";
 import { type EstimatedScore } from "../../preparation/estimated-score";
+import { passedWritingEvaluations } from "../essays/_utils/writing-rubric-evaluations";
+import { getWritingRubricFingerprint } from "../essays/_utils/writing-task-basis";
 import { CGU, CGU_WRITTEN_GRADING } from "../mocks/_test-utils/cgu-written";
 import { projectWritten } from "./written-projection";
+
+vi.mock("../essays/_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
+
+const activeGrader = getWritingGrader("points");
+
+function allowWritingPoints(points: number, grader = activeGrader) {
+  const basis = { grading: CGU_WRITTEN_GRADING, points };
+
+  Object.assign(passedWritingEvaluations, {
+    [getWritingRubricFingerprint(basis)]: {
+      arithmetic: { rounding: null, zeroRules: [] },
+      corpus: "fixture",
+      model: grader.model,
+      promptRevision: grader.promptVersion,
+    },
+  });
+}
 
 const OBJECTIVE: EstimatedScore = {
   calibrated: false,
@@ -71,6 +91,11 @@ function sample({
 }
 
 describe(projectWritten, () => {
+  beforeEach(() => {
+    allowWritingPoints(30);
+    allowWritingPoints(70);
+  });
+
   it("retains the objective and measured question while naming the missing written task", () => {
     expect(
       projectWritten({
@@ -85,8 +110,10 @@ describe(projectWritten, () => {
       objectiveMax: 100,
       parts: [
         {
+          decimals: 0,
           max: 100,
           range: null,
+          scale: "points",
           standing: "unmeasured",
           tasks: [
             { key: "short", max: 30, range: { high: 19, low: 17 } },
@@ -186,13 +213,23 @@ describe(projectWritten, () => {
   });
 
   it("excludes disabled rubrics and scoring bases that changed", () => {
-    const short = sample({ high: 20, key: "short", low: 15, numericEligible: false });
+    allowWritingPoints(30, { ...activeGrader, promptVersion: "old" });
+    allowWritingPoints(70, { ...activeGrader, model: "old" });
+    const short = sample({ high: 20, key: "short", low: 15 });
     const long = sample({ high: 50, key: "long", low: 45 });
     const samples = [short, { ...long, prompt: { ...long.prompt, points: 60 } }];
 
     expect(projectWritten({ objective: OBJECTIVE, samples, structure: CGU })).toMatchObject({
       combined: null,
-      parts: [{ range: null, standing: "unmeasured", tasks: [{ range: null }, { range: null }] }],
+      parts: [
+        {
+          decimals: 0,
+          range: null,
+          scale: "levels",
+          standing: "unmeasured",
+          tasks: [{ range: null }, { range: null }],
+        },
+      ],
     });
   });
 });

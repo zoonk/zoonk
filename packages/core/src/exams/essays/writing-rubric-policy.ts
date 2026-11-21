@@ -1,52 +1,59 @@
-import { type z } from "zod";
+import { getWritingGrader } from "@zoonk/ai/tasks/grading/grade-essay";
 import { ENEM_WRITING_MAX, hasEnemCompetences } from "./_utils/enem-writing";
+import { passedWritingEvaluations } from "./_utils/writing-rubric-evaluations";
 import { getWritingRounding, getWritingRubricFingerprint } from "./_utils/writing-task-basis";
-import { type writtenItemSchema } from "./writing-contract";
-
-type Basis = Pick<z.infer<typeof writtenItemSchema>, "criteria" | "grading" | "points">;
 
 export type WritingArithmetic = {
   rounding: { mode: "nearest" | "down"; places: number } | null;
   zeroRules: readonly number[];
 };
 
-type PassedEvaluation = {
-  corpus: string;
-  model: string;
-  promptRevision: string;
-  arithmetic: WritingArithmetic;
-};
+type Basis = Parameters<typeof getWritingRubricFingerprint>[0];
 
-const passedEvaluations: Readonly<Record<string, PassedEvaluation>> = {};
+export function supportsWritingArithmetic(
+  { language, rounding }: Basis["grading"],
+  arithmetic: WritingArithmetic,
+) {
+  const rule = getWritingRounding(rounding);
+  const rounds = Boolean(rounding) && (typeof rule !== "object" || rule?.mode !== "none");
+
+  return (
+    rounds === Boolean(arithmetic.rounding) &&
+    (!language || (language.method !== "other" && language.factor !== null && language.formula))
+  );
+}
 
 export function getWritingArithmetic(
   basis: Basis,
   observed?: { model: string; promptVersion: string },
 ): WritingArithmetic | null {
   const { grading, points } = basis;
+  const { criteria, kind } = grading;
+  const rounding = getWritingRounding(grading.rounding);
 
   if (
     points === null ||
-    grading.kind === "levels" ||
-    getWritingRounding(grading.rounding) === "unknown" ||
-    (grading.kind === "enem"
-      ? points !== ENEM_WRITING_MAX || !hasEnemCompetences(basis.criteria)
-      : grading.criteria.length === 0)
+    kind === "levels" ||
+    rounding === "unknown" ||
+    (kind === "enem"
+      ? points !== ENEM_WRITING_MAX || !hasEnemCompetences(criteria)
+      : criteria.length === 0)
   ) {
     return null;
   }
 
-  const passed = passedEvaluations[getWritingRubricFingerprint(basis)];
+  const passed = passedWritingEvaluations[getWritingRubricFingerprint(basis)];
 
-  if (
-    !passed ||
-    (observed &&
-      (passed.model !== observed.model || passed.promptRevision !== observed.promptVersion))
-  ) {
+  if (!passed || !supportsWritingArithmetic(grading, passed.arithmetic)) {
     return null;
   }
 
-  return passed.arithmetic;
+  const current = getWritingGrader(kind);
+
+  const matches = ({ model, promptVersion }: typeof current) =>
+    passed.model === model && passed.promptRevision === promptVersion;
+
+  return matches(current) && (!observed || matches(observed)) ? passed.arithmetic : null;
 }
 
 export function isNumericWritingRubric(basis: Basis): boolean {

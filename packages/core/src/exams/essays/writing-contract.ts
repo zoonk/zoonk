@@ -1,7 +1,8 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
-import { writtenGradingSchema } from "../../library/exams/written-grading";
+import { writingZeroKindSchema, writtenGradingSchema } from "../../library/exams/written-grading";
+import { withSavedNextStep } from "./_utils/writing-next-step";
 
 export const MAX_ESSAY_CHARACTERS = 48_000;
 
@@ -128,6 +129,9 @@ export const writingRangeSchema = z
   .object({ high: z.number(), low: z.number() })
   .meta({ id: "WritingRange" });
 
+export const writingScaleSchema = z.enum(["points", "levels"]);
+export const writingDecimalsSchema = z.int().nonnegative();
+
 const feedback = z.object({
   criteria: z.array(
     z.object({
@@ -163,8 +167,10 @@ const feedback = z.object({
     .object({
       criterionId: z.string(),
       example: z.string().nullable(),
+      kind: z.enum(["criterion", "limit", "zero"]).optional(),
       quote: z.string().nullable(),
       text: z.string(),
+      title: z.string().nullable().optional(),
     })
     .nullable(),
   progress: z.object({ fixed: z.array(z.string()), persists: z.array(z.string()) }).nullable(),
@@ -175,11 +181,13 @@ export const writingResultSchema = z
     feedback.extend({ kind: z.literal("levels") }),
     feedback.extend({
       content: writingRangeSchema,
+      decimals: writingDecimalsSchema.optional(),
       deduction: writingRangeSchema.describe("Nonnegative points deducted for language"),
       kind: z.literal("points"),
       max: z.number().positive(),
       rows: z.array(
         z.object({
+          decimals: writingDecimalsSchema.optional(),
           earned: z.number().describe("Points earned, or the lower end of a ranged criterion"),
           id: z.string(),
           max: z.number().positive(),
@@ -187,6 +195,7 @@ export const writingResultSchema = z
         }),
       ),
       total: writingRangeSchema,
+      zeroKind: writingZeroKindSchema.optional(),
       zeroReason: z.string().nullable(),
     }),
   ])
@@ -194,7 +203,7 @@ export const writingResultSchema = z
 
 export const writtenAnswerSchema = z.object({
   conditions: writingConditionsSchema,
-  grade: writingResultSchema,
+  grade: writingResultSchema.transform(withSavedNextStep),
   text: z.string(),
 });
 

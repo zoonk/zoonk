@@ -1,4 +1,5 @@
 import "server-only";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
@@ -57,6 +58,7 @@ const writingEvidenceSchema = z.object({
       example: z.string().nullable(),
       quote: z.string().nullable(),
       text: z.string(),
+      title: z.string(),
     })
     .nullable(),
   onTopicQuote: z
@@ -97,16 +99,7 @@ type WritingEvidenceParams = {
   analytics?: AiGenerationContext;
 };
 
-export async function gradeWritingEvidence(params: WritingEvidenceParams) {
-  const {
-    analytics,
-    model = defaultModel,
-    reasoning = defaultReasoning,
-    useFallback = true,
-  } = params;
-
-  const kind = params.scoringBasis.kind;
-
+function getWritingSystemPrompt(kind: WritingEvidenceParams["scoringBasis"]["kind"]) {
   const rubricPrompt = selectPromptVariants({
     template: promptTemplate,
     variants: {
@@ -117,7 +110,26 @@ export async function gradeWritingEvidence(params: WritingEvidenceParams) {
     },
   });
 
-  const systemPrompt = `${rubricPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
+  return `${rubricPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
+}
+
+export function getWritingGrader(kind: WritingEvidenceParams["scoringBasis"]["kind"]) {
+  return {
+    model: defaultModel,
+    promptVersion: getPromptVersion({ systemPrompt: getWritingSystemPrompt(kind) }),
+  };
+}
+
+export async function gradeWritingEvidence(params: WritingEvidenceParams) {
+  const {
+    analytics,
+    model = defaultModel,
+    reasoning = defaultReasoning,
+    useFallback = true,
+  } = params;
+
+  const kind = params.scoringBasis.kind;
+  const systemPrompt = getWritingSystemPrompt(kind);
 
   const schema =
     kind === "enem"

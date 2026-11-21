@@ -380,6 +380,20 @@ describe("CGU written exam preparation", () => {
     expect(first.score).toBeNull();
     expect(first.answer).toMatchObject({ conditions: { estimatedLines: 23 } });
 
+    await expect(getSyllabusView({ goalId: goal.id })).resolves.toMatchObject({
+      syllabus: {
+        writtenPractice: {
+          subjects: [
+            {
+              answers: [{ attemptId: first.id, criteria: { complete: 0, total: 1 }, range: null }],
+              decimals: 0,
+              scale: "levels",
+            },
+          ],
+        },
+      },
+    });
+
     await expect(getWritingAttempt(first.id)).resolves.toMatchObject({
       attempt: {
         grade: { estimatedLines: 23 },

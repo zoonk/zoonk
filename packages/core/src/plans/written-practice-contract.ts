@@ -2,8 +2,10 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import {
   writingAvailabilitySchema,
+  writingDecimalsSchema,
   writingNeedsChoiceSchema,
   writingRangeSchema,
+  writingScaleSchema,
   writingUnitSchema,
 } from "../exams/essays/writing-contract";
 import { writtenPartPointsSchema } from "../exams/scoring/written-points-contract";
@@ -13,7 +15,11 @@ const writtenSubjectSchema = z.object({
   answers: z.array(
     z.object({
       attemptId: uuidSchema(),
+      criteria: z
+        .object({ complete: z.int().nonnegative(), total: z.int().nonnegative() })
+        .optional(),
       date: z.iso.date(),
+      decimals: writingDecimalsSchema.optional(),
       estimatedLines: z.int().nonnegative().optional(),
       lines: z.int().positive().nullable(),
       range: writingRangeSchema.nullable(),
@@ -24,9 +30,11 @@ const writtenSubjectSchema = z.object({
     }),
   ),
   availability: writingNeedsChoiceSchema.optional(),
+  decimals: writingDecimalsSchema.optional(),
   minutes: z.int().positive().nullable().optional(),
   points: writtenPartPointsSchema,
   questions: z.int().positive().optional(),
+  scale: writingScaleSchema.optional(),
   share: z.number().positive().max(1).nullable().optional(),
   trend: z.array(
     z.object({
