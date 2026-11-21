@@ -36,7 +36,12 @@ type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { f
 const FIGURE_CONTEXT = "Na figura, uma seta aponta para uma organela da célula vegetal.";
 
 function evenOption(text: string, isCorrect: boolean) {
-  return { isCorrect, misconception: isCorrect ? null : `Picks ${text}`, reason: `${text} reason.`, text };
+  return {
+    isCorrect,
+    misconception: isCorrect ? null : `Picks ${text}`,
+    reason: `${text} reason.`,
+    text,
+  };
 }
 
 function mockUploads() {
