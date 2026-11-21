@@ -33,15 +33,19 @@ function countDayLessons({
     return 0;
   }
 
-  const total = item.minutes;
-
-  if (item.lessonId !== null || !total || !onDay.minutes) {
+  if (item.lessonId !== null || !item.minutes || !onDay.minutes) {
     return 1;
   }
 
   const day = toIsoDate(date);
   const lessons = Math.max(1, item.lessons ?? 1);
   const days = readSelectedItemFacts(item.facts)?.days ?? [];
+
+  // A kept item's minutes can be fewer than the days it was saved with still hold.
+  const total = Math.max(
+    item.minutes,
+    days.reduce((sum, [, minutes]) => sum + minutes, 0),
+  );
 
   const before = days.reduce(
     (sum, [allocated, minutes]) => (allocated < day ? sum + minutes : sum),
