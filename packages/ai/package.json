@@ -178,6 +178,7 @@
     "./tasks/research/find-product-pages": "./src/tasks/research/find-product-pages.ts",
     "./tasks/research/find-course-weights": "./src/tasks/research/find-course-weights.ts",
     "./tasks/research/find-subject-questions": "./src/tasks/research/find-subject-questions.ts",
+    "./tasks/research/find-written-task-subjects": "./src/tasks/research/find-written-task-subjects.ts",
     "./tasks/research/find-target-cutoff": "./src/tasks/research/find-target-cutoff.ts",
     "./tasks/research/find-topic-frequency": "./src/tasks/research/find-topic-frequency.ts",
     "./tasks/research/plan": "./src/tasks/research/research-plan.ts",

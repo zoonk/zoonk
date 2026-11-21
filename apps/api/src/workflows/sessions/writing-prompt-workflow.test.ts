@@ -2,7 +2,7 @@ import { writeWritingPrompt } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { reserveWritingPromptSpend } from "@zoonk/core/library/items/writing-prompt-spend";
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
@@ -135,6 +135,92 @@ describe(writingPromptWorkflow, () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("claims a specialty's prompt apart from another specialty's", async () => {
+    const citation = { passage: "Each candidate picks one specialty.", sourceId: "notice" };
+
+    const specialty = (name: string) => ({
+      choiceGroup: "Specialty",
+      citation,
+      name,
+      questions: null,
+      topics: [`${name} basics`],
+      weight: null,
+    });
+
+    const blueprint = await examBlueprintFixture({
+      structure: {
+        formats: [],
+        mock: {
+          adaptive: false,
+          citations: [],
+          order: null,
+          scoring: { description: "", method: "raw" },
+          sections: [
+            {
+              day: null,
+              kind: "written",
+              minutes: 80,
+              name: "Written section",
+              questions: 1,
+              tasks: [
+                {
+                  count: 1,
+                  description: "Case on the specialty",
+                  key: "case",
+                  subjects: ["Audit", "Systems"],
+                },
+              ],
+            },
+          ],
+          timeLimitMinutes: 80,
+          totalQuestions: 1,
+        },
+        rules: [],
+        subjects: [specialty("Audit"), specialty("Systems")],
+      },
+    });
+
+    const learner = async (option: string) => {
+      const user = await userFixture();
+
+      const goal = await goalFixture({
+        examBlueprintId: blueprint.id,
+        kind: "exam",
+        userId: user.id,
+      });
+
+      await planFixture({
+        goalId: goal.id,
+        settings: { examChoices: [{ group: "Specialty", subjects: [option] }] },
+      });
+
+      return {
+        count: 1,
+        goalId: goal.id,
+        taskKey: "case",
+        unit: "answer" as const,
+        userId: user.id,
+      };
+    };
+
+    const tokens: (string | undefined)[] = [];
+
+    getStartMock().mockImplementation(async (_workflow, _args, options) => {
+      tokens.push(options?.experimental_hook?.token);
+      return { runId: crypto.randomUUID() } as never;
+    });
+
+    await ensureWritingPrompts(await learner("Audit"));
+    await ensureWritingPrompts(await learner("Systems"));
+    await ensureWritingPrompts(await learner("Audit"));
+
+    expect(tokens).toStrictEqual([
+      `writing-prompt:${blueprint.id}:case:Audit`,
+      `writing-prompt:${blueprint.id}:case:Systems`,
+      `writing-prompt:${blueprint.id}:case:Audit`,
+    ]);
   });
 
   it("replays the committed guest reservation after the workflow missed its acknowledgment", async () => {

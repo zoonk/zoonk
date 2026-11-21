@@ -1,0 +1,397 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "2.1": [
+            "Fundamentos de Governança, Riscos e Integridade Pública e Privada",
+            "Fundamentos de Transparência, Ouvidoria e Participação Social",
+            "Fundamentos de Direito Público Aplicado, Controle e Responsabilização",
+            "Fundamentos de Evidências, Dados e Inteligência Artificial",
+            "Fundamentos de Auditoria Governamental e Atuação Integrada da CGU"
+          ],
+          "2.2": [
+            "Auditoria",
+            "Tecnologia da Informação – Ciência de Dados",
+            "Tecnologia da Informação – Infraestrutura de TI",
+            "Tecnologia da Informação – Desenvolvimento de Sistemas"
+          ]
+        },
+        "id": "cgu-2026-part-and-specialty-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
+              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
+            }
+          ],
+          "exam": "CGU 2026, Auditor Federal de Finanças e Controle",
+          "subjects": [
+            {
+              "group": "Conhecimentos básicos (P1)",
+              "name": "Estado, Democracia, Direitos e Ciência Política"
+            },
+            {
+              "group": "Conhecimentos básicos (P1)",
+              "name": "Ética Pública e Responsabilidade Profissional"
+            },
+            {
+              "group": "Conhecimentos complementares (P2)",
+              "name": "Fundamentos de Governança, Riscos e Integridade Pública e Privada"
+            },
+            {
+              "group": "Conhecimentos complementares (P2)",
+              "name": "Fundamentos de Transparência, Ouvidoria e Participação Social"
+            },
+            {
+              "group": "Conhecimentos complementares (P2)",
+              "name": "Fundamentos de Direito Público Aplicado, Controle e Responsabilização"
+            },
+            {
+              "group": "Conhecimentos complementares (P2)",
+              "name": "Fundamentos de Evidências, Dados e Inteligência Artificial"
+            },
+            {
+              "group": "Conhecimentos complementares (P2)",
+              "name": "Fundamentos de Auditoria Governamental e Atuação Integrada da CGU"
+            },
+            {
+              "choiceGroup": "Especialidade",
+              "group": "Conhecimentos específicos (P3)",
+              "name": "Auditoria"
+            },
+            {
+              "choiceGroup": "Especialidade",
+              "group": "Conhecimentos específicos (P3)",
+              "name": "Tecnologia da Informação – Ciência de Dados"
+            },
+            {
+              "choiceGroup": "Especialidade",
+              "group": "Conhecimentos específicos (P3)",
+              "name": "Tecnologia da Informação – Infraestrutura de TI"
+            },
+            {
+              "choiceGroup": "Especialidade",
+              "group": "Conhecimentos específicos (P3)",
+              "name": "Tecnologia da Informação – Desenvolvimento de Sistemas"
+            }
+          ],
+          "tasks": [
+            {
+              "description": "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+              "id": "2.1",
+              "section": "Prova discursiva (P4)"
+            },
+            {
+              "description": "uma questão envolvendo situação-problema, a ser respondida em até 60 linhas, no valor de 70,00 pontos",
+              "id": "2.2",
+              "section": "Prova discursiva (P4)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "4.1": [
+            "Direito Administrativo",
+            "Administração Financeira e Orçamentária",
+            "Administração Geral e Pública"
+          ],
+          "4.2": [
+            "Direito Administrativo",
+            "Administração Financeira e Orçamentária",
+            "Administração Geral e Pública"
+          ]
+        },
+        "id": "tcdf-2026-specialized-part-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – TCDF/ANACE, de 8 de julho de 2026",
+              "url": "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/7971F586B9A9CE2C60801C731D8A1CD87F4C5136CA1F1E346C27C5C743773A73.pdf"
+            }
+          ],
+          "exam": "Concurso TCDF, Analista Administrativo de Controle Externo",
+          "subjects": [
+            {
+              "group": "Conhecimentos básicos (P1)",
+              "name": "Língua Portuguesa"
+            },
+            {
+              "group": "Conhecimentos básicos (P1)",
+              "name": "Lei Orgânica do Distrito Federal"
+            },
+            {
+              "group": "Conhecimentos específicos (P2)",
+              "name": "Direito Constitucional"
+            },
+            {
+              "group": "Conhecimentos específicos (P2)",
+              "name": "Lei Orgânica do TCDF e Regimento Interno"
+            },
+            {
+              "group": "Conhecimentos especializados (P3)",
+              "name": "Direito Administrativo"
+            },
+            {
+              "group": "Conhecimentos especializados (P3)",
+              "name": "Administração Financeira e Orçamentária"
+            },
+            {
+              "group": "Conhecimentos especializados (P3)",
+              "name": "Administração Geral e Pública"
+            }
+          ],
+          "tasks": [
+            {
+              "description": "uma questão discursiva de até 20 linhas, valendo 15,00 pontos",
+              "id": "4.1",
+              "section": "(P4) Discursiva"
+            },
+            {
+              "description": "uma peça de natureza técnica (Informação) de até 50 linhas, valendo 35,00 pontos",
+              "id": "4.2",
+              "section": "(P4) Discursiva"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Tasks 1/1. passages found 0/0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 1/1. passages found 0/0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 1/1. passages found 0/0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "2.1": []
+        },
+        "id": "municipal-theme-not-a-subject-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "PREFEITURA MUNICIPAL DE VALE ALTO\nEDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO\n\n5 DAS PROVAS\n5.1 O concurso será composto de prova objetiva e de prova discursiva, aplicadas no mesmo dia, com duração total de 4 horas.\n5.2 A prova objetiva terá 40 questões de múltipla escolha, com cinco alternativas cada, sobre Língua Portuguesa (15 questões), Noções de Informática (10 questões) e Conhecimentos Específicos (15 questões).\n5.3 A prova discursiva consistirá na redação de um texto dissertativo, com extensão máxima de 30 linhas, sobre tema de atualidade relacionado à administração pública municipal.",
+              "title": "Edital nº 3/2026 – Prefeitura de Vale Alto"
+            }
+          ],
+          "exam": "Concurso da Prefeitura de Vale Alto, Assistente Administrativo",
+          "subjects": [
+            {
+              "name": "Língua Portuguesa"
+            },
+            {
+              "name": "Noções de Informática"
+            },
+            {
+              "name": "Conhecimentos Específicos"
+            }
+          ],
+          "tasks": [
+            {
+              "description": "texto dissertativo de até 30 linhas",
+              "id": "2.1",
+              "section": "Prova discursiva"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "2.1": [
+            "Unit 1: Cells",
+            "Unit 2: Energy",
+            "Unit 3: Forces"
+          ],
+          "2.2": [
+            "Ecology",
+            "Genetics"
+          ]
+        },
+        "id": "science-core-and-option-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "NORTHFIELD SCIENCE CERTIFICATE – SYLLABUS 2027\n\nCandidates study the three Core Units (Unit 1: Cells, Unit 2: Energy, Unit 3: Forces) and choose one Option: Option A, Ecology, or Option B, Genetics.\n\nPaper 1 (multiple choice, 1 hour) covers the Core Units.\nPaper 2 (written, 2 hours) has two parts. Part A is one structured essay of up to 800 words on the Core Units. Part B is one extended response on the candidate's chosen Option.",
+              "title": "Northfield Science Certificate syllabus"
+            }
+          ],
+          "exam": "Northfield Science Certificate",
+          "subjects": [
+            {
+              "group": "Core Units",
+              "name": "Unit 1: Cells"
+            },
+            {
+              "group": "Core Units",
+              "name": "Unit 2: Energy"
+            },
+            {
+              "group": "Core Units",
+              "name": "Unit 3: Forces"
+            },
+            {
+              "choiceGroup": "Option",
+              "name": "Ecology"
+            },
+            {
+              "choiceGroup": "Option",
+              "name": "Genetics"
+            }
+          ],
+          "tasks": [
+            {
+              "description": "Part A: one structured essay of up to 800 words",
+              "id": "2.1",
+              "section": "Paper 2"
+            },
+            {
+              "description": "Part B: one extended response",
+              "id": "2.2",
+              "section": "Paper 2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Tasks 2/2. passages found 2/2",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "1.1": [
+            "Direito Constitucional"
+          ],
+          "1.2": [
+            "Direito Administrativo"
+          ]
+        },
+        "id": "court-one-discipline-each-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "TRIBUNAL REGIONAL DE SERRA CLARA – EDITAL Nº 2/2027\n6.1 A prova discursiva será composta de duas questões, de até 20 linhas cada.\n6.2 A primeira questão versará sobre Direito Constitucional e a segunda, sobre Direito Administrativo.\n7.1 A prova objetiva abordará Língua Portuguesa, Direito Constitucional, Direito Administrativo e Noções de Informática.",
+              "title": "Edital nº 2/2027 – TR Serra Clara"
+            }
+          ],
+          "exam": "Tribunal Regional de Serra Clara, Analista Judiciário",
+          "subjects": [
+            {
+              "name": "Língua Portuguesa"
+            },
+            {
+              "name": "Direito Constitucional"
+            },
+            {
+              "name": "Direito Administrativo"
+            },
+            {
+              "name": "Noções de Informática"
+            }
+          ],
+          "tasks": [
+            {
+              "description": "primeira questão discursiva, de até 20 linhas",
+              "id": "1.1",
+              "section": "Prova discursiva"
+            },
+            {
+              "description": "segunda questão discursiva, de até 20 linhas",
+              "id": "1.2",
+              "section": "Prova discursiva"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "find-written-task-subjects"
+}

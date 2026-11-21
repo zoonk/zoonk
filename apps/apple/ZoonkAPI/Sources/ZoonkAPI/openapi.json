@@ -97475,6 +97475,14 @@
                             "type": "number",
                             "minimum": 0,
                             "exclusiveMinimum": true
+                          },
+                          "subjects": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
                           }
                         },
                         "required": [

@@ -174,6 +174,41 @@ const HISTORY_SKILLS = [
   { id: "0195f1d2-7c4a-7d3e-9a10-000000000013", name: "Proofread a timed essay" },
 ];
 
+const CGU_SPECIALTY = "Especialidade";
+
+const CGU_GOVERNANCE = {
+  name: "Fundamentos de Governança, Riscos e Integridade Pública e Privada",
+  topics: [
+    "1 Governança e responsabilidades",
+    "1.1 Distinção entre direção, gestão, controle e prestação de contas; papéis, supervisão, transparência e responsabilização",
+  ],
+};
+
+const CGU_PUBLIC_LAW = {
+  name: "Fundamentos de Direito Público Aplicado, Controle e Responsabilização",
+  topics: [
+    "1 Decisão administrativa",
+    "1.1 Competência, finalidade, motivação, proporcionalidade e segurança jurídica; consideração das consequências e das condições de atuação",
+  ],
+};
+
+const CGU_AUDIT = {
+  name: "Auditoria",
+  topics: [
+    "1 Avaliação, consultoria e apuração",
+    "1.1 Seleção da forma de atuação conforme o problema, objetivos e riscos",
+  ],
+};
+
+const CGU_SYSTEMS = {
+  name: "Tecnologia da Informação – Desenvolvimento de Sistemas",
+  topics: [
+    "1 Problemas e requisitos",
+    "1.1 Necessidades de usuários",
+    "1.2 Requisitos funcionais e não funcionais",
+  ],
+};
+
 const ANSWER_EXPECTATIONS = `A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. The keyed aspects are each one thing an examiner can see present or missing, split into steps where a board grades in steps, covering every requested aspect; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words.`;
 
 export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
@@ -182,11 +217,12 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     id: "cgu-question-30-lines-pt",
     userInput: {
       board: "Cebraspe",
+      choices: [],
       drillSkillId: null,
       exam: "CGU Auditor Federal de Finanças e Controle",
       language: "pt",
-      sectionTopics: ["Administração Financeira e Orçamentária", "Controle interno"],
       skills: CGU_SKILLS,
+      subject: CGU_GOVERNANCE,
       task: CGU_QUESTION,
       unit: "answer",
       usedTitles: [],
@@ -197,12 +233,45 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     id: "cgu-case-60-lines-pt",
     userInput: {
       board: "Cebraspe",
+      choices: [{ group: CGU_SPECIALTY, subject: CGU_AUDIT.name }],
       drillSkillId: null,
       exam: "CGU Auditor Federal de Finanças e Controle",
       language: "pt",
-      sectionTopics: ["Auditoria governamental", "Controle interno"],
       skills: CGU_SKILLS,
+      subject: CGU_AUDIT,
       task: CGU_CASE,
+      unit: "answer",
+      usedTitles: [],
+    },
+  },
+  {
+    expectations: `${ANSWER_EXPECTATIONS} The aspects' points add up to 70; the question is a situação-problema on developing information systems (such as eliciting requirements for a public agency's system), the specialty a candidate of Tecnologia da Informação – Desenvolvimento de Sistemas sits, never an audit case.`,
+    id: "cgu-case-60-lines-systems-pt",
+    userInput: {
+      board: "Cebraspe",
+      choices: [{ group: CGU_SPECIALTY, subject: CGU_SYSTEMS.name }],
+      drillSkillId: null,
+      exam: "CGU Auditor Federal de Finanças e Controle",
+      language: "pt",
+      skills: CGU_SKILLS,
+      subject: CGU_SYSTEMS,
+      task: CGU_CASE,
+      unit: "answer",
+      usedTitles: [],
+    },
+  },
+  {
+    expectations: `${ANSWER_EXPECTATIONS} The aspects' points add up to 70; the task is on the candidate's own specialty and the learner's is Tecnologia da Informação – Ciência de Dados, so the question is a situação-problema on data science (exploring, describing or modeling a public body's data), never an audit case.`,
+    id: "cgu-case-60-lines-no-subject-data-pt",
+    userInput: {
+      board: "Cebraspe",
+      choices: [{ group: CGU_SPECIALTY, subject: "Tecnologia da Informação – Ciência de Dados" }],
+      drillSkillId: null,
+      exam: "CGU Auditor Federal de Finanças e Controle",
+      language: "pt",
+      skills: CGU_SKILLS,
+      subject: null,
+      task: { ...CGU_CASE, section: "Prova discursiva (P4)" },
       unit: "answer",
       usedTitles: [],
     },
@@ -212,11 +281,12 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     id: "cgu-question-used-titles-pt",
     userInput: {
       board: "Cebraspe",
+      choices: [],
       drillSkillId: null,
       exam: "CGU Auditor Federal de Finanças e Controle",
       language: "pt",
-      sectionTopics: ["Administração Financeira e Orçamentária", "Controle interno"],
       skills: CGU_SKILLS,
+      subject: CGU_PUBLIC_LAW,
       task: CGU_QUESTION,
       unit: "answer",
       usedTitles: [
@@ -234,11 +304,12 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     id: "cgu-drill-plan-pt",
     userInput: {
       board: "Cebraspe",
+      choices: [],
       drillSkillId: SKILLS.plan.id,
       exam: "CGU Auditor Federal de Finanças e Controle",
       language: "pt",
-      sectionTopics: ["Administração Financeira e Orçamentária", "Controle interno"],
       skills: [SKILLS.plan],
+      subject: CGU_GOVERNANCE,
       task: CGU_QUESTION,
       unit: "drill",
       usedTitles: ["Esboço sobre controle externo"],
@@ -249,16 +320,17 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     id: "enem-redacao-pt",
     userInput: {
       board: "Inep",
+      choices: [],
       drillSkillId: null,
       exam: "Enem",
       language: "pt",
-      sectionTopics: [],
       skills: [
         {
           id: "0195f1d2-7c4a-7d3e-9a10-000000000021",
           name: "Redação dissertativo-argumentativa do Enem",
         },
       ],
+      subject: null,
       task: ENEM_REDACAO,
       unit: "answer",
       usedTitles: ["Herança africana no Brasil"],
@@ -269,13 +341,14 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     id: "oab-peca-penal-pt",
     userInput: {
       board: "FGV",
+      choices: [{ group: "Área de opção", subject: "Direito Penal" }],
       drillSkillId: null,
       exam: "Exame de Ordem Unificado, segunda fase",
       language: "pt",
-      sectionTopics: ["Direito do Trabalho", "Direito Processual do Trabalho"],
       skills: [
         { id: "0195f1d2-7c4a-7d3e-9a10-000000000031", name: "Redigir peças processuais penais" },
       ],
+      subject: null,
       task: OAB_PECA,
       unit: "answer",
       usedTitles: [],
@@ -285,11 +358,12 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     expectations: `${ANSWER_EXPECTATIONS} The notice states no scale: two to five criteria of the examiner's own with null points, aspects with null points, and a question with no marks. A real exam-board style history essay question on the industrial revolution in Britain, in English.`,
     id: "history-essay-no-scale-en",
     userInput: {
+      choices: [],
       drillSkillId: null,
       exam: "Prova de redação",
       language: "en",
-      sectionTopics: [],
       skills: HISTORY_SKILLS,
+      subject: null,
       task: ESSAY_NO_SCALE,
       unit: "answer",
       usedTitles: ["Factory conditions and reform"],
@@ -299,11 +373,12 @@ export const TEST_CASES: TestCase<unknown, WriteWritingPromptInput>[] = [
     expectations: `A drill in English that practices writing a thesis for a history essay: the context gives an essay question (and nothing else long), the question asks only for a thesis sentence or two, the criteria assess that thesis only, with null points, and assessedSkillIds holds only the drill skill.`,
     id: "history-drill-thesis-en",
     userInput: {
+      choices: [],
       drillSkillId: HISTORY_SKILLS[1]?.id ?? null,
       exam: "Prova de redação",
       language: "en",
-      sectionTopics: [],
       skills: HISTORY_SKILLS.slice(1, 2),
+      subject: null,
       task: ESSAY_NO_SCALE,
       unit: "drill",
       usedTitles: [],

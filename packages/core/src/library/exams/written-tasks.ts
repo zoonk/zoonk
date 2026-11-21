@@ -125,6 +125,7 @@ function toTask({
     points: task.points ?? null,
     section: section.name,
     session: section.session ?? null,
+    subjects: task.subjects ?? null,
   };
 }
 

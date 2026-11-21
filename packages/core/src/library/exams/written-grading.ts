@@ -46,4 +46,6 @@ export const sectionTaskSchema = z.object({
   officialIdentifier: z.string().min(1).optional(),
   plays: z.number().int().min(1).max(2).nullable().optional(),
   points: z.number().positive().optional(),
+  /** The exam's subjects the notice says the task's questions are on; absent when it doesn't say. */
+  subjects: z.array(z.string().min(1)).min(1).optional(),
 });
