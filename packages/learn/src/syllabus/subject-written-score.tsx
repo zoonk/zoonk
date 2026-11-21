@@ -25,13 +25,12 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { useWritingTaskTitle } from "../writing/writing-header";
 import { useFormatPointsRange } from "../writing/writing-labels";
 import { WrittenStanding } from "./subject-written-standing";
+import { getTrendBarShares } from "./written-trend";
 
 export type WrittenSubject = NonNullable<WrittenPractice["subjects"]>[number];
 
 const PERCENT = 100;
 const TREND_SAMPLES = 4;
-/** The shortest bar still reads as a bar, so a zero isn't an empty slot. */
-const MIN_BAR_SHARE = 0.2;
 
 export function findWrittenSubject({
   practice,
@@ -48,20 +47,24 @@ export function findWrittenSubject({
 
 /** One small bar per answer, oldest first, the latest in full color. */
 function TrendBars({ values }: { values: (number | null)[] }) {
-  const peak = Math.max(1, ...values.map((value) => value ?? 0));
+  const shares = getTrendBarShares(values);
+
+  if (shares.length === 0) {
+    return null;
+  }
 
   return (
     <span aria-hidden="true" className="flex h-5 shrink-0 items-end gap-0.5">
-      {values.map((value, index) => (
+      {shares.map((share, index) => (
         <span
           className={cn(
             "rounded-meter w-1.5",
             index === values.length - 1 ? "bg-success" : "bg-success/40",
-            value === null && "bg-surface-3",
+            values[index] === null && "bg-surface-3",
           )}
           // oxlint-disable-next-line react/no-array-index-key -- the bars are the answers in order
           key={index}
-          style={{ height: `${Math.max(MIN_BAR_SHARE, (value ?? 0) / peak) * PERCENT}%` }}
+          style={{ height: `${share * PERCENT}%` }}
         />
       ))}
     </span>

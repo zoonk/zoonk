@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -93,6 +94,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
@@ -661,12 +663,26 @@ internal fun DraftConflictDialog(
     onKeepThis: () -> Unit,
     onUseOther: () -> Unit,
 ) {
+    val keepFocus = remember { FocusRequester() }
+
     AlertDialog(
         onDismissRequest = {},
         title = { Text(stringResource(R.string.essay_conflict_title)) },
         text = { Text(stringResource(R.string.essay_conflict_body)) },
-        confirmButton = { TextButton(onClick = onKeepThis) { Text(stringResource(R.string.essay_conflict_keep)) } },
-        dismissButton = { TextButton(onClick = onUseOther) { Text(stringResource(R.string.essay_conflict_use_other)) } },
+        confirmButton = {
+            TextButton(onClick = onKeepThis, modifier = Modifier.focusMoveTarget(keepFocus)) {
+                Text(stringResource(R.string.essay_conflict_keep))
+            }
+            LaunchedEffect(keepFocus) { keepFocus.requestFocus() }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onUseOther,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+            ) {
+                Text(stringResource(R.string.essay_conflict_use_other))
+            }
+        },
     )
 }
 

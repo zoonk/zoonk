@@ -94,6 +94,7 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamSectionsInner
+import com.zoonk.api.models.MockShape
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
@@ -327,11 +328,13 @@ private fun RunnerProgress(
                 style = meta,
             )
             run.moves.itemSeconds?.let { key(question.itemId) { ItemCountdown(it, onTimeUp = onQuestionTimeUp) } }
-            Text(
-                place?.let { stringResource(R.string.mock_place, it.number, it.total) } ?: stringResource(R.string.mock_written_part),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = meta,
-            )
+            if (place != null || run.view.shape?.kind != MockShape.Kind.WRITTEN) {
+                Text(
+                    place?.let { stringResource(R.string.mock_place, it.number, it.total) } ?: stringResource(R.string.mock_written_part),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = meta,
+                )
+            }
         }
     }
 }

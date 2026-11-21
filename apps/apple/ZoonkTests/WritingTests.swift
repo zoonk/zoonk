@@ -5,6 +5,26 @@ import XCTest
 
 @testable import Zoonk
 
+final class WrittenTrendTests: XCTestCase {
+  func testOneAnswerHasNoTrend() {
+    XCTAssertEqual(writtenTrendBarShares([3]), [])
+  }
+
+  func testTwoAnswersAreScaledToTheHigherValue() {
+    XCTAssertEqual(writtenTrendBarShares([2, 4]), [0.5, 1])
+  }
+}
+
+@MainActor
+final class DraftConflictChoiceTests: XCTestCase {
+  func testOnlyKeepingThisDraftIsTheDefault() {
+    XCTAssertEqual(DraftConflictChoice.keep.shortcut, .defaultAction)
+    XCTAssertNil(DraftConflictChoice.keep.role)
+    XCTAssertNil(DraftConflictChoice.useOther.shortcut)
+    XCTAssertEqual(DraftConflictChoice.useOther.role, .destructive)
+  }
+}
+
 /// Core's `countWritingLines` gives these counts and offsets; the writer, the result and the
 /// server must agree on where the board stops reading.
 final class WritingLinesTests: XCTestCase {

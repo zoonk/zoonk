@@ -174,22 +174,31 @@ private struct TrendBars: View {
   @ScaledMetric(relativeTo: .footnote) private var height = 20.0
 
   var body: some View {
-    let peak = max(1, values.compactMap(\.self).max() ?? 0)
+    let shares = writtenTrendBarShares(values)
 
-    HStack(alignment: .bottom, spacing: 2) {
-      ForEach(Array(values.enumerated()), id: \.offset) { index, value in
-        RoundedRectangle(cornerRadius: 2, style: .continuous)
-          .fill(
-            value == nil
-              ? Color.surface3
-              : index == values.count - 1 ? Color.success : Color.success.opacity(0.4)
-          )
-          .frame(width: 6, height: height * max(0.2, (value ?? 0) / peak))
+    if !shares.isEmpty {
+      HStack(alignment: .bottom, spacing: 2) {
+        ForEach(Array(shares.enumerated()), id: \.offset) { index, share in
+          RoundedRectangle(cornerRadius: 2, style: .continuous)
+            .fill(
+              values[index] == nil
+                ? Color.surface3
+                : index == shares.count - 1 ? Color.success : Color.success.opacity(0.4)
+            )
+            .frame(width: 6, height: height * share)
+        }
       }
+      .frame(height: height, alignment: .bottom)
+      .accessibilityHidden(true)
     }
-    .frame(height: height, alignment: .bottom)
-    .accessibilityHidden(true)
   }
+}
+
+func writtenTrendBarShares(_ values: [Double?]) -> [Double] {
+  guard values.count >= 2 else { return [] }
+
+  let peak = max(1, values.compactMap(\.self).max() ?? 0)
+  return values.map { max(0.2, ($0 ?? 0) / peak) }
 }
 
 /// Each first answer, which opens as its result was read.

@@ -239,7 +239,7 @@ private struct EssayContent: View {
         Text("This answer changed on another device", tableName: "Essay"),
         isPresented: Binding(get: { writer.conflict != nil }, set: { _ in })
       ) {
-        Button {
+        Button(role: DraftConflictChoice.keep.role) {
           Task { await writer.keepThisOne() }
         } label: {
           Text(
@@ -248,7 +248,8 @@ private struct EssayContent: View {
               "A choice between two versions of one written answer: keep what's typed on this device and save it over the other."
           )
         }
-        Button {
+        .keyboardShortcut(DraftConflictChoice.keep.shortcut)
+        Button(role: DraftConflictChoice.useOther.role) {
           writer.useTheOther()
         } label: {
           Text(
@@ -257,6 +258,7 @@ private struct EssayContent: View {
               "A choice between two versions of one written answer: replace what's typed here with the version saved on another device."
           )
         }
+        .keyboardShortcut(DraftConflictChoice.useOther.shortcut)
       } message: {
         Text(
           "Keep the version you're writing here, or switch to the other one.", tableName: "Essay")
@@ -618,4 +620,12 @@ struct WritingCriteriaList: View {
       }
     }
   }
+}
+
+enum DraftConflictChoice {
+  case keep
+  case useOther
+
+  var role: ButtonRole? { self == .useOther ? .destructive : nil }
+  var shortcut: KeyboardShortcut? { self == .keep ? .defaultAction : nil }
 }
