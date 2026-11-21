@@ -11,6 +11,18 @@ const lines = z.int().positive().nullable();
 const points = z.number().positive().nullable();
 export const writingUnitSchema = z.enum(["drill", "answer"]);
 
+const writingTaskPosition = {
+  number: z.int().positive().describe("The first question number for this task in notice order"),
+  total: z
+    .int()
+    .positive()
+    .describe("The number of questions in the written test, counting repeats"),
+};
+
+export const writingTaskSchema = z
+  .object({ lines, points, ...writingTaskPosition })
+  .meta({ id: "WritingTask" });
+
 export const writingPromptSchema = z
   .object({
     charactersPerLine: z.int().positive(),
@@ -77,8 +89,10 @@ export const writingStartSchema = z
           description: z.string(),
           lines,
           minutes: z.int().positive(),
+          number: writingTaskPosition.number.optional(),
           points,
           taskKey,
+          total: writingTaskPosition.total.optional(),
           unit: writingUnitSchema,
         })
         .optional()

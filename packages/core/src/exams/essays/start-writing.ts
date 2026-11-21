@@ -20,6 +20,7 @@ import { getStoredBlockWait } from "../../sessions/block-wait";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { getSession } from "../../users/get-session";
 import { listPracticeWritingTasks } from "./_utils/practice-writing-tasks";
+import { indexWritingTasks } from "./_utils/writing-task-positions";
 import {
   InvalidWritingRewriteError,
   admitWriting,
@@ -40,10 +41,14 @@ function findCurrentTask({
     return;
   }
 
-  return listPracticeWritingTasks({
+  const tasks = listPracticeWritingTasks({
     classTest: Boolean(blueprint.ownerId),
     structure: readBlueprintContent(blueprint).structure,
-  }).find(({ key }) => key === taskKey);
+  });
+
+  const task = tasks.find(({ key }) => key === taskKey);
+
+  return task && { ...task, ...indexWritingTasks(tasks).get(taskKey) };
 }
 
 function summarizeTask({
@@ -60,6 +65,7 @@ function summarizeTask({
         description: task.description,
         lines: task.lines,
         minutes: estimatedMinutes,
+        ...(task.number && { number: task.number, total: task.total }),
         points: task.points,
         taskKey: task.key,
         unit,

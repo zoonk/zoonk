@@ -19,6 +19,7 @@ import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { loadStudySessionView } from "./load-session-view";
 import { getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
+import { getBlueprintWritingTasks } from "./writing-block-tasks";
 
 /** A saved day can need a POST for entitlement-only free replacements, never invented IDs. */
 export async function readSavedDayView({
@@ -86,6 +87,8 @@ export async function readSavedDayView({
 
   const savedViews = new Map(view.blocks.map((block) => [block.id, block]));
 
+  const writingTasks = getBlueprintWritingTasks(blueprint);
+
   const blocks = refill.blocks.map((block) => {
     const saved = block.id ? savedViews.get(block.id) : undefined;
 
@@ -100,6 +103,7 @@ export async function readSavedDayView({
       blockedTestOutChapters,
       blocks: refill.blocks,
       subject: subjects.get(block.position) ?? null,
+      writingTasks,
     });
   });
 

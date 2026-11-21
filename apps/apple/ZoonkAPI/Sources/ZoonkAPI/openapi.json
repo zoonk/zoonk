@@ -43300,6 +43300,13 @@
                       "$ref": "#/components/schemas/WritingRangeOutput"
                     }
                   ]
+                },
+                "writingTask": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/WritingTask"
+                    }
+                  ]
                 }
               },
               "required": [
@@ -43319,6 +43326,45 @@
           "range",
           "standing",
           "tasks"
+        ],
+        "additionalProperties": false
+      },
+      "WritingTask": {
+        "type": "object",
+        "properties": {
+          "lines": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "points": {
+            "nullable": true,
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The first question number for this task in notice order"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The number of questions in the written test, counting repeats"
+          }
+        },
+        "required": [
+          "lines",
+          "points",
+          "number",
+          "total"
         ],
         "additionalProperties": false
       },
@@ -79017,6 +79063,13 @@
             ],
             "type": "object"
           },
+          "writingTask": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingTask"
+              }
+            ]
+          },
           "writingUnit": {
             "description": "The size of this writing block, when it is a writing drill or a whole answer",
             "type": "string",
@@ -86817,6 +86870,13 @@
                       },
                       "taskKey": {
                         "type": "string"
+                      },
+                      "writingTask": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/WritingTask"
+                          }
+                        ]
                       }
                     },
                     "required": [
@@ -96139,6 +96199,13 @@
                   ],
                   "type": "object"
                 },
+                "writingTask": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/WritingTask"
+                    }
+                  ]
+                },
                 "writingUnit": {
                   "description": "The size of this writing block, when it is a writing drill or a whole answer",
                   "type": "string",
@@ -100985,6 +101052,13 @@
                     "exclusiveMinimum": true,
                     "maximum": 9007199254740991
                   },
+                  "number": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "description": "The first question number for this task in notice order"
+                  },
                   "points": {
                     "nullable": true,
                     "type": "number",
@@ -100994,6 +101068,13 @@
                   "taskKey": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "total": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "description": "The number of questions in the written test, counting repeats"
                   },
                   "unit": {
                     "type": "string",

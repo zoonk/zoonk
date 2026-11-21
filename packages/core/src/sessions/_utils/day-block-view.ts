@@ -1,5 +1,6 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { getPlannedQuestions } from "../../checkpoints/checkpoint-rules";
+import { type indexWritingTasks } from "../../exams/essays/_utils/writing-task-positions";
 import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../block-payload";
 import { studyCheckpointSchema } from "../block-view-contract";
 import { getStoredBlockWait } from "../block-wait";
@@ -51,10 +52,12 @@ function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["che
 function getWritingFields({
   block,
   payload,
+  writingTasks,
 }: {
   block: DayBlockInput;
   payload: ReturnType<typeof readBlockPayload>;
-}): Pick<DayBlockView, "writingAvailability" | "writingUnit"> {
+  writingTasks?: ReturnType<typeof indexWritingTasks>;
+}): Pick<DayBlockView, "writingAvailability" | "writingTask" | "writingUnit"> {
   const { writing } = payload;
 
   if (!writing) {
@@ -64,7 +67,10 @@ function getWritingFields({
   const continuing =
     writing.admissionId && (block.status === "active" || block.status === "pending");
 
+  const writingTask = writingTasks?.get(writing.taskKey);
+
   return {
+    ...(writingTask && { writingTask }),
     writingAvailability: { status: continuing ? "continue" : "available" },
     writingUnit: writing.unit,
   };
@@ -77,6 +83,7 @@ export function toDayBlockView({
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
   subject = null,
+  writingTasks,
 }: {
   answeredItemIds: ReadonlySet<string>;
   block: DayBlockInput;
@@ -85,6 +92,7 @@ export function toDayBlockView({
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
   subject?: string | null;
+  writingTasks?: ReturnType<typeof indexWritingTasks>;
 }): DayBlockView {
   const payload = readBlockPayload(block);
   const itemIds = getBlockItemIds(payload);
@@ -142,6 +150,6 @@ export function toDayBlockView({
     topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),
     weakest: payload.weakest,
-    ...getWritingFields({ block, payload }),
+    ...getWritingFields({ block, payload, writingTasks }),
   };
 }

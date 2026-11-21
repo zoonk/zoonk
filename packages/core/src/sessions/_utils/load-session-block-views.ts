@@ -10,14 +10,14 @@ import { loadBlockSubjects } from "./block-subjects";
 import { isCurrentSession } from "./current-session";
 import { loadExtraWritingAvailability } from "./extra-writing-availability";
 import { type LessonStatesReader, readLessonScreens } from "./lesson-screens";
-import { findRemovedWritingBlocks } from "./removed-writing-blocks";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { toStudyBlockView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
+import { loadSessionWritingTasks } from "./writing-block-tasks";
 
 export async function loadSessionBlockViews({
   answers: knownAnswers,
-  blueprint,
+  blueprint: knownBlueprint,
   plan,
   readLessonStates,
   session: saved,
@@ -32,9 +32,9 @@ export async function loadSessionBlockViews({
   timeZone: string;
   userId: string;
 }) {
-  const [now, removed] = await Promise.all([
+  const [now, { blueprint, removed, writingTasks }] = await Promise.all([
     getRequestInstant(),
-    findRemovedWritingBlocks({ blueprint, session: saved }),
+    loadSessionWritingTasks({ blueprint: knownBlueprint, session: saved }),
   ]);
 
   const session = { ...saved, blocks: saved.blocks.filter(({ id }) => !removed.has(id)) };
@@ -83,6 +83,7 @@ export async function loadSessionBlockViews({
           blocks: session.blocks,
           oftenTestedSkillIds,
           subject: subjects.get(block.position) ?? null,
+          writingTasks,
         }),
       ),
       current,
