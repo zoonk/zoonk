@@ -18,11 +18,6 @@ enum WritingLabels {
     value.formatted(.percent.precision(.fractionLength(0)).locale(locale))
   }
 
-  /// Without the scale's own decimals, both ends take one when either needs it.
-  private static func decimals(_ range: WritingRange, scale: Int?) -> Int {
-    scale ?? ([range.low, range.high].contains { Int((abs($0) * 10).rounded()) % 10 != 0 } ? 1 : 0)
-  }
-
   /// 0.3 × 10 is 3.0000000000000004 in floating point, which must still round to 3.
   private static let floatSlack = 1e-9
 
@@ -36,18 +31,17 @@ enum WritingLabels {
       low: (range.low * step + floatSlack).rounded(.down) / step + 0)
   }
 
-  /// A range of points, one number when both ends read alike ("29.8", never "29.79–29.8"), both
-  /// ends with the same decimals ("12.0–17.5", never "12–17.5"), joined by an en dash. Its ends
-  /// round outward, the low one down and the high one up, so it never claims more than it knows;
-  /// nothing at all reads "0", never "0.0".
-  static func range(_ range: WritingRange, decimals scale: Int? = nil) -> String {
-    let decimals = decimals(range, scale: scale)
-    let shown = roundedOutward(range, decimals: decimals)
-
-    if shown.low == 0, shown.high == 0 { return points(0, decimals: 0) }
-
+  /// A range of points with exactly the scale's `decimals` (whole points when the server sends
+  /// none), one number when both ends read alike ("29.8", never "29.79–29.8"), joined by an en
+  /// dash. Each end rounds to the nearest; a `headline` rounds its low end down and its high end
+  /// up, so it never claims more than its parts. Nothing at all reads "0", never "0.0".
+  static func range(_ range: WritingRange, decimals: Int? = nil, headline: Bool = false) -> String {
+    let decimals = decimals ?? 0
+    let shown = headline ? roundedOutward(range, decimals: decimals) : range
     let low = points(shown.low, decimals: decimals)
     let high = points(shown.high, decimals: decimals)
+
+    if [low, high].allSatisfy(isZero) { return points(0, decimals: 0) }
 
     return low == high
       ? low
@@ -56,20 +50,28 @@ enum WritingLabels {
         comment: "A range of points, low to high, like 16–19")
   }
 
-  /// What language errors take away: "−0.3 to −0.6", or one number when both ends read alike.
-  static func deduction(_ range: WritingRange, decimals scale: Int? = nil) -> String {
-    let decimals = decimals(range, scale: scale)
-    let shown = roundedOutward(range, decimals: decimals)
-    let low = points(shown.low, decimals: decimals)
-    let high = points(shown.high, decimals: decimals)
+  /// What language errors take away, to one decimal: "−0.3 to −0.6", one number when both ends
+  /// read alike, and "0" when nothing is taken, never "−0".
+  static func deduction(_ range: WritingRange) -> String {
+    let low = points(range.low, decimals: 1)
+    let high = points(range.high, decimals: 1)
 
-    if shown.high <= 0 { return points(0, decimals: 0) }
+    if isZero(high) { return points(0, decimals: 0) }
+    if low == high { return "−\(high)" }
 
-    return low == high
-      ? "−\(low)"
+    return isZero(low)
+      ? String(
+        localized: "0 to −\(high)", table: "Essay",
+        comment:
+          "Points language errors take off an answer, from none to some, like '0 to −0.6'")
       : String(
         localized: "−\(low) to −\(high)", table: "Essay",
         comment: "Points language errors take off an answer, as a range, like '−0.3 to −0.6'")
+  }
+
+  /// A number written as zero, whatever its decimals: "0", "0.0" or "-0.0".
+  private static func isZero(_ written: String) -> Bool {
+    !written.contains { $0.isNumber && $0 != "0" }
   }
 
   /// "16–19 of 30": the scale with the range's own decimals, so a 1.25-point question reads 1.25.

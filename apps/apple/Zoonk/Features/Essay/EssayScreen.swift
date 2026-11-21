@@ -22,7 +22,8 @@ struct EssayScreen: View {
           WritingStartView(
             blockId: blockId, start: shownStart ?? .failed, onReady: { started = $0 })
         case .ready, nil:
-          EssayLoader(blockId: blockId, admissionId: shownStart?.admissionId)
+          EssayLoader(
+            blockId: blockId, admissionId: shownStart?.admissionId, onStart: { started = $0 })
         }
       }
       .navigationBarTitleDisplayMode(.inline)
@@ -42,6 +43,7 @@ private struct EssayLoader: View {
 
   let blockId: String
   let admissionId: String?
+  let onStart: (WritingStart) -> Void
 
   var body: some View {
     let essay = store.essay(blockId: blockId)
@@ -53,7 +55,11 @@ private struct EssayLoader: View {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .lonePage()
       case .empty, .failed(.notFound):
-        NotFoundView()
+        // No question admitted yet: a link or a screen opened again shows the task, unasked.
+        UnstartedWriting(blockId: blockId) { start in
+          if case .ready = start { essay.invalidate() }
+          onStart(start)
+        }
       case .failed:
         PageLoadFailure {
           Label {
@@ -70,13 +76,78 @@ private struct EssayLoader: View {
       }
     }
     .toolbar {
-      if essay.value == nil {
+      if essay.value == nil, ![.empty, .failed(.notFound)].contains(essay.state) {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) { dismiss() }
         }
       }
     }
     .loads(essay, refreshable: false)
+  }
+}
+
+/// A writing block before its question is admitted, as the learner's own day lists it: the task's
+/// name and time with "Write", the day's grading used up, or a block the day no longer lists, which
+/// a re-read of the exam's notice removed. Nothing starts until the learner taps.
+private struct UnstartedWriting: View {
+  @Environment(TodayStore.self) private var today
+  @Environment(\.dismiss) private var dismiss
+
+  let blockId: String
+  let onReady: (WritingStart) -> Void
+
+  var body: some View {
+    Group {
+      switch today.today.state {
+      case .idle, .loading:
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .lonePage()
+          .toolbar { close }
+      case .loaded(.day(let view)):
+        if let block = view.session.blocks.first(where: { $0.id == blockId }) {
+          if let unit = block.writingUnit {
+            WritingStartView(
+              blockId: blockId, start: Self.start(of: block),
+              task: .init(
+                title: WritingLabels.taskTitle(
+                  unit: unit, task: block.writingTask, fallback: block.title)
+                  ?? WritingLabels.header(unit),
+                minutes: block.estimatedMinutes),
+              unasked: unit, onReady: onReady)
+          } else {
+            NotFoundView()
+              .toolbar { close }
+          }
+        } else {
+          WritingStartView(blockId: blockId, start: .unavailable, onReady: onReady)
+        }
+      default:
+        NotFoundView()
+          .toolbar { close }
+      }
+    }
+    .loads(today.today)
+  }
+
+  private var close: some ToolbarContent {
+    ToolbarItem(placement: .cancellationAction) {
+      Button(role: .close) { dismiss() }
+    }
+  }
+
+  /// The day's grading used up refuses before a question is asked for; anything else waits for
+  /// "Write".
+  static func start(of block: StudyBlock) -> WritingStart? {
+    guard let returnsOn = block.writingAvailability?.returnsOn else { return nil }
+
+    return .limitReached(
+      returnsOn: returnsOn,
+      task: .init(
+        description: block.title ?? "", distinctLines: block.writingTask?.distinctLines,
+        lines: block.writingTask?.lines, minutes: block.estimatedMinutes,
+        number: block.writingTask?.number, points: block.writingTask?.points,
+        total: block.writingTask?.total, unit: block.writingUnit))
   }
 }
 
@@ -407,6 +478,13 @@ private struct WritingEditorPage: View {
         .typeStyle(.data)
         .foregroundStyle(count.isOver ? .warningText : .mutedForeground)
         .accessibilityHidden(true)
+
+      // The bar's note floats over the page: the field gives it room so the count stays in view.
+      if let note {
+        note.floatingNote()
+          .hidden()
+          .accessibilityHidden(true)
+      }
     }
     .scenePadding(.horizontal)
     .padding(.top, 8)
