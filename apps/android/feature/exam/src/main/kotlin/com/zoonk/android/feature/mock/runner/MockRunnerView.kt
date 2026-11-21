@@ -584,6 +584,7 @@ internal fun SheetSections(
         run.view.sections.forEachIndexed { index, section ->
             if (index > 0) HorizontalDivider()
             val current = section.status == MockExamSectionsInner.Status.CURRENT
+            val total = if (current && run.view.current != null) counts.total.toLong() else section.questions + section.essays
             Row(
                 Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics(mergeDescendants = true) {},
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -614,10 +615,7 @@ internal fun SheetSections(
                         stringResource(
                             R.string.mock_section_answered_of,
                             formatNumber((if (current) counts.answered else 0).toDouble(), locale),
-                            formatNumber(
-                                if (current) counts.total.toDouble() else (section.questions + section.essays).toDouble(),
-                                locale,
-                            ),
+                            formatNumber(total.toDouble(), locale),
                         )
                     },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

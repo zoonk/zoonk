@@ -27,6 +27,7 @@ const SECTION_MARK = { current: "next", done: "done", upcoming: "todo" } as cons
 function SectionTrailing({ section }: { section: MockSectionView }) {
   const t = useExtracted();
   const countOf = useCountOf();
+  const { runner } = useMockScreen();
   const counts = useSectionCounts();
 
   if (section.status === "done") {
@@ -40,7 +41,7 @@ function SectionTrailing({ section }: { section: MockSectionView }) {
     );
   }
 
-  return section.status === "current"
+  return section.status === "current" && runner.view.current
     ? countOf(counts.answered, counts.total)
     : countOf(0, section.questions + section.essays);
 }
