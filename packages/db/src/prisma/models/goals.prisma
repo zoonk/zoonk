@@ -66,6 +66,7 @@ model Goal {
   prompt                String
   displayName           String                 @map("display_name")
   title                 String
+  livingPlanWindow      Json?                  @map("living_plan_window")
   details               Json                   @default("{}")
   language              String                 @db.VarChar(10)
   targetLanguage        String?                @map("target_language") @db.VarChar(10)

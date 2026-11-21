@@ -7,6 +7,11 @@ import {
   parseCefrScore,
 } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
+import {
+  DROP_ACCURACY,
+  LEVEL_WINDOW_ANSWERS,
+  RISE_ACCURACY,
+} from "../../sessions/_utils/living-plan-window";
 
 export const LANGUAGE_SKILLS = [
   "reading",
@@ -14,12 +19,6 @@ export const LANGUAGE_SKILLS = [
   "speaking",
   "writing",
 ] as const satisfies readonly LanguageSkill[];
-
-const LEVEL_WINDOW_ANSWERS = 20;
-
-const RISE_ACCURACY = 0.85;
-
-const DROP_ACCURACY = 0.5;
 
 const HALF_STEP = 0.5;
 
@@ -116,7 +115,8 @@ export function applyLevelEvidence(
   evidence: LevelEvidence,
 ): SkillLevelState {
   const next = {
-    ...state,
+    score: state.score,
+    startScore: state.startScore,
     windowCeiling:
       evidence.correct > 0
         ? Math.max(state.windowCeiling ?? evidence.ceiling, evidence.ceiling)

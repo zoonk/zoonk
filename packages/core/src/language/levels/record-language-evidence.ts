@@ -7,6 +7,10 @@ import {
   prisma,
 } from "@zoonk/db";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import {
+  type LessonWindowAnswer,
+  recordLivingPlanAnswers,
+} from "../../sessions/_utils/living-plan-window";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
 import { isPatternCheckDue } from "../patterns/find-mistake-pattern";
 import {
@@ -149,4 +153,46 @@ export async function writeLanguageStepEvidence(
       userId,
     });
   }
+}
+
+export async function recordLanguageLessonWindow(
+  tx: TransactionClient,
+  {
+    answers,
+    at,
+    details,
+    language,
+    skill,
+    userId,
+  }: {
+    answers: readonly LessonWindowAnswer[];
+    at: Date;
+    details: Record<string, unknown>;
+    language: string;
+    skill: LanguageSkill;
+    userId: string;
+  },
+) {
+  const where = { userLanguageSkill: { language, skill, userId } };
+
+  const current = await tx.languageSkillLevel.findUnique({
+    select: { livingPlanWindow: true },
+    where,
+  });
+
+  const livingPlanWindow = recordLivingPlanAnswers({
+    answers,
+    at,
+    stored: current?.livingPlanWindow,
+  });
+
+  const startScore = getStartScore({ details, skill });
+
+  await tx.languageSkillLevel.upsert({
+    create: { language, livingPlanWindow, score: startScore, skill, startScore, userId },
+    update: { livingPlanWindow },
+    where,
+  });
+
+  return livingPlanWindow.total === 0 ? livingPlanWindow.closed : null;
 }
