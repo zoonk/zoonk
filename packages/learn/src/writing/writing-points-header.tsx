@@ -15,9 +15,6 @@ import { getMinimumShare } from "./minimum-points";
 import { MinimumLegend, PointsMeter, PointsReadout } from "./points-readout";
 import { useFormatPointsRange } from "./writing-labels";
 
-// A language error costs a fraction of a point, so whole points would read "−0".
-const DEDUCTION_DECIMALS = 1;
-
 type Points = Extract<WritingResult, { kind: "points" }>;
 
 /** The written test's minimum, drawn on this question's scale at the same share of its points. */
@@ -107,7 +104,7 @@ export function PointsHeader({
               </span>
             </span>
             <span className="font-mono text-xs tabular-nums">
-              {formatRange(grade.deduction, { decimals: DEDUCTION_DECIMALS, deduction: true })}
+              {formatRange(grade.deduction, { kind: "deduction" })}
             </span>
           </StepRow>
         </StepRows>

@@ -9,6 +9,17 @@ const PERCENT = 100;
 
 type Range = { high: number; low: number };
 
+export function usePointsEstimate() {
+  const t = useExtracted();
+  const formatRange = useFormatPointsRange();
+  const formatScore = useFormatScore();
+
+  return ({ decimals, max, range }: { decimals?: number; max: number; range: Range }) => ({
+    scale: t("of {max}", { max: formatScore(max) }),
+    score: formatRange(range, { decimals, kind: "estimate" }),
+  });
+}
+
 /**
  * A block's one number: the range large, its scale small beside it ("54–61 of 100"). A headline
  * never claims more than its parts, so its ends round outward.
@@ -22,18 +33,12 @@ export function PointsReadout({
   max: number;
   range: Range;
 }) {
-  const t = useExtracted();
-  const formatRange = useFormatPointsRange();
-  const formatScore = useFormatScore();
+  const { scale, score } = usePointsEstimate()({ decimals, max, range });
 
   return (
     <span className="flex items-baseline gap-2">
-      <span className="text-readout text-[2.5rem] leading-none tabular-nums">
-        {formatRange(range, { decimals, headline: true })}
-      </span>
-      <span className="text-muted-foreground text-sm font-normal">
-        {t("of {max}", { max: formatScore(max) })}
-      </span>
+      <span className="text-readout text-[2.5rem] leading-none tabular-nums">{score}</span>
+      <span className="text-muted-foreground text-sm font-normal">{scale}</span>
     </span>
   );
 }

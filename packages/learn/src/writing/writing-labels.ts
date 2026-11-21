@@ -4,7 +4,7 @@ import { type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { daysBetween, useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
 import { useFormatRange } from "../_utils/range";
-import { roundOutward } from "./round-outward";
+import { formatPointsRange } from "./format-points-range";
 
 export type WritingLevel = WritingResult["criteria"][number]["level"];
 
@@ -40,45 +40,14 @@ export function useLevelName() {
   };
 }
 
-type Range = { high: number; low: number };
-
-/** A deduction's minus: the typographic one, which a hyphen only imitates. */
-const MINUS = "\u2212";
-
-/** Exactly `decimals` digits after the point, so every number of one scale reads alike. */
-export function fixedDecimals(decimals: number) {
-  return { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
-}
-
-/**
- * A range of points, one number when both ends round alike ("29.8", never "29.79–29.8"), and both
- * ends with the scale's decimals ("12.0–17.5", never "12–17.5"), which the server sends with it; a
- * scale it sends none for is whole points. A deduction carries its minus on each end, the smaller
- * first: "−0.3 to −0.6". A `headline` rounds its low end down and its high end up, so it never
- * claims more than its parts.
- */
 export function useFormatPointsRange() {
-  const format = useFormatter();
-  const formatRange = useFormatRange();
+  const { number } = useFormatter();
+  const joinDeduction = useFormatRange();
 
   return (
-    { high, low }: Range,
-    {
-      decimals = 0,
-      deduction = false,
-      headline = false,
-    }: { decimals: number | undefined; deduction?: boolean; headline?: boolean },
-  ): string => {
-    const options = fixedDecimals(decimals);
-
-    const end = (value: number) => {
-      const written = format.number(value, options);
-      return deduction && value > 0 ? `${MINUS}${written}` : written;
-    };
-
-    const shown = headline ? roundOutward({ high, low }, decimals) : { high, low };
-    return formatRange(end(shown.low), end(shown.high));
-  };
+    range: Parameters<typeof formatPointsRange>[0]["range"],
+    options: Pick<Parameters<typeof formatPointsRange>[0], "decimals" | "kind">,
+  ): string => formatPointsRange({ joinDeduction, number, range, ...options });
 }
 
 /**

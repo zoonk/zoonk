@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useFormatScore } from "../../essay/essay-labels";
 import { useWriteNow } from "../../learn-context";
 import { getMinimumPoints, getMinimumShare } from "../../writing/minimum-points";
-import { PointsMeter, PointsReadout } from "../../writing/points-readout";
+import { PointsMeter, PointsReadout, usePointsEstimate } from "../../writing/points-readout";
 import { useWritingTaskName } from "../../writing/writing-header";
 import { useFormatPointsRange } from "../../writing/writing-labels";
 import { getProjectionWriteTask } from "./projection-write-task";
@@ -34,6 +34,7 @@ function ScoreRow({
   minimumShare = null,
   name,
   range,
+  written = false,
 }: {
   children?: React.ReactNode;
   decimals?: number;
@@ -43,13 +44,20 @@ function ScoreRow({
   minimumShare?: number | null;
   name: string;
   range: Range | null;
+  written?: boolean;
 }) {
   const t = useExtracted();
+  const estimate = usePointsEstimate();
   const formatRange = useFormatPointsRange();
   const formatScore = useFormatScore();
 
   const value = () => {
     if (range && max !== null) {
+      if (written) {
+        const { scale, score } = estimate({ decimals, max, range });
+        return `${score} ${scale}`;
+      }
+
       return t("{range} of {max}", {
         max: formatScore(max),
         range: formatRange(range, { decimals }),
@@ -301,6 +309,7 @@ export function WrittenProjectionScore({
             minimumShare={part.minimum && getMinimumShare({ max: part.max, minimum: part.minimum })}
             name={part.name}
             range={part.range}
+            written
           >
             {getPartScale(part) === "points" && <TaskRows part={part} />}
             <Standing part={part} />

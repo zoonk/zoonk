@@ -8,11 +8,11 @@ import { DetailsDrawer } from "../_components/details-drawer";
 import { PageSectionFooter, PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
 import { ESSAY_QUOTE_CLASS, useFormatScore } from "../essay/essay-labels";
+import { fixedDecimals } from "./format-points-range";
 import { getNextStep } from "./next-step";
 import {
   LEVEL_CELLS,
   LEVEL_CELL_COUNT,
-  fixedDecimals,
   useFormatPointsRange,
   useLevelName,
 } from "./writing-labels";
