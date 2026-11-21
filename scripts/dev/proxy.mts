@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { closeSync, openSync, readFileSync, readSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
@@ -65,6 +65,32 @@ export function shouldReplaceProxy({
   return proxyVersion.localeCompare(ownVersion, undefined, { numeric: true }) < 0;
 }
 
+const PROXY_LOG_LIMIT = 10 * 1024 * 1024;
+const PROXY_LOG_KEPT = 1024 * 1024;
+
+/**
+ * Portless appends every proxy error to its log and never trims it. Rewriting the file in place
+ * keeps a running proxy's append-mode handle writing at the new end, so this is safe while it runs.
+ */
+export function trimProxyLog(logPath: string): void {
+  const size = statSync(logPath, { throwIfNoEntry: false })?.size ?? 0;
+
+  if (size <= PROXY_LOG_LIMIT) {
+    return;
+  }
+
+  const tail = Buffer.alloc(PROXY_LOG_KEPT);
+  const file = openSync(logPath, "r");
+
+  try {
+    readSync(file, tail, 0, PROXY_LOG_KEPT, size - PROXY_LOG_KEPT);
+  } finally {
+    closeSync(file);
+  }
+
+  writeFileSync(logPath, tail.subarray(tail.indexOf("\n") + 1));
+}
+
 /** Starts the checkout's shared proxy, replacing one an older Portless left running. */
 export function startProxy({
   currentDirectory,
@@ -75,6 +101,8 @@ export function startProxy({
 }): void {
   const pnpmCommand = getPnpmCommand(environment);
   const stateDirectory = String(environment.PORTLESS_STATE_DIR);
+
+  trimProxyLog(join(stateDirectory, "proxy.log"));
 
   const portless = (command: string) =>
     execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "proxy", command], {
