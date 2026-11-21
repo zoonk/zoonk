@@ -494,8 +494,12 @@ struct BlockRow: View {
   }
 
   private var extraTag: some View {
-    Text("Extra", tableName: "Today", comment: "Tag on a step added after the day's own steps")
-      .chip()
+    Text(
+      "Extra", tableName: "Today",
+      comment:
+        "Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress."
+    )
+    .chip()
   }
 
   @ViewBuilder
