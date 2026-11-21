@@ -4,6 +4,7 @@ import { type BuildPlanInput } from "./build-plan";
 import { getMockWeeks } from "./mock-days";
 import { type FundedMocks, type MockFunding } from "./mock-funding";
 import { type MockResolution } from "./mock-identity";
+import { holdOpenedDay } from "./opened-day";
 import { toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem } from "./plan-items";
 import { getCalendar } from "./plan-run-days";
@@ -164,6 +165,7 @@ export function scheduleRunEvents({
     cursor: funded.funding.findLast((entry) => entry.day !== undefined)?.day,
     dropped: schedule.dropped,
     goal: input.goal,
+    holdOpened: ({ days: afterDays, units }) => holdOpenedDay({ days: afterDays, input, units }),
     mockMinutes: input.mockMinutes,
     phase: windows.length,
     planStart,

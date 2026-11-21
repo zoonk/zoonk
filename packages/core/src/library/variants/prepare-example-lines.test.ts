@@ -9,6 +9,7 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { toExampleLineClaimTarget } from "./_utils/lesson-example-lines";
 import { getStepExampleLine, requestStepExampleLine } from "./get-step-example-line";
 import {
   listExampleLineLessons,
@@ -139,6 +140,17 @@ describe(listExampleLineLessons, () => {
 });
 
 describe(writeLessonExampleLines, () => {
+  it("preserves the target of existing example-line claims", () => {
+    expect(
+      toExampleLineClaimTarget({
+        contextKey: "context",
+        lessonId: "lesson",
+        userId: "learner",
+        version: 2,
+      }),
+    ).toBe("a23bc65c-3d15-3e10-da53-5e1ef6811ffc");
+  });
+
   it("writes ahead at the background tier, then serves the line when the lesson opens", async () => {
     const learner = await learnerWhoCooks();
     const { lesson, step } = await slotLesson();

@@ -53,9 +53,9 @@ class PatternFlowTest {
         show(pattern(), api)
 
         rule.onNodeWithText("Practice").performClick()
-        answer("agree")
+        answer("partenza")
         rule.onNodeWithText("Continue").performClick()
-        answer("agree")
+        answer("salita")
         rule.onNodeWithText("See result").performClick()
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
@@ -78,9 +78,9 @@ class PatternFlowTest {
         val viewModel = show(pattern(), api)
 
         rule.onNodeWithText("Practice").performClick()
-        answer("agree")
+        answer("partenza")
         rule.onNodeWithText("Continue").performClick()
-        answer("agree")
+        answer("salita")
         rule.onNodeWithText("See result").performClick()
         rule.onNodeWithContentDescription("Leave").performClick()
 
@@ -93,13 +93,13 @@ class PatternFlowTest {
 
     @Test
     fun aRightAnswerWithSpacesAroundItIsMarkedRight() {
-        show(pattern(firstAnswer = " agree "), FakePatternApi())
+        show(pattern(firstAnswer = " partenza "), FakePatternApi())
 
         rule.onNodeWithText("Practice").performClick()
-        answer("agree")
+        answer("partenza")
 
         rule.onNodeWithText("Correct!").assertIsDisplayed()
-        rule.onNodeWithText("am agree").assertDoesNotExist()
+        rule.onNodeWithText("discesa").assertDoesNotExist()
     }
 
     @Test

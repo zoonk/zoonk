@@ -15,6 +15,7 @@ import {
 import { useExtracted } from "next-intl";
 import { Callout } from "../../_components/callout";
 import { EnterButton } from "../../_components/enter-button";
+import { LessonSummaryIdeas } from "../../_components/lesson-summary-ideas";
 import { type Drill, type LessonHref } from "./drill-types";
 import { useDrillLine } from "./use-drill-line";
 
@@ -82,19 +83,7 @@ function IdeaScreen({
             <p className="text-muted-foreground">{drillLine(drill)}</p>
           </div>
 
-          <ol className="flex w-full flex-col leading-relaxed [&>li+li]:border-t">
-            {lesson.ideas.map((idea, index) => (
-              <li className="flex items-baseline gap-3 py-2.75" key={idea}>
-                <span
-                  aria-hidden="true"
-                  className="text-faint w-4 shrink-0 font-mono text-sm tabular-nums"
-                >
-                  {index + 1}
-                </span>
-                <span className="min-w-0 flex-1">{idea}</span>
-              </li>
-            ))}
-          </ol>
+          <LessonSummaryIdeas ideas={lesson.ideas} />
 
           {lessonHref && <LessonLink lesson={lesson} lessonHref={lessonHref} />}
         </section>

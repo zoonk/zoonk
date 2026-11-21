@@ -1,10 +1,10 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, GripVertical, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
   ACTIVITY_CARD_CLASS,
   ACTIVITY_EMPTY_CLASS,

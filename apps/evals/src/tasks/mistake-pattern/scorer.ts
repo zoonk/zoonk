@@ -33,25 +33,36 @@ function checkMistakeNumbers({
 function checkDrill({
   expected,
   output,
+  sameLanguage,
 }: {
   expected: MistakePatternExpected;
   output: FindMistakePatternSchema;
+  sameLanguage: boolean;
 }): boolean {
   if (expected.kind !== "pattern") {
     return output.drill.length === 0;
   }
 
   return (
-    output.drill.length > 0 && output.drill.every((question) => isWellFormedDrillQuestion(question))
+    output.drill.length > 0 &&
+    output.drill.every((question) =>
+      isWellFormedDrillQuestion({
+        // Outputs saved before drills had translations lack the field.
+        question: { ...question, translation: question.translation ?? "" },
+        sameLanguage,
+      }),
+    )
   );
 }
 
 function checkMistakePattern({
   expected,
   output,
+  sameLanguage,
 }: {
   expected: MistakePatternExpected;
   output: string;
+  sameLanguage: boolean;
 }): CodeCheckResult {
   const parsed = JSON.parse(output) as FindMistakePatternSchema;
 
@@ -68,10 +79,10 @@ function checkMistakePattern({
     },
     {
       criterion: "drill",
-      passed: checkDrill({ expected, output: parsed }),
+      passed: checkDrill({ expected, output: parsed, sameLanguage }),
       problem:
         expected.kind === "pattern"
-          ? `The drill has ${parsed.drill.length} questions or a malformed one.`
+          ? `The drill has ${parsed.drill.length} questions, a malformed one or a missing or extra translation.`
           : "A drill was written without a pattern.",
     },
   ];
@@ -101,7 +112,9 @@ export const checkMistakePatternOutput: TaskCodeChecks<MistakePatternExpected> =
     throw new Error(`Test case ${testCase.id} needs a labeled kind.`);
   }
 
-  return checkMistakePattern({ expected, output });
+  const sameLanguage = testCase.userInput.learnerLanguage === testCase.userInput.targetLanguage;
+
+  return checkMistakePattern({ expected, output, sameLanguage });
 };
 
 export const scoreMistakePattern: TaskScorer<MistakePatternExpected> = ({ output, testCase }) =>

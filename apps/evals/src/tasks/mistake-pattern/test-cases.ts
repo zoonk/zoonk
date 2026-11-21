@@ -176,4 +176,34 @@ export const TEST_CASES: TestCase<MistakePatternExpected, MistakePatternInput>[]
       targetLanguage: "pt",
     },
   },
+  {
+    expectations: `A Brazilian learner of Italian mixes up the words for boarding, departure and getting off a train: "salita", "partenza" and "discesa" (mistakes 1, 2 and 4). Mistake 3 (the missing "mi" in "mi piace") is a different rule. The drill sentences alone can't tell these words apart, so each drill translation in Brazilian Portuguese must say which moment is meant ("a partida", "o desembarque"), leaving one right option. Title, rule, contrast labels, translations and feedback in Brazilian Portuguese.`,
+    expected: { kind: "pattern", mistakeNumbers: [1, 2, 4] },
+    id: "pt-it-travel-words",
+    userInput: {
+      learnerLanguage: "pt",
+      mistakes: [
+        mistake("fillBlank", "La ___ del treno per Milano è alle 9:15.", "salita", "partenza"),
+        mistake(
+          "typed",
+          "Translate: 'O desembarque é pela porta da frente.'",
+          "La salita è dalla porta anteriore.",
+          "La discesa è dalla porta anteriore.",
+        ),
+        mistake(
+          "typed",
+          "Translate: 'Eu gosto de viajar.'",
+          "Io piace viaggiare.",
+          "Mi piace viaggiare.",
+        ),
+        mistake(
+          "multipleChoice",
+          "Siamo arrivati a Roma: la ___ è dal lato destro.",
+          "partenza",
+          "discesa",
+        ),
+      ],
+      targetLanguage: "it",
+    },
+  },
 ];

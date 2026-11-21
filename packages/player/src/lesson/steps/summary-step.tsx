@@ -1,8 +1,8 @@
 "use client";
 
+import { LessonSummaryIdeas } from "@zoonk/learn/lesson-summary-ideas";
 import { useExtracted } from "next-intl";
 import { PlayerReadScene } from "../../components/player-read-scene";
-import { LessonSummaryIdeas } from "../_components/lesson-summary-ideas";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
 export function SummaryStepView({ step }: LessonStepViewProps<StepOf<"summary">>) {

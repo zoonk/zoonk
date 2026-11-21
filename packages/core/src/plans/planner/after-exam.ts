@@ -65,6 +65,12 @@ function toPlainUnit(unit: DroppedUnit): QueueUnit {
   return plain;
 }
 
+/** Holds the day the learner opened when it falls on these days; the rest is scheduled around it. */
+type HoldOpened = (laid: {
+  days: readonly PlanDay[];
+  units: readonly QueueUnit[];
+}) => { days: readonly PlanDay[]; held: ScheduledUnit[]; units: readonly QueueUnit[] } | null;
+
 export function continueAfterExam({
   bossDays,
   bossMinutes = () => 0,
@@ -73,6 +79,7 @@ export function continueAfterExam({
   cursor,
   dropped,
   goal,
+  holdOpened,
   mockMinutes,
   phase,
   resolution = null,
@@ -90,6 +97,7 @@ export function continueAfterExam({
   calendar: StudyCalendar;
   dropped: readonly DroppedUnit[];
   goal: { kind: GoalKind; targetDate: Date | null };
+  holdOpened?: HoldOpened;
   mockMinutes: number;
   phase: number;
   planStart: Date;
@@ -130,20 +138,22 @@ export function continueAfterExam({
     resolution,
   });
 
-  const { days } = funded;
+  const lessons = dropped.filter((unit) => unit.kind === "lesson").map((unit) => toPlainUnit(unit));
+  const shown = holdOpened?.({ days: funded.days, units: lessons });
 
   const schedule = scheduleUnits({
-    days,
-    units: dropped.filter((unit) => unit.kind === "lesson").map((unit) => toPlainUnit(unit)),
+    days: shown?.days ?? funded.days,
+    units: shown?.units ?? lessons,
   });
 
-  const lastUnit = schedule.units.at(-1)?.date;
+  const units = [...(shown?.held ?? []), ...schedule.units];
+  const lastUnit = units.at(-1)?.date;
 
   const events = schedule.events.filter(
     (event) => event.kind === "boss" || (lastUnit !== undefined && event.date <= lastUnit),
   );
 
-  const dates = [...schedule.units, ...events]
+  const dates = [...units, ...events]
     .map((item) => item.date)
     .toSorted((a, b) => a.getTime() - b.getTime());
 
@@ -151,7 +161,7 @@ export function continueAfterExam({
   const last = dates.at(-1);
 
   const minutes = [
-    ...schedule.units.map((unit) => unit.studyMinutes),
+    ...units.map((unit) => unit.studyMinutes),
     ...events.map((event) => event.minutes),
   ].reduce((sum, value) => sum + value, 0);
 
@@ -160,7 +170,7 @@ export function continueAfterExam({
     events,
     funded,
     span: first && last ? { end: last, minutes, start: first } : null,
-    units: schedule.units,
+    units,
   };
 }
 

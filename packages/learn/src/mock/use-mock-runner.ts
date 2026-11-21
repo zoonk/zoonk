@@ -331,7 +331,7 @@ export function useMockRunner({
     submitSection: () => step("submit", () => actions.submit(view.current?.section ?? 0)),
     timeOutQuestion: () => move(position + 1, true),
     timeUp,
-    toggleFlag: () => question && drafts.toggleFlag(question.itemId),
+    toggleUnsure: () => question && drafts.toggleUnsure(question.itemId),
     view,
     write: (next) => {
       if (question && canAnswer(next)) {

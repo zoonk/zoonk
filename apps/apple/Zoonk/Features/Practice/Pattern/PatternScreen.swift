@@ -142,7 +142,8 @@ struct PatternScreen: View {
     }
 
     let asked = PracticeQuestionView(
-      question: question, labels: .trueFalse, result: result, draft: $draft)
+      question: question, translation: item.translation, labels: .trueFalse, result: result,
+      draft: $draft)
 
     return PracticeTaskLayout(segments: segments(pattern, index: index), index: index) {
       asked.stimulus

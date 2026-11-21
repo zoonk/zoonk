@@ -1,12 +1,12 @@
 "use client";
 
 import { PROGRAM_TIME_LIMIT_MS } from "@zoonk/core/library/activities/program-limits";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { NotQuiteLead } from "../../components/not-quite-lead";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { type ProgramRun } from "../_sandbox/run-program";
 

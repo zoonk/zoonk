@@ -238,6 +238,11 @@ function parseColor(value: string, lookup: Lookup): Rgba {
   return color;
 }
 
+/** A role as main draws it, see-through when main's is. */
+export function seeThroughColor({ name, ...lookup }: Lookup & { name: string }): Rgba {
+  return parseColor(lookUp(name, lookup), lookup);
+}
+
 /** See-through colors are laid on the mode's background, so every role is opaque. */
 export function resolveColor({ name, ...lookup }: Lookup & { name: string }): Rgba {
   const background = parseColor(lookUp("background", lookup), lookup);

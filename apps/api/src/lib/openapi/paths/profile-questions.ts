@@ -31,7 +31,7 @@ export const profileQuestionPaths = {
   "/me/profile-questions/answers": {
     post: {
       description:
-        "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Typed memory facts start sensitive until a follow-up checks them.",
+        "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Facts with typed text or custom tool names start sensitive until a follow-up checks them.",
       operationId: "answerCurrentUserProfileQuestion",
       requestBody: {
         content: { "application/json": { schema: profileAnswerInputSchema } },

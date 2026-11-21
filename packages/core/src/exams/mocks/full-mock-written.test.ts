@@ -175,7 +175,15 @@ async function startFull(goalId: string) {
   return started.id;
 }
 
-async function writeEssay({ id, text }: { id: string; text: string }) {
+async function writeEssay({
+  flagged = false,
+  id,
+  text,
+}: {
+  flagged?: boolean;
+  id: string;
+  text: string;
+}) {
   await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
 
   const written = await readMock(id);
@@ -183,7 +191,7 @@ async function writeEssay({ id, text }: { id: string; text: string }) {
 
   await saveMockAnswer({
     blockId: id,
-    input: { answer: { text }, durationMs: 600_000, flagged: false, itemId: essay?.itemId ?? "" },
+    input: { answer: { text }, durationMs: 600_000, flagged, itemId: essay?.itemId ?? "" },
   });
 
   return { essay, written };
@@ -250,7 +258,7 @@ describe("a full mock of an exam with a written test", () => {
     ).resolves.toStrictEqual({ status: "invalidItem" });
 
     const text = "O controle externo cabe ao Congresso, com o auxílio do TCU.";
-    const { written } = await writeEssay({ id, text });
+    const { written } = await writeEssay({ flagged: true, id, text });
 
     expect(written.current?.questions).toMatchObject([
       {
@@ -276,7 +284,7 @@ describe("a full mock of an exam with a written test", () => {
     expect(finished.result).toMatchObject({ total: 8 });
 
     expect(finished.essays).toMatchObject([
-      { grade: null, itemId: essay.id, status: "pending", text },
+      { grade: null, itemId: essay.id, status: "pending", text, unsure: true },
     ]);
 
     expect(gradeEssay).not.toHaveBeenCalled();
@@ -287,7 +295,8 @@ describe("a full mock of an exam with a written test", () => {
 
     const graded = await readMock(id);
 
-    expect(graded.essays).toMatchObject([{ grade: GRADE, status: "graded", text }]);
+    expect(graded.essays).toMatchObject([{ grade: GRADE, status: "graded", text, unsure: true }]);
+    expect(graded.review.some((entry) => entry.itemId === essay.id)).toBe(false);
     expect(graded.essayRubric).toBe("custom");
 
     await gradeMockEssays({ blockId: id, input: { timeZone: UTC } });
@@ -355,7 +364,7 @@ describe("a full mock of an exam with a written test", () => {
     await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
 
     await expect(readMock(id)).resolves.toMatchObject({
-      essays: [{ itemId: essay.id, status: "pending" }],
+      essays: [{ itemId: essay.id, status: "pending", unsure: false }],
       result: { total: 0 },
       status: "finished",
     });
