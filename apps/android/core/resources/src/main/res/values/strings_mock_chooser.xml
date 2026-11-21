@@ -20,7 +20,10 @@
     <string name="mock_chooser_writing_written_detail">Questions like the ones on your exam. Your mock exam starts here when they\'re ready.</string>
     <string name="mock_chooser_writing_written_failed">We couldn\'t write your questions</string>
     <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
-    <string name="mock_chooser_all_tests">All %1$d tests</string>
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="one">All %1$d test</item>
+        <item quantity="other">All %1$d tests</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">Day %1$d</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

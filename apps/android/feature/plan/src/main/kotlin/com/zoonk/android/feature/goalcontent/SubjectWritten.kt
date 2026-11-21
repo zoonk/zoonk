@@ -95,7 +95,14 @@ internal fun LazyListScope.subjectWritten(
                         supporting = {
                             // A levels answer's result is its own line: as a trailing value it would squeeze the title on a phone.
                             criteria?.let {
-                                Text(stringResource(R.string.essay_criteria_complete, it.complete.toInt(), it.total.toInt()))
+                                Text(
+                                    pluralStringResource(
+                                        R.plurals.essay_criteria_complete,
+                                        it.total.toInt(),
+                                        it.complete.toInt(),
+                                        it.total.toInt(),
+                                    ),
+                                )
                             }
                             Text(
                                 factsLine(
@@ -103,9 +110,22 @@ internal fun LazyListScope.subjectWritten(
                                         answer.unit == WrittenPracticeSubjectsInnerAnswersInner.Unit.DRILL
                                     },
                                     when {
-                                        estimated != null && lines != null -> stringResource(R.string.essay_lines_used, estimated, lines)
-                                        estimated != null -> pluralStringResource(R.plurals.essay_about_lines, estimated, estimated)
-                                        else -> lines?.let { pluralStringResource(R.plurals.goalcontent_written_lines, it, it) }
+                                        estimated != null && lines != null -> {
+                                            pluralStringResource(
+                                                R.plurals.essay_lines_used,
+                                                lines,
+                                                estimated,
+                                                lines,
+                                            )
+                                        }
+
+                                        estimated != null -> {
+                                            pluralStringResource(R.plurals.essay_about_lines, estimated, estimated)
+                                        }
+
+                                        else -> {
+                                            lines?.let { pluralStringResource(R.plurals.goalcontent_written_lines, it, it) }
+                                        }
                                     },
                                     if (versions >
                                         1

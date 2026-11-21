@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -497,8 +498,7 @@ internal fun WritingLineCount(
             com.zoonk.android.feature.player.language
                 .countWords(text)
         Text(
-            androidx.compose.ui.res
-                .pluralStringResource(R.plurals.essay_words, words, words),
+            pluralStringResource(R.plurals.essay_words, words, words),
             modifier,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = style,
@@ -510,16 +510,11 @@ internal fun WritingLineCount(
     val over = used > limit
     Text(
         if (text.isBlank()) {
-            stringResource(R.string.essay_lines_empty, limit)
+            pluralStringResource(R.plurals.essay_lines_empty, limit, limit)
         } else if (over) {
-            stringResource(
-                R.string.essay_lines_over,
-                used,
-                limit,
-                used - limit,
-            )
+            pluralStringResource(R.plurals.essay_lines_over, limit, used, limit, used - limit)
         } else {
-            stringResource(R.string.essay_lines_used, used, limit)
+            pluralStringResource(R.plurals.essay_lines_used, limit, used, limit)
         },
         modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = if (over) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurfaceVariant,

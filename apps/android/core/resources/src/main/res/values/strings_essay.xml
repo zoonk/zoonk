@@ -76,11 +76,20 @@
         <item quantity="other">%d words</item>
     </plurals>
     <!-- How many handwritten lines the typed answer would take, of the question's limit, such as "about 23 of 30 lines". -->
-    <string name="essay_lines_used">about %1$d of %2$d lines</string>
+    <plurals name="essay_lines_used">
+        <item quantity="one">about %1$d of %2$d line</item>
+        <item quantity="other">about %1$d of %2$d lines</item>
+    </plurals>
     <!-- An empty answer field's line count, against the question's limit. -->
-    <string name="essay_lines_empty">0 of %1$d lines</string>
+    <plurals name="essay_lines_empty">
+        <item quantity="one">0 of %1$d line</item>
+        <item quantity="other">0 of %1$d lines</item>
+    </plurals>
     <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <string name="essay_lines_over">about %1$d of %2$d lines · %3$d won\'t be read</string>
+    <plurals name="essay_lines_over">
+        <item quantity="one">about %1$d of %2$d line · %3$d won\'t be read</item>
+        <item quantity="other">about %1$d of %2$d lines · %3$d won\'t be read</item>
+    </plurals>
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
     <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
@@ -128,7 +137,10 @@
     <string name="essay_for_example">For example: %1$s</string>
     <string name="essay_nothing_left">Nothing left to work on</string>
     <string name="essay_full_marks">Every criterion is complete.</string>
-    <string name="essay_limit_title">Fit it in %1$d lines</string>
+    <plurals name="essay_limit_title">
+        <item quantity="one">Fit it in %1$d line</item>
+        <item quantity="other">Fit it in %1$d lines</item>
+    </plurals>
     <string name="essay_limit_title_any">Fit it in the line limit</string>
     <string name="essay_limit_text">Graders stop at line %1$d, so the rest isn\'t read.</string>
     <string name="essay_limit_text_any">Graders stop at the line limit, so the rest isn\'t read.</string>
@@ -148,7 +160,10 @@
     <string name="essay_zero_identification_title">Leave out anything that identifies you</string>
     <string name="essay_zero_identification_text">Remove names, signatures and marks that aren\'t part of the answer.</string>
     <!-- A past written answer graded by level: how many of its criteria were fully met, out of all of them. -->
-    <string name="essay_criteria_complete">%1$d of %2$d criteria complete</string>
+    <plurals name="essay_criteria_complete">
+        <item quantity="one">%1$d of %2$d criterion complete</item>
+        <item quantity="other">%1$d of %2$d criteria complete</item>
+    </plurals>
     <string name="essay_criteria">Criteria</string>
     <!-- A criterion of a written answer fully met. -->
     <string name="essay_level_complete">Complete</string>

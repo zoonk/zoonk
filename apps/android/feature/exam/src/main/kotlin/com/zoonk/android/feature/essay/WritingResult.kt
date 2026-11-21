@@ -146,7 +146,9 @@ private fun PointsHeader(
                     detail =
                         factsLine(
                             pluralStringResource(R.plurals.essay_errors, errorCount, errorCount),
-                            prompt.lines?.let { limit -> stringResource(R.string.essay_lines_used, lines, limit.toInt()) }
+                            prompt.lines?.let { limit ->
+                                pluralStringResource(R.plurals.essay_lines_used, limit.toInt(), lines, limit.toInt())
+                            }
                                 ?: pluralStringResource(R.plurals.essay_about_lines, lines, lines),
                         ),
                     // The scale's decimals don't reach the deduction, which reads in tenths: "−0.3 to −0.6".
@@ -235,7 +237,7 @@ private fun WritingNextStep(
 
             NextStep.Limit -> {
                 if (lines != null) {
-                    stringResource(R.string.essay_limit_title, lines) to stringResource(R.string.essay_limit_text, lines)
+                    pluralStringResource(R.plurals.essay_limit_title, lines, lines) to stringResource(R.string.essay_limit_text, lines)
                 } else {
                     stringResource(R.string.essay_limit_title_any) to stringResource(R.string.essay_limit_text_any)
                 }
