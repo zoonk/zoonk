@@ -256,6 +256,25 @@ export const lettersChart: ChartVisual = {
   valueLabel: "Ofícios",
 };
 
+export const visitorsChart: ChartVisual = {
+  ...lettersChart,
+  axisStart: 10_000,
+  categories: ["Mar", "Abr", "Mai", "Jun", "Jul"],
+  chart: "line",
+  series: [{ name: "Visitantes", values: [10_050, 10_120, 10_200, 10_310, 10_380] }],
+  title: "Visitantes por mês, com o eixo a partir de 10.000",
+  valueLabel: "Visitantes",
+};
+
+export const japaneseRegionsChart: ChartVisual = {
+  ...lettersChart,
+  categories: ["北海道地方", "東北地方", "関東地方", "中部地方", "近畿地方"],
+  categoryLabel: "地方",
+  series: [{ name: "回答数", values: [18, 42, 64, 30, 22] }],
+  title: "地方別の回答数",
+  valueLabel: "回答数",
+};
+
 export const lawTimeline: TimelineVisual = {
   events: [
     { date: "1988", detail: "Promulgada em 5 de outubro.", label: "Constituição Federal" },

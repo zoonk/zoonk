@@ -7,11 +7,38 @@ import { atViewport } from "../_test-utils/browser-viewport";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
-import { inlineImage, lawTimeline, lettersChart, teachingStep } from "../preview/preview-steps";
+import {
+  inlineImage,
+  japaneseRegionsChart,
+  lawTimeline,
+  lettersChart,
+  teachingStep,
+  visitorsChart,
+} from "../preview/preview-steps";
 
 const PHONE = { height: 812, width: 375 };
 
 const PICTURE_POLL_MS = 4000;
+
+function overlappingLabels(chart: Element): string[] {
+  const boxes = [...chart.querySelectorAll("svg text")].map((text) => ({
+    box: text.getBoundingClientRect(),
+    label: text.textContent,
+  }));
+
+  return boxes.flatMap((a, index) =>
+    boxes
+      .slice(index + 1)
+      .filter(
+        (b) =>
+          a.box.left < b.box.right &&
+          b.box.left < a.box.right &&
+          a.box.top < b.box.bottom &&
+          b.box.top < a.box.bottom,
+      )
+      .map((b) => `${a.label} / ${b.label}`),
+  );
+}
 
 function check(content: object) {
   const base = teachingStep("check");
@@ -254,28 +281,36 @@ describe("lesson visuals", () => {
       const chart = page.getByRole("figure", { name: days.title });
       await expect.element(chart).toBeVisible();
 
-      const overlappingLabels = () => {
-        const boxes = [...chart.element().querySelectorAll("svg text")].map((text) => ({
-          box: text.getBoundingClientRect(),
-          label: text.textContent,
-        }));
-
-        return boxes.flatMap((a, index) =>
-          boxes
-            .slice(index + 1)
-            .filter(
-              (b) =>
-                a.box.left < b.box.right &&
-                b.box.left < a.box.right &&
-                a.box.top < b.box.bottom &&
-                b.box.top < a.box.bottom,
-            )
-            .map((b) => `${a.label} / ${b.label}`),
-        );
-      };
-
-      await expect.poll(overlappingLabels).toStrictEqual([]);
+      await expect.poll(() => overlappingLabels(chart.element())).toStrictEqual([]);
     });
+  });
+
+  it("measures names in the chart's font, so Japanese names don't overlap under their bars", async () => {
+    await atViewport({ height: 640, width: 320 }, async () => {
+      renderLessonPlayer({ lesson: buildLesson([check({ visual: japaneseRegionsChart })]) });
+
+      const chart = page.getByRole("figure", { name: japaneseRegionsChart.title });
+      await expect.element(chart).toBeVisible();
+      await expect.poll(() => overlappingLabels(chart.element())).toStrictEqual([]);
+
+      const labels = [...chart.element().querySelectorAll("svg text")].map(
+        (text) => text.textContent,
+      );
+
+      expect(labels).toStrictEqual(expect.arrayContaining(japaneseRegionsChart.categories));
+    });
+  });
+
+  it("prints a cropped axis's ticks with the decimals that tell them apart", async () => {
+    renderLessonPlayer({ lesson: buildLesson([check({ visual: visitorsChart })]) });
+
+    const chart = page.getByRole("figure", { name: visitorsChart.title });
+    await expect.element(chart).toBeVisible();
+    const ticks = [...chart.element().querySelectorAll("svg text")].map((text) => text.textContent);
+
+    expect(ticks).toStrictEqual(
+      expect.arrayContaining(["10K", "10.1K", "10.2K", "10.3K", "10.4K"]),
+    );
   });
 
   it("starts a chart's axis where a screen about a cropped axis says", async () => {
