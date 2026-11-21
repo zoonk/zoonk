@@ -478,6 +478,13 @@ private struct WritingEditorPage: View {
         .typeStyle(.data)
         .foregroundStyle(count.isOver ? .warningText : .mutedForeground)
         .accessibilityHidden(true)
+
+      // The bar's note floats over the page: the field gives it room so the count stays in view.
+      if let note {
+        note.floatingNote()
+          .hidden()
+          .accessibilityHidden(true)
+      }
     }
     .scenePadding(.horizontal)
     .padding(.top, 8)

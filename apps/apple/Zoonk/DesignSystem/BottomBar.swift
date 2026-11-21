@@ -114,7 +114,7 @@ private struct BottomBar<Actions: View>: View {
 
 extension BarNote {
   /// Over the screen just above the bar, on the page's background.
-  fileprivate func floatingNote() -> some View {
+  func floatingNote() -> some View {
     typeStyle(.body)
       .frame(maxWidth: .infinity)
       .padding(.horizontal, 16)
