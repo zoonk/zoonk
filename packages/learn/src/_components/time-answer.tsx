@@ -19,6 +19,9 @@ export const TIME_ANSWER_BUTTON_CLASS =
 
 const FAILED_KINDS = new Set<TimeLine["kind"]>(["askFailed", "findFailed"]);
 
+/** The longest sentence a dated goal's time gets, whose room every other one keeps. */
+const LONGEST_LINE: TimeLine = { kind: "share", share: 0.99 };
+
 function DaySplitWords({ split }: { split: DaySplit }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -32,8 +35,9 @@ function DaySplitWords({ split }: { split: DaySplit }) {
 
 /**
  * What the time picked gets the learner: one line under the picker, whose number is its subject.
- * What covering everything takes keeps its room under a time that covers everything, so nothing
- * moves as times change.
+ * On a goal with a date, the line keeps the room of the longest one, and what covering everything
+ * takes and the time offered to cover it keep theirs where they don't show, so nothing moves as
+ * times change.
  */
 export function TimeAnswer({
   action,
@@ -80,8 +84,16 @@ export function TimeAnswer({
           updating && "opacity-50",
         )}
       >
-        <span>
-          <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
+        <span className="grid">
+          <span className="col-start-1 row-start-1">
+            <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
+          </span>
+
+          {date && (
+            <span aria-hidden className="invisible col-start-1 row-start-1">
+              <LineWords date={date} exam={exam} line={LONGEST_LINE} minutes={minutes} />
+            </span>
+          )}
         </span>
 
         {full !== undefined && (
@@ -116,12 +128,12 @@ export function TimeAnswer({
           <>
             {space}
             <Button
-              className={TIME_ANSWER_BUTTON_CLASS}
-              onClick={() => onUseOffer(offer)}
+              className={cn(TIME_ANSWER_BUTTON_CLASS, !offer.shown && "invisible")}
+              onClick={() => onUseOffer(offer.minutes)}
               size="sm"
               variant="outline"
             >
-              {t("Use {time} to cover everything", { time: formatDuration(offer) })}
+              {t("Use {time} to cover everything", { time: formatDuration(offer.minutes) })}
             </Button>
           </>
         )}

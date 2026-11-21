@@ -64,8 +64,9 @@ export function getEverythingTakes(found: PlanTimeToCover | null): FullTime | nu
 }
 
 /**
- * The time that covers everything, offered while a shorter time is shown, only when that time is
- * the suggestion (so a realistic one). Null otherwise.
+ * Beside a suggestion that covers everything (so a realistic time), that time: offered back while a
+ * shorter time is shown, and kept in its place, unseen, otherwise, so offering it moves nothing.
+ * Null beside a focus suggestion, which is never offered.
  */
 export function getOffer({
   found,
@@ -75,14 +76,17 @@ export function getOffer({
   found: PlanTimeToCover | null;
   line: TimeLine;
   minutes: number | null;
-}): number | null {
+}): { minutes: number; shown: boolean } | null {
   const suggested = found?.suggested;
 
-  return suggested?.kind === "everything" &&
-    suggested.minutes !== minutes &&
-    line.kind !== "everything"
-    ? suggested.minutes
-    : null;
+  if (suggested?.kind !== "everything") {
+    return null;
+  }
+
+  return {
+    minutes: suggested.minutes,
+    shown: suggested.minutes !== minutes && line.kind !== "everything",
+  };
 }
 
 /** A share of 1 or none says nothing was taken out; any other means the learner took part out. */
