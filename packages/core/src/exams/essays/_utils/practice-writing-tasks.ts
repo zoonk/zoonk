@@ -30,6 +30,7 @@ export function listPracticeWritingTasks({
       points: null,
       section: shortAnswer.sections?.[0] ?? shortAnswer.description,
       session: null,
+      subjects: null,
     },
   ];
 }

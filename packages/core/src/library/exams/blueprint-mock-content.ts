@@ -4,6 +4,7 @@ import { type KeptFacts, keptOr } from "./blueprint-kept";
 import { toPointsScoring } from "./blueprint-points-content";
 import { toWrittenGrading } from "./blueprint-written-facts";
 import { normalizePenalty } from "./marking-penalty";
+import { findTaskSubjects } from "./written-task-subjects";
 
 type Extraction = BlueprintExtraction;
 type MockConditions = NonNullable<ExamStructure["mock"]>;
@@ -76,7 +77,34 @@ function toPlays({
   return plays === 1 || plays === 2 ? plays : null;
 }
 
-function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extraction["mock"]> }) {
+function toTaskSubjects({
+  id,
+  kept,
+  names,
+  subjects,
+}: {
+  id: string;
+  kept: KeptFacts;
+  names: readonly string[] | undefined;
+  subjects: ExamStructure["subjects"];
+}): { subjects?: string[] } {
+  const found =
+    names && kept.has(`${id}.subjects`)
+      ? findTaskSubjects({ names, subjects }).map((subject) => subject.name)
+      : [];
+
+  return found.length > 0 ? { subjects: found } : {};
+}
+
+function toSections({
+  kept,
+  mock,
+  subjects,
+}: {
+  kept: KeptFacts;
+  mock: NonNullable<Extraction["mock"]>;
+  subjects: ExamStructure["subjects"];
+}) {
   const ids = mock.sections.map((_, index) => `mock.sections.${index}`);
 
   const confirmedSections = mock.sections.map(
@@ -145,6 +173,7 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
           ...(officialIdentifier?.trim() && kept.has(`${id}.officialIdentifier`)
             ? { officialIdentifier: officialIdentifier.trim() }
             : {}),
+          ...toTaskSubjects({ id, kept, names: task.subjects, subjects }),
         },
       ];
     }),
@@ -245,7 +274,7 @@ export function toMock({
     citations,
     order: keptOr({ gap: null, id: "mock.order", kept, value: mock.order }),
     scoring: toScoring({ kept, mock, partNames, subjects }),
-    sections: toSections({ kept, mock }),
+    sections: toSections({ kept, mock, subjects }),
     timeLimitMinutes: keptOr({
       gap: null,
       id: "mock.timeLimitMinutes",

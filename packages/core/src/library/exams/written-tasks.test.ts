@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blueprintExtraction } from "./_test-utils/blueprint-extraction";
+import { NOTICE, blueprintExtraction } from "./_test-utils/blueprint-extraction";
 import { toBlueprintContent } from "./blueprint-content";
 import { type ExamStructure } from "./blueprint-contract";
 import { listBlueprintFacts } from "./blueprint-facts";
@@ -17,7 +17,12 @@ const DOCUMENTS = [
   },
 ];
 
-function readWrittenTest() {
+const SUBJECTS_PASSAGE = "Part A is on Linguagens and Física.";
+
+function readWrittenTest({
+  documents = DOCUMENTS,
+  subjects,
+}: { documents?: typeof DOCUMENTS; subjects?: string[] } = {}) {
   const base = blueprintExtraction();
 
   const extraction = {
@@ -69,9 +74,13 @@ function readWrittenTest() {
               handwritten: true,
               lines: 30,
               officialIdentifier: "Part A",
-              passages: [{ document: 1, passage: TASK_PASSAGE }],
+              passages: [
+                { document: 1, passage: TASK_PASSAGE },
+                ...(subjects ? [{ document: 1, passage: SUBJECTS_PASSAGE }] : []),
+              ],
               plays: null,
               points: 30.5,
+              ...(subjects && { subjects }),
             },
           ],
           tools: null,
@@ -80,10 +89,10 @@ function readWrittenTest() {
     },
   };
 
-  const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction });
+  const facts = listBlueprintFacts({ documents, extraction });
 
   return toBlueprintContent({
-    documents: DOCUMENTS,
+    documents,
     extraction,
     facts,
     noticeUrl: "https://example.com/notice",
@@ -114,6 +123,23 @@ describe(listWrittenTasks, () => {
       points: 30.5,
       session: "afternoon",
     });
+  });
+
+  it("links a task only to the subjects of the same reading that the notice names for it", () => {
+    const documents = [
+      { sourceId: "notice", text: [NOTICE, DOCUMENTS[0]?.text, SUBJECTS_PASSAGE].join("\n") },
+    ];
+
+    const [linked] = listWrittenTasks({
+      structure: readWrittenTest({ documents, subjects: ["linguagens", "Física"] }),
+    });
+
+    const [unstated] = listWrittenTasks({
+      structure: readWrittenTest({ documents, subjects: [] }),
+    });
+
+    expect(linked?.subjects).toStrictEqual(["Linguagens"]);
+    expect(unstated?.subjects).toBeNull();
   });
 
   it("keeps an official key through changed labels and marks and issues a new key for a different task", () => {

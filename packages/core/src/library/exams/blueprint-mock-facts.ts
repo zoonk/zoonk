@@ -94,6 +94,10 @@ function taskFacts({
           id: `${taskId}.points`,
           statement: `${task.description} is worth ${task.points} points per answer`,
         },
+        Boolean(task.subjects?.length) && {
+          id: `${taskId}.subjects`,
+          statement: `${task.description} asks about: ${task.subjects?.join("; ")}`,
+        },
         typeof task.handwritten === "boolean" && {
           id: `${taskId}.handwritten`,
           statement: `${task.description} ${task.handwritten ? "is handwritten" : "is explicitly not handwritten"}`,
