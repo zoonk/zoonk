@@ -1,18 +1,18 @@
 package com.zoonk.android.ui.components
 
-import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.AnnotatedString
-import com.zoonk.android.ui.richtext.RichTextLine
-import com.zoonk.android.ui.richtext.SpokenText
 
-/** What the learner answered, or the right answer, after the fact: the [AnswerOption]'s result look, locked (main's `AnswerPair`). */
+/**
+ * What the learner answered, or the right answer, after the fact: the [AnswerOption]'s result look,
+ * locked (main's `AnswerPair`), around [content], the answer as its item shows it.
+ */
 @Composable
 fun MistakeAnswer(
-    text: SpokenText,
     right: Boolean,
     modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
     AnswerOption(
         marker = 0,
@@ -21,7 +21,7 @@ fun MistakeAnswer(
         onClick = {},
         modifier = modifier,
         role = null,
-    ) { RichTextLine(text, Modifier, LocalTextStyle.current) }
+    ) { content() }
 }
 
 /** An answer shown exactly as written, such as what the learner typed. */
@@ -30,4 +30,4 @@ fun MistakeAnswer(
     text: String,
     right: Boolean,
     modifier: Modifier = Modifier,
-) = MistakeAnswer(SpokenText(AnnotatedString(text)), right, modifier)
+) = MistakeAnswer(right, modifier) { Text(text) }

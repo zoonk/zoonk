@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { contentStep, explanationStep, teachingStep } from "../../preview/preview-steps";
 import { stepResult } from "../_test-utils/lesson-steps";
 import { type PlayableLibraryStep } from "../lesson-player-types";
-import { getLessonOutline, getLessonRecap, getRecapMark } from "./lesson-aside";
+import { getLessonOutline, getLessonRecap, getRecapMark, splitQuestionData } from "./lesson-aside";
 
 function stateOf(
   steps: PlayableLibraryStep[],
@@ -17,6 +17,29 @@ function stateOf(
     steps: Object.fromEntries(steps.map((step) => [step.id, step])),
   };
 }
+
+describe(splitQuestionData, () => {
+  it("shows a question's code above it, with the question as its title", () => {
+    const code = "```python\nfor i in range(3):\n    print(i)\n```";
+
+    expect(splitQuestionData(`What does this print?\n${code}`)).toStrictEqual({
+      data: code,
+      question: "What does this print?",
+    });
+
+    expect(splitQuestionData(`Look at this:\n\n${code}\n\nWhat does it print?`)).toStrictEqual({
+      data: `Look at this:\n\n${code}`,
+      question: "What does it print?",
+    });
+  });
+
+  it("keeps a question with no table or code whole", () => {
+    expect(splitQuestionData("What is `x`?")).toStrictEqual({
+      data: null,
+      question: "What is `x`?",
+    });
+  });
+});
 
 describe(getLessonOutline, () => {
   const hook = contentStep("hook", {

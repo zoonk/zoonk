@@ -1,6 +1,7 @@
 "use client";
 
 import { isTutorAppPath, readTutorBlockLink } from "@zoonk/core/lesson-questions/app-links";
+import { CodeBlock, CodeListing, InlineCode } from "@zoonk/learn/code";
 import { DisplayMath } from "@zoonk/learn/rich-text/display-math";
 import {
   AlertDialog,
@@ -22,6 +23,7 @@ import {
   type ExtraProps,
   type LinkSafetyModalProps,
   Streamdown,
+  defaultComponents,
   defaultRehypePlugins,
 } from "streamdown";
 import { type PlayerLinkComponent } from "../player-context";
@@ -170,9 +172,54 @@ function AnswerSpan({ node, ...props }: ComponentProps<"span"> & ExtraProps) {
   return <span {...props} />;
 }
 
-const ANSWER_COMPONENTS: Components = { span: AnswerSpan };
+/** Whether Streamdown can draw a diagram yet; until then its source shows as code. */
+const DiagramsReadyContext = createContext(false);
 
-const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink, span: AnswerSpan };
+/** What code is called, and what a screen reader says for each of its lines, where no translations load. */
+type TutorCodeLabels = { code: string; line: (text: string, number: number) => string };
+
+const CodeLabelsContext = createContext<TutorCodeLabels | undefined>(undefined);
+
+const FENCE_LANGUAGE = /language-(?<name>\S+)/u;
+const TRAILING_LINE_BREAKS = /\n+$/u;
+
+function AnswerCodeBlock(props: ComponentProps<"code"> & ExtraProps) {
+  const diagramsReady = use(DiagramsReadyContext);
+  const labels = use(CodeLabelsContext);
+  const language = FENCE_LANGUAGE.exec(props.className ?? "")?.groups?.name?.toLowerCase() ?? null;
+  const written = typeof props.children === "string" ? props.children : "";
+  const code = written.replace(TRAILING_LINE_BREAKS, "");
+
+  if (language === "mermaid" && diagramsReady) {
+    return <defaultComponents.code {...props} />;
+  }
+
+  if (labels) {
+    return (
+      <CodeListing
+        code={code}
+        label={labels.code}
+        language={language}
+        speakLine={labels.line}
+        variant="panel"
+      />
+    );
+  }
+
+  return <CodeBlock code={code} language={language} />;
+}
+
+function AnswerInlineCode({ children }: ComponentProps<"code"> & ExtraProps) {
+  return <InlineCode>{children}</InlineCode>;
+}
+
+const ANSWER_COMPONENTS: Components = {
+  code: AnswerCodeBlock,
+  inlineCode: AnswerInlineCode,
+  span: AnswerSpan,
+};
+
+const TUTOR_ANSWER_COMPONENTS: Components = { ...ANSWER_COMPONENTS, a: TutorAnswerLink };
 
 function BlockOpenFailed() {
   const t = useExtracted();
@@ -198,27 +245,30 @@ function BlockUnavailable() {
   );
 }
 
-// Streamdown's code and table scrollers carry their own border and background, which the sideways
-// fade would fade with them, so their outer card is the one frame. A table keeps its words whole
-// and scrolls instead of breaking them letter by letter. Its lists sit inside their text, so a
-// wrapped item's next line would start under the bullet, and an inline code box split over two
-// lines would leave each half open.
+// Streamdown's table scroller carries its own border and background, which the sideways fade would
+// fade with it, so its outer card is the one frame. A table keeps its words whole and scrolls
+// instead of breaking them letter by letter. Its lists sit inside their text, so a wrapped item's
+// next line would start under the bullet.
 const TUTOR_MARKDOWN_CLASS = cn(
   "min-w-0 wrap-anywhere [&_a]:underline [&_a]:underline-offset-4",
-  "**:data-[streamdown=inline-code]:box-decoration-clone **:data-[streamdown=ordered-list]:list-outside **:data-[streamdown=ordered-list]:ps-5 **:data-[streamdown=unordered-list]:list-outside **:data-[streamdown=unordered-list]:ps-5",
-  "**:data-[streamdown=code-block]:bg-background **:data-[streamdown=code-block-body]:scroll-fade-x **:data-[streamdown=code-block-body]:border-0 **:data-[streamdown=code-block-body]:bg-transparent",
+  "**:data-[streamdown=ordered-list]:list-outside **:data-[streamdown=ordered-list]:ps-5 **:data-[streamdown=unordered-list]:list-outside **:data-[streamdown=unordered-list]:ps-5",
   "**:data-[streamdown=table-wrapper]:bg-background [&_[data-streamdown=table-wrapper]>div:has(>table)]:scroll-fade-x **:data-[streamdown=table-wrapper]:wrap-normal [&_[data-streamdown=table-wrapper]>div:has(>table)]:border-0 [&_[data-streamdown=table-wrapper]>div:has(>table)]:bg-transparent",
 );
 
-/** Admin renders answers without an intl provider, so only parts shown after a click may translate. */
+/**
+ * Admin renders answers without translations, so it names code's parts (`codeLabels`), and other
+ * parts that translate show only after a click.
+ */
 export function TutorMarkdown({
   answer,
   appLinks,
+  codeLabels,
   isAnimating,
   isStreaming,
 }: {
   answer: string;
   appLinks?: TutorAnswerLinks;
+  codeLabels?: TutorCodeLabels;
   isAnimating: boolean;
   isStreaming: boolean;
 }) {
@@ -255,21 +305,25 @@ export function TutorMarkdown({
 
   return (
     <TutorAnswerLinksContext value={links}>
-      <Streamdown
-        animated={isAnimating}
-        className={TUTOR_MARKDOWN_CLASS}
-        components={appLinks ? TUTOR_ANSWER_COMPONENTS : ANSWER_COMPONENTS}
-        controls={false}
-        disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
-        isAnimating={isAnimating}
-        linkSafety={appLinks ? undefined : LESSON_QUESTION_LINK_SAFETY}
-        mode={isStreaming ? "streaming" : "static"}
-        plugins={plugins}
-        rehypePlugins={appLinks ? BUDDY_REHYPE_PLUGINS : undefined}
-        urlTransform={getSafeLessonQuestionUrl}
-      >
-        {answer}
-      </Streamdown>
+      <CodeLabelsContext value={codeLabels}>
+        <DiagramsReadyContext value={plugins.mermaid !== undefined}>
+          <Streamdown
+            animated={isAnimating}
+            className={TUTOR_MARKDOWN_CLASS}
+            components={appLinks ? TUTOR_ANSWER_COMPONENTS : ANSWER_COMPONENTS}
+            controls={false}
+            disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
+            isAnimating={isAnimating}
+            linkSafety={appLinks ? undefined : LESSON_QUESTION_LINK_SAFETY}
+            mode={isStreaming ? "streaming" : "static"}
+            plugins={plugins}
+            rehypePlugins={appLinks ? BUDDY_REHYPE_PLUGINS : undefined}
+            urlTransform={getSafeLessonQuestionUrl}
+          >
+            {answer}
+          </Streamdown>
+        </DiagramsReadyContext>
+      </CodeLabelsContext>
 
       {opened === false && <BlockOpenFailed />}
 

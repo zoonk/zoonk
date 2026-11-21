@@ -14,8 +14,9 @@ struct InlineMarks: Equatable {
   /// word, not at the space after it.
   var underline: [Range<Int>] = []
   var terms: [Range<Int>] = []
+  var code: [Range<Int>] = []
 
-  var isEmpty: Bool { underline.isEmpty && terms.isEmpty }
+  var isEmpty: Bool { underline.isEmpty && terms.isEmpty && code.isEmpty }
 
   init(underline: [Range<Int>] = [], terms: [Range<Int>] = []) {
     self.underline = underline
@@ -28,6 +29,9 @@ struct InlineMarks: Equatable {
       underline.flatMap { phrase in
         text.range(of: phrase).map { Self.words(in: Self.offsets(of: $0, in: text), of: text) }
       } ?? []
+    code = text.runs.compactMap { run in
+      InlineCode.isCode(run.inlinePresentationIntent) ? Self.offsets(of: run.range, in: text) : nil
+    }
 
     guard highlightsTerms else {
       return
@@ -86,8 +90,10 @@ extension View {
 struct HandMarksRenderer: TextRenderer {
   let marks: InlineMarks
 
+  /// Below and above only: SwiftUI lays a text out wider by its renderer's side padding than it
+  /// measured it, so a line near the edge wraps later than the text's height counts on.
   var displayPadding: EdgeInsets {
-    EdgeInsets(top: 0, leading: 4, bottom: 10, trailing: 4)
+    EdgeInsets(top: 2, leading: 0, bottom: 10, trailing: 0)
   }
 
   func draw(layout: Text.Layout, in context: inout GraphicsContext) {
@@ -111,6 +117,14 @@ struct HandMarksRenderer: TextRenderer {
     for ((line, glyphs), span) in zip(zip(layout, lines), underlined) {
       let bounds = line.typographicBounds
 
+      for code in marks.code {
+        if let chip = Self.chip(of: code, in: glyphs, from: start, lineStart: bounds.rect.minX) {
+          context.fill(
+            Path(roundedRect: chip, cornerRadius: Radius.sm, style: .continuous),
+            with: .color(.muted))
+        }
+      }
+
       for term in marks.terms {
         if let span = Self.span(of: [term], in: glyphs, from: start) {
           let rect = CGRect(
@@ -131,6 +145,32 @@ struct HandMarksRenderer: TextRenderer {
 
       context.draw(line)
     }
+  }
+
+  /// Main's chip around a line's piece of inline code, 2 points above and below its glyphs. The text
+  /// keeps the padding beside the run (`InlineCode.drawn`), the end's inside its last glyph; where
+  /// the run splits over two lines, each piece ends flush, so it never reaches past the column.
+  private static func chip(
+    of range: Range<Int>, in glyphs: [Text.Layout.RunSlice], from start: Text.Layout.CharacterIndex,
+    lineStart: CGFloat
+  ) -> CGRect? {
+    let marked = glyphs.filter { glyph in
+      glyph.characterIndices.contains { range.contains(start.distance(to: $0)) }
+    }
+    let rects = marked.map { $0.typographicBounds.rect }
+
+    guard let minX = rects.map(\.minX).min(), let maxX = rects.map(\.maxX).max(),
+      let minY = rects.map(\.minY).min(), let maxY = rects.map(\.maxY).max()
+    else {
+      return nil
+    }
+
+    let startsHere = marked.contains { glyph in
+      glyph.characterIndices.contains { start.distance(to: $0) == range.lowerBound }
+    }
+    let left = startsHere ? max(minX - InlineCode.padding, lineStart) : minX
+
+    return CGRect(x: left, y: minY - 2, width: maxX - left, height: maxY - minY + 4)
   }
 
   private static func span(

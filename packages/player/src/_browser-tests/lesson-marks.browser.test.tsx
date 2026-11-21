@@ -208,31 +208,33 @@ describe("lesson marks", () => {
     expect(underlined()).toStrictEqual(["a cloud of possibilities: a map"]);
   });
 
-  it("leaves an example inside a numbered list unframed, so the list keeps counting", async () => {
+  it("frames an example inside a numbered list, and the list counts on after it", async () => {
     const steps = "1. Heat the water.\n2. Add the salt.\n3. Stir until it dissolves.";
 
     const explanation = contentStep("explanation", {
       content: { text: steps },
-      marks: marks({
-        example: "2. Add the salt.",
-        icon: inlineIcon("S"),
-        ideaIndex: 0,
-        underline: "Add the salt",
-      }),
+      marks: marks({ example: "2. Add the salt.", ideaIndex: 0, underline: "Add the salt" }),
     });
 
     renderLessonPlayer({ lesson: buildLesson([explanation], { summary: MAP }) });
-    await expect.element(page.getByText("Add the salt.")).toBeVisible();
+    await expect.element(page.getByText("Example", { exact: true })).toBeVisible();
 
-    await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
-    expect(page.getByRole("main").getByRole("listitem").elements()).toHaveLength(3);
+    const lists = page
+      .getByRole("main")
+      .getByRole("list")
+      .elements()
+      .map((list) => ({
+        framed: list.closest("[data-slot='example-box']") !== null,
+        start: list instanceof HTMLOListElement ? list.start : null,
+      }));
+
+    expect(lists).toStrictEqual([
+      { framed: false, start: 1 },
+      { framed: true, start: 2 },
+      { framed: false, start: 3 },
+    ]);
+
     expect(underlined()).toStrictEqual(["Add the salt"]);
-
-    const cornerIcons = document.querySelectorAll(
-      '[data-slot="lesson-text"] [data-slot="lesson-icon"]',
-    );
-
-    expect(cornerIcons).toHaveLength(1);
   });
 
   it("plays a lesson written before marks as plain text", async () => {

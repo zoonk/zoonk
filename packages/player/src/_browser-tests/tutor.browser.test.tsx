@@ -54,6 +54,12 @@ const FORMATTED_ANSWER = [
   "```mermaid\nflowchart TD\n  accTitle: How an orbit forms\n  accDescr: Gravity and forward motion produce an orbit.\n  A[Gravity] --> B[Orbit]\n  C[Forward motion] --> B\n```",
 ].join("\n\n");
 
+const CODE_QUESTION_PROGRAM = "```python\nfor i in range(3):\n    print(i)\n```";
+
+function codeOption({ code, id, isCorrect }: { code: string; id: string; isCorrect: boolean }) {
+  return { id, isCorrect, reason: "It starts at 0.", text: `\`\`\`python\n${code}\n\`\`\`` };
+}
+
 function lessonWithTutor({
   pageSize,
   steps = [teachingStep("check")],
@@ -122,6 +128,12 @@ function checkAgain(sheet: Locator) {
 
 function connectionLost() {
   return new TypeError("Failed to fetch");
+}
+
+function codeLines(block: Element): string[] {
+  return [...block.querySelectorAll("[data-slot='code-line'] > div")].map(
+    (line) => line.textContent ?? "",
+  );
 }
 
 function distanceFromBottom(log: Locator) {
@@ -226,6 +238,63 @@ describe("asking the tutor", () => {
       },
       question: "Why isn't it this one?",
     });
+  });
+
+  it("quotes a guess's question without the code shown above it", async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [
+        contentStep("hook", {
+          content: {
+            options: [
+              { id: "one", isCorrect: false, text: "`1`" },
+              { id: "zero", isCorrect: true, text: "`0`" },
+            ],
+            question: `What does this print first?\n${CODE_QUESTION_PROGRAM}`,
+            reveal: "It prints 0 first.",
+            variant: "guess",
+          },
+        }),
+      ],
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+
+    expect(sheet.element().querySelector("[data-slot='tutor-quote']")?.textContent).toBe(
+      "About “What does this print first?”",
+    );
+  });
+
+  it("quotes a picked code option as one line of code, never as raw Markdown", async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [
+        contentStep("check", {
+          content: {
+            basis: null,
+            options: [
+              codeOption({ code: "print(1)\nprint(2)", id: "one", isCorrect: false }),
+              codeOption({ code: "print(0)", id: "zero", isCorrect: true }),
+            ],
+            question: `What does this print first?\n${CODE_QUESTION_PROGRAM}`,
+          },
+        }),
+      ],
+    });
+
+    playLesson({ lesson });
+
+    await page.getByRole("radio", { name: "Line 1: print(1) Line 2: print(2)" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByText("It starts at 0.")).toBeVisible();
+
+    const sheet = await openTutor();
+    const quote = sheet.element().querySelector("[data-slot='tutor-quote']");
+
+    expect(quote?.textContent).toBe(
+      "You picked print(1) print(2) on “What does this print first?”",
+    );
+
+    expect(quote?.querySelector("[data-slot='code-snippet']")).toBeNull();
   });
 
   it("recovers a lost question before sending a follow-up typed while it waited", async () => {
@@ -587,11 +656,9 @@ describe("tutor answers", () => {
       .element(sheet.getByRole("blockquote").getByText("continuous free fall"))
       .toBeVisible();
 
-    await expect.element(sheet.getByText("const orbitalSpeed = 7.8;")).toBeVisible();
-
     await expect
-      .poll(() => sheet.getByRole("code").filter({ hasText: "const orbitalSpeed" }).element())
-      .toHaveProperty("innerText", expect.stringContaining(";\nconsole.log"));
+      .poll(() => codeLines(sheet.getByRole("group", { name: "Code" }).first().element()))
+      .toStrictEqual(["const orbitalSpeed = 7.8;", "console.log(orbitalSpeed);"]);
 
     await expect
       .element(sheet.getByRole("table").getByRole("cell", { name: "km/s" }))
@@ -600,6 +667,39 @@ describe("tutor answers", () => {
     await Promise.all([import("@streamdown/math"), import("@streamdown/mermaid")]);
     await expectCount(sheet.getByRole("math"), 2);
     await expect.element(sheet.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
+  });
+
+  it("draws an answer's code as a lesson does, from a half-written block on", async () => {
+    await atViewport(PHONE, async () => {
+      const { api, lesson } = lessonWithTutor();
+      const stream = tutorAnswerStream();
+      api.next("answer", () => Promise.resolve(stream.response));
+      playLesson({ lesson });
+
+      const sheet = await openTutor();
+      await ask(sheet, "How do I print two lines?");
+      stream.write("Call `print` once per line:\n\n```python\nprint('first')\nprint('sec");
+
+      const code = sheet.getByRole("group", { name: "Code" });
+      await expect.element(code).toBeVisible();
+      await expect.poll(() => codeLines(code.element())[0]).toBe("print('first')");
+
+      stream.write("ond')\n```\n\nEach call ends its line.");
+      stream.finish();
+      stream.close();
+
+      await expect.element(sheet.getByText("Each call ends its line.")).toBeVisible();
+      expect(codeLines(code.element())).toStrictEqual(["print('first')", "print('second')"]);
+      await expect.element(sheet.getByRole("code").filter({ hasText: /^print$/u })).toBeVisible();
+
+      expect(
+        sheet
+          .element()
+          .querySelector("[data-streamdown='code-block'], [data-streamdown='inline-code']"),
+      ).toBeNull();
+
+      expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+    });
   });
 
   it("draws an answer's math without downloading a stylesheet for it", async () => {
