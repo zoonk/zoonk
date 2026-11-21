@@ -207,7 +207,7 @@ struct MistakePracticeScreen: View {
         shownAt = .now
         state.start()
       }
-    case .feedback(_, let grade, _):
+    case .feedback:
       PracticeActionRow {
         PracticeMainButton(
           title: LocalizedStringResource(
