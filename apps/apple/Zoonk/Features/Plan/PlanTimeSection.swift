@@ -82,39 +82,14 @@ struct PlanTimeSection: View {
           covers
             .foregroundStyle(.mutedForeground)
         } else {
-          let awaitsOffer =
-            found == nil && !line.coversEverything && [.idle, .loading].contains(time.freshState)
-
-          // Short of everything, the time that covers it is offered, or what it takes is said, once
-          // it's worked out. Its room, the tallest either takes here, is held for the visit, so
-          // nothing under it moves when it comes, nor when nothing does.
-          HeldSlot(gated: awaitsOffer) {
-            VStack(alignment: .leading, spacing: 8) {
-              TimeAnswer(
-                date: TimeAnswer.GoalDate(
-                  isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
-                exam: goal.kind == .exam, found: found, line: line, minutes: minutes
-              ) {
-                Task { await time.refresh() }
-              } onUseOffer: { minutes in
-                editor.run { await setMinutes(minutes) }
-              }
-
-              if awaitsOffer {
-                ZStack(alignment: .topLeading) {
-                  Button {
-                  } label: {
-                    TimeAnswer.offerLabel(longestOfferMinutes(minutes))
-                  }
-
-                  Text(planMostTimeText(minutes: longestOfferMinutes(minutes)))
-                }
-                .buttonStyle(.outline)
-                .controlSize(.small)
-                .hidden()
-                .accessibilityHidden(true)
-              }
-            }
+          TimeAnswer(
+            date: TimeAnswer.GoalDate(
+              isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
+            exam: goal.kind == .exam, found: found, line: line, minutes: minutes
+          ) {
+            Task { await time.refresh() }
+          } onUseOffer: { minutes in
+            editor.run { await setMinutes(minutes) }
           }
         }
       }
@@ -163,12 +138,6 @@ struct PlanTimeSection: View {
     }
     .buttonStyle(.outline)
     .controlSize(.small)
-  }
-
-  private func longestOfferMinutes(_ current: Int) -> Int {
-    (plan.schedule.dailyTimes + [current]).max {
-      planDurationText(minutes: Double($0)).count < planDurationText(minutes: Double($1)).count
-    } ?? current
   }
 
   private func setMinutes(_ minutes: Int) async {

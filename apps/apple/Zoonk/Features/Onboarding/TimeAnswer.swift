@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// Main's `TimeAnswer`, shared by the time question and the plan editor: one line under the picker
-/// that says what the time shown gets the learner, and what covering everything takes when the
-/// suggestion doesn't. It never says a time covers everything unless it does, and offers another time
-/// only when the suggestion covers everything.
+/// Main's `TimeAnswer`, shared by the time question and the plan editor: one line that says what the
+/// time shown gets the learner, and what covering everything takes when the suggestion doesn't. It
+/// never says a time covers everything unless it does, and offers another time only when the
+/// suggestion covers everything.
 struct TimeAnswer: View {
   struct GoalDate: Equatable {
     let isoDate: String
@@ -36,12 +36,11 @@ struct TimeAnswer: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      // Under a time that covers everything, its room stays, so nothing moves as times change.
-      if line != .unmeasured, let everything = ScheduleTime.everythingTakes(found) {
+      if line != .unmeasured, !line.coversEverything,
+        let everything = ScheduleTime.everythingTakes(found)
+      {
         Text(Self.everythingTakes(everything))
           .foregroundStyle(.mutedForeground)
-          .opacity(line.coversEverything ? 0 : 1)
-          .accessibilityHidden(line.coversEverything)
       }
 
       if failed {

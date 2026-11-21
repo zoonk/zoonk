@@ -671,14 +671,17 @@ final class PlanReadsOnScreenTests: XCTestCase {
     XCTAssertEqual(PlanBasesView.recommended(screen.store.basesAdvice(goalId: "goal")), .essential)
   }
 
-  func testTheTimeSectionsOfferArrivingMovesNothingUnderIt() async throws {
+  /// No blank room waits for the offer: the row under the time sits right under the sentence until
+  /// the offer comes and takes its place.
+  func testTheTimeSectionHoldsNoRoomForAnOfferStillComing() async throws {
     let api = PlanAPIStub()
     await api.setSuggested(
       TimeToCover.Suggested(
         kind: .everything, minutes: 60, reachedShare: 1, split: nil))
     let rows = try await rowUnderTimeSection(api: api) { await api.releaseHeldCall() }
 
-    XCTAssertEqual(rows.count, 1, "The row under it moved: \(rows)")
+    XCTAssertGreaterThan(
+      rows.last ?? 0, rows.first ?? 0, "The row under it didn't make way for the offer: \(rows)")
   }
 
   func testTheTimeSectionsFailedReadMovesNothingUnderIt() async throws {
