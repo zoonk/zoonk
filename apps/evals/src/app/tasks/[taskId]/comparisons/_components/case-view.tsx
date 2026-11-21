@@ -4,6 +4,7 @@ import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   type CheckResult,
+  type FailedCheck,
   type ObservationView,
   type ReadOrder,
   type ReadView,
@@ -175,8 +176,31 @@ function ProblemItem({
   );
 }
 
+/** Named as the decision table's row names it, so a row's link lands on what it counted. */
+function FailedChecks({ checks }: { checks: FailedCheck[] }) {
+  return checks.map((check) => (
+    <Fold
+      key={check.name}
+      title={
+        <span className="text-destructive-text">
+          Failed {check.name} ({check.total - check.passed} of {check.total})
+        </span>
+      }
+    >
+      <ul className="flex flex-col gap-1 pb-2">
+        {[...new Set(check.problems)].map((problem) => (
+          <li className="text-muted-foreground text-xs" key={problem}>
+            {problem}
+          </li>
+        ))}
+      </ul>
+    </Fold>
+  ));
+}
+
 function OutputColumn({
   criteria,
+  failedChecks,
   imageIndex,
   images,
   label,
@@ -184,6 +208,7 @@ function OutputColumn({
   output,
 }: {
   criteria: CriterionLabels;
+  failedChecks: FailedCheck[];
   imageIndex: number;
   images: ShownImage[];
   label: React.ReactNode;
@@ -205,6 +230,8 @@ function OutputColumn({
       ) : (
         <OutputImage images={images} index={imageIndex} />
       )}
+
+      <FailedChecks checks={failedChecks} />
 
       {observations.length > 0 && (
         <div className="flex flex-col pt-3">
@@ -324,6 +351,7 @@ function RunSection({
           return (
             <OutputColumn
               criteria={criteria}
+              failedChecks={run.failedChecks[side]}
               imageIndex={pictured.findIndex((image) => image.side === side)}
               images={pictured}
               key={side}

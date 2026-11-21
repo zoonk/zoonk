@@ -36,7 +36,10 @@ export type ReadView = {
   reverse: boolean;
 };
 
+export type FailedCheck = Comparison["checks"][number];
+
 export type RunView = {
+  failedChecks: Record<Side, FailedCheck[]>;
   outputs: Record<Side, PacketOutput | null>;
   reads: ReadView[];
   run: number;
@@ -117,6 +120,20 @@ function readView(comparison: Comparison, claims: Claim[], read: Read): ReadView
   };
 }
 
+function failedChecks(
+  comparison: Comparison,
+  { caseId, run }: { caseId: string; run: number },
+  side: Side,
+): FailedCheck[] {
+  return comparison.checks.filter(
+    (check) =>
+      check.caseId === caseId &&
+      check.run === run &&
+      check.side === side &&
+      check.passed < check.total,
+  );
+}
+
 /** Each run of a case: both outputs, and every accepted read of them translated from A and B to sides. */
 export function caseRuns(comparison: Comparison, caseId: string): RunView[] {
   const reads = acceptedReads(comparison);
@@ -136,6 +153,10 @@ export function caseRuns(comparison: Comparison, caseId: string): RunView[] {
     .filter((run) => run.caseId === caseId)
     .toSorted((left, right) => left.run - right.run)
     .map((run) => ({
+      failedChecks: {
+        challenger: failedChecks(comparison, run, "challenger"),
+        incumbent: failedChecks(comparison, run, "incumbent"),
+      },
       outputs: { challenger: output(run.challenger), incumbent: output(run.incumbent) },
       reads: reads
         .filter((read) => read.mapping.caseId === caseId && read.mapping.run === run.run)
