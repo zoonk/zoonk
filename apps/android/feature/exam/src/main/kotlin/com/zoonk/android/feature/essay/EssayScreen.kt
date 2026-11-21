@@ -182,6 +182,31 @@ private fun WritingStart(
             RunLoading(navigator::closeTask)
         }
 
+        WritingStartState.Removed -> {
+            RunPage(
+                onClose = navigator::closeTask,
+                title = { BarTitle(stringResource(R.string.essay_written_answer)) },
+                bottomBar = {
+                    TaskActionBar {
+                        TaskActions { width ->
+                            Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
+                                Text(stringResource(R.string.essay_back_to_today))
+                            }
+                        }
+                    }
+                },
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.essay_removed), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        stringResource(R.string.essay_removed_detail),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+        }
+
         is WritingStartState.Writing -> {
             TrackShown(AnalyticsEvent.WritingPromptWaitViewed(shown.generationId, AnalyticsEvent.WritingSurface.Practice))
             TaskScaffold(onClose = navigator::closeTask, title = { BarTitle(stringResource(R.string.essay_written_answer)) }) { padding ->
@@ -446,7 +471,16 @@ internal fun WritingLineCount(
         remember(text, writing.charactersPerLine, limit) { countWritingLines(text, writing.charactersPerLine.toInt(), limit).estimated }
     val over = used > limit
     Text(
-        stringResource(if (over) R.string.essay_lines_over else R.string.essay_lines_used, used, limit),
+        if (over) {
+            stringResource(
+                R.string.essay_lines_over,
+                used,
+                limit,
+                used - limit,
+            )
+        } else {
+            stringResource(R.string.essay_lines_used, used, limit)
+        },
         modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = if (over) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurfaceVariant,
         style = style,

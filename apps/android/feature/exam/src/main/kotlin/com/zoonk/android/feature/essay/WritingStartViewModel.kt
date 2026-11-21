@@ -23,6 +23,9 @@ sealed interface WritingStartState {
 
     data object Failed : WritingStartState
 
+    /** The notice no longer asks this task. */
+    data object Removed : WritingStartState
+
     /** [task] is what's left for tomorrow, when a later start's refusal named it. */
     data class LimitReached(
         val task: RefusedTask? = null,
@@ -47,6 +50,7 @@ class WritingStartViewModel(
             when (initial) {
                 is WritingBefore.Writing -> WritingStartState.Writing(initial.generationId)
                 WritingBefore.Failed -> WritingStartState.Failed
+                WritingBefore.Removed -> WritingStartState.Removed
                 WritingBefore.LimitReached -> WritingStartState.LimitReached()
             },
         )
@@ -116,6 +120,7 @@ class WritingStartViewModel(
             when (answer) {
                 is WritingStartAnswer.Ready -> WritingStartState.Ready.also { store.essays[blockId].refresh() }
                 is WritingStartAnswer.LimitReached -> WritingStartState.LimitReached(answer.task)
+                WritingStartAnswer.Removed -> WritingStartState.Removed
                 else -> WritingStartState.Failed
             }
     }

@@ -37,6 +37,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.SyllabusSubject
+import com.zoonk.api.models.WrittenPartPointsMinimum
 import com.zoonk.api.models.WrittenPractice
 import com.zoonk.api.models.WrittenPracticeSubjectsInner
 import kotlinx.datetime.toJavaLocalDate
@@ -77,6 +78,7 @@ internal fun LazyListScope.subjectWritten(
                 written.answers.forEachIndexed { index, answer ->
                     if (index > 0) HorizontalDivider()
                     val lines = answer.lines?.toInt()
+                    val estimated = answer.estimatedLines?.toInt()
                     val versions = answer.versions.toInt()
                     ListRow(
                         headline = { Text(answer.title) },
@@ -84,7 +86,11 @@ internal fun LazyListScope.subjectWritten(
                         supporting = {
                             Text(
                                 factsLine(
-                                    lines?.let { pluralStringResource(R.plurals.goalcontent_written_lines, it, it) },
+                                    when {
+                                        estimated != null && lines != null -> stringResource(R.string.essay_lines_used, estimated, lines)
+                                        estimated != null -> pluralStringResource(R.plurals.essay_about_lines, estimated, estimated)
+                                        else -> lines?.let { pluralStringResource(R.plurals.goalcontent_written_lines, it, it) }
+                                    },
                                     if (versions >
                                         1
                                     ) {
@@ -118,7 +124,16 @@ private fun WrittenPoints(written: WrittenPracticeSubjectsInner) {
     val points = written.points
     val max = points.max
     val range = points.range
-    val minimum = points.minimum?.value
+    val minimum =
+        points.minimum?.let {
+            if (it.unit == WrittenPartPointsMinimum.Unit.PERCENT &&
+                max != null
+            ) {
+                it.value / PERCENT * max
+            } else {
+                it.value
+            }
+        }
 
     Column(
         Modifier.padding(horizontal = PAGE_PADDING).padding(top = 20.dp),
@@ -136,9 +151,14 @@ private fun WrittenPoints(written: WrittenPracticeSubjectsInner) {
                 Text(stringResource(R.string.essay_not_measured), style = MaterialTheme.typography.titleLarge)
             }
             max?.let { RangeMeter(range?.low, range?.high, it, minimum = minimum) }
-            minimum?.let {
+            points.minimum?.let {
+                val locale = currentLocale()
                 Text(
-                    stringResource(R.string.goalcontent_written_minimum, formatPoints(it, currentLocale())),
+                    if (it.unit == WrittenPartPointsMinimum.Unit.PERCENT) {
+                        stringResource(R.string.goalcontent_written_minimum_share, formatPercent(it.value / PERCENT, locale))
+                    } else {
+                        stringResource(R.string.goalcontent_written_minimum, formatPoints(it.value, locale))
+                    },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -229,6 +249,7 @@ private fun TrendBars(values: List<Double?>) {
 }
 
 private const val TREND_SAMPLES = 4
+private const val PERCENT = 100.0
 private const val MIN_BAR_SHARE = 0.2f
 private const val OLDER_ALPHA = 0.4f
 private val BAR_HEIGHT = 20.dp

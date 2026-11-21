@@ -17,6 +17,8 @@ import com.zoonk.api.models.MockQuestionsInput
 import com.zoonk.api.models.MockShape
 import com.zoonk.api.models.WrittenTestShape
 import kotlinx.coroutines.delay
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import java.time.Instant
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
@@ -61,6 +63,9 @@ sealed interface QuestionWriting {
     ) : QuestionWriting
 
     data object PlusRequired : QuestionWriting
+
+    /** A written test's questions would be graded as it starts, and today's extra grading is used: it returns tomorrow. */
+    data object GradesUsed : QuestionWriting
 }
 
 /**
@@ -115,6 +120,9 @@ class LiveMockStartApi(
         )
     }
 }
+
+/** The day's extra writing allowance, rather than a plan's usage cap, says when it returns. */
+private fun JsonElement?.hasReturnsOn(): Boolean = (this as? JsonObject)?.containsKey("returnsOn") == true
 
 /** The written test is a shape of its own on the wire; every other option names its kind, day and subject. */
 private fun MockShape.input(): AnytimeMockInputShape =
@@ -178,7 +186,16 @@ class MockStarter(
                     )
                         ?: QuestionWriting.Ready
                 } catch (e: ApiException) {
-                    Limit.of(e)?.let(QuestionWriting::Refused) ?: if (e.code == PLUS_REQUIRED) QuestionWriting.PlusRequired else throw e
+                    when {
+                        e.code == USAGE_LIMIT_REACHED && e.details.hasReturnsOn() -> {
+                            QuestionWriting.GradesUsed
+                        }
+
+                        else -> {
+                            Limit.of(e)?.let(QuestionWriting::Refused)
+                                ?: if (e.code == PLUS_REQUIRED) QuestionWriting.PlusRequired else throw e
+                        }
+                    }
                 }
             }
         if ((result as? MutationResult.Done)?.value == QuestionWriting.PlusRequired) cache.invalidate(setOf(DataDomain.UserSubscription))
@@ -209,6 +226,7 @@ class MockStarter(
     private companion object {
         const val PLUS_REQUIRED = "PLUS_REQUIRED"
         const val NOT_ENOUGH_QUESTIONS = "NOT_ENOUGH_QUESTIONS"
+        const val USAGE_LIMIT_REACHED = "USAGE_LIMIT_REACHED"
 
         /** Its body is `{status: "limitReached", returnsOn}`, not an error's. */
         const val TOO_MANY_REQUESTS = 429

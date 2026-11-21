@@ -114,6 +114,7 @@ internal class FakeEssayApi(
     var starts = ArrayDeque<WritingStartAnswer>()
     var defaultStart: WritingStartAnswer = WritingStartAnswer.Ready(ADMISSION)
     val started = mutableListOf<UUID?>()
+    var startError: com.zoonk.android.data.ApiException? = null
 
     /** Each save's answer in turn; once empty, a save is kept at the next revision. */
     val saveAnswers = ArrayDeque<DraftSave>()
@@ -134,6 +135,7 @@ internal class FakeEssayApi(
         previousAttemptId: UUID?,
     ): WritingStartAnswer {
         started += previousAttemptId
+        startError?.let { throw it }
         return starts.removeFirstOrNull() ?: defaultStart
     }
 

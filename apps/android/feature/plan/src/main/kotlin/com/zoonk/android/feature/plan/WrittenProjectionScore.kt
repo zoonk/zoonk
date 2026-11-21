@@ -26,9 +26,11 @@ import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.pointsRange
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.WritingRangeOutput
 import com.zoonk.api.models.WrittenPartPoints
+import com.zoonk.api.models.WrittenPartPointsMinimum
 import com.zoonk.api.models.WrittenProjection
 
 /**
@@ -55,9 +57,16 @@ internal fun WrittenProjectionScore(
             )
             when {
                 below != null -> {
-                    Text(stringResource(R.string.plan_written_below_minimum, below.name), style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(R.string.plan_written_below_minimum), style = MaterialTheme.typography.titleLarge)
                     below.minimum?.let {
-                        MetaLine(stringResource(R.string.plan_written_asks_for, formatPoints(it.value, currentLocale())))
+                        val locale = currentLocale()
+                        MetaLine(
+                            if (it.unit == WrittenPartPointsMinimum.Unit.PERCENT) {
+                                stringResource(R.string.plan_written_asks_for_share, below.name, formatPercent(it.value / PERCENT, locale))
+                            } else {
+                                stringResource(R.string.plan_written_asks_for, below.name, formatPoints(it.value, locale))
+                            },
+                        )
                     }
                 }
 
@@ -145,3 +154,5 @@ private fun Standing(part: WrittenPartPoints) {
         WrittenPartPoints.Standing.UNMEASURED, null -> {}
     }
 }
+
+private const val PERCENT = 100.0

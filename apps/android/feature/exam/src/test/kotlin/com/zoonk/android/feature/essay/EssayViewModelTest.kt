@@ -79,6 +79,19 @@ class EssayViewModelTest {
         }
 
     @Test
+    fun aStartTheNoticeNoLongerAsksForIsRemovedNotAFailure() =
+        runTest(dispatcher) {
+            val api = FakeEssayApi()
+            api.startError =
+                com.zoonk.android.data
+                    .ApiException(com.zoonk.android.data.ApiError.Unavailable, status = 409)
+            val session = AuthenticatedSession(ANA, "token", "local")
+
+            assertEquals(WritingStartAnswer.Removed, api.startAnswer(session, ESSAY_BLOCK))
+            assertEquals("removed", api.startRoute(session, ESSAY_BLOCK).writing)
+        }
+
+    @Test
     fun aDraftSavedOnAnotherDeviceWinsOverAnOlderOneKeptHere() {
         val saved = "Continued on the laptop."
         assertEquals(saved, chooseDraftText(KeptWriting("Typed here before.", base = 1), saved, savedRevision = 2))

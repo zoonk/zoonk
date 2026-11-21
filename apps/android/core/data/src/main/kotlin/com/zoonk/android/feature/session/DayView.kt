@@ -120,6 +120,8 @@ data class DayStep(
     val waitReason: StudyBlock.WaitReason?,
     /** A written task's row: its saved draft goes on, or today's extra grades are used and it waits for tomorrow. */
     val writing: WritingRow? = null,
+    /** A short writing task on what a lesson just taught, rather than a whole answer. */
+    val drill: Boolean = false,
 ) {
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
@@ -325,6 +327,7 @@ fun StudyBlock.toDayStep(): DayStep =
         opensInPlayer = opensInPlayer,
         waitReason = waitReason,
         writing = writingAvailability?.toWritingRow(),
+        drill = writingUnit == StudyBlock.WritingUnit.DRILL,
     )
 
 private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
@@ -360,6 +363,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         opensInPlayer = opensInPlayer,
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
         writing = writingAvailability?.toWritingRow(),
+        drill = writingUnit == UnstartedStudyDayBlocksInner.WritingUnit.DRILL,
     )
 
 fun StudyMission.toDayMission(): DayMission =

@@ -48,7 +48,7 @@
     <!-- How many handwritten lines the typed answer would take, of the question's limit, such as "about 23 of 30 lines". -->
     <string name="essay_lines_used">about %1$d of %2$d lines</string>
     <!-- The typed answer would take more handwritten lines than the question allows; the exam's graders stop reading at the limit. -->
-    <string name="essay_lines_over">about %1$d of %2$d lines · the board won\'t read past line %2$d</string>
+    <string name="essay_lines_over">about %1$d of %2$d lines · %3$d won\'t be read</string>
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
     <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
@@ -58,15 +58,16 @@
     <string name="essay_question_failed">We couldn\'t write your question</string>
     <string name="essay_nothing_lost">Nothing was lost. Try again in a moment.</string>
     <string name="essay_try_again">Try again</string>
+    <!-- A written task the exam's notice no longer asks, after it was read again. -->
+    <string name="essay_removed">This task is no longer available</string>
+    <string name="essay_removed_detail">Your exam\'s notice changed, so it\'s out of your plan. Nothing was graded.</string>
     <!-- The day's extra grades for written answers are used. -->
     <string name="essay_no_more_grading">No more grading today</string>
     <string name="essay_more_tomorrow">You\'ll have more tomorrow.</string>
     <!-- A written task that waits for the next day. -->
     <string name="essay_left_for_tomorrow">Left for tomorrow</string>
-    <!-- Under a question's score: the written test's minimum, on the sum of all its questions, never this question's own. -->
-    <string name="essay_part_minimum">Written test minimum: %1$s of %2$s, on the sum of its questions</string>
-    <!-- Under a question's score: the written test's minimum as a percent of its points. %1$s is a number, such as "50". -->
-    <string name="essay_part_minimum_percent">Written test minimum: %1$s%% of its points</string>
+    <!-- Under a question's score: the written test's own minimum, on the sum of all its questions, never this question's. %1$s is a share, such as "50%". -->
+    <string name="essay_part_minimum">Minimum to pass the written test: %1$s of the points</string>
     <!-- The part of a written answer's score that its content earned. -->
     <string name="essay_content">Content</string>
     <string name="essay_language_errors">Language errors</string>
@@ -80,6 +81,8 @@
     </plurals>
     <!-- Points taken away, such as "−0.35". -->
     <string name="essay_minus">−%1$s</string>
+    <!-- Points language errors take away, as a range, such as "−0.3 to −0.6". -->
+    <string name="essay_minus_range">−%1$s to −%2$s</string>
     <!-- After a rewrite: the criteria the learner fixed. %1$s lists them. -->
     <string name="essay_fixed">Fixed: %1$s</string>
     <!-- After a rewrite: the criteria still to improve. %1$s lists them. -->

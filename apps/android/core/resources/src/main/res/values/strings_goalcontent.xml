@@ -180,6 +180,10 @@
     <string name="goalcontent_written_estimated">Estimated score</string>
     <!-- %1$s is the written test's minimum points. -->
     <string name="goalcontent_written_minimum">Minimum to pass: %1$s</string>
+    <!-- %1$s is the written test's minimum as a share of its points, such as "50%". -->
+    <string name="goalcontent_written_minimum_share">Minimum to pass: %1$s of the points</string>
+    <!-- Instead of the Write button, once today's grading is used for every written task. -->
+    <string name="goalcontent_written_more_tomorrow">More grading tomorrow</string>
     <!-- How the learner's written answers are moving, over their last few answers. -->
     <string name="goalcontent_written_progress">Your progress</string>
     <plurals name="goalcontent_written_last_answers">

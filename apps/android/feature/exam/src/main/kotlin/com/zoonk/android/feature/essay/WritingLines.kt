@@ -11,7 +11,7 @@ data class WritingLines(
 
 /**
  * Core's `countWritingLines`: each grapheme takes a character of a line [charactersPerLine] long,
- * and each line break starts a new line, so an answer typed here counts as the sheet would.
+ * and each line break inside the text starts a new line, so an answer typed here counts as the sheet would.
  */
 fun countWritingLines(
     text: String,
@@ -33,7 +33,8 @@ fun countWritingLines(
         }
         if (limit != null && lines > limit && ignoredFrom == null) ignoredFrom = start
         if (lineBreak) {
-            lines += 1
+            // A break that ends the text starts no line of its own.
+            if (end < text.length) lines += 1
             used = 0
         } else {
             used += 1

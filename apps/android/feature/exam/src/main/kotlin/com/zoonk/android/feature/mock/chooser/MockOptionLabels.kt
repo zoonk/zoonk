@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.api.models.MockLeftOut
@@ -71,7 +72,8 @@ internal fun mockOptionDetail(
     // A test of an exam of several says when it happens, if the notice says; its name says the rest.
     val sections = option.sections.orEmpty()
     if (sections.isNotEmpty() && option.kind != MockOption.Kind.HALF) {
-        return sections.mapNotNull { it.session }.takeIf { it.isNotEmpty() }?.let { formatList(it, currentLocale()) }
+        // The notice's own words for each session are labels, so they're listed apart, not set in a sentence.
+        return sections.mapNotNull { it.session }.takeIf { it.isNotEmpty() }?.factsLine()
     }
     val subjects = option.areas.takeIf { severalDays && option.kind != MockOption.Kind.AREA }.orEmpty()
     val parts = option.covers ?: (subjects + option.written)

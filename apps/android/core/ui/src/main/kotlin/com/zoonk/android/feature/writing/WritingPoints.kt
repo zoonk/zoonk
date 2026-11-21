@@ -26,16 +26,41 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.util.Locale
 
-/** A range of points, one number when both ends round alike: "29.8", never "29.79–29.8". */
+/**
+ * A range of points, one number when both ends round alike ("29.8", never "29.79–29.8"), and both
+ * ends with the same decimals ("12.0–17.5", never "12–17.5").
+ */
 @Composable
 fun pointsRange(
     low: Double,
     high: Double,
 ): String {
-    val locale = currentLocale()
-    val from = formatPoints(low, locale)
-    val to = formatPoints(high, locale)
+    val (from, to) = rangeEnds(low, high, currentLocale())
     return if (from == to) from else stringResource(R.string.essay_range, from, to)
+}
+
+/** What language errors take away, as a range like the rest: "−0.3 to −0.6", never "−0.3–0.6". */
+@Composable
+fun deductionRange(
+    low: Double,
+    high: Double,
+): String {
+    val (from, to) = rangeEnds(low, high, currentLocale())
+    return when {
+        high <= 0 -> from
+        from == to -> stringResource(R.string.essay_minus, from)
+        else -> stringResource(R.string.essay_minus_range, from, to)
+    }
+}
+
+private fun rangeEnds(
+    low: Double,
+    high: Double,
+    locale: Locale,
+): Pair<String, String> {
+    val decimals = if (listOf(low, high).any { Math.round(it * TENTHS) % TENTHS != 0L }) 1 else 0
+    return formatNumber(low, locale, maximumFractionDigits = decimals, minimumFractionDigits = decimals) to
+        formatNumber(high, locale, maximumFractionDigits = decimals, minimumFractionDigits = decimals)
 }
 
 fun formatPoints(
@@ -126,6 +151,7 @@ fun PointsValue(
     )
 }
 
+private const val TENTHS = 10
 private val METER_HEIGHT = 6.dp
 private val TICK_HEIGHT = 14.dp
 private val TICK_WIDTH = 2.dp

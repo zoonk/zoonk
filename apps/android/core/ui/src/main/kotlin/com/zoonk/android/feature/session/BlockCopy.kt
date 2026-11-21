@@ -89,6 +89,10 @@ fun blockTitle(step: DayStep): String {
             step.title ?: stringResource(R.string.session_block_new_lesson)
         }
 
+        step.kind == StudyBlock.Kind.PRODUCE && step.drill -> {
+            stringResource(R.string.session_block_writing_drill)
+        }
+
         step.kind == StudyBlock.Kind.PRODUCE -> {
             step.title ?: stringResource(R.string.session_block_writing_practice)
         }
@@ -151,7 +155,7 @@ fun blockDetail(step: DayStep): String? {
             when (step.writing) {
                 WritingRow.Tomorrow -> stringResource(R.string.session_block_writing_tomorrow)
                 WritingRow.Continue -> stringResource(R.string.session_block_writing_draft_saved)
-                null -> step.canDo
+                null -> if (step.drill) stringResource(R.string.session_block_writing_drill_detail) else step.canDo
             }
         }
 

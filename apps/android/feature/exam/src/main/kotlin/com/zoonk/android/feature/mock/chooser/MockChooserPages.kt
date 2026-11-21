@@ -256,11 +256,14 @@ internal fun MockWriting(
     run: GenerationRun,
     onRetry: () -> Unit,
     titleFocus: FocusRequester? = null,
+    /** A written test's questions are being written: its wait says so, and is counted as a writing wait. */
+    writtenTestRun: String? = null,
 ) {
+    writtenTestRun?.let { TrackShown(AnalyticsEvent.WritingPromptWaitViewed(it, AnalyticsEvent.WritingSurface.Mock)) }
     BeforeFold { beforeFold ->
         Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
             GenerationWait(
-                kind = GenerationKind.MockQuestions,
+                kind = if (writtenTestRun != null) GenerationKind.WritingPrompt else GenerationKind.MockQuestions,
                 run = run,
                 onRetry = onRetry,
                 modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),

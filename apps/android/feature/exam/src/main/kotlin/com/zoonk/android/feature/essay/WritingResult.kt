@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.em
 import com.zoonk.android.R
 import com.zoonk.android.feature.writing.PointsReadout
 import com.zoonk.android.feature.writing.RangeMeter
+import com.zoonk.android.feature.writing.deductionRange
 import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.pointsRange
 import com.zoonk.android.ui.components.ButtonSize
@@ -60,6 +61,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
+import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.WritingPromptOutput
@@ -111,9 +113,9 @@ private fun PointsHeader(
         }
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             RangeMeter(points.total.low, points.total.high, points.max, minimum = partMinimum?.let { it * points.max })
-            prompt.partMinimum?.let { part ->
+            prompt.partMinimum?.let { part -> partMinimumLine(part.minimum.unit.value, part.minimum.value, part.max) }?.let { line ->
                 Text(
-                    partMinimumLine(part.minimum.unit.value, part.minimum.value, part.max),
+                    line,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -126,15 +128,15 @@ private fun PointsHeader(
             Column {
                 PartRow(stringResource(R.string.essay_content), detail = null, value = pointsRange(points.content.low, points.content.high))
                 HorizontalDivider()
-                val deduction = pointsRange(points.deduction.low, points.deduction.high)
                 PartRow(
                     stringResource(R.string.essay_language_errors),
                     detail =
                         factsLine(
                             pluralStringResource(R.plurals.essay_errors, errorCount, errorCount),
-                            pluralStringResource(R.plurals.essay_about_lines, lines, lines),
+                            prompt.lines?.let { limit -> stringResource(R.string.essay_lines_used, lines, limit.toInt()) }
+                                ?: pluralStringResource(R.plurals.essay_about_lines, lines, lines),
                         ),
-                    value = if (points.deduction.high > 0) stringResource(R.string.essay_minus, deduction) else deduction,
+                    value = deductionRange(points.deduction.low, points.deduction.high),
                 )
             }
         }
@@ -153,20 +155,13 @@ private fun minimumShare(
         else -> null
     }?.coerceIn(0.0, 1.0)
 
-/** Named as the written test's, never as this question's: CGU asks 50 of 100 on the sum of both questions. */
+/** Named as the written test's, never as this question's: CGU asks half the points on the sum of both questions. */
 @Composable
 private fun partMinimumLine(
     unit: String,
     value: Double,
     max: Double?,
-): String {
-    val locale = currentLocale()
-    return if (unit == "percent" || max == null) {
-        stringResource(R.string.essay_part_minimum_percent, formatPoints(value, locale))
-    } else {
-        stringResource(R.string.essay_part_minimum, formatPoints(value, locale), formatPoints(max, locale))
-    }
-}
+): String? = minimumShare(unit, value, max)?.let { stringResource(R.string.essay_part_minimum, formatPercent(it, currentLocale())) }
 
 @Composable
 private fun PartRow(
@@ -404,7 +399,7 @@ private fun WritingMarkedText(
             color = MaterialTheme.colorScheme.error,
             fontWeight = FontWeight.Medium,
         )
-    val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length)
+    val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) }
     val marked =
         remember(grade, text, errorStyle, stepStyle, ignoredStyle) {
             markText(grade, text, errorStyle, stepStyle, ignoredStyle, numberStyle)
@@ -488,7 +483,7 @@ private fun markText(
 ): MarkedText {
     val stepQuote = grade.nextStep?.quote?.takeIf { it.isNotEmpty() }
     val stepRange = stepQuote?.let { quote -> text.indexOf(quote).takeIf { it >= 0 }?.let { it until it + quote.length } }
-    val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length) ?: text.length
+    val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) } ?: text.length
     val errors = grade.errors.map { it.start.toInt().coerceIn(0, text.length) until minOf(text.length, it.start.toInt() + it.quote.length) }
     val cuts =
         (
@@ -520,6 +515,16 @@ private fun markText(
             offsets[text.length] = length
         }
     return MarkedText(annotated, offsets)
+}
+
+/** A line limit falls inside a word as often as not; the word it splits is shown as past it, whole. */
+private fun wordStart(
+    text: String,
+    offset: Int,
+): Int {
+    var start = offset
+    while (start > 0 && !text[start - 1].isWhitespace()) start--
+    return start
 }
 
 private const val LEVEL_CELLS = 4

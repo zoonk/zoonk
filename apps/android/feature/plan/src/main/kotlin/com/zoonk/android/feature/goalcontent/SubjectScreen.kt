@@ -3,8 +3,11 @@ package com.zoonk.android.feature.goalcontent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -152,6 +156,7 @@ internal fun SubjectContent(
                         },
                         openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
                         openAnswer = { navigator.open(AppRoute.WritingAnswer(it.toString())) },
+                        openEssay = { navigator.open(AppRoute.Essay(it.toString())) },
                         writeNow = writeNow,
                     ),
             )
@@ -170,6 +175,8 @@ internal data class SubjectActions(
     val openFarTopic: ((SyllabusChapter) -> Unit)? = null,
     val openMindMaps: (() -> Unit)? = null,
     val openAnswer: (UUID) -> Unit = {},
+    /** An unfinished written task the learner asked for. */
+    val openEssay: (UUID) -> Unit = {},
     /** A written part's main action: writing, since its lessons are a small part of its time. */
     val writeNow: WriteNow? = null,
 )
@@ -248,7 +255,7 @@ internal fun SubjectPage(
         menu = menu,
         action =
             if (writeNow != null && written != null) {
-                { modifier -> WriteButton(writeNow, written.writeActions?.firstOrNull(), modifier) }
+                { modifier -> WriteButton(writeNow, written.writeActions.orEmpty(), actions.openEssay, modifier) }
             } else {
                 subject.nextChapterId?.let { next ->
                     { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }
@@ -351,26 +358,49 @@ internal fun knownLine(subject: SyllabusSubject): String? {
     }
 }
 
-/** The part's next question: written now, its saved draft continued, or back tomorrow once the day's extra grades are used. */
+/**
+ * A written part's main action is writing: an unfinished task opens where it was left, and once the
+ * day's grading is used for every task the bar says when it returns instead of offering a tap that
+ * would be refused.
+ */
 @Composable
 private fun WriteButton(
     writeNow: WriteNow,
-    action: WrittenPracticeSubjectsInnerWriteActionsInner?,
+    actions: List<WrittenPracticeSubjectsInnerWriteActionsInner>,
+    openEssay: (UUID) -> Unit,
     modifier: Modifier,
 ) {
-    val availability = action?.availability
-    val tomorrow = availability is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value
-    val draft =
-        (availability as? StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOfValue)?.value?.status ==
-            StudyBlockWritingAvailabilityOneOf.Status.CONTINUE
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (tomorrow) {
+    val unfinished =
+        actions
+            .firstOrNull {
+                (it.availability as? StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOfValue)?.value?.status ==
+                    StudyBlockWritingAvailabilityOneOf.Status.CONTINUE
+            }?.blockId
+    val tomorrow =
+        actions.isNotEmpty() && actions.all { it.availability is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value }
+
+    if (unfinished != null) {
+        Button(onClick = { openEssay(unfinished) }, modifier = modifier, size = ButtonSize.Large) {
+            Text(stringResource(R.string.essay_continue))
+        }
+        return
+    }
+    if (tomorrow) {
+        Row(
+            modifier.heightIn(min = 48.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(painterResource(R.drawable.ic_schedule), null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(
-                stringResource(R.string.session_block_writing_tomorrow),
+                stringResource(R.string.goalcontent_written_more_tomorrow),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
+        return
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (writeNow.failed) {
             Text(
                 stringResource(R.string.essay_finish_failed),
@@ -379,13 +409,9 @@ private fun WriteButton(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        Button(
-            onClick = { writeNow.write(action?.taskKey) },
-            modifier = modifier,
-            enabled = !tomorrow,
-            busy = writeNow.busy,
-            size = ButtonSize.Large,
-        ) { Text(stringResource(if (draft) R.string.essay_continue else R.string.essay_write)) }
+        Button(onClick = { writeNow.write(null) }, modifier = modifier, busy = writeNow.busy, size = ButtonSize.Large) {
+            Text(stringResource(R.string.essay_write))
+        }
     }
 }
 

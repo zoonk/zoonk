@@ -47,6 +47,9 @@ sealed interface WritingStartAnswer {
 
     /** A guest whose question would cost a model call: signing up funds it. */
     data object SignUpRequired : WritingStartAnswer
+
+    /** The notice no longer asks this task; nothing was admitted. */
+    data object Removed : WritingStartAnswer
 }
 
 /** The written task a refused start leaves for tomorrow. */
@@ -231,6 +234,7 @@ fun WritingStartAnswer.routeValue(): String? =
         is WritingStartAnswer.Writing -> generationId
         is WritingStartAnswer.LimitReached -> WRITING_LIMIT
         WritingStartAnswer.SignUpRequired -> WRITING_FAILED
+        WritingStartAnswer.Removed -> WRITING_REMOVED
     }
 
 /** What an essay's route says stood before its question, as [routeValue] wrote it. */
@@ -243,12 +247,15 @@ sealed interface WritingBefore {
 
     data object Failed : WritingBefore
 
+    data object Removed : WritingBefore
+
     companion object {
         fun of(value: String?): WritingBefore? =
             when (value) {
                 null, "" -> null
                 WRITING_LIMIT -> LimitReached
                 WRITING_FAILED -> Failed
+                WRITING_REMOVED -> Removed
                 else -> Writing(value)
             }
     }
@@ -256,6 +263,7 @@ sealed interface WritingBefore {
 
 private const val WRITING_LIMIT = "limit"
 private const val WRITING_FAILED = "failed"
+private const val WRITING_REMOVED = "removed"
 
 suspend fun EssayApi.startAnswer(
     session: AuthenticatedSession,
@@ -265,7 +273,11 @@ suspend fun EssayApi.startAnswer(
     try {
         start(session, blockId, previousAttemptId)
     } catch (e: ApiException) {
-        if (e.code == SIGN_UP_REQUIRED) WritingStartAnswer.SignUpRequired else throw e
+        when {
+            e.code == SIGN_UP_REQUIRED -> WritingStartAnswer.SignUpRequired
+            e.status == CONFLICT -> WritingStartAnswer.Removed
+            else -> throw e
+        }
     }
 
 /**
@@ -293,6 +305,7 @@ suspend fun EssayApi.startRoute(
 }
 
 private const val SIGN_UP_REQUIRED = "SIGN_UP_REQUIRED"
+private const val CONFLICT = 409
 
 class EssayStore(
     private val api: EssayApi,
