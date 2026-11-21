@@ -1,4 +1,4 @@
-import { type Goal, type ItemFormat } from "@zoonk/db";
+import { type ItemFormat } from "@zoonk/db";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getExamChoiceFormat } from "../../library/exams/exam-choice-format";
 import { countRightAnswersToKnow } from "./placement-beliefs";
@@ -9,11 +9,6 @@ export function getPlacementQuickFormat(
   structure: Pick<ExamStructure, "formats"> | null,
 ): PlacementQuickFormat {
   return getExamChoiceFormat(structure)?.kind ?? "multipleChoice";
-}
-
-/** Only language goals confirm in writing; other goals use quick questions to avoid typing friction. */
-export function confirmsInWriting(goal: Pick<Goal, "targetLanguage">): boolean {
-  return goal.targetLanguage !== null;
 }
 
 /** Returns zero outside placement, when formats are narrowed, or when confirmation is written. */
