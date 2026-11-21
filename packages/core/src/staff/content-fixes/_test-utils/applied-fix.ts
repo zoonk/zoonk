@@ -20,6 +20,7 @@ export function appliedFixFixture({
       changes,
       decidedAt,
       effects: [],
+      media: [],
       proposerClientId: "test",
       reason: "Test fix",
       status: "applied",

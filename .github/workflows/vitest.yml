@@ -26,20 +26,28 @@ jobs:
     name: vitest (${{ matrix.part }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Three runners of about the same length. Each has 4 vCPUs, which two suites at once keep busy;
-    # more at once only slowed every test down.
+    # Runners of about the same length. Each has 4 vCPUs, which two suites at once keep busy; more
+    # at once only slowed every test down. The API's workflow runs mostly wait on durable retries and
+    # sleeps, so they get a runner of their own.
     strategy:
       fail-fast: false
       matrix:
         include:
           - part: core and api 1 of 2
+            task: test
             filter: "--filter=@zoonk/core --filter=api"
             args: "-- --shard=1/2"
           - part: core and api 2 of 2
+            task: test
             filter: "--filter=@zoonk/core --filter=api"
             args: "-- --shard=2/2"
           - part: player and the rest
+            task: test
             filter: "--filter=!@zoonk/core --filter=!api"
+            args: ""
+          - part: api workflows
+            task: test:workflow
+            filter: "--filter=api"
             args: ""
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
@@ -90,13 +98,7 @@ jobs:
           exit 1
 
       - name: Run Vitest
-        run: pnpm turbo run test ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
-
-      - name: Run workflow integration tests
-        if: matrix.part == 'core and api 1 of 2'
-        run: |
-          mkdir -p apps/api/.workflow-data
-          pnpm --filter api test:workflow
+        run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
 
   # The one check branch protection requires: it passes only when every part passed.
   vitest:
