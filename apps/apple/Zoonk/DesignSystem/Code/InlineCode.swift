@@ -17,6 +17,8 @@ struct RichInlineText: View {
   }
 
   var body: some View {
+    let inline = InlineCode.opened(self.inline)
+
     Text(
       InlineCode.drawn(inline, in: style, legibility: legibilityWeight),
       legibility: legibilityWeight
@@ -31,6 +33,22 @@ enum InlineCode {
 
   static func isCode(_ intent: InlinePresentationIntent?) -> Bool {
     intent?.contains(.code) == true
+  }
+
+  /// A run that opens the text has no character before it to keep its padding, so a no-break space
+  /// a point wide keeps it: a character that draws nothing, such as a word joiner, leaves the
+  /// layout, and its padding with it.
+  static func opened(_ inline: RichInline) -> RichInline {
+    guard let first = inline.text.runs.first, isCode(first.inlinePresentationIntent) else {
+      return inline
+    }
+
+    var space = AttributedString("\u{00A0}")
+    space.font = .system(size: 1)
+
+    var opened = inline
+    opened.text = space + inline.text
+    return opened
   }
 
   /// Sets each code run in `style`'s inline code font and keeps the characters around it a chip's
@@ -60,8 +78,9 @@ enum InlineCode {
       let padsEnd =
         isCode || (index + 1 < runs.count && Self.isCode(runs[index + 1].inlinePresentationIntent))
 
+      // Tracking, not kern: the tracking every type role sets turns a run's kern off.
       if padsEnd, let last = piece.characters.indices.last {
-        piece[last...].kern = padding
+        piece[last...].tracking = padding
       }
 
       text += piece
