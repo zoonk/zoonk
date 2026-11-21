@@ -35,11 +35,11 @@ class SyllabusRulesTest {
     )
 
     @Test
-    fun optionalStudyGroupsLastAndAnAreaOutsideTheNoticeTakesNoGroupOfItsOwn() {
+    fun subjectsWithNoHeadingComeFirstAndOptionalStudyLast() {
         val groups = groupSubjects(examSyllabus(strategy = true).subjects, modules = false)
 
-        assertEquals(listOf(false to "Day 1", false to "Day 2", false to null, true to null), groups.map { it.extra to it.name })
-        assertEquals(listOf("Study skills"), groups[2].subjects.map { it.shortName })
+        assertEquals(listOf(false to null, false to "Day 1", false to "Day 2", true to null), groups.map { it.extra to it.name })
+        assertEquals(listOf("Study skills"), groups[0].subjects.map { it.shortName })
         assertEquals(listOf("Exam strategy"), groups[3].subjects.map { it.shortName })
     }
 

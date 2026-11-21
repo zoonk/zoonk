@@ -51,7 +51,10 @@ internal data class SubjectGroup(
     val subjects: List<SyllabusSubject>,
 )
 
-/** The notice's groups in its order, then the optional study the learner added; a plan's modules are one group. */
+/**
+ * Subjects with no group of their own first, so none reads as part of the group above it; then the notice's groups in
+ * its order; then the optional study the learner added. A plan's modules are one group.
+ */
 internal fun groupSubjects(
     subjects: List<SyllabusSubject>,
     modules: Boolean,
@@ -63,10 +66,14 @@ internal fun groupSubjects(
     return subjects
         .map(::key)
         .distinct()
-        .sortedBy { it == null }
-        .map { key ->
-            val inGroup = subjects.filter { key(it) == key }
-            SubjectGroup(extra = key == null, name = if (key == null) null else inGroup.first().group, subjects = inGroup)
+        .sortedBy {
+            when {
+                it == null -> 2
+                it.isEmpty() -> 0
+                else -> 1
+            }
+        }.map { key ->
+            SubjectGroup(extra = key == null, name = key?.ifEmpty { null }, subjects = subjects.filter { key(it) == key })
         }
 }
 
