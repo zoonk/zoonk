@@ -1,5 +1,3 @@
-import { AnyNull } from "@zoonk/db";
-
 type QueueBlock = { payload?: unknown; position: number; status: string };
 
 export function isDayBlock(block: { payload?: unknown }): boolean {
@@ -10,13 +8,6 @@ export function isDayBlock(block: { payload?: unknown }): boolean {
     block.payload.extra === true
   );
 }
-
-export const DAY_BLOCK_WHERE = {
-  OR: [
-    { payload: { equals: AnyNull, path: ["extra"] } },
-    { NOT: { payload: { equals: true, path: ["extra"] } } },
-  ],
-};
 
 export function getPlayOrder<Block extends QueueBlock>(blocks: readonly Block[]): Block[] {
   return blocks

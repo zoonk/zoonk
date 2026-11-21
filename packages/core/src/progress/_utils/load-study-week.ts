@@ -12,7 +12,7 @@ import {
   getWeekDays,
   toStudiedMinutes,
 } from "../../sessions/daily-goal";
-import { DAY_BLOCK_WHERE } from "../../sessions/day-blocks";
+import { DAY_BLOCK_WHERE } from "../../sessions/day-block-where";
 import { type WeeklyStudyTime } from "../weekly-study-time-contract";
 
 export type StudyWeek = {
