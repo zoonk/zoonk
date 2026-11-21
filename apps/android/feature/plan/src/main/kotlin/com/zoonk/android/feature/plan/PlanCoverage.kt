@@ -149,7 +149,6 @@ internal fun DailyCoverage(
                     // Asked as the editor opens, so a search not answered yet is being found; one that failed shows nothing.
                     finding = search is TimeToCoverState.Idle || search is TimeToCoverState.Pending,
                     offer = timeOffer(found, line, minutes),
-                    offerAsButton = true,
                     onRetry = { edits.findTimeToCover(plan, null) },
                     onUseOffer = {
                         onUseTime(it)

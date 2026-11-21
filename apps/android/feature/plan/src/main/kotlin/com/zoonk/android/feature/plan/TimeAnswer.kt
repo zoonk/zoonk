@@ -60,7 +60,6 @@ fun TimeAnswer(
     onUseOffer: (Int) -> Unit,
     modifier: Modifier = Modifier,
     finding: Boolean = false,
-    offerAsButton: Boolean = false,
     split: DaySplit? = null,
     updating: Boolean = false,
     today: LocalDate = LocalDate.now(),
@@ -107,14 +106,8 @@ fun TimeAnswer(
                 }
             }
 
-            offered != null && offerAsButton -> {
-                OutlinedButton(onClick = { onUseOffer(offered) }) { Text(offerLabel(offered)) }
-            }
-
             offered != null -> {
-                TextButton(onClick = { onUseOffer(offered) }, edge = ButtonEdge.Start) {
-                    Text(offerLabel(offered))
-                }
+                OutlinedButton(onClick = { onUseOffer(offered) }) { Text(offerLabel(offered)) }
             }
         }
     }
