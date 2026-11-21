@@ -236,25 +236,6 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertEqual(changes.count, 1, "Add applies the offer shown")
   }
 
-  /// A check that found the offer adds nothing hides Add; the next offer has its Add again.
-  func testAnUnchangedAddAboutAnEarlierOfferHasItsAddOnTheNextOne() async throws {
-    let api = PlanAPIStub()
-    await api.setPlan(try goalPlanFixture(fitOffer: Self.offer))
-    await api.setPreview(
-      PlanChangePreview(
-        effect: nil, feasibility: nil, finishDate: nil, ready: true, unchanged: true))
-    let window = try await showPlan(api: api, width: .wide)
-
-    try await activate(Self.add, in: window)
-    try await waitForTestCondition("Expected state did not arrive") {
-      !(spoken(in: window).contains(Self.add))
-    }
-    XCTAssertFalse(spoken(in: window).contains(Self.add), "The check found nothing to add")
-
-    try await readAgain(api, plan: goalPlanFixture(fitOffer: Self.offer(lessons: 4)))
-    XCTAssertTrue(spoken(in: window).contains(Self.add), "The next offer has its Add")
-  }
-
   /// In the opening: the Plan's editor. The learner changes the plan by hand, so an add must not
   /// land under the editor.
   func testOpeningThePlansEditorEndsAnAddWaiting() async throws {

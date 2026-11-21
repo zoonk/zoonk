@@ -600,7 +600,6 @@ struct PlanOfferSlot: View {
 
   var body: some View {
     let repriced = check.repriced?.preview
-    let unchanged = repriced?.unchanged == true
 
     PlanSlotCard(title: title, mark: .sparkle, description: nil) {
       if !facts.isEmpty {
@@ -611,7 +610,7 @@ struct PlanOfferSlot: View {
 
       if facts.isEmpty || repriced != nil {
         PlanEffectDiff(
-          effect: unchanged ? nil : repriced?.effect ?? offer.effect, today: context.plan.today,
+          effect: repriced?.effect ?? offer.effect, today: context.plan.today,
           options: context.changeOptions, repriced: repriced != nil, saysLessonsAdded: true)
       }
 
@@ -623,16 +622,14 @@ struct PlanOfferSlot: View {
         Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
       }
 
-      if !unchanged {
-        BusyButton(isBusy: check.isWorking) {
-          check.run { await add() }
-        } label: {
-          Text(
-            "Add to plan", tableName: "Plan",
-            comment: "Brings into the plan the lessons the learner's time fits")
-        }
-        .mainActionUnlessBarHoldsOne()
+      BusyButton(isBusy: check.isWorking) {
+        check.run { await add() }
+      } label: {
+        Text(
+          "Add to plan", tableName: "Plan",
+          comment: "Brings into the plan the lessons the learner's time fits")
       }
+      .mainActionUnlessBarHoldsOne()
     }
   }
 
@@ -664,8 +661,8 @@ enum OfferCheck: Equatable {
   case applied
   /// Other numbers, shown before the next tap applies them.
   case repriced(PlanSlotRepriced)
-  /// The plan changed since, elsewhere, so the offer no longer applies: the plan is read again and
-  /// shows without it, as a stale change on Today does.
+  /// The plan changed since, elsewhere, so the offer no longer applies or the plan already holds it:
+  /// the plan is read again and shows without it, as a stale change on Today does.
   case refused
   case failed
 }
@@ -685,9 +682,9 @@ extension PlanStore {
     case .done(let preview?) where !preview.unchanged && preview.effect == offer.effect:
       apply(edits)
       return .applied
-    case .done(let preview?):
+    case .done(let preview?) where !preview.unchanged:
       return .repriced(PlanSlotRepriced(edits: edits, preview: preview))
-    case .done(nil):
+    case .done:
       cache.invalidate([.goals, .learnerModel])
       return .refused
     case .failed:
