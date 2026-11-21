@@ -161,7 +161,9 @@ const effectSchema = z.discriminatedUnion("kind", [
     }),
   z
     .object({ kind: z.literal("lessonsUpdated"), lessonIds: z.array(idSchema) })
-    .meta({ description: "Every lesson showing the word or sentence changes at once" }),
+    .meta({
+      description: "Every lesson showing the word or sentence is updated right after approval",
+    }),
   z
     .object({ kind: z.literal("spokenScreensCopied"), stepIds: z.array(idSchema) })
     .meta({

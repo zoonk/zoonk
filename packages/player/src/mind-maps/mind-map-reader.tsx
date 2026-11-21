@@ -79,7 +79,7 @@ function EmptyDeck({ exit }: { exit: string }) {
       }
       headerTitle={<TaskHeaderTitle title={t("Mind maps")} />}
     >
-      <p className="text-muted-foreground text-sm text-pretty" data-slot="mind-map-reader-empty">
+      <p className="text-muted-foreground text-sm" data-slot="mind-map-reader-empty">
         {t("There are no maps to study here yet.")}
       </p>
     </TaskFrame>

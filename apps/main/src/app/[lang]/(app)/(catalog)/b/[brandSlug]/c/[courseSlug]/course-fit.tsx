@@ -64,7 +64,7 @@ export async function CourseFit({
 
         <ul className={LIST_CLASS}>
           {audience.map((item) => (
-            <li className={cn(ROW_CLASS, "text-pretty")} key={item}>
+            <li className={ROW_CLASS} key={item}>
               {item}
             </li>
           ))}

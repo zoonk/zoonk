@@ -13,6 +13,7 @@ import {
   resolveMistakeCauseStep,
   saveDailyInsightStep,
   settleSessionDayStep,
+  updateLessonsShowingStep,
   voiceWordStep,
   writeDailyInsightStep,
 } from "./steps/background-task-steps";
@@ -77,6 +78,8 @@ async function runTask(task: BackgroundTask): Promise<void> {
       return settleSessionDayStep({ ...task.input, userId });
     case "voiceWord":
       return voiceWordStep(task.input);
+    case "updateLessonsShowing":
+      return updateLessonsShowingStep(task.input);
     case "prepareContentFixMedia":
     case "voiceContentFix":
       return prepareContentFixMedia(task.input.fixId);

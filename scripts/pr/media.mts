@@ -187,8 +187,8 @@ export async function writeManifest(folder: string, items: ManifestItem[]): Prom
 }
 
 /**
- * A picture registered again with the same bytes keeps its record, read and findings included,
- * and a capture's record is never replaced by one made by hand.
+ * A picture registered again with the same bytes keeps its record, read and findings included.
+ * New bytes replace it, unread, except that a record made by hand never replaces a capture's.
  */
 export async function registerItems(folder: string, added: ManifestItem[]): Promise<void> {
   const existing = (await readManifest(folder)) ?? [];
@@ -196,7 +196,13 @@ export async function registerItems(folder: string, added: ManifestItem[]): Prom
 
   const replacing = added.filter((item) => {
     const earlier = byFile.get(item.file);
-    return !earlier || (earlier.sha256 !== item.sha256 && !isRecorded(earlier));
+
+    if (!earlier) {
+      return true;
+    }
+
+    const byHandOverCapture = isRecorded(earlier) && !isRecorded(item);
+    return earlier.sha256 !== item.sha256 && !byHandOverCapture;
   });
 
   const files = new Set(replacing.map((item) => item.file));

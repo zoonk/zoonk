@@ -104,7 +104,7 @@ export function FirstLessonLine({ lesson }: { lesson: GenerationFirstLesson }) {
   }
 
   return (
-    <span className="text-muted-foreground col-span-2 col-start-2 row-start-2 text-sm leading-5 text-pretty">
+    <span className="text-muted-foreground col-span-2 col-start-2 row-start-2 text-sm leading-5">
       {t.rich("Writing your first lesson: <lesson>{title}</lesson>", {
         lesson: LessonTitle,
         title: lesson.title,

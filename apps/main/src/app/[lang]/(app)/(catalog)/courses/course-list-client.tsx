@@ -88,7 +88,7 @@ function CourseItem({
         <span className="flex min-w-0 flex-1 flex-col self-stretch">
           {/* The row carries the title's type, so the chip's box is one of its lines (`h-lh`) and the chip centers on the first. */}
           <span className="text-reading flex items-start justify-between gap-3 leading-snug">
-            <span className="min-w-0 font-semibold text-pretty">{course.title}</span>
+            <span className="min-w-0 font-semibold">{course.title}</span>
 
             {subjectName && (
               <span className="flex h-lh shrink-0 items-center lg:hidden">

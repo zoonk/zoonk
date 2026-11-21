@@ -193,7 +193,7 @@ export function CompletedLessonsScreen({
   const list = (
     <DetailContent>
       {lessons.length === 0 && (
-        <p className="text-muted-foreground text-sm text-pretty">
+        <p className="text-muted-foreground text-sm">
           {t("Lessons you finish show up here, so you can do them again anytime.")}
         </p>
       )}

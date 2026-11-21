@@ -83,11 +83,11 @@ function OrderedStep({
       <StepMarks icon={step.icon} position={position} state={state ?? null} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">
-        <p className="font-medium text-pretty">
+        <p className="font-medium">
           <LessonRichText text={step.text} />
         </p>
 
-        {step.why && <p className="text-muted-foreground text-pretty">{step.why}</p>}
+        {step.why && <p className="text-muted-foreground">{step.why}</p>}
 
         {state === "incorrect" && result?.learnerPosition && (
           <p className="text-destructive-text text-xs font-medium">
@@ -163,7 +163,7 @@ export function ProcessOrderActivity({
         renderItem={(item) => (
           <span className="flex min-w-0 flex-1 items-start gap-3">
             <StepMarks icon={byId.get(item.id)?.icon} position={null} state={null} />
-            <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium text-pretty">
+            <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium">
               <LessonRichText text={item.label} />
             </span>
           </span>
