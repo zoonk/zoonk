@@ -284,6 +284,7 @@ export type TaskModelOutputResults = {
 export type ScoredResult = {
   testCase: TestCase;
   steps: Score["steps"];
+  outputHash?: string;
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
   judge?: JudgeRun;

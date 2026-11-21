@@ -1,6 +1,9 @@
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { cache } from "react";
+import { hash } from "./comparisons/identity";
+import { writeBytes } from "./comparisons/storage";
 import { getBaseTestCaseId, getTestCaseRunProgress } from "./test-case-runs";
 import {
   type ModelOutputs,
@@ -48,9 +51,48 @@ export function combineOutputsWithTestCases({
   return { ...modelOutputs, outputs };
 }
 
-async function ensureOutputsDir(taskId: string) {
-  const taskDir = path.join(OUTPUTS_DIR, taskId);
-  await fs.mkdir(taskDir, { recursive: true });
+function isActive(pid: number) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ESRCH") {
+      return false;
+    }
+
+    throw error;
+  }
+}
+
+export async function withImageGeneration<T>(
+  taskId: string,
+  modelId: string,
+  generate: () => Promise<T>,
+) {
+  const locks = path.join(os.tmpdir(), "zoonk-eval-image-generations");
+  const prefix = `${hash(getOutputsFilePath(taskId, modelId))}-`;
+  const owner = `${prefix}${process.pid}`;
+  const marker = path.join(locks, owner);
+
+  await fs.mkdir(locks, { recursive: true });
+  await fs.writeFile(marker, "", { flag: "wx" });
+
+  try {
+    const markers = await fs.readdir(locks);
+
+    if (
+      markers.some(
+        (file) =>
+          file.startsWith(prefix) && file !== owner && isActive(Number(file.slice(prefix.length))),
+      )
+    ) {
+      throw new Error("This model is already generating images.");
+    }
+
+    return await generate();
+  } finally {
+    await fs.rm(marker, { force: true });
+  }
 }
 
 export async function saveModelOutputs(
@@ -58,9 +100,8 @@ export async function saveModelOutputs(
   modelId: string,
   outputs: ModelOutputs,
 ): Promise<void> {
-  await ensureOutputsDir(taskId);
   const filePath = getOutputsFilePath(taskId, modelId);
-  await fs.writeFile(filePath, JSON.stringify(outputs, null, 2));
+  await writeBytes(filePath, JSON.stringify(outputs, null, 2), true);
 }
 
 export async function deleteModelOutputs({
