@@ -4,7 +4,8 @@ import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { APICallError, NoObjectGeneratedError, RetryError } from "ai";
-import { hashJson } from "./comparisons/identity";
+import { generationSourceHash } from "./comparisons/generation-source";
+import { hash, hashJson } from "./comparisons/identity";
 import { settleWithConcurrency } from "./concurrency";
 import { getFailedRunsCost } from "./cost";
 import { DEFAULT_REASONING, type ModelConfig, getModelById } from "./models";
@@ -84,12 +85,14 @@ async function generateOutputForTestCase({
   failed,
   model,
   runNumber,
+  sourceHash,
   task,
   testCase,
 }: {
   failed: FailedAttempt[];
   model: ModelConfig;
   runNumber: number;
+  sourceHash: string;
   task: RegisteredTask;
   testCase: TestCase;
 }) {
@@ -123,7 +126,13 @@ async function generateOutputForTestCase({
     ...toRunCalls(billed),
     caseInputHash: hashJson(testCase.userInput),
     duration,
-    generation: { model: input.model, reasoning: input.reasoning },
+    generation: { model: input.model, reasoning: input.reasoning, sourceHash },
+    initialPromptHashes: result.initialPrompt
+      ? {
+          system: hash(result.initialPrompt.systemPrompt),
+          user: hash(result.initialPrompt.userPrompt),
+        }
+      : undefined,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
     systemPrompt: result.systemPrompt,
@@ -248,12 +257,13 @@ export async function generateOutputs(
   }
 
   const failed: FailedAttempt[] = [];
+  const sourceHash = generationSourceHash();
 
   const results = await settleWithConcurrency({
     concurrency: GENERATION_CONCURRENCY,
     items: runsToExecute,
     run: ({ testCase, runNumber }) =>
-      generateOutputForTestCase({ failed, model, runNumber, task, testCase }),
+      generateOutputForTestCase({ failed, model, runNumber, sourceHash, task, testCase }),
   });
 
   const newOutputs = extractSuccessfulOutputs(results);
@@ -279,6 +289,7 @@ export async function generateOutputs(
 export async function generateComparisonRun(args: {
   model: ModelConfig;
   runNumber: number;
+  sourceHash: string;
   task: RegisteredTask;
   testCase: TestCase;
 }) {

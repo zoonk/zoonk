@@ -395,10 +395,13 @@ export async function readPacket<T>({
     ...(content ? { messages: [{ content, role: "user" as const }] } : { prompt: packet }),
   });
 
-  const costUsd = result.steps.reduce(
-    (total, step) => total + getCallCost({ ...toModelCall(describeStep(step)), prices }),
-    0,
-  );
+  const calls = result.steps.map((step) => toModelCall(describeStep(step)));
+
+  if (calls.length === 0 || calls.some((call) => call.modelId.split("/")[0] !== reader.family)) {
+    throw new Error(`The gateway did not serve the configured reader family (${reader.family}).`);
+  }
+
+  const costUsd = calls.reduce((total, call) => total + getCallCost({ ...call, prices }), 0);
 
   return { channel: "gateway" as const, costUsd, response: result.output, seatContext: undefined };
 }

@@ -9,10 +9,11 @@ import { generateComparisonRun } from "../output-generator";
 import { type RegisteredTask } from "../types";
 import { confirmForecast, forecastReads } from "./forecast";
 import { generationSourceHash } from "./generation-source";
-import { hash, hashJson, promptHash } from "./identity";
+import { hash, hashJson } from "./identity";
 import { buildPackets } from "./packets";
 import readerProtocol from "./protocols/reader.md";
 import verifierProtocol from "./protocols/verifier.md";
+import { assertReaderPlan, freezeReaders } from "./reader-selection";
 import {
   type Reader,
   controlsSchema,
@@ -23,7 +24,7 @@ import {
   selectionSchema,
   variantSchema,
 } from "./schemas";
-import { readRunOutput, resolveModel, source, variantFor } from "./sources";
+import { promptHashFor, readRunOutput, resolveModel, source, variantFor } from "./sources";
 import { directory, readBlob, readOptional, readOutputs, writeBytes, writeRecord } from "./storage";
 
 const plannedSelection = selectionSchema.extend({
@@ -71,6 +72,12 @@ export async function prepare(options: PrepareOptions) {
       "This pending selection predates generation provenance. Use a new comparison ID.",
     );
   }
+
+  assertReaderPlan({
+    challenger: frozen.challengerModel,
+    incumbent: frozen.variants.incumbent?.model,
+    readers: frozen.readers,
+  });
 
   if (options.stopAfterFreeze) {
     return null;
@@ -206,12 +213,12 @@ async function freeze(options: PrepareOptions) {
 
   assertOutputType({ challenger, image, incumbent });
 
-  const readers = withReserve(
-    options.readers,
-    challenger.model.id,
-    incumbent?.model.id,
-    options.reserve,
-  );
+  const readers = freezeReaders({
+    challenger: challenger.model.id,
+    incumbent: incumbent?.model.id,
+    requested: options.readers,
+    reserve: options.reserve,
+  });
 
   const selection = plannedSelection.parse({
     cases,
@@ -346,7 +353,7 @@ async function sealRun({
   const run = structuredClone(planned);
 
   if (!run.challenger && frozen.generate) {
-    if (currentGenerationSource !== frozen.generationSource) {
+    if (!currentGenerationSource || currentGenerationSource !== frozen.generationSource) {
       throw new Error(
         "Generation source changed since selection was frozen. Restore it or use a new comparison ID.",
       );
@@ -355,7 +362,9 @@ async function sealRun({
     const casePrompt = previous.find((prior) => prior.caseId === run.caseId && prior.challenger)
       ?.challenger?.systemPromptHash;
 
-    await captureEvalImages(() => generateSlot({ casePrompt, dir, frozen, run, task }));
+    await captureEvalImages(() =>
+      generateSlot({ casePrompt, dir, frozen, run, sourceHash: currentGenerationSource, task }),
+    );
   }
 
   if (
@@ -373,12 +382,14 @@ async function generateSlot({
   casePrompt,
   dir,
   frozen,
+  sourceHash,
   task,
   run,
 }: {
   casePrompt?: string;
   dir: string;
   frozen: Frozen;
+  sourceHash: string;
   task: RegisteredTask;
   run: Run;
 }) {
@@ -391,6 +402,7 @@ async function generateSlot({
   const result = await generateComparisonRun({
     model: resolveModel(frozen.challengerModel),
     runNumber: run.run,
+    sourceHash,
     task,
     testCase: {
       expectations: tc.expectations,
@@ -436,7 +448,7 @@ async function generateSlot({
         hash: hash(output),
         ...(task.output === "image" ? { mediaType: "image/webp" as const } : {}),
         systemPromptHash: produced.systemPromptHash,
-        userPromptHash: promptHash(entry.userPrompt),
+        userPromptHash: promptHashFor(entry),
       };
 
       await writeBytes(path.join(dir, "outputs", run.challenger.hash), output);
@@ -450,29 +462,6 @@ async function generateSlot({
   } else {
     run.failures.push({ costUsd: result.costUsd, reason: result.reason, side: "challenger" });
   }
-}
-
-function withReserve(
-  requested: Reader[],
-  challenger: string,
-  incumbent?: string,
-  reserve?: string,
-) {
-  const families = new Set([challenger, incumbent].map((model) => model?.split("/")[0]));
-
-  const mandatoryNeon = families.has("openai") && families.has("anthropic");
-
-  return reserve === "none" || (!reserve && requested.some((reader) => reader.family === "google"))
-    ? requested
-    : [
-        ...requested,
-        {
-          channel: "gateway",
-          family: reserve ? identifier.parse(reserve.split("/")[0]) : "google",
-          model: reserve ?? "google/gemini-4-neon",
-          reserve: Boolean(reserve) || !mandatoryNeon,
-        } as const,
-      ];
 }
 
 function generationForecast({

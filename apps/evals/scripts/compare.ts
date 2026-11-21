@@ -16,6 +16,11 @@ import {
 } from "@/lib/comparisons/forecast";
 import { importVerdicts, ownerPackets, saveResponse } from "@/lib/comparisons/packets";
 import { prepare } from "@/lib/comparisons/prepare";
+import {
+  additionalReaders,
+  assertReaderPlan,
+  modelReader,
+} from "@/lib/comparisons/reader-selection";
 import { imageContent, readPacket } from "@/lib/comparisons/readers";
 import { formatDecision } from "@/lib/comparisons/report";
 import {
@@ -25,7 +30,6 @@ import {
   identifier,
   manifestSchema,
   ownerResponseSchema,
-  readerSchema,
   responseSchema,
 } from "@/lib/comparisons/schemas";
 import {
@@ -60,8 +64,9 @@ const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [
                          If limited, wait for a reset within four hours. Otherwise, print the reason and use the gateway.
   --gpt-reader <model>    Full OpenAI model ID (default ${DEFAULT_GPT_READER})
                          Choose models that passed the control packets. Use --reader to choose channels.
-  --reserve <model|none>   Choose the reserve gateway model when sealing, or skip reserve reads
-  --reserve-cap <n>        Maximum reserve calls across attempts (default ${DEFAULT_RESERVE_READ_CAP})
+  --reserve <model|none>   Choose the third gateway reader, or skip optional reads with none
+                          Claude–GPT comparisons always require a third family
+  --reserve-cap <n>        Maximum optional reads across attempts (default ${DEFAULT_RESERVE_READ_CAP})
   --seal-only              Freeze and seal saved outputs for free, without generation or reads
   --bank <name>            Control bank in eval-results/controls (default: the task id)
   --question <text>        The question the comparison answers
@@ -72,8 +77,7 @@ const usage = `Usage: pnpm --filter evals eval:compare --task <task> --id <id> [
   --attempt <name>         Attempt label for reads and imports (default first)
   --packet <id>            Packet to export or import
   --export <file>          Write the packet, protocol and response schema to a new file
-  --import <file>          Import a response for --packet
-  --cost-usd <amount>      Measured cost of an imported model response
+  --import <file>          Import the owner's response for --packet
   --help                   Show this help
 `;
 
@@ -85,7 +89,6 @@ const { values: options } = parseArgs({
     challenger: string,
     "claude-reader": string,
     confirm: flag,
-    "cost-usd": string,
     export: string,
     "gpt-reader": string,
     help: flag,
@@ -126,6 +129,11 @@ const limit = z.coerce
 const reserveCap = z.coerce.number().int().nonnegative().optional().parse(options["reserve-cap"]);
 const current = () => loadComparison(taskId, id);
 
+const stopAfter = z
+  .enum(["freeze", "seal", "checks", "packet", "reads"])
+  .optional()
+  .parse(options["stop-after"]);
+
 const claudeReader = z
   .string()
   .regex(/^anthropic\/[\w.-]+$/u)
@@ -142,31 +150,21 @@ if (options.reader && (claudeReader || gptReader)) {
   throw new Error("Choose --reader or the family-specific reader options.");
 }
 
+const readerOptions = options.reader?.map((raw) => {
+  const [channel, model, extra] = raw.split(":");
+
+  if (extra !== undefined) {
+    throw new Error("Specify a reader as seat:provider/model or gateway:provider/model.");
+  }
+
+  return modelReader(channel, model);
+});
+
 function readers(image: boolean) {
-  const defaultReaders = [
-    `${image ? "gateway" : "seat"}:${claudeReader ?? DEFAULT_CLAUDE_READER}`,
-    `gateway:${gptReader ?? DEFAULT_GPT_READER}`,
+  const selected = readerOptions ?? [
+    modelReader(image ? "gateway" : "seat", claudeReader ?? DEFAULT_CLAUDE_READER),
+    modelReader("gateway", gptReader ?? DEFAULT_GPT_READER),
   ];
-
-  const selected = (options.reader ?? defaultReaders).map((raw) => {
-    const [channel, model] = raw.split(":");
-    return readerSchema.parse({ channel, family: model?.split("/")[0], model });
-  });
-
-  if (
-    new Set(selected.map((reader) => reader.family)).size !== selected.length ||
-    selected.some((reader) => reader.family === "owner" || reader.channel === "owner")
-  ) {
-    throw new Error(
-      "Specify one model reader per family. The owner packet is added automatically.",
-    );
-  }
-
-  if (
-    !["anthropic", "openai"].every((family) => selected.some((reader) => reader.family === family))
-  ) {
-    throw new Error("Include Claude and GPT readers.");
-  }
 
   return [...selected, { channel: "owner", family: "owner", model: "owner" } as const];
 }
@@ -189,6 +187,12 @@ async function exchange(manifest: Manifest) {
           reverse: entry.reverse,
         })),
       )}`,
+    );
+  }
+
+  if (options.import && packet.reader.channel !== "owner") {
+    throw new Error(
+      "Only owner responses can be imported. Run model readers through eval:compare.",
     );
   }
 
@@ -229,22 +233,13 @@ async function exchange(manifest: Manifest) {
   }
 
   if (options.import) {
-    const args = {
+    await importVerdicts({
       attempt,
       id,
       packetId: packet.id,
       response: JSON.parse(await fs.readFile(options.import, "utf8")) as unknown,
       taskId,
-    };
-
-    if (packet.reader.channel === "owner") {
-      await importVerdicts(args);
-    } else {
-      await saveResponse(args, {
-        channel: "gateway",
-        costUsd: z.coerce.number().nonnegative().parse(options["cost-usd"]),
-      });
-    }
+    });
   }
 }
 
@@ -293,6 +288,11 @@ async function reserveStarts(comparison: Comparison) {
   return started;
 }
 
+function activeReserveCap(manifest: Manifest) {
+  const frozen = manifest.reserveCap ?? DEFAULT_RESERVE_READ_CAP;
+  return Math.min(frozen, reserveCap ?? frozen);
+}
+
 async function readOrder(comparison: Comparison, reverse: boolean, reserve = false) {
   if (!needsModelReads(comparison)) {
     return false;
@@ -332,7 +332,7 @@ async function readOrder(comparison: Comparison, reverse: boolean, reserve = fal
     );
   });
 
-  const cap = reserveCap ?? manifest.reserveCap ?? DEFAULT_RESERVE_READ_CAP;
+  const cap = activeReserveCap(manifest);
 
   const used = started.size;
 
@@ -340,7 +340,7 @@ async function readOrder(comparison: Comparison, reverse: boolean, reserve = fal
 
   const first = available.at(0);
 
-  if (options["stop-after"] === "packet" && first) {
+  if (stopAfter === "packet" && first) {
     await readOne(first, comparison);
     return true;
   }
@@ -372,7 +372,7 @@ async function evidenceStep(attempted: Set<string>) {
   const comparison = await current();
   const reads = comparison.attempts.length;
 
-  if ((await readPackets(comparison)) || options["stop-after"] === "reads") {
+  if ((await readPackets(comparison)) || stopAfter === "packet" || stopAfter === "reads") {
     return "stop";
   }
 
@@ -424,7 +424,7 @@ async function getManifest() {
       .positive()
       .parse(options.runs ?? 2),
     sealOnly: options["seal-only"],
-    stopAfterFreeze: options["stop-after"] === "freeze",
+    stopAfterFreeze: stopAfter === "freeze",
     task,
   });
 }
@@ -436,8 +436,12 @@ async function forecastFirstRead(manifest: Manifest, needsForecast: boolean) {
     (reader) => !reader.reserve || options.reserve !== "none",
   );
 
-  if (!comparison || comparison.attempts.some((record) => record.reader.channel !== "owner")) {
-    const cap = reserveCap ?? manifest.reserveCap ?? DEFAULT_RESERVE_READ_CAP;
+  if (
+    !comparison ||
+    (!options["limit-usd"] &&
+      comparison.attempts.some((record) => record.reader.channel !== "owner"))
+  ) {
+    const cap = activeReserveCap(manifest);
 
     process.stdout.write(
       `${JSON.stringify({ forecast: { readers: selected.map((reader) => forecastReader(reader)), reserveCap: cap } })}\n`,
@@ -447,7 +451,7 @@ async function forecastFirstRead(manifest: Manifest, needsForecast: boolean) {
   }
 
   const byReader = await forecastReads(
-    { ...manifest, readers: selected, reserveCap: reserveCap ?? manifest.reserveCap },
+    { ...manifest, readers: selected, reserveCap: activeReserveCap(manifest) },
     manifest.runsCompared,
     new Map(Object.entries(comparison.outputs)),
     Boolean(manifest.variants.incumbent),
@@ -458,13 +462,19 @@ async function forecastFirstRead(manifest: Manifest, needsForecast: boolean) {
 }
 
 function checkReaderConfiguration(manifest: Manifest) {
+  assertReaderPlan({
+    challenger: manifest.variants.challenger.model,
+    incumbent: manifest.variants.incumbent?.model,
+    readers: manifest.readers,
+  });
+
   if (
     options.reserve &&
     options.reserve !== "none" &&
-    !manifest.readers.some((reader) => reader.reserve && reader.model === options.reserve)
+    !additionalReaders(manifest.readers).some((reader) => reader.model === options.reserve)
   ) {
     throw new Error(
-      "The chosen reserve model differs from this sealed comparison. Start a new comparison to change readers.",
+      "The chosen third reader differs from this sealed comparison. Start a new comparison to change readers.",
     );
   }
 
@@ -472,6 +482,10 @@ function checkReaderConfiguration(manifest: Manifest) {
     [claudeReader, gptReader].some(
       (model) =>
         model && !manifest.readers.some((reader) => !reader.reserve && reader.model === model),
+    ) ||
+    readerOptions?.some(
+      ({ channel, model }) =>
+        !manifest.readers.some((reader) => reader.channel === channel && reader.model === model),
     )
   ) {
     throw new Error(
@@ -482,9 +496,14 @@ function checkReaderConfiguration(manifest: Manifest) {
 
 async function run() {
   const sealed = await readOptional(path.join(dir, "manifest.json"), manifestSchema);
+
+  if (!sealed && (options.export || options.import)) {
+    throw new Error("Seal the comparison before exchanging packets.");
+  }
+
   const manifest = sealed ?? (await getManifest());
 
-  if (!manifest || options["seal-only"] || options["stop-after"] === "seal") {
+  if (!manifest || options["seal-only"] || stopAfter === "freeze" || stopAfter === "seal") {
     return;
   }
 
@@ -495,7 +514,7 @@ async function run() {
     return;
   }
 
-  if (options["stop-after"] !== "checks") {
+  if (stopAfter !== "checks") {
     await forecastFirstRead(manifest, sealed !== null);
   }
 
@@ -509,7 +528,7 @@ async function run() {
     await checkRuns(task, await current());
   }
 
-  if (options["stop-after"] === "checks") {
+  if (stopAfter === "checks") {
     return;
   }
 
