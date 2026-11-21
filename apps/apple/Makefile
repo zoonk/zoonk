@@ -11,7 +11,7 @@ XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts) $(XCODEBUILD_COMMAND
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 TEST_ON_DESTINATION := $(if $(TEST_DESTINATION),$(XCODEBUILD) -destination "$(TEST_DESTINATION)",node scripts/with-simulator.mts $(XCODEBUILD_COMMAND))
 
-.PHONY: build build-ios test ui-test format format-check strings-check formatting-check check
+.PHONY: build build-ios test test-mac ui-test format format-check strings-check formatting-check check
 
 build: build-ios
 
@@ -22,6 +22,9 @@ test: ONLY_TESTING ?= ZoonkTests
 ui-test: ONLY_TESTING ?= ZoonkUITests
 test ui-test:
 	$(TEST_ON_DESTINATION) -scheme "$(APP_SCHEME)" CODE_SIGNING_ALLOWED=NO -parallel-testing-enabled NO -only-testing:"$(ONLY_TESTING)" test
+
+test-mac:
+	$(XCODEBUILD) -scheme "$(APP_SCHEME)" -destination "platform=macOS,variant=Mac Catalyst" CODE_SIGN_IDENTITY=- CODE_SIGN_ENTITLEMENTS= DEVELOPMENT_TEAM= -parallel-testing-enabled NO -only-testing:ZoonkTests test
 
 format:
 	xcrun swift-format format --recursive --in-place $(SWIFT_SOURCES)

@@ -23,7 +23,7 @@ jobs:
       - name: Restore the last build
         uses: ./.github/actions/apple-last-build
         with:
-          build: simulator
+          build: catalyst
 
       - name: Run unit tests
         env:
@@ -34,10 +34,7 @@ jobs:
             -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
-        # The newest runtime the image installs, as in apple.yml's test job.
-        run: |
-          udid=$(xcrun simctl list devices available --json | jq -r '[.devices | to_entries | sort_by(.key) | .[].value[] | select(.name == "iPhone 17")] | last | .udid')
-          make -C apps/apple test TEST_DESTINATION="platform=iOS Simulator,id=$udid"
+        run: make -C apps/apple test-mac
 
       - name: Report unit test results
         if: always()
