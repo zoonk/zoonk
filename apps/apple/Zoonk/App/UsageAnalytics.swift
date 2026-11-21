@@ -32,6 +32,8 @@ struct AnalyticsLearner: Equatable {
 }
 
 /// Main sends a missing value as null, which a Swift optional in `[String: Any]` can't encode.
+/// PostHog leaves a null out of an event's own properties, which it reads the same, and keeps it in
+/// person properties and in what `register` stores, where it clears an earlier value.
 func orNull<Value>(_ value: Value?) -> Any {
   if let value { value } else { NSNull() }
 }
