@@ -1036,6 +1036,26 @@ msgctxt "ko7e4v"
 msgid "Quick questions that find where your study time should go"
 msgstr "Domande rapide per capire a cosa dedicare il tuo tempo di studio"
 
+#: src/app/[lang]/(app)/(onboarding)/level-test/page.tsx
+msgctxt "Z05RU-"
+msgid "Level test"
+msgstr "Test di livello"
+
+#: src/app/[lang]/(app)/(onboarding)/level-test/page.tsx
+msgctxt "Ye4GUJ"
+msgid "Find your level and skip what you know"
+msgstr "Scopri il tuo livello e salta ciò che sai già"
+
+#: src/app/[lang]/(app)/(onboarding)/placement-test/page.tsx
+msgctxt "QZI9sA"
+msgid "Test what you know"
+msgstr "Verifica ciò che sai"
+
+#: src/app/[lang]/(app)/(onboarding)/placement-test/page.tsx
+msgctxt "42QSqg"
+msgid "Skip lessons you already know"
+msgstr "Salta le lezioni che conosci già"
+
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "8Dn3GJ"
 msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"

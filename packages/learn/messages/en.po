@@ -52,6 +52,7 @@ msgstr "BP"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
@@ -78,9 +79,11 @@ msgstr "Skipped"
 #: src/generation/generation-step-label.ts
 #: src/generation/generation-wait.tsx
 #: src/journey/phase-details.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-speaking.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
@@ -252,6 +255,7 @@ msgstr "{days, plural, one {About # day left} other {About # days left}}"
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-entry.tsx
@@ -263,6 +267,7 @@ msgstr "{days, plural, one {About # day left} other {About # days left}}"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/questions/test-out-run.tsx
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
@@ -290,6 +295,7 @@ msgstr "Continue"
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/profile-step.tsx
 #: src/onboarding/steps/reveal-body.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
 #: src/today/today-suggested-goal.tsx
@@ -1478,11 +1484,15 @@ msgstr "Zu"
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
+#: src/language/level-test/level-test-flow.tsx
+#: src/language/level-test/level-test-preparing.tsx
 #: src/mock/mock-result-plan.tsx
+#: src/placement-test/placement-test-flow.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/research/upload-request-card.tsx
+#: src/session/level-check-offer.tsx
 #: src/today/today-focus-test.tsx
 #: src/today/today-insight.tsx
 #: src/today/today-plan-change.tsx
@@ -2289,6 +2299,7 @@ msgstr "Your plan can't make room for this {duration} mock exam on {date}. It st
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/plan/plan-suggestion-context.tsx
+#: src/plan/tested-out-change-card.tsx
 #: src/questions/undo-button.tsx
 #: src/today/today-exam-choice.tsx
 #: src/today/today-insight.tsx
@@ -3279,7 +3290,7 @@ msgstr "Leave for now?"
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
-#: src/onboarding/test-outcome.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan/plan-bases-choices.tsx
 msgctxt "_4tOwT"
 msgid "Skip"
@@ -3962,7 +3973,6 @@ msgid "{count, plural, one {Your plan also skips # lesson you already know.} oth
 msgstr "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
 
 #: src/focus-test/focus-test-screens.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/questions/test-out-preparing.tsx
 #: src/today/today-focus-test.tsx
 msgctxt "SKxNcp"
@@ -3970,6 +3980,7 @@ msgid "Start the test"
 msgstr "Start the test"
 
 #: src/focus-test/focus-test-screens.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "Continue your test"
@@ -4017,7 +4028,6 @@ msgid "Find what to study most"
 msgstr "Find what to study most"
 
 #: src/focus-test/use-focus-test-texts.ts
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "YSXaxI"
 msgid "Already know some of this?"
 msgstr "Already know some of this?"
@@ -4045,6 +4055,7 @@ msgid "See my result"
 msgstr "See my result"
 
 #: src/focus-test/use-focus-test-texts.ts
+#: src/plan/plan-placement-test.tsx
 msgctxt "q1WWIr"
 msgid "In progress"
 msgstr "In progress"
@@ -4091,6 +4102,7 @@ msgstr "Your plan keeps the focus you chose."
 
 #: src/focus-test/use-result-line.ts
 #: src/mock/mock-result-plan.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -4847,6 +4859,7 @@ msgid "{language} level"
 msgstr "{language} level"
 
 #: src/journey/journey-hero.tsx
+#: src/language/level-test/level-test-results.tsx
 #: src/language/level-test/level-test-screens.tsx
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "zSuk_8"
@@ -6293,6 +6306,21 @@ msgctxt "h0uuWx"
 msgid "Last result"
 msgstr "Last result"
 
+#: src/language/level-test/level-test-flow.tsx
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "HUvYmi"
+msgid "Question {number, number} of {total, number}"
+msgstr "Question {number, number} of {total, number}"
+
+#. A short test of one language level, such as “Test out of B2”.
+#: src/language/level-test/level-test-flow.tsx
+#: src/language/level-test/level-test-results.tsx
+#: src/placement-test/placement-test-screens.tsx
+#: src/session/level-check-offer.tsx
+msgctxt "h5ZSCC"
+msgid "Test out of {level}"
+msgstr "Test out of {level}"
+
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "KlIXoI"
 msgid "Play the message again"
@@ -6381,20 +6409,47 @@ msgctxt "9Da2rt"
 msgid "Say it out loud"
 msgstr "Say it out loud"
 
+#: src/language/level-test/level-test-results.tsx
+#: src/mock/mock-speaking.tsx
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "JiaScE"
+msgid "Keep going"
+msgstr "Keep going"
+
+#. {levels} is a list of language levels, such as “A1 and A2”. The plan no longer has their lessons.
+#: src/language/level-test/level-test-results.tsx
+msgctxt "11l_Sx"
+msgid "{count, plural, one {We skipped {levels}: # lesson.} other {We skipped {levels}: # lessons.}}"
+msgstr "{count, plural, one {We skipped {levels}: # lesson.} other {We skipped {levels}: # lessons.}}"
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "pdcoIY"
+msgid "Your lessons keep adjusting as you answer."
+msgstr "Your lessons keep adjusting as you answer."
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "Jrp0gH"
+msgid "There aren't enough questions for {level} yet."
+msgstr "There aren't enough questions for {level} yet."
+
+#. The title after a placement test: how many lessons it took out of the plan.
+#. A fact on the Plan's test row: how many lessons the last test skipped.
+#: src/language/level-test/level-test-results.tsx
+#: src/placement-test/placement-test-screens.tsx
+#: src/plan/plan-placement-test.tsx
+msgctxt "psTUYu"
+msgid "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
+msgstr "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
+
+#: src/language/level-test/level-test-results.tsx
+msgctxt "8CPaDq"
+msgid "{level} stays in your plan"
+msgstr "{level} stays in your plan"
+
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
 msgid "Use the app in {language}"
 msgstr "Use the app in {language}"
-
-#: src/language/level-test/level-test-screens.tsx
-msgctxt "oLlJZg"
-msgid "Find your level in {language}"
-msgstr "Find your level in {language}"
-
-#: src/language/level-test/level-test-screens.tsx
-msgctxt "OAt3qi"
-msgid "About {time} of reading, listening and one sentence out loud, so your plan starts at your level."
-msgstr "About {time} of reading, listening and one sentence out loud, so your plan starts at your level."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "4Itq02"
@@ -6402,6 +6457,7 @@ msgid "New to its alphabet? Skip the test. Your first lesson teaches you to read
 msgstr "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
 
 #: src/language/level-test/level-test-screens.tsx
+#: src/plan/plan-placement-test.tsx
 msgctxt "Z05RU-"
 msgid "Level test"
 msgstr "Level test"
@@ -8679,11 +8735,6 @@ msgid "Every task is done. After this, you can't do them again in this mock exam
 msgstr "Every task is done. After this, you can't do them again in this mock exam."
 
 #: src/mock/mock-speaking.tsx
-msgctxt "JiaScE"
-msgid "Keep going"
-msgstr "Keep going"
-
-#: src/mock/mock-speaking.tsx
 msgctxt "i9hrw7"
 msgid "Your speaking paper opens as soon as it's ready."
 msgstr "Your speaking paper opens as soon as it's ready."
@@ -9451,7 +9502,7 @@ msgid "Only what's new or hard"
 msgstr "Only what's new or hard"
 
 #: src/onboarding/steps/level-choices.tsx
-#: src/onboarding/steps/placement-screens.tsx
+#: src/placement-test/placement-test-screens.tsx
 msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "About {time}"
@@ -9530,19 +9581,9 @@ msgid "Question {number, number}"
 msgstr "Question {number, number}"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "HUvYmi"
-msgid "Question {number, number} of {total, number}"
-msgstr "Question {number, number} of {total, number}"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Stop and use my answers"
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "N7Heuq"
-msgid "A short test finds the lessons you don't need."
-msgstr "A short test finds the lessons you don't need."
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -9903,11 +9944,6 @@ msgctxt "65ILOx"
 msgid "Subjects you know well"
 msgstr "Subjects you know well"
 
-#: src/onboarding/steps/typed-answer-field.tsx
-msgctxt "s7LDgm"
-msgid "Your answer, in your own words"
-msgstr "Your answer, in your own words"
-
 #: src/onboarding/understood/understood-aim-picker.tsx
 #: src/onboarding/understood/understood-country-picker.tsx
 #: src/onboarding/understood/understood-row.tsx
@@ -10077,6 +10113,65 @@ msgstr "Reason"
 msgctxt "d68iA8"
 msgid "Your plan and lessons follow this material"
 msgstr "Your plan and lessons follow this material"
+
+#: src/placement-test/placement-test-flow.tsx
+msgctxt "gnlQcT"
+msgid "Part {part, number}"
+msgstr "Part {part, number}"
+
+#. {time} is a duration with its unit, such as “15 min”.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "d-Y4Kd"
+msgid "About {time} left. Your answers are saved."
+msgstr "About {time} left. Your answers are saved."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "2-7vLr"
+msgid "How much do you want to check?"
+msgstr "How much do you want to check?"
+
+#. The short placement test: about four minutes of questions.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "Ggk7AI"
+msgid "Quick"
+msgstr "Quick"
+
+#. {time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "GoojEm"
+msgid "About {time}, in parts"
+msgstr "About {time}, in parts"
+
+#. The long placement test: it checks every topic still ahead in the course.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "XuFiV3"
+msgid "Whole course"
+msgstr "Whole course"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "3NCmfj"
+msgid "Skip {level} if you already know it"
+msgstr "Skip {level} if you already know it"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "nbbjyZ"
+msgid "Stop any time. Lessons you already know stay skipped."
+msgstr "Stop any time. Lessons you already know stay skipped."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "OpomGa"
+msgid "Finish for today"
+msgstr "Finish for today"
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "NWfVeb"
+msgid "You can finish the test from Plan."
+msgstr "You can finish the test from Plan."
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "DHGBiL"
+msgid "The whole-course test can skip more."
+msgstr "The whole-course test can skip more."
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
@@ -10519,6 +10614,33 @@ msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "Find a date"
 
+#. A CEFR level range the test found for reading, such as “B1–B2”.
+#: src/plan/plan-placement-test.tsx
+msgctxt "hSzKEx"
+msgid "Reading {range}"
+msgstr "Reading {range}"
+
+#. A CEFR level range the test found for listening, such as “B1–B2”.
+#: src/plan/plan-placement-test.tsx
+msgctxt "fFePx9"
+msgid "Listening {range}"
+msgstr "Listening {range}"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "Ye4GUJ"
+msgid "Find your level and skip what you know"
+msgstr "Find your level and skip what you know"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "42QSqg"
+msgid "Skip lessons you already know"
+msgstr "Skip lessons you already know"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "QZI9sA"
+msgid "Test what you know"
+msgstr "Test what you know"
+
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
 msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
@@ -10657,6 +10779,7 @@ msgid "Plan suggestion"
 msgstr "Plan suggestion"
 
 #: src/plan/plan-suggestion-context.tsx
+#: src/plan/tested-out-change-card.tsx
 msgctxt "cTvbeT"
 msgid "Plan updated"
 msgstr "Plan updated"
@@ -11327,6 +11450,17 @@ msgctxt "oqn6dA"
 msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "Days {first, number} to {last, number} of {days, number}"
 
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "KUuKmG"
+msgid "{count, plural, one {The lesson is back in your plan.} other {The lessons are back in your plan.}}"
+msgstr "{count, plural, one {The lesson is back in your plan.} other {The lessons are back in your plan.}}"
+
+#. After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews.
+#: src/plan/use-skipped-lessons-sentences.ts
+msgctxt "Ng8L3W"
+msgid "{count, plural, one {You already know it. It stays in your practice.} other {You already know them. They stay in your practice.}}"
+msgstr "{count, plural, one {You already know it. It stays in your practice.} other {You already know them. They stay in your practice.}}"
+
 #: src/plan/use-study-days-text.ts
 msgctxt "1ooK0d"
 msgid "Every day"
@@ -11338,6 +11472,11 @@ msgid "{first} – {last}"
 msgstr "{first} – {last}"
 
 #: src/plan/use-system-change-sentence.ts
+msgctxt "qd8BIn"
+msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
+msgstr "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
+
+#: src/plan/use-system-change-sentence.ts
 msgctxt "3Qo-pr"
 msgid "Your plan changed to make up for the days you missed."
 msgstr "Your plan changed to make up for the days you missed."
@@ -11347,10 +11486,11 @@ msgctxt "gU3R5_"
 msgid "Your plan changed to match the time your lessons take."
 msgstr "Your plan changed to match the time your lessons take."
 
+#. One day's plan change: {skipped} says the lessons it skipped, {back} the topics that came back.
 #: src/plan/use-system-change-sentence.ts
-msgctxt "BEtnOi"
-msgid "{lessons, plural, one {You passed the test, so your plan skips # lesson.} other {You passed the test, so your plan skips # lessons.}}"
-msgstr "{lessons, plural, one {You passed the test, so your plan skips # lesson.} other {You passed the test, so your plan skips # lessons.}}"
+msgctxt "uMtUNQ"
+msgid "{skipped} {back}"
+msgstr "{skipped} {back}"
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "KjtC18"
@@ -11906,11 +12046,6 @@ msgctxt "1ovpGI"
 msgid "The chapter stays in your plan, and your answers help it start at the right level."
 msgstr "The chapter stays in your plan, and your answers help it start at the right level."
 
-#: src/questions/test-out-run.tsx
-msgctxt "aBn-KM"
-msgid "The lessons are back in your plan."
-msgstr "The lessons are back in your plan."
-
 #. The learner passed this chapter's test. "It" is the chapter.
 #: src/questions/test-out-run.tsx
 msgctxt "ttohgu"
@@ -12184,6 +12319,26 @@ msgstr "Practice {minutes} more min"
 msgctxt "kapQxt"
 msgid "Your lesson isn't saved yet"
 msgstr "Your lesson isn't saved yet"
+
+#: src/session/level-check-offer.tsx
+msgctxt "I6gFfo"
+msgid "This looks easy for you"
+msgstr "This looks easy for you"
+
+#: src/session/level-check-offer.tsx
+msgctxt "-VTNJ0"
+msgid "A short test can skip {level} if you already know it."
+msgstr "A short test can skip {level} if you already know it."
+
+#: src/session/level-check-offer.tsx
+msgctxt "bj7N9e"
+msgid "A quick check can skip lessons you already know."
+msgstr "A quick check can skip lessons you already know."
+
+#: src/session/level-check-offer.tsx
+msgctxt "lPAYdL"
+msgid "Check my level"
+msgstr "Check my level"
 
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"
