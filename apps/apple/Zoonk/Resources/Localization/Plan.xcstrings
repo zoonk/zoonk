@@ -255,7 +255,9 @@
         }
       }
     },
-    "%@ a day covers as much as any time can." : {},
+    "%@ a day covers as much as any time can." : {
+      "comment" : "When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more."
+    },
     "%@ a day covers everything" : {
       "comment" : "The time a day that covers the whole goal; the argument is a duration",
       "localizations" : {
@@ -316,6 +318,7 @@
       }
     },
     "%@ a day covers the first lessons of about %@ of your exam" : {
+      "comment" : "{share} is a share of the whole exam, by how much it asks, not a share of its topics.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -25144,7 +25147,7 @@
       }
     },
     "Not in your plan · other topics come first" : {
-      "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first."
+      "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as \"Not in your plan · you took this subject out\"."
     },
     "Not in your plan · you took this subject out" : {
       "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
@@ -32642,7 +32645,9 @@
         }
       }
     },
-    "There isn't enough time to cover everything." : {},
+    "There isn't enough time to cover everything." : {
+      "comment" : "Under a sentence that already names the goal's date: the same words as \"There isn't enough time to cover everything by {date}.\" without the date."
+    },
     "These lessons aren't ready yet. Try again later." : {
       "comment" : "A topic whose lessons can't be made ready now",
       "localizations" : {

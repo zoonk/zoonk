@@ -696,7 +696,9 @@ func planCoverageLine(minutes: Int, share: Double, exam: Bool) -> String {
     ? String(
       localized:
         "\(time) a day covers the first lessons of about \(percent) of your exam",
-      table: "Plan")
+      table: "Plan",
+      comment:
+        "{share} is a share of the whole exam, by how much it asks, not a share of its topics.")
     : String(
       localized: "\(time) a day covers the first lessons of about \(percent) of your goal",
       table: "Plan")
@@ -716,7 +718,10 @@ func planMostTimeText(minutes: Int) -> String {
   String(
     localized:
       "\(planDurationText(minutes: Double(minutes))) a day covers as much as any time can.",
-    table: "Plan")
+    table: "Plan",
+    comment:
+      "When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more."
+  )
 }
 
 extension PlanContext {

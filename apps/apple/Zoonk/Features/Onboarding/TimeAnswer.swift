@@ -101,7 +101,11 @@ struct TimeAnswer: View {
     case .takes(let full):
       planMostTimeText(minutes: full.minutes)
     case .neverFits:
-      String(localized: "There isn't enough time to cover everything.", table: "Plan")
+      String(
+        localized: "There isn't enough time to cover everything.", table: "Plan",
+        comment:
+          "Under a sentence that already names the goal's date: the same words as \"There isn't enough time to cover everything by {date}.\" without the date."
+      )
     }
   }
 
@@ -156,6 +160,14 @@ struct TimeAnswer: View {
     switch line {
     case .everything:
       return shown.map { Self.everythingWords(exam: exam, month: month, date: $0) }
+    case .everythingKept:
+      return shown.map { date in
+        month
+          ? String(
+            localized: "Covers everything in your plan by the start of \(date).",
+            table: "Onboarding")
+          : String(localized: "Covers everything in your plan by \(date).", table: "Onboarding")
+      }
     case .share(let share):
       return shown.map { Self.shareWords(share, exam: exam, month: month, date: $0) }
     case .unmeasured:
@@ -272,7 +284,7 @@ struct TimeAnswer: View {
           "Covers the first lessons of about \(percent) of your exam by \(date).",
         table: "Onboarding",
         comment:
-          "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is a date like 'May 5, 2027'"
+          "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is a date like 'May 5, 2027'. The share is of the whole exam, by how much it asks, not a share of its topics."
       )
     case (true, true):
       String(
@@ -280,7 +292,7 @@ struct TimeAnswer: View {
           "Covers the first lessons of about \(percent) of your exam by the start of \(date).",
         table: "Onboarding",
         comment:
-          "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is the month the learner named, like 'May 2027'"
+          "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is the month the learner named, like 'May 2027'. The share is of the whole exam, by how much it asks, not a share of its topics."
       )
     case (false, false):
       String(

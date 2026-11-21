@@ -4058,8 +4058,10 @@
         }
       }
     },
+    "Covers everything in your plan by %@." : {},
+    "Covers everything in your plan by the start of %@." : {},
     "Covers the first lessons of about %@ of your exam by %@." : {
-      "comment" : "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is a date like 'May 5, 2027'",
+      "comment" : "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is a date like 'May 5, 2027'. The share is of the whole exam, by how much it asks, not a share of its topics.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4070,7 +4072,7 @@
       }
     },
     "Covers the first lessons of about %@ of your exam by the start of %@." : {
-      "comment" : "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is the month the learner named, like 'May 2027'",
+      "comment" : "The share of an exam whose topics get their first lessons at a time a day, by its date; the second argument is the month the learner named, like 'May 2027'. The share is of the whole exam, by how much it asks, not a share of its topics.",
       "localizations" : {
         "en" : {
           "stringUnit" : {

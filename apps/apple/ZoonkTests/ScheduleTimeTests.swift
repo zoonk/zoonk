@@ -169,6 +169,8 @@ final class ScheduleTimeTests: XCTestCase {
     XCTAssertEqual(line(covered: 0.6, reached: 1), .share(1))
     XCTAssertEqual(line(covered: 1, reached: 1), .everything)
     XCTAssertEqual(line(covered: 0.2, reached: nil), .unmeasured, "a plan saved before reach")
+    XCTAssertEqual(line(covered: 1, reached: 0.9), .everythingKept, "a subject taken out")
+    XCTAssertEqual(line(covered: 1, reached: nil), .everything)
   }
 
   func testWaitsForTheNewDaysSuggestionUnlessTheLearnerPickedATime() {

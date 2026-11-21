@@ -7,6 +7,8 @@ enum ScheduleTime {
     case asking
     case askFailed
     case everything
+    /// Everything the learner kept, with a subject they took out of the plan.
+    case everythingKept
     case findFailed
     case finish(endDate: String)
     case noDays
@@ -20,13 +22,7 @@ enum ScheduleTime {
 
     var isBusy: Bool { self == .asking || self == .working }
 
-    var coversEverything: Bool {
-      if case .everything = self {
-        return true
-      }
-
-      return false
-    }
+    var coversEverything: Bool { self == .everything || self == .everythingKept }
   }
 
   /// The longest time worth studying: what covers everything, or as much as any time does when part
@@ -248,12 +244,14 @@ enum ScheduleTime {
     }
 
     if let suggested = found?.suggested, suggested.minutes == minutes {
-      return suggested.kind == .everything ? .everything : reached(suggested.reachedShare)
+      return suggested.kind == .everything
+        ? everything(reached: suggested.reachedShare) : reached(suggested.reachedShare)
     }
 
     // The plan's own time can say what it covers before the time question answers.
     if let advice {
-      return (advice.coveredShare ?? 0) >= 1 ? .everything : reached(advice.reachedShare)
+      return (advice.coveredShare ?? 0) >= 1
+        ? everything(reached: advice.reachedShare) : reached(advice.reachedShare)
     }
 
     guard found != nil else {
@@ -261,6 +259,11 @@ enum ScheduleTime {
     }
 
     return askFailed ? .askFailed : .asking
+  }
+
+  /// Covering everything while part of the goal isn't reached means a subject was taken out.
+  private static func everything(reached: Double?) -> Line {
+    (reached ?? 1) < 1 ? .everythingKept : .everything
   }
 
   private static func reached(_ share: Double?) -> Line {
