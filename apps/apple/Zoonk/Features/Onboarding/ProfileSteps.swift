@@ -29,6 +29,8 @@ struct ProfileQuestionSections: View {
   /// Something else was just picked, so its words, now required, take focus as its field appears.
   @State private var asksOther = false
   @FocusState private var otherFocused: Bool
+  @Environment(\.listScroll) private var scroll
+  @State private var revealsFirstTool = false
 
   var body: some View {
     StepHeader(
@@ -119,7 +121,8 @@ struct ProfileQuestionSections: View {
     }
   }
 
-  /// Typed tools become chips under the field, so adding one moves nothing above it.
+  /// Typed tools become chips under the field, so adding one moves nothing above it. Each one added
+  /// scrolls into view over the keyboard and the bar.
   @ViewBuilder private var tools: some View {
     Section {
       chips
@@ -128,7 +131,10 @@ struct ProfileQuestionSections: View {
     Section {
       ToolField(
         label: ProfileCopy.favoritesLabel(view.id), prompt: ProfileCopy.favoritesPrompt(view.id),
-        draft: $draft)
+        draft: $draft
+      )
+      // Main's 12pt between the field and its chips, with the field's own 6pt under it.
+      .listRowInsets(.bottom, 6)
 
       if !draft.typedTools.isEmpty {
         FlowLayout(spacing: 8) {
@@ -138,8 +144,36 @@ struct ProfileQuestionSections: View {
             }
           }
         }
+        .listRowInsets(.top, 0)
         .listRowSeparator(.hidden)
+        .id(Self.typedToolsRow)
+        .onAppear {
+          if revealsFirstTool {
+            revealsFirstTool = false
+            revealTypedTools()
+          }
+        }
       }
+    }
+    .onChange(of: draft.typedTools.count) { added, count in
+      if added == 0, count > 0 {
+        // The chips' row appears with the first one, and can be scrolled to only then.
+        revealsFirstTool = true
+      } else if count > added {
+        revealTypedTools()
+      }
+    }
+  }
+
+  private static let typedToolsRow = "typedTools"
+
+  /// Once the new chip is laid out, and again once Return's new line, which grows the field until
+  /// the add empties it, has left: the list's layout of that can undo the first scroll.
+  private func revealTypedTools() {
+    Task {
+      scroll?.scrollTo(Self.typedToolsRow)
+      try? await Task.sleep(for: .milliseconds(400))
+      scroll?.scrollTo(Self.typedToolsRow)
     }
   }
 
@@ -345,7 +379,7 @@ private struct TypedToolChip: View {
         Text(verbatim: name)
         Image(systemName: "xmark")
           .imageScale(.small)
-          .foregroundStyle(.mutedForeground)
+          .fontWeight(.semibold)
       },
       isOn: true, action: remove
     )
@@ -357,7 +391,8 @@ private struct TypedToolChip: View {
 }
 
 /// The tools field with its Add button. Add, Return, a comma or a semicolon turn what's typed into
-/// chips, and the field keeps focus for the next one.
+/// chips, and the field keeps focus for the next one. Return with nothing typed puts the keyboard
+/// away.
 private struct ToolField: View {
   let label: Text
   let prompt: Text
@@ -369,11 +404,18 @@ private struct ToolField: View {
     FormField(title: label, isFocused: isFocused) {
       HStack(spacing: 8) {
         MultilineTextField(
-          text: $draft.text, prompt: prompt, label: label, onSubmit: { draft.addTypedTools() }
+          text: $draft.text, prompt: prompt, label: label,
+          onSubmit: {
+            if ProfileDraft.favorites(in: draft.text).isEmpty {
+              isFocused = false
+            } else {
+              draft.addTypedTools()
+            }
+          }
         )
         .focused($isFocused)
-        .onChange(of: draft.text) {
-          draft.settleToolText()
+        .onChange(of: draft.text) { old, _ in
+          draft.settleToolText(from: old)
         }
 
         Button {
@@ -383,7 +425,7 @@ private struct ToolField: View {
         }
         .buttonStyle(.ghost)
         .controlSize(.small)
-        .disabled(ProfileDraft.favorites(in: draft.text).isEmpty)
+        .disabled(!draft.canAddTypedTools)
       }
     }
   }
