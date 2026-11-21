@@ -14,12 +14,13 @@ import { EnterButton } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page } from "../_components/page";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
-import { type GenerationRun } from "../generation/generation-run";
+import { type GenerationRun, hasStopped } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { IndeterminateWait } from "../generation/indeterminate-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
+import { ChooseOnTodayLink } from "../writing/writing-choice";
 import { type MockChooserStatus } from "./mock-chooser-parts";
 
 export function ChooserLayout({
@@ -119,15 +120,15 @@ type ChooserBarProps = { busy: boolean; gated: boolean; status: MockChooserStatu
 /** Start on every screen size, after the list: the choice comes before the action. */
 export function ChooserBar({
   busy,
+  choose = false,
   disabled,
   gated,
-  note,
   onStart,
   status,
 }: ChooserBarProps & {
+  /** The picked option waits for an exam choice, which its row names: the way on is Today's question. */
+  choose?: boolean;
   disabled: boolean;
-  /** What the picked option needs first, when no refusal says more. */
-  note?: ReactNode;
   onStart: () => void;
 }) {
   const t = useExtracted();
@@ -135,10 +136,14 @@ export function ChooserBar({
   const refusal = useChooserNote({ busy, gated, status });
 
   return (
-    <BottomBar note={refusal ?? note}>
-      {gated ? (
-        <SubscribeMainAction />
-      ) : (
+    <BottomBar note={refusal}>
+      {gated && <SubscribeMainAction />}
+      {!gated && choose && (
+        <BottomBarActions>
+          <ChooseOnTodayLink />
+        </BottomBarActions>
+      )}
+      {!gated && !choose && (
         <BottomBarActions>
           <EnterButton
             busy={busy}
@@ -151,6 +156,21 @@ export function ChooserBar({
           </EnterButton>
         </BottomBarActions>
       )}
+    </BottomBar>
+  );
+}
+
+/** A written test whose questions couldn't be written: its one way on is trying again. */
+function RetryBar({ retry }: { retry?: () => void }) {
+  const t = useExtracted();
+
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        <EnterButton className={DETAIL_PRIMARY_CLASS} onClick={() => retry?.()} size="lg">
+          {t("Try again")}
+        </EnterButton>
+      </BottomBarActions>
     </BottomBar>
   );
 }
@@ -168,7 +188,7 @@ export function MockWriting({
 
   if (written) {
     return (
-      <ChooserLayout bar={bar}>
+      <ChooserLayout bar={hasStopped(run) ? <RetryBar retry={run.retry} /> : bar}>
         <IndeterminateWait
           description={t(
             "Questions like the ones on your exam. Your mock exam starts here when they're ready.",

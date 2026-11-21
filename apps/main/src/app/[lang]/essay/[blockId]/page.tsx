@@ -2,8 +2,8 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
-import { readWritingStart } from "@/lib/essays/writing-start-href";
 import { getEssay } from "@zoonk/core/exams/essays/get";
+import { getSessionPageView } from "@zoonk/core/sessions/page";
 import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -42,21 +42,58 @@ function EssaySkeleton() {
   );
 }
 
-async function EssayContent({ params, searchParams }: Props) {
-  const [{ blockId }, search] = await Promise.all([params, searchParams]);
+/**
+ * A writing block before its question is admitted, read from the learner's own day: the page shows
+ * what the server says, never what an address claims. An owned block the day no longer lists was
+ * dropped by a re-read of the exam's notice.
+ */
+async function getUnadmittedWriting(blockId: string) {
+  const day = await getSessionPageView({ blockId });
 
+  if (day.status !== "ready") {
+    return null;
+  }
+
+  const sessionId = day.session.id;
+  const block = day.session.blocks.find(({ id }) => id === blockId);
+
+  if (!block) {
+    return { initial: { status: "taskRemoved" } as const, sessionId, task: null };
+  }
+
+  if (!block.writingUnit) {
+    return null;
+  }
+
+  const task = {
+    minutes: block.estimatedMinutes,
+    title: block.title,
+    unit: block.writingUnit,
+    writingTask: block.writingTask ?? null,
+  };
+
+  const initial =
+    block.writingAvailability?.status === "tomorrow"
+      ? ({ status: "limitReached", task } as const)
+      : ({ status: "unasked" } as const);
+
+  return { initial, sessionId, task };
+}
+
+async function EssayContent({ params }: Pick<Props, "params">) {
+  const { blockId } = await params;
   const result = await getEssay({ blockId });
-  const start = readWritingStart(search);
 
   if (result.status === "unauthorized") {
     return <AuthGateScreen next={`/essay/${blockId}`} />;
   }
 
-  // A written question appears once its start admits it; until then the start's answer shows.
-  if (result.status === "notFound" && start) {
+  const unadmitted = result.status === "notFound" ? await getUnadmittedWriting(blockId) : null;
+
+  if (unadmitted) {
     return (
       <MainLearnProvider>
-        <WritingStartClient blockId={blockId} initial={start} />
+        <WritingStartClient blockId={blockId} {...unadmitted} />
       </MainLearnProvider>
     );
   }
@@ -78,10 +115,10 @@ async function EssayContent({ params, searchParams }: Props) {
   );
 }
 
-export default function EssayPage(props: Props) {
+export default function EssayPage({ params }: Props) {
   return (
     <Suspense fallback={<EssaySkeleton />}>
-      <EssayContent {...props} />
+      <EssayContent params={params} />
     </Suspense>
   );
 }

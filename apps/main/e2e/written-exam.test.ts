@@ -92,7 +92,7 @@ test.describe("Written exam practice", () => {
       await page.goto(`/essay/${day.blockId}`);
 
       await expect(
-        page.getByRole("heading", { level: 1, name: /^Your answer\s*16\.6–18\.7\s*of 30$/u }),
+        page.getByRole("heading", { level: 1, name: /^Your answer\s*16–19\s*of 30$/u }),
       ).toBeVisible();
 
       await expect(
@@ -140,11 +140,29 @@ test.describe("Written exam practice", () => {
       // The run's model never answers in E2E, so the question stays in writing.
       await waiting.goto("/today");
       await waiting.getByRole("button", { name: "Start" }).click();
-      await expect(waiting).toHaveURL(new RegExp(`/essay/${missing.blockId}\\?writing=`, "u"));
+      await expect(waiting).toHaveURL(new RegExp(`/essay/${missing.blockId}$`, "u"));
 
       await expect(
         waiting.getByRole("heading", { level: 1, name: "Writing your question…" }),
       ).toBeVisible();
+
+      // The run belongs to the tap, not the address: a reload shows the task and starts nothing.
+      const starts: string[] = [];
+
+      waiting.on("request", (request) => {
+        if (request.method() === "POST" && request.url().endsWith("/starts")) {
+          starts.push(request.url());
+        }
+      });
+
+      await waiting.reload();
+
+      await expect(
+        waiting.getByRole("heading", { name: "Write the 30-line question" }),
+      ).toBeVisible();
+
+      await expect(waiting.getByRole("button", { exact: true, name: "Write" })).toBeVisible();
+      expect(starts).toHaveLength(0);
 
       await page.goto("/mock/new");
       await page.getByRole("radio", { name: /^Written test/u }).click();
@@ -184,9 +202,8 @@ test.describe("Written exam practice", () => {
       await expect(page.getByText("Short writing exercise").first()).toBeVisible();
       await expect(page.getByText(/30-line question/u)).toBeHidden();
 
-      // An address a start answered before the notice was read again: trying it again is a start.
-      await page.goto(`/essay/${day.blockId}?writing=failed`);
-      await page.getByRole("button", { name: "Try again" }).click();
+      // An old link to its start reads the learner's own day, which no longer lists it.
+      await page.goto(`/essay/${day.blockId}`);
 
       await expect(
         page.getByRole("heading", { level: 1, name: "This question is no longer on your exam" }),
@@ -194,9 +211,7 @@ test.describe("Written exam practice", () => {
 
       expect(await prisma.writingAdmission.count({ where: { userId: day.user.id } })).toBe(0);
 
-      await page.getByRole("link", { exact: true, name: "Today" }).click();
-      await expect(page).toHaveURL(/\/today/u);
-      await page.getByRole("button", { name: "Start" }).click();
+      await page.getByRole("button", { exact: true, name: "Continue" }).click();
       await expect(page).toHaveURL(new RegExp(`/essay/${drillId}`, "u"));
     } finally {
       await page.context().close();

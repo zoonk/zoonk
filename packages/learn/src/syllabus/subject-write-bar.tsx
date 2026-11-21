@@ -7,7 +7,7 @@ import { useState } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { EnterButton, EnterLink } from "../_components/enter-button";
 import { useFormatDuration } from "../_utils/time-format";
-import { ChooseOnToday } from "../writing/writing-choice";
+import { ChooseOnToday, ChooseOnTodayLink, useChoiceSentence } from "../writing/writing-choice";
 import { useWritingTaskName } from "../writing/writing-header";
 import { useGradingReturnsLine } from "../writing/writing-labels";
 import { type WrittenSubject } from "./subject-written-score";
@@ -93,6 +93,7 @@ export function WriteBottomBar({
   const t = useExtracted();
   const gradingReturns = useGradingReturnsLine();
   const taskName = useWritingTaskName();
+  const choiceSentence = useChoiceSentence();
   const [busy, setBusy] = useState(false);
   const actions = written.writeActions ?? [];
   const unfinished = actions.find((action) => action.availability.status === "continue");
@@ -123,17 +124,23 @@ export function WriteBottomBar({
       title: written.points.tasks.find(({ key }) => key === waiting.taskKey)?.name ?? "",
     });
 
-  const choiceNote = choice && (
-    <ChooseOnToday choiceGroups={choice.groups} task={choice.all ? undefined : waitingName} />
-  );
-
   if (choice?.all) {
     return (
-      <BottomBar>
-        <div className="flex min-h-11 items-center lg:justify-end">{choiceNote}</div>
+      <BottomBar
+        note={
+          <p className="text-muted-foreground text-pretty">
+            {choiceSentence({ choiceGroups: choice.groups })}
+          </p>
+        }
+      >
+        <BottomBarActions>
+          <ChooseOnTodayLink />
+        </BottomBarActions>
       </BottomBar>
     );
   }
+
+  const choiceNote = choice && <ChooseOnToday choiceGroups={choice.groups} task={waitingName} />;
 
   const returnsOn = getReturnsOn(actions);
 

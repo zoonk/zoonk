@@ -1,21 +1,99 @@
 "use client";
 
+import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS } from "@zoonk/core/exams/essays/contract";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { deviceStorage, subscribeToDeviceStorage } from "../_utils/device-storage";
 import {
-  chooseDraftText,
+  type DraftPosition,
+  type ServerDraft,
+  acknowledgeSave,
   keepDraftText,
   keptDraftKey,
+  openDraft,
   parseKeptDraft,
 } from "./writing-draft-choice";
 import { type WritingActions, type WrittenEssay } from "./writing-types";
 
 const DRAFT_SAVE_MS = 1500;
 
+/** Time on the field while the page is in view, on a clock a device's time change can't move. */
+function useWritingClock() {
+  const total = useRef(0);
+  const since = useRef<number | null>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden" && since.current !== null) {
+        total.current += performance.now() - since.current;
+        since.current = null;
+      } else if (document.visibilityState === "visible" && started.current) {
+        since.current ??= performance.now();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
+  return {
+    durationMs: () => {
+      const running = since.current === null ? 0 : performance.now() - since.current;
+      return Math.round(Math.min(MAX_WRITING_MS, Math.max(0, total.current + running)));
+    },
+    reset: () => {
+      total.current = 0;
+      since.current = null;
+      started.current = false;
+    },
+    typed: () => {
+      started.current = true;
+
+      if (document.visibilityState === "visible") {
+        since.current ??= performance.now();
+      }
+    },
+  };
+}
+
+/**
+ * Leaving by any route saves the latest edit: the tab hidden or closed, with a request that
+ * outlives the page; the connection back; or the screen closed inside the app.
+ */
+function useSaveOnLeave(flush: (options?: { keepalive?: boolean }) => Promise<boolean>) {
+  const latest = useRef(flush);
+
+  useEffect(() => {
+    latest.current = flush;
+  });
+
+  useEffect(() => {
+    const onHidden = () => {
+      if (document.visibilityState === "hidden") {
+        void latest.current({ keepalive: true });
+      }
+    };
+
+    const onPageHide = () => void latest.current({ keepalive: true });
+    const onOnline = () => void latest.current();
+
+    document.addEventListener("visibilitychange", onHidden);
+    globalThis.addEventListener("pagehide", onPageHide);
+    globalThis.addEventListener("online", onOnline);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onHidden);
+      globalThis.removeEventListener("pagehide", onPageHide);
+      globalThis.removeEventListener("online", onOnline);
+      void latest.current();
+    };
+  }, []);
+}
+
 /**
  * The text stays on this device as it's typed and goes to the block's saved draft a moment later,
- * so "Continue" works on another device. A save that finds a newer draft keeps what was typed here
- * and saves it over that one.
+ * so "Continue" works on another device. A save that finds a newer draft stops and asks which one
+ * to keep: nothing is overwritten on either side until the learner answers.
  */
 export function useWritingDraft({
   actions,
@@ -25,28 +103,52 @@ export function useWritingDraft({
   essay: WrittenEssay;
 }) {
   const { blockId } = essay;
+  const key = keptDraftKey(blockId);
 
   const raw = useSyncExternalStore(
     subscribeToDeviceStorage,
-    () => deviceStorage.get(keptDraftKey(blockId)),
+    () => deviceStorage.get(key),
     () => null,
   );
 
-  const [typed, setTyped] = useState<string | null>(null);
-  const text = typed ?? chooseDraftText({ kept: parseKeptDraft(raw), saved: essay.draft ?? null });
-  const admission = useRef(essay.draft?.admissionId ?? null);
-  const revision = useRef(essay.draft?.revision ?? 0);
-  const saved = useRef(essay.draft?.text ?? "");
-  const latest = useRef<string | null>(null);
-  const saving = useRef<Promise<unknown> | null>(null);
-  const typingSince = useRef<number | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const opened = openDraft({ kept: parseKeptDraft(raw), saved: essay.draft ?? null });
 
-  useEffect(() => () => clearTimeout(timer.current ?? undefined), []);
+  // Null until the learner types or answers a conflict; before that, what the page opened with.
+  const [local, setLocal] = useState<{ conflict: ServerDraft | null; text: string } | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const text = local?.text ?? opened.text;
+  const conflict = local ? local.conflict : opened.conflict;
+
+  const live = useRef({ conflict, opened, text });
+  const position = useRef<DraftPosition | null>(null);
+  const sending = useRef<Promise<boolean>>(Promise.resolve(true));
+  const locked = useRef(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clock = useWritingClock();
+
+  useEffect(() => {
+    live.current = { conflict, opened, text };
+  });
+
+  function at(): DraftPosition {
+    position.current ??= live.current.opened.position;
+    return position.current;
+  }
+
+  function keep(next: string, base = at().revision) {
+    keepDraftText(blockId, { admissionId: at().admissionId, base, text: next });
+  }
+
+  function show(next: { conflict: ServerDraft | null; text: string }) {
+    live.current = { ...live.current, ...next };
+    setLocal(next);
+  }
 
   async function ensureAdmission(): Promise<string | null> {
-    if (admission.current) {
-      return admission.current;
+    const current = at();
+
+    if (current.admissionId) {
+      return current.admissionId;
     }
 
     const started = await actions.start({}).catch(() => null);
@@ -55,69 +157,128 @@ export function useWritingDraft({
       return null;
     }
 
-    admission.current = started.admissionId;
-    return admission.current;
+    position.current = { ...current, admissionId: started.admissionId };
+    return started.admissionId;
   }
 
-  async function save(current: string, retried = false): Promise<void> {
+  /** True when what the editor holds is on the server. */
+  async function save(keepalive: boolean): Promise<boolean> {
+    const sent = live.current.text;
+
+    if (live.current.conflict) {
+      return false;
+    }
+
+    if (sent === at().text) {
+      return true;
+    }
+
+    if (sent.length > MAX_ESSAY_CHARACTERS) {
+      return false;
+    }
+
     const admissionId = await ensureAdmission();
 
-    if (!admissionId || current === saved.current) {
+    const answer = admissionId
+      ? await actions
+          .saveDraft({ admissionId, revision: at().revision, text: sent }, { keepalive })
+          .catch(() => ({ status: "failed" as const }))
+      : ({ status: "failed" } as const);
+
+    if (answer.status === "conflict") {
+      show({ conflict: answer.draft, text: live.current.text });
+      return false;
+    }
+
+    if (answer.status !== "saved" || !admissionId) {
+      setSaveFailed(true);
+      return false;
+    }
+
+    const acknowledged = acknowledgeSave({
+      admissionId,
+      latest: live.current.text,
+      revision: answer.draft.revision,
+      sent,
+    });
+
+    position.current = acknowledged.position;
+
+    if (acknowledged.kept) {
+      keepDraftText(blockId, acknowledged.kept);
+    } else {
+      deviceStorage.remove(key);
+    }
+
+    setSaveFailed(false);
+    return !acknowledged.kept;
+  }
+
+  /** Saves the latest edit after any save already out, and says whether it's on the server. */
+  function flush({ keepalive = false }: { keepalive?: boolean } = {}): Promise<boolean> {
+    clearTimeout(timer.current ?? undefined);
+    sending.current = sending.current.then(() => save(keepalive));
+    return sending.current;
+  }
+
+  useSaveOnLeave(flush);
+
+  function write(next: string) {
+    if (locked.current) {
       return;
     }
 
-    const answer = await actions
-      .saveDraft({ admissionId, revision: revision.current, text: current })
-      .catch(() => ({ status: "failed" as const }));
-
-    if (answer.status === "saved") {
-      revision.current = answer.draft.revision;
-      saved.current = current;
-      keepDraftText(blockId, { base: answer.draft.revision, text: current });
-    }
-
-    // Another device saved first: what was typed here goes over it, once.
-    if (answer.status === "conflict" && !retried) {
-      revision.current = answer.draft.revision;
-      await save(current, true);
-    }
-  }
-
-  function flush(): Promise<unknown> {
-    clearTimeout(timer.current ?? undefined);
-    const current = latest.current ?? text;
-    saving.current = (saving.current ?? Promise.resolve()).then(() => save(current));
-    return saving.current;
-  }
-
-  function write(next: string) {
-    typingSince.current ??= Date.now();
-    latest.current = next;
-    setTyped(next);
-    keepDraftText(blockId, { base: revision.current, text: next });
+    clock.typed();
+    show({ conflict: live.current.conflict, text: next });
+    keep(next);
+    setSaveFailed(false);
     clearTimeout(timer.current ?? undefined);
     timer.current = setTimeout(() => void flush(), DRAFT_SAVE_MS);
   }
 
-  function restart({ admissionId, from }: { admissionId: string; from: string }) {
-    admission.current = admissionId;
-    revision.current = 0;
-    saved.current = "";
-    typingSince.current = null;
-    write(from);
+  /** "Keep this one" saves what's typed here over the other device's draft; "Use the other" takes it. */
+  function answerConflict(keepHere: boolean) {
+    const other = live.current.conflict;
+
+    if (!other) {
+      return;
+    }
+
+    position.current = { ...at(), revision: other.revision, text: other.text };
+    show({ conflict: null, text: keepHere ? live.current.text : other.text });
+
+    if (keepHere) {
+      keep(live.current.text);
+      void flush();
+    } else {
+      deviceStorage.remove(key);
+    }
   }
 
-  function durationMs(): number {
-    return typingSince.current === null ? 0 : Date.now() - typingSince.current;
+  function restart({ admissionId, from }: { admissionId: string; from: string }) {
+    locked.current = false;
+    position.current = { admissionId, revision: 0, text: "" };
+    clock.reset();
+    show({ conflict: null, text: from });
+    keep(from);
+    timer.current = setTimeout(() => void flush(), DRAFT_SAVE_MS);
   }
 
   return {
     admissionId: ensureAdmission,
-    clear: () => deviceStorage.remove(keptDraftKey(blockId)),
-    durationMs,
+    clear: () => deviceStorage.remove(key),
+    conflict,
+    conflicted: () => Boolean(live.current.conflict),
+    durationMs: clock.durationMs,
     flush,
-    pending: () => saving.current,
+    keepMine: () => answerConflict(true),
+    /** While an answer is out for grading, the field takes no edits. */
+    lock: (value: boolean) => {
+      locked.current = value;
+    },
     restart,
+    saveFailed,
+    takeOther: () => answerConflict(false),
     text,
     write,
   };
