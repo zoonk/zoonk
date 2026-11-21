@@ -4,6 +4,7 @@ import { type EvalSummary, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollars, formatPercent, formatSeconds } from "@/lib/format";
 import { type TaskStats } from "@/lib/stats";
 import { type ReactNode } from "react";
+import { UNSCORED_IMAGES_NOTE } from "../unscored-images";
 
 function Headline({ label, value }: { label: string; value: ReactNode }) {
   return (
@@ -59,11 +60,14 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
       )}
 
       {summary.unscoredImages.length > 0 && (
-        <CaseCount
-          caseIds={summary.unscoredImages}
-          count={summary.unscoredImages.length}
-          text={`Images without a score (${summary.unscoredImages.length})`}
-        />
+        <div className="flex flex-col gap-1">
+          <CaseCount
+            caseIds={summary.unscoredImages}
+            count={summary.unscoredImages.length}
+            text={`Images without a score (${summary.unscoredImages.length})`}
+          />
+          <p className="text-muted-foreground max-w-prose text-xs">{UNSCORED_IMAGES_NOTE}</p>
+        </div>
       )}
 
       <Fold title="Details">

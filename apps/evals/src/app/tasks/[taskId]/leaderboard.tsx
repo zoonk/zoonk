@@ -13,6 +13,7 @@ import {
   ModelLink,
   measuredColumns,
 } from "./leaderboard-table";
+import { UNSCORED_IMAGES_NOTE } from "./unscored-images";
 
 type Column = LeaderboardColumn<LeaderboardEntry>;
 
@@ -185,7 +186,11 @@ export function Leaderboard({
   return (
     <LeaderboardTable
       columns={getColumns({ entries, taskId, totalRuns })}
-      description="Each output is scored on its own, against its test case."
+      description={
+        entries.some((entry) => entry.summary.unscoredImages.length > 0)
+          ? `Each output is scored on its own, against its test case. ${UNSCORED_IMAGES_NOTE}`
+          : "Each output is scored on its own, against its test case."
+      }
       entries={entries}
       moreColumns={getMoreColumns(entries, taskId)}
       renderActions={(sortedEntries) => (
