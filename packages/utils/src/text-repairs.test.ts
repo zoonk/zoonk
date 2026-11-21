@@ -1,3 +1,4 @@
+import { assert, constantFrom, pre, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import { findUnrenderedMarkdown } from "./text-flaws";
 import { repairMarkdown, toPlainLine } from "./text-repairs";
@@ -184,6 +185,42 @@ describe(repairMarkdown, () => {
 
     expect(repairMarkdown({ layout: "blocks", text: "## O que `<div>` e `[a](b)` contêm?" })).toBe(
       "O que `<div>` e `[a](b)` contêm?",
+    );
+  });
+
+  it("takes out emphasis around inline code, which players show as raw marks", () => {
+    const stray = [
+      ["**Use `x` here**", "Use `x` here"],
+      ["*see `a_b` now*", "see `a_b` now"],
+      ["- **call `f()`** first", "- call `f()` first"],
+    ] as const;
+
+    for (const layout of ["blocks", "inline"] as const) {
+      for (const [text, repaired] of stray) {
+        expect(findUnrenderedMarkdown({ layout, text })).toStrictEqual([
+          expect.stringContaining("emphasis marks"),
+        ]);
+
+        expect(repairMarkdown({ layout, text })).toBe(repaired);
+      }
+    }
+  });
+
+  it("leaves no emphasis mark the check would still flag", () => {
+    const pieces = constantFrom("a", " ", "**", "*", "_", "`", "$", "\n", "```", "- ");
+
+    assert(
+      property(
+        string({ maxLength: 16, unit: pieces }),
+        constantFrom("blocks", "inline"),
+        (text, layout) => {
+          pre(layout === "blocks" || !text.includes("```"));
+
+          expect(
+            findUnrenderedMarkdown({ layout, text: repairMarkdown({ layout, text }) }),
+          ).not.toContainEqual(expect.stringContaining("emphasis marks"));
+        },
+      ),
     );
   });
 

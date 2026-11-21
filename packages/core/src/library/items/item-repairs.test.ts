@@ -49,6 +49,22 @@ describe(repairItem, () => {
     });
   });
 
+  it("takes out bold around inline code, which players never pair, so the question stays", () => {
+    const item = generatedMultipleChoice({
+      context: "**Rode `soma(2, 3)` no terminal.**",
+      question: "**Quanto `soma(2, 3)` retorna?**",
+    });
+
+    const repaired = repairItem({ item, language: "pt" });
+
+    expect(repaired).toMatchObject({
+      context: "Rode `soma(2, 3)` no terminal.",
+      question: "Quanto `soma(2, 3)` retorna?",
+    });
+
+    expect(checkItem({ item: repaired, language: "pt" })).toStrictEqual([]);
+  });
+
   it("puts a plain numeric power between dollar signs and leaves other raw math to the writer", () => {
     const item = generatedMultipleChoice({
       context: "The gap is 7 × 10^-5 m and the bill is $5.",
