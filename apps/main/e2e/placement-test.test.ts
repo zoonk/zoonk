@@ -168,6 +168,8 @@ test("a test's skip appears on Plan and Today and can be undone from Today", asy
 
   await expect(undo).toBeVisible();
   await page.getByRole("link", { exact: true, name: "Today" }).filter({ visible: true }).click();
+  await expect(page).toHaveURL(/\/today$/u);
+  await expect(page.getByRole("heading", { exact: true, name: "Today" })).toBeVisible();
   await expect(undo).toBeVisible();
   await undo.click();
 
