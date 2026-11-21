@@ -15,7 +15,7 @@ import { type PracticeTopic, buildPracticeBlocks } from "./_utils/practice-block
 import {
   getLessonMinutes,
   getNewLessons,
-  getReviewLessonMinutes,
+  getPracticeMinutes,
   isSessionReviewDay,
   takeLessons,
   toLessonBlock,
@@ -176,30 +176,6 @@ function fillReview({
   return blocks.map((block) => (review && block.kind === "review" ? review : block));
 }
 
-/** Preserve the opened day's practice share; unused question capacity returns time to lessons. */
-function getPracticeMinutes({
-  budget,
-  input,
-  remaining,
-}: {
-  budget: number;
-  input: SessionBuildInput;
-  remaining: number;
-}): number {
-  const share = isSessionReviewDay(input) ? 1 : input.practiceShare;
-  const practice = input.practice;
-  const opened = input.openedPractice;
-
-  // Multiplied before dividing, so a day that keeps its minutes gets its practice's exactly.
-  const target = opened
-    ? (opened.minutes * (budget + (input.usedMinutes ?? 0))) / opened.dayMinutes
-    : remaining * share;
-
-  const study = getReviewLessonMinutes(input);
-  const room = study > 0 ? Math.max(0, remaining - study) : target;
-  return Math.min(target, practice.length * PRACTICE_MINUTES_PER_QUESTION, room);
-}
-
 function fundSessionChallenges(input: SessionBuildInput, budget: number) {
   const planItems = input.planItems ?? [];
 
@@ -314,8 +290,9 @@ export function buildSessionBlocks(day: SessionBuildInput): {
   });
 
   const lessonRoom = remaining - getLessonMinutes(reinforcement);
-  const learnBudget = lessonRoom - getPracticeMinutes({ budget, input, remaining });
   const writingMinutes = getWritingMinutes({ input, room: lessonRoom });
+
+  const learnBudget = lessonRoom - getPracticeMinutes({ budget, input, remaining, writingMinutes });
 
   const stretch = listDayStretch({
     budget: learnBudget + leading.reduce((sum, checkpoint) => sum + checkpoint.minutes, 0),
