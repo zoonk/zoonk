@@ -616,19 +616,21 @@ private struct ArrangeWordsView: View {
 
   @ViewBuilder
   private func screen(_ sentence: LanguageExercise.Sentence) -> some View {
-    if isListening {
+    if isListening, let audio = exercise.promptAudio {
       Text(
         "What do you hear?", tableName: "Player",
         comment: "The question over a sentence to listen to and arrange"
       )
       .typeStyle(.question)
       .accessibilityAddTraits(.isHeader)
-      HStack(spacing: 12) {
-        LessonAudioButton(url: exercise.promptAudio)
-        if exercise.promptAudio == nil {
-          LessonQuestionText(text: sentence.sentence)
-        }
-      }
+      LessonAudioButton(url: audio)
+    } else if isListening {
+      // Without its sound the screen still works, as on main: it shows the sentence to translate.
+      Chip(
+        Text(
+          "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
+        ))
+      LessonQuestionText(text: sentence.sentence)
     } else {
       Chip(
         Text(
