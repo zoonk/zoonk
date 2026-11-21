@@ -27,7 +27,9 @@ describe(findBuildOutputs, () => {
       "node_modules/next/dist/",
       "apps/main/.next/server/",
       "apps/main/.next-e2e/cache/",
+      "apps/apple/DerivedData/Make/info.plist",
       "apps/apple/DerivedData/Make/Build/",
+      "apps/apple/DerivedData/Make/Logs/Test/run.xcresult/",
       "apps/android/settings.gradle.kts",
       "apps/android/build/",
       "apps/android/.gradle/",
@@ -43,19 +45,21 @@ describe(findBuildOutputs, () => {
         "apps/android/.gradle",
         "apps/android/build",
         "apps/android/core/ui/build",
-        "apps/apple/DerivedData",
+        "apps/apple/DerivedData/Make/Build",
         "apps/main/.next",
         "apps/main/.next-e2e",
       ].map((path) => join(root, path)),
     );
   });
 
-  it("finds builds and dependencies in a scratch folder, whatever Xcode's build folder is called", () => {
+  it("finds builds and dependencies in a scratch folder and keeps Xcode's test results", () => {
     const root = makeTree([
       "session/scratchpad/before-dd/info.plist",
       "session/scratchpad/before-dd/Build/Products/",
+      "session/scratchpad/before-dd/Logs/Test/run.xcresult/",
       "session/scratchpad/shots/home.png",
       "session/verify/node_modules/zod/",
+      "task/build/lane/apple/DerivedData/info.plist",
       "task/build/lane/apple/DerivedData/SourcePackages/",
       "task/build/REPORT.md",
       "copy/apps/android/build.gradle.kts",
@@ -65,9 +69,9 @@ describe(findBuildOutputs, () => {
     expect(findBuildOutputs({ inWorktree: false, root }).toSorted()).toStrictEqual(
       [
         "copy/apps/android/build",
-        "session/scratchpad/before-dd",
+        "session/scratchpad/before-dd/Build",
         "session/verify/node_modules",
-        "task/build/lane/apple/DerivedData",
+        "task/build/lane/apple/DerivedData/SourcePackages",
       ].map((path) => join(root, path)),
     );
   });
@@ -78,6 +82,12 @@ describe(findBuildOutputs, () => {
     expect(
       findBuildOutputs({ inWorktree: false, root, skip: new Set([join(root, "worktree")]) }),
     ).toStrictEqual([join(root, "other/node_modules")]);
+  });
+
+  it("finds nothing when the scratch folder is itself a worktree to skip", () => {
+    const root = makeTree(["apps/main/node_modules/zod/"]);
+
+    expect(findBuildOutputs({ inWorktree: false, root, skip: new Set([root]) })).toStrictEqual([]);
   });
 });
 

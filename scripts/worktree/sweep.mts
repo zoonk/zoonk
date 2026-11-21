@@ -63,6 +63,17 @@ function isXcodeBuildFolder(names: Set<string>): boolean {
   return names.has("info.plist") && (names.has("Build") || names.has("SourcePackages"));
 }
 
+// What Xcode remakes in its build folder. Its `Logs` keep test results, which no build brings back.
+const XCODE_OUTPUTS = new Set([
+  "Build",
+  "CompilationCache.noindex",
+  "Index.noindex",
+  "ModuleCache.noindex",
+  "SDKExplicitPrecompiledModules",
+  "SDKStatCaches.noindex",
+  "SourcePackages",
+]);
+
 function isBuildOutput({
   inWorktree,
   name,
@@ -72,7 +83,7 @@ function isBuildOutput({
   name: string;
   siblings: Set<string>;
 }): boolean {
-  if (name === "DerivedData" || name === ".next" || name === ".next-e2e") {
+  if (name === ".next" || name === ".next-e2e") {
     return true;
   }
 
@@ -105,18 +116,24 @@ export function findBuildOutputs({
   const found: string[] = [];
 
   function visit(directory: string, depth: number): void {
+    if (skip.has(directory)) {
+      return;
+    }
+
     const entries = readEntries(directory);
     const names = new Set(entries.map(({ name }) => name));
 
     if (depth > 0 && isXcodeBuildFolder(names)) {
-      found.push(directory);
+      found.push(
+        ...entries
+          .filter((entry) => entry.isDirectory() && XCODE_OUTPUTS.has(entry.name))
+          .map(({ name }) => path.join(directory, name)),
+      );
+
       return;
     }
 
-    const folders = entries.filter(
-      (entry) =>
-        entry.isDirectory() && entry.name !== ".git" && !skip.has(path.join(directory, entry.name)),
-    );
+    const folders = entries.filter((entry) => entry.isDirectory() && entry.name !== ".git");
 
     for (const { name } of folders) {
       const child = path.join(directory, name);
@@ -202,18 +219,17 @@ function report(line: string): void {
   appendFileSync(logPath, stamped);
 }
 
-/** Moves the folder aside first, so nothing ever sees it half deleted. */
-function removeFolder(target: string): void {
-  const aside = path.join(trashDirectory, randomUUID());
-
+/**
+ * Moves the folder into the trash, which the sweep empties once everything is moved, so a build that
+ * starts meanwhile finds it either whole or gone, never half deleted.
+ */
+function moveToTrash(target: string): void {
   try {
-    renameSync(target, aside);
-    rmSync(aside, { force: true, recursive: true });
-  } catch {
-    rmSync(target, { force: true, recursive: true });
+    renameSync(target, path.join(trashDirectory, randomUUID()));
+    report(`Removed ${target}`);
+  } catch (error) {
+    report(`Kept ${target}: ${error instanceof Error ? error.message : String(error)}`);
   }
-
-  report(`Removed ${target}`);
 }
 
 function removeUnusedSwiftPackages({
@@ -251,39 +267,43 @@ function removeUnusedSwiftPackages({
  * simulators' wallpaper snapshots. Never where a process is running.
  */
 export async function sweep({ dryRun = false }: { dryRun?: boolean } = {}): Promise<void> {
-  const remove = dryRun ? (target: string) => report(`Would remove ${target}`) : removeFolder;
+  const remove = dryRun ? (target: string) => report(`Would remove ${target}`) : moveToTrash;
   const now = Date.now();
   const freeBefore = freeBytes();
-  const processes = await listProcessDirectories();
   const worktrees = await listWorktrees();
+  const isIdle = (output: string) => now - lastChange(output) >= IDLE_MS;
+
+  // The first worktree is the main checkout, which holds someone's own work.
+  const idleWorktreeOutputs = worktrees
+    .slice(1)
+    .filter((worktree) => worktree !== repository)
+    .flatMap((worktree) => {
+      const outputs = findBuildOutputs({ inWorktree: true, root: worktree });
+      const changedAt = Math.max(gitActivity(worktree), ...outputs.map((item) => lastChange(item)));
+
+      return now - changedAt >= IDLE_MS ? outputs.map((output) => ({ output, owner: worktree })) : [];
+    });
+
+  const idleScratchOutputs = listScratchRoots().flatMap((root) =>
+    findBuildOutputs({ inWorktree: false, root, skip: new Set(worktrees) })
+      .filter((output) => isIdle(output))
+      .map((output) => ({ output, owner: path.dirname(output) })),
+  );
+
+  // Listed after the slow scan, so a task that started meanwhile keeps its builds.
+  const processes = await listProcessDirectories();
 
   const isBusy = (directory: string) =>
     processes.some((item) => isInside({ directories: [directory], path: item.directory }));
 
-  rmSync(trashDirectory, { force: true, recursive: true });
-  mkdirSync(trashDirectory, { recursive: true });
-
-  // The first worktree is the main checkout, which holds someone's own work.
-  for (const worktree of worktrees.slice(1).filter((item) => item !== repository)) {
-    const outputs = isBusy(worktree) ? [] : findBuildOutputs({ inWorktree: true, root: worktree });
-
-    const changedAt = Math.max(
-      gitActivity(worktree),
-      ...outputs.map((output) => lastChange(output)),
-    );
-
-    for (const output of now - changedAt >= IDLE_MS ? outputs : []) {
-      remove(output);
-    }
+  if (!dryRun) {
+    rmSync(trashDirectory, { force: true, recursive: true });
+    mkdirSync(trashDirectory, { recursive: true });
   }
 
-  const skip = new Set(worktrees);
-
-  for (const root of listScratchRoots()) {
-    for (const output of findBuildOutputs({ inWorktree: false, root, skip })) {
-      if (now - lastChange(output) >= IDLE_MS && !isBusy(path.dirname(output))) {
-        remove(output);
-      }
+  for (const { output, owner } of [...idleWorktreeOutputs, ...idleScratchOutputs]) {
+    if (!isBusy(owner) && isIdle(output)) {
+      remove(output);
     }
   }
 
@@ -291,6 +311,10 @@ export async function sweep({ dryRun = false }: { dryRun?: boolean } = {}): Prom
 
   if (process.platform === "darwin") {
     trimSimulators(remove);
+  }
+
+  if (!dryRun) {
+    rmSync(trashDirectory, { force: true, recursive: true });
   }
 
   const freed = (freeBytes() - freeBefore) / 1024 ** 3;
