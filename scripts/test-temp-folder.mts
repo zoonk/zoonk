@@ -2,8 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-/** Points `tmpdir()` at a folder of this run's own, removed when the run ends, so no test leaves folders behind. */
-export default function setupTestTempFolder(): () => void {
+export default function giveTestRunItsOwnTempFolder(): () => void {
   const folder = mkdtempSync(join(tmpdir(), "zoonk-test-run-"));
   const remove = () => rmSync(folder, { force: true, recursive: true });
 
