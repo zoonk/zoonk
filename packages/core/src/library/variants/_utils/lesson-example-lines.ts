@@ -1,8 +1,8 @@
 import "server-only";
-import { createHash } from "node:crypto";
 import { type CallWait } from "@zoonk/ai/provider-options";
 import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { MemoryCategory, type StepExampleLine, prisma } from "@zoonk/db";
+import { toUsageClaimTarget } from "../../../entitlements/_utils/usage-claim-target";
 import { type RefusedUsage, type UsageDecision } from "../../../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { markMemoryFactsUsed } from "../../../memory/_utils/mark-facts-used";
@@ -29,8 +29,6 @@ export type LessonLinesInput = {
 };
 
 const EARLIER_LINE_LIMIT = 8;
-const UUID_HEX_DIGITS = 32;
-const UUID_GROUPS = /^(?<time>.{8})(?<mid>.{4})(?<high>.{4})(?<clock>.{4})(?<node>.{12})$/u;
 
 /**
  * Names no lesson topic: a topic pulls the check toward facts about that subject, so a developer's
@@ -54,13 +52,7 @@ export function toExampleLineClaimTarget({
   userId: string;
   version: number;
 }): string {
-  const hex = createHash("sha256")
-    .update(`example-lines:${userId}:${lessonId}:${version}:${contextKey}`)
-    .digest("hex");
-
-  return hex
-    .slice(0, UUID_HEX_DIGITS)
-    .replace(UUID_GROUPS, "$<time>-$<mid>-$<high>-$<clock>-$<node>");
+  return toUsageClaimTarget(`example-lines:${userId}:${lessonId}:${version}:${contextKey}`);
 }
 
 function getSlot(content: unknown) {

@@ -1,9 +1,9 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
 import { suggestProfileTools } from "@zoonk/ai/tasks/profile/suggest-tools";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearningProfileCacheTag } from "../../cache/tags";
+import { toUsageClaimTarget } from "../../entitlements/_utils/usage-claim-target";
 import { claimUsageFor } from "../../entitlements/claim-usage";
 import { type OwedFollowUp } from "../../follow-ups/follow-up-contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
@@ -19,7 +19,9 @@ function currentAsk({ id, revision, userId }: ToolsTask) {
 
 export async function writeProfileToolSuggestions(task: ToolsTask): Promise<string[] | null> {
   const {
+    id,
     input: { language },
+    revision,
     userId,
   } = task;
 
@@ -47,7 +49,8 @@ export async function writeProfileToolSuggestions(task: ToolsTask): Promise<stri
     throw new Error("Could not read the saved work and studies answers");
   }
 
-  const claim = await claimUsageFor({ kind: "assist", targetId: randomUUID(), userId });
+  const targetId = toUsageClaimTarget(`profile-tools:${id}:${revision}`);
+  const claim = await claimUsageFor({ kind: "assist", targetId, userId });
 
   if (claim.status !== "allowed") {
     return null;
