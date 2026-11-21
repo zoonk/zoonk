@@ -126,6 +126,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "prepareContentFixMedia":
     case "voiceContentFix":
     case "voiceWord":
+    case "updateLessonsShowing":
       await startOnce(backgroundTaskWorkflow, [followUp], getBackgroundTaskToken(followUp));
       return;
     // These read the learner's state as of when they run, and a run that's working may have read it

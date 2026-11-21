@@ -22,7 +22,12 @@ import { type FixContext } from "../handlers/fix-handler";
 import { findStoredHandler } from "../handlers/registry";
 import { changesLearnerLesson } from "./lesson-version-effect";
 import { type FixUnit } from "./resolved-change";
-import { applyVocabularyUnit, findLessonsShowing, isVocabularyUnit } from "./vocabulary-unit";
+import {
+  applyVocabularyUnit,
+  findLessonsShowing,
+  findLessonsTeaching,
+  isVocabularyUnit,
+} from "./vocabulary-unit";
 
 const UNIT_TABLES = {
   chapter: sql`library_chapters`,
@@ -46,7 +51,9 @@ const UNIT_TABLES = {
 
 /**
  * Lessons are locked before their screens, as publishing a version does, and rows in table and id
- * order, so two approvals and a publication never wait on each other in a cycle.
+ * order, so two approvals and a publication never wait on each other in a cycle. A word or
+ * sentence fix also writes the screens and rows of every lesson that teaches it, so it locks those
+ * lessons here too.
  */
 export async function lockFixRows(
   tx: TransactionClient,
@@ -59,6 +66,9 @@ export async function lockFixRows(
   const rows = [
     ...changes.map((change) => findStoredHandler(change).lockRows(change)),
     ...(unit.kind === "course" ? [{ ids: [unit.id], table: UNIT_TABLES.course }] : []),
+    ...(isVocabularyUnit(unit)
+      ? [{ ids: await findLessonsTeaching(tx, unit), table: UNIT_TABLES.lesson }]
+      : []),
   ];
 
   const tables = [...new Map(rows.map((row) => [row.table.sql, row.table])).entries()];

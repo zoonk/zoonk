@@ -671,6 +671,7 @@
     "./staff/content-fixes/reject": "./src/staff/content-fixes/reject-content-fix.ts",
     "./staff/content-fixes/screen-content-rules": "./src/staff/content-fixes/screen-content-rules.ts",
     "./staff/content-fixes/status-labels": "./src/staff/content-fixes/status-labels.ts",
+    "./staff/content-fixes/update-lessons-showing": "./src/staff/content-fixes/update-lessons-showing.ts",
     "./staff/content-fixes/withdraw": "./src/staff/content-fixes/withdraw-content-fix.ts",
     "./staff/me": "./src/staff/get-staff-me.ts",
     "./staff/lesson": "./src/staff/lesson.ts",
