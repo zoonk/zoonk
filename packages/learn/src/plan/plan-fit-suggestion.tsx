@@ -34,7 +34,7 @@ type Offer = Pick<FitItem["offer"], "canApply" | "effect" | "operations">;
 function usePlanOffer({ item, offer }: { item: SlotItem; offer: Offer }) {
   const t = useExtracted();
   const sentence = usePlanChangeSentence();
-  const { plan } = usePlanScreen();
+  const { actions, plan } = usePlanScreen();
   const { change, isPending } = usePlanChange({ offer: true });
   const slot = usePlanSuggestionSlot();
   const { apply: applyPreview, isPending: isApplying } = useApplyPreview(item);
@@ -58,11 +58,23 @@ function usePlanOffer({ item, offer }: { item: SlotItem; offer: Offer }) {
 
   const checked = currentPlanPreview({ operations: offer.operations, plan, state: slot.preview });
 
+  // A plan that already holds the offer is read again, and the card leaves with the offer.
   const preview: PlanPreviewState =
-    checked.status === "ready" && isShown(checked.preview) ? { status: "idle" } : checked;
+    checked.status === "ready" && (checked.preview.unchanged || isShown(checked.preview))
+      ? { status: "idle" }
+      : checked;
 
   const accept = async () => {
-    if (offer.canApply || isShown(await slot.requestPreview(offer.operations))) {
+    if (offer.canApply) {
+      add();
+      return;
+    }
+
+    const today = await slot.requestPreview(offer.operations);
+
+    if (today?.ready && today.unchanged) {
+      actions.readPlanAgain();
+    } else if (isShown(today)) {
       add();
     }
   };
