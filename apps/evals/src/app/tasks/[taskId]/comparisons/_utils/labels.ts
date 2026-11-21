@@ -63,15 +63,11 @@ export function variantName(variant: Variant): string {
     : name;
 }
 
-/** The models after the writer, such as a reviewer and a fixer, or null for a writer alone. */
-export function pipelineNote(variant: Variant): string | null {
-  const [, ...after] = variant.pipeline;
-
-  if (after.length === 0) {
-    return null;
-  }
-
-  return `then ${after.map((model) => modelName(model)).join(", then ")}`;
+/** The models after the writer, such as a reviewer and a fixer; empty for a writer alone. */
+export function laterModels(variant: Variant): { name: string; step: number }[] {
+  return variant.pipeline
+    .map((model, step) => ({ name: modelName(model), step }))
+    .filter(({ step }) => step > 0);
 }
 
 const languageNames = new Intl.DisplayNames(["en"], { fallback: "code", type: "language" });

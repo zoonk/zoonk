@@ -1,6 +1,6 @@
 import { type Decision } from "@/lib/comparisons/decision";
 import { caseRunKey } from "@/lib/comparisons/identity";
-import { type Comparison } from "@/lib/comparisons/schemas";
+import { type Comparison, type Variant } from "@/lib/comparisons/schemas";
 import { formatDollars, formatSeconds } from "@/lib/format";
 import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import {
@@ -11,12 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
+import { Fragment } from "react";
 import {
   SIDE_LABELS,
   STATUS_LABELS,
   formatDate,
   languageName,
-  pipelineNote,
+  laterModels,
   variantName,
 } from "../_utils/labels";
 import { plural } from "../_utils/words";
@@ -151,6 +152,24 @@ function statusCell(row: Row) {
   return <span className="font-medium">{STATUS_LABELS[row.status]}</span>;
 }
 
+function LaterModels({ variant }: { variant: Variant }) {
+  const later = laterModels(variant);
+
+  if (later.length === 0) {
+    return null;
+  }
+
+  return (
+    <span className="text-muted-foreground block text-xs font-normal">
+      {later.map(({ name, step }) => (
+        <Fragment key={step}>
+          {step > 1 && ", "}then <span className="font-mono">{name}</span>
+        </Fragment>
+      ))}
+    </span>
+  );
+}
+
 function preferredCell(row: Row) {
   return `${row.wins} won · ${row.losses} lost`;
 }
@@ -231,11 +250,7 @@ export function DecisionTable({
                   <span className="text-muted-foreground font-mono text-xs font-normal">
                     {variant && variantName(variant)}
                   </span>
-                  {variant && pipelineNote(variant) && (
-                    <span className="text-muted-foreground block text-xs font-normal">
-                      {pipelineNote(variant)}
-                    </span>
-                  )}
+                  {variant && <LaterModels variant={variant} />}
                 </TableHead>
               );
             })}
