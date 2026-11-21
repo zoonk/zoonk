@@ -38,18 +38,29 @@ export function useLevelName() {
   };
 }
 
+type Range = { high: number; low: number };
+
+/** A deduction's minus: the typographic one, which a hyphen only imitates. */
+const MINUS = "\u2212";
+
 /**
  * A range of points, one number when both ends round alike ("29.8", never "29.79–29.8"), and both
- * ends with the same decimals ("12.0–17.5", never "12–17.5").
+ * ends with the same decimals ("12.0–17.5", never "12–17.5"). A deduction carries its minus on
+ * each end, the smaller first: "−0.3 to −0.6".
  */
 export function useFormatPointsRange() {
   const format = useFormatter();
   const formatRange = useFormatRange();
 
-  return ({ high, low }: { high: number; low: number }): string => {
+  return ({ high, low }: Range, { deduction = false }: { deduction?: boolean } = {}): string => {
     const decimals = [low, high].some((value) => Math.round(value * 10) % 10 !== 0) ? 1 : 0;
     const options = { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
 
-    return formatRange(format.number(low, options), format.number(high, options));
+    const end = (value: number) => {
+      const written = format.number(value, options);
+      return deduction && value > 0 ? `${MINUS}${written}` : written;
+    };
+
+    return formatRange(end(low), end(high));
   };
 }
