@@ -67,4 +67,14 @@ describe("what a plan reaches of the exam", () => {
     expect(coverage?.reachedShare).toBeLessThan(1);
   });
 
+  it("counts a subject the learner took out as not reached", () => {
+    const input = examInput({
+      skills: ["A", "B"].map((area) => skill({ area, lessons: 60, topic: `Topic of ${area}` })),
+      skippedAreas: ["B"],
+    });
+
+    const coverage = selectedCoverage(input);
+
+    expect(coverage).toMatchObject({ coreFits: true, fits: false, reachedShare: 0.5 });
+  });
 });

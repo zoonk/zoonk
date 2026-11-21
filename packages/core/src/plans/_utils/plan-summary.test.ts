@@ -93,7 +93,7 @@ describe(readPlanSummary, () => {
       selected: { ...summary.selected, coverage: { ...coverage, reachedShare: null } },
     });
 
-    expect(readSavedFeasibility(read)).toMatchObject({ coveredShare: 0.5, reachedShare: null });
+    expect(readSavedFeasibility({ skippedAreas: [], summary: read })).toMatchObject({ coveredShare: 0.5, reachedShare: null });
   });
 
   it.each([{ id: "plan-b" }, { userId: "learner-b" }, { version: 8 }])(
@@ -220,9 +220,14 @@ describe(reduceCompletedSummary, () => {
       reachedShare: 0.5,
     });
 
-    expect(readSavedFeasibility(reduced)).toMatchObject({
+    expect(readSavedFeasibility({ skippedAreas: [], summary: reduced })).toMatchObject({
       coveredShare: 0.99,
       reachedShare: 0.99,
+    });
+
+    expect(readSavedFeasibility({ skippedAreas: ["Taken out"], summary: reduced })).toMatchObject({
+      coveredShare: 0.99,
+      reachedShare: 0.5,
     });
   });
 

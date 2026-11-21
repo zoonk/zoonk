@@ -266,7 +266,7 @@ export async function buildPlanView({
     estimate: buildEstimateView({ context }),
     examChoices,
     examDocument: getExamDocument(goal),
-    feasibility: readSavedFeasibility(summary),
+    feasibility: readSavedFeasibility({ skippedAreas: state.settings.skippedAreas, summary }),
     fitOffer: fitOffer && {
       ...foldChangeAreas({ change: fitOffer, partAreas }),
       canApply: fresh !== null,

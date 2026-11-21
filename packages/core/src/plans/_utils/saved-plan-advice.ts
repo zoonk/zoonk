@@ -6,7 +6,13 @@ import { toShownCoverage } from "./plan-feasibility-view";
 import { type PlanReadContext } from "./plan-read-projection";
 import { type PlanSummary } from "./plan-summary";
 
-export function readSavedFeasibility(summary: PlanSummary | null): PlanView["feasibility"] {
+export function readSavedFeasibility({
+  skippedAreas,
+  summary,
+}: {
+  skippedAreas: PlanSettings["skippedAreas"];
+  summary: PlanSummary | null;
+}): PlanView["feasibility"] {
   const coverage = summary?.selected.coverage;
   const saved = summary?.advice.feasibility ?? null;
 
@@ -17,14 +23,17 @@ export function readSavedFeasibility(summary: PlanSummary | null): PlanView["fea
   const coveredShare = coverage.coveredShare ?? Number(coverage.coreFits);
   const { reachedShare } = coverage;
 
+  // Reach is measured when the plan is built; lessons done since only add depth. Depth is a share
+  // of the subjects kept, so it bounds the exam's reach only when none was taken out.
+  const floor = skippedAreas.length === 0 ? coveredShare : 0;
+
   return {
     ...saved,
     coreFits: coverage.coreFits,
     ...toShownCoverage({
       ...coverage,
       coveredShare,
-      // Reach is measured when the plan is built; lessons done since only add depth.
-      reachedShare: reachedShare === null ? null : Math.max(reachedShare, coveredShare),
+      reachedShare: reachedShare === null ? null : Math.max(reachedShare, floor),
     }),
     fits: coverage.fits,
     timeCovers: coverage.fits || saved.timeCovers,

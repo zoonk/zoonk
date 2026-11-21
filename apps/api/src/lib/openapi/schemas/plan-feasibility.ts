@@ -32,7 +32,7 @@ export const planFeasibilitySchema = z.object({
     .nullable()
     .meta({
       description:
-        "Share whose topics this plan reaches by the deadline, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a deadline.",
+        "Share whose topics this plan reaches by the deadline, including topics the learner already knows. Measured when the plan is laid out, in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null without a deadline, and for a plan laid out before it was measured.",
     }),
   timeCovers: z
     .boolean()

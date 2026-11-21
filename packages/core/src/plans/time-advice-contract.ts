@@ -77,7 +77,7 @@ const suggestedTimeSchema = z
       .default(null)
       .meta({
         description:
-          "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null from a server that doesn't measure it.",
+          "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null from a server that doesn't measure it.",
       }),
     split: daySplitSchema.meta({
       description:
@@ -143,7 +143,7 @@ export const planTimeAdviceSchema = z
       .default(null)
       .meta({
         description:
-          "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a date, while not ready, or from a server that doesn't measure it.",
+          "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null without a date, while not ready, or from a server that doesn't measure it.",
       }),
     readingNotice: readingNoticeSchema,
     ready: readySchema,

@@ -6,6 +6,7 @@ import { getHarderStartSkillIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
+import { getSkillValue, measureDepth, measureReach } from "./coverage-measures";
 import { type SkillRequirement, isCompleted } from "./selected-requirement";
 
 export type ExamSubjectShare = { areas: readonly string[]; share: number };
@@ -13,9 +14,6 @@ export type ExamSubjectShare = { areas: readonly string[]; share: number };
 type ScopedSkill = { area: string; skillId: string; weight: number };
 
 type SelectedSkill = SelectedCoverage["skills"][number];
-
-// A missing topic can carry no weight, so the weighted ratio alone can reach 1.
-const LARGEST_PARTIAL_SHARE = 1 - Number.EPSILON / 2;
 
 function getExamWorth({
   examSubjects,
@@ -36,6 +34,10 @@ function getExamWorth({
   return worth.some(([, value]) => value > 0) ? new Map(worth) : null;
 }
 
+function worthIn(worth: ReadonlyMap<string, number> | null, skill: ScopedSkill): number {
+  return worth ? (worth.get(skill.skillId) ?? 0) : skill.weight;
+}
+
 function listScope({
   examSubjects,
   input,
@@ -49,27 +51,28 @@ function listScope({
 
   const pastBasics = getHarderStartSkillIds(input);
 
-  const skills = input.graph.skills
+  const whole = input.graph.skills
     .map((skill) => ({
       area: getSkillArea({ graph: input.graph, skill }),
       skillId: skill.skillId,
       weight: skill.weight ?? 1,
     }))
-    .filter(
-      (skill) =>
-        !skippedAreas.has(skill.area) &&
-        choices.get(skill.skillId) !== "skip" &&
-        !pastBasics.has(skill.skillId),
-    );
+    .filter((skill) => choices.get(skill.skillId) !== "skip" && !pastBasics.has(skill.skillId));
 
+  const skills = whole.filter((skill) => !skippedAreas.has(skill.area));
   const examWorth = examSubjects ? getExamWorth({ examSubjects, skills }) : null;
+  const wholeWorth = examSubjects && examWorth ? getExamWorth({ examSubjects, skills: whole }) : null;
 
   return {
     measure: examWorth ? ("exam" as const) : ("goal" as const),
     skills: skills.map((skill) => ({
       skillId: skill.skillId,
-      worth: examWorth ? (examWorth.get(skill.skillId) ?? 0) : skill.weight,
+      wholeWorth: worthIn(wholeWorth, skill),
+      worth: worthIn(examWorth, skill),
     })),
+    takenOutWorth: whole
+      .filter((skill) => skippedAreas.has(skill.area))
+      .reduce((sum, skill) => sum + worthIn(wholeWorth, skill), 0),
   };
 }
 
@@ -216,49 +219,6 @@ export function getWholeShortfall({
   return [...lessonsLeft.values()].reduce((sum, minutes) => sum + minutes, standInsLeft);
 }
 
-export function getSkillValue(skill: SelectedSkill): number {
-  if (skill.state === "settled") {
-    return 1;
-  }
-
-  return skill.state === "unknown" ? 0 : Math.min(1, skill.coveredRaw / skill.requiredRaw);
-}
-
-/** How much of each skill's lessons the plan holds before the deadline. */
-export function measureDepth({
-  coreFits,
-  skills,
-}: {
-  coreFits: boolean;
-  skills: readonly SelectedSkill[];
-}) {
-  const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
-  const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
-  const limit = coreFits ? 1 : LARGEST_PARTIAL_SHARE;
-
-  const whole = skills.every(
-    (skill) =>
-      skill.state === "settled" ||
-      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
-  );
-
-  return {
-    coveredShare: total > 0 ? Math.min(limit, Math.max(0, covered / total)) : null,
-    fits: coreFits && total > 0 && whole,
-  };
-}
-
-function measureReach(skills: readonly (SelectedSkill & { reached: boolean })[]) {
-  const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
-  const reached = skills.reduce((sum, skill) => sum + (skill.reached ? skill.worth : 0), 0);
-  const coreFits = skills.every((skill) => skill.reached);
-
-  return {
-    coreFits,
-    reachedShare: coreFits ? 1 : Math.min(LARGEST_PARTIAL_SHARE, total > 0 ? reached / total : 0),
-  };
-}
-
 export function getCoverage({
   built,
   deadline,
@@ -291,7 +251,7 @@ export function getCoverage({
     skills: input.graph.skills,
   });
 
-  const measured = scope.skills.map(({ skillId, worth }) => {
+  const measured = scope.skills.map(({ skillId, wholeWorth, worth }) => {
     const required = requirement.get(skillId);
     const lessonMinutes = [...(required?.lessons.values() ?? [])].reduce((a, b) => a + b, 0);
     const requiredRaw = lessonMinutes + (required?.standIn ?? 0);
@@ -307,6 +267,7 @@ export function getCoverage({
         requiredRaw,
         skillId,
         state: "settled" as const,
+        wholeWorth,
         worth,
       };
     }
@@ -319,11 +280,15 @@ export function getCoverage({
       worth,
     };
 
-    return { ...skill, reached: isInPlan(skillId) || getSkillValue(skill) > 0 };
+    return { ...skill, reached: isInPlan(skillId) || getSkillValue(skill) > 0, wholeWorth };
   });
 
-  const skills = measured.map(({ reached: _reached, ...skill }) => skill);
-  const { coreFits, reachedShare } = measureReach(measured);
+  const skills = measured.map(({ reached: _reached, wholeWorth: _wholeWorth, ...skill }) => skill);
+
+  const { coreFits, reachedShare } = measureReach({
+    skills: measured,
+    takenOutWorth: scope.takenOutWorth,
+  });
 
   return {
     basis: "selected",

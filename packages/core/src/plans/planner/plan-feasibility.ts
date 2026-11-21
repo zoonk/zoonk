@@ -13,7 +13,8 @@ import { findFittingDate } from "./fitting-date";
 import { getFittingFloor } from "./fitting-floor";
 import { type MostCoverage, findMostCoverage } from "./most-coverage";
 import { fromIsoDate } from "./plan-calendar";
-import { type ExamSubjectShare, getSkillValue } from "./selected-coverage";
+import { getSkillValue } from "./coverage-measures";
+import { type ExamSubjectShare } from "./selected-coverage";
 import { getSelectedCoverage } from "./selected-plan-summary";
 
 export type TimeCoverage = { coreFits: boolean; coveredShare: number; reachedShare: number };

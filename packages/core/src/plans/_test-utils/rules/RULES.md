@@ -256,7 +256,7 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 ### R25. What the plan says it covers is true
 
 - **Owner's words:** "never claim something about the plan that isn't true" (round 11); pass 9 showed "you can study every topic" next to "2 of 202 don't fit" (in Portuguese).
-- **Check:** a syllabus topic shown as to study (or in progress) has a lesson still to do on a skill that teaches it; one in progress whose rest is out for time (its lessons set aside after missed days, `notPlannedReason` `time`) has none still to do; one shown out of the plan has none still to do or done; `feasibility.coreFits` never stands next to topics out for time; `fits` implies `coreFits`. For a dated plan, `reachedShare` is at least `coveredShare`, and equals 1 exactly when `coreFits` is true.
+- **Check:** a syllabus topic shown as to study (or in progress) has a lesson still to do on a skill that teaches it; one in progress whose rest is out for time (its lessons set aside after missed days, `notPlannedReason` `time`) has none still to do; one shown out of the plan has none still to do or done; `feasibility.coreFits` never stands next to topics out for time; `fits` implies `coreFits`. For a dated plan, `reachedShare` measures the whole exam or goal, a subject taken out (`skipAreas`) counting as not reached: it equals 1 exactly when `coreFits` is true and no subject is taken out, and, with none taken out, it is at least `coveredShare`.
 - **Reads:** `syllabus`, `view.feasibility`, `after`.
 
 ### R26. What everything takes is said, and the suggestion is one people keep up
