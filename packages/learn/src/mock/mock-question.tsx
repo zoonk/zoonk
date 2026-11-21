@@ -20,6 +20,7 @@ import { WritingLineCount } from "../writing/writing-editor";
 import { WritingQuestionBody } from "../writing/writing-question";
 import { useMockScreen } from "./mock-context";
 import { MockOptions, MockPicks, useLocked } from "./mock-options";
+import { getSectionPlace } from "./mock-place";
 
 const MAX_TYPED_ANSWER = 500;
 
@@ -117,23 +118,20 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
   );
 }
 
-/** A section of written questions only (a written test): its questions, else none. */
-export function getWrittenTestQuestions(questions: readonly MockQuestion[]): MockQuestion[] {
-  return questions.every(({ format }) => format === "essay") ? [...questions] : [];
-}
-
 export function useQuestionPlace(question: MockQuestion): string {
   const t = useExtracted();
   const { runner } = useMockScreen();
 
   if (question.format === "essay") {
-    const essays = getWrittenTestQuestions(runner.view.current?.questions ?? []);
+    const questions = runner.view.current?.questions ?? [];
 
-    // A written test of several questions counts them; the screen's chip already names the test.
-    if (essays.length > 1) {
+    const inTest = getSectionPlace({ position: questions.indexOf(question), questions });
+
+    // A written test counts its questions; the screen's chip already names the test.
+    if (inTest && inTest.total > 1) {
       return t("Question {number} of {total}", {
-        number: String(essays.indexOf(question) + 1),
-        total: String(essays.length),
+        number: String(inTest.number),
+        total: String(inTest.total),
       });
     }
 
