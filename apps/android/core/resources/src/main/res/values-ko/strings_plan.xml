@@ -448,6 +448,8 @@
   "plan_time_covers_goal_all": "f62501511bfa3e523d0787309c5052552c157dacf75a0fdd0ff62ac97290b208",
   "plan_time_covers_goal_all_month": "a2124c6f75d96b3828927656a6aa6873f74f2a54963ffa855fc42955ccb90b6b",
   "plan_time_covers_most_any_time": "7164ef49ec3cea6b538ab76e6ffc7499a7300bf71b72411cda2bb8a4134d5f8d",
+  "plan_time_covers_plan_all": "aecc150d7430b840430ab8d79f63f312cd477a9c47cadccfd6638e8169dbe255",
+  "plan_time_covers_plan_all_month": "d87b2e7577b66cb618c8c9bc858790593aba7048767ff7823628b068ede5cc1e",
   "plan_time_find_failed": "a84e025675eded5caf37cc9fdaee40a6cf551cff382a9ef459d368d36ec6d8de",
   "plan_time_finish_failed": "ac3048ae09df782f32ee2e00bc0398542b42efbb33c9953459ec3efff8dadd30",
   "plan_time_finish_unknown": "3346a675149d05658086f591b76bd0119d435b05981842fb1bbb4e123724ee0f",
@@ -1059,6 +1061,10 @@
     <string name="plan_time_covers_goal_all">목표의 전체 범위를 %1$s까지 다뤄요.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">목표의 전체 범위를 %1$s까지 다뤄요.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_plan_all">%1$s까지 계획에 있는 내용을 모두 다뤄요.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_plan_all_month">%1$s까지 계획에 있는 내용을 모두 다뤄요.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_past_date">목표 날짜(%1$s)가 지났어요.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->

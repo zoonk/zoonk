@@ -448,6 +448,8 @@
   "plan_time_covers_goal_all": "d54f80a4104dfa4ab9f733a7c9a03df0dba4aebd553c55874484cd15dd5391fc",
   "plan_time_covers_goal_all_month": "504696ab616af237de5f7bcf10e331240070912e7cc283b9768cea0e90e39377",
   "plan_time_covers_most_any_time": "feaf3e5832dad84ea1afdb345ba0875734810015ae17e3ed3136504500691149",
+  "plan_time_covers_plan_all": "676649b613a6ec988c894ee32f80cb1ce71eec432dd83df7b19ac15e62ea3979",
+  "plan_time_covers_plan_all_month": "6dec8893338d2e2f34d3cda276af968f1d8d59e2e4c332297d043c7b18ce81cd",
   "plan_time_find_failed": "4ed66b145ba041015bff41615446919c9129ddab40cfdb4b55b1082fa2a017d2",
   "plan_time_finish_failed": "b03b670e77706934260626525dc50342b880785bc263dffa5c44becf4182442f",
   "plan_time_finish_unknown": "016abab300ec672a6b76ea05c4a0452a749f1483ab9524754b134102af40523c",
@@ -1161,6 +1163,10 @@
     <string name="plan_time_covers_goal_all">Cubre todo el contenido de tu objetivo para el %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Cubre todo el contenido de tu objetivo para %1$s.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_plan_all">Cubre todo lo que hay en tu plan de aquí al %1$s.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_plan_all_month">Cubre todo lo que hay en tu plan de aquí a %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_past_date">Tu fecha, %1$s, ya pasó.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->

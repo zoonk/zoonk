@@ -448,6 +448,8 @@
   "plan_time_covers_goal_all": "6bf896a0a4228b3016257c6d2fdc7dde236c8edeaabc18d5ca7d757bd36f79cf",
   "plan_time_covers_goal_all_month": "a68bd23a04fc1e1fa250a99150b6d50821b5bc85f59fbd73d23d5894a2241a96",
   "plan_time_covers_most_any_time": "7cffaf7a3153b289a30ced9fe22e5f0cddd2a1c6af14a3bf3412eb170d69da24",
+  "plan_time_covers_plan_all": "ebbf7e89ab51bed5dba253e364beb3c2cca1b24bf792da21203a54c9207aea59",
+  "plan_time_covers_plan_all_month": "c75d499db548010eb5c3a58058b28443607936208a9eda14e56692f5e44460ec",
   "plan_time_find_failed": "0c97894580e8aa20738a4a1d4139504b5c4cd9097c5058ea7413191f3a25f12f",
   "plan_time_finish_failed": "c21a915995afe27dedcd9b519acdcf6c316bc19556c58184aa1ec72bf90695c7",
   "plan_time_finish_unknown": "d5ec8a3d69f87f92f3956cee9f0d9bedf491eb728748a5140d48e0a4058cd72c",
@@ -1110,6 +1112,10 @@
     <string name="plan_time_covers_goal_all">Hedefindeki tüm konuları %1$s tarihine kadar ele alır.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Hedefindeki tüm konuları %1$s tarihine kadar ele alır.</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_plan_all">Planındaki her şeyi %1$s tarihine kadar tamamlar.</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_plan_all_month">Planındaki her şeyi %1$s ayına kadar tamamlar.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_past_date">Hedef tarihin (%1$s) geçti.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->

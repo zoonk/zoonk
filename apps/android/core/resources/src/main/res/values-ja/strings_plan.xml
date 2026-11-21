@@ -448,6 +448,8 @@
   "plan_time_covers_goal_all": "76656914ca6c135eb58e5cfee12f172b21e10bcc444acd883babe0838fe96e54",
   "plan_time_covers_goal_all_month": "fa4507bf9121b22297f3d79bae5687f0a3f47cacc13e353378d77bfccd796c3a",
   "plan_time_covers_most_any_time": "87899b914c2e54665a40d0ed6c0132dd7449063873db58a45c794b0eb839a95f",
+  "plan_time_covers_plan_all": "b147253fdf67b313b109c0dfaea1bcfb48714d4c729bbff1b926f2036847d3f6",
+  "plan_time_covers_plan_all_month": "0e8858ed4272ec6aac9b1672e49ee3e89369183e736faeb3c5fcadaaa22e2865",
   "plan_time_find_failed": "695e21c3219eee2a09049a58f71c84448c5bd12e26bf67b24a10d915793e3d46",
   "plan_time_finish_failed": "dcc0d508a2c72f3ad5abeedf92e7fc4c922c6c7c1164027ad2b3a838e054e119",
   "plan_time_finish_unknown": "f0c2cc088fe5cdaa3d060f3afa0bf253bdf262e759cc0ef788fbd2f929dee38b",
@@ -1059,6 +1061,10 @@
     <string name="plan_time_covers_goal_all">%1$sまでに目標に必要な内容をすべて学びます。</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">%1$sまでに目標に必要な内容をすべて学びます。</string>
+    <!-- %1$s is a day, such as "May 5". -->
+    <string name="plan_time_covers_plan_all">%1$sまでに学習計画の内容をすべて学べます。</string>
+    <!-- %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_covers_plan_all_month">%1$sまでに学習計画の内容をすべて学べます。</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_past_date">設定した期日（%1$s）を過ぎました。</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
