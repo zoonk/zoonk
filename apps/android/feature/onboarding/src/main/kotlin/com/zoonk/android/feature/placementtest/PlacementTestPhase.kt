@@ -75,7 +75,8 @@ internal fun placementTestPhase(
     return PlacementTestPhase.Question(next.item(), attempt, read.answered.toInt(), read.dayBudgetSpent, read.trueFalseLabels)
 }
 
-private val Placement.isReady get() = status == PlacementStatus.ASKING || status == PlacementStatus.DONE
+private val Placement.isReady
+    get() = status == PlacementStatus.ASKING || status == PlacementStatus.DONE || status == PlacementStatus.UNAVAILABLE
 
 /** An open part with nothing more to ask, which closing applies. */
 internal fun Placement.partOver(): PlacementAttempt? = attempt?.takeIf { !it.partComplete && isReady && next == null }

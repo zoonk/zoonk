@@ -36,7 +36,7 @@ fun TestedOutChangeCard(
                 SuggestionResult(stringResource(R.string.placementtest_undo_restored))
             } else {
                 SuggestionHeader(title)
-                PlanEffectDiff(change.effect, dateKind = dateKind)
+                PlanEffectDiff(change.effect, dateKind = dateKind, summary = false)
                 if (change.canUndo) {
                     SuggestionActions {
                         SuggestionAction(

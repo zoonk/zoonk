@@ -77,6 +77,12 @@ class PlacementTestViewModelTest {
     }
 
     @Test
+    fun anOpenPartWithNoAvailableQuestionsCanFinish() {
+        val read = placement(PART_ONE, next = null, status = "unavailable")
+        assertTrue(placementTestPhase(LoadState.Loaded(read), closed = null) is PlacementTestPhase.PartOver)
+    }
+
+    @Test
     fun theLastAnswerOfAPartClosesThatPartAndSaysWhatItSkipped() =
         runTest {
             val api =
