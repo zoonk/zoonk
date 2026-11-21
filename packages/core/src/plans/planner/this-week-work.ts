@@ -1,6 +1,7 @@
 import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type StudyPortion } from "./interval-study-minutes";
 import { toIsoDate } from "./plan-calendar";
+import { isStandIn } from "./plan-item-rules";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type QueueUnit } from "./plan-units";
 
@@ -27,14 +28,27 @@ export function getKeptShare({
   return item.lessonId === null && item.lessons && total ? Math.min(1, item.lessons / total) : 1;
 }
 
-/** An item saved this week can teach past it, as a stand-in split into lessons does. */
-function listSavedDaysUntil({ end, item }: { end: Date | null; item: ExistingPlanItem }) {
+/**
+ * An item saved this week can teach past it, as a stand-in split into lessons does. The days
+ * before today went by without a stand-in's lessons, so their time is laid out again with the
+ * rest.
+ */
+function listSavedDaysUntil({
+  end,
+  item,
+  today,
+}: {
+  end: Date | null;
+  item: ExistingPlanItem;
+  today: Date;
+}) {
   const days = readSelectedItemFacts(item.facts)?.days ?? [];
+  const first = isStandIn(item) ? toIsoDate(today) : "";
   const last = end && toIsoDate(end);
   const total = days.reduce((sum, day) => sum + day[2], 0);
 
   const until = days.flatMap(([date, minutes, lessonMinutes]) =>
-    !last || date <= last ? [{ date, lessonMinutes, minutes }] : [],
+    date >= first && (!last || date <= last) ? [{ date, lessonMinutes, minutes }] : [],
   );
 
   const kept = until.reduce((sum, day) => sum + day.lessonMinutes, 0);
@@ -45,10 +59,12 @@ function listSavedDaysUntil({ end, item }: { end: Date | null; item: ExistingPla
 export function listThisWeekWork({
   end,
   frozen,
+  today,
   units,
 }: {
   end: Date | null;
   frozen: readonly ExistingPlanItem[];
+  today: Date;
   units: ReadonlyMap<string, QueueUnit>;
 }): KeptPiece[] {
   return frozen.flatMap((item) => {
@@ -57,7 +73,7 @@ export function listThisWeekWork({
     }
 
     const kept = getKeptShare({ item, units });
-    const { days, share } = listSavedDaysUntil({ end, item });
+    const { days, share } = listSavedDaysUntil({ end, item, today });
 
     return [
       {
@@ -69,16 +85,4 @@ export function listThisWeekWork({
       },
     ];
   });
-}
-
-/** The lessons that landed in a stand-in's place carry their own days. */
-export function withoutLandedDays<T>({
-  days,
-  landed,
-}: {
-  days: ReadonlyMap<string, T>;
-  landed: readonly ExistingPlanItem[];
-}): Map<string, T> {
-  const keys = new Set(landed.map((item) => getItemKey(item)));
-  return new Map([...days].filter(([key]) => !keys.has(key)));
 }

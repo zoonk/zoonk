@@ -293,7 +293,6 @@ describe(layOutAfterThisWeek, () => {
 
     const later = laid.restSchedule.units.filter((unit) => unit.key === standIn.key);
 
-    expect(laid.keptParts.map((unit) => toIsoDate(unit.date))).toStrictEqual(["2026-10-15"]);
     expect(later.every((unit) => unit.date >= start)).toBe(true);
     expect(later.reduce((total, unit) => total + unit.minutes, 0)).toBe(30);
   });

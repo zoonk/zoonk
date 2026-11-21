@@ -164,16 +164,6 @@ export function listKeptStandInCuts({
   });
 }
 
-function listThisWeekKeys({
-  frozen,
-  landed,
-}: {
-  frozen: readonly ExistingPlanItem[];
-  landed: readonly { key: string }[];
-}): Set<string> {
-  return new Set([...frozen.map((item) => getItemKey(item)), ...landed.map((unit) => unit.key)]);
-}
-
 export function keepThisWeek({
   days,
   frozen,
@@ -187,7 +177,7 @@ export function keepThisWeek({
   schedule: { dropped: DroppedUnit[]; events: ScheduledEvent[]; units: ScheduledUnit[] };
   start: Date;
 }) {
-  const hidden = listThisWeekKeys({ frozen, landed });
+  const hidden = new Set(frozen.map((item) => getItemKey(item)));
 
   const first = days.find((day) => day.date >= start);
   const isNew = (unit: QueueUnit) => !hidden.has(unit.key);

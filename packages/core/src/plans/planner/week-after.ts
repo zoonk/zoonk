@@ -1,6 +1,6 @@
 import { reserveCarriedTime } from "./carry-over";
 import { findDayIndex } from "./day-index";
-import { type StudyPortion, listIntervalPortions } from "./interval-study-minutes";
+import { type StudyPortion, listIntervalPortions, toDayMinutes } from "./interval-study-minutes";
 import { toIsoDate } from "./plan-calendar";
 import { isStandInUnit } from "./plan-item-rules";
 import { PLAN_EPSILON } from "./plan-precision";
@@ -79,7 +79,30 @@ function listKeptPortions({
   units: readonly QueueUnit[];
 }): Map<string, StudyPortion[]> {
   const cumulative = getCumulativeCapacity(days);
-  const saved = new Map(kept.flatMap((piece) => (piece.days ? [[piece.key, piece.days]] : [])));
+  const written = new Map(units.flatMap((unit) => (unit.lessonId ? [[unit.key, unit]] : [])));
+
+  // A written lesson saved without its days is studied on its own day.
+  const onItsDay = (piece: KeptPiece): StudyPortion[] | undefined => {
+    const lessonMinutes = written.get(piece.key)?.minutes;
+    const day = days.find((planDay) => planDay.date >= piece.date);
+
+    return lessonMinutes && day
+      ? [
+          {
+            date: toIsoDate(day.date),
+            lessonMinutes,
+            minutes: toDayMinutes({ lessonMinutes, share: day.shape.share }),
+          },
+        ]
+      : undefined;
+  };
+
+  const saved = new Map(
+    kept.flatMap((piece) => {
+      const own = piece.days ?? onItsDay(piece);
+      return own ? [[piece.key, own]] : [];
+    }),
+  );
 
   return listKeptIntervals({ cumulative, days, kept, units }).reduce((portions, interval) => {
     if (interval.kind === "boss" || interval.end <= interval.start) {
@@ -147,26 +170,6 @@ function listLaterPart({
   ];
 }
 
-function listKeptParts({
-  kept,
-  own,
-}: {
-  kept: readonly KeptPiece[];
-  own: readonly ScheduledUnit[];
-}): ScheduledUnit[] {
-  const totals = Map.groupBy(own, (unit) => unit.key);
-  const taken = new Map<string, number>();
-
-  return own.filter((unit) => {
-    const share = kept.find((piece) => piece.key === unit.key)?.share ?? 1;
-    const total = (totals.get(unit.key) ?? []).reduce((sum, part) => sum + part.minutes, 0);
-    const before = taken.get(unit.key) ?? 0;
-
-    taken.set(unit.key, before + unit.minutes);
-    return before < total * share - PLAN_EPSILON;
-  });
-}
-
 function joinPortions(
   kept: ReadonlyMap<string, StudyPortion[]>,
   later: ReadonlyMap<string, StudyPortion[]>,
@@ -198,12 +201,7 @@ export function layOutAfterThisWeek<T extends LaidOut>({
   layOut: (laid: { days: readonly PlanDay[]; units: readonly QueueUnit[] }) => T;
   start: Date;
   units: readonly QueueUnit[];
-}): T & {
-  keptParts: ScheduledUnit[];
-  keptPortions: Map<string, StudyPortion[]>;
-  keptUntil: Date | null;
-  spill: number;
-} {
+}): T & { keptPortions: Map<string, StudyPortion[]>; keptUntil: Date | null; spill: number } {
   const thisWeek = new Set(kept.map((piece) => piece.key));
   const first = layOut({ days, units });
   const scheduled = [...first.carriedSchedule.units, ...first.restSchedule.units];
@@ -237,7 +235,6 @@ export function layOutAfterThisWeek<T extends LaidOut>({
 
     return {
       ...first,
-      keptParts: [],
       keptPortions: listLaidPortions(own),
       keptUntil: parts.length > 0 ? new Date(last) : null,
       spill: 0,
@@ -263,7 +260,6 @@ export function layOutAfterThisWeek<T extends LaidOut>({
 
   return {
     ...laid,
-    keptParts: listKeptParts({ kept, own }),
     keptPortions: joinPortions(
       listKeptPortions({ days, kept, units }),
       listLaidPortions(laterParts),
