@@ -263,7 +263,7 @@ final class MockRun {
   /// In a forward-only section's review, changing a left-behind answer uses one of its changes,
   /// once per question.
   private func countChange(_ itemId: String, at index: Int, to next: PracticeAnswer?) {
-    guard moves.reviewing, index < reached, !changed.contains(index),
+    guard moves.reviewing, moves.canChange(index), index < reached, !changed.contains(index),
       drafts[itemId]?.answer != next
     else {
       return

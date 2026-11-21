@@ -536,6 +536,25 @@ final class MockRunKeptAnswersTests: XCTestCase {
     run.queue.stop()
   }
 
+  func testAKeptChangeTheServerHasNoChangeLeftForStaysLocked() async throws {
+    let stored = [Self.itemOne, Self.itemTwo, Self.itemThree].map {
+      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: $0)
+    }
+    var keptChange = stored[0]
+    keptChange.answer = .choice(1)
+    let transport = MockTransport(
+      itemIds: [Self.itemOne, Self.itemTwo, Self.itemThree], drafts: stored,
+      review: (allowed: 1, changed: [Self.itemTwo]))
+    unsent.keep(keptChange, inPlace: false)
+
+    let run = try await open(makeStore(transport, session: .preview(account: .keptAnswersFixture)))
+
+    XCTAssertEqual(run.moves.changesLeft, 0)
+    XCTAssertFalse(run.moves.canChange(0), "No change was left for question 1")
+    XCTAssertTrue(run.moves.canChange(1), "Question 2's change was already used on it")
+    run.queue.stop()
+  }
+
   func testAFinishedMockClearsItsKeptAnswers() async throws {
     unsent.keep(
       MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne),
