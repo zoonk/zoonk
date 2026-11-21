@@ -44,7 +44,7 @@ internal fun ColumnScope.ProfileStep(
     val draft = vm.profileDraft(question, role)
     val answer = draft.submitted(question)
     val memory = view.profile.memoryEnabled
-    val valid = draft.valid(id, memory)
+    val valid = answer.valid(id, memory)
     val holdsAnswer = draft.declined || !draft.empty(id, memory)
     val save = { vm.answer(answer.onboardingInput(id, memory), profileAnswer = answer) }
     val wait = LocalSetupWait.current
