@@ -15,6 +15,7 @@ import com.zoonk.android.ui.richtext.moneySignGap
 import java.util.Locale
 
 /** A number field's [unit] around the typed number, where the learner's [locale] writes it: money's sign before or after it. */
+@Suppress("DEPRECATION")
 class NumberUnitTransformation(
     private val unit: String,
     locale: Locale,

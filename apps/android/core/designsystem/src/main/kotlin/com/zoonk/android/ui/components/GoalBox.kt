@@ -67,6 +67,7 @@ const val MAX_GOAL_LENGTH = 2000
  * example, as the catalog's is. [hiddenLabel] makes it main's buddy box: no visible "I want to" (TalkBack reads
  * the hidden label), and Build my plan beside the words while it fits. Enter sends, as main's box does.
  */
+@Suppress("DEPRECATION")
 @Composable
 fun GoalBox(
     value: String,

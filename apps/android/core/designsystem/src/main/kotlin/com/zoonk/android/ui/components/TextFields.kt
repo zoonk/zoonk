@@ -65,6 +65,8 @@ import com.zoonk.android.ui.theme.zoonk
  * `MaterialTextField` lint check outside this file.
  */
 
+// These overloads edit caller-owned values and selection. The state overload below owns its edits in TextFieldState.
+@Suppress("DEPRECATION")
 @Composable
 fun OutlinedTextField(
     value: String,
@@ -118,6 +120,7 @@ fun OutlinedTextField(
 }
 
 /** The field over a [TextFieldValue], for a screen that keeps the learner's cursor where the field moves, as across a fold. */
+@Suppress("DEPRECATION")
 @Composable
 fun OutlinedTextField(
     value: TextFieldValue,
@@ -179,6 +182,7 @@ private class FieldLook(
 )
 
 /** Main's field around a [BasicTextField] showing [text], which [field] draws with the style, cursor and frame given to it. */
+@Suppress("DEPRECATION")
 @Composable
 private fun ZoonkField(
     text: String,

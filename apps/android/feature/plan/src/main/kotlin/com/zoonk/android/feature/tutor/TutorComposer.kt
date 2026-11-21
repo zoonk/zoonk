@@ -12,7 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLength
+import androidx.compose.foundation.text.input.maxLengthReject
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -95,7 +95,7 @@ internal fun TutorComposer(
                     },
             placeholder = { Text(placeholder) },
             trailingIcon = { SendButton(state.asking, resending, enabled = canSend, onClick = vm::send) },
-            inputTransformation = InputTransformation.maxLength(MAX_QUESTION_LENGTH),
+            inputTransformation = InputTransformation.maxLengthReject(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
             shape = RoundedCornerShape(ZoonkRadius.xl),
             contentPadding = PaddingValues(start = 14.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
