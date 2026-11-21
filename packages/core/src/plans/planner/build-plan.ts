@@ -144,6 +144,7 @@ function planGoal({
 
   const work = preparePlanWork({ input, landing, planStart, resolution });
   const { funded, keepsRest, landedUnits, priorities, queue, start, unitsByKey, windows } = work;
+
   const {
     finished,
     frozen,

@@ -10,7 +10,7 @@ import {
 } from "./_utils/day-stretch";
 import { fillRemainingLessonTime, getWritingMinutes } from "./_utils/fill-session-time";
 import { canHoldPhaseChallenges } from "./_utils/phase-challenge-day";
-import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
+import { buildCheckpointBlock, buildMockDay } from "./_utils/planned-checkpoint-block";
 import { type PracticeTopic, buildPracticeBlocks } from "./_utils/practice-blocks";
 import {
   getLessonMinutes,
@@ -208,15 +208,6 @@ function fundSessionChallenges(input: SessionBuildInput, budget: number) {
 
   const calendar = input.checkpoints.filter((checkpoint) => !isPhaseChallenge(checkpoint));
   return { available, calendar, checkpoints: [...leading, ...calendar], leading, planItems };
-}
-
-function buildMockDay(checkpoints: readonly PlannedCheckpoint[]) {
-  const mocks = checkpoints.filter((checkpoint) => checkpoint.mock);
-
-  return {
-    blocks: mocks.map((mock) => buildCheckpointBlock(mock)),
-    plannedMinutes: Math.ceil(mocks.reduce((sum, mock) => sum + mock.minutes, 0)),
-  };
 }
 
 /** Full reviews cover every skill and welcome-back days otherwise stay lighter. */
