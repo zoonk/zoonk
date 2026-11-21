@@ -153,7 +153,7 @@ function ProblemItem({
 
   return (
     <li
-      className="flex scroll-mt-20 flex-col gap-1.5 border-t py-3 first:border-t-0"
+      className="flex scroll-mt-20 flex-col gap-1.5 border-t py-3 first:border-t-0 first:pt-1"
       id={view.anchor}
     >
       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
@@ -199,8 +199,8 @@ function FailedChecks({ checks }: { checks: FailedCheck[] }) {
 }
 
 /**
- * Beside the other answer, its label, checks, output and problems share rows with it, so both
- * outputs start level whatever sits above them.
+ * Beside the other answer, its label and checks share rows with it, so both outputs start level
+ * whatever sits above them; each output and its problems then run at their own length.
  */
 function OutputColumn({
   aligned,
@@ -228,7 +228,7 @@ function OutputColumn({
       className={cn(
         "flex min-w-0 flex-col gap-3",
         aligned && "lg:grid lg:grid-rows-subgrid",
-        aligned && (checksRow ? "lg:row-span-4" : "lg:row-span-3"),
+        aligned && (checksRow ? "lg:row-span-3" : "lg:row-span-2"),
       )}
     >
       <p className="text-sm font-medium">{label}</p>
@@ -239,37 +239,39 @@ function OutputColumn({
         </div>
       )}
 
-      {imageIndex === -1 ? (
-        <div className="rounded-xl border p-4">
-          {typeof output === "string" ? (
-            <ReadableOutput marks={marksFor(observations)} text={output} />
-          ) : (
-            <p className="text-muted-foreground text-sm">No output for this run.</p>
-          )}
-        </div>
-      ) : (
-        <OutputImage images={images} index={imageIndex} />
-      )}
+      <div className="flex flex-col gap-3">
+        {imageIndex === -1 ? (
+          <div className="rounded-xl border px-4 py-3">
+            {typeof output === "string" ? (
+              <ReadableOutput marks={marksFor(observations)} text={output} />
+            ) : (
+              <p className="text-muted-foreground text-sm">No output for this run.</p>
+            )}
+          </div>
+        ) : (
+          <OutputImage images={images} index={imageIndex} />
+        )}
 
-      {observations.length > 0 && (
-        <div className="flex flex-col pt-3">
-          <p className="text-muted-foreground text-xs">
-            {observations.length === 1
-              ? "1 problem found"
-              : `${observations.length} problems found`}
-          </p>
-          <ul className="flex flex-col">
-            {observations.map((view) => (
-              <ProblemItem
-                criteria={criteria}
-                key={view.anchor}
-                picture={imageIndex !== -1}
-                view={view}
-              />
-            ))}
-          </ul>
-        </div>
-      )}
+        {observations.length > 0 && (
+          <div className="flex flex-col pt-3">
+            <p className="text-muted-foreground text-xs">
+              {observations.length === 1
+                ? "1 problem found"
+                : `${observations.length} problems found`}
+            </p>
+            <ul className="flex flex-col">
+              {observations.map((view) => (
+                <ProblemItem
+                  criteria={criteria}
+                  key={view.anchor}
+                  picture={imageIndex !== -1}
+                  view={view}
+                />
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
