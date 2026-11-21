@@ -38,12 +38,15 @@ export async function prepareGoalUnderstandingRun({
     return { draft: await loadDraftView(draft), status: "understood" };
   }
 
-  const cached = await findCompletableUnderstanding({
-    language: draft.language,
-    normalizedPrompt: normalizeString(draft.prompt),
-    now: new Date(),
-    userId: session.user.id,
-  });
+  const cached =
+    draft.sourceIds.length > 0
+      ? null
+      : await findCompletableUnderstanding({
+          language: draft.language,
+          normalizedPrompt: normalizeString(draft.prompt),
+          now: new Date(),
+          userId: session.user.id,
+        });
 
   if (cached) {
     const understood = await completeDraft({ draft, exams: [], understanding: cached });

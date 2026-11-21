@@ -21499,7 +21499,7 @@
     },
     "/goal-understandings": {
       "post": {
-        "description": "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. A start while a run is already reading the words answers with that run's id. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
+        "description": "Saves a goal typed in the learner's own words as a draft and starts reading it: goals to plan, each with a draft for POST /goals holding every fact the words already give (an exam's dates for the year named, from its stored notice with the source or estimated), a quick question for an explanation, an instrument, or something unsafe or too vague. Material sent in `sourceIds` is read together with the words, and the draft's main goal is created with it. The same words in the same language on the same day are understood at once (201) unless they name an exam, whose dates a run looks up, or come with material. Otherwise a run reads them (202): stream GET /generations/{generationId}/events for `readGoal`, `findExamDates` (only when the words name an exam), then `understandingReady`, and read the draft again. A start while a run is already reading the words answers with that run's id. A run is one of the learner's small AI calls: a refusal is `SLOW_DOWN` (429) or `USAGE_LIMIT_REACHED` with `details.limit` (403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later). Guests can call it.",
         "operationId": "createGoalUnderstanding",
         "security": [
           {
@@ -31454,6 +31454,24 @@
             "minLength": 2,
             "maxLength": 10,
             "description": "The learner's language, for titles and notes"
+          },
+          "materialIntent": {
+            "description": "What the learner wants from the material in `sourceIds`: `exam` to prepare for a test on it, `understand` to learn what it covers. Left out when they didn't choose; refused without `sourceIds`",
+            "type": "string",
+            "enum": [
+              "exam",
+              "understand"
+            ]
+          },
+          "sourceIds": {
+            "description": "Material the learner attached (`POST /v1/uploads`), in the order they added it. The goal is read together with it, and the draft's main goal is created with it, so POST /goals needs no `sourceIds` for this draft. An id that isn't one of the learner's uploads, or a repeated one, is left out; the draft's `sources` lists what was kept",
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
           },
           "timeZone": {
             "description": "The learner's IANA timezone, for relative dates; UTC when left out",
@@ -92315,9 +92333,25 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "materialIntent": {
+            "nullable": true,
+            "description": "What the learner wants from `sources`: `exam` to prepare for a test on it, `understand` to learn what it covers; null when they didn't choose or sent no material. The main goal created from the draft carries it in `details.materialIntent`",
+            "type": "string",
+            "enum": [
+              "exam",
+              "understand"
+            ]
+          },
           "prompt": {
             "type": "string",
             "description": "What the learner typed"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OnboardingDraftSource"
+            },
+            "description": "The learner's material sent with the words, in the order they attached it, read together with them. The draft's main goal is created with it. Empty when none was sent"
           },
           "status": {
             "type": "string",
@@ -92347,10 +92381,31 @@
           "generationId",
           "goalId",
           "id",
+          "materialIntent",
           "prompt",
+          "sources",
           "status",
           "timeZone",
           "understanding"
+        ],
+        "additionalProperties": false
+      },
+      "OnboardingDraftSource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "description": "The file's name or the link's title; empty for pasted text"
+          }
+        },
+        "required": [
+          "id",
+          "title"
         ],
         "additionalProperties": false
       },

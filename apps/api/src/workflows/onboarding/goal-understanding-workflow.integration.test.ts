@@ -4,8 +4,13 @@ import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { understandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
 import { prisma } from "@zoonk/db";
+import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  learnerSourceFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
@@ -83,6 +88,71 @@ describe(goalUnderstandingWorkflow, () => {
       understanding: {
         goals: [{ countryDependent: false, draft: { title: "Pass the bar" }, examDates: [] }],
       },
+    });
+  });
+
+  it("reads the words with the learner's material, apart from the words read alone, and looks up no public exam for a test on it", async () => {
+    vi.mocked(classifyCourseIntent).mockResolvedValue(taskResult({ intent: "learn" as const }));
+
+    vi.mocked(understandGoal).mockResolvedValue(
+      taskResult({
+        followUps: [],
+        goals: [
+          {
+            countryDependent: false,
+            examDay: "official",
+            examName: "Biology unit test",
+            kind: "exam",
+            subject: "the cell cycle",
+            title: "Pass the cell cycle test",
+          },
+        ],
+        route: "goals",
+      }),
+    );
+
+    const user = await userFixture();
+    const prompt = `test on Friday ${randomUUID()}`;
+    const notesText = "Interphase: G1, S and G2. Mitosis: prophase, metaphase and anaphase.";
+
+    const notes = await sourceFixture({ extractedText: notesText, kind: "upload", title: "" });
+
+    await Promise.all([
+      learnerSourceFixture({ sourceId: notes.id, userId: user.id }),
+      goalUnderstandingFixture({ goal: prompt, result: { route: "unclear" }, userId: user.id }),
+    ]);
+
+    const draft = await onboardingDraftFixture({
+      materialIntent: "exam",
+      prompt,
+      sourceIds: [notes.id],
+      status: "understanding",
+      userId: user.id,
+    });
+
+    const run = await start(goalUnderstandingWorkflow, [{ draftId: draft.id }]);
+    await expect(run.returnValue).resolves.toMatchObject({ status: "understood" });
+
+    expect(understandGoal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        goal: prompt,
+        material: { intent: "exam", overview: expect.stringContaining(notesText) },
+      }),
+    );
+
+    expect(classifyCourseIntent).toHaveBeenCalledWith(expect.objectContaining({ prompt }));
+    expect(decideExamIdentity).not.toHaveBeenCalled();
+    expect(findExamDate).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.goalUnderstanding.findMany({ select: { result: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ result: { route: "unclear" } }]);
+
+    await expect(
+      prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } }),
+    ).resolves.toMatchObject({
+      status: "understood",
+      understanding: { goals: [{ draft: { title: "Pass the cell cycle test" }, examDates: [] }] },
     });
   });
 

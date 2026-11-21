@@ -9,10 +9,13 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getOnboardingDraftsCacheTag } from "../../cache/tags";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
+import { loadDraftMaterial } from "./_utils/draft-material";
 import { type ExamLookup, type FoundExam, listExamLookups } from "./_utils/exam-facts";
 import { completeDraft, parseStoredUnderstanding } from "./_utils/onboarding-draft";
 import { findCachedUnderstanding, saveUnderstanding } from "./_utils/understanding-cache";
 import { getLearnerToday } from "./_utils/understanding-view";
+import { type MaterialIntent } from "./onboarding-contract";
+import { formatReadingMaterial } from "./reading-material";
 
 export {
   type ExamCandidate,
@@ -31,7 +34,10 @@ export {
 export type UnderstandingRunDraft = {
   id: string;
   language: string;
+  materialIntent: MaterialIntent | null;
   prompt: string;
+  /** Ids only: the material's text is read inside the step that sends it to the model. */
+  sourceIds: string[];
   status: "failed" | "understanding" | "understood";
   timeZone: string;
   userId: string;
@@ -51,7 +57,16 @@ export async function loadUnderstandingDraft(
   draftId: string,
 ): Promise<UnderstandingRunDraft | null> {
   return prisma.onboardingDraft.findUnique({
-    select: { id: true, language: true, prompt: true, status: true, timeZone: true, userId: true },
+    select: {
+      id: true,
+      language: true,
+      materialIntent: true,
+      prompt: true,
+      sourceIds: true,
+      status: true,
+      timeZone: true,
+      userId: true,
+    },
     where: { id: draftId },
   });
 }
@@ -95,6 +110,11 @@ function toReading({
   draft: UnderstandingRunDraft;
   result: GoalUnderstanding;
 }): GoalReading {
+  // An exam on the learner's own material is theirs alone: no public exam has its dates.
+  if (draft.materialIntent === "exam") {
+    return { exams: [], result };
+  }
+
   const exams = listExamLookups({
     language: draft.language,
     today: getLearnerToday(draft.timeZone),
@@ -105,8 +125,19 @@ function toReading({
   return { exams, result };
 }
 
-/** Today's reading of the same words, reused without a model call and without saving it again; null when none is kept. */
+function hasMaterial(draft: UnderstandingRunDraft): boolean {
+  return draft.sourceIds.length > 0;
+}
+
+/**
+ * Today's reading of the same words, reused without a model call and without saving it again; null
+ * when none is kept. Words sent with material are never read from or kept for the words alone.
+ */
 export async function findKeptReading(draft: UnderstandingRunDraft): Promise<GoalReading | null> {
+  if (hasMaterial(draft)) {
+    return null;
+  }
+
   const cached = await findCachedUnderstanding({
     language: draft.language,
     normalizedPrompt: normalizeString(draft.prompt),
@@ -117,12 +148,18 @@ export async function findKeptReading(draft: UnderstandingRunDraft): Promise<Goa
   return cached ? toReading({ draft, result: cached }) : null;
 }
 
+async function readMaterial(draft: UnderstandingRunDraft) {
+  const overview = formatReadingMaterial({ sources: await loadDraftMaterial(draft) });
+  return overview === null ? null : { intent: draft.materialIntent, overview };
+}
+
 export async function understandGoalWords(draft: UnderstandingRunDraft): Promise<UnderstoodWords> {
   const understood = await understandGoal({
     analytics: { contentScope: "personal", distinctId: draft.userId },
     dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     goal: draft.prompt,
     language: draft.language,
+    material: hasMaterial(draft) ? await readMaterial(draft) : null,
     serviceTier: SERVICE_TIER,
     today: getLearnerToday(draft.timeZone),
   });
@@ -142,7 +179,7 @@ export async function isUnsafeGoal(draft: UnderstandingRunDraft): Promise<boolea
   return intent.data.intent === "unsafe";
 }
 
-/** A declined unsafe intent overrides the understanding route; the reading is kept for the learner's same words today. */
+/** A declined unsafe intent overrides the understanding route; a reading of the words alone is kept for the learner's same words today. */
 export async function saveGoalReading({
   draft,
   unsafe,
@@ -154,13 +191,15 @@ export async function saveGoalReading({
 }): Promise<GoalReading> {
   const result: GoalUnderstanding = unsafe ? { route: "unsafe" } : words.result;
 
-  await saveUnderstanding({
-    language: draft.language,
-    normalizedPrompt: normalizeString(draft.prompt),
-    provenance: words.provenance,
-    result,
-    userId: draft.userId,
-  });
+  if (!hasMaterial(draft)) {
+    await saveUnderstanding({
+      language: draft.language,
+      normalizedPrompt: normalizeString(draft.prompt),
+      provenance: words.provenance,
+      result,
+      userId: draft.userId,
+    });
+  }
 
   return toReading({ draft, result });
 }

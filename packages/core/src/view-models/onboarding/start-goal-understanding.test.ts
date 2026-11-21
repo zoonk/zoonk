@@ -4,6 +4,7 @@ import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { understandGoal as runUnderstandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
+import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -20,6 +21,20 @@ function uniqueGoal(text: string) {
 function countAssists(userId: string) {
   return prisma.usageRecord.count({ where: { kind: "assist", userId } });
 }
+
+async function uploadFixture({ title, userId }: { title: string; userId: string }) {
+  const source = await sourceFixture({ kind: "upload", title });
+  await learnerSourceFixture({ sourceId: source.id, userId });
+  return source;
+}
+
+const CACHED_READING = {
+  followUps: [],
+  goals: [
+    { countryDependent: false, kind: "learn" as const, subject: "Biology", title: "Learn biology" },
+  ],
+  route: "goals" as const,
+};
 
 describe(startGoalUnderstanding, () => {
   it("needs a session, which guests have", async () => {
@@ -291,6 +306,72 @@ describe(startGoalUnderstanding, () => {
     });
 
     expect(result.status).toBe("understanding");
+  });
+
+  it("keeps the learner's own material with the draft in the order sent, and leaves out the rest", async () => {
+    const [user, other] = await Promise.all([userFixture(), userFixture()]);
+    mockSession(user.id);
+
+    const [slides, notes, theirs] = await Promise.all([
+      uploadFixture({ title: "Cell cycle.pdf", userId: user.id }),
+      uploadFixture({ title: "", userId: user.id }),
+      uploadFixture({ title: "Their notes", userId: other.id }),
+    ]);
+
+    const result = await startGoalUnderstanding({
+      goal: uniqueGoal("test on Friday"),
+      language: "en",
+      materialIntent: "exam",
+      sourceIds: [notes.id, theirs.id, randomUUID(), slides.id, notes.id],
+    });
+
+    const draft = result.status === "understanding" ? result.draft : null;
+
+    expect(draft).toMatchObject({
+      materialIntent: "exam",
+      sources: [
+        { id: notes.id, title: "" },
+        { id: slides.id, title: "Cell cycle.pdf" },
+      ],
+      status: "understanding",
+    });
+
+    await expect(
+      prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft?.id } }),
+    ).resolves.toMatchObject({ materialIntent: "exam", sourceIds: [notes.id, slides.id] });
+
+    await expect(countAssists(user.id)).resolves.toBe(1);
+  });
+
+  it("forgets the intent when none of the material is the learner's", async () => {
+    const [user, other] = await Promise.all([userFixture(), userFixture()]);
+    mockSession(user.id);
+    const theirs = await uploadFixture({ title: "Their notes", userId: other.id });
+
+    const result = await startGoalUnderstanding({
+      goal: uniqueGoal("test on Friday"),
+      language: "en",
+      materialIntent: "understand",
+      sourceIds: [theirs.id],
+    });
+
+    expect(result).toMatchObject({ draft: { materialIntent: null, sources: [] } });
+  });
+
+  it("reads words sent with material in a run, even when the same words alone were read today", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const goal = uniqueGoal("learn biology");
+    const notes = await uploadFixture({ title: "Mitosis notes", userId: user.id });
+    await goalUnderstandingFixture({ goal, result: CACHED_READING, userId: user.id });
+
+    const result = await startGoalUnderstanding({ goal, language: "en", sourceIds: [notes.id] });
+
+    expect(result).toMatchObject({
+      draft: { materialIntent: null, sources: [{ id: notes.id }], status: "understanding" },
+    });
+
+    await expect(countAssists(user.id)).resolves.toBe(1);
   });
 
   it("asks a guest who used today's small AI calls to sign up, and still reads words known today", async () => {

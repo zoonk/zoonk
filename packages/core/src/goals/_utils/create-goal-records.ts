@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type TransactionClient } from "@zoonk/db";
+import { type Goal, type OnboardingDraft, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { claimBundleInWrite, openUsageLedgerInWrite } from "../../entitlements/bundle-claims";
@@ -176,11 +176,13 @@ async function pauseGoal(
   }
 }
 
+type CardMaterial = Pick<OnboardingDraft, "materialIntent" | "sourceIds">;
+
 /** An archived goal frees its place, so the card can start it again. */
 async function findCardGoal(
   tx: TransactionClient,
   { card, userId }: { card: CardPlace; userId: string },
-): Promise<{ card?: CardPlace; goalId?: string }> {
+): Promise<{ card?: CardPlace; goalId?: string; material?: CardMaterial }> {
   const draft = await tx.onboardingDraft.findFirst({
     select: {
       goals: {
@@ -189,11 +191,51 @@ async function findCardGoal(
         take: 1,
         where: { onboardingPlace: card.place, status: { not: "archived" } },
       },
+      materialIntent: true,
+      sourceIds: true,
     },
     where: { id: card.draftId, userId },
   });
 
-  return draft ? { card, goalId: draft.goals[0]?.id } : {};
+  if (!draft) {
+    return {};
+  }
+
+  const { goals, ...material } = draft;
+  const isMain = card.place === 0 && material.sourceIds.length > 0;
+
+  return { card, goalId: goals[0]?.id, material: isMain ? material : undefined };
+}
+
+/** The draft's choice wins over the details a client sends, so a card confirmed as is keeps it. */
+function withCardMaterialIntent({
+  draft,
+  material,
+}: {
+  draft: GoalDraft;
+  material: CardMaterial;
+}): GoalDraft {
+  const { materialIntent: _sent, ...details } = draft.details ?? {};
+
+  if (material.materialIntent === null) {
+    return { ...draft, details };
+  }
+
+  const withIntent = { ...details, materialIntent: material.materialIntent };
+  const needsPurpose = material.materialIntent === "understand" && !details.purpose;
+
+  return { ...draft, details: needsPurpose ? { ...withIntent, purpose: "other" } : withIntent };
+}
+
+/** An upload already on another goal stays there: a source follows one goal. */
+async function linkCardMaterial(
+  tx: TransactionClient,
+  { goalId, material, userId }: { goalId: string; material: CardMaterial; userId: string },
+): Promise<void> {
+  await tx.learnerSource.updateMany({
+    data: { goalId },
+    where: { goalId: null, origin: "upload", sourceId: { in: material.sourceIds }, userId },
+  });
 }
 
 /**
@@ -220,7 +262,7 @@ export async function createGoal(
         }
       }
 
-      const { card, goalId } = record.card
+      const { card, goalId, material } = record.card
         ? await findCardGoal(transaction, { card: record.card, userId })
         : {};
 
@@ -243,7 +285,18 @@ export async function createGoal(
         return unchanged(decision);
       }
 
-      await insertGoalWithPlan(transaction, { ...record, card });
+      if (!material || isExplanation) {
+        await insertGoalWithPlan(transaction, { ...record, card });
+        return decision;
+      }
+
+      await insertGoalWithPlan(transaction, {
+        ...record,
+        card,
+        draft: withCardMaterialIntent({ draft, material }),
+      });
+
+      await linkCardMaterial(transaction, { goalId: id, material, userId });
       return decision;
     },
   );
