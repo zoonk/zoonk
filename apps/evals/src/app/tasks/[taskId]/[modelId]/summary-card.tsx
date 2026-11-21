@@ -58,6 +58,14 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
         </Fold>
       )}
 
+      {summary.unscoredImages.length > 0 && (
+        <CaseCount
+          caseIds={summary.unscoredImages}
+          count={summary.unscoredImages.length}
+          text={`Images without a score (${summary.unscoredImages.length})`}
+        />
+      )}
+
       <Fold title="Details">
         <dl className="grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-4">
           <Detail label="Latency p95" value={formatSeconds(stats.latencyP95)} />

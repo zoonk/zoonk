@@ -38,7 +38,13 @@ type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
 export type JudgeCategoryScore = z.infer<typeof judgeCategoryScoreSchema>;
 
-export type ScoreCategory = { id: string; label: string; weight: number; expectations: string };
+export type ScoreCategory = {
+  id: string;
+  label: string;
+  weight: number;
+  expectations: string;
+  readerExpectations?: string;
+};
 
 export type CategoryScore = JudgeCategoryScore & { label: string; weight: number };
 
@@ -187,6 +193,7 @@ export type EvalResult = TokenUsage & {
   keyFlaws?: KeyFlaw[];
   itemsScored?: number;
   listeningReview?: ListeningReview;
+  imageReview?: string;
   duration: number;
 };
 
@@ -280,6 +287,7 @@ export type ScoredResult = {
   keyFlaws?: KeyFlaw[];
   itemsScored?: number;
   listeningReview?: ListeningReview;
+  imageReview?: string;
 };
 
 export type ScoredTaskResults = { taskId: string; modelId: string; results: ScoredResult[] };

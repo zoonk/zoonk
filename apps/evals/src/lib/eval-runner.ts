@@ -120,7 +120,7 @@ async function scoreOutput({
   };
 }
 
-function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): boolean {
+function hasSavedResult(existingResults: ScoredResult[], testCaseId: string): boolean {
   return existingResults.some((result) => result.testCase.id === testCaseId);
 }
 
@@ -146,20 +146,20 @@ export async function runEval(
     throw new Error(`No outputs found for model ${modelId}. Generate outputs first.`);
   }
 
-  logInfo(`Found ${modelOutputs.outputs.length} outputs to score`);
+  logInfo(`Found ${modelOutputs.outputs.length} saved outputs`);
 
   const existingResults = await loadExistingScoredResults(task.id, modelId);
-  logInfo(`Found ${existingResults.length} existing scored results`);
+  logInfo(`Found ${existingResults.length} saved evaluation records`);
 
   const outputsToScore = modelOutputs.outputs.filter(
     (output) =>
-      runIds.has(output.testCaseId) && !isAlreadyScored(existingResults, output.testCaseId),
+      runIds.has(output.testCaseId) && !hasSavedResult(existingResults, output.testCaseId),
   );
 
   logInfo(`Scoring ${outputsToScore.length} outputs`);
 
   if (outputsToScore.length === 0) {
-    logInfo("All outputs already scored");
+    logInfo("Reusing saved evaluation records");
     return combineOutputsAndResults(task.id, modelId, modelOutputs, existingResults);
   }
 
@@ -190,7 +190,7 @@ export async function runEval(
   const allScoredResults = [...existingResults, ...newResults];
 
   await saveScoredResults(task.id, modelId, allScoredResults);
-  logInfo(`Saved ${allScoredResults.length} total scored results`);
+  logInfo(`Saved ${allScoredResults.length} evaluation records`);
 
   return combineOutputsAndResults(task.id, modelId, modelOutputs, allScoredResults);
 }
@@ -217,6 +217,7 @@ function combineOutputsAndResults(
       classification: scored.classification,
       duration: output.duration,
       extraCalls: output.extraCalls,
+      imageReview: scored.imageReview,
       images: output.images,
       inputTokens: output.inputTokens,
       itemsScored: scored.itemsScored,

@@ -5,49 +5,56 @@
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "A virus or germ relates to the course content but shows the threat, not the body's immune defense. That makes it a generic or wrong symbol for immunology, which caps this category at 5.",
+          "reasoning": "A virus or germ relates to immunology but is a generic germ image that fits microbiology, virology or hygiene courses equally well. It does not convey the body's defenses or immune response, so it is capped as generic.",
           "score": 5,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "There is a single centered object with a clean silhouette, smooth matte 3D, soft lighting, a subtle shadow and a plain white background, which fits the app-icon style well. The palette uses only two tones of one blue, which is minimal and slightly toy-like.",
+          "reasoning": "A single centered object with a clean silhouette, rendered in smooth matte 3D with soft lighting and a subtle shadow. It uses two blue tones on a plain white background with no frame or props. Only weakness is the low color contrast.",
           "score": 9,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There is no text, no letters and no numbers anywhere in the image.",
+          "reasoning": "No letters, numbers or captions anywhere.",
           "score": 10,
           "label": "No text",
           "weight": 20
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
       ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3006,
-          "outputTokens": 817,
-          "reasoningTokens": 247
+          "inputTokens": 3402,
+          "outputTokens": 744,
+          "reasoningTokens": 210
         }
       },
       "steps": [
         {
-          "conclusion": "The object is a spiky virus or germ particle. It stands for the pathogen, the 'foe', rather than for immunology and the body's defenses. The expectations asked for something like a shield with a cell or an antibody. A learner would more likely read this as virology or germs, and its rubbery look also suggests a squeaky dog-toy ball.",
+          "conclusion": "The object is a generic spiky virus or germ particle, which shows the 'foe' rather than the body's defenses. It reads as virology or microbiology, not specifically immunology, and lacks any defense cue such as a shield or antibody. A beginner could also take it for a sea urchin or a massage ball.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "The palette is only two tones of one blue with no accent. The object reads somewhat flat and generic, and the soft rubber texture weakens its scientific meaning.",
+          "conclusion": "The palette is all one blue family, so the light-blue spikes have low contrast against the body. The silhouette could look like a soft toy at small sizes.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "Make the immune defense the focus. For example, use a Y-shaped antibody, or a shield with a Y-shaped antibody in front of it. Alternatively, show an antibody binding to the virus as one fused, clean silhouette. Add a contrasting accent color to separate the defender from the germ.",
+          "conclusion": "Show an immune defense symbol, such as a shield bearing a Y-shaped antibody or a shield deflecting a small germ fused into one object. Use a second contrasting color so it reads clearly as the course's 'friend vs. foe' idea.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -64,52 +71,29 @@
       }
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "The crossing curves are a weak nod to supply and demand, but at a glance they read as an X on a generic app tile. The subject only comes through because of the written word. This is a generic object, so the score is capped at 5.",
-          "score": 3,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image shows a single centered object in matte 3D with soft lighting, a shadow and a white background. However, it is a tile containing a dark panel and text rather than a clean iconic silhouette, and it is dominated by heavy dark navy.",
-          "score": 5,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "The word 'Economia' is clearly written on the icon, so this category is capped at 3.",
-          "score": 1,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3013,
-          "outputTokens": 600,
+          "inputTokens": 3409,
+          "outputTokens": 616,
           "reasoningTokens": 0
         }
       },
       "steps": [
         {
-          "conclusion": "The image renders the word 'Economia' in large white letters, which breaks the strict no-text rule. The object is a generic rounded app tile with a frame. Its only economic cue is an abstract supply-and-demand cross. A learner may read that cross as an 'X' or a close/cancel mark rather than economics. There is no money, coin, price or market object.",
+          "conclusion": "The icon has the word 'Economia' printed across the top of the object, even though no text was allowed. The object itself is a generic rounded-square app tile, not an economics object. It has no coin, money, price tag or market. Its only hint of the subject is a pair of crossing curves, a faint supply-and-demand chart that a beginner would not recognize without the caption. The image also reads as an app button with a raised border frame rather than a standalone 3D object.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The dark navy panel takes up most of the object and gives heavy contrast. The design leans on the frame-within-a-frame tile instead of a single strong silhouette. The supply and demand curves are faint and unlabeled, so they read as an X.",
+          "conclusion": "The crossing lines are thin and low-contrast, and the dark navy line almost disappears into the panel, so the one economic cue is weak even at large size. The inner panel inset and the outer tile together create a frame-within-a-frame look.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Remove the text. Replace the tile with one recognizable economic object, such as a coin with a rising arrow or a balance scale holding coins and goods. Keep the smooth matte rendering, use 2 to 4 soft colors and add a subtle shadow on white.",
+          "conclusion": "Replace the tile with a single recognizable economics object, such as a coin with a rising arrow or a balance scale holding a coin and goods. Remove all lettering, and keep the same matte blue palette and soft shadow on pure white.",
           "kind": "potentialImprovements",
           "score": 7
         }
@@ -123,51 +107,62 @@
           "language": "pt",
           "title": "Economia"
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "A bar chart on a clipboard clearly signals data and charts, though it leans toward reporting rather than analysis.",
-          "score": 8,
+          "reasoning": "This is a generic app tile. Its only economic hint is a pair of faint crossing curves that only someone who already knows economics would read as supply and demand. The image relies on the word to convey the subject, so the generic-object cap applies.",
+          "score": 4,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "A single centered object with a clean silhouette, smooth matte 3D, soft shadow, about 3 to 4 colors on a white background, very app-icon-like.",
-          "score": 9,
+          "reasoning": "The background is clean white, with smooth matte 3D, soft shadow and limited colors. However, the object is essentially a framed app tile with a bordered inset panel that holds a caption, which reads as a frame rather than a clean single object.",
+          "score": 4,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "No letters or numbers; the gray lines are abstract placeholders only.",
-          "score": 9,
+          "reasoning": "The word 'Economia' is prominently written on the object, which is disallowed text.",
+          "score": 1,
           "label": "No text",
           "weight": 20
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2996,
-          "outputTokens": 363,
+          "inputTokens": 3392,
+          "outputTokens": 455,
           "reasoningTokens": 0
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The clipboard reads more as a report than as active analysis; the abstract text-line bars add a little visual noise, though they contain no actual letters.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
         {
-          "conclusion": "Adding a magnifying glass element integrated into the chart, or a trend line, would convey analysis and checking conclusions more strongly than a static report clipboard.",
+          "conclusion": "The background reads very slightly off-white or warm at the corners rather than pure white. The gray lines suggest text placeholders, which adds a bit of busyness. The bars sit on the paper without an axis, so the chart reads as a generic report.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the background pure white edge to edge. Drop the gray placeholder lines so the bar chart dominates. A small magnifying-glass motif or a trend line integrated into the chart could make the analysis idea more specific than a report clipboard.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -181,7 +176,37 @@
           "language": "en",
           "title": "Data analysis"
         }
-      }
+      },
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A clipboard with a bar chart clearly reads as data or analytics at a glance. It is slightly report-like, but it is clearly about data.",
+          "score": 8,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "One centered object with a clean silhouette, rendered in smooth matte 3D with soft lighting and a subtle shadow. It uses about 3–4 colors. The background is a near-white, possibly faintly warm. There is no frame.",
+          "score": 8,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "There are no letters or numbers. The gray bars are abstract placeholders, not text.",
+          "score": 10,
+          "label": "No text",
+          "weight": 20
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
+        }
+      ]
     }
   ],
   "taskId": "course-icon"

@@ -1,4 +1,4 @@
-import { calculateScore } from "./score-calculation";
+import { calculateScore, hasValidScore } from "./score-calculation";
 import { getBaseTestCaseId } from "./test-case-runs";
 import { type EvalResult, type KeyFlaw, type TestCase, type TestCaseOutput } from "./types";
 
@@ -37,7 +37,7 @@ function findLowestScoringResult({
   testCaseId: string;
 }): EvalResult | null {
   const matchingResults = results.filter(
-    (result) => !result.listeningReview && getBaseTestCaseId(result.testCase.id) === testCaseId,
+    (result) => hasValidScore(result) && getBaseTestCaseId(result.testCase.id) === testCaseId,
   );
 
   if (matchingResults.length === 0) {
