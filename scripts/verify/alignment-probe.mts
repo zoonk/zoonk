@@ -1137,11 +1137,13 @@ export function readAlignment({
       getComputedStyle(element).getPropertyValue("--button-variant").trim() === "ghost";
 
     /**
-     * Where a strip that scrolls sideways (`HorizontalScroll`) continues, it fades past the column,
-     * the sign that it scrolls: what passes the column on that side is under the fade.
+     * Where a strip that scrolls sideways (`HorizontalScroll`, `SidewaysScroll`) continues, it fades
+     * past the column, the sign that it scrolls: what passes the column on that side is under the fade.
      */
     const unfaded = (element: Element, area: Rect, edges: { left: number; right: number }) => {
-      const scroller = element.closest("[data-slot=horizontal-scroll] > *");
+      const scroller = element.closest(
+        "[data-slot=horizontal-scroll] > *,[data-slot=sideways-scroll]",
+      );
 
       if (!(scroller instanceof HTMLElement)) {
         return area;
@@ -1594,7 +1596,9 @@ export function readAlignment({
     const style = getComputedStyle(element);
 
     return (
-      element.matches("input,textarea,select,[data-slot=horizontal-scroll]") ||
+      element.matches(
+        "input,textarea,select,[data-slot=horizontal-scroll],[data-slot=sideways-scroll]",
+      ) ||
       [style.overflowX, style.overflowY].some((overflow) =>
         ["auto", "scroll"].includes(overflow),
       ) ||
@@ -1609,7 +1613,7 @@ export function readAlignment({
         !(element instanceof HTMLElement) ||
         !present(element) ||
         element.closest(
-          "svg,[data-slot=horizontal-scroll],[data-slot=contribution-calendar-viewport]",
+          "svg,[data-slot=horizontal-scroll],[data-slot=sideways-scroll],[data-slot=contribution-calendar-viewport]",
         )
       ) {
         return [];

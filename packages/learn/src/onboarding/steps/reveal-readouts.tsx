@@ -17,7 +17,7 @@ function Readout({ children, label }: { children: React.ReactNode; label: string
   return (
     <div className="flex min-w-0 flex-col gap-1 py-3 ps-3 first:ps-0 sm:ps-4">
       <span className={READOUT_CLASS}>{children}</span>
-      <span className="text-muted-foreground text-xs leading-snug text-pretty">{label}</span>
+      <span className="text-muted-foreground text-xs leading-snug">{label}</span>
     </div>
   );
 }

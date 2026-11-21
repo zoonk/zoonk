@@ -245,7 +245,7 @@ function Outcome({ fix, viewer }: { fix: ContentFixDetail; viewer: ContentFixVie
 
       {state === "applied" && <RevertForm fixId={fix.id} />}
       {fix.status === "approved" && (
-        <p className="text-muted-foreground max-w-2xl text-sm text-pretty">
+        <p className="text-muted-foreground max-w-2xl text-sm">
           {fix.deciderId === viewer.id
             ? "Applying stopped before it finished. Finishing needs no passkey."
             : `Applying stopped before it finished. Only ${fix.decider?.name ?? "whoever approved it"} can finish it.`}
@@ -302,7 +302,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
           </AdminSection>
 
           {isProposed ? (
-            <p className="text-muted-foreground text-compact max-w-2xl text-pretty">
+            <p className="text-muted-foreground text-compact max-w-2xl">
               Approving applies exactly the changes above and takes a passkey, so only you can apply
               a fix. Rejecting changes nothing.
             </p>

@@ -88,6 +88,7 @@ export async function loadCurrentSection({
     durationMs: answer.durationMs,
     flagged: answer.flagged,
     itemId: answer.itemId,
+    revision: answer.revision ?? answer.id,
   }));
 
   return {

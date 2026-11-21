@@ -55,7 +55,8 @@ function useMockStatusNote(): React.ReactNode {
   const slowLine = useSlowLine();
   const saved = runner.saveStatus === "saved";
   // A hand-in that timed out waiting on saves that keep failing is that one failure, told once.
-  const failed = runner.error && runner.saveStatus !== "retrying";
+  const failed =
+    runner.error && runner.saveStatus !== "retrying" && runner.saveStatus !== "refused";
 
   if (runner.saveStatus === "retrying") {
     return (

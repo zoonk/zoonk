@@ -138,9 +138,7 @@ function PlanChanges({ goals }: { goals: UserGoal[] }) {
                   {formatDate(change.createdAt)}
                 </span>
               </span>
-              <span className="text-muted-foreground max-w-column text-pretty">
-                {change.reason}
-              </span>
+              <span className="text-muted-foreground max-w-column">{change.reason}</span>
               <span className="text-muted-foreground flex flex-wrap items-center gap-x-3 text-xs">
                 <StateMark state={change.status} />
                 {goals.length > 1 ? <span>{goal.title}</span> : null}

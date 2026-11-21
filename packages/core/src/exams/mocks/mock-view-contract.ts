@@ -33,9 +33,11 @@ export type MockDraft = {
   durationMs: number;
   flagged: boolean;
   itemId: string;
+  revision?: string;
 };
 
 export type MockCurrentSection = {
+  changedItemIds: string[];
   changesLeft: number | null;
   deadline: string;
   drafts: MockDraft[];

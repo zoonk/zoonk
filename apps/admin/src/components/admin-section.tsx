@@ -23,9 +23,7 @@ export function AdminSection({
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="flex min-w-0 flex-col gap-0.5">
           <h2 className={cn("text-sm leading-5 font-semibold", titleClassName)}>{title}</h2>
-          {description ? (
-            <p className="text-muted-foreground text-compact text-pretty">{description}</p>
-          ) : null}
+          {description ? <p className="text-muted-foreground text-compact">{description}</p> : null}
         </div>
         {/* A 30 px control hangs past the 20 px title line, so the title and what follows it start
             at one height with or without one, as the section's skeleton draws them. */}

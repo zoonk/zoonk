@@ -6,6 +6,7 @@ import { studySessionErrorCodes } from "./study-session-errors";
 const examErrorCodes = {
   invalidMockOption: "INVALID_MOCK_OPTION",
   mockAnswerLocked: "MOCK_ANSWER_LOCKED",
+  mockAnswerStale: "MOCK_ANSWER_STALE",
   mockExpired: "MOCK_EXPIRED",
   mockFinished: "MOCK_FINISHED",
   mockNotFinished: "MOCK_NOT_FINISHED",
@@ -41,6 +42,7 @@ type ExamRefusal = {
     | "notSpeaking"
     | "plusRequired"
     | "signUpRequired"
+    | "staleAnswer"
     | "timeUp"
     | "tooEarly"
     | "unauthorized"
@@ -127,6 +129,11 @@ const REFUSALS = {
     code: examErrorCodes.plusRequired,
     message: "Mock exams come with Plus",
     status: httpStatus.paymentRequired,
+  },
+  staleAnswer: {
+    code: examErrorCodes.mockAnswerStale,
+    message: "A newer edit to this answer is already saved",
+    status: httpStatus.conflict,
   },
   timeUp: {
     code: examErrorCodes.timeUp,

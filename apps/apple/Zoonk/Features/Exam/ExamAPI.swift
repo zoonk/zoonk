@@ -535,13 +535,14 @@ private struct MockAnswerRequest: Encodable {
 
   init(_ draft: MockDraft) { self.draft = draft }
 
-  private enum CodingKeys: String, CodingKey { case answer, durationMs, flagged, itemId }
+  private enum CodingKeys: String, CodingKey { case answer, durationMs, edit, flagged, itemId }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     // A blank is an explicit null: the API asks for the key.
     try container.encode(draft.isAnswered ? draft.answer : nil, forKey: .answer)
-    try container.encode(min(max(draft.durationMs, 0), 3_600_000), forKey: .durationMs)
+    try container.encode(min(max(draft.durationMs, 0), 24 * 60 * 60 * 1000), forKey: .durationMs)
+    try container.encodeIfPresent(draft.edit, forKey: .edit)
     try container.encode(draft.flagged, forKey: .flagged)
     try container.encode(draft.itemId, forKey: .itemId)
   }

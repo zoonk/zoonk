@@ -4,12 +4,10 @@ import { MAX_ESSAY_CHARACTERS } from "@zoonk/core/exams/essays/contract";
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { InputGroup, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Textarea } from "@zoonk/ui/components/textarea";
-import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { countWords } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { QuestionTitle } from "../_components/question-title";
-import { useAppLocale } from "../_utils/locale";
 import { ESSAY_FIELD_CLASS, useWritingName } from "../essay/essay-labels";
 import { EssayWordCount } from "../essay/essay-word-count";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
@@ -27,30 +25,21 @@ const MAX_TYPED_ANSWER = 500;
 const NUMBER_DIGITS = 4;
 
 function MockNumberAnswer({ question }: { question: MockQuestion }) {
-  const locale = useAppLocale();
   const { runner } = useMockScreen();
   const locked = useLocked();
   const answer = runner.drafts[question.itemId]?.answer ?? null;
 
-  const saved =
-    answer && "number" in answer
-      ? formatLocalizedNumber({
-          grouping: false,
-          locale,
-          maximumFractionDigits: NUMBER_DIGITS,
-          value: answer.number,
-        })
-      : "";
-
   return (
     <NumericAnswerField
-      defaultText={saved}
       entry={question.entry}
+      grouping={false}
       locked={locked}
+      maximumFractionDigits={NUMBER_DIGITS}
       onChange={(value) => runner.write(value === null ? null : { number: value })}
       onSubmit={(value) => runner.answer({ number: value })}
       result={null}
       unit={question.unit}
+      value={answer && "number" in answer ? answer.number : null}
     />
   );
 }

@@ -2,6 +2,7 @@
 
 import { type MockAnswer } from "@zoonk/core/exams/mocks/answer-contract";
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
+import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useEffect, useEffectEvent, useState } from "react";
@@ -15,7 +16,12 @@ import {
   type MockStep,
 } from "./mock-context";
 import { isSavedQuestionExpired } from "./mock-deadline";
-import { getSectionMoves } from "./section-moves";
+import {
+  getChangedAfterAnswer,
+  getChargedPositions,
+  getCurrentSectionMoves,
+  replayKeptAnswers,
+} from "./section-moves";
 import { useMockDrafts } from "./use-mock-drafts";
 import { useSpeakingStart } from "./use-speaking-start";
 
@@ -24,10 +30,6 @@ const STEP_BOUNDS = { slowMs: 10_000, timeoutMs: 45_000 } as const;
 
 /** Essays grade at once, about 9 to 17 s each and up to 24 s on the fallback model. */
 const ESSAY_GRADING_TIMEOUT_MS = 120_000;
-
-function isSameAnswer(first: MockAnswer | null, second: MockAnswer | null): boolean {
-  return JSON.stringify(first) === JSON.stringify(second);
-}
 
 function hasPendingEssays(view: MockView): boolean {
   return view.essays.some((essay) => essay.status === "pending");
@@ -119,11 +121,13 @@ function useShownQuestion({
   currentItemId,
   drafts,
   forwardOnly,
+  sectionTimeUp,
   shownItemId,
 }: {
   currentItemId?: string;
   drafts: ReturnType<typeof useMockDrafts>;
   forwardOnly: boolean;
+  sectionTimeUp: boolean;
   shownItemId?: string;
 }) {
   const synchronize = useEffectEvent((itemId: string | undefined) => {
@@ -138,11 +142,31 @@ function useShownQuestion({
     }
 
     if (currentItemId) {
-      drafts.leave(currentItemId);
+      drafts.leave(currentItemId, !sectionTimeUp);
     }
   });
 
   useEffect(() => synchronize(shownItemId), [shownItemId]);
+}
+
+function stepAfterSaves<T>({
+  flush,
+  request,
+}: {
+  flush: () => Promise<boolean>;
+  request: () => Promise<T>;
+}) {
+  const attempt = new AbortController();
+
+  return settleWithin({
+    ms: STEP_BOUNDS.timeoutMs,
+    request: async () => {
+      const saved = await flush();
+      return saved && !attempt.signal.aborted ? request() : null;
+    },
+  })
+    .catch(() => null)
+    .finally(() => attempt.abort());
 }
 
 export function useMockRunner({
@@ -155,7 +179,7 @@ export function useMockRunner({
   const [view, setView] = useState(initial);
   const [position, setPosition] = useState(initial.current?.resume ?? 0);
   const [reached, setReached] = useState(initial.current?.resume ?? 0);
-  const [changed, setChanged] = useState<readonly number[]>([]);
+  const [changed, setChanged] = useState<readonly number[]>(() => getChargedPositions(initial));
   const [pending, setPending] = useState(false);
   const [questionTimeUp, setQuestionTimeUp] = useState(() => hasExpiredFinalQuestion(initial));
   const sectionTimeUp = useIsSectionExpired(view.current?.deadline);
@@ -165,26 +189,33 @@ export function useMockRunner({
   const { essayGrading, gradeEssays } = useEssayGrading({ actions, setView });
   const speaking = useSpeakingStart({ start: actions.startSpeaking, step });
   const slow = useTakingLong({ active: busy !== null, afterMs: STEP_BOUNDS.slowMs });
-  const drafts = useMockDrafts({ save: actions.answer, view: initial });
+
+  function enter(next: MockView, kept: readonly MockDraft[]) {
+    const place = replayKeptAnswers({ kept, view: next });
+    setPosition(place.reached);
+    setReached(place.reached);
+    setChanged(place.changed);
+  }
+
+  const drafts = useMockDrafts({ onEnter: enter, save: actions.answer, view });
+
   const questions = view.current?.questions ?? [];
   const question = questions[position];
   const shownItemId = timeUp ? undefined : question?.itemId;
-  const changesLeft = view.current?.changesLeft ?? null;
 
-  const moves = getSectionMoves({
+  const moves = getCurrentSectionMoves({
     answered: Boolean(question && isDraftAnswered(drafts.drafts[question.itemId])),
     changed,
-    changesLeft: changesLeft === null ? null : Math.max(0, changesLeft - changed.length),
-    navigation: view.sections.find((section) => section.status === "current")?.navigation ?? null,
     position,
     reached,
-    total: questions.length,
+    view,
   });
 
   useShownQuestion({
     currentItemId: question?.itemId,
     drafts,
     forwardOnly: moves.forwardOnly,
+    sectionTimeUp,
     shownItemId,
   });
 
@@ -194,17 +225,10 @@ export function useMockRunner({
     setError(false);
 
     if (question) {
-      drafts.leave(question.itemId);
+      drafts.leave(question.itemId, !sectionTimeUp);
     }
 
-    const settled = await settleWithin({
-      ms: STEP_BOUNDS.timeoutMs,
-      request: async () => {
-        await drafts.flush();
-        return request();
-      },
-    }).catch(() => null);
-
+    const settled = await stepAfterSaves({ flush: drafts.flush, request });
     const next = settled?.status === "settled" ? settled.value : null;
     setPending(false);
     setBusy(null);
@@ -215,9 +239,6 @@ export function useMockRunner({
     }
 
     drafts.reset(next);
-    setPosition(next.current?.resume ?? 0);
-    setReached(next.current?.resume ?? 0);
-    setChanged([]);
     setQuestionTimeUp(false);
     setView(next);
 
@@ -254,17 +275,24 @@ export function useMockRunner({
   }
 
   function canAnswer(next: MockAnswer | null): boolean {
-    if (!question || timeUp || !moves.canChange(position)) {
+    if (!question || pending || timeUp) {
       return false;
     }
 
-    const saved = drafts.drafts[question.itemId]?.answer ?? null;
-    const isChange = moves.reviewing && position < reached && !isSameAnswer(saved, next);
+    const nextChanged = getChangedAfterAnswer({
+      answer: next,
+      changed,
+      moves,
+      position,
+      reached,
+      saved: drafts.drafts[question.itemId]?.answer ?? null,
+    });
 
-    if (isChange && !changed.includes(position)) {
-      setChanged((current) => [...current, position]);
+    if (nextChanged === null) {
+      return false;
     }
 
+    setChanged(nextChanged);
     return true;
   }
 

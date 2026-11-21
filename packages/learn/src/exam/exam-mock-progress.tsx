@@ -96,7 +96,7 @@ function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean })
 
   return (
     <li className={cn(TITLE_ROW_CLASS, "min-h-11 py-2.5")}>
-      <span className="text-sm leading-snug font-medium text-pretty">{trend.name}</span>
+      <span className="text-sm leading-snug font-medium">{trend.name}</span>
       <span className="flex flex-wrap items-center gap-x-3">
         <span className="flex min-w-0 items-center gap-3">
           {trends ? (
@@ -169,7 +169,7 @@ function ProgressCard({ progress }: { progress: Progress }) {
     <div className="flex flex-col gap-4">
       <LatestMock progress={progress} />
 
-      {line && <p className="text-reading font-medium text-pretty">{line}</p>}
+      {line && <p className="text-reading font-medium">{line}</p>}
 
       {first && latest && progress.mocks.length > 1 && (
         <ProgressLineChart

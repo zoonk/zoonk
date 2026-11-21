@@ -49,25 +49,36 @@ final class MockRun {
   @ObservationIgnored private let store: ExamStore
   @ObservationIgnored private let blockId: String
   @ObservationIgnored private let now: () -> Date
+  @ObservationIgnored private let unsent: UnsentMockDrafts
   @ObservationIgnored private var adopted: String?
   @ObservationIgnored private var shown: (itemId: String, at: ContinuousClock.Instant)?
   @ObservationIgnored private var unsavedText: MockDraft?
   @ObservationIgnored private var textTask: Task<Void, Never>?
   @ObservationIgnored private let taps = ScreenTasks()
 
-  init(store: ExamStore, blockId: String, now: @escaping () -> Date = { .now }) {
+  init(
+    store: ExamStore,
+    blockId: String,
+    defaults: UserDefaults = .standard,
+    now: @escaping () -> Date = { .now }
+  ) {
     self.store = store
     self.blockId = blockId
     self.now = now
     let mock = store.mock(blockId: blockId)
     self.mock = mock
+    let unsent = UnsentMockDrafts(blockId: blockId, defaults: defaults)
+    self.unsent = unsent
+    // A save the session changed under didn't reach the server either: it stays kept and retried.
     queue = MockDraftQueue { [store] draft in
       switch await store.write({ api, token in
         try await api.saveAnswer(token: token, blockId: blockId, draft: draft)
       }) {
-      case .done(true): .stored
-      case .done(false), .obsolete: .refused
-      case .failed: .unreachable
+      case .done(let stored):
+        unsent.drop(draft)
+        return stored ? .stored : .refused
+      case .failed, .obsolete:
+        return .unreachable
       }
     }
   }
@@ -93,7 +104,10 @@ final class MockRun {
   var moves: MockSectionMoves {
     MockSectionMoves(
       answered: question.map { drafts[$0.itemId]?.isAnswered ?? false } ?? false,
-      changed: changed, changesLeft: current?.changesLeft,
+      changed: changed,
+      changesAllowed: current.flatMap { current in
+        current.changesLeft.map { $0 + current.changedItemIds.count }
+      },
       navigation: view?.currentSection?.navigation, position: position, reached: reached,
       total: questions.count)
   }
@@ -113,9 +127,39 @@ final class MockRun {
     initiallyStored = drafts
     position = view.current?.resume ?? 0
     reached = position
-    changed = []
+    let questionIds = (view.current?.questions ?? []).map(\.itemId)
+    changed = (view.current?.changedItemIds ?? []).compactMap { questionIds.firstIndex(of: $0) }
     questionTimeUp = Self.hasExpiredFinalQuestion(view)
     sectionTimeUp = view.current.map { $0.deadline <= .now } ?? false
+    restoreUnsent(view)
+  }
+
+  /// Answers kept on the device go out again in the order they were made, counting a review's
+  /// changes as they did then.
+  private func restoreUnsent(_ view: MockView) {
+    guard view.status == .running, let current = view.current else {
+      if view.status == .finished || view.status == .expired {
+        unsent.clear()
+      }
+
+      return
+    }
+
+    let questionIds = current.questions.map(\.itemId)
+
+    for kept in unsent.restore(for: Set(questionIds), matching: initiallyStored) {
+      guard let index = questionIds.firstIndex(of: kept.itemId) else { continue }
+      let draft = kept.edit == nil ? kept.nextEdit() : kept
+      unsent.keep(draft, inPlace: true)
+      reached = max(reached, index)
+      countChange(draft.itemId, at: index, to: draft.answer)
+      drafts[draft.itemId] = draft
+      queue.add(draft)
+    }
+
+    if moves.forwardOnly {
+      position = reached
+    }
   }
 
   /// A partial answer, or text as typed, stays on the device; the mock saves only its answer.
@@ -125,6 +169,7 @@ final class MockRun {
         self?.partials[question.itemId] ?? self?.drafts[question.itemId]?.answer
       },
       set: { [weak self] answer in
+        guard self?.pending == false else { return }
         self?.partials[question.itemId] = answer?.complete == answer ? nil : answer
         let saved = answer?.complete
 
@@ -139,15 +184,16 @@ final class MockRun {
     guard let question, canAnswer(answer) else { return }
     var draft = withTimeSpent(question.itemId)
     draft.answer = answer
-    persist(draft)
+    persist(draft.nextEdit())
   }
 
   func write(_ answer: PracticeAnswer?) {
     guard let question, canAnswer(answer) else { return }
-    var draft = drafts[question.itemId] ?? .empty(question.itemId)
+    var draft = (drafts[question.itemId] ?? .empty(question.itemId)).nextEdit()
     draft.answer = answer
     drafts[question.itemId] = draft
     unsavedText = draft
+    unsent.keep(draft, inPlace: queue.isWaiting(draft.itemId))
     textTask?.cancel()
     textTask = Task { [weak self] in
       try? await Task.sleep(for: Self.textSaveDelay)
@@ -157,12 +203,12 @@ final class MockRun {
   }
 
   func toggleFlag() {
-    guard let question, !timeUp else { return }
+    guard let question, !pending, !timeUp else { return }
     unsavedText = nil
     saveText()
     var draft = withTimeSpent(question.itemId)
     draft.flagged.toggle()
-    persist(draft)
+    persist(draft.nextEdit())
   }
 
   /// In a forward-only section a question is saved as reached at once, so the ones before it stay
@@ -171,15 +217,18 @@ final class MockRun {
     shown = (itemId, .now)
 
     if moves.forwardOnly, drafts[itemId] == nil {
-      persist(.empty(itemId))
+      persist(MockDraft.empty(itemId).nextEdit())
     }
   }
 
-  func leave(_ itemId: String) {
+  func leave(_ itemId: String, countTime: Bool = true) {
     guard shown?.itemId == itemId else { return }
+    let shouldSave = unsavedText != nil || (countTime && !queue.wasRefused(itemId))
     unsavedText = nil
     saveText()
-    persist(withTimeSpent(itemId))
+    if shouldSave {
+      persist(withTimeSpent(itemId).nextEdit())
+    }
     shown = nil
   }
 
@@ -210,17 +259,22 @@ final class MockRun {
     reached = max(reached, target)
   }
 
+  private func canAnswer(_ next: PracticeAnswer?) -> Bool {
+    guard let question, !pending, !timeUp, moves.canChange(position) else { return false }
+    countChange(question.itemId, at: position, to: next)
+    return true
+  }
+
   /// In a forward-only section's review, changing a left-behind answer uses one of its changes,
   /// once per question.
-  private func canAnswer(_ next: PracticeAnswer?) -> Bool {
-    guard let question, !timeUp, moves.canChange(position) else { return false }
-    let saved = drafts[question.itemId]?.answer
-
-    if moves.reviewing, position < reached, saved != next, !changed.contains(position) {
-      changed.append(position)
+  private func countChange(_ itemId: String, at index: Int, to next: PracticeAnswer?) {
+    guard moves.reviewing, moves.canChange(index), index < reached, !changed.contains(index),
+      drafts[itemId]?.answer != next
+    else {
+      return
     }
 
-    return true
+    changed.append(index)
   }
 
   /// Runs a tap's step, which the run owns rather than the screen: a section handed in on purpose
@@ -306,7 +360,7 @@ final class MockRun {
     failed = false
 
     if let question {
-      leave(question.itemId)
+      leave(question.itemId, countTime: !sectionTimeUp)
     }
 
     saveText()
@@ -316,9 +370,12 @@ final class MockRun {
     }
 
     // Answers are saved first, then the step.
+    let refusals = queue.refusals
     let result: MutationResult<MockStepOutcome?>? = await within(timeout) {
       [queue, store] in
+      queue.retryNow()
       await queue.idle()
+      guard !Task.isCancelled, queue.refusals == refusals else { return .failed(.unavailable) }
       return await store.write { api, token in try await request(api, token, blockId) }
     }
 
@@ -388,7 +445,13 @@ final class MockRun {
 
   private func persist(_ draft: MockDraft) {
     drafts[draft.itemId] = draft
+    unsent.keep(draft, inPlace: queue.isWaiting(draft.itemId))
     queue.add(draft)
+  }
+
+  func stop() {
+    textTask?.cancel()
+    queue.stop()
   }
 
   private func saveText() {
@@ -407,9 +470,11 @@ final class MockRun {
 
     if let shown, shown.itemId == itemId {
       let elapsed = now - shown.at
-      draft.durationMs +=
+      let elapsedMs =
         Int(elapsed.components.seconds * 1000)
         + Int(elapsed.components.attoseconds / 1_000_000_000_000_000)
+      let limit = question?.format == .essay ? 24 * 60 * 60 * 1000 : 3_600_000
+      draft.durationMs = min(draft.durationMs + elapsedMs, limit)
     }
 
     shown = (itemId, now)

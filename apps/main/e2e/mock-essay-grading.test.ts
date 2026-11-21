@@ -8,6 +8,9 @@ import { openAs } from "./study-day";
 const ESSAY_TEXT =
   "O controle externo da administração pública cabe ao Congresso Nacional, com o auxílio do Tribunal de Contas da União, que julga as contas dos administradores e fiscaliza a aplicação dos recursos federais.";
 
+const OFFLINE_EDIT = `${ESSAY_TEXT} A fiscalização também inclui auditorias.`;
+const OTHER_DEVICE_EDIT = `${ESSAY_TEXT} O Congresso exerce o controle externo.`;
+
 async function writtenSitting({ expired }: { expired: boolean }) {
   const { goal, user } = await createAnytimeMockLearner({ plus: true, written: true });
 
@@ -87,6 +90,83 @@ async function writtenSitting({ expired }: { expired: boolean }) {
 }
 
 test.describe("Mock essays need a learner's grading request", () => {
+  test("a written answer survives a failed save and a stale edit stops the first hand-in", async ({
+    browser,
+  }) => {
+    const { mock, user } = await writtenSitting({ expired: false });
+    const page = await openAs(browser, user);
+    const where = { mockExamId: mock.id };
+    const url = `/mock/${mock.id}`;
+    let offline = true;
+
+    try {
+      await page.route("**/*", async (route) => {
+        const request = route.request();
+
+        if (
+          offline &&
+          request.method() === "POST" &&
+          request.headers()["next-action"] &&
+          (request.postData() ?? "").includes('"itemId"')
+        ) {
+          await route.abort();
+          return;
+        }
+
+        await route.fallback();
+      });
+
+      await page.goto(url);
+      const answer = page.getByRole("textbox");
+      await expect(answer).toHaveValue(ESSAY_TEXT);
+      await answer.fill(OFFLINE_EDIT);
+      await page.reload();
+      await expect(answer).toHaveValue(OFFLINE_EDIT);
+
+      await expect(prisma.mockExamAnswer.findFirstOrThrow({ where })).resolves.toMatchObject({
+        answer: { text: ESSAY_TEXT },
+      });
+
+      offline = false;
+
+      await expect
+        .poll(() => prisma.mockExamAnswer.findFirstOrThrow({ where }))
+        .toMatchObject({ answer: { text: OFFLINE_EDIT } });
+
+      // Hold the next edit until the hand-in flushes it.
+      await page.clock.install();
+      await page.clock.pauseAt(new Date(Date.now() + 1000));
+      await answer.fill(ESSAY_TEXT);
+
+      const other = await openAs(browser, user);
+
+      try {
+        await other.goto(url);
+        await other.getByRole("textbox").fill(OTHER_DEVICE_EDIT);
+
+        await expect
+          .poll(() => prisma.mockExamAnswer.findFirstOrThrow({ where }))
+          .toMatchObject({ answer: { text: OTHER_DEVICE_EDIT } });
+      } finally {
+        await other.context().close();
+      }
+
+      await page.getByRole("button", { exact: true, name: "Hand in" }).first().click();
+      await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+      await expect(page.getByText("An answer wasn't saved.")).toBeVisible();
+
+      await expect(prisma.mockExam.findUnique({ where: { id: mock.id } })).resolves.toMatchObject({
+        status: "active",
+      });
+
+      await expect(prisma.mockExamAnswer.findFirstOrThrow({ where })).resolves.toMatchObject({
+        answer: { text: OTHER_DEVICE_EDIT },
+      });
+    } finally {
+      await page.context().close();
+    }
+  });
+
   for (const mode of ["expired", "section"] as const) {
     test(`${mode} timeout closes answers without requesting AI grading`, async ({ browser }) => {
       const expired = mode === "expired";

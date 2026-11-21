@@ -26,10 +26,28 @@ struct MockShape: Hashable, Codable, Sendable {
 }
 
 struct MockDraft: Hashable, Codable, Sendable {
+  struct Edit: Hashable, Codable, Sendable {
+    var base: String?
+    var order: Int
+    var writer: String
+  }
+
   var answer: PracticeAnswer?
   var durationMs: Int
   var flagged: Bool
   var itemId: String
+  var revision: String? = nil
+  var edit: Edit? = nil
+
+  func nextEdit() -> Self {
+    var draft = self
+    if let edit {
+      draft.edit = Edit(base: edit.base, order: edit.order + 1, writer: edit.writer)
+    } else {
+      draft.edit = Edit(base: revision, order: 0, writer: UUID().uuidString.lowercased())
+    }
+    return draft
+  }
 
   /// A number counts even when it's zero.
   var isAnswered: Bool {
@@ -122,6 +140,7 @@ struct MockCurrent: Hashable, Decodable, Sendable {
     var setId: String
   }
 
+  var changedItemIds: [String]
   var changesLeft: Int?
   var deadline: Date
   var drafts: [MockDraft]

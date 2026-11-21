@@ -70,7 +70,7 @@ function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
             <span className="text-faint w-4 shrink-0 font-mono text-xs leading-6 tabular-nums">
               {index + 1}
             </span>
-            <span className="min-w-0 font-medium text-pretty">{chapter.title}</span>
+            <span className="min-w-0 font-medium">{chapter.title}</span>
           </li>
         ))}
       </ol>
@@ -230,7 +230,7 @@ function CourseStartForm({
         {dailyMinutes && <input name={MINUTES_PARAM} type="hidden" value={dailyMinutes} />}
 
         {!blocked && dailyMinutes && (
-          <p className="text-muted-foreground -mt-2 text-sm text-pretty">
+          <p className="text-muted-foreground -mt-2 text-sm">
             {t(
               "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later.",
               { minutes: dailyMinutes },

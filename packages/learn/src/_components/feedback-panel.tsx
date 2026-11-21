@@ -82,7 +82,7 @@ export function FeedbackVerdict({
 export function FeedbackExplanation({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("text-foreground text-sm leading-relaxed text-pretty", className)}
+      className={cn("text-foreground text-sm leading-relaxed", className)}
       data-slot="feedback-explanation"
       {...props}
     />

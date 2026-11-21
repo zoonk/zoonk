@@ -11,7 +11,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -126,7 +126,21 @@ function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
   );
 }
 
-const SCROLL_FADE_PX = 64;
+/** How wide the scroller's edge fades, from its scroll padding: `scroll-fade-x` sets it to the fade, such as `min(12%, 80px)`. */
+function fadeWidth(scroll: HTMLElement): number {
+  const padding = getComputedStyle(scroll).scrollPaddingInlineEnd;
+  const lengths = padding.replaceAll(/min\(|\)/gu, "").split(",");
+
+  return Math.min(
+    ...lengths.map((length) => {
+      const share = length.trim();
+
+      return share.endsWith("%")
+        ? (scroll.clientWidth * Number(share.slice(0, -1))) / 100
+        : Number(share.replace("px", ""));
+    }),
+  );
+}
 
 export function MockQuestionMap({ className }: { className?: string }) {
   const t = useExtracted();
@@ -149,7 +163,7 @@ export function MockQuestionMap({ className }: { className?: string }) {
 
       const viewport = scroll.getBoundingClientRect();
       const cell = current.getBoundingClientRect();
-      const inset = Math.min(SCROLL_FADE_PX, cell.width);
+      const inset = Math.min(fadeWidth(scroll), cell.width);
       const left = cell.left - viewport.left - inset;
       const right = cell.right - viewport.right + inset;
 
@@ -169,11 +183,7 @@ export function MockQuestionMap({ className }: { className?: string }) {
   }
 
   return (
-    <HorizontalScroll
-      box={{ label: t("Questions") }}
-      className={className}
-      labels={{ left: t("Earlier questions"), right: t("Later questions") }}
-    >
+    <SidewaysScroll className={className} label={t("Questions")}>
       <ol className="flex w-max min-w-full gap-2 p-0.5" data-slot="mock-question-map" ref={row}>
         {questions.map((question, index) => (
           <li className="w-11 shrink-0 grow" key={question.itemId}>
@@ -181,7 +191,7 @@ export function MockQuestionMap({ className }: { className?: string }) {
           </li>
         ))}
       </ol>
-    </HorizontalScroll>
+    </SidewaysScroll>
   );
 }
 

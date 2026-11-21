@@ -49,6 +49,9 @@ model MockExamAnswer {
   flagged    Boolean  @default(false)
   durationMs Int      @default(0) @map("duration_ms")
   changes    Int      @default(0) @db.SmallInt
+  revision   String?  @db.Uuid
+  editWriter String?  @map("edit_writer") @db.Uuid
+  editOrder  Int?     @map("edit_order")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 

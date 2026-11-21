@@ -169,7 +169,7 @@ function NameRow({
     <StepRow>
       {icon}
       <span className="shrink-0 font-medium">{label}</span>
-      <span className="text-muted-foreground min-w-0 flex-1 text-end text-pretty">{children}</span>
+      <span className="text-muted-foreground min-w-0 flex-1 text-end">{children}</span>
     </StepRow>
   );
 }

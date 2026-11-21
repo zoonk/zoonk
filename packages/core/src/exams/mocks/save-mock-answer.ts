@@ -1,6 +1,6 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { DbNull, prisma } from "@zoonk/db";
+import { DbNull, type MockExamAnswer, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { judgeForwardOnlySave } from "./_utils/mock-navigation";
 import { findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
@@ -21,6 +21,7 @@ export type SaveMockAnswerResult = {
     | "notFound"
     | "notRunning"
     | "saved"
+    | "staleAnswer"
     | "timeUp"
     | "unauthorized";
 };
@@ -89,6 +90,34 @@ async function judgeMove({
   });
 }
 
+function keptEditStatus({
+  input,
+  saved,
+}: {
+  input: MockAnswerInput;
+  saved: MockExamAnswer | null;
+}): "saved" | "staleAnswer" | null {
+  const { edit } = input;
+
+  if (!edit) {
+    return null;
+  }
+
+  if (saved?.editWriter !== edit.writer) {
+    return (saved?.revision ?? saved?.id) === edit.base ? null : "staleAnswer";
+  }
+
+  if ((saved.editOrder ?? -1) < edit.order) {
+    return null;
+  }
+
+  return saved.editOrder === edit.order &&
+    isDeepStrictEqual(saved.answer, input.answer) &&
+    saved.flagged === input.flagged
+    ? "saved"
+    : "staleAnswer";
+}
+
 export async function saveMockAnswer({
   blockId,
   input,
@@ -139,7 +168,14 @@ export async function saveMockAnswer({
       )
     : input.durationMs;
 
-  const draft = { answer: input.answer ?? DbNull, durationMs, flagged: input.flagged };
+  const draft = {
+    answer: input.answer ?? DbNull,
+    durationMs,
+    editOrder: input.edit?.order ?? null,
+    editWriter: input.edit?.writer ?? null,
+    flagged: input.flagged,
+    revision: crypto.randomUUID(),
+  };
 
   return writeLearnerChange<SaveMockAnswerResult>({ userId: found.owned.userId }, async (tx) => {
     const current = await tx.mockExam.findUnique({
@@ -161,8 +197,14 @@ export async function saveMockAnswer({
 
     const where = { mockItem: { itemId: input.itemId, mockExamId: mock.id } };
     const saved = await tx.mockExamAnswer.findUnique({ where });
+    const status = keptEditStatus({ input, saved });
+
+    if (status) {
+      return unchanged({ status });
+    }
 
     if (
+      !input.edit &&
       saved &&
       isDeepStrictEqual(saved.answer, input.answer ?? null) &&
       saved.durationMs === durationMs &&

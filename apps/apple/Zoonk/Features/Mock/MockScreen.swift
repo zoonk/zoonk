@@ -54,7 +54,12 @@ private struct MockStage: View {
           finishedHere = true
         }
       }
-      .onDisappear { run.queue.stop() }
+      .onChange(of: scenePhase) { _, phase in
+        if phase == .active {
+          run.queue.retryNow()
+        }
+      }
+      .onDisappear { run.stop() }
   }
 
   @ViewBuilder
@@ -160,7 +165,7 @@ extension MockRun {
       break
     }
 
-    if failed {
+    if failed && save != .refused {
       return BarNote(
         save == .saved
           ? String(

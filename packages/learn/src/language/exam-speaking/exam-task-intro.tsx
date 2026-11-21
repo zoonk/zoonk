@@ -63,7 +63,7 @@ export function ExamTaskIntro({
         >
           {examTask.task.name}
         </h1>
-        <p className="text-pretty">{examTask.card.summary}</p>
+        <p>{examTask.card.summary}</p>
       </header>
 
       <CharacterRow detail={roleNoun(examTask.task.role)} name={character.name} />

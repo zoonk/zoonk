@@ -16,6 +16,7 @@ function getRetryDelay(attempt: number): number {
 export function createDraftSaveQueue<TDraft>({
   keyOf,
   onFailed,
+  onRefused,
   onStatus,
   onStored,
   save,
@@ -23,17 +24,20 @@ export function createDraftSaveQueue<TDraft>({
   keyOf: (draft: TDraft) => string;
   /** A refused answer, or one that didn't get through; it stays failed until it's stored. */
   onFailed: (draft: TDraft) => void;
+  onRefused: (draft: TDraft) => void;
   onStatus: (status: DraftSaveStatus) => void;
   onStored: (draft: TDraft) => void;
-  /** True once stored, false when refused; rejects when it didn't get through. */
-  save: (draft: TDraft) => Promise<boolean>;
+  /** True once stored, false when refused; null or a rejection when it didn't get through. */
+  save: (draft: TDraft) => Promise<boolean | null>;
 }) {
   const waiting: TDraft[] = [];
   const idleWaiters: (() => void)[] = [];
   let sending = false;
   let attempt = 0;
   const refused = new Set<string>();
+  let refusals = 0;
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
+  let stopped = false;
 
   function getStatus(): DraftSaveStatus {
     if (retryTimer) {
@@ -80,7 +84,7 @@ export function createDraftSaveQueue<TDraft>({
   async function sendNext(): Promise<void> {
     const draft = waiting.shift();
 
-    if (sending || retryTimer || draft === undefined) {
+    if (stopped || sending || retryTimer || draft === undefined) {
       if (draft !== undefined) {
         waiting.unshift(draft);
       }
@@ -104,8 +108,11 @@ export function createDraftSaveQueue<TDraft>({
     }
 
     if (stored === null) {
-      keepForRetry(draft);
-      scheduleRetry();
+      if (!stopped) {
+        keepForRetry(draft);
+        scheduleRetry();
+      }
+
       settle();
       return;
     }
@@ -117,13 +124,36 @@ export function createDraftSaveQueue<TDraft>({
       onStored(draft);
     } else {
       refused.add(keyOf(draft));
+      refusals += 1;
+      onRefused(draft);
     }
 
     await sendNext();
   }
 
+  function idle(): Promise<void> {
+    if (!isBusy()) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      idleWaiters.push(resolve);
+    });
+  }
+
+  function retryNow() {
+    if (!retryTimer) {
+      return;
+    }
+
+    clearTimeout(retryTimer);
+    retryTimer = null;
+    void sendNext();
+  }
+
   return {
     add(draft: TDraft) {
+      stopped = false;
       const key = keyOf(draft);
       const index = waiting.findIndex((other) => keyOf(other) === key);
 
@@ -135,30 +165,38 @@ export function createDraftSaveQueue<TDraft>({
 
       void sendNext();
     },
+    async flush(): Promise<boolean> {
+      const before = refusals;
+      retryNow();
+      await idle();
+      return before === refusals;
+    },
     /** A handed-in section's answers can't be saved again, so its refusals have nothing left to ask. */
     forgetRefusals() {
       refused.clear();
       settle();
     },
     /** Resolves once every answer given so far is stored or refused. */
-    idle(): Promise<void> {
-      if (!isBusy()) {
-        return Promise.resolve();
-      }
-
-      return new Promise((resolve) => {
-        idleWaiters.push(resolve);
-      });
-    },
+    idle,
     isBusy,
-    retryNow() {
-      if (!retryTimer) {
-        return;
-      }
-
-      clearTimeout(retryTimer);
-      retryTimer = null;
-      void sendNext();
+    /** Whether a newer answer to this key would take the place of one still in line. */
+    isWaiting(key: string): boolean {
+      return waiting.some((other) => keyOf(other) === key);
     },
+    retryNow,
+    /**
+     * Holds sends until the next answer, so a closed screen's can't land after a reopened one's.
+     * What was in line stays on the device, and a screen shown again sends it in the device's order.
+     */
+    stop() {
+      stopped = true;
+      waiting.length = 0;
+
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+        retryTimer = null;
+      }
+    },
+    wasRefused: (key: string) => refused.has(key),
   };
 }

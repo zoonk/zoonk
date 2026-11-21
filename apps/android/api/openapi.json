@@ -21197,7 +21197,7 @@
             }
           },
           "409": {
-            "description": "The mock isn't running, the time ran out, or a forward-only section keeps that answer (MOCK_ANSWER_LOCKED)",
+            "description": "The mock isn't running, the time ran out, a forward-only section keeps that answer (MOCK_ANSWER_LOCKED), or a newer edit is already saved (MOCK_ANSWER_STALE)",
             "content": {
               "application/json": {
                 "schema": {
@@ -31928,6 +31928,34 @@
             "minimum": 0,
             "maximum": 86400000,
             "description": "Total time spent on the question so far"
+          },
+          "edit": {
+            "type": "object",
+            "properties": {
+              "base": {
+                "description": "The saved answer revision this edit started from, when one existed",
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "order": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647,
+                "description": "The order of this edit among edits by the same writer"
+              },
+              "writer": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "Identifies the client editing this draft"
+              }
+            },
+            "required": [
+              "order",
+              "writer"
+            ],
+            "additionalProperties": false
           },
           "flagged": {
             "type": "boolean",
@@ -92329,6 +92357,15 @@
             "description": "The running section, never with answers",
             "type": "object",
             "properties": {
+              "changedItemIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "description": "In a forward-only section's review: the questions whose answer the review already changed. Each may change again without using another of `changesLeft`; empty otherwise"
+              },
               "changesLeft": {
                 "nullable": true,
                 "description": "In a forward-only section with a review at its end (`navigation.answerChanges`): the answers the review may still change; null without a limit",
@@ -92363,6 +92400,11 @@
                       "type": "boolean"
                     },
                     "itemId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
                       "type": "string",
                       "format": "uuid",
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
@@ -92564,6 +92606,7 @@
               }
             },
             "required": [
+              "changedItemIds",
               "changesLeft",
               "deadline",
               "drafts",
