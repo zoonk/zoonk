@@ -2,10 +2,11 @@ import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type BuildPlanInput } from "./build-plan";
 import { type scheduleCarriedAndRest } from "./carried-and-rest";
 import { markAfterCarried } from "./carried-schedule";
+import { getSkillArea } from "./graph-areas";
 import { getOneDayStudy, toDayMinutes } from "./interval-study-minutes";
 import { toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
-import { type QueueUnit } from "./plan-units";
+import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import {
   type FixedEvent,
   type PlanDay,
@@ -148,6 +149,46 @@ function holdWholeOn({ day, unit }: { day: PlanDay; unit: QueueUnit }): Schedule
   };
 }
 
+/** The opened session already teaches this lesson, so a re-plan whose queue no longer picks it keeps it from the saved plan. */
+function toSavedLessonUnit({
+  input,
+  key,
+}: {
+  input: BuildPlanInput;
+  key: string;
+}): QueueUnit | null {
+  const item = input.items.find(
+    (entry) =>
+      entry.kind === "lesson" &&
+      entry.status === "todo" &&
+      entry.lessonId !== null &&
+      getItemKey(entry) === key,
+  );
+
+  if (!item?.lessonId) {
+    return null;
+  }
+
+  const lessonId = item.lessonId;
+  const lesson = input.lessons.find((entry) => entry.lessonId === lessonId);
+  const skill = input.graph.skills.find((entry) => entry.skillId === item.skillId);
+  const minutes = lesson?.minutes ?? readSelectedItemFacts(item.facts)?.minutes;
+
+  return {
+    area: skill
+      ? getSkillArea({ graph: input.graph, skill })
+      : (input.graph.phases[item.phase]?.name ?? ""),
+    chapterId: item.chapterId,
+    key,
+    kind: "lesson",
+    lessonId,
+    minutes: (minutes ?? DEFAULT_LESSON_MINUTES) * input.paceFactor,
+    phase: item.phase,
+    skillId: item.skillId,
+    title: lesson?.title ?? item.titleSnapshot,
+  };
+}
+
 /** The rest still fills today's time left after the opened work, so the day before an exam keeps the lessons it can't move; an event the opened day doesn't hold leaves today. */
 function holdOpenedDay({
   days,
@@ -169,7 +210,7 @@ function holdOpenedDay({
   const byKey = new Map(units.map((unit) => [unit.key, unit]));
 
   const held = [...opened].flatMap((key) => {
-    const unit = byKey.get(key);
+    const unit = byKey.get(key) ?? toSavedLessonUnit({ input, key });
     return unit ? [holdWholeOn({ day, unit })] : [];
   });
 
