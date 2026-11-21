@@ -4,14 +4,16 @@ import { CircleSlash2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { StepDetail, StepHeader, StepTitle } from "../_components/step-card";
+import { SignUpMainAction } from "../_components/subscribe-gate";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions, TaskStopMessage } from "../_components/task-layout";
+import { useFinishTask } from "../essay/use-finish-essay";
 import { FollowedRun } from "../generation/generation-follower";
-import { type GenerationRun } from "../generation/generation-run";
+import { type GenerationRun, hasStopped } from "../generation/generation-run";
 import { IndeterminateWait } from "../generation/indeterminate-wait";
 import { useLearnAnalytics } from "../learn-context";
-import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
-import { getRefusedTaskPlace } from "./writing-header";
+import { TaskFrame, TaskMainButton } from "../shell/task-frame";
+import { getRefusedTaskPlace, useWritingTaskTitle } from "./writing-header";
 import { WritingRefused } from "./writing-refused";
 import { type WritingStartAnswer } from "./writing-screen";
 import { type TomorrowTask } from "./writing-types";
@@ -22,18 +24,19 @@ export { type WritingTaskPlace, getRefusedTaskPlace } from "./writing-header";
 
 export type WritingStartState =
   | { generationId: string; unit?: WritingUnit }
-  | { status: "failed" | "taskRemoved" }
+  | { status: "failed" | "signUpRequired" | "taskRemoved" | "unasked" }
   | { status: "limitReached"; task: TomorrowTask | null };
 
-function toStopState(
-  answer: Exclude<WritingStartAnswer, { status: "ready" | "writing" }>,
+/** How a start answered, as the screen shows it; `ready` opens the question instead. */
+export function toWritingStartState(
+  answer: Exclude<WritingStartAnswer, { status: "ready" }>,
 ): WritingStartState {
-  if (answer.status === "taskRemoved") {
-    return { status: "taskRemoved" };
+  if (answer.status === "writing") {
+    return { generationId: answer.generationId, unit: answer.unit };
   }
 
   if (answer.status !== "limitReached") {
-    return { status: "failed" };
+    return { status: answer.status };
   }
 
   const { task } = answer;
@@ -71,16 +74,25 @@ export function useWritingWaitViewed({
   }, [generationId, surface, track]);
 }
 
-/** The exam's notice was read again and dropped this task: nothing was admitted, so only the way back is left. */
-function WritingTaskRemoved({ hrefs }: { hrefs: { exit: string } }) {
+/** The exam's notice was read again and dropped this task: nothing was admitted, so the learner moves on. */
+function WritingTaskRemoved({
+  hrefs,
+  onContinue,
+}: {
+  hrefs: { exit: string };
+  onContinue: () => Promise<boolean>;
+}) {
   const t = useExtracted();
+  const finishing = useFinishTask(onContinue);
 
   return (
     <TaskFrame
       exitHref={hrefs.exit}
       footer={
         <TaskActions>
-          <TaskMainLink href={hrefs.exit}>{t("Today")}</TaskMainLink>
+          <TaskMainButton busy={finishing.pending} onClick={() => void finishing.finish()}>
+            {t("Continue")}
+          </TaskMainButton>
         </TaskActions>
       }
       headerTitle={null}
@@ -118,10 +130,66 @@ function WritingPromptWait({ run, unit }: { run: GenerationRun; unit?: WritingUn
   );
 }
 
+function StartMessage({ state, task }: { state: WritingStartState; task: TomorrowTask }) {
+  const t = useExtracted();
+  const writingTitle = useWritingTaskTitle();
+
+  if ("status" in state && state.status === "signUpRequired") {
+    return (
+      <StepHeader className="gap-3">
+        <StepTitle>{t("This needs a free account")}</StepTitle>
+      </StepHeader>
+    );
+  }
+
+  if ("status" in state && state.status === "failed") {
+    return (
+      <StepHeader className="gap-3">
+        <StepTitle>
+          {task.unit === "drill"
+            ? t("We couldn't write your exercise")
+            : t("We couldn't write your question")}
+        </StepTitle>
+        <StepDetail>{t("Nothing was lost. Try again in a moment.")}</StepDetail>
+      </StepHeader>
+    );
+  }
+
+  return (
+    <StepHeader className="gap-3">
+      <StepTitle>{writingTitle({ ...task, task: task.writingTask })}</StepTitle>
+    </StepHeader>
+  );
+}
+
+function StartAction({
+  asking,
+  onAsk,
+  state,
+}: {
+  asking: boolean;
+  onAsk: () => void;
+  state: WritingStartState;
+}) {
+  const t = useExtracted();
+
+  if ("status" in state && state.status === "signUpRequired") {
+    return <SignUpMainAction />;
+  }
+
+  return (
+    <TaskActions>
+      <TaskMainButton busy={asking} onClick={onAsk}>
+        {"status" in state && state.status === "failed" ? t("Try again") : t("Write")}
+      </TaskMainButton>
+    </TaskActions>
+  );
+}
+
 /**
  * Before the question exists: it's being written, its writing failed, the day's extra grades are
- * used, or the task left the exam. Asking again is always the learner's tap, or the run they started
- * ending.
+ * used, the task left the exam, or nothing was asked yet in this tab. Asking is always the
+ * learner's tap here, or the run their tap started ending.
  */
 export function WritingStartScreen({
   finish,
@@ -129,6 +197,7 @@ export function WritingStartScreen({
   initial,
   onReady,
   start,
+  task,
 }: {
   finish: () => Promise<boolean>;
   hrefs: { exit: string };
@@ -136,12 +205,13 @@ export function WritingStartScreen({
   /** The question is ready: read the page again. */
   onReady: () => void;
   start: () => Promise<WritingStartAnswer>;
+  task: TomorrowTask;
 }) {
   const t = useExtracted();
   const [state, setState] = useState(initial);
   const [asking, setAsking] = useState(false);
   const generationId = "generationId" in state ? state.generationId : null;
-  const unit = "unit" in state ? state.unit : undefined;
+  const unit = ("unit" in state ? state.unit : undefined) ?? task.unit;
 
   useWritingWaitViewed({ generationId, surface: "practice" });
 
@@ -155,55 +225,58 @@ export function WritingStartScreen({
       return undefined;
     }
 
-    if (answer.status === "writing") {
-      setState({ generationId: answer.generationId, unit: answer.unit ?? unit });
-      return answer.generationId;
-    }
-
-    setState(toStopState(answer));
-    return null;
+    const next = toWritingStartState(answer);
+    setState("generationId" in next ? { ...next, unit: next.unit ?? unit } : next);
+    return "generationId" in next ? next.generationId : null;
   }
 
   if ("status" in state && state.status === "limitReached") {
-    return <WritingRefused hrefs={hrefs} onContinue={finish} task={state.task} />;
+    return <WritingRefused hrefs={hrefs} onContinue={finish} task={state.task ?? task} />;
   }
 
   if ("status" in state && state.status === "taskRemoved") {
-    return <WritingTaskRemoved hrefs={hrefs} />;
+    return <WritingTaskRemoved hrefs={hrefs} onContinue={finish} />;
+  }
+
+  const headerTitle = (
+    <TaskHeaderTitle title={unit === "drill" ? t("Writing practice") : t("Written answer")} />
+  );
+
+  if (generationId) {
+    return (
+      <FollowedRun
+        generationId={generationId}
+        key={generationId}
+        kind="writingPrompt"
+        onReady={() => void ask()}
+        restart={ask}
+      >
+        {(run) => (
+          <TaskFrame
+            exitHref={hrefs.exit}
+            footer={
+              hasStopped(run) && (
+                <TaskActions>
+                  <TaskMainButton onClick={() => run.retry?.()}>{t("Try again")}</TaskMainButton>
+                </TaskActions>
+              )
+            }
+            headerTitle={headerTitle}
+          >
+            <WritingPromptWait run={run} unit={unit} />
+          </TaskFrame>
+        )}
+      </FollowedRun>
+    );
   }
 
   return (
     <TaskFrame
       exitHref={hrefs.exit}
-      footer={
-        generationId ? null : (
-          <TaskActions>
-            <TaskMainButton busy={asking} onClick={() => void ask()}>
-              {t("Try again")}
-            </TaskMainButton>
-          </TaskActions>
-        )
-      }
-      headerTitle={
-        <TaskHeaderTitle title={unit === "answer" ? t("Written answer") : t("Writing practice")} />
-      }
+      footer={<StartAction asking={asking} onAsk={() => void ask()} state={state} />}
+      headerTitle={headerTitle}
     >
-      {generationId ? (
-        <FollowedRun
-          generationId={generationId}
-          key={generationId}
-          kind="writingPrompt"
-          onReady={() => void ask()}
-          restart={ask}
-        >
-          {(run) => <WritingPromptWait run={run} unit={unit} />}
-        </FollowedRun>
-      ) : (
-        <StepHeader className="gap-3">
-          <StepTitle>{t("We couldn't write your question")}</StepTitle>
-          <StepDetail>{t("Nothing was lost. Try again in a moment.")}</StepDetail>
-        </StepHeader>
-      )}
+      <StartMessage state={state} task={task} />
     </TaskFrame>
   );
 }
