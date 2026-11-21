@@ -15,7 +15,7 @@ import { type MockPlanOfferInput, mockResultSchema } from "./mock-contract";
 export type AdaptPlanFromMockResult =
   | { changeId: string | null; lessonsSkipped: number; status: "applied" }
   | { reason: UnchangedFocusReason | null; status: "unchanged" }
-  | { status: "notFound" | "unauthorized" };
+  | { status: "conflict" | "notFound" | "unauthorized" };
 
 export async function adaptPlanFromMock({
   blockId,
@@ -95,7 +95,11 @@ export async function adaptPlanFromMock({
     return { changeId: changed.change?.id ?? null, lessonsSkipped: 0, status: "applied" };
   }
 
-  if (changed.status === "notFound" || changed.status === "unauthorized") {
+  if (
+    changed.status === "conflict" ||
+    changed.status === "notFound" ||
+    changed.status === "unauthorized"
+  ) {
     return changed;
   }
 

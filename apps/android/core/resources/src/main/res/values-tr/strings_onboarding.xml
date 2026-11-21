@@ -48,6 +48,7 @@
   "onboarding_course_chapters": "74f2c22e170847c6c1fb398017606d99f0e59d5b1d7c786e91a75234a149f84a",
   "onboarding_course_daily_minutes": "db0e785f9f27f3af8211a94e83b7c387167c0935745aa822fed52eaa844b8a4e",
   "onboarding_course_failed": "02ae033320d07994f8ceb68a917ba95cb9d7111dd9ca042d412c450c63d1567e",
+  "onboarding_course_language_note": "3722d8a7334b84714a54d28d9608b1073eec0adddd9bf91936134009c907ec93",
   "onboarding_course_lessons": "d1943d3d9b647c01df111dd35d5d13e166f6a74950257b4e8d7e27498044ffdd",
   "onboarding_course_more_chapters": "ee57a552b18c8716ac11437a0dddf1ce87fb47124384223f68b0816b0fb092aa",
   "onboarding_course_start_free": "790e1bbf2860a5d7ef19c9cf8756495692bc07f07d41abbbe146d72de2520382",
@@ -687,6 +688,8 @@
         <item quantity="one">Şimdilik günde %d dakika. Sonraki adımlarda bu süreyi değiştirebilirsin.</item>
         <item quantity="other">Şimdilik günde %d dakika. Sonraki adımlarda bu süreyi değiştirebilirsin.</item>
     </plurals>
+    <!-- Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence -->
+    <string name="onboarding_course_language_note">Bu kursun dili %1$s. Derslerin dili %2$s olacak.</string>
     <string name="onboarding_course_build">Planımı oluştur</string>
     <!-- Read out while Build my plan starts the course. -->
     <string name="onboarding_course_starting">Planını başlatıyoruz…</string>

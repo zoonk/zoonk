@@ -19,7 +19,7 @@ import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { followPlanToday } from "../../plans/_utils/follow-plan-today";
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { settleNewPlan } from "../../plans/_utils/recommended-bases";
-import { afterPlanInputWrite } from "../../plans/plan-conflict";
+import { unlessPlanConflict } from "../../plans/plan-conflict";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { updateLearningProfile } from "../../profile/update-learning-profile";
 import { answerProfileOnboardingQuestion } from "./_utils/answer-profile-onboarding-question";
@@ -64,7 +64,7 @@ async function saveProfileAnswer(input: OnboardingAnswerInput): Promise<"invalid
 }
 
 async function followSavedPlan(goalId: string): Promise<void> {
-  await afterPlanInputWrite(async () => {
+  await unlessPlanConflict(async () => {
     const context = await loadPlanAtToken(goalId);
 
     if (context) {

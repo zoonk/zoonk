@@ -709,7 +709,7 @@ describe("other exams", () => {
     vi.useRealTimers();
   });
 
-  it("gives a public exam days away the same days, its mock opening the practice and a light review the day before", async () => {
+  it("gives a public exam days away the same days, its mock taking the one practice day and a light review the day before", async () => {
     const { goal, plan } = await setup({ days: 3, isPrivate: false });
     const items = await loadItems(plan.id);
     const view = await readPlanView(goal.id);
@@ -720,7 +720,7 @@ describe("other exams", () => {
 
     expect(view.phases.map((phase) => phase.short?.focus)).toStrictEqual([
       "mapAndGaps",
-      "mockAndPractice",
+      "mockAndReview",
       "lightReview",
     ]);
 

@@ -24,7 +24,7 @@ import { getBossKey } from "../planner/plan-units";
 import { getRunEffect, withBuiltSettings } from "../planner/run-outcome";
 import { type SelectedItemFacts, listSelectedItemFacts } from "../planner/selected-item-facts";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
-import { getSettledSkillIds } from "../planner/settled-skills";
+import { getSettledSkillIds, getStartedSkillIds } from "../planner/settled-skills";
 import { loadRunBossFacts } from "./boss-plan-facts";
 import { type PlanCarrySnapshot, isTodayShown, loadPlanCarryOver } from "./carried-lessons";
 import { choosePlanSettings } from "./choose-plan-pace";
@@ -104,17 +104,43 @@ export type ComputePlanRequest = {
   studyScheduleAt?: StudyScheduleAt;
 };
 
-function withPastBasicsLessons<
-  Loaded extends Pick<Awaited<ReturnType<typeof loadPlannerInputs>>, "lessons" | "missedSkillIds">,
->({ graph, loaded, state }: { graph: PlanState["graph"]; loaded: Loaded; state: PlanState }) {
+function shapePlannerInputs<
+  Loaded extends Pick<
+    Awaited<ReturnType<typeof loadPlannerInputs>>,
+    "bands" | "lessons" | "missedSkillIds"
+  >,
+>({
+  context,
+  loaded,
+  resolved,
+  state,
+}: {
+  context: PlanContext;
+  loaded: Loaded;
+  resolved: PlanState["graph"];
+  state: PlanState;
+}) {
+  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
+    bands: loaded.bands,
+    goal: context.goal,
+    graph: resolved,
+    keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
+    settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
+    state,
+  });
+
   return {
-    ...loaded,
-    lessons: keepPastBasicsBands({
-      graph,
-      keepSkillIds: loaded.missedSkillIds,
-      lessons: loaded.lessons,
-      pastBasicsAreas: state.settings.pastBasicsAreas,
-    }),
+    fullGraph,
+    graph,
+    inputs: {
+      ...loaded,
+      lessons: keepPastBasicsBands({
+        graph,
+        keepSkillIds: loaded.missedSkillIds,
+        lessons: loaded.lessons,
+        pastBasicsAreas: state.settings.pastBasicsAreas,
+      }),
+    },
   };
 }
 
@@ -168,15 +194,7 @@ export async function computePlan({
     loadQuickBaseLessons(state.settings),
   ]);
 
-  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
-    bands: loaded.bands,
-    goal: context.goal,
-    graph: resolved,
-    settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
-    state,
-  });
-
-  const inputs = withPastBasicsLessons({ graph, loaded, state });
+  const { fullGraph, graph, inputs } = shapePlannerInputs({ context, loaded, resolved, state });
 
   const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
   const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });

@@ -9,6 +9,7 @@ import {
   addressFormTemplate,
   getAddressFormPrompt,
 } from "../_utils/address-form";
+import { answerStreamOptions } from "../_utils/answer-stream";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonQuestionPriorTurn } from "../lessons/lesson-question";
 import { type PlanScopeContext, type TutorScreenContext } from "../lessons/lesson-question-context";
@@ -268,11 +269,6 @@ export function joinStepTexts(steps: readonly { text: string }[]): string {
     .join("\n\n");
 }
 
-/** Provider errors can contain private prompt data; the delivery adapter logs safe identifiers. */
-function suppressProviderError() {
-  return Promise.resolve();
-}
-
 /** For evals: the same prompt, tools and steps, without streaming. */
 export async function generateGoalTutorAnswer({
   analytics,
@@ -340,7 +336,7 @@ export function streamGoalTutorAnswer({ analytics, ...input }: GoalTutorInput) {
           model: GOAL_TUTOR_MODEL,
           useFallback: true,
         }),
-        onError: suppressProviderError,
+        ...answerStreamOptions(GOAL_TUTOR_TASK),
       }),
     systemPrompt: getPromptVersionText(input),
     task: GOAL_TUTOR_TASK,

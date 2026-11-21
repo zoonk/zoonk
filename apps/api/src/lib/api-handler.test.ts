@@ -1,3 +1,4 @@
+import { PlanConflictError } from "@zoonk/core/plans/conflict";
 import { assertTargetDates } from "@zoonk/core/plans/target-date-range";
 import { logError } from "@zoonk/utils/logger";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -117,6 +118,22 @@ describe(withApiErrorBoundary, () => {
 
     await expect(body.json()).resolves.toMatchObject({
       error: { code: "VALIDATION_ERROR", details: [{ path: ["minutes"] }] },
+    });
+
+    expect(logError).not.toHaveBeenCalled();
+  });
+
+  it("answers a plan write other writes kept winning as a 409 to send again, not a server error", async () => {
+    const wrappedHandler = withApiErrorBoundary(async () => {
+      throw new PlanConflictError();
+    });
+
+    const response = await wrappedHandler();
+
+    expect(response.status).toBe(409);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "PLAN_CHANGE_CONFLICT" },
     });
 
     expect(logError).not.toHaveBeenCalled();

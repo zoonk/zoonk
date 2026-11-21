@@ -3,7 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { settleFinishedChapters } from "../../mind-maps/finished-chapters";
 import { announceSharedTestOuts } from "../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
-import { afterPlanInputWrite } from "../../plans/plan-conflict";
+import { unlessPlanConflict } from "../../plans/plan-conflict";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { skipTestedOutBlocks } from "../../sessions/_utils/skip-tested-out-blocks";
 import { type FinishedChapter } from "../../sessions/completion-contract";
@@ -215,7 +215,7 @@ export async function markPlanItemsTestedOut({
       timeZone,
     });
 
-  const announcement = extraWrites ? await announce() : await afterPlanInputWrite(announce);
+  const announcement = extraWrites ? await announce() : await unlessPlanConflict(announce);
 
   if (!announcement) {
     await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds: announced });

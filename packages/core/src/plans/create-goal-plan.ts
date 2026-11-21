@@ -1,10 +1,11 @@
 import "server-only";
-import { DbNull, type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
-import { getString, isJsonObject } from "@zoonk/utils/json";
+import { type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getKeptMonthStart } from "../exams/kept-month";
+import { unpinnedCourseSourceId } from "../goals/course-start-details";
 import { type GoalRebuildFollowUp } from "../goals/goal-rebuild-follow-up";
 import {
   getAnsweredQuestions,
@@ -17,6 +18,7 @@ import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import { ensureQuickBaseLessons, hasQuickBases } from "./_utils/quick-bases";
 import { planOnRecommendedBases } from "./_utils/recommended-bases";
 import { type ComputedPlan, computePlan } from "./_utils/replan";
+import { savePlanPrimaryCourse } from "./_utils/save-plan-primary-course";
 import { trackPlanCreated } from "./_utils/track-plan-created";
 import { checkNoticeLanding, getNoticeWaitEnd } from "./notice-wait";
 import { withPlanRetry } from "./plan-conflict";
@@ -34,7 +36,10 @@ export type GoalPlanCreation = {
   status: "created" | "notFound" | "unchanged";
 };
 
-async function keepKnownSkills(graph: PlanGraph): Promise<PlanGraph> {
+async function keepKnownSkills({
+  editionCandidate: _previous,
+  ...graph
+}: PlanGraph): Promise<PlanGraph> {
   const known = await prisma.skill.findMany({
     select: { id: true },
     where: { id: { in: graph.skills.map((skill) => skill.skillId) } },
@@ -117,11 +122,6 @@ async function findNoticeNextDay({
   );
 }
 
-function getPreviousCourseId(goal: Goal): string | null {
-  const openingCourse = isJsonObject(goal.openingSkill) ? goal.openingSkill.course : null;
-  return goal.primaryCourseId ?? getString(openingCourse, "id");
-}
-
 type GraphPlanning = {
   primaryCourseId?: string;
   followUp?: GoalRebuildFollowUp;
@@ -160,9 +160,15 @@ async function planFromGraph({
     keepKnownSkills(graph),
   ]);
 
+  const firstCoursePlan =
+    isFirst || (graph.editionCandidate && context.state.graph.editionCandidate);
+
   const state = {
     goal: { ...context.state.goal, targetDate: target.targetDate },
-    graph: skills,
+    graph:
+      firstCoursePlan && !followUp && unpinnedCourseSourceId(goal)
+        ? { ...skills, editionCandidate: true }
+        : skills,
     settings: { ...context.state.settings, noticeDate: target.noticeDate },
   };
 
@@ -207,25 +213,13 @@ async function planFromGraph({
         }
       }
 
-      if (primaryCourseId && primaryCourseId !== goal.primaryCourseId) {
-        await tx.goal.update({
-          data: {
-            primaryCourseId,
-            ...(!isFirst &&
-              primaryCourseId !== getPreviousCourseId(goal) && {
-                details: isJsonObject(goal.details)
-                  ? Object.fromEntries(
-                      Object.entries(goal.details).filter(([key]) => key !== "courseStart"),
-                    )
-                  : undefined,
-                openingLessonId: null,
-                openingSkill: DbNull,
-                warmUpId: null,
-              }),
-          },
-          where: { id: goalId },
-        });
-      }
+      await savePlanPrimaryCourse({
+        goal,
+        graph: computed.state.graph,
+        isFirst,
+        primaryCourseId,
+        tx,
+      });
 
       if (followNotice) {
         await checkNoticeLanding(tx, context.plan.id);

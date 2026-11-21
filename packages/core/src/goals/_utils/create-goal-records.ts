@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { claimBundleInWrite, openUsageLedgerInWrite } from "../../entitlements/bundle-claims";
@@ -9,7 +9,9 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
+import { type CourseStart } from "../course-start-details";
 import { type GoalCreateInput, type GoalDraft, withoutCoreDetails } from "../goal-contract";
+import { getCourseGoalIds } from "./find-course-goal";
 import { resolveNewGoalCountry } from "./goal-content-country";
 import { defaultDisplayName } from "./goal-display-name";
 import { saveMetadataInTransaction } from "./goal-metadata";
@@ -36,7 +38,48 @@ function toScopeSettings(value: unknown): { examSubjects?: string[] } {
   return subjects.length > 0 ? { examSubjects: subjects } : {};
 }
 
+function getCountryDetails(
+  country: Awaited<ReturnType<typeof resolveNewGoalCountry>>,
+  details: Record<string, unknown>,
+) {
+  const answered = Array.isArray(details.answered)
+    ? details.answered.filter((value): value is string => typeof value === "string")
+    : [];
+
+  return country.countryDependent === null
+    ? {}
+    : {
+        contentCountrySource: country.source,
+        countryDependent: country.countryDependent,
+        ...(country.source !== "default" && {
+          answered: [...new Set([...answered, "contentCountry"])],
+        }),
+      };
+}
+
+export type CourseGoalOrigin = {
+  country: string | null;
+  details: CourseStart;
+  courseId: string;
+  sourceCourseId?: string;
+};
+
+export type CardPlace = { draftId: string; place: number };
+
+export function getCardPlace(
+  goal: Pick<Goal, "onboardingDraftId" | "onboardingPlace">,
+): CardPlace | undefined {
+  const { onboardingDraftId: draftId, onboardingPlace: place } = goal;
+  return draftId === null || place === null ? undefined : { draftId, place };
+}
+
+function toCardColumns(card?: CardPlace) {
+  return { onboardingDraftId: card?.draftId ?? null, onboardingPlace: card?.place ?? null };
+}
+
 type GoalRecord = {
+  card?: CardPlace;
+  courseStart?: CourseGoalOrigin;
   dailyMinutes: number;
   draft: GoalDraft;
   id: string;
@@ -49,6 +92,8 @@ type GoalRecord = {
 export async function insertGoalWithPlan(
   tx: TransactionClient,
   {
+    card,
+    courseStart,
     dailyMinutes,
     draft,
     id,
@@ -65,34 +110,34 @@ export async function insertGoalWithPlan(
 ): Promise<void> {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
   const { examSubjects, ...details } = draft.details ?? {};
-  const country = await resolveNewGoalCountry({ draft, tx, userId });
-  const answered = Array.isArray(details.answered) ? details.answered : [];
 
-  const countryDetails =
-    country.countryDependent === null
-      ? {}
-      : {
-          contentCountrySource: country.source,
-          countryDependent: country.countryDependent,
-          ...(country.source !== "default" && {
-            answered: [...new Set([...answered, "contentCountry"])],
-          }),
-        };
+  const country = await resolveNewGoalCountry({
+    courseCountry: courseStart?.country,
+    draft,
+    tx,
+    userId,
+  });
 
   await tx.goal.create({
     data: {
       contentCountry: country.contentCountry,
       dailyMinutes,
-      details: { ...withoutCoreDetails(details), ...countryDetails },
+      details: {
+        ...withoutCoreDetails(details),
+        ...getCountryDetails(country, details),
+        ...(courseStart && { courseStart: courseStart.details }),
+      },
       displayName: draft.displayName ?? defaultDisplayName(draft),
       examBlueprintId: draft.examBlueprintId ?? null,
       id,
       kind: draft.kind,
       language: draft.language,
+      ...toCardColumns(card),
       planRevealedAt: planShown ? new Date() : null,
       primaryCourseId: draft.primaryCourseId ?? null,
       prompt: draft.prompt,
       replacesGoalId: replacesGoalId ?? null,
+      sourceCourseId: courseStart?.sourceCourseId,
       studyTime: input.studyTime ?? null,
       targetDate: draft.targetDate ? fromIsoDate(draft.targetDate) : null,
       targetLanguage: testedLanguage ?? draft.targetLanguage ?? getCertificateLanguage(draft),
@@ -131,36 +176,77 @@ async function pauseGoal(
   }
 }
 
+/** An archived goal frees its place, so the card can start it again. */
+async function findCardGoal(
+  tx: TransactionClient,
+  { card, userId }: { card: CardPlace; userId: string },
+): Promise<{ card?: CardPlace; goalId?: string }> {
+  const draft = await tx.onboardingDraft.findFirst({
+    select: {
+      goals: {
+        orderBy: { createdAt: "desc" },
+        select: { id: true },
+        take: 1,
+        where: { onboardingPlace: card.place, status: { not: "archived" } },
+      },
+    },
+    where: { id: card.draftId, userId },
+  });
+
+  return draft ? { card, goalId: draft.goals[0]?.id } : {};
+}
+
 /**
  * Claims the goal in its own write, under the plan→user lock, so the claim's active-goal count is
  * the one the insert sees and a refused start charges nothing and leaves the goal it would have
- * paused active.
+ * paused active. The same lock makes the card lookup and the insert one step, so a card confirmed
+ * twice, at once or after a lost response, gets the goal the first confirm made.
  */
 export async function createGoal(
   record: GoalRecord & { input: GoalCreateInput; viewer: EntitlementViewer },
-): Promise<UsageDecision> {
+): Promise<UsageDecision | { goalId: string; status: "existing" }> {
   const { draft, id, input, userId, viewer } = record;
   const isExplanation = draft.kind === "explain";
 
-  return writeLearnerChange({ planInputs: true, userId }, async (transaction) => {
-    if (!isExplanation) {
-      await pauseGoal(transaction, { goalId: input.pauseGoalId, userId });
-    }
+  return writeLearnerChange<UsageDecision, UsageDecision | { goalId: string; status: "existing" }>(
+    { planInputs: true, userId },
+    async (transaction) => {
+      if (record.courseStart) {
+        const goals = await getCourseGoalIds(transaction, userId);
+        const existing = goals.get(record.courseStart.courseId);
 
-    const claims = [
-      { generated: isExplanation, kind: isExplanation ? "explanation" : "goal", targetId: id },
-    ] as const;
+        if (existing) {
+          return unchanged({ goalId: existing, status: "existing" });
+        }
+      }
 
-    const ledger = await openUsageLedgerInWrite({ claims, now: new Date(), transaction, viewer });
-    const { decision } = await claimBundleInWrite({ claims, ledger, transaction });
+      const { card, goalId } = record.card
+        ? await findCardGoal(transaction, { card: record.card, userId })
+        : {};
 
-    if (decision.status !== "allowed") {
-      return unchanged(decision);
-    }
+      if (goalId) {
+        return unchanged({ goalId, status: "existing" });
+      }
 
-    await insertGoalWithPlan(transaction, record);
-    return decision;
-  });
+      if (!isExplanation) {
+        await pauseGoal(transaction, { goalId: input.pauseGoalId, userId });
+      }
+
+      const claims = [
+        { generated: isExplanation, kind: isExplanation ? "explanation" : "goal", targetId: id },
+      ] as const;
+
+      const ledger = await openUsageLedgerInWrite({ claims, now: new Date(), transaction, viewer });
+      const { decision } = await claimBundleInWrite({ claims, ledger, transaction });
+
+      if (decision.status !== "allowed") {
+        return unchanged(decision);
+      }
+
+      await insertGoalWithPlan(transaction, { ...record, card });
+      return decision;
+    },
+  );
 }
 
 export async function setActiveGoal(

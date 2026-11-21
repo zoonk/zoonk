@@ -48,6 +48,7 @@
   "onboarding_course_chapters": "f0fd50c34f454d6891307022baa6832fc3f46701dcade4da527899355be2959f",
   "onboarding_course_daily_minutes": "765460f5dbabd710af3cc7eda372e1fc0d300a704e094f7b62de35cc0fd4fab1",
   "onboarding_course_failed": "21398867fef7e3a1a097899fe7123065e55132b900b3fdc09485b1e93736c0f7",
+  "onboarding_course_language_note": "4cd0a3a1d87cc6cb01112455bc7b1c7972528a4757250bec04262cd99a42cbe9",
   "onboarding_course_lessons": "8dfeb3414a70441587c752d03bc25b59242a99be418c9c5e6caab3d2417fb941",
   "onboarding_course_more_chapters": "8e417b8af6c486fb6825a0ab2960045d71bbc8e43ae2351412654fb4c75e2741",
   "onboarding_course_start_free": "43aff13ce4c9b514fa427ae1b2e2c743622435e931e793bdc3b99efabd8b727c",
@@ -687,6 +688,8 @@
         <item quantity="one">%d Minute am Tag vorerst. Du kannst das in den nächsten Schritten ändern.</item>
         <item quantity="other">%d Minuten am Tag vorerst. Du kannst das in den nächsten Schritten ändern.</item>
     </plurals>
+    <!-- Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence -->
+    <string name="onboarding_course_language_note">Dieser Kurs ist auf %1$s. Deine Lektionen sind auf %2$s.</string>
     <string name="onboarding_course_build">Meinen Plan erstellen</string>
     <!-- Read out while Build my plan starts the course. -->
     <string name="onboarding_course_starting">Wir starten deinen Plan…</string>

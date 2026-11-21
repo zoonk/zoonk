@@ -23,7 +23,7 @@ import {
 export type MoveChallengeResult =
   | { move: ChallengeMove; status: "moved" }
   | PlanChangeRefusal
-  | { status: "notFound" | "notMovable" | "unauthorized" };
+  | { status: "conflict" | "notFound" | "notMovable" | "unauthorized" };
 
 export type UndoChallengeMoveResult =
   | { planItemId: string | null; status: "undone" }

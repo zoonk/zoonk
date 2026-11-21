@@ -33,9 +33,11 @@ class SignInViewModel(
         private set
     var code by handle.saveable { mutableStateOf("") }
         private set
+    private var rejectedCode by handle.saveable { mutableStateOf<String?>(null) }
+    val isCodeRejected get() = code == rejectedCode
     var work by mutableStateOf<SignInWork?>(null)
         private set
-    var failure by mutableStateOf<AccountFailure?>(null)
+    var failure by mutableStateOf(if (isCodeRejected) AccountFailure.WrongCode else null)
         private set
     var resend by mutableStateOf<ResendStatus?>(null)
         private set
@@ -73,6 +75,7 @@ class SignInViewModel(
         if (work != null) return
         codeSentTo = null
         code = ""
+        rejectedCode = null
         failure = null
         resend = null
     }
@@ -81,18 +84,27 @@ class SignInViewModel(
     fun onCodeChange(value: String) {
         if (needsNewCode) return
         code = value.filter(Char::isDigit).take(CODE_LENGTH)
+        if (isCodeRejected) {
+            failure = AccountFailure.WrongCode
+            return
+        }
         if (failure == AccountFailure.WrongCode) failure = null
         if (code.length == CODE_LENGTH) checkCode()
     }
 
     fun checkCode() {
         val email = codeSentTo ?: return
-        if (work != null || needsNewCode) return
+        if (work != null || needsNewCode || isCodeRejected) return
         if (code.length != CODE_LENGTH) {
             failure = AccountFailure.WrongCode
             return
         }
-        run(SignInWork.CheckCode) { show(account.signInWithEmailCode(email, code)) }
+        val checked = code
+        run(SignInWork.CheckCode) {
+            val result = account.signInWithEmailCode(email, checked)
+            show(result)
+            if (result is SignInResult.Failed && failure == AccountFailure.WrongCode) rejectedCode = checked
+        }
     }
 
     fun resendCode() {
@@ -107,6 +119,7 @@ class SignInViewModel(
                 }
             if (resend == ResendStatus.Sent) {
                 code = ""
+                rejectedCode = null
                 failure = null
             }
         }

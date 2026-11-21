@@ -1,9 +1,10 @@
 import { generateText, streamText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
+import { streamOnceAfterOverload } from "../_test-utils/stream-after-overload";
 import { TEST_TUTOR_LINKS } from "../_test-utils/tutor-links";
 import { type PlanScopeContext } from "../lessons/lesson-question-context";
-import { generateGoalTutorAnswer, streamGoalTutorAnswer } from "./goal-tutor";
+import { generateGoalTutorAnswer, joinStepTexts, streamGoalTutorAnswer } from "./goal-tutor";
 import { LOOKUP_DEADLINE_MS } from "./goal-tutor-lookup";
 import { formatGoalTutorPageGuide } from "./goal-tutor-pages";
 import { SEARCH_DEADLINE_MS } from "./goal-tutor-web-search";
@@ -170,6 +171,23 @@ describe(generateGoalTutorAnswer, () => {
     expect(second.promptVersion).toBe(first.promptVersion);
     const calls = vi.mocked(streamText).mock.calls;
     expect(calls[0]?.[0].instructions).not.toBe(calls[1]?.[0].instructions);
+  });
+
+  it("answers when the provider's stream fails after it started", async () => {
+    await streamOnceAfterOverload("Because.");
+
+    const { generation } = streamGoalTutorAnswer({
+      contextSnapshot: planContext("language"),
+      links: TEST_TUTOR_LINKS,
+      lookUp: vi.fn(),
+      offerAppTool: vi.fn(),
+      priorTurns: [],
+      proposePlanChange: vi.fn(),
+      question: "Why?",
+    });
+
+    await generation.consumeStream();
+    expect(joinStepTexts(await generation.steps)).toBe("Because.");
   });
 
   it("adds the exam's instructions only for an exam goal", async () => {

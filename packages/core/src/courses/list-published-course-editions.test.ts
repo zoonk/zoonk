@@ -7,7 +7,7 @@ import { getCourseCacheTag } from "../cache/tags";
 import { listPublishedCourseEditions } from "./list-published-course-editions";
 
 describe(listPublishedCourseEditions, () => {
-  it("lists every listed edition in the course's family, itself included, and expires with any course in it", async () => {
+  it("lists every published edition in the course's family, itself included, and expires with any course in it", async () => {
     const [org, family] = await Promise.all([
       organizationFixture({ kind: "brand" }),
       prisma.courseFamily.create({ data: {} }),
@@ -41,7 +41,7 @@ describe(listPublishedCourseEditions, () => {
       }),
     ]);
 
-    const [english, portuguese] = courses;
+    const [english, portuguese, , french] = courses;
 
     await expect(listPublishedCourseEditions({ courseId: english.id })).resolves.toStrictEqual([
       {
@@ -50,6 +50,13 @@ describe(listPublishedCourseEditions, () => {
         id: english.id,
         language: "en",
         title: english.title,
+      },
+      {
+        brandSlug: org.slug,
+        courseSlug: french.slug,
+        id: french.id,
+        language: "fr",
+        title: french.title,
       },
       {
         brandSlug: org.slug,

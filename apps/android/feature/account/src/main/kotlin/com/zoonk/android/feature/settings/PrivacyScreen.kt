@@ -265,7 +265,7 @@ private fun DeletionDialogs(
                             Text(stringResource(R.string.account_send_new_code))
                         }
                     } else {
-                        DeleteButton(R.string.settings_delete_verify, data.isDeleting, data::delete)
+                        DeleteButton(R.string.settings_delete_verify, data.isDeleting, data::delete, enabled = !data.isCodeRejected)
                     }
                 },
                 dismissButton = {
@@ -310,11 +310,13 @@ private fun DeleteButton(
     text: Int,
     isDeleting: Boolean,
     onClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     TextButton(
         busy = isDeleting,
         onClick = onClick,
         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+        enabled = enabled,
     ) { Text(stringResource(text)) }
 }
 

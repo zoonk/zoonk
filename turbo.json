@@ -115,6 +115,10 @@
       "dependsOn": ["db:generate", "^db:setup:test", "transit"],
       "inputs": ["$TURBO_DEFAULT$"]
     },
+    "test:workflow": {
+      "dependsOn": ["db:generate", "^db:setup:test", "transit"],
+      "inputs": ["$TURBO_DEFAULT$"]
+    },
     "test:watch": {
       "cache": false,
       "dependsOn": ["db:generate", "^db:setup:test"],

@@ -16,7 +16,7 @@ import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { type PlannedStudyDay, toUnstartedBlocks } from "./plan-study-day";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
-import { hasSessionLessonReservation } from "./session-lesson-reservation";
+import { getSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionDayContext } from "./session-placement";
 import { getSessionBar } from "./session-view";
 
@@ -62,7 +62,7 @@ export async function loadUnstartedDayView({
 
   const missions = missionViews.map((mission) => asDayMission(mission));
 
-  const reserved = hasSessionLessonReservation({
+  const reservation = getSessionLessonReservation({
     access: examAccess,
     plan: day.plan,
     prerequisites: day.plan.prerequisites,
@@ -81,9 +81,9 @@ export async function loadUnstartedDayView({
     current: true,
     dayMinutes,
     examAccess,
-    lessonRoom: reserved,
+    ...reservation,
     missions,
-    outlines: reserved ? (day.plan.outlines ?? "idle") : null,
+    outlines: reservation.lessonRoom ? (day.plan.outlines ?? "idle") : null,
     session: {
       blocks,
       freshStart: day.input.freshStart,

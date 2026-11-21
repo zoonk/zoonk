@@ -67,6 +67,7 @@ struct Course: Codable, Equatable, Identifiable, Sendable {
   /// Set only for a course written for a country other than its language's own.
   var contentCountry: ContentCountry? = nil
   let description: String?
+  var supportsEditions: Bool? = nil
   /// The course's published editions in every language, itself included.
   let editions: [CourseEdition]
   /// The page's example plan; nil for a learner's private course.

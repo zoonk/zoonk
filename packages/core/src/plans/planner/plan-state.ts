@@ -50,6 +50,8 @@ const graphSkillSchema = z.object({
   name: z.string(),
   outcome: z.boolean().optional(),
   outlined: z.boolean().optional(),
+  /** A language plan leaves it out because the learner's level already covers it. */
+  pastLevel: z.boolean().optional(),
   phase: z.int().min(0),
   plannedLessons: z.int().min(0).optional(),
   skillId: z.string(),
@@ -68,6 +70,7 @@ export const planGraphSchema = z.object({
       startChapterId: z.string().nullable(),
     })
     .optional(),
+  editionCandidate: z.boolean().optional(),
   optionSkills: z.array(optionSkillSchema).optional(),
   phases: z.array(graphPhaseSchema).default([]),
   skills: z.array(graphSkillSchema).default([]),

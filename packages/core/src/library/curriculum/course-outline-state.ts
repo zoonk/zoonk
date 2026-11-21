@@ -16,6 +16,7 @@ import {
 } from "../claims/generation-claim";
 import { COURSE_PRODUCT_SELECT, toPromptProduct } from "../products/course-product";
 import { loadCourseMaterial } from "../sources/goal-material";
+import { linkResolvedCourseEdition } from "./link-resolved-course-edition";
 
 export async function findUntaughtSkills({
   courseId,
@@ -231,16 +232,37 @@ export async function finishCourseOutline({
     workflowRunId,
   });
 
-  if (!finished || status !== "completed") {
+  if (status !== "completed") {
     return;
   }
 
   const { count } = await prisma.course.updateMany({
     data: { isPublished: true },
-    where: { id: courseId, isPublished: false, visibility: "public" },
+    where: {
+      id: courseId,
+      isPublished: false,
+      outlineRunId: workflowRunId,
+      outlineStatus: "completed",
+      visibility: "public",
+    },
   });
 
   if (count > 0) {
     await revalidateCourseContent(await getListedCourseTags(courseId));
+  }
+
+  if (
+    finished ||
+    (await prisma.course.findFirst({
+      select: { id: true },
+      where: {
+        id: courseId,
+        isPublished: true,
+        outlineRunId: workflowRunId,
+        outlineStatus: "completed",
+      },
+    }))
+  ) {
+    await linkResolvedCourseEdition({ courseId });
   }
 }
