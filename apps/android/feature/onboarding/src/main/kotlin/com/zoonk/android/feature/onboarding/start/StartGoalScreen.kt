@@ -148,7 +148,9 @@ fun StartGoalScreen(
 
             is StartScreen.Draft -> {
                 {
-                    val draft = store.drafts[screen.id].state.value.value
+                    val draft =
+                        store.drafts[screen.id]
+                            .state.value.value
                     if (draft == null) vm.backToEntry("") else vm.editDraft(draft)
                 }
             }
