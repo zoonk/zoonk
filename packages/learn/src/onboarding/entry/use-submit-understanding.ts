@@ -5,13 +5,16 @@ import { useEffect, useRef, useState } from "react";
 import { useAppLocale } from "../../_utils/locale";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError, useStartError } from "../goal-errors";
-import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
+import {
+  type SentMaterial,
+  type StartUnderstandingOutcome,
+  type UnderstandingActions,
+} from "../onboarding-actions";
 import { startOnboardingAttempt } from "./attempt-clock";
 import { forgetSentGoal, holdSentGoal, sendGoal, takeSentGoal } from "./understanding-start";
 
 export function useSubmitUnderstanding({
   draftId,
-  hasAttachment,
   onDraft,
   onError,
   onExplanation,
@@ -19,7 +22,6 @@ export function useSubmitUnderstanding({
   understanding,
 }: {
   draftId: string | null;
-  hasAttachment: boolean;
   onDraft: (draft: OnboardingDraftView) => void;
   onError: (input: { error: GoalError; words: string }) => void;
   onExplanation: (input: { draft: OnboardingDraftView; question: string }) => void;
@@ -50,7 +52,7 @@ export function useSubmitUnderstanding({
    * One goal on its way at a time: taps replayed once the page's code arrived would otherwise save
    * a second draft.
    */
-  async function send(goal: string) {
+  async function send(goal: string, material: SentMaterial) {
     if (submitted.current) {
       return;
     }
@@ -59,7 +61,7 @@ export function useSubmitUnderstanding({
     submitted.current = controller;
 
     try {
-      await sendOnce({ goal, signal: controller.signal });
+      await sendOnce({ goal, material, signal: controller.signal });
     } finally {
       if (submitted.current === controller) {
         submitted.current = null;
@@ -67,10 +69,19 @@ export function useSubmitUnderstanding({
     }
   }
 
-  async function sendOnce({ goal, signal }: { goal: string; signal: AbortSignal }) {
+  async function sendOnce({
+    goal,
+    material,
+    signal,
+  }: {
+    goal: string;
+    material: SentMaterial;
+    signal: AbortSignal;
+  }) {
+    const hasAttachment = Boolean(material.sourceIds?.length);
     const attempt = startOnboardingAttempt({ hasAttachment, track: analytics.track });
     const sentAt = attempt.submittedAt;
-    const outcome = sendGoal({ attempt, goal, language: locale, signal, understanding });
+    const outcome = sendGoal({ attempt, goal, language: locale, material, signal, understanding });
     await follow({ attemptId: attempt.id, goal, outcome, sentAt, signal });
   }
 

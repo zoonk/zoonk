@@ -8,8 +8,7 @@ import { DraftScreen } from "./entry/draft-screen";
 import { GoalStartEntry } from "./entry/goal-attachments";
 import { GoalExamples } from "./entry/goal-examples";
 import { GuestGoalGate } from "./entry/guest-goal-gate";
-import { useSubmitGoal } from "./entry/material-goal";
-import { type MaterialIntent } from "./entry/material-intent";
+import { toDraftMaterial, useStartMaterial, useSubmitGoal } from "./entry/material-goal";
 import { MaterialQuestions } from "./entry/material-questions";
 import { forgetHandedOffGoal, getHandedOffGoal, getSentGoal } from "./entry/understanding-start";
 import { SendingGoal } from "./entry/understanding-wait";
@@ -20,7 +19,6 @@ import { useSubmitUnderstanding } from "./entry/use-submit-understanding";
 import { type GoalError } from "./goal-errors";
 import { OnboardingHowItWorks } from "./how-it-works";
 import {
-  type AttachedSource,
   type GoalLimit,
   type OnboardingActions,
   type OnboardingNavigation,
@@ -87,17 +85,19 @@ function getScreenKey(state: StartState): string {
 }
 
 function getBack({
-  backToEntry,
+  editDraft,
+  showEntry,
   state,
 }: {
-  backToEntry: (words: string) => void;
+  editDraft: (draft: OnboardingDraftView) => void;
+  showEntry: (entry: { words: string }) => void;
   state: StartState;
 }): (() => void) | undefined {
   if (state.kind === "questions") {
-    return () => backToEntry("");
+    return () => showEntry({ words: "" });
   }
 
-  return state.kind === "draft" ? () => backToEntry(state.draft.prompt) : undefined;
+  return state.kind === "draft" ? () => editDraft(state.draft) : undefined;
 }
 
 export function StartFlow({
@@ -191,8 +191,7 @@ function GoalStartFlow({
 }: GoalStartFlowProps) {
   const creation = useGoalCreation();
   const { createExplanation } = useDraftGoals(actions);
-  const [attached, setAttached] = useState<AttachedSource[]>([]);
-  const [intent, setIntent] = useState<MaterialIntent | null>(null);
+  const material = useStartMaterial();
 
   const [state, setState] = useState<StartState>(() =>
     getInitialState({ defaultGoal, initialDraft, takesHandedOffGoal }),
@@ -245,7 +244,6 @@ function GoalStartFlow({
 
   const submission = useSubmitUnderstanding({
     draftId: state.kind === "draft" ? state.draft.id : null,
-    hasAttachment: attached.length > 0,
     onDraft: showDraft,
     onError: showEntry,
     onExplanation: startExplanation,
@@ -271,16 +269,20 @@ function GoalStartFlow({
   }, [shownDraft]);
 
   const submit = useSubmitGoal({
-    attached,
-    intent,
+    material,
     onAsk: () => setState({ kind: "questions" }),
-    understand: (goal) => void submission.send(goal),
+    understand: (goal, sent) => void submission.send(goal, sent),
   });
 
-  const backToEntry = (words: string) => showEntry({ words });
+  /** The draft holds the material it was sent with, so editing brings it back after a reload too. */
+  const editDraft = (draft: OnboardingDraftView) => {
+    material.restore(draft);
+    showEntry({ words: draft.prompt });
+  };
 
   const atGoalLimit = goalLimit?.reason === "activeGoals";
-  const bar = { backDisabled: creation.isCreating, onBack: getBack({ backToEntry, state }) };
+  const onBack = getBack({ editDraft, showEntry, state });
+  const bar = { backDisabled: creation.isCreating, onBack };
 
   const rail = showsRail({ atGoalLimit, state }) ? (
     <>
@@ -296,21 +298,21 @@ function GoalStartFlow({
           <GoalStartEntry
             atGoalLimit={atGoalLimit}
             attach={actions.attach}
-            attached={attached}
+            attached={material.attached}
             canAttach={canAttach}
             defaultGoal={state.words}
             error={state.error}
             fromSharedPlan={fromSharedPlan}
-            intent={intent}
-            onAttachedChange={setAttached}
-            onIntentChange={setIntent}
+            intent={material.intent}
+            onAttachedChange={material.setAttached}
+            onIntentChange={material.setIntent}
             onSubmit={submit}
             routes={routes}
           />
         )}
 
         {state.kind === "questions" && (
-          <MaterialQuestions ask={actions.askMaterial} buddy={buddy} sources={attached} />
+          <MaterialQuestions ask={actions.askMaterial} buddy={buddy} sources={material.attached} />
         )}
 
         {state.kind === "sending" && (
@@ -320,7 +322,6 @@ function GoalStartFlow({
         {state.kind === "draft" && (
           <DraftScreen
             actions={actions}
-            attached={attached}
             creation={{
               error: creation.error,
               isCreating: creation.isCreating || submission.isSubmitting,
@@ -336,9 +337,8 @@ function GoalStartFlow({
             draftActions={draftActions}
             goalLimit={goalLimit}
             hasAccount={canAttach}
-            intent={intent}
-            onBack={() => backToEntry(state.draft.prompt)}
-            onRewrite={(goal) => void submission.send(goal)}
+            onBack={() => editDraft(state.draft)}
+            onRewrite={(goal) => void submission.send(goal, toDraftMaterial(state.draft))}
             routes={routes}
             sentAt={state.sentAt}
           />

@@ -3,10 +3,13 @@ import { del, get } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../../_test-utils/mock-session";
+import { getOnboardingDraft } from "../../view-models/onboarding/get-onboarding-draft";
 import { loadSourceDocuments } from "./load-source-documents";
 import { hashDocument } from "./parse-document";
 import { shareSourceUpload } from "./share-upload";
@@ -201,6 +204,40 @@ describe(shareSourceUpload, () => {
     expect(links.map((link) => link.userId).toSorted()).toStrictEqual(
       [first.id, second.id, both.id].toSorted(),
     );
+  });
+
+  it("keeps a goal draft's material when the upload joins the copy another learner shared", async () => {
+    const [first, second] = await Promise.all([userFixture(), userFixture()]);
+    const text = noticeText();
+    servePublisherCopy(text);
+
+    const shared = await privateUploadFixture({ text, userId: first.id });
+    await shareNotice(shared.id);
+
+    const [duplicate, notes] = await Promise.all([
+      privateUploadFixture({ text, userId: second.id }),
+      privateUploadFixture({ text: noticeText(), userId: second.id }),
+    ]);
+
+    const draft = await onboardingDraftFixture({
+      materialIntent: "exam",
+      sourceIds: [duplicate.id, notes.id],
+      userId: second.id,
+    });
+
+    await expect(shareNotice(duplicate.id)).resolves.toMatchObject({ merged: true });
+
+    mockSession(second.id);
+
+    await expect(getOnboardingDraft({ draftId: draft.id })).resolves.toMatchObject({
+      draft: {
+        materialIntent: "exam",
+        sources: [
+          { id: shared.id, title: "Edital nº 1 – TJ-CE 2026" },
+          { id: notes.id, title: "edital" },
+        ],
+      },
+    });
   });
 
   it("moves what lessons read from the duplicate to the shared copy at the version they read", async () => {

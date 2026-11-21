@@ -42,6 +42,13 @@ async function mergeIntoPublicSource({
     // A lesson write waiting to save what it read from the upload saves it before the move, or
     // finds the upload gone.
     prisma.$queryRaw`SELECT id FROM sources WHERE id = ${privateSourceId}::uuid FOR UPDATE`,
+    // A goal draft keeps its material, which its main goal is created with.
+    prisma.$executeRaw`
+      UPDATE onboarding_drafts
+      SET source_ids = array_replace(source_ids, ${privateSourceId}::uuid, ${publicSourceId}::uuid)
+      WHERE user_id IN (SELECT user_id FROM learner_sources WHERE source_id = ${privateSourceId}::uuid)
+        AND ${privateSourceId}::uuid = ANY(source_ids)
+    `,
     prisma.stepSource.deleteMany({
       where: {
         sourceId: privateSourceId,
