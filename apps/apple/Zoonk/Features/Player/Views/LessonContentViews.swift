@@ -75,6 +75,20 @@ struct LessonTextBlocks: View {
   }
 }
 
+/// Main's `LessonContext`: the table, code or words a check asks about, over its question.
+struct LessonContextText: View {
+  let text: String
+
+  init(_ text: String) {
+    self.text = text
+  }
+
+  var body: some View {
+    LessonTextBlocks(text)
+      .typeStyle(.lessonContext)
+  }
+}
+
 /// A question as a VoiceOver heading, with any table or code it asks about above it as a check's
 /// context.
 struct LessonQuestionText: View {
@@ -84,8 +98,7 @@ struct LessonQuestionText: View {
     let parts = LessonQuestionParts(text)
 
     if let data = parts.data {
-      LessonTextBlocks(data)
-        .foregroundStyle(.mutedForeground)
+      LessonContextText(data)
     }
 
     if !parts.question.isEmpty {

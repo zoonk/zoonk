@@ -50,6 +50,9 @@ extension TypeStyle {
   /// A lesson's running text.
   static let lessonText = TypeStyle(
     size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)
+  /// Main's `LessonContext`: the table, code or words a check asks about, over its question.
+  static let lessonContext = TypeStyle(
+    size: 16, relativeTo: .callout, weight: .regular, lineHeight: 1.625)
   /// Main's `text-lead`, in the secondary color.
   static let lead = TypeStyle(size: 17, relativeTo: .body, weight: .regular, tracking: -0.01)
   /// Running text read for itself: a question's context.

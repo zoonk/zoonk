@@ -9,6 +9,7 @@ struct RichInlineText: View {
 
   @Environment(\.typeStyle) private var style
   @Environment(\.legibilityWeight) private var legibilityWeight
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   init(_ inline: RichInline, underline: String? = nil, highlightsTerms: Bool = false) {
     self.inline = inline
@@ -18,12 +19,23 @@ struct RichInlineText: View {
 
   var body: some View {
     let inline = InlineCode.opened(self.inline)
+    let hasCode = inline.text.runs.contains { InlineCode.isCode($0.inlinePresentationIntent) }
 
-    Text(
+    let text = Text(
       InlineCode.drawn(inline, in: style, legibility: legibilityWeight),
       legibility: legibilityWeight
     )
     .handMarks(InlineMarks(inline.text, underline: underline, highlightsTerms: highlightsTerms))
+
+    // Spacing added to each line's own height leaves a row of code shorter than a row of words, as
+    // Geist Mono's smaller size is; main's rows keep the role's height, whatever runs they hold.
+    if hasCode, style.lineHeight != nil {
+      text
+        .lineSpacing(0)
+        .lineHeight(.exact(points: style.rowHeight(dynamicTypeSize)))
+    } else {
+      text
+    }
   }
 }
 
