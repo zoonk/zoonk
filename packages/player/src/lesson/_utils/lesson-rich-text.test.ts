@@ -78,10 +78,10 @@ describe(parseRichBlocks, () => {
         [{ kind: "text", text: "where it isn't" }],
       ],
       kind: "list",
-      ordered: false,
+      start: null,
     });
 
-    expect(blocks[2]).toMatchObject({ ordered: true });
+    expect(blocks[2]).toMatchObject({ start: 1 });
   });
 
   it("keeps a single line break inside the paragraph and splits on a blank line", () => {
@@ -179,7 +179,7 @@ describe(markRichBlocks, () => {
     expect(markRichBlocks(blocks, "One item")[1]).toStrictEqual({
       items: [[{ kind: "text", marked: true, text: "One item" }]],
       kind: "list",
-      ordered: false,
+      start: null,
     });
   });
 });

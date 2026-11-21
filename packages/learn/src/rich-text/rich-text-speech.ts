@@ -26,8 +26,14 @@ export function speakRichInline({ text, words }: { text: string; words: MathWord
   return speakSegments({ segments: parseRichInline(toOneLine(text)), words });
 }
 
-function numbered(items: RichInlineSegment[][]): RichInlineSegment[][] {
-  return items.map((item, index) => [{ kind: "text", text: `${index + 1}. ` }, ...item]);
+function numbered({
+  items,
+  start,
+}: {
+  items: RichInlineSegment[][];
+  start: number;
+}): RichInlineSegment[][] {
+  return items.map((item, index) => [{ kind: "text", text: `${start + index}. ` }, ...item]);
 }
 
 /**
@@ -37,7 +43,9 @@ function numbered(items: RichInlineSegment[][]): RichInlineSegment[][] {
 function spokenLines(block: RichBlock): RichInlineSegment[][] {
   switch (block.kind) {
     case "list":
-      return block.ordered ? numbered(block.items) : block.items;
+      return block.start === null
+        ? block.items
+        : numbered({ items: block.items, start: block.start });
     case "paragraph":
       return block.lines;
     case "code":

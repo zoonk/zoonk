@@ -5,7 +5,7 @@ import { parseInlineMarkupRanges } from "./inline-markup";
  * character at least as long. A backtick fence's info string can't hold a backtick, so "```x```"
  * stays inline code. A line may end in the "\r" of a Windows line break.
  */
-const OPENING_FENCE = /^ {0,3}(?<fence>`{3,}(?=[^`]*$)|~{3,})(?<info>.*)\r?$/u;
+const OPENING_FENCE = /^(?<indent> {0,3})(?<fence>`{3,}(?=[^`]*$)|~{3,})(?<info>.*)\r?$/u;
 const CLOSING_FENCE = /^ {0,3}(?<fence>`{3,}|~{3,}) *\r?$/u;
 
 /** `end` is the line after the closing fence; a fence that never closes runs to the text's end. */
@@ -20,9 +20,16 @@ function closes({ fence, line }: { fence: string; line: string }): boolean {
   return (CLOSING_FENCE.exec(line)?.groups?.fence ?? "").startsWith(fence);
 }
 
-/** Code lines stay exactly as written. */
+const LEADING_SPACES = /^ */u;
+
+/** A fence indented in a list item lines its code up with it, so its code starts that far in. */
+function unindent({ indent, line }: { indent: number; line: string }): string {
+  return line.slice(Math.min(indent, LEADING_SPACES.exec(line)?.[0].length ?? 0));
+}
+
+/** Code lines stay exactly as written, less the opening fence's own indentation. */
 export function readCodeFence(lines: readonly string[], index: number): CodeFence | null {
-  const { fence, info = "" } = OPENING_FENCE.exec(lines[index] ?? "")?.groups ?? {};
+  const { fence, indent = "", info = "" } = OPENING_FENCE.exec(lines[index] ?? "")?.groups ?? {};
 
   if (!fence) {
     return null;
@@ -32,7 +39,10 @@ export function readCodeFence(lines: readonly string[], index: number): CodeFenc
 
   return {
     closed: close !== -1,
-    code: lines.slice(index + 1, close === -1 ? lines.length : close).join("\n"),
+    code: lines
+      .slice(index + 1, close === -1 ? lines.length : close)
+      .map((line) => unindent({ indent: indent.length, line }))
+      .join("\n"),
     end: close === -1 ? lines.length : close + 1,
     language: readLanguage(info),
   };

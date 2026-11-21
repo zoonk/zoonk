@@ -56,6 +56,27 @@ describe(parseRichBlocks, () => {
     ]);
   });
 
+  it("numbers a list's steps on across a code block between them", () => {
+    expect(
+      parseRichBlocks("1. Install it:\n   ```bash\n   npm i zod\n   ```\n2. Run it.\n3. Done."),
+    ).toStrictEqual([
+      { items: [words("Install it:")], kind: "list", start: 1 },
+      { code: "npm i zod", kind: "code", language: "bash" },
+      { items: [words("Run it."), words("Done.")], kind: "list", start: 2 },
+    ]);
+
+    expect(parseRichBlocks("- a\n- b")).toStrictEqual([
+      { items: [words("a"), words("b")], kind: "list", start: null },
+    ]);
+  });
+
+  it("reads a block fenced with tildes as code", () => {
+    expect(parseRichBlocks("Veja:\n~~~js\nf(`a`);\n```\n~~~")).toStrictEqual([
+      { kind: "paragraph", lines: [words("Veja:")] },
+      { code: "f(`a`);\n```", kind: "code", language: "js" },
+    ]);
+  });
+
   it("runs a block that never closes to the end of the text", () => {
     expect(parseRichBlocks("Run it:\n```js\nconst a = 1;\n\nlog(a);")).toStrictEqual([
       { kind: "paragraph", lines: [words("Run it:")] },

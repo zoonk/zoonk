@@ -7,11 +7,12 @@ import { type RichInlineSegment } from "./rich-inline-segments";
 /**
  * Emphasis, short lists, GFM tables, fenced code blocks, inline code and `$...$` math only, so
  * generated headings or links can never change the player's layout. A code block keeps its code
- * exactly as written.
+ * exactly as written. A numbered list starts at its first item's number, as in CommonMark, so
+ * steps split by a code block number on; `start` is null for bullets.
  */
 export type RichBlock =
   | { code: string; kind: "code"; language: string | null }
-  | { kind: "list"; items: RichInlineSegment[][]; ordered: boolean }
+  | { items: RichInlineSegment[][]; kind: "list"; start: number | null }
   | { kind: "paragraph"; lines: RichInlineSegment[][] }
   | {
       align: MarkdownTableAlign[];
@@ -22,7 +23,7 @@ export type RichBlock =
 
 const UNORDERED_ITEM = /^\s*[-*•]\s+(?<text>.+)$/u;
 const SPACE_BEFORE_PUNCTUATION = /^[ \t]+(?=[.,])/u;
-const ORDERED_ITEM = /^\s*\d{1,3}[.)]\s+(?<text>.+)$/u;
+const ORDERED_ITEM = /^\s*(?<number>\d{1,3})[.)]\s+(?<text>.+)$/u;
 
 function parseMarkup(text: string): RichInlineSegment[] {
   return parseInlineMarkup(text).map((segment, index, segments) => {
@@ -107,19 +108,19 @@ export function parseRichLine({
 
 type LineKind =
   | { kind: "blank" }
-  | { kind: "item"; ordered: boolean; text: string }
+  | { kind: "item"; number: number | null; text: string }
   | { kind: "text"; text: string };
 
 function classifyLine(line: string): LineKind {
   const unordered = UNORDERED_ITEM.exec(line)?.groups?.text;
-  const ordered = ORDERED_ITEM.exec(line)?.groups?.text;
+  const ordered = ORDERED_ITEM.exec(line)?.groups;
 
   if (unordered) {
-    return { kind: "item", ordered: false, text: unordered };
+    return { kind: "item", number: null, text: unordered };
   }
 
-  if (ordered) {
-    return { kind: "item", ordered: true, text: ordered };
+  if (ordered?.text) {
+    return { kind: "item", number: Number(ordered.number), text: ordered.text };
   }
 
   return line.trim() ? { kind: "text", text: line.trim() } : { kind: "blank" };
@@ -140,9 +141,14 @@ function appendLine(
   const inline = parseRichInline(line.text);
 
   if (line.kind === "item") {
-    return last?.kind === "list" && last.ordered === line.ordered && previous?.kind === "item"
+    const continues =
+      last?.kind === "list" &&
+      previous?.kind === "item" &&
+      (last.start === null) === (line.number === null);
+
+    return continues
       ? [...head, { ...last, items: [...last.items, inline] }]
-      : [...blocks, { items: [inline], kind: "list", ordered: line.ordered }];
+      : [...blocks, { items: [inline], kind: "list", start: line.number }];
   }
 
   return last?.kind === "paragraph" && previous?.kind === "text"

@@ -168,6 +168,12 @@ describe(speakRichBlocks, () => {
     );
   });
 
+  it("reads a list's numbers on across a code block, as the list shows them", () => {
+    expect(
+      speakRichBlocks({ text: "1. Install it.\n   ```bash\n   npm i\n   ```\n2. Run it.", words }),
+    ).toBe("1. Install it. 2. Run it.");
+  });
+
   it("leaves a code block to the block, which a screen reader reads as written", () => {
     expect(
       speakRichBlocks({ text: "What does this print?\n```python\nprint(1 + 1)\n```", words }),

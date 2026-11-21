@@ -54,6 +54,12 @@ describe(readCodeFence, () => {
     expect(readCodeFence(["~~", "x", "~~"], 0)).toBeNull();
   });
 
+  it("takes the opening fence's indentation off its code, as CommonMark does", () => {
+    expect(readCodeFence(["  ```py", "  if x:", "      y()", " z", "  ```"], 0)?.code).toBe(
+      "if x:\n    y()\nz",
+    );
+  });
+
   it("reads a fence on lines that end in a carriage return", () => {
     expect(readCodeFence(["```js\r", "f();\r", "```\r"], 0)).toMatchObject({
       closed: true,
