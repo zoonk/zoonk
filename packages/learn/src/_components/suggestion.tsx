@@ -140,7 +140,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
 export function SuggestionSummary({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("min-w-0 flex-1 text-sm font-medium text-pretty", className)}
+      className={cn("min-w-0 flex-1 text-sm font-medium", className)}
       data-slot="suggestion-summary"
       {...props}
     />
@@ -242,10 +242,7 @@ export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <h2
-      className="text-compact leading-snug font-semibold text-pretty"
-      data-slot="suggestion-header"
-    >
+    <h2 className="text-compact leading-snug font-semibold" data-slot="suggestion-header">
       {children}
     </h2>
   );
@@ -262,7 +259,7 @@ export function SuggestionDescription({ className, ...props }: React.ComponentPr
 
   return (
     <p
-      className={cn("text-muted-foreground text-pretty", DESCRIPTION_SIZE[presentation], className)}
+      className={cn("text-muted-foreground", DESCRIPTION_SIZE[presentation], className)}
       data-slot="suggestion-description"
       {...props}
     />
@@ -280,7 +277,7 @@ export function SuggestionResult({ className, ...props }: React.ComponentProps<"
 
   return (
     <p
-      className={cn("font-medium text-pretty", RESULT_SIZE[presentation], className)}
+      className={cn("font-medium", RESULT_SIZE[presentation], className)}
       data-slot="suggestion-result"
       role="status"
       {...props}

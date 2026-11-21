@@ -4,8 +4,14 @@ import { type MockAnswer, type MockAnswerInput } from "@zoonk/core/exams/mocks/a
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { type DraftSaveStatus, createDraftSaveQueue } from "./draft-save-queue";
+import {
+  clearHandedInMockDrafts,
+  dropUnsentMockDraft,
+  keepUnsentMockDraft,
+  restoreUnsentMockDrafts,
+} from "./unsent-drafts";
 
 type Drafts = Record<string, MockDraft>;
 
@@ -18,21 +24,32 @@ function toDrafts(view: MockView): Drafts {
   return Object.fromEntries((view.current?.drafts ?? []).map((draft) => [draft.itemId, draft]));
 }
 
+function withoutDraft(drafts: Partial<Drafts>, itemId: string): Partial<Drafts> {
+  return drafts[itemId] ? { ...drafts, [itemId]: undefined } : drafts;
+}
+
 function emptyDraft(itemId: string): MockDraft {
   return { answer: null, durationMs: 0, flagged: false, itemId };
 }
 
 export function useMockDrafts({
+  onEnter,
   save,
   view,
 }: {
-  save: (input: MockAnswerInput) => Promise<boolean>;
+  /** The answers this device kept for a view it enters, on mount and after each step. */
+  onEnter: (view: MockView, kept: MockDraft[]) => void;
+  save: (input: MockAnswerInput) => Promise<boolean | null>;
   view: MockView;
 }) {
+  const { blockId } = view;
   const [drafts, setDrafts] = useState<Drafts>(() => toDrafts(view));
   const [failedDrafts, setFailedDrafts] = useState<Partial<Drafts>>({});
   const [savedDrafts, setSavedDrafts] = useState<Drafts>(drafts);
   const [saveStatus, setSaveStatus] = useState<DraftSaveStatus>("saved");
+  // Read by the first question's visit, which runs right after the restore and before it renders.
+  const latestDrafts = useRef(drafts);
+  const entered = useRef(false);
   const shown = useRef<{ at: number; itemId: string } | null>(null);
   const unsavedText = useRef<MockDraft | null>(null);
   const textTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -43,27 +60,60 @@ export function useMockDrafts({
       createDraftSaveQueue<MockDraft>({
         keyOf: (draft) => draft.itemId,
         onFailed: (draft) => setFailedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
+        onRefused: (draft) => dropUnsentMockDraft({ blockId, draft }),
         onStatus: setSaveStatus,
         onStored: (draft) => {
+          dropUnsentMockDraft({ blockId, draft });
           setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft }));
-
-          setFailedDrafts((current) =>
-            current[draft.itemId] ? { ...current, [draft.itemId]: undefined } : current,
-          );
+          setFailedDrafts((current) => withoutDraft(current, draft.itemId));
         },
         save,
       }),
-    [save],
+    [blockId, save],
   );
 
+  function setAllDrafts(next: Drafts) {
+    latestDrafts.current = next;
+    setDrafts(next);
+  }
+
+  function enter(next: MockView) {
+    const kept = restoreUnsentMockDrafts({ blockId, view: next });
+    const stored = toDrafts(next);
+
+    setAllDrafts({ ...stored, ...Object.fromEntries(kept.map((draft) => [draft.itemId, draft])) });
+    setSavedDrafts(stored);
+    setFailedDrafts({});
+    kept.forEach((draft) => queue.add(draft));
+    onEnter(next, kept);
+  }
+
+  // Back and forward show this screen again as it was, so only what's still unsent goes out again.
+  const enterOnMount = useEffectEvent(() => {
+    if (entered.current) {
+      restoreUnsentMockDrafts({ blockId, view }).forEach((draft) => queue.add(draft));
+    } else {
+      entered.current = true;
+      enter(view);
+    }
+  });
+
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- Device storage can be read only after hydration.
+    enterOnMount();
     const retry = () => queue.retryNow();
     globalThis.addEventListener("online", retry);
-    return () => globalThis.removeEventListener("online", retry);
+
+    return () => {
+      clearTimeout(textTimer.current ?? undefined);
+      globalThis.removeEventListener("online", retry);
+      queue.stop();
+    };
   }, [queue]);
 
   function persist(draft: MockDraft) {
-    setDrafts((current) => ({ ...current, [draft.itemId]: draft }));
+    setAllDrafts({ ...latestDrafts.current, [draft.itemId]: draft });
+    keepUnsentMockDraft({ blockId, draft, keepPlace: queue.isWaiting(draft.itemId) });
     queue.add(draft);
   }
 
@@ -82,7 +132,7 @@ export function useMockDrafts({
   }
 
   function withTimeSpent(itemId: string): MockDraft {
-    const draft = drafts[itemId] ?? emptyDraft(itemId);
+    const draft = latestDrafts.current[itemId] ?? emptyDraft(itemId);
     const since = shown.current?.itemId === itemId ? shown.current.at : null;
     const now = Date.now();
 
@@ -119,11 +169,9 @@ export function useMockDrafts({
     },
     reset: (next: MockView) => {
       shown.current = null;
-      const nextDrafts = toDrafts(next);
-      setDrafts(nextDrafts);
-      setFailedDrafts({});
-      setSavedDrafts(nextDrafts);
+      clearHandedInMockDrafts({ blockId, next, previous: view });
       queue.forgetRefusals();
+      enter(next);
     },
     retry: () => queue.retryNow(),
     saveStatus,
@@ -131,22 +179,23 @@ export function useMockDrafts({
     show: (itemId: string) => {
       shown.current = { at: Date.now(), itemId };
     },
-    toggleFlag: (itemId: string) => {
+    toggleUnsure: (itemId: string) => {
       unsavedText.current = null;
       saveText();
       const draft = withTimeSpent(itemId);
       persist({ ...draft, flagged: !draft.flagged });
     },
     visit: (itemId: string) => {
-      if (!drafts[itemId]) {
+      if (!latestDrafts.current[itemId]) {
         persist(emptyDraft(itemId));
       }
     },
     write: (itemId: string, answer: MockAnswer | null) => {
-      const draft = { ...(drafts[itemId] ?? emptyDraft(itemId)), answer };
+      const draft = { ...(latestDrafts.current[itemId] ?? emptyDraft(itemId)), answer };
 
-      setDrafts((current) => ({ ...current, [itemId]: draft }));
+      setAllDrafts({ ...latestDrafts.current, [itemId]: draft });
       unsavedText.current = draft;
+      keepUnsentMockDraft({ blockId, draft, keepPlace: queue.isWaiting(draft.itemId) });
 
       if (textTimer.current) {
         clearTimeout(textTimer.current);

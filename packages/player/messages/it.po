@@ -129,16 +129,6 @@ msgctxt "8RsqoE"
 msgid "No guess yet"
 msgstr "Ancora nessuna stima"
 
-#: src/activities/_components/activity-horizontal-scroll.tsx
-msgctxt "jzFcrt"
-msgid "Scroll left"
-msgstr "Scorri a sinistra"
-
-#: src/activities/_components/activity-horizontal-scroll.tsx
-msgctxt "-lsh8v"
-msgid "Scroll right"
-msgstr "Scorri a destra"
-
 #: src/activities/_components/activity-model-sliders.tsx
 msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
@@ -153,6 +143,16 @@ msgstr "{output}: {value}, {note}."
 msgctxt "dB2ZYO"
 msgid "{output}: {value}."
 msgstr "{output}: {value}."
+
+#: src/activities/_components/activity-snippet-bar.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Scorri a sinistra"
+
+#: src/activities/_components/activity-snippet-bar.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Scorri a destra"
 
 #: src/activities/_components/activity-sortable-list.tsx
 msgctxt "TkDZ5b"
@@ -1308,16 +1308,6 @@ msgstr "Ascolta le tue note"
 msgctxt "b0QQkx"
 msgid "The sound plays: {notes}"
 msgstr "Il suono contiene queste note: {notes}"
-
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "xAzh1Y"
-msgid "I can listen now"
-msgstr "Ora posso ascoltare"
-
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "K8wsFm"
-msgid "I can't listen now"
-msgstr "Ora non posso ascoltare"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "6KJB-Z"
@@ -2816,6 +2806,16 @@ msgstr "La tua risposta"
 msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Scegli le parole per comporre la risposta"
+
+#: src/components/cant-listen-switch.tsx
+msgctxt "xAzh1Y"
+msgid "I can listen now"
+msgstr "Ora posso ascoltare"
+
+#: src/components/cant-listen-switch.tsx
+msgctxt "K8wsFm"
+msgid "I can't listen now"
+msgstr "Ora non posso ascoltare"
 
 #. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
 #: src/components/enter-hint.tsx

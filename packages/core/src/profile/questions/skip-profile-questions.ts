@@ -11,6 +11,7 @@ import { getGoalsCacheTag, getLearningProfileCacheTag } from "../../cache/tags";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { findOnboardingGoalIds } from "../../view-models/onboarding/_utils/onboarding-goals";
+import { oweProfileTools } from "./_utils/owe-profile-tools";
 import { toProfileQuestionSavedEvent } from "./_utils/profile-question-event";
 import {
   PROFILE_QUESTIONS,
@@ -20,7 +21,7 @@ import {
 
 export async function skipProfileQuestions({
   goalId,
-  locale,
+  locale = "en",
   questions,
   forever = false,
 }: {
@@ -57,10 +58,12 @@ export async function skipProfileQuestions({
       tx.userLearningProfile.findUnique({ select: { memoryEnabled: true }, where: { userId } }),
     ]);
 
+    const memoryEnabled = profile?.memoryEnabled ?? true;
+
     const skipped = getProfileSteps({
       answered: Object.fromEntries(answers.map((answer) => [answer.question, answer.version])),
       goal,
-      memoryEnabled: profile?.memoryEnabled ?? true,
+      memoryEnabled,
     }).filter((question) => forever || questions.includes(question));
 
     if (forever) {
@@ -82,6 +85,7 @@ export async function skipProfileQuestions({
         })),
       });
 
+      await oweProfileTools({ changedQuestions: missing, locale, memoryEnabled, tx, userId });
       return { changed: true, skipped, status: "saved" as const };
     }
 
@@ -115,6 +119,7 @@ export async function skipProfileQuestions({
       return unchanged({ changed: false, skipped: [], status: "saved" as const });
     }
 
+    await oweProfileTools({ changedQuestions: skipped, locale, memoryEnabled, tx, userId });
     return { changed: true, skipped, status: "saved" as const };
   });
 

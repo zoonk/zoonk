@@ -34,6 +34,7 @@ struct LessonStepView: View {
       LessonQuestionStepView(
         step: step, state: state, context: context, part: part,
         cantTalk: Binding(get: { store.cantTalkToday }, set: { store.cantTalkToday = $0 }),
+        cantListen: Binding(get: { store.cantListenToday }, set: { store.cantListenToday = $0 }),
         micBlocked: Binding(get: { store.isMicBlocked }, set: { store.isMicBlocked = $0 }),
         team: store.challengeTeam, waitForRun: { await store.ensureRun() },
         studySessionId: { store.studySessionId })
@@ -69,6 +70,7 @@ struct LessonQuestionStepView: View {
   let context: LessonStepContext
   let part: LessonStepPart
   @Binding var cantTalk: Bool
+  @Binding var cantListen: Bool
   @Binding var micBlocked: Bool
   var team: [String] = []
   var waitForRun: @MainActor () async -> Bool = { true }
@@ -86,13 +88,15 @@ struct LessonQuestionStepView: View {
     case .spokenAnswer(let content, let listening):
       SpokenAnswerStepView(
         step: step, content: content, listening: listening, context: context,
-        cantTalk: $cantTalk, micBlocked: $micBlocked, waitForRun: waitForRun,
-        studySessionId: studySessionId, part: part, mistake: mistake,
+        cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
+        waitForRun: waitForRun, studySessionId: studySessionId, part: part, mistake: mistake,
         onPracticeGraded: onPracticeGraded, onCheckingChanged: onCheckingChanged)
     case .activity(let content):
       ActivityStepView(step: step, content: content, context: context, part: part)
     case .language(let exercise, let hints):
-      LanguageStepView(exercise: exercise, wordHints: hints, context: context, part: part)
+      LanguageStepView(
+        exercise: exercise, wordHints: hints, context: context, part: part,
+        cantListen: $cantListen)
     case .challenge(let content):
       ChallengeStepView(
         step: step, content: content, state: state, select: context.select, team: team, part: part)
@@ -427,8 +431,8 @@ enum SpokenAnswerMode: Equatable {
   case listen
   case type
 
-  init(canListen: Bool, canSpeak: Bool, cantTalk: Bool, micBlocked: Bool) {
-    if (cantTalk || !canSpeak) && canListen {
+  init(canListen: Bool, canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool) {
+    if (cantTalk || !canSpeak) && canListen && !cantListen {
       self = .listen
     } else if cantTalk || micBlocked || !canSpeak {
       self = .type
@@ -451,7 +455,20 @@ enum SpokenAnswerMode: Equatable {
 extension LessonPlayerStore {
   func spokenAnswerMode(canListen: Bool, canSpeak: Bool) -> SpokenAnswerMode {
     SpokenAnswerMode(
-      canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalkToday, micBlocked: isMicBlocked)
+      canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalkToday,
+      cantListen: cantListenToday, micBlocked: isMicBlocked)
+  }
+}
+
+extension LessonStep {
+  /// The prompt this screen plays. Main's `ListeningInstead`: a spoken screen answered by listening
+  /// is a listening screen.
+  func shownPromptAudio(spokenMode: SpokenAnswerMode, cantListen: Bool) -> URL? {
+    switch content {
+    case .spokenAnswer(_, let listening?): spokenMode == .listen ? listening.promptAudio : nil
+    case .language(let exercise, _): exercise.promptAudio(cantListen: cantListen)
+    default: nil
+    }
   }
 }
 
@@ -464,6 +481,7 @@ private struct SpokenAnswerStepView: View {
   let listening: LanguageExercise?
   let context: LessonStepContext
   @Binding var cantTalk: Bool
+  @Binding var cantListen: Bool
   @Binding var micBlocked: Bool
   let waitForRun: @MainActor () async -> Bool
   let studySessionId: @MainActor () -> String?
@@ -477,12 +495,14 @@ private struct SpokenAnswerStepView: View {
       ? SpokenAnswerMode(answered: context.answer)
       : SpokenAnswerMode(
         canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
-        micBlocked: micBlocked)
+        cantListen: cantListen, micBlocked: micBlocked)
   }
 
   var body: some View {
     if mode == .listen, let listening {
-      LanguageStepView(exercise: listening, wordHints: nil, context: context, part: part)
+      LanguageStepView(
+        exercise: listening, wordHints: nil, context: context, part: part,
+        cantListen: typingWhenCantListen)
 
       if part == .turn {
         modeSwitch
@@ -559,6 +579,16 @@ private struct SpokenAnswerStepView: View {
     }
   }
 
+  /// Not listening leaves this screen to be typed, and an answer started one way doesn't carry over.
+  private var typingWhenCantListen: Binding<Bool> {
+    Binding {
+      cantListen
+    } set: {
+      context.select(nil)
+      cantListen = $0
+    }
+  }
+
   private static var micBlockedLine: String {
     String(
       localized: "The microphone is blocked.", table: "Player")
@@ -579,7 +609,7 @@ private struct SpokenAnswerStepView: View {
               "I can't talk now", tableName: "Player",
               comment: "Answers a spoken screen by listening or typing instead")
           } icon: {
-            Image(systemName: listening == nil ? "keyboard" : "headphones")
+            Image(systemName: listening == nil || cantListen ? "keyboard" : "headphones")
           }
         } else {
           Label {
@@ -641,16 +671,7 @@ private struct SummaryStepView: View {
       .typeStyle(.pageTitle)
       .accessibilityAddTraits(.isHeader)
 
-    VStack(alignment: .leading, spacing: 12) {
-      ForEach(Array(content.ideas.enumerated()), id: \.offset) { _, idea in
-        Label {
-          LessonRichText(idea.text)
-        } icon: {
-          Image(systemName: "lightbulb")
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-    }
+    LessonSummaryIdeas(ideas: content.ideas.map(\.text))
   }
 }
 

@@ -13,6 +13,28 @@ vi.mock("./example-lines.prompt.md", () => ({
 vi.mock("ai", async (original) => ({ ...(await original<typeof Ai>()), generateText: vi.fn() }));
 
 describe(generateExampleLines, () => {
+  it("runs at priority while the learner waits and at flex when written ahead", async () => {
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult({ lines: [] }));
+
+    const input = {
+      country: null,
+      facts: ["Cooks dinner for the family"],
+      goal: null,
+      language: "en",
+      learnerHomeCountry: null,
+      screens: [{ idea: "Waiting on one task", text: "await pauses only its function." }],
+    };
+
+    await generateExampleLines({ ...input, wait: "learner" });
+    await generateExampleLines({ ...input, wait: "later" });
+
+    const tiers = vi
+      .mocked(generateText)
+      .mock.calls.map(([call]) => call.providerOptions?.gateway?.serviceTier);
+
+    expect(tiers.slice(-2)).toStrictEqual(["priority", "flex"]);
+  });
+
   it("keeps plain-words support out of the recorded prompt version", async () => {
     vi.mocked(generateText).mockResolvedValue(
       createGenerateTextResult({ lines: [{ line: "A line.", screen: 1 }] }),
@@ -25,6 +47,7 @@ describe(generateExampleLines, () => {
       language: "en",
       learnerHomeCountry: null,
       screens: [{ idea: "A discount", text: "25% removes one quarter." }],
+      wait: "learner" as const,
     };
 
     const ordinary = await generateExampleLines(input);
@@ -42,6 +65,7 @@ describe(generateExampleLines, () => {
       goal: null,
       language: "pt",
       screens: [{ idea: "Uma conta dividida", text: "Dividir é repartir em partes iguais." }],
+      wait: "learner" as const,
     };
 
     const lisbon = await generateExampleLines({ ...input, learnerHomeCountry: "PT" });

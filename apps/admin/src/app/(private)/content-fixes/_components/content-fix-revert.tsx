@@ -42,7 +42,7 @@ export function RevertForm({ fixId }: { fixId: string }) {
         </AdminActionSubmitButton>
       </form>
 
-      <p className="text-muted-foreground text-sm text-pretty">
+      <p className="text-muted-foreground text-sm">
         Undoing is a new fix that puts back what this one replaced. It waits for review and changes
         nothing until it&apos;s approved with a passkey.
       </p>

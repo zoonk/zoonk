@@ -33,7 +33,7 @@ import {
 import { MindMapRowView } from "./mind-map-row";
 import { type MindMapsLibrary } from "./use-mind-maps-library";
 
-const LINE_CLASS = "text-muted-foreground max-w-prose text-sm text-pretty";
+const LINE_CLASS = "text-muted-foreground max-w-prose text-sm";
 
 /** What stops a new map on this page: a refusal while the list is read again, then the list's offer. */
 export function useShownStop({ page, refusal }: MindMapsLibrary) {

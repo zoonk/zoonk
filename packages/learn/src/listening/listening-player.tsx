@@ -214,7 +214,7 @@ export function ListeningPlayer({
         </div>
       </div>
 
-      <p aria-live="polite" className="text-muted-foreground text-sm text-pretty">
+      <p aria-live="polite" className="text-muted-foreground text-sm">
         {status === "failed" &&
           t("The recording didn't load. Check your connection and try again.")}
         {status === "playing" && !isReview && t("Playing. It doesn't pause, like in the exam.")}

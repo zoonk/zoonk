@@ -3,11 +3,11 @@
 import { type ActivityCell } from "@zoonk/core/library/activities/expected-answer";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Table2 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
-import { ActivityHorizontalScroll } from "../_components/activity-horizontal-scroll";
 import { keyedByPosition } from "../_utils/position-keys";
 
 type RowState = "extra" | "missing" | "plain" | "right";
@@ -77,14 +77,8 @@ export function SqlRowsTable({
   rows: readonly (readonly ActivityCell[])[];
 }) {
   return (
-    <div
-      className={cn(
-        ACTIVITY_BOX_CLASS,
-        "has-focus-visible:ring-ring/50 overflow-hidden has-focus-visible:ring-[3px]",
-        className,
-      )}
-    >
-      <ActivityHorizontalScroll box={{ label: caption }}>
+    <div className={cn(ACTIVITY_BOX_CLASS, "overflow-hidden", className)}>
+      <SidewaysScroll label={caption}>
         <table className="w-full text-sm">
           <caption className="sr-only">{caption}</caption>
           <thead className="bg-muted/60 text-muted-foreground font-mono text-xs">
@@ -110,7 +104,7 @@ export function SqlRowsTable({
             ))}
           </tbody>
         </table>
-      </ActivityHorizontalScroll>
+      </SidewaysScroll>
     </div>
   );
 }
@@ -132,7 +126,7 @@ export function SqlTableViewer({ table }: { table: Table }) {
         <Table2 aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <span className="font-mono text-sm font-semibold">{table.name}</span>
         {/* Open, the table's own header names the columns. */}
-        <span className="text-muted-foreground min-w-0 flex-1 font-mono text-xs text-pretty group-open:hidden">
+        <span className="text-muted-foreground min-w-0 flex-1 font-mono text-xs group-open:hidden">
           {table.columns.map((column) => column.name).join(", ")}
         </span>
         <span className="text-muted-foreground ms-auto shrink-0 text-xs tabular-nums">

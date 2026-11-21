@@ -1,5 +1,6 @@
 import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type FollowUp } from "../../../follow-ups/follow-up-contract";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { copySpokenSentence } from "../../../library/language/_utils/language-lesson-steps";
 import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
@@ -9,7 +10,7 @@ import { deleteWrittenFromScreen, writtenFromScreen } from "../handlers/screens"
 import { type FixUnit } from "./resolved-change";
 import { findLessonsWithWordTiles } from "./word-tile-lessons";
 
-type VocabularyUnit = { id: string; kind: "sentence" | "word" };
+export type VocabularyUnit = { id: string; kind: "sentence" | "word" };
 
 export function isVocabularyUnit(unit: FixUnit): unit is VocabularyUnit {
   return unit.kind === "word" || unit.kind === "sentence";
@@ -148,6 +149,26 @@ async function findOwedOrders(db: TransactionClient, changes: readonly StoredCha
   return { lessonIds: uniqueIds(rows), where };
 }
 
+/**
+ * The lessons whose screens or rows applying the changes writes, which approving locks first. A
+ * clip writes none, and one lesson's row writes only that lesson's.
+ */
+export async function findLessonsWritten(
+  db: TransactionClient,
+  changes: readonly StoredChange[],
+): Promise<string[]> {
+  const where = changes.flatMap((change) => screensWhere(change) ?? []);
+
+  const [screens, orders] = await Promise.all([
+    where.length === 0
+      ? []
+      : db.step.findMany({ select: { lessonId: true }, where: { OR: where } }),
+    findOwedOrders(db, changes),
+  ]);
+
+  return [...new Set([...screens.map((step) => step.lessonId), ...orders.lessonIds])];
+}
+
 async function keptPronunciations(
   db: TransactionClient,
   changes: readonly StoredChange[],
@@ -234,11 +255,11 @@ async function copySpokenScreens(tx: TransactionClient, changes: readonly Stored
 async function oweSentenceOrders(
   tx: TransactionClient,
   { changes, context }: { changes: readonly StoredChange[]; context: FixContext },
-) {
+): Promise<FollowUp[]> {
   const orders = await findOwedOrders(tx, changes);
 
   if (orders.lessonIds.length === 0) {
-    return;
+    return [];
   }
 
   await tx.lessonSentence.updateMany({
@@ -251,30 +272,31 @@ async function oweSentenceOrders(
     where: { id: { in: orders.lessonIds } },
   });
 
+  return orders.lessonIds.map((lessonId) => ({
+    input: { lessonId },
+    kind: "writeSentenceOrders" as const,
+  }));
+}
+
+async function findApprover(tx: TransactionClient, fixId: string): Promise<string> {
   const fix = await tx.contentFix.findUniqueOrThrow({
     select: { deciderId: true },
-    where: { id: context.fixId },
+    where: { id: fixId },
   });
 
   if (!fix.deciderId) {
-    throw new Error("Owed word orders need the staff approver.");
+    throw new Error("A word or sentence fix owes its follow-ups to the staff approver.");
   }
 
-  await oweFollowUps({
-    db: tx,
-    followUps: orders.lessonIds.map((lessonId) => ({
-      input: { lessonId },
-      kind: "writeSentenceOrders" as const,
-    })),
-    userId: fix.deciderId,
-  });
+  return fix.deciderId;
 }
 
 /**
  * What a word or sentence fix writes besides its own rows, recomputed from the rows as fixed, so
  * applying a revert puts them back the same way: spoken screens copy the sentence again, word
- * orders are owed again, answers written from the old screens go, and every lesson showing it
- * moves its version. Lessons are written before their screens, in the order publishing locks them.
+ * orders are owed again, and answers written from the old screens go. It writes only the lessons
+ * `findLessonsWritten` finds, which approving locks first. Every lesson showing it, which for a
+ * common word is a large share of its language, moves its version after this commits, as owed work.
  */
 export async function applyVocabularyUnit(
   tx: TransactionClient,
@@ -284,11 +306,6 @@ export async function applyVocabularyUnit(
     unit,
   }: { changes: readonly StoredChange[]; context: FixContext; unit: VocabularyUnit },
 ): Promise<void> {
-  await tx.lesson.updateMany({
-    data: { updatedAt: context.now },
-    where: { id: { in: await findLessonsShowing(tx, unit) } },
-  });
-
   const screens = await findShowingScreens(tx, changes);
 
   for (const stepId of screens) {
@@ -297,5 +314,14 @@ export async function applyVocabularyUnit(
   }
 
   await copySpokenScreens(tx, changes);
-  await oweSentenceOrders(tx, { changes, context });
+  const orders = await oweSentenceOrders(tx, { changes, context });
+
+  await oweFollowUps({
+    db: tx,
+    followUps: [
+      ...orders,
+      { input: { id: unit.id, kind: unit.kind }, kind: "updateLessonsShowing" },
+    ],
+    userId: await findApprover(tx, context.fixId),
+  });
 }

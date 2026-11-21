@@ -80,7 +80,7 @@ class MockRunnerViewModelTest {
         runTest(dispatcher) {
             api.mock = navigatedMock(FORWARD_ONLY)
             val store = store()
-            val kept = MockDraft(ITEM_ONE, Answer.Choice(2), durationMs = 4000, flagged = true)
+            val kept = MockDraft(ITEM_ONE, Answer.Choice(2), durationMs = 4000, unsure = true)
             store.unsent(ana, RUN_BLOCK).save(listOf(kept))
 
             val viewModel = store.runner()
@@ -91,6 +91,103 @@ class MockRunnerViewModelTest {
             assertEquals(listOf(kept), api.saved)
             assertEquals(kept, viewModel.state.value.drafts[ITEM_ONE])
             assertTrue(store.kept().isEmpty())
+        }
+
+    /** A forward-only section of three questions allowing [answerChanges] in its review; [stored] are the answers the server has. */
+    private fun forwardOnly(
+        answerChanges: Int,
+        stored: List<String>,
+        changesLeft: Int = answerChanges,
+        changedItemIds: List<String> = emptyList(),
+    ) = navigatedMock(
+        """{"answerChanges":$answerChanges,"forwardOnly":true,"itemSeconds":null,"mustAnswer":false}""",
+        currentSection(
+            questions =
+                listOf(ITEM_ONE, ITEM_TWO, ITEM_THREE)
+                    .mapIndexed { index, item -> question(item, index + 1, "Question ${index + 1}") }
+                    .joinToString(","),
+            drafts = stored.joinToString(",") { """{"answer":{"selectedIndex":0},"durationMs":1000,"flagged":false,"itemId":"$it"}""" },
+            resume = stored.size - 1,
+            changesLeft = changesLeft,
+            changedItemIds = changedItemIds,
+        ),
+    )
+
+    @Test
+    fun aQuestionTheReviewAlreadyChangedChangesAgainWithoutUsingAnotherChange() =
+        runTest(dispatcher) {
+            api.mock =
+                forwardOnly(
+                    answerChanges = 2,
+                    stored = listOf(ITEM_ONE, ITEM_TWO, ITEM_THREE),
+                    changesLeft = 1,
+                    changedItemIds = listOf(ITEM_TWO),
+                )
+            val viewModel = store().runner()
+
+            viewModel.go(1)
+            viewModel.answer(Answer.Choice(2))
+            assertEquals(
+                Answer.Choice(2),
+                viewModel.state.value.drafts[ITEM_TWO]
+                    ?.answer,
+            )
+            assertEquals(1, viewModel.state.value.moves.changesLeft)
+
+            viewModel.go(0)
+            viewModel.answer(Answer.Choice(1))
+            assertEquals(0, viewModel.state.value.moves.changesLeft)
+            assertTrue(
+                viewModel.state.value.moves
+                    .canChange(1),
+            )
+            advanceUntilIdle()
+        }
+
+    @Test
+    fun aReviewsChangesKeptOnTheDeviceCountOnceWhenTheMockOpensAgain() =
+        runTest(dispatcher) {
+            api.mock =
+                forwardOnly(
+                    answerChanges = 3,
+                    stored = listOf(ITEM_ONE, ITEM_TWO, ITEM_THREE),
+                    changesLeft = 2,
+                    changedItemIds = listOf(ITEM_TWO),
+                )
+            val store = store()
+            store.unsent(ana, RUN_BLOCK).save(listOf(MockDraft(ITEM_TWO, Answer.Choice(2)), MockDraft(ITEM_ONE, Answer.Choice(1))))
+
+            val moves =
+                store
+                    .runner()
+                    .state.value.moves
+
+            // Question 2 was already charged on the server, so only question 1 uses a change.
+            assertEquals(1, moves.changesLeft)
+            assertTrue(moves.canChange(0))
+            assertTrue(moves.canChange(1))
+        }
+
+    @Test
+    fun aSectionFinishedOfflineOpensAgainWhereItWasLeft() =
+        runTest(dispatcher) {
+            api.mock = forwardOnly(answerChanges = 1, stored = listOf(ITEM_ONE))
+            val store = store()
+            store.unsent(ana, RUN_BLOCK).save(
+                listOf(
+                    MockDraft(ITEM_TWO, Answer.Choice(0)),
+                    MockDraft(ITEM_THREE, Answer.Choice(0)),
+                    MockDraft(ITEM_ONE, Answer.Choice(1)),
+                ),
+            )
+
+            val run = store.runner().state.value
+
+            assertEquals(2, run.position)
+            assertEquals(2, run.reached)
+            assertEquals(0, run.moves.changesLeft)
+            assertTrue(run.moves.canChange(0))
+            assertFalse(run.moves.canChange(1))
         }
 
     @Test

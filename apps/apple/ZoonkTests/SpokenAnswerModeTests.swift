@@ -12,6 +12,12 @@ final class SpokenAnswerModeTests: XCTestCase {
     XCTAssertEqual(mode(cantTalk: true), .type)
   }
 
+  func testCantTalkOrListenTypesTheSentence() {
+    XCTAssertEqual(mode(canListen: true, cantTalk: true, cantListen: true), .type)
+    XCTAssertEqual(mode(canListen: true, canSpeak: false, cantListen: true), .type)
+    XCTAssertEqual(mode(canListen: true, cantListen: true), .speak, "speaking needs no listening")
+  }
+
   func testABlockedMicrophoneTypesTheSentence() {
     XCTAssertEqual(mode(micBlocked: true), .type)
     XCTAssertEqual(mode(canListen: true, micBlocked: true), .type)
@@ -29,9 +35,11 @@ final class SpokenAnswerModeTests: XCTestCase {
   }
 
   private func mode(
-    canListen: Bool = false, canSpeak: Bool = true, cantTalk: Bool = false, micBlocked: Bool = false
+    canListen: Bool = false, canSpeak: Bool = true, cantTalk: Bool = false,
+    cantListen: Bool = false, micBlocked: Bool = false
   ) -> SpokenAnswerMode {
     SpokenAnswerMode(
-      canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalk, micBlocked: micBlocked)
+      canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalk, cantListen: cantListen,
+      micBlocked: micBlocked)
   }
 }

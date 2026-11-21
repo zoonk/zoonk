@@ -66,7 +66,7 @@ describe("profile question capabilities", () => {
 
     await expect(save(watch)).resolves.toMatchObject({
       question: {
-        saved: { picks: ["anime", "sciFi"], text: "Star Trek, Fringe" },
+        saved: { picks: ["sciFi", "anime"], text: "Star Trek, Fringe" },
         status: "answered",
       },
       status: "saved",
@@ -323,7 +323,8 @@ describe("profile question capabilities", () => {
 
     const claims = await prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } });
     expect(claims).toBe(cap);
-    const checks = await listFollowUps(user.id);
+    const followUps = await listFollowUps(user.id);
+    const checks = followUps.filter(({ kind }) => kind === "checkFactSensitivity");
     expect(checks).toHaveLength(1);
     await expect(activeFacts(user.id)).resolves.toHaveLength(3);
   });
@@ -477,7 +478,8 @@ describe("profile question capabilities", () => {
       prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
     ).resolves.toBe(cap);
 
-    await expect(listFollowUps(user.id)).resolves.toHaveLength(2);
+    const followUps = await listFollowUps(user.id);
+    expect(followUps.filter(({ kind }) => kind === "checkFactSensitivity")).toHaveLength(2);
   });
 
   it("round-trips accepted Japanese favorites with canonical separators", async () => {
@@ -559,7 +561,11 @@ describe("profile question capabilities", () => {
 
     expect(
       view?.questions.find((question) => question.id === "studies")?.saved.studies,
-    ).toHaveLength(3);
+    ).toStrictEqual([
+      { field: "computing", subject: null },
+      { field: "business", subject: null },
+      { field: "law", subject: null },
+    ]);
   });
 
   it.each([

@@ -33,20 +33,35 @@ export async function loadLessonPlanSkillIds({
   );
 }
 
-/** Uses plan skills when the lesson belongs to a plan, otherwise its own skills. */
+/** Uses plan skills when a lesson belongs to a plan, otherwise its own skills. */
 export async function loadLessonReviewSkillIds({
-  lessonId,
-  ownSkillIds,
+  lessonIds,
   userId,
 }: {
-  lessonId: string;
-  ownSkillIds: readonly string[];
+  lessonIds: readonly string[];
   userId: string;
-}): Promise<string[]> {
-  const planSkillIds = await loadLessonPlanSkillIds({ lessonIds: [lessonId], userId });
-  const held = planSkillIds.get(lessonId) ?? [];
+}): Promise<Map<string, string[]>> {
+  if (lessonIds.length === 0) {
+    return new Map();
+  }
 
-  return held.length > 0 ? held : [...ownSkillIds];
+  const [ownSkills, planSkillIds] = await Promise.all([
+    prisma.lessonSkill.findMany({
+      select: { lessonId: true, skillId: true },
+      where: { lessonId: { in: [...lessonIds] } },
+    }),
+    loadLessonPlanSkillIds({ lessonIds, userId }),
+  ]);
+
+  const ownSkillIds = Map.groupBy(ownSkills, (row) => row.lessonId);
+
+  return new Map(
+    lessonIds.map((lessonId) => {
+      const held = planSkillIds.get(lessonId) ?? [];
+      const own = ownSkillIds.get(lessonId) ?? [];
+      return [lessonId, held.length > 0 ? held : own.map((row) => row.skillId)];
+    }),
+  );
 }
 
 /** Lesson answers map to the plan's skill when available; other answers keep their recorded skill. */

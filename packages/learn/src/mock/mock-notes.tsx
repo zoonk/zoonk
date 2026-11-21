@@ -182,9 +182,7 @@ export function useMockAbout(view: AboutView): React.ReactNode {
   return (
     <div className="text-muted-foreground flex flex-col gap-1.5 text-sm">
       {[...new Set(lines)].map((line) => (
-        <p className="text-pretty" key={line}>
-          {line}
-        </p>
+        <p key={line}>{line}</p>
       ))}
       {pastEdition && <PastEditionLine source={pastEdition} />}
     </div>

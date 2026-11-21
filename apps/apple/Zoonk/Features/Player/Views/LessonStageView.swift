@@ -70,14 +70,12 @@ struct LessonStageView: View {
     "\(step.id)/\(state.rounds[step.id] ?? 0)"
   }
 
-  /// Main's `ListeningInstead`: a spoken screen answered by listening is a listening screen.
   private func shownPrompt(_ step: LessonStep) -> ShownPrompt {
-    guard case .spokenAnswer(_, let listening?) = step.content else {
-      return ShownPrompt(stepId: step.id, url: step.promptAudio)
-    }
-
-    let mode = store.spokenAnswerMode(canListen: true, canSpeak: recording.input != nil)
-    return ShownPrompt(stepId: step.id, url: mode == .listen ? listening.promptAudio : nil)
+    ShownPrompt(
+      stepId: step.id,
+      url: step.shownPromptAudio(
+        spokenMode: store.spokenAnswerMode(canListen: true, canSpeak: recording.input != nil),
+        cantListen: store.cantListenToday))
   }
 
   private func recapView(_ recap: LessonRecap, on step: LessonStep) -> some View {

@@ -75,11 +75,7 @@ export function StepTitleNumber({ className, ...props }: React.ComponentProps<"s
 
 export function StepDetail({ className, ...props }: React.ComponentProps<"p">) {
   return (
-    <p
-      className={cn("text-muted-foreground text-pretty", className)}
-      data-slot="step-detail"
-      {...props}
-    />
+    <p className={cn("text-muted-foreground", className)} data-slot="step-detail" {...props} />
   );
 }
 

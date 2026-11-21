@@ -14,17 +14,13 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { MicIcon, MicOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
-import {
-  FILL_SCREEN_CLASS,
-  InteractiveStepLayout,
-  PlayerContentFrame,
-} from "../../components/step-layouts";
+import { InteractiveStepLayout } from "../../components/step-layouts";
 import { StepWayOut } from "../../components/step-way-out";
 import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
-import { CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
+import { CANT_LISTEN_TODAY, CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
 import { ExerciseStepView } from "./exercise-step";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
@@ -159,7 +155,8 @@ function useAnswerMode({
   const canSpeak =
     (Boolean(adapters.gradeSpokenAnswer) || Boolean(canRecordSpokenAnswer)) && canRecord;
 
-  const canListen = step.listening !== null;
+  const [cantListen] = useTodayChoice(CANT_LISTEN_TODAY);
+  const canListen = step.listening !== null && !cantListen;
   const [cantTalk, setCantTalk] = useTodayChoice(CANT_TALK_TODAY);
   const [micProblem, setMicProblem] = useState<MicrophoneProblem | null>(null);
 
@@ -179,13 +176,22 @@ function useAnswerMode({
 function ListeningInstead({
   props,
   step,
+  wayOut,
 }: {
   props: LessonStepViewProps<StepOf<"spokenAnswer">>;
   step: StepOf<"spokenAnswer"> & { listening: NonNullable<StepOf<"spokenAnswer">["listening"]> };
+  wayOut: React.ReactNode;
 }) {
+  const [cantListen] = useTodayChoice(CANT_LISTEN_TODAY);
+
   return (
-    <PlayerAudioProvider audioUrl={step.listening.sentence?.audioUrl ?? null}>
-      <ExerciseStepView {...props} step={toListeningStep({ listening: step.listening, step })} />
+    <PlayerAudioProvider audioUrl={cantListen ? null : (step.listening.sentence?.audioUrl ?? null)}>
+      <ExerciseStepView
+        {...props}
+        onCantListenChange={() => props.onAnswer(null)}
+        step={toListeningStep({ listening: step.listening, step })}
+        wayOut={wayOut}
+      />
     </PlayerAudioProvider>
   );
 }
@@ -244,14 +250,11 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
 
   if (answerMode.mode === "listen" && listening) {
     return (
-      <div className={cn("flex flex-col", FILL_SCREEN_CLASS)}>
-        <ListeningInstead props={props} step={{ ...step, listening }} />
-
-        {/* Under the answer on the column, as on the speaking screen. */}
-        <PlayerContentFrame className="pb-6 empty:hidden">
-          <ModeSwitch answerMode={answerMode} isLocked={isLocked} />
-        </PlayerContentFrame>
-      </div>
+      <ListeningInstead
+        props={props}
+        step={{ ...step, listening }}
+        wayOut={<ModeSwitch answerMode={answerMode} isLocked={isLocked} />}
+      />
     );
   }
 
@@ -263,7 +266,7 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
         <>
           {/* Typing in place of speaking says why, unless the learner chose it ("I can't talk now"). */}
           {(answerMode.micProblem || !answerMode.canSpeak) && !isLocked && (
-            <p className="text-muted-foreground text-sm text-pretty" role="status">
+            <p className="text-muted-foreground text-sm" role="status">
               {answerMode.micProblem === "blocked"
                 ? t("To speak instead, allow the microphone for Zoonk in your browser settings.")
                 : t("We can't use your microphone, so type what you'd say.")}

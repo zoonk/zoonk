@@ -3,8 +3,9 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
+import { stalledRunReporter } from "@zoonk/testing/stalled-run-reporter";
 import { type CDPSession, type Page, type Route } from "playwright";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import { type BrowserCommand } from "vitest/node";
 
 assertBrowserLaunchAllowed();
@@ -164,5 +165,7 @@ export default defineConfig({
         },
       },
     ],
+    // Vitest's own deadlines in a page are 60 s at most, so a page silent for twice that is stuck.
+    reporters: [...configDefaults.reporters, stalledRunReporter({ quietMs: 120_000 })],
   },
 });

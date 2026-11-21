@@ -110,9 +110,7 @@ function OfferFrame({
           <p className="text-sm font-medium" id={titleId} role="status">
             {title}
           </p>
-          <p className="text-muted-foreground text-xs leading-5 text-pretty wrap-anywhere">
-            {description}
-          </p>
+          <p className="text-muted-foreground text-xs leading-5 wrap-anywhere">{description}</p>
         </div>
 
         {/* Their room is there from the start, so nothing moves when the claim lands. */}

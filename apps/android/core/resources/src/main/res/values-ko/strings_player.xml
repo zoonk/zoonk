@@ -21,7 +21,9 @@
   "player_back_to_chapter": "6b262dcf3a0d8ac1818bb6fe1c0cf3702faf3ad8fd2906eb1af04c04e6391c79",
   "player_back_to_unit": "6c0324d78a636ce18b9932fe50d6fb5b6828bc7675fa3015e600f4b90262d19b",
   "player_build_my_plan": "70dbb68360874584dc2cc31eb201fc64ead40d2a2887cac4e5348cdcf33488c7",
+  "player_can_listen_now": "904870b345d656c36c1d6d39a95e9d74cec266588637b185874f05aabb6bdb10",
   "player_can_talk_now": "7a36d91ce0bcdec53a6aff39d9e3cd32b33ac8ab6c0e09d437d013ec4dcb7713",
+  "player_cant_listen_now": "20e8e100226298206f8541413e9cfea3d1650504093b5e7822e09eaab5d38b04",
   "player_cant_talk_now": "9b24f9b59b157fdd124fdda748644b487a012d5ba02875b7d532de2c14e6cc3a",
   "player_cant_write_now": "93f7352ed074d8e1491cbad0387f8d1f6f413cc156eb07872f5d253c180c778d",
   "player_challenge_bit_higher": "0b7e24053f17d0f764d43fec8348a458c89b91a47e88183ac12aa1e8d9bbb073",
@@ -342,6 +344,8 @@
     <string name="player_not_found_title">이 레슨은 이용할 수 없어요</string>
     <string name="player_cant_talk_now">지금은 말할 수 없어요</string>
     <string name="player_can_talk_now">이제 말할 수 있어요</string>
+    <string name="player_cant_listen_now">지금은 들을 수 없어요</string>
+    <string name="player_can_listen_now">이제 들을 수 있어요</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">소리 내어 말하기</string>
     <string name="player_microphone_is_blocked">마이크 사용이 차단됐어요.</string>

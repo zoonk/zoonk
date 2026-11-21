@@ -20,6 +20,7 @@ import {
   revertInAdmin,
   signInApprover,
   signInProposer,
+  skilledLanguageLesson,
 } from "./_test-utils/content-fix-steps";
 import { mockVoice } from "./_test-utils/mock-fix-voice";
 import {
@@ -176,7 +177,7 @@ describe("resources reviewed with a screen list", () => {
   });
 
   it("saves a declared sentence with its recording and reviewed orders, and refuses a clip changed after review", async () => {
-    const { lesson, steps, sentence } = await languageLessonFixture();
+    const { lesson, steps, sentence } = await skilledLanguageLesson();
 
     const target = await prisma.sentence.create({
       data: {
@@ -393,7 +394,7 @@ describe("resources reviewed with a screen list", () => {
   });
 
   it("records a new alphabet card and sentence in the lesson's target language", async () => {
-    const { lesson, sentence, steps } = await languageLessonFixture();
+    const { lesson, sentence, steps } = await skilledLanguageLesson();
 
     const content = {
       audioText: "A",

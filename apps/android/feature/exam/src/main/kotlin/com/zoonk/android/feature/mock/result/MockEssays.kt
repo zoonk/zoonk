@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -88,7 +89,7 @@ internal fun EssayStepContent(
 ) {
     when (step) {
         is EssayStep.Ungraded -> UngradedEssay(step, rubric, grading, onGrade)
-        is EssayStep.Grade -> EssayGradeCard(step.grade, EssayRubric.of(rubric?.value))
+        is EssayStep.Grade -> EssayGradeCard(step.grade, EssayRubric.of(rubric?.value), note = { EssayUnsure(step.essay) })
         is EssayStep.NextStep -> NextStepComment(step.grade)
     }
 }
@@ -107,8 +108,18 @@ private fun UngradedEssay(
         StepTitle(writingName(EssayRubric.of(rubric?.value)), Modifier.stepHeading())
         if (essay.status == MockEssay.Status.BLANK) StepDetail(stringResource(R.string.mock_result_left_blank))
         if (essay.grade?.zeroReason == EssayGrade.ZeroReason.TOO_SHORT) StepDetail(stringResource(R.string.mock_result_too_short))
+        EssayUnsure(essay)
     }
     if (essay.status == MockEssay.Status.PENDING) PendingGrade(grading, onGrade)
+}
+
+/** Not sure, as the review's rows show it, on an essay the learner marked. */
+@Composable
+private fun EssayUnsure(essay: MockEssay) {
+    if (!essay.unsure) return
+    ProvideTextStyle(MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)) {
+        UnsureFacts("", unsure = true)
+    }
 }
 
 /** Grading is started by the hand-in; here it shows going, and offers Grade it again while it can still go through. */

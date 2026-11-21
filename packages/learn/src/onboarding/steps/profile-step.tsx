@@ -15,12 +15,11 @@ import { LearnLink } from "../../learn-link";
 import { useExclusiveLabels } from "../../profile-questions/profile-body-parts";
 import {
   type ProfileDraft,
-  canSendProfileDraft,
   declineProfileQuestion,
   getPrecheckedSupports,
   getProfileJobPrefill,
-  toProfileAnswer,
   toProfileDraft,
+  toProfileInput,
   withPrecheckedSupports,
 } from "../../profile-questions/profile-draft";
 import { ProfileQuestionBody } from "../../profile-questions/profile-question-body";
@@ -127,8 +126,7 @@ function ProfileStep({
   const description = useProfileQuestionDescription(question.id, "onboarding");
 
   const [draft, setDraft] = useState(() => initialDraft({ jobPrefill, precheck, question }));
-  const canSend = canSendProfileDraft({ draft, from: "onboarding", question: question.id });
-  const input = canSend ? toProfileAnswer({ draft, memoryEnabled, question: question.id }) : null;
+  const input = toProfileInput({ draft, from: "onboarding", memoryEnabled, question });
 
   const send = () => {
     if (!input) {

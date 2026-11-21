@@ -77,30 +77,44 @@ fun rememberPromptAudio(
     return PromptAudio(audio, autoplayed)
 }
 
-fun promptAudioUrl(step: LessonStep): String? = (step.content as? StepContent.Language)?.let { promptAudioUrl(it) }
+fun promptAudioUrl(
+    step: LessonStep,
+    cantListen: Boolean,
+): String? = (step.content as? StepContent.Language)?.let { promptAudioUrl(it, cantListen) }
 
-fun promptAudioUrl(language: StepContent.Language): String? {
+fun promptAudioUrl(
+    language: StepContent.Language,
+    cantListen: Boolean,
+): String? {
     val exercise = language.exercise.toExercise()
     return when (language.kind) {
         StepKind.Alphabet -> (exercise.content as? ExerciseContent.Alphabet)?.content?.audioUrl
-        StepKind.Listening -> exercise.sentence?.audioUrl
+        StepKind.Listening -> exercise.sentence?.let { listeningAudioUrl(it, cantListen) }
         StepKind.Vocabulary -> exercise.word?.audioUrl
         else -> null
     }
 }
 
+/** A listening sentence's recording, which stays quiet for a learner who can't listen today: they read the sentence instead. */
+internal fun listeningAudioUrl(
+    sentence: ExerciseSentence,
+    cantListen: Boolean,
+): String? = sentence.audioUrl?.takeUnless { cantListen }
+
 /**
  * The previous screen's sound stops, including when the lesson ends; this one's starts once per
  * visit, so going back plays it again while rotating or resizing doesn't. A spoken screen's listening exercise, shown when the
- * learner can't talk, plays each time they switch to it and stops when they switch back, as on main.
+ * learner can't talk, plays each time they switch to it and stops when they switch back, as on main; a learner who can't listen
+ * today hears neither, and the sound plays again once they can.
  */
 @Composable
 fun PromptAudioEffect(
     step: LessonStep?,
     cantTalk: Boolean,
+    cantListen: Boolean,
     prompt: PromptAudio,
 ) {
-    val url = step?.let { shownPromptUrl(it, cantTalk) }
+    val url = step?.let { shownPromptUrl(it, cantTalk, cantListen) }
     LaunchedEffect(step?.id, url) {
         prompt.cancel()
         val id = step?.id ?: return@LaunchedEffect
@@ -108,13 +122,14 @@ fun PromptAudioEffect(
     }
 }
 
-private fun shownPromptUrl(
+internal fun shownPromptUrl(
     step: LessonStep,
     cantTalk: Boolean,
+    cantListen: Boolean,
 ): String? =
     when (val content = step.content) {
-        is StepContent.SpokenAnswer -> content.listeningInstead(cantTalk)?.let { promptAudioUrl(it) }
-        else -> promptAudioUrl(step)
+        is StepContent.SpokenAnswer -> content.listeningInstead(cantTalk, cantListen)?.let { promptAudioUrl(it, cantListen) }
+        else -> promptAudioUrl(step, cantListen)
     }
 
 @Composable

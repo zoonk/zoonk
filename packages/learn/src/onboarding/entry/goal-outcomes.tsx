@@ -30,7 +30,7 @@ import {
 import { GoalLimitNotice, isPlusGoalLimit } from "./goal-limit-notice";
 
 const BUBBLE_CLASS =
-  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-reading leading-relaxed text-pretty whitespace-pre-wrap";
+  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-reading leading-relaxed whitespace-pre-wrap";
 
 const ICON_CLASS = "text-muted-foreground flex [&_svg]:size-6";
 
@@ -52,10 +52,7 @@ export function GoalErrorMessage({ error }: { error: GoalError | null }) {
   }
 
   return error.needsAccount ? (
-    <p
-      className={cn("text-muted-foreground text-sm text-pretty", message.hidden && "invisible")}
-      role="alert"
-    >
+    <p className={cn("text-muted-foreground text-sm", message.hidden && "invisible")} role="alert">
       {message.text}
     </p>
   ) : (

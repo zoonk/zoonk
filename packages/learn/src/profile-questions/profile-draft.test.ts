@@ -6,18 +6,18 @@ import { assert, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
   type ProfileDraft,
-  canSendProfileDraft,
+  type ProfileQuestionPlace,
   getPrecheckedSupports,
   getProfileJobPrefill,
-  toProfileAnswer,
   toProfileDraft,
+  toProfileInput,
   toggleProfileExclusive,
   toggleProfilePick,
   withPrecheckedSupports,
 } from "./profile-draft";
 
 function draft(overrides: Partial<ProfileDraft> = {}): ProfileDraft {
-  return { exclusive: null, picks: [], studies: [], text: "", ...overrides };
+  return { exclusive: null, picks: [], studies: [], text: "", typed: [], ...overrides };
 }
 
 function view(overrides: Partial<ProfileQuestionView> & Pick<ProfileQuestionView, "id">) {
@@ -30,6 +30,27 @@ function view(overrides: Partial<ProfileQuestionView> & Pick<ProfileQuestionView
   } satisfies ProfileQuestionView;
 }
 
+function input({
+  draft: sent,
+  from = "onboarding",
+  memoryEnabled = true,
+  question,
+  status = null,
+}: {
+  draft: ProfileDraft;
+  from?: ProfileQuestionPlace;
+  memoryEnabled?: boolean;
+  question: ProfileQuestionView["id"];
+  status?: ProfileQuestionView["status"];
+}) {
+  return toProfileInput({
+    draft: sent,
+    from,
+    memoryEnabled,
+    question: view({ id: question, status }),
+  });
+}
+
 describe(getProfileJobPrefill, () => {
   it("an earlier role fits the job field and can be sent without editing", () => {
     const role =
@@ -39,11 +60,7 @@ describe(getProfileJobPrefill, () => {
     expect(text).toBe(role.trim().slice(0, MAX_PROFILE_JOB_LENGTH));
 
     expect(
-      toProfileAnswer({
-        draft: draft({ picks: ["work"], text: text ?? "" }),
-        memoryEnabled: true,
-        question: "work",
-      }),
+      input({ draft: draft({ picks: ["work"], text: text ?? "" }), question: "work" }),
     ).not.toBeNull();
   });
 
@@ -54,11 +71,7 @@ describe(getProfileJobPrefill, () => {
         expect(text?.length ?? 0).toBeLessThanOrEqual(MAX_PROFILE_JOB_LENGTH);
 
         expect(
-          toProfileAnswer({
-            draft: draft({ picks: ["work"], text: text ?? "" }),
-            memoryEnabled: true,
-            question: "work",
-          }),
+          input({ draft: draft({ picks: ["work"], text: text ?? "" }), question: "work" }),
         ).not.toBeNull();
       }),
     );
@@ -71,13 +84,6 @@ describe(getProfileJobPrefill, () => {
 });
 
 describe(toggleProfilePick, () => {
-  it("a fourth chip is refused and says so", () => {
-    const full = draft({ picks: ["sports", "anime", "drama"] });
-    const result = toggleProfilePick({ draft: full, id: "comedy", question: "watch" });
-
-    expect(result).toStrictEqual({ capped: true, draft: full });
-  });
-
   it("a pick clears the decline row", () => {
     const result = toggleProfilePick({
       draft: draft({ exclusive: "ratherNot" }),
@@ -85,7 +91,7 @@ describe(toggleProfilePick, () => {
       question: "work",
     });
 
-    expect(result.draft).toStrictEqual(draft({ picks: ["student"] }));
+    expect(result).toStrictEqual(draft({ picks: ["student"] }));
   });
 
   it("work keeps one status", () => {
@@ -95,34 +101,32 @@ describe(toggleProfilePick, () => {
       question: "work",
     });
 
-    expect(result.draft.picks).toStrictEqual(["work"]);
+    expect(result.picks).toStrictEqual(["work"]);
   });
 
-  it("studies keep their pick order and cap at three", () => {
+  it("studies keep their pick order, however many there are", () => {
     let current = draft();
 
-    for (const field of ["law", "media", "health"]) {
-      current = toggleProfilePick({ draft: current, id: field, question: "studies" }).draft;
+    for (const field of ["law", "media", "health", "other"]) {
+      current = toggleProfilePick({ draft: current, id: field, question: "studies" });
     }
 
-    expect(current.studies.map((study) => study.field)).toStrictEqual(["law", "media", "health"]);
-
-    expect(toggleProfilePick({ draft: current, id: "other", question: "studies" }).capped).toBe(
-      true,
-    );
+    expect(current.studies.map((study) => study.field)).toStrictEqual([
+      "law",
+      "media",
+      "health",
+      "other",
+    ]);
   });
 
-  it("condition rows have no cap", () => {
+  it("chips have no cap", () => {
     const picked = toggleProfilePick({
-      draft: draft({ picks: ["adhd", "autism", "dyslexia"] }),
-      id: "anxiety",
-      question: "conditions",
+      draft: draft({ picks: ["sports", "anime", "drama"] }),
+      id: "comedy",
+      question: "watch",
     });
 
-    expect(picked).toStrictEqual({
-      capped: false,
-      draft: draft({ picks: ["adhd", "autism", "dyslexia", "anxiety"] }),
-    });
+    expect(picked).toStrictEqual(draft({ picks: ["sports", "anime", "drama", "comedy"] }));
   });
 });
 
@@ -141,50 +145,32 @@ describe(toggleProfileExclusive, () => {
   });
 });
 
-describe(canSendProfileDraft, () => {
+describe(toProfileInput, () => {
   it("onboarding needs an answer", () => {
-    expect(canSendProfileDraft({ draft: draft(), from: "onboarding", question: "watch" })).toBe(
-      false,
-    );
-
-    expect(
-      canSendProfileDraft({ draft: draft({ text: "Dune" }), from: "onboarding", question: "read" }),
-    ).toBe(true);
+    expect(input({ draft: draft(), question: "watch" })).toBeNull();
+    expect(input({ draft: draft({ text: "Dune" }), question: "read" })).not.toBeNull();
   });
 
   it("Settings needs an answer for an unanswered question", () => {
-    expect(canSendProfileDraft({ draft: draft(), from: "settings", question: "watch" })).toBe(
-      false,
-    );
+    expect(input({ draft: draft(), from: "settings", question: "watch" })).toBeNull();
   });
 
   it("Settings lets the learner clear a saved answer", () => {
     expect(
-      canSendProfileDraft({
-        draft: draft(),
-        from: "settings",
-        question: "watch",
-        savedStatus: "answered",
-      }),
-    ).toBe(true);
+      input({ draft: draft(), from: "settings", question: "watch", status: "answered" }),
+    ).not.toBeNull();
   });
 
   it("Settings lets the learner explicitly decline an unanswered question", () => {
     expect(
-      canSendProfileDraft({
-        draft: draft({ exclusive: "ratherNot" }),
-        from: "settings",
-        question: "work",
-      }),
-    ).toBe(true);
+      input({ draft: draft({ exclusive: "ratherNot" }), from: "settings", question: "work" }),
+    ).not.toBeNull();
   });
 
   it("another field needs its name", () => {
     const other = draft({ studies: [{ field: "other", subject: " " }] });
 
-    expect(canSendProfileDraft({ draft: other, from: "onboarding", question: "studies" })).toBe(
-      false,
-    );
+    expect(input({ draft: other, question: "studies" })).toBeNull();
   });
 
   it("Something else needs its words, in onboarding and Settings", () => {
@@ -192,26 +178,14 @@ describe(canSendProfileDraft, () => {
     const filled = draft({ picks: ["adhd", "other"], text: "Migraines" });
 
     for (const from of ["onboarding", "settings"] as const) {
-      expect(canSendProfileDraft({ draft: blank, from, question: "conditions" })).toBe(false);
-      expect(canSendProfileDraft({ draft: filled, from, question: "conditions" })).toBe(true);
+      expect(input({ draft: blank, from, question: "conditions" })).toBeNull();
+      expect(input({ draft: filled, from, question: "conditions" })).not.toBeNull();
     }
   });
 
-  it("Settings saves picked conditions", () => {
+  it("an emptied conditions screen declines", () => {
     expect(
-      canSendProfileDraft({
-        draft: draft({ picks: ["adhd"] }),
-        from: "settings",
-        question: "conditions",
-      }),
-    ).toBe(true);
-  });
-});
-
-describe(toProfileAnswer, () => {
-  it("an empty conditions screen declines", () => {
-    expect(
-      toProfileAnswer({ draft: draft(), memoryEnabled: true, question: "conditions" }),
+      input({ draft: draft(), from: "settings", question: "conditions", status: "answered" }),
     ).toStrictEqual({
       answer: { conditions: [], consented: false, declined: true },
       question: "conditions",
@@ -220,9 +194,9 @@ describe(toProfileAnswer, () => {
 
   it("picked conditions are saved with consent, the note only on other", () => {
     expect(
-      toProfileAnswer({
+      input({
         draft: draft({ picks: ["adhd", "other"], text: " Migraines " }),
-        memoryEnabled: true,
+        from: "settings",
         question: "conditions",
       }),
     ).toStrictEqual({
@@ -240,19 +214,19 @@ describe(toProfileAnswer, () => {
 
   it("the address form sends one form, and I'd rather not say declines it", () => {
     const picked = toggleProfilePick({
-      draft: toggleProfilePick({ draft: draft(), id: "feminine", question: "addressForm" }).draft,
+      draft: toggleProfilePick({ draft: draft(), id: "feminine", question: "addressForm" }),
       id: "neutral",
       question: "addressForm",
-    }).draft;
+    });
+
+    expect(input({ draft: picked, memoryEnabled: false, question: "addressForm" })).toStrictEqual({
+      answer: { declined: false, form: "neutral" },
+      question: "addressForm",
+    });
 
     expect(
-      toProfileAnswer({ draft: picked, memoryEnabled: false, question: "addressForm" }),
-    ).toStrictEqual({ answer: { declined: false, form: "neutral" }, question: "addressForm" });
-
-    expect(
-      toProfileAnswer({
+      input({
         draft: toggleProfileExclusive({ draft: picked, exclusive: "ratherNot" }),
-        memoryEnabled: true,
         question: "addressForm",
       }),
     ).toStrictEqual({ answer: { declined: true, form: null }, question: "addressForm" });
@@ -260,33 +234,26 @@ describe(toProfileAnswer, () => {
 
   it("the job goes only with a working status", () => {
     expect(
-      toProfileAnswer({
-        draft: draft({ picks: ["student"], text: "nurse" }),
-        memoryEnabled: true,
-        question: "work",
-      })?.answer,
+      input({ draft: draft({ picks: ["student"], text: "nurse" }), question: "work" })?.answer,
     ).toStrictEqual({ declined: false, job: null, status: "student" });
   });
 
   it("No sound effects alone is an answer", () => {
     expect(
-      toProfileAnswer({
-        draft: draft({ picks: ["noSoundEffects"] }),
-        memoryEnabled: true,
-        question: "learningSupport",
-      })?.answer,
+      input({ draft: draft({ picks: ["noSoundEffects"] }), question: "learningSupport" })?.answer,
     ).toStrictEqual({ declined: false, needs: [], note: null, soundEffects: false });
   });
 
-  it("an empty support screen declines and turns sounds back on", () => {
+  it("an emptied support screen declines and turns sounds back on", () => {
     expect(
-      toProfileAnswer({ draft: draft(), memoryEnabled: true, question: "learningSupport" })?.answer,
+      input({ draft: draft(), from: "settings", question: "learningSupport", status: "answered" })
+        ?.answer,
     ).toStrictEqual({ declined: true, needs: [], note: null, soundEffects: true });
   });
 
   it("with memory off, the support note isn't sent", () => {
     expect(
-      toProfileAnswer({
+      input({
         draft: draft({ picks: ["stepByStep"], text: "Diagrams" }),
         memoryEnabled: false,
         question: "learningSupport",
@@ -294,17 +261,16 @@ describe(toProfileAnswer, () => {
     ).toStrictEqual({ declined: false, needs: ["stepByStep"], note: null, soundEffects: true });
   });
 
-  it("an empty screen declines", () => {
+  it("an emptied screen declines", () => {
     expect(
-      toProfileAnswer({ draft: draft(), memoryEnabled: true, question: "studies" })?.answer,
+      input({ draft: draft(), from: "settings", question: "studies", status: "answered" })?.answer,
     ).toStrictEqual({ declined: true, studies: [] });
   });
 
   it("studies send their subjects", () => {
     expect(
-      toProfileAnswer({
+      input({
         draft: draft({ studies: [{ field: "media", subject: "journalism" }] }),
-        memoryEnabled: true,
         question: "studies",
       })?.answer,
     ).toStrictEqual({ declined: false, studies: [{ field: "media", subject: "journalism" }] });
@@ -348,6 +314,63 @@ describe(toProfileDraft, () => {
         }),
       ),
     ).toStrictEqual(draft({ picks: ["noSoundEffects"] }));
+  });
+});
+
+const TOOLS = [
+  { description: null, id: "excel", label: "Excel" },
+  { description: null, id: "Tasy", label: "Tasy" },
+];
+
+describe("the tools question", () => {
+  const tools = view({ id: "tools", options: TOOLS });
+
+  it("text left in the tools field is saved with the typed tools", () => {
+    expect(
+      toProfileInput({
+        draft: draft({ picks: ["Tasy"], text: "Excel, UpToDate", typed: ["Whitebook"] }),
+        from: "onboarding",
+        memoryEnabled: true,
+        question: tools,
+      }),
+    ).toStrictEqual({
+      answer: { declined: false, favorites: "Whitebook, UpToDate", picks: ["Tasy", "excel"] },
+      question: "tools",
+    });
+  });
+
+  it("a name that doesn't fit holds the screen until the learner makes room", () => {
+    expect(
+      toProfileInput({
+        draft: draft({ picks: ["Tasy"], text: "Python", typed: ["a".repeat(118)] }),
+        from: "onboarding",
+        memoryEnabled: true,
+        question: tools,
+      }),
+    ).toBeNull();
+  });
+
+  it("onboarding can't send a tools screen with nothing on it", () => {
+    expect(
+      toProfileInput({
+        draft: draft({ text: " , " }),
+        from: "onboarding",
+        memoryEnabled: true,
+        question: tools,
+      }),
+    ).toBeNull();
+  });
+
+  it("saved typed tools come back as chips", () => {
+    expect(
+      toProfileDraft(
+        view({
+          id: "tools",
+          saved: { picks: [], studies: [], text: "ClinicalKey, Whitebook" },
+          status: "answered",
+        }),
+      ),
+    ).toStrictEqual(draft({ typed: ["ClinicalKey", "Whitebook"] }));
   });
 });
 

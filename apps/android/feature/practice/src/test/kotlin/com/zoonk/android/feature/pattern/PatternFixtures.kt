@@ -22,48 +22,64 @@ import java.util.UUID
 
 private val PATTERN_ID: UUID = UUID.fromString("5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b")
 
+/** An Italian drill for a learner who reads the app in English; [translated] false is a drill written before translations. */
 internal fun pattern(
     kind: MistakePattern.Kind = MistakePattern.Kind.PATTERN,
-    firstAnswer: String = "agree",
+    firstAnswer: String = "partenza",
+    translated: Boolean = true,
 ) = MistakePattern(
     contrast =
         listOf(
-            MistakePatternContrastInner(example = "I agree with you", label = "agree + with"),
-            MistakePatternContrastInner(example = "I am happy", label = "be + adjective"),
+            MistakePatternContrastInner(example = "La partenza è alle nove.", label = "partenza + leaving"),
+            MistakePatternContrastInner(example = "La salita è dalla porta anteriore.", label = "salita + getting on"),
+            MistakePatternContrastInner(example = "La discesa è dalla porta posteriore.", label = "discesa + getting off"),
         ),
     drill =
         listOf(
             MistakePatternDrillInner(
                 answer = firstAnswer,
-                feedback = "“Agree” is already a verb.",
-                options = listOf("am agree", "agree"),
-                sentence = "I ___ with your plan.",
+                feedback = "“Partenza” is when the train leaves.",
+                options = listOf("salita", "partenza", "discesa"),
+                sentence = "Il treno per Torino è pronto; la ___ è alle 18:40.",
+                translation = "The train to Turin is ready; the departure is at 6:40 PM.".takeIf { translated }.orEmpty(),
             ),
             MistakePatternDrillInner(
-                answer = "agree",
-                feedback = "No “are” before a verb.",
-                options = listOf("agree", "are agree"),
-                sentence = "They ___ that it's late.",
+                answer = "salita",
+                feedback = "“Salita” is getting on.",
+                options = listOf("salita", "discesa", "partenza"),
+                sentence = "A Palermo i passeggeri stanno entrando nell'autobus con le valigie: la ___ è appena iniziata.",
+                translation =
+                    "In Palermo the passengers are getting on the bus with their suitcases: boarding has just started."
+                        .takeIf { translated }
+                        .orEmpty(),
             ),
         ),
     examples =
         listOf(
-            MistakePatternExamplesInner(answer = "I am agree with you.", correctAnswer = "I agree with you.", format = "writing"),
-            MistakePatternExamplesInner(answer = "She is agree.", correctAnswer = "She agrees.", format = "spokenAnswer"),
+            MistakePatternExamplesInner(
+                answer = "La salita è alle 18:40.",
+                correctAnswer = "La partenza è alle 18:40.",
+                format = "writing",
+            ),
+            MistakePatternExamplesInner(
+                answer = "La partenza è dalla porta centrale.",
+                correctAnswer = "La discesa è dalla porta centrale.",
+                format = "spokenAnswer",
+            ),
         ),
     rule =
         if (kind ==
             MistakePattern.Kind.TYPOS
         ) {
-            "Check the spelling of “agree”: it has two e’s."
+            "Check the spelling of “partenza”: it ends in “-enza”."
         } else {
-            "“Agree” is a verb, so it needs no “am”."
+            "On a trip, “partenza” is when the vehicle leaves, “salita” is getting on and “discesa” is getting off."
         },
     id = PATTERN_ID,
     kind = kind,
     occurrences = 2,
     practiced = false,
-    title = "Saying you agree",
+    title = "“Partenza”, “salita” and “discesa”",
 )
 
 /** A [gate] holds each save until it's completed; [saved] counts the saves that got through. */

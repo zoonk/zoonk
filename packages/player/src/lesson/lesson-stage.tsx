@@ -28,6 +28,7 @@ import { type LessonScreen } from "./lesson-player-screen";
 import { type LessonPlayerState } from "./lesson-player-state";
 import { type LessonStepResult, type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
+import { CANT_LISTEN_TODAY, useTodayChoice } from "./use-today-choice";
 
 function NoticeLine({
   action,
@@ -221,10 +222,13 @@ function useOwnCardNotes({ isShown, step }: { isShown: boolean; step: PlayableLi
 function CheckAdded({ additions, step }: { additions: CheckAdditions; step: PlayableLibraryStep }) {
   const { state } = useLessonPlayer();
   const answered = getAnsweredStep({ answer: state.answers[step.id], step });
+  const [cantListen] = useTodayChoice(CANT_LISTEN_TODAY);
 
   return (
     <div className="flex flex-col gap-3">
-      {additions.selfCorrect && <SelfCorrectLine listening={answered.kind === "listening"} />}
+      {additions.selfCorrect && (
+        <SelfCorrectLine listening={answered.kind === "listening" && !cantListen} />
+      )}
       {additions.feedback && <CheckFeedback step={step} />}
     </div>
   );

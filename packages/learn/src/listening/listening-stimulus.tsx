@@ -3,7 +3,6 @@
 import { type ListeningSetView } from "@zoonk/core/library/listening/view";
 import { Button } from "@zoonk/ui/components/button";
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ItemLine } from "../questions/item-text";
@@ -66,7 +65,7 @@ function ListeningTranscript({
               {transcript[index - 1]?.speaker !== turn.speaker && (
                 <span className="font-medium">{turn.speaker}</span>
               )}
-              <p className="text-pretty">{turn.text}</p>
+              <p>{turn.text}</p>
             </li>
           ))}
         </ol>
@@ -99,10 +98,7 @@ function ListeningQuestionList({
         {questions.prompts.map((prompt, index) => (
           <li
             aria-current={index === questions.current ? "step" : undefined}
-            className={cn(
-              "text-pretty",
-              index === questions.current ? "font-medium" : "text-muted-foreground",
-            )}
+            className={index === questions.current ? "font-medium" : "text-muted-foreground"}
             // oxlint-disable-next-line react/no-array-index-key -- Questions keep their order, and two may ask the same words.
             key={index}
           >
@@ -155,7 +151,7 @@ export function ListeningStimulus({
 
   return (
     <div className="flex flex-col gap-3">
-      {set.task && <p className="text-muted-foreground text-sm text-pretty">{set.task}</p>}
+      {set.task && <p className="text-muted-foreground text-sm">{set.task}</p>}
 
       <ListeningPlayer
         key={refused}
