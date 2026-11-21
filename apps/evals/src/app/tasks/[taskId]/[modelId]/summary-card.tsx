@@ -3,6 +3,7 @@ import { Fold } from "@/components/fold";
 import { type EvalSummary, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollars, formatPercent, formatSeconds } from "@/lib/format";
 import { type TaskStats } from "@/lib/stats";
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { type ReactNode } from "react";
 import { UNSCORED_IMAGES_NOTE } from "../unscored-images";
 
@@ -66,7 +67,9 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
             count={summary.unscoredImages.length}
             text={`Images without a score (${summary.unscoredImages.length})`}
           />
-          <p className="text-muted-foreground max-w-prose text-xs">{UNSCORED_IMAGES_NOTE}</p>
+          <p className={`text-muted-foreground text-xs ${PROSE_MEASURE_CLASS}`}>
+            {UNSCORED_IMAGES_NOTE}
+          </p>
         </div>
       )}
 
