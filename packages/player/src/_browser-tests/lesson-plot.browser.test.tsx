@@ -1,5 +1,9 @@
 import { type PlotVisual } from "@zoonk/core/library/steps/contract";
-import { DETECTOR_SCAN_PLOT, FILL_WEIGHT_PLOT } from "@zoonk/testing/fixtures/plot-visuals";
+import {
+  DETECTOR_SCAN_PLOT,
+  FILL_WEIGHT_PLOT,
+  FINE_SCAN_PLOT,
+} from "@zoonk/testing/fixtures/plot-visuals";
 import { describe, expect, it, onTestFinished } from "vitest";
 import { type Locator, page } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
@@ -9,6 +13,8 @@ import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 
 const NARROW_PHONE = { height: 640, width: 320 };
+const SMALL_PHONE = { height: 780, width: 360 };
+const MIN_PLOT_WIDTH = 72;
 
 function check(visual: PlotVisual) {
   const base = teachingStep("check");
@@ -60,11 +66,11 @@ describe("lesson plots", () => {
 
       const texts = drawnTexts(chart);
       const lowestY = texts.find(({ label }) => label === "800");
-      const firstX = texts.find(({ label }) => label === "0");
-      expect((firstX?.box.left ?? 0) - (lowestY?.box.right ?? 0)).toBeGreaterThanOrEqual(6);
+      const firstX = texts.find(({ label }) => label === "1");
+      expect((firstX?.box.left ?? 0) - (lowestY?.box.right ?? 0)).toBeGreaterThanOrEqual(2);
 
       await expect
-        .element(chart.getByText("Horizontal axis: Detector position, from 0 mm to 6 mm"))
+        .element(chart.getByText("Horizontal axis: Detector position, from 0.5 mm to 5.5 mm"))
         .toBeInTheDocument();
 
       await expect.element(chart.getByRole("rowheader", { name: "C" })).toBeInTheDocument();
@@ -119,6 +125,39 @@ describe("lesson plots", () => {
       );
 
       expect(referenceLines).toStrictEqual(["Upper", "limit", "Target", "Lower", "limit"]);
+    });
+  });
+
+  it("keeps the plot area readable at the largest text on a small phone, its line's name hugging its text", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport(SMALL_PHONE, async () => {
+      renderLessonPlayer({ lesson: buildLesson([check(FINE_SCAN_PLOT)]) });
+
+      const chart = page.getByRole("figure", { name: FINE_SCAN_PLOT.title });
+      await expect.element(chart).toBeVisible();
+      await expect.poll(() => crowdedTexts(chart)).toStrictEqual([]);
+
+      const svg = chart.element().querySelector("svg");
+      const gridline = svg?.querySelector("line.stroke-viz-grid");
+      const plotWidth = Number(gridline?.getAttribute("x2")) - Number(gridline?.getAttribute("x1"));
+
+      expect(plotWidth).toBeGreaterThanOrEqual(MIN_PLOT_WIDTH);
+
+      const nameRight = Math.max(
+        ...[...(svg?.querySelectorAll("tspan") ?? [])].map(
+          (line) => line.getBoundingClientRect().right,
+        ),
+      );
+
+      const drawingRight = svg?.getBoundingClientRect().right ?? 0;
+      const scale = (svg?.getBoundingClientRect().width ?? 0) / (svg?.viewBox.baseVal.width ?? 1);
+
+      expect(drawingRight - nameRight).toBeLessThanOrEqual((6 + 2) * scale);
     });
   });
 

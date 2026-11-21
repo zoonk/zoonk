@@ -70,7 +70,7 @@ export function ValueGrid({
 }: {
   left: number;
   right: number;
-  ticks: { label: string; value: number }[];
+  ticks: { label: string; line?: boolean; value: number }[];
   y: LinearScale;
 }) {
   return ticks.map((tick) => {
@@ -78,7 +78,9 @@ export function ValueGrid({
 
     return (
       <g key={tick.value}>
-        <line className="stroke-viz-grid" x1={left} x2={right} y1={at} y2={at} />
+        {tick.line !== false && (
+          <line className="stroke-viz-grid" x1={left} x2={right} y1={at} y2={at} />
+        )}
         <text
           className="fill-muted-foreground"
           dominantBaseline="middle"

@@ -1,24 +1,23 @@
 "use client";
 
 import { type PlotVisual } from "@zoonk/core/library/steps/contract";
+import { isLarge } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
+import { useAppLocale } from "../_utils/locale";
 import { useFormatNumber } from "../_utils/use-format-number";
 import { HEIGHT, LABEL_LINE_HEIGHT } from "./_utils/chart-layout";
-import { type PlotLayout, drawsDot, getPlotLayout } from "./_utils/plot-layout";
+import { type PlotLayout, drawsDot, getPlotLayout, getPlotTextScale } from "./_utils/plot-layout";
 import { getSeriesMark } from "./_utils/series-marks";
 import { useChartSize } from "./_utils/use-chart-size";
+import { useTextWidth } from "./_utils/use-text-width";
 import { ChartDrawing, ChartFigure, ScreenReaderData, ValueGrid } from "./chart-frame";
 import { SeriesLegend, SeriesLine, SeriesPoint } from "./series-marks";
 
 const REFERENCE_DASH = "4 4";
-const COMPACT_FROM = 10_000;
+const HALO_WIDTH = 3;
 
 function axisTitle(label: string, unit: string | null): string {
   return unit ? `${label} (${unit})` : label;
-}
-
-function isLarge(values: number[]): boolean {
-  return Math.max(...values.map((value) => Math.abs(value))) >= COMPACT_FROM;
 }
 
 function XTicks({ layout }: { layout: PlotLayout }) {
@@ -50,7 +49,7 @@ function References({ layout }: { layout: PlotLayout }) {
         {reference.lines.map((line, index) => (
           <tspan
             key={`${line}-${String(index)}`}
-            x={layout.referenceLabelX}
+            x={reference.x}
             y={reference.top + LABEL_LINE_HEIGHT * index + LABEL_LINE_HEIGHT / 2}
           >
             {line}
@@ -92,9 +91,11 @@ function Series({ layout, visual }: { layout: PlotLayout; visual: PlotVisual }) 
 function PointLabels({ layout }: { layout: PlotLayout }) {
   return layout.labels.map((label) => (
     <text
-      className="fill-foreground font-medium"
+      className="fill-foreground stroke-card font-medium [paint-order:stroke]"
       dominantBaseline="middle"
       key={`${label.text}-${String(label.x)}-${String(label.y)}`}
+      strokeLinejoin="round"
+      strokeWidth={HALO_WIDTH}
       textAnchor={label.anchor}
       x={label.x}
       y={label.y}
@@ -104,7 +105,7 @@ function PointLabels({ layout }: { layout: PlotLayout }) {
   ));
 }
 
-function PointKey({ layout }: { layout: PlotLayout }) {
+function PlotKey({ layout }: { layout: PlotLayout }) {
   if (layout.key.length === 0) {
     return null;
   }
@@ -197,23 +198,13 @@ function PlotData({
 }
 
 export function PlotVisualView({ className, visual }: { className?: string; visual: PlotVisual }) {
-  const format = useFormatNumber();
-  const { boxWidth, ref, scale, width } = useChartSize();
-
-  const points = visual.series.flatMap((series) => series.points);
-  const compactX = isLarge(points.map((point) => point.x));
-
-  const compactY = isLarge([
-    ...points.map((point) => point.y),
-    ...visual.references.map(({ y }) => y),
-  ]);
-
-  const layout = getPlotLayout({
-    formatX: (value) => format(value, { compact: compactX, grouping: compactX }),
-    formatY: (value) => format(value, { compact: compactY }),
-    visual,
-    width,
-  });
+  const locale = useAppLocale();
+  const { boxWidth, ref, scale: textScale } = useChartSize();
+  const textWidth = useTextWidth(ref);
+  const scale = getPlotTextScale({ boxWidth, locale, textScale, textWidth, visual });
+  const width = boxWidth / scale;
+  const layout = getPlotLayout({ locale, textWidth, visual, width });
+  const groupX = isLarge(visual.series.flatMap((series) => series.points.map((point) => point.x)));
 
   return (
     <ChartFigure
@@ -222,7 +213,7 @@ export function PlotVisualView({ className, visual }: { className?: string; visu
       source={visual.source}
       title={visual.title}
     >
-      <PlotData groupX={compactX} layout={layout} visual={visual} />
+      <PlotData groupX={groupX} layout={layout} visual={visual} />
 
       <SeriesLegend
         series={visual.series.map((series) => ({
@@ -250,7 +241,7 @@ export function PlotVisualView({ className, visual }: { className?: string; visu
         <p className="text-muted-foreground text-xs">{axisTitle(visual.xLabel, visual.xUnit)}</p>
       </div>
 
-      <PointKey layout={layout} />
+      <PlotKey layout={layout} />
     </ChartFigure>
   );
 }

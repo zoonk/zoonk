@@ -54,3 +54,32 @@ export const FILL_WEIGHT_PLOT = {
   yLabel: "Fill weight",
   yUnit: "ml",
 };
+
+export const FINE_SCAN_PLOT = {
+  kind: "plot" as const,
+  references: [{ label: "Needed tonight", y: 960 }],
+  series: [
+    {
+      mark: "lineWithPoints" as const,
+      name: "Fine scan",
+      points: [
+        { label: null, x: 1.5, y: 880 },
+        { label: null, x: 2, y: 930 },
+        { label: null, x: 2.25, y: 968 },
+        { label: null, x: 2.5, y: 992 },
+        { label: null, x: 2.75, y: 975 },
+        { label: null, x: 3, y: 952 },
+        { label: null, x: 3.25, y: 925 },
+        { label: null, x: 3.5, y: 905 },
+        { label: null, x: 4, y: 893 },
+        { label: null, x: 4.5, y: 890 },
+      ],
+    },
+  ],
+  source: null,
+  title: "Finer scan, B to D",
+  xLabel: "Detector position",
+  xUnit: "mm",
+  yLabel: "Count rate",
+  yUnit: "counts/s",
+};

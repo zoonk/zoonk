@@ -2,11 +2,14 @@ import { type PlotVisual } from "@zoonk/core/library/steps/contract";
 import { describe, expect, it } from "vitest";
 import { getLabelWidth } from "./category-labels";
 import { LABEL_GAP, PADDING } from "./chart-layout";
-import { type PlotLayout, drawsDot, getPlotLayout } from "./plot-layout";
+import { type PlotLayout, drawsDot, getPlotLayout, getPlotTextScale } from "./plot-layout";
+import { MIN_PLOT_WIDTH } from "./plot-references";
 import { DOT_RADIUS, type PointLabel } from "./point-labels";
 
 const PHONE = 324;
-const LARGEST_TEXT_ON_SMALL_PHONE = 128;
+const SMALL_PHONE_CARD = 296;
+const LARGEST_TEXT = 2;
+const DESKTOP_CARD = 640;
 
 const scan: PlotVisual = {
   kind: "plot",
@@ -30,6 +33,30 @@ const scan: PlotVisual = {
   xUnit: "mm",
   yLabel: "Count rate",
   yUnit: "counts/s",
+};
+
+const fineScan: PlotVisual = {
+  ...scan,
+  references: [{ label: "Needed tonight", y: 960 }],
+  series: [
+    {
+      mark: "lineWithPoints",
+      name: "Fine scan",
+      points: [
+        [1.5, 880],
+        [2, 930],
+        [2.25, 968],
+        [2.5, 992],
+        [2.75, 975],
+        [3, 952],
+        [3.25, 925],
+        [3.5, 905],
+        [4, 893],
+        [4.5, 890],
+      ].map(([x = 0, y = 0]) => ({ label: null, x, y })),
+    },
+  ],
+  title: "Finer scan, B to D",
 };
 
 const control: PlotVisual = {
@@ -57,7 +84,11 @@ const control: PlotVisual = {
 };
 
 function layoutFor(visual: PlotVisual, width = PHONE): PlotLayout {
-  return getPlotLayout({ formatX: String, formatY: String, visual, width });
+  return getPlotLayout({ locale: "en", visual, width });
+}
+
+function plotWidth(layout: PlotLayout): number {
+  return layout.plotRight - layout.left;
 }
 
 function labelBox(label: PointLabel) {
@@ -171,6 +202,69 @@ describe(getPlotLayout, () => {
     );
   });
 
+  it("puts a single point in the middle of the plot, not in the axes' corner", () => {
+    const layout = layoutFor({
+      ...scan,
+      series: [{ mark: "points", name: "Scan", points: [{ label: "Peak", x: 3, y: 952 }] }],
+    });
+
+    const [dot] = layout.series[0] ?? [];
+
+    expect(dot?.x).toBeCloseTo((layout.left + layout.plotRight) / 2);
+    expect(dot?.y).toBeCloseTo((layout.y.range[0] + layout.y.range[1]) / 2);
+  });
+
+  it("spans the x axis from the first day to the last, not from zero", () => {
+    const layout = layoutFor(control);
+
+    expect(layout.x.domain).toStrictEqual([1, 10]);
+    expect(layout.series[0]?.[0]?.x).toBe(layout.left);
+    expect(layout.xTicks.map((tick) => tick.label)).toStrictEqual(["2", "4", "6", "8", "10"]);
+  });
+
+  it("centers every x number under its value and leaves out one that would reach the corner", () => {
+    const layout = layoutFor({
+      ...control,
+      series: [
+        {
+          mark: "line",
+          name: "Fill weight",
+          points: [1000, 1500, 2000].map((x) => ({ label: null, x, y: 500 })),
+        },
+      ],
+    });
+
+    for (const tick of layout.xTicks) {
+      expect(tick.center).toBe(layout.x.toPixel(tick.value));
+    }
+
+    expect(layout.xTicks.map((tick) => tick.value)).toStrictEqual([1200, 1400, 1600, 1800, 2000]);
+  });
+
+  it("prints ticks that differ as different numbers", () => {
+    const layout = layoutFor({
+      ...scan,
+      series: [
+        {
+          mark: "points",
+          name: "Visitors",
+          points: [10_000, 10_150, 10_400].map((value) => ({ label: null, x: value, y: value })),
+        },
+      ],
+    });
+
+    expect(new Set(layout.yTicks.map((tick) => tick.label)).size).toBe(layout.yTicks.length);
+    expect(new Set(layout.xTicks.map((tick) => tick.label)).size).toBe(layout.xTicks.length);
+  });
+
+  it("draws no gridline under a reference line, so its dashes stay visible", () => {
+    const layout = layoutFor(control);
+    const target = layout.yTicks.find((tick) => tick.value === 500);
+
+    expect(target).toMatchObject({ label: "500", line: false });
+    expect(layout.yTicks.filter((tick) => tick.line)).toHaveLength(layout.yTicks.length - 1);
+  });
+
   it("names reference lines past the plot's right edge, without overlapping each other", () => {
     const layout = layoutFor(control);
     const [upper, target, lower] = layout.references;
@@ -190,66 +284,90 @@ describe(getPlotLayout, () => {
     expect((lower?.top ?? 0) - (target?.top ?? 0)).toBeGreaterThanOrEqual(14);
   });
 
-  it("stacks names of lines too close to read apart and keeps them inside the chart", () => {
+  it("makes the names' column as wide as its widest wrapped line", () => {
+    const width = 300;
+    const layout = layoutFor(fineScan, width);
+
+    expect(layout.references[0]?.lines).toStrictEqual(["Needed", "tonight"]);
+    expect(layout.plotRight).toBeCloseTo(width - DOT_RADIUS - LABEL_GAP - getLabelWidth("tonight"));
+  });
+
+  it("numbers lines too close to name apart, each number level with its own line", () => {
     const layout = layoutFor({
       ...control,
       references: [
-        { label: "Alarm", y: 497.1 },
-        { label: "Lower limit", y: 497 },
+        { label: "Upper limit", y: 501 },
+        { label: "Upper warning limit", y: 500.6 },
+        { label: "Target", y: 500 },
       ],
     });
 
-    const [first, second] = layout.references;
-
-    expect((second?.top ?? 0) - (first?.top ?? 0)).toBeGreaterThanOrEqual(14);
-    expect((second?.top ?? 0) + 14).toBeLessThanOrEqual(layout.plotBottom);
-  });
-
-  it("keeps wrapped names clear of the x axis's numbers on a narrow chart", () => {
-    const layout = layoutFor(control, LARGEST_TEXT_ON_SMALL_PHONE);
-    const last = layout.references.at(-1);
-
-    expect(last?.lines.length).toBeGreaterThan(1);
-
-    expect((last?.top ?? 0) + (last?.lines.length ?? 0) * 14).toBeLessThanOrEqual(
-      layout.plotBottom,
-    );
-  });
-
-  it("never breaks a reference name inside a word, even at the largest text size", () => {
-    const layout = layoutFor(control, LARGEST_TEXT_ON_SMALL_PHONE);
-
-    expect(layout.references.map((reference) => reference.lines)).toStrictEqual([
-      ["Upper", "limit"],
-      ["Target"],
-      ["Lower", "limit"],
+    expect(layout.key).toStrictEqual([
+      { label: "Upper limit", marker: "1" },
+      { label: "Upper warning limit", marker: "2" },
+      { label: "Target", marker: "3" },
     ]);
+
+    for (const reference of layout.references) {
+      expect(reference.top + 7).toBeCloseTo(reference.y);
+    }
+
+    const [upper, warning, target] = layout.references;
+
+    expect(warning?.x).toBeGreaterThan(upper?.x ?? 0);
+    expect(warning?.x).toBeGreaterThan(target?.x ?? 0);
   });
 
-  it.each([PHONE, LARGEST_TEXT_ON_SMALL_PHONE])(
+  it("numbers lines whose names can't fit beside a plot of the narrowest width", () => {
+    const width = 220;
+
+    const layout = layoutFor(
+      { ...control, references: [{ label: "Temperaturgrenze", y: 502 }] },
+      width,
+    );
+
+    expect(layout.key).toStrictEqual([{ label: "Temperaturgrenze", marker: "1" }]);
+    expect(layout.references[0]?.lines).toStrictEqual(["1"]);
+    expect(plotWidth(layout)).toBeGreaterThanOrEqual(MIN_PLOT_WIDTH);
+  });
+
+  it("continues the key's numbers from the lines to the points", () => {
+    const layout = layoutFor(
+      {
+        ...scan,
+        references: [{ label: "Temperaturgrenze", y: 900 }],
+        series: [
+          {
+            mark: "points",
+            name: "Sites",
+            points: ["North", "South", "East"].map((place, index) => ({
+              label: `${place} warehouse`,
+              x: 5 + index * 0.05,
+              y: 850 + index,
+            })),
+          },
+        ],
+      },
+      200,
+    );
+
+    expect(layout.key.map((entry) => entry.marker)).toStrictEqual(["1", "2", "3", "4"]);
+    expect(layout.labels.map((label) => label.text)).toStrictEqual(["2", "3", "4"]);
+  });
+
+  it.each([PHONE, 200])(
     "keeps a point on the plot's right edge clear of the reference names (%d px)",
     (width) => {
       const layout = layoutFor(control, width);
       const last = layout.series[0]?.at(-1);
 
       expect(last?.x).toBe(layout.plotRight);
-      expect(layout.referenceLabelX - layout.plotRight).toBeGreaterThan(DOT_RADIUS + LABEL_GAP / 2);
+
+      for (const reference of layout.references) {
+        expect(reference.x - layout.plotRight).toBeGreaterThan(DOT_RADIUS + LABEL_GAP / 2);
+      }
     },
   );
-
-  it("keeps the x axis's first number right of the y axis's numbers, so the corner never crowds", () => {
-    const layout = layoutFor(scan);
-    const [first] = layout.xTicks;
-    const lowest = layout.yTicks[0];
-
-    expect(first?.value).toBe(layout.x.domain[0]);
-    expect(layout.y.toPixel(lowest?.value ?? 0)).toBe(layout.plotBottom);
-
-    const firstLeft = (first?.center ?? 0) - (getLabelWidth(first?.label ?? "") - LABEL_GAP) / 2;
-    const lowestRight = layout.left - LABEL_GAP;
-
-    expect(firstLeft - lowestRight).toBeGreaterThanOrEqual(LABEL_GAP);
-  });
 
   it("fits the y axis to the data and references, with no forced zero", () => {
     const layout = layoutFor(control);
@@ -263,8 +381,8 @@ describe(getPlotLayout, () => {
     const wide = layoutFor(control);
 
     const narrow = getPlotLayout({
-      formatX: (value) => `Day ${String(value)} of the run`,
-      formatY: String,
+      locale: "en",
+      textWidth: (text) => text.length * 20,
       visual: control,
       width: 254,
     });
@@ -274,6 +392,42 @@ describe(getPlotLayout, () => {
 
   it("uses the full width when there are no references", () => {
     expect(layoutFor(scan).plotRight).toBe(PHONE - PADDING.right);
+  });
+});
+
+describe(getPlotTextScale, () => {
+  it("stops growing the drawing's text where the plot would get narrower than its floor", () => {
+    const scale = getPlotTextScale({
+      boxWidth: SMALL_PHONE_CARD,
+      locale: "en",
+      textScale: LARGEST_TEXT,
+      visual: fineScan,
+    });
+
+    const layout = layoutFor(fineScan, SMALL_PHONE_CARD / scale);
+
+    expect(scale).toBeGreaterThan(1);
+    expect(scale).toBeLessThan(LARGEST_TEXT);
+    expect(plotWidth(layout)).toBeGreaterThanOrEqual(MIN_PLOT_WIDTH - 0.01);
+    expect(layout.key).toStrictEqual([]);
+    expect(layout.references[0]?.lines).toStrictEqual(["Needed", "tonight"]);
+  });
+
+  it("follows the text size wherever the plot keeps its room", () => {
+    expect(
+      getPlotTextScale({
+        boxWidth: DESKTOP_CARD,
+        locale: "en",
+        textScale: LARGEST_TEXT,
+        visual: fineScan,
+      }),
+    ).toBe(LARGEST_TEXT);
+  });
+
+  it("never shrinks the drawing's text below the reader's size", () => {
+    expect(getPlotTextScale({ boxWidth: 100, locale: "en", textScale: 1, visual: fineScan })).toBe(
+      1,
+    );
   });
 });
 

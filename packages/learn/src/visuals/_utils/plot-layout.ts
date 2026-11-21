@@ -1,17 +1,23 @@
 import { type PlotVisual } from "@zoonk/core/library/steps/contract";
-import { type LinearScale, createLinearScale, getPlotAxes } from "@zoonk/utils/plot-scale";
-import { getLabelWidth, getWidestWord, wrapLabel } from "./category-labels";
 import {
-  AXIS_LABEL_OFFSET,
-  HEIGHT,
-  LABEL_GAP,
-  LABEL_LINE_HEIGHT,
-  PADDING,
-  type PlacedTick,
-  thinTicks,
-} from "./chart-layout";
+  type LinearScale,
+  createLinearScale,
+  fittingTickIndices,
+  formatTicks,
+  getPlotAxes,
+} from "@zoonk/utils/plot-scale";
+import { type TextWidth, estimateTextWidth, getWidestWord } from "./category-labels";
+import { AXIS_LABEL_OFFSET, HEIGHT, LABEL_GAP, PADDING, type PlacedTick } from "./chart-layout";
 import {
-  DOT_RADIUS,
+  MAX_GUTTER_SHARE,
+  MIN_PLOT_WIDTH,
+  type Measure,
+  type PlannedMark,
+  REFERENCE_INSET,
+  type ReferenceMark,
+  planReferences,
+} from "./plot-references";
+import {
   type KeyEntry,
   type Pixel,
   type PointLabel,
@@ -19,15 +25,12 @@ import {
   getPointLabels,
 } from "./point-labels";
 
-const MAX_GUTTER_SHARE = 0.3;
-const REFERENCE_SPACING = 2;
-const REFERENCE_INSET = DOT_RADIUS + LABEL_GAP;
-
-type Tick = { label: string; value: number };
+const CORNER_CLEARANCE = 2;
+const GRID_SNAP = 1;
 
 type Mark = PlotVisual["series"][number]["mark"];
 
-type ReferenceMark = { label: string; lines: string[]; top: number; y: number };
+export type PlotTick = { label: string; line: boolean; value: number };
 
 export type PlotLayout = {
   key: KeyEntry[];
@@ -35,75 +38,73 @@ export type PlotLayout = {
   left: number;
   plotBottom: number;
   plotRight: number;
-  referenceLabelX: number;
   references: ReferenceMark[];
   series: Pixel[][];
   x: LinearScale;
   xTickY: number;
   xTicks: PlacedTick[];
   y: LinearScale;
-  yTicks: Tick[];
+  yTicks: PlotTick[];
 };
 
-function blockHeight(mark: ReferenceMark): number {
-  return mark.lines.length * LABEL_LINE_HEIGHT;
+function measure(textWidth: TextWidth): Measure {
+  return { labelWidth: (text) => textWidth(text) + LABEL_GAP, textWidth };
 }
 
-function stackReferences({
-  bottom,
-  marks,
+function getGutters({
+  locale,
+  measured,
+  visual,
 }: {
-  bottom: number;
-  marks: ReferenceMark[];
-}): ReferenceMark[] {
-  const stacked: ReferenceMark[] = [];
+  locale: string;
+  measured: Measure;
+  visual: PlotVisual;
+}) {
+  const axes = getPlotAxes(visual);
+  const labels = formatTicks({ axis: "y", locale, ticks: axes.y.ticks });
+  const names = visual.references.map(({ label }) => label);
 
-  for (const mark of marks.toSorted((a, b) => a.y - b.y)) {
-    const previous = stacked.at(-1);
-    const floor = previous ? previous.top + blockHeight(previous) + REFERENCE_SPACING : 0;
-    stacked.push({ ...mark, top: Math.max(mark.top, floor) });
-  }
-
-  const last = stacked.at(-1);
-  const overflow = last ? last.top + blockHeight(last) - bottom : 0;
-
-  return overflow > 0 ? stacked.map((mark) => ({ ...mark, top: mark.top - overflow })) : stacked;
-}
-
-function getReferences({
-  references,
-  room,
-  y,
-}: {
-  references: PlotVisual["references"];
-  room: number;
-  y: LinearScale;
-}): ReferenceMark[] {
-  const marks = references.map((reference) => {
-    const lines = wrapLabel({ label: reference.label, room });
-    const lineY = y.toPixel(reference.y);
-    const top = lineY - (lines.length * LABEL_LINE_HEIGHT) / 2;
-
-    return { label: reference.label, lines, top, y: lineY };
-  });
-
-  return stackReferences({ bottom: y.range[0], marks });
+  return {
+    axes,
+    left: Math.max(PADDING.left, ...labels.map((label) => measured.labelWidth(label))),
+    longest: Math.max(0, ...names.map((name) => measured.labelWidth(name))),
+    widestWord: getWidestWord(names, measured.labelWidth),
+    yLabels: labels,
+  };
 }
 
 /**
- * Reference names sit past the plot's right edge, clear of a point drawn on that edge, so they never
- * cover the data. The gutter takes up to a share of the width, but never breaks a word.
+ * The drawing's text grows with the browser's text size until the plot area would get narrower
+ * than `MIN_PLOT_WIDTH`, counting reference names wrapped as narrow as their widest word; the text
+ * around the drawing keeps growing.
  */
-function getGutter({ references, width }: { references: PlotVisual["references"]; width: number }) {
-  if (references.length === 0) {
-    return { room: 0, width: PADDING.right };
-  }
+export function getPlotTextScale({
+  boxWidth,
+  locale,
+  textScale,
+  textWidth = estimateTextWidth,
+  visual,
+}: {
+  boxWidth: number;
+  locale: string;
+  textScale: number;
+  textWidth?: TextWidth;
+  visual: PlotVisual;
+}): number {
+  const { left, longest, widestWord } = getGutters({
+    locale,
+    measured: measure(textWidth),
+    visual,
+  });
 
-  const labels = references.map(({ label }) => label);
-  const widest = Math.max(...labels.map((label) => getLabelWidth(label)));
-  const room = Math.max(Math.min(widest, width * MAX_GUTTER_SHARE), getWidestWord(labels));
+  const named = visual.references.length > 0;
+  const fixed = left + (named ? REFERENCE_INSET : PADDING.right) + MIN_PLOT_WIDTH;
 
-  return { room, width: room + REFERENCE_INSET };
+  const minWidth = named
+    ? Math.min(fixed + longest, Math.max(fixed / (1 - MAX_GUTTER_SHARE), fixed + widestWord))
+    : fixed;
+
+  return Math.min(textScale, Math.max(boxWidth / minWidth, 1));
 }
 
 /** A bare line beside other series marks its end with its shape, so shape tells series apart too. */
@@ -132,7 +133,7 @@ function getSegments({
   x,
 }: {
   marks: Mark[];
-  references: ReferenceMark[];
+  references: PlannedMark[];
   series: Pixel[][];
   x: LinearScale;
 }): Segment[] {
@@ -152,33 +153,72 @@ function getSegments({
   return [...lines, ...rules];
 }
 
+/**
+ * Each number sits centered under its value. The first or last one is left out when it would
+ * reach the y axis's numbers or past the drawing's edge, and the rest thin out evenly when they
+ * would touch.
+ */
+function placeXTicks({
+  labels,
+  left,
+  measured,
+  ticks,
+  width,
+  x,
+}: {
+  labels: string[];
+  left: number;
+  measured: Measure;
+  ticks: number[];
+  width: number;
+  x: LinearScale;
+}): PlacedTick[] {
+  const placed = ticks
+    .map((value, index) => {
+      const label = labels[index] ?? "";
+      const center = x.toPixel(value);
+      const half = measured.textWidth(label) / 2;
+
+      return { center, frame: { left: center - half, right: center + half }, label, value };
+    })
+    .filter(
+      ({ frame }) => frame.left >= left - LABEL_GAP + CORNER_CLEARANCE && frame.right <= width,
+    );
+
+  const kept = fittingTickIndices(
+    placed.map(({ frame }) => frame),
+    LABEL_GAP,
+  );
+
+  return placed
+    .filter((_, index) => kept.includes(index))
+    .map(({ center, label, value }) => ({ center, label, value }));
+}
+
 export function getPlotLayout({
-  formatX,
-  formatY,
+  locale,
+  textWidth = estimateTextWidth,
   visual,
   width,
 }: {
-  formatX: (value: number) => string;
-  formatY: (value: number) => string;
+  locale: string;
+  textWidth?: TextWidth;
   visual: PlotVisual;
   width: number;
 }): PlotLayout {
-  const axes = getPlotAxes(visual);
-  const yTicks = axes.y.ticks.map((value) => ({ label: formatY(value), value }));
-  const left = Math.max(PADDING.left, ...yTicks.map((tick) => getLabelWidth(tick.label)));
-  const gutter = getGutter({ references: visual.references, width });
-  const plotRight = Math.max(width - gutter.width, left + 1);
+  const measured = measure(textWidth);
+  const { axes, left, yLabels } = getGutters({ locale, measured, visual });
   const plotBottom = HEIGHT - PADDING.bottom;
-  const marks = visual.series.map((item) => item.mark);
-
-  const x = createLinearScale({ domain: axes.x.domain, range: [left, plotRight] });
   const y = createLinearScale({ domain: axes.y.domain, range: [plotBottom, PADDING.top] });
+
+  const plan = planReferences({ left, measured, references: visual.references, width, y });
+  const plotRight = Math.max(width - plan.width, left + 1);
+  const x = createLinearScale({ domain: axes.x.domain, range: [left, plotRight] });
+  const marks = visual.series.map((item) => item.mark);
 
   const series = visual.series.map((item) =>
     item.points.map((point) => ({ x: x.toPixel(point.x), y: y.toPixel(point.y) })),
   );
-
-  const references = getReferences({ references: visual.references, room: gutter.room, y });
 
   const dots = series.flatMap((points, seriesIndex) =>
     points.filter((_, index) =>
@@ -198,29 +238,49 @@ export function getPlotLayout({
     }),
   );
 
-  const { key, labels } = getPointLabels({
+  const points = getPointLabels({
+    firstMarker: plan.key.length + 1,
     named,
     scene: {
-      bounds: { bottom: plotBottom, left, right: gutter.room > 0 ? plotRight : width, top: 0 },
+      bounds: {
+        bottom: plotBottom,
+        left,
+        right: plan.marks.length > 0 ? plotRight : width,
+        top: 0,
+      },
       dots,
-      segments: getSegments({ marks, references, series, x }),
+      segments: getSegments({ marks, references: plan.marks, series, x }),
+      textWidth,
     },
   });
 
-  const xTicks = axes.x.ticks.map((value) => ({ label: formatX(value), value }));
+  const yTicks = axes.y.ticks.map((value, index) => ({
+    label: yLabels[index] ?? "",
+    line: plan.marks.every((mark) => Math.abs(mark.y - y.toPixel(value)) >= GRID_SNAP),
+    value,
+  }));
 
   return {
-    key,
-    labels,
+    key: [...plan.key, ...points.key],
+    labels: points.labels,
     left,
     plotBottom,
     plotRight,
-    referenceLabelX: plotRight + REFERENCE_INSET,
-    references,
+    references: plan.marks.map(({ offset, ...mark }) => ({
+      ...mark,
+      x: plotRight + REFERENCE_INSET + offset,
+    })),
     series,
     x,
     xTickY: plotBottom + AXIS_LABEL_OFFSET,
-    xTicks: thinTicks({ start: left, ticks: xTicks, width, x }),
+    xTicks: placeXTicks({
+      labels: formatTicks({ axis: "x", locale, ticks: axes.x.ticks }),
+      left,
+      measured,
+      ticks: axes.x.ticks,
+      width,
+      x,
+    }),
     y,
     yTicks,
   };

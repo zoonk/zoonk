@@ -1,5 +1,4 @@
-import { getLabelWidth } from "./category-labels";
-import { LABEL_GAP } from "./chart-layout";
+import { type TextWidth } from "./category-labels";
 
 export const DOT_RADIUS = 4.5;
 const LABEL_OFFSET = DOT_RADIUS + 3;
@@ -19,7 +18,7 @@ export type KeyEntry = { label: string; marker: string };
 
 type Named = { dot: Pixel; text: string };
 
-type Scene = { bounds: Box; dots: Pixel[]; segments: Segment[] };
+type Scene = { bounds: Box; dots: Pixel[]; segments: Segment[]; textWidth: TextWidth };
 
 type Candidate = { box: Box; label: PointLabel };
 
@@ -64,8 +63,8 @@ function crosses([from, to]: Segment, box: Box): boolean {
   return Math.max(...ys) >= box.top && Math.min(...ys) <= box.bottom;
 }
 
-function boxOf(label: PointLabel): Box {
-  const width = getLabelWidth(label.text) - LABEL_GAP;
+function boxOf(label: PointLabel, textWidth: TextWidth): Box {
+  const width = textWidth(label.text, "medium");
   const start = { end: label.x - width, middle: label.x - width / 2, start: label.x }[label.anchor];
 
   return {
@@ -76,7 +75,7 @@ function boxOf(label: PointLabel): Box {
   };
 }
 
-function candidates({ dot, text }: Named): Candidate[] {
+function candidates({ dot, text }: Named, textWidth: TextWidth): Candidate[] {
   const above = dot.y - LABEL_OFFSET - LABEL_HEIGHT / 2;
   const below = dot.y + LABEL_OFFSET + LABEL_HEIGHT / 2;
 
@@ -91,7 +90,7 @@ function candidates({ dot, text }: Named): Candidate[] {
     { anchor: "end", text, x: dot.x - DOT_RADIUS, y: below },
   ];
 
-  return sides.map((label) => ({ box: boxOf(label), label }));
+  return sides.map((label) => ({ box: boxOf(label, textWidth), label }));
 }
 
 function placeLabels({
@@ -104,7 +103,7 @@ function placeLabels({
   const taken = scene.dots.map((dot) => dotBox(dot));
 
   return named.map((item) => {
-    const options = candidates(item);
+    const options = candidates(item, scene.textWidth);
 
     const free = options
       .filter(
@@ -132,12 +131,18 @@ function placeLabels({
 
 /**
  * Every labeled point keeps its name. When one can't sit beside its dot without covering another,
- * every name moves to a numbered key, except names as short as a number, which gain nothing from it.
+ * every name moves to a numbered key, counting from `firstMarker`, except names as short as a
+ * number, which gain nothing from it.
  */
-export function getPointLabels({ named, scene }: { named: Named[]; scene: Scene }): {
-  key: KeyEntry[];
-  labels: PointLabel[];
-} {
+export function getPointLabels({
+  firstMarker = 1,
+  named,
+  scene,
+}: {
+  firstMarker?: number;
+  named: Named[];
+  scene: Scene;
+}): { key: KeyEntry[]; labels: PointLabel[] } {
   const direct = placeLabels({ named, scene });
   const short = named.every(({ text }) => text.length <= MAX_KEY_MARKER_LENGTH);
 
@@ -145,7 +150,11 @@ export function getPointLabels({ named, scene }: { named: Named[]; scene: Scene 
     return { key: [], labels: direct.map(({ label }) => label) };
   }
 
-  const key = named.map(({ text }, index) => ({ label: text, marker: String(index + 1) }));
+  const key = named.map(({ text }, index) => ({
+    label: text,
+    marker: String(firstMarker + index),
+  }));
+
   const markers = named.map(({ dot }, index) => ({ dot, text: key[index]?.marker ?? "" }));
 
   return { key, labels: placeLabels({ named: markers, scene }).map(({ label }) => label) };
