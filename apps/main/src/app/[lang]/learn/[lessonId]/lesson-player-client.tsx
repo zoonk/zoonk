@@ -18,6 +18,7 @@ import {
   requestExampleLine,
 } from "@/lib/lessons/lesson-help-requests";
 import { checkLessonStep } from "@/lib/lessons/lesson-step-check";
+import { getLevelCheckHref } from "@/lib/placement-test/level-check-href";
 import { type LessonOpening } from "@/lib/session/lesson-opening";
 import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
 import { trackEvent } from "@zoonk/core/analytics/client";
@@ -214,6 +215,7 @@ function LessonPlayerVisit({
   const routes = useMemo(
     () => ({
       ...routing,
+      checkLevel: getLevelCheckHref,
       mistakes: "/mistakes",
       seePlan: (planGoalId: string) => `/start/${planGoalId}`,
       signUp,

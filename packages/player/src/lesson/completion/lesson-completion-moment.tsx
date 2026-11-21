@@ -5,6 +5,7 @@ import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { DayMoment } from "@zoonk/learn/session/day-moment";
 import { FailedMoment } from "@zoonk/learn/session/failed-moment";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
+import { LevelCheckOfferCard } from "@zoonk/learn/session/level-check-offer";
 import {
   MomentHeader,
   MomentSavingTitle,
@@ -180,7 +181,7 @@ function useCompletionNextStep() {
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const { completion, onRetry } = props;
   const t = useExtracted();
-  const { slots } = useLessonPlayerConfig();
+  const { linkComponent: LinkComponent, routes, slots } = useLessonPlayerConfig();
   const nextStep = useCompletionNextStep();
   const { result } = completion;
   const isSaved = completion.status === "saved";
@@ -203,6 +204,14 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
 
         {isSaved && result && <ExtraMoment result={result} />}
         {planReveal && <LessonCompletionPlan reveal={planReveal} />}
+        {isSaved && result?.placementOffer && routes.checkLevel && (
+          <LevelCheckOfferCard
+            href={routes.checkLevel(result.placementOffer)}
+            link={LinkComponent}
+            offer={result.placementOffer}
+            onDismiss={props.onDismissOffer}
+          />
+        )}
         {isSaved && slots.completionDetails?.(props)}
       </TaskBody>
 

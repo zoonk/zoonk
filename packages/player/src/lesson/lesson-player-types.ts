@@ -111,7 +111,9 @@ export type LessonPlayerAdapters = {
     stepId: string;
     usedHelp: boolean;
   }) => Promise<LessonCheckOutcome>;
+  /** `dismissPlacementOffer`: the learner's "Not now" on a finished lesson's offer to check their level. */
   completeLesson: (input: {
+    dismissPlacementOffer?: boolean;
     runId: string;
     skippedWritingStepIds?: string[];
   }) => Promise<LessonCompletionOutcome>;
@@ -137,6 +139,8 @@ export type LessonPlayerAdapters = {
 };
 
 export type LessonPlayerRoutes = {
+  /** Where a finished lesson's offer to check the learner's level opens; without it, none is offered. */
+  checkLevel?: (offer: NonNullable<LibraryLessonCompletion["placementOffer"]>) => string;
   mistakes: string;
   exit: string;
   /** Set when `exit` points to the lesson's chapter or language unit. */

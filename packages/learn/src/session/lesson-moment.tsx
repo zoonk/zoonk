@@ -40,6 +40,7 @@ type OutsideSessionResult = NonNullable<LessonMomentCompletion["result"]>;
 function SavedMoment({
   buddy,
   moment,
+  offer,
   onContinue,
   onStartTestOut,
   onStop,
@@ -48,6 +49,7 @@ function SavedMoment({
 }: {
   buddy?: LearnBuddy | null;
   moment: StudyMomentView;
+  offer: ReactNode;
   onContinue: () => Promise<boolean>;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
@@ -63,6 +65,7 @@ function SavedMoment({
       kind="learn"
       moment={moment}
       next={moment.next?.block ?? null}
+      offer={offer}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
@@ -73,11 +76,13 @@ function SavedMoment({
 
 function OutsideSession({
   buddy,
+  offer,
   onContinue,
   result,
   title,
 }: {
   buddy?: LearnBuddy | null;
+  offer: ReactNode;
   onContinue: () => Promise<boolean>;
   result: OutsideSessionResult | null;
   title: string;
@@ -102,6 +107,8 @@ function OutsideSession({
             reached={result.reached}
           />
         )}
+
+        {offer}
       </TaskBody>
 
       <TaskActionBar note={failed && <NextStepFailed />}>
@@ -135,6 +142,7 @@ export function LessonMomentHeader({
 export function LessonMoment({
   buddy,
   completion,
+  offer = null,
   onContinue,
   onRetry,
   onStartTestOut,
@@ -143,6 +151,8 @@ export function LessonMoment({
 }: {
   buddy?: LearnBuddy | null;
   completion: LessonMomentCompletion;
+  /** An offer to check the learner's level, after a run of easy lessons. */
+  offer?: ReactNode;
   onContinue: () => Promise<boolean>;
   onRetry: () => void;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
@@ -159,7 +169,15 @@ export function LessonMoment({
   }
 
   if (!moment && completion.status === "saved") {
-    return <OutsideSession buddy={buddy} onContinue={onContinue} result={result} title={title} />;
+    return (
+      <OutsideSession
+        buddy={buddy}
+        offer={offer}
+        onContinue={onContinue}
+        result={result}
+        title={title}
+      />
+    );
   }
 
   if (!result || !moment) {
@@ -170,6 +188,7 @@ export function LessonMoment({
     <SavedMoment
       buddy={buddy}
       moment={moment}
+      offer={offer}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}

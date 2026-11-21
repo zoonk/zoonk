@@ -41,6 +41,8 @@ export type LessonCompletionSlotProps = {
   completion: LessonPlayerCompletionState;
   correctCount: number;
   incorrectCount: number;
+  /** Saves "Not now" on the lesson's offer to check the learner's level; resolves whether it saved. */
+  onDismissOffer: () => Promise<boolean>;
   onRetry: () => void;
 };
 
