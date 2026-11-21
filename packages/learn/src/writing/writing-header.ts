@@ -102,12 +102,7 @@ export function useWritingTaskName() {
     }
 
     if (task && task.total > 1) {
-      return t({
-        description:
-          "One question of an exam's written test whose questions share a line limit, named by its place in the test.",
-        message: "Question {number}",
-        values: { number: String(task.number) },
-      });
+      return t("Question {number}", { number: String(task.number) });
     }
 
     return task

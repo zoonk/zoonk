@@ -8425,7 +8425,6 @@ msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Dopo questa simulazione"
 
-#. One question of an exam's written test whose questions share a line limit, named by its place in the test.
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
 #: src/writing/writing-header.ts
