@@ -55,7 +55,6 @@
   "player_challenge_what_if": "9e6aa5329d00beddd3b0afba42ca636f92ec29d6b20964f19429ad00a88351a4",
   "player_challenge_you": "f000f89b92a15b65d89125aca53e245af7e3b95c769a542dd25c14b4076499ec",
   "player_challenge_your_options": "2b1762f71b15051f20e27d638d365471e65f2e85bc186a205a2d37ccdb70f2a6",
-  "player_check_failed": "4f26afa45db5a9764a780daea6a88b0989169ac11b810e6d44a9e3ff4eedbfda",
   "player_citation_from_material": "108a1fde8b24f6841ff933d5575762d34b943986477f83a460d839506023df3b",
   "player_citation_not_in_material": "fab9784325bca754b4f352062babb82149b465b4b5f69053dd15770933062cf8",
   "player_comes_back_at_end": "fe1143921ac73e6fb2773d05cd9efefac819858de98b28756cc8cfa707cebd3e",
@@ -158,7 +157,6 @@
   "player_start_the_lesson": "63f99718b0b8184a6f99b0434ff0e70b56a570a2fbfa2ecf17307ee7058e5c16",
   "player_start_this_challenge": "4b6c16270bebde1e554ac8786f96e0f5ee198b18151078ebdd42eebbcee65e2c",
   "player_start_this_lesson": "43b05f5c5c138940f459087f0194312170583b18a24670d128ab18179913a9e5",
-  "player_still_checking": "a493d73d2deee78c064616eb39a5301b98894b3e7f19df53f07b5e9489302fd3",
   "player_stop_failed": "fc9bf7e47ed560aa2afff849c5285273f14a4fe44ee8fdc0c20d93b958bb80d4",
   "player_stop_for_today": "5e227468d92083cb5eca3702d04b9b82eca0d14320f87514471bd353406d1818",
   "player_summary": "b1e7534e6d1b7cd9a4a00a7fd258d05d7d2ba318491faee45ec20ee2333c2ce9",
@@ -287,8 +285,6 @@
     <string name="player_dont_know_yet">아직 모르겠어요</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">먼저 설명 보기</string>
-    <string name="player_check_failed">이번에는 답을 확인하지 못했어요. 다시 시도해 보세요.</string>
-    <string name="player_still_checking">아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
     <string name="player_enter_hint">Enter를 눌러 답을 확인하고, Shift+Enter를 눌러 줄을 바꾸세요.</string>
     <string name="player_your_answer">내 답</string>
     <string name="player_write_your_answer">답을 써 주세요</string>

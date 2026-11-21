@@ -102,8 +102,6 @@
     <string name="player_dont_know_yet">I don\'t know yet</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Explain first</string>
-    <string name="player_check_failed">We couldn\'t check your answer this time. Try again.</string>
-    <string name="player_still_checking">Still checking. This is taking longer than usual.</string>
     <string name="player_enter_hint">Press Enter to check, Shift+Enter for a new line.</string>
     <string name="player_your_answer">Your answer</string>
     <string name="player_write_your_answer">Write your answer</string>

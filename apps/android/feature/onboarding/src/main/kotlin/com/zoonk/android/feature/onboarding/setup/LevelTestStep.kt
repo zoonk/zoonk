@@ -58,8 +58,8 @@ import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.VoiceAnswerButton
-import com.zoonk.android.feature.audio.VoiceAnswerLine
 import com.zoonk.android.feature.audio.buttonIconSize
+import com.zoonk.android.feature.audio.recordNote
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.voiceAnswerModel
@@ -477,6 +477,7 @@ private fun ColumnScope.LevelTestSpeaking(
     val recorderKey = "level-test-sentence:$goalId"
     // Skipping while a sentence is graded would race the grade.
     val voice = voiceAnswerModel(recorderKey) { store.speakLevelTest(goalId, it) }
+    val note = recordNote(voice, navigator)
     QuestionPages(
         questionId = recorderKey,
         read = {
@@ -490,14 +491,8 @@ private fun ColumnScope.LevelTestSpeaking(
                 Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             }
         },
-        answer = {
-            // The title already asks to say it out loud; the line says only how the take went.
-            if (voice.microphoneOff) {
-                MicrophoneOff(stringResource(R.string.audio_microphone_off_answer))
-            } else {
-                VoiceAnswerLine(voice, navigator, asksToSpeak = false)
-            }
-        },
+        answer = {},
+        note = if (voice.microphoneOff) ({ MicrophoneOff(stringResource(R.string.audio_microphone_off_answer), titled = false) }) else note,
     ) {
         if (!voice.microphoneOff) VoiceAnswerButton(voice, Modifier.fillMaxWidth())
         TextButton(onClick = onSkip, enabled = !voice.checking, modifier = Modifier.fillMaxWidth()) {

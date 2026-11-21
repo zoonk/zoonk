@@ -74,8 +74,9 @@ import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.audio.VoiceAnswerButton
 import com.zoonk.android.feature.audio.VoiceAnswerLimit
 import com.zoonk.android.feature.audio.VoiceAnswerModel
+import com.zoonk.android.feature.audio.checkNote
+import com.zoonk.android.feature.audio.recordNote
 import com.zoonk.android.feature.audio.voiceAnswerModel
-import com.zoonk.android.feature.audio.voiceAnswerNote
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
@@ -116,12 +117,8 @@ import com.zoonk.android.ui.richtext.typesetMath
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
 
 private const val MAX_TYPED_ANSWER_LENGTH = 1000
-
-private val SLOW_CHECK = 15.seconds
 
 /** A whole number in the learner's digits. */
 @Composable
@@ -743,17 +740,20 @@ fun offersDontKnow(
 }
 
 /**
- * What the spoken screen's take is doing (how to start, listening, checking, what went wrong), for the bar's note right over
- * [SpokenRecordAction]; null while the learner types or listens instead, or once the answer is checked.
+ * The lesson bar's note while the learner answers: on a spoken screen, the line over [SpokenRecordAction]; on any other, a check
+ * that failed or is taking long. Null once the answer is checked.
  */
 @Composable
-fun spokenRecordNote(
+fun lessonBarNote(
     step: LessonStep?,
     state: LessonPlayerState,
     actions: StepActions,
 ): (@Composable () -> Unit)? {
     val answering = state.phase == LessonPhase.Playing || state.phase == LessonPhase.Checking
-    return if (step != null && answering && recordsInBar(step, actions)) voiceAnswerNote(spokenVoice(step, actions)) else null
+    if (step == null || !answering) return null
+    if (recordsInBar(step, actions)) return recordNote(spokenVoice(step, actions))
+    // A check that names its own problem (no words heard, a limit) says it where the learner answers.
+    return checkNote(checking = state.phase == LessonPhase.Checking, failed = state.checkFailed && state.checkIssue == null)
 }
 
 /** Whether [SpokenRecordAction] takes the bar's main action on this screen now. */
@@ -828,30 +828,12 @@ private fun AnswerHint(
     state: LessonPlayerState,
     isNumber: Boolean,
 ) {
-    var slow by remember { mutableStateOf(false) }
-    val checking = state.phase == LessonPhase.Checking
     val hasKeyboard = LocalConfiguration.current.keyboard != Configuration.KEYBOARD_NOKEYS
-
-    LaunchedEffect(checking) {
-        slow = false
-        if (checking) {
-            delay(SLOW_CHECK)
-            slow = true
-        }
-    }
-
-    val (text, isError) =
-        when {
-            state.checkFailed -> stringResource(R.string.player_check_failed) to true
-            checking && slow -> stringResource(R.string.player_still_checking) to false
-            !isNumber && state.phase == LessonPhase.Playing && hasKeyboard -> stringResource(R.string.player_enter_hint) to false
-            else -> return
-        }
+    if (isNumber || state.phase != LessonPhase.Playing || !hasKeyboard) return
 
     Text(
-        text = text,
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        text = stringResource(R.string.player_enter_hint),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall,
     )
 }

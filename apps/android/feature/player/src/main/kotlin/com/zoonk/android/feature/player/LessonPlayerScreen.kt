@@ -127,10 +127,10 @@ import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
+import com.zoonk.android.feature.player.steps.lessonBarNote
 import com.zoonk.android.feature.player.steps.offersDontKnow
 import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.player.steps.rememberScreenWork
-import com.zoonk.android.feature.player.steps.spokenRecordNote
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -476,7 +476,7 @@ fun LessonPlayer(
                         null
                     }
                 },
-            note = state?.takeIf { screen?.primary != null }?.let { spokenRecordNote(screen?.step, it, actions) },
+            note = state?.takeIf { screen?.primary != null }?.let { lessonBarNote(screen?.step, it, actions) },
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if (state == null || screen == null) {

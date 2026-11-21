@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,11 +49,14 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.app.LocalSnackbarAnchors
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LocalButtonSize
+import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.isRoomyBar
 
 /**
  * Main's `BottomBar`: the one home of a screen's main action, pinned to the bottom over a hairline. It
@@ -60,7 +64,8 @@ import com.zoonk.android.ui.components.LocalButtonSize
  * alike, one number on purpose so a button alone in its corner sits even, clear of the system bars and the keyboard, with its lines 8dp apart and its buttons [ButtonSize.Large]; [columnWidth] keeps them
  * under a page's column, which a page whose column starts at its pane's edge or keeps another side margin says
  * with [columnAtStart] and [columnMargin], so the buttons end where the column does. A [note] (an error, a status) draws over the page
- * just above the bar, so the bar never grows and its buttons never move; [noteRoom] tells the page how tall it is, for its scrolling
+ * just above the bar, in the bar's column: at its start on a phone, and at its end, over the main action, where the bar has room to
+ * put that action at its end ([TaskActions]). The bar never grows for it and its buttons never move; [noteRoom] tells the page how tall it is, for its scrolling
  * content to end clear of it. A note taller than the room between the page's content ([barNoteViewport]) and the bar goes into the
  * page's scroll instead ([BarNoteInPage]), where it can be read whole. Its slot stays in place as a polite live region, so a new note
  * is read out. The window's snackbars show above it. Across an unfolded book's fold,
@@ -79,7 +84,6 @@ fun BottomBar(
     val anchors = LocalSnackbarAnchors.current
     val key = remember { Any() }
     var span by remember { mutableStateOf<PageSpan?>(null) }
-    val margin = pageMargin()
     var barTop by remember { mutableFloatStateOf(Float.NaN) }
     val room = noteRoom ?: remember { BarNoteRoom() }
 
@@ -87,13 +91,24 @@ fun BottomBar(
     SideEffect { room.show(note) }
     FollowNoteIntoPage(room)
 
-    Box(
+    BoxWithConstraints(
         modifier
             .onGloballyPositioned {
                 barTop = it.positionInRoot().y
                 anchors.set(key, barTop)
             }.onPageSpan { span = it },
     ) {
+        val fold = screenSplit(maxWidth, span)
+        val column: @Composable (WindowInsets, @Composable () -> Unit) -> Unit = { insets, inner ->
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(insets)
+                    .padding(start = fold?.end ?: 0.dp),
+                contentAlignment = if (columnAtStart) Alignment.TopStart else Alignment.TopCenter,
+            ) { Box(Modifier.widthIn(max = columnWidth).fillMaxWidth()) { inner() } }
+        }
+
         // Placed before the bar, so Tab reaches the note's action before the buttons under it, as on the web.
         Box(
             Modifier
@@ -102,39 +117,56 @@ fun BottomBar(
                 .semantics { liveRegion = LiveRegionMode.Polite },
         ) {
             note?.takeUnless { room.inPage }?.let {
-                Surface(Modifier.fillMaxWidth()) { Box(Modifier.padding(horizontal = margin, vertical = 8.dp)) { it() } }
+                Surface(Modifier.fillMaxWidth()) {
+                    column(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)) { BarNoteLine(columnMargin, it) }
+                }
             }
         }
         Surface {
-            BoxWithConstraints {
-                val fold = screenSplit(maxWidth, span)
-
-                Column {
-                    HorizontalDivider()
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .windowInsetsPadding(
-                                WindowInsets.safeDrawing
-                                    .only(
-                                        WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal,
-                                    ).union(WindowInsets.ime),
-                            ).padding(start = fold?.end ?: 0.dp),
-                        contentAlignment = if (columnAtStart) Alignment.TopStart else Alignment.TopCenter,
-                    ) {
-                        CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
-                            Column(
-                                Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(columnMargin),
-                                verticalArrangement = Arrangement.spacedBy(BAR_GAP),
-                                content = content,
-                            )
-                        }
+            Column {
+                HorizontalDivider()
+                column(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal).union(WindowInsets.ime)) {
+                    CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
+                        Column(
+                            Modifier.fillMaxWidth().padding(columnMargin),
+                            verticalArrangement = Arrangement.spacedBy(BAR_GAP),
+                            content = content,
+                        )
                     }
                 }
             }
         }
     }
 }
+
+/** The note in the bar's column, in the bar's [margin]: at its start, and at its end over the main action where the bar is roomy. */
+@Composable
+private fun BarNoteLine(
+    margin: Dp,
+    note: @Composable () -> Unit,
+) {
+    BoxWithConstraints(Modifier.fillMaxWidth().padding(horizontal = margin, vertical = 8.dp)) {
+        val end = isRoomyBar(maxWidth)
+        NoteStyle(end) { Box(Modifier.fillMaxWidth(), contentAlignment = if (end) Alignment.TopEnd else Alignment.TopStart) { note() } }
+    }
+}
+
+/** A note's words, in the bar or in the page: main's `text-sm`, at its [end] where the note sits there. */
+@Composable
+private fun NoteStyle(
+    end: Boolean,
+    content: @Composable () -> Unit,
+) {
+    val align = if (end) TextAlign.End else TextAlign.Start
+    CompositionLocalProvider(
+        LocalTextStyle provides MaterialTheme.typography.bodyMedium.copy(textAlign = align),
+        LocalNoteAtEnd provides end,
+        content = content,
+    )
+}
+
+/** Whether what's drawn here is a bar's note at its end, so a note of several parts (a gate's words and its button) ends there too. */
+internal val LocalNoteAtEnd = compositionLocalOf { false }
 
 /**
  * Where a page and its [BottomBar] meet over the bar's note: the room the page keeps clear at its scrolling content's end while the
@@ -185,7 +217,9 @@ fun BarNoteInPage(
         withFrameNanos {}
         requester.bringIntoView()
     }
-    Box(modifier.fillMaxWidth().bringIntoViewRequester(requester).semantics { liveRegion = LiveRegionMode.Polite }) { note() }
+    Box(modifier.fillMaxWidth().bringIntoViewRequester(requester).semantics { liveRegion = LiveRegionMode.Polite }) {
+        NoteStyle(end = false, content = note)
+    }
 }
 
 /** [BarNoteInPage] as a lazy page's last item. */
@@ -247,5 +281,5 @@ val BAR_GAP = 8.dp
 /** A [BottomBar] note for what its last tap couldn't do, such as a failed save: read out as the note's slot appears. */
 @Composable
 fun BarError(message: String) {
-    Text(text = message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+    Text(text = message, color = MaterialTheme.colorScheme.error)
 }

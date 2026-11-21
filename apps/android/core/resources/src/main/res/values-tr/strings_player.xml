@@ -55,7 +55,6 @@
   "player_challenge_what_if": "a90ca944394d277a044f3ce9fc0265295c4666aa596d00c6499c9b8cfe83bc9b",
   "player_challenge_you": "64d4afbe99cad4fe41836f925f3aa9990b9d496f342dc567288db382c3164dc5",
   "player_challenge_your_options": "6b96393b366c390eadcd6850c72942644613c6e669fc4a9546cf304934808f21",
-  "player_check_failed": "624207ebf676c1120eaf4885f570184cbc6d24b06bb31439cb5ab3daaeee208b",
   "player_citation_from_material": "31933b12a8351fe754c1f03d5294b40730eb52b7b001d0b3fa79fee7904c47d1",
   "player_citation_not_in_material": "2bc41c0ab4ca49752fd693851b0db3f9a12bcf623e3e1449e3da0505c2009f31",
   "player_comes_back_at_end": "30b8f9fea16f213a400d7be354c77a36d084fa228a571076c13cb3fa7de3bbb3",
@@ -158,7 +157,6 @@
   "player_start_the_lesson": "bac25661bca7720d1bb2287d963ac3b4d1ddb54e64d730be7b736e0f94561369",
   "player_start_this_challenge": "c5efbb5e452481b661a43f8926351a4e7b992925902806ac76542b5af0ef2997",
   "player_start_this_lesson": "c8079ef598906c297d4de2f1a8e0bf0461c95253839781170c3a65283ac712a8",
-  "player_still_checking": "cd641ccee08d2fbbba068b5a2c4aaf0696dca14795b31e66e4ba286e1e5d17b2",
   "player_stop_failed": "bacf92739ba6d6ce5820f7a347860fc437c77c6c30ae5128c0d9fa66f03e1c14",
   "player_stop_for_today": "497ad2132602f69e16d525b4ea84bd24d2fa495fcd70fa25a960bbc5c306073e",
   "player_summary": "76a023fcd9a571d3cc608a04bbd9aa6f9dd224f566fd949dfc65770d3da51b42",
@@ -289,8 +287,6 @@
     <string name="player_dont_know_yet">Henüz bilmiyorum</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Önce açıklamayı göster</string>
-    <string name="player_check_failed">Bu kez cevabını kontrol edemedik. Tekrar dene.</string>
-    <string name="player_still_checking">Hâlâ kontrol ediyoruz. Normalden uzun sürüyor.</string>
     <string name="player_enter_hint">Kontrol etmek için Enter’a, yeni satır için Shift+Enter’a bas.</string>
     <string name="player_your_answer">Cevabın</string>
     <string name="player_write_your_answer">Cevabını yaz</string>

@@ -3,20 +3,15 @@
 {
   "pronunciation_continue": "26294479b46ac128c41d6ceb80f362476a076879d2d6af15296c88f033500143",
   "pronunciation_done": "de123c80613e26bcf53ac1243cb17a250bb4d0c74a65fadd5ad5705179fd850a",
-  "pronunciation_failed": "bcb31be01a5265d9b50199cc3f5120c18c4ab4c2e98822926f1bb49c8acc13b9",
-  "pronunciation_grading": "3232af08b2560af43ab252396f20b8f0bcb8b1b24aa3260201f03c4de0cb140c",
   "pronunciation_heard": "2c2dc986abb6707039f1af4fbca3b192a677329926b71e49e13758424cf3395a",
   "pronunciation_listen": "66df8a35f691aa67d5d0daa6047d182f0c64c2b41d267b9f0e1e5f130dcd111b",
   "pronunciation_listen_slowly": "af0fa30f0709e23ffbccbe4673b5a183a1f8086c87a3fcef2a7b40cf4e1a1b14",
   "pronunciation_microphone_off": "8de595b04b3d7970d2e1a159932acfde9c1581b815249988d1c39981f1a30495",
-  "pronunciation_no_speech": "fb59c29c8e3207c611d71b63df34c03af1b5fcbbde62a7a32f66cd738adf338d",
   "pronunciation_no_words": "b0cf118476a94163e9fad062939b1f7409c2ac1415695c5286b527ac3ccda9bc",
   "pronunciation_nothing_said": "6e736d6c78940ee4ad536418cca6d992f5b6b85a069afc126ff2d5e69bdbc9e2",
   "pronunciation_options": "a7e8e9ad0152d4c9cd26c08cc584ff6bcbea188f6807ad81a45bde2ed64d6e4a",
   "pronunciation_position": "67f76e9603db80a9d2cc0640521458c9eb9e617e158bae2daa24297ab260e033",
   "pronunciation_practice_done": "b21ccdcc681c7094940affad62d320bb4f8efaad9a4d7f23d3d899666dac3c17",
-  "pronunciation_press_record": "cf910a2f2cad6fce2a27305b65d5212014853c7558d60ce8af15adb77e91f076",
-  "pronunciation_recording": "19bac9433b0048993d846e5a31c949eb59de9caafc9dea13b3a8f975b57a8226",
   "pronunciation_save_failed": "150abd61e2eafaed9b1d004e247d8c14b99d668141b1c61b5db3c8c308ee147b",
   "pronunciation_save_retry": "7b7ae5b6bdf908815b941e4a8e660328a7cd3dbd68e760d1de1f3fff6555a718",
   "pronunciation_say_it_like": "c00df131ac8315a9af37b78c94ec61a6a50c3eeae34b32955c9d1ed1c57ac22e",
@@ -37,11 +32,6 @@
     <string name="pronunciation_say_it_like">%1$sのように声に出して言ってください</string>
     <string name="pronunciation_options">画面のオプション</string>
     <string name="pronunciation_skip">スキップ</string>
-    <string name="pronunciation_press_record">「録音」を押して、単語を声に出して言ってください</string>
-    <string name="pronunciation_recording">録音しています…話し終わったら「停止」を押してください。</string>
-    <string name="pronunciation_grading">発音を聞いています…</string>
-    <string name="pronunciation_no_speech">うまく聞き取れませんでした。もう少しマイクに近づいて、もう一度試してください。</string>
-    <string name="pronunciation_failed">うまくいきませんでした。もう一度試してください。</string>
     <string name="pronunciation_microphone_off">単語を声に出して言うには、設定でZoonkにマイクの使用を許可してください。今はスキップできます。</string>
     <string name="pronunciation_sounded_right">正しく発音できました</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->

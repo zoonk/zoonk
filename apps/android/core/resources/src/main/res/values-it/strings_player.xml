@@ -55,7 +55,6 @@
   "player_challenge_what_if": "df72a7ac0d440b01a38ceca52b03020da9a5d6cb998f210b7b2c9e25b6013289",
   "player_challenge_you": "f706dccf0482592462888cdc4647374acbe8c90d76e7acd493b254b005d2d7bb",
   "player_challenge_your_options": "e676424ddb98dde6f28cdfd9c4c1deae0bc8a857255df56d08c5b15f30ef84f2",
-  "player_check_failed": "90ee9e076038b6419c064e5244069fa12c429989c7f4f476859cf5156f68d61d",
   "player_citation_from_material": "0456a24d2a7b802d29bfe89232d826c7ec8afb27dfc1c59aac91e682262a142c",
   "player_citation_not_in_material": "9939b848acf135dae33d836682b00c3ba873a13fa505877f451e8dfef94dc3ce",
   "player_comes_back_at_end": "d66be09136242b1279eb46aca7a145863ccec8863a4cfc794e8695e0ca37b4c5",
@@ -158,7 +157,6 @@
   "player_start_the_lesson": "1fec0e6fabf98baccde910a5daf4f2d776ddf4b573073d39cee546e4608baa7d",
   "player_start_this_challenge": "552c0a39e7ff5bf147e87cd4c0a5e49feb982fde4502329f71a80600ad52ac85",
   "player_start_this_lesson": "5a837afeec0b9d858498b4d8b20b8d3d74ac5934b269a5dad8359246b9044979",
-  "player_still_checking": "a262fae837f644a55e1573c845bef3baf755fe6367097dbedf02ad30b79bbcc1",
   "player_stop_failed": "fbf50bbd9106a25474cb2af64e889d6c77aeed45f76865fde334998529cb7f6a",
   "player_stop_for_today": "96706943b27911017e31bb9aeec9d17fb4c3e8ae4ce0aef6a5f3a363c888c27d",
   "player_summary": "fd3017780b28c46bf495ead93847c55c911b00548426446de8a69105e6e6d3a0",
@@ -291,8 +289,6 @@
     <string name="player_dont_know_yet">Non lo so ancora</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Mostra prima la spiegazione</string>
-    <string name="player_check_failed">Questa volta non abbiamo potuto controllare la tua risposta. Riprova.</string>
-    <string name="player_still_checking">Stiamo ancora controllando. Ci stiamo mettendo più del solito.</string>
     <string name="player_enter_hint">Premi Invio per controllare, Maiusc+Invio per andare a capo.</string>
     <string name="player_your_answer">La tua risposta</string>
     <string name="player_write_your_answer">Scrivi la tua risposta</string>
