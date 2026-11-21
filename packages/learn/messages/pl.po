@@ -2141,7 +2141,6 @@ msgstr "{lessons, plural, =0 {Rewanż jutro.} one {Rewanż jutro, po # krótkiej
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
-#: src/syllabus/subject-write-bar.tsx
 #: src/today/today-week-challenge.tsx
 #: src/today/use-row-label.ts
 msgctxt "UIUcbm"
@@ -12849,6 +12848,12 @@ msgstr ", do nauki"
 msgctxt "sUFAfD"
 msgid "{total, plural, one {{done, number} of # topic studied} other {{done, number} of # topics studied}}"
 msgstr "{total, plural, one {Przerobiono {done, number} z # tematu} other {Przerobiono {done, number} z # tematów}}"
+
+#. The number of questions in an exam's written test.
+#: src/syllabus/subject-write-bar.tsx
+msgctxt "writtenTestQuestionCount"
+msgid "{count, plural, one {# question} other {# questions}}"
+msgstr "{count, plural, one {# pytanie} few {# pytania} many {# pytań} other {łącznie # pytania}}"
 
 #: src/syllabus/subject-write-bar.tsx
 msgctxt "dCMmZj"

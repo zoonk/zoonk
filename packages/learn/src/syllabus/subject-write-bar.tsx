@@ -23,7 +23,13 @@ export function useWrittenFacts({
   const formatDuration = useFormatDuration();
 
   return [
-    questions && t("{count, plural, one {# question} other {# questions}}", { count: questions }),
+    questions &&
+      t({
+        description: "The number of questions in an exam's written test.",
+        id: "writtenTestQuestionCount",
+        message: "{count, plural, one {# question} other {# questions}}",
+        values: { count: questions },
+      }),
     minutes && formatDuration(minutes),
     share &&
       t("{share} of the score", {
