@@ -1,4 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import { humanizeKey } from "../_utils/words";
 
 export type OutputMark = { anchor: string; label: string; major: boolean; quote: string };
@@ -12,7 +13,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 const HEADER_KEYS = new Set(["kind", "template", "type"]);
-const INLINE_PATTERN = /(?<inline>\*\*[^*\n]+\*\*|(?<![\w])_[^_\s][^_\n]*_(?![\w]))/u;
 
 function parseJson(text: string): unknown {
   const trimmed = text.trim();
@@ -69,19 +69,29 @@ function splitMarks(text: string, marks: OutputMark[]): Segment[] {
   ].filter((segment) => segment.text.length > 0);
 }
 
+/** Bold, italic and code as the lesson player reads them, so a mark it can't pair shows here too. */
 function Inline({ text }: { text: string }) {
-  return text.split(INLINE_PATTERN).map((part, index) => {
-    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+  return parseInlineMarkup(text).map((part, index) => {
+    if (part.kind === "bold") {
       // oxlint-disable-next-line react/no-array-index-key -- a sentence's parts never reorder
-      return <strong key={index}>{part.slice(2, -2)}</strong>;
+      return <strong key={index}>{part.text}</strong>;
     }
 
-    if (part.startsWith("_") && part.endsWith("_") && part.length > 2) {
+    if (part.kind === "italic") {
       // oxlint-disable-next-line react/no-array-index-key -- a sentence's parts never reorder
-      return <em key={index}>{part.slice(1, -1)}</em>;
+      return <em key={index}>{part.text}</em>;
     }
 
-    return part;
+    if (part.kind === "code") {
+      return (
+        // oxlint-disable-next-line react/no-array-index-key -- a sentence's parts never reorder
+        <code className="font-mono text-[0.9em]" key={index}>
+          {part.text}
+        </code>
+      );
+    }
+
+    return part.text;
   });
 }
 
