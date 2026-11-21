@@ -59,7 +59,6 @@ function getScheduleAnswer(schedule: Schedule): OnboardingAnswerInput | null {
   };
 }
 
-/** The answer leads: the time, then the one line on what it gets the learner. */
 function DateLinkLabel({ dated, exam }: { dated: boolean; exam: boolean }) {
   const t = useExtracted();
 
@@ -70,21 +69,13 @@ function DateLinkLabel({ dated, exam }: { dated: boolean; exam: boolean }) {
   return dated ? t("Change end date") : t("Set end date");
 }
 
-function ScheduleTime({
-  aim,
-  exam,
-  schedule,
-}: {
-  aim: string | null;
-  exam: boolean;
-  schedule: Schedule;
-}) {
+function ScheduleTime({ schedule }: { schedule: Schedule }) {
   const t = useExtracted();
-  const { found, minutes, setPicked, shown } = schedule;
+  const { found, minutes, setPicked } = schedule;
   const marked = getMarkedTimes(found.found);
 
   return (
-    <div className="flex flex-col gap-2" data-slot="schedule-time">
+    <>
       <OnboardingQuestionShown step="schedule" />
 
       <DailyTimePicker
@@ -103,22 +94,37 @@ function ScheduleTime({
         stale={schedule.stale}
         suggested={marked.suggested}
       />
+    </>
+  );
+}
 
-      <TimeAnswer
-        aim={aim}
-        date={getGoalDate(schedule)}
-        exam={exam}
-        found={shown.found}
-        line={shown.line}
-        minutes={minutes}
-        onRetry={found.failed ? found.covering.restart : schedule.timeAdvice.restart}
-        onUseOffer={(offer) =>
-          setPicked(toPickedMinutes({ first: found.first, found: found.found, minutes: offer }))
-        }
-        split={schedule.split}
-        updating={shown.updating}
-      />
-    </div>
+/** What the time and days picked get the learner, last, so its changing length moves nothing. */
+function ScheduleAnswer({
+  aim,
+  exam,
+  schedule,
+}: {
+  aim: string | null;
+  exam: boolean;
+  schedule: Schedule;
+}) {
+  const { found, minutes, setPicked, shown } = schedule;
+
+  return (
+    <TimeAnswer
+      aim={aim}
+      date={getGoalDate(schedule)}
+      exam={exam}
+      found={shown.found}
+      line={shown.line}
+      minutes={minutes}
+      onRetry={found.failed ? found.covering.restart : schedule.timeAdvice.restart}
+      onUseOffer={(offer) =>
+        setPicked(toPickedMinutes({ first: found.first, found: found.found, minutes: offer }))
+      }
+      split={schedule.split}
+      updating={shown.updating}
+    />
   );
 }
 
@@ -226,7 +232,7 @@ export function ScheduleStep({
         rail={<PlanReceipt goal={goal} />}
         title={t("How much time can you study each day?")}
       >
-        <ScheduleTime aim={aim} exam={exam} schedule={schedule} />
+        <ScheduleTime schedule={schedule} />
         <ScheduleWeek minutes={schedule.minutes ?? recommendedMinutes} week={schedule.week} />
         <ScheduleAim
           endDate={schedule.shown.line.kind === "finish" ? schedule.shown.line.endDate : null}
@@ -244,6 +250,7 @@ export function ScheduleStep({
         >
           <DateLinkLabel dated={schedule.dated} exam={exam} />
         </Button>
+        <ScheduleAnswer aim={aim} exam={exam} schedule={schedule} />
       </StepForm>
     </PlanWait>
   );

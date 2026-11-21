@@ -119,28 +119,23 @@ describe(getTimeLine, () => {
 
 describe(getOffer, () => {
   const SHORT = { kind: "share", share: 0.48 } as const;
-  const covers = { kind: "everything", whole: true } as const;
 
   it("offers a suggestion that covers everything back while a shorter time is shown", () => {
-    expect(getOffer({ found: foundTime(), line: SHORT, minutes: 15 })).toStrictEqual({
-      minutes: 35,
-      shown: true,
-    });
+    expect(getOffer({ found: foundTime(), line: SHORT, minutes: 35 })).toBeNull();
+    expect(getOffer({ found: foundTime(), line: SHORT, minutes: 15 })).toBe(35);
   });
 
-  it("keeps the offer's place, unseen, under a time that covers everything", () => {
-    expect(getOffer({ found: foundTime(), line: covers, minutes: 35 })).toStrictEqual({
-      minutes: 35,
-      shown: false,
-    });
+  it("offers nothing to a time that already covers everything", () => {
+    const covers = { kind: "everything", whole: true } as const;
 
     expect(
       getOffer({ found: foundTime(everythingAt(240)), line: covers, minutes: 900 }),
-    ).toStrictEqual({ minutes: 240, shown: false });
+    ).toBeNull();
   });
 
   it("never offers another time beside a focus suggestion", () => {
     const found = foundTime(focusAt(805));
+    const covers = { kind: "everything", whole: true } as const;
 
     expect(getOffer({ found, line: SHORT, minutes: 240 })).toBeNull();
     expect(getOffer({ found, line: SHORT, minutes: 120 })).toBeNull();

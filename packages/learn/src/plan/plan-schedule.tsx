@@ -140,26 +140,21 @@ function useWeekShape() {
   return plan.schedule.shape;
 }
 
-function DailyMinutes({
+/** The weekdays' time, saved on each pick, shown as tapped while it saves. */
+function useDailyTime({
   moving,
-  onMoving,
   planChange,
   weekendOn,
 }: {
   moving: boolean;
-  onMoving: (moving: boolean) => void;
   planChange: PlanChange;
   weekendOn: boolean;
 }) {
   const { change } = planChange;
   const isPending = planChange.isPending || moving;
-  const t = useExtracted();
-  const { plan } = usePlanScreen();
   const shape = useWeekShape();
   const current = shape.weekdays;
   const time = useTappedChoice(current);
-  const answer = useTimeAnswer(plan.schedule.targetDate !== null);
-  const marked = getMarkedTimes(answer.answered);
 
   const setMinutes = (minutes: number) => {
     if (isPending || minutes === current) {
@@ -176,25 +171,32 @@ function DailyMinutes({
     );
   };
 
+  return { current, isPending, setMinutes, shown: time.shown };
+}
+
+type DailyTime = ReturnType<typeof useDailyTime>;
+
+function DailyMinutes({
+  answer,
+  daily,
+}: {
+  answer: ReturnType<typeof useTimeAnswer>;
+  daily: DailyTime;
+}) {
+  const t = useExtracted();
+  const marked = getMarkedTimes(answer.answered);
+
   return (
     <div className="flex flex-col gap-2" id={getEditorSectionId("time")}>
       <DailyTimePicker
-        disabled={isPending}
+        disabled={daily.isPending}
         full={marked.full}
         label={t("Daily study time")}
-        minutes={time.shown}
-        onChange={setMinutes}
+        minutes={daily.shown}
+        onChange={daily.setMinutes}
         saves
         suggested={marked.suggested}
         titled
-      />
-
-      <DailyCoverage
-        answer={answer}
-        minutes={current}
-        onMoving={onMoving}
-        onUseTime={setMinutes}
-        planChange={planChange}
       />
     </div>
   );
@@ -297,26 +299,31 @@ function WeekendMinutes({
 }
 
 export function PlanSchedule() {
+  const { plan } = usePlanScreen();
   const shape = useWeekShape();
   const planChange = usePlanChange();
   const [weekendChoice, setWeekendChoice] = useState<boolean | null>(null);
   const weekendOn = weekendChoice ?? shape.weekend !== null;
   const [moving, setMoving] = useState(false);
   const schedule = { ...planChange, isPending: planChange.isPending || moving };
+  const answer = useTimeAnswer(plan.schedule.targetDate !== null);
+  const daily = useDailyTime({ moving, planChange, weekendOn });
 
   return (
     <>
-      <DailyMinutes
-        moving={moving}
-        onMoving={setMoving}
-        planChange={planChange}
-        weekendOn={weekendOn}
-      />
+      <DailyMinutes answer={answer} daily={daily} />
       <StudyDays planChange={schedule} />
       <WeekendMinutes
         checked={weekendOn}
         onCheckedChange={setWeekendChoice}
         planChange={schedule}
+      />
+      <DailyCoverage
+        answer={answer}
+        minutes={daily.current}
+        onMoving={setMoving}
+        onUseTime={daily.setMinutes}
+        planChange={planChange}
       />
       <FullCourseSwitch />
     </>
