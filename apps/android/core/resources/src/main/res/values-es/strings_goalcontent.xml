@@ -41,7 +41,10 @@
   "goalcontent_more_chapters": "52471e25776680bbcbfa7e144dc9fee93d39e15161ce13a3161ecfd84dac6ba7",
   "goalcontent_new": "6310642d9784f4de27976fb7a2397e10b7e92546ad62ae038695113f0b7e3693",
   "goalcontent_next_date": "2c0ad1c81966adfcc4dbe8f1ad06f2204a873df7d08a97a4a3ff0f13dec83edd",
+  "goalcontent_not_in_guide": "087ba3d72d06bcc7297b7a6965e5a3989aa375adadee3bd1f393715fb748ea90",
+  "goalcontent_not_in_notice": "8540f4b3b69d87e190229b668053a0880293fc824c4d63602e49b972c553e157",
   "goalcontent_not_in_plan": "682f3e7da2a962d75a2ab207dcf75a904d2c52779463e7684d0aa325e87dc5b9",
+  "goalcontent_optional_study": "74a83c67e372dc3ed0ff39138bb65cc9f5fe0a55cf53db2225d83d2868060e59",
   "goalcontent_percent_done": "b68fdc6da17534e40884d2c21239c5bff0353654b69c524124e4fc24507939c4",
   "goalcontent_practice": "296a7133e076e87eb7446718394d921a3c27147be544ae23429b0497d65e3d8b",
   "goalcontent_practice_chapter": "8dd8310524433a95ee587642f3c67b0fa81a2d712aab68a2e65bea1cd5457d41",
@@ -150,6 +153,11 @@
     <string name="goalcontent_preparation">Preparación</string>
     <string name="goalcontent_coverage">Cobertura</string>
     <string name="goalcontent_not_in_plan">No está en tu plan</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
+    <string name="goalcontent_not_in_notice">No está en la convocatoria</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's official guide. -->
+    <string name="goalcontent_not_in_guide">No está en la guía oficial</string>
+    <string name="goalcontent_optional_study">Opcional</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">Preguntas por materia en %1$s, según el conteo de %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

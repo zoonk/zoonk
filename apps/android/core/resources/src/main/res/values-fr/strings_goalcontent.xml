@@ -41,7 +41,10 @@
   "goalcontent_more_chapters": "be0f07e4fe6809e7e6417d847e7d132b242160f18107030bc8441857105eeaaf",
   "goalcontent_new": "714772bd836c498ac08e65e5bf2aea7525aa62bbaac35091127c1e77d88f77b8",
   "goalcontent_next_date": "c48a0132f455a6ee37762741d6169cfb093f547026b8091caa12560eff3835ff",
+  "goalcontent_not_in_guide": "fb6fdb9f282e83eb288390cdc991706f463d450b85a6980548b4e20ee6a11326",
+  "goalcontent_not_in_notice": "d4582c0ccea255a709cfab90d2a153d17ed1fe54ee2487d9989597fc8caf344f",
   "goalcontent_not_in_plan": "e8ea036a740f088f95a6856b9a18b5aa164186649f1654cad50e475a4b0196b5",
+  "goalcontent_optional_study": "3e167977077943e214e1eaa83e8deacb0f0e627d990f6fa2427c6be0b91a7239",
   "goalcontent_percent_done": "771311628be3bcafd45ca6a8adc426fa09e3a1b6672d2e623ae9a0a85f86623a",
   "goalcontent_practice": "684706db3beab299a139c57b7f6df96b6199b529109d312b38045f80cd11c497",
   "goalcontent_practice_chapter": "8619fe7f85de82b9dfd0340005f1462dedb6295c67f2f116fea135ce61e11662",
@@ -150,6 +153,11 @@
     <string name="goalcontent_preparation">Préparation</string>
     <string name="goalcontent_coverage">Couverture</string>
     <string name="goalcontent_not_in_plan">Pas dans ton plan</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
+    <string name="goalcontent_not_in_notice">Absent de l’avis officiel</string>
+    <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's official guide. -->
+    <string name="goalcontent_not_in_guide">Absent du guide officiel</string>
+    <string name="goalcontent_optional_study">Facultatif</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">Nombre de questions par matière pour %1$s, selon le décompte de %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
