@@ -240,6 +240,8 @@ struct WriteNowButton: View {
 
   let goalId: String
   var taskKey: String?
+  /// A task with a saved draft continues it.
+  var continues = false
   @Binding var failed: Bool
 
   @State private var writing = VisitRequest<Bool>()
@@ -259,7 +261,11 @@ struct WriteNowButton: View {
         failed = opened == false
       }
     } label: {
-      Text("Write", tableName: "Plan", comment: "Starts a written answer")
+      if continues {
+        Text("Continue", tableName: "Plan", comment: "Continues a written answer's saved draft")
+      } else {
+        Text("Write", tableName: "Plan", comment: "Starts a written answer")
+      }
     }
     .buttonStyle(.mainAction)
     .onDisappear { writing.leave() }

@@ -364,8 +364,8 @@ private struct WritingEditorPage: View {
             "Still grading. This is taking longer than usual.", table: "Essay",
             comment: "Grading is slow")
           : LocalizedStringResource(
-            "Reading your answer against each criterion. It can take up to a minute.",
-            table: "Essay", comment: "Grading an answer"),
+            "Reading your essay against each criterion. It can take up to 30 seconds.",
+            table: "Essay", comment: "Grading a draft"),
         tone: .status)
     case .idle:
       nil

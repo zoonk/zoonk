@@ -18,8 +18,10 @@ struct WritingStartView: View {
   var body: some View {
     Group {
       switch shown {
-      case .limitReached:
-        WritingRefusedView(task: nil, isBusy: false, onContinue: { dismiss() })
+      case .limitReached(_, let task):
+        WritingRefusedView(
+          task: task.map { .init(title: $0.description, minutes: $0.minutes) }, isBusy: false,
+          onContinue: { dismiss() })
       case .writing(let generationId):
         waiting(generationId)
       case .signUpRequired:
@@ -60,7 +62,7 @@ struct WritingStartView: View {
             "Writing a question like your exam's", tableName: "Essay",
             comment: "The step of writing a question"),
           hint: Text(
-            "Checking it against the exam's criteria", tableName: "Essay",
+            "Checking it against the exam's criteria…", tableName: "Essay",
             comment: "Under the step of writing a question"))
       }
     }

@@ -12,7 +12,9 @@ struct WritingResultSections: View {
 
   var body: some View {
     if let points = grade.points {
-      WritingPointsSection(points: points, errors: grade.errors.count, prompt: prompt, text: text)
+      WritingPointsSection(
+        points: points, errors: grade.errors.count, lines: grade.estimatedLines, prompt: prompt,
+        text: text)
     }
 
     WritingProgressSection(grade: grade)
@@ -27,6 +29,8 @@ struct WritingResultSections: View {
 private struct WritingPointsSection: View {
   let points: WritingResult.Points
   let errors: Int
+  /// The server's count; older results leave it to this device.
+  let lines: Int?
   let prompt: WritingPrompt
   let text: String
 
@@ -53,7 +57,23 @@ private struct WritingPointsSection: View {
         }
         .accessibilityElement(children: .combine)
 
-        RangeBar(range: points.total, max: points.max)
+        // The written test's minimum is on the sum of its questions: its tick sits at the same
+        // share of this question's points and says it's the test's, never this question's.
+        if let share = prompt.partMinimum?.share {
+          VStack(alignment: .leading, spacing: 6) {
+            RangeBar(range: points.total, max: points.max, minimum: share * points.max)
+            Text(
+              "Minimum to pass the written test: \(share.formatted(.percent.precision(.fractionLength(0)))) of its points",
+              tableName: "Essay",
+              comment:
+                "Under a question's score: the written test's own minimum, on the sum of its questions"
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+          }
+        } else {
+          RangeBar(range: points.total, max: points.max)
+        }
       }
       .padding(.vertical, 4)
 
@@ -88,9 +108,11 @@ private struct WritingPointsSection: View {
   private var errorCount: String { WritingLabels.errors(errors) }
 
   private var lineCount: String {
-    let lines = WritingLines.count(
-      text, charactersPerLine: prompt.charactersPerLine, limit: prompt.lines
-    ).estimatedLines
+    let lines =
+      self.lines
+      ?? WritingLines.count(
+        text, charactersPerLine: prompt.charactersPerLine, limit: prompt.lines
+      ).estimatedLines
 
     return String(
       localized: "about \(lines) lines", table: "Essay",

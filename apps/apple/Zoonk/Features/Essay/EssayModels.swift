@@ -24,11 +24,27 @@ struct WritingPrompt: Hashable, Decodable, Sendable {
     var points: Double?
   }
 
+  /// The written test's own minimum on the sum of its questions, never this question's.
+  struct PartMinimum: Hashable, Decodable, Sendable {
+    var max: Double?
+    var minimum: PointsMinimum
+
+    /// The minimum's share of the part's points, which is where it sits on this question's scale.
+    var share: Double? {
+      switch minimum.unit {
+      case .percent: minimum.value / 100
+      case .points: max.map { minimum.value / $0 }
+      }
+    }
+  }
+
   var charactersPerLine: Int
   var criteria: [Criterion]
   var keySource: KeySource
   var lines: Int?
   var minimumWords: Int
+  /// Nil on prompts written before it was recorded.
+  var partMinimum: PartMinimum?
   var points: Double?
   var taskKey: String
   var title: String
@@ -111,6 +127,8 @@ struct WritingResult: Hashable, Decodable, Sendable {
 
   var criteria: [Criterion]
   var errors: [LanguageError]
+  /// The answer's handwritten lines as the server counted them.
+  var estimatedLines: Int?
   var ignoredFrom: Int?
   var nextStep: NextStep?
   var progress: Progress?
@@ -122,7 +140,8 @@ struct WritingResult: Hashable, Decodable, Sendable {
   }
 
   private enum CodingKeys: String, CodingKey {
-    case content, criteria, deduction, errors, ignoredFrom, kind, max, nextStep, progress, rows,
+    case content, criteria, deduction, errors, estimatedLines, ignoredFrom, kind, max, nextStep,
+      progress, rows,
       total, zeroReason
   }
 
@@ -130,6 +149,7 @@ struct WritingResult: Hashable, Decodable, Sendable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     criteria = try container.decode([Criterion].self, forKey: .criteria)
     errors = try container.decode([LanguageError].self, forKey: .errors)
+    estimatedLines = try container.decodeIfPresent(Int.self, forKey: .estimatedLines)
     ignoredFrom = try container.decodeIfPresent(Int.self, forKey: .ignoredFrom)
     nextStep = try container.decodeIfPresent(NextStep.self, forKey: .nextStep)
     progress = try container.decodeIfPresent(Progress.self, forKey: .progress)
@@ -195,9 +215,15 @@ struct EssayView: Hashable, Decodable, Sendable {
 /// What a start answered: the grading is admitted, the question is being written, or the day's
 /// extra grades are used.
 enum WritingStart: Hashable, Sendable {
+  /// The task a refusal leaves for tomorrow, before any question is assigned.
+  struct Task: Hashable, Decodable, Sendable {
+    var description: String
+    var minutes: Int
+  }
+
   case ready(admissionId: String)
   case writing(generationId: String)
-  case limitReached(returnsOn: String)
+  case limitReached(returnsOn: String, task: Task?)
   case signUpRequired
   case failed
 }

@@ -445,9 +445,6 @@
         }
       }
     },
-    "Checking it against the exam's criteria" : {
-      "comment" : "Under the step of writing a question"
-    },
     "Comments" : {
       "comment" : "Comments on each criterion",
       "localizations" : {
@@ -1522,9 +1519,6 @@
     },
     "Question" : {
       "comment" : "Opens the question while writing"
-    },
-    "Reading your answer against each criterion. It can take up to a minute." : {
-      "comment" : "Grading an answer"
     },
     "Reading your essay against each criterion. It can take up to 30 seconds." : {
       "comment" : "Grading a draft",

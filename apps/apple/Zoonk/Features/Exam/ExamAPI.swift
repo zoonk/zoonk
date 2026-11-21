@@ -479,6 +479,7 @@ struct WritingStartWire: Decodable {
   let returnsOn: String?
   let runId: String?
   let status: String
+  let task: WritingStart.Task?
 
   static func recode(_ payload: some Encodable) throws -> WritingStart {
     let wire: Self = try PracticeJSON.recode(payload)
@@ -486,7 +487,7 @@ struct WritingStartWire: Decodable {
     switch (wire.status, wire.admissionId, wire.runId, wire.returnsOn) {
     case ("ready", let id?, _, _): return .ready(admissionId: id)
     case ("writing", _, let run?, _): return .writing(generationId: run)
-    case ("limitReached", _, _, let day?): return .limitReached(returnsOn: day)
+    case ("limitReached", _, _, let day?): return .limitReached(returnsOn: day, task: wire.task)
     default: throw APIError.unavailable
     }
   }

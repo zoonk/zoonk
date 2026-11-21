@@ -118,9 +118,15 @@ private struct SubjectContent: View {
     }
     .bottomBar(note: writeNote) {
       // A written part's main action is writing: its lessons are a small part of its time.
-      if written != nil {
-        WriteNowButton(goalId: goal.id, failed: $writeFailed)
-          .keyboardShortcut(.defaultAction)
+      if let written {
+        let action = written.writeAction
+
+        WriteNowButton(
+          goalId: goal.id, taskKey: action?.taskKey,
+          continues: action?.availability == .continue, failed: $writeFailed
+        )
+        .keyboardShortcut(.defaultAction)
+        .disabled(action?.waits == true)
       } else if let chapterId = nextChapterId {
         Button {
           router.open(chapterRoute(chapterId))
@@ -145,7 +151,15 @@ private struct SubjectContent: View {
   }
 
   private var writeNote: BarNote? {
-    writeFailed
+    if written?.writeAction?.waits == true {
+      return BarNote(
+        LocalizedStringResource(
+          "Back tomorrow: today's extra grades are used", table: "Today",
+          comment: "A written task that waits for tomorrow's grades"),
+        tone: .status)
+    }
+
+    return writeFailed
       ? BarNote(
         LocalizedStringResource(
           "That didn't go through. Try again in a moment.", table: "Plan",

@@ -138,12 +138,29 @@ struct GoalPlan: Decodable, Equatable, Sendable {
         let presentationShare: Double?
       }
 
+      /// What "Write" starts: each task, and whether it's open now, continues a draft or waits
+      /// for tomorrow's grades.
+      struct WriteAction: Decodable, Equatable, Sendable {
+        let availability: WritingAvailability
+        let taskKey: String
+
+        var waits: Bool {
+          if case .tomorrow = availability { true } else { false }
+        }
+      }
+
       let answers: [Answer]
       let minutes: Int?
       let points: WrittenPartPoints
       let questions: Int?
       let share: Double?
       let trend: [Sample]
+      let writeActions: [WriteAction]?
+
+      /// The first task open now; else the first, to say when it comes back.
+      var writeAction: WriteAction? {
+        writeActions?.first { !$0.waits } ?? writeActions?.first
+      }
     }
 
     /// `weekly`, `biweekly` or `finalWeeks`.

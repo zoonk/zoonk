@@ -113,7 +113,7 @@ final class WritingResultDecodingTests: XCTestCase {
       .writing(generationId: "wrun_1"))
     XCTAssertEqual(
       try WritingStartWire.recode(Wire(status: "limitReached", returnsOn: "2026-11-21")),
-      .limitReached(returnsOn: "2026-11-21"))
+      .limitReached(returnsOn: "2026-11-21", task: nil))
   }
 
   static func points(zeroReason: String) -> String {
