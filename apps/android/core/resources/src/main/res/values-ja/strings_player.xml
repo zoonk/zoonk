@@ -21,7 +21,9 @@
   "player_back_to_chapter": "e42f1bc9d787999f980711b92845b5df766c8a04b0ebd269d2429d44ed5303e7",
   "player_back_to_unit": "bf95351079063f4273fee41fec9c3fd0409699c5fe977b6ce001fa4d2f4ef08f",
   "player_build_my_plan": "b6897b51372a56f2b24f6f9452de5c9a4ba3bb86ffa354aefa200e004bcf8e98",
+  "player_can_listen_now": "2125df4649cdef3d052b79d5f83b7b55cf9920144986d8d4f0be95d3a7e8ce61",
   "player_can_talk_now": "e68e360b23136ebacedd8a083997354198b86b11875012be1c6a974a287a5b32",
+  "player_cant_listen_now": "db7df75eb175df08dbccb17e8aac14ee6907ee38e489ffdde0fa74e008bca0e7",
   "player_cant_talk_now": "631ee704ae2dac0964f71d581c46947b11abe6721435d3d19f1355b6c53a8573",
   "player_cant_write_now": "067579726077b4f46f493d361374aea07d3651e7e6ea34da7e746120875ecbf2",
   "player_challenge_bit_higher": "09f5f7172b8156ee76d343d468b854de422c77a71eb2351dcb2a32baa150665b",
@@ -346,6 +348,8 @@
     <string name="player_not_found_title">このレッスンは利用できません</string>
     <string name="player_cant_talk_now">今は話せない</string>
     <string name="player_can_talk_now">今は話せる</string>
+    <string name="player_cant_listen_now">今は音を聞けない</string>
+    <string name="player_can_listen_now">今は音を聞ける</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">声に出して答える</string>
     <string name="player_microphone_is_blocked">マイクの使用が許可されていません。</string>

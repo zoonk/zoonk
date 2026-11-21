@@ -164,6 +164,8 @@
     <string name="player_not_found_title">This lesson isn\'t available</string>
     <string name="player_cant_talk_now">I can\'t talk now</string>
     <string name="player_can_talk_now">I can talk now</string>
+    <string name="player_cant_listen_now">I can\'t listen now</string>
+    <string name="player_can_listen_now">I can listen now</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Say it instead</string>
     <string name="player_microphone_is_blocked">The microphone is blocked.</string>

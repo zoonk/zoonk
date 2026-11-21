@@ -78,6 +78,7 @@ import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
+import com.zoonk.android.feature.player.engine.asAnswered
 import com.zoonk.android.feature.player.engine.isExploredPictureLost
 import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.listeningInstead
@@ -661,10 +662,19 @@ internal fun SpokenAnswerView(
         voice.blocked = false
         actions.setCantTalk(cantTalk)
     }
-    val listening = content.listeningInstead(if (locked) answer is LessonAnswer.Listening else actions.cantTalk)
+    val listening =
+        if (locked) {
+            step
+                .asAnswered(
+                    answer,
+                ).content as? StepContent.Language
+        } else {
+            content.listeningInstead(actions.cantTalk, actions.cantListen)
+        }
 
     if (listening != null) {
-        LanguageStepView(listening, answer, state.results[step.id], locked, language, actions, part)
+        val typesInstead = remember(actions) { ListeningTurnsToTyping(actions) }
+        LanguageStepView(listening, answer, state.results[step.id], locked, language, typesInstead, part)
         if (part.showsTurn && !locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
         return
     }
@@ -708,11 +718,21 @@ internal fun SpokenAnswerView(
                         stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
                     ) { switchTo(false) }
                 } else {
-                    val icon = if (content.listening != null) R.drawable.ic_headphones else R.drawable.ic_keyboard
+                    val icon = if (content.listening != null && !actions.cantListen) R.drawable.ic_headphones else R.drawable.ic_keyboard
                     GhostAction(icon, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
                 }
             }
         }
+    }
+}
+
+/** A spoken screen heard instead turns to typing once the learner can't listen either, so the words placed so far go. */
+private class ListeningTurnsToTyping(
+    private val actions: StepActions,
+) : StepActions by actions {
+    override fun setCantListen(chosen: Boolean) {
+        actions.select(null)
+        actions.setCantListen(chosen)
     }
 }
 

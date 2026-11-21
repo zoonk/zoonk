@@ -54,6 +54,7 @@ import com.zoonk.android.feature.player.steps.ChoiceOption
 import com.zoonk.android.feature.player.steps.ChoiceOptions
 import com.zoonk.android.feature.player.steps.ContextText
 import com.zoonk.android.feature.player.steps.DescribedPicture
+import com.zoonk.android.feature.player.steps.GhostAction
 import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.feature.player.steps.QuestionText
 import com.zoonk.android.feature.player.steps.ReadScene
@@ -118,7 +119,12 @@ fun LanguageStepView(
     val speech = language.speech
     val exercise = remember(content.exercise) { content.exercise.toExercise() }
     val select = { answer: LessonAnswer? -> if (!locked) actions.select(answer) }
-    val sound: (@Composable () -> Unit)? = prompt?.let { promptAudioUrl(content)?.let { url -> { PromptAudioInlineButton(url, prompt) } } }
+    val sound: (@Composable () -> Unit)? =
+        prompt?.let {
+            promptAudioUrl(content, actions.cantListen)?.let { url ->
+                { PromptAudioInlineButton(url, prompt) }
+            }
+        }
 
     when (content.kind) {
         StepKind.Alphabet -> {
@@ -183,8 +189,8 @@ fun LanguageStepView(
 
         StepKind.Listening -> {
             exercise.sentence?.let { sentence ->
+                val url = listeningAudioUrl(sentence, actions.cantListen)
                 val listen = @Composable {
-                    val url = sentence.audioUrl
                     if (url != null && prompt != null) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Eyebrow(stringResource(R.string.player_language_what_do_you_hear), icon = R.drawable.ic_hearing)
@@ -221,6 +227,7 @@ fun LanguageStepView(
                         prompt = question,
                     )
                 }
+                if (part.showsTurn && !locked && sentence.audioUrl != null) CantListenAction(actions)
             }
         }
 
@@ -235,6 +242,16 @@ fun LanguageStepView(
 
         else -> {}
     }
+}
+
+/** Where a speaking screen has "I can't talk now": for the rest of the day, sentences to hear are read instead; the words placed so far stay. */
+@Composable
+private fun CantListenAction(actions: StepActions) {
+    val cantListen = actions.cantListen
+    GhostAction(
+        if (cantListen) R.drawable.ic_hearing else R.drawable.ic_hearing_disabled,
+        stringResource(if (cantListen) R.string.player_can_listen_now else R.string.player_cant_listen_now),
+    ) { actions.setCantListen(!cantListen) }
 }
 
 /**

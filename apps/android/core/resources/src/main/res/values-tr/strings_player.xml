@@ -21,7 +21,9 @@
   "player_back_to_chapter": "c9fade0c18023a45274b8a3393927db3cce5cd16773ce3a2ca45aa4fa88b4006",
   "player_back_to_unit": "637faaea21a78bc36c210895c2b75cb9ac23815faa9d45e2ebf33ea8466d27f9",
   "player_build_my_plan": "e2f5c84df1374865b2f8687e948a634ba49b44f8c10118f37101b233fae7a595",
+  "player_can_listen_now": "6614d8c1576f8bf40c94e21b8e72680895dfb1bb030e92b89a628020f12779de",
   "player_can_talk_now": "779ef9042bc4d3a7d2d6e6ca1f2dd4bf96e9b93d3e5be489dcdd2f28107f2812",
+  "player_cant_listen_now": "8fe06bfd6fd4abb6424db4d4d60d257671bfbcd6fcb71c4e86482fbd966053b5",
   "player_cant_talk_now": "606d2d643b5d85519c818e9b10301b83b040dbcbccc7182a7f818d91fa3d0b90",
   "player_cant_write_now": "2e6dee1ed5b5d4cdb97b3f165744b812907361a0a6a41fc09bdba0340c5106de",
   "player_challenge_bit_higher": "d3f9c99633816e44704f70c48dde737c42cc3cb2436c37b1efb8d4b0fde61f11",
@@ -349,6 +351,8 @@
     <string name="player_not_found_title">Bu ders kullanılamıyor</string>
     <string name="player_cant_talk_now">Şu an konuşamıyorum</string>
     <string name="player_can_talk_now">Şu an konuşabilirim</string>
+    <string name="player_cant_listen_now">Şu an dinleyemiyorum</string>
+    <string name="player_can_listen_now">Artık dinleyebilirim</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Sesli söyle</string>
     <string name="player_microphone_is_blocked">Mikrofon erişimi engellendi.</string>

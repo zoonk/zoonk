@@ -21,7 +21,9 @@
   "player_back_to_chapter": "8e9b89f0ca64b060dd0b2aca24a5eb4d0b236835d555ed0acc9788c527d3b1ee",
   "player_back_to_unit": "7a1ebe70809412b22a085c4c06c5653286c439050c24b75074113a97ec20dc83",
   "player_build_my_plan": "868d48c4980ee68f9c39f5a514f736e82c32a191245057cefd438272df0ae74c",
+  "player_can_listen_now": "dce55a0c371c896cf7a9c4b6defdea20b3bba9bf1dbe755305466ead07509eda",
   "player_can_talk_now": "7b6786dc3557d2000faa6cc97cb9290d1829d6b88c4ef8ec1b30e2daaab38168",
+  "player_cant_listen_now": "e07f89cefe826b7dbc4f706af066baaf43daf10750c5fab83752eef68e0be8cf",
   "player_cant_talk_now": "5504e6740ff02d286a588b9c1f33f2ea6692ddf16c736b4bdb36a1da18dd8c68",
   "player_cant_write_now": "4127ce2f1cdbcc1d34a69024daa96d2d65e3fdb4dd39ea30ff94e1bc0b20f3bd",
   "player_challenge_bit_higher": "9b32a6f6d9ecc3f419988e916c0321929c84ea54f0dde83a2569e06752b5cf8d",
@@ -349,6 +351,8 @@
     <string name="player_not_found_title">Diese Lektion ist nicht verfügbar</string>
     <string name="player_cant_talk_now">Ich kann gerade nicht sprechen</string>
     <string name="player_can_talk_now">Ich kann jetzt sprechen</string>
+    <string name="player_cant_listen_now">Ich kann gerade nicht zuhören</string>
+    <string name="player_can_listen_now">Ich kann wieder zuhören</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Sag es stattdessen</string>
     <string name="player_microphone_is_blocked">Der Zugriff auf das Mikrofon ist blockiert.</string>
