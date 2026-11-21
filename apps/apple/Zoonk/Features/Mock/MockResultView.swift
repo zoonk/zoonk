@@ -1300,12 +1300,30 @@ private struct MockReviewSection: View {
   private func facts(_ item: MockReviewItem) -> [FactSegments.Fact] {
     let outcome =
       switch item.outcome {
-      case .blank: String(localized: "Blank", table: "Mock", comment: "A blank question")
+      case .blank:
+        String(
+          localized: "mockReviewBlank", defaultValue: "Blank", table: "Mock",
+          comment:
+            "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\"."
+        )
       case .partial:
-        String(localized: "Partly right", table: "Mock", comment: "Partly right answers")
+        String(
+          localized: "mockReviewPartlyRight", defaultValue: "Partly right", table: "Mock",
+          comment:
+            "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\"."
+        )
       case .right:
-        String(localized: "Right", table: "Mock", comment: "Right answers")
-      case .wrong: String(localized: "Wrong", table: "Mock", comment: "Wrong answers")
+        String(
+          localized: "mockReviewRight", defaultValue: "Right", table: "Mock",
+          comment:
+            "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\"."
+        )
+      case .wrong:
+        String(
+          localized: "mockReviewWrong", defaultValue: "Wrong", table: "Mock",
+          comment:
+            "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\"."
+        )
       }
 
     return [

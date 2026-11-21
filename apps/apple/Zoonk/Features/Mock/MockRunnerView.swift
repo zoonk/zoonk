@@ -389,6 +389,7 @@ private struct UnsureButton: View {
 
   var body: some View {
     let unsure = run.question.map { run.drafts[$0.itemId]?.unsure ?? false } ?? false
+    let typesAnswer = run.question.map { [.typed, .numeric, .essay].contains($0.format) } ?? true
 
     Toggle(
       isOn: Binding(
@@ -419,6 +420,7 @@ private struct UnsureButton: View {
     .controlSize(.large)
     .buttonTone(unsure ? .warning : .neutral)
     .disabled(run.timeUp || run.pending)
+    .keyboardShortcut(typesAnswer ? nil : KeyboardShortcut("u", modifiers: []))
     .popover(isPresented: $showsTip, attachmentAnchor: .point(.top), arrowEdge: .bottom) {
       Group {
         if run.moves.canRecheck {
