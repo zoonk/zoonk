@@ -91,7 +91,7 @@ function PopoverArrow({ className, ...props }: PopoverPrimitive.Arrow.Props) {
   return (
     <PopoverPrimitive.Arrow
       className={cn(
-        "bg-popover border-foreground/10 size-3 rotate-45 rounded-[2px] data-[side=bottom]:-top-1.5 data-[side=bottom]:border-t data-[side=bottom]:border-l data-[side=left]:-right-1.5 data-[side=left]:border-t data-[side=left]:border-r data-[side=right]:-left-1.5 data-[side=right]:border-b data-[side=right]:border-l data-[side=top]:-bottom-1.5 data-[side=top]:border-r data-[side=top]:border-b",
+        "bg-popover border-foreground/10 size-4 rotate-45 rounded-[2px] data-[side=bottom]:-top-2 data-[side=bottom]:border-t data-[side=bottom]:border-l data-[side=left]:-right-2 data-[side=left]:border-t data-[side=left]:border-r data-[side=right]:-left-2 data-[side=right]:border-b data-[side=right]:border-l data-[side=top]:-bottom-2 data-[side=top]:border-r data-[side=top]:border-b",
         className,
       )}
       data-slot="popover-arrow"

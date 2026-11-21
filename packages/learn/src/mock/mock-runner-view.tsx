@@ -183,7 +183,7 @@ function UnsureButton() {
           finalFocus={false}
           initialFocus={false}
           side="top"
-          sideOffset={12}
+          sideOffset={4}
         >
           <PopoverDescription className="text-popover-foreground text-pretty" id={tipId}>
             {tipText}
