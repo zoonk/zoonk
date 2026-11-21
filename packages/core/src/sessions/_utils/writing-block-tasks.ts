@@ -20,6 +20,17 @@ export function getBlueprintWritingTasks(blueprint?: ExamBlueprint | null) {
   return indexWritingTasks(listBlueprintWritingTasks(blueprint));
 }
 
+export async function loadWritingTask({
+  blueprintId,
+  taskKey,
+}: {
+  blueprintId: string | null | undefined;
+  taskKey: string;
+}) {
+  const blueprint = blueprintId ? await readExamBlueprint(blueprintId) : null;
+  return getBlueprintWritingTasks(blueprint).get(taskKey);
+}
+
 export async function loadSessionWritingTasks({
   blueprint: knownBlueprint,
   fresh,

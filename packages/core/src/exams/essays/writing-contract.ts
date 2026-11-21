@@ -24,7 +24,7 @@ const writingTaskPosition = {
 
 export const writingTaskSchema = z
   .object({ lines, points, ...writingTaskPosition })
-  .meta({ id: "WritingTask" });
+  .meta({ id: "WritingTask", override: { additionalProperties: false } });
 
 export const writingPromptSchema = z
   .object({
@@ -98,6 +98,7 @@ export const writingStartSchema = z
           taskKey,
           total: writingTaskPosition.total.optional(),
           unit: writingUnitSchema,
+          writingTask: writingTaskSchema.optional(),
         })
         .optional()
         .describe("The writing task and its estimated practice time in minutes"),

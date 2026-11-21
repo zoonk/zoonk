@@ -10,11 +10,17 @@ import {
   type WritingResult,
   writingPromptSchema,
   writingResultSchema,
+  writingTaskSchema,
 } from "./writing-contract";
 
 export const writingAttemptSchema = z
   .object({ grade: writingResultSchema, text: z.string() })
-  .extend({ attemptId: uuidSchema(), submittedAt: z.iso.datetime(), writing: writingPromptSchema })
+  .extend({
+    attemptId: uuidSchema(),
+    submittedAt: z.iso.datetime(),
+    writing: writingPromptSchema,
+    writingTask: writingTaskSchema.optional(),
+  })
   .meta({ id: "WritingAttempt" });
 
 export { MAX_ESSAY_CHARACTERS } from "./writing-contract";
@@ -39,9 +45,11 @@ export type EssayDraft = {
   grade: WritingResult;
   submittedAt: string;
   text: string;
+  writingTask?: z.infer<typeof writingTaskSchema>;
 };
 
 export type EssayView = {
+  admissionId?: string;
   blockId: string;
   draft: WritingDraft | null;
   context: string | null;
@@ -53,4 +61,5 @@ export type EssayView = {
   sessionId: string;
   status: StudySessionBlock["status"];
   writing: WritingPrompt;
+  writingTask?: z.infer<typeof writingTaskSchema>;
 };
