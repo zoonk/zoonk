@@ -1,3 +1,4 @@
+import { startLevelTestBank } from "@/lib/level-test-bank";
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { getCallWritingKey } from "@zoonk/core/language/conversations/call-writing";
 import { createHook } from "workflow";
@@ -76,13 +77,21 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     }
     case "preparePlacementItems": {
-      const ask = `placement-items:${followUp.input.goalId}:${followUp.id}:${followUp.revision}`;
+      const { goalId, levelTestBank, waitsForNotice, writeTopics = true } = followUp.input;
+      const ask = `placement-items:${goalId}:${followUp.id}:${followUp.revision}`;
 
-      await startOnce(
-        placementItemsWorkflow,
-        [{ ...followUp.input, analytics: { distinctId: userId } }],
-        ask,
-      );
+      await Promise.all([
+        levelTestBank
+          ? startLevelTestBank({ analytics: { distinctId: userId, goalId }, pair: levelTestBank })
+          : null,
+        writeTopics
+          ? startOnce(
+              placementItemsWorkflow,
+              [{ analytics: { distinctId: userId }, goalId, waitsForNotice }],
+              ask,
+            )
+          : null,
+      ]);
 
       return;
     }
