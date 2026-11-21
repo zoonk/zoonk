@@ -15015,7 +15015,7 @@
       }
     },
     "Your answer" : {
-      "comment" : "Placeholder of an answer field.",
+      "comment" : "Placeholder of an answer field.\nVoiceOver value of the learner's wrong answer shown after the fact.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

@@ -3,6 +3,7 @@
 {
   "activities_guess_in_unit": "c7fd06efc1faaf3f56342dcba33c934f85f9e7630c1e9f4aeab002e12b748c4a",
   "answer_tag_correct": "ec77020557bc0462e384ac51df0f726fd468a575baa6b02ac7f1378349ed7b28",
+  "answer_tag_your_answer": "39239aaceec7c5ebbcd301bec5af15ea217c8572fa54bdabfcea35654930f68b",
   "answer_tag_your_guess": "a295206d6cdedf4e96252799182e96d3d38ec200a05a76ff639037c3a5be11fa",
   "belt_black": "31f2f55b233bcf50e8f533fc15922f40c84203bb36b69ca6c30a1b2728f6ba59",
   "belt_blue": "0d3b9c5a45ec1da697e7858415e785617cfe76866d68bcea51a88792e5375e9a",
@@ -124,6 +125,7 @@
     <string name="belt_level_description">%1$s、レベル%2$s</string>
     <string name="belt_level_words">レベル%1$s</string>
     <string name="answer_tag_correct">正解</string>
+    <string name="answer_tag_your_answer">選んだ答え</string>
     <string name="answer_tag_your_guess">予想</string>
     <string name="load_failed_title">このページを読み込めませんでした</string>
     <string name="load_failed_description">インターネット接続を確認して、もう一度試してください。</string>

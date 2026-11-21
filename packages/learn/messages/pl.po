@@ -28,6 +28,16 @@ msgctxt "9-6ClJ"
 msgid "Your answer and the right one"
 msgstr "Twoja odpowiedź i poprawna odpowiedź"
 
+#: src/_components/answer-pair.tsx
+#: src/essay/essay-labels.tsx
+#: src/mock/mock-question.tsx
+#: src/onboarding/steps/question-steps.tsx
+#: src/questions/numeric-answer-field.tsx
+#: src/questions/typed-answer-field.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "Twoja odpowiedź"
+
 #: src/_components/brain-power-amount.tsx
 #: src/_components/moment-readouts.tsx
 msgctxt "XjzZDx"
@@ -3176,15 +3186,6 @@ msgstr "Szczegół"
 msgctxt "EWD_9X"
 msgid "Your essay"
 msgstr "Twoje wypracowanie"
-
-#: src/essay/essay-labels.tsx
-#: src/mock/mock-question.tsx
-#: src/onboarding/steps/question-steps.tsx
-#: src/questions/numeric-answer-field.tsx
-#: src/questions/typed-answer-field.tsx
-msgctxt "1nJY2_"
-msgid "Your answer"
-msgstr "Twoja odpowiedź"
 
 #: src/essay/essay-prompt.tsx
 msgctxt "iyKTfM"

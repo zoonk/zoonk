@@ -85,6 +85,7 @@ describe("a mock exam's questions to review", () => {
 
     await expect.element(answers.getByText("The picked option")).toBeVisible();
     await expect.element(answers.getByText("The right option")).toBeVisible();
+    await expect.element(answers.getByText("Your answer", { exact: true })).toBeInTheDocument();
     await expect.element(page.getByText("Why question 4 went wrong.")).not.toBeInTheDocument();
 
     expect({ first: top(4), pressed: top(7) }).toStrictEqual(before);
