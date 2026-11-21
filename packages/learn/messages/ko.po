@@ -2596,6 +2596,48 @@ msgctxt "3ekog5"
 msgid "Rematch next time you study"
 msgstr "다음에 공부할 때 재대결"
 
+#. Name of a block of program code in a lesson or a question, read by screen readers.
+#: src/code/code-listing.tsx
+msgctxt "h2vipu"
+msgid "Code"
+msgstr "코드"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”.
+#: src/code/spoken-code.ts
+msgctxt "kpbRGD"
+msgid "{count, plural, one {# tab} other {# tabs}}"
+msgstr "{count, plural, other {탭 #개}}"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”.
+#: src/code/spoken-code.ts
+msgctxt "yjyNvP"
+msgid "{count, plural, one {# space} other {# spaces}}"
+msgstr "{count, plural, other {공백 #개}}"
+
+#. Read by screen readers for an empty line of a program.
+#: src/code/spoken-code.ts
+msgctxt "wrB4QU"
+msgid "Line {number}: blank"
+msgstr "{number}번째 줄: 빈 줄"
+
+#. Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "2gsZ99"
+msgid "Line {number}, indented {indent}: {code}"
+msgstr "{number}번째 줄, 들여쓰기 {indent}: {code}"
+
+#. Read by screen readers for a line of a program: its number, then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "B_BMju"
+msgid "Line {number}: {code}"
+msgstr "{number}번째 줄: {code}"
+
+#. Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "W3ZnQw"
+msgid "Indented {indent}: {code}"
+msgstr "들여쓰기 {indent}: {code}"
+
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-sections.tsx

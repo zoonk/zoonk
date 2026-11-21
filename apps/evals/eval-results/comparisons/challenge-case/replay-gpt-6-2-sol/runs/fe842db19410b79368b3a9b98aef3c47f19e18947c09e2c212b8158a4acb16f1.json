@@ -1,0 +1,17 @@
+{
+  "caseId": "en-statistics-field-nursing",
+  "challenger": {
+    "costUsd": 0.12396900000000001,
+    "durationMs": 126232.03125,
+    "hash": "402197dbf10aab4e8238ffaeb43aa3f0d2ba5b2a020cf75917b7b406376beb98",
+    "userPromptHash": "1401ea20bd0ba2e68fe52c16895277b0b5167f4ef8d58e04563228db717c1f21"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.11402110000000001,
+    "durationMs": 188342.631291,
+    "hash": "ed185f3b680482eb3932d671264620ed7b54215ea5b2f2c4abbe10175fa85d20",
+    "userPromptHash": "1401ea20bd0ba2e68fe52c16895277b0b5167f4ef8d58e04563228db717c1f21"
+  },
+  "run": 2
+}

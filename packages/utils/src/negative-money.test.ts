@@ -34,4 +34,12 @@ describe(repairNegativeMoney, () => {
 
     expect(repairNegativeMoney({ text })).toBe(text);
   });
+
+  it("keeps code as written, where a string may hold any text", () => {
+    const text = 'Saldo: R$ -2,00 e `"$-5"`:\n```python\nprint("$-5")\n```';
+
+    expect(repairNegativeMoney({ text })).toBe(
+      'Saldo: -R$ 2,00 e `"$-5"`:\n```python\nprint("$-5")\n```',
+    );
+  });
 });

@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-mapa-imperio-romano",
+        "claimId": "262b09131e3d9e27",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "3a11fd14ee9be3e84a0611969e7670dea20755f6239031c525c9d24b9bee0b09.first.1b1afe2e-58b8-48c7-84d1-dba55f349a47.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0030342499999999996,
+    "id": "749114fbe5926f77bf700bc17977229143f3ec0c73cf6806fef729a58993dc14",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "1a4144ca27a23eee",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+          "format": "text"
+        },
+        "B": {
+          "blob": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+          "format": "text"
+        },
+        "claim": "The guess asks what a traveler would find around the Mediterranean coast, but the screen provides no map showing the places or Roman territory needed to answer it.",
+        "claimId": "262b09131e3d9e27",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "9f85471e06fe5e54cf42319005000e430f49b10ef344865829daed20c849f940",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6b1e640eeda1dcc69e4efb30ebff393dbb458337b8542728e8cc9c17040057bf",
+          "format": "json"
+        },
+        "location": {
+          "detail": "\"Perguntar: no auge dessa expansão, o que um viajante encontraria ao percorrer todo o litoral do Mediterrâneo?\"",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "1a4144ca27a23eee",
+          "finding": "doesn't hold",
+          "reason": "The worked example in output A divides by the starting wage: 3 ÷ 20 = 0.15, so 15%. It does not divide by $23 or report 13%. Output B has the same worked example, so the claim is false for both."
+        },
+        {
+          "claimId": "262b09131e3d9e27",
+          "finding": "holds",
+          "reason": "In output A, the guess screen has visual null and visualKind none, so nothing shows the Mediterranean coast or Roman territory. The earlier mapExplorer screen does not fix this, because the guess screen is still text only."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

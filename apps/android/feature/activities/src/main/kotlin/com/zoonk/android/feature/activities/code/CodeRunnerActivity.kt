@@ -45,12 +45,19 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.jsonSaver
+import com.zoonk.android.ui.code.CodeFrame
+import com.zoonk.android.ui.code.CodeLine
+import com.zoonk.android.ui.code.CodeLineText
+import com.zoonk.android.ui.code.CodeLineTone
+import com.zoonk.android.ui.code.highlightCode
+import com.zoonk.android.ui.code.rememberSpokenCode
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf16Fields
 import kotlinx.coroutines.launch
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf16Value as CodeRunnerContent
@@ -158,7 +165,8 @@ private fun CodePanel(
     val shape = RoundedCornerShape(ZoonkRadius.xl)
     val editable = fields.editableLines.map(Long::toInt).toSet()
     val lines = program.split("\n")
-    val highlightedLines = highlightCode(program, language)
+    val highlightedLines = highlightCode(program, language.fenceName)
+    val style = MaterialTheme.zoonkType.codeField
     val digits = lines.size.toString().length
     val errorLine = run?.error?.line?.takeUnless { isStale }
 
@@ -196,7 +204,9 @@ private fun CodePanel(
                 }
             }
         }
-        CodeBlock(stringResource(R.string.activities_code_code)) {
+        val spoken = rememberSpokenCode()
+        // Editable lines are one-line fields, so the program keeps its lines' shape and scrolls.
+        CodeFrame(stringResource(R.string.activities_code_code), wraps = false, stopPerLine = true) {
             lines.forEachIndexed { index, line ->
                 val number = index + 1
                 val isError = errorLine == number
@@ -208,7 +218,7 @@ private fun CodePanel(
                             isLocked -> CodeLineTone.Plain
                             else -> CodeLineTone.Editable
                         }
-                    CodeLine(number, digits, tone) {
+                    CodeLine(number, digits, tone = tone, style = style) {
                         CodeLineField(
                             value = line,
                             onValueChange = { onEdit(number, it) },
@@ -220,8 +230,14 @@ private fun CodePanel(
                         )
                     }
                 } else {
-                    CodeLine(number, digits, if (isError) CodeLineTone.Error else CodeLineTone.Plain) {
-                        Text(highlighted(highlightedLines.getOrElse(index) { emptyList() }), softWrap = false, style = codeTextStyle())
+                    CodeLine(
+                        number,
+                        digits,
+                        tone = if (isError) CodeLineTone.Error else CodeLineTone.Plain,
+                        spoken = spoken.line(line, number),
+                        style = style,
+                    ) {
+                        CodeLineText(highlightedLines.getOrElse(index) { emptyList() }, wraps = false, style = style)
                     }
                 }
             }

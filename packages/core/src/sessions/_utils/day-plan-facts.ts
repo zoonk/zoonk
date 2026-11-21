@@ -8,6 +8,7 @@ import { getUnwrittenMinutesOn } from "./day-lessons";
 import { type loadDayPlan } from "./day-plan";
 import { getTestSkillIds } from "./review-skills";
 import { type SessionPlanItem } from "./session-plan-item";
+import { type PlannedTime } from "./unwritten-time";
 
 function isNewPhase({
   blocks,
@@ -69,14 +70,17 @@ export function getPlanTestSkillIds(plan: Awaited<ReturnType<typeof loadDayPlan>
   });
 }
 
-export function getDayWritingMinutes({
+export function getDayUnwrittenTime({
   reservedItems,
   today,
 }: {
   reservedItems: readonly SessionPlanItem[];
   today: Date;
-}): number {
-  return getUnwrittenMinutesOn({ items: reservedItems, today });
+}): PlannedTime[] {
+  return reservedItems.flatMap((item) => {
+    const minutes = getUnwrittenMinutesOn({ items: [item], today });
+    return minutes > 0 ? [{ minutes, position: item.position }] : [];
+  });
 }
 
 export function getDayPracticeShare({

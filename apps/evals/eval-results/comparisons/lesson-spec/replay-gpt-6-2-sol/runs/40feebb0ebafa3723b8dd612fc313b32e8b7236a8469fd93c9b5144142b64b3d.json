@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-en-brain-lobes",
+  "challenger": {
+    "costUsd": 0.0321558,
+    "durationMs": 35572.045250000025,
+    "hash": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+    "userPromptHash": "6c10554f514403bae43d1e5fe771c94ca34a45f44a23336717a69024b30e8012"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0444466,
+    "durationMs": 80831.844666,
+    "hash": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+    "userPromptHash": "6c10554f514403bae43d1e5fe771c94ca34a45f44a23336717a69024b30e8012"
+  },
+  "run": 1
+}

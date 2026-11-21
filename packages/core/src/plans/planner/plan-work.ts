@@ -1,6 +1,7 @@
 import { type BuildPlanInput } from "./build-plan";
 import { splitExistingItems } from "./kept-items";
-import { type LandedUnits } from "./landed-lessons";
+import { type Landing } from "./landed-lessons";
+import { findLandedUnits } from "./landed-placement";
 import { type MockResolution } from "./mock-identity";
 import { addDays, getEndOfWeek } from "./plan-calendar";
 import { buildPlanQueue } from "./plan-queue";
@@ -10,18 +11,18 @@ import { limitWrittenTeaching } from "./writing-allocation";
 
 export function preparePlanWork({
   input,
-  keepsRest,
-  landedUnits,
+  landing,
   planStart,
   resolution,
 }: {
   input: BuildPlanInput;
-  keepsRest: boolean;
-  landedUnits: LandedUnits | null;
+  landing: Landing | null;
   planStart: Date;
   resolution: MockResolution | null;
 }) {
   const { units: queue, ...priorities } = buildPlanQueue(input);
+
+  const { keepsRest, landedUnits } = findLandedUnits({ input, landing, queue });
 
   const split = splitExistingItems({
     input,
@@ -57,6 +58,8 @@ export function preparePlanWork({
     deferred,
     finishedKeys,
     funded,
+    keepsRest,
+    landedUnits,
     limited,
     priorities,
     queue,

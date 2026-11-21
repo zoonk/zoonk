@@ -67,6 +67,13 @@ export const findTargetCutoffTask: Task<
   id: "find-target-cutoff",
   latencyBudget: { p50: 25, p95: 40 },
   name: "Find target cut-off",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "A learner sees their target's cutoff in onboarding",
+    reason: "A made-up cutoff misleads every learner aiming at that course",
+    waits: "Nobody: the shared-exam research workflow",
+  },
   score: scoreTargetCutoff,
   testCases: TEST_CASES,
 };

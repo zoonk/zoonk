@@ -114,6 +114,17 @@ describe(writeAlphabetLesson, () => {
     expect(written.clips).toStrictEqual(["아", "어", "가", "나"]);
 
     await expect(
+      prisma.lessonQualityDecision.findMany({ where: { lessonId: written.lessonId } }),
+    ).resolves.toMatchObject([
+      {
+        blocking: [],
+        outcome: "passed",
+        phase: "codeCheck",
+        writerRunId: written.provenance.runId,
+      },
+    ]);
+
+    await expect(
       prisma.lesson.findUniqueOrThrow({ where: { id: written.lessonId } }),
     ).resolves.toMatchObject({ contentRunId: workflowRunId, contentStatus: "running" });
 
@@ -190,6 +201,8 @@ describe(writeAlphabetLesson, () => {
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
     await expect(publishAlphabetLesson({ ...publish, workflowRunId })).resolves.toBe(true);
 
+    await expect(publishAlphabetLesson({ ...publish, workflowRunId })).resolves.toBe(false);
+
     await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
       {
         input: { lessonId: written.lessonId, version: 1 },
@@ -216,6 +229,12 @@ describe(writeAlphabetLesson, () => {
     await expect(
       prisma.lesson.findUniqueOrThrow({ include: { steps: true }, where: { id: lessonId } }),
     ).resolves.toMatchObject({ contentStatus: "failed", steps: [] });
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({ where: { lessonId } }),
+    ).resolves.toMatchObject([
+      { blocking: [expect.objectContaining({ code: "emptyAlphabet" })], outcome: "needsFix" },
+    ]);
 
     mockContent(HANGUL);
 

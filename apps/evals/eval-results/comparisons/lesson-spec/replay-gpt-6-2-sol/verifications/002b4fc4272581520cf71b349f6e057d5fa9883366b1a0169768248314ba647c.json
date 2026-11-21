@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "732ed03ee1411e0a",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "e753ec8a90c2beee82183dee1f699807dd7251307a4c561a48543164ee8a56fd.first.5d569ca1-6d0e-416a-89ba-64a05a4cc5fb.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0019776,
+    "id": "002b4fc4272581520cf71b349f6e057d5fa9883366b1a0169768248314ba647c",
+    "packet": [
+      {
+        "A": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "B": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "claim": "The check asks where a target sits on the brain (forehead or back of the head), but its visual is null. The answer depends on seeing where the regions are, so the learner must answer without a picture.",
+        "claimId": "732ed03ee1411e0a",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Check screen about the colors on a screen and where the target sits.",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "d66ea8c037dbc98d",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "732ed03ee1411e0a",
+          "finding": "holds",
+          "reason": "A tela de checagem pergunta se o alvo de processamento das cores fica perto da testa ou atrás da cabeça, mas tem `visual` nulo. Pela expectativa, essa pergunta sobre a localização de uma função cerebral precisa mostrar o cérebro com as regiões numeradas ou o local marcado; a outra saída não contém essa checagem."
+        },
+        {
+          "claimId": "d66ea8c037dbc98d",
+          "finding": "doesn't hold",
+          "reason": "A primeira explicação da saída A fala de custo variável e ingredientes, mas não usa o termo “depreciação”. A primeira explicação da saída B também não menciona depreciação."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

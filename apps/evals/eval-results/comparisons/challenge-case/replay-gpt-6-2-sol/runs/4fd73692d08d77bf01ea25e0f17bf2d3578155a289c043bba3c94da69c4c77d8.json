@@ -1,0 +1,17 @@
+{
+  "caseId": "en-ab-test-work",
+  "challenger": {
+    "costUsd": 0.10858890000000002,
+    "durationMs": 114969.529958,
+    "hash": "9d13ee33497ba074e3c5202dffe2c175cd87edeff2a7e6da05c1756d0e3ed128",
+    "userPromptHash": "4a5ba0ba78b6f6ae343ec85a12a9ac1500a15eed55e50de18d2ce4636d4ec4fd"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.1706185,
+    "durationMs": 269947.061042,
+    "hash": "54ec02a699967cb4b61b1e3cd97e7566ff17057a7fd1fc1d227dc657385891bc",
+    "userPromptHash": "4a5ba0ba78b6f6ae343ec85a12a9ac1500a15eed55e50de18d2ce4636d4ec4fd"
+  },
+  "run": 2
+}

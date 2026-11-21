@@ -2,11 +2,11 @@
 
 import { getActivityBaseMap } from "@zoonk/core/library/activities/base-maps";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { use, useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { type BaseMapDrawing } from "../_assets/base-maps/base-map-drawing";
 import { projectPlace } from "../_assets/base-maps/base-map-projection";
 import { loadBaseMap } from "../_assets/base-maps/load-base-map";

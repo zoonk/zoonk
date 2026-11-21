@@ -10,6 +10,7 @@ struct PracticeQuestionView: View {
   }
 
   let question: PracticeQuestion
+  let translation: String
   let labels: PracticeTrueFalseLabels
   let allowsBlank: Bool
   let result: PracticeItemResult?
@@ -27,14 +28,15 @@ struct PracticeQuestionView: View {
   @Environment(\.isPaneSplit) private var isPaneSplit
 
   init(
-    question: PracticeQuestion, labels: PracticeTrueFalseLabels, allowsBlank: Bool = false,
-    result: PracticeItemResult? = nil, isLocked: Bool = false, continuesSet: Bool = false,
-    askedIn: String? = nil,
+    question: PracticeQuestion, translation: String = "", labels: PracticeTrueFalseLabels,
+    allowsBlank: Bool = false, result: PracticeItemResult? = nil, isLocked: Bool = false,
+    continuesSet: Bool = false, askedIn: String? = nil,
     recordingQuestions: (prompts: [String], current: Int)? = nil,
     transcript: [PracticeTranscriptLine]? = nil, served: ServedPlays? = nil,
     draft: Binding<PracticeAnswer?>, onSubmit: @escaping (PracticeAnswer) -> Void = { _ in }
   ) {
     self.question = question
+    self.translation = translation
     self.labels = labels
     self.allowsBlank = allowsBlank
     self.result = result
@@ -121,7 +123,12 @@ struct PracticeQuestionView: View {
     ItemSupportView(context: question.context, image: question.image, visual: question.visual)
 
     if showsTitle {
-      QuestionTitle(text: question.question, isMuted: result != nil)
+      VStack(alignment: .leading, spacing: 4) {
+        QuestionTitle(text: question.question, isMuted: result != nil)
+        if !translation.isEmpty {
+          Text(translation).foregroundStyle(.mutedForeground)
+        }
+      }
     }
 
     if showsStatementCard {
@@ -155,10 +162,9 @@ struct QuestionTitle: View {
   var isHeading = true
 
   var body: some View {
-    LessonTextBlocks(text)
+    LessonTextBlocks(text, wordTraits: isHeading ? .isHeader : [])
       .typeStyle(.section)
       .foregroundStyle(isMuted ? .mutedForeground : .primary)
-      .accessibilityAddTraits(isHeading ? .isHeader : [])
   }
 }
 

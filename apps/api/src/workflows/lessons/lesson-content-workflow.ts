@@ -158,7 +158,7 @@ async function reviewLanguageDraft({
   stage: LanguageDraftStage;
 }): Promise<LessonWriteOutcome> {
   const { draft } = stage;
-  const problems = await reviewLanguageDraftStep(stage);
+  const problems = await reviewLanguageDraftStep(stage, input.lessonId);
 
   if (problems.length === 0) {
     return publishLanguageDraftStep({ draft, input });

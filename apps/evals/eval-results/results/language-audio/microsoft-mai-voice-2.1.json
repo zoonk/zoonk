@@ -957,28 +957,15 @@
       }
     },
     {
-      "classification": { "expected": "read right", "predicted": "misread" },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
         "usage": { "inputTokens": 1181, "outputTokens": 901 }
       },
-      "steps": [
-        {
-          "conclusion": "Read \"Name\". gpt-transcribe heard \"Name.\" (misheard []); the pronunciation check heard \"name\" (unclear [\"Name\"]). As a look-alike it sounded english (/neɪm/).",
-          "kind": "majorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"Name\". gpt-transcribe heard \"Name.\" (misheard []); the pronunciation check heard \"name\" (unclear [\"Name\"]). As a look-alike it sounded english (/neɪm/).",
-          "kind": "minorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"Name\". gpt-transcribe heard \"Name.\" (misheard []); the pronunciation check heard \"name\" (unclear [\"Name\"]). As a look-alike it sounded english (/neɪm/).",
-          "kind": "potentialImprovements",
-          "score": 1
-        }
-      ],
+      "listeningReview": {
+        "audioPath": "language-audio/microsoft-mai-voice-2.1/de-lookalike-name.mp3",
+        "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1/de-lookalike-name.mp3. Single-provider flags: name. Read \"Name\". gpt-transcribe heard \"Name.\" (misheard []); the pronunciation check heard \"name\" (unclear [\"Name\"]). As a look-alike it sounded english (/neɪm/)."
+      },
+      "steps": [],
       "testCase": {
         "id": "de-lookalike-name-1",
         "userInput": {
@@ -1056,28 +1043,15 @@
       }
     },
     {
-      "classification": { "expected": "read right", "predicted": "misread" },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
         "usage": { "inputTokens": 1237, "outputTokens": 491 }
       },
-      "steps": [
-        {
-          "conclusion": "Read \"time\". gpt-transcribe heard \"Time.\" (misheard []); the pronunciation check heard \"time\" (unclear [\"time\"]). As a look-alike it sounded english (/taɪm/).",
-          "kind": "majorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"time\". gpt-transcribe heard \"Time.\" (misheard []); the pronunciation check heard \"time\" (unclear [\"time\"]). As a look-alike it sounded english (/taɪm/).",
-          "kind": "minorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"time\". gpt-transcribe heard \"Time.\" (misheard []); the pronunciation check heard \"time\" (unclear [\"time\"]). As a look-alike it sounded english (/taɪm/).",
-          "kind": "potentialImprovements",
-          "score": 1
-        }
-      ],
+      "listeningReview": {
+        "audioPath": "language-audio/microsoft-mai-voice-2.1/pt-lookalike-time.mp3",
+        "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1/pt-lookalike-time.mp3. Single-provider flags: time. Read \"time\". gpt-transcribe heard \"Time.\" (misheard []); the pronunciation check heard \"time\" (unclear [\"time\"]). As a look-alike it sounded english (/taɪm/)."
+      },
+      "steps": [],
       "testCase": {
         "id": "pt-lookalike-time-1",
         "userInput": {
@@ -1122,28 +1096,15 @@
       }
     },
     {
-      "classification": { "expected": "read right", "predicted": "misread" },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
         "usage": { "inputTokens": 1181, "outputTokens": 472 }
       },
-      "steps": [
-        {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"peine\" (unclear [\"pain\"]). As a look-alike it sounded english (/peɪn/).",
-          "kind": "majorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"peine\" (unclear [\"pain\"]). As a look-alike it sounded english (/peɪn/).",
-          "kind": "minorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"peine\" (unclear [\"pain\"]). As a look-alike it sounded english (/peɪn/).",
-          "kind": "potentialImprovements",
-          "score": 1
-        }
-      ],
+      "listeningReview": {
+        "audioPath": "language-audio/microsoft-mai-voice-2.1/fr-lookalike-pain.mp3",
+        "conclusion": "Needs a listen: eval-results/audio/language-audio/microsoft-mai-voice-2.1/fr-lookalike-pain.mp3. Single-provider flags: pain. Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"peine\" (unclear [\"pain\"]). As a look-alike it sounded english (/peɪn/)."
+      },
+      "steps": [],
       "testCase": {
         "id": "fr-lookalike-pain-1",
         "userInput": {

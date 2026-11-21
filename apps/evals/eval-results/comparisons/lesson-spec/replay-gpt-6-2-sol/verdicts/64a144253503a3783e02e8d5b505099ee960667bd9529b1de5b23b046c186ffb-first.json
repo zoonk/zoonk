@@ -1,0 +1,130 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00425174,
+  "failures": [],
+  "packetId": "64a144253503a3783e02e8d5b505099ee960667bd9529b1de5b23b046c186ffb",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both keep the lesson focused on the connected filing and payment deadlines and extension process.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B adds a clear timeline of the original and extended filing deadlines and an extra check on filing after the ordinary deadline; both plans include a worked example and a check that tests the payment-extension trap.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "The timeline gives the writer a useful way to show how the two filing deadlines relate. Neither plan needs a separate activity.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English and stay on filing deadlines and extensions; B’s withholding example remains relevant to whether a return must be filed.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "B’s timeline and additional deadline check make the plan a little more concrete, while preserving the key lesson that an extension delays filing, not payment."
+        },
+        "pairId": "2b400f7f-f357-4786-ba7c-096eef16fd27"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both teach the same single skill: calculating percent change from the starting value.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens with an everyday salary question and then explains the idea plainly. B’s opening is a formal definition rather than a scene, and its first explanation uses advanced terminology before building intuition.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Neither plan proposes an activity or a visual; the numeric examples and table are specified in the briefs.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses accessible beginner language and stays on percent change. B introduces formal notation and unrelated percentage-point and logarithmic-return concepts.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The opening is a formal definition with notation, not an everyday scene that introduces the question the lesson answers.",
+            "criterion": "screenPlan",
+            "learnerCost": "A beginner is asked to process a formula before having a concrete reason to learn the idea.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The first explanation uses advanced abstract terms and brings in percentage-point change and logarithmic returns, which are outside this beginner lesson.",
+            "criterion": "levelAndScope",
+            "learnerCost": "The jargon and unrelated concepts can confuse or overwhelm a learner trying to understand a basic percent change.",
+            "location": {
+              "detail": "Introduce relative change as the ratio of the absolute change to the reference value, and distinguish it from percentage-point change and from logarithmic returns.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A gives a beginner a concrete entry point and accessible explanation. B starts with formal notation and adds advanced, out-of-scope terminology."
+        },
+        "pairId": "2bd17fcf-43bd-4458-9d43-e1884e93bd21"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and both teach the connected filing deadline and extension skills.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The screen plans are identical, including the payment-extension trap, worked example, follow-up check, and practical application.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and neither includes an unnecessary activity or visual.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and meet the language and scope expectations.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the reader better."
+        },
+        "pairId": "5b6dc49a-35c1-406a-9a76-ee57438a0d3a"
+      }
+    ]
+  }
+}

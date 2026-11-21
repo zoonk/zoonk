@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-lever",
+        "claimId": "50fcebb12dc52c1f",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "7db5210ea16df200f68fb9acefee5643870fead8bda1a1a80f5d65d807994343.first.1b27a131-022f-4ab2-85e8-9f22de4167e1.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00287375,
+    "id": "73d5339b9177b3de117feba73ebd5a0445fbe17731578e75a1cf64244810d3b9",
+    "packet": [
+      {
+        "A": {
+          "blob": "23ec55f7392e02a620ebf46011ecf8211485fedba0d6d843aa68686d44c73f91",
+          "format": "text"
+        },
+        "B": {
+          "blob": "6d723fb0be86c2907d11e6e86aa402ca2e2043628a8c081b986007a2a87636c8",
+          "format": "text"
+        },
+        "claim": "The hook shows the lever parts but does not mark the load-arm and push-arm distances.",
+        "claimId": "50fcebb12dc52c1f",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "ecb3e1ce8f62834f931c552f3375a418fdf3add71626616b972edcf4570b6069",
+          "format": "text"
+        },
+        "input": {
+          "blob": "5dfdee9df303c4e1d37fbf7e82588e2ea0c51d2ea106ebe3553ff672a3250263",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Side view of a nearly horizontal bar with its left tip under the edge of a heavy crate, a small support block just to the right of the crate, and Andre’s hand pressing down on the far right end.",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "d4019b677bedafda",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "50fcebb12dc52c1f",
+          "finding": "holds for both",
+          "reason": "The hook screen in output A describes the bar, crate, support block and hand but no load-arm or push-arm distances. Output B's hook also shows no distances, so the problem is shared rather than specific to A."
+        },
+        {
+          "claimId": "d4019b677bedafda",
+          "finding": "doesn't hold",
+          "reason": "The word 'depreciação' does not appear anywhere in output A; its first explanation is about custo variável. The claim is misquoted, and output B has no such term either."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

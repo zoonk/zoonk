@@ -1,0 +1,10 @@
+{
+  "caseId": "pt-estabilidade-sourced",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 6,
+  "problems": [],
+  "run": 1,
+  "side": "challenger",
+  "total": 6
+}

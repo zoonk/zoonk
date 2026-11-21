@@ -69,6 +69,7 @@ const NOT_FIXED: Record<string, string> = {
   LearningEvent: ONE_LEARNERS,
   "Lesson: creating, deleting or merging": "Structure fixes rearrange existing rows only.",
   LessonIcon: "Pixels lesson marks point at; marks are derived and a fix can't redraw.",
+  LessonQualityDecision: BOOKKEEPING,
   LessonQuestion: ONE_LEARNERS,
   LessonQuestionThread: ONE_LEARNERS,
   LiveCallConnection: BOOKKEEPING,

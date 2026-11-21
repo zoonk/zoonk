@@ -1,3 +1,5 @@
+import { findCodeFenceLines } from "./code-fence";
+
 /** Cells stay raw text, so each renderer parses its own inline markup in them. */
 export type MarkdownTableAlign = "center" | "left" | "right" | null;
 
@@ -96,10 +98,15 @@ export function readMarkdownTable(
 
 type FoundTable = { end: number; start: number; table: MarkdownTable };
 
-/** Like the players: after a table, the search carries on from its last row, so a body row is never read as a new header. */
+/**
+ * Like the players: after a table, the search carries on from its last row, so a body row is never
+ * read as a new header, and a line of code is never a table.
+ */
 function readMarkdownTables(lines: readonly string[]): FoundTable[] {
+  const code = findCodeFenceLines(lines);
+
   return lines.reduce<FoundTable[]>((found, _, index) => {
-    if (index < (found.at(-1)?.end ?? 0)) {
+    if (index < (found.at(-1)?.end ?? 0) || code.has(index)) {
       return found;
     }
 
@@ -137,12 +144,32 @@ export function splitTableCells(line: string): string[] {
   return line.split(CELL_PIPE);
 }
 
-/** The player reads each line, and each table cell, on its own; joining with `|` and `\n` restores the text. */
-export function splitLinesAndCells(text: string): string[][] {
-  const lines = text.split("\n");
+/** The player reads each line, and each table cell, on its own, and code (null) as written. */
+function splitLinesAndCells(lines: readonly string[]): (string[] | null)[] {
   const tableLines = findMarkdownTableLines(lines);
+  const code = findCodeFenceLines(lines);
 
-  return lines.map((line, index) => (tableLines.has(index) ? splitTableCells(line) : [line]));
+  return lines.map((line, index) => {
+    if (code.has(index)) {
+      return null;
+    }
+
+    return tableLines.has(index) ? splitTableCells(line) : [line];
+  });
+}
+
+/** Every line and table cell the player reads as text, leaving code out. */
+export function readTextCells(text: string): string[] {
+  return splitLinesAndCells(text.split("\n")).flatMap((cells) => cells ?? []);
+}
+
+/** Rewrites each line and table cell the player reads as text, keeping table pipes and code as written. */
+export function mapTextCells(text: string, rewrite: (cell: string) => string): string {
+  const lines = text.split("\n");
+
+  return splitLinesAndCells(lines)
+    .map((cells, index) => (cells ? cells.map((cell) => rewrite(cell)).join("|") : lines[index]))
+    .join("\n");
 }
 
 export function removeMarkdownTables(text: string): string {

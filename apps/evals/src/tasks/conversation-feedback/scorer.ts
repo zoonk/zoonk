@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type ConversationTurn,
   type WriteConversationFeedbackSchema,
@@ -48,24 +48,34 @@ function checkFeedback({
 
   const checks = [
     ...feedback.wentWell.map((phrase) => ({
+      criterion: "honesty",
       passed: wasSaidByLearner({ phrase, turns }),
       problem: `"Went well" phrase "${phrase}" isn't in the learner's turns.`,
     })),
     {
+      criterion: "fix",
       passed: !feedback.improve || wasSaidByLearner({ phrase: feedback.improve.said, turns }),
       problem: `The fix quotes "${feedback.improve?.said}", which the learner didn't say.`,
     },
     ...feedback.pronunciation.map((item) => ({
+      criterion: "honesty",
       passed: wasSaidByLearner({ phrase: item.word, turns }),
       problem: `Pronunciation word "${item.word}" isn't in the learner's turns.`,
     })),
-    { passed: !output.includes(EM_DASH), problem: "The feedback uses an em dash." },
+    {
+      criterion: "language",
+      passed: !output.includes(EM_DASH),
+      problem: "The feedback uses an em dash.",
+    },
   ];
 
+  const failed = checks.filter((check) => !check.passed);
+
   return {
+    criteria: [...new Set(failed.map((check) => check.criterion))],
     judgedOutput: output,
-    passed: checks.filter((check) => check.passed).length,
-    problems: checks.filter((check) => !check.passed).map((check) => check.problem),
+    passed: checks.length - failed.length,
+    problems: failed.map((check) => check.problem),
     total: checks.length,
   };
 }
@@ -78,13 +88,13 @@ function getTurns(userInput: Record<string, unknown>): ConversationTurn[] {
   return userInput.turns as ConversationTurn[];
 }
 
-export const scoreConversationFeedback: TaskScorer = ({ output, testCase }) => {
-  const turns = getTurns(testCase.userInput);
+export const checkConversationFeedbackOutput: TaskCodeChecks = ({ output, testCase }) =>
+  checkFeedback({ output, turns: getTurns(testCase.userInput) });
 
-  return scoreWithCodeChecks({
-    check: (value) => checkFeedback({ output: value, turns }),
+export const scoreConversationFeedback: TaskScorer = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkConversationFeedbackOutput({ output: value, testCase }),
     output,
     scoreCategories: CONVERSATION_FEEDBACK_SCORE_CATEGORIES,
     testCase,
   });
-};

@@ -25,6 +25,8 @@ import { scoreLessonAnswers } from "./score-lesson-answers";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
+const daysFromToday = (days: number) => new Date(SESSION_TODAY.getTime() + days * DAY_MS);
+
 async function setup() {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ challengesDone: true, lessons: 3, userId: user.id });
@@ -169,6 +171,32 @@ describe("ending a session", () => {
       after: 1 / 3,
       before: 0,
     });
+  });
+
+  it("says when each finished lesson comes back, from its plan's skills or else its own", async () => {
+    const { lessons, planItems, session, skills, user } = await setup();
+    const survivor = await skillFixture({ name: "Survivor" });
+    const alias = await skillFixture({ mergedIntoId: survivor.id, name: "Alias" });
+
+    await Promise.all([
+      prisma.planItem.update({ data: { skillId: alias.id }, where: { id: planItems[0]?.id } }),
+      prisma.planItem.update({ data: { skillId: null }, where: { id: planItems[1]?.id } }),
+      prisma.studySessionBlock.updateMany({
+        data: { completedAt: new Date(), status: "completed" },
+        where: { sessionId: session.id },
+      }),
+      dueSkillFixture({ due: daysFromToday(1), skillId: skills[0]?.id ?? "", userId: user.id }),
+      dueSkillFixture({ due: daysFromToday(3), skillId: survivor.id, userId: user.id }),
+      dueSkillFixture({ due: daysFromToday(5), skillId: skills[1]?.id ?? "", userId: user.id }),
+    ]);
+
+    const summary = await getStudySessionSummary({ input: {}, sessionId: session.id });
+
+    expect(summary.status === "ready" && summary.summary.capsulesSealed).toStrictEqual([
+      { lessonId: lessons[0]?.id, opensOn: daysFromToday(3), title: "Lesson 1" },
+      { lessonId: lessons[1]?.id, opensOn: daysFromToday(5), title: "Lesson 2" },
+      { lessonId: lessons[2]?.id, opensOn: null, title: "Lesson 3" },
+    ]);
   });
 
   it("keeps the summary as the session ended, counts the day it was finished and owes what follows once", async () => {
@@ -482,6 +510,26 @@ describe("ending a session", () => {
 
     expect(summary.status === "ready" && summary.summary.extraTime).toStrictEqual(nothingLeft);
     expect(view.status === "ready" && view.session.extraTime).toStrictEqual(nothingLeft);
+  });
+
+  it("still sums up a finished day after its goal is deleted, with nothing more to offer", async () => {
+    const { goal, session } = await setup();
+
+    await prisma.studySessionBlock.updateMany({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { sessionId: session.id },
+    });
+
+    await prisma.goal.delete({ where: { id: goal.id } });
+
+    const summary = await getStudySessionSummary({ input: {}, sessionId: session.id });
+
+    expect(summary.status === "ready" && summary.summary.extraTime).toStrictEqual({
+      available: false,
+      lessons: [],
+      minutes: 0,
+      reason: "nothingToStudy",
+    });
   });
 
   it("keeps a lesson block's persisted minutes after its library estimate changes", async () => {

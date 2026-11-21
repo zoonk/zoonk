@@ -58,6 +58,13 @@ export const warmUpCheckTask: Task<WarmUpCheckInput, WarmUpCheckOutput, WarmUpCh
   generate: (input) => checkWarmUpCards({ ...input, writerModel: WRITER_MODEL }),
   id: "warm-up-check",
   name: "Warm-up check",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code keeps or drops each card",
+    reason: "A false card that gets through reaches every learner of the deck",
+    waits: "A learner waits during the goal build",
+  },
   score: scoreWarmUpCheck,
   testCases: TEST_CASES,
 };

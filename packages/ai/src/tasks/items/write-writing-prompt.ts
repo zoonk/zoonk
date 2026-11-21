@@ -3,7 +3,12 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type CallWait, buildProviderOptions, chooseServiceTier } from "../../provider-options";
+import {
+  type CallWait,
+  type Reasoning,
+  buildProviderOptions,
+  chooseServiceTier,
+} from "../../provider-options";
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import { type WrittenTask } from "../research/blueprint-written-schema";
 import taskPrompt from "./write-writing-prompt.prompt.md";
@@ -41,6 +46,7 @@ export async function writeWritingPrompt({
   analytics,
   input,
   model = defaultModel,
+  reasoning,
   shared,
   useFallback = true,
   wait,
@@ -48,6 +54,7 @@ export async function writeWritingPrompt({
   analytics?: AiGenerationContext;
   input: WritingPromptInput;
   model?: string;
+  reasoning?: Reasoning;
   shared: boolean;
   useFallback?: boolean;
   wait: CallWait;
@@ -57,6 +64,8 @@ export async function writeWritingPrompt({
     template: taskPrompt,
   });
 
+  const userPrompt = JSON.stringify(input);
+
   const { provenance, result } = await runTaskGeneration({
     analytics,
     generate: () =>
@@ -64,10 +73,11 @@ export async function writeWritingPrompt({
         instructions: systemPrompt,
         model,
         output: Output.object({ schema }),
-        prompt: JSON.stringify(input),
+        prompt: userPrompt,
         providerOptions: buildProviderOptions({
           fallbackModels,
           model,
+          reasoning,
           serviceTier: chooseServiceTier({ wait }),
           useFallback,
         }),
@@ -77,5 +87,5 @@ export async function writeWritingPrompt({
     task: "write-writing-prompt",
   });
 
-  return { data: result.output, provenance };
+  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

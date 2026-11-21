@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-patrimonio-liquido-dense-brief",
+        "claimId": "8f922fe87352f962",
+        "criterion": "fitAndApplication",
+        "observationId": "2360c88a34d71606f8a2ff6dfb3d5842e05236a5bdd5e2f1e17440228624eb76.first.20688532-1aea-483e-ab38-5a31aee1864f.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00345285,
+    "id": "673c0fd97a67292a5213735dab33465530408a2135ec2eccfca9cc67f25a1c77",
+    "packet": [
+      {
+        "A": {
+          "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
+          "format": "text"
+        },
+        "B": {
+          "blob": "842ff38fda3cb7225947513036bb15cd3fc9c2e70880347602a9c3fbd7ffccfe",
+          "format": "text"
+        },
+        "claim": "A primeira explicação tem cinco frases, embora a expectativa peça duas ou três frases curtas.",
+        "claimId": "8f922fe87352f962",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
+          "format": "text"
+        },
+        "input": {
+          "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Na oficina, some o que ela tem (bens) e o que tem a receber (direitos). Desconte o que ela deve (obrigações). Essa diferença é o **patrimônio líquido**. Ela vem dos valores registrados e não prevê o preço de venda. Varie a dívida e veja o que muda.",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
+          "format": "text"
+        },
+        "B": {
+          "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
+          "format": "text"
+        },
+        "claim": "A tela 3 usa a fórmula E = mc² para explicar por que o elétron não cai no núcleo.",
+        "claimId": "a43bdb2ef43e2f99",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
+          "format": "text"
+        },
+        "input": {
+          "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "8f922fe87352f962",
+          "finding": "holds for both",
+          "reason": "Output A's first explanation has five sentences: 'Na oficina, some…', 'Desconte o que ela deve.', 'Essa diferença é o patrimônio líquido.', 'Ela vem dos valores registrados…', 'Varie a dívida e veja o que muda.' Output B's first explanation also has five sentences, so the problem is shared and not a reason to prefer either."
+        },
+        {
+          "claimId": "a43bdb2ef43e2f99",
+          "finding": "doesn't hold",
+          "reason": "E = mc² appears nowhere in output A, and its screen 3 is the hookGuess with no formula. Output B's formula appears on screen 4 and is an energy expression for hydrogen, not E = mc². Output A has no formulas, as the overview level requires."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

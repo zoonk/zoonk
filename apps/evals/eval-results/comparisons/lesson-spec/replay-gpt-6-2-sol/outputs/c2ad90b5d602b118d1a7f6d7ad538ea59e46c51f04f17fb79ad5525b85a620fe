@@ -1,0 +1,10 @@
+
+      - MUST be in Brazilian Portuguese
+      - A circuit is a layout to see: the screens that explain series and parallel show each circuit (the battery, the wires and the bulbs, numbered), and every question that asks which bulbs stay lit shows the circuit it asks about with the bulbs numbered, never the answer; a circuit described only in words ("the bulbs one after the other") fails
+    
+
+  - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only
+  - Go through every guess, check, activity and application on its own: when answering it depends on seeing something (where a part or a place is, which numbered label, a setup's positions or distances, two things compared by how they look), it shows that, and its `visual` names every label the answer needs without showing the answer. A question like that left text only is a missing visual, even when an earlier screen showed the picture; a question the words alone settle (a job named, a rule, a calculation) stays text only
+  - The kind follows the app's order: data as a table, a bar or line chart or a timeline in the brief with exact values and `visual` null; something to work with as an activity whose template draws it; a picture in `visual` only for what those can't show
+  - A planned picture names every part, place or label its screen talks about; no decorative picture
+  - Don't evaluate JSON formatting; estimated minutes are computed by code

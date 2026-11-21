@@ -36,22 +36,26 @@ export async function loadMeasuredSkills({
   readPlan: PlanReader;
   savedPlan?: Pick<Plan, "graph" | "settings"> | null;
 }) {
-  const [plan, row] = await Promise.all([
-    readPlan(goalId),
+  const rowRead =
     savedPlan === undefined
       ? prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId } })
-      : savedPlan,
+      : Promise.resolve(savedPlan);
+
+  const [plan, row, survivorOf] = await Promise.all([
+    readPlan(goalId),
+    rowRead,
+    rowRead.then((loaded) =>
+      readSurvivorOf(
+        parsePlanGraph(loaded?.graph).skills.map((skill) => skill.skillId),
+        savedPlan === undefined ? prisma : "shared",
+      ),
+    ),
   ]);
 
   const graph = parsePlanGraph(row?.graph);
   const { examChoices, examSubjects, fullCourse, skippedAreas } = parsePlanSettings(row?.settings);
   const skipped = new Set(skippedAreas);
   const graphSkills = graph.skills.filter((skill) => !skipped.has(getSkillArea({ graph, skill })));
-
-  const survivorOf = await readSurvivorOf(
-    graph.skills.map((skill) => skill.skillId),
-    savedPlan === undefined ? prisma : "shared",
-  );
 
   const graphSections = new Map(
     graph.skills.map((skill) => [survivorOf(skill.skillId), getSkillArea({ graph, skill })]),

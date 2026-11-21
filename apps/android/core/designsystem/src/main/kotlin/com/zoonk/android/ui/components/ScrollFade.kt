@@ -15,9 +15,14 @@ import kotlin.math.min
 
 /**
  * Main's `scroll-fade-x`: scrolls sideways and fades the start or end only while there's more to
- * scroll that way, each fade growing over the first stretch of scroll toward it.
+ * scroll that way, each fade growing over the first stretch of scroll toward it. The left fade
+ * begins [leftInset] pixels in, past a column that stays put while the rest scrolls under it, such
+ * as a program's line numbers.
  */
-fun Modifier.fadingHorizontalScroll(state: ScrollState): Modifier =
+fun Modifier.fadingHorizontalScroll(
+    state: ScrollState,
+    leftInset: () -> Float = { 0f },
+): Modifier =
     graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
         .drawWithContent {
             drawContent()
@@ -28,10 +33,13 @@ fun Modifier.fadingHorizontalScroll(state: ScrollState): Modifier =
             val end = fade * min(1f, (state.maxValue - state.value) / reveal)
             if (width <= 0f || (start <= 0f && end <= 0f)) return@drawWithContent
             val (left, right) = if (layoutDirection == LayoutDirection.Rtl) end to start else start to end
+            val inset = leftInset().coerceIn(0f, width) / width
             drawRect(
                 Brush.horizontalGradient(
-                    0f to Color.Transparent,
-                    left / width to Color.Black,
+                    0f to Color.Black,
+                    inset to Color.Black,
+                    inset to Color.Transparent,
+                    inset + left / width to Color.Black,
                     (width - right) / width to Color.Black,
                     1f to Color.Transparent,
                 ),

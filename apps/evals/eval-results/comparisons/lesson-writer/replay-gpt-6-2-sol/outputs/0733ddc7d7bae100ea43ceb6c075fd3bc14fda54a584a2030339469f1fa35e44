@@ -1,0 +1,161 @@
+{
+  "screens": [
+    {
+      "image": {
+        "alt": "Bianca olha no celular o desenho de um átomo com elétrons em trilhas ao redor do núcleo.",
+        "prompt": "Bianca, adulta, assiste no celular a um vídeo com o desenho clássico de um átomo: núcleo no centro e elétrons em trilhas, como planetas."
+      },
+      "kind": "hookText",
+      "text": "Bianca vê num vídeo o átomo desenhado como um sistema solar, com elétrons girando em trilhas. Um comentário diz que esse desenho está errado. Onde está o erro?",
+      "visual": null
+    },
+    {
+      "exampleLineIdea": "a imagem de um elétron desenhado como bolinha em uma aula ou vídeo",
+      "explore": null,
+      "image": {
+        "alt": "Uma órbita de bolinha aparece riscada ao lado de uma região difusa chamada nuvem eletrônica.",
+        "prompt": "Comparação lado a lado: à esquerda, bolinha em órbita desenhada como trilha ao redor de um núcleo, com um X sobre a trilha; à direita, região difusa ao redor do núcleo com o rótulo «nuvem eletrônica»."
+      },
+      "kind": "explanation",
+      "text": "Imagine procurar o elétron ao redor do núcleo. Em vez de uma bolinha seguindo uma trilha, você encontra uma região onde ele pode aparecer. Essa região se chama **nuvem eletrônica**. Ela não é uma trilha nem uma nuvem de matéria comum.",
+      "title": "Não é uma órbita",
+      "visual": null
+    },
+    {
+      "image": {
+        "alt": "Uma seta aponta para o núcleo, cercado pela região onde o elétron pode ser encontrado.",
+        "prompt": "Ilustração didática simples: núcleo no centro, região difusa ao redor indicando onde o elétron pode ser encontrado e seta apontando para o núcleo com o rótulo «atração». Sem desenhar uma órbita."
+      },
+      "kind": "hookGuess",
+      "options": [
+        {
+          "isCorrect": false,
+          "text": "Porque gira rápido como um planeta."
+        },
+        {
+          "isCorrect": true,
+          "text": "Porque concentrá-lo tanto exige energia."
+        },
+        {
+          "isCorrect": false,
+          "text": "Porque o núcleo o empurra para longe."
+        }
+      ],
+      "question": "O núcleo atrai o elétron. Sem valer ponto: por que ele não termina espremido no núcleo?",
+      "reveal": "O núcleo atrai o elétron, mas espremê-lo num espaço minúsculo exige energia. A atração não decide tudo sozinha.",
+      "visual": null
+    },
+    {
+      "exampleLineIdea": null,
+      "explore": null,
+      "image": {
+        "alt": "A nuvem espalhada é comparada a uma nuvem comprimida, cuja compressão exige energia.",
+        "prompt": "Duas versões do mesmo átomo: à esquerda, nuvem eletrônica espalhada ao redor do núcleo; à direita, nuvem muito comprimida junto ao núcleo, com seta e rótulo «comprimir exige energia». Sem mola."
+      },
+      "kind": "explanation",
+      "text": "O núcleo atrai o elétron para perto. Mas concentrar sua nuvem num espaço minúsculo exige mais energia. Pense em tentar confinar algo que resiste a ficar espremido: apertar tem um custo. Isso é só uma comparação; não existe uma mola dentro do átomo.",
+      "title": "Apertar exige energia",
+      "visual": null
+    },
+    {
+      "basis": null,
+      "context": "O núcleo atrai o elétron para perto.",
+      "image": null,
+      "kind": "check",
+      "options": [
+        {
+          "isCorrect": false,
+          "picture": null,
+          "reason": "Essa imagem parece explicar por que ele não cai, mas trata o elétron como uma bolinha em órbita. Ela não descreve sua nuvem.",
+          "text": "Porque ele gira rápido como um planeta."
+        },
+        {
+          "isCorrect": true,
+          "picture": null,
+          "reason": "Você precisa considerar tanto a atração pelo núcleo quanto a energia necessária para confinar o elétron.",
+          "text": "Porque concentrar sua nuvem demais exige energia."
+        },
+        {
+          "isCorrect": false,
+          "picture": null,
+          "reason": "Pode parecer que a atração precisa parar, mas ela continua. O custo de concentrar o elétron é que impede essa explicação simples.",
+          "text": "Porque o núcleo deixa de atraí-lo quando chega perto."
+        }
+      ],
+      "question": "Por que essa atração não basta para deixá-lo espremido no núcleo?",
+      "visual": null
+    },
+    {
+      "exampleLineIdea": "os átomos que formam a tela de um celular",
+      "explore": null,
+      "image": {
+        "alt": "Uma nuvem ocupa uma região ao redor do núcleo, em vez de se concentrar num ponto central.",
+        "prompt": "Núcleo cercado por uma nuvem eletrônica de tamanho definido. Ao lado, um ponto minúsculo sobre o núcleo marcado «concentração excessiva», em contraste com a nuvem ao redor."
+      },
+      "kind": "explanation",
+      "text": "O arranjo mais estável leva em conta duas coisas: o núcleo atrai o elétron, e confiná-lo demais custa energia. Por isso, mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo. O elétron não fica espremido num ponto.",
+      "title": "O arranjo mais estável",
+      "visual": null
+    },
+    {
+      "basis": null,
+      "context": "Alguém diz: «O elétron não cai porque o núcleo o empurra para longe».",
+      "image": null,
+      "kind": "check",
+      "options": [
+        {
+          "isCorrect": true,
+          "picture": null,
+          "reason": "Você corrige o sentido da atração e considera o custo de confinar o elétron.",
+          "text": "O núcleo atrai o elétron, mas concentrá-lo demais exige energia."
+        },
+        {
+          "isCorrect": false,
+          "picture": null,
+          "reason": "Você acerta que há atração, mas volta à imagem de uma bolinha em órbita. O elétron ocupa uma nuvem, não uma trilha.",
+          "text": "O núcleo atrai o elétron, que escapa por girar como um planeta."
+        },
+        {
+          "isCorrect": false,
+          "picture": null,
+          "reason": "A frase erra ao dizer que o núcleo empurra. Isso não significa que não exista atração.",
+          "text": "O núcleo não atrai nem empurra o elétron."
+        }
+      ],
+      "question": "Qual é o erro nessa frase?",
+      "visual": null
+    },
+    {
+      "acceptedAnswers": [],
+      "basis": null,
+      "context": "Um celular é feito de átomos que não desabam sobre seus núcleos. Uma pessoa imagina os elétrons como bolinhas prestes a cair.",
+      "keyPoints": [
+        "O núcleo atrai o elétron.",
+        "O elétron ocupa uma nuvem, não uma órbita de bolinha.",
+        "Concentrar o elétron num espaço minúsculo exige energia.",
+        "No arranjo mais estável, a nuvem ocupa uma região ao redor do núcleo."
+      ],
+      "kind": "typedAnswer",
+      "question": "Como você explicaria a essa pessoa por que os elétrons não ficam espremidos nos núcleos?",
+      "sampleAnswer": "O núcleo atrai o elétron, mas ele não é uma bolinha em órbita: ocupa uma nuvem. Espremer essa nuvem no núcleo exige energia. Por isso, no arranjo mais estável, ela ocupa uma região ao redor dele.",
+      "visual": null
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Nuvem eletrônica",
+        "text": "O elétron não é uma bolinha seguindo uma órbita: ele pode ser encontrado numa região chamada nuvem eletrônica."
+      },
+      {
+        "label": "Atração do núcleo",
+        "text": "O núcleo atrai o elétron, mas concentrá-lo num espaço minúsculo exige energia."
+      },
+      {
+        "label": "Menor energia",
+        "text": "Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo, em vez de ficar espremida nele."
+      }
+    ],
+    "shape": "hub"
+  }
+}

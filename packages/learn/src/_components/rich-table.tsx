@@ -1,3 +1,4 @@
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type MarkdownTableAlign } from "@zoonk/utils/markdown-table";
 import { SpokenMath } from "../rich-text/spoken-math";
@@ -43,21 +44,11 @@ export function RichTable<TCell>({
 }) {
   return (
     <div
-      className={cn(
-        SURFACE_CLASS,
-        "has-focus-visible:ring-ring/50 max-w-full overflow-hidden has-focus-visible:ring-[3px]",
-        className,
-      )}
+      className={cn(SURFACE_CLASS, "max-w-full overflow-hidden", className)}
       data-slot="rich-table"
     >
-      <div
-        aria-label={label}
-        className="scroll-fade-x overflow-x-auto pb-0.5 outline-none"
-        role="region"
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A wide table scrolls sideways, which needs focus by keyboard.
-        tabIndex={0}
-      >
-        <table className="text-foreground w-full border-collapse text-sm leading-snug">
+      <SidewaysScroll className="rounded-xl pb-0.5" label={label} role="region">
+        <table className="text-foreground text-block w-full border-collapse leading-snug">
           <thead className="bg-muted">
             <tr>
               {header.map((cell, index) => {
@@ -92,7 +83,7 @@ export function RichTable<TCell>({
             })}
           </tbody>
         </table>
-      </div>
+      </SidewaysScroll>
     </div>
   );
 }

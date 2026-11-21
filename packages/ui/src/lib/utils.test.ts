@@ -28,6 +28,11 @@ describe(cn, () => {
     );
   });
 
+  it("keeps the block size, set on code and tables in text, beside a color", () => {
+    expect(cn("text-block", "text-foreground")).toBe("text-block text-foreground");
+    expect(cn("text-sm", "text-block")).toBe("text-block");
+  });
+
   it("treats the option radius and the column widths as their kind's values", () => {
     expect(cn("rounded-xl", "rounded-xl")).toBe("rounded-xl");
     expect(cn("max-w-column", "max-w-none")).toBe("max-w-none");

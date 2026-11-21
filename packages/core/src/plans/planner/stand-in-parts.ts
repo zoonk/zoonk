@@ -8,13 +8,17 @@ export function splitStandIns(units: readonly QueueUnit[]): QueueUnit[] {
       return [unit];
     }
 
-    const parts = Math.max(1, Math.round(unit.minutes / DEFAULT_LESSON_MINUTES));
+    const parts = Math.max(1, unit.lessons ?? Math.round(unit.minutes / DEFAULT_LESSON_MINUTES));
 
     if (parts === 1) {
       return [unit];
     }
 
-    return Array.from({ length: parts }, () => ({ ...unit, minutes: unit.minutes / parts }));
+    return Array.from({ length: parts }, () => ({
+      ...unit,
+      lessons: 1,
+      minutes: unit.minutes / parts,
+    }));
   });
 }
 
@@ -27,14 +31,15 @@ export function joinStandIns<
   },
 >(units: readonly TUnit[]): TUnit[] {
   const totals = units.reduce((sums, unit) => {
-    const sum = sums.get(unit.key) ?? { minutes: 0, studyMinutes: 0, studyPortions: [] };
+    const sum = sums.get(unit.key);
 
     return sums.set(unit.key, {
-      minutes: sum.minutes + unit.minutes,
-      studyMinutes: sum.studyMinutes + unit.studyMinutes,
-      studyPortions: [...sum.studyPortions, ...(unit.studyPortions ?? [])],
+      ...(unit.lessons !== undefined && { lessons: (sum?.lessons ?? 0) + unit.lessons }),
+      minutes: (sum?.minutes ?? 0) + unit.minutes,
+      studyMinutes: (sum?.studyMinutes ?? 0) + unit.studyMinutes,
+      studyPortions: [...(sum?.studyPortions ?? []), ...(unit.studyPortions ?? [])],
     });
-  }, new Map<string, { minutes: number; studyMinutes: number; studyPortions: StudyPortion[] }>());
+  }, new Map<string, { lessons?: number; minutes: number; studyMinutes: number; studyPortions: StudyPortion[] }>());
 
   const firstIndex = units.reduce(
     (first, unit, index) => (first.has(unit.key) ? first : first.set(unit.key, index)),

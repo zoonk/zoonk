@@ -1,7 +1,7 @@
 import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { parseRichInline } from "@zoonk/learn/rich-text/parser";
 import { toOneLine } from "@zoonk/utils/math-spans";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { keyedByPosition } from "../_utils/position-keys";
 
 const IDENTIFIER = /\d+(?:-\d+)+/u;

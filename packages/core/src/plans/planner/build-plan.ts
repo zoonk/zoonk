@@ -8,22 +8,10 @@ import { getKeptBaseChoices, hasBaseChoices, withBaseChoices } from "./chosen-ba
 import { listEndsBeforeLessons } from "./ends-before-lessons";
 import { type ExamBossDays, listBossDayFacts } from "./exam-boss-days";
 import { listLessonDays } from "./interval-study-minutes";
-import {
-  keepThisWeek,
-  listKeptStandInCuts,
-  listThisWeekWork,
-  setAsideLeftWork,
-  toKeptItem,
-} from "./kept-items";
+import { keepThisWeek, listKeptStandInCuts, setAsideLeftWork, toKeptItem } from "./kept-items";
 import { listStrainedEnds } from "./kept-phase-ends";
-import {
-  type LandedUnits,
-  findLanding,
-  getLandingSkillMinutes,
-  listLandedUnits,
-  withoutRepeatedLandings,
-} from "./landed-lessons";
-import { listKeptTime, putLandedLessons } from "./landed-placement";
+import { type Landing, findLanding } from "./landed-lessons";
+import { placeLandedLessons, reservePlaced, withoutPlaced } from "./landed-placement";
 import { type LaidOutOrder, toLaidOutOrder } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";
@@ -38,15 +26,17 @@ import { getLastLessonDate, scheduleRunEvents } from "./plan-events";
 import { type ExistingPlanItem, fromUnit, mergePlanItems } from "./plan-items";
 import { type ExamWindow } from "./plan-phases";
 import { getPlanStart } from "./plan-run-days";
-import { type PlanGraph, type PlanSettings, type StoredBaseChoice } from "./plan-state";
+import { type PlanGraph, type PlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 import { preparePlanWork } from "./plan-work";
 import { type BossPlanFacts, settlePlannedBosses } from "./planned-bosses";
 import { resolvePlannedMocks, settlePlannedMocks } from "./planned-mocks";
+import { getSkillMinutes } from "./skill-minutes";
 import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
 import { listDroppedSkills, summarizePlan } from "./summarize-plan";
-import { listStillSetAside } from "./this-week-items";
+import { getLastKeptDay, listStillSetAside } from "./this-week-items";
+import { listThisWeekWork } from "./this-week-work";
 import { markKeptLessons } from "./whole-boss";
 import { type PlanWriting } from "./writing-allocation";
 
@@ -113,78 +103,47 @@ export function buildPlan(given: BuildPlanInput) {
   });
 }
 
-function buildWithBosses(given: BuildPlanInput): BuiltPlan {
-  const landing = findLanding(given);
-
-  const input = landing?.asSaved ?? given;
-
+function buildWithBosses(input: BuildPlanInput): BuiltPlan {
+  const landing = findLanding(input);
   const essential = withBaseChoices({ choices: [], input });
-
-  const landedFor = (choices: StoredBaseChoice[]) =>
-    landing && listLandedUnits({ input: withBaseChoices({ choices, input: given }), landing });
-
-  const keepsRest = landing !== null && given.landedOnly === true;
 
   if (!hasBaseChoices(input)) {
     return resolvePlannedMocks((resolution) =>
-      planGoal({
-        given,
-        input: essential,
-        keepsRest,
-        landedUnits: landedFor([]),
-        learnedOrder: null,
-        resolution,
-      }),
+      planGoal({ input: essential, landing, learnedOrder: null, resolution }),
     );
   }
 
   const reference = resolvePlannedMocks((resolution) =>
     planGoal({
-      given,
       input: { ...essential, mode: "forced" },
-      keepsRest: false,
-      landedUnits: null,
+      landing: null,
       learnedOrder: null,
       resolution,
     }),
   );
 
-  const choices = getKeptBaseChoices(input);
-  const chosen = withBaseChoices({ choices, input });
+  const chosen = withBaseChoices({ choices: getKeptBaseChoices(input), input });
 
   return resolvePlannedMocks((resolution) =>
-    planGoal({
-      given,
-      input: chosen,
-      keepsRest,
-      landedUnits: landedFor(choices),
-      learnedOrder: reference.order,
-      resolution,
-    }),
+    planGoal({ input: chosen, landing, learnedOrder: reference.order, resolution }),
   );
 }
 
 function planGoal({
-  given,
   input,
-  keepsRest,
-  landedUnits,
+  landing,
   learnedOrder,
   resolution,
 }: {
-  /** The build's own input, before a landing holds its newly written lessons back from `input`. */
-  given: BuildPlanInput;
   input: BuildPlanInput;
-  keepsRest: boolean;
-  landedUnits: LandedUnits | null;
+  landing: Landing | null;
   learnedOrder: LaidOutOrder | null;
   resolution: MockResolution | null;
 }): BuiltPlan {
   const planStart = getPlanStart(input);
 
-  const work = preparePlanWork({ input, keepsRest, landedUnits, planStart, resolution });
-  const { funded, priorities, queue, start, unitsByKey, windows } = work;
-
+  const work = preparePlanWork({ input, landing, planStart, resolution });
+  const { funded, keepsRest, landedUnits, priorities, queue, start, unitsByKey, windows } = work;
   const {
     finished,
     frozen,
@@ -194,54 +153,56 @@ function planGoal({
     thisWeek,
   } = work.split;
 
-  const keptWork = [...finished, ...thisWeek, ...frozen];
-  const unplaced = markKeptLessons({ input, kept: keptWork, units: work.limited });
+  const end = getLastKeptDay({ input, keepsRest });
+
+  const landed = placeLandedLessons({
+    days: funded.days,
+    end,
+    frozen,
+    input,
+    landed: landedUnits,
+    units: work.limited,
+    unitsByKey,
+  });
+
+  const keptWork = [...finished, ...thisWeek, ...frozen, ...landed.kept];
+  const pending = markKeptLessons({ input, kept: keptWork, units: work.limited });
 
   const phaseEnds = windows.length > 0 ? new Map() : (input.phaseEnds ?? new Map());
 
-  const { carriedSchedule, keptParts, keptPortions, keptUntil, restSchedule, spill, yielded } =
-    createLayOut({
-      input,
-      kept: keptWork,
-      learnedOrder,
-      phaseEnds,
-      planStart,
-      queue: priorities,
-      start,
-      thisWeek: listThisWeekWork({
-        frozen: [...frozen, ...landedStandIns],
-        landed: [],
-        units: unitsByKey,
-      }),
-      units: unplaced,
-      unitsByKey,
-    })(funded.days);
-
-  const {
-    dropped: leftOut,
-    landed,
-    laidOut: placed,
-  } = putLandedLessons({
-    days: funded.days,
-    dropped: [...carriedSchedule.dropped, ...restSchedule.dropped],
+  const { carriedSchedule, keptPortions, keptUntil, restSchedule, spill, yielded } = createLayOut({
     input,
-    kept: keepsRest ? listKeptTime({ frozen, units: unitsByKey }) : null,
-    keptParts,
-    landed: withoutRepeatedLandings({ kept: [...finished, ...frozen], landed: landedUnits }),
+    // A landing's lessons are placed outside the layout, so the week it lays out isn't the saved one.
+    keepsSavedDays: landedUnits !== null,
+    kept: keptWork,
+    learnedOrder,
+    phaseEnds,
+    planStart,
+    queue: priorities,
     start,
-    units: [...carriedSchedule.units, ...restSchedule.units],
-  });
+    thisWeek: listThisWeekWork({ end, frozen, today: input.today, units: unitsByKey }),
+    units: withoutPlaced({ placed: [...landed.placed, ...landed.dropped], units: pending }),
+    unitsByKey,
+  })(reservePlaced({ days: funded.days, placed: landed.placed }));
 
-  const taught = listTaughtPhases({ kept: keptWork, landed, units: placed });
+  // A run that keeps the rest lays nothing else out: every other item stays as it was saved.
+  const placed = keepsRest ? [] : [...carriedSchedule.units, ...restSchedule.units];
+  const taught = listTaughtPhases({ kept: keptWork, landed: landed.placed, units: placed });
   const laidOut = placed.filter((unit) => unit.kind !== "boss" || taught.has(unit.phase));
 
   const schedule = keepThisWeek({
     days: funded.days,
     frozen,
-    landed,
-    schedule: { dropped: leftOut, events: restSchedule.events, units: laidOut },
+    landed: landed.placed,
+    schedule: {
+      dropped: [...carriedSchedule.dropped, ...restSchedule.dropped, ...landed.dropped],
+      events: restSchedule.events,
+      units: laidOut,
+    },
     start,
   });
+
+  const droppedBeforeExam = [...schedule.dropped, ...work.deferred];
 
   const { afterExam, spare } = scheduleRunEvents({
     days: funded.days,
@@ -251,13 +212,10 @@ function planGoal({
     lastLessonDate: getLastLessonDate({ kept: thisWeek, keptUntil, units: schedule.units }),
     planStart,
     resolution,
-    schedule: { ...schedule, dropped: [...schedule.dropped, ...work.deferred] },
+    schedule: { ...schedule, dropped: droppedBeforeExam },
     start,
     windows,
   });
-
-  const outlined = (keepsRest ? [...landed, ...laidOut] : landed).filter((unit) => unit.lessonId);
-  const landedBySkill = Map.groupBy(outlined, (unit) => unit.skillId ?? "");
 
   const units = joinStandIns([...schedule.units, ...(afterExam?.units ?? [])]);
 
@@ -265,7 +223,7 @@ function planGoal({
 
   const kept = [...finished, ...stillAside, ...thisWeek].flatMap((item) =>
     landedStandIns.includes(item)
-      ? (landedBySkill.get(item.skillId ?? "") ?? []).map((unit) => fromUnit(unit))
+      ? (landed.lessons.get(item.skillId ?? "") ?? []).map((unit) => fromUnit(unit))
       : [toKeptItem({ input, item, units: unitsByKey, windows })],
   );
 
@@ -278,7 +236,7 @@ function planGoal({
     units,
   });
 
-  const dropped = afterExam?.dropped ?? [...schedule.dropped, ...work.deferred];
+  const dropped = afterExam?.dropped ?? droppedBeforeExam;
 
   const challengeDays = [...funded.days, ...listAfterExamDays(afterExam)].filter(
     (day) => day.date >= start,
@@ -304,17 +262,22 @@ function planGoal({
     graph: input.graph,
     items,
     kept: phaseEnds,
-    queue: [...queue.filter((unit) => work.finishedKeys.has(unit.key)), ...unplaced],
+    queue: [...queue.filter((unit) => work.finishedKeys.has(unit.key)), ...pending],
     scheduleStart: start,
     windows,
-    writingSchedule: work.writing.writingSchedule,
   });
 
   return {
     ...outline,
     skillLessons,
     ...listDroppedSkills(dropped),
-    endsBeforeLessons: listEndsBeforeLessons({ given, items, laidOut, phaseEnds, skillLessons }),
+    endsBeforeLessons: listEndsBeforeLessons({
+      given: input,
+      items,
+      laidOut,
+      phaseEnds,
+      skillLessons,
+    }),
     items,
     keptKeys: new Set([...kept, ...setAside].map((item) => item.key)),
     ...listLessonDays(units, keptPortions),
@@ -322,11 +285,10 @@ function planGoal({
     mocks,
     order: toLaidOutOrder(restSchedule),
     planDays: funded.days,
-    skillMinutes: getLandingSkillMinutes({
+    skillMinutes: getSkillMinutes({
       dropped: [...dropped, ...listKeptStandInCuts({ frozen, units: unitsByKey })],
       kept: queue.filter((unit) => work.finishedKeys.has(unit.key)),
-      landed: landedUnits,
-      pending: [...unplaced, ...work.deferred],
+      pending: [...pending, ...work.deferred],
     }),
     spill,
     strainedEnds: listStrainedEnds({ days: funded.days, ends: phaseEnds, units: laidOut }),

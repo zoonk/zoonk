@@ -75,7 +75,7 @@ async function loadLessonReservation({
   ...input
 }: Parameters<typeof getSessionLessonReservation>[0] & { current: boolean }) {
   if (!current || !plan) {
-    return { lessonPlaceholder: null, lessonRoom: false };
+    return { lessonPlaceholder: null, lessonRoom: false, unwrittenRoom: false };
   }
 
   const prerequisites = await loadSkillPrerequisites(
@@ -169,7 +169,7 @@ export async function loadStudySessionView({
       })
     : { includesMockExams: true };
 
-  const [outlines, missions, reservation] = await Promise.all([
+  const [outlines, missions, { unwrittenRoom, ...reservation }] = await Promise.all([
     loadDayOutlines({ dayMinutes, plan, session }),
     getDayMissions({
       displayBlocks,
@@ -190,7 +190,7 @@ export async function loadStudySessionView({
     examAccess,
     ...reservation,
     missions,
-    outlines: reservation.lessonRoom ? (outlines ?? "idle") : null,
+    outlines: unwrittenRoom ? (outlines ?? "idle") : null,
     session,
     timeZone,
     week,

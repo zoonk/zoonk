@@ -1,0 +1,176 @@
+{
+  "attempt": "first",
+  "costUsd": 0.008546189999999999,
+  "failures": [],
+  "packetId": "e753ec8a90c2beee82183dee1f699807dd7251307a4c561a48543164ee8a56fd",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical: one lobe lesson with the same screens, skills and wording.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the screen plan is the same in both.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the activities and visuals are the same in both, including the same missing visual on the guess.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so the level, scope and language fit is the same in both.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess asks where in the brain the eye signals are first processed, but its visual is null. The expectations require a brain picture with the lobes marked for any question about where a lobe or spot is, so the learner has nothing to look at.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must answer a location question from text alone and cannot see which region is the back of the head.",
+            "location": {
+              "detail": "Guess screen about where signals from the eyes are first processed.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess asks where in the brain the eye signals are first processed, but its visual is null. The expectations require a brain picture with the lobes marked for any question about where a lobe or spot is, so the learner has nothing to look at.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must answer a location question from text alone and cannot see which region is the back of the head.",
+            "location": {
+              "detail": "Guess screen about where signals from the eyes are first processed.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "0b665f20-480e-47e9-b545-67252668bb1b"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both give one lobe lesson with two skills and the same core idea of locating lobes and matching them to jobs.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A includes a check with a named tempting answer and more explanation screens with pictures, while Output B has no check at all.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B has a labeled diagram activity where the learner names numbered lobes, while Output A uses that template as an explanation with no question.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use everyday examples and plain beginner language, with similar load.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The check asks where a target sits on the brain (forehead or back of the head), but its visual is null. The answer depends on seeing where the regions are, so the learner must answer without a picture.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot see where the back of the head is relative to the forehead, so the check is guesswork from text.",
+            "location": {
+              "detail": "Check screen about the colors on a screen and where the target sits.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The template is labeledDiagram, which is a name-matching activity, but the brief uses it as a no-question explanation with all names visible.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner gets a template built for matching in a screen meant only to show the map, which is confusing.",
+            "location": {
+              "detail": "Screen that lets the learner explore the completed four-lobe map.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The guess asks where in the brain the eye signals are first processed, but its visual is null. The location question has no picture to show the back of the head.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must answer a location question from text alone.",
+            "location": {
+              "detail": "Guess screen about where signals from the eyes are first processed.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Each output has one major missing visual on a location question, and neither is clearly better overall."
+        },
+        "pairId": "5d569ca1-6d0e-416a-89ba-64a05a4cc5fb"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both cover one percent change idea with the same skill and the same starting-value rule.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A's check gives the wrong answer key for the fee change, which would teach the learner the wrong method, while Output B's key is correct.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same table visuals and text-only screens, with the same visuals and no activity.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are beginner-level US English with the same scope and no reused chapter cases.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The answer key is wrong: a fee rising from $40 to $46 is a $6 change, and 6 divided by 40 is 15%. The stated answer of 13.04% comes from dividing by the new fee of $46.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner would be told the wrong percent change and would learn the exact trap the lesson is meant to avoid.",
+            "location": {
+              "detail": "Check screen on the monthly service fee.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B has a correct answer key on its check, while Output A teaches the wrong answer and the wrong division, which is a major problem."
+        },
+        "pairId": "a0b66c54-29cf-4164-96a4-d0caacd9bea8"
+      }
+    ]
+  }
+}

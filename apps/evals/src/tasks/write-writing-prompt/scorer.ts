@@ -1,6 +1,6 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { defineScoreCategories } from "@/lib/score-categories";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type WritingPromptOutput } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { promptContent } from "@zoonk/core/library/items/write-writing-item";
 import { normalizeString } from "@zoonk/utils/string";
@@ -118,21 +118,23 @@ function checkValidator({
 
 const CHECKS = [checkValidator, checkPoints, checkTitle, checkEnem];
 
-function checkOutput(output: string, input: WriteWritingPromptInput): CodeCheckResult {
+export const checkWriteWritingPrompt: TaskCodeChecks = ({ output, testCase }) => {
+  const input = testCase.userInput as WriteWritingPromptInput;
   const parsed = JSON.parse(output) as WritingPromptOutput;
   const results = CHECKS.map((check) => check({ input, output: parsed }));
 
   return {
+    blockingProblems: results[0],
     judgedOutput: JSON.stringify(parsed, null, 2),
     passed: results.filter((problems) => problems.length === 0).length,
     problems: results.flat(),
     total: CHECKS.length,
   };
-}
+};
 
 export const scoreWriteWritingPrompt: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkOutput(value, testCase.userInput as WriteWritingPromptInput),
+    check: (value) => checkWriteWritingPrompt({ output: value, testCase }),
     output,
     scoreCategories: WRITE_WRITING_PROMPT_SCORE_CATEGORIES,
     testCase,

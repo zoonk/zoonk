@@ -53,6 +53,13 @@ export const solveItemsTask: Task<SolveItemsInput, SolveItemsOutput, SolveItemsE
   generate: solveItems,
   id: "solve-items",
   name: "Solve items (key check)",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code drops items whose key the blind solve doesn't reproduce",
+    reason: "A missed wrong key reaches every learner",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreSolveItems,
   testCases: TEST_CASES,
 };

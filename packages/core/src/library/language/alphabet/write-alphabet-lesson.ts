@@ -18,6 +18,7 @@ import { claimLibraryGeneration, finishLibraryGeneration } from "../../claims/ge
 import { toStepData } from "../../lessons/_utils/step-data";
 import { createLibraryLesson } from "../../lessons/create-library-lesson";
 import { startLessonVersion } from "../../lessons/lesson-versions";
+import { recordLessonQualityDecision } from "../../quality/lesson-quality-decision";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { getAlphabetIdentityKey } from "./alphabet-identity";
 import { ALPHABET_LESSON_MINUTES } from "./alphabet-lesson-check";
@@ -262,8 +263,25 @@ async function writeClaimedLesson({
   });
 
   const steps = buildAlphabetLessonSteps({ audioUrls: new Map(), content: data });
+  const hasAlphabet = steps.some((step) => step.kind === "alphabet");
 
-  if (!steps.some((step) => step.kind === "alphabet")) {
+  await recordLessonQualityDecision({
+    blocking: hasAlphabet
+      ? []
+      : [
+          {
+            code: "emptyAlphabet",
+            problem: "The lesson did not contain any usable alphabet symbols.",
+            screen: null,
+            source: "code",
+          },
+        ],
+    lessonId,
+    phase: "codeCheck",
+    writerRunId: provenance.runId,
+  });
+
+  if (!hasAlphabet) {
     await failAlphabetLesson({ lessonId, workflowRunId });
     return { lessonId, status: "heldBack" };
   }

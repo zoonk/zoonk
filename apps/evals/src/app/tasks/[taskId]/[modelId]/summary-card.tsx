@@ -3,7 +3,9 @@ import { Fold } from "@/components/fold";
 import { type EvalSummary, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollars, formatPercent, formatSeconds } from "@/lib/format";
 import { type TaskStats } from "@/lib/stats";
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { type ReactNode } from "react";
+import { UNSCORED_IMAGES_NOTE } from "../unscored-images";
 
 function Headline({ label, value }: { label: string; value: ReactNode }) {
   return (
@@ -47,6 +49,38 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
         <Headline label="Cost / 1k runs" value={formatDollars(stats.costPer1000Runs)} />
         <Headline label="Latency p50" value={formatSeconds(stats.latencyP50)} />
       </dl>
+
+      {summary.needsListening.length > 0 && (
+        <Fold title={`Needs a listen (${summary.needsListening.length})`}>
+          <ul className="text-muted-foreground list-disc ps-5 text-sm">
+            {summary.needsListening.map(({ audioPath, caseId }) => (
+              <li key={caseId}>eval-results/audio/{audioPath}</li>
+            ))}
+          </ul>
+        </Fold>
+      )}
+
+      {summary.unscoredImages.length > 0 && (
+        <div className="flex flex-col gap-1">
+          <Fold title={`Images without a score (${summary.unscoredImages.length})`}>
+            <ul className="flex flex-col text-sm">
+              {summary.unscoredImages.map((caseId) => (
+                <li key={caseId}>
+                  <a
+                    className="block min-h-11 content-center break-all underline underline-offset-4"
+                    href={`#case-${encodeURIComponent(caseId)}`}
+                  >
+                    {caseId}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </Fold>
+          <p className={`text-muted-foreground text-xs ${PROSE_MEASURE_CLASS}`}>
+            {UNSCORED_IMAGES_NOTE} Choose Generate outputs, then Score outputs.
+          </p>
+        </div>
+      )}
 
       <Fold title="Details">
         <dl className="grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-4">

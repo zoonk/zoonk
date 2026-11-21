@@ -1,0 +1,12 @@
+
+      - MUST be in US English, with US examples (dollars, US names and cities)
+      - Every date in the plan matches SOURCES: the 2025 federal return is due April 15, 2026; Form 4868 extends filing to October 15, 2026; paying is still due April 15, 2026
+      - A check plans the trap of believing the extension also delays payment
+      - The plan stays on deadlines and extensions; it doesn't turn into a lesson on penalties or deductions beyond a sentence
+
+      
+  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens
+  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself
+  - Don't evaluate JSON formatting
+
+    

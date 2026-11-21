@@ -74,6 +74,13 @@ export const memorySessionPatternsTask: Task<
   generate: findSessionPatterns,
   id: "memory-session-patterns",
   name: "Memory session patterns",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Later AI steps read the saved facts",
+    reason: "Background and private: every model scored the same, so the cheapest",
+    waits: "Nobody: background work",
+  },
   score: scoreSessionPatterns,
   testCases: TEST_CASES,
 };

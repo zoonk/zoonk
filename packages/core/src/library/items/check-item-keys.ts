@@ -2,7 +2,7 @@ import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { type GeneratedItem, type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type SolvableItem, solveItems } from "@zoonk/ai/tasks/items/solve";
-import { toCheckedItem } from "./create-items";
+import { toCheckedItem } from "./item-checks";
 import { findKeyMismatch } from "./key-mismatch";
 
 declare const keyChecked: unique symbol;

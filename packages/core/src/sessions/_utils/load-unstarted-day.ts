@@ -63,7 +63,7 @@ export async function loadUnstartedDayView({
 
   const missions = missionViews.map((mission) => asDayMission(mission));
 
-  const reservation = getSessionLessonReservation({
+  const { unwrittenRoom, ...reservation } = getSessionLessonReservation({
     access: examAccess,
     plan: day.plan,
     prerequisites: day.plan.prerequisites,
@@ -84,7 +84,7 @@ export async function loadUnstartedDayView({
     examAccess,
     ...reservation,
     missions,
-    outlines: reservation.lessonRoom ? (day.plan.outlines ?? "idle") : null,
+    outlines: unwrittenRoom ? (day.plan.outlines ?? "idle") : null,
     session: {
       blocks,
       freshStart: day.input.freshStart,

@@ -19,7 +19,7 @@ export const cn = createCn({
       radius: ["meter"],
       /** The frame's gutter (`--spacing-frame`), so a later `px-0` replaces a `px-frame`. */
       spacing: ["frame"],
-      text: ["2xs", "compact", "reading"],
+      text: ["2xs", "block", "compact", "reading"],
     },
   },
 });

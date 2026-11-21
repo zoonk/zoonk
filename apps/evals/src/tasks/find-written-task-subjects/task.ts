@@ -84,6 +84,13 @@ export const findWrittenTaskSubjectsTask: Task<
   generate: generateTaskSubjects,
   id: "find-written-task-subjects",
   name: "Find written task subjects",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "The planner uses these links to choose what to teach for the written exam",
+    reason: "A missing or invented link sends learners to the wrong subjects",
+    waits: "Prepared from the exam notice before learners practice",
+  },
   score: scoreTaskSubjects,
   testCases: TEST_CASES,
 };

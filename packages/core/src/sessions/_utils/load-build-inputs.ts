@@ -19,7 +19,7 @@ import { loadDayPlan } from "./day-plan";
 import {
   getDayFreshStart,
   getDayPracticeShare,
-  getDayWritingMinutes,
+  getDayUnwrittenTime,
   getPlanTestSkillIds,
 } from "./day-plan-facts";
 import { findPlannedReview } from "./day-review";
@@ -274,7 +274,7 @@ export async function loadSessionBuildInput(
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay ? (reviewDay.key ?? getItemKey(reviewDay)) : null,
     topics: getPlanTopics({ goal, graph: plan.graph }),
-    writingMinutes: getDayWritingMinutes({ reservedItems, today: localDate }),
+    unwritten: getDayUnwrittenTime({ reservedItems, today: localDate }),
   };
 
   const work = { context, dueCapsules, isReviewDay, plan, practiceQuery };

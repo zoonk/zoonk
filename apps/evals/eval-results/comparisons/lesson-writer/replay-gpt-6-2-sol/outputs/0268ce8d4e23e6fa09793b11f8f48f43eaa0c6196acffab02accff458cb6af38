@@ -1,0 +1,102 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Mei's team is about to redesign their online store's checkout. At the kickoff meeting, someone writes the goal on the whiteboard: _Add a progress bar to checkout_. Is that really a goal?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Name the change, not the fix",
+      "text": "A progress bar is one fix the team might try. A goal says what should change for the people buying, like _fewer people give up at payment_. This is called a **UX goal**. UX means user experience: how using a product feels to people.",
+      "exampleLineIdea": "an app the learner uses where one step annoys them, like paying a bill or booking a ride",
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Mei's team lists three ideas for the new checkout.",
+      "question": "Which one is a UX goal?",
+      "options": [
+        {
+          "text": "Redesign the payment button",
+          "isCorrect": false,
+          "reason": "This names a design change, so it's a fix the team might try. It sounds like a goal because it starts with an action, but it doesn't say what changes for buyers.",
+          "picture": null
+        },
+        {
+          "text": "More people pay on their first try",
+          "isCorrect": true,
+          "reason": "It says what should change for the people buying. It leaves the team free to choose any design that makes that happen.",
+          "picture": null
+        },
+        {
+          "text": "Add a one-click pay option",
+          "isCorrect": false,
+          "reason": "A one-click option is a fix the team might build. A goal would say what should change for buyers, like how many finish paying.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "A goal says what should change for the people buying, like _fewer people give up at payment_."
+      }
+    },
+    {
+      "kind": "activity",
+      "template": "findError",
+      "content": "{\"template\":\"findError\",\"prompt\":\"Find the step where the AI's answer goes wrong.\",\"fields\":{\"author\":\"ai\",\"problem\":\"A designer asked an AI assistant: Turn our interview notes about the Forkful food delivery app into a UX goal.\",\"steps\":[{\"id\":\"s1\",\"text\":\"The notes say many people give up on their order right when the delivery fee appears at the last step.\"},{\"id\":\"s2\",\"text\":\"So the UX goal is: show the delivery fee on the home screen.\"},{\"id\":\"s3\",\"text\":\"To measure success, we'll count how many people see the fee on the home screen.\"},{\"id\":\"s4\",\"text\":\"Summary: put the fee on the home screen, and success means people see it there.\"}],\"errorStepId\":\"s2\",\"why\":\"Showing the fee on the home screen is one fix the team might try. It doesn't say what should change for people. Steps 3 and 4 build on it, so the team would measure whether people see a fee, not whether fewer give up.\",\"correction\":\"The UX goal is: fewer people give up on their order when they see the delivery fee.\"},\"check\":{\"kind\":\"interaction\",\"explanation\":\"Step 2 turns a fix into the goal. The notes show a change people need: fewer orders dropped at the fee. Because the measure and summary build on step 2, they track the fix instead of that change.\"}}"
+    },
+    {
+      "kind": "check",
+      "context": "At Harbor Bank, support tickets show that people using the app can't find where to change their card limit. The team is planning a redesign.",
+      "question": "Which one is a UX goal for this redesign?",
+      "options": [
+        {
+          "text": "People find the card limit setting on their own",
+          "isCorrect": true,
+          "reason": "It names what should change for people using the app. Any design that helps them find it on their own would count.",
+          "picture": null
+        },
+        {
+          "text": "Add a card limit button to the home screen",
+          "isCorrect": false,
+          "reason": "A new button is one fix the team might try. It may help, but the goal is the change it should bring, not the button.",
+          "picture": null
+        },
+        {
+          "text": "Redesign the app's settings menu",
+          "isCorrect": false,
+          "reason": "This sounds like a goal, but it names a design change. It doesn't say what should be different for the people looking for their limit.",
+          "picture": null
+        },
+        {
+          "text": "Write a help article about card limits",
+          "isCorrect": false,
+          "reason": "An article is another fix to try. The goal should say what changes for people, whichever fix the team picks.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": null
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "A fix to try",
+        "text": "A design idea like adding a progress bar is one fix a team might try, not a goal."
+      },
+      {
+        "label": "UX goal names change",
+        "text": "A UX goal says what should change for the people using a product, like fewer people giving up at payment."
+      }
+    ],
+    "shape": "hub"
+  }
+}

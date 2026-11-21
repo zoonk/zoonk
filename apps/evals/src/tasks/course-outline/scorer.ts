@@ -1,11 +1,11 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type CourseOutlineParams } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { findMixedAreaChapters } from "@zoonk/ai/tasks/curriculum/outline-areas";
+import { selectOutlineChapters } from "@zoonk/core/library/curriculum/select-outline-chapters";
 import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
 
-/** A case-insensitive pattern matched against practical chapters' tool names. */
-export type CourseOutlineExpected = { tool: string };
+export type CourseOutlineExpected = { existingBand?: true; tool?: string };
 
 type OutlineTool = { essential: boolean; name: string };
 type OutlineChapter = { skillKeys?: string[]; title: string; tools: OutlineTool[] };
@@ -73,6 +73,53 @@ function getAreaProblems({
   );
 }
 
+function checkChapters({
+  chapters,
+  params,
+}: {
+  chapters: OutlineChapter[];
+  params: CourseOutlineParams;
+}) {
+  const checks = chapters.map((chapter) => ({
+    area: getAreaProblems({ chapter, params }),
+    tools: getToolProblems({
+      chapter,
+      level: params.level,
+      withoutTools: params.withoutTools ?? false,
+    }),
+  }));
+
+  return {
+    hasAreaProblems: checks.some(({ area }) => area.length > 0),
+    hasToolProblems: checks.some(({ tools }) => tools.length > 0),
+    passed: checks.filter(({ area, tools }) => area.length === 0 && tools.length === 0).length,
+    problems: checks.flatMap(({ area, tools }) => [...tools, ...area]),
+  };
+}
+
+function getKeptChapters({
+  chapters,
+  existingBand,
+  params,
+}: {
+  chapters: OutlineChapter[];
+  existingBand: boolean;
+  params: CourseOutlineParams;
+}) {
+  if (!existingBand) {
+    return chapters;
+  }
+
+  return selectOutlineChapters({
+    chapters: chapters.map((chapter) => ({ ...chapter, skillKeys: chapter.skillKeys ?? [] })),
+    plan: {
+      extensions: (params.extendSkills ?? []).map((skill) => ({ skill })),
+      isNewBand: false,
+      otherChapterTitles: params.otherLevelChapters ?? [],
+    },
+  });
+}
+
 function checkOutline({
   expected,
   output,
@@ -82,50 +129,73 @@ function checkOutline({
   output: string;
   params: CourseOutlineParams;
 }): CodeCheckResult {
-  const { level, withoutTools = false } = params;
   const { chapters, uncoveredSkillKeys } = parseOutline(output);
+  const kept = getKeptChapters({ chapters, existingBand: expected?.existingBand === true, params });
+  const { extendSkills = [], requiredSkills = [] } = params;
+  const coversSkills = requiredSkills.length + extendSkills.length > 0;
+  const toolName = expected?.tool;
+  const pattern = toolName ? new RegExp(toolName, "iu") : null;
+  const total = Math.max(chapters.length + Number(Boolean(pattern)) + Number(coversSkills), 1);
 
-  const coversSkills =
-    (params.requiredSkills?.length ?? 0) + (params.extendSkills?.length ?? 0) > 0;
+  if (kept.length === 0) {
+    const problem =
+      chapters.length === 0
+        ? "The output has no chapters."
+        : "Production would discard every chapter in the outline.";
 
-  const chapterProblems = chapters.map((chapter) => [
-    ...getToolProblems({ chapter, level, withoutTools }),
-    ...getAreaProblems({ chapter, params }),
-  ]);
+    return {
+      blockingProblems: [problem],
+      criteria: ["coverage"],
+      judgedOutput: output,
+      passed: 0,
+      problems: [problem],
+      total,
+    };
+  }
 
-  const pattern = expected ? new RegExp(expected.tool, "iu") : null;
+  const checked = checkChapters({ chapters: kept, params });
 
   const found =
     !pattern ||
-    chapters.some((chapter) => (chapter.tools ?? []).some((tool) => pattern.test(tool.name)));
+    kept.some((chapter) => (chapter.tools ?? []).some((tool) => pattern.test(tool.name)));
 
+  const dropped = chapters.length - kept.length;
   const leavesSkillsOut = coversSkills && uncoveredSkillKeys.length > 0;
 
   const problems = [
-    ...chapterProblems.flat(),
-    !found && `No chapter names the tool the course practices with (${expected?.tool}).`,
+    ...checked.problems,
+    dropped > 0 && `Production would discard ${dropped} of ${chapters.length} chapters.`,
+    !found && `No chapter names the tool the course practices with (${toolName}).`,
     leavesSkillsOut &&
       `No chapter teaches ${uncoveredSkillKeys.length} required skill(s): ${uncoveredSkillKeys.join(", ")}.`,
   ].filter((problem) => typeof problem === "string");
 
   return {
+    criteria: [
+      ...(checked.hasToolProblems || !found ? ["levelFit"] : []),
+      ...(checked.hasAreaProblems || leavesSkillsOut || dropped > 0 ? ["coverage"] : []),
+    ],
     judgedOutput: output,
     passed:
-      chapterProblems.filter((list) => list.length === 0).length +
-      (pattern && found ? 1 : 0) +
-      (coversSkills && !leavesSkillsOut ? 1 : 0),
-    problems: chapters.length === 0 ? ["The output has no chapters."] : problems,
-    total: Math.max(chapters.length + (pattern ? 1 : 0) + (coversSkills ? 1 : 0), 1),
+      checked.passed + Number(Boolean(pattern) && found) + Number(coversSkills && !leavesSkillsOut),
+    problems,
+    total,
   };
 }
 
-export const scoreCourseOutline: TaskScorer<CourseOutlineExpected> = ({ output, testCase }) => {
+export const checkCourseOutlineOutput: TaskCodeChecks<CourseOutlineExpected> = ({
+  output,
+  testCase,
+}) => {
   const params = testCase.userInput as CourseOutlineParams;
 
-  return scoreWithCodeChecks({
-    check: (value) => checkOutline({ expected: testCase.expected, output: value, params }),
+  return checkOutline({ expected: testCase.expected, output, params });
+};
+
+export const scoreCourseOutline: TaskScorer<CourseOutlineExpected> = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkCourseOutlineOutput({ output: value, testCase }),
     output,
     scoreCategories: COURSE_OUTLINE_SCORE_CATEGORIES,
     testCase,
   });
-};

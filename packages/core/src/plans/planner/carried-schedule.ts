@@ -1,10 +1,17 @@
 import { sumOf } from "@zoonk/utils/number";
-import { sumByDay } from "./held-time";
 import { getOneDayStudy } from "./interval-study-minutes";
 import { fromIsoDate } from "./plan-calendar";
 import { type QueueUnit, getBossKey } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, scheduleUnits } from "./schedule-units";
 import { markKeptLessons } from "./whole-boss";
+
+function sumByDay(units: readonly { date: Date; minutes: number }[]): Map<number, number> {
+  return units.reduce(
+    (sums, unit) =>
+      sums.set(unit.date.getTime(), (sums.get(unit.date.getTime()) ?? 0) + unit.minutes),
+    new Map<number, number>(),
+  );
+}
 
 export function shiftReserved({
   days,
