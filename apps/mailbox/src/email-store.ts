@@ -8,6 +8,7 @@ type EmailStoreSnapshot = EmailInboxResponse & { status: EmailInboxStatus };
 const EMAILS_PATH = "/api/emails";
 const POLLING_INTERVAL = 1000;
 const MAX_POLLING_INTERVAL = 30_000;
+const CHECK_TIMEOUT = 10_000;
 const listeners = new Set<() => void>();
 let pollingTimer: ReturnType<typeof setTimeout> | null = null;
 let isChecking = false;
@@ -80,7 +81,8 @@ function getSnapshot(): EmailStoreSnapshot {
 
 async function refreshEmailInbox(): Promise<void> {
   try {
-    const response = await fetch(EMAILS_PATH);
+    // Bounded, so a request that never answers can't stop the polling for good.
+    const response = await fetch(EMAILS_PATH, { signal: AbortSignal.timeout(CHECK_TIMEOUT) });
 
     if (!response.ok) {
       throw new Error(`Inbox request failed: ${response.statusText}`);
