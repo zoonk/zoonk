@@ -204,6 +204,11 @@ function decimalsOf(step: number): number {
   return decimals.replace(/0+$/u, "").length;
 }
 
+export type TickFormat = { compact: boolean; grouping: boolean; maximumFractionDigits: number };
+
+/** Prints one tick in a chart's own notation, such as with its unit or currency. */
+export type TickFormatter = (value: number, options: TickFormat) => string;
+
 /**
  * Tick labels a learner reads on every platform: as many decimals as the step between ticks needs,
  * and large numbers shortened ("12.5K") only where every shortened tick stays exact, so no two ticks
@@ -211,20 +216,24 @@ function decimalsOf(step: number): number {
  */
 export function formatTicks({
   axis,
-  locale,
   ticks,
-}: {
-  axis: "x" | "y";
-  locale: string;
-  ticks: readonly number[];
-}): string[] {
+  ...notation
+}: { axis: "x" | "y"; ticks: readonly number[] } & (
+  | { format: TickFormatter }
+  | { locale: string }
+)): string[] {
   const [first = 0, second] = ticks;
   const large = isLarge(ticks);
   const grouping = axis === "y" || large;
   const digits = second === undefined ? fractionDigitsFor(first) : decimalsOf(second - first);
 
+  const print: TickFormatter =
+    "format" in notation
+      ? notation.format
+      : (value, options) => formatLocalizedNumber({ ...options, locale: notation.locale, value });
+
   const format = (options: { compact: boolean; maximumFractionDigits: number }) =>
-    ticks.map((value) => formatLocalizedNumber({ ...options, grouping, locale, value }));
+    ticks.map((value) => print(value, { ...options, grouping }));
 
   if (large) {
     const compact = format({ compact: true, maximumFractionDigits: COMPACT_FRACTION_DIGITS });
