@@ -39,7 +39,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.today.DayRing
+import com.zoonk.android.feature.today.WeekDayRing
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
@@ -244,7 +244,7 @@ private fun WeekRings(recap: WeeklyRecap) {
     WeekDaysRow(Modifier.clearAndSetSemantics { contentDescription = description }) {
         recap.days.forEach { day ->
             WeekDayCell(weekdayNames(locale).narrow.getValue(day.date.toJavaLocalDate().dayOfWeek), today = day.isToday) {
-                DayRing(day, today) {}
+                WeekDayRing(day, today)
             }
         }
     }

@@ -64,6 +64,25 @@ function dayOf({
 }
 
 describe(toDayViewFields, () => {
+  it("continues pending day work ahead of extras, preserving an active block first", () => {
+    const day = examDay();
+    const [block] = day.session.blocks;
+
+    if (!block) {
+      throw new Error("Expected block");
+    }
+
+    const blocks = [
+      { ...block, payload: { extra: true }, position: 1 },
+      { ...block, payload: {}, position: 9 },
+    ];
+
+    const view = () => toDayViewFields({ ...day, session: { ...day.session, blocks } });
+    expect(view().nextPosition).toBe(9);
+    blocks[0] = { ...blocks[0]!, status: "active" };
+    expect(view().nextPosition).toBe(1);
+  });
+
   it("treats a day with only practice like an empty day: coming while outlined, asked for while idle", () => {
     expect(dayOf({ kinds: [], outlines: "awaiting" }).emptyDay).toBe("lessonsComing");
     expect(dayOf({ kinds: [], outlines: "idle" }).emptyDay).toBe("lessonsToPrepare");

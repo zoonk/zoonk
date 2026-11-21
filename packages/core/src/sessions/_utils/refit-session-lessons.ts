@@ -158,7 +158,10 @@ export async function refitSessionLessons(
     return { reserved: false };
   }
 
-  const { blocks, leaving } = await trimSessionLessons({ completedBlockId, session, tx });
+  const { blocks, leaving } = session.endedAt
+    ? { blocks: session.blocks, leaving: [] }
+    : await trimSessionLessons({ completedBlockId, session, tx });
+
   const room = session.plannedMinutes - getSessionUsedMinutes(blocks);
 
   if (room < 1) {
@@ -234,6 +237,7 @@ export async function refitSessionLessons(
       ? await tx.studySessionBlock.createManyAndReturn({
           data: fitting.map((block, index) => ({
             ...block,
+            payload: { ...block.payload, ...(session.endedAt && { extra: true }) },
             position: position + index,
             sessionId,
           })),
@@ -246,9 +250,12 @@ export async function refitSessionLessons(
 
   const current = { ...session, blocks: [...blocks, ...added] };
 
-  const reserved = hasSessionLessonReservation({ access, plan, prerequisites, session: current });
+  const reserved =
+    !session.endedAt &&
+    hasSessionLessonReservation({ access, plan, prerequisites, session: current });
 
   if (
+    !session.endedAt &&
     !reserved &&
     fitting.length === 0 &&
     room > 0 &&
