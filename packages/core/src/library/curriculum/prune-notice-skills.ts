@@ -1,5 +1,6 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
+import { examStructureSchema } from "../exams/blueprint-contract";
 
 type NoticeSkill = {
   area: string | null;
@@ -10,6 +11,18 @@ type NoticeSkill = {
 };
 
 type NoticeSubject = { name: string; shortName?: string | null; topics: readonly string[] };
+
+export function noticeSubjects(structure: unknown): readonly NoticeSubject[] {
+  return (
+    examStructureSchema
+      .safeParse(structure)
+      .data?.subjects.map(({ name, shortName, topics }) => ({
+        name,
+        shortName: shortName ?? null,
+        topics,
+      })) ?? []
+  );
+}
 
 export function findOutsideNoticeSkills({
   protectedIds = new Set<string>(),

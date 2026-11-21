@@ -5,7 +5,10 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
-import { listNoticeRepairBlueprintsStep } from "../goals/steps/notice-steps";
+import {
+  listNoticeRepairBlueprintsStep,
+  logNoticeRepairFailureStep,
+} from "../goals/steps/notice-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
 import {
   getLevelTestBankCheckToken,
@@ -168,7 +171,7 @@ async function pruneNoticeGraphs(): Promise<void> {
     const ids = await listNoticeRepairBlueprintsStep(after);
 
     // oxlint-disable-next-line no-await-in-loop -- Finish the page before loading more work.
-    await Promise.all(
+    const outcomes = await Promise.allSettled(
       ids.map((examBlueprintId) =>
         updateExamNoticePlans({
           examBlueprintId,
@@ -176,6 +179,15 @@ async function pruneNoticeGraphs(): Promise<void> {
           movesExamDays: false,
           noticeId: null,
         }),
+      ),
+    );
+
+    // oxlint-disable-next-line no-await-in-loop -- Report failures before advancing the page.
+    await Promise.all(
+      outcomes.flatMap((outcome, index) =>
+        outcome.status === "rejected"
+          ? [logNoticeRepairFailureStep({ blueprintId: ids[index], error: String(outcome.reason) })]
+          : [],
       ),
     );
 
@@ -201,6 +213,8 @@ async function sweep(): Promise<SweepCounts> {
     levelTestAnswers,
     sentenceOrders,
     skillLevels,
+    ,
+    noticeRepair,
   ] = await Promise.allSettled([
     checkFreshness(),
     deleteGuests(),
@@ -222,6 +236,10 @@ async function sweep(): Promise<SweepCounts> {
     startOwedMindMapRedraws(),
     pruneNoticeGraphs(),
   ]);
+
+  if (noticeRepair.status === "rejected") {
+    await logNoticeRepairFailureStep({ error: String(noticeRepair.reason) });
+  }
 
   return {
     accessRecordsPurged: access.status === "fulfilled" ? access.value.recordsPurged : 0,

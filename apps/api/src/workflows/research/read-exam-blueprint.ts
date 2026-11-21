@@ -1,8 +1,9 @@
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import {
   listNoticeGoalsStep,
-  pruneSharedExamGraphStep,
-  updateNoticePlansStep,
+  logNoticeRepairFailureStep,
+  prepareNoticeGraphRepairStep,
+  repairNoticePlanStep,
 } from "../goals/steps/notice-steps";
 import { type ResearchAnalytics } from "./_utils/research-analytics";
 import { extractBlueprint } from "./steps/extract-blueprint-step";
@@ -27,7 +28,11 @@ export async function updateExamNoticePlans({
   movesExamDays: boolean;
   noticeId: string | null;
 }): Promise<void> {
-  await pruneSharedExamGraphStep(examBlueprintId);
+  const notice = await prepareNoticeGraphRepairStep(examBlueprintId);
+
+  if (!notice) {
+    return;
+  }
 
   let after: string | null = null;
 
@@ -35,13 +40,25 @@ export async function updateExamNoticePlans({
     // oxlint-disable-next-line no-await-in-loop -- Each page starts after the last one's goal.
     const page = await listNoticeGoalsStep({ after, examBlueprintId, exceptGoalId });
 
-    // oxlint-disable-next-line no-await-in-loop -- One page at a time spares the database.
-    await updateNoticePlansStep({
-      blueprintId: examBlueprintId,
-      goalIds: page.goalIds,
-      movesExamDays,
-      noticeId,
-    });
+    for (const goalId of page.goalIds) {
+      try {
+        // oxlint-disable-next-line no-await-in-loop -- One replan per blueprint at a time.
+        await repairNoticePlanStep({
+          blueprintId: examBlueprintId,
+          goalId,
+          movesExamDays,
+          notice,
+          noticeId,
+        });
+      } catch (error) {
+        // oxlint-disable-next-line no-await-in-loop -- Report a failed goal before continuing.
+        await logNoticeRepairFailureStep({
+          blueprintId: examBlueprintId,
+          error: String(error),
+          goalId,
+        });
+      }
+    }
 
     after = page.next;
   } while (after);

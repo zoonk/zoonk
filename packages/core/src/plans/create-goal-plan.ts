@@ -168,10 +168,11 @@ async function planFromGraph({
 
   const reading = followNotice
     ? followNoticeGraph({
+        askedExtras: context.state.settings.extras,
+        current: context.state.graph,
         droppedIds: new Set(droppedNoticeSkillIds),
         graph: skills,
-        state: context.state,
-      }).graph
+      })
     : skills;
 
   const state = {

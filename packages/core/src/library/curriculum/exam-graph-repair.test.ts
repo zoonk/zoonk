@@ -1,7 +1,9 @@
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   ENGLISH,
@@ -10,20 +12,26 @@ import {
   SPANISH,
   choiceBlueprintFixture,
 } from "../../exams/choices/_test-utils/choice-blueprint";
+import { repairNoticePlan } from "../../plans/notice-plan-change";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { examStructureSchema } from "../exams/blueprint-contract";
 import {
   mockDecision,
   mockSearchTerms,
   mockSearchTermsFor,
   uniqueWord,
 } from "../identity/_test-utils/identity-mocks";
-import { addMissingExamGraphSkills, pruneSharedExamGraph } from "./exam-graph-repair";
+import { addMissingExamGraphSkills, prepareNoticeGraphRepair } from "./exam-graph-repair";
 
 const provenance = {
   generatedAt: new Date().toISOString(),
+  latencyMs: 0,
   model: "openai/gpt-6-sol",
   promptVersion: "coverage-test",
+  provider: "test",
+  requestedModel: "openai/gpt-6-sol",
   runId: "coverage-run",
+  usage: {},
 };
 
 async function writtenGraph(country?: string) {
@@ -214,6 +222,104 @@ describe(addMissingExamGraphSkills, () => {
     ).resolves.toMatchObject({ country: null });
   });
 
+  it("restores a subject to the shared graph after a correction, while an existing plan still lacks it", async () => {
+    const [{ blueprint, graph }, user] = await Promise.all([writtenGraph(), userFixture()]);
+    const parsed = examStructureSchema.parse(blueprint.structure);
+
+    const structure = {
+      ...parsed,
+      subjects: parsed.subjects.filter(({ name }) => name === LANGUAGES || name === MATH),
+    };
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    const plan = await planFixture({ goalId: goal.id, graph });
+
+    const repair = async () => {
+      const notice = await prepareNoticeGraphRepair(blueprint.id);
+
+      if (!notice) {
+        throw new Error("Expected the notice blueprint");
+      }
+
+      await repairNoticePlan({
+        blueprintId: blueprint.id,
+        goalId: goal.id,
+        movesExamDays: false,
+        notice,
+      });
+    };
+
+    await prisma.examBlueprint.update({
+      data: {
+        structure: {
+          ...structure,
+          subjects: structure.subjects.filter(({ name }) => name !== MATH),
+        },
+      },
+      where: { id: blueprint.id },
+    });
+
+    await repair();
+
+    const readPlan = async () => {
+      const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+      return parsePlanGraph(saved.graph);
+    };
+
+    const areas = (saved: Awaited<ReturnType<typeof readPlan>>) =>
+      saved.skills.map((skill) => skill.area);
+
+    expect(areas(await loadGraph(blueprint.id))).toStrictEqual([LANGUAGES]);
+    expect(areas(await readPlan())).toStrictEqual([LANGUAGES]);
+
+    await prisma.examBlueprint.update({ data: { structure }, where: { id: blueprint.id } });
+    await repair();
+
+    vi.mocked(checkCoverage).mockResolvedValue({
+      data: {
+        examWeights: [],
+        missing: [
+          {
+            area: MATH,
+            description: "Solve the restored math questions",
+            examWeight: 5,
+            name: `Resolver questões de matemática ${uniqueWord()}`,
+            prerequisites: [],
+            reference: "Notice",
+            syllabusLine: `Leitura: ${MATH}`,
+            topics: [`Leitura: ${MATH}`],
+          },
+        ],
+        placements: [],
+      },
+      provenance,
+      systemPrompt: "",
+      usage: {
+        inputTokenDetails: {
+          cacheReadTokens: undefined,
+          cacheWriteTokens: undefined,
+          noCacheTokens: 0,
+        },
+        inputTokens: 0,
+        outputTokenDetails: { reasoningTokens: undefined, textTokens: 0 },
+        outputTokens: 0,
+        totalTokens: 0,
+      },
+      userPrompt: "",
+    });
+
+    await expect(addMissingExamGraphSkills(blueprint.id)).resolves.toHaveLength(1);
+    expect(areas(await loadGraph(blueprint.id))).toStrictEqual([LANGUAGES, MATH]);
+
+    await repair();
+    expect(areas(await readPlan())).toStrictEqual([LANGUAGES]);
+  });
+
   it("asks no model when the graph already teaches every topic", async () => {
     const blueprint = await choiceBlueprintFixture();
 
@@ -222,7 +328,7 @@ describe(addMissingExamGraphSkills, () => {
   });
 });
 
-describe(pruneSharedExamGraph, () => {
+describe(prepareNoticeGraphRepair, () => {
   it("keeps the extra when repairing the graph and prunes its out-of-notice prerequisite", async () => {
     const { blueprint, graph, strategy } = await writtenGraph();
     const outside = await skillFixture({ language: "pt", name: "Lógica do concurso anterior" });
@@ -249,8 +355,8 @@ describe(pruneSharedExamGraph, () => {
       }),
     ]);
 
-    await expect(pruneSharedExamGraph(blueprint.id)).resolves.toBe(true);
-    await expect(pruneSharedExamGraph(blueprint.id)).resolves.toBe(false);
+    const notice = await prepareNoticeGraphRepair(blueprint.id);
+    await expect(prepareNoticeGraphRepair(blueprint.id)).resolves.toStrictEqual(notice);
 
     const saved = await prisma.examSkillGraph.findUniqueOrThrow({
       where: { examBlueprintId: blueprint.id },

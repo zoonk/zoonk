@@ -12,6 +12,7 @@ import { type CurriculumScope } from "./curriculum-scope";
 import { toExamOutline } from "./exam-curriculum-outline";
 import { toGoalPlanGraph } from "./goal-plan-graph";
 import { type PlanSkillGraph, buildPlanSkillGraph } from "./plan-skill-graph";
+import { noticeSubjects } from "./prune-notice-skills";
 import { prunePlanNoticeGraph } from "./prune-plan-notice-graph";
 import {
   type GoalSkillGraph,
@@ -180,48 +181,51 @@ export async function addMissingExamGraphSkills(examBlueprintId: string): Promis
   return saved ? added.map((skill) => skill.name) : [];
 }
 
-export async function pruneSharedExamGraph(examBlueprintId: string): Promise<boolean> {
+export async function prepareNoticeGraphRepair(examBlueprintId: string) {
   const [stored, blueprint] = await Promise.all([
-    prisma.examSkillGraph.findUnique({ where: { examBlueprintId } }),
-    prisma.examBlueprint.findUnique({ where: { id: examBlueprintId } }),
+    prisma.examSkillGraph.findUnique({ select: { graph: true }, where: { examBlueprintId } }),
+    prisma.examBlueprint.findUnique({
+      select: { structure: true },
+      where: { id: examBlueprintId },
+    }),
   ]);
 
-  if (!stored || !blueprint) {
-    return false;
+  if (!blueprint) {
+    return null;
   }
 
-  const { dropped } = await prunePlanNoticeGraph({
-    graph: parsePlanGraph(stored.graph),
-    subjects: toExamOutline(blueprint).subjects,
-  });
+  const graph = parsePlanGraph(stored?.graph);
+  const subjects = noticeSubjects(blueprint.structure);
+  const { dropped } = await prunePlanNoticeGraph({ graph, subjects });
 
   if (dropped.length === 0) {
-    return false;
+    return { extraSkills: graph.extraSkills ?? [], subjects };
   }
 
   return writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
 
     const [current, notice] = await Promise.all([
-      tx.examSkillGraph.findUnique({ where: { examBlueprintId } }),
-      tx.examBlueprint.findUnique({ where: { id: examBlueprintId } }),
+      tx.examSkillGraph.findUnique({ select: { graph: true }, where: { examBlueprintId } }),
+      tx.examBlueprint.findUnique({ select: { structure: true }, where: { id: examBlueprintId } }),
     ]);
 
-    if (!current || !notice) {
-      return false;
+    if (!notice) {
+      return null;
     }
+
+    const currentSubjects = noticeSubjects(notice.structure);
 
     const pruned = await prunePlanNoticeGraph({
       db: tx,
-      graph: parsePlanGraph(current.graph),
-      subjects: toExamOutline(notice).subjects,
+      graph: parsePlanGraph(current?.graph),
+      subjects: currentSubjects,
     });
 
-    if (pruned.dropped.length === 0) {
-      return false;
+    if (pruned.dropped.length > 0) {
+      await tx.examSkillGraph.update({ data: { graph: pruned.graph }, where: { examBlueprintId } });
     }
 
-    await tx.examSkillGraph.update({ data: { graph: pruned.graph }, where: { examBlueprintId } });
-    return true;
+    return { extraSkills: pruned.graph.extraSkills ?? [], subjects: currentSubjects };
   });
 }

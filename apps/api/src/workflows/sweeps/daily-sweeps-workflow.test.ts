@@ -32,6 +32,7 @@ import {
   unnoticedSourceChangeFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { assert, describe, expect, it } from "vitest";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
@@ -43,6 +44,7 @@ import { levelTestBankCheckWorkflow } from "../language/level-test-bank-check-wo
 import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
 import { skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
+import { updateExamNoticePlans } from "../research/read-exam-blueprint";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
 
@@ -118,19 +120,27 @@ describe(dailySweepsWorkflow, () => {
     ]);
 
     const goal = await goalFixture({
+      dailyMinutes: 60,
       examBlueprintId: blueprint.id,
       kind: "exam",
+      targetDate: new Date(Date.now() + 30 * DAY_MS),
       userId: user.id,
     });
 
     const [official, strategy] = plannedSkills([required, outside]);
 
+    const finance = {
+      ...official,
+      area: "Public finance",
+      skillId: required.id,
+      topics: ["Budgets"],
+    };
+
+    const extra = { ...strategy, area: "Strategy", skillId: outside.id, topics: [] };
+
     const graph = {
       phases: [{ milestone: null, name: "Exam preparation" }],
-      skills: [
-        { ...official, area: "Public finance", skillId: required.id, topics: ["Budgets"] },
-        { ...strategy, area: "Strategy", skillId: outside.id, topics: [] },
-      ],
+      skills: [finance, extra],
     };
 
     const [plan, shared] = await Promise.all([
@@ -148,7 +158,21 @@ describe(dailySweepsWorkflow, () => {
     ]);
 
     await dailySweepsWorkflow(scheduledRun());
-    await dailySweepsWorkflow(scheduledRun());
+
+    await planItemFixture({ planId: plan.id, skillId: required.id });
+
+    const itemReads = await countDatabaseRows(
+      () =>
+        updateExamNoticePlans({
+          examBlueprintId: blueprint.id,
+          exceptGoalId: null,
+          movesExamDays: false,
+          noticeId: null,
+        }),
+      '"plan_items"',
+    );
+
+    expect.soft(itemReads.rows).toBe(0);
 
     const [updated, reused, changes] = await Promise.all([
       prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
@@ -160,6 +184,25 @@ describe(dailySweepsWorkflow, () => {
     expect(updated.graph).toMatchObject({ skills });
     expect(reused.graph).toMatchObject({ skills });
     expect(changes).toMatchObject([{ payload: { effect: { noticeRemoved: ["Strategy"] } } }]);
+
+    const extraSkills = [extra];
+
+    await prisma.examSkillGraph.update({
+      data: { graph: { extraSkills, phases: graph.phases, skills: [finance] } },
+      where: { id: shared.id },
+    });
+
+    await dailySweepsWorkflow(scheduledRun());
+
+    const offered = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(offered.graph).toMatchObject({ extraSkills, skills });
+
+    expect(offered.summary).toMatchObject({
+      advice: {
+        extraOffer: { lessons: 1, operations: [{ kind: "setExtras", skillIds: [outside.id] }] },
+      },
+    });
   });
 
   it("checks due exams and sources, deletes inactive guests, purges old memory and evaluation runs, recalibrates questions, starts the later check of lessons made ahead, deletes lesson versions replaced days ago and sign-in codes expired days ago", async () => {

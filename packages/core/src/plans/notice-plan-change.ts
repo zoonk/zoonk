@@ -125,7 +125,7 @@ async function proposeForGoal({
   return proposed.status === "proposed" ? "proposed" : "none";
 }
 
-async function landWaitingNoticeGraph(goalId: string): Promise<boolean> {
+async function loadWaitingNoticeGraph(goalId: string) {
   const waiting = await prisma.planChange.findFirst({
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     select: { payload: true, plan: { select: { goal: { select: { examBlueprintId: true } } } } },
@@ -137,27 +137,55 @@ async function landWaitingNoticeGraph(goalId: string): Promise<boolean> {
     },
   });
 
-  const payload = waiting?.payload;
-  const blueprintId = waiting?.plan.goal.examBlueprintId;
-  const graph = isJsonObject(payload) ? planGraphSchema.safeParse(payload.noticeGraph).data : null;
-
-  if (blueprintId && graph?.skills.length) {
-    await applyNoticeGraph({ blueprintId, goalId, graph, legacy: true });
+  if (!waiting) {
+    return null;
   }
 
-  return waiting !== null;
+  const { payload, plan } = waiting;
+  const graph = isJsonObject(payload) ? planGraphSchema.safeParse(payload.noticeGraph).data : null;
+
+  return { blueprintId: plan.goal.examBlueprintId, graph };
 }
 
 export async function proposeNoticeChange(
   request: NoticeChangeRequest,
 ): Promise<NoticeChangeOutcome> {
-  await landWaitingNoticeGraph(request.goalId);
+  const waiting = await loadWaitingNoticeGraph(request.goalId);
+
+  if (waiting?.blueprintId && waiting.graph?.skills.length) {
+    await applyNoticeGraph({
+      blueprintId: waiting.blueprintId,
+      goalId: request.goalId,
+      graph: waiting.graph,
+      legacy: true,
+    });
+  }
+
   return withPlanRetry(() => proposeForGoal(request));
 }
 
-export async function retireWaitingNoticeGraph(goalId: string): Promise<void> {
-  if (await landWaitingNoticeGraph(goalId)) {
-    await withPlanRetry(() => proposeForGoal({ goalId }));
+export async function repairNoticePlan({
+  blueprintId,
+  goalId,
+  movesExamDays,
+  notice,
+  noticeId,
+}: Pick<NoticeChangeRequest, "goalId" | "noticeId"> & {
+  blueprintId: string;
+  movesExamDays: boolean;
+  notice: NonNullable<Parameters<typeof applyNoticeGraph>[0]["notice"]>;
+}): Promise<void> {
+  const waiting = await loadWaitingNoticeGraph(goalId);
+
+  const graph =
+    waiting?.blueprintId === blueprintId && waiting.graph?.skills.length
+      ? waiting.graph
+      : undefined;
+
+  await applyNoticeGraph({ blueprintId, goalId, graph, legacy: Boolean(graph), notice });
+
+  if (movesExamDays || waiting) {
+    await proposeForGoal({ goalId, noticeId });
   }
 }
 
