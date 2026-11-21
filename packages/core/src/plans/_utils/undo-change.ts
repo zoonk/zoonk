@@ -7,6 +7,7 @@ import { FOCUS_TEST_SOURCE } from "../../learner/placement/focus-test-contract";
 import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
+import { keepOpenSessionSelection } from "../../sessions/_utils/skip-tested-out-blocks";
 import { refreshGoalPlan, refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { followPlanToday } from "./follow-plan-today";
@@ -79,8 +80,10 @@ export async function undoChange({
     return { status: "conflict" as const };
   }
 
+  const payload = parsePlanChangePayload(change.payload);
+
   const skipped = new Set(
-    change.kind === "testedOut" ? parsePlanChangePayload(change.payload).planItemIds : [],
+    change.kind === "testedOut" || payload.livingPlanDay ? payload.planItemIds : [],
   );
 
   const skillIds =
@@ -98,6 +101,7 @@ export async function undoChange({
     const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
 
     const session =
+      !payload.livingPlanDay &&
       snapshot.todaySession &&
       (await lockDaySession({
         goalId: context.goal.id,
@@ -107,13 +111,40 @@ export async function undoChange({
         userId: context.goal.userId,
       }));
 
+    const returned = new Set(payload.livingPlanDay ? payload.carriedItemIds : []);
+
+    const testedOut = Map.groupBy(
+      items.filter((item) => returned.has(item.id) && item.status === "testedOut"),
+      (item) => item.completedAt?.toISOString(),
+    );
+
+    for (const [completedAt, group] of testedOut) {
+      // oxlint-disable-next-line no-await-in-loop -- Restore the snapshot dates under the plan lock.
+      await tx.planItem.updateMany({
+        data: { completedAt: completedAt ? new Date(completedAt) : null, status: "testedOut" },
+        where: {
+          id: { in: group.map((item) => item.id) },
+          planId: context.plan.id,
+          status: "todo",
+        },
+      });
+    }
+
     await restorePlan({ context: writeContext, items, snapshot, tx });
+
+    if (payload.livingPlanDay) {
+      await keepOpenSessionSelection(tx, {
+        goalId: context.goal.id,
+        planVersion: context.plan.version + 1,
+      });
+    }
+
     await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
     const undone = await toUndone({ change, tx });
 
     await tx.planChange.update({
       data:
-        change.kind === "testedOut" && undone.status === "undone"
+        (change.kind === "testedOut" || payload.livingPlanDay) && undone.status === "undone"
           ? {
               ...undone,
               payload: toPlanChangePayload({
@@ -154,9 +185,9 @@ export async function undoChange({
   await refreshSavedGoalPlanAdvice(context.goal.id);
   revalidatePlanTags(context.goal.userId);
 
-  if (!restored) {
+  if (!restored && !payload.livingPlanDay) {
     await followPlanToday({ context });
-  } else if (restored.settle) {
+  } else if (restored?.settle) {
     await settleSessionDay({
       sessionId: restored.sessionId,
       timeZone: context.timeZone,

@@ -23,6 +23,7 @@ export async function commitPlan({
   keepsOpenUndo,
   phaseDates,
   restorable = null,
+  snapshotContext = context,
   revalidation = "now",
   replacement,
 }: {
@@ -33,6 +34,7 @@ export async function commitPlan({
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
   keepsOpenUndo?: boolean;
   restorable?: string | null;
+  snapshotContext?: PlanContext;
   phaseDates?: Pick<Parameters<typeof preparePhaseDatesProposal>[0], "mode" | "pace" | "planning">;
   revalidation?: PlanTagRevalidation;
 }): Promise<string | null> {
@@ -83,7 +85,7 @@ export async function commitPlan({
     const undoable = created && isUndoableChange(created) ? created.id : restorable;
 
     if (undoable) {
-      await savePlanSnapshot({ changeId: undoable, context, tx });
+      await savePlanSnapshot({ changeId: undoable, context: snapshotContext, tx });
     }
 
     return created?.id ?? null;

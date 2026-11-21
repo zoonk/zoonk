@@ -4,6 +4,7 @@ import { getExamDocument } from "../../exams/exam-document";
 import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { addDays } from "../planner/plan-calendar";
+import { latestLivingPlanChanges } from "./living-plan-change";
 import { isUndoableChange, parsePlanChangePayload } from "./plan-change-payload";
 import { getPlanChangeQuote } from "./plan-change-quote";
 
@@ -91,7 +92,7 @@ export async function loadPlanChangeViews({
     },
   });
 
-  return changes
+  return latestLivingPlanChanges(changes)
     .toSorted((a, b) => Number(b.status === "proposed") - Number(a.status === "proposed"))
     .map((change) => toPlanChangeView({ change, goal, planVersion }));
 }
