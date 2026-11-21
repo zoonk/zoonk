@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
-import { writingResultSchema, writingStartSchema } from "@zoonk/core/exams/essays/writing-contract";
+import {
+  MAX_ESSAY_CHARACTERS,
+  writingResultSchema,
+  writingStartSchema,
+} from "@zoonk/core/exams/essays/writing-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -225,7 +229,9 @@ test.describe("Essays API", () => {
         learner.api.post(`/v1/essays/${randomUUID()}/submissions`, { data: submission }),
         learner.api.post("/v1/essays/not-a-block/submissions", { data: submission }),
         learner.api.post(`${path}/submissions`, { data: SHORT_DRAFT }),
-        learner.api.post(`${path}/submissions`, { data: { ...submission, text: " " } }),
+        learner.api.post(`${path}/submissions`, {
+          data: { ...submission, text: "a".repeat(MAX_ESSAY_CHARACTERS + 1) },
+        }),
         learner.api.post(`${path}/submissions`, {
           data: { ...submission, timeZone: "Mars/Olympus" },
         }),
