@@ -8,14 +8,19 @@ import { CLEAN, checkFixture } from "./check-fixture.mts";
 import { deviceSection } from "./device-section.mts";
 import { type DeviceBridge, type Installed, takeDevicePicture } from "./device.mts";
 import { type CaptureItem, deviceLine, readManifest, writeManifest } from "./media.mts";
+import { sha256File } from "./provenance.mts";
 import { formatCheck } from "./report.mts";
 
 /** A booted device that draws `bytes` and reports `installed` as its app's build. */
-function bridge(installed: Installed, booted = true): DeviceBridge {
+function bridge(
+  installed: Installed,
+  booted = true,
+  bytes = "the simulator's picture",
+): DeviceBridge {
   return {
     describe: async () => (booted ? "iPhone 17, iOS 26.1" : null),
     installed: async () => installed,
-    screenshot: async (_id, file) => writeFileSync(file, "the simulator's picture"),
+    screenshot: async (_id, file) => writeFileSync(file, bytes),
   };
 }
 
@@ -49,7 +54,7 @@ async function take(repository: string, installed: Installed, platform: "android
   const markdown = deviceSection([{ item, link: picture }]);
   const result = await checkBody({ markdown, repository, root: repository });
 
-  return { item, result };
+  return { item, result, to };
 }
 
 describe("pnpm pr:media device: a picture the tool takes from a booted device", () => {
@@ -65,6 +70,33 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
       formatCheck(result, repository),
       /^On a device, layout not measured \(1\):\n {2}.*sheet-over-plan\.png: iPhone 17, iOS 26\.1; build \w{10}$/mu,
     );
+  });
+
+  it("replaces the record when a picture is retaken, the new one unread until it's read", async () => {
+    const { repository } = checkFixture();
+    const installed = { commit: head(repository), dirty: false };
+    const { to } = await take(repository, installed, "apple");
+
+    const retaken = await takeDevicePicture({
+      bridge: bridge(installed, true, "the picture after the fix"),
+      deviceId: "booted-device",
+      name: "sheet over plan",
+      platform: "apple",
+      repository,
+      to,
+    });
+
+    const picture = join(to, "sheet-over-plan.png");
+    assert.deepEqual(await readManifest(to), [retaken]);
+    assert.equal(retaken.sha256, await sha256File(picture));
+
+    const markdown = deviceSection([{ item: retaken, link: picture }]);
+    const unread = await checkBody({ markdown, repository, root: repository });
+    assert.deepEqual(unread.problems, [{ kind: "unread", picture }]);
+
+    await writeManifest(to, [{ ...retaken, read: CLEAN }]);
+    const read = await checkBody({ markdown, repository, root: repository });
+    assert.deepEqual(read.problems, []);
   });
 
   it("refuses a simulator whose installed build isn't the head's, or was built from changes", async () => {
