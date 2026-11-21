@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
+import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
@@ -185,9 +186,15 @@ export async function writePlan({
     tx,
   });
 
-  if (mockScheduled) {
-    const { goal } = context;
+  const { goal } = context;
+  const firstPlan = context.state.graph.skills.length === 0 && plan.state.graph.skills.length > 0;
 
+  if (
+    goal.kind === "exam" &&
+    goal.status === "active" &&
+    (mockScheduled || firstPlan) &&
+    (await findActiveSubscriptionForUser({ client: tx, now: new Date(), userId: goal.userId }))
+  ) {
     await owe({
       db: tx,
       followUps: [
@@ -204,9 +211,9 @@ export async function writePlan({
 
   await saveProposalPreviews({ previews: plan.previews, tx });
 
-  if (context.goal.kind === "exam") {
-    const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
-    await keepSummaryCurrent({ goal, plan: plan.state, tx });
+  if (goal.kind === "exam") {
+    const updated = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    await keepSummaryCurrent({ goal: updated, plan: plan.state, tx });
   }
 }
 

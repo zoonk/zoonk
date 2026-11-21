@@ -182,7 +182,9 @@ describe("a mock's listening section", () => {
 
     expect(full?.leftOut).not.toContainEqual({ name: "Listening", part: "listening" });
 
-    await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
+    await expect(
+      listMockPrepWrites({ goalId: goal.id, only: mockPaperKey(FULL) }),
+    ).resolves.toMatchObject({
       papers: [{ recordings: { parts: [{ sectionName: "Listening" }] } }],
     });
 
@@ -250,7 +252,10 @@ describe("a mock's listening section", () => {
     const request = await listMockPrepWrites({ goalId: goal.id });
 
     expect(
-      request.papers.flatMap((paper) => paper.recordings?.parts ?? []).map((part) => part.task),
+      request.papers
+        .filter((paper) => !paper.alternative)
+        .flatMap((paper) => paper.recordings?.parts ?? [])
+        .map((part) => part.task),
     ).toStrictEqual([
       parts[1]?.task,
       parts[0]?.task,
@@ -290,7 +295,7 @@ describe("a mock's listening section", () => {
   it("has written questions written only for the other sections' skills: listening is asked on recordings", async () => {
     const { goal, reading } = await listeningSetup({ readingQuestions: 1 });
 
-    const request = await listMockPrepWrites({ goalId: goal.id });
+    const request = await listMockPrepWrites({ goalId: goal.id, only: mockPaperKey(FULL) });
 
     expect(request.papers.every((paper) => !paper.recordings)).toBe(true);
 

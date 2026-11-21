@@ -57,6 +57,27 @@ async function prepareSets({
   return stored.some(Boolean);
 }
 
+async function writeSupply({
+  goalId,
+  workflowRunId,
+  supply,
+}: {
+  goalId: string;
+  workflowRunId: string;
+  supply: MockQuestionWrites;
+}) {
+  await writeMockQuestions({ ...supply, goalId, workflowRunId });
+
+  if (supply.recordings) {
+    await prepareMockRecordings({
+      goalId,
+      later: supply.later,
+      recordings: supply.recordings,
+      workflowRunId,
+    });
+  }
+}
+
 async function prepareGoalSupply({
   ask,
   goalId,
@@ -72,28 +93,47 @@ async function prepareGoalSupply({
     const input = { goalId, priority: paper };
     const planned = await listMockPrepWritesStep(input);
 
+    const first = planned.papers.filter((supply) => !supply.alternative);
+
     const stored = await Promise.all(
-      planned.papers.map((supply) => prepareSets({ goalId, supply, workflowRunId })),
+      first.map((supply) => prepareSets({ goalId, supply, workflowRunId })),
     );
 
     const { papers } = stored.some(Boolean) ? await listMockPrepWritesStep(input) : planned;
-    // The next batch compares its questions against those already written.
-    /* oxlint-disable no-await-in-loop */
-    for (const supply of papers.toSorted((a, b) => Number(a.later) - Number(b.later))) {
-      await writeMockQuestions({ ...supply, goalId, workflowRunId });
 
-      if (supply.recordings) {
-        await prepareMockRecordings({
-          goalId,
-          later: supply.later,
-          recordings: supply.recordings,
-          workflowRunId,
-        });
+    const reserved = papers
+      .filter((entry) => !entry.alternative)
+      .toSorted((a, b) => Number(a.later) - Number(b.later));
+
+    /* oxlint-disable no-await-in-loop -- Each chooser alternative can use the last paper's writes. */
+    for (const supply of reserved) {
+      await writeSupply({ goalId, supply, workflowRunId });
+    }
+
+    if (paper) {
+      return;
+    }
+
+    const current = reserved.length > 0 ? await listMockPrepWritesStep(input) : { papers };
+
+    for (const alternative of current.papers.filter((supply) => supply.alternative)) {
+      const next = { ...input, only: alternative.key };
+      const { papers: short } = await listMockPrepWritesStep(next);
+      const [supply] = short;
+
+      if (supply) {
+        const addedSets = await prepareSets({ goalId, supply, workflowRunId });
+        const recounted = addedSets ? await listMockPrepWritesStep(next) : { papers: short };
+        const [remaining] = recounted.papers;
+
+        if (remaining) {
+          await writeSupply({ goalId, supply: remaining, workflowRunId });
+        }
       }
     }
     /* oxlint-enable no-await-in-loop */
   } finally {
-    await checkMockSupplyStep(goalId);
+    await checkMockSupplyStep(goalId, { priority: paper });
 
     // A writer that can't fill the shortage would spend again on every later pass, so a run that
     // reached its recount answers the ask; the recount's alert and the daily supply take it from here.

@@ -6,6 +6,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { thirdsMath, thirdsQuestion } from "../../library/items/_test-utils/math-problems";
+import { mockPaperKey } from "./_utils/mock-supply-request";
 import { getMock } from "./get-mock";
 import { listMockPrepWrites } from "./prepare-mock-questions";
 import { startAnytimeMock } from "./start-anytime-mock";
@@ -200,7 +201,7 @@ describe("a mock in the exam's own mix of formats", () => {
       skillId: kinematics?.id ?? "",
     });
 
-    const first = await listMockPrepWrites({ goalId: goal.id });
+    const first = await listMockPrepWrites({ goalId: goal.id, only: mockPaperKey(FULL) });
 
     expect(
       first.papers
@@ -319,7 +320,7 @@ describe("a mock in the exam's own mix of formats", () => {
       data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
     });
 
-    const { papers } = await listMockPrepWrites({ goalId: goal.id });
+    const { papers } = await listMockPrepWrites({ goalId: goal.id, only: mockPaperKey(FULL) });
     const writes = papers.flatMap((paper) => paper.writes);
 
     expect(

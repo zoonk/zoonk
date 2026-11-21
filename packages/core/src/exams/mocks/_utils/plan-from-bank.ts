@@ -176,25 +176,33 @@ async function reserveScheduled({
   return reserved;
 }
 
-export async function planFromBank({
-  client = prisma,
-  now,
-  reuse = false,
-  exclude,
-  goal,
-  option,
-  setup,
-  userId,
-}: {
+type BankInput = {
   goal: Goal;
-  option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
   client?: TransactionClient;
   reuse?: boolean;
   now?: Date;
   exclude?: ReadonlySet<string>;
-}): Promise<BankPlan> {
+};
+
+export async function planFromBank({
+  option,
+  ...input
+}: BankInput & { option: MockOption }): Promise<BankPlan> {
+  const bank = await loadMockBank(input);
+  return planFromMockBank({ bank, option });
+}
+
+export async function loadMockBank({
+  client = prisma,
+  now,
+  reuse = false,
+  exclude,
+  goal,
+  setup,
+  userId,
+}: BankInput) {
   const loaded = await loadMockCandidates({
     client,
     goal,
@@ -221,7 +229,17 @@ export async function planFromBank({
         })
       : setup;
 
-  const text = loaded.filter((item) => !protectedIds.has(item.itemId));
+  return { available, reuse, text: loaded.filter((item) => !protectedIds.has(item.itemId)) };
+}
+
+export function planFromMockBank({
+  bank,
+  option,
+}: {
+  bank: Awaited<ReturnType<typeof loadMockBank>>;
+  option: MockOption;
+}): BankPlan {
+  const { available, reuse, text } = bank;
   const candidates = [...text, ...[...available.listening.values()].flat()];
 
   const freshPlan = planOptionMock({

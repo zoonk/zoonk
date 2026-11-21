@@ -31,7 +31,7 @@ export async function listExamSupplyGoalsStep(input: Parameters<typeof listExamS
   "use step";
   return listExamSupplyGoals(input);
 }
-export async function checkMockSupplyStep(goalId: string) {
+export async function checkMockSupplyStep(...input: Parameters<typeof checkMockSupply>) {
   "use step";
-  return checkMockSupply(goalId);
+  return checkMockSupply(...input);
 }

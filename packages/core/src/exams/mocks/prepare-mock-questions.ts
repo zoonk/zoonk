@@ -1,5 +1,6 @@
 import { captureMessage } from "@sentry/nextjs";
-import { AnyNull, DbNull, type Goal, prisma } from "@zoonk/db";
+import { getActiveSubscriptionFilter } from "@zoonk/auth/active-subscription";
+import { DbNull, type Goal, type Plan, type PlanItem, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -10,6 +11,7 @@ import {
   getPlacementQuickFormat,
 } from "../../learner/placement/placement-quick-format";
 import "server-only";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toListeningExam } from "../listening/listening-exam";
 import { type PartsToPrepare } from "../listening/prepare-listening-part";
 import {
@@ -17,14 +19,14 @@ import {
   loadAnytimeMockSetup,
   resolveAnytimeOption,
 } from "./_utils/anytime-mock-setup";
-import { canReuseMockItems, isCompleteMock, planFromBank } from "./_utils/create-anytime-mock";
+import { canReuseMockItems, isCompleteMock } from "./_utils/create-anytime-mock";
 import {
   mockPaperKey,
   readMockSupplyRequest,
   storedMockRequest,
 } from "./_utils/mock-supply-request";
-import { planMockWrites } from "./_utils/mock-writes";
-import { planScheduledFromBank } from "./_utils/plan-from-bank";
+import { loadMockWriteSkills, planMockWrites } from "./_utils/mock-writes";
+import { loadMockBank, planFromMockBank, planScheduledFromBank } from "./_utils/plan-from-bank";
 import {
   SCHEDULED_SUPPLY_PLAN_SELECT,
   listScheduledSupplyOptions,
@@ -35,6 +37,7 @@ import { type MockFormatShortfall } from "./mock-shortfall";
 export type MockQuestionWrites = {
   recordings?: PartsToPrepare;
   allowStimulusSets?: boolean;
+  alternative?: true;
   later: boolean;
   key: string;
   quickFormat: PlacementQuickFormat;
@@ -42,27 +45,18 @@ export type MockQuestionWrites = {
 };
 
 export async function listDueMockGoals() {
-  const now = new Date();
+  const paid = await prisma.subscription.groupBy({
+    by: ["referenceId"],
+    where: getActiveSubscriptionFilter(new Date()),
+  });
 
   const due = await prisma.goal.findMany({
     select: { examBlueprintId: true, id: true },
     where: {
-      OR: [
-        { requestedMock: { not: AnyNull, path: ["shape", "kind"] } },
-        {
-          plan: {
-            items: {
-              some: {
-                kind: "mock",
-                scheduledFor: { lte: new Date(now.getTime() + 7 * MS_PER_DAY) },
-                status: "todo",
-              },
-            },
-          },
-        },
-      ],
       kind: "exam",
+      plan: { isNot: null },
       status: "active",
+      userId: { in: paid.map(({ referenceId }) => referenceId) },
     },
   });
 
@@ -89,13 +83,10 @@ export async function listExamSupplyGoals({
   const peers = await prisma.goal.findMany({
     select: { id: true },
     where: {
-      OR: [
-        { requestedMock: { not: AnyNull, path: ["shape", "kind"] } },
-        { plan: { items: { some: { kind: "mock", status: "todo" } } } },
-      ],
       examBlueprintId,
       id: { not: goalId },
       kind: "exam",
+      plan: { isNot: null },
       status: "active",
     },
   });
@@ -103,7 +94,7 @@ export async function listExamSupplyGoals({
   return [goalId, ...peers.map((peer) => peer.id)];
 }
 
-export async function checkMockSupply(goalId: string) {
+export async function checkMockSupply(goalId: string, { priority }: { priority?: string } = {}) {
   const goal = await prisma.goal.findUnique({
     select: { requestedMock: true, userId: true },
     where: { id: goalId },
@@ -113,7 +104,10 @@ export async function checkMockSupply(goalId: string) {
 
   if (goal) {
     const saved = readMockSupplyRequest(goal.requestedMock);
-    const papers = result.papers.map((paper) => paper.key);
+
+    const papers = result.papers.flatMap((paper) =>
+      priority && paper.alternative && !saved.papers.includes(paper.key) ? [] : [paper.key],
+    );
 
     if (JSON.stringify(saved.papers) !== JSON.stringify(papers)) {
       await writeLearnerChange({ userId: goal.userId }, (tx) =>
@@ -134,48 +128,104 @@ export async function checkMockSupply(goalId: string) {
     });
   }
 
-  return result.papers.length === 0;
+  return priority
+    ? result.papers.every((paper) => paper.key !== priority)
+    : result.papers.length === 0;
 }
 
-async function getSupplyTargets({
+type SupplyGoal = Goal & {
+  plan: (Pick<Plan, "graph" | "settings"> & { items: Pick<PlanItem, "scheduledFor">[] }) | null;
+};
+
+async function planScheduledSupply({
   goal,
   setup,
 }: {
-  goal: Goal & { plan: Parameters<typeof listScheduledSupplyOptions>[0]["plan"] };
+  goal: SupplyGoal;
+  setup: Awaited<ReturnType<typeof loadAnytimeMockSetup>>;
+}) {
+  const upcoming = await listScheduledSupplyOptions({ goal, plan: goal.plan });
+  const exclude = new Set<string>();
+  const papers = [];
+
+  for (const paper of upcoming) {
+    // oxlint-disable-next-line no-await-in-loop -- Each sitting reserves its own fresh questions.
+    const planned = await planScheduledFromBank({
+      ...paper,
+      exclude,
+      goal,
+      paperPlan: goal.plan,
+      setup,
+    });
+
+    papers.push({
+      key: paper.scheduledFor.toISOString(),
+      planned,
+      urgent: paper.scheduledFor.getTime() <= Date.now() + 3 * MS_PER_DAY,
+    });
+
+    for (const id of getPlannedItemIds(planned.plan)) {
+      exclude.add(id);
+    }
+  }
+
+  return { exclude, papers };
+}
+
+async function planAnytimeSupply({
+  exclude,
+  goal,
+  only,
+  priority,
+  reuse,
+  setup,
+}: {
+  exclude: ReadonlySet<string>;
+  goal: Goal;
+  only?: string;
+  priority?: string;
+  reuse: boolean;
   setup: Awaited<ReturnType<typeof loadAnytimeMockSetup>>;
 }) {
   const { shape } = readMockSupplyRequest(goal.requestedMock);
+  const asked = shape && resolveAnytimeOption({ choice: { shape }, setup });
+  const askedKey = asked && mockPaperKey(asked);
 
-  const upcoming = await listScheduledSupplyOptions({ goal, plan: goal.plan });
+  const allowed = reuse || priority ? [asked].filter((option) => option !== null) : setup.options;
+  const options = allowed.filter((option) => !only || mockPaperKey(option) === only);
 
-  const scheduled = upcoming.map((paper) => ({
-    key: paper.scheduledFor.toISOString(),
-    paper,
-    urgent: paper.scheduledFor.getTime() <= Date.now() + 3 * MS_PER_DAY,
-  }));
+  if (options.length === 0) {
+    return [];
+  }
 
-  const asked = shape
-    ? resolveAnytimeOption({ choice: { shape }, setup })
-    : (setup.options.find((option) => option.kind === "full") ?? setup.options[0]);
+  const bank = await loadMockBank({ exclude, goal, reuse, setup, userId: goal.userId });
 
-  const reuseRequested = await canReuseMockItems(prisma, goal.userId);
+  return options.map((option) => {
+    const draft = planFromMockBank({ bank, option });
+    const key = mockPaperKey(option);
+    const urgent = key === askedKey;
 
-  const targets = [
-    ...scheduled,
-    ...(asked && (shape || !reuseRequested)
-      ? [{ key: mockPaperKey(asked), option: asked, reuse: reuseRequested, urgent: Boolean(shape) }]
-      : []),
-  ];
-
-  return { reuseRequested, targets };
+    return {
+      alternative: !urgent,
+      key,
+      planned: {
+        ...draft,
+        complete: isCompleteMock({ option, plan: draft.plan, setup: draft.available }),
+        option,
+      },
+      urgent,
+    };
+  });
 }
 
 export async function listMockPrepWrites({
   goalId,
   priority,
+  only,
 }: {
   goalId: string;
   priority?: string;
+  only?: string;
 }): Promise<{ papers: MockQuestionWrites[]; urgentShort: boolean }> {
   const goal = await prisma.goal.findUnique({
     include: { plan: { select: SCHEDULED_SUPPLY_PLAN_SELECT } },
@@ -190,64 +240,55 @@ export async function listMockPrepWrites({
     return { papers: [], urgentShort: false };
   }
 
-  const setup = await loadAnytimeMockSetup(goal);
-  const { reuseRequested, targets } = await getSupplyTargets({ goal, setup });
-  const used = new Set<string>();
-  const papers: MockQuestionWrites[] = [];
+  const [setup, reuse] = await Promise.all([
+    loadAnytimeMockSetup(goal),
+    canReuseMockItems(prisma, goal.userId),
+  ]);
+
+  const scheduled = await planScheduledSupply({ goal, setup });
+
+  const anytime = await planAnytimeSupply({
+    exclude: scheduled.exclude,
+    goal,
+    only,
+    priority,
+    reuse,
+    setup,
+  });
+
+  const missing = [...scheduled.papers, ...anytime].filter(
+    ({ key, planned }) => (!only || key === only) && !planned.complete,
+  );
+
   const exam = toListeningExam({ ...goal, examBlueprint: setup.blueprint });
   const quickFormat = getPlacementQuickFormat(setup.structure);
-  let urgentShort = false;
 
-  /* oxlint-disable no-await-in-loop -- Each target reserves the questions that later targets must exclude. */
-  for (const target of targets) {
-    const input = { exclude: used, goal, setup, userId: goal.userId };
+  const skills =
+    missing.length > 0
+      ? await loadMockWriteSkills({ goalId, graph: parsePlanGraph(goal.plan?.graph) })
+      : [];
 
-    const planned =
-      "paper" in target
-        ? await planScheduledFromBank({ ...input, ...target.paper, paperPlan: goal.plan })
-        : await planFromBank({ ...input, option: target.option, reuse: target.reuse }).then(
-            (bank) => ({
-              ...bank,
-              complete: isCompleteMock({
-                option: target.option,
-                plan: bank.plan,
-                setup: bank.available,
-              }),
-              option: target.option,
-            }),
-          );
+  const papers = missing.map((target) => {
+    const { option } = target.planned;
+    const available = target.planned.available;
+    const sections = listMissingRecordings({ option, setup: available });
+    const parts = available.missingParts.filter((part) => sections.includes(part.sectionName));
+    const writes = planMockWrites({ option, planned: target.planned, setup: available, skills });
 
-    const { option, complete } = planned;
+    const alternative = "alternative" in target && target.alternative;
 
-    if (!complete) {
-      const sections = listMissingRecordings({ option, setup: planned.available });
+    return {
+      ...(alternative && { alternative: true as const }),
+      key: target.key,
+      later: alternative || priority !== target.key,
+      quickFormat,
+      writes,
+      ...(writes.length > 0 && !reuse ? { allowStimulusSets: true } : {}),
+      ...(exam && parts.length > 0 && { recordings: { exam, parts } }),
+    };
+  });
 
-      const missingParts = planned.available.missingParts.filter((part) =>
-        sections.includes(part.sectionName),
-      );
-
-      urgentShort ||= target.urgent;
-
-      const batch = await planMockWrites({ goal, option, planned, setup: planned.available });
-
-      papers.push({
-        key: target.key,
-        later: priority !== target.key,
-        quickFormat,
-        writes: batch ?? [],
-        ...(batch && batch.length > 0 && !reuseRequested ? { allowStimulusSets: true } : {}),
-        ...(exam && missingParts.length > 0 && { recordings: { exam, parts: missingParts } }),
-      });
-    }
-
-    for (const id of getPlannedItemIds(planned.plan)) {
-      used.add(id);
-    }
-  }
-
-  /* oxlint-enable no-await-in-loop */
-
-  return { papers, urgentShort };
+  return { papers, urgentShort: missing.some(({ urgent }) => urgent) };
 }
 
 export { pickMockSetTargets } from "./mock-set-targets";
