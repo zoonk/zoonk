@@ -15,7 +15,7 @@
 - “exam”: “prova”
 - “subject”: “matéria”, not “disciplina”
 - “topic”: “tópico”, not “assunto” or “tema”
-- “notice” (official exam announcement): “edital”
+- “notice” (official exam announcement): “edital”, never “edital oficial”
 - “syllabus” (what an exam's notice or a class covers): “conteúdo programático”
 - “learning” (study days): “estudo”
 - “goal”: “objetivo”, not “meta”, for the learner's goal and for the goal of a call, lesson or activity alike; it's masculine: “seu objetivo”, “um novo objetivo”

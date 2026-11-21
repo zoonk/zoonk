@@ -15,6 +15,7 @@
 
 - “goal”: “objetivo”; “start a goal”: “crear un objetivo”, not “empezar un objetivo”; “target” (a score or course aimed for): “meta”; “milestone”: “hito”
 - “course” (the degree an admission exam aims for): “carrera”
+- “notice” (an exam's official notice): “convocatoria”; an official guide: “guía oficial”
 - “continue” (something unfinished, like a mock or a session): “continuar”, not “retomar”
 - “check” (an answer): “comprobar”
 - “guess” (a pick that doesn't count): “suposición”, never “respuesta”
