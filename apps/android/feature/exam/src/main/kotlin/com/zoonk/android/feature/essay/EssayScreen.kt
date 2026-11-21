@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.essay
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -443,8 +444,27 @@ internal fun WriteScreen(
 
     LaunchedEffect(Unit) { if (ui.switched) moveFocus(field) }
 
+    // Leaving saves what's typed; one that can't reach the server says it stays on this device first.
+    var leaving by rememberSaveable { mutableStateOf(false) }
+    val close = { if (ui.saveFailed) leaving = true else navigator.closeTask() }
+    BackHandler(enabled = ui.saveFailed) { leaving = true }
+    if (leaving) {
+        AlertDialog(
+            onDismissRequest = { leaving = false },
+            title = { Text(stringResource(R.string.essay_unsaved_title)) },
+            text = { Text(stringResource(R.string.essay_unsaved_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    leaving = false
+                    navigator.closeTask()
+                }) { Text(stringResource(R.string.task_leave)) }
+            },
+            dismissButton = { TextButton(onClick = { leaving = false }) { Text(stringResource(R.string.essay_keep_writing)) } },
+        )
+    }
+
     TaskScaffold(
-        onClose = navigator::closeTask,
+        onClose = close,
         title = { BarTitle(writingLabel(essay.writing)) },
         actions = {
             if (!taskAsideBeside()) {
@@ -458,7 +478,7 @@ internal fun WriteScreen(
             },
         bottomBar = {
             TaskActionBar {
-                StatusLine(ui.send)
+                StatusLine(ui.send, ui.saveFailed)
                 TaskActions { width ->
                     if (ui.send == WritingSend.SignUpRequired) {
                         // Sending again would only meet the gate, so its way on is the bar's one action.
@@ -582,7 +602,10 @@ internal fun WritingLineCount(
 }
 
 @Composable
-private fun StatusLine(send: WritingSend) {
+private fun StatusLine(
+    send: WritingSend,
+    saveFailed: Boolean,
+) {
     if (send == WritingSend.SignUpRequired) {
         val words = limitWords(Limit.SignUpRequired, LimitSubject.Help)
         GateWords(words.title, words.line, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
@@ -600,6 +623,7 @@ private fun StatusLine(send: WritingSend) {
         when {
             failed -> stringResource(R.string.essay_send_failed)
             send == WritingSend.Pending -> stringResource(if (slow) R.string.essay_grading_slow else R.string.essay_grading)
+            saveFailed -> stringResource(R.string.essay_not_saved)
             else -> return
         }
     Text(

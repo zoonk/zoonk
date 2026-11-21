@@ -58,9 +58,12 @@ fun deductionRange(
     decimals: Int,
 ): String {
     val (from, to) = rangeEnds(low, high, decimals, currentLocale())
+    val zero = formatPoints(0.0, currentLocale(), decimals)
+    // Nothing taken away has no minus: never "−0".
     return when {
-        high <= 0 -> formatNumber(0.0, currentLocale())
+        high <= 0 || to == zero -> formatNumber(0.0, currentLocale())
         from == to -> stringResource(R.string.essay_minus, from)
+        from == zero -> stringResource(R.string.essay_zero_to_minus, from, to)
         else -> stringResource(R.string.essay_minus_range, from, to)
     }
 }

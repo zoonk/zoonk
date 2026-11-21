@@ -514,7 +514,6 @@ private fun HandInDialog(
             enem && blankEssays == 1 -> stringResource(R.string.mock_essay_blank)
             enem -> pluralStringResource(R.plurals.mock_essays_blank, blankEssays, blankEssays)
             counts.total == counts.essays -> pluralStringResource(R.plurals.mock_left_blank_only, blankEssays, blankEssays)
-            blankEssays == 1 -> stringResource(R.string.mock_written_question_blank)
             else -> pluralStringResource(R.plurals.mock_written_questions_blank, blankEssays, blankEssays)
         }
 

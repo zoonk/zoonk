@@ -90,15 +90,17 @@
         <item quantity="one">about %1$d of %2$d line · %3$d won\'t be read</item>
         <item quantity="other">about %1$d of %2$d lines · %3$d won\'t be read</item>
     </plurals>
-    <!-- A dialog when a written answer was saved on another device after the learner started typing on this one. -->
     <string name="essay_conflict_title">This answer changed on another device</string>
     <string name="essay_conflict_body">Keep the version you\'re writing here, or switch to the other one.</string>
-    <!-- Keeps the answer as typed on this device, saving it over the other device's version. -->
+    <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
     <string name="essay_conflict_keep">Keep this one</string>
-    <!-- Replaces the answer typed on this device with the version saved on the other device. -->
+    <!-- A choice between two versions of one written answer: replace what's typed here with the version saved on another device. -->
     <string name="essay_conflict_use_other">Use the other</string>
-    <!-- Over a written answer's result, when an earlier send was graded before the learner changed the text. -->
-    <string name="essay_graded_earlier_version">This grade is for the version you sent first. Your changes are kept: rewrite to continue from them.</string>
+    <string name="essay_graded_earlier_version">This grade is for the version you sent first. Your changes are kept for your rewrite.</string>
+    <string name="essay_not_saved">Not saved yet. It\'s kept on this device.</string>
+    <string name="essay_unsaved_title">Your answer isn\'t saved yet</string>
+    <string name="essay_unsaved_body">It\'s kept on this device and saves when you\'re back online.</string>
+    <string name="essay_keep_writing">Keep writing</string>
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
     <string name="essay_grading">Reading your answer against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
@@ -137,6 +139,8 @@
     <string name="essay_minus">−%1$s</string>
     <!-- Points language errors take away, as a range, such as "−0.3 to −0.6". -->
     <string name="essay_minus_range">−%1$s to −%2$s</string>
+    <!-- Points language errors may take away, from none, such as "0.0 to −0.4". -->
+    <string name="essay_zero_to_minus">%1$s to −%2$s</string>
     <!-- After a rewrite: the criteria the learner fixed. %1$s lists them. -->
     <string name="essay_fixed">Fixed: %1$s</string>
     <!-- After a rewrite: the criteria still to improve. %1$s lists them. -->

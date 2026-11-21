@@ -151,8 +151,8 @@ private fun ScoreRow(
 /** Said against the part's own minimum, never the objective's: 50 of 100 on the sum of its answers. */
 @Composable
 private fun Standing(part: WrittenPartPoints) {
-    val minimum = part.minimum?.value ?: return
     val range = part.range ?: return
+    val minimum = part.minimumPoints() ?: return
     val locale = currentLocale()
     val points = formatPoints(minimum, locale)
     val decimals = part.decimals?.toInt() ?: 0
@@ -193,6 +193,13 @@ private fun Standing(part: WrittenPartPoints) {
 
         WrittenPartPoints.Standing.UNMEASURED, null -> {}
     }
+}
+
+/** The part's minimum in its own points: a percent minimum is that share of its maximum, as its meter's tick is. */
+internal fun WrittenPartPoints.minimumPoints(): Double? {
+    val minimum = minimum ?: return null
+    if (minimum.unit != WrittenPartPointsMinimum.Unit.PERCENT) return minimum.value
+    return max?.let { minimum.value / PERCENT * it }
 }
 
 private const val PERCENT = 100.0

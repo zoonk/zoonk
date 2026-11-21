@@ -60,6 +60,8 @@ data class EssayUi(
     val send: WritingSend = WritingSend.Idle,
     /** Another device saved this answer since it was typed here: nothing saves until the learner picks one. */
     val conflict: WritingDraft? = null,
+    /** The last save didn't reach the server; the text is kept on this device until one does. */
+    val saveFailed: Boolean = false,
     /**
      * A grade the server had already recorded for this answer, before the learner changed it: the
      * changed text the grade isn't for, which a rewrite starts from.
@@ -123,7 +125,6 @@ class EssayViewModel(
 
     /** A save that's out, which the server may hold even if its answer never comes. */
     private var sendingText: String? = null
-    private var saveFailed = false
     private val saving = Mutex()
     private var saveSoon: Job? = null
 
@@ -141,7 +142,7 @@ class EssayViewModel(
             keptRead = true
             open()
         }
-        viewModelScope.launch { networkAvailable.collect { if (saveFailed) scope.launch { saveLatest() } } }
+        viewModelScope.launch { networkAvailable.collect { if (mutableUi.value.saveFailed) scope.launch { saveLatest() } } }
     }
 
     /** Each read of the essay; the first one opens it. */
@@ -193,7 +194,7 @@ class EssayViewModel(
         val other = mutableUi.value.conflict ?: return
         revision = other.revision
         savedText = other.text
-        mutableUi.update { it.copy(conflict = null, text = other.text) }
+        mutableUi.update { it.copy(conflict = null, saveFailed = false, text = other.text) }
         scope.launch { kept?.remove() }
     }
 
@@ -376,13 +377,14 @@ class EssayViewModel(
             while (true) {
                 val ui = mutableUi.value
                 val text = ui.text
-                if (ui.results == null || ui.conflict != null || text == savedText) return
+                if (ui.results == null || ui.conflict != null) return
+                if (text == savedText) return mutableUi.update { it.copy(saveFailed = false) }
                 val admissionId = (admit() as? Admitted.Ready)?.admissionId ?: return
                 sendingText = text
                 keep()
                 val result = store.saveDraft(blockId, SaveWritingDraft(admissionId, revision, text))
                 sendingText = null
-                saveFailed = result is MutationResult.Failed
+                mutableUi.update { it.copy(saveFailed = result is MutationResult.Failed) }
                 when (val saved = (result as? MutationResult.Done)?.value) {
                     is DraftSave.Saved -> {
                         revision = saved.draft.revision
@@ -452,6 +454,7 @@ class EssayViewModel(
             ui.copy(
                 results = if (known) results else listOf(GradedAnswer(grade, text, null)) + results,
                 send = WritingSend.Idle,
+                saveFailed = false,
                 text = "",
                 mode = WritingMode.Result,
                 switched = true,
@@ -475,6 +478,7 @@ class EssayViewModel(
             ui.copy(
                 results = listOf(GradedAnswer(grade, recorded, null)) + results,
                 send = WritingSend.Idle,
+                saveFailed = false,
                 text = "",
                 unsent = changed,
                 mode = WritingMode.Result,
