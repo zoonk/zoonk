@@ -1,6 +1,6 @@
 import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { examError } from "@/lib/exam-errors";
+import { examError, writingExtraLimitErrorFields } from "@/lib/exam-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
@@ -45,9 +45,7 @@ async function createMockQuestions(
 
   if (result.status === "limitReached") {
     return createErrorResponse({
-      code: "USAGE_LIMIT_REACHED",
-      details: { returnsOn: result.returnsOn },
-      message: "Today's extra writing allowance is used",
+      ...writingExtraLimitErrorFields(result.returnsOn),
       status: httpStatus.tooManyRequests,
     });
   }

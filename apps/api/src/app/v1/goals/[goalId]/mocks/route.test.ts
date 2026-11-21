@@ -5,9 +5,13 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NextRequest } from "next/server";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../../../../../../../packages/core/src/_test-utils/mock-session";
 import { CGU } from "../../../../../../../../packages/core/src/exams/mocks/_test-utils/cgu-written";
+import {
+  SESSION_NOW,
+  SESSION_TODAY,
+} from "../../../../../../../../packages/core/src/sessions/_test-utils/session-goal";
 import { POST as generate } from "./generations/route";
 import { GET as listMocks, POST as startMock } from "./route";
 
@@ -24,15 +28,19 @@ function context(goalId: string) {
   return { params: Promise.resolve({ goalId }) };
 }
 
-function request(goalId: string, suffix = "") {
+function request(goalId: string, suffix = "", kind = WRITTEN.kind) {
   return new NextRequest(`http://localhost/v1/goals/${goalId}/mocks${suffix}`, {
-    body: JSON.stringify({ shape: WRITTEN }),
+    body: JSON.stringify({ shape: { ...WRITTEN, kind } }),
     headers: { "content-type": "application/json" },
     method: "POST",
   });
 }
 
 describe("the written mock API", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("describes the exam sessions and starts an authorized prompt wait when the bank is empty", async () => {
     const [user, blueprint] = await Promise.all([
       userFixture(),
@@ -97,20 +105,53 @@ describe("the written mock API", () => {
         })),
       ),
     );
+  });
 
-    await prisma.writingAdmission.createMany({
-      data: Array.from({ length: 6 }, () => ({
-        extra: true,
-        id: crypto.randomUUID(),
-        itemIds: [],
-        localDate: new Date(new Date().toISOString().slice(0, 10)),
+  it.each([
+    { kind: "written", path: "/mocks", post: startMock, suffix: "" },
+    { kind: "full", path: "/mocks", post: startMock, suffix: "" },
+    { kind: "written", path: "/mocks/generations", post: generate, suffix: "/generations" },
+  ])("returns the next date when $path refuses $kind writing", async ({ kind, post, suffix }) => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(SESSION_NOW);
+
+    const [user, blueprint] = await Promise.all([
+      userFixture(),
+      examBlueprintFixture({ structure: CGU }),
+    ]);
+
+    const [goal] = await Promise.all([
+      goalFixture({
+        examBlueprintId: blueprint.id,
+        kind: "exam",
+        timezone: "UTC",
         userId: user.id,
-      })),
+      }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+      prisma.writingAdmission.createMany({
+        data: Array.from({ length: 6 }, () => ({
+          extra: true,
+          id: crypto.randomUUID(),
+          itemIds: [],
+          localDate: SESSION_TODAY,
+          userId: user.id,
+        })),
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const refused = await post(request(goal.id, suffix, kind), context(goal.id));
+    expect(refused.status).toBe(429);
+
+    await expect(refused.json()).resolves.toMatchObject({
+      error: { code: "USAGE_LIMIT_REACHED", details: { returnsOn: "2026-10-01" } },
+      ...(suffix === "" && { returnsOn: "2026-10-01", status: "limitReached" }),
     });
 
-    const refused = await generate(request(goal.id, "/generations"), context(goal.id));
-    expect(refused.status).toBe(429);
-    expect(ensureMockWritingPrompts).toHaveBeenCalledOnce();
+    expect(ensureMockWritingPrompts).not.toHaveBeenCalled();
     await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 

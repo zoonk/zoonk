@@ -145,6 +145,14 @@ const REFUSALS = {
   },
 } as const;
 
+export function writingExtraLimitErrorFields(returnsOn: string) {
+  return {
+    code: "USAGE_LIMIT_REACHED",
+    details: { returnsOn },
+    message: "Today's extra writing allowance is used",
+  } as const;
+}
+
 export function examError(result: ExamRefusal | WritingNeedsChoice) {
   if (result.status === "needsChoice") {
     return createErrorResponse({

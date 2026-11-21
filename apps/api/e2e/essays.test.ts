@@ -136,6 +136,7 @@ async function createEssayBlock(userId: string) {
   return {
     blockId: block.id,
     essay,
+    goalId: goal.id,
     itemId: item.id,
     path: `/v1/essays/${block.id}`,
     prompt,
@@ -300,10 +301,15 @@ test.describe("Essays API", () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "essay-limit" });
 
     try {
-      const { blockId, path } = await createEssayBlock(userId);
+      const { blockId, goalId, path } = await createEssayBlock(userId);
       const today = toUTCMidnight(new Date());
 
-      await fillWritingAllowance({ localDate: today, userId });
+      await Promise.all([
+        fillWritingAllowance({ localDate: today, userId }),
+        prisma.subscription.create({
+          data: { plan: "plus", provider: "zoonk", referenceId: userId, status: "active" },
+        }),
+      ]);
 
       const refusal = await readBody({
         response: await api.post(`${path}/starts`, { data: {} }),
@@ -311,8 +317,10 @@ test.describe("Essays API", () => {
         status: 429,
       });
 
+      const returnsOn = new Date(today.getTime() + MS_PER_DAY).toISOString().slice(0, 10);
+
       expect(refusal).toStrictEqual({
-        returnsOn: new Date(today.getTime() + MS_PER_DAY).toISOString().slice(0, 10),
+        returnsOn,
         status: "limitReached",
         task: {
           description: TASK.description,
@@ -330,6 +338,20 @@ test.describe("Essays API", () => {
 
       const unissued = await api.get(path);
       expect(unissued.status()).toBe(404);
+
+      const mockRefusal = await api.post(`/v1/goals/${goalId}/mocks`, {
+        data: { shape: { area: null, day: null, kind: "written" } },
+      });
+
+      expect(mockRefusal.status()).toBe(429);
+
+      await expect(mockRefusal.json()).resolves.toMatchObject({
+        error: { code: "USAGE_LIMIT_REACHED", details: { returnsOn } },
+        returnsOn,
+        status: "limitReached",
+      });
+
+      await expect(prisma.mockExam.count({ where: { goalId } })).resolves.toBe(0);
 
       await expect(
         prisma.studySessionBlock.findUnique({ where: { id: blockId } }),

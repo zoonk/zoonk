@@ -93,10 +93,21 @@ export const mockPaths = {
         "429": {
           content: {
             "application/json": {
-              schema: z.object({ returnsOn: z.iso.date(), status: z.literal("limitReached") }),
+              schema: z.object({
+                error: z
+                  .object({
+                    code: z.literal("USAGE_LIMIT_REACHED"),
+                    details: z.object({ returnsOn: z.iso.date() }),
+                    message: z.string(),
+                  })
+                  .optional(),
+                returnsOn: z.iso.date(),
+                status: z.literal("limitReached"),
+              }),
             },
           },
-          description: "The extra writing allowance is used for the day",
+          description:
+            "The extra writing allowance is used for the day. `error.details.returnsOn` is the date it renews.",
         },
       },
       security: AUTHENTICATED_SECURITY,

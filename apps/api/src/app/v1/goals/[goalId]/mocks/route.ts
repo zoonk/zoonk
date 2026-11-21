@@ -1,5 +1,6 @@
+import { httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { examError } from "@/lib/exam-errors";
+import { examError, writingExtraLimitErrorFields } from "@/lib/exam-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { anytimeMockInputSchema } from "@zoonk/core/exams/mocks/contract";
@@ -10,7 +11,6 @@ import { type NextRequest, NextResponse } from "next/server";
 type MocksContext = RouteContext<"/v1/goals/[goalId]/mocks">;
 
 const CREATED = 201;
-const TOO_MANY_REQUESTS = 429;
 
 async function listMocks(_request: Request, context: MocksContext) {
   const path = await readPathParams(context, goalPathParamsSchema);
@@ -37,7 +37,10 @@ async function startMock(request: NextRequest, context: MocksContext) {
   }
 
   if (result.status === "limitReached") {
-    return NextResponse.json(result, { status: TOO_MANY_REQUESTS });
+    return NextResponse.json(
+      { ...result, error: writingExtraLimitErrorFields(result.returnsOn) },
+      { status: httpStatus.tooManyRequests },
+    );
   }
 
   if (!("id" in result)) {
