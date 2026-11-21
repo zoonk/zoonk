@@ -37,7 +37,9 @@ type WriteAction = NonNullable<WrittenSubject["writeActions"]>[number];
  * The exam choices some of the part's tasks wait for, and whether every task does, so there's
  * nothing to write until they're made. A server without write actions says it for the whole part.
  */
-function getPendingChoice(written: WrittenSubject): { all: boolean; groups: string[] } | null {
+function getPendingChoice(
+  written: WrittenSubject,
+): { all: boolean; groups: string[]; task?: string } | null {
   const actions = written.writeActions ?? [];
 
   if (actions.length === 0) {
@@ -52,7 +54,15 @@ function getPendingChoice(written: WrittenSubject): { all: boolean; groups: stri
 
   const all = actions.every(({ availability }) => availability.status === "needsChoice");
 
-  return groups.length > 0 ? { all, groups: [...new Set(groups)] } : null;
+  const waiting = actions.filter(({ availability }) => availability.status === "needsChoice");
+  const [only] = waiting;
+
+  const task =
+    waiting.length === 1 && only
+      ? written.points.tasks.find(({ key }) => key === only.taskKey)?.name
+      : undefined;
+
+  return groups.length > 0 ? { all, groups: [...new Set(groups)], task } : null;
 }
 
 /** When every task's grading is used up for today, the first day one returns. */
@@ -105,7 +115,10 @@ export function WriteBottomBar({
   }
 
   const choice = getPendingChoice(written);
-  const choiceNote = choice && <ChooseOnToday choiceGroups={choice.groups} />;
+
+  const choiceNote = choice && (
+    <ChooseOnToday choiceGroups={choice.groups} task={choice.all ? undefined : choice.task} />
+  );
 
   if (choice?.all) {
     return (

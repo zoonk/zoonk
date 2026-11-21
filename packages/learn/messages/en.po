@@ -13669,6 +13669,12 @@ msgctxt "JsmQZC"
 msgid "Depends on your choice of {groups}"
 msgstr "Depends on your choice of {groups}"
 
+#. Under a written test where one question waits for an exam choice the learner hasn't made. {task} is the question, such as "The 60-line question"; {groups} names the choices.
+#: src/writing/writing-choice.tsx
+msgctxt "dwIEAG"
+msgid "{task} depends on your choice of {groups}"
+msgstr "{task} depends on your choice of {groups}"
+
 #: src/writing/writing-choice.tsx
 msgctxt "C3wT9_"
 msgid "Choose on Today"
