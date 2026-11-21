@@ -23,6 +23,7 @@ const checkOutput: TaskCodeChecks = ({ output, testCase }) => {
   });
 
   return {
+    blockingProblems: checked.ok ? undefined : checked.problems,
     criteria: ["writing"],
     judgedOutput: output,
     passed: Number(checked.ok),
