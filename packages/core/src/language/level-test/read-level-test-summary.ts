@@ -40,7 +40,7 @@ function readOpenAttempt({ attempt, testOut }: ReturnType<typeof readLevelTestAt
     };
   }
 
-  return testOut && !testOut.result
+  return testOut && !testOut.result && (testOut.preparingUntil || testOut.questions.length > 0)
     ? { id: testOut.id, length: "quick" as const, testOutLevel: testOut.level }
     : null;
 }

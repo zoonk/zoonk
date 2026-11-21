@@ -1,3 +1,4 @@
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 
 export const LEVEL_WINDOW_ANSWERS = 20;
@@ -6,8 +7,10 @@ export const DROP_ACCURACY = 0.5;
 
 const closedWindowSchema = z.object({
   at: z.iso.datetime(),
+  levelTestOut: z.enum(CEFR_LEVELS).optional(),
   missedSkillIds: z.array(z.string()),
   result: z.enum(["easy", "steady", "hard"]),
+  score: z.number().optional(),
   sessionDay: z.iso.date().optional(),
   streak: z.int().min(1),
 });

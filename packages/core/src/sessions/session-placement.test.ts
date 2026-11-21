@@ -52,7 +52,7 @@ async function setup({
 
   const fixture = await learnerGoalFixture({
     challengesDone: true,
-    itemsPerSkill: 2,
+    itemsPerSkill: confirming ? 1 : 2,
     phases: [1],
     userId: user.id,
   });

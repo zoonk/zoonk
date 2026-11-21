@@ -160,7 +160,7 @@ export async function finishLanguageLevelTestOut({
       const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId, userId } });
       const { testOut } = readLevelTestAttempts(current);
 
-      if (testOut?.id !== attemptId) {
+      if (testOut?.id !== attemptId || testOut.questions.length === 0) {
         return unchanged(null);
       }
 

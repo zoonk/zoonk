@@ -53,14 +53,8 @@ export async function finishPlacementAttempt({
 
       const plan = await loadPlacementPlan(goalId, tx);
 
-      const { attemptFollowUps, attemptHasMore, state } = await loadPlacementWithSummary({
-        goalId,
-        plan,
-        timeZone,
-        today,
-        tx,
-        userId,
-      });
+      const { attemptFollowUps, attemptHasMore, attemptRemainingSkillIds, state } =
+        await loadPlacementWithSummary({ goalId, plan, timeZone, today, tx, userId });
 
       await tx.$executeRaw`
       UPDATE attempts SET answer = answer - 'placementPending'
@@ -119,6 +113,7 @@ export async function finishPlacementAttempt({
                 estimatedMinutes: state.attempt?.estimatedMinutes ?? attempt.estimatedMinutes,
                 lessonsSkipped,
                 partComplete: true,
+                remainingSkillIds: attemptRemainingSkillIds,
               }
             : null,
           lastPart: receipt,

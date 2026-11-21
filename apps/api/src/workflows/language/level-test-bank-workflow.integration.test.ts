@@ -99,7 +99,7 @@ describe(levelTestBankWorkflow, () => {
     const run = await start(levelTestBankWorkflow, [{ pair }]);
 
     await expect(run.returnValue).resolves.toStrictEqual({ status: "written" });
-    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(5);
+    expect(generateLevelTestBankLevel).toHaveBeenCalledTimes(6);
 
     expect(Object.fromEntries(tries)).toStrictEqual({
       [`${passage} A1`]: 1,
@@ -107,6 +107,7 @@ describe(levelTestBankWorkflow, () => {
       [`${passage} B1`]: 4,
       [`${passage} B2`]: 1,
       [`${passage} C1`]: 1,
+      [`${passage} C2`]: 1,
     });
 
     const clips = await prisma.mediaAsset.findMany({
@@ -120,6 +121,7 @@ describe(levelTestBankWorkflow, () => {
       `${passage} A2`,
       `${passage} B2`,
       `${passage} C1`,
+      `${passage} C2`,
     ]);
   });
 });

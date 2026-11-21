@@ -24,7 +24,10 @@ const partReceiptSchema = z.object({
 
 const attemptSchema = placementAttemptViewSchema.extend({
   lessonsSkipped: z.number().int().nonnegative(),
+  partPrepared: z.boolean().optional(),
+  partSkillIds: z.array(uuidSchema()).optional(),
   partStartedAt: z.iso.datetime(),
+  remainingSkillIds: z.array(uuidSchema()).optional(),
   skillIds: z.array(uuidSchema()),
   topicCount: z.number().int().nonnegative(),
 });
@@ -77,6 +80,9 @@ export function placementAttemptView(attempt: PlacementAttempt): PlacementAttemp
 }
 
 const MINUTES_PER_AHEAD_TOPIC = 1;
+const PART_MINUTES = 10;
+
+export const TOPICS_PER_PART = PART_MINUTES / MINUTES_PER_AHEAD_TOPIC;
 
 export function getPlacementEstimate({
   length,

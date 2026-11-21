@@ -14,36 +14,33 @@ import { getLevelTestStartScore } from "./_utils/level-test-start-score";
 import { levelTestDetailsWithProgress, readLevelTestProgress } from "./_utils/level-test-state";
 import { getLanguageLevelTest } from "./get-language-level-test";
 import { type LevelTestLength, type LevelTestProgress } from "./level-test-contract";
+import { isOpenLevelTestOut } from "./level-test-out-contract";
 import { hasOpenLanguageTopicWalk, readLevelTestAttempts } from "./read-level-test-summary";
 
 async function oweLevelTestPreparation({
   db,
   goalId,
-  length,
   pair,
   userId,
 }: {
   db: TransactionClient;
   goalId: string;
-  length: LevelTestLength;
   pair: LanguagePair;
   userId: string;
 }) {
   const bank = readBank(await findBankRow(pair, db));
   const levelTestBank = bank?.confirmations === undefined ? pair : undefined;
-  const writeTopics = length === "wholeCourse";
 
   await oweFollowUps({
     db,
-    followUps:
-      levelTestBank || writeTopics
-        ? [
-            {
-              input: { goalId, levelTestBank, waitsForNotice: false, writeTopics },
-              kind: "preparePlacementItems",
-            },
-          ]
-        : [],
+    followUps: levelTestBank
+      ? [
+          {
+            input: { goalId, levelTestBank, waitsForNotice: false, writeTopics: false },
+            kind: "preparePlacementItems",
+          },
+        ]
+      : [],
     userId,
   });
 }
@@ -72,10 +69,7 @@ export async function startLanguageLevelTest({
     const current = await db.goal.findUniqueOrThrow({ where: { id: goalId, userId } });
     const { attempt, testOut } = readLevelTestAttempts(current);
 
-    if (
-      hasOpenLanguageTopicWalk(current) ||
-      (testOut && (!testOut.result || testOut.result.unannounced.length > 0))
-    ) {
+    if (hasOpenLanguageTopicWalk(current) || isOpenLevelTestOut(testOut)) {
       return unchanged(null);
     }
 
@@ -123,13 +117,7 @@ export async function startLanguageLevelTest({
       where: { id: goalId },
     });
 
-    await oweLevelTestPreparation({
-      db,
-      goalId,
-      length,
-      pair: { language, targetLanguage },
-      userId,
-    });
+    await oweLevelTestPreparation({ db, goalId, pair: { language, targetLanguage }, userId });
 
     return { attemptId: id, opened: true };
   });

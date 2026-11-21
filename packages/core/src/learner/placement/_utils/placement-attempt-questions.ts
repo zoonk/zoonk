@@ -15,6 +15,10 @@ const PART_ANSWERS = 30;
 
 type Attempt = NonNullable<ReturnType<typeof readPlacementAttempt>["attempt"]>;
 
+function toScope(ids: string[] | undefined) {
+  return ids ? new Set(ids) : null;
+}
+
 function estimateRemaining({
   attempt,
   given,
@@ -134,11 +138,33 @@ export function readAttemptQuestions({
         )
         .toSorted((a, b) => Number(bySkill.has(b.id)) - Number(bySkill.has(a.id)));
 
+  const partScope = toScope(attempt.partSkillIds);
+  const inPart = (skill: { id: string }) => !partScope || partScope.has(skill.id);
+  const stillInWalk = toScope(attempt.remainingSkillIds);
+  const isRemaining = (skill: { id: string }) => !stillInWalk || stillInWalk.has(skill.id);
+
   const next = ready
+    .filter((skill) => inPart(skill) && isRemaining(skill))
     .map((skill) => ({ item: nextIn(skill.id), waiting: build.preparingSkillIds.has(skill.id) }))
     .find((skill) => skill.item || skill.waiting);
 
-  const remaining = walk?.remaining.length ?? ready.length;
+  const deferred = new Set(
+    walk?.remaining.filter((skill) => !walk.ready.includes(skill)).map((skill) => skill.id),
+  );
+
+  const remainingSkillIds =
+    walk?.remaining
+      .filter((skill) => isRemaining(skill))
+      .filter(
+        (skill) =>
+          !inPart(skill) ||
+          deferred.has(skill.id) ||
+          nextIn(skill.id) ||
+          build.preparingSkillIds.has(skill.id),
+      )
+      .map((skill) => skill.id) ?? [];
+
+  const remaining = walk ? remainingSkillIds.length : ready.length;
   const estimatedMinutes = estimateRemaining({ attempt, given, remaining });
 
   return {
@@ -146,11 +172,10 @@ export function readAttemptQuestions({
     complete: !next,
     estimatedMinutes,
     followUpSkillIds: whole ? [] : listQuickFollowUps({ bySkill, known }),
-    hasMore:
-      Boolean(next) ||
-      Boolean(walk?.remaining.some((skill) => !walk.ready.includes(skill) && nextIn(skill.id))),
+    hasMore: whole ? remainingSkillIds.length > 0 : Boolean(next),
     item: attempt.partComplete || spent >= 1 ? null : (next?.item ?? null),
     knownSkillIds,
+    remainingSkillIds,
     spent,
     waiting: Boolean(next?.waiting && !next.item),
   };

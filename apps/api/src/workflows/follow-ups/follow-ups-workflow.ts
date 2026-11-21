@@ -10,6 +10,7 @@ import { callContentWorkflow } from "../calls/call-content-workflow";
 import { getGoalRebuildAsk } from "../goals/goal-rebuild-ask";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
+import { levelTestOutPreparationWorkflow } from "../language/level-test-out-preparation-workflow";
 import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
@@ -48,6 +49,59 @@ function startSentenceOrders(lessonId: string) {
   );
 }
 
+async function startPlacementPreparation(
+  followUp: Extract<OwedFollowUp, { kind: "preparePlacementItems" }>,
+) {
+  const { userId } = followUp;
+
+  const {
+    goalId,
+    levelTestBank,
+    levelTestOutAttemptId,
+    placementPart,
+    skillIds,
+    waitsForNotice,
+    writeTopics = true,
+  } = followUp.input;
+
+  const ask = `placement-items:${goalId}:${followUp.id}:${followUp.revision}`;
+
+  if (levelTestOutAttemptId) {
+    await startOnce(
+      levelTestOutPreparationWorkflow,
+      [{ attemptId: levelTestOutAttemptId, goalId, skillIds: skillIds ?? [], userId }],
+      ask,
+    );
+
+    return;
+  }
+
+  await Promise.all([
+    levelTestBank
+      ? startLevelTestBank({
+          analytics: { distinctId: userId, goalId },
+          pair: levelTestBank,
+          upgrade: true,
+        })
+      : null,
+    writeTopics
+      ? startOnce(
+          placementItemsWorkflow,
+          [
+            {
+              analytics: { distinctId: userId },
+              goalId,
+              ...(placementPart && { placementPart }),
+              skillIds,
+              waitsForNotice,
+            },
+          ],
+          ask,
+        )
+      : null,
+  ]);
+}
+
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
 // oxlint-disable-next-line complexity -- Each follow-up kind starts its own workflow.
 async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
@@ -80,36 +134,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 
       return;
     }
-    case "preparePlacementItems": {
-      const {
-        goalId,
-        levelTestBank,
-        skillIds,
-        waitsForNotice,
-        writeTopics = true,
-      } = followUp.input;
+    case "preparePlacementItems":
+      return startPlacementPreparation(followUp);
 
-      const ask = `placement-items:${goalId}:${followUp.id}:${followUp.revision}`;
-
-      await Promise.all([
-        levelTestBank
-          ? startLevelTestBank({
-              analytics: { distinctId: userId, goalId },
-              pair: levelTestBank,
-              upgrade: true,
-            })
-          : null,
-        writeTopics
-          ? startOnce(
-              placementItemsWorkflow,
-              [{ analytics: { distinctId: userId }, goalId, skillIds, waitsForNotice }],
-              ask,
-            )
-          : null,
-      ]);
-
-      return;
-    }
     case "writeLesson": {
       const writing = await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId });
 

@@ -314,11 +314,25 @@ export async function readPlacementPlanRunId(goalId: string): Promise<string | n
 /** A previous curriculum's question writer cannot finish waiting for the rebuilt curriculum. */
 export async function recordPlacementPrepared({
   goalId,
+  placementPart,
   planRunId,
 }: {
   goalId: string;
+  placementPart?: { attemptId: string; part: number };
   planRunId: string | null;
 }): Promise<void> {
+  if (placementPart) {
+    await prisma.$executeRaw`
+      UPDATE goals
+      SET details = jsonb_set(details, '{placementTest,attempt,partPrepared}', 'true'::jsonb)
+      WHERE id = ${goalId}::uuid
+        AND details #>> '{placementTest,attempt,id}' = ${placementPart.attemptId}
+        AND details #>> '{placementTest,attempt,part}' = ${String(placementPart.part)}
+    `;
+
+    return;
+  }
+
   await prisma.plan.updateMany({
     data: { placementPreparedAt: new Date() },
     where: { goalId, runId: planRunId },

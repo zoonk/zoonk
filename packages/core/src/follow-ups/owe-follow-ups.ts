@@ -22,6 +22,14 @@ function getFollowUpKey(followUp: FollowUp): string {
         ? `level-test-notice:${followUp.input.goalId}`
         : followUp.input.goalId;
     case "preparePlacementItems":
+      if (followUp.input.levelTestOutAttemptId) {
+        return `language-test-out:${followUp.input.goalId}`;
+      }
+
+      if (followUp.input.placementPart) {
+        return `whole-course:${followUp.input.goalId}`;
+      }
+
       return followUp.input.levelTestBank
         ? `language:${followUp.input.goalId}`
         : followUp.input.goalId;

@@ -3,20 +3,28 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { createLearnerAttempt } from "../../learner/_utils/create-learner-attempt";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { readPendingTopicWalkAssessmentId } from "../../learner/placement/_utils/placement-attempt-record";
 import { gradeSessionAnswer, parseSessionItem } from "../../sessions/_utils/session-items";
-import { pickTestOutQuestions } from "./_utils/level-test-out-items";
+import { listTestOutSkillIds, readTestOutBank } from "./_utils/level-test-out-items";
 import {
   loadTestOutAnswers,
   nextTestOutQuestion,
   readTestOutView,
   saveTestOut,
 } from "./_utils/level-test-out-state";
-import { type LevelTestOutAnswer, type LevelTestOutLevel } from "./level-test-out-contract";
+import {
+  type LevelTestOutAnswer,
+  type LevelTestOutLevel,
+  type LevelTestOutProgress,
+  isOpenLevelTestOut,
+} from "./level-test-out-contract";
 import { hasOpenLanguageTopicWalk, readLevelTestAttempts } from "./read-level-test-summary";
+
+const PREPARATION_WINDOW_MS = 10 * 60 * 1000;
 
 export type LanguageLevelTestOutResult =
   | { status: "invalid" | "notFound" | "notLanguage" | "unauthorized" }
@@ -79,11 +87,11 @@ export async function startLanguageLevelTestOut({
       return unchanged(null);
     }
 
-    if (testOut && (!testOut.result || testOut.result.unannounced.length > 0)) {
+    if (testOut && isOpenLevelTestOut(testOut)) {
       return unchanged(testOut.id);
     }
 
-    const questions = await pickTestOutQuestions({
+    const skillIds = await listTestOutSkillIds({
       goalId,
       level,
       timeZone: getAnswerTimeZone({ goal }),
@@ -91,11 +99,28 @@ export async function startLanguageLevelTestOut({
       userId,
     });
 
-    if (questions.length === 0) {
+    if (skillIds.length === 0) {
       return unchanged(null);
     }
 
-    const progress = { id: randomUUID(), level, questions };
+    const { questions } = await readTestOutBank({ skillIds, tx, userId });
+    const progress: LevelTestOutProgress = { id: randomUUID(), level, questions };
+
+    if (questions.length === 0) {
+      progress.preparingUntil = new Date(Date.now() + PREPARATION_WINDOW_MS).toISOString();
+
+      await oweFollowUps({
+        db: tx,
+        followUps: [
+          {
+            input: { goalId, levelTestOutAttemptId: progress.id, skillIds, waitsForNotice: false },
+            kind: "preparePlacementItems",
+          },
+        ],
+        userId,
+      });
+    }
+
     await saveTestOut({ goal: current, progress, tx });
     return progress.id;
   });

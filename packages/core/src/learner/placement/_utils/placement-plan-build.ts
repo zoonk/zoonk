@@ -25,6 +25,7 @@ export async function loadPlanBuild({
   goalId,
   knownAreas,
   ownLevel,
+  partPrepared,
   requestedSkillIds,
   tx = prisma,
 }: {
@@ -38,6 +39,7 @@ export async function loadPlanBuild({
   knownAreas: readonly string[];
   /** The learner's own level, where placement starts asking in each subject. */
   ownLevel: OwnLevel | null;
+  partPrepared?: boolean;
   requestedSkillIds?: readonly string[];
   tx?: TransactionClient;
 }): Promise<PlanBuild> {
@@ -63,7 +65,8 @@ export async function loadPlanBuild({
   const writingSince = Math.max(graphWrittenAt.getTime(), askedAt?.getTime() ?? 0);
 
   const writing =
-    plan.placementPreparedAt === null && Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
+    (partPrepared === undefined ? plan.placementPreparedAt === null : !partPrepared) &&
+    Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
 
   const graph = parsePlanGraph(plan.graph);
 

@@ -57,6 +57,7 @@ export type PlacementState = {
 export type PlacementLoad = {
   attemptFollowUps?: string[];
   attemptHasMore: boolean;
+  attemptRemainingSkillIds?: string[];
   /** What an exam goal's writes need beside the state; null for other goals. */
   focusTest: Awaited<ReturnType<typeof loadFocusTest>>;
   state: PlacementState;
@@ -103,7 +104,9 @@ async function loadPlacementFacts({
         goalId,
         knownAreas: exam.knownAreas,
         ownLevel,
-        requestedSkillIds: exam.placement?.attempt?.skillIds,
+        partPrepared: exam.placement?.attempt?.partPrepared,
+        requestedSkillIds:
+          exam.placement?.attempt?.partSkillIds ?? exam.placement?.attempt?.skillIds,
         tx,
       }),
     () => loadPlacementItems({ examBlueprintId: exam.examBlueprintId, skillIds, tx }),
