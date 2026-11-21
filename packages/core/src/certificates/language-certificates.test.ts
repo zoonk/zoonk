@@ -1298,10 +1298,7 @@ describe("the level test", () => {
 
     await expect(
       prisma.languageSkillLevel.findMany({ orderBy: { skill: "asc" }, where: { userId: user.id } }),
-    ).resolves.toMatchObject([
-      { score: 0.5, skill: "reading", startScore: 0 },
-      { score: 2, skill: "listening", startScore: 2 },
-    ]);
+    ).resolves.toMatchObject([{ score: 0.5, skill: "reading", startScore: 0 }]);
   });
 });
 

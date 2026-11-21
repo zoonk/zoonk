@@ -112,12 +112,14 @@ function resize({
  */
 export function sizeLanguageGraph({
   bands,
+  currentLevel,
   goal,
   graph,
   settledSkillIds = new Set(),
   state,
 }: {
   bands: ReadonlyMap<string, CourseLevel | null>;
+  currentLevel?: string | null;
   /** Its details hold the level the learner starts from. */
   goal: { details: unknown; kind: GoalKind };
   graph: PlanGraph;
@@ -126,7 +128,10 @@ export function sizeLanguageGraph({
   state: { goal: Pick<PlanState["goal"], "aim">; settings: Pick<PlanSettings, "stopsAtAim"> };
 }): { graph: PlanGraph; planned: PlanGraph } {
   const aimScore = parseCefrScore(state.goal.aim);
-  const start = getStartHours(isJsonObject(goal.details) ? goal.details.level : null);
+
+  const start = getStartHours(
+    currentLevel ?? (isJsonObject(goal.details) ? goal.details.level : null),
+  );
 
   if (goal.kind !== "language" || aimScore === null) {
     return { graph, planned: graph };
