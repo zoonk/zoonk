@@ -1,9 +1,6 @@
 #if DEBUG
   import SwiftUI
 
-  /// `ZOONK_DEBUG_GALLERY=challenge` plays a case whose first decision shows a control chart, with
-  /// no lesson on the server, to look at a decision's chart before and after the pick. Pick with the
-  /// options and Continue from the bar; it scrolls as the player's stage does.
   struct DebugChallenge: View {
     private let step: LessonStep
     @State private var state: LessonPlayerState
@@ -41,15 +38,13 @@
             }
           }
         }
-        .safeAreaInset(edge: .bottom) {
+        .bottomBar {
           Button {
             state.continueLesson()
           } label: {
-            Text(verbatim: "Continue").frame(maxWidth: .infinity)
+            Text(verbatim: "Continue")
           }
           .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .padding(16)
         }
       }
     }
