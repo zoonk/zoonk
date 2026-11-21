@@ -1,103 +1,130 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
-import { type StudyBlockStatus, prisma } from "@zoonk/db";
+import { writingResultSchema, writingStartSchema } from "@zoonk/core/exams/essays/writing-contract";
+import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { essayViewResponseSchema } from "../src/lib/openapi/schemas/essays";
 import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
-const DAILY_ESSAY_GRADES = 6;
+const DAILY_EXTRA_WRITES = 6;
+const MINUTES = 20;
+const TASK = { count: 1, description: "Argumentative essay", key: "essay", lines: 30 };
+const CRITERION = { id: "argument", name: "Argument", points: null };
 
-const ESSAY = {
-  context: "Tema: o combate à desinformação no Brasil.",
-  keyPoints: ["Proposta de intervenção com os cinco elementos"],
-  question: "Escreva um texto dissertativo-argumentativo sobre o tema.",
-  rubric: [
-    { criterion: "Norma culta", description: "O português escrito formal" },
-    { criterion: "Proposta", description: "Uma proposta de intervenção detalhada" },
-  ],
-  sampleOutline: "Introdução, dois argumentos e a proposta.",
+const SHORT_DRAFT = {
+  durationMs: 600_000,
+  text: "Minha redação sobre desinformação.",
+  timeZone: "UTC",
 };
 
-const GRADED_DRAFT = {
-  grade: {
-    criteria: [
-      {
-        comment: "A proposta não diz por qual meio vai funcionar.",
-        example: null,
-        id: "c5",
-        maxScore: 200,
-        name: "C5",
-        quote: null,
-        score: 120,
-      },
-    ],
-    enemInterventionElements: {
-      action: true,
-      agent: true,
-      detail: false,
-      effect: true,
-      means: false,
-    },
-    nextStep: { criterionId: "c5", text: "Diga por qual meio a proposta vai funcionar." },
-    range: { high: 740, low: 660 },
-    total: { maxScore: 1000, score: 700 },
-    zeroReason: null,
-  },
-  text: "Meu primeiro rascunho da redação.",
-};
-
-const DRAFT = { durationMs: 600_000, text: "Minha redação sobre desinformação.", timeZone: "UTC" };
-
-async function createEssayBlock({
-  localDate,
-  status,
-  userId,
-}: {
-  localDate?: Date;
-  status: StudyBlockStatus;
-  userId: string;
-}) {
+async function createEssayBlock(userId: string) {
   const [blueprint, skill] = await Promise.all([
-    examBlueprintFixture({ identityKey: `enem-${randomUUID()}`, name: "ENEM" }),
-    skillFixture({ name: `Redação ${randomUUID()}` }),
+    examBlueprintFixture({
+      identityKey: `enem-${randomUUID()}`,
+      name: "ENEM",
+      structure: {
+        formats: [],
+        mock: {
+          adaptive: false,
+          citations: [],
+          order: null,
+          scoring: { description: "Evaluate the written argument", method: "other" },
+          sections: [
+            {
+              day: null,
+              kind: "written",
+              minutes: MINUTES,
+              name: TASK.description,
+              questions: null,
+              tasks: [TASK],
+            },
+          ],
+          timeLimitMinutes: MINUTES,
+          totalQuestions: null,
+        },
+        rules: [],
+        subjects: [],
+      },
+      visibility: "public",
+    }),
+    skillFixture({ name: `Redação ${randomUUID()}`, visibility: "public" }),
   ]);
 
   const goal = await goalFixture({
     examBlueprintId: blueprint.id,
     kind: "exam",
+    language: "en",
     timezone: "UTC",
     userId,
   });
 
+  const prompt = {
+    charactersPerLine: 60,
+    criteria: [CRITERION],
+    keySource: "practiceKey",
+    lines: TASK.lines,
+    minimumWords: 10,
+    points: null,
+    taskKey: TASK.key,
+    title: "Disinformation in Brazil",
+    unit: "answer",
+  };
+
+  const essay = {
+    context: "Tema: o combate à desinformação no Brasil.",
+    keyPoints: ["Proposta de intervenção com os cinco elementos"],
+    question: "Escreva um texto dissertativo-argumentativo sobre o tema.",
+    rubric: [{ criterion: "Argument", description: "Use evidence to support an argument." }],
+    sampleOutline: "Introdução, dois argumentos e a proposta.",
+    writing: {
+      ...prompt,
+      aspects: [],
+      assessedSkillIds: [skill.id],
+      grading: { criteria: [], kind: "levels", language: null, rounding: null, zeroing: [] },
+    },
+  };
+
   const [item, session] = await Promise.all([
     itemFixture({
-      content: ESSAY,
+      content: essay,
       examBlueprintId: blueprint.id,
       format: "essay",
       skillId: skill.id,
     }),
-    studySessionFixture({ goalId: goal.id, userId, ...(localDate && { localDate }) }),
+    studySessionFixture({ goalId: goal.id, userId }),
   ]);
 
   const block = await studySessionBlockFixture({
+    estimatedMinutes: MINUTES,
     kind: "produce",
-    payload: { itemIds: [item.id], skillIds: [skill.id], title: "Redação" },
+    payload: {
+      extra: true,
+      itemIds: [],
+      skillIds: [skill.id],
+      title: TASK.description,
+      writing: { admissionId: null, draft: null, taskKey: TASK.key, unit: "answer" },
+    },
     sessionId: session.id,
-    startedAt: status === "active" ? new Date() : null,
-    status,
+    status: "pending",
   });
 
-  return { blockId: block.id, item, sessionId: session.id };
+  return {
+    blockId: block.id,
+    essay,
+    itemId: item.id,
+    path: `/v1/essays/${block.id}`,
+    prompt,
+    sessionId: session.id,
+  };
 }
 
 test.describe("Essays API", () => {
@@ -111,105 +138,193 @@ test.describe("Essays API", () => {
     await prisma.$disconnect();
   });
 
-  test("requires a session to send a draft", async () => {
+  test("requires a session to start writing or submit a draft", async () => {
     const anonymous = await request.newContext({ baseURL });
+    const path = `/v1/essays/${randomUUID()}`;
 
-    const response = await anonymous.post(`/v1/essays/${randomUUID()}/submissions`, {
-      data: DRAFT,
-    });
+    try {
+      const responses = await Promise.all([
+        anonymous.post(`${path}/starts`, { data: {} }),
+        anonymous.post(`${path}/submissions`, {
+          data: { ...SHORT_DRAFT, admissionId: randomUUID() },
+        }),
+      ]);
 
-    expect(response.status()).toBe(401);
-    await anonymous.dispose();
+      expect(responses.map((response) => response.status())).toStrictEqual([401, 401]);
+    } finally {
+      await anonymous.dispose();
+    }
   });
 
-  test("shows the writing block to its learner only and grades a draft for yesterday's block", async () => {
+  test("admits an owned question and grades it after midnight without charging twice", async () => {
     const [learner, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "essay" }),
       createBearerLearner({ baseURL, prefix: "essay-other" }),
     ]);
 
-    const yesterday = new Date(Date.now() - MS_PER_DAY);
-    yesterday.setUTCHours(0, 0, 0, 0);
+    try {
+      const { blockId, essay, itemId, path, prompt, sessionId } = await createEssayBlock(
+        learner.userId,
+      );
 
-    const { blockId, sessionId } = await createEssayBlock({
-      localDate: yesterday,
-      status: "pending",
-      userId: learner.userId,
-    });
+      const [unissued, otherStart] = await Promise.all([
+        learner.api.get(path),
+        other.api.post(`${path}/starts`, { data: {} }),
+      ]);
 
-    const path = `/v1/essays/${blockId}`;
+      expect(unissued.status()).toBe(404);
+      expect(otherStart.status()).toBe(404);
 
-    const essay = await readBody({
-      response: await learner.api.get(`${path}?timeZone=UTC`),
-      schema: essayViewResponseSchema,
-    });
+      const started = await readBody({
+        response: await learner.api.post(`${path}/starts`, { data: {} }),
+        schema: writingStartSchema,
+      });
 
-    expect(essay).toStrictEqual({
-      blockId,
-      context: ESSAY.context,
-      drafts: [],
-      gradesLeft: DAILY_ESSAY_GRADES,
-      question: ESSAY.question,
-      rubric: "enem",
-      sessionId,
-      status: "pending",
-    });
+      if (started.status !== "ready") {
+        throw new Error(`Expected an admitted question, got ${started.status}`);
+      }
 
-    const sent = await learner.api.post(`${path}/submissions`, { data: DRAFT });
+      const { admissionId } = started;
 
-    expect(sent.status()).toBe(200);
-    await expect(sent.json()).resolves.toMatchObject({ zeroReason: "tooShort" });
+      const readEssay = () =>
+        learner.api
+          .get(`${path}?timeZone=UTC`)
+          .then((response) => readBody({ response, schema: essayViewResponseSchema }));
 
-    const refusals = await Promise.all([
-      other.api.get(path),
-      other.api.post(`${path}/submissions`, { data: DRAFT }),
-      learner.api.post(`/v1/essays/${randomUUID()}/submissions`, { data: DRAFT }),
-      learner.api.post("/v1/essays/not-a-block/submissions", { data: DRAFT }),
-      learner.api.post(`${path}/submissions`, { data: { ...DRAFT, text: " " } }),
-      learner.api.post(`${path}/submissions`, { data: { ...DRAFT, timeZone: "Mars/Olympus" } }),
-      learner.api.post(`${path}/submissions`, { data: { ...DRAFT, score: 1000 } }),
-    ]);
+      expect(await readEssay()).toStrictEqual({
+        blockId,
+        context: essay.context,
+        draft: null,
+        drafts: [],
+        gradesLeft: DAILY_EXTRA_WRITES - 1,
+        pacing: { minutes: MINUTES, source: "practice" },
+        question: essay.question,
+        rubric: "levels",
+        sessionId,
+        status: "active",
+        writing: prompt,
+      });
 
-    expect(refusals.map((response) => response.status())).toStrictEqual([
-      404, 404, 404, 400, 400, 400, 400,
-    ]);
+      const submission = { ...SHORT_DRAFT, admissionId };
 
-    const attempts = await prisma.attempt.count({ where: { userId: learner.userId } });
-    expect(attempts).toBe(1);
+      const refusals = await Promise.all([
+        other.api.get(path),
+        other.api.post(`${path}/submissions`, { data: submission }),
+        learner.api.post(`/v1/essays/${randomUUID()}/submissions`, { data: submission }),
+        learner.api.post("/v1/essays/not-a-block/submissions", { data: submission }),
+        learner.api.post(`${path}/submissions`, { data: SHORT_DRAFT }),
+        learner.api.post(`${path}/submissions`, { data: { ...submission, text: " " } }),
+        learner.api.post(`${path}/submissions`, {
+          data: { ...submission, timeZone: "Mars/Olympus" },
+        }),
+        learner.api.post(`${path}/submissions`, { data: { ...submission, score: 1000 } }),
+      ]);
 
-    await Promise.all([learner.api.dispose(), other.api.dispose()]);
+      expect(refusals.map((response) => response.status())).toStrictEqual([
+        404, 404, 404, 400, 400, 400, 400, 400,
+      ]);
+
+      const today = toUTCMidnight(new Date());
+      const yesterday = new Date(today.getTime() - MS_PER_DAY);
+
+      await prisma.writingAdmission.update({
+        data: { localDate: yesterday },
+        where: { id: admissionId },
+      });
+
+      const submit = () =>
+        learner.api
+          .post(`${path}/submissions`, { data: submission })
+          .then((response) => readBody({ response, schema: writingResultSchema }));
+
+      const grade = await submit();
+
+      expect(grade).toMatchObject({
+        criteria: [{ id: CRITERION.id, level: "missing" }],
+        estimatedLines: 1,
+        kind: "levels",
+        nextStep: { criterionId: CRITERION.id },
+      });
+
+      await expect(submit()).resolves.toStrictEqual(grade);
+
+      const attempts = await prisma.attempt.findMany({ where: { itemId, userId: learner.userId } });
+      expect(attempts).toHaveLength(1);
+
+      expect(attempts[0]?.answer).toMatchObject({
+        conditions: { admissionId },
+        grade,
+        text: SHORT_DRAFT.text,
+      });
+
+      expect(await readEssay()).toMatchObject({
+        draft: null,
+        drafts: [{ attemptId: attempts[0]?.id, grade, text: SHORT_DRAFT.text }],
+        gradesLeft: DAILY_EXTRA_WRITES,
+      });
+
+      await expect(
+        prisma.writingAdmission.findMany({ where: { userId: learner.userId } }),
+      ).resolves.toMatchObject([
+        { extra: true, id: admissionId, itemIds: [itemId], localDate: yesterday },
+      ]);
+    } finally {
+      await Promise.all([learner.api.dispose(), other.api.dispose()]);
+    }
   });
 
-  test("shows the graded drafts and refuses a draft once today's grades are used up", async () => {
+  test("refuses extra writing before issuing a question when today's allowance is used", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "essay-limit" });
-    const { blockId, item, sessionId } = await createEssayBlock({ status: "active", userId });
 
-    await Promise.all(
-      Array.from({ length: DAILY_ESSAY_GRADES }, () =>
-        attemptFixture({
-          answer: GRADED_DRAFT,
-          itemId: item.id,
-          skillId: item.skillId,
-          studySessionId: sessionId,
+    try {
+      const { blockId, path } = await createEssayBlock(userId);
+      const today = toUTCMidnight(new Date());
+
+      await prisma.writingAdmission.createMany({
+        data: Array.from({ length: DAILY_EXTRA_WRITES }, () => ({
+          extra: true,
+          id: randomUUID(),
+          itemIds: [],
+          localDate: today,
           userId,
-        }),
-      ),
-    );
+        })),
+      });
 
-    const essay = await readBody({
-      response: await api.get(`/v1/essays/${blockId}?timeZone=UTC`),
-      schema: essayViewResponseSchema,
-    });
+      const refusal = await readBody({
+        response: await api.post(`${path}/starts`, { data: {} }),
+        schema: writingStartSchema,
+        status: 429,
+      });
 
-    expect(essay).toMatchObject({ gradesLeft: 0, status: "active" });
-    expect(essay.drafts).toHaveLength(DAILY_ESSAY_GRADES);
-    expect(essay.drafts[0]).toMatchObject(GRADED_DRAFT);
+      expect(refusal).toStrictEqual({
+        returnsOn: new Date(today.getTime() + MS_PER_DAY).toISOString().slice(0, 10),
+        status: "limitReached",
+        task: {
+          description: TASK.description,
+          lines: TASK.lines,
+          minutes: MINUTES,
+          points: null,
+          taskKey: TASK.key,
+          unit: "answer",
+        },
+      });
 
-    const refused = await api.post(`/v1/essays/${blockId}/submissions`, { data: DRAFT });
+      const unissued = await api.get(path);
+      expect(unissued.status()).toBe(404);
 
-    expect(refused.status()).toBe(429);
-    await expect(refused.json()).resolves.toMatchObject({ error: { code: "ESSAY_LIMIT_REACHED" } });
+      await expect(
+        prisma.studySessionBlock.findUnique({ where: { id: blockId } }),
+      ).resolves.toMatchObject({
+        payload: { itemIds: [], writing: { admissionId: null } },
+        startedAt: null,
+        status: "pending",
+      });
 
-    await api.dispose();
+      await expect(prisma.writingAdmission.count({ where: { userId } })).resolves.toBe(
+        DAILY_EXTRA_WRITES,
+      );
+    } finally {
+      await api.dispose();
+    }
   });
 });
