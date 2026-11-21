@@ -254,6 +254,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let fitOffer: FitOffer?
   /// An exam goal's Focus test; nil for other goals.
   var focusTest: FocusTestSummary?
+  /// A learn or language goal's test of what the learner already knows; nil for others.
+  var placementTest: PlanPlacementTest?
   let goalId: String
   /// A language goal's level the course goes up to and the aims to change it to; nil for others.
   let languageAim: LanguageAimView?

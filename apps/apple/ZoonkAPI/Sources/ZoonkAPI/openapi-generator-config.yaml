@@ -19,6 +19,7 @@ filter:
     - adaptPlanFromMock
     - answerCurrentUserProfileQuestion
     - answerLanguageLevelTest
+    - answerLanguageLevelTestOut
     - answerLanguageLevelTestOutLoud
     - answerMemoryInsight
     - answerOnboardingQuestion
@@ -102,6 +103,7 @@ filter:
     - exportCurrentUserMemory
     - findPlanTimeToCover
     - finishLanguageLevelTest
+    - finishLanguageLevelTestOut
     - finishMock
     - getCatalogLesson
     - getChallenge
@@ -153,6 +155,7 @@ filter:
     - getLanguageCheckpointCall
     - getLanguageConversation
     - getLanguageLevelTest
+    - getLanguageLevelTestOut
     - getLanguageProgress
     - getLanguageToday
     - getLanguageUnit
@@ -228,6 +231,8 @@ filter:
     - startChallenge
     - startCourseGoal
     - startLanguageConversation
+    - startLanguageLevelTest
+    - startLanguageLevelTestOut
     - startMock
     - startMockSpeaking
     - streamGenerationEvents

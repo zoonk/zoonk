@@ -316,11 +316,20 @@ struct LevelTest: Decodable, Equatable, Sendable {
   }
 
   struct Next: Decodable, Equatable, Sendable {
+    /// `question`; `confirmation`, a question at the level the answers propose, where every right
+    /// option is picked; `speaking`; or `done`.
     let kind: String
     let question: Question?
     let speaking: Sentence?
+
+    var isQuestion: Bool { kind == "question" || kind == "confirmation" }
   }
 
+  /// The test taken from the plan; nil for onboarding's.
+  var attemptId: String?
+  var length: PlacementLength?
+  /// The last finished test taken from the plan.
+  var result: PlacementTestResult?
   let status: Status
   let showAlphabetNote: Bool
   /// Set while a run writes the pair's questions.

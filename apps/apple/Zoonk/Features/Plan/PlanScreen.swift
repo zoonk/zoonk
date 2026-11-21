@@ -250,8 +250,9 @@ private struct PlanContent: View {
                 .rowSeparatorHiddenBelow()
                 PlanRoadmapContent(context: context, structure: structure)
                   .rowSeparatorHiddenBelow()
-                if structure != nil, let focusTest = context.plan.focusTest {
-                  PlanFocusTestRow(goalId: goal.id, summary: focusTest)
+                if structure != nil, let testRow = PlanTestRow(goalId: goal.id, plan: context.plan)
+                {
+                  testRow
                 }
               } header: {
                 EmptyView()
@@ -259,7 +260,7 @@ private struct PlanContent: View {
 
               structureSections(
                 context: context, structure: structure, namesChoices: false,
-                includesFocusTest: structure == nil)
+                includesTestRow: structure == nil)
             }
 
             VStack(alignment: .leading, spacing: 32) {
@@ -406,21 +407,19 @@ private struct PlanContent: View {
   @ViewBuilder
   private func structureSections(
     context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool,
-    includesFocusTest: Bool = true
+    includesTestRow: Bool = true
   ) -> some View {
-    let focusTest = (includesFocusTest ? context.plan.focusTest : nil).map {
-      PlanFocusTestRow(goalId: goal.id, summary: $0)
-    }
+    let testRow = includesTestRow ? PlanTestRow(goalId: goal.id, plan: context.plan) : nil
 
     if let structure {
       // Unpicked choices are the suggestion's; beside the page its settings name the pick.
       PlanSyllabusSection(
         goalKind: goal.kind, syllabus: structure,
         choices: namesChoices ? context.plan.examChoices.filter { !$0.subjects.isEmpty } : [],
-        change: { context.adjust(.choice($0)) }, focusTest: focusTest)
+        change: { context.adjust(.choice($0)) }, testRow: testRow)
     } else {
       PlanPathSection(
-        context: context, course: context.plan.libraryCourse, focusTest: focusTest)
+        context: context, course: context.plan.libraryCourse, testRow: testRow)
     }
   }
 }
