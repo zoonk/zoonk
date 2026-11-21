@@ -131,17 +131,6 @@ const TAP_ITEMS: GeneratedItem[] = [
 ];
 
 /** As the writer answers: only the lists a skill asked for, at its counts. */
-/** A call for one Polícia Federal skill, as its own questions are written. */
-function policeWrite(quickCount: number, tapCount: number): unknown[] {
-  return [
-    expect.objectContaining({
-      examFormat: expect.objectContaining({ name: "Polícia Federal, Agente" }),
-      quickFormat: "trueFalse",
-      skills: [expect.objectContaining({ quickCount, tapCount })],
-    }),
-  ];
-}
-
 function writtenFor(
   params: PlacementItemsParams,
   quick: (format: PlacementItemsParams["quickFormat"]) => readonly GeneratedItem[] = (format) => [
@@ -597,7 +586,7 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
-  it("waits for a language exam's blueprint, not only its formats, so listening skills get no text questions", async () => {
+  it("waits for a language exam's blueprint, so listening skills get no text questions", async () => {
     const { blueprint, goal, listeningSkills, reading } = await listeningGoalFixture();
     const listeningIds = listeningSkills.map((skill) => skill.id);
 
@@ -680,44 +669,7 @@ describe(placementItemsWorkflow, () => {
     ).rejects.toBe(unavailable);
   });
 
-  it("writes an exam's true/false questions under its blueprint once research has read its notice", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
-
-    await preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds });
-
-    const blueprint = await examBlueprintFixture({
-      name: "Polícia Federal",
-      role: "Agente",
-      structure: CEBRASPE_STRUCTURE,
-    });
-
-    await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
-    vi.mocked(generatePlacementItems).mockClear();
-
-    await expect(
-      preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds }),
-    ).resolves.toStrictEqual({ failed: 0, written: 2 });
-
-    expect(generatePlacementItems).toHaveBeenCalledTimes(3);
-
-    expect(vi.mocked(generatePlacementItems).mock.calls).toStrictEqual(
-      expect.arrayContaining([policeWrite(1, 0), policeWrite(0, 3), policeWrite(1, 3)]),
-    );
-
-    const examItems = await prisma.item.findMany({
-      where: { examBlueprintId: blueprint.id, skillId: { in: skillIds } },
-    });
-
-    expect(examItems.map((item) => item.format).toSorted()).toStrictEqual(
-      ["matchPairs", "multipleChoice", "order", "trueFalse"].flatMap((format) => [format, format]),
-    );
-
-    vi.mocked(generatePlacementItems).mockClear();
-    await preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds });
-    expect(generatePlacementItems).not.toHaveBeenCalled();
-  });
-
-  it("writes a new exam's first questions in the formats a first pass over its notice read", async () => {
+  it("keeps an exam's placement questions general, written once whatever its notice says", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
 
     await prisma.goal.update({
@@ -734,33 +686,36 @@ describe(placementItemsWorkflow, () => {
       }),
     ).resolves.toMatchObject({ failed: 0, written: 2 });
 
-    expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
-      examFormat: { blueprintId: null, style: expect.stringContaining("Itens Certo ou Errado.") },
-      quickFormat: "trueFalse",
-      serviceTier: "priority",
+    expect(sleep).not.toHaveBeenCalled();
+
+    expect(
+      vi
+        .mocked(generatePlacementItems)
+        .mock.calls.every(
+          ([params]) => params.examFormat === null && params.quickFormat === "multipleChoice",
+        ),
+    ).toBe(true);
+
+    const blueprint = await examBlueprintFixture({
+      name: "Polícia Federal",
+      role: "Agente",
+      structure: CEBRASPE_STRUCTURE,
     });
 
-    await expect(countItems({ format: "trueFalse", skillIds })).resolves.toBe(2);
-  });
-
-  it("waits for a new notice's formats before writing questions, and goes on without them in the end", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 1, kind: "exam" });
+    await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
+    vi.mocked(generatePlacementItems).mockClear();
 
     await expect(
-      placementItemsWorkflow({
-        analytics: context.analytics,
-        goalId: goal.id,
-        skillIds,
-        waitsForNotice: true,
-      }),
-    ).resolves.toMatchObject({ written: 1 });
+      preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds }),
+    ).resolves.toStrictEqual({ failed: 0, written: 0 });
 
-    expect(sleep).toHaveBeenCalledTimes(39);
+    expect(generatePlacementItems).not.toHaveBeenCalled();
 
-    expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
-      examFormat: null,
-      quickFormat: "multipleChoice",
-    });
+    await expect(
+      prisma.item.count({ where: { examBlueprintId: { not: null }, skillId: { in: skillIds } } }),
+    ).resolves.toBe(0);
+
+    await expect(countItems({ format: "trueFalse", skillIds })).resolves.toBe(0);
   });
 
   it("writes a multiple-choice exam's own questions once when its notice lands", async () => {

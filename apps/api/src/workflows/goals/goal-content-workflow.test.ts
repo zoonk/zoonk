@@ -2566,7 +2566,7 @@ describe(goalContentWorkflow, () => {
     ]);
 
     await expect(
-      prisma.item.count({ where: { examBlueprintId: blueprint.id, skillId: added.id } }),
+      prisma.item.count({ where: { examBlueprintId: null, skillId: added.id } }),
     ).resolves.toBeGreaterThan(0);
 
     expect(plan.placementPreparedAt).toStrictEqual(preparedAt[0]);
@@ -3484,7 +3484,7 @@ describe(goalContentWorkflow, () => {
     );
   });
 
-  it("rebuilds the uploaded notice and placement without writing lessons ahead again", async () => {
+  it("rebuilds the uploaded notice without writing lessons ahead or placement's general questions again", async () => {
     const { goal } = await newGoal({ kind: "exam" });
 
     vi.mocked(classifyGoalSpecificity).mockResolvedValue(
@@ -3525,11 +3525,7 @@ describe(goalContentWorkflow, () => {
 
     expect(generateItems).not.toHaveBeenCalled();
 
-    expect(generatePlacementItems).toHaveBeenCalledWith(
-      expect.objectContaining({
-        examFormat: expect.objectContaining({ blueprintId: blueprint.id }),
-      }),
-    );
+    expect(generatePlacementItems).not.toHaveBeenCalled();
 
     expect(getStartMock().mock.calls.some(([workflow]) => workflow === lessonContentWorkflow)).toBe(
       false,
