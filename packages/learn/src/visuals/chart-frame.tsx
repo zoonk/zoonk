@@ -22,10 +22,12 @@ export function ChartFigure({
 
   return (
     <figure
+      aria-label={title}
       className={cn(SURFACE_CLASS, "flex w-full flex-col gap-3 p-4", className)}
       data-slot={slot}
     >
-      <figcaption className="text-foreground text-sm font-semibold text-balance">
+      {/* The figure's name already announces the title. */}
+      <figcaption aria-hidden="true" className="text-foreground text-sm font-semibold text-balance">
         {title}
       </figcaption>
 
