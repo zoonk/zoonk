@@ -126,7 +126,7 @@ private struct LessonExampleFrame<Content: View>: View {
     content
       .padding(
         EdgeInsets(
-          top: labelRise + 13, leading: 16, bottom: 16,
+          top: rise + 13, leading: 16, bottom: 16,
           trailing: icon == nil ? 16 : LessonCornerIcon.size)
       )
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -150,21 +150,40 @@ private struct LessonExampleFrame<Content: View>: View {
         .alignmentGuide(.top) { $0.height / 2 }
         .padding(.leading, 12)
       }
-      .overlay(alignment: .topTrailing) {
-        // A fifth of it outside the frame, as much as the text keeps clear of it.
-        if let icon {
-          LessonIconImage(icon: icon, size: LessonCornerIcon.size)
-            .alignmentGuide(.top) { $0[.top] + rise }
-            .alignmentGuide(.trailing) { $0[.trailing] - $0.width * 0.2 }
-        }
-      }
-      .padding(.vertical, labelRise)
+      .lessonCornerIcon(icon, rise: rise)
+      .padding(.vertical, rise)
   }
 }
 
-/// A lesson's icon on the corner of a screen's words or of its example frame.
-private enum LessonCornerIcon {
+/// A lesson's icon on a frame's top trailing corner, a fifth of it outside, its top `rise` above the
+/// frame, level with the label's. A frame keeps the icon's width clear beside its text, which leaves
+/// that same fifth between them.
+private struct LessonCornerIcon: ViewModifier {
   static let size: CGFloat = 56
+
+  let icon: LessonIcon
+  let rise: CGFloat
+
+  func body(content: Content) -> some View {
+    content
+      .overlay(alignment: .topTrailing) {
+        LessonIconImage(icon: icon, size: Self.size)
+          .alignmentGuide(.top) { $0[.top] + rise }
+          .alignmentGuide(.trailing) { $0[.trailing] - $0.width * 0.2 }
+      }
+  }
+}
+
+extension View {
+  /// A modifier rather than an `if` in the overlay, which would drop the icon's alignment guides.
+  @ViewBuilder
+  fileprivate func lessonCornerIcon(_ icon: LessonIcon?, rise: CGFloat) -> some View {
+    if let icon {
+      modifier(LessonCornerIcon(icon: icon, rise: rise))
+    } else {
+      self
+    }
+  }
 }
 
 /// An icon from the lesson's library, loaded like its pictures. It's decorative: until it loads, or
