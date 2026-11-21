@@ -1,7 +1,7 @@
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
 
-const QUESTION_CLASS = "text-base leading-snug font-semibold text-pretty";
+const QUESTION_CLASS = "text-base leading-snug font-semibold";
 
 /** A question an activity asks, under its card or inside it: one style wherever it's asked. */
 export function ActivityCheckQuestion({

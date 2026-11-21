@@ -42,7 +42,7 @@ function SpeakingTaskRow({ number, task }: { number: number; task: SpeakingTask 
         <p className="text-muted-foreground font-mono text-xs tabular-nums">
           {t("Task {number, number} · {time}", { number, time: minutes(task.minutes) })}
         </p>
-        <p className="text-sm leading-snug font-medium text-pretty">{task.name}</p>
+        <p className="text-sm leading-snug font-medium">{task.name}</p>
       </div>
 
       {done ? (
@@ -68,7 +68,7 @@ function SpeakingPaper({ paper }: { paper: SpeakingSectionView }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground text-sm text-pretty">
+      <p className="text-muted-foreground text-sm">
         {left > 0
           ? t("Do the tasks in order. Each one is a call.")
           : t("Every task is done. Hand in this section to go on.")}
@@ -184,7 +184,7 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
         )}
 
         {!speaking && !writing && (
-          <p className="text-muted-foreground text-pretty">
+          <p className="text-muted-foreground">
             {t(
               "Each task is a live call with an examiner, as in the exam: an AI stands in for the person.",
             )}

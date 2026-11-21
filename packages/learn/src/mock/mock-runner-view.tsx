@@ -2,41 +2,41 @@
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { SwapLabel } from "@zoonk/ui/components/swap-label";
+import {
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverDescription,
+} from "@zoonk/ui/components/popover";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon } from "lucide-react";
+import { BookmarkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
 import { TaskHeaderProgress } from "../_components/task-header";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
+import { deviceStorage } from "../_utils/device-storage";
 import { MockAnswerSheet, MockQuestionMap, useMockSheetAside } from "./mock-answer-sheet";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
-import { useMockTitle } from "./mock-labels";
+import { useMockTitle, useUnsureLabel } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
-import { getSectionPlace } from "./mock-place";
 import { MockQuestionCard, MockRecording, useQuestionPlace } from "./mock-question";
 import { useSectionCounts } from "./mock-section-counts";
 
 const PERCENT = 100;
 
-function RunnerProgress({ question }: { question: MockQuestion }) {
+function RunnerProgress({ question, total }: { question: MockQuestion; total: number }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const counts = useSectionCounts();
   const title = useMockTitle();
-  const place = useQuestionPlace(question);
-
-  const inSection = getSectionPlace({
-    position: runner.position,
-    questions: runner.view.current?.questions ?? [],
-  });
+  const place = useQuestionPlace({ question, total });
 
   return (
     <>
@@ -61,12 +61,9 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
         <span className="flex shrink-0 items-center gap-3 font-mono text-xs tabular-nums">
           <ItemClock />
           <span aria-hidden="true">
-            {inSection
-              ? t("{number} of {total}", {
-                  number: String(inSection.number),
-                  total: String(inSection.total),
-                })
-              : t("Written part")}
+            {question.format === "essay"
+              ? t("Written part")
+              : t("{number} of {total}", { number: String(question.number), total: String(total) })}
           </span>
         </span>
         <span className="sr-only">{place}</span>
@@ -75,33 +72,117 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
   );
 }
 
-function FlagButton() {
+const UNSURE_TIP_SEEN_KEY = "zoonk:mock-unsure-tip-seen";
+
+function useUnsureTip(itemId: string | undefined) {
+  const [tipFor, setTipFor] = useState<string | null>(null);
+  const [shownItem, setShownItem] = useState(itemId);
+
+  // Any move to another question closes it, so coming back never shows it without a press.
+  if (shownItem !== itemId) {
+    setShownItem(itemId);
+    setTipFor(null);
+  }
+
+  return {
+    close: () => setTipFor(null),
+    open: tipFor === itemId,
+    toggled: (marking: boolean) => {
+      const show = marking && deviceStorage.get(UNSURE_TIP_SEEN_KEY) === null;
+
+      if (show) {
+        deviceStorage.set(UNSURE_TIP_SEEN_KEY, "1");
+      }
+
+      setTipFor(show && itemId ? itemId : null);
+    },
+  };
+}
+
+/**
+ * The tip stands over the whole bottom bar, so the question strip under it stays in sight, and its
+ * arrow points down at the button.
+ */
+function aboveBottomBar(button: HTMLElement | null) {
+  if (!button) {
+    return null;
+  }
+
+  return {
+    contextElement: button,
+    getBoundingClientRect: () => {
+      const rect = button.getBoundingClientRect();
+      const barTop = button.closest('[data-slot="bottom-bar"]')?.getBoundingClientRect().top;
+      const top = barTop ?? rect.top;
+
+      return new DOMRect(rect.left, top, rect.width, rect.bottom - top);
+    },
+  };
+}
+
+function useUnsureTipText() {
   const t = useExtracted();
   const { runner } = useMockScreen();
-  const question = runner.view.current?.questions[runner.position];
-  const flagged = Boolean(question && runner.drafts[question.itemId]?.flagged);
-  const flag = t("Flag");
-  const unflag = t("Remove flag");
 
-  useShortcut("flag", runner.toggleFlag);
+  return runner.moves.canRecheck
+    ? t("Check it again before you hand in. Your result shows how these answers went.")
+    : t("Your result shows how these answers went.");
+}
+
+function UnsureButton() {
+  const label = useUnsureLabel();
+  const { runner } = useMockScreen();
+  const question = runner.view.current?.questions[runner.position];
+  const unsure = Boolean(question && runner.drafts[question.itemId]?.flagged);
+  const button = useRef<HTMLButtonElement>(null);
+  const tip = useUnsureTip(question?.itemId);
+  const tipId = useId();
+  const tipText = useUnsureTipText();
+
+  function toggle() {
+    tip.toggled(!unsure);
+    runner.toggleUnsure();
+  }
+
+  useShortcut("unsure", toggle);
 
   return (
-    <Button
-      aria-keyshortcuts={shortcutKeys("flag")}
-      className={cn(
-        "shrink-0",
-        flagged && "border-warning text-warning-text hover:text-warning-text",
-      )}
-      onClick={runner.toggleFlag}
-      size="xl"
-      variant="outline"
-    >
-      <SwapLabel
-        current={flagged ? unflag : flag}
-        icon={<FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />}
-        labels={[flag, unflag]}
-      />
-    </Button>
+    <>
+      <Button
+        aria-describedby={tip.open ? tipId : undefined}
+        aria-keyshortcuts={shortcutKeys("unsure")}
+        aria-pressed={unsure}
+        className={cn(
+          "shrink-0",
+          unsure && "border-warning text-warning-text hover:text-warning-text",
+        )}
+        onClick={toggle}
+        ref={button}
+        size="xl"
+        variant="outline"
+      >
+        <BookmarkIcon aria-hidden="true" className={cn(unsure && "fill-current")} />
+        {label}
+      </Button>
+
+      <Popover onOpenChange={(open) => !open && tip.close()} open={tip.open}>
+        <PopoverContent
+          anchor={() => aboveBottomBar(button.current)}
+          backdrop={false}
+          className="w-64 max-w-(--available-width)"
+          collisionAvoidance={{ side: "none" }}
+          finalFocus={false}
+          initialFocus={false}
+          side="top"
+          sideOffset={4}
+        >
+          <PopoverDescription className="text-popover-foreground text-pretty" id={tipId}>
+            {tipText}
+          </PopoverDescription>
+          <PopoverArrow />
+        </PopoverContent>
+      </Popover>
+    </>
   );
 }
 
@@ -138,7 +219,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
       {/* In the bar, so the numbers stay in one place whatever a question's length. */}
       <MockQuestionMap className="with-aside:hidden w-full" />
       <QuestionActions className="w-full lg:w-auto">
-        <FlagButton />
+        <UnsureButton />
         {isLastQuestion ? (
           <QuestionMainAction
             action="finish"
@@ -162,8 +243,15 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   );
 }
 
-/** What the flag is for, said once: where the learner first meets the button. */
-function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
+function RunnerScreen({
+  deadline,
+  question,
+  total,
+}: {
+  deadline: string;
+  question: MockQuestion;
+  total: number;
+}) {
   const t = useExtracted();
   const [confirming, setConfirming] = useState(false);
   const handIn = () => setConfirming(true);
@@ -181,7 +269,7 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
       footer={<RunnerFooter onHandIn={handIn} />}
       headerEnd={<MockAnswerSheet onHandIn={handIn} />}
       headerTitle={<ClockTitle clockBeside deadline={deadline} />}
-      progress={{ bar: <RunnerProgress question={question} /> }}
+      progress={{ bar: <RunnerProgress question={question} total={total} /> }}
     >
       <MockRecording key={question.set?.id ?? "none"} question={question} />
       <MockQuestionCard key={question.itemId} question={question} />
@@ -202,5 +290,7 @@ export function MockRunnerView() {
     return null;
   }
 
-  return <RunnerScreen deadline={current.deadline} question={question} />;
+  return (
+    <RunnerScreen deadline={current.deadline} question={question} total={current.questionTotal} />
+  );
 }

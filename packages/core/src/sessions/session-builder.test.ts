@@ -574,7 +574,7 @@ describe(buildSessionBlocks, () => {
         itemId: `p${index}`,
         skillId: `s${index % 3}`,
       })),
-      writingMinutes: 12,
+      unwritten: [{ minutes: 12, position: 0 }],
     });
 
     expect(blocks.some((block) => block.kind === "practice")).toBe(true);
@@ -590,12 +590,63 @@ describe(buildSessionBlocks, () => {
 
       lessons: [],
       practice: [],
-      writingMinutes: 18,
+      unwritten: [{ minutes: 18, position: 0 }],
     });
 
     expect(blocks.map((block) => block.kind)).toStrictEqual(["review"]);
     expect(plannedMinutes).toBe(30);
     expect(blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0)).toBeLessThanOrEqual(12);
+  });
+
+  it("gives the written lessons before an unwritten one the day first, and it only what's left", () => {
+    const planItems = [
+      { id: "plan-earlier", kind: "lesson" as const, position: 1, status: "todo" as const },
+      { id: "plan-after", kind: "lesson" as const, position: 12, status: "todo" as const },
+    ];
+
+    const day = (unwritten: { minutes: number; position: number }) =>
+      buildSessionBlocks({
+        ...baseInput,
+        capsules: [capsule("a", 1)],
+        dailyMinutes: 25,
+        freshStart: "welcomeBack",
+        lessons: [lesson("earlier", 8), lesson("after", 3)],
+        planItems,
+        practice: [],
+        unwritten: [unwritten],
+      });
+
+    const later = day({ minutes: 12.5, position: 9 });
+
+    expect(later.blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
+      ["review", null],
+      ["learn", "earlier"],
+    ]);
+
+    expect(later.plannedMinutes).toBe(10);
+
+    const next = day({ minutes: 12.5, position: 0 });
+
+    expect(next.blocks.map((block) => block.kind)).toStrictEqual(["review"]);
+    expect(next.plannedMinutes).toBe(10);
+  });
+
+  it("holds the minutes a due subject's unwritten lesson needs after the written one before it", () => {
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 10,
+      lessons: [lesson("reading", 6)],
+      planItems: [{ id: "plan-reading", kind: "lesson", position: 1, status: "todo" }],
+      practice: [],
+      unwritten: [{ minutes: 4, position: 2 }],
+    });
+
+    expect(blocks.map((block) => [block.kind, block.estimatedMinutes])).toStrictEqual([
+      ["learn", 6],
+    ]);
+
+    expect(plannedMinutes).toBe(10);
   });
 
   it("splits a long day's practice into short blocks without splitting a set", () => {

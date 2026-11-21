@@ -30,7 +30,7 @@ export async function EditionNotice({
       <LineMarker>
         <LanguagesIcon aria-hidden="true" className="text-muted-foreground size-4" />
       </LineMarker>
-      <span className="flex-1 text-pretty">
+      <span className="flex-1">
         {t("This course is also in {language}.", {
           language: getLanguageNameInSentence({
             targetLanguage: edition.language,

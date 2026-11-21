@@ -10,7 +10,7 @@ import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
 import { getSessionUsedMinutes } from "../session-minutes";
-import { getLessonLookahead, getUnwrittenMinutesOn } from "./day-lessons";
+import { getLessonLookahead } from "./day-lessons";
 import { orderDayBlocks } from "./day-stretch";
 import { getExamPrepAccess } from "./exam-access";
 import { loadPlanLessons } from "./load-plan-lessons";
@@ -19,6 +19,7 @@ import { fitRefillStretch } from "./refill-challenges";
 import {
   getSessionLessonCandidates,
   hasSessionLessonReservation,
+  holdCandidateTime,
 } from "./session-lesson-reservation";
 import { toLessonBlock } from "./session-lessons";
 import { lockSessionQueue } from "./session-queue-lock";
@@ -199,7 +200,12 @@ export async function refitSessionLessons(
     prerequisites,
   });
 
-  const writingMinutes = getUnwrittenMinutesOn({ items: candidates, today: session.localDate });
+  const writingMinutes = holdCandidateTime({
+    candidates,
+    plan,
+    room,
+    today: session.localDate,
+  }).reduce((sum, hold) => sum + hold.held, 0);
 
   const lessons =
     room - writingMinutes >= 1

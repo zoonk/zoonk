@@ -30,7 +30,7 @@ export function MomentHeader({
         <h2 className="text-title outline-none" ref={heading} {...MOMENT_TITLE_PROPS}>
           {title}
         </h2>
-        {detail && <StepDetail className="text-pretty">{detail}</StepDetail>}
+        {detail && <StepDetail>{detail}</StepDetail>}
       </StepHeader>
 
       {children}

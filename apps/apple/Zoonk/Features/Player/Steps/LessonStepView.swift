@@ -602,16 +602,7 @@ private struct SummaryStepView: View {
       .typeStyle(.pageTitle)
       .accessibilityAddTraits(.isHeader)
 
-    VStack(alignment: .leading, spacing: 12) {
-      ForEach(Array(content.ideas.enumerated()), id: \.offset) { _, idea in
-        Label {
-          LessonRichText(idea.text)
-        } icon: {
-          Image(systemName: "lightbulb")
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-    }
+    LessonSummaryIdeas(ideas: content.ideas.map(\.text))
   }
 }
 

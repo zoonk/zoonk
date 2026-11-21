@@ -84,7 +84,7 @@ function PickerOption({
       onClick={() => onPick(row.country)}
       value={row}
     >
-      <span className="min-w-0 text-pretty">{row.label}</span>
+      <span className="min-w-0">{row.label}</span>
       <span className="flex shrink-0 items-center gap-2">
         {row.home && (
           <span className="text-muted-foreground text-xs">

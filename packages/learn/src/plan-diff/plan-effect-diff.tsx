@@ -28,7 +28,7 @@ function ChangeRows({ rows }: { rows: readonly ChangeRow[] }) {
               {row.after}
             </dd>
           </div>
-          {row.detail && <dd className="text-muted-foreground text-pretty">{row.detail}</dd>}
+          {row.detail && <dd className="text-muted-foreground">{row.detail}</dd>}
         </div>
       ))}
     </dl>
@@ -53,11 +53,7 @@ export function PlanEffectNote({
 }) {
   return (
     <div className={cn("flex flex-col gap-1.5", className)} data-slot="plan-change-effect">
-      <p
-        aria-busy={busy || undefined}
-        className="text-muted-foreground text-sm text-pretty"
-        role="status"
-      >
+      <p aria-busy={busy || undefined} className="text-muted-foreground text-sm" role="status">
         {children}
       </p>
       <div className="text-compact flex h-lh leading-snug">{action}</div>
@@ -98,7 +94,7 @@ function RepricedLine({ changes }: { changes: boolean }) {
   const t = useExtracted();
 
   return (
-    <p className="text-sm font-medium text-pretty" role="status">
+    <p className="text-sm font-medium" role="status">
       {changes
         ? t("Your plan changed since you saw this. Here's what it does now.")
         : t("Your plan stays as it is.")}
@@ -150,7 +146,7 @@ export function PlanEffectDiff({
 
       {consequence && (
         <p
-          className="in-data-[slot=suggestion-panel]:text-compact in-data-[slot=suggestion-sheet]:text-reading text-sm text-pretty"
+          className="in-data-[slot=suggestion-panel]:text-compact in-data-[slot=suggestion-sheet]:text-reading text-sm"
           data-slot="plan-change-consequence"
         >
           {consequence.text}

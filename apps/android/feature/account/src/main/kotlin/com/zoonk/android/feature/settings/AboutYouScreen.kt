@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fitInside
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -46,6 +48,7 @@ import com.zoonk.android.feature.profile.ProfileQuestionBody
 import com.zoonk.android.feature.profile.ProfileQuestionsStore
 import com.zoonk.android.feature.profile.profileQuestionDescription
 import com.zoonk.android.feature.profile.profileQuestionTitle
+import com.zoonk.android.feature.profile.splitProfileFavorites
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
@@ -74,8 +77,9 @@ import kotlinx.coroutines.launch
 fun AboutYouScreen(
     app: AppContainer,
     navigator: AppNavigator,
+    store: ProfileQuestionsStore = app.profileQuestions,
 ) {
-    val state by app.profileQuestions.questions.collectShown()
+    val state by store.questions.collectShown()
     ProfilePage(navigator, stringResource(R.string.profile_questions_title)) {
         PageHeader(
             stringResource(R.string.profile_questions_title),
@@ -84,7 +88,7 @@ fun AboutYouScreen(
         )
         when (val shown = state) {
             is LoadState.Loaded -> AboutYouRows(shown.value, navigator)
-            is LoadState.Failed -> LoadFailedMessage(onRetry = { app.scope.launch { app.profileQuestions.questions.refresh() } })
+            is LoadState.Failed -> LoadFailedMessage(onRetry = { app.scope.launch { store.questions.refresh() } })
             else -> PageLoading()
         }
     }
@@ -119,7 +123,7 @@ private val HOW_YOU_LEARN = listOf(ProfileQuestion.ADDRESS_FORM, ProfileQuestion
 
 private val ABOUT_YOU_GROUPS =
     listOf(
-        R.string.profile_questions_your_day to listOf(ProfileQuestion.WORK, ProfileQuestion.TOOLS, ProfileQuestion.STUDIES),
+        R.string.profile_questions_your_day to listOf(ProfileQuestion.WORK, ProfileQuestion.STUDIES, ProfileQuestion.TOOLS),
         R.string.profile_questions_for_fun to
             listOf(ProfileQuestion.WATCH, ProfileQuestion.LISTEN, ProfileQuestion.PLAY, ProfileQuestion.READ, ProfileQuestion.ACTIVITIES),
         R.string.profile_questions_how_learn to HOW_YOU_LEARN,
@@ -169,6 +173,7 @@ private fun profileSummary(question: ProfileQuestionView): String {
             ProfileQuestion.WORK -> question.saved.text.ifBlank { labelsSummary }
             ProfileQuestion.STUDIES -> labelsSummary
             ProfileQuestion.LEARNING_SUPPORT -> labelsSummary.ifBlank { question.saved.text }
+            ProfileQuestion.TOOLS -> (selected + splitProfileFavorites(question.saved.text)).joinToString(", ")
             else -> factsLine(labelsSummary, question.saved.text)
         }
     return summary.ifEmpty {
@@ -329,19 +334,22 @@ internal class ProfileQuestionViewModel(
 
     fun canSave(memoryEnabled: Boolean): Boolean {
         val question = source ?: return false
-        if (!draft.empty(question.id, memoryEnabled)) return draft.valid(question.id, memoryEnabled)
+        val sent = draft.submitted(question)
+        if (!sent.empty(question.id, memoryEnabled)) return sent.valid(question.id, memoryEnabled)
         return question.status == ProfileQuestionView.Status.ANSWERED ||
-            (draft.declined && (question.id == ProfileQuestion.WORK || question.id == ProfileQuestion.ADDRESS_FORM))
+            (sent.declined && (question.id == ProfileQuestion.WORK || question.id == ProfileQuestion.ADDRESS_FORM))
     }
 
     fun save(
         question: ProfileQuestion,
         memoryEnabled: Boolean,
     ) {
+        val source = source
         if (saving || source?.id != question || !canSave(memoryEnabled)) return
         saving = true
         failure.clear()
-        val answer = if (draft.empty(question, memoryEnabled)) draft.copy(declined = true) else draft
+        val submitted = draft.submitted(source)
+        val answer = if (submitted.empty(question, memoryEnabled)) submitted.copy(declined = true) else submitted
         val started = visit.number
         viewModelScope.launch {
             when (store.answer(answer.input(question, memoryEnabled))) {
@@ -368,7 +376,9 @@ private fun ProfilePage(
                     .fillMaxSize()
                     .padding(padding)
                     .consumeWindowInsets(padding)
-                    .fitInside(WindowInsetsRulers.Ime.current),
+                    // Above the keyboard by where the page sits, over the tab bar it covers; the bar then adds no keyboard room again.
+                    .fitInside(WindowInsetsRulers.Ime.current)
+                    .consumeWindowInsets(WindowInsets.ime),
             ) {
                 Box(
                     Modifier

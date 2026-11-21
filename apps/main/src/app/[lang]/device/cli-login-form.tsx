@@ -236,7 +236,7 @@ function Outcome({ email, outcome }: { email: string; outcome: CliLoginOutcome }
       <h2 className="text-section outline-none" ref={(node) => node?.focus()} tabIndex={-1}>
         {text[outcome].title}
       </h2>
-      <p className="text-muted-foreground text-pretty">{text[outcome].body}</p>
+      <p className="text-muted-foreground">{text[outcome].body}</p>
     </div>
   );
 }
@@ -283,7 +283,7 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
 
         <Grant email={email} />
 
-        <p className="flex gap-3 text-sm text-pretty">
+        <p className="flex gap-3 text-sm">
           <ShieldAlertIcon aria-hidden="true" className="text-warning mt-0.5 size-4 shrink-0" />
           {t("Only approve a login you started yourself. If someone sent you this link, deny it.")}
         </p>

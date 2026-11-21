@@ -65,7 +65,7 @@ export function ChooserHeader({ detail, title }: { detail: string; title: string
     <DetailHero>
       <DetailHeroText>
         <DetailTitle>{title}</DetailTitle>
-        <p className="text-muted-foreground pt-1 text-sm text-pretty">{detail}</p>
+        <p className="text-muted-foreground pt-1 text-sm">{detail}</p>
       </DetailHeroText>
     </DetailHero>
   );
@@ -104,7 +104,7 @@ function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
 
   if (status.kind === "failed") {
     return (
-      <p className="text-destructive-text text-sm text-pretty" role="alert">
+      <p className="text-destructive-text text-sm" role="alert">
         {failureText(status.reason)}
       </p>
     );

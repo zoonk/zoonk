@@ -5,7 +5,7 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { FeedbackExplanation, FeedbackPanel, FeedbackVerdict } from "../_components/feedback-panel";
 import { QuestionTitle } from "../_components/question-title";
@@ -138,7 +138,7 @@ function ChoiceGrade({ feedback }: { feedback: ChoiceFeedback }) {
 
 /**
  * For several picks (`select`), the host gets an answer only once as many as it asks are picked,
- * null before.
+ * null before. `translation` is the question in the learner's language, read under it.
  */
 export function ChoiceQuestion({
   disabled = false,
@@ -146,6 +146,7 @@ export function ChoiceQuestion({
   onSelect,
   question,
   selected,
+  translation,
   trueFalseLabels = "trueFalse",
 }: {
   disabled?: boolean;
@@ -153,12 +154,14 @@ export function ChoiceQuestion({
   onSelect: (answer: ChoiceAnswer | null) => void;
   question: ChoiceQuestionView;
   selected: ChoiceAnswer | null;
+  translation?: string;
   trueFalseLabels?: TrueFalseLabels;
 }) {
   const options = useOptions({ question, trueFalseLabels });
   const locked = disabled || feedback !== null;
   const select = question.format === "multipleChoice" ? question.select : null;
   const [picks, setPicks] = usePicks({ question, selected });
+  const translationId = useId();
 
   const isPicked = (option: Option, index: number) =>
     isMultiPick(select) ? picks.includes(index) : isSame(selected, option.answer);
@@ -185,11 +188,21 @@ export function ChoiceQuestion({
   return (
     <div className="flex flex-col gap-4">
       <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <QuestionTitle tabIndex={-1} text={question.question} />
+      <div className="flex flex-col gap-1">
+        <QuestionTitle tabIndex={-1} text={question.question} />
+        {translation && (
+          <p className="text-muted-foreground" id={translationId}>
+            {translation}
+          </p>
+        )}
+      </div>
 
       {isMultiPick(select) && <PickRule select={select} />}
 
-      <AnswerOptionGroup role={isMultiPick(select) ? "group" : "radiogroup"}>
+      <AnswerOptionGroup
+        aria-describedby={translation ? translationId : undefined}
+        role={isMultiPick(select) ? "group" : "radiogroup"}
+      >
         {options.map((option, index) => {
           const picked = isPicked(option, index);
           const result = getOptionResult({ feedback, index, option, picked });

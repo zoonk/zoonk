@@ -25,6 +25,9 @@ struct FactSegments: View {
     var unit: String?
     /// What VoiceOver says instead of the text and its unit.
     var spoken: String?
+    /// A small symbol before the text, such as the bookmark of an answer marked as not sure.
+    var symbol: String?
+    var symbolColor: Color?
   }
 
   let facts: [Fact]
@@ -49,11 +52,11 @@ struct FactSegments: View {
             .accessibilityHidden(true)
         }
         ViewThatFits(in: .horizontal) {
-          text(fact.text, color: fact.color, unit: fact.unit).fixedSize()
+          text(fact.text, fact: fact).fixedSize()
           if let compact = fact.compact {
-            text(compact, color: fact.color, unit: fact.unit).fixedSize()
+            text(compact, fact: fact).fixedSize()
           }
-          text(fact.compact ?? fact.text, color: fact.color, unit: fact.unit)
+          text(fact.compact ?? fact.text, fact: fact)
             .fixedSize(horizontal: false, vertical: true)
         }
       }
@@ -70,15 +73,26 @@ struct FactSegments: View {
     }
   }
 
-  @ViewBuilder private func text(_ words: String, color: Color?, unit: String?) -> some View {
+  @ViewBuilder private func text(_ words: String, fact: Fact) -> some View {
     let lead = Group {
-      if let color { Text(verbatim: words).foregroundStyle(color) } else { Text(verbatim: words) }
+      if let color = fact.color {
+        Text(verbatim: words).foregroundStyle(color)
+      } else {
+        Text(verbatim: words)
+      }
     }
 
-    if let unit {
+    if fact.symbol != nil || fact.unit != nil {
       HStack(alignment: .firstTextBaseline, spacing: 4) {
+        if let symbol = fact.symbol {
+          Image(systemName: symbol)
+            .imageScale(.small)
+            .foregroundStyle(fact.symbolColor ?? fact.color ?? .primary)
+        }
         lead
-        Text(verbatim: unit).foregroundStyle(.mutedForeground)
+        if let unit = fact.unit {
+          Text(verbatim: unit).foregroundStyle(.mutedForeground)
+        }
       }
     } else {
       lead

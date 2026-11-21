@@ -92,19 +92,7 @@ struct DrillIdeaView: View {
         }
       }
 
-      VStack(alignment: .leading, spacing: 0) {
-        ForEach(Array(lesson.ideas.enumerated()), id: \.offset) { index, idea in
-          if index > 0 { Divider() }
-          HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(index + 1, format: .number)
-              .typeStyle(.data)
-              .foregroundStyle(.faint)
-            Text(idea)
-          }
-          .padding(.vertical, 10)
-          .accessibilityElement(children: .combine)
-        }
-      }
+      LessonSummaryIdeas(ideas: lesson.ideas)
 
       LessonLinkButton(lessonId: lesson.id)
     }
@@ -184,9 +172,10 @@ struct DrillAnswerNotes: View {
 
     if let trap {
       QuestionNote(systemImage: "exclamationmark.triangle") {
-        Text(
-          "The trap: \(trap)", tableName: "Practice",
-          comment: "The misconception a trap drill's wrong answer fell for.")
+        LessonRichText(
+          String(
+            localized: "The trap: \(trap)", table: "Practice",
+            comment: "The misconception a trap drill's wrong answer fell for."))
       }
     }
   }

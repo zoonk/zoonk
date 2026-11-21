@@ -3,12 +3,12 @@
 import { AnswerOption } from "@zoonk/learn/answer-option";
 import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { useActivityDropTarget } from "../_components/activity-drag-drop";
 
 type Group = { id: string; label: string; rule: string };

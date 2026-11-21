@@ -123,7 +123,7 @@ async function ChapterClosing({
             })}
       </h2>
 
-      <p className="text-muted-foreground max-w-column text-reading leading-relaxed text-pretty">
+      <p className="text-muted-foreground max-w-column text-reading leading-relaxed">
         {startChapterId
           ? t("You get a plan for each day, from this chapter to the end of the course.")
           : t("A few quick questions, then your plan and your first lesson.")}

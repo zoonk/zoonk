@@ -50,5 +50,6 @@ export async function mergeProfileAnswers({ guestUserId, transaction, userId }: 
   return {
     takeGuestAddressForm: takeGuest("addressForm"),
     takeGuestSupport: takeGuest("learningSupport"),
+    takeGuestTools: !accountQuestions.has("work") && !accountQuestions.has("studies"),
   };
 }

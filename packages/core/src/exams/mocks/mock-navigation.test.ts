@@ -164,7 +164,7 @@ describe("a mock section that moves like the real exam's", () => {
 
     const reloaded = await readMock(id);
 
-    expect(reloaded.current).toMatchObject({ changesLeft: 2, resume: 1 });
+    expect(reloaded.current).toMatchObject({ changedItemIds: [], changesLeft: 2, resume: 1 });
 
     for (const itemId of itemIds.slice(2)) {
       // oxlint-disable-next-line no-await-in-loop -- One question after another, in order.
@@ -190,6 +190,7 @@ describe("a mock section that moves like the real exam's", () => {
     const reviewed = await readMock(id);
 
     expect(reviewed.current).toMatchObject({ changesLeft: 0, resume: QUESTIONS - 1 });
+    expect(new Set(reviewed.current?.changedItemIds)).toStrictEqual(new Set([first, third]));
   });
 
   it("keeps a section that moves freely as it was: any answer changes, and it opens again past the last answer", async () => {
@@ -211,6 +212,6 @@ describe("a mock section that moves like the real exam's", () => {
 
     const free = await readMock(id);
 
-    expect(free.current).toMatchObject({ changesLeft: null, resume: 2 });
+    expect(free.current).toMatchObject({ changedItemIds: [], changesLeft: null, resume: 2 });
   });
 });

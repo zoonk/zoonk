@@ -61,6 +61,7 @@
 - “Phase challenge”: “Phasen-Herausforderung”
 - “Weekly challenge”: “Wöchentliche Herausforderung”
 - “Mock exam”, including speaking mocks: “Probeprüfung”, not “Probeklausur”, “Probetest”, or “Simulation”
+- A mock exam's “Not sure” (the button and the mark it leaves on an answer): “Unsicher”
 - “Logbook”: “Logbuch”
 - “Fading” (needs review): “Nachlassend”
 - “Overview” (course level): “Überblick”

@@ -44,9 +44,7 @@ function NotWonDetails() {
           {retry.passed ? <CheckIcon aria-hidden="true" /> : <RotateCcwIcon aria-hidden="true" />}
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="font-medium">{retry.title}</span>
-            {retry.detail && (
-              <span className="text-muted-foreground text-xs text-pretty">{retry.detail}</span>
-            )}
+            {retry.detail && <span className="text-muted-foreground text-xs">{retry.detail}</span>}
           </span>
         </StepRow>
       )}

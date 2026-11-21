@@ -30,6 +30,7 @@ import {
   revertInAdmin,
   signInApprover,
   signInProposer,
+  skilledLanguageLesson,
 } from "./_test-utils/content-fix-steps";
 import { mockVoice } from "./_test-utils/mock-fix-voice";
 import {
@@ -415,7 +416,7 @@ describe("publishing one reviewed lesson screen version", () => {
   });
 
   it("publishes two Vietnamese tones with their recordings, translations and existing map ideas", async () => {
-    const { lesson, steps, word, sentence } = await languageLessonFixture({
+    const { lesson, steps, word, sentence } = await skilledLanguageLesson({
       language: "en",
       wordText: "ma",
       wordTranslation: "ghost",
@@ -642,7 +643,111 @@ describe("publishing one reviewed lesson screen version", () => {
     expect(next[1]?.content).toStrictEqual({ ideas: [ideas[2], { text: "Four apples." }] });
   });
 
-  it("draws a numeric check and creates its practice item from the same calculation", async () => {
+  it("gives an added screen the skill it names, or else the lesson's first skill", async () => {
+    const { lesson, steps, word } = await languageLessonFixture();
+    const [first, second] = await Promise.all([skillFixture(), skillFixture()]);
+
+    await prisma.word.create({
+      data: {
+        audioUrl: "https://audio.test/deposit.mp3",
+        organizationId: word.organizationId,
+        targetLanguage: word.targetLanguage,
+        word: "deposit",
+      },
+    });
+
+    await prisma.lessonSkill.create({
+      data: { createdAt: new Date("2026-01-02"), lessonId: lesson.id, skillId: second.id },
+    });
+
+    await prisma.lessonSkill.create({
+      data: { createdAt: new Date("2026-01-01"), lessonId: lesson.id, skillId: first.id },
+    });
+
+    await apply([
+      change(
+        lesson.id,
+        [
+          ...steps.map(({ id }) => ({ id })),
+          { kind: "vocabulary", word: "deposit" },
+          { kind: "translation", skillId: second.id, word: "deposit" },
+          { content: intro, kind: "explanation" },
+        ],
+        {
+          words: [
+            { id: word.id },
+            {
+              distractors: ["debit", "despot"],
+              key: "deposit",
+              translation: "depósito",
+              word: "deposit",
+            },
+          ],
+        },
+      ),
+    ]);
+
+    const screens = await current(lesson.id);
+    const added = screens.slice(steps.length);
+
+    expect(added.map(({ kind, skillId }) => ({ kind, skillId }))).toStrictEqual([
+      { kind: "vocabulary", skillId: first.id },
+      { kind: "translation", skillId: second.id },
+      { kind: "explanation", skillId: first.id },
+    ]);
+  });
+
+  it("refuses an added question without a skill and flags distractors that are the lesson's translations", async () => {
+    const { lesson, steps, word } = await languageLessonFixture();
+    await signInProposer();
+
+    const input = {
+      changes: [
+        change(
+          lesson.id,
+          [...steps.map(({ id }) => ({ id })), { kind: "translation", word: "deposit" }],
+          {
+            words: [
+              { distractors: ["deposit", "aluguel"], id: word.id },
+              {
+                distractors: ["debit", "Depósito", "conta"],
+                key: "deposit",
+                translation: "depósito",
+                word: "deposit",
+              },
+            ],
+          },
+        ),
+      ],
+      reason,
+    };
+
+    await expect(proposeContentFix(input, { check: true })).resolves.toMatchObject({
+      message: expect.stringContaining(`screens[${String(steps.length)}].skillId`),
+      status: "invalid",
+    });
+
+    const skill = await skillFixture();
+    await prisma.lessonSkill.create({ data: { lessonId: lesson.id, skillId: skill.id } });
+
+    await expect(proposeContentFix(input, { check: true })).resolves.toMatchObject({
+      fixes: [
+        {
+          effects: expect.arrayContaining([
+            { kind: "distractorsLikeTranslations", texts: ["aluguel"], wordId: word.id },
+            {
+              kind: "distractorsLikeTranslations",
+              texts: ["Depósito"],
+              wordId: expect.any(String),
+            },
+          ]),
+        },
+      ],
+      status: "checked",
+    });
+  });
+
+  it("draws a numeric check in the lesson's skill and creates its practice item from the same calculation", async () => {
     const { lesson, reading } = await publishedLesson();
     const skill = await skillFixture();
     await prisma.lessonSkill.create({ data: { lessonId: lesson.id, skillId: skill.id } });
@@ -675,7 +780,6 @@ describe("publishing one reviewed lesson screen version", () => {
             math: numeric.math,
             question: numeric.question,
           },
-          skillId: skill.id,
         },
       ]),
     ]);
@@ -703,7 +807,7 @@ describe("publishing one reviewed lesson screen version", () => {
   });
 
   it("finishes the old version when its only graded screen was excused before any answer was saved", async () => {
-    const { lesson, word, steps } = await languageLessonFixture();
+    const { lesson, word, steps } = await skilledLanguageLesson();
     const translation = steps.find((screen) => screen.kind === "translation");
 
     if (!translation) {

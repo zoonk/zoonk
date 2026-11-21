@@ -72,13 +72,9 @@ function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string 
         {place === "chapter" ? t("Mind map") : view.title}
       </ListRowTitle>
 
-      {line && (
-        <ListRowDescription className={cn("text-pretty", quiet && "sr-only")}>
-          {line}
-        </ListRowDescription>
-      )}
+      {line && <ListRowDescription className={cn(quiet && "sr-only")}>{line}</ListRowDescription>}
 
-      {hint && !quiet && <ListRowDescription className="text-pretty">{hint}</ListRowDescription>}
+      {hint && !quiet && <ListRowDescription>{hint}</ListRowDescription>}
     </ListRowContent>
   );
 }

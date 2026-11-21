@@ -12,6 +12,7 @@ import {
 } from "@zoonk/core/memory/insights/daily";
 import { resolveMistakeCause } from "@zoonk/core/mistakes/resolve-cause";
 import { settleOwedSessionDay } from "@zoonk/core/sessions/settle-owed-day";
+import { updateLessonsShowing } from "@zoonk/core/staff/content-fixes/update-lessons-showing";
 import {
   askToCancelSecondStorePlus,
   endWebPlusBesideStore,
@@ -53,6 +54,11 @@ export async function settleSessionDayStep(input: Parameters<typeof settleOwedSe
 export async function voiceWordStep(input: Parameters<typeof voiceWord>[0]) {
   "use step";
   await voiceWord(input);
+}
+
+export async function updateLessonsShowingStep(input: Parameters<typeof updateLessonsShowing>[0]) {
+  "use step";
+  await updateLessonsShowing(input);
 }
 
 export async function proposeOnboardingMemoryStep(input: {

@@ -24,7 +24,7 @@ import { type TopicOutlineActions } from "./topic-outline-actions";
 import { useFarTopicLine } from "./use-far-topic-line";
 import { type TopicOutlineShown, useTopicOutline } from "./use-topic-outline";
 
-const TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
+const TEXT_CLASS = "text-muted-foreground text-sm";
 
 function useStateCopy(shown: TopicOutlineShown): { action: string | null; message: string } {
   const t = useExtracted();

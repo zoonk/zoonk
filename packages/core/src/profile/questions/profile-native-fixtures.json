@@ -202,6 +202,70 @@
       "answer": {
         "answer": {
           "declined": false,
+          "favorites": "ClinicalKey, Notion",
+          "picks": [
+            "Whitebook",
+            "Medscape",
+            "UpToDate",
+            "excel",
+            "Tasy"
+          ]
+        },
+        "question": "tools"
+      },
+      "view": {
+        "id": "tools",
+        "options": [
+          {
+            "description": null,
+            "id": "Whitebook",
+            "label": "Whitebook"
+          },
+          {
+            "description": null,
+            "id": "Medscape",
+            "label": "Medscape"
+          },
+          {
+            "description": null,
+            "id": "UpToDate",
+            "label": "UpToDate"
+          },
+          {
+            "description": null,
+            "id": "Google Drive",
+            "label": "Google Drive"
+          },
+          {
+            "description": null,
+            "id": "excel",
+            "label": "Excel"
+          },
+          {
+            "description": null,
+            "id": "Tasy",
+            "label": "Tasy"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "Whitebook",
+            "Medscape",
+            "UpToDate",
+            "excel",
+            "Tasy"
+          ],
+          "studies": [],
+          "text": "ClinicalKey, Notion"
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
           "studies": [
             {
               "field": "business",
@@ -306,8 +370,8 @@
           "declined": false,
           "favorites": "Star Trek, Fringe",
           "picks": [
-            "anime",
-            "sciFi"
+            "sciFi",
+            "anime"
           ]
         },
         "question": "watch"
@@ -358,8 +422,8 @@
         ],
         "saved": {
           "picks": [
-            "anime",
-            "sciFi"
+            "sciFi",
+            "anime"
           ],
           "studies": [],
           "text": "Star Trek, Fringe"
@@ -868,8 +932,8 @@
         "answer": {
           "declined": false,
           "needs": [
-            "shorterDays",
-            "stepByStep"
+            "stepByStep",
+            "shorterDays"
           ],
           "note": "I understand diagrams better than text",
           "soundEffects": false
@@ -912,8 +976,8 @@
         ],
         "saved": {
           "picks": [
-            "shorterDays",
             "stepByStep",
+            "shorterDays",
             "noSoundEffects"
           ],
           "studies": [],

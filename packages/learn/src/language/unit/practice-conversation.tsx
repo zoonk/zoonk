@@ -79,7 +79,7 @@ function CallsPausedMessage({ className }: { className: string }) {
 
   return (
     <CallReason className={className} role="alert" title={t("Calls are paused")}>
-      <p className="text-muted-foreground text-sm text-pretty">
+      <p className="text-muted-foreground text-sm">
         {t({
           description:
             'Under the title "Calls are paused": the pause applies to every learner, not only this one.',
@@ -133,7 +133,7 @@ function CallSetup({
         {/* The line's space is kept for a Plus-only length and for a limit's words once it lifts,
             so the action under it never moves. */}
         <div
-          className="grid text-sm text-pretty [&:not([data-held]):not(:has(>:not(:empty)))]:contents"
+          className="grid text-sm [&:not([data-held]):not(:has(>:not(:empty)))]:contents"
           ref={slot}
         >
           {conversation.plusMinutes.length > 0 && (

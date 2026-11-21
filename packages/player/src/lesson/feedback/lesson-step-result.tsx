@@ -8,10 +8,10 @@ import {
   FeedbackPanel,
 } from "@zoonk/learn/feedback-panel";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { RightAnswerLine } from "@zoonk/learn/right-answer-line";
 import { type Verdict, VerdictLabel } from "@zoonk/learn/verdict-label";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../_components/lesson-rich-text";
 import { isLanguageStep } from "../_utils/lesson-steps";
 import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
 import { WordHints } from "../steps/word-hints";

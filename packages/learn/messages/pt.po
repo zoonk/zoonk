@@ -598,13 +598,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Isso está demorando mais que o normal. Vai abrir sozinho, não precisa tocar de novo."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Rolar para a esquerda"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Rolar para a direita"
@@ -1326,7 +1324,6 @@ msgstr "Oi! Sou {name}, seu colega de estudos com IA. Me conte o que você quer 
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Perguntas anteriores"
@@ -3621,19 +3618,19 @@ msgid "{answered, number} of {questions, number} answered"
 msgstr "{answered, number} de {questions, number} respondidas"
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "5wOk8O"
-msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged."
-msgstr "Nos seus simulados: {sureRight, plural, =0 {# acertos em {sureAnswered}} one {# acerto em {sureAnswered}} other {# acertos em {sureAnswered}}} nas respostas não marcadas, {unsureRight, plural, =0 {# acertos em {unsureAnswered}} one {# acerto em {unsureAnswered}} other {# acertos em {unsureAnswered}}} nas respostas marcadas."
+msgctxt "FvTaDr"
+msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure."
+msgstr "Nas suas provas simuladas: {sureRight, plural, =0 {# de {sureAnswered} acertos} one {# de {sureAnswered} acertos} other {# de {sureAnswered} acertos}} quando você tem certeza, {unsureRight, plural, =0 {# de {unsureAnswered} acertos} one {# de {unsureAnswered} acertos} other {# de {unsureAnswered} acertos}} quando está em dúvida."
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "d5aD04"
-msgid "Your flagged answers cost more than they earn: leave those blank."
-msgstr "Você perde mais pontos do que ganha nas respostas marcadas: deixe essas questões em branco."
+msgctxt "kJlaFe"
+msgid "When you're not sure, leave it blank: those answers cost more than they earn."
+msgstr "Quando estiver em dúvida, deixe em branco: essas respostas tiram mais pontos do que dão."
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "8ghbty"
-msgid "Your flagged answers still earn points: keep answering them."
-msgstr "Suas respostas marcadas ainda rendem pontos: continue respondendo essas questões."
+msgctxt "FxZzRf"
+msgid "When you're not sure, still answer: those answers earn points."
+msgstr "Quando estiver em dúvida, responda mesmo assim: essas respostas valem pontos."
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -7779,10 +7776,11 @@ msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# respondidas} one {# respondida} other {# respondidas}}"
 
+#. On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "Questões seguintes"
+msgctxt "q_puC8"
+msgid "{unsure, plural, one {# not sure} other {# not sure}}"
+msgstr "{unsure, plural, one {# em dúvida} other {# em dúvida}}"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
@@ -7944,23 +7942,23 @@ msgctxt "P-hmyB"
 msgid "An answer wasn't saved."
 msgstr "Uma resposta não foi salva."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "Beu7ZD"
-msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
-msgstr "{blank, plural, one {# questão está em branco} other {# questões estão em branco}} e {flagged, plural, one {# está marcada} other {# estão marcadas}}."
+msgctxt "INKJBm"
+msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and you're not sure of {unsure, plural, one {#} other {#}}."
+msgstr "{blank, plural, one {# questão em branco} other {# questões em branco}} e você está em dúvida sobre {unsure, plural, one {# resposta} other {# respostas}}."
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank.
 #: src/mock/mock-hand-in.tsx
 msgctxt "h5Iipv"
 msgid "{count, plural, one {# question is blank.} other {# questions are blank.}}"
 msgstr "{count, plural, one {# questão está em branco.} other {# questões estão em branco.}}"
 
-#. Before handing in a mock exam: how many of its questions are blank or flagged.
+#. Before handing in a mock exam: how many of its questions are blank, or marked with the "Not sure" button.
 #: src/mock/mock-hand-in.tsx
-msgctxt "GCYYkV"
-msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
-msgstr "{count, plural, one {# questão está marcada.} other {# questões estão marcadas.}}"
+msgctxt "MVVQnK"
+msgid "{count, plural, one {You're not sure of # answer.} other {You're not sure of # answers.}}"
+msgstr "{count, plural, one {Você está em dúvida sobre # resposta.} other {Você está em dúvida sobre # respostas.}}"
 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
@@ -7988,6 +7986,27 @@ msgstr "Depois disso, você não poderá alterar suas respostas."
 msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Continuar respondendo"
+
+#. A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed.
+#: src/mock/mock-labels.tsx
+msgctxt "BsQPJC"
+msgid "Not sure"
+msgstr "Em dúvida"
+
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Seção {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Questão {number} de {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Questão {number} de {total}"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8176,18 +8195,7 @@ msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Parte escrita"
 
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Questão {number} de {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Questão {number} de {total}"
-
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
 msgstr "Acertos parciais"
@@ -8204,7 +8212,6 @@ msgid "Wrong"
 msgstr "Erros"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Em branco"
@@ -8302,24 +8309,24 @@ msgid "You missed {count, plural, one {# easy question} other {# easy questions}
 msgstr "Você errou {count, plural, one {# questão fácil. Revise essa primeiro} other {# questões fáceis. Revise essas primeiro}}."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "Gac05z"
-msgid "Flagged answers"
-msgstr "Respostas marcadas"
+msgctxt "v-WZ1x"
+msgid "Answers you weren't sure of"
+msgstr "Respostas sobre as quais você estava em dúvida"
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "EnpXr5"
-msgid "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "Não marcadas: {sureRight, plural, =0 {# acertos em {sureAnswered}} one {# acerto em {sureAnswered}} other {# acertos em {sureAnswered}}}. Marcadas: {unsureRight, plural, =0 {# acertos em {unsureAnswered}} one {# acerto em {unsureAnswered}} other {# acertos em {unsureAnswered}}}."
+msgctxt "eQCLMt"
+msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
+msgstr "Certeza: {sureRight, plural, =0 {# acertos de {sureAnswered}} one {# acerto de {sureAnswered}} other {# acertos de {sureAnswered}}}. Em dúvida: {unsureRight, plural, =0 {# acertos de {unsureAnswered}} one {# acerto de {unsureAnswered}} other {# acertos de {unsureAnswered}}}."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "1yogM5"
-msgid "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}."
-msgstr "Deixar as questões marcadas em branco teria rendido {points, plural, one {# ponto} other {# pontos}} a mais."
+msgctxt "BxnoFo"
+msgid "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}."
+msgstr "Se você tivesse deixado em branco as respostas sobre as quais estava em dúvida, teria ganhado {points, plural, one {# ponto} other {# pontos}}."
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "ZkBfTU"
-msgid "Your flagged answers still earned points, so keep answering them."
-msgstr "Suas respostas marcadas ainda renderam pontos, então continue respondendo a essas questões."
+msgctxt "riHnND"
+msgid "The answers you weren't sure of still earned points, so keep answering them."
+msgstr "As respostas sobre as quais você estava em dúvida ainda valeram pontos, então continue respondendo."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
@@ -8547,16 +8554,34 @@ msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Depois deste simulado"
 
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Questão {number}"
+msgctxt "mockReviewBlank"
+msgid "Blank"
+msgstr "Em branco"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewPartlyRight"
+msgid "Partly right"
+msgstr "Parcialmente certo"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewRight"
+msgid "Right"
+msgstr "Certo"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewWrong"
+msgid "Wrong"
+msgstr "Errado"
 
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
-msgstr "Questões para revisar"
+msgstr "Perguntas para revisar"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "rD-WPb"
@@ -8569,14 +8594,14 @@ msgid "{number} of {total}"
 msgstr "{number} de {total}"
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "bSCV9J"
-msgid "Flag"
-msgstr "Marcar"
+msgctxt "d9n-z1"
+msgid "Check it again before you hand in. Your result shows how these answers went."
+msgstr "Confira de novo antes de entregar. O resultado mostra como você foi nessas respostas."
 
 #: src/mock/mock-runner-view.tsx
-msgctxt "sflabU"
-msgid "Remove flag"
-msgstr "Remover marcação"
+msgctxt "vmWccn"
+msgid "Your result shows how these answers went."
+msgstr "Seu resultado mostra como você se saiu nessas respostas."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8616,11 +8641,6 @@ msgstr "Suas respostas estão salvas."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Entregue"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Seção {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8721,11 +8741,16 @@ msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Pratique: {worst}."
 
-#. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
-msgctxt "ETtb7q"
-msgid "{question}, flagged"
-msgstr "{question}, marcada"
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Questão {number}"
+
+#. A cell of the mock exam's answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.
+#: src/mock/use-question-cell-label.ts
+msgctxt "n8sv3N"
+msgid "{question}, not sure"
+msgstr "{question}, em dúvida"
 
 #: src/onboarding/choice-list.tsx
 msgctxt "IfCNU-"
@@ -11643,6 +11668,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Ex.: fazer pão, carros, astronomia"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Adicionar"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11673,6 +11704,12 @@ msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Ex.: jornalismo"
 
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "Remover {tool}"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
 msgid "What do you do now?"
@@ -11681,7 +11718,7 @@ msgstr "O que você faz atualmente?"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "lxu-IX"
 msgid "Which apps and tools do you use most?"
-msgstr "Quais apps e ferramentas você mais usa?"
+msgstr "Quais aplicativos e ferramentas você mais usa?"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "McuAl7"
@@ -11741,9 +11778,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "A gente usa isso para escolher exemplos que te interessem."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "O que você estuda ou já estudou, mesmo sem concluir. Escolha até 3."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "No passado ou no presente, concluído ou não."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11759,11 +11796,6 @@ msgstr "Opcional. A gente usa o que você escolher para adaptar o conteúdo às 
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Escolha o que te ajuda."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Escolha até 3."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

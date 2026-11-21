@@ -17,6 +17,19 @@ struct ZoonkList<Content: View>: View {
   @Environment(\.listRowMargin) private var rowMargin
 
   var body: some View {
+    ScrollViewReader { scroll in
+      list.environment(\.listScroll, scroll)
+    }
+    .modifier(ListRowTrailingHost())
+    .modifier(ListRowTrailingScope())
+    .listStyle(.plain)
+    .listSectionSpacing(listSectionGap)
+    .environment(\.defaultMinListRowHeight, 44)
+    .pageColumn()
+    .headsPage()
+  }
+
+  private var list: some View {
     List {
       // Row and section traits reach a list's rows only from inside it. A separator tint set here
       // would bring back the hairline a footer hides above itself, so hairlines keep the system's.
@@ -36,13 +49,6 @@ struct ZoonkList<Content: View>: View {
         }
         .rowLabelColumn()
     }
-    .modifier(ListRowTrailingHost())
-    .modifier(ListRowTrailingScope())
-    .listStyle(.plain)
-    .listSectionSpacing(listSectionGap)
-    .environment(\.defaultMinListRowHeight, 44)
-    .pageColumn()
-    .headsPage()
   }
 }
 
@@ -68,6 +74,9 @@ extension View {
 }
 
 extension EnvironmentValues {
+  /// Scrolls the `ZoonkList` a row is in, by the row's `id`. Its visible room is what the keyboard
+  /// and a bottom bar over it leave.
+  @Entry var listScroll: ScrollViewProxy?
   @Entry fileprivate var pageColumnFillsRoom = false
   /// How far folds moved a row's content in from its column's edge, so the current row's band
   /// still spans the column.

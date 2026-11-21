@@ -2,11 +2,11 @@
 
 import { getActivityBaseMap } from "@zoonk/core/library/activities/base-maps";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { use, useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { type BaseMapDrawing } from "../_assets/base-maps/base-map-drawing";
 import { projectPlace } from "../_assets/base-maps/base-map-projection";
 import { loadBaseMap } from "../_assets/base-maps/load-base-map";
@@ -172,7 +172,7 @@ function MapCanvas({
   return (
     <ActivityCanvas labelId={labelId}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <p className="text-sm font-medium text-pretty">{name}</p>
+        <p className="text-sm font-medium">{name}</p>
         <ActivityCanvasLabel className="max-w-full min-w-0 tabular-nums">
           {t("{count} of {total} explored", {
             count: format(visited.length),

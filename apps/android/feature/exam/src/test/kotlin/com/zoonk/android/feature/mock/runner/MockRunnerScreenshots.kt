@@ -1,6 +1,9 @@
 package com.zoonk.android.feature.mock.runner
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.view.View
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
@@ -8,10 +11,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.core.graphics.withTranslation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
@@ -79,6 +90,67 @@ class MockRunnerScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun expanded() = capture("mock-expanded", answered())
 
+    /** The question on screen and the next one both marked: the button on, two marked cells. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneMarked() = capture("mock-phone-marked", marked())
+
+    @Test
+    @Config(qualifiers = "w360dp-h740dp-night-xxhdpi")
+    fun smallPhoneMarkedDark() = capture("mock-small-phone-marked-dark", marked(), dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xhdpi")
+    fun phoneMarkedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("mock-phone-marked-font200", marked())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun answerSheet() =
+        capture("mock-answer-sheet", marked()) {
+            compose.onNodeWithText("Sheet").performClick()
+            compose.waitForIdle()
+            compose.onAllNodes(isRoot()).onLast()
+        }
+
+    /** The tip the first Not sure shows, in a section the learner can go back in and in one they can't. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun unsureTip() = capture("mock-unsure-tip", answered(), popup = true) { openTip() }
+
+    @Test
+    @Config(qualifiers = "w360dp-h740dp-night-xxhdpi")
+    fun unsureTipForwardOnlyDark() =
+        capture("mock-unsure-tip-forward-only-dark", navigatedMock(FORWARD_ONLY), dark = true, popup = true) {
+            openTip()
+        }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xhdpi")
+    fun unsureTipAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("mock-unsure-tip-font200", answered(), popup = true) { openTip() }
+    }
+
+    private fun openTip(): SemanticsNodeInteraction {
+        compose.onNodeWithText("Not sure").performClick()
+        compose.waitForIdle()
+        return compose.onAllNodes(isRoot()).onLast()
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun handIn() =
+        capture("mock-hand-in", marked()) {
+            compose.onNodeWithText("Next").performClick()
+            compose.waitForIdle()
+            compose.onNodeWithText("Hand in section").performClick()
+            compose.waitForIdle()
+            compose.onNode(isDialog())
+        }
+
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun timeUp() = capture("mock-time-up", runningMock(current = currentSection(deadline = "${Clock.System.now() - 1.minutes}")))
@@ -108,6 +180,7 @@ class MockRunnerScreenshots {
                 current =
                     currentSection(
                         questions = question(ITEM_ONE, 1, "Water boils at 100 °C at sea level.", emptyList(), "trueFalse"),
+                        questionTotal = 1,
                     ),
                 extra = """"scoring":"net"""",
             ),
@@ -248,13 +321,24 @@ class MockRunnerScreenshots {
 
     private fun onBreak() = runningMock(current = "null", extra = """"breakUntil":"${Clock.System.now() + 9.minutes}"""")
 
-    /** The first question answered and the second flagged, from the drafts the server kept. */
+    /** The first question answered and the second marked not sure, from the drafts the server kept. */
     private fun answered() =
         runningMock(
             current =
                 currentSection(
                     drafts =
                         """{"answer":{"selectedIndex":0},"durationMs":4000,"flagged":false,"itemId":"$ITEM_ONE"},
+                        {"answer":null,"durationMs":2000,"flagged":true,"itemId":"$ITEM_TWO"}""",
+                ),
+        )
+
+    /** The first question answered and the second left blank, both marked as not sure. */
+    private fun marked() =
+        runningMock(
+            current =
+                currentSection(
+                    drafts =
+                        """{"answer":{"selectedIndex":0},"durationMs":4000,"flagged":true,"itemId":"$ITEM_ONE"},
                         {"answer":null,"durationMs":2000,"flagged":true,"itemId":"$ITEM_TWO"}""",
                 ),
         )
@@ -267,6 +351,8 @@ class MockRunnerScreenshots {
         unfolded: Boolean = false,
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         shows: String? = null,
+        popup: Boolean = false,
+        open: (() -> SemanticsNodeInteraction)? = null,
     ) {
         val api = FakeMockRunApi(mock)
         compose.setContent {
@@ -293,7 +379,35 @@ class MockRunnerScreenshots {
         // A fold published before the screen it waits for appears never reaches that screen.
         shows?.let { text -> compose.waitUntil { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() } }
         if (unfolded) compose.unfoldBook(folds)
-        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+        val node = open?.invoke() ?: compose.onRoot()
+        write(name, if (popup) pageWithPopups() else node.captureRender().asAndroidBitmap())
+    }
+
+    /**
+     * The page with the popups over it where they're placed. A popup is a window of its own, and Robolectric's copy of
+     * it is the page behind, so each popup's root is drawn onto the page at its window's place. Shadows don't draw.
+     */
+    private fun pageWithPopups(): Bitmap {
+        val page =
+            compose
+                .onAllNodes(isRoot())
+                .onFirst()
+                .captureRender()
+                .asAndroidBitmap()
+                .copy(Bitmap.Config.ARGB_8888, true)
+        val global = Class.forName("android.view.WindowManagerGlobal").getMethod("getInstance").invoke(null)
+
+        fun windows(field: String) =
+            global.javaClass
+                .getDeclaredField(field)
+                .apply { isAccessible = true }
+                .get(global) as List<*>
+        val canvas = Canvas(page)
+        windows("mViews").zip(windows("mParams")).drop(1).forEach { (view, params) ->
+            params as WindowManager.LayoutParams
+            canvas.withTranslation(params.x.toFloat(), params.y.toFloat()) { (view as View).draw(this) }
+        }
+        return page
     }
 
     private fun write(

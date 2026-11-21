@@ -36,11 +36,7 @@ export function SettingRow({
     >
       <ListRowContent className={cn(stacks && "sm:py-3")}>
         <ListRowTitle>{label}</ListRowTitle>
-        {description && (
-          <ListRowDescription className="text-pretty" id={descriptionId}>
-            {description}
-          </ListRowDescription>
-        )}
+        {description && <ListRowDescription id={descriptionId}>{description}</ListRowDescription>}
       </ListRowContent>
       <div
         className={cn(
