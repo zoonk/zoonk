@@ -3,7 +3,7 @@ import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { type MockIdentity } from "../../../plans/planner/mock-identity";
-import { parsePlanGraph, parsePlanPhases } from "../../../plans/planner/plan-state";
+import { type PlanGraph, parsePlanGraph, parsePlanPhases } from "../../../plans/planner/plan-state";
 import { getFinalStretchStart, isInFinalStretch } from "../../final-stretch/final-stretch-rules";
 import { loadFinalStretchStart } from "../../final-stretch/load-final-stretch-start";
 import { getMockFormatMix } from "../mock-format-mix";
@@ -105,6 +105,16 @@ type WeeklyPaper = WeeklyOutline & {
   itemIds?: readonly string[] | null;
 };
 
+export function getMockPaperSkillIds({
+  graph,
+  skillIds,
+}: {
+  graph: PlanGraph;
+  skillIds: readonly string[];
+}): string[] {
+  return [...new Set([...skillIds, ...graph.skills.map((skill) => skill.skillId)])];
+}
+
 async function loadPaperSkillIds({
   client = prisma,
   goal,
@@ -117,9 +127,7 @@ async function loadPaperSkillIds({
       ? await client.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
       : savedPlan;
 
-  const paperGraph = parsePlanGraph(graph ?? plan?.graph);
-
-  return [...new Set([...skillIds, ...paperGraph.skills.map((skill) => skill.skillId)])];
+  return getMockPaperSkillIds({ graph: parsePlanGraph(graph ?? plan?.graph), skillIds });
 }
 
 export async function loadWeeklyOutline({
