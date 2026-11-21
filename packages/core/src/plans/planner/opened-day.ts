@@ -80,7 +80,7 @@ function toSavedLessonUnit({
   };
 }
 
-/** The rest still fills today's time left after the opened work, so the day before an exam keeps the lessons it can't move; an event the opened day doesn't hold leaves today. */
+/** The opened session is all of today, as Today shows it: the rest starts tomorrow, and an event the opened day doesn't hold leaves today. */
 export function holdOpenedDay({
   days,
   input,
@@ -134,7 +134,7 @@ export function holdOpenedDay({
   const shape = {
     ...day.shape,
     events: [...events, ...reviews],
-    reserved: (day.shape.reserved ?? 0) + held.reduce((total, unit) => total + unit.minutes, 0),
+    reserved: day.shape.minutes * day.shape.share,
   };
 
   return {

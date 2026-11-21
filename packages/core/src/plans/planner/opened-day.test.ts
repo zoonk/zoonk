@@ -128,6 +128,20 @@ describe("the day the learner opened", () => {
   });
 });
 
+describe("the day the learner opened is all of today", () => {
+  it.each(CASES)("dates nothing else on today: $name, on $plan", ({ goal, opened, skills }) => {
+    const built = buildPlan(comeBack({ goal, openedKeys: opened, skills }));
+
+    const today = built.items.flatMap((item) =>
+      item.kind === "lesson" && item.scheduledFor && toIsoDate(item.scheduledFor) === "2026-10-01"
+        ? [item.key]
+        : [],
+    );
+
+    expect(today.toSorted()).toStrictEqual(opened.toSorted());
+  });
+});
+
 describe("an opened lesson the re-plan no longer plans", () => {
   it("takes the time its saved plan gave it, the same as when the planner still loads it", () => {
     const input = {
