@@ -3,6 +3,7 @@ package com.zoonk.android.feature.mock
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -82,7 +83,8 @@ private fun MockWritingProgress(
     val left = stringResource(R.string.mock_writing_time_left, formatDuration(minutes * SECONDS_PER_MINUTE, currentLocale()))
     val line = if (run.status == GenerationRun.Status.Ready) stringResource(R.string.mock_writing_done) else listOf(step, left).factsLine()
 
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    // On a wide bar the bar keeps a short note's width (main's `max-w-sm`) instead of crossing the page.
+    Column(Modifier.widthIn(max = 384.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall)
         // The bar's note is a live region: TalkBack hears the line as it changes (a step, a minute), not every tick of the bar.
         Column(
