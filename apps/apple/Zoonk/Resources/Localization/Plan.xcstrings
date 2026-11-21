@@ -1,27 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ of %@ criteria complete" : {
-      "comment" : "A past written answer graded by level: how many of its criteria were fully met, out of all of them.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ of %2$@ criteria complete"
-          }
-        }
-      }
-    },
-    "%@ points short of the %@ needed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ points short of the %2$@ needed"
-          }
-        }
-      }
-    },
     "%@ – %@" : {
       "comment" : "Study days as a run, from its first weekday to its last",
       "localizations" : {
@@ -87,17 +66,6 @@
         }
       }
     },
-    "%@, %@ of your final score, isn't measured yet." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@ of your final score, isn't measured yet."
-          }
-        }
-      }
-    },
-    "%@, half your final score, isn't measured yet." : {},
     "%@ · %@" : {
       "comment" : "A prerequisite option and the time it takes, like \"Every lesson · 12 hr\"\nThe learner's phase under the roadmap: its number of the phases, then its name",
       "localizations" : {
@@ -1050,28 +1018,6 @@
         }
       }
     },
-    "%@ asks for %@ of its points, whatever your other scores." : {
-      "comment" : "Why a part's own minimum matters, as a share",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ asks for %2$@ of its points, whatever your other scores."
-          }
-        }
-      }
-    },
-    "%@ asks for %@ points, whatever your other scores." : {
-      "comment" : "Why a part's own minimum matters",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ asks for %2$@ points, whatever your other scores."
-          }
-        }
-      }
-    },
     "%@ at %@ counts %@ more, so your plan gives them more of your time. Weights from %@." : {
       "comment" : "How the learner's course weighs an exam's parts: the ones counted more; the last argument is the source's site",
       "localizations" : {
@@ -1617,6 +1563,26 @@
         }
       }
     },
+    "%@ needs %@ of its points, whatever your other scores." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ needs %2$@ of its points, whatever your other scores."
+          }
+        }
+      }
+    },
+    "%@ needs %@ points, whatever your other scores." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ needs %2$@ points, whatever your other scores."
+          }
+        }
+      }
+    },
     "%@ of %@" : {
       "comment" : "Time studied this week of the week's planned time",
       "localizations" : {
@@ -1682,8 +1648,29 @@
         }
       }
     },
+    "%@ of %@ criteria complete" : {
+      "comment" : "A past written answer graded by level: how many of its criteria were fully met, out of all of them.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ criteria complete"
+          }
+        }
+      }
+    },
     "%@ of the score" : {
       "comment" : "A written part's share of the exam's final score"
+    },
+    "%@ points short of the %@ needed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ points short of the %2$@ needed"
+          }
+        }
+      }
     },
     "%@ start from the basics." : {
       "comment" : "Says several subjects start from their basics",
@@ -2110,6 +2097,16 @@
         }
       }
     },
+    "%@, %@ of your final score, isn't measured yet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ of your final score, isn't measured yet."
+          }
+        }
+      }
+    },
     "%@, every %lld weeks" : {
       "comment" : "When a plan's mock exams come: a weekday, every few weeks, like 'Saturdays, every 2 weeks'",
       "localizations" : {
@@ -2389,6 +2386,7 @@
         }
       }
     },
+    "%@, half your final score, isn't measured yet." : {},
     "%@, where you live" : {
       "comment" : "VoiceOver, for the country the learner lives in in a list of countries; the argument is its name",
       "localizations" : {
@@ -11708,21 +11706,6 @@
         }
       }
     },
-    "Above the %@ points needed" : {},
-    "Choose on Today" : {},
-    "Close to the %@ points needed" : {},
-    "Graded by level" : {},
-    "Minimum to pass: %@ of %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Minimum to pass: %1$@ of %2$@"
-          }
-        }
-      }
-    },
-    "Your answers are graded by level. A points estimate isn't available for this test yet." : {},
     "~%@" : {
       "comment" : "An estimated day or month, like '~Nov 20'",
       "localizations" : {
@@ -12682,6 +12665,7 @@
         }
       }
     },
+    "Above the %@ points needed" : {},
     "Add %@ back to your plan?" : {
       "comment" : "Asks to bring subjects the learner took out back into the plan",
       "localizations" : {
@@ -15841,6 +15825,7 @@
         }
       }
     },
+    "Choose on Today" : {},
     "Choose where to focus" : {
       "comment" : "Opens the choice of the subjects that get more time",
       "localizations" : {
@@ -16018,6 +16003,7 @@
         }
       }
     },
+    "Close to the %@ points needed" : {},
     "Coming up" : {
       "comment" : "Spoken state of a later lesson",
       "localizations" : {
@@ -20507,6 +20493,7 @@
         }
       }
     },
+    "Graded by level" : {},
     "Grammar tips" : {
       "comment" : "Section of a unit's grammar tips",
       "localizations" : {
@@ -22771,6 +22758,16 @@
     },
     "Minimum to pass: %@" : {
       "comment" : "A written part's own minimum"
+    },
+    "Minimum to pass: %@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Minimum to pass: %1$@ of %2$@"
+          }
+        }
+      }
     },
     "Minimum to pass: %@ of the points" : {
       "comment" : "A written part's own minimum, as a share of its points"
@@ -39406,6 +39403,7 @@
     "Your answers" : {
       "comment" : "Past written answers"
     },
+    "Your answers are graded by level. A points estimate isn't available for this test yet." : {},
     "Your call opens as soon as it's ready." : {
       "comment" : "A practice call opens by itself once it's written",
       "localizations" : {

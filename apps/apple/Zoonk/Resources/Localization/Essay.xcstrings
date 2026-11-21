@@ -287,57 +287,6 @@
         }
       }
     },
-    "0 of %lld lines" : {},
-    "A new question like the ones on your exam. It opens here when it's ready." : {},
-    "A short exercise on what you just learned. It opens here when it's ready." : {},
-    "Answer the question asked" : {},
-    "Back on %@: no more grading today" : {},
-    "Back tomorrow: no more grading today" : {},
-    "Check what kind of text the question asks for, and write that." : {},
-    "Depends on your choice of %@" : {
-      "comment" : "Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices."
-    },
-    "Develop each point the question asks for until you reach it." : {},
-    "Every criterion is complete." : {},
-    "Fit it in %@ lines" : {},
-    "Fit it in the line limit" : {},
-    "Graders stop at line %@, so the rest isn't read." : {},
-    "Graders stop at the line limit, so the rest isn't read." : {},
-    "Leave out anything that identifies you" : {},
-    "Past line %@: graders stop reading here" : {},
-    "Past the limit: graders stop reading here" : {},
-    "Question %@" : {},
-    "Reach the minimum length" : {
-      "comment" : "The next step of a written answer zeroed for being shorter than the exam's minimum number of lines."
-    },
-    "Remove names, signatures and marks that aren't part of the answer." : {},
-    "Reread the question and write about what it asks." : {},
-    "Rewrite it following the rule above." : {},
-    "Short writing exercise" : {
-      "comment" : "A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer."
-    },
-    "Start with the points the question asks for." : {},
-    "Take the support text as a starting point, not as your answer." : {},
-    "The %@-line question" : {
-      "comment" : "One question of an exam's written test, named by its line limit, such as 30 lines."
-    },
-    "The question" : {
-      "comment" : "The only question of an exam's written test."
-    },
-    "This question is no longer on your exam" : {},
-    "Use your own words" : {},
-    "We couldn't write your exercise" : {},
-    "Write an answer" : {},
-    "Write it in the form asked" : {
-      "comment" : "The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked."
-    },
-    "Write question %@" : {},
-    "Write the %@-line question" : {
-      "comment" : "A whole answer of an exam's written test, named by its line limit, such as 30 lines."
-    },
-    "Write the question" : {},
-    "Writing your exercise…" : {},
-    "Your exam notice changed, so it's out of your plan. Nothing was graded." : {},
     "−%@ to −%@" : {
       "comment" : "Points language errors take off an answer, as a range, like '−0.3 to −0.6'",
       "localizations" : {
@@ -352,6 +301,7 @@
     "0 errors" : {
       "comment" : "An answer with no language errors"
     },
+    "0 of %lld lines" : {},
     "A detail" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -411,6 +361,8 @@
         }
       }
     },
+    "A new question like the ones on your exam. It opens here when it's ready." : {},
+    "A short exercise on what you just learned. It opens here when it's ready." : {},
     "about %@" : {
       "comment" : "An estimated time to write an answer"
     },
@@ -459,6 +411,9 @@
         }
       }
     },
+    "Answer the question asked" : {},
+    "Back on %@: no more grading today" : {},
+    "Back tomorrow: no more grading today" : {},
     "By what means" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -518,6 +473,7 @@
         }
       }
     },
+    "Check what kind of text the question asks for, and write that." : {},
     "Comments" : {
       "comment" : "Comments on each criterion",
       "localizations" : {
@@ -595,6 +551,10 @@
     "Criteria and points from the exam notice. The answer key is ours, for practice." : {
       "comment" : "Where a result's criteria come from, with Zoonk's practice key"
     },
+    "Depends on your choice of %@" : {
+      "comment" : "Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices."
+    },
+    "Develop each point the question asks for until you reach it." : {},
     "Essay · ENEM rubric" : {
       "comment" : "An ENEM essay task",
       "localizations" : {
@@ -775,6 +735,9 @@
         }
       }
     },
+    "Every criterion is complete." : {},
+    "Fit it in %@ lines" : {},
+    "Fit it in the line limit" : {},
     "Fixed: %@" : {
       "comment" : "Criteria a rewrite fixed since the last version"
     },
@@ -1026,11 +989,18 @@
         }
       }
     },
+    "Graders stop at line %@, so the rest isn't read." : {},
+    "Graders stop at the line limit, so the rest isn't read." : {},
     "Grading criteria" : {
       "comment" : "Criteria section\nCriteria sheet\nOpens the criteria sheet"
     },
     "How the %@ points are split" : {
       "comment" : "Under the criteria row: how a question's points are split"
+    },
+    "It's kept on this device and saves when you're back online." : {},
+    "Keep the version you're writing here, or switch to the other one." : {},
+    "Keep this one" : {
+      "comment" : "A choice between two versions of one written answer: keep what's typed on this device and save it over the other."
     },
     "Keep writing" : {
       "comment" : "Stays on the essay",
@@ -1212,6 +1182,7 @@
         }
       }
     },
+    "Leave out anything that identifies you" : {},
     "Left for tomorrow" : {
       "comment" : "The task that waits"
     },
@@ -1460,6 +1431,7 @@
     "No more grading today" : {
       "comment" : "Extra grades used up"
     },
+    "Not saved yet. It's kept on this device." : {},
     "Nothing left to work on" : {
       "comment" : "Full marks",
       "localizations" : {
@@ -1526,6 +1498,8 @@
     "Partly" : {
       "comment" : "A criterion of a written answer half met"
     },
+    "Past line %@: graders stop reading here" : {},
+    "Past the limit: graders stop reading here" : {},
     "present" : {
       "comment" : "A proposal element is there",
       "localizations" : {
@@ -1588,9 +1562,16 @@
     "Question" : {
       "comment" : "Opens the question while writing"
     },
+    "Question %@" : {},
+    "Reach the minimum length" : {
+      "comment" : "The next step of a written answer zeroed for being shorter than the exam's minimum number of lines."
+    },
+    "Reading your answer against each criterion. It can take up to 30 seconds." : {},
+    "Remove names, signatures and marks that aren't part of the answer." : {},
     "Report" : {
       "comment" : "Reports a save that keeps failing"
     },
+    "Reread the question and write about what it asks." : {},
     "Rewrite" : {
       "comment" : "Rewrites the essay",
       "localizations" : {
@@ -1650,6 +1631,7 @@
         }
       }
     },
+    "Rewrite it following the rule above." : {},
     "Rewrite what needs work" : {
       "comment" : "The rewrite box",
       "localizations" : {
@@ -1830,6 +1812,9 @@
         }
       }
     },
+    "Short writing exercise" : {
+      "comment" : "A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer."
+    },
     "Since your last version" : {
       "comment" : "What a rewrite changed"
     },
@@ -1892,6 +1877,7 @@
         }
       }
     },
+    "Start with the points the question asks for." : {},
     "Still grading. This is taking longer than usual." : {
       "comment" : "Grading is slow",
       "localizations" : {
@@ -2016,6 +2002,7 @@
         }
       }
     },
+    "Take the support text as a starting point, not as your answer." : {},
     "That didn't go through. Try again in a moment." : {
       "comment" : "Finishing the block failed",
       "localizations" : {
@@ -2133,6 +2120,9 @@
           }
         }
       }
+    },
+    "The %@-line question" : {
+      "comment" : "One question of an exam's written test, named by its line limit, such as 30 lines."
     },
     "The answer didn't load" : {
       "comment" : "Loading failed"
@@ -2317,9 +2307,15 @@
         }
       }
     },
+    "The question" : {
+      "comment" : "The only question of an exam's written test."
+    },
     "The question didn't load" : {
       "comment" : "Loading failed"
     },
+    "This answer changed on another device" : {},
+    "This grade is for the version you sent first. Your changes are kept for your rewrite." : {},
+    "This question is no longer on your exam" : {},
     "To what end" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -2523,6 +2519,11 @@
         }
       }
     },
+    "Use the other" : {
+      "comment" : "A choice between two versions of one written answer: replace what's typed here with the version saved on another device."
+    },
+    "Use your own words" : {},
+    "We couldn't write your exercise" : {},
     "We couldn't write your question" : {},
     "What the answer is judged on" : {
       "comment" : "Under the criteria row of a question without points"
@@ -2654,6 +2655,15 @@
     "Write" : {
       "comment" : "Starts writing the answer"
     },
+    "Write an answer" : {},
+    "Write it in the form asked" : {
+      "comment" : "The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked."
+    },
+    "Write question %@" : {},
+    "Write the %@-line question" : {
+      "comment" : "A whole answer of an exam's written test, named by its line limit, such as 30 lines."
+    },
+    "Write the question" : {},
     "Write the whole essay, then send it again." : {
       "comment" : "What to do with an essay too short to grade",
       "localizations" : {
@@ -2772,6 +2782,7 @@
         }
       }
     },
+    "Writing your exercise…" : {},
     "Writing your question…" : {},
     "Written answer" : {},
     "You skipped this essay." : {
@@ -2965,6 +2976,7 @@
         }
       }
     },
+    "Your answer isn't saved yet" : {},
     "Your essay" : {
       "comment" : "The box for an ENEM essay",
       "localizations" : {
@@ -3024,6 +3036,7 @@
         }
       }
     },
+    "Your exam notice changed, so it's out of your plan. Nothing was graded." : {},
     "Your last grade" : {
       "comment" : "The last grade while rewriting",
       "localizations" : {
