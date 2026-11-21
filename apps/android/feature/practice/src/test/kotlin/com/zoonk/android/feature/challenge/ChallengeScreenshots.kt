@@ -21,6 +21,8 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.feature.exam.FakeMockApi
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
@@ -142,7 +144,7 @@ class ChallengeScreenshots {
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val viewModel = ChallengeViewModel(challenge.planItemId, null, ChallengeStore(api, cache) { "UTC" }, source, SavedStateHandle())
+        val viewModel = ChallengeViewModel(challenge.planItemId, null, ChallengeStore(api, cache) { "UTC" }, source, SavedStateHandle(), MockStore(FakeMockApi(null), cache))
         if (moved) viewModel.moveToMonday()
 
         rule.setContent {

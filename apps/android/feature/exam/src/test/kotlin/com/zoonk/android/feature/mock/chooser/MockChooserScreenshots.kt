@@ -17,6 +17,8 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.GenerationEvent
+import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.feature.exam.FakeMockApi
 import com.zoonk.android.feature.exam.GOAL
 import com.zoonk.android.feature.exam.mockOptions
@@ -26,9 +28,13 @@ import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.Generation
+import com.zoonk.api.models.MockWriting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.flow
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -92,14 +98,47 @@ class MockChooserScreenshots {
         capturePreparing("chooser-phone-preparing-font200")
     }
 
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h1400dp-xxhdpi")
+    fun phonePreparingInPortuguese() = capturePreparing("chooser-phone-preparing-pt", day = "Dia 1", start = "Começar")
+
+    /** Nothing is writing the paper: the note says to come back. */
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun phonePreparingWithNothingWriting() = capturePreparing("chooser-phone-preparing-come-back", writing = false)
+
+    /** A run that wrote the texts and has been writing questions for a minute and a half. */
+    private val writingRun =
+        object : GenerationSource {
+            override fun events(id: String) =
+                flow {
+                    val now = System.currentTimeMillis()
+                    emit(GenerationEvent(at = now - 130_000, status = "started", step = "writeMockTexts"))
+                    emit(GenerationEvent(at = now - 90_000, status = "completed", step = "writeMockTexts"))
+                    emit(GenerationEvent(at = now - 90_000, status = "started", step = "writeMockQuestions"))
+                    awaitCancellation()
+                }
+
+            override suspend fun status(id: String) = Generation.Status.RUNNING
+        }
+
     private fun capturePreparing(
         name: String,
         dark: Boolean = false,
+        writing: Boolean = true,
+        day: String = "Day 1",
+        start: String = "Start",
     ) {
         starts.starts = listOf { preparing() }
-        capture(name, dark = dark) {
-            compose.onNodeWithText("Day 1").performClick()
-            compose.onNodeWithText("Start").performClick()
+        val mocks =
+            if (writing) {
+                FakeMockApi(mockOptions(OPTIONS), MockWriting(generationId = "paper-run", status = MockWriting.Status.WRITING), writingRun)
+            } else {
+                FakeMockApi(mockOptions(OPTIONS))
+            }
+        capture(name, dark = dark, mocks = mocks) {
+            compose.onNodeWithText(day).performClick()
+            compose.onNodeWithText(start).performClick()
         }
     }
 
@@ -150,9 +189,9 @@ class MockChooserScreenshots {
         moreContrast: Boolean = false,
         options: String = OPTIONS,
         fold: Boolean = false,
+        mocks: FakeMockApi = FakeMockApi(mockOptions(options)),
         act: () -> Unit = {},
     ) {
-        val mocks = FakeMockApi(mockOptions(options))
         compose.setContent {
             val context = LocalContext.current
             val app = remember { AppContainer.preview(context) }

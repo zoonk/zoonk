@@ -10,12 +10,15 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.mock.MockPaperWait
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChallengeGeneration
 import com.zoonk.api.models.ChallengeStart
 import com.zoonk.api.models.PlanEffect
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,6 +81,7 @@ class ChallengeViewModel(
     private val store: ChallengeStore,
     generations: GenerationSource,
     private val saved: SavedStateHandle,
+    private val mocks: MockStore,
 ) : ViewModel() {
     // A move replaces the route's plan item, so the one it became and its Undo outlive the process.
     private val mutableUi =
@@ -90,6 +94,12 @@ class ChallengeViewModel(
     val ui: StateFlow<ChallengeUi> = mutableUi.asStateFlow()
 
     val challenge get() = store.challenges[mutableUi.value.planItemId]
+
+    /** The wait on a scheduled mock's paper while it's being prepared; it lives as long as its note. */
+    fun paperWait(
+        scope: CoroutineScope,
+        goalId: UUID,
+    ): MockPaperWait = mocks.paperWait(scope, goalId, mutableUi.value.planItemId)
 
     private val follower =
         GenerationFollower(

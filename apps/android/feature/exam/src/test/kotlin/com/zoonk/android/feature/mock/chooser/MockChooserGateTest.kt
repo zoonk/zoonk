@@ -23,6 +23,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.exam.GOAL
@@ -34,6 +35,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.MockWriting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -77,12 +79,21 @@ class MockChooserGateTest {
                     session: AuthenticatedSession,
                     goalId: UUID,
                 ) = answer()
+
+                override suspend fun writing(
+                    session: AuthenticatedSession,
+                    goalId: UUID,
+                    planItemId: UUID?,
+                ) = MockWriting(generationId = null, status = MockWriting.Status.NONE)
+
+                override fun generations(session: AuthenticatedSession?) = WritingRuns()
             },
             cache,
         )
 
     private fun show() {
-        val viewModel = MockChooserViewModel(GOAL, MockStarter(starts, cache, store)) { store.refused(GOAL) }
+        val viewModel =
+            MockChooserViewModel(GOAL, MockStarter(starts, cache, store), { store.paperWait(it, GOAL) }) { store.refused(GOAL) }
         rule.setContent {
             ZoonkTheme {
                 val state by store.options[GOAL].collectShown()

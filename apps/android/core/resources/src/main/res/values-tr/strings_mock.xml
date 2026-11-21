@@ -46,10 +46,10 @@
   "mock_next_section": "9accd0524c41c7ed9dabd437a95d03c394676217cab43dc1ae687d696acd7532",
   "mock_place": "6f4f79b8300799bfe604a1ac1c9ac4be246b1a501af1209a3eb14e629789f985",
   "mock_points_of": "ef001a020a1c9e8b03410ca6db37efc54b63b3386d11d16bd0a07b08efeb7537",
-  "mock_preparing_chooser_title": "4933cff8ac6fc46e72d8d9ecb50d8ac4c193b6fa94dcd257006ecb6c5af4fe04",
+  "mock_preparing_chooser_title": "4a5341d166eeaaff147ce06bf89f74251dabbf9d62e5d83f27dd9c9db6b4b79a",
   "mock_preparing_keep_studying": "b9e1060d1c763635eb2e8d2c8cc06e69b4ebb4cc695589163fd60b1aa8fe0e85",
   "mock_preparing_line": "0f4e08961e0ebdf08b2b70d032d2bf9581b8e033bce5a0a1fed1a8221bbbd824",
-  "mock_preparing_title": "f15b6aeddf1595637e75bb55f32a3bf791f316fba5f3a4f3f0cbd5bc2b580ba1",
+  "mock_preparing_title": "852abcc0e8728d7236aed0d4c9d7d86b11e3ece244e58b7dd6754296ec639c6d",
   "mock_progress_label": "42a5783daff8b0691a7af628f7da8ef664483c608077253e7a35d10bbf763748",
   "mock_question_number": "82da547f59fc81766d6b4ed814141783e85e6209da6c850d0a76e4aaa4d628ce",
   "mock_question_place": "f3fb6bd6f364030bad9bfa3d7ca5e9ce86d6723f91be97c74e67c6f1a72c60bd",
@@ -95,6 +95,11 @@
   "mock_try_again": "97c6befc797e9a063493c62d85b875cb6074994815d830bef0f0c4c7b3f443a3",
   "mock_unflag": "b286738fcbe813c6c52a29fe09ce510cb87efd634a5a84217820046e947668cc",
   "mock_words": "09bea6696784497561148eb3b0daa415cfadf75894d07ef11e3c5cd4857b7e35",
+  "mock_writing_done": "8d3c527bc76df547ecc900bb4b6321c16be60ce757751070d92a734369ce10d2",
+  "mock_writing_listening": "ac9325e2a39324c501f8a319e5c5194dc0418bae7f4a4752f2d24d54adaa2830",
+  "mock_writing_questions": "71e43f0d4b56727899547b034a66fb78ff8fca903a2ef4ff47d73a727f79ec00",
+  "mock_writing_texts": "90defe31c39fdfdb1b232f8af4dd0304c4225cba4e30b839007dedae7bbaae32",
+  "mock_writing_time_left": "3994ed70ae1fd856c63cdc844d466b4b5703eaffb0d41b63389344f3fd4fa7b9",
   "mock_written_part": "6394e671851eb17368937215e9a5700250292edfa3dbd6f32df4769d8c3706a6",
   "mock_written_part_area": "b43f3a2581a6f24450f38dc40c9c8920a7c5a5d0031d2105e31516cbc48973d3",
   "mock_your_essay": "724e58e8832e908e0d0c917af8d1825bb46d456b8931e292c59ab41a37af3eb1"
@@ -249,11 +254,16 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Tüm bölümleri tamamladın. Bundan sonra bu deneme sınavında onları tekrar yapamazsın.</string>
     <string name="mock_keep_going">Devam et</string>
-    <!-- Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them. -->
     <string name="mock_preparing_title">Deneme sınavın hazırlanıyor</string>
-    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away. -->
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away. -->
     <string name="mock_preparing_chooser_title">Bu deneme sınavı hazırlanıyor</string>
     <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
     <string name="mock_preparing_line">Başlatmak için bu sayfaya tekrar gel.</string>
     <string name="mock_preparing_keep_studying">Çalışmaya devam et</string>
+    <!-- A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about. -->
+    <string name="mock_writing_texts">Metinler hazırlanıyor</string>
+    <string name="mock_writing_questions">Sorular hazırlanıyor</string>
+    <string name="mock_writing_listening">Dinleme bölümü kaydediliyor</string>
+    <string name="mock_writing_time_left">Yaklaşık %1$s kaldı</string>
+    <string name="mock_writing_done">Tamamlandı</string>
 </resources>

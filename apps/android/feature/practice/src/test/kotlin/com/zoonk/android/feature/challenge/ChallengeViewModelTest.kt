@@ -10,6 +10,8 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.exam.FakeMockApi
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.Challenge
@@ -108,7 +110,7 @@ class ChallengeViewModelTest {
                 override suspend fun status(id: String) = Generation.Status.COMPLETED
             }
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return ChallengeViewModel(challenge.planItemId, "session", ChallengeStore(api, cache) { "UTC" }, source, saved)
+        return ChallengeViewModel(challenge.planItemId, "session", ChallengeStore(api, cache) { "UTC" }, source, saved, MockStore(FakeMockApi(null), cache))
     }
 
     @Test

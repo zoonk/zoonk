@@ -77,7 +77,10 @@ internal fun MockChooser(
 ) {
     val options = mockStore.options[goalId]
     val state by options.collectShown()
-    val viewModel = viewModel(key = "mock-chooser-$goalId") { MockChooserViewModel(goalId, starter) { mockStore.refused(goalId) } }
+    val viewModel =
+        viewModel(key = "mock-chooser-$goalId") {
+            MockChooserViewModel(goalId, starter, { scope -> mockStore.paperWait(scope, goalId) }) { mockStore.refused(goalId) }
+        }
     val opened by viewModel.opened.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()

@@ -3,11 +3,14 @@ package com.zoonk.android.feature.exam
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.feature.mock.MockApi
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ExamResult
 import com.zoonk.api.models.ExamView
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.MockWriting
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -70,11 +73,22 @@ class FakeExamApi(
     ): ExamResult = ExamResult(report.maxScore, report.passed, Clock.System.now(), report.scale, report.score)
 }
 
+/** [writing] is what the wait on a preparing mock finds, nothing by default; [runs] the runs it follows. */
 class FakeMockApi(
     private val options: MockOptions?,
+    private val writing: MockWriting = MockWriting(generationId = null, status = MockWriting.Status.NONE),
+    private val runs: GenerationSource = WritingRuns(),
 ) : MockApi {
     override suspend fun options(
         session: AuthenticatedSession,
         goalId: UUID,
     ) = options ?: throw ApiException(ApiError.NotFound)
+
+    override suspend fun writing(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        planItemId: UUID?,
+    ) = writing
+
+    override fun generations(session: AuthenticatedSession?) = runs
 }

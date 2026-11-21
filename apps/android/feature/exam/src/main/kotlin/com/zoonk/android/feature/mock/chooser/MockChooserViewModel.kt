@@ -3,7 +3,9 @@ package com.zoonk.android.feature.mock.chooser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.mock.MockPaperWait
 import com.zoonk.api.models.MockShape
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +19,8 @@ import java.util.UUID
 class MockChooserViewModel(
     private val goalId: UUID,
     private val starter: MockStarter,
+    /** The wait on the paper of the mock the learner asked for, while it's being prepared. */
+    val paperWait: (CoroutineScope) -> MockPaperWait,
     private val refused: suspend () -> Unit = {},
 ) : ViewModel() {
     private val mutableBusy = MutableStateFlow(false)

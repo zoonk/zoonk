@@ -46,10 +46,10 @@
   "mock_next_section": "953ee7b107af6dd2e8eb6dac7679fd57bac86728f9378c0468518e66a00c59dd",
   "mock_place": "1982a8fba9c61fe3b24030e3bfb432df40a7747d72c94fde219c2775ce23a73a",
   "mock_points_of": "f61ab2f0e606d6dcb55a4a4b055c97079707c99daf59a6c257dfd97882897c54",
-  "mock_preparing_chooser_title": "7c322f8cfc1a19d6c5dcad179f17e79b1bda7c2f01dbd492ad71148203557477",
+  "mock_preparing_chooser_title": "d9be5f10e8d557067127066b3a133dddfc9d6605ea10267b6cf6285233b76d63",
   "mock_preparing_keep_studying": "03d39c23125cbe64420d458e4b535047758495f145bd30de28f9775496c482ec",
   "mock_preparing_line": "5d3f1d0450386c9fccdbf61800e28fdb5d43d647f52b466e09d17d39f36a3f62",
-  "mock_preparing_title": "6df8a23a74f59e972f19aa606d28054641ccb8a20e29b6d78b5c5f9527040c34",
+  "mock_preparing_title": "4275d23ba39056e4fe0fdff030f414a43b87d6592a940d9677c6608d7c6ff41a",
   "mock_progress_label": "f718a74efe747e04ab176be13ef626c7a6693c3cffa7e94dbd841e4fdadae9d0",
   "mock_question_number": "b1e0d982ef6411979b70529f9426f4eefdff195019f416e349a367365b68240a",
   "mock_question_place": "8ce3a4825bc44a868f278a2872a29462b8554f226fdcbf1c680efa98aa80ed83",
@@ -95,6 +95,11 @@
   "mock_try_again": "ff63528e2bcdacad5feb18e760d466fb6d3ed49185ad59b0d5e95cdbedde0043",
   "mock_unflag": "c65e7c967aff407d91072fbe87bd6c81336ee37b18b20177ca91eadb51d35b20",
   "mock_words": "22ef9b29a0d007c7f61d8d22a7620e454e385e1ab5786a814cc9d6684401247f",
+  "mock_writing_done": "da2bdef839ad493ddb0cc0a13e7adbf3cbe58f13c61631bf8606872652e383e0",
+  "mock_writing_listening": "c5dd22aa6978aacc63a7f968fd801931c71299c07d892b5b19ca0221b8269a72",
+  "mock_writing_questions": "9789cce0c1fd28184a653822082cd04dd3697629e865b41d3c95383925b74647",
+  "mock_writing_texts": "22b2663881d21627477f91c46936a69163de90377dfe896ec032389f3a1ad017",
+  "mock_writing_time_left": "2089a40087a06089e3bc5e587d3fcdcf3b4c68022c6d67f7ae4f9298643907fb",
   "mock_written_part": "38d912581656bce5d564d96091edfd85b4d3fedb2e94343bbfc94659ec034ed2",
   "mock_written_part_area": "721469c5d441abe7b0a7c07990677b60714863180a911f4348e00080a360b18e",
   "mock_your_essay": "3af4ecd25f9befcafe647b9e38cd8fae99f54e80f3004c16c760d089e99d0e4f"
@@ -260,11 +265,16 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Hai completato tutti i compiti. Dopo la consegna, non potrai ripeterli in questa simulazione.</string>
     <string name="mock_keep_going">Continua</string>
-    <!-- Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them. -->
-    <string name="mock_preparing_title">La tua simulazione è in preparazione</string>
-    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away. -->
-    <string name="mock_preparing_chooser_title">Questa simulazione è in preparazione</string>
+    <string name="mock_preparing_title">Stiamo preparando la simulazione d’esame</string>
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away. -->
+    <string name="mock_preparing_chooser_title">Stiamo preparando questa simulazione d’esame</string>
     <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
     <string name="mock_preparing_line">Torna su questa pagina per iniziare.</string>
     <string name="mock_preparing_keep_studying">Continua a studiare</string>
+    <!-- A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about. -->
+    <string name="mock_writing_texts">Stiamo scrivendo i testi</string>
+    <string name="mock_writing_questions">Stiamo scrivendo le domande</string>
+    <string name="mock_writing_listening">Stiamo registrando la parte di ascolto</string>
+    <string name="mock_writing_time_left">Ancora circa %1$s</string>
+    <string name="mock_writing_done">Raggiunto</string>
 </resources>

@@ -46,10 +46,10 @@
   "mock_next_section": "89517ad4965e09b827e1f354464008cdee29149eecaa4667b9e33f91363b8503",
   "mock_place": "ff4722c9820bee57713c87e7af6c0dd977cbab69ab2826e7021e829a9ab9d278",
   "mock_points_of": "aca46f5fa19c131b01ac174e8d043107a0f00f4ee45376f315770aa1d1627779",
-  "mock_preparing_chooser_title": "5dd80c5ce9f88877e6a635f4592e553ffaf70c08deadcbf9c0a09931371371c3",
+  "mock_preparing_chooser_title": "842d3515a23025b5618ee50aeb38d56cadea18c4172b4b4979bfa4c757b6bd7e",
   "mock_preparing_keep_studying": "2a9f769163c8c8bd3527e4937e1a7cefb528ddeb37741552e64be42792869a0b",
   "mock_preparing_line": "a3eeccf1147b4322fe02bcff489ad33cc0b6380a59075ad1522b8e684128edd7",
-  "mock_preparing_title": "f1dc8369d8d96c70b5f46bb52dc7c99030ecce4ab5d089efb4161e09f3f42911",
+  "mock_preparing_title": "98d9aac15d38528c5e2478b833a86ac75acd3ead6e09b858a88dffaca960b529",
   "mock_progress_label": "63b66069fb271fba4e4a0eedb6733ed4a4bebd0522b30e96f8e016ac5fbc83b0",
   "mock_question_number": "0c163d8c70f660f9475520df4feab4e93263c713e5058348c3f62fd3bc98cc20",
   "mock_question_place": "59521414e1c1cb0f83c934ad95da8090bf26ef7ad3028474e89d82e94732ad63",
@@ -95,6 +95,11 @@
   "mock_try_again": "a3eefff768b7862fd7df9f37fc1c12722627eca1151fa96055795e194e20e3ab",
   "mock_unflag": "bd5c43e32389bd6172814f286617e6fca5446256a76686969e0fef08ad98c778",
   "mock_words": "1d9d3c22f10d27d0c771f21a8dd4f8140daf039ccd35e27e4748379889dd711a",
+  "mock_writing_done": "4230c6e47c1d4fe0015e767970864dde76c728bbc757db45d79f48a58eef6d7b",
+  "mock_writing_listening": "2896f0d65204147e2ee01f4ca86e6e49e1775aafd3b493ddcc6b83b534903552",
+  "mock_writing_questions": "6ef7ab0be822bf54af19445f9bd34e23b9763ee4f129984d42fed85f12d94fbe",
+  "mock_writing_texts": "ddaee1c6b699fbe0d4d52846f5bfe5c38a1bdcfc1372db3317ef6aa5187d8908",
+  "mock_writing_time_left": "3dace858dd6a7c58262991d01708185cb15122501f323500ee7f374e97c32252",
   "mock_written_part": "0f496cce0ce85beefb50cc21b9700a774139685f84d918b585e6872c26c21d06",
   "mock_written_part_area": "f56b68c4b6c7021f13e3cf0635f9ddb3c5b1b4a85f58e40a02d9940d8c2651ca",
   "mock_your_essay": "f3b2541f02e0bcb52782b2a069156e4b16b7c6862b01f1fa2e3ecd781cf88b6c"
@@ -271,11 +276,16 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Wszystkie zadania są ukończone. Po oddaniu nie możesz ich powtórzyć w tym egzaminie próbnym.</string>
     <string name="mock_keep_going">Kontynuuj</string>
-    <!-- Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them. -->
-    <string name="mock_preparing_title">Przygotowujemy pytania do twojego egzaminu próbnego</string>
-    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away. -->
-    <string name="mock_preparing_chooser_title">Przygotowujemy pytania do tego egzaminu próbnego</string>
+    <string name="mock_preparing_title">Przygotowujemy egzamin próbny</string>
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away. -->
+    <string name="mock_preparing_chooser_title">Przygotowujemy ten egzamin próbny</string>
     <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
     <string name="mock_preparing_line">Wróć na tę stronę, żeby go rozpocząć.</string>
     <string name="mock_preparing_keep_studying">Ucz się dalej</string>
+    <!-- A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about. -->
+    <string name="mock_writing_texts">Przygotowujemy teksty</string>
+    <string name="mock_writing_questions">Przygotowujemy pytania</string>
+    <string name="mock_writing_listening">Nagrywamy część ze słuchaniem</string>
+    <string name="mock_writing_time_left">Około %1$s do końca</string>
+    <string name="mock_writing_done">Zrealizowany</string>
 </resources>

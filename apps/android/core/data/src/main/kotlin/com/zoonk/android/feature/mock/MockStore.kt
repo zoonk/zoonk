@@ -7,11 +7,15 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
+import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.KeyedResources
+import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.perform
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockOptionsRequested
 import com.zoonk.api.models.MockShape
+import com.zoonk.api.models.MockWriting
+import kotlinx.coroutines.CoroutineScope
 import java.util.UUID
 
 interface MockApi {
@@ -20,6 +24,15 @@ interface MockApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ): MockOptions?
+
+    /** The run writing a preparing mock's paper: a scheduled one's with [planItemId], else the one last asked for. */
+    suspend fun writing(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        planItemId: UUID?,
+    ): MockWriting
+
+    fun generations(session: AuthenticatedSession?): GenerationSource
 }
 
 class LiveMockApi(
@@ -29,12 +42,20 @@ class LiveMockApi(
         session: AuthenticatedSession,
         goalId: UUID,
     ) = notAnExamAsNull { perform { api.clients(session).exams.listMocks(goalId) } }
+
+    override suspend fun writing(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        planItemId: UUID?,
+    ) = perform { api.clients(session).exams.getMockWriting(goalId, planItemId) }
+
+    override fun generations(session: AuthenticatedSession?) = LiveGenerationSource(api, session)
 }
 
 /** The mocks an exam goal offers any time; Today's practice, the exam page and the chooser share it. */
 class MockStore(
     private val api: MockApi,
-    cache: AppCache,
+    private val cache: AppCache,
 ) {
     val options: KeyedResources<UUID, MockOptions> =
         cache.keyed(Audience.SignedIn, OPTIONS_DOMAINS) { session, goalId -> session?.let { api.options(it, goalId) } }
@@ -47,6 +68,16 @@ class MockStore(
         val resource = options[goalId]
         resource.update { it.copy(access = MockOptions.Access.PLUS_REQUIRED) }
         resource.refresh()
+    }
+
+    /** The wait on a preparing mock's paper, read as the session signed in now. */
+    fun paperWait(
+        scope: CoroutineScope,
+        goalId: UUID,
+        planItemId: UUID? = null,
+    ): MockPaperWait {
+        val owner = cache.session.current
+        return MockPaperWait(scope, api.generations(owner)) { owner?.let { api.writing(it, goalId, planItemId) } }
     }
 
     fun requested(

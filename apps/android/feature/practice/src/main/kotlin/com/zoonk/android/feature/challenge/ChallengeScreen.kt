@@ -132,6 +132,7 @@ fun ChallengeScreen(
                 app.challenges,
                 LiveGenerationSource(app.api, signedIn),
                 createSavedStateHandle(),
+                app.mocks,
             )
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
@@ -736,7 +737,7 @@ private fun ChallengeFooter(
                 }
 
                 challenge.access == Challenge.Access.PREPARING -> {
-                    PreparingActions(ui, movable, actions)
+                    PreparingActions(challenge.goalId, ui, movable, actions)
                 }
 
                 challenge.status == Challenge.Status.READY -> {
@@ -856,11 +857,16 @@ private fun StartActions(
 
 @Composable
 private fun PreparingActions(
+    goalId: UUID,
     ui: ChallengeUi,
     movable: Boolean,
     actions: ChallengeActions,
 ) {
-    MockPreparingNote(stringResource(R.string.mock_preparing_title))
+    MockPreparingNote(
+        stringResource(R.string.mock_preparing_title),
+        createWait = { scope -> actions.viewModel.paperWait(scope, goalId) },
+        onWritten = { actions.viewModel.challenge.refresh() },
+    )
     MoveFailed(ui)
     TaskActions { width ->
         if (movable) {

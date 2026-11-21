@@ -46,10 +46,10 @@
   "mock_next_section": "ff464d8b7c8aca10ff628a7398007c2a954ebc76be2822af58d952a59eec34ed",
   "mock_place": "71872615f909946fca7e9bc741ed97b205f02213e846f068751e1c13029998cd",
   "mock_points_of": "7ee7c2b96463f0b561165232cbccfaee0f65d1c4533122e72340302edb835f49",
-  "mock_preparing_chooser_title": "fc9c8b86529534030fc85a8971156a22558f7be49a591395855148ea902a2078",
+  "mock_preparing_chooser_title": "2e6f7188487d2da5a3a389ff44e944a84e4631a4406849105c6cb024c22a3db7",
   "mock_preparing_keep_studying": "ef230664ef8565e1a96e046aa2daf749fdc7c3926224bcf379d8e1920afd884c",
   "mock_preparing_line": "e64cccd6e34ee6fc57109ad779b26ca00d7448c0ff318e2705368ec2ae69c822",
-  "mock_preparing_title": "3e39cea78f23756af378c672aa27618f842af334c7a202a69719068ee7f339d5",
+  "mock_preparing_title": "3bd931e813c844d75687247072dd62be5c46c983a51f451dfb91c59009b64777",
   "mock_progress_label": "c3413be759f5d2a12f80514f416b944e202146657e7baf520faaf16d9f9b9559",
   "mock_question_number": "58d4a557aa0f5a4ab6506d4d6698c352f46ac03d3dde7bda9769a7fde95fe9e2",
   "mock_question_place": "9b274eb7f18137333cf9330d67782fb224a28958851a3766f0cee5db9983a631",
@@ -95,6 +95,11 @@
   "mock_try_again": "6902745cd20287e9893552ed99bbde3e5cbdf03a61b4b697971c300682ab5b78",
   "mock_unflag": "72bfe8f47a5bdac1dce9dc6929b42e97d0eb627d817b927873ea6416ca2aa878",
   "mock_words": "e649665ced8cd8ddbba5bf8f8d557d0b8e098043b5da57e8bf5dcc1f1d00a70c",
+  "mock_writing_done": "85f022f543d8e30b6809631df470f3caaabe6842bf47ac9db1e692174a01d2a7",
+  "mock_writing_listening": "1ba98a8b633fa6206f4e20ea80ecc65f1aff54cc37ac2461d7d779d95befbf44",
+  "mock_writing_questions": "6b58f5fb63f345d06fad50dda91f7e6a916f3d97d7895645e8465e6edf89d345",
+  "mock_writing_texts": "cbc44ae9e9f217ad5f12b6a2d238631daa37c5d8c4ee9726ab68f64f134cef47",
+  "mock_writing_time_left": "0b86d904ae143ad7d34918cb6a5b5f9c41bdfcbff8fbad6c0618f76a4c5a3b53",
   "mock_written_part": "db6b0a534dc3f9c9f217d6f5693ddc7b706d0212d01842efbf68e3613c952015",
   "mock_written_part_area": "337fbbf983416ff5144c8222f88c81faeace47bd06ff4828643b0a8fa61ca82c",
   "mock_your_essay": "53b6addc1fe5640bb2fcd2b088e75d202b7f2f4cf3002305d83716a894bdb69e"
@@ -238,11 +243,16 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">すべてのタスクが終わりました。提出後はこの模試でやり直せません。</string>
     <string name="mock_keep_going">続ける</string>
-    <!-- Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them. -->
     <string name="mock_preparing_title">模試を準備しています</string>
-    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away. -->
+    <!-- Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away. -->
     <string name="mock_preparing_chooser_title">この模試を準備しています</string>
     <!-- Shown right under a line saying the mock exam is being prepared; 'it' is the mock exam, so don't repeat the noun. -->
     <string name="mock_preparing_line">このページに戻ると開始できます。</string>
     <string name="mock_preparing_keep_studying">学習を続ける</string>
+    <!-- A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about. -->
+    <string name="mock_writing_texts">文章を作成しています</string>
+    <string name="mock_writing_questions">問題を作成しています</string>
+    <string name="mock_writing_listening">リスニングを録音しています</string>
+    <string name="mock_writing_time_left">残り約%1$s</string>
+    <string name="mock_writing_done">達成</string>
 </resources>

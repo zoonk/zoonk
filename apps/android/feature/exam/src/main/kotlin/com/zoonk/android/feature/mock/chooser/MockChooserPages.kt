@@ -20,6 +20,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -144,7 +145,11 @@ internal fun PracticeChooser(
         note =
             when {
                 gated -> ({ MockGate() })
-                preparing -> ({ MockPreparingNote(stringResource(R.string.mock_preparing_chooser_title)) })
+                preparing -> ({
+                    key(picked) {
+                        MockPreparingNote(stringResource(R.string.mock_preparing_chooser_title), viewModel.paperWait, readAgain)
+                    }
+                })
                 failed -> ({ StartFailed() })
                 else -> null
             },
