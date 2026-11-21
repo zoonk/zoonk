@@ -18,6 +18,7 @@
     "@eloqnt/format-po": "0.1.2",
     "@formatjs/icu-messageformat-parser": "3.5.23",
     "@zoonk/utils": "workspace:*",
+    "ai": "catalog:",
     "ai-sdk-provider-codex-cli": "2.4.0",
     "zod": "catalog:"
   },

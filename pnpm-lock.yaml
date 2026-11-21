@@ -1356,6 +1356,9 @@ importers:
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../utils
+      ai:
+        specifier: 'catalog:'
+        version: 7.0.179(zod@4.6.7)
       ai-sdk-provider-codex-cli:
         specifier: 2.4.0
         version: 2.4.0(zod@4.6.7)
