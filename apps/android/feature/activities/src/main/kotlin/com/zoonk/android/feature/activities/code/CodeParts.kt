@@ -71,6 +71,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.code.CodeColors
+import com.zoonk.android.ui.code.codeColors
+import com.zoonk.android.ui.code.highlightCode
+import com.zoonk.android.ui.code.styledCodeLine
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
@@ -80,176 +84,29 @@ import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 
 /** The app's one sandbox; the lesson screen provides it. */
 val LocalCodeSandbox = staticCompositionLocalOf<CodeSandbox> { error("The lesson screen provides the code sandbox") }
 
-enum class CodeLineTone { Plain, Current, Editable, Error }
-
-@Composable
-internal fun codeTextStyle(): TextStyle = MaterialTheme.typography.bodyLarge.copy(fontFamily = GeistMono)
-
-private data class CodePalette(
-    val builtin: Color,
-    val comment: Color,
-    val keyword: Color,
-    val literal: Color,
-) {
-    fun styled(tokens: List<CodeToken>) =
-        buildAnnotatedString {
-            tokens.forEach { token ->
-                val style =
-                    when (token.kind) {
-                        CodeTokenKind.Builtin -> SpanStyle(color = builtin)
-                        CodeTokenKind.Comment -> SpanStyle(color = comment, fontStyle = FontStyle.Italic)
-                        CodeTokenKind.Keyword -> SpanStyle(color = keyword)
-                        CodeTokenKind.Number, CodeTokenKind.String -> SpanStyle(color = literal)
-                        CodeTokenKind.Plain -> SpanStyle()
-                    }
-                withStyle(style) { append(token.text) }
-            }
+internal val CodeLanguage.fenceName: String
+    get() =
+        when (this) {
+            CodeLanguage.JavaScript -> "javascript"
+            CodeLanguage.Python -> "python"
+            CodeLanguage.Sql -> "sql"
         }
-}
-
-@Composable
-private fun codePalette() =
-    CodePalette(
-        builtin = MaterialTheme.zoonk.vizSecondary,
-        comment = MaterialTheme.colorScheme.onSurfaceVariant,
-        keyword = MaterialTheme.zoonk.vizAccent,
-        literal = MaterialTheme.zoonk.vizHighlight,
-    )
-
-@Composable
-internal fun highlighted(tokens: List<CodeToken>): AnnotatedString = codePalette().styled(tokens)
-
-/** Main's `ActivityCodeBlock`: code scrolls sideways instead of wrapping, each line as wide as the longest. */
-@Composable
-internal fun CodeBlock(
-    label: String,
-    modifier: Modifier = Modifier,
-    wraps: Boolean = false,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    BoxWithConstraints(modifier.fillMaxWidth().semantics { contentDescription = label }) {
-        Column(
-            if (wraps) {
-                Modifier.fillMaxWidth()
-            } else {
-                Modifier
-                    .fadingHorizontalScroll(rememberScrollState())
-                    .widthIn(min = maxWidth)
-                    .width(IntrinsicSize.Max)
-            },
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            content()
-        }
-    }
-}
-
-/**
- * A line of code after its number, which TalkBack skips; the number keeps its width across a listing and stays
- * clear of the line's mark, which starts after it.
- */
-@Composable
-internal fun CodeLine(
-    number: Int,
-    digits: Int,
-    tone: CodeLineTone,
-    modifier: Modifier = Modifier,
-    state: String? = null,
-    content: @Composable RowScope.() -> Unit,
-) {
-    val colors = MaterialTheme.colorScheme
-    val highlight = MaterialTheme.zoonk.vizHighlight
-    val shape =
-        if (tone ==
-            CodeLineTone.Current
-        ) {
-            RoundedCornerShape(topEnd = ZoonkRadius.md, bottomEnd = ZoonkRadius.md)
-        } else {
-            RoundedCornerShape(ZoonkRadius.md)
-        }
-    val toned =
-        when (tone) {
-            CodeLineTone.Plain -> {
-                Modifier
-            }
-
-            CodeLineTone.Current -> {
-                Modifier.background(highlight.copy(alpha = SOFT_ALPHA), shape).drawBehind {
-                    drawRect(highlight, size = Size(CURRENT_MARK.toPx(), size.height), topLeft = Offset.Zero)
-                }
-            }
-
-            CodeLineTone.Editable -> {
-                val edge = if (LocalMoreContrast.current) 1f else EDGE_ALPHA
-                Modifier.background(colors.surface, shape).border(1.dp, MaterialTheme.zoonk.vizAccent.copy(alpha = edge), shape)
-            }
-
-            CodeLineTone.Error -> {
-                Modifier.background(MaterialTheme.zoonk.destructive.copy(alpha = SOFT_ALPHA), shape)
-            }
-        }
-    Row(
-        modifier
-            .fillMaxWidth()
-            .then(if (state == null) Modifier else Modifier.semantics { stateDescription = state }),
-    ) {
-        Text(
-            number.toString().padStart(digits),
-            Modifier
-                .alignByBaseline()
-                .padding(end = NUMBER_GAP)
-                .clearAndSetSemantics {},
-            color = colors.onSurfaceVariant,
-            style = codeTextStyle(),
-        )
-        Row(
-            Modifier
-                .alignByBaseline()
-                .weight(1f)
-                .then(toned)
-                .padding(start = NUMBER_GAP, end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            content = content,
-        )
-    }
-}
-
-/** Main's `ActivityCodeListing`: highlighted, numbered and read-only. */
-@Composable
-internal fun CodeListing(
-    code: String,
-    language: CodeLanguage,
-    label: String,
-    currentLine: Int? = null,
-) {
-    val lines = highlightCode(code, language)
-    val digits = lines.size.toString().length
-    val current = stringResource(R.string.activities_code_current_line)
-    // A listing wraps, so the part of a line a question asks about is never off the card.
-    CodeBlock(label, wraps = true) {
-        lines.forEachIndexed { index, tokens ->
-            val isCurrent = index + 1 == currentLine
-            CodeLine(index + 1, digits, if (isCurrent) CodeLineTone.Current else CodeLineTone.Plain, state = current.takeIf { isCurrent }) {
-                Text(highlighted(tokens), style = codeTextStyle())
-            }
-        }
-    }
-}
 
 private data class Highlighting(
     private val language: CodeLanguage,
-    private val palette: CodePalette,
+    private val colors: CodeColors,
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val annotated =
             buildAnnotatedString {
-                highlightCode(text.text, language).forEachIndexed { index, tokens ->
+                highlightCode(text.text, language.fenceName).forEachIndexed { index, tokens ->
                     if (index > 0) append('\n')
-                    append(palette.styled(tokens))
+                    append(styledCodeLine(tokens, colors, field = true))
                 }
             }
         return TransformedText(annotated, OffsetMapping.Identity)
@@ -291,17 +148,21 @@ internal fun CodeLineField(
         onValueChange = onValueChange,
         modifier =
             modifier
-                .reachingNeighbors(with(LocalDensity.current) { codeTextStyle().lineHeight.toDp() })
-                .semantics { contentDescription = label }
+                .reachingNeighbors(
+                    with(LocalDensity.current) {
+                        MaterialTheme.zoonkType.codeField.lineHeight
+                            .toDp()
+                    },
+                ).semantics { contentDescription = label }
                 .onPreviewKeyEvent { event ->
                     if (event.isEnter() && event.type == KeyEventType.KeyDown) onSubmit()
                     event.isEnter()
                 },
         readOnly = readOnly,
-        textStyle = codeTextStyle().copy(color = MaterialTheme.colorScheme.onSurface),
+        textStyle = MaterialTheme.zoonkType.codeField.copy(color = MaterialTheme.colorScheme.onSurface),
         keyboardOptions = codeKeyboard,
         singleLine = true,
-        visualTransformation = Highlighting(language, codePalette()),
+        visualTransformation = Highlighting(language, codeColors()),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         decorationBox = { field -> Box(contentAlignment = Alignment.CenterStart) { field() } },
     )
@@ -326,7 +187,7 @@ internal fun CodeEditor(
 ) {
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    val style = codeTextStyle().copy(color = colors.onSurface)
+    val style = MaterialTheme.zoonkType.codeField.copy(color = colors.onSurface)
     BoxWithConstraints(
         modifier
             .fillMaxWidth()
@@ -354,7 +215,7 @@ internal fun CodeEditor(
             readOnly = readOnly,
             textStyle = style,
             keyboardOptions = codeKeyboard,
-            visualTransformation = Highlighting(language, codePalette()),
+            visualTransformation = Highlighting(language, codeColors()),
             cursorBrush = SolidColor(colors.primary),
             decorationBox = { field ->
                 Box {
@@ -492,9 +353,6 @@ internal fun SandboxRunBar(
     }
 }
 
-private val CURRENT_MARK = 3.dp
-private val NUMBER_GAP = 6.dp
 internal const val SOFT_ALPHA = 0.12f
 internal const val STALE_ALPHA = 0.6f
 private val EDITOR_PADDING = 16.dp
-private const val EDGE_ALPHA = 0.4f

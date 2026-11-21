@@ -83,17 +83,23 @@
   }
 }
 
-/* Fades a sideways scroller's start or end only while there's more to scroll that way. */
+/*
+ * Fades a sideways scroller's start or end only while there's more to scroll that way. The start
+ * fade begins `--scroll-fade-x-inset` in, past a column that stays put while the rest scrolls under
+ * it, such as a program's line numbers.
+ */
 @utility scroll-fade-x {
   --_scroll-fade-size-x: var(
     --scroll-fade-x-size,
     var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
   );
+  --_scroll-fade-x-inset: var(--scroll-fade-x-inset, 0px);
   --_scroll-fade-x-direction: to right;
   --scroll-fade-mask: linear-gradient(
     var(--_scroll-fade-x-direction),
-    transparent 0,
-    #000 var(--scroll-fade-s, 0px),
+    #000 var(--_scroll-fade-x-inset),
+    transparent var(--_scroll-fade-x-inset),
+    #000 calc(var(--_scroll-fade-x-inset) + var(--scroll-fade-s, 0px)),
     #000 calc(100% - var(--scroll-fade-e, 0px)),
     transparent 100%
   );
@@ -102,7 +108,8 @@
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   /* Keyboard focus scrolls an item clear of the faded edge. */
-  scroll-padding-inline: var(--_scroll-fade-size-x);
+  scroll-padding-inline: calc(var(--_scroll-fade-x-inset) + var(--_scroll-fade-size-x))
+    var(--_scroll-fade-size-x);
 
   /* The build rewrites :dir() as a list of languages, which a scroller that sets dir itself doesn't match. */
   &:dir(rtl),

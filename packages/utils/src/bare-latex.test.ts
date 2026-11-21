@@ -147,6 +147,21 @@ describe(findBareLatex, () => {
 });
 
 describe(wrapBareLatex, () => {
+  it("leaves code as written, where a caret or an underscore is code", () => {
+    const text = "Em Python, `**` eleva:\n```python\nx_1 = 10^3\ny = x_1 ** 2\n```\nE 10^3 é mil.";
+
+    expect(wrap(text)).toBe(
+      "Em Python, `**` eleva:\n```python\nx_1 = 10^3\ny = x_1 ** 2\n```\nE $10^{3}$ é mil.",
+    );
+
+    expect(find("```python\nx_1 = a^b\n```")).toStrictEqual([]);
+
+    const option = "```python\nx_1 = 10^3\n```";
+
+    expect(wrapBareLatex({ layout: "inline", text: option })).toBe(option);
+    expect(findBareLatex({ layout: "inline", text: option })).toStrictEqual([]);
+  });
+
   it("wraps a number raised to a number in math, leaving the words around it as text", () => {
     expect(wrap("A sensor log stores a tiny gap as 7.02 × 10^{-5} m.")).toBe(
       "A sensor log stores a tiny gap as 7.02 × $10^{-5}$ m.",

@@ -1,4 +1,5 @@
 import { type LessonVisual } from "@zoonk/ai/tasks/visuals/schema";
+import { removeCode } from "@zoonk/utils/code-fence";
 import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { findMarkdownTables, findRaggedTableRows } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";
@@ -173,8 +174,10 @@ function getPatterns(language: string): VisualPatterns {
   return PATTERNS[getSupportedLocaleFromLanguage(language)];
 }
 
+/** Only the words a learner reads point at something: code shows what a program does. */
 function normalizeForPhrases(text: string): string {
-  return ` ${normalizeString(text.replaceAll("’", "'")).replaceAll(/[^\p{L}\p{N}]+/gu, " ")} `;
+  const prose = removeCode(text).replaceAll("’", "'");
+  return ` ${normalizeString(prose).replaceAll(/[^\p{L}\p{N}]+/gu, " ")} `;
 }
 
 function findVisualReferences({
@@ -205,7 +208,7 @@ export function pointsAtFigure({ language, text }: { language: string; text: str
     kinds.has("panels") ||
     kinds.has("chart") ||
     kinds.has("timeline") ||
-    NUMBERED_PANELS.test(text)
+    NUMBERED_PANELS.test(removeCode(text))
   );
 }
 

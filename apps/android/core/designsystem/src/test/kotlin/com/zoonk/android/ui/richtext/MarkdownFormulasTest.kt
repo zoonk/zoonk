@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.richtext
 
+import org.commonmark.node.FencedCodeBlock
 import org.commonmark.node.IndentedCodeBlock
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -38,5 +39,13 @@ class MarkdownFormulasTest {
         val code = parseMarkdown("Some code:\n\n    \$\$x^2\$\$").root.lastChild as IndentedCodeBlock
 
         assertEquals("\$\$x^2\$\$\n", code.literal)
+    }
+
+    @Test
+    fun readsAHalfWrittenFenceAsCodeWithTheLinesThatArrived() {
+        val block = parseMarkdown("Here it is:\n\n```js\nconst a = 1;\nconsole.lo").root.lastChild as FencedCodeBlock
+
+        assertEquals("js", readLanguage(block.info))
+        assertEquals("const a = 1;\nconsole.lo", block.literal.trimEnd('\n'))
     }
 }
