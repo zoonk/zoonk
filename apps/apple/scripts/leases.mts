@@ -1,10 +1,10 @@
 import { spawnSync } from "node:child_process";
-import { closeSync, constants, fstatSync, ftruncateSync, writeSync } from "node:fs";
+import { closeSync, fstatSync, ftruncateSync, writeSync } from "node:fs";
 import { availableParallelism, homedir, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { listCrashReports } from "../../../scripts/dev/crash-reports.mts";
-import { openExclusiveLock } from "../../../scripts/dev/exclusive-lock.mts";
+import { openExclusiveLock, tryExclusiveLock } from "../../../scripts/dev/exclusive-lock.mts";
 import { type QueueTurn, waitForTurn } from "../../../scripts/dev/queue.mts";
 import { type Simulator, listSimulators } from "./simulators.mts";
 
@@ -37,19 +37,9 @@ export function getBootedSimulators(): Simulator[] {
     .filter((device) => device.state !== "Shutdown");
 }
 
-function tryLocking(device: Simulator): number | undefined {
-  try {
-    return openExclusiveLock({
-      flags: constants.O_NONBLOCK,
-      lockPath: path.join(leaseDirectory, device.udid),
-    });
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "EAGAIN") {
-      return undefined;
-    }
-
-    throw error;
-  }
+/** Undefined while a test run, a launch or a hold has the simulator. */
+export function tryLocking({ udid }: Pick<Simulator, "udid">): number | undefined {
+  return tryExclusiveLock(path.join(leaseDirectory, udid));
 }
 
 /** A test run's lease names it until released, so a run that's killed leaves its simulator marked. */

@@ -66,6 +66,7 @@
     "verify:pages": "node scripts/verify/pages.mts",
     "verify:scenarios": "node scripts/verify/scenarios/run.mts",
     "worktree:setup": "node scripts/worktree/setup.mts",
+    "worktree:sweep": "node scripts/worktree/sweep.mts",
     "zoonk": "node apps/cli/src/main.ts"
   },
   "devDependencies": {
