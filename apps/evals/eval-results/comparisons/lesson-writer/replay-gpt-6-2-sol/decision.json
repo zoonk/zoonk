@@ -65,7 +65,7 @@
       }
     }
   ],
-  "outcome": "insufficient evidence",
+  "outcome": "neither qualifies",
   "readers": [
     {
       "failedPackets": 0,
@@ -104,7 +104,101 @@
       "ownerCompared": 0
     }
   ],
-  "reason": "Some unresolved cases are awaiting qualified model reads.",
+  "reason": "Both variants failed a hard requirement.",
+  "replay": {
+    "checks": [
+      {
+        "blockingProblems": [
+          "Screen 8: data: Cite the data's source or mark it as an example",
+          "Screen 8: Shows raw text that reads as math: \"ψ_4\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"E_3\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"9E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"3E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 10: Step 1 types the computed 2 instead of a placeholder.",
+          "Screen 10: Puts {L0} inside $…$. Write a value's placeholder outside the formula.",
+          "Screen 10: Puts {E0} inside $…$. Write a value's placeholder outside the formula.",
+          "Screen 10: Puts {L} inside $…$. Write a value's placeholder outside the formula.",
+          "The label \"Energy levels E_n\" shows math as typed, since labels are plain text; name it in words."
+        ],
+        "caseId": "en-particle-in-a-box-advanced",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "blockingProblems": [
+          "Screen 8: fields.outputs.0.unit: Too small: expected string to have >=1 characters",
+          "Screen 8: fields.outputs.1.unit: Too small: expected string to have >=1 characters",
+          "Screen 8: fields.outputs.2.unit: Too small: expected string to have >=1 characters",
+          "Screen 8: fields.variables.0.unit: Too small: expected string to have >=1 characters",
+          "Screen 8: fields.variables.1.unit: Too small: expected string to have >=1 characters"
+        ],
+        "caseId": "en-particle-in-a-box-advanced",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "blockingProblems": [
+          "Screen 5: Shows raw text that reads as math: \"k_n\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 6: Shows raw text that reads as math: \"E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: data: Cite the data's source or mark it as an example",
+          "Screen 8: Shows raw text that reads as math: \"ψ_n\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"ψ_4\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"E_3\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"9E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"3²E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 8: Shows raw text that reads as math: \"3E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 9: Shows raw text that reads as math: \"E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 9: Shows raw text that reads as math: \"E_2\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 9: Shows raw text that reads as math: \"E_n\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 9: Shows raw text that reads as math: \"3E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Screen 10: Shows raw text that reads as math: \"E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Shows raw text that reads as math: \"k_n\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "The label \"Allowed wavenumbers k_n\" shows math as typed, since labels are plain text; name it in words.",
+          "Shows raw text that reads as math: \"E_n\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "The label \"Quantized energies E_n\" shows math as typed, since labels are plain text; name it in words.",
+          "Shows raw text that reads as math: \"ψ_n\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "Shows raw text that reads as math: \"3E_1\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks."
+        ],
+        "caseId": "en-particle-in-a-box-advanced",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "blockingProblems": [
+          "Screen 3: Shows a code fence as text: \"```\"."
+        ],
+        "caseId": "en-python-range-beginner",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "priorities": {
+      "comparison": {
+        "criteria": {
+          "accuracy": "counts",
+          "checks": "counts",
+          "clarity": "counts",
+          "fitAndApplication": "counts",
+          "teacher": "counts"
+        },
+        "preference": "canBlock",
+        "trade": {
+          "majorIncreasePer100": 1,
+          "saveCostShare": 0.7,
+          "saveSeconds": null
+        },
+        "weights": {
+          "accuracy": 3
+        }
+      },
+      "distribution": "shared",
+      "first": "quality",
+      "reads": "A learner reads the lesson",
+      "reason": "Shared lessons spread a pricier model's cost over many readers; personal lessons use a cheaper model",
+      "waits": "A learner waits when the lesson is opened live; otherwise prepared ahead"
+    }
+  },
   "rows": [
     {
       "attempted": 12,
@@ -142,13 +236,15 @@
           ],
           "both": [],
           "criterion": "accuracy",
-          "language": "en"
+          "language": "en",
+          "weight": 3
         },
         {
           "affected": [],
           "both": [],
           "criterion": "teacher",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -163,7 +259,8 @@
           ],
           "both": [],
           "criterion": "clarity",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -179,7 +276,8 @@
             }
           ],
           "criterion": "checks",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -195,7 +293,8 @@
             }
           ],
           "criterion": "fitAndApplication",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -223,8 +322,9 @@
             }
           ],
           "check": true,
-          "criterion": "code checks",
-          "language": "en"
+          "criterion": "fitAndApplication",
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -235,13 +335,15 @@
           ],
           "both": [],
           "criterion": "accuracy",
-          "language": "pt"
+          "language": "pt",
+          "weight": 3
         },
         {
           "affected": [],
           "both": [],
           "criterion": "teacher",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -257,7 +359,8 @@
             }
           ],
           "criterion": "clarity",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -268,7 +371,8 @@
           ],
           "both": [],
           "criterion": "checks",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -300,7 +404,8 @@
             }
           ],
           "criterion": "fitAndApplication",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -315,15 +420,20 @@
           ],
           "both": [],
           "check": true,
-          "criterion": "code checks",
-          "language": "pt"
+          "criterion": "fitAndApplication",
+          "language": "pt",
+          "weight": 1
         }
       ],
       "side": "incumbent",
-      "status": "eligible",
+      "status": "disqualified",
       "succeeded": 12,
       "ties": 0,
       "unresolved": 6,
+      "weightedMajorsByLanguage": {
+        "en": 5,
+        "pt": 7
+      },
       "wins": 0
     },
     {
@@ -357,19 +467,22 @@
           "affected": [],
           "both": [],
           "criterion": "accuracy",
-          "language": "en"
+          "language": "en",
+          "weight": 3
         },
         {
           "affected": [],
           "both": [],
           "criterion": "teacher",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "clarity",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -385,7 +498,8 @@
             }
           ],
           "criterion": "checks",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -401,7 +515,8 @@
             }
           ],
           "criterion": "fitAndApplication",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -425,8 +540,9 @@
             }
           ],
           "check": true,
-          "criterion": "code checks",
-          "language": "en"
+          "criterion": "fitAndApplication",
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -437,13 +553,15 @@
           ],
           "both": [],
           "criterion": "accuracy",
-          "language": "pt"
+          "language": "pt",
+          "weight": 3
         },
         {
           "affected": [],
           "both": [],
           "criterion": "teacher",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -459,7 +577,8 @@
             }
           ],
           "criterion": "clarity",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -470,7 +589,8 @@
           ],
           "both": [],
           "criterion": "checks",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -494,21 +614,27 @@
             }
           ],
           "criterion": "fitAndApplication",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "check": true,
-          "criterion": "code checks",
-          "language": "pt"
+          "criterion": "fitAndApplication",
+          "language": "pt",
+          "weight": 1
         }
       ],
       "side": "challenger",
-      "status": "eligible",
+      "status": "disqualified",
       "succeeded": 12,
       "ties": 0,
       "unresolved": 6,
+      "weightedMajorsByLanguage": {
+        "en": 3,
+        "pt": 5
+      },
       "wins": 0
     }
   ]

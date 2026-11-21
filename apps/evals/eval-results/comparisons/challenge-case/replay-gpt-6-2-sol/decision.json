@@ -110,6 +110,35 @@
     }
   ],
   "reason": "Some unresolved cases are awaiting qualified model reads.",
+  "replay": {
+    "priorities": {
+      "comparison": {
+        "criteria": {
+          "accuracy": "counts",
+          "debrief": "counts",
+          "decisions": "counts",
+          "depth": "counts",
+          "plainLanguage": "counts",
+          "realism": "counts",
+          "team": "counts"
+        },
+        "preference": "canBlock",
+        "trade": {
+          "majorIncreasePer100": 1,
+          "saveCostShare": 0.7,
+          "saveSeconds": null
+        },
+        "weights": {
+          "accuracy": 3
+        }
+      },
+      "distribution": "shared",
+      "first": "quality",
+      "reads": "A learner plays the case and reads its debrief",
+      "reason": "Shared cases are reused across learners, and the case is the lesson's practice",
+      "waits": "Set by the lesson's wait: a learner, soon or later"
+    }
+  },
   "rows": [
     {
       "attempted": 14,
@@ -152,25 +181,29 @@
             }
           ],
           "criterion": "realism",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "decisions",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "team",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "debrief",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -181,7 +214,8 @@
           ],
           "both": [],
           "criterion": "accuracy",
-          "language": "en"
+          "language": "en",
+          "weight": 3
         },
         {
           "affected": [
@@ -196,7 +230,8 @@
           ],
           "both": [],
           "criterion": "depth",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -207,49 +242,57 @@
           ],
           "both": [],
           "criterion": "plainLanguage",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "realism",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "decisions",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "team",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "debrief",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "accuracy",
-          "language": "pt"
+          "language": "pt",
+          "weight": 3
         },
         {
           "affected": [],
           "both": [],
           "criterion": "depth",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "plainLanguage",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         }
       ],
       "side": "incumbent",
@@ -257,6 +300,10 @@
       "succeeded": 14,
       "ties": 0,
       "unresolved": 5,
+      "weightedMajorsByLanguage": {
+        "en": 5,
+        "pt": 0
+      },
       "wins": 2
     },
     {
@@ -308,25 +355,29 @@
             }
           ],
           "criterion": "realism",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "decisions",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "team",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "debrief",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -337,61 +388,71 @@
           ],
           "both": [],
           "criterion": "accuracy",
-          "language": "en"
+          "language": "en",
+          "weight": 3
         },
         {
           "affected": [],
           "both": [],
           "criterion": "depth",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "plainLanguage",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "realism",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "decisions",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "team",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "debrief",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "accuracy",
-          "language": "pt"
+          "language": "pt",
+          "weight": 3
         },
         {
           "affected": [],
           "both": [],
           "criterion": "depth",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "plainLanguage",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         }
       ],
       "side": "challenger",
@@ -399,6 +460,10 @@
       "succeeded": 14,
       "ties": 0,
       "unresolved": 5,
+      "weightedMajorsByLanguage": {
+        "en": 5,
+        "pt": 0
+      },
       "wins": 0
     }
   ]

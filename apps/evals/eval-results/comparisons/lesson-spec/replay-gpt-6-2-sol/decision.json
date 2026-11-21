@@ -187,6 +187,29 @@
     }
   ],
   "reason": "More cases prefer the incumbent. The open cases and claims can’t change the decision.",
+  "replay": {
+    "priorities": {
+      "comparison": {
+        "criteria": {
+          "activitiesAndVisuals": "counts",
+          "levelAndScope": "counts",
+          "oneIdea": "counts",
+          "screenPlan": "counts"
+        },
+        "preference": "canBlock",
+        "trade": {
+          "majorIncreasePer100": 1,
+          "saveCostShare": 0.7,
+          "saveSeconds": null
+        }
+      },
+      "distribution": "shared",
+      "first": "quality",
+      "reads": "The lesson writer reads the plan",
+      "reason": "Every shared lesson is built from it",
+      "waits": "Prepared ahead in a workflow, before a learner needs it"
+    }
+  },
   "rows": [
     {
       "attempted": 14,
@@ -219,7 +242,8 @@
           "affected": [],
           "both": [],
           "criterion": "oneIdea",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -235,7 +259,8 @@
             }
           ],
           "criterion": "screenPlan",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -279,13 +304,15 @@
             }
           ],
           "criterion": "activitiesAndVisuals",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "levelAndScope",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -296,7 +323,8 @@
           ],
           "both": [],
           "criterion": "oneIdea",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -316,7 +344,8 @@
             }
           ],
           "criterion": "screenPlan",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -348,13 +377,15 @@
             }
           ],
           "criterion": "activitiesAndVisuals",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "levelAndScope",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         }
       ],
       "side": "incumbent",
@@ -362,6 +393,10 @@
       "succeeded": 14,
       "ties": 0,
       "unresolved": 5,
+      "weightedMajorsByLanguage": {
+        "en": 5,
+        "pt": 5
+      },
       "wins": 8
     },
     {
@@ -395,7 +430,8 @@
           "affected": [],
           "both": [],
           "criterion": "oneIdea",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -411,7 +447,8 @@
             }
           ],
           "criterion": "screenPlan",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [
@@ -455,19 +492,22 @@
             }
           ],
           "criterion": "activitiesAndVisuals",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "levelAndScope",
-          "language": "en"
+          "language": "en",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "oneIdea",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -483,7 +523,8 @@
             }
           ],
           "criterion": "screenPlan",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [
@@ -519,13 +560,15 @@
             }
           ],
           "criterion": "activitiesAndVisuals",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         },
         {
           "affected": [],
           "both": [],
           "criterion": "levelAndScope",
-          "language": "pt"
+          "language": "pt",
+          "weight": 1
         }
       ],
       "side": "challenger",
@@ -533,6 +576,10 @@
       "succeeded": 14,
       "ties": 0,
       "unresolved": 5,
+      "weightedMajorsByLanguage": {
+        "en": 5,
+        "pt": 5
+      },
       "wins": 1
     }
   ]
