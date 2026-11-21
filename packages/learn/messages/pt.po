@@ -7992,6 +7992,21 @@ msgctxt "BsQPJC"
 msgid "Not sure"
 msgstr "Em dúvida"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Seção {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Questão {number} de {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Questão {number} de {total}"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8178,16 +8193,6 @@ msgstr "Parte escrita · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Parte escrita"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Questão {number} de {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Questão {number} de {total}"
 
 #: src/mock/mock-result-answers.tsx
 msgctxt "EVKFmp"
@@ -8548,12 +8553,6 @@ msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Depois deste simulado"
 
-#: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Questão {number}"
-
 #. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
 #: src/mock/mock-review.tsx
 msgctxt "mockReviewBlank"
@@ -8641,11 +8640,6 @@ msgstr "Suas respostas estão salvas."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Entregue"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Seção {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8745,6 +8739,11 @@ msgstr "Melhor desempenho: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Pratique: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Questão {number}"
 
 #. A cell of the mock exam's answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
@@ -11665,6 +11664,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Ex.: fazer pão, carros, astronomia"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Adicionar"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11695,6 +11700,12 @@ msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Ex.: jornalismo"
 
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "Remover {tool}"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
 msgid "What do you do now?"
@@ -11703,7 +11714,7 @@ msgstr "O que você faz atualmente?"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "lxu-IX"
 msgid "Which apps and tools do you use most?"
-msgstr "Quais apps e ferramentas você mais usa?"
+msgstr "Quais aplicativos e ferramentas você mais usa?"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "McuAl7"
@@ -11763,9 +11774,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "A gente usa isso para escolher exemplos que te interessem."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "O que você estuda ou já estudou, mesmo sem concluir. Escolha até 3."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "No passado ou no presente, concluído ou não."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11781,11 +11792,6 @@ msgstr "Opcional. A gente usa o que você escolher para adaptar o conteúdo às 
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Escolha o que te ajuda."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Escolha até 3."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

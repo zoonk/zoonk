@@ -127,6 +127,7 @@ struct MockCurrent: Hashable, Decodable, Sendable {
   var drafts: [MockDraft]
   var kind: Kind?
   var plays: [Plays]
+  var questionTotal: Int?
   var questions: [MockQuestion]
   var resume: Int
   var section: Int
@@ -348,6 +349,8 @@ struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   var number: Int
   var outcome: Outcome
   var question: String
+  var section: Int?
+  var total: Int?
   /// The learner marked it "Not sure"; a right answer is reviewed only when marked.
   var unsure: Bool
 

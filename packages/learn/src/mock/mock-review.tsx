@@ -1,6 +1,6 @@
 "use client";
 
-import { type MockReviewEntry } from "@zoonk/core/exams/mocks/view-contract";
+import { type MockReviewEntry, type MockSectionView } from "@zoonk/core/exams/mocks/view-contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import {
   Collapsible,
@@ -32,7 +32,7 @@ import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
-import { UnsureFact } from "./mock-labels";
+import { UnsureFact, useMockQuestionLabel, useMockSectionTitle } from "./mock-labels";
 
 /**
  * A right answer shows once, as the learner gave it: a typed question can accept more than one.
@@ -60,12 +60,14 @@ function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: True
 }
 
 /** The row says which question it is and how it went, in a word for every outcome: the list holds right answers marked "Not sure" too. */
-function useEntryFacts() {
+function useEntryFacts(section: MockSectionView | undefined) {
   const t = useExtracted();
+  const title = useMockSectionTitle();
+  const label = useMockQuestionLabel();
 
   return (entry: MockReviewEntry): (string | null)[] => [
-    t("Question {number}", { number: String(entry.number) }),
-    entry.area,
+    label({ number: entry.number, total: entry.total }),
+    section ? title(section) : entry.area,
     {
       blank: t({
         description:
@@ -123,8 +125,16 @@ function ReviewEntryBody({ entry, labels }: { entry: MockReviewEntry; labels: Tr
   );
 }
 
-function ReviewEntry({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
-  const facts = useEntryFacts();
+function ReviewEntry({
+  entry,
+  labels,
+  section,
+}: {
+  entry: MockReviewEntry;
+  labels: TrueFalseLabels;
+  section: MockSectionView | undefined;
+}) {
+  const facts = useEntryFacts(section);
   const unsure = entry.unsure ? <UnsureFact /> : null;
 
   return (
@@ -155,9 +165,11 @@ function ReviewEntry({ entry, labels }: { entry: MockReviewEntry; labels: TrueFa
  */
 export function MockReview({
   review,
+  sections,
   trueFalseLabels,
 }: {
   review: readonly MockReviewEntry[];
+  sections: readonly MockSectionView[];
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
@@ -166,6 +178,8 @@ export function MockReview({
   if (review.length === 0) {
     return null;
   }
+
+  const severalQuestionSections = sections.filter((section) => section.questions > 0).length > 1;
 
   return (
     <PageSection aria-labelledby={titleId} className="w-full gap-1" data-slot="mock-review">
@@ -177,7 +191,12 @@ export function MockReview({
       <ListGroup>
         <ol>
           {review.map((entry) => (
-            <ReviewEntry entry={entry} key={entry.itemId} labels={trueFalseLabels} />
+            <ReviewEntry
+              entry={entry}
+              key={entry.itemId}
+              labels={trueFalseLabels}
+              section={severalQuestionSections ? sections[entry.section] : undefined}
+            />
           ))}
         </ol>
       </ListGroup>

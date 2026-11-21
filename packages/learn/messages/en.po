@@ -7992,6 +7992,21 @@ msgctxt "BsQPJC"
 msgid "Not sure"
 msgstr "Not sure"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Section {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Question {number} of {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Question {number} of {total}"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8178,16 +8193,6 @@ msgstr "Written part · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Written part"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Question {number} of {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Question {number} of {total}"
 
 #: src/mock/mock-result-answers.tsx
 msgctxt "EVKFmp"
@@ -8548,12 +8553,6 @@ msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "After this mock exam"
 
-#: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Question {number}"
-
 #. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
 #: src/mock/mock-review.tsx
 msgctxt "mockReviewBlank"
@@ -8641,11 +8640,6 @@ msgstr "Your answers are saved."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Handed in"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Section {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8745,6 +8739,11 @@ msgstr "Strongest: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Work on: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Question {number}"
 
 #. A cell of the mock exam's answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
@@ -11665,6 +11664,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "E.g., baking bread, cars, astronomy"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Add"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11694,6 +11699,12 @@ msgstr "{field}: course or subject (optional)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "E.g., journalism"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "Remove {tool}"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11763,9 +11774,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "We use this to pick examples you'll care about."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "Past or present, finished or not. Pick up to 3."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "Past or present, finished or not."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11781,11 +11792,6 @@ msgstr "Optional. We use what you pick to adapt the content to your needs. You c
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Pick anything that helps."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Pick up to 3."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

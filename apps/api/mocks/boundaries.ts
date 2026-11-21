@@ -81,6 +81,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/mind-maps/structure": { generateMindMapStructure: vi.fn() },
   "@zoonk/ai/tasks/plans/routine-fit": { fitPlanToRoutineFacts: vi.fn() },
   "@zoonk/ai/tasks/products/compare-release-lessons": { compareReleaseLessons: vi.fn() },
+  "@zoonk/ai/tasks/profile/suggest-tools": { suggestProfileTools: vi.fn() },
   "@zoonk/ai/tasks/quality/challenge-quality-check": { checkChallengeQuality: vi.fn() },
   "@zoonk/ai/tasks/quality/lesson-check": { checkLessonQuality: vi.fn() },
   "@zoonk/ai/tasks/research/changing-facts": { detectChangingFacts: vi.fn() },

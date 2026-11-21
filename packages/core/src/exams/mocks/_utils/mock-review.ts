@@ -1,11 +1,12 @@
 import "server-only";
 import { type MistakeCause, prisma } from "@zoonk/db";
+import { isStillAsked } from "../../../library/items/item-image";
 import { getPickOutcome } from "../../scoring/partial-credit";
 import { type MockConditions } from "../mock-contract";
 import { type MockReviewEntry } from "../mock-view-contract";
 import { gradeMockItem, readRecordedMockAnswer } from "./mock-item-grading";
 import { type MockItem, loadMockItems, toMockQuestionView } from "./mock-items";
-import { getAskedItemIds } from "./mock-sections";
+import { getAskedItemIds, numberMockQuestions } from "./mock-sections";
 import { type MockSitting } from "./owned-mock";
 
 function toEntry({
@@ -15,6 +16,8 @@ function toEntry({
   item,
   mockExamId,
   number,
+  section,
+  total,
   unsure,
 }: {
   area: string | null;
@@ -23,6 +26,8 @@ function toEntry({
   item: MockItem;
   mockExamId: string;
   number: number;
+  section: number;
+  total: number;
   unsure: boolean;
 }): MockReviewEntry | null {
   if (attempt.isCorrect && !unsure) {
@@ -52,7 +57,9 @@ function toEntry({
     number,
     outcome: attempt.isCorrect ? "right" : missedOutcome,
     question: shown.question,
+    section,
     set: shown.set,
+    total,
     unsure,
   };
 }
@@ -63,16 +70,14 @@ type FinishedMockAnswers = {
 };
 
 async function loadFinishedAnswers({
-  conditions,
+  itemIds,
   mockExamId,
   userId,
 }: {
-  conditions: MockConditions;
+  itemIds: string[];
   mockExamId: string;
   userId: string;
 }): Promise<FinishedMockAnswers> {
-  const itemIds = getAskedItemIds(conditions).map((entry) => entry.itemId);
-
   const [attempts, items] = await Promise.all([
     prisma.attempt.findMany({
       select: { answer: true, id: true, isCorrect: true, itemId: true },
@@ -97,28 +102,51 @@ export async function loadMockReview({
   review: MockReviewEntry[];
 }> {
   const { answers, conditions, id: mockExamId } = mock;
-  const { attempts, items } = await loadFinishedAnswers({ conditions, mockExamId, userId });
+  const asked = getAskedItemIds(conditions);
   const draftsByItem = new Map(answers.map((answer) => [answer.itemId, answer]));
 
-  const review = getAskedItemIds(conditions).flatMap((entry, index) => {
-    const item = items.get(entry.itemId);
-    const attempt = attempts.find((row) => row.itemId === entry.itemId);
+  const { attempts, items } = await loadFinishedAnswers({
+    itemIds: asked.map((entry) => entry.itemId),
+    mockExamId,
+    userId,
+  });
 
-    if (!item || !attempt) {
-      return [];
-    }
+  const attemptsByItem = new Map(attempts.map((attempt) => [attempt.itemId, attempt]));
+  const bySection = Map.groupBy(asked, (entry) => entry.section);
 
-    const reviewed = toEntry({
-      area: areas.get(item.skillId) ?? null,
-      attempt,
-      conditions,
-      item,
-      mockExamId,
-      number: index + 1,
-      unsure: draftsByItem.get(entry.itemId)?.flagged ?? false,
+  const review = [...bySection].flatMap(([section, entries]) => {
+    const satQuestions = entries.filter(({ itemId }) => {
+      const item = items.get(itemId);
+
+      // Placement doesn't record attempts for blanks, which still occupied a slot in the running paper.
+      return (
+        attemptsByItem.has(itemId) ||
+        (conditions.purpose === "placement" && item && isStillAsked({ answered: false, item }))
+      );
     });
 
-    return reviewed ? [reviewed] : [];
+    return numberMockQuestions(satQuestions).flatMap(({ number, question, total }) => {
+      const item = items.get(question.itemId);
+      const attempt = attemptsByItem.get(question.itemId);
+
+      if (!item || !attempt) {
+        return [];
+      }
+
+      const reviewed = toEntry({
+        area: areas.get(item.skillId) ?? null,
+        attempt,
+        conditions,
+        item,
+        mockExamId,
+        number,
+        section,
+        total,
+        unsure: draftsByItem.get(question.itemId)?.flagged ?? false,
+      });
+
+      return reviewed ? [reviewed] : [];
+    });
   });
 
   const mistakes = await prisma.mistake.findMany({

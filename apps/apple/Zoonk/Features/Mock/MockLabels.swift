@@ -22,6 +22,25 @@ enum MockLabels {
       localized: "Mock exam \(number)", table: "Mock", comment: "A mock exam's name, by its number")
   }
 
+  static func sectionTitle(_ section: MockSection) -> String {
+    section.name
+      ?? String(
+        localized: "Section \(section.index + 1)", table: "Mock",
+        comment: "A section without a name")
+  }
+
+  static func questionPlace(number: Int, total: Int, area: String? = nil) -> LocalizedStringResource
+  {
+    if let area {
+      return LocalizedStringResource(
+        "Question \(number) of \(total)\u{00A0}· \(area)", table: "Mock",
+        comment: "A question's place in the mock, with its subject")
+    }
+
+    return LocalizedStringResource(
+      "Question \(number) of \(total)", table: "Mock", comment: "A question's place in the mock")
+  }
+
   static func daySize(fullLength: Bool, day: Int?) -> String {
     switch (fullLength, day) {
     case (true, let day?):

@@ -15,6 +15,7 @@ import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { isMultiPick } from "../questions/pick-rule";
 import { useMockScreen } from "./mock-context";
+import { useMockQuestionLabel } from "./mock-labels";
 import { MockOptions, MockPicks, useLocked } from "./mock-options";
 
 const MAX_TYPED_ANSWER = 500;
@@ -100,19 +101,21 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
   );
 }
 
-export function useQuestionPlace(question: MockQuestion): string {
+export function useQuestionPlace({
+  question,
+  total,
+}: {
+  question: MockQuestion;
+  total: number;
+}): string {
   const t = useExtracted();
-  const { runner } = useMockScreen();
+  const label = useMockQuestionLabel();
 
   if (question.format === "essay") {
     return question.area ? t("Written part · {area}", { area: question.area }) : t("Written part");
   }
 
-  const place = { number: String(question.number), total: String(runner.view.questions) };
-
-  return question.area
-    ? t("Question {number} of {total} · {area}", { ...place, area: question.area })
-    : t("Question {number} of {total}", place);
+  return label({ area: question.area, number: question.number, total });
 }
 
 function MockAnswerInput({ question }: { question: MockQuestion }) {
