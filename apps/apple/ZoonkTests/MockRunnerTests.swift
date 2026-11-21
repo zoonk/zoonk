@@ -73,7 +73,7 @@ final class MockSectionMovesTests: XCTestCase {
   func testAnAnswerIsRecheckedOnlyWhereItCanStillChange() {
     func canRecheck(_ navigation: MockSection.Navigation?) -> Bool {
       MockSectionMoves(
-        answered: true, changed: [], changesLeft: nil, navigation: navigation, position: 0,
+        answered: true, changed: [], changesAllowed: nil, navigation: navigation, position: 0,
         reached: 0, total: 3
       ).canRecheck
     }
