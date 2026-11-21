@@ -4,6 +4,8 @@ import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
+import com.zoonk.android.feature.essay.LiveEssayApi
+import com.zoonk.android.feature.essay.startRoute
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
@@ -22,6 +24,13 @@ import java.util.UUID
 class LiveStudyApi(
     private val api: ApiClients,
 ) : StudyApi {
+    private val essays = LiveEssayApi(api)
+
+    override suspend fun startWriting(
+        session: AuthenticatedSession,
+        blockId: UUID,
+    ) = essays.startRoute(session, blockId)
+
     override suspend fun openDay(
         session: AuthenticatedSession,
         goalId: UUID,

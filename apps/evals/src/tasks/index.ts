@@ -37,6 +37,7 @@ import { findProductPagesTask } from "./find-product-pages/task";
 import { findSubjectQuestionsTask } from "./find-subject-questions/task";
 import { findTargetCutoffTask } from "./find-target-cutoff/task";
 import { findTopicFrequencyTask } from "./find-topic-frequency/task";
+import { findWrittenTaskSubjectsTask } from "./find-written-task-subjects/task";
 import { generateItemsTask } from "./generate-items/task";
 import { goalOpeningTask } from "./goal-opening/task";
 import { goalSpecificityTask } from "./goal-specificity/task";
@@ -106,6 +107,7 @@ import { wordIpaTask } from "./word-ipa/task";
 import { workFieldTask } from "./work-field/task";
 import { writeItemSetTask } from "./write-item-set/task";
 import { writeListeningSetTask } from "./write-listening-set/task";
+import { writeWritingPromptTask } from "./write-writing-prompt/task";
 
 export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTask[] }[] = [
   {
@@ -144,6 +146,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       findChoiceOptionsTask,
       extractExamBlueprintTask,
       extractQuestionFormatsTask,
+      findWrittenTaskSubjectsTask,
       checkCitedFactsTask,
       checkExamReadingTask,
       examIdentityDecisionTask,
@@ -198,6 +201,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       solveItemsTask,
       writeListeningSetTask,
       writeItemSetTask,
+      writeWritingPromptTask,
       pastQuestionsTask,
       gradeTypedAnswerTask,
       gradeEssayTask,

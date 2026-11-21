@@ -26,7 +26,13 @@ import { SubjectChapters } from "./subject-chapters";
 import { SubjectMatrix } from "./subject-matrix";
 import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
 import { SubjectTopics } from "./subject-topics";
+import { WriteBottomBar, useWrittenFacts } from "./subject-write-bar";
 import { SubjectWrittenPractice } from "./subject-written-practice";
+import {
+  SubjectWrittenScore,
+  type WrittenSubject,
+  findWrittenSubject,
+} from "./subject-written-score";
 import { TopicFrequencySource } from "./syllabus-notes";
 import { getSubjectBar, getSubjectShare, useKnownLine } from "./use-subject-progress";
 
@@ -34,8 +40,12 @@ const TOPICS_TITLE_ID = "subject-topics-title";
 
 type SubjectHrefs = {
   adjust: string;
+  /** A past written answer's page; without it the written part lists no answers. */
+  answer?: (attemptId: string) => string;
   back: string;
   chapter: (chapterId: string) => string;
+  /** An unfinished written task the learner asked for. */
+  essay: (blockId: string) => string;
   mindMaps?: (subjectKey: string) => string;
 };
 
@@ -79,30 +89,44 @@ function useShareFact(subject: SyllabusSubject): string | null {
   });
 }
 
+function useSubjectFacts({
+  fromMaterial,
+  kind,
+  subject,
+}: {
+  fromMaterial: boolean;
+  kind: SyllabusView["kind"];
+  subject: SyllabusSubject;
+}): string[] {
+  const doneShare = useDoneShare();
+  const origin = useOriginFact({ fromMaterial, kind, subject });
+  const share = useShareFact(subject);
+  const inLessons = !subject.notPlannedReason && subject.preparation === null;
+
+  // Topics and chapters count themselves over their lists, and Details names the questions.
+  return [origin, share, inLessons && doneShare(getSubjectShare(getSubjectBar(subject)))].filter(
+    (fact) => typeof fact === "string",
+  );
+}
+
 function SubjectFacts({
   fromMaterial,
   kind,
   sharedExams,
   subject,
+  written,
 }: {
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
+  written: WrittenSubject | null;
 }) {
-  const doneShare = useDoneShare();
-  const origin = useOriginFact({ fromMaterial, kind, subject });
-  const share = useShareFact(subject);
+  const subjectFacts = useSubjectFacts({ fromMaterial, kind, subject });
+  const writtenFacts = useWrittenFacts(written ?? {});
   const known = useKnownLine()(subject);
   const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
-  const inLessons = !subject.notPlannedReason && subject.preparation === null;
-
-  // Topics and chapters count themselves over their lists, and Details names the questions.
-  const facts = [
-    origin,
-    share,
-    inLessons && doneShare(getSubjectShare(getSubjectBar(subject))),
-  ].filter(Boolean);
+  const facts = written ? writtenFacts : subjectFacts;
 
   return (
     <>
@@ -146,11 +170,13 @@ function SubjectHeader({
   kind,
   sharedExams,
   subject,
+  written,
 }: {
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
+  written: WrittenSubject | null;
 }) {
   return (
     <DetailHero>
@@ -161,6 +187,7 @@ function SubjectHeader({
           kind={kind}
           sharedExams={sharedExams}
           subject={subject}
+          written={written}
         />
       </DetailHeroText>
     </DetailHero>
@@ -222,10 +249,17 @@ export function SubjectScreen({
   >;
 }) {
   const t = useExtracted();
+  const written = findWrittenSubject({ practice: syllabus.writtenPractice, subject });
 
   return (
     <DetailLayout
-      aside={<SubjectAside questionsSource={syllabus.questionsSource} subject={subject} />}
+      aside={
+        <SubjectAside
+          questionsSource={syllabus.questionsSource}
+          subject={subject}
+          written={written}
+        />
+      }
       asideLabel={t("About this subject")}
       bar={
         <LearnPageBar
@@ -236,7 +270,13 @@ export function SubjectScreen({
           <ReportProblemMenu label={t("Subject options")} screen="subject" />
         </LearnPageBar>
       }
-      bottomBar={<SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />}
+      bottomBar={
+        written && actions.write ? (
+          <WriteBottomBar essayHref={hrefs.essay} write={actions.write} written={written} />
+        ) : (
+          <SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />
+        )
+      }
       data-slot="subject"
     >
       <DetailAside>
@@ -245,21 +285,28 @@ export function SubjectScreen({
           kind={syllabus.kind}
           sharedExams={syllabus.sharedExams}
           subject={subject}
+          written={written}
         />
-        <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />
+        {/* A written part's headline is its estimated points: lessons are a small part of its time. */}
+        {!written && <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />}
         <NotPlannedCallout actions={actions} adjustHref={hrefs.adjust} subject={subject} />
-        <SubjectWrittenPractice
-          actions={actions}
-          practice={syllabus.writtenPractice}
-          subject={subject}
-        />
       </DetailAside>
 
       <DetailContent>
+        {written && hrefs.answer && (
+          <SubjectWrittenScore answerHref={hrefs.answer} written={written} />
+        )}
+
         <SubjectChapters
           chapterHref={hrefs.chapter}
           chapters={subject.chapters}
           mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
+        />
+
+        <SubjectWrittenPractice
+          actions={actions}
+          practice={syllabus.writtenPractice}
+          subject={subject}
         />
 
         {subject.topics.length > 0 && (

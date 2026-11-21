@@ -34,6 +34,7 @@ import { countFullReviewQuestions } from "./full-review";
 const FRESH_START_REVIEW_FACTOR = 0.5;
 
 export type PlannedLesson = {
+  drill?: PlannedProduce;
   canDo: string | null;
   chapterId: string | null;
   lessonId: string | null;
@@ -79,8 +80,8 @@ export type SessionBuildInput = {
   /** An exam where a wrong answer cancels a right one: mixed practice is scored net. */
   netScored: boolean;
   practice: PracticeItem[];
-  /** Official-rubric essay; null when none is planned today. */
-  produce: PlannedProduce | null;
+  produces: readonly PlannedProduce[];
+  continuingWritingMinutes?: number;
   practiceShare: number;
   /** Replaces an unavailable mock with practice across every goal skill; null on other days. */
   fullReviewSkillIds?: readonly string[] | null;
@@ -104,11 +105,6 @@ export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"
   estimatedMinutes: number;
   payload: BlockPayload;
 };
-
-/** Full reviews stay whole on returns so the exam-eve session still reaches every topic. */
-function getSessionBudget(input: SessionBuildInput): number {
-  return Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
-}
 
 function buildReviewBlock({
   capsules,
@@ -183,7 +179,6 @@ function getPracticeMinutes({
   remaining: number;
 }): number {
   const share = isSessionReviewDay(input) ? 1 : input.practiceShare;
-  const practice = input.practice;
   const opened = input.openedPractice;
 
   // Multiplied before dividing, so a day that keeps its minutes gets its practice's exactly.
@@ -191,7 +186,7 @@ function getPracticeMinutes({
     ? (opened.minutes * (budget + (input.usedMinutes ?? 0))) / opened.dayMinutes
     : remaining * share;
 
-  return Math.min(target, practice.length * PRACTICE_MINUTES_PER_QUESTION);
+  return Math.min(target, input.practice.length * PRACTICE_MINUTES_PER_QUESTION);
 }
 
 function fundSessionChallenges(input: SessionBuildInput, budget: number) {
@@ -237,14 +232,25 @@ export function buildSessionBlocks(day: SessionBuildInput): {
     }),
   };
 
-  const budget = getSessionBudget(input);
+  const dayBudget = Math.max(0, getSessionDayMinutes(input) - (input.usedMinutes ?? 0));
 
-  if (budget < MIN_BLOCK_MINUTES) {
+  if (dayBudget < MIN_BLOCK_MINUTES) {
     return { blocks: [], plannedMinutes: 0 };
   }
 
   if (input.mockReplacesDay) {
     return buildMockDay(input.checkpoints);
+  }
+
+  return buildMixedDay(input, dayBudget - (input.continuingWritingMinutes ?? 0));
+}
+
+function buildMixedDay(input: SessionBuildInput, dayBudget: number) {
+  const produceMinutes = input.produces.reduce((sum, block) => sum + block.minutes, 0);
+  const budget = dayBudget - produceMinutes;
+
+  if (budget < MIN_BLOCK_MINUTES) {
+    return { blocks: input.produces.map(toProduceBlock), plannedMinutes: produceMinutes };
   }
 
   const reviewFactor = input.freshStart ? FRESH_START_REVIEW_FACTOR : 1;
@@ -256,8 +262,11 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   if (leading[0] && leading[0].minutes > budget) {
     return {
-      blocks: [buildCheckpointBlock(leading[0])],
-      plannedMinutes: Math.ceil(leading[0].minutes),
+      blocks:
+        produceMinutes > 0
+          ? input.produces.map(toProduceBlock)
+          : [buildCheckpointBlock(leading[0])],
+      plannedMinutes: produceMinutes || Math.ceil(leading[0].minutes),
     };
   }
 
@@ -284,13 +293,7 @@ export function buildSessionBlocks(day: SessionBuildInput): {
 
   const base = (review?.estimatedMinutes ?? 0) + checkpointMinutes;
 
-  const produce = toProduceBlock({
-    ...input,
-    minBlockMinutes: MIN_BLOCK_MINUTES,
-    room: budget - base,
-  });
-
-  const open = Math.max(0, budget - base - (produce?.estimatedMinutes ?? 0));
+  const open = Math.max(0, budget - base);
 
   const fullReviewMinutes =
     countFullReviewQuestions({
@@ -350,19 +353,19 @@ export function buildSessionBlocks(day: SessionBuildInput): {
       reviewedSkillIds: review?.payload.skillIds ?? [],
       topics: input.topics,
     }),
-    produce,
+    ...input.produces.map(toProduceBlock),
     ...calendar.map((checkpoint) => buildCheckpointBlock(checkpoint)),
   ].filter((block) => block !== null);
 
   return fillRemainingLessonTime({
     available,
-    blocks: fillReview({ blocks: built, budget, input: reviewInput }),
-    budget,
+    blocks: fillReview({ blocks: built, budget: dayBudget, input: reviewInput }),
+    budget: dayBudget,
     checkpointMinutes,
     input,
     leading,
     learnBudget,
     lessons,
-    produceMinutes: produce?.estimatedMinutes ?? 0,
+    produceMinutes,
   });
 }

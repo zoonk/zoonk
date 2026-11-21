@@ -89,6 +89,7 @@ enum AppLink: Equatable {
     case (2, "checkpoint", let blockId, _):
       return .route(.checkpoint(blockId: blockId, sessionId: session))
     case (2, "essay", let blockId, _): return .route(.essay(blockId: blockId))
+    case (3, "essay", "answers", let attemptId): return .route(.writingAnswer(attemptId: attemptId))
     case (2, "mock", let blockId, _): return .route(.mock(blockId: blockId, sessionId: session))
     case (1, "pronunciation", _, _): return .route(.pronunciation(goalId: value("goal")))
     case (2, "conversation", let conversationId, _):

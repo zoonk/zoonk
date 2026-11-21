@@ -7,13 +7,14 @@ import { settleWithin } from "@zoonk/utils/timeout";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { type DraftSaveStatus, createDraftSaveQueue } from "./draft-save-queue";
 import {
+  type PendingMockDraft,
   clearHandedInMockDrafts,
   dropUnsentMockDraft,
   keepUnsentMockDraft,
   restoreUnsentMockDrafts,
 } from "./unsent-drafts";
 
-type Drafts = Record<string, MockDraft>;
+type Drafts = Record<string, PendingMockDraft>;
 
 const TEXT_SAVE_DELAY_MS = 1500;
 
@@ -30,6 +31,29 @@ function withoutDraft(drafts: Partial<Drafts>, itemId: string): Partial<Drafts> 
 
 function emptyDraft(itemId: string): MockDraft {
   return { answer: null, durationMs: 0, flagged: false, itemId };
+}
+
+function nextEdit(draft: PendingMockDraft): PendingMockDraft {
+  const edit = draft.edit;
+
+  return {
+    ...draft,
+    edit: edit
+      ? { ...edit, order: edit.order + 1 }
+      : { base: draft.revision, order: 0, writer: crypto.randomUUID() },
+  };
+}
+
+function readKept({ blockId, view }: { blockId: string; view: MockView }): PendingMockDraft[] {
+  return restoreUnsentMockDrafts({ blockId, view }).map((draft) => {
+    if (draft.edit) {
+      return draft;
+    }
+
+    const stamped = nextEdit(draft);
+    keepUnsentMockDraft({ blockId, draft: stamped, keepPlace: true });
+    return stamped;
+  });
 }
 
 export function useMockDrafts({
@@ -51,13 +75,13 @@ export function useMockDrafts({
   const latestDrafts = useRef(drafts);
   const entered = useRef(false);
   const shown = useRef<{ at: number; itemId: string } | null>(null);
-  const unsavedText = useRef<MockDraft | null>(null);
+  const unsavedText = useRef<PendingMockDraft | null>(null);
   const textTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // The host keeps `save` stable.
   const queue = useMemo(
     () =>
-      createDraftSaveQueue<MockDraft>({
+      createDraftSaveQueue<PendingMockDraft>({
         keyOf: (draft) => draft.itemId,
         onFailed: (draft) => setFailedDrafts((current) => ({ ...current, [draft.itemId]: draft })),
         onRefused: (draft) => dropUnsentMockDraft({ blockId, draft }),
@@ -67,7 +91,8 @@ export function useMockDrafts({
           setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft }));
           setFailedDrafts((current) => withoutDraft(current, draft.itemId));
         },
-        save,
+        save: ({ answer, durationMs, edit, flagged, itemId }) =>
+          save({ answer, durationMs, edit, flagged, itemId }),
       }),
     [blockId, save],
   );
@@ -78,7 +103,7 @@ export function useMockDrafts({
   }
 
   function enter(next: MockView) {
-    const kept = restoreUnsentMockDrafts({ blockId, view: next });
+    const kept = readKept({ blockId, view: next });
     const stored = toDrafts(next);
 
     setAllDrafts({ ...stored, ...Object.fromEntries(kept.map((draft) => [draft.itemId, draft])) });
@@ -91,7 +116,7 @@ export function useMockDrafts({
   // Back and forward show this screen again as it was, so only what's still unsent goes out again.
   const enterOnMount = useEffectEvent(() => {
     if (entered.current) {
-      restoreUnsentMockDrafts({ blockId, view }).forEach((draft) => queue.add(draft));
+      readKept({ blockId, view }).forEach((draft) => queue.add(draft));
     } else {
       entered.current = true;
       enter(view);
@@ -111,18 +136,15 @@ export function useMockDrafts({
     };
   }, [queue]);
 
-  function persist(draft: MockDraft) {
+  function persist(draft: PendingMockDraft) {
     setAllDrafts({ ...latestDrafts.current, [draft.itemId]: draft });
     keepUnsentMockDraft({ blockId, draft, keepPlace: queue.isWaiting(draft.itemId) });
     queue.add(draft);
   }
 
   function saveText() {
-    if (textTimer.current) {
-      clearTimeout(textTimer.current);
-      textTimer.current = null;
-    }
-
+    clearTimeout(textTimer.current ?? undefined);
+    textTimer.current = null;
     const draft = unsavedText.current;
     unsavedText.current = null;
 
@@ -142,12 +164,12 @@ export function useMockDrafts({
 
   return {
     answer: (itemId: string, answer: MockAnswer | null) =>
-      persist({ ...withTimeSpent(itemId), answer }),
+      persist(nextEdit({ ...withTimeSpent(itemId), answer })),
     drafts,
     failedDrafts,
     flush: () => {
       saveText();
-      return queue.idle();
+      return queue.flush();
     },
     inFlight: () => {
       saveText();
@@ -159,11 +181,15 @@ export function useMockDrafts({
       queue.retryNow();
       return settleWithin({ ms: LEAVE_WAIT_MS, request: () => queue.idle() });
     },
-    leave: (itemId: string) => {
+    leave: (itemId: string, countTime = true) => {
       if (shown.current?.itemId === itemId) {
+        const shouldSave = unsavedText.current !== null || (countTime && !queue.wasRefused(itemId));
         unsavedText.current = null;
-        saveText();
-        persist(withTimeSpent(itemId));
+
+        if (shouldSave) {
+          persist(nextEdit(withTimeSpent(itemId)));
+        }
+
         shown.current = null;
       }
     },
@@ -181,17 +207,16 @@ export function useMockDrafts({
     },
     toggleUnsure: (itemId: string) => {
       unsavedText.current = null;
-      saveText();
       const draft = withTimeSpent(itemId);
-      persist({ ...draft, flagged: !draft.flagged });
+      persist(nextEdit({ ...draft, flagged: !draft.flagged }));
     },
     visit: (itemId: string) => {
       if (!latestDrafts.current[itemId]) {
-        persist(emptyDraft(itemId));
+        persist(nextEdit(emptyDraft(itemId)));
       }
     },
     write: (itemId: string, answer: MockAnswer | null) => {
-      const draft = { ...(latestDrafts.current[itemId] ?? emptyDraft(itemId)), answer };
+      const draft = nextEdit({ ...(latestDrafts.current[itemId] ?? emptyDraft(itemId)), answer });
 
       setAllDrafts({ ...latestDrafts.current, [itemId]: draft });
       unsavedText.current = draft;

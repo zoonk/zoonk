@@ -5,6 +5,31 @@ import XCTest
 @testable import Zoonk
 
 final class StudyAPITests: XCTestCase {
+  func testWritingRowUsesSavedDraftField() throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    let cases: [(String, Bool?, String?)] = [
+      ("continue", nil, nil),
+      ("continue", false, nil),
+      ("continue", true, "Your draft is saved"),
+      ("available", true, "Your draft is saved"),
+    ]
+
+    for (availability, hasDraft, expectedLine) in cases {
+      var fixture = base
+      fixture["kind"] = "produce"
+      fixture["subject"] = nil
+      fixture["canDo"] = nil
+      fixture["writingAvailability"] = ["status": availability]
+      fixture["hasWritingDraft"] = hasDraft
+      let block = try JSONDecoder().decode(
+        StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
+
+      XCTAssertEqual(block.label, expectedLine)
+      XCTAssertEqual(block.detail, expectedLine)
+    }
+  }
+
   /// Core reads the shown block's missing values as `null` and refuses a body that leaves them out.
   func testOpeningADaySendsTheShownBlocksNullsWithTheBodysOwnLength() async throws {
     let transport = StudyRecordingTransport()

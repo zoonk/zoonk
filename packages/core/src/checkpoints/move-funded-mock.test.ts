@@ -47,7 +47,8 @@ async function readPlan(goalId: string) {
   });
 
   const lessons = plan.items.filter((item) => item.kind === "lesson" && item.status === "todo");
-  return { funding: parsePlanSettings(plan.settings).mockFunding, lessons, plan };
+  const settings = parsePlanSettings(plan.settings);
+  return { funding: settings.mockFunding, lessons, plan, writing: settings.writingSchedule ?? [] };
 }
 
 describe("moving a funded mock to Monday", () => {
@@ -60,7 +61,7 @@ describe("moving a funded mock to Monday", () => {
     vi.useRealTimers();
   });
 
-  it("moves Ana's Sunday mock with its saved credits, names what leaves, and undoes exactly", async () => {
+  it("moves Ana's funded mock onto the writing day, preserves the writing, and undoes exactly", async () => {
     const copyKey = randomUUID().slice(0, 8);
 
     const copy = await seedPersonaCopy({
@@ -78,7 +79,8 @@ describe("moving a funded mock to Monday", () => {
         item.scheduledFor?.toISOString().slice(0, 10) === SUNDAY,
     );
 
-    expect(before.lessons.some((item) => teachingDays(item).includes(MONDAY))).toBe(true);
+    const writing = before.writing.find((entry) => entry.date === MONDAY);
+    expect(writing).toMatchObject({ minutes: 45, tasks: [{ unit: "answer" }] });
 
     mockSession(copy.userId);
 
@@ -113,6 +115,12 @@ describe("moving a funded mock to Monday", () => {
 
     expect(week(after.plan.items)).toStrictEqual(week(before.plan.items));
 
+    expect(after.writing.find((entry) => entry.date === SUNDAY)).toStrictEqual({
+      ...writing,
+      date: SUNDAY,
+    });
+
+    expect(after.writing.some((entry) => entry.date === MONDAY)).toBe(false);
     expect(after.lessons.filter((item) => teachingDays(item).includes(MONDAY))).toStrictEqual([]);
 
     const change = await prisma.planChange.findUniqueOrThrow({
@@ -140,6 +148,7 @@ describe("moving a funded mock to Monday", () => {
 
     expect(layout(restored.plan.items)).toStrictEqual(layout(before.plan.items));
     expect(restored.funding).toStrictEqual(before.funding);
+    expect(restored.writing).toStrictEqual(before.writing);
   });
 
   it("refuses Ana's mock when no day before her exam has room for Monday's lessons, saying why", async () => {

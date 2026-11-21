@@ -13,7 +13,7 @@ import * as planner from "./planner/build-plan";
 const SEARCH_STEP_MINUTES = 5;
 
 /** Trying every daily time with the floor at 0 finds this same time. */
-const ANA_WEEKDAY_MINUTES = 145;
+const ANA_WEEKDAY_MINUTES = 190;
 
 async function countBuilds<Result>(read: () => Promise<Result>) {
   const builds = vi.spyOn(planner, "buildPlan");

@@ -1,0 +1,1242 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The hypothetical equipment purchase gives a federal audit candidate three concrete risks to analyze in a discursive answer. The numbered commands show their marks, the separate presentation allocation is clear, and neither the line limit nor the total is restated. The main ambiguity is the candidate's perspective in item 3: management and internal audit have different responsibilities for correction.",
+          "score": 8,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The allocations add to 30 and the key usefully separates the three risks. Its substantive risk statements are sound, but the legal grounding is incomplete, especially for brand designation. The receipt controls can reward the same statement twice, and the vague structure descriptor triggers the cap of 7.",
+          "score": 7,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "“Controles na contratação pública” names the topic concisely. There are no used titles to duplicate. Organizing a reasoned response and writing about public control exercise both credited skills; revision is not credited.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3224,
+          "outputTokens": 589,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The key says that a brand indication must satisfy “the legal conditions” but never identifies those conditions. For an equipment purchase, article 41(I) of Lei nº 14.133/2021 limits brand indications to specified exceptional cases and requires formal justification. An examiner needs that distinction to tell a legally sufficient answer from one that treats any written justification as enough. The key also omits the relevant bases for segregation of duties and price estimation (articles 7, § 1º, and 23).",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Two 2.5-point aspects overlap: assigning receipt to a different official can earn credit both for segregation of duties and for verification of receipt, without the candidate explaining what is checked. The two-point award for a “logical sequence” and “articulation” lacks a clear pass/fail test. In item 3, the command does not say whether the writer is advising management or acting as an auditor, which matters because the key asks for adoption of a corrective measure rather than a recommendation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Distinguish who receives the goods from what that person verifies: reserve the receipt points for checking delivered equipment against contractual specifications. Define an observable structure test and identify who recommends a correction and who implements it.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. The keyed aspects are each one thing an examiner can see present or missing, split into steps where a board grades in steps, covering every requested aspect; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words. The aspects' points add up to 30, and the topic is one a Cebraspe complementary-knowledge question for a federal audit career could set.",
+        "id": "cgu-question-30-lines-pt-1",
+        "userInput": {
+          "drillSkillId": null,
+          "language": "pt",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000001",
+              "name": "Planejar respostas discursivas fundamentadas"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000002",
+              "name": "Redigir respostas discursivas sobre controle público"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000003",
+              "name": "Revisar respostas discursivas"
+            }
+          ],
+          "task": {
+            "count": 1,
+            "description": "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+            "grading": {
+              "criteria": [
+                {
+                  "citation": {
+                    "passage": "9.7.5 … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de 30,00 pontos;",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "id": "content",
+                  "points": 30,
+                  "text": "a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC)"
+                }
+              ],
+              "kind": "points",
+              "language": {
+                "citation": {
+                  "passage": "9.7.5 … d) … pela fórmula NQ1 = NC - 6 × NE ÷ TL, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;",
+                  "sourceId": "cgu-2026-affc-edital-1"
+                },
+                "factor": 6,
+                "formula": "NQ1 = NC - 6 × NE ÷ TL",
+                "method": "errorsPerLine",
+                "text": "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato, considerando-se aspectos de natureza gramatical, tais como: grafia, morfossintaxe e propriedade vocabular"
+              },
+              "rounding": null,
+              "zeroing": [
+                {
+                  "citation": {
+                    "passage": "9.7.5 … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "text": "nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero"
+                }
+              ]
+            },
+            "handwritten": true,
+            "key": "written-cgu-q1",
+            "lines": 30,
+            "minutes": 210,
+            "points": 30,
+            "section": "Prova discursiva (P4)",
+            "session": "no turno da tarde"
+          },
+          "unit": "answer",
+          "usedTitles": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The hypothetical federal IT contract gives the candidate a concrete audit problem: how to investigate unsupported payments without assuming loss, while addressing a team member’s prior management role. The numbered commands call for a discursive response and state their marks without repeating the total or line limit. The small command-to-key mismatch is that “acompanhamento” does not clearly signal a duty to discuss referral.",
+          "score": 8,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The points sum to 70, the proposed evidence tests are relevant, and the key correctly avoids treating missing records as proof of nonperformance. However, the vague four-point presentation item triggers the cap of 7. Bundled checks, particularly monitoring and referral, further impair consistent grading, and the payment-verification point lacks its applicable legal basis.",
+          "score": 7,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "“Auditoria de Pagamentos Contratuais” concisely names the case topic, with no used title to duplicate. Organizing a reasoned analysis across the three commands exercises planning, and writing it exercises discursive writing on public control. Neither skill depends on a proofreading task.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3513,
+          "outputTokens": 650,
+          "reasoningTokens": 41
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several scoring items combine actions a candidate could perform independently. For example, the five-point follow-up item requires both monitoring recommendations and referring possible irregularities, although question 3 asks for follow-up without asking for referral. The four-point item for “adequate” presentation and structure also lacks an observable threshold. An examiner has no consistent way to score a response that meets only part of either item.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The key correctly distinguishes missing service records from proof of nonperformance, but the corresponding scoring item rewards identifying a documentation risk without requiring that distinction. The key also omits the legal basis for verifying delivery before payment: article 63, paragraph 2, III, of Law 4.320/1964 identifies proof of actual service provision as a basis for liquidating the expenditure.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the 20/24/22/4 allocation, but divide the bundled points into independently earnable checks. In particular, score disclosure of the auditor’s prior role separately from reassignment, and either request conditional referral explicitly or reserve the follow-up points for monitoring. Define the structure marks through visible features, such as separating the risk analysis from the proposed procedures.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. The keyed aspects are each one thing an examiner can see present or missing, split into steps where a board grades in steps, covering every requested aspect; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words. The aspects' points add up to 70; the question is a situação-problema (a concrete case the candidate must analyze and resolve) for a federal audit and control career, not an abstract essay prompt.",
+        "id": "cgu-case-60-lines-pt-1",
+        "userInput": {
+          "drillSkillId": null,
+          "language": "pt",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000001",
+              "name": "Planejar respostas discursivas fundamentadas"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000002",
+              "name": "Redigir respostas discursivas sobre controle público"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000003",
+              "name": "Revisar respostas discursivas"
+            }
+          ],
+          "task": {
+            "count": 1,
+            "description": "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos",
+            "grading": {
+              "criteria": [
+                {
+                  "citation": {
+                    "passage": "9.7.6 … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de 70,00 pontos;",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "id": "content",
+                  "points": 70,
+                  "text": "a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC)"
+                }
+              ],
+              "kind": "points",
+              "language": {
+                "citation": {
+                  "passage": "9.7.6 … d) … pela fórmula NQ2 = NC – 14 × NE ÷ TL, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;",
+                  "sourceId": "cgu-2026-affc-edital-1"
+                },
+                "factor": 14,
+                "formula": "NQ2 = NC – 14 × NE ÷ TL",
+                "method": "errorsPerLine",
+                "text": "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato, considerando-se aspectos de natureza gramatical, tais como: grafia, morfossintaxe e propriedade vocabular"
+              },
+              "rounding": null,
+              "zeroing": [
+                {
+                  "citation": {
+                    "passage": "9.7.6 … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "text": "nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero"
+                }
+              ]
+            },
+            "handwritten": true,
+            "key": "written-cgu-q2",
+            "lines": 60,
+            "minutes": 210,
+            "points": 70,
+            "section": "Prova discursiva (P4) – Auditoria e Controle",
+            "session": "no turno da tarde"
+          },
+          "unit": "answer",
+          "usedTitles": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The hypothetical payment case supports a feasible public-control essay. The four numbered commands state their marks, account for the separate structure point, and repeat neither the total nor the line limit. The main weakness is the weight on identifying two facts already given in the case, rather than explaining their relationship.",
+          "score": 8,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The key separates probability from impact, prevention from detection, and corrective action from monitoring. Its examples are technically sound and cover the requested content. The vague structure aspect triggers the seven-point cap, and the cause criterion is narrower than the question.",
+          "score": 7,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "The concise title identifies a specific payment risk. Although controls form part of the response, the substantive task is to analyze and manage duplicate payments, not to explain internal-control roles or lines of defense. Planning a reasoned response and writing about public control are both exercised; revision is not credited.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3142,
+          "outputTokens": 501,
+          "reasoningTokens": 23
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The one-point structure criterion asks whether the text is “organized” and “compatible” with a discursive answer without saying what earns the point. Item 1 also asks for any plausible cause, but its four-point scoring aspect names only the absence of a joint check. An examiner could reject another valid case-based formulation, such as fragmented payment records.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the structure point observable, for example by checking whether the candidate develops the response in connected prose rather than a list of labels. For a more discriminating first item, ask how separate records allow the same expense to be processed twice: the current scenario already states both the event and its cause, worth eight points together.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. The keyed aspects are each one thing an examiner can see present or missing, split into steps where a board grades in steps, covering every requested aspect; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words. Its topic differs from every used title in substance, not only in wording (no other question on the access-to-information law, LGPD, public procurement or internal control lines of defense).",
+        "id": "cgu-question-used-titles-pt-1",
+        "userInput": {
+          "drillSkillId": null,
+          "language": "pt",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000001",
+              "name": "Planejar respostas discursivas fundamentadas"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000002",
+              "name": "Redigir respostas discursivas sobre controle público"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000003",
+              "name": "Revisar respostas discursivas"
+            }
+          ],
+          "task": {
+            "count": 1,
+            "description": "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+            "grading": {
+              "criteria": [
+                {
+                  "citation": {
+                    "passage": "9.7.5 … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de 30,00 pontos;",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "id": "content",
+                  "points": 30,
+                  "text": "a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC)"
+                }
+              ],
+              "kind": "points",
+              "language": {
+                "citation": {
+                  "passage": "9.7.5 … d) … pela fórmula NQ1 = NC - 6 × NE ÷ TL, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;",
+                  "sourceId": "cgu-2026-affc-edital-1"
+                },
+                "factor": 6,
+                "formula": "NQ1 = NC - 6 × NE ÷ TL",
+                "method": "errorsPerLine",
+                "text": "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato, considerando-se aspectos de natureza gramatical, tais como: grafia, morfossintaxe e propriedade vocabular"
+              },
+              "rounding": null,
+              "zeroing": [
+                {
+                  "citation": {
+                    "passage": "9.7.5 … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "text": "nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero"
+                }
+              ]
+            },
+            "handwritten": true,
+            "key": "written-cgu-q1",
+            "lines": 30,
+            "minutes": 210,
+            "points": 30,
+            "section": "Prova discursiva (P4)",
+            "session": "no turno da tarde"
+          },
+          "unit": "answer",
+          "usedTitles": [
+            "Lei de Acesso à Informação",
+            "Transparência ativa e passiva",
+            "LGPD no setor público",
+            "Nova Lei de Licitações",
+            "Três linhas de defesa",
+            "Controle interno na administração"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The public-portal case gives the candidate a concrete tension to resolve. The command asks for one feasible five-line outline and specifies the sequence rather than asking for a full answer. Its only material ambiguity is what grounding the examiner expects.",
+          "score": 8,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The LGPD references are accurate, and the immediate response is usefully split into two observable decisions: remove the CPF numbers and retain the aggregate information. However, the examiner cannot use the listed aspects to credit compliance with the explicitly requested order. The sample follows that order but does not supply the missing grading aspect.",
+          "score": 7,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "The short title identifies personal data as the topic, distinct from the used title on external control. Only the designated planning skill is credited, and constructing the outline directly exercises it.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2559,
+          "outputTokens": 422,
+          "reasoningTokens": 20
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The question explicitly requires a three-part sequence, but no aspect checks the order. It also asks for a grounded outline without specifying the principle of necessity, although the key requires that particular principle.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Ask the candidate to explain why publishing CPF numbers exceeds what the page’s purpose requires. This makes the expected reasoning clear without giving away the legal term. Add a yes-or-no check for the requested sequence.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A drill: one short writing move (an outline, a thesis, one paragraph, a conclusion or a rewrite under a tighter limit) that practices planning a well-founded discursive answer, done in a few minutes. The context gives what the move works on; the question asks for that move only, with its length; the criteria assess only that move, with null points; assessedSkillIds holds only the drill skill.",
+        "id": "cgu-drill-plan-pt-1",
+        "userInput": {
+          "drillSkillId": "0195f1d2-7c4a-7d3e-9a10-000000000001",
+          "language": "pt",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000001",
+              "name": "Planejar respostas discursivas fundamentadas"
+            }
+          ],
+          "task": {
+            "count": 1,
+            "description": "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+            "grading": {
+              "criteria": [
+                {
+                  "citation": {
+                    "passage": "9.7.5 … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de 30,00 pontos;",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "id": "content",
+                  "points": 30,
+                  "text": "a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC)"
+                }
+              ],
+              "kind": "points",
+              "language": {
+                "citation": {
+                  "passage": "9.7.5 … d) … pela fórmula NQ1 = NC - 6 × NE ÷ TL, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;",
+                  "sourceId": "cgu-2026-affc-edital-1"
+                },
+                "factor": 6,
+                "formula": "NQ1 = NC - 6 × NE ÷ TL",
+                "method": "errorsPerLine",
+                "text": "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato, considerando-se aspectos de natureza gramatical, tais como: grafia, morfossintaxe e propriedade vocabular"
+              },
+              "rounding": null,
+              "zeroing": [
+                {
+                  "citation": {
+                    "passage": "9.7.5 … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "text": "nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero"
+                }
+              ]
+            },
+            "handwritten": true,
+            "key": "written-cgu-q1",
+            "lines": 30,
+            "minutes": 210,
+            "points": 30,
+            "section": "Prova discursiva (P4)",
+            "session": "no turno da tarde"
+          },
+          "unit": "drill",
+          "usedTitles": [
+            "Esboço sobre controle externo"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The comparative command sets a credible British industrial history essay: candidates must explain two developments and judge their importance against another cause. The numbered parts are clear and correctly carry no marks. The word-count reminder is dispensable, but it is not a restated line limit or marks total.",
+          "score": 9,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The historical examples are accurate, and the key usefully distinguishes identifying evidence from explaining its significance. However, the single either-sector aspect cannot record whether the candidate explained both required effects. Mentioning both in the key points does not fix that grading gap.",
+          "score": 7,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "“Coal and Steam Power” identifies the topic concisely and is distinct from “Factory conditions and reform.” The comparative essay exercises both credited skills—forming a thesis and supporting a historical argument with evidence—and does not credit proofreading.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2542,
+          "outputTokens": 496,
+          "reasoningTokens": 36
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The question requires an explanation of steam power’s effects on mining and manufacturing, but the keyed aspect accepts mining or manufacturing. An essay could omit either sector and still earn every aspect.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The organization aspect leaves “paragraphs with distinct roles” open to interpretation. The final key point also implies that a defensible assessment must discuss change over time, although the question asks for a comparison of factors and does not require a chronological argument.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Open directly with “Assess the importance of coal and steam power…” rather than repeating the approximate essay length. In the key, use mine drainage and factory machinery as separate examples of the two causal explanations an examiner should look for.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. The keyed aspects are each one thing an examiner can see present or missing, split into steps where a board grades in steps, covering every requested aspect; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words. The notice states no scale: two to five criteria of the examiner's own with null points, aspects with null points, and a question with no marks. A real exam-board style history essay question on the industrial revolution in Britain, in English.",
+        "id": "history-essay-no-scale-en-1",
+        "userInput": {
+          "drillSkillId": null,
+          "language": "en",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000011",
+              "name": "Build a historical argument from evidence"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000012",
+              "name": "Write a clear thesis for a history essay"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000013",
+              "name": "Proofread a timed essay"
+            }
+          ],
+          "task": {
+            "count": 1,
+            "description": "one essay of about 500 words on a question about the industrial revolution in Britain",
+            "grading": {
+              "criteria": [],
+              "kind": "levels",
+              "language": null,
+              "rounding": null,
+              "zeroing": []
+            },
+            "handwritten": null,
+            "key": "written-history-essay",
+            "lines": null,
+            "minutes": 45,
+            "points": null,
+            "section": "Paper 2: Written answer",
+            "session": null
+          },
+          "unit": "answer",
+          "usedTitles": [
+            "Factory conditions and reform"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The context contains only a credible British Industrial Revolution essay question. The drill command asks for one thesis sentence and makes its two ingredients explicit: a judgment about coal’s importance and one reason for that judgment.",
+          "score": 10,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "An examiner can check the judgment, its supporting reason, and sentence completeness separately. All points are null. The examples about coal, steam power, iron production, and water power are historically sound, and the key does not require candidates to argue that coal was decisive.",
+          "score": 10,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "“Coal and Industrialization” names the topic concisely, with no used title to duplicate. The sole assessed skill ID is the requested thesis-writing skill, which the response directly exercises.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1871,
+          "outputTokens": 320,
+          "reasoningTokens": 41
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "A drill in English that practices writing a thesis for a history essay: the context gives an essay question (and nothing else long), the question asks only for a thesis sentence or two, the criteria assess that thesis only, with null points, and assessedSkillIds holds only the drill skill.",
+        "id": "history-drill-thesis-en-1",
+        "userInput": {
+          "drillSkillId": "0195f1d2-7c4a-7d3e-9a10-000000000012",
+          "language": "en",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000012",
+              "name": "Write a clear thesis for a history essay"
+            }
+          ],
+          "task": {
+            "count": 1,
+            "description": "one essay of about 500 words on a question about the industrial revolution in Britain",
+            "grading": {
+              "criteria": [],
+              "kind": "levels",
+              "language": null,
+              "rounding": null,
+              "zeroing": []
+            },
+            "handwritten": null,
+            "key": "written-history-essay",
+            "lines": null,
+            "minutes": 45,
+            "points": null,
+            "section": "Paper 2: Written answer",
+            "session": null
+          },
+          "unit": "drill",
+          "usedTitles": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The theme specifies a social challenge, the affected population and the Brazilian context. Three short motivating texts offer distinct entry points: access to services, barriers beyond connectivity and differences among older people. The command clearly requests an argumentative essay in formal Portuguese and an intervention that respects human rights, without repeating a line limit or total score.",
+          "score": 10,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The five competences have the required IDs and null points. C2 checks the exact theme, and C5 separately checks action, agent, means, intended effect, detail and respect for human rights. The factual guidance is sound, with no invented quotation or figure attributed to a source. The vague C3 reference to the “projeto de texto” triggers the cap of 7: examiners lack a shared test for awarding that aspect.",
+          "score": 7,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "“Inclusão digital de idosos” concisely identifies the topic and population and differs substantively from “Herança africana no Brasil.” The sole assessed skill is precisely the ENEM essay-writing skill the response exercises.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2984,
+          "outputTokens": 479,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The C3 aspect “Relaciona as informações selecionadas ao projeto de texto” does not tell an examiner what evidence earns credit. The C2 repertoire aspect also combines two judgments: whether the reference is relevant and whether the writer uses it to support an argument.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make C3 check for a link the examiner can locate: for example, whether the writer explains how a selected fact or example supports the paragraph’s claim. For C2, distinguish a reference that fits the theme from an explanation of how that reference supports the reasoning.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An ENEM redação proposal: a social theme stated as Inep states themes, two to four short motivating texts in the context that never attribute invented quotes or figures to real sources, and the command to write a dissertative-argumentative text in formal Portuguese with an intervention proposal that respects human rights. The criteria are the five competences with ids c1 to c5 and null points. Aspects name what earns credit on this theme (the exact theme, not only its broad subject; the proposal's agent, action, means, effect and detail).",
+        "id": "enem-redacao-pt-1",
+        "userInput": {
+          "drillSkillId": null,
+          "language": "pt",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000021",
+              "name": "Redação dissertativo-argumentativa do Enem"
+            }
+          ],
+          "task": {
+            "count": 1,
+            "description": "uma redação em Língua Portuguesa, texto dissertativo-argumentativo, com nota entre 0 e 1.000 pontos",
+            "grading": {
+              "criteria": [],
+              "kind": "enem",
+              "language": null,
+              "rounding": null,
+              "zeroing": [
+                {
+                  "citation": {
+                    "passage": "14.7 A banca avaliadora poderá atribuir nota 0 (zero) à redação que: 14.7.1 Não atender à proposta solicitada ou possua outra estrutura textual que não seja a estrutura dissertativo-argumentativa",
+                    "sourceId": "enem-2026-edital-64"
+                  },
+                  "text": "Fuga ao tema/não atendimento à estrutura dissertativo-argumentativa"
+                }
+              ]
+            },
+            "handwritten": true,
+            "key": "written-enem-redacao",
+            "lines": null,
+            "minutes": null,
+            "points": 1000,
+            "section": "Linguagens, Códigos e suas Tecnologias e Redação",
+            "session": null
+          },
+          "unit": "answer",
+          "usedTitles": [
+            "Herança africana no Brasil"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "Receipt of the complaint followed by personal service points to one filing, and the video and identified witness give the candidate concrete work to do. The numbered commands carry clear marks. The missing dates and answer-revealing title, however, make this less convincing as an exam-board question.",
+          "score": 7,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The legal route is correct: CPP arts. 396 and 396-A support the response and ten-day period; CP arts. 23, II, and 25 support the defense; and CPP art. 397, I, supports summary acquittal. The court, fallback evidence request and witness are covered, and the three criterion IDs retain null points. The main grading gap is that the aspects test the elements of legitimate defense and the procedural remedy but not the intervening legal conclusion under art. 23, II. The expected lawyer placeholders are also absent.",
+          "score": 8,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "The title names the topic concisely, there are no used titles to repeat, and drafting this response directly exercises the sole credited skill. A less revealing title could preserve that topical fit while leaving the legal diagnosis to the candidate.",
+          "score": 9,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3179,
+          "outputTokens": 677,
+          "reasoningTokens": 101
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The case establishes the procedural stage but gives no calendar dates. “Acaba de ser citada” makes the resposta à acusação unambiguous, but it does not satisfy the dated-facts requirement or let the candidate calculate a filing date. The title also gives away both the peça and the defense thesis that the candidate is asked to identify.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The outline ends with “Fechamento da peça” without showing placeholders for the lawyer’s signature and OAB registration. The grading aspects also omit a distinct check for explaining that legitimate defense excludes unlawfulness under CP art. 23, II, even though the key and outline expressly include that step.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a fact-based title that does not disclose the answer, and supply dates for the incident and personal service. If timeliness is to be graded, ask for the filing date and include it in the key; otherwise, keep the ten-day period as explanatory guidance.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "An OAB 2nd phase criminal-law peça: a case with dated facts and procedural stage from which exactly one correct peça follows, asking the candidate to draft it, with the key naming the right peça and its legal basis, the court, the theses with their provisions and the requests, each fact and article correct. The criteria keep the notice's three ids with null points. The question never invents personal data and expects placeholders for the lawyer.",
+        "id": "oab-peca-penal-pt-1",
+        "userInput": {
+          "drillSkillId": null,
+          "language": "pt",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000031",
+              "name": "Redigir peças processuais penais"
+            }
+          ],
+          "task": {
+            "count": 1,
+            "description": "Redação de peça profissional de Direito Penal e do seu correspondente direito processual, valendo 5,00 pontos",
+            "grading": {
+              "criteria": [
+                {
+                  "citation": {
+                    "passage": "3.5.11. O texto da peça profissional e as respostas às questões discursivas serão avaliados quanto à adequação ao problema apresentado",
+                    "sourceId": "oab-47-edital"
+                  },
+                  "id": "fit",
+                  "points": null,
+                  "text": "adequação ao problema apresentado"
+                },
+                {
+                  "citation": {
+                    "passage": "3.5.11. … ao domínio do raciocínio jurídico, à fundamentação e sua consistência",
+                    "sourceId": "oab-47-edital"
+                  },
+                  "id": "reasoning",
+                  "points": null,
+                  "text": "domínio do raciocínio jurídico, fundamentação e sua consistência"
+                },
+                {
+                  "citation": {
+                    "passage": "3.5.11. … à capacidade de interpretação e exposição e à técnica profissional demonstrada",
+                    "sourceId": "oab-47-edital"
+                  },
+                  "id": "technique",
+                  "points": null,
+                  "text": "capacidade de interpretação e exposição e técnica profissional"
+                }
+              ],
+              "kind": "oab",
+              "language": null,
+              "rounding": {
+                "citation": {
+                  "passage": "4.2.4.1. … o somatório dessas notas constituirá a nota na prova prático-profissional, vedado o arredondamento.",
+                  "sourceId": "oab-47-edital"
+                },
+                "text": "vedado o arredondamento"
+              },
+              "zeroing": [
+                {
+                  "citation": {
+                    "passage": "4.2.6. Nos casos de propositura de peça inadequada para a solução do problema proposto",
+                    "sourceId": "oab-47-edital"
+                  },
+                  "text": "peça inadequada para a solução do problema proposto"
+                }
+              ]
+            },
+            "handwritten": true,
+            "key": "written-oab-peca",
+            "lines": null,
+            "minutes": 300,
+            "points": 5,
+            "section": "Prova prático-profissional (P2)",
+            "session": "das 13 às 18 horas"
+          },
+          "unit": "answer",
+          "usedTitles": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The audit workflow supplies user needs, but the candidate's job is to elicit, classify and verify system requirements, not to conduct an audit. The dissertation command is clear, the three numbered demands carry 20, 24 and 23 marks, and the separate 3 presentation marks complete the allocation without restating the total or line limit.",
+          "score": 10,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The technical answers are sound: the unit-specific authorization rule describes required behavior, and the load and availability checks use the scenario's actual targets. The limitation is scoring granularity, not factual accuracy. Several independent achievements share all-or-nothing marks, the requested quality-attribute identification is not consistently scored, and the vague presentation criterion triggers the cap of 7.",
+          "score": 7,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "The short title names requirements and the system's domain, with no used title to duplicate. The candidate plans a reasoned response and writes about a concrete public-control workflow, including the distinct information needs of auditors and unit managers. No revision skill is credited.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3476,
+          "outputTokens": 632,
+          "reasoningTokens": 82
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The key cannot award credit consistently for partial answers. Most notably, one 7-point aspect bundles finding registration and access control, although the key points distinguish successful registration, an authorized query and a denied cross-unit query. The 3-point criterion for a “coherent” text with “adequate” structure also lacks an observable threshold.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Item 2 explicitly asks candidates to name the quality attributes. The scored availability aspect requires only classifying the target as nonfunctional; mentioning availability in the key points does not tell an examiner how to score a candidate who classifies it correctly but omits the attribute.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the question and its mark allocations, but divide the functional checks into separately scored actions. Likewise, distinguish identifying the two stakeholders and distinguish participation in conflict resolution from recording the decision. Give the presentation marks a visible test, such as whether the response organizes its analysis into identifiable parts corresponding to the command.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. The keyed aspects are each one thing an examiner can see present or missing, split into steps where a board grades in steps, covering every requested aspect; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words. The aspects' points add up to 70; the question is a situação-problema on developing information systems (such as eliciting requirements for a public agency's system), the specialty a candidate of Tecnologia da Informação – Desenvolvimento de Sistemas sits, never an audit case.",
+        "id": "cgu-case-60-lines-systems-pt-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "choices": [
+            {
+              "group": "Especialidade",
+              "subject": "Tecnologia da Informação – Desenvolvimento de Sistemas"
+            }
+          ],
+          "drillSkillId": null,
+          "exam": "CGU Auditor Federal de Finanças e Controle",
+          "language": "pt",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000001",
+              "name": "Planejar respostas discursivas fundamentadas"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000002",
+              "name": "Redigir respostas discursivas sobre controle público"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000003",
+              "name": "Revisar respostas discursivas"
+            }
+          ],
+          "subject": {
+            "name": "Tecnologia da Informação – Desenvolvimento de Sistemas",
+            "topics": [
+              "1 Problemas e requisitos",
+              "1.1 Necessidades de usuários",
+              "1.2 Requisitos funcionais e não funcionais"
+            ]
+          },
+          "task": {
+            "count": 1,
+            "description": "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos",
+            "grading": {
+              "criteria": [
+                {
+                  "citation": {
+                    "passage": "9.7.6 … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de 70,00 pontos;",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "id": "content",
+                  "points": 70,
+                  "text": "a apresentação e a estrutura textuais e o desenvolvimento do tema (NC)"
+                }
+              ],
+              "kind": "points",
+              "language": {
+                "citation": {
+                  "passage": "9.7.6 … d) será calculada, então, a nota … pela fórmula NQ2 = NC – 14 × NE ÷ TL, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;",
+                  "sourceId": "cgu-2026-affc-edital-1"
+                },
+                "factor": 14,
+                "formula": "NQ2 = NC – 14 × NE ÷ TL",
+                "method": "errorsPerLine",
+                "text": "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato, considerando-se aspectos de natureza gramatical, tais como: grafia, morfossintaxe e propriedade vocabular"
+              },
+              "rounding": null,
+              "zeroing": [
+                {
+                  "citation": {
+                    "passage": "9.7.6 … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "kinds": [
+                    "blank",
+                    "offTopic"
+                  ],
+                  "text": "fuga ao tema ou ausência de texto"
+                }
+              ]
+            },
+            "handwritten": true,
+            "key": "written-cgu-q2",
+            "lines": 60,
+            "minutes": 210,
+            "points": 70,
+            "section": "Prova discursiva (P4) – Auditoria e Controle",
+            "session": "no turno da tarde"
+          },
+          "unit": "answer",
+          "usedTitles": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The candidate must design and evaluate a classifier, not conduct an audit. The hypothetical contracting data support a credible specialty problem, and the numbered discursive command does not repeat the line limit or total. The main clarity issues are the undisclosed presentation marks and the broad deployment command relative to what will be scored.",
+          "score": 8,
+          "label": "A question the board could set",
+          "weight": 40
+        },
+        {
+          "categoryId": "key",
+          "reasoning": "The calculations are correct: 20 true positives imply 80 false positives, 20 false negatives, 20% precision and 50% sensitivity. The key usefully separates calculations from interpretations and distinguishes a later audit result used as a label from its leaking use as a predictor. The vague organization item triggers the cap of 7. Overlapping temporal-split credit and the narrow selection-bias remedy also reduce grading reliability.",
+          "score": 7,
+          "label": "A key an examiner can grade with",
+          "weight": 40
+        },
+        {
+          "categoryId": "fit",
+          "reasoning": "The short title identifies both the classification method and its public-control application. There are no used titles to duplicate. Planning a justified solution and writing a discursive response on its use in public control are both exercised; revision is not credited.",
+          "score": 10,
+          "label": "Title and skills",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3934,
+          "outputTokens": 583,
+          "reasoningTokens": 38
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The question asks candidates to propose a way to address selection bias, but the three-point scoring item credits only collecting new audit labels outside the usual selection process. A candidate who gives a different technically sound mitigation, with the assumptions it requires, could satisfy the command without earning the marks.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The four advertised allocations add to 68. The key reaches 70 by awarding two points for organization, but the question does not disclose that allocation, and “organized” gives the examiner no clear present-or-absent test. The temporal-split items also overlap: reserving later contracts for testing already demonstrates a temporal split.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "State the separate presentation marks without restating the total, and define an observable structural feature that earns them. In item 4, explicitly request a data-protection measure: the key reserves four points for it, whereas the command asks only for general deployment precautions.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A question the board could set for this task, on a topic inside the task's description and the skills' field, in the kind of text the task asks for. The question numbers the aspects to address and states the marks of each when the task has points; it doesn't restate the line limit or total. The keyed aspects are each one thing an examiner can see present or missing, split into steps where a board grades in steps, covering every requested aspect; every fact in the key points is correct and current, with its legal basis when an answer would cite one. The context, when present, invents nothing attributed to a real source. assessedSkillIds name only skills the answer exercises (never a revising or proofreading skill). The title names the topic in a few words. The aspects' points add up to 70; the task is on the candidate's own specialty and the learner's is Tecnologia da Informação – Ciência de Dados, so the question is a situação-problema on data science (exploring, describing or modeling a public body's data), never an audit case.",
+        "id": "cgu-case-60-lines-no-subject-data-pt-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "choices": [
+            {
+              "group": "Especialidade",
+              "subject": "Tecnologia da Informação – Ciência de Dados"
+            }
+          ],
+          "drillSkillId": null,
+          "exam": "CGU Auditor Federal de Finanças e Controle",
+          "language": "pt",
+          "skills": [
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000001",
+              "name": "Planejar respostas discursivas fundamentadas"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000002",
+              "name": "Redigir respostas discursivas sobre controle público"
+            },
+            {
+              "id": "0195f1d2-7c4a-7d3e-9a10-000000000003",
+              "name": "Revisar respostas discursivas"
+            }
+          ],
+          "subject": null,
+          "task": {
+            "count": 1,
+            "description": "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos",
+            "grading": {
+              "criteria": [
+                {
+                  "citation": {
+                    "passage": "9.7.6 … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de 70,00 pontos;",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "id": "content",
+                  "points": 70,
+                  "text": "a apresentação e a estrutura textuais e o desenvolvimento do tema (NC)"
+                }
+              ],
+              "kind": "points",
+              "language": {
+                "citation": {
+                  "passage": "9.7.6 … d) será calculada, então, a nota … pela fórmula NQ2 = NC – 14 × NE ÷ TL, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;",
+                  "sourceId": "cgu-2026-affc-edital-1"
+                },
+                "factor": 14,
+                "formula": "NQ2 = NC – 14 × NE ÷ TL",
+                "method": "errorsPerLine",
+                "text": "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato, considerando-se aspectos de natureza gramatical, tais como: grafia, morfossintaxe e propriedade vocabular"
+              },
+              "rounding": null,
+              "zeroing": [
+                {
+                  "citation": {
+                    "passage": "9.7.6 … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.",
+                    "sourceId": "cgu-2026-affc-edital-1"
+                  },
+                  "kinds": [
+                    "blank",
+                    "offTopic"
+                  ],
+                  "text": "fuga ao tema ou ausência de texto"
+                }
+              ]
+            },
+            "handwritten": true,
+            "key": "written-cgu-q2",
+            "lines": 60,
+            "minutes": 210,
+            "points": 70,
+            "section": "Prova discursiva (P4)",
+            "session": "no turno da tarde"
+          },
+          "unit": "answer",
+          "usedTitles": []
+        }
+      }
+    }
+  ],
+  "taskId": "write-writing-prompt"
+}

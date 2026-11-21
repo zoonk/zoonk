@@ -59,6 +59,7 @@ model User {
   instrumentWaitlist    InstrumentWaitlistEntry[]
   mockExams             MockExam[]
   examResults           ExamResult[]
+  writingAdmissions     WritingAdmission[]
   essayGradeClaims      EssayGradeClaim[]
   testSubmissionClaims  TestSubmissionClaim[]
   languageSkillLevels   LanguageSkillLevel[]

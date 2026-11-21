@@ -41,6 +41,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -57,12 +58,16 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.writing.choiceLine
+import com.zoonk.android.feature.writing.gradingReturnsLine
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.HeldSlot
+import com.zoonk.android.ui.components.IndeterminateWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OpeningDay
@@ -83,10 +88,12 @@ import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.android.ui.theme.balanced
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
+import com.zoonk.api.models.MockOptionSectionsInner
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerAvailability
 
 @Composable
 internal fun PracticeChooser(
@@ -106,16 +113,35 @@ internal fun PracticeChooser(
     val open = view.access == MockOptions.Access.OPEN
     val short = status as? ChooserStatus.Short
     val shown = status.takeUnless { it is ChooserStatus.Short } ?: ChooserStatus.Choosing
-    val examChoices = practiceChoices(view.options.filter { it.kind != MockOption.Kind.AREA }, severalDays)
-    val subjectChoices = practiceChoices(view.options.filter { it.kind == MockOption.Kind.AREA }, severalDays)
+    // An exam of several tests lists each test and all of them first, then the shorter, objective-only options.
+    val tests = if (severalDays) 0 else examTests(view.options)
+    val leads = { it: MockOption ->
+        if (tests > 1) it.kind != MockOption.Kind.HALF && it.kind != MockOption.Kind.AREA else it.kind != MockOption.Kind.AREA
+    }
+    val examChoices = practiceChoices(view.options.filter(leads), severalDays, tests, status = shown)
+    val subjectChoices = practiceChoices(view.options.filterNot(leads), severalDays, tests, objectiveTitled = tests > 1, status = shown)
+    val blocked = option?.let { rowLimit(it, shown) } != null
+    val pickedChoice = option?.let { pendingChoice(it, shown) }
+    val examTitle =
+        if (tests >
+            1
+        ) {
+            pluralStringResource(R.plurals.mock_chooser_exam_tests, tests, tests)
+        } else {
+            stringResource(R.string.mock_chooser_the_exam)
+        }
+    val restTitle = stringResource(if (tests > 1) R.string.mock_chooser_objective_only else R.string.mock_chooser_one_subject)
 
     // The bar's button becomes Subscribe once a Start met the lock, until a purchase opens the mocks.
     val triedLocked by viewModel.triedLocked.collectAsStateWithLifecycle()
     val gated = triedLocked && !open
+    // A pick whose questions wait for an exam choice has nothing to start: its row says why, and the bar leads to the choice.
     val mainAction = {
         if (gated) {
             navigator.open(AppRoute.Subscription)
-        } else if (option != null && !busy) {
+        } else if (pickedChoice != null) {
+            navigator.showRoot(AppTab.Today)
+        } else if (option != null && !busy && !blocked) {
             onStart()
             if (open) viewModel.start(option.shape, option.key) else viewModel.tryLocked()
         }
@@ -125,12 +151,16 @@ internal fun PracticeChooser(
             Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
                 Text(stringResource(R.string.subscription_subscribe))
             }
+        } else if (pickedChoice != null) {
+            Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
+                Text(stringResource(R.string.essay_choose_on_today))
+            }
         } else {
             Button(
                 busy = busy,
                 onClick = mainAction,
                 modifier = modifier.focus(replacementFocus),
-                enabled = option != null,
+                enabled = option != null && !blocked,
             ) { Text(stringResource(R.string.mock_chooser_start)) }
         }
     }
@@ -167,12 +197,12 @@ internal fun PracticeChooser(
         item(key = "choices", contentType = "choices") {
             Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    if (subjectChoices.isNotEmpty()) SectionHeader(stringResource(R.string.mock_chooser_the_exam))
+                    if (subjectChoices.isNotEmpty() || tests > 1) SectionHeader(examTitle)
                     ChoiceRows(examChoices, picked, onEnter = mainAction) { picked = it }
                 }
                 if (subjectChoices.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        SectionHeader(stringResource(R.string.mock_chooser_one_subject))
+                        SectionHeader(restTitle)
                         ChoiceRows(subjectChoices, picked, onEnter = mainAction) { picked = it }
                     }
                 }
@@ -240,9 +270,41 @@ internal fun MockWriting(
     run: GenerationRun,
     onRetry: () -> Unit,
     titleFocus: FocusRequester? = null,
+    /** A written test's questions are being written: its wait says so, and is counted as a writing wait. */
+    writtenTestRun: String? = null,
 ) {
+    writtenTestRun?.let { TrackShown(AnalyticsEvent.WritingPromptWaitViewed(it, AnalyticsEvent.WritingSurface.Mock)) }
+    val titleModifier = (titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier).semantics { heading() }
     BeforeFold { beforeFold ->
         Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
+            if (writtenTestRun != null) {
+                val failed = run.status == GenerationRun.Status.Failed
+                Column(
+                    Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    if (failed) {
+                        Text(
+                            stringResource(R.string.mock_chooser_writing_written_failed),
+                            titleModifier,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Text(
+                            stringResource(R.string.essay_nothing_lost),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    } else {
+                        // The written test's questions are one model call: the wait says what's coming, with no steps it doesn't have.
+                        IndeterminateWait(
+                            title = stringResource(R.string.mock_chooser_writing_written),
+                            description = stringResource(R.string.mock_chooser_writing_written_detail),
+                            titleModifier = titleModifier,
+                        )
+                    }
+                }
+                return@Box
+            }
             GenerationWait(
                 kind = GenerationKind.MockQuestions,
                 run = run,
@@ -251,7 +313,7 @@ internal fun MockWriting(
             ) {
                 Text(
                     stringResource(R.string.mock_chooser_preparing),
-                    (titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier).semantics { heading() },
+                    titleModifier,
                     style = MaterialTheme.typography.headlineSmall,
                 )
                 Text(
@@ -310,6 +372,34 @@ private fun StartFailed(failed: ChooserStatus.Failed) {
     )
 }
 
+private fun MockOption.hasWrittenTest(): Boolean =
+    kind == MockOption.Kind.WRITTEN || sections.orEmpty().any { it.kind == MockOptionSectionsInner.Kind.WRITTEN }
+
+/** The exam choices a mock's written test waits for, from the options or from a refused start. */
+private fun pendingChoice(
+    option: MockOption,
+    status: ChooserStatus,
+): List<String>? =
+    (listOf(option.availability) + option.sections.orEmpty().map { it.availability })
+        .firstOrNull { it?.status == WrittenPracticeSubjectsInnerAvailability.Status.NEEDS_CHOICE }
+        ?.choiceGroups
+        ?: (status as? ChooserStatus.NeedsChoice)?.choiceGroups?.takeIf { option.hasWrittenTest() }
+
+/** Why an option can't start now, said on its own row the way Today says it. */
+@Composable
+private fun rowLimit(
+    option: MockOption,
+    status: ChooserStatus,
+): String? {
+    val groups = pendingChoice(option, status)
+    val used = status as? ChooserStatus.GradesUsed
+    return when {
+        groups != null -> choiceLine(groups)
+        used != null && option.hasWrittenTest() -> gradingReturnsLine(used.returnsOn)
+        else -> null
+    }
+}
+
 /** Enter runs [action] once per press, as main's screen keys do, and is spent whether held or not. */
 private fun enterTakes(
     event: KeyEvent,
@@ -342,19 +432,26 @@ internal data class RowChoice(
     val label: String,
     val description: String?,
     val trailing: String,
+    /** Why the choice can't be taken now, under its description. */
+    val note: String? = null,
 )
 
 @Composable
 private fun practiceChoices(
     options: List<MockOption>,
     severalDays: Boolean,
+    tests: Int,
+    /** The group's title already says its options hold objective questions only. */
+    objectiveTitled: Boolean = false,
+    status: ChooserStatus = ChooserStatus.Choosing,
 ): List<RowChoice> =
     options.map {
         RowChoice(
             key = it.key,
-            label = mockOptionName(it, severalDays),
-            description = mockOptionDetail(it, severalDays),
+            label = mockOptionName(it, severalDays, tests),
+            description = if (objectiveTitled) null else mockOptionDetail(it, severalDays),
             trailing = mockOptionSize(it),
+            note = rowLimit(it, status),
         )
     }
 
@@ -421,6 +518,14 @@ private fun ChoiceRowContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
+            choice.note?.let {
+                Text(
+                    it,
+                    Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
             if (stacked) ChoiceSize(choice, MaterialTheme.typography.bodySmall)
         }
         if (!stacked) ChoiceSize(choice, MaterialTheme.typography.labelMedium, Modifier.alignByBaseline())
@@ -441,7 +546,7 @@ private fun ChoiceSize(
         choice.trailing,
         modifier = modifier,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = style.withTabularFigures(),
+        style = MaterialTheme.zoonkType.data.copy(fontSize = style.fontSize, lineHeight = style.lineHeight),
     )
 }
 

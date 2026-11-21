@@ -233,6 +233,16 @@ function useMockQuestionsCopy(): KindCopy<"mockQuestions"> {
   };
 }
 
+function useWritingPromptCopy(): KindCopy<"writingPrompt"> {
+  const t = useExtracted();
+
+  return {
+    name: t("Writing your question"),
+    // One model call: its wait shows no steps (`IndeterminateWait`), so this names the run only.
+    phases: { question: { label: t("Writing your question"), lines: [] } },
+  };
+}
+
 function useSetupLessonCopy(): KindCopy<"setupLesson"> {
   const t = useExtracted();
 
@@ -274,6 +284,7 @@ export function useGenerationCopy(kind: GenerationKind): {
     speakingPaper: useSpeakingPaperCopy(),
     testOutQuestions: useTestOutQuestionsCopy(),
     understanding: useUnderstandingCopy(),
+    writingPrompt: useWritingPromptCopy(),
   } satisfies { [Kind in GenerationKind]: KindCopy<Kind> };
 
   return copy[kind];

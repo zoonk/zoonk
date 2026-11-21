@@ -1,8 +1,10 @@
 import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
+import { writingNeedsChoiceSchema } from "@zoonk/core/exams/essays/writing-contract";
 import {
   type MockOptionView,
   type MockOptionsView,
+  mockOptionSectionsSchema,
   mockShapeSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -24,6 +26,7 @@ const estimatedMinutesSchema = z
 const mockOptionSchema = mockShapeSchema
   .extend({
     areas: z.array(z.string()).meta({ description: "The notice's subjects it asks, in its words" }),
+    availability: writingNeedsChoiceSchema.optional(),
     covers: z
       .array(z.string())
       .nullable()
@@ -38,13 +41,10 @@ const mockOptionSchema = mockShapeSchema
       .int()
       .min(1)
       .meta({ description: "The exam's time for it, which its clock gives" }),
-    objectiveOnly: z
-      .boolean()
-      .meta({
-        description:
-          "The exam day also has a written part (an essay, a discursive test) this mock leaves out",
-      }),
+    objectiveOnly: z.boolean().meta({ description: "The mock consists of objective questions" }),
+    pacing: z.enum(["official", "practice"]).optional(),
     questions: z.number().int().min(0),
+    sections: mockOptionSectionsSchema.optional(),
     written: z
       .array(z.string())
       .meta({
@@ -75,7 +75,7 @@ export const mockOptionsResponseSchema = z
       .array(mockOptionSchema)
       .meta({
         description:
-          "Each exam day in full, then half of each exam day, then each objective subject, biggest first",
+          "Each exam day and its standalone tests, then shorter mocks for each day and each objective subject",
       }),
     running: z
       .object({ id: uuidSchema(), purpose: mockPurposeSchema, shape: mockShapeSchema.nullable() })

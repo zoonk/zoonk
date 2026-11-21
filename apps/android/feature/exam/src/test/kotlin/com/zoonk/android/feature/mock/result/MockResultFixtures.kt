@@ -60,16 +60,17 @@ internal fun pendingEssay(
     """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow.","unsure":$unsure}"""
 
 internal fun gradedEssay(unsure: Boolean = false) =
-    """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded","text":"Cities grow.","unsure":$unsure,
-    "grade":{"criteria":[
-      {"maxScore":200,"score":160,"comment":"Clear.","example":null,"id":"c1","name":"C1","quote":null},
-      {"maxScore":200,"score":160,"comment":"On topic.","example":null,"id":"c2","name":"C2","quote":null},
-      {"maxScore":200,"score":120,"comment":"Loose.","example":"Because cities grow, transport must too.","id":"c3","name":"C3",
-       "quote":"Cities grow and that is it."},
-      {"maxScore":200,"score":160,"comment":"Linked.","example":null,"id":"c4","name":"C4","quote":null},
-      {"maxScore":200,"score":80,"comment":"Missing.","example":null,"id":"c5","name":"C5","quote":null}],
-     "enemInterventionElements":null,"nextStep":{"criterionId":"c3","text":"Tie each argument to your thesis."},
-     "range":{"high":720,"low":640},"total":{"maxScore":1000,"score":680},"zeroReason":null}}"""
+    """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded","unsure":$unsure,
+    "text":"Cities grow and that is it. Transport must follow them.",
+    "writing":{"charactersPerLine":55,"keySource":"practiceKey","lines":30,"minimumWords":30,"points":null,"taskKey":"essay",
+      "title":"Cities and transport","unit":"answer","criteria":[{"id":"c1","name":"Argument","points":null},
+      {"id":"c2","name":"Cohesion","points":null}]},
+    "grade":{"kind":"levels","errors":[],"ignoredFrom":null,"progress":null,
+     "criteria":[{"comment":"Loose.","id":"c1","level":"partial","name":"Argument","quote":"Cities grow and that is it."},
+      {"comment":"Linked.","id":"c2","level":"strong","name":"Cohesion","quote":null}],
+     "nextStep":{"criterionId":"c1","kind":"criterion","title":"Tie your argument to the thesis",
+      "example":"Because cities grow, transport must too.","quote":"Cities grow and that is it.",
+      "text":"Say why each point supports what you claim about cities."}}}"""
 
 internal const val SPEAKING =
     """{"exam":"dele","language":"es","level":"B2","paper":"Prueba 4","source":"https://examenes.cervantes.es/dele-b2","title":"DELE B2",

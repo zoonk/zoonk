@@ -4,6 +4,7 @@ import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
+import { writeWritingPrompt } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { type ContentFixUnit, type Plan, type TransactionClient, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -38,6 +39,7 @@ import {
   SPANISH,
   choiceBlueprintFixture,
 } from "../exams/choices/_test-utils/choice-blueprint";
+import { CGU } from "../exams/mocks/_test-utils/cgu-written";
 import { loadPlanContext } from "../plans/_utils/plan-context";
 import { resolvePlanInputDependents } from "../plans/_utils/plan-input-dependencies";
 import { computePlan } from "../plans/_utils/replan";
@@ -75,6 +77,7 @@ import {
 } from "./items/_test-utils/generated-items";
 import { createItems } from "./items/create-items";
 import { savePastQuestions } from "./items/past-questions";
+import { writeWritingItem } from "./items/write-writing-item";
 import { getAlphabetIdentityKey } from "./language/alphabet/alphabet-identity";
 import { publishAlphabetLesson } from "./language/alphabet/write-alphabet-lesson";
 import {
@@ -316,6 +319,13 @@ const REGISTRY: Record<string, Registration[]> = {
       verdict: "excluded",
       why: "item calibration",
       writes: ["raw:items"],
+    },
+  ],
+  "library/items/write-writing-item.ts": [
+    {
+      verdict: "marks",
+      why: "a writing prompt becomes available for the exam",
+      writes: ["item.createMany"],
     },
   ],
   "library/language/_utils/save-language-lesson.ts": [
@@ -1068,6 +1078,44 @@ async function itemsCase(): Promise<WriterCase> {
         provenance: generatedProvenance(),
         skillId: skill.id,
       }),
+  };
+}
+
+async function writingPromptCase(): Promise<WriterCase> {
+  const blueprint = await examBlueprintFixture({ structure: CGU });
+  const plan = await examPlan(blueprint.id);
+  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: plan.goalId } });
+  const id = randomUUID();
+
+  vi.mocked(writeWritingPrompt, { partial: true }).mockImplementation(async ({ input }) => ({
+    data: {
+      aspects: [{ criterionId: "case", description: "Apply the rule", points: 1 }],
+      assessedSkillIds: input.skills.map((skill) => skill.id),
+      context: null,
+      criteria: [{ id: "case", name: "Application", points: 1 }],
+      keyPoints: ["Apply the rule"],
+      question: "Explain how the rule applies.",
+      sampleOutline: "Rule and analysis",
+      title: "Applying the rule",
+    },
+    provenance: {
+      ...generatedProvenance(),
+      latencyMs: 1,
+      provider: "fixture",
+      requestedModel: "fixture",
+      usage: {},
+    },
+  }));
+
+  return {
+    expectWritten: () => expect(prisma.item.findUnique({ where: { id } })).resolves.not.toBeNull(),
+    plan,
+    root: blueprintRoot(blueprint.id),
+    write: () =>
+      writeWritingItem(
+        { count: 1, goalId: goal.id, taskKey: "short", unit: "answer", userId: goal.userId },
+        id,
+      ),
   };
 }
 
@@ -2171,6 +2219,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/generation/hold-back-lesson.ts": { holdBackLessonDraft: holdBackCase },
   "library/items/create-items.ts": { createItems: itemsCase },
   "library/items/past-questions.ts": { savePastQuestions: pastQuestionsCase },
+  "library/items/write-writing-item.ts": { writeWritingItem: writingPromptCase },
   "library/language/alphabet/write-alphabet-lesson.ts": { publishAlphabetLesson: alphabetCase },
   "library/lessons/_utils/save-lesson-content.ts": {
     "publishStagedLessonVersion (a math item's skill)": stagedMathItemCase,

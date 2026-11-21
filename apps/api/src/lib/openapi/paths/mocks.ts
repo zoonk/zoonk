@@ -80,10 +80,34 @@ export const mockPaths = {
         },
         ...commonErrors,
         "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
-        "409": { ...conflictResponse, description: "The goal is paused" },
+        "403": forbiddenResponse,
+        "409": {
+          ...conflictResponse,
+          description:
+            "The goal is paused, or the written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
+        },
         "422": {
           ...unprocessableEntityResponse,
           description: "Not an exam, not one of its mocks, or too few questions for one",
+        },
+        "429": {
+          content: {
+            "application/json": {
+              schema: z.object({
+                error: z
+                  .object({
+                    code: z.literal("USAGE_LIMIT_REACHED"),
+                    details: z.object({ returnsOn: z.iso.date() }),
+                    message: z.string(),
+                  })
+                  .optional(),
+                returnsOn: z.iso.date(),
+                status: z.literal("limitReached"),
+              }),
+            },
+          },
+          description:
+            "The extra writing allowance is used for the day. `error.details.returnsOn` is the date it renews.",
         },
       },
       security: AUTHENTICATED_SECURITY,
@@ -94,7 +118,7 @@ export const mockPaths = {
   "/goals/{goalId}/mocks/generations": {
     post: {
       description:
-        "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. When today's extra writing allowance is used, the latter includes `details.returnsOn` and no written prompts are started.",
       operationId: "createMockQuestionsGeneration",
       requestBody: {
         content: { "application/json": { schema: mockQuestionsInputSchema } },
@@ -119,6 +143,11 @@ export const mockPaths = {
         ...commonErrors,
         "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
         "403": forbiddenResponse,
+        "409": {
+          ...conflictResponse,
+          description:
+            "The written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
+        },
         "422": unprocessableEntityResponse,
         "429": tooManyRequestsResponse,
       },
@@ -148,7 +177,7 @@ export const mockPaths = {
   "/mocks/{blockId}/essay-grades": {
     post: {
       description:
-        "Grades a finished full mock's essays (its written part, `essays` with `pending` on GET /mocks/{blockId}) with the exam's official rubric, and records them as learning: call it right after the hand-in, while the objective result already shows. Each essay is graded once; a second request waits for the first one's grades. They count toward the day's essay grades: past them, the rest wait for another day (`ESSAY_LIMIT_REACHED`).",
+        "Grades a finished mock's submitted writing tasks using the admissions issued at its start. Each answer is graded once, and concurrent requests replay the saved results.",
       operationId: "gradeMockEssays",
       requestBody: {
         content: { "application/json": { schema: mockTimeZoneInputSchema } },
@@ -162,7 +191,6 @@ export const mockPaths = {
         },
         ...commonErrors,
         "409": { ...conflictResponse, description: "The mock isn't handed in yet" },
-        "429": { ...tooManyRequestsResponse, description: "Today's essay grades are used up" },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Grade a mock's essays",
@@ -226,12 +254,20 @@ export const mockPaths = {
       },
       requestParams: { path: mockPathParamsSchema },
       responses: {
+        "202": {
+          content: { "application/json": { schema: mockQuestionsGenerationSchema } },
+          description: "The written prompts are being prepared",
+        },
         "204": { description: "Running" },
         ...commonErrors,
+        "402": paymentRequiredResponse,
+        "403": forbiddenResponse,
         "409": {
           ...conflictResponse,
-          description: "The mock or its block already finished, or the mock expired",
+          description:
+            "The mock or its block finished, the mock expired, or the written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
         },
+        "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Start a mock exam",

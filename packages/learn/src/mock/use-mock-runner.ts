@@ -80,27 +80,8 @@ function useEssayGrading({
   setView: (view: MockView) => void;
 }) {
   const [essayGrading, setEssayGrading] = useState<MockEssayGradingStatus>("idle");
-  const [gradesUsedOn, setGradesUsedOn] = useState<string | null>(null);
-
-  // The day's essay grades come back at the learner's midnight.
-  useEffect(() => {
-    if (gradesUsedOn === null) {
-      return;
-    }
-
-    function offerGradingOnANewDay() {
-      if (document.visibilityState === "visible" && new Date().toDateString() !== gradesUsedOn) {
-        setGradesUsedOn(null);
-        setEssayGrading("idle");
-      }
-    }
-
-    document.addEventListener("visibilitychange", offerGradingOnANewDay);
-    return () => document.removeEventListener("visibilitychange", offerGradingOnANewDay);
-  }, [gradesUsedOn]);
 
   async function gradeEssays() {
-    const askedOn = new Date().toDateString();
     setEssayGrading("grading");
 
     const settled = await settleWithin({
@@ -116,8 +97,7 @@ function useEssayGrading({
     }
 
     setView(outcome.mock);
-    setEssayGrading(outcome.status === "limitReached" ? "limitReached" : "idle");
-    setGradesUsedOn(outcome.status === "limitReached" ? askedOn : null);
+    setEssayGrading("idle");
   }
 
   return { essayGrading, gradeEssays };
@@ -141,11 +121,13 @@ function useShownQuestion({
   currentItemId,
   drafts,
   forwardOnly,
+  sectionTimeUp,
   shownItemId,
 }: {
   currentItemId?: string;
   drafts: ReturnType<typeof useMockDrafts>;
   forwardOnly: boolean;
+  sectionTimeUp: boolean;
   shownItemId?: string;
 }) {
   const synchronize = useEffectEvent((itemId: string | undefined) => {
@@ -160,11 +142,31 @@ function useShownQuestion({
     }
 
     if (currentItemId) {
-      drafts.leave(currentItemId);
+      drafts.leave(currentItemId, !sectionTimeUp);
     }
   });
 
   useEffect(() => synchronize(shownItemId), [shownItemId]);
+}
+
+function stepAfterSaves<T>({
+  flush,
+  request,
+}: {
+  flush: () => Promise<boolean>;
+  request: () => Promise<T>;
+}) {
+  const attempt = new AbortController();
+
+  return settleWithin({
+    ms: STEP_BOUNDS.timeoutMs,
+    request: async () => {
+      const saved = await flush();
+      return saved && !attempt.signal.aborted ? request() : null;
+    },
+  })
+    .catch(() => null)
+    .finally(() => attempt.abort());
 }
 
 export function useMockRunner({
@@ -213,6 +215,7 @@ export function useMockRunner({
     currentItemId: question?.itemId,
     drafts,
     forwardOnly: moves.forwardOnly,
+    sectionTimeUp,
     shownItemId,
   });
 
@@ -222,17 +225,10 @@ export function useMockRunner({
     setError(false);
 
     if (question) {
-      drafts.leave(question.itemId);
+      drafts.leave(question.itemId, !sectionTimeUp);
     }
 
-    const settled = await settleWithin({
-      ms: STEP_BOUNDS.timeoutMs,
-      request: async () => {
-        await drafts.flush();
-        return request();
-      },
-    }).catch(() => null);
-
+    const settled = await stepAfterSaves({ flush: drafts.flush, request });
     const next = settled?.status === "settled" ? settled.value : null;
     setPending(false);
     setBusy(null);
@@ -279,7 +275,7 @@ export function useMockRunner({
   }
 
   function canAnswer(next: MockAnswer | null): boolean {
-    if (!question || timeUp) {
+    if (!question || pending || timeUp) {
       return false;
     }
 

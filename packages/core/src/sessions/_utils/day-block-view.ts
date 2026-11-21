@@ -1,5 +1,7 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { getPlannedQuestions } from "../../checkpoints/checkpoint-rules";
+import { getWritingAttemptId } from "../../exams/essays/_utils/writing-attempt-id";
+import { type indexWritingTasks } from "../../exams/essays/_utils/writing-task-positions";
 import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../block-payload";
 import { studyCheckpointSchema } from "../block-view-contract";
 import { getStoredBlockWait } from "../block-wait";
@@ -48,14 +50,55 @@ function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["che
   return checkpoint ? studyCheckpointSchema.parse(checkpoint) : null;
 }
 
+function getWritingFields({
+  answeredAttemptIds,
+  block,
+  payload,
+  writingTasks,
+}: {
+  answeredAttemptIds?: ReadonlySet<string>;
+  block: DayBlockInput;
+  payload: ReturnType<typeof readBlockPayload>;
+  writingTasks?: ReturnType<typeof indexWritingTasks>;
+}): Pick<DayBlockView, "hasWritingDraft" | "writingAvailability" | "writingTask" | "writingUnit"> {
+  const { writing } = payload;
+
+  if (!writing) {
+    return { writingAvailability: undefined };
+  }
+
+  const continuing =
+    writing.admissionId && (block.status === "active" || block.status === "pending");
+
+  const writingTask = writingTasks?.get(writing.taskKey);
+  const [itemId] = payload.itemIds;
+  const hasDraftText = block.status !== "skipped" && Boolean(writing.draft?.text.trim());
+
+  const hasWritingDraft =
+    hasDraftText && writing.admissionId && itemId
+      ? answeredAttemptIds &&
+        !answeredAttemptIds.has(getWritingAttemptId({ admissionId: writing.admissionId, itemId }))
+      : false;
+
+  return {
+    hasWritingDraft,
+    ...(writingTask && { writingTask }),
+    writingAvailability: { status: continuing ? "continue" : "available" },
+    writingUnit: writing.unit,
+  };
+}
+
 export function toDayBlockView({
+  answeredAttemptIds,
   answeredItemIds,
   block,
   blocks = [block],
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
   subject = null,
+  writingTasks,
 }: {
+  answeredAttemptIds?: ReadonlySet<string>;
   answeredItemIds: ReadonlySet<string>;
   block: DayBlockInput;
   blocks?: readonly DayBlockInput[];
@@ -63,6 +106,7 @@ export function toDayBlockView({
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
   subject?: string | null;
+  writingTasks?: ReturnType<typeof indexWritingTasks>;
 }): DayBlockView {
   const payload = readBlockPayload(block);
   const itemIds = getBlockItemIds(payload);
@@ -120,5 +164,6 @@ export function toDayBlockView({
     topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),
     weakest: payload.weakest,
+    ...getWritingFields({ answeredAttemptIds, block, payload, writingTasks }),
   };
 }

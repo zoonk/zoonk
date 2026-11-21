@@ -12,9 +12,15 @@ import { type TrueFalseLabels } from "../../library/exams/true-false-labels";
 import { type MilestoneView, type MissionMomentView } from "../../sessions/completion-contract";
 import { type Reached } from "../../sessions/reached";
 import { type EssayView } from "../essays/essay-contract";
+import { type WritingNeedsChoice, writingNeedsChoiceSchema } from "../essays/writing-contract";
 import { type ExamDocument } from "../exam-document";
 import { type ExamMockSummary } from "../view/exam-view-contract";
-import { areaPointsShape, mockMarkingSchema, mockPointsSchema } from "./mock-points-contract";
+import {
+  areaPointsShape,
+  mockMarkingSchema,
+  mockPointsSchema,
+  mockWrittenPartsSchema,
+} from "./mock-points-contract";
 import {
   type MockAdaptView,
   type MockCurrentSection,
@@ -38,7 +44,7 @@ export const MOCK_PURPOSES = ["planned", "practice", "placement"] as const;
 
 export type MockPurpose = (typeof MOCK_PURPOSES)[number];
 
-const MOCK_SHAPE_KINDS = ["full", "half", "area"] as const;
+const OTHER_MOCK_KINDS = ["full", "half", "area", "objective"] as const;
 
 const MAX_AREA_NAME = 200;
 
@@ -50,17 +56,15 @@ export const mockShapeSchema = z
       .max(MAX_AREA_NAME)
       .nullable()
       .meta({ description: "For `area`: the notice's subject, as the options name it" }),
-    day: z
-      .int()
-      .min(1)
-      .nullable()
-      .meta({
-        description: "For `full` and `half`: the exam day it copies, when there are several",
-      }),
-    kind: z.enum(MOCK_SHAPE_KINDS),
+    day: z.int().min(1).nullable().describe("The exam day, when there are several"),
+    kind: z.enum([...OTHER_MOCK_KINDS, "written"]),
   })
   .strict()
   .meta({ id: "MockShape" });
+
+export const writtenTestShapeSchema = mockShapeSchema
+  .extend({ area: z.null(), kind: z.literal("written") })
+  .meta({ id: "WrittenTestShape" });
 
 export type MockShape = z.infer<typeof mockShapeSchema>;
 
@@ -85,6 +89,7 @@ export const mockConditionsSchema = z.object({
   examQuestions: z.int().min(0).nullable(),
   fullLength: z.boolean(),
   marking: mockMarkingSchema.optional(),
+  pacing: z.enum(["official", "practice"]).optional(),
   partialCredit: z.enum(PARTIAL_CREDIT_RULES),
   purpose: z.enum(MOCK_PURPOSES),
   reused: z.int().min(0),
@@ -95,6 +100,8 @@ export const mockConditionsSchema = z.object({
   timeZone: z.string().nullable(),
   timedOutSections: z.array(z.int()),
   unpicked: z.array(z.string()).optional(),
+  writingAdmissionId: uuidSchema().optional(),
+  writtenParts: mockWrittenPartsSchema.optional(),
   wrongPenalty: z.number().min(0).max(1),
 });
 
@@ -214,6 +221,7 @@ export type MockView = {
   missionMoment: MissionMomentView | null;
   mistakes: { cause: MistakeCause | null; count: number }[];
   number: number;
+  pacing?: MockConditions["pacing"];
   passMarks: PassMarks | null;
   planItemId: string | null;
   purpose: MockPurpose;
@@ -238,12 +246,13 @@ export type MockView = {
 };
 
 const anytimeMockChoiceSchema = z.object({
-  shape: mockShapeSchema.meta({
-    description: "The option picked from GET /v1/goals/{goalId}/mocks",
-  }),
+  shape: z.union([
+    mockShapeSchema.extend({ kind: z.enum(OTHER_MOCK_KINDS) }),
+    writtenTestShapeSchema,
+  ]),
 });
 
-export type AnytimeMockChoice = z.infer<typeof anytimeMockChoiceSchema>;
+export type AnytimeMockChoice = { shape: MockShape };
 
 export const mockQuestionsInputSchema = anytimeMockChoiceSchema
   .strict()
@@ -263,21 +272,36 @@ export const anytimeMockInputSchema = anytimeMockChoiceSchema
       .optional()
       .meta({
         description:
-          "This start follows a question-writing run (or a writing request that answered `ready`): never answers `needsQuestions`, so a mock still well short of its questions answers `short`",
+          "This start follows a question-writing run. A mock still short of objective questions reports `short`; a mock missing a written prompt still reports `needsQuestions`",
       }),
   })
   .strict()
   .meta({ id: "AnytimeMockInput" });
 
-export type AnytimeMockInput = z.infer<typeof anytimeMockInputSchema>;
+export type AnytimeMockInput = Omit<z.infer<typeof anytimeMockInputSchema>, "shape"> &
+  AnytimeMockChoice;
+
+export const mockOptionSectionsSchema = z.array(
+  z.object({
+    availability: writingNeedsChoiceSchema.optional(),
+    kind: z.enum(["objective", "written", "listening", "speaking", "practical"]),
+    minutes: z.int().positive().nullable(),
+    name: z.string(),
+    questions: z.int().nonnegative().nullable(),
+    session: z.string().nullable(),
+  }),
+);
 
 export type MockOptionView = MockShape & {
   areas: string[];
+  availability?: WritingNeedsChoice;
+  sections?: z.infer<typeof mockOptionSectionsSchema>;
   covers: string[] | null;
   estimatedMinutes: number;
   minutes: number;
   leftOut: MockLeftOut[];
   objectiveOnly: boolean;
+  pacing?: "official" | "practice";
   questions: number;
   written: string[];
 };

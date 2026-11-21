@@ -1,6 +1,6 @@
+import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import "server-only";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
@@ -129,7 +129,7 @@ export async function loadStudySessionView({
   const { answers } = blockViews;
 
   const visibleBlocks = withoutLockedPhaseChallenges({
-    blocks: storedSession.blocks,
+    blocks: blockViews.displayBlocks,
     phaseChallengesRequired: storedSession.goal?.kind !== "language" || viewer?.tier === "plus",
   });
 

@@ -1,5 +1,6 @@
+import { httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { examError } from "@/lib/exam-errors";
+import { examError, writingExtraLimitErrorFields } from "@/lib/exam-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { anytimeMockInputSchema } from "@zoonk/core/exams/mocks/contract";
@@ -33,6 +34,13 @@ async function startMock(request: NextRequest, context: MocksContext) {
 
   if (result.status === "needsQuestions" || result.status === "short") {
     return NextResponse.json({ ...result, id: null });
+  }
+
+  if (result.status === "limitReached") {
+    return NextResponse.json(
+      { ...result, error: writingExtraLimitErrorFields(result.returnsOn) },
+      { status: httpStatus.tooManyRequests },
+    );
   }
 
   if (!("id" in result)) {

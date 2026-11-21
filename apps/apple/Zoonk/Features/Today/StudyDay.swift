@@ -329,6 +329,11 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let topics: [String]
   let waitReason: WaitReason?
   let weakest: Bool
+  let hasWritingDraft: Bool?
+  let writingAvailability: WritingAvailability?
+  /// A drill or a whole answer, known before any question is assigned.
+  let writingUnit: WritingPrompt.Unit?
+  let writingTask: WritingTaskName?
 
   var isFinished: Bool {
     status == .completed || status == .skipped
@@ -370,6 +375,37 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case .produce: return .essay
     case .review: return .review
     }
+  }
+}
+
+enum WritingAvailability: Decodable, Hashable, Sendable {
+  case available
+  case `continue`
+  case tomorrow(returnsOn: String)
+  /// The question depends on an exam choice the learner hasn't made, named as the notice names it.
+  case needsChoice(choiceGroups: [String])
+
+  private enum CodingKeys: String, CodingKey { case choiceGroups, returnsOn, status }
+
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    switch try container.decode(String.self, forKey: .status) {
+    case "continue": self = .continue
+    case "tomorrow":
+      self = .tomorrow(returnsOn: try container.decode(String.self, forKey: .returnsOn))
+    case "needsChoice":
+      self = .needsChoice(choiceGroups: try container.decode([String].self, forKey: .choiceGroups))
+    default: self = .available
+    }
+  }
+
+  var returnsOn: String? {
+    if case .tomorrow(let day) = self { day } else { nil }
+  }
+
+  var choiceGroups: [String]? {
+    if case .needsChoice(let groups) = self { groups } else { nil }
   }
 }
 

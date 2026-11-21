@@ -7,10 +7,13 @@ import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
 import { PageSectionTitle } from "../_components/page";
 import { FactSegments } from "../_components/task-meta";
+import { useChoiceLine } from "../writing/writing-choice";
+import { useGradingReturnsLine } from "../writing/writing-labels";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
 import { ChooserBar, ChooserHeader, ChooserLayout, MockWriting } from "./mock-chooser-page";
 import { type MockChooserStatus } from "./mock-chooser-parts";
 import {
+  getExamTests,
   useMockOptionDetail,
   useMockOptionName,
   useMockOptionSizeFacts,
@@ -25,68 +28,167 @@ export function getMockOptionKey(option: MockOptionView): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");
 }
 
+function hasWrittenTest(option: MockOptionView): boolean {
+  return (
+    option.kind === "written" || (option.sections ?? []).some(({ kind }) => kind === "written")
+  );
+}
+
+/** The exam choices a mock's written test waits for, from the options or from a refused start. */
+function getPendingChoice(option: MockOptionView, status: MockChooserStatus): string[] | null {
+  const pending = [
+    option.availability,
+    ...(option.sections ?? []).map((section) => section.availability),
+  ].find((availability) => availability?.status === "needsChoice");
+
+  if (pending) {
+    return pending.choiceGroups;
+  }
+
+  return status.kind === "needsChoice" && hasWrittenTest(option) ? status.choiceGroups : null;
+}
+
+/** Why an option can't start now, said on its own row the way Today says it. */
+function useRowLimit(status: MockChooserStatus) {
+  const choiceLine = useChoiceLine();
+  const gradingReturns = useGradingReturnsLine();
+
+  return function rowLimit(option: MockOptionView): string | null {
+    const choiceGroups = getPendingChoice(option, status);
+
+    if (choiceGroups) {
+      return choiceLine(choiceGroups);
+    }
+
+    return status.kind === "writingUsedUp" && hasWrittenTest(option)
+      ? gradingReturns(status.returnsOn)
+      : null;
+  };
+}
+
+/** `objectiveTitled`: the group's title already says its options hold objective questions only. */
 function useMockChoices({
+  objectiveTitled = false,
   options,
+  rowLimit,
   severalDays,
+  tests = 0,
 }: {
+  objectiveTitled?: boolean;
   options: readonly MockOptionView[];
+  rowLimit: (option: MockOptionView) => string | null;
   severalDays: boolean;
+  tests?: number;
 }) {
   const name = useMockOptionName();
   const detail = useMockOptionDetail();
   const sizeFacts = useMockOptionSizeFacts();
 
-  return options.map((option) => ({
-    description: detail({ option, severalDays }) || undefined,
-    label: name({ option, severalDays }),
-    trailing: <FactSegments facts={sizeFacts(option)} />,
-    value: getMockOptionKey(option),
-  }));
+  return options.map((option) => {
+    // An exam taken as one test reads its options as it always did; its sections say nothing new.
+    const shown = tests > 1 ? option : { ...option, sections: undefined };
+
+    return {
+      description: (!objectiveTitled && detail({ option: shown, severalDays })) || undefined,
+      label: name({ option: shown, severalDays, tests }),
+      note: rowLimit(option) ?? undefined,
+      trailing: <FactSegments facts={sizeFacts(shown)} />,
+      value: getMockOptionKey(option),
+    };
+  });
 }
 
+function OptionGroup({
+  choices,
+  id,
+  label,
+  onPick,
+  picked,
+  title,
+}: {
+  choices: ReturnType<typeof useMockChoices>;
+  id: string;
+  label: string;
+  onPick: (key: string) => void;
+  picked: string | null;
+  title: string | null;
+}) {
+  if (choices.length === 0) {
+    return null;
+  }
+
+  return (
+    <section aria-labelledby={title ? id : undefined} className="flex flex-col gap-1">
+      {title && <PageSectionTitle id={id}>{title}</PageSectionTitle>}
+      <ChoiceRows
+        choices={choices}
+        label={label}
+        onChange={onPick}
+        value={choices.some((choice) => choice.value === picked) ? picked : null}
+      />
+    </section>
+  );
+}
+
+/**
+ * An exam of several tests lists each test and all of them first, then the shorter, objective-only
+ * options; any other exam lists the exam, then one subject.
+ */
 function MockOptionLists({
   onPick,
   picked,
+  rowLimit,
   severalDays,
   view,
 }: {
   onPick: (key: string) => void;
   picked: string | null;
+  rowLimit: (option: MockOptionView) => string | null;
   severalDays: boolean;
   view: MockOptionsView;
 }) {
   const t = useExtracted();
-  const exam = view.options.filter((option) => option.kind !== "area");
-  const subjects = view.options.filter((option) => option.kind === "area");
-  const examChoices = useMockChoices({ options: exam, severalDays });
-  const subjectChoices = useMockChoices({ options: subjects, severalDays });
-  const examTitle = t("The exam");
+  const tests = severalDays ? 0 : getExamTests(view.options);
+
+  const leads = (option: MockOptionView) =>
+    tests > 1 ? option.kind !== "half" && option.kind !== "area" : option.kind !== "area";
+
+  const exam = view.options.filter((option) => leads(option));
+  const rest = view.options.filter((option) => !leads(option));
+  const examChoices = useMockChoices({ options: exam, rowLimit, severalDays, tests });
+
+  const restChoices = useMockChoices({
+    objectiveTitled: tests > 1,
+    options: rest,
+    rowLimit,
+    severalDays,
+  });
+
+  const examTitle =
+    tests > 1
+      ? t("{count, plural, other {Your exam has # tests}}", { count: tests })
+      : t("The exam");
+
+  const restTitle = tests > 1 ? t("Shorter, objective questions only") : t("One subject");
 
   return (
     <div className="flex flex-col gap-6">
-      <section aria-labelledby="mock-exam-title" className="flex flex-col gap-1">
-        {subjectChoices.length > 0 && (
-          <PageSectionTitle id="mock-exam-title">{examTitle}</PageSectionTitle>
-        )}
-        <ChoiceRows
-          choices={examChoices}
-          label={examTitle}
-          onChange={onPick}
-          value={examChoices.some((choice) => choice.value === picked) ? picked : null}
-        />
-      </section>
-
-      {subjectChoices.length > 0 && (
-        <section aria-labelledby="mock-subjects-title" className="flex flex-col gap-1">
-          <PageSectionTitle id="mock-subjects-title">{t("One subject")}</PageSectionTitle>
-          <ChoiceRows
-            choices={subjectChoices}
-            label={t("One subject")}
-            onChange={onPick}
-            value={subjectChoices.some((choice) => choice.value === picked) ? picked : null}
-          />
-        </section>
-      )}
+      <OptionGroup
+        choices={examChoices}
+        id="mock-exam-title"
+        label={examTitle}
+        onPick={onPick}
+        picked={picked}
+        title={restChoices.length > 0 || tests > 1 ? examTitle : null}
+      />
+      <OptionGroup
+        choices={restChoices}
+        id="mock-subjects-title"
+        label={restTitle}
+        onPick={onPick}
+        picked={picked}
+        title={restTitle}
+      />
     </div>
   );
 }
@@ -127,6 +229,10 @@ function PracticeChooser({
     ? view.options.find((candidate) => getMockOptionKey(candidate) === short.optionKey)
     : undefined;
 
+  const rowLimit = useRowLimit(status);
+  const blocked = option !== null && rowLimit(option) !== null;
+  const pickedChoice = option && getPendingChoice(option, status);
+
   const start = () => {
     if (!option) {
       return;
@@ -144,7 +250,14 @@ function PracticeChooser({
       aside={view.lastMock && <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />}
       bar={bar}
       bottomBar={
-        <ChooserBar busy={busy} disabled={!option} gated={gated} onStart={start} status={shown} />
+        <ChooserBar
+          busy={busy}
+          disabled={!option || blocked}
+          gated={gated}
+          choose={Boolean(pickedChoice)}
+          onStart={start}
+          status={shown}
+        />
       }
     >
       <ChooserHeader
@@ -153,7 +266,13 @@ function PracticeChooser({
       />
 
       <DetailContent>
-        <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
+        <MockOptionLists
+          onPick={setPicked}
+          picked={picked}
+          rowLimit={rowLimit}
+          severalDays={severalDays}
+          view={view}
+        />
       </DetailContent>
 
       <MockShortDialog
@@ -167,7 +286,7 @@ function PracticeChooser({
 
 export function MockChooserScreen(props: MockChooserProps) {
   if (props.status.kind === "writing") {
-    return <MockWriting bar={props.bar} run={props.status.run} />;
+    return <MockWriting bar={props.bar} run={props.status.run} written={props.status.written} />;
   }
 
   return <PracticeChooser {...props} />;

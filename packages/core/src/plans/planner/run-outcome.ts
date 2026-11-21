@@ -13,17 +13,24 @@ type SavedEffectItem = EffectItem & { lessons?: number | null; titleSnapshot: st
 export function withBuiltSettings({
   built,
   settings,
+  writtenSkillIds,
 }: {
   built: {
     checkpointOverflow: PlanSettings["checkpointOverflow"];
     mockFunding: PlanSettings["mockFunding"];
+    writingSchedule?: PlanSettings["writingSchedule"];
   };
   settings: PlanSettings;
+  writtenSkillIds?: string[];
 }): PlanSettings {
+  const { writingSchedule: _previous, ...retained } = settings;
+
   return {
-    ...settings,
+    ...retained,
     checkpointOverflow: built.checkpointOverflow,
     mockFunding: built.mockFunding,
+    ...(built.writingSchedule && { writingSchedule: built.writingSchedule }),
+    ...(writtenSkillIds && { writtenSkillIds }),
   };
 }
 

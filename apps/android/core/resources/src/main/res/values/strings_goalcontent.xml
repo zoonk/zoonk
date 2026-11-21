@@ -176,4 +176,31 @@
     <string name="goalcontent_skill_solid">Solid</string>
     <string name="goalcontent_skill_mastered">Mastered</string>
     <string name="goalcontent_chapters_progress">%1$s of %2$s</string>
+    <string name="goalcontent_written_estimated">Estimated score</string>
+    <string name="goalcontent_written_minimum">Minimum to pass: %1$s</string>
+    <string name="goalcontent_written_minimum_of">Minimum to pass: %1$s of %2$s</string>
+    <string name="goalcontent_written_levels">Your answers are graded by level. A points estimate isn\'t available for this test yet.</string>
+    <plurals name="goalcontent_written_questions">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <string name="goalcontent_written_share">%1$s of the score</string>
+    <string name="goalcontent_written_minimum_share">Minimum to pass: %1$s of the points</string>
+    <string name="goalcontent_written_progress">Your progress</string>
+    <string name="goalcontent_written_last_answer">last answer</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">last %d answer</item>
+        <item quantity="other">last %d answers</item>
+    </plurals>
+    <string name="goalcontent_written_presentation">Presentation and structure</string>
+    <string name="goalcontent_written_answers">Your answers</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="one">%d line</item>
+        <item quantity="other">%d lines</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="one">%d version</item>
+        <item quantity="other">%d versions</item>
+    </plurals>
 </resources>

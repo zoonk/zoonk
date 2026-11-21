@@ -146,7 +146,11 @@ function MapCanvas({
   const mapName = useBaseMapName();
   const mapNote = useBaseMapNote();
   const { fields } = content;
-  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH, {
+    measureBeforePaint: true,
+  });
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [visited, setVisited] = useState<string[]>([]);
 

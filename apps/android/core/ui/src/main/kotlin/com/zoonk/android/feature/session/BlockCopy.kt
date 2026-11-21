@@ -11,6 +11,8 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import com.zoonk.android.R
+import com.zoonk.android.feature.writing.gradingReturnsLine
+import com.zoonk.android.feature.writing.writingTaskTitle
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
@@ -90,7 +92,7 @@ fun blockTitle(step: DayStep): String {
         }
 
         step.kind == StudyBlock.Kind.PRODUCE -> {
-            step.title ?: stringResource(R.string.session_block_writing_practice)
+            writingTaskTitle(drill = step.drill, task = step.writingTask, fallback = step.title)
         }
 
         step.fullReview -> {
@@ -148,7 +150,11 @@ fun blockDetail(step: DayStep): String? {
         }
 
         step.kind == StudyBlock.Kind.PRODUCE -> {
-            step.canDo
+            when (step.writing) {
+                WritingRow.Tomorrow -> gradingReturnsLine(step.writingReturnsOn)
+                WritingRow.DraftSaved -> stringResource(R.string.session_block_writing_draft_saved)
+                null -> if (step.drill) stringResource(R.string.essay_short_exercise_detail) else step.canDo
+            }
         }
 
         step.fullReview -> {

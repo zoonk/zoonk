@@ -56,11 +56,10 @@ private struct MockStage: View {
       }
       .onChange(of: scenePhase) { _, phase in
         if phase == .active {
-          run.offerGradingOnANewDay()
           run.queue.retryNow()
         }
       }
-      .onDisappear { run.queue.stop() }
+      .onDisappear { run.stop() }
   }
 
   @ViewBuilder
@@ -166,7 +165,7 @@ extension MockRun {
       break
     }
 
-    if failed {
+    if failed && save != .refused {
       return BarNote(
         save == .saved
           ? String(
@@ -202,8 +201,8 @@ extension MockRun {
   }
 }
 
+/// A mock step's buttons; its note goes over the page with `barNote(run.barNote)`.
 struct MockActionBar<Actions: View>: View {
-  let run: MockRun
   @ViewBuilder let actions: Actions
 
   var body: some View {
@@ -213,17 +212,6 @@ struct MockActionBar<Actions: View>: View {
     .environment(\.mainActionFillsRow, true)
     .scenePadding(.horizontal)
     .padding(.vertical, 10)
-    .announcesStatus(run.barNote?.politeLine)
-    .floatingAbove {
-      if let note = run.barNote {
-        note
-          .typeStyle(.body)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .scenePadding(.horizontal)
-          .padding(.vertical, 8)
-          .background(.background)
-      }
-    }
   }
 }
 

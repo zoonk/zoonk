@@ -209,22 +209,27 @@ export async function startStudyBlock({
       SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
     `;
 
-      const locked = await tx.studySession.findFirst({
-        include: STUDY_SESSION_INCLUDE,
+      const lockedSession = await tx.studySession.findFirst({
+        include: { blocks: STUDY_SESSION_INCLUDE.blocks },
         where: { id: sessionId, userId },
       });
 
-      if (!locked) {
+      if (!lockedSession) {
         throw new StudyBlockStartUnchangedError({ status: "notFound" });
       }
 
-      const wait = getStoredBlockWait({ block: current, blocks: locked.blocks });
+      const wait = getStoredBlockWait({ block: current, blocks: lockedSession.blocks });
 
       if (wait) {
         throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
       }
 
-      if (!changed && locked.status === "active" && locked.startedAt && isRunningBlock(current)) {
+      if (
+        !changed &&
+        lockedSession.status === "active" &&
+        lockedSession.startedAt &&
+        isRunningBlock(current)
+      ) {
         const { id, kind, lessonId, startedAt, status } = current;
 
         throw new StudyBlockStartUnchangedError({
@@ -232,6 +237,12 @@ export async function startStudyBlock({
           status: "ready",
         });
       }
+
+      const goal = lockedSession.goalId
+        ? await tx.goal.findUnique({ where: { id: lockedSession.goalId } })
+        : null;
+
+      const locked = { ...lockedSession, goal };
 
       const filled = await fillCheckpointQuestions({
         afterWriting: input.afterWriting,

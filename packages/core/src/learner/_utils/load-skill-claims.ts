@@ -5,6 +5,8 @@ import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { loadGoalWritingFact } from "../writing-skills";
+import { loadWritingEvidence } from "../written-evidence";
 import {
   type ClaimEvent,
   type DatedClaim,
@@ -193,6 +195,7 @@ export async function loadPlanClaimEvents({
 
 export async function loadClaimEvents({
   goalId,
+  writingFact,
   planEvents,
   skillIds,
   userId,
@@ -200,17 +203,28 @@ export async function loadClaimEvents({
   goalId: string;
   /** A GET's request-wide `loadPlanClaimEvents`; without it, they're read fresh. */
   planEvents?: Promise<ClaimEvent[]>;
+  writingFact?: Awaited<ReturnType<typeof loadGoalWritingFact>>;
   skillIds: readonly string[];
   userId: string;
 }): Promise<ClaimEvent[]> {
   const asked = new Set(skillIds);
 
-  const [fromPlan, answers] = await Promise.all([
+  const { examBlueprintId, skillIds: writtenSkills } =
+    writingFact ?? (await loadGoalWritingFact(goalId));
+
+  const writtenAsked = new Set(skillIds.filter((id) => writtenSkills.has(id)));
+
+  const [fromPlan, answers, written] = await Promise.all([
     planEvents ?? loadPlanClaimEvents({ goalId, skillIds: asked }),
-    loadAnswerEvents({ skillIds, userId }),
+    loadAnswerEvents({ skillIds: skillIds.filter((id) => !writtenAsked.has(id)), userId }),
+    loadWritingEvidence({ examBlueprintId, skillIds: writtenAsked, tx: prisma, userId }),
   ]);
 
-  return [...fromPlan.filter((event) => asked.has(event.skillId)), ...answers];
+  return [
+    ...fromPlan.filter((event) => asked.has(event.skillId) && !writtenAsked.has(event.skillId)),
+    ...answers,
+    ...written,
+  ];
 }
 
 export async function loadSkillEvidence({
@@ -220,6 +234,7 @@ export async function loadSkillEvidence({
   goalId: string;
   /** The basics the learner passed over by choice, still to confirm (see `listKnownSkills`). */
   passedOver?: (skillId: string) => boolean;
+  writingFact?: Awaited<ReturnType<typeof loadGoalWritingFact>>;
   skillIds: readonly string[];
   userId: string;
 }): Promise<{ answeredWrong: Set<string>; claims: Map<string, SkillClaim>; known: Set<string> }> {

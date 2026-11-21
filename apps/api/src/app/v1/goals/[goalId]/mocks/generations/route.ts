@@ -1,5 +1,6 @@
+import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { examError } from "@/lib/exam-errors";
+import { examError, writingExtraLimitErrorFields } from "@/lib/exam-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
@@ -8,6 +9,7 @@ import {
   getMockQuestionsToken,
   mockQuestionsWorkflow,
 } from "@/workflows/goals/mock-questions-workflow";
+import { ensureMockWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
 import { mockQuestionsInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { requestMockQuestions } from "@zoonk/core/exams/mocks/request-questions";
 import { type NextRequest, NextResponse } from "next/server";
@@ -24,6 +26,29 @@ async function createMockQuestions(
   ]);
 
   const result = await requestMockQuestions({ goalId: path.goalId, input: body });
+
+  if (result.status === "writing") {
+    const supply = await ensureMockWritingPrompts(result.requests);
+
+    if (supply.status === "ready") {
+      return NextResponse.json({ generationId: null, status: "ready" });
+    }
+
+    return NextResponse.json(
+      { generationId: supply.runId, status: "generating" },
+      {
+        headers: { Location: `/v1/generations/${encodeURIComponent(supply.runId)}` },
+        status: ACCEPTED,
+      },
+    );
+  }
+
+  if (result.status === "limitReached") {
+    return createErrorResponse({
+      ...writingExtraLimitErrorFields(result.returnsOn),
+      status: httpStatus.tooManyRequests,
+    });
+  }
 
   if (result.status === "refused") {
     return usageDecisionError(result.decision);

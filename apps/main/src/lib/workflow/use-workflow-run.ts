@@ -1,6 +1,7 @@
 "use client";
 
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
+import { WRITING_PROMPT_KIND } from "@zoonk/core/library/generation/steps";
 import { type GenerationKind } from "@zoonk/learn/generation/kinds";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { safeAsync } from "@zoonk/utils/error";
@@ -27,7 +28,7 @@ function isRunStatus(value: string | null): value is RunStatus {
   return value !== null && RUN_STATUSES.has(value);
 }
 
-async function readRunStatus(runId: string): Promise<RunStatus | null> {
+async function readRun(runId: string): Promise<unknown> {
   const headers = await getWorkflowAuthHeaders();
   const url = `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}`;
   const { data: response } = await safeAsync(() => fetch(url, { headers }));
@@ -37,9 +38,17 @@ async function readRunStatus(runId: string): Promise<RunStatus | null> {
   }
 
   const { data } = await safeAsync<unknown>(() => response.json());
-  const status = getString(data, "status");
+  return data;
+}
 
+async function readRunStatus(runId: string): Promise<RunStatus | null> {
+  const status = getString(await readRun(runId), "status");
   return isRunStatus(status) ? status : null;
+}
+
+/** Whether a run writes an exam's written questions: a mock's start can answer with one or with its objective questions' run. */
+export async function isWritingPromptRun(runId: string): Promise<boolean> {
+  return getString(await readRun(runId), "kind") === WRITING_PROMPT_KIND;
 }
 
 export function useWorkflowRun({

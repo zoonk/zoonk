@@ -1,6 +1,6 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { DbNull, type TransactionClient } from "@zoonk/db";
+import { DbNull, type MockExamAnswer, type TransactionClient } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { judgeForwardOnlySave } from "./_utils/mock-navigation";
 import {
@@ -9,7 +9,11 @@ import {
   findOwnedMock,
   getSectionDeadline,
 } from "./_utils/owned-mock";
-import { type MockAnswerInput } from "./mock-answer-contract";
+import {
+  MAX_OBJECTIVE_ANSWER_CHARACTERS,
+  MAX_OBJECTIVE_ANSWER_DURATION_MS,
+  type MockAnswerInput,
+} from "./mock-answer-contract";
 import { type MockConditions } from "./mock-contract";
 
 /** A slow network shouldn't lose the last answer given right before time ran out. */
@@ -22,6 +26,7 @@ export type SaveMockAnswerResult = {
     | "notFound"
     | "notRunning"
     | "saved"
+    | "staleAnswer"
     | "timeUp"
     | "unauthorized";
 };
@@ -41,7 +46,10 @@ async function fitsSection({
     return input.answer === null || isText;
   }
 
-  if (!section?.itemIds.includes(input.itemId)) {
+  if (
+    !section?.itemIds.includes(input.itemId) ||
+    input.durationMs > MAX_OBJECTIVE_ANSWER_DURATION_MS
+  ) {
     return false;
   }
 
@@ -51,7 +59,12 @@ async function fitsSection({
 
   const item = await tx.item.findUnique({ select: { format: true }, where: { id: input.itemId } });
 
-  return item?.format === "typed";
+  return (
+    item?.format === "typed" &&
+    input.answer !== null &&
+    "text" in input.answer &&
+    input.answer.text.length <= MAX_OBJECTIVE_ANSWER_CHARACTERS
+  );
 }
 
 function judgeMove({
@@ -76,6 +89,55 @@ function judgeMove({
   });
 }
 
+function keptEditStatus({
+  input,
+  saved,
+}: {
+  input: MockAnswerInput;
+  saved: MockExamAnswer | null;
+}): "saved" | "staleAnswer" | null {
+  const { edit } = input;
+
+  if (!edit) {
+    return null;
+  }
+
+  if (saved?.editWriter !== edit.writer) {
+    return (saved?.revision ?? saved?.id) === edit.base ? null : "staleAnswer";
+  }
+
+  if ((saved.editOrder ?? -1) < edit.order) {
+    return null;
+  }
+
+  return saved.editOrder === edit.order &&
+    isDeepStrictEqual(saved.answer, input.answer) &&
+    saved.flagged === input.flagged
+    ? "saved"
+    : "staleAnswer";
+}
+
+function creditedDuration({
+  input,
+  mock,
+  now,
+  section,
+}: {
+  input: MockAnswerInput;
+  mock: MockSitting;
+  now: number;
+  section: MockConditions["sections"][number];
+}): number {
+  if (!section.essays.includes(input.itemId)) {
+    return input.durationMs;
+  }
+
+  const elapsed =
+    Math.min(now, getSectionDeadline(mock).getTime()) - mock.sectionStartedAt.getTime();
+
+  return Math.min(input.durationMs, Math.max(0, elapsed));
+}
+
 async function judgeSave({
   input,
   mock,
@@ -85,10 +147,12 @@ async function judgeSave({
   mock: MockSitting | null;
   tx: TransactionClient;
 }): Promise<
-  | { changed: boolean; status: "saved" }
+  | { changed: boolean; durationMs: number; status: "saved" }
   | { status: Exclude<SaveMockAnswerResult["status"], "saved"> }
 > {
-  if (mock?.status !== "active" || mock.sectionStartedAt.getTime() > Date.now()) {
+  const now = Date.now();
+
+  if (mock?.status !== "active" || mock.sectionStartedAt.getTime() > now) {
     return { status: "notRunning" };
   }
 
@@ -98,11 +162,15 @@ async function judgeSave({
     return { status: "invalidItem" };
   }
 
-  if (Date.now() > getSectionDeadline(mock).getTime() + DEADLINE_GRACE_MS) {
+  if (now > getSectionDeadline(mock).getTime() + DEADLINE_GRACE_MS) {
     return { status: "timeUp" };
   }
 
-  return judgeMove({ input, mock, section });
+  const move = judgeMove({ input, mock, section });
+
+  return move.status === "locked"
+    ? { status: move.status }
+    : { ...move, durationMs: creditedDuration({ input, mock, now, section }), status: "saved" };
 }
 
 /** Judges the save against the sitting read under the learner's lock, which hand-ins take too. */
@@ -133,12 +201,20 @@ export async function saveMockAnswer({
       return unchanged({ status: judged.status });
     }
 
-    const saved = mock?.answers.find((row) => row.itemId === input.itemId);
+    const saved = mock?.answers.find((row) => row.itemId === input.itemId) ?? null;
+    const status = keptEditStatus({ input, saved });
+
+    if (status) {
+      return unchanged({ status });
+    }
+
+    const { durationMs } = judged;
 
     if (
+      !input.edit &&
       saved &&
       isDeepStrictEqual(saved.answer, input.answer ?? null) &&
-      saved.durationMs === input.durationMs &&
+      saved.durationMs === durationMs &&
       saved.flagged === input.flagged
     ) {
       return unchanged({ status: "saved" });
@@ -146,8 +222,11 @@ export async function saveMockAnswer({
 
     const draft = {
       answer: input.answer ?? DbNull,
-      durationMs: input.durationMs,
+      durationMs,
+      editOrder: input.edit?.order ?? null,
+      editWriter: input.edit?.writer ?? null,
       flagged: input.flagged,
+      revision: crypto.randomUUID(),
     };
 
     await tx.mockExamAnswer.upsert({

@@ -2,6 +2,7 @@ package com.zoonk.android.feature.session
 
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.OpenStudyDayRequest
@@ -35,6 +36,10 @@ class FakeStudyApi : StudyApi {
     var targetStatus = "resolved"
     var dayOpening: JsonObject? = null
 
+    /** What opening a written block's start leaves for its route; the blocks it started, in order. */
+    var writingStart: String? = null
+    val writingStarts = mutableListOf<UUID>()
+
     /** The answer to each block opening, in order; the last one answers the rest. */
     var openings = listOf(opening("session", "blockId" to null, "sessionId" to SESSION.toString()))
 
@@ -44,6 +49,14 @@ class FakeStudyApi : StudyApi {
     var generation = LessonGeneration(generationId = "run-1", status = LessonGeneration.Status.GENERATING)
     var session: StudySession = decodeFixture("study-session")
     var studySummary: StudySessionSummary = decodeFixture("study-session-summary")
+
+    override suspend fun startWriting(
+        session: AuthenticatedSession,
+        blockId: UUID,
+    ): AppRoute.Essay {
+        writingStarts += blockId
+        return AppRoute.Essay(blockId.toString(), writingStart)
+    }
 
     override suspend fun openDay(
         session: AuthenticatedSession,

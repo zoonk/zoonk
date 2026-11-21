@@ -2,7 +2,9 @@ import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-
 import { type ExamStructure, type SectionNavigation } from "./blueprint-contract";
 import { type KeptFacts, keptOr } from "./blueprint-kept";
 import { toPointsScoring } from "./blueprint-points-content";
+import { toWrittenGrading } from "./blueprint-written-facts";
 import { normalizePenalty } from "./marking-penalty";
+import { findTaskSubjects } from "./written-task-subjects";
 
 type Extraction = BlueprintExtraction;
 type MockConditions = NonNullable<ExamStructure["mock"]>;
@@ -75,10 +77,44 @@ function toPlays({
   return plays === 1 || plays === 2 ? plays : null;
 }
 
-function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extraction["mock"]> }) {
+function toTaskSubjects({
+  id,
+  kept,
+  names,
+  subjects,
+}: {
+  id: string;
+  kept: KeptFacts;
+  names: readonly string[] | undefined;
+  subjects: ExamStructure["subjects"];
+}): { subjects?: string[] } {
+  const found =
+    names && kept.has(`${id}.subjects`)
+      ? findTaskSubjects({ names, subjects }).map((subject) => subject.name)
+      : [];
+
+  return found.length > 0 ? { subjects: found } : {};
+}
+
+function toSections({
+  kept,
+  mock,
+  subjects,
+}: {
+  kept: KeptFacts;
+  mock: NonNullable<Extraction["mock"]>;
+  subjects: ExamStructure["subjects"];
+}) {
   const ids = mock.sections.map((_, index) => `mock.sections.${index}`);
 
-  if (!ids.every((id) => kept.has(id))) {
+  const confirmedSections = mock.sections.map(
+    (section, index) =>
+      kept.has(ids[index] ?? "") ||
+      (section.kind === "written" &&
+        section.tasks.some((_, taskIndex) => kept.has(`${ids[index]}.tasks.${taskIndex}`))),
+  );
+
+  if (!confirmedSections.every(Boolean)) {
     return [];
   }
 
@@ -91,6 +127,9 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
     kind: section.kind,
     minutes: keptOr({ gap: null, id: `${ids[index]}.minutes`, kept, value: section.minutes }),
     name: section.name,
+    ...(section.session?.trim() && kept.has(`${ids[index]}.session`)
+      ? { session: section.session.trim() }
+      : {}),
     questions:
       section.kind === "written"
         ? null
@@ -109,7 +148,34 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
           ? keptOr({ gap: "", id: `${id}.description`, kept, value: task.description })
           : task.description;
 
-      return [{ count: task.count, description, ...(plays ? { plays } : {}) }];
+      const { handwritten, lines, officialIdentifier, points } = task;
+      const grading = toWrittenGrading({ grading: task.grading, id, kept });
+      const verifiedPoints = points && points > 0 && kept.has(`${id}.points`) ? points : null;
+
+      return [
+        {
+          count: task.count,
+          description,
+          ...(plays ? { plays } : {}),
+          ...(grading
+            ? {
+                grading:
+                  !verifiedPoints && grading.kind !== "enem"
+                    ? { ...grading, kind: "levels" as const }
+                    : grading,
+              }
+            : {}),
+          ...(typeof handwritten === "boolean" && kept.has(`${id}.handwritten`)
+            ? { handwritten }
+            : {}),
+          ...(lines && lines > 0 && kept.has(`${id}.lines`) ? { lines } : {}),
+          ...(verifiedPoints ? { points: verifiedPoints } : {}),
+          ...(officialIdentifier?.trim() && kept.has(`${id}.officialIdentifier`)
+            ? { officialIdentifier: officialIdentifier.trim() }
+            : {}),
+          ...toTaskSubjects({ id, kept, names: task.subjects, subjects }),
+        },
+      ];
     }),
     ...toSectionDetails({ id: ids[index] ?? "", kept, section }),
   }));
@@ -208,7 +274,7 @@ export function toMock({
     citations,
     order: keptOr({ gap: null, id: "mock.order", kept, value: mock.order }),
     scoring: toScoring({ kept, mock, partNames, subjects }),
-    sections: toSections({ kept, mock }),
+    sections: toSections({ kept, mock, subjects }),
     timeLimitMinutes: keptOr({
       gap: null,
       id: "mock.timeLimitMinutes",

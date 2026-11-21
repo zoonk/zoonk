@@ -95,6 +95,9 @@
   "mock_words": "eb553ea24edc73926f9077a568fc91bd79dbdc7fba73368ff845152ab1feb5e9",
   "mock_written_part": "36ece6d4391dcc395fdf94326178a83b2fd2ca616114da1af20e669d731c34a8",
   "mock_written_part_area": "b4c5eb14dc3eb6f16939d3e7502cd46324d4c403273a4d4c66d0f0ef4bba9a0e",
+  "mock_written_question_blank": "1fd27ca83a706c5bdf23a47007bcd8edeb35a3ea87adafa2e3536ff8b72da644",
+  "mock_written_question_place": "805971326723949e79bf1c8a135401310bc121dd9b9a494e0df740f470868391",
+  "mock_written_questions_blank": "2ab373658982da2555b4cce347b3b7f53351dc5bce955e287d597bb2ef23540d",
   "mock_your_essay": "555c798e197e77cc8d5908bd1b1d0dfa0f153456d3c72b603a79fd11d519e750"
 }
 -->
@@ -133,6 +136,8 @@
     <!-- %1$s is the essay's area, such as Portuguese. -->
     <string name="mock_written_part_area">Parte escrita · %1$s</string>
     <string name="mock_question_place">Pregunta %1$d de %2$d</string>
+    <!-- A question's position among the questions in an exam's written test. -->
+    <string name="mock_written_question_place">Pregunta %1$d de %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Pregunta %1$d de %2$d · %3$s</string>
     <!-- A button beside "Next" the learner turns on for a question whose answer they aren't sure of, to check it again before handing in; the result shows how those answers went. -->
@@ -181,6 +186,14 @@
     </plurals>
     <string name="mock_every_answered">Respondiste todas las preguntas.</string>
     <string name="mock_essay_blank">La redacción está en blanco.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <string name="mock_written_question_blank">La respuesta escrita está en blanco.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <plurals name="mock_written_questions_blank">
+        <item quantity="one">Hay %d pregunta escrita en blanco.</item>
+        <item quantity="many">Hay %d respuestas escritas en blanco.</item>
+        <item quantity="other">Hay %d respuestas escritas en blanco.</item>
+    </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">Hay %d redacción en blanco.</item>
         <item quantity="many">Hay %d redacciones en blanco.</item>

@@ -16,7 +16,12 @@ export type MockShortStatus = {
 
 export type MockChooserStatus =
   | { kind: "choosing" }
-  | { kind: "writing"; run: GenerationRun }
+  /** `written`: the run writes the written test's questions, one model call with no steps to show. */
+  | { kind: "writing"; run: GenerationRun; written?: boolean }
   | MockShortStatus
   | { kind: "failed"; reason: "failed" | "notEnoughQuestions" }
-  | { kind: "refused"; limit: HelpLimit };
+  | { kind: "refused"; limit: HelpLimit }
+  /** Today's extra writing is used, so a mock with the written test waits for that day. */
+  | { kind: "writingUsedUp"; returnsOn: string }
+  /** The written test's questions depend on an exam choice the learner hasn't made yet. */
+  | { choiceGroups: string[]; kind: "needsChoice" };

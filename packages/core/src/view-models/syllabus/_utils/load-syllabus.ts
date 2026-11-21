@@ -8,9 +8,10 @@ import {
 } from "../../../learner/_utils/plan-library-rows";
 import { type ClaimEvent, listKnownSkills } from "../../../learner/_utils/skill-claims";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
+import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
 import { hasPlanDeadline } from "../../../plans/_utils/plan-end";
-import { getWrittenPracticeView } from "../../../plans/_utils/written-practice-view";
+import { loadWrittenPracticeView } from "../../../plans/_utils/written-practice-view";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { LEARN_KINDS } from "../../../plans/planner/plan-item-rules";
 import {
@@ -104,7 +105,7 @@ export async function loadSyllabusInput(
     Goal,
     "createdAt" | "examBlueprintId" | "id" | "kind" | "language" | "targetDate" | "userId"
   > &
-    Partial<Pick<Goal, "details" | "primaryCourseId">>,
+    Partial<Pick<Goal, "details" | "primaryCourseId" | "timezone">>,
   {
     blueprint,
     readClaims,
@@ -117,9 +118,14 @@ export async function loadSyllabusInput(
     taughtStandIns?: Promise<Set<string>>;
   } = {},
 ): Promise<SyllabusInput | null> {
-  const [plan, notice] = await Promise.all([
+  const blueprintRead =
+    blueprint === undefined && goal.kind === "exam" && goal.examBlueprintId
+      ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+      : (blueprint ?? null);
+
+  const [plan, knownBlueprint] = await Promise.all([
     readSyllabusPlan(goal, savedPlan),
-    loadNotice(goal, blueprint, savedPlan ? readExamPicks(savedPlan.settings) : undefined),
+    blueprintRead,
   ]);
 
   if (!plan) {
@@ -129,27 +135,42 @@ export async function loadSyllabusInput(
   const graph = parsePlanGraph(plan.graph);
   const graphSkillIds = new Set(graph.skills.map((skill) => skill.skillId));
   const from: LibrarySource = savedPlan === undefined ? prisma : "shared";
-  const knownBlueprint = blueprint === undefined ? undefined : await blueprint;
+  const picks = readExamPicks(plan.settings);
 
-  const [items, areaCourses, chapterTitles, claimEvents, prerequisites, taughtSkillIds] =
-    await Promise.all([
-      withSkills({ from, graphSkillIds, items: plan.items }).then((withOwn) =>
-        withTestedOutSkills({ graphSkillIds, items: withOwn }),
-      ),
-      loadAreaCourses(graph, from),
-      loadChapterTitles(plan.items, from),
-      readClaims
-        ? readClaims([...graphSkillIds])
-        : loadClaimEvents({ goalId: goal.id, skillIds: [...graphSkillIds], userId: goal.userId }),
-      readSkillPrerequisiteMap([...graphSkillIds], from),
-      taughtStandIns ??
-        listTaughtStandInSkills({
-          blueprint: knownBlueprint,
-          goal: { ...goal, primaryCourseId: plan.goal.primaryCourseId },
-          graph,
-          items: plan.items,
-        }),
-    ]);
+  const [
+    items,
+    areaCourses,
+    chapterTitles,
+    claimEvents,
+    prerequisites,
+    taughtSkillIds,
+    notice,
+    writtenPractice,
+  ] = await Promise.all([
+    withSkills({ from, graphSkillIds, items: plan.items }).then((withOwn) =>
+      withTestedOutSkills({ graphSkillIds, items: withOwn }),
+    ),
+    loadAreaCourses(graph, from),
+    loadChapterTitles(plan.items, from),
+    readClaims
+      ? readClaims([...graphSkillIds])
+      : loadClaimEvents({ goalId: goal.id, skillIds: [...graphSkillIds], userId: goal.userId }),
+    readSkillPrerequisiteMap([...graphSkillIds], from),
+    taughtStandIns ??
+      listTaughtStandInSkills({
+        blueprint: knownBlueprint,
+        goal: { ...goal, primaryCourseId: plan.goal.primaryCourseId },
+        graph,
+        items: plan.items,
+      }),
+    loadNotice(goal, knownBlueprint, picks),
+    loadWrittenPracticeView({
+      goal: { ...goal, timezone: goal.timezone ?? null },
+      graph,
+      settings: parsePlanSettings(plan.settings),
+      structure: knownBlueprint ? readBlueprintContent(knownBlueprint).structure : null,
+    }),
+  ]);
 
   const settings = parsePlanSettings(plan.settings);
   const pastBasicsSkillIds = getPastBasicsSkillIds({ graph, items, prerequisites, settings });
@@ -177,11 +198,7 @@ export async function loadSyllabusInput(
     skippedAreas: settings.skippedAreas,
     skippedBaseIds,
     taughtSkillIds,
-    writtenPractice: getWrittenPracticeView({
-      goal: { createdAt: goal.createdAt, kind: goal.kind, targetDate: goal.targetDate },
-      graph,
-      settings,
-    }),
+    writtenPractice,
   };
 }
 

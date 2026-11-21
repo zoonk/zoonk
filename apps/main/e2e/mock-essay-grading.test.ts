@@ -1,4 +1,6 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { continueToStep } from "./result-steps";
@@ -6,6 +8,9 @@ import { openAs } from "./study-day";
 
 const ESSAY_TEXT =
   "O controle externo da administração pública cabe ao Congresso Nacional, com o auxílio do Tribunal de Contas da União, que julga as contas dos administradores e fiscaliza a aplicação dos recursos federais.";
+
+const OFFLINE_EDIT = `${ESSAY_TEXT} A fiscalização também inclui auditorias.`;
+const OTHER_DEVICE_EDIT = `${ESSAY_TEXT} O Congresso exerce o controle externo.`;
 
 async function writtenSitting({ expired }: { expired: boolean }) {
   const { goal, user } = await createAnytimeMockLearner({ plus: true, written: true });
@@ -20,6 +25,17 @@ async function writtenSitting({ expired }: { expired: boolean }) {
   ]);
 
   const startedAt = new Date(Date.now() - (expired ? 120_000 : 0));
+
+  // A written test admits its grading when it starts, so the sitting carries that receipt.
+  const admission = await prisma.writingAdmission.create({
+    data: {
+      extra: false,
+      id: randomUUID(),
+      itemIds: [essay.id],
+      localDate: new Date(startedAt.toISOString().slice(0, 10)),
+      userId: user.id,
+    },
+  });
 
   const mock = await prisma.mockExam.create({
     data: {
@@ -60,6 +76,7 @@ async function writtenSitting({ expired }: { expired: boolean }) {
         startTime: null,
         timeZone: null,
         timedOutSections: [],
+        writingAdmissionId: admission.id,
         wrongPenalty: 1,
       },
       goalId: goal.id,
@@ -74,6 +91,88 @@ async function writtenSitting({ expired }: { expired: boolean }) {
 }
 
 test.describe("Mock essays need a learner's grading request", () => {
+  test("a written answer survives a failed save and a stale edit stops the first hand-in", async ({
+    browser,
+  }) => {
+    const { mock, user } = await writtenSitting({ expired: false });
+    const page = await openAs(browser, user);
+    const where = { mockExamId: mock.id };
+    const url = `/mock/${mock.id}`;
+    let offline = true;
+
+    try {
+      await page.route("**/*", async (route) => {
+        const request = route.request();
+
+        if (
+          offline &&
+          request.method() === "POST" &&
+          request.headers()["next-action"] &&
+          (request.postData() ?? "").includes('"itemId"')
+        ) {
+          await route.abort();
+          return;
+        }
+
+        await route.fallback();
+      });
+
+      await page.goto(url);
+      const answer = page.getByRole("textbox");
+
+      await expectHydrated(answer);
+      await expect(answer).toHaveValue(ESSAY_TEXT);
+      await answer.fill(OFFLINE_EDIT);
+      await page.reload();
+      await expect(answer).toHaveValue(OFFLINE_EDIT);
+
+      await expect(prisma.mockExamAnswer.findFirstOrThrow({ where })).resolves.toMatchObject({
+        answer: { text: ESSAY_TEXT },
+      });
+
+      offline = false;
+
+      await expect
+        .poll(() => prisma.mockExamAnswer.findFirstOrThrow({ where }))
+        .toMatchObject({ answer: { text: OFFLINE_EDIT } });
+
+      // Hold the next edit until the hand-in flushes it.
+      await page.clock.install();
+      await page.clock.pauseAt(new Date(Date.now() + 1000));
+      await answer.fill(ESSAY_TEXT);
+
+      const other = await openAs(browser, user);
+
+      try {
+        await other.goto(url);
+        const otherAnswer = other.getByRole("textbox");
+
+        await expectHydrated(otherAnswer);
+        await otherAnswer.fill(OTHER_DEVICE_EDIT);
+
+        await expect
+          .poll(() => prisma.mockExamAnswer.findFirstOrThrow({ where }))
+          .toMatchObject({ answer: { text: OTHER_DEVICE_EDIT } });
+      } finally {
+        await other.context().close();
+      }
+
+      await page.getByRole("button", { exact: true, name: "Hand in" }).first().click();
+      await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+      await expect(page.getByText("An answer wasn't saved.")).toBeVisible();
+
+      await expect(prisma.mockExam.findUnique({ where: { id: mock.id } })).resolves.toMatchObject({
+        status: "active",
+      });
+
+      await expect(prisma.mockExamAnswer.findFirstOrThrow({ where })).resolves.toMatchObject({
+        answer: { text: OTHER_DEVICE_EDIT },
+      });
+    } finally {
+      await page.context().close();
+    }
+  });
+
   for (const mode of ["expired", "section"] as const) {
     test(`${mode} timeout closes answers without requesting AI grading`, async ({ browser }) => {
       const expired = mode === "expired";
@@ -147,7 +246,7 @@ test.describe("Mock essays need a learner's grading request", () => {
         .poll(() => prisma.mockExam.findUnique({ where: { id: mock.id } }))
         .toMatchObject({ status: "finished" });
 
-      await continueToStep(page, "Your answer");
+      await continueToStep(page, "Controle externo");
       await expect(page.getByText("That didn't go through. Try again in a moment.")).toBeVisible();
       expect(gradingRequests).toHaveLength(1);
       expect(sectionRequests).toHaveLength(1);

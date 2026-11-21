@@ -83,7 +83,21 @@
   "goalcontent_topics_in_notice": "40daaf9976984a4e08c1ffdfdd7d76d2735edc0521e3835209c7fedd495494f3",
   "goalcontent_topics_known_skipped": "c739bf3228749f10741b78903b616d5905b8bb7c344f3358866324d64a3d89cd",
   "goalcontent_topics_studied_of": "4226deaf96b1643246476fa6ff916c5a26ed4898b34411cfa3a2fa161bf612c4",
-  "goalcontent_topics_studied_spoken": "64dc0baa03601e8f5cb5dafcf76367f2389fd7eb21cf61c962884c9612b90a92"
+  "goalcontent_topics_studied_spoken": "64dc0baa03601e8f5cb5dafcf76367f2389fd7eb21cf61c962884c9612b90a92",
+  "goalcontent_written_answers": "491207e5de052efc6ce468b9c697722449b9fea2615137114ee8e019512a9ba5",
+  "goalcontent_written_estimated": "a6874438fe371673c64eb67171c21d23aeb4d4ee226f371451a0707a946b06be",
+  "goalcontent_written_last_answer": "7a12f1ff53adae5d314421c46094f3990bae1766742efe593eb3f3f4d9ed076f",
+  "goalcontent_written_last_answers": "629e6d2f4c3726ed2080ae7eb61662962a498b0683de0f6d83979a42a63dd4d5",
+  "goalcontent_written_levels": "6d6ae47caf0ba4bc87b57a086a44f6524bfeab80ee9f25ba5814aa9b90b54332",
+  "goalcontent_written_lines": "4c86e6d31b1feb040519da68b887d3e23a14f011700d1353c2b5fa2a058996c2",
+  "goalcontent_written_minimum": "11d4d23c8082ed496eee52aaaede9115d6a6218130ba704ff77a602495e8d5bd",
+  "goalcontent_written_minimum_of": "5f8b366cc91d4d0fb64a9ceebde746cf89902502676b67c8e5a9b306b252b66e",
+  "goalcontent_written_minimum_share": "39c316080387b376435f9083fa4308deae3df3934885ee41a76bedd585d631a2",
+  "goalcontent_written_presentation": "cd7d4800563ae68adb54d91595b0e592fc9cb4ac8aff544636019f12c095377b",
+  "goalcontent_written_progress": "32d757c22113e2d03643ac99d50edb03fe51492fc742da7c3db4b5a53c103ad1",
+  "goalcontent_written_questions": "51854b000eb829382b965c61de63b77cfe6004e0f2228124ae257da4ccf1e80c",
+  "goalcontent_written_share": "0af0af46ea31a41bd40bce3de3e364ac1c8dc45a7b448ad51ba119b46f8a4b39",
+  "goalcontent_written_versions": "77bba0f84e708f8428e9a3df1508de603a8401001edbb9dc5281cb7f9d3a811d"
 }
 -->
 <resources>
@@ -261,4 +275,31 @@
     <string name="goalcontent_skill_solid">Sicher</string>
     <string name="goalcontent_skill_mastered">Gemeistert</string>
     <string name="goalcontent_chapters_progress">%1$s von %2$s</string>
+    <string name="goalcontent_written_estimated">Geschätzter Score</string>
+    <string name="goalcontent_written_minimum">Zum Bestehen mindestens %1$s</string>
+    <string name="goalcontent_written_minimum_of">Zum Bestehen mindestens %1$s von %2$s Punkten</string>
+    <string name="goalcontent_written_levels">Deine Antworten werden nach Level bewertet. Für diesen Test gibt es noch keine geschätzte Punktzahl.</string>
+    <plurals name="goalcontent_written_questions">
+        <item quantity="one">%d Frage</item>
+        <item quantity="other">%d Fragen</item>
+    </plurals>
+    <string name="goalcontent_written_share">%1$s des Scores</string>
+    <string name="goalcontent_written_minimum_share">Zum Bestehen mindestens %1$s der Punkte</string>
+    <string name="goalcontent_written_progress">Dein Fortschritt</string>
+    <string name="goalcontent_written_last_answer">letzte Antwort</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">letzte %d Antwort</item>
+        <item quantity="other">letzte %d Antworten</item>
+    </plurals>
+    <string name="goalcontent_written_presentation">Darstellung und Aufbau</string>
+    <string name="goalcontent_written_answers">Deine Antworten</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="one">%d Zeile</item>
+        <item quantity="other">%d Zeilen</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="one">%d Version</item>
+        <item quantity="other">%d Versionen</item>
+    </plurals>
 </resources>

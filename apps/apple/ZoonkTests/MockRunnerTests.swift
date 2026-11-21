@@ -472,6 +472,26 @@ final class MockRunKeptAnswersTests: XCTestCase {
     XCTAssertEqual(fetches, 2, "Opening again reads the mock again")
   }
 
+  func testWrittenTextIsKeptBeforeDebounceAndSentWithItsOriginalEditOnReopen() async throws {
+    let transport = MockTransport(itemIds: [Self.itemOne], format: "essay")
+    let store = makeStore(transport, session: .preview(account: .keptAnswersFixture))
+    let firstVisit = try await open(store)
+    let question = try XCTUnwrap(firstVisit.question)
+    XCTAssertEqual(question.format, .essay)
+    firstVisit.show(Self.itemOne)
+    firstVisit.write(.text("A first paragraph."))
+    let edit = try XCTUnwrap(unsent.read().first?.edit)
+    firstVisit.stop()
+
+    let reopened = try await open(store)
+    await reopened.queue.idle()
+
+    let saved = await transport.saved
+    XCTAssertEqual(saved.map(\.answer), [.text("A first paragraph.")])
+    XCTAssertEqual(saved.first?.edit, edit)
+    XCTAssertTrue(unsent.read().isEmpty)
+  }
+
   func testAnAnswerWhoseSessionEndedStaysKeptAndUnsaved() async throws {
     let transport = MockTransport(itemIds: [Self.itemOne])
     let session = SessionStore.preview(account: .keptAnswersFixture)
@@ -638,6 +658,7 @@ private actor MockTransport: ClientTransport {
   private let drafts: [MockDraft]
   private let review: (allowed: Int, changed: [String])?
   private let status: String
+  private let format: String
   private var offline = false
   private var sessionEnded = false
   private(set) var saved: [MockDraft] = []
@@ -645,12 +666,13 @@ private actor MockTransport: ClientTransport {
 
   init(
     itemIds: [String], drafts: [MockDraft] = [], review: (allowed: Int, changed: [String])? = nil,
-    status: String = "running"
+    status: String = "running", format: String = "multipleChoice"
   ) {
     self.itemIds = itemIds
     self.drafts = drafts
     self.review = review
     self.status = status
+    self.format = format
   }
 
   func setOffline(_ value: Bool) {
@@ -709,7 +731,7 @@ private actor MockTransport: ClientTransport {
     let resume = review == nil ? 0 : itemIds.count - 1
     let questions = itemIds.enumerated().map { index, id in
       """
-      {"area":null,"context":null,"entry":null,"format":"multipleChoice","image":null,"itemId":"\(id)","number":\(index + 1),"options":["Alpha","Beta"],"question":"Question \(index + 1)","select":null,"set":null,"skillId":"33333333-3333-4333-8333-333333333333","unit":null,"visual":null}
+      {"area":null,"context":null,"entry":null,"format":"\(format)","image":null,"itemId":"\(id)","number":\(index + 1),"options":["Alpha","Beta"],"question":"Question \(index + 1)","select":null,"set":null,"skillId":"33333333-3333-4333-8333-333333333333","unit":null,"visual":null}
       """
     }.joined(separator: ",")
     let currentJSON =

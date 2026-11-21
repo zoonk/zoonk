@@ -11,12 +11,16 @@ const goalIdSchema = uuidSchema();
 
 export type MockStartOutcome =
   | { id: string; status: "running" | "started" }
-  | Extract<StartAnytimeMockResult, { status: "short" }>
-  | { status: "failed" | "needsQuestions" | "notEnoughQuestions" };
+  | Extract<StartAnytimeMockResult, { status: "limitReached" | "needsChoice" | "short" }>
+  | { status: "failed" | "needsQuestions" | "notEnoughQuestions" | "signUpRequired" };
 
-type KeptRefusal = "needsQuestions" | "notEnoughQuestions";
+type KeptRefusal = "needsQuestions" | "notEnoughQuestions" | "signUpRequired";
 
-const KEPT_REFUSALS: readonly KeptRefusal[] = ["needsQuestions", "notEnoughQuestions"];
+const KEPT_REFUSALS: readonly KeptRefusal[] = [
+  "needsQuestions",
+  "notEnoughQuestions",
+  "signUpRequired",
+];
 
 function isKeptRefusal(status: string): status is KeptRefusal {
   return KEPT_REFUSALS.some((kept) => kept === status);
@@ -39,7 +43,11 @@ export async function startAnytimeMockAction(
     return { id: result.id, status: result.status };
   }
 
-  if (result.status === "short") {
+  if (
+    result.status === "short" ||
+    result.status === "limitReached" ||
+    result.status === "needsChoice"
+  ) {
     return result;
   }
 

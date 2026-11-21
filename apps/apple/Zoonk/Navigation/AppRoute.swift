@@ -36,7 +36,10 @@ enum AppRoute: Hashable, Identifiable {
   case focusTest(goalId: String, startsTest: Bool = false)
   case challenge(planItemId: String, sessionId: String? = nil)
   case checkpoint(blockId: String, sessionId: String? = nil)
-  case essay(blockId: String)
+  /// `start`: what opening it answered, from the tap that opened it.
+  case essay(blockId: String, start: WritingStart? = nil)
+  /// A past written answer, read as its result was.
+  case writingAnswer(attemptId: String)
   case mock(blockId: String, sessionId: String? = nil)
   /// A chapter's map full screen, on the goal that opened it.
   case mindMap(goalId: String, chapterId: String)

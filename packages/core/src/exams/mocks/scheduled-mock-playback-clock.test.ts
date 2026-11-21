@@ -319,7 +319,7 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
     expect(recordings.every((item) => sets.some((set) => set.id === item.setId))).toBe(true);
   });
 
-  it("keeps a missing written section's time without creating an empty playback section", async () => {
+  it("keeps the scheduled full clock and waits for the missing written prompt", async () => {
     const structure = examStructureSchema.parse({
       ...TWO_OBJECTIVE,
       mock: {
@@ -341,8 +341,25 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
       ),
     );
 
-    const conditions = await assertScheduledClock({ ...fixture, minutes: 90, questions: 6 });
-    expect(conditions.sections).toHaveLength(1);
-    expect(conditions.sections[0]).toMatchObject({ essays: [], minutes: 90, questions: 6 });
+    vi.setSystemTime(new Date(`${fixture.date}T12:00:00Z`));
+    const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+
+    if (today.status !== "ready") {
+      throw new Error("Expected the scheduled block");
+    }
+
+    const block = today.today.session.blocks.find((entry) => entry.checkpoint?.mock);
+
+    if (!block) {
+      throw new Error("Expected the scheduled mock block");
+    }
+
+    await expect(getMock(block.id)).resolves.toMatchObject({ mock: { minutes: 90, questions: 6 } });
+
+    await expect(
+      startMock({ blockId: block.id, input: { timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ requests: [{ count: 1, unit: "answer" }], status: "writing" });
+
+    await expect(prisma.mockExam.count({ where: { blockId: block.id } })).resolves.toBe(0);
   });
 });

@@ -17,7 +17,6 @@ final class MockRun {
     case idle
     case grading
     case failed
-    case limitReached(on: DateComponents)
   }
 
   private static let slowAfter = Duration.seconds(10)
@@ -148,8 +147,10 @@ final class MockRun {
 
     let questionIds = current.questions.map(\.itemId)
 
-    for draft in unsent.restore(for: Set(questionIds), matching: initiallyStored) {
-      guard let index = questionIds.firstIndex(of: draft.itemId) else { continue }
+    for kept in unsent.restore(for: Set(questionIds), matching: initiallyStored) {
+      guard let index = questionIds.firstIndex(of: kept.itemId) else { continue }
+      let draft = kept.edit == nil ? kept.nextEdit() : kept
+      unsent.keep(draft, inPlace: true)
       reached = max(reached, index)
       countChange(draft.itemId, at: index, to: draft.answer)
       drafts[draft.itemId] = draft
@@ -168,6 +169,7 @@ final class MockRun {
         self?.partials[question.itemId] ?? self?.drafts[question.itemId]?.answer
       },
       set: { [weak self] answer in
+        guard self?.pending == false else { return }
         self?.partials[question.itemId] = answer?.complete == answer ? nil : answer
         let saved = answer?.complete
 
@@ -182,12 +184,12 @@ final class MockRun {
     guard let question, canAnswer(answer) else { return }
     var draft = withTimeSpent(question.itemId)
     draft.answer = answer
-    persist(draft)
+    persist(draft.nextEdit())
   }
 
   func write(_ answer: PracticeAnswer?) {
     guard let question, canAnswer(answer) else { return }
-    var draft = drafts[question.itemId] ?? .empty(question.itemId)
+    var draft = (drafts[question.itemId] ?? .empty(question.itemId)).nextEdit()
     draft.answer = answer
     drafts[question.itemId] = draft
     unsavedText = draft
@@ -201,12 +203,12 @@ final class MockRun {
   }
 
   func toggleUnsure() {
-    guard let question, !timeUp else { return }
+    guard let question, !pending, !timeUp else { return }
     unsavedText = nil
     saveText()
     var draft = withTimeSpent(question.itemId)
     draft.unsure.toggle()
-    persist(draft)
+    persist(draft.nextEdit())
   }
 
   /// In a forward-only section a question is saved as reached at once, so the ones before it stay
@@ -215,15 +217,18 @@ final class MockRun {
     shown = (itemId, .now)
 
     if moves.forwardOnly, drafts[itemId] == nil {
-      persist(.empty(itemId))
+      persist(MockDraft.empty(itemId).nextEdit())
     }
   }
 
-  func leave(_ itemId: String) {
+  func leave(_ itemId: String, countTime: Bool = true) {
     guard shown?.itemId == itemId else { return }
+    let shouldSave = unsavedText != nil || (countTime && !queue.wasRefused(itemId))
     unsavedText = nil
     saveText()
-    persist(withTimeSpent(itemId))
+    if shouldSave {
+      persist(withTimeSpent(itemId).nextEdit())
+    }
     shown = nil
   }
 
@@ -255,7 +260,7 @@ final class MockRun {
   }
 
   private func canAnswer(_ next: PracticeAnswer?) -> Bool {
-    guard let question, !timeUp, moves.canChange(position) else { return false }
+    guard let question, !pending, !timeUp, moves.canChange(position) else { return false }
     countChange(question.itemId, at: position, to: next)
     return true
   }
@@ -355,7 +360,7 @@ final class MockRun {
     failed = false
 
     if let question {
-      leave(question.itemId)
+      leave(question.itemId, countTime: !sectionTimeUp)
     }
 
     saveText()
@@ -365,9 +370,12 @@ final class MockRun {
     }
 
     // Answers are saved first, then the step.
+    let refusals = queue.refusals
     let result: MutationResult<MockStepOutcome?>? = await within(timeout) {
       [queue, store] in
+      queue.retryNow()
       await queue.idle()
+      guard !Task.isCancelled, queue.refusals == refusals else { return .failed(.unavailable) }
       return await store.write { api, token in try await request(api, token, blockId) }
     }
 
@@ -403,36 +411,23 @@ final class MockRun {
 
   func gradeEssays() async {
     guard essayGrading != .grading else { return }
-    let askedOn = today()
     essayGrading = .grading
 
-    let result: MutationResult<Bool>? = await within(Self.gradingTimeout) { [store, blockId] in
+    let result: MutationResult<Void>? = await within(Self.gradingTimeout) { [store, blockId] in
       await store.write(invalidating: [.learnerModel]) { api, token in
         try await api.gradeEssays(token: token, blockId: blockId)
       }
     }
 
     switch result {
-    case .done(let allGraded):
+    case .done:
       await mock.refresh()
-      essayGrading = allGraded ? .idle : .limitReached(on: askedOn)
-      offerGradingOnANewDay()
+      essayGrading = .idle
     case .obsolete:
       essayGrading = .idle
     case .failed, nil:
       essayGrading = .failed
     }
-  }
-
-  /// The day's essay grades come back at the learner's midnight.
-  func offerGradingOnANewDay() {
-    if case .limitReached(let day) = essayGrading, day != today() {
-      essayGrading = .idle
-    }
-  }
-
-  private func today() -> DateComponents {
-    Calendar.current.dateComponents([.year, .month, .day], from: now())
   }
 
   /// Leaving waits a moment for answers still going out, so ✕ always leaves, even offline.
@@ -454,6 +449,11 @@ final class MockRun {
     queue.add(draft)
   }
 
+  func stop() {
+    textTask?.cancel()
+    queue.stop()
+  }
+
   private func saveText() {
     textTask?.cancel()
     textTask = nil
@@ -470,9 +470,11 @@ final class MockRun {
 
     if let shown, shown.itemId == itemId {
       let elapsed = now - shown.at
-      draft.durationMs +=
+      let elapsedMs =
         Int(elapsed.components.seconds * 1000)
         + Int(elapsed.components.attoseconds / 1_000_000_000_000_000)
+      let limit = question?.format == .essay ? 24 * 60 * 60 * 1000 : 3_600_000
+      draft.durationMs = min(draft.durationMs + elapsedMs, limit)
     }
 
     shown = (itemId, now)

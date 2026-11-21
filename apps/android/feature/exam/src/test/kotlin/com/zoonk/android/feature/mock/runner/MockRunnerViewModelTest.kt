@@ -80,7 +80,7 @@ class MockRunnerViewModelTest {
         runTest(dispatcher) {
             api.mock = navigatedMock(FORWARD_ONLY)
             val store = store()
-            val kept = MockDraft(ITEM_ONE, Answer.Choice(2), durationMs = 4000, unsure = true)
+            val kept = MockDraft(ITEM_ONE, Answer.Choice(2), durationMs = 4000, unsure = true).nextEdit()
             store.unsent(ana, RUN_BLOCK).save(listOf(kept))
 
             val viewModel = store.runner()
@@ -221,8 +221,9 @@ class MockRunnerViewModelTest {
         }
 
     @Test
-    fun typingIsKeptOnTheDeviceAsSoonAsTheAppGoesToTheBackground() =
+    fun writtenTypingIsKeptOnTheDeviceAndSentWithItsOriginalEditWhenOpenedAgain() =
         runTest(dispatcher) {
+            api.mock = runningMock(current = currentSection(questions = question(ITEM_ONE, 1, "Write an answer", format = "essay")))
             val store = store()
             val viewModel = store.runner()
 
@@ -230,8 +231,17 @@ class MockRunnerViewModelTest {
             viewModel.onStop()
             runCurrent()
 
-            assertEquals(Answer.Text("Paris"), store.kept().single().answer)
+            val kept = store.kept().single()
+            assertEquals(Answer.Text("Paris"), kept.answer)
             assertTrue(api.saved.isEmpty())
+
+            val reopened = store.runner()
+            runCurrent()
+            assertEquals(kept, api.saved.single())
+
+            reopened.onStop()
+            runCurrent()
+            assertTrue(store.kept().isEmpty())
         }
 
     @Test

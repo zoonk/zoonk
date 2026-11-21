@@ -104,17 +104,43 @@ export type ComputePlanRequest = {
   studyScheduleAt?: StudyScheduleAt;
 };
 
-function withPastBasicsLessons<
-  Loaded extends Pick<Awaited<ReturnType<typeof loadPlannerInputs>>, "lessons" | "missedSkillIds">,
->({ graph, loaded, state }: { graph: PlanState["graph"]; loaded: Loaded; state: PlanState }) {
+function shapePlannerInputs<
+  Loaded extends Pick<
+    Awaited<ReturnType<typeof loadPlannerInputs>>,
+    "bands" | "lessons" | "missedSkillIds"
+  >,
+>({
+  context,
+  loaded,
+  resolved,
+  state,
+}: {
+  context: PlanContext;
+  loaded: Loaded;
+  resolved: PlanState["graph"];
+  state: PlanState;
+}) {
+  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
+    bands: loaded.bands,
+    goal: context.goal,
+    graph: resolved,
+    keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
+    settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
+    state,
+  });
+
   return {
-    ...loaded,
-    lessons: keepPastBasicsBands({
-      graph,
-      keepSkillIds: loaded.missedSkillIds,
-      lessons: loaded.lessons,
-      pastBasicsAreas: state.settings.pastBasicsAreas,
-    }),
+    fullGraph,
+    graph,
+    inputs: {
+      ...loaded,
+      lessons: keepPastBasicsBands({
+        graph,
+        keepSkillIds: loaded.missedSkillIds,
+        lessons: loaded.lessons,
+        pastBasicsAreas: state.settings.pastBasicsAreas,
+      }),
+    },
   };
 }
 
@@ -148,38 +174,27 @@ export async function computePlan({
 
   const targetDate = getStateTargetDate(state);
 
-  const [{ areaShares, examSubjects, topicLevels, ...loaded }, carryOver, todayShown, quick] =
-    await Promise.all([
-      loadPlannerInputs({
-        difficultyBias: state.settings.difficultyBias,
-        examPicks: state.settings,
-        goal: context.goal,
-        graph: resolved,
-        targetDate,
-        userId: context.goal.userId,
-      }),
-      loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }).then(
-        (loadedCarry) =>
-          loadedCarry && {
-            ...loadedCarry,
-            todayExceptAreas: options.todayExceptAreas ?? loadedCarry.todayExceptAreas ?? null,
-          },
-      ),
-      shownToday ??
-        (mode === "automatic" && isTodayShown({ goalId: context.goal.id, today: context.today })),
-      loadQuickBaseLessons(state.settings),
-    ]);
+  const [
+    { areaShares, examSubjects, topicLevels, writtenSkillIds, ...loaded },
+    carryOver,
+    todayShown,
+    quick,
+  ] = await Promise.all([
+    loadPlannerInputs({
+      difficultyBias: state.settings.difficultyBias,
+      examPicks: state.settings,
+      goal: context.goal,
+      graph: resolved,
+      targetDate,
+      userId: context.goal.userId,
+    }),
+    loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }),
+    shownToday ??
+      (mode === "automatic" && isTodayShown({ goalId: context.goal.id, today: context.today })),
+    loadQuickBaseLessons(state.settings),
+  ]);
 
-  const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
-    bands: loaded.bands,
-    goal: context.goal,
-    graph: resolved,
-    keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
-    settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
-    state,
-  });
-
-  const inputs = withPastBasicsLessons({ graph, loaded, state });
+  const { fullGraph, graph, inputs } = shapePlannerInputs({ context, loaded, resolved, state });
 
   const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
   const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });
@@ -189,7 +204,10 @@ export async function computePlan({
     bossFacts: await bossFacts,
     bossMinutes: listSavedBossMinutes(context.items),
     bringBackSetAside: options.bringBackSetAside ?? false,
-    carryOver,
+    carryOver: carryOver && {
+      ...carryOver,
+      todayExceptAreas: options.todayExceptAreas ?? carryOver.todayExceptAreas ?? null,
+    },
     examWindows: toExamWindows(context.phases),
     finishedOn: listFinishedDays({ items: context.items, timeZone: context.timeZone }),
     goal: { dailyMinutes: state.goal.dailyMinutes, kind: context.goal.kind, targetDate },
@@ -223,13 +241,14 @@ export async function computePlan({
     topicLevels,
   });
 
-  // Compare the inputs before the producer changes its own funding: its output isn't news.
-  if (shouldSkipPlanBuild({ input, savedKey: context.plan.inputsKey, skipUnchangedInputs })) {
+  const savedKey =
+    writtenSkillIds && !state.settings.writtenSkillIds ? null : context.plan.inputsKey;
+
+  if (shouldSkipPlanBuild({ input, savedKey, skipUnchangedInputs })) {
     return null;
   }
 
   const builtInput = { ...input, ...readLanding({ input, savedKey: context.plan.inputsKey }) };
-
   const built = buildPlan(builtInput);
 
   const laidOut = await layOutUnmetPhaseDates({
@@ -262,7 +281,7 @@ export async function computePlan({
 
   const saved = withPlannedLessons({ graph: fullGraph, skillLessons: built.skillLessons });
 
-  const savedSettings = withBuiltSettings({ built, settings });
+  const savedSettings = withBuiltSettings({ built, settings, writtenSkillIds });
 
   return {
     get bases() {

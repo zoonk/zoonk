@@ -1,5 +1,6 @@
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { describe, expect, it } from "vitest";
+import { writingPromptSchema } from "../../exams/essays/writing-contract";
 import { generatedMultipleChoice } from "./_test-utils/generated-items";
 import { discountMath } from "./_test-utils/math-problems";
 import { parseItemContent, toStoredItem } from "./item-content";
@@ -136,5 +137,60 @@ describe(parseItemContent, () => {
         format: "numeric",
       }),
     ).toThrow();
+  });
+
+  it("retains a written task's scoring basis while keeping the practice key out of its question view", () => {
+    const criterion = { id: "authority", name: "Explain the authority", points: 9.5 };
+
+    const writing = {
+      aspects: [
+        { criterionId: criterion.id, description: "Identify the external auditor.", points: 9.5 },
+      ],
+      assessedSkillIds: ["00000000-0000-4000-8000-000000000001"],
+      charactersPerLine: 45,
+      criteria: [criterion],
+      grading: {
+        criteria: [
+          {
+            citation: { passage: "Authority: 9.50 points", sourceId: "notice" },
+            id: criterion.id,
+            points: 9.5,
+            text: criterion.name,
+          },
+        ],
+        kind: "points",
+        language: null,
+        rounding: null,
+        zeroing: [],
+      },
+      keySource: "practiceKey",
+      lines: 30,
+      minimumWords: 0,
+      points: 9.5,
+      taskKey: "p4-short",
+      title: "External audit",
+      unit: "answer",
+    };
+
+    const item = parseItemContent({
+      content: {
+        context: null,
+        keyPoints: ["Identify the auditor."],
+        question: "Who audits the accounts?",
+        rubric: [
+          { criterion: criterion.name, description: "Identify the authority.", points: null },
+        ],
+        sampleOutline: "Name the authority and give its role.",
+        writing,
+      },
+      format: "essay",
+    });
+
+    expect(item).toMatchObject({ content: { writing } });
+    const question = writingPromptSchema.parse(writing);
+    expect(question.criteria).toStrictEqual([criterion]);
+    expect(question).not.toHaveProperty("aspects");
+    expect(question).not.toHaveProperty("grading");
+    expect(question).not.toHaveProperty("assessedSkillIds");
   });
 });

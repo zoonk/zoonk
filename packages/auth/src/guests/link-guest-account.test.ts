@@ -28,6 +28,29 @@ async function createLearnersWithPlans() {
 }
 
 describe(linkGuestAccount, () => {
+  it("transfers a guest's writing admission without changing its date or prompt exposure", async () => {
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+    ]);
+
+    const receipt = await prisma.writingAdmission.create({
+      data: {
+        extra: true,
+        id: randomUUID(),
+        itemIds: [randomUUID()],
+        localDate: new Date("2026-11-20"),
+        userId: guestId,
+      },
+    });
+
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
+
+    await expect(
+      prisma.writingAdmission.findUnique({ where: { id: receipt.id } }),
+    ).resolves.toStrictEqual({ ...receipt, userId: accountId });
+  });
+
   it("marks the account's and the guest's plans changed", async () => {
     const { accountId, goalIds, guestId } = await createLearnersWithPlans();
     const before = await readMarks({ goalIds });

@@ -89,11 +89,12 @@ function listNeedsWork({
 }
 
 export function getMockProgress(mocks: readonly ProgressMock[]): ExamMockProgress | null {
-  if (mocks.length === 0) {
+  const recent = mocks.filter((mock) => mock.result.total > 0).slice(-MOCK_PROGRESS_SIZE);
+
+  if (recent.length === 0) {
     return null;
   }
 
-  const recent = mocks.slice(-MOCK_PROGRESS_SIZE);
   const subjects = getSubjectTrends(recent);
   const improved = listImproved(subjects);
 

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_chooser_all_tests": "a6b2817d5051907e5aec45d95554e3561eee4286c1e6a823364143ade2837598",
+  "mock_chooser_both_tests": "3ec952c9210f0c13d8ad723000d73d375773902267a01c5fef9cad4fb75a7aea",
   "mock_chooser_day": "c6361cbfefc6ea0cff5c98906b8d463523e24d4c14e1b2086561e47233af519f",
   "mock_chooser_day_without": "cdf354307a85c8815dbd1543619500641102512f4e73067de2e149bb80243758",
+  "mock_chooser_exam_tests": "22b2a3e2764f89696ccebd1cfda3c5166306cd42cfc5f2845942ba7e425aaf99",
   "mock_chooser_failed": "24307d5a9eac38fee1035f888670a1e152161e0c6cc61786f76bfef06350dafc",
   "mock_chooser_full_exam": "771df7fb385d4660c1e3eff24da11c07ca836b52d201c6609c53d95de8ca9a97",
   "mock_chooser_full_exam_without": "7807ecbe1fba8ffe55527ca9090ad36bb87fcdd51b9eb90ceac7f12b9971424f",
@@ -12,6 +15,7 @@
   "mock_chooser_line": "48e912b8dc485f29b7173140bad1a0233fd227fa67bf8b8795e5d21b31904bb1",
   "mock_chooser_no_written_part": "a1dc6ffbaff41d7e3efe06e436eed9201253c181962db142bec551ef445c2f02",
   "mock_chooser_not_enough": "8613dceaef8c9076820212d697337dab6e942a2d85574a74fbaf4756a0fc5561",
+  "mock_chooser_objective_only": "6cae6ae0caa4087964a66722726ae1879b00460a5360f4eca6159ef3cf7a2397",
   "mock_chooser_one_subject": "4cf12b80426cd68e2a609ee68e0a511086461fc855a2318b778393aa5eb6be09",
   "mock_chooser_option_size": "594e8f0fd19e14ff0f65321ca62fd421fff3111a1b180fe3a3cdeda6e85d0d77",
   "mock_chooser_pick_another": "0ef1b0224f213925515809462e77df8579d1200dbc2790a7f331289ca2abd3f6",
@@ -28,7 +32,10 @@
   "mock_chooser_usually": "05d79cf01e1e76f43af21c74c14cbc319b98d8294c669f6076e4f55b07afd4d7",
   "mock_chooser_writing": "34be40bb733d1ad0e3d1f8fdab1865d555a439eed91d3670698a28f328531518",
   "mock_chooser_writing_questions": "d8e614ed4e9dc274e491bb5879e1f46a2dfaee3ae2632367e97e34b69addc746",
-  "mock_chooser_writing_questions_line": "075fbc4b91a4971a77ed8e57b7a864949bdb9c1043723697785f3c751bec5c6f"
+  "mock_chooser_writing_questions_line": "075fbc4b91a4971a77ed8e57b7a864949bdb9c1043723697785f3c751bec5c6f",
+  "mock_chooser_writing_written": "6278f1be5dc5c4fceb10618d7122661b1ef6f53d3a5597f7077c4353eaa4188d",
+  "mock_chooser_writing_written_detail": "dd13358ff0bdbc14b4d4f2b03658aae245f6f5f337c78e4979105419ceb41671",
+  "mock_chooser_writing_written_failed": "439d1f6b141b7a0bef0b3dfad623c83c2cb3bbf18135f2f91461d52a3e37e409"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -38,6 +45,18 @@
     <string name="mock_chooser_one_subject">Uma matéria</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">A prova</string>
+    <string name="mock_chooser_objective_only">Mais curta, só com questões objetivas</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">As duas provas</string>
+    <string name="mock_chooser_writing_written">Criando suas questões…</string>
+    <string name="mock_chooser_writing_written_detail">Questões como as da sua prova. Seu simulado começa quando elas estiverem prontas.</string>
+    <string name="mock_chooser_writing_written_failed">Não foi possível criar suas questões</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="one">Todas as %1$d provas</item>
+        <item quantity="many">Todas as %1$d provas</item>
+        <item quantity="other">Todas as %1$d provas</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">Dia %1$d</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->
@@ -77,4 +96,10 @@
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">geralmente %1$s</string>
     <string name="mock_chooser_last_mock">Seu último simulado</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="one">Sua prova tem %d prova</item>
+        <item quantity="many">Sua prova tem %d provas</item>
+        <item quantity="other">Sua prova tem %d provas</item>
+    </plurals>
 </resources>

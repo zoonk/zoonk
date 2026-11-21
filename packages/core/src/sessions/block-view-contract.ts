@@ -1,6 +1,7 @@
 import { StudyBlockKind, StudyBlockStatus } from "@zoonk/db/enums";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { writingAvailabilitySchema, writingTaskSchema } from "../exams/essays/writing-contract";
 import { checkpointRefSchema, dayBlockRefSchema, dayBlockScreenSchema } from "./day-block";
 
 const idSchema = uuidSchema();
@@ -63,6 +64,12 @@ export const studyBlockSchema = z
       .meta({
         description: "A full review: every topic, in place of a mock the plan doesn't have",
       }),
+    hasWritingDraft: z
+      .boolean()
+      .optional()
+      .describe(
+        "The writing block has nonblank saved text for an admission that has not been graded",
+      ),
     id: idSchema,
     kind: z.enum(StudyBlockKind),
     lessonId: idSchema.nullable(),
@@ -131,5 +138,11 @@ export const studyBlockSchema = z
         description:
           "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty",
       }),
+    writingAvailability: writingAvailabilitySchema.optional(),
+    writingTask: writingTaskSchema.optional(),
+    writingUnit: z
+      .enum(["drill", "answer"])
+      .optional()
+      .describe("The size of this writing block, when it is a writing drill or a whole answer"),
   })
   .meta({ id: "StudyBlock" });

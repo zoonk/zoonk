@@ -1,4 +1,5 @@
 import Foundation
+import OpenAPIRuntime
 
 enum MockStartOutcome: Equatable, Sendable {
   typealias Limit = Components.Schemas.AnytimeMock.LimitPayload
@@ -10,6 +11,10 @@ enum MockStartOutcome: Equatable, Sendable {
   case notEnoughQuestions
   case plusRequired
   case refused(HelpLimit)
+  /// A written test past the day's extra grades: it can start again on `returnsOn`.
+  case writingLimitReached(returnsOn: String)
+  /// The written test's questions depend on an exam choice the learner hasn't made.
+  case needsChoice(choiceGroups: [String])
 }
 
 enum MockQuestionsStart: Equatable, Sendable {
@@ -17,6 +22,18 @@ enum MockQuestionsStart: Equatable, Sendable {
   case preparing
   case writing(generationId: String)
   case refused(HelpLimit)
+  /// The day's extra writing allowance is used until `returnsOn`.
+  case writingLimitReached(returnsOn: String)
+  case needsChoice(choiceGroups: [String])
+}
+
+/// The exam choices a refused written or full mock waits for (`EXAM_CHOICE_REQUIRED`).
+private func pendingChoice(_ error: Components.Schemas._Error?) -> [String]? {
+  let refusal = voiceRefusal(status: 409, error: error)
+  guard refusal.code == "EXAM_CHOICE_REQUIRED" else { return nil }
+
+  let groups = (refusal.details?.value as? [String: (any Sendable)?])?["choiceGroups"]
+  return (groups as? [(any Sendable)?])?.compactMap { $0 as? String }
 }
 
 enum MockStepOutcome: String, Decodable, Sendable {
@@ -41,10 +58,16 @@ enum MockPlanOfferOutcome: Equatable, Sendable {
 }
 
 enum EssaySubmission: Equatable, Sendable {
-  case graded(EssayGrade)
-  case limitReached
-  case signUpRequired
+  case graded(WritingResult)
   case blockNotActive
+}
+
+/// A draft save: saved, or another device saved first and this is the draft it left.
+enum WritingDraftSave: Equatable, Sendable {
+  case saved(WritingDraft)
+  case conflict(WritingDraft)
+  /// The answer was sent already; there's no draft left to save.
+  case closed
 }
 
 struct ExamResultInput: Encodable, Equatable, Sendable {
@@ -63,15 +86,10 @@ struct ExamAPI {
   /// The API takes every key of a shape: the client leaves out nils, and these go as nulls.
   private static let shapeNulls = ["shape.area", "shape.day"]
 
-  private static func body(_ shape: MockShape) -> Components.Schemas.MockShape {
-    let kind: Components.Schemas.MockShape.KindPayload =
-      switch shape.kind {
-      case .full: .full
-      case .half: .half
-      case .area: .area
-      }
-
-    return .init(area: shape.area, day: shape.day, kind: kind)
+  /// Every kind goes as one JSON object; the generated client picks the matching schema (a written
+  /// test is its own, the written tasks of one exam day).
+  private static func body<Payload: Decodable>(_ shape: MockShape) throws -> Payload {
+    try PracticeJSON.recode(ShapeBody(area: shape.area, day: shape.day, kind: shape.kind.rawValue))
   }
 
   func exam(token: String, goalId: String) async throws -> ExamView? {
@@ -122,7 +140,7 @@ struct ExamAPI {
     token: String, goalId: String, shape: MockShape, acceptFewer: Bool, afterWriting: Bool = false
   ) async throws -> MockStartOutcome {
     let body = Components.Schemas.AnytimeMockInput(
-      shape: .init(value1: Self.body(shape)), acceptFewer: acceptFewer,
+      shape: try Self.body(shape), acceptFewer: acceptFewer,
       afterWriting: afterWriting ? true : nil)
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
@@ -132,6 +150,13 @@ struct ExamAPI {
       case .ok(let response): started = try response.body.json
       case .created(let response): started = try response.body.json
       case .code402: return .plusRequired
+      case .tooManyRequests(let response):
+        return .writingLimitReached(returnsOn: try response.body.json.returnsOn)
+      case .conflict(let response):
+        guard let groups = pendingChoice(try? response.body.json) else {
+          throw APIError.unavailable
+        }
+        return .needsChoice(choiceGroups: groups)
       case .unprocessableContent(let response):
         let code = try? response.body.json.error.code
         if code == "NOT_ENOUGH_QUESTIONS" { return .notEnoughQuestions }
@@ -160,7 +185,7 @@ struct ExamAPI {
   func requestMockQuestions(token: String, goalId: String, shape: MockShape) async throws
     -> MockQuestionsStart
   {
-    let body = Components.Schemas.MockQuestionsInput(shape: .init(value1: Self.body(shape)))
+    let body = Components.Schemas.MockQuestionsInput(shape: try Self.body(shape))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let generation: Components.Schemas.MockQuestionsGeneration
@@ -171,7 +196,22 @@ struct ExamAPI {
       case .ok(let response): generation = try response.body.json
       case .accepted(let response): generation = try response.body.json
       case .tooManyRequests(let response):
-        return try refused(voiceRefusal(status: 429, error: try? response.body.json))
+        let refusal = voiceRefusal(status: 429, error: try? response.body.json)
+
+        // The day's extra writing is used: the written test's questions wait for that day.
+        if refusal.code == "USAGE_LIMIT_REACHED",
+          let returnsOn = (refusal.details?.value as? [String: (any Sendable)?])?["returnsOn"]
+            as? String
+        {
+          return .writingLimitReached(returnsOn: returnsOn)
+        }
+
+        return try refused(refusal)
+      case .conflict(let response):
+        guard let groups = pendingChoice(try? response.body.json) else {
+          throw APIError.unavailable
+        }
+        return .needsChoice(choiceGroups: groups)
       case .forbidden(let response):
         return try refused(voiceRefusal(status: 403, error: try? response.body.json))
       case .code402(let response):
@@ -319,14 +359,13 @@ struct ExamAPI {
     }
   }
 
-  /// False when today's essay grades ran out first.
-  func gradeEssays(token: String, blockId: String) async throws -> Bool {
+  /// The written test's answers were admitted when it started, so grading is never refused.
+  func gradeEssays(token: String, blockId: String) async throws {
     try await performLong(token: token) { client in
       switch try await client.gradeMockEssays(
         path: .init(blockId: blockId), body: .json(.init(timeZone: timeZone)))
       {
-      case .ok: return true
-      case .tooManyRequests: return false
+      case .ok: return
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }
@@ -364,20 +403,88 @@ struct ExamAPI {
     }
   }
 
-  /// Only from a learner's tap. A resend under the same `attemptId` joins the first one, so it's
-  /// graded once.
+  /// Only from a learner's tap: it admits the grading, or starts writing the question. A rewrite
+  /// names the graded answer it starts from; anything else replays the block's start.
+  func startWriting(token: String, blockId: String, previousAttemptId: String? = nil)
+    async throws -> WritingStart
+  {
+    try await clients.perform(token: token) { client in
+      switch try await client.startWriting(
+        path: .init(blockId: blockId), body: .json(.init(previousAttemptId: previousAttemptId)))
+      {
+      case .ok(let response): return try WritingStartWire.recode(try response.body.json)
+      case .accepted(let response): return try WritingStartWire.recode(try response.body.json)
+      case .tooManyRequests(let response):
+        return try WritingStartWire.recode(try response.body.json)
+      case .forbidden: return .signUpRequired
+      case .conflict: return .unavailable
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: return .failed
+      }
+    }
+  }
+
+  /// "Write now": the learner's own extra block for a written task, the same unfinished one on a
+  /// repeat. Its start follows as the same tap.
+  func createWritingBlock(token: String, goalId: String, taskKey: String?) async throws -> String {
+    try await clients.perform(token: token) { client in
+      switch try await client.createWritingBlock(
+        path: .init(goalId: goalId), body: .json(.init(taskKey: taskKey)))
+      {
+      case .ok(let response): return try response.body.json.blockId
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  /// Saved over `revision`; a newer draft saved elsewhere comes back as the conflict.
+  func saveWritingDraft(token: String, blockId: String, draft: WritingDraft) async throws
+    -> WritingDraftSave
+  {
+    let body = Components.Schemas.SaveWritingDraft(
+      admissionId: draft.admissionId, revision: draft.revision, text: draft.text)
+
+    return try await clients.perform(token: token) { client in
+      switch try await client.saveWritingDraft(path: .init(blockId: blockId), body: .json(body)) {
+      case .ok(let response): return .saved(try PracticeJSON.recode(try response.body.json))
+      case .conflict(let response):
+        guard let current: WritingDraft = try? PracticeJSON.recode(try response.body.json) else {
+          return .closed
+        }
+        return .conflict(current)
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  func writingAttempt(token: String, attemptId: String) async throws -> WritingAttempt? {
+    try await clients.perform(token: token) { client in
+      switch try await client.getWritingAttempt(path: .init(attemptId: attemptId)) {
+      case .ok(let response): return try PracticeJSON.recode(try response.body.json)
+      case .notFound: return nil
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  /// Only from a learner's tap, under the admission its start issued. Sending the same admission
+  /// again replays its grade.
   func submitEssay(
-    token: String, blockId: String, attemptId: String, text: String, durationMs: Int
+    token: String, blockId: String, admissionId: String, text: String, durationMs: Int
   ) async throws -> EssaySubmission {
     let body = Components.Schemas.EssaySubmissionInput(
-      attemptId: attemptId, durationMs: min(max(durationMs, 0), 3_600_000), text: text,
+      admissionId: admissionId, durationMs: min(max(durationMs, 0), 86_400_000), text: text,
       timeZone: timeZone)
 
     return try await performLong(token: token) { client in
       switch try await client.submitEssay(path: .init(blockId: blockId), body: .json(body)) {
       case .ok(let response): return .graded(try PracticeJSON.recode(try response.body.json))
-      case .tooManyRequests: return .limitReached
-      case .forbidden: return .signUpRequired
       case .conflict: return .blockNotActive
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
@@ -387,18 +494,55 @@ struct ExamAPI {
   }
 }
 
+private struct ShapeBody: Encodable {
+  let area: String?
+  let day: Int?
+  let kind: String
+
+  private enum CodingKeys: String, CodingKey { case area, day, kind }
+
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(area, forKey: .area)
+    try container.encode(day, forKey: .day)
+    try container.encode(kind, forKey: .kind)
+  }
+}
+
+/// `WritingStart` on the wire: one object whatever its status.
+struct WritingStartWire: Decodable {
+  let admissionId: String?
+  let returnsOn: String?
+  let runId: String?
+  let status: String
+  let task: WritingStart.Task?
+  let unit: WritingPrompt.Unit?
+
+  static func recode(_ payload: some Encodable) throws -> WritingStart {
+    let wire: Self = try PracticeJSON.recode(payload)
+
+    switch (wire.status, wire.admissionId, wire.runId, wire.returnsOn) {
+    case ("ready", let id?, _, _): return .ready(admissionId: id)
+    case ("writing", _, let run?, _): return .writing(generationId: run, unit: wire.unit)
+    case ("limitReached", _, _, let day?): return .limitReached(returnsOn: day, task: wire.task)
+    default: throw APIError.unavailable
+    }
+  }
+}
+
 private struct MockAnswerRequest: Encodable {
   let draft: MockDraft
 
   init(_ draft: MockDraft) { self.draft = draft }
 
-  private enum CodingKeys: String, CodingKey { case answer, durationMs, flagged, itemId }
+  private enum CodingKeys: String, CodingKey { case answer, durationMs, edit, flagged, itemId }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     // A blank is an explicit null: the API asks for the key.
     try container.encode(draft.isAnswered ? draft.answer : nil, forKey: .answer)
-    try container.encode(min(max(draft.durationMs, 0), 3_600_000), forKey: .durationMs)
+    try container.encode(min(max(draft.durationMs, 0), 24 * 60 * 60 * 1000), forKey: .durationMs)
+    try container.encodeIfPresent(draft.edit, forKey: .edit)
     try container.encode(draft.unsure, forKey: .flagged)
     try container.encode(draft.itemId, forKey: .itemId)
   }

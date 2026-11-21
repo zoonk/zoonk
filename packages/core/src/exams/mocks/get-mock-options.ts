@@ -1,5 +1,4 @@
 import "server-only";
-import { readMockEssays } from "../../learner/facts/mock-essays";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
@@ -36,11 +35,7 @@ export async function getMockOptions({
     loadAnytimeMockSetup(
       goal,
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
-      {
-        essays: readMockEssays(goal.userId, goal.id, goal.examBlueprintId),
-        plan: readSavedPlan(goal.userId, goal.id),
-        typed: getBankTypedParts(goal.examBlueprintId),
-      },
+      { plan: readSavedPlan(goal.userId, goal.id), typed: getBankTypedParts(goal.examBlueprintId) },
     ),
     getAnytimeMockAccess(goal),
     findRunningAnytimeMock({ goalId: goal.id, now: getRequestInstant(), userId: goal.userId }),

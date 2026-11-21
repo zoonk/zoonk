@@ -1,10 +1,14 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
+import { lockUsageForViewer } from "../../../entitlements/_utils/usage-lock";
 import { type AllowanceLimit, type UsagePeriod } from "../../../entitlements/contract";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
+import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
+import { admitWriting, readWritingExtraLimit } from "../../essays/writing-admission";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { getMockFormatMix } from "../mock-format-mix";
@@ -13,6 +17,8 @@ import { planOptionMock } from "../mock-option-plan";
 import { type MockOption } from "../mock-options";
 import { type MockCandidate, type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { isMockShort, listShortFormats } from "../mock-shortfall";
+import { snapshotMockWriting } from "../mock-written-points";
+import { bindMockWriting, outlineWrittenPrompts } from "../written-test-plan";
 import {
   type AnytimeMockSetup,
   findRunningAnytimeMock,
@@ -21,11 +27,14 @@ import {
 } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { getExamStartTime } from "./mock-conditions";
+import { findMockWriting } from "./mock-writing-supply";
 
 export type CreateAnytimeMockResult =
   | { id: string; status: "running" | "started" }
   | { status: "notEnoughQuestions" }
   | { status: "needsQuestions" }
+  | { returnsOn: string; status: "limitReached" }
+  | { status: "signUpRequired" }
   | {
       availableAt?: Date | null;
       examQuestions: number;
@@ -65,19 +74,22 @@ export async function planFromBank({
   setup: AnytimeMockSetup;
   userId: string;
 }): Promise<{ candidates: MockCandidate[]; plan: MockPlan }> {
-  const candidates = await loadMockCandidates({
-    goal,
-    itemIds: null,
-    skillIds: await loadMockSkillIds(goal.id),
-    structure: setup.structure,
-    userId,
-  });
+  const candidates =
+    option.kind === "written"
+      ? []
+      : await loadMockCandidates({
+          goal,
+          itemIds: null,
+          skillIds: await loadMockSkillIds(goal.id),
+          structure: setup.structure,
+          userId,
+        });
 
   return {
     candidates,
     plan: planOptionMock({
       candidates,
-      essays: setup.essays,
+      essays: outlineWrittenPrompts({ day: option.day, structure: setup.structure }),
       listening: setup.listening,
       option,
       speaking: setup.speaking,
@@ -88,12 +100,14 @@ export async function planFromBank({
 
 function toConditions({
   candidates,
+  essays,
   goal,
   option,
   plan,
   setup,
 }: {
   candidates: readonly MockCandidate[];
+  essays: Parameters<typeof snapshotMockWriting>[0]["essays"];
   goal: Goal;
   option: MockOption;
   plan: MockPlan;
@@ -105,12 +119,13 @@ function toConditions({
   return {
     day: plan.day,
     examQuestions: asked < option.questions ? option.questions : null,
-    fullLength: option.kind === "full",
+    fullLength: option.kind === "full" || option.kind === "objective",
     ...markPlannedItems({
       candidates: [...candidates, ...[...setup.listening.values()].flat()],
       plan,
       structure: setup.structure,
     }),
+    ...(option.pacing && { pacing: option.pacing }),
     partialCredit: getPartialCredit(setup.structure),
     purpose: "practice",
     reused: plan.reused,
@@ -124,6 +139,7 @@ function toConditions({
       part.part === "choice" && part.name ? [part.name] : [],
     ),
     wrongPenalty: getWrongPenalty(setup.structure),
+    ...snapshotMockWriting({ day: plan.day, essays, structure: setup.structure }),
   };
 }
 
@@ -167,6 +183,30 @@ export async function createAnytimeMock({
       return unchanged({ id: running.id, status: "running" });
     }
 
+    if (option.kind === "written" || option.kind === "full") {
+      await lockUsageForViewer({ transaction: tx, userId });
+    }
+
+    const writing = await findMockWriting({
+      goal,
+      goalId: goal.id,
+      shape: option,
+      structure: setup.structure,
+      tx,
+      userId,
+    });
+
+    if (writing.status === "missing") {
+      const localDate = getDateInTimeZone({
+        date: new Date(),
+        timeZone: getAnswerTimeZone({ goal }),
+      });
+
+      const refusal = await readWritingExtraLimit({ localDate, tx, userId });
+
+      return unchanged(refusal ?? { status: "needsQuestions" });
+    }
+
     if (asksForNew) {
       return unchanged({ status: "needsQuestions" });
     }
@@ -187,30 +227,78 @@ export async function createAnytimeMock({
       return unchanged({ status: "notEnoughQuestions" });
     }
 
-    const now = new Date();
-
-    const conditions = toConditions({ candidates, goal, option, plan, setup });
-
-    const created = await tx.mockExam.create({
-      data: {
-        conditions,
-        examBlueprintId: setup.blueprint?.id ?? null,
-        goalId: goal.id,
-        sectionStartedAt: now,
-        startedAt: now,
-        userId,
-      },
+    const sections = bindMockWriting({
+      day: option.day,
+      essays: writing.essays,
+      sections: plan.sections,
+      structure: setup.structure,
     });
 
-    // The speaking paper is written while the learner sits the papers before it.
-    if (conditions.sections.some((section) => section.kind === "speaking")) {
-      await oweFollowUps({
-        db: tx,
-        followUps: [{ input: { mockId: created.id }, kind: "writeSpeakingPaper" }],
-        userId,
-      });
+    if (!sections) {
+      return unchanged({ status: "notEnoughQuestions" });
     }
 
-    return { id: created.id, status: "started" };
+    return persistAnytimeMock({
+      candidates,
+      essays: writing.essays,
+      goal,
+      option,
+      plan: { ...plan, sections },
+      setup,
+      tx,
+      userId,
+    });
   });
+}
+
+async function persistAnytimeMock({
+  candidates,
+  essays,
+  goal,
+  option,
+  plan,
+  setup,
+  tx,
+  userId,
+}: Parameters<typeof toConditions>[0] & { tx: TransactionClient; userId: string }) {
+  const now = new Date();
+
+  const conditions = toConditions({ candidates, essays, goal, option, plan, setup });
+
+  const created = await tx.mockExam.create({
+    data: {
+      conditions,
+      examBlueprintId: setup.blueprint?.id ?? null,
+      goalId: goal.id,
+      sectionStartedAt: now,
+      startedAt: now,
+      userId,
+    },
+  });
+
+  if (essays.length > 0) {
+    const admission = await admitWriting({
+      extra: true,
+      itemIds: essays.map((essay) => essay.itemId),
+      localDate: getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) }),
+      owner: { mock: created },
+      tx,
+      userId,
+    });
+
+    if (admission.status !== "ready") {
+      return unchanged(admission);
+    }
+  }
+
+  // The speaking paper is written while the learner sits the papers before it.
+  if (conditions.sections.some((section) => section.kind === "speaking")) {
+    await oweFollowUps({
+      db: tx,
+      followUps: [{ input: { mockId: created.id }, kind: "writeSpeakingPaper" }],
+      userId,
+    });
+  }
+
+  return { id: created.id, status: "started" as const };
 }

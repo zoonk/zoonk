@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_chooser_all_tests": "0fde76baf65221db71ec20903b1adba27854249bd528eabf5a18e8e8ee39b3b4",
+  "mock_chooser_both_tests": "92def86ee968aea3aa583c298763fc1b06df402fc3ac49c9bd92be20701b56ff",
   "mock_chooser_day": "f76b625c1790396203e4e7d936438e278fb604b791bf9ce357fbe916cec755ff",
   "mock_chooser_day_without": "495b0e2d99c704b73c21a5cf70900002d181a4dac1c86c092a6d7fa8d01aa94c",
+  "mock_chooser_exam_tests": "ff6252b79972438d7205a408308e0ed8ac5cbad5cdccd9da0aaf26d0de3298a9",
   "mock_chooser_failed": "be90a629471826adbcb31c2ab495700a5401cbaac4a97a2bf1b5455c8bfc759e",
   "mock_chooser_full_exam": "66c85a2e43b8d2f7c1f2e122f9ce361645ee875e823524fa374dc2e2a450656b",
   "mock_chooser_full_exam_without": "68b1f8d72d3a325cf09e0eeee23f53984076a8aa419fb0ff942dead2fb2c23d4",
@@ -12,6 +15,7 @@
   "mock_chooser_line": "f7959c506886d28c425c25dcd72d853694f20c6785fab11cd324afe53dd9133b",
   "mock_chooser_no_written_part": "96d06171f629c932e13ce7788afadc4e11d739954cbb13e35e6d01a10c9bfd71",
   "mock_chooser_not_enough": "fe115719d0401dd03d62bcfb71a30a95d38069489f85d32d97d152e03e04a0dc",
+  "mock_chooser_objective_only": "dad0ca389f567bc7f5430e547120367022718d417bfcceb7ded1fae023f3d8fb",
   "mock_chooser_one_subject": "063908ea394847a8be0d174e05a1019e45d5720d7eec41ee1c02a551302d8a90",
   "mock_chooser_option_size": "1d15e3d5e7b8e76c5bd63806666b0a003b3a1ce3f92727ff96bd867935cea575",
   "mock_chooser_pick_another": "16ae796177b7c83a27d9a5e9798b898fd83b2c5c7725c4124729059c9a417140",
@@ -28,7 +32,10 @@
   "mock_chooser_usually": "0d4d79836963dae520702bc1485ffe3244f4a1c5e6178c01f76db6a424d1adaf",
   "mock_chooser_writing": "f6b59625b0aecf630963782e594a9acfe879a1431085452aaecb7585e77b1564",
   "mock_chooser_writing_questions": "5d6066ea3560d261d4ce02401be965282033f552f03cca6434ed90b02aeb62ff",
-  "mock_chooser_writing_questions_line": "34e947310c537e645722e41d310f0ce7b90720ec2c221cb453aedde28f099ae0"
+  "mock_chooser_writing_questions_line": "34e947310c537e645722e41d310f0ce7b90720ec2c221cb453aedde28f099ae0",
+  "mock_chooser_writing_written": "eda5f3f123f1aedc42f4f9ed97d428969cec2827c3b8c998f0c1af203897eb8c",
+  "mock_chooser_writing_written_detail": "af35f51d37a1d303d667e3abdf357cf38cb858b7b551042dd2f497833b862d26",
+  "mock_chooser_writing_written_failed": "7dc058e316bc9092afc8674b3444ec0166aae5f9e47a46617a35891ce5465101"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -38,6 +45,22 @@
     <string name="mock_chooser_one_subject">Ein Fach</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">Die Prüfung</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="one">Deine Prüfung hat %d Test</item>
+        <item quantity="other">Deine Prüfung hat %d Tests</item>
+    </plurals>
+    <string name="mock_chooser_objective_only">Kürzer, nur geschlossene Fragen</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">Beide Tests</string>
+    <string name="mock_chooser_writing_written">Wir erstellen deine Fragen…</string>
+    <string name="mock_chooser_writing_written_detail">Fragen wie in deiner Prüfung. Hier startet deine Probeprüfung, sobald die Fragen fertig sind.</string>
+    <string name="mock_chooser_writing_written_failed">Wir konnten deine Fragen nicht erstellen</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="one">Alle %1$d Tests</item>
+        <item quantity="other">Alle %1$d Tests</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">Tag %1$d</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

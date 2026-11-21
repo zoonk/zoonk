@@ -1,14 +1,45 @@
 import "server-only";
-import { type StudySessionBlock, isPrismaUniqueConstraintError } from "@zoonk/db";
+import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { startStudyBlock } from "../../sessions/start-study-block";
+import { admitWriting } from "../essays/writing-admission";
+import { type WritingNeedsChoice } from "../essays/writing-contract";
+import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
 import { buildMockConditions } from "./_utils/mock-conditions";
-import { findOwnedMock } from "./_utils/owned-mock";
-import { type MockTimeZoneInput } from "./mock-contract";
+import { getMockWritingAvailability } from "./_utils/mock-writing-choices";
+import { findMockWriting } from "./_utils/mock-writing-supply";
+import { type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
+import { type MockConditions, type MockTimeZoneInput } from "./mock-contract";
+import { snapshotMockWriting } from "./mock-written-points";
+import { bindMockWriting } from "./written-test-plan";
 
-export type StartMockResult = {
-  status: "blockFinished" | "expired" | "finished" | "notFound" | "ready" | "unauthorized";
+type StartWritingRequest = {
+  count: number;
+  goalId: string;
+  taskKey: string;
+  unit: "answer";
+  userId: string;
 };
+
+export type StartMockResult =
+  | WritingNeedsChoice
+  | {
+      status:
+        | "blockFinished"
+        | "expired"
+        | "finished"
+        | "notEnoughQuestions"
+        | "notFound"
+        | "plusRequired"
+        | "ready"
+        | "signUpRequired"
+        | "unauthorized";
+    }
+  | { requests: StartWritingRequest[]; status: "writing" };
 
 async function startScheduledBlock({
   block,
@@ -68,42 +99,153 @@ export async function startMock({
     return { status: "notFound" };
   }
 
-  const started = await startScheduledBlock({ block: owned.block, input });
+  return startNewScheduledMock({ input, owned: { ...owned, block: owned.block } });
+}
+
+async function startNewScheduledMock({
+  input,
+  owned,
+}: {
+  input: MockTimeZoneInput;
+  owned: OwnedMock & { block: StudySessionBlock };
+}): Promise<StartMockResult> {
+  const { block, goal, payload, structure, userId } = owned;
+
+  if (goal && (await getAnytimeMockAccess(goal)) !== "open") {
+    return { status: "plusRequired" };
+  }
+
+  if (block.status === "completed" || block.status === "skipped") {
+    return { status: "blockFinished" };
+  }
+
+  const identity = payload.checkpoint?.mockIdentity;
+  const fullKind = identity?.fullLength ? "full" : "half";
+  const kind = payload.checkpoint?.written ? "written" : fullKind;
+  const shape = { day: identity?.day ?? null, kind } as const;
+  const { blueprint, picks } = owned;
+
+  const availability = getMockWritingAvailability({
+    picks,
+    shape,
+    structure: blueprint ? readBlueprintContent(blueprint).structure : null,
+  });
+
+  if (availability) {
+    return availability;
+  }
+
+  const writingInput = goal ? { goal, goalId: goal.id, shape, structure, userId } : null;
+  const supply = writingInput && (await findMockWriting(writingInput));
+
+  if (supply?.status === "missing" && goal) {
+    return {
+      requests: supply.requests.map((request) => ({ ...request, goalId: goal.id, userId })),
+      status: "writing",
+    };
+  }
+
+  const started = await startScheduledBlock({ block, input });
 
   if (started.status !== "ready") {
     return started;
   }
 
-  const conditions = await buildMockConditions(owned);
+  const preview = await buildMockConditions(owned);
+
+  return writeLearnerChange<StartMockResult>({ userId }, (tx) =>
+    persistScheduledMock({ input, owned, preview, tx, writingInput }),
+  );
+}
+
+async function persistScheduledMock({
+  input,
+  owned,
+  preview,
+  tx,
+  writingInput,
+}: {
+  input: MockTimeZoneInput;
+  owned: OwnedMock & { block: StudySessionBlock };
+  preview: MockConditions;
+  tx: TransactionClient;
+  writingInput: Parameters<typeof findMockWriting>[0] | null;
+}) {
+  const {
+    block: { id: blockId },
+    goal,
+    userId,
+  } = owned;
+
+  const existing = await tx.mockExam.findUnique({ where: { blockId } });
+
+  if (existing) {
+    return unchanged({ status: "ready" });
+  }
+
+  if (writingInput && writingInput.shape.kind !== "half") {
+    await lockUsageForViewer({ transaction: tx, userId });
+  }
+
+  const writing = writingInput && (await findMockWriting({ ...writingInput, tx }));
+
+  if (writing?.status === "missing" && goal) {
+    return unchanged({
+      requests: writing.requests.map((request) => ({ ...request, goalId: goal.id, userId })),
+      status: "writing",
+    });
+  }
+
+  const essays = writing?.status === "ready" ? writing.essays : [];
+
+  const sections = bindMockWriting({
+    day: preview.day,
+    essays,
+    sections: preview.sections,
+    structure: owned.structure,
+  });
+
+  if (!sections?.length) {
+    return unchanged({ status: "notEnoughQuestions" });
+  }
+
+  const conditions = {
+    ...preview,
+    sections,
+    ...snapshotMockWriting({ day: preview.day, essays, structure: owned.structure }),
+  };
+
   const now = new Date();
 
-  try {
-    await writeLearnerChange<null>({ userId: owned.userId }, async (tx) => {
-      const existing = await tx.mockExam.findUnique({ where: { blockId } });
+  const created = await tx.mockExam.create({
+    data: {
+      blockId,
+      conditions,
+      examBlueprintId: owned.blueprint?.id ?? null,
+      goalId: goal?.id ?? null,
+      sectionStartedAt: now,
+      startedAt: now,
+      userId,
+    },
+  });
 
-      if (existing) {
-        return unchanged(null);
-      }
-
-      await tx.mockExam.create({
-        data: {
-          blockId,
-          conditions,
-          examBlueprintId: owned.blueprint?.id ?? null,
-          goalId: owned.goal?.id ?? null,
-          sectionStartedAt: now,
-          startedAt: now,
-          userId: owned.userId,
-        },
-      });
-
-      return null;
+  if (essays.length > 0) {
+    const admitted = await admitWriting({
+      extra: false,
+      itemIds: essays.map((essay) => essay.itemId),
+      localDate: getDateInTimeZone({
+        date: now,
+        timeZone: getAnswerTimeZone({ goal, timeZone: input.timeZone }),
+      }),
+      owner: { mock: created },
+      tx,
+      userId,
     });
-  } catch (error) {
-    if (!isPrismaUniqueConstraintError(error)) {
-      throw error;
+
+    if (admitted.status !== "ready") {
+      return unchanged({ status: "signUpRequired" as const });
     }
   }
 
-  return { status: "ready" };
+  return { status: "ready" as const };
 }

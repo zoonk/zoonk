@@ -1,8 +1,9 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { type MockConditions } from "./mock-contract";
+import { type MockConditions, type MockShape } from "./mock-contract";
 import { outlineMock } from "./mock-plan";
 import { type MockLeftOut } from "./mock-view-contract";
 import { type MockDayWrittenPart, getDayWrittenParts } from "./written-parts";
+import { outlineWrittenPrompts } from "./written-test-plan";
 
 const SECTION_PARTS = new Set<MockLeftOut["part"]>(["listening", "practical", "speaking"]);
 
@@ -33,7 +34,7 @@ export function listMockLeftOut({
   running?: ReadonlySet<string>;
   typed: readonly MockTypedPart[];
   day: number | null;
-  kind: "area" | "full" | "half";
+  kind: MockShape["kind"];
   structure: ExamStructure | null;
 }): MockLeftOut[] {
   const allSections = structure?.mock?.sections ?? [];
@@ -84,7 +85,7 @@ export function readMockWrittenParts({
 }): MockDayWrittenPart[] {
   return outlineMock({
     day,
-    essays: Array.from({ length: essays }, (_, index) => ({ area: null, itemId: String(index) })),
+    essays: outlineWrittenPrompts({ day, structure }).slice(0, essays),
     fullLength,
     structure,
   }).written;
@@ -97,7 +98,7 @@ export function listSatMockLeftOut({
 }: {
   conditions: Pick<
     MockConditions,
-    "day" | "fullLength" | "purpose" | "sections" | "shape" | "unpicked"
+    "day" | "fullLength" | "purpose" | "sections" | "shape" | "unpicked" | "writtenParts"
   >;
   structure: ExamStructure | null;
   typed: readonly MockTypedPart[];
@@ -113,14 +114,16 @@ export function listSatMockLeftOut({
 
   const essays = conditions.sections.reduce((sum, section) => sum + section.essays.length, 0);
 
-  const asked = readMockWrittenParts({
-    day: conditions.day,
-    essays,
-    fullLength: conditions.fullLength,
-    structure,
-  })
-    .filter((part) => part.asked)
-    .map((part) => part.name);
+  const asked =
+    conditions.writtenParts?.map((part) => part.name) ??
+    readMockWrittenParts({
+      day: conditions.day,
+      essays,
+      fullLength: conditions.fullLength || kind === "written",
+      structure,
+    })
+      .filter((part) => part.asked)
+      .map((part) => part.name);
 
   return listMockLeftOut({
     asked,

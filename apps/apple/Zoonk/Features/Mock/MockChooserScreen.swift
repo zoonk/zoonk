@@ -67,12 +67,19 @@ private enum ChooserStatus: Equatable {
     minutes: Int, questions: Int)
   case notEnoughQuestions
   case failed
+  /// The written test's questions couldn't be written.
+  case writingFailed
   case refused(HelpLimit)
+  /// The written test past the day's extra grades: it starts again on `returnsOn`.
+  case writingLimitReached(returnsOn: String)
+  /// The written test's questions wait for an exam choice the options didn't say yet.
+  case needsChoice(choiceGroups: [String])
   case plusRequired
 }
 
 private struct MockChooser: View {
   @Environment(ExamStore.self) private var exam
+  @Environment(AppRouter.self) private var router
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var picked: String?
@@ -170,25 +177,45 @@ private struct MockChooser: View {
     }
   }
 
+  /// An exam of several tests (an objective one in the morning, a written one in the afternoon).
+  private var tests: Int { severalDays ? 0 : MockLabels.examTests(view.options) }
+
+  /// An exam of several tests lists each test and all of them first, then the shorter, objective-only
+  /// options; any other exam lists the exam, then one subject.
+  private func leads(_ option: MockOption) -> Bool {
+    tests > 1 ? option.kind != .half && option.kind != .area : option.kind != .area
+  }
+
   @ViewBuilder
   private var choices: some View {
-    let examOptions = view.options.filter { $0.kind != .area }
-    let subjects = view.options.filter { $0.kind == .area }
+    let examOptions = view.options.filter(leads)
+    let rest = view.options.filter { !leads($0) }
 
     Section {
       ForEach(examOptions) { optionRow($0) }
     } header: {
-      if !subjects.isEmpty {
+      if tests > 1 {
+        SectionTitle(
+          Text(
+            "Your exam has \(tests) tests", tableName: "Mock",
+            comment: "Over the mock exams of an exam held as several tests"))
+      } else if !rest.isEmpty {
         SectionTitle(
           Text("The exam", tableName: "Mock", comment: "Mock exams of a whole exam or exam day"))
       }
     }
 
-    if !subjects.isEmpty {
+    if !rest.isEmpty {
       Section {
-        ForEach(subjects) { optionRow($0) }
+        ForEach(rest) { optionRow($0, objectiveTitled: tests > 1) }
       } header: {
-        SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
+        if tests > 1 {
+          SectionTitle(
+            Text(
+              "Shorter, objective questions only", tableName: "Mock"))
+        } else {
+          SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
+        }
       }
     }
   }
@@ -223,7 +250,7 @@ private struct MockChooser: View {
         startLabel
       }
       .buttonStyle(.mainAction)
-      .disabled(pickedOption == nil)
+      .disabled(pickedOption.map { rowLimit($0) != nil } ?? true)
       .keyboardShortcut(.defaultAction)
       .confirmationDialog(
         Text(
@@ -260,7 +287,38 @@ private struct MockChooser: View {
         String(localized: "Mock exams need a subscription", table: "Mock"), tone: .status)
     }
 
-    return failure.map { BarNote($0) }
+    if let failure {
+      return BarNote(failure)
+    }
+
+    // Today asks the exam's open choices, so an option waiting for one leads there.
+    guard let picked = pickedOption, let groups = pendingChoice(picked) else { return nil }
+
+    return BarNote(
+      WritingLabels.choiceLine(groups), tone: .status,
+      action: .init(
+        label: Text("Choose on Today", tableName: "Mock"),
+        perform: { router.showRoot(of: .today) }))
+  }
+
+  /// The exam choices an option's written test waits for, from the options or a refused start.
+  private func pendingChoice(_ option: MockOption) -> [String]? {
+    if let groups = option.pendingChoice { return groups }
+    if case .needsChoice(let groups) = status, option.hasWrittenTest { return groups }
+    return nil
+  }
+
+  /// Why an option can't start now, said on its own row the way Today says it.
+  private func rowLimit(_ option: MockOption) -> String? {
+    if let groups = pendingChoice(option) {
+      return WritingLabels.choiceLine(groups)
+    }
+
+    if case .writingLimitReached(let returnsOn) = status, option.hasWrittenTest {
+      return WritingLabels.gradingReturns(returnsOn)
+    }
+
+    return nil
   }
 
   private var detail: Text {
@@ -339,24 +397,38 @@ private struct MockChooser: View {
       String(
         localized: "We couldn't start the mock exam. Try again.", table: "Mock",
         comment: "Start failed")
+    case .writingFailed?:
+      String(localized: "We couldn't write your questions", table: "Mock")
     default:
       nil
     }
   }
 
+  /// The written test's questions are one model call each, with no steps to show.
   private var writing: some View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
-        Text(
-          "Getting your mock exam ready…", tableName: "Mock", comment: "Questions being written"
-        )
-        .typeStyle(.body.weight(.semibold))
-        Text(
-          "It starts here when it's ready.", tableName: "Mock",
-          comment: "While a mock's questions are written"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+        if pickedOption?.kind == .written {
+          Text("Writing your questions…", tableName: "Mock")
+            .typeStyle(.body.weight(.semibold))
+          Text(
+            "Questions like the ones on your exam. Your mock exam starts here when they're ready.",
+            tableName: "Mock"
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+        } else {
+          Text(
+            "Getting your mock exam ready…", tableName: "Mock", comment: "Questions being written"
+          )
+          .typeStyle(.body.weight(.semibold))
+          Text(
+            "It starts here when it's ready.", tableName: "Mock",
+            comment: "While a mock's questions are written"
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+        }
       }
     } icon: {
       ProgressView()
@@ -369,17 +441,26 @@ private struct MockChooser: View {
     switch status {
     case .refused(let limit):
       return [limit.words(.mockExams).said]
-    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed, .short:
+    case .writingLimitReached(let returnsOn):
+      return [WritingLabels.gradingReturns(returnsOn)]
+    case .needsChoice(let groups):
+      return [WritingLabels.choiceLine(groups)]
+    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed, .writingFailed, .short:
       return []
     }
   }
 
-  private func optionRow(_ option: MockOption) -> some View {
-    choiceRow(
+  /// An exam taken as one test reads its options as it always did; its sections say nothing new.
+  private func optionRow(_ option: MockOption, objectiveTitled: Bool = false) -> some View {
+    var shown = option
+    if tests < 2 { shown.sections = nil }
+
+    return choiceRow(
       isPicked: option.id == pickedOption?.id,
-      title: MockLabels.optionName(option, severalDays: severalDays),
-      detail: optionDetail(option),
-      trailing: optionSize(option)
+      title: MockLabels.optionName(shown, severalDays: severalDays, tests: tests),
+      detail: objectiveTitled ? nil : optionDetail(shown),
+      note: rowLimit(option),
+      trailing: optionSize(shown)
     ) {
       picked = option.id
     }
@@ -390,7 +471,7 @@ private struct MockChooser: View {
   private func optionSize(_ option: MockOption) -> [String] {
     let size = String(
       localized:
-        "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
+        "\(MockLabels.questions(option)) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
       table: "Mock", comment: "A mock exam's size: its number of questions, then its time limit.")
 
     guard let usual = MockLabels.usualMinutes(option) else {
@@ -407,7 +488,7 @@ private struct MockChooser: View {
   /// Main's `ChoiceRows`: the words, the mock's size under them on a phone or before the row's
   /// mark, and the mark at the end, empty until the row is picked, so the rows read as choices.
   private func choiceRow(
-    isPicked: Bool, title: String, detail: String?, trailing: [String],
+    isPicked: Bool, title: String, detail: String?, note: String? = nil, trailing: [String],
     action: @escaping () -> Void
   ) -> some View {
     let size = FactSegments(trailing)
@@ -418,7 +499,8 @@ private struct MockChooser: View {
       HStack(spacing: 12) {
         VStack(alignment: .leading, spacing: 2) {
           ChoiceWords(
-            title: Text(title), detail: detail.flatMap { $0.isEmpty ? nil : Text($0) })
+            title: Text(title), detail: detail.flatMap { $0.isEmpty ? nil : Text($0) },
+            note: note.map { Text($0) })
 
           if sizeUnderWords {
             size
@@ -435,6 +517,13 @@ private struct MockChooser: View {
   }
 
   private func optionDetail(_ option: MockOption) -> String {
+    let sessions = (option.sections ?? []).compactMap(\.session)
+
+    // A test of an exam of several says when it happens, if the notice says; its name says the rest.
+    if !(option.sections ?? []).isEmpty, option.kind != .half {
+      return sessions.joinedFacts()
+    }
+
     let subjects = severalDays && option.kind != .area ? option.areas : []
     let parts = option.covers ?? subjects + option.written
 
@@ -456,7 +545,14 @@ private struct MockChooser: View {
     starting.run {
       let result = await exam.startMock(
         goalId: goalId, shape: pickedOption.shape, acceptFewer: acceptFewer,
-        onWriting: { if !Task.isCancelled { status = .writing } })
+        onWriting: { generationId in
+          guard !Task.isCancelled else { return }
+          status = .writing
+          if pickedOption.asksWriting {
+            UsageAnalytics.track(
+              .writingPromptWaitViewed(generationID: generationId, surface: "mock"))
+          }
+        })
       guard !Task.isCancelled else { return nil }
 
       switch result {
@@ -469,6 +565,10 @@ private struct MockChooser: View {
           availableAt: availableAt, minutes: minutes, questions: questions)
       case .done(.notEnoughQuestions): return .notEnoughQuestions
       case .done(.refused(let limit)): return .refused(limit)
+      case .done(.writingLimitReached(let returnsOn)):
+        return .writingLimitReached(returnsOn: returnsOn)
+      case .done(.needsChoice(let groups)):
+        return .needsChoice(choiceGroups: groups)
       case .done(.plusRequired):
         // The server's answer is the access now, even if the read after it fails; a later read
         // (a subscription bought) replaces it.
@@ -480,7 +580,8 @@ private struct MockChooser: View {
         }
         await options.refresh()
         return .plusRequired
-      case .done(.needsQuestions), .failed: return .failed
+      case .done(.needsQuestions), .failed:
+        return status == .writing && pickedOption.kind == .written ? .writingFailed : .failed
       case .obsolete: return nil
       }
     } then: { _ in
@@ -507,7 +608,10 @@ struct MockSummaryRow: View {
         StatusMark(status: .done)
       } trailing: {
         VStack(alignment: isStacked ? .leading : .trailing, spacing: 2) {
-          Text(score)
+          // A written test has no objective questions to score.
+          if mock.total > 0 {
+            Text(score)
+          }
           Text(PlanDate.moment(mock.finishedAt, .row, weekday: true))
         }
       }

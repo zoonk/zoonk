@@ -1,9 +1,12 @@
 package com.zoonk.android.feature.session
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.android.feature.writing.WritingTaskName
+import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCapsulesInner
+import com.zoonk.api.models.StudyBlockWritingAvailability
 import com.zoonk.api.models.StudyCheckpoint
 import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudyExtraTime
@@ -21,6 +24,7 @@ import com.zoonk.api.models.UnstartedStudyDayBlocksInner
 import com.zoonk.api.models.UnstartedStudyDayMissionsInner
 import com.zoonk.api.models.UnstartedStudyDayMissionsInnerOpens
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import java.util.UUID
 
 /**
@@ -60,6 +64,22 @@ data class SessionBar(
     val completed: Int,
     val total: Int,
 )
+
+enum class WritingRow { DraftSaved, Tomorrow }
+
+private fun writingRow(
+    availability: StudyBlockWritingAvailability?,
+    hasWritingDraft: Boolean?,
+): WritingRow? =
+    when {
+        availability is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value -> WritingRow.Tomorrow
+        hasWritingDraft == true -> WritingRow.DraftSaved
+        else -> null
+    }
+
+/** The day a written task waiting for tomorrow's grading returns. */
+private fun StudyBlockWritingAvailability.returnsOn(): java.time.LocalDate? =
+    (this as? StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value)?.value?.returnsOn?.toJavaLocalDate()
 
 enum class EmptyDay { LessonsComing, LessonsToPrepare, NothingNew }
 
@@ -105,6 +125,14 @@ data class DayStep(
     val weakest: Boolean,
     val opensInPlayer: Boolean = false,
     val waitReason: StudyBlock.WaitReason?,
+    /** A written task's row: its saved draft goes on, or today's extra grades are used and it waits for tomorrow. */
+    val writing: WritingRow? = null,
+    /** When a [WritingRow.Tomorrow] task returns: tomorrow, or a later day. */
+    val writingReturnsOn: java.time.LocalDate? = null,
+    /** Which question of the written test a whole answer is, so its row names it rather than the notice's sentence. */
+    val writingTask: WritingTaskName? = null,
+    /** A short writing task on what a lesson just taught, rather than a whole answer. */
+    val drill: Boolean = false,
 ) {
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
@@ -311,6 +339,10 @@ fun StudyBlock.toDayStep(): DayStep =
         weakest = weakest,
         opensInPlayer = opensInPlayer,
         waitReason = waitReason,
+        writing = writingRow(writingAvailability, hasWritingDraft),
+        writingReturnsOn = writingAvailability?.returnsOn(),
+        writingTask = writingTask?.toName(),
+        drill = writingUnit == StudyBlock.WritingUnit.DRILL,
     )
 
 private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
@@ -345,6 +377,10 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         weakest = weakest,
         opensInPlayer = opensInPlayer,
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
+        writing = writingRow(writingAvailability, hasWritingDraft),
+        writingReturnsOn = writingAvailability?.returnsOn(),
+        writingTask = writingTask?.toName(),
+        drill = writingUnit == UnstartedStudyDayBlocksInner.WritingUnit.DRILL,
     )
 
 fun StudyMission.toDayMission(): DayMission =

@@ -44,6 +44,7 @@ function examBlueprint({
     model: "test",
     name: "Test Exam",
     nextCheckAt: null,
+    noticeRereadSource: null,
     ownerId,
     promptVersion: "test",
     registrationEndsAt: null,

@@ -19,6 +19,8 @@ function getContent({
     block.kind,
     block.lessonId,
     block.estimatedMinutes,
+    block.payload.writing?.taskKey,
+    block.payload.writing?.unit,
     ...(anyOrder ? itemIds.toSorted() : itemIds),
   ].join(":");
 }
@@ -49,6 +51,28 @@ export function hasSameContent({
               payload: readBlockPayload(current),
             },
           })
+      );
+    })
+  );
+}
+
+export function hasSameBlocks({
+  locked,
+  read,
+}: {
+  locked: readonly StudySessionBlock[];
+  read: readonly StudySessionBlock[];
+}): boolean {
+  return (
+    read.length === locked.length &&
+    read.every((block, index) => {
+      const current = locked[index];
+
+      return (
+        current?.id === block.id &&
+        current.status === block.status &&
+        readBlockPayload(current).writing?.admissionId ===
+          readBlockPayload(block).writing?.admissionId
       );
     })
   );

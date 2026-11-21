@@ -5,13 +5,17 @@ extension View {
   /// Main's input around a `TextField` or `TextEditor` drawn outside a list row: the stronger line,
   /// 44pt tall (an answer's field is taller), and a thicker ink line while it has focus. An invalid
   /// field draws main's `destructive` mark with a soft 3pt ring around it; its message keeps
-  /// `destructiveText`. A checked answer's field takes its verdict's line instead.
+  /// `destructiveText`. A checked answer's field takes its verdict's line instead. A field that
+  /// `holdsFocus` for a whole task and fills the screen, such as a written answer, keeps a soft line
+  /// while focused, as main's writing field does; the ink line comes back with more contrast.
   func fieldBorder(
-    isFocused: Bool = false, isInvalid: Bool = false, isRight: Bool? = nil, minHeight: CGFloat = 44
+    isFocused: Bool = false, isInvalid: Bool = false, isRight: Bool? = nil, minHeight: CGFloat = 44,
+    holdsFocus: Bool = false
   ) -> some View {
     modifier(
       FieldBorder(
-        isFocused: isFocused, isInvalid: isInvalid, isRight: isRight, minHeight: minHeight))
+        isFocused: isFocused, isInvalid: isInvalid, isRight: isRight, minHeight: minHeight,
+        holdsFocus: holdsFocus))
   }
 }
 
@@ -23,6 +27,9 @@ private struct FieldBorder: ViewModifier {
   let isInvalid: Bool
   let isRight: Bool?
   let minHeight: CGFloat
+  let holdsFocus: Bool
+
+  private var softFocus: Bool { holdsFocus && contrast != .increased }
 
   func body(content: Content) -> some View {
     let shape = RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
@@ -33,7 +40,7 @@ private struct FieldBorder: ViewModifier {
       .frame(minHeight: minHeight)
       .background(.boxBackground, in: shape)
       .overlay {
-        shape.strokeBorder(line, lineWidth: isFocused && isRight == nil ? 2 : 1)
+        shape.strokeBorder(line, lineWidth: isFocused && isRight == nil && !softFocus ? 2 : 1)
       }
       .background {
         if isInvalid && isRight == nil && contrast != .increased {
@@ -53,6 +60,10 @@ private struct FieldBorder: ViewModifier {
     if isInvalid {
       return colorScheme == .dark && contrast != .increased
         ? Color.destructive.opacity(0.5) : .destructive
+    }
+
+    if isFocused, softFocus {
+      return Color(.foreground).opacity(0.35)
     }
 
     return isFocused ? Color(.foreground) : .input

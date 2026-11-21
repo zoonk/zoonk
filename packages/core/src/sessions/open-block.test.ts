@@ -15,7 +15,8 @@ import {
   waitForBlockedStatement,
 } from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
-import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
+import { toProduceBlock } from "../exams/essays/produce-block";
+import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
 import { claimStudySessionSummaryVisit } from "./claim-study-session-summary-visit";
 import { openStudyBlock } from "./open-block";
 import { openStudyDay } from "./open-study-day";
@@ -176,6 +177,40 @@ describe("the learner opens a study block", () => {
     });
 
     await expect(readBlock(review)).resolves.toMatchObject({ status: "active" });
+  });
+
+  it("opens the next available block when an extra writing block returns tomorrow", async () => {
+    const { session, user } = await learnerSession();
+
+    const produce = toProduceBlock({
+      minutes: 8,
+      taskKey: "policy",
+      title: "Policy",
+      unit: "drill",
+    });
+
+    const [, review] = await Promise.all([
+      studySessionBlockFixture({
+        ...produce,
+        payload: { ...produce.payload, extra: true },
+        position: 0,
+        sessionId: session.id,
+      }),
+      studySessionBlockFixture({ kind: "review", position: 1, sessionId: session.id }),
+      prisma.writingAdmission.createMany({
+        data: Array.from({ length: 6 }, () => ({
+          extra: true,
+          id: crypto.randomUUID(),
+          itemIds: [],
+          localDate: SESSION_TODAY,
+          userId: user.id,
+        })),
+      }),
+    ]);
+
+    await expect(
+      openStudyBlock({ target: { kind: "next", sessionId: session.id }, timeZone: "UTC" }),
+    ).resolves.toMatchObject({ opening: { blockId: review.id, kind: "session" }, status: "ready" });
   });
 
   it("continues directly to Today after a seen summary unless a reward is waiting", async () => {
