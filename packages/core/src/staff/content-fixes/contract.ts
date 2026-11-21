@@ -176,6 +176,16 @@ const effectSchema = z.discriminatedUnion("kind", [
         "The lessons' other accepted word orders are cleared and written again right after approval",
     }),
   z
+    .object({
+      kind: z.literal("distractorsLikeTranslations"),
+      texts: z.array(z.string()),
+      wordId: idSchema,
+    })
+    .meta({
+      description:
+        "Wrong options on the word's translation screen match the lesson's translations; check they're in the word's language",
+    }),
+  z
     .object({ count: z.int(), kind: z.literal("pronunciationsKept"), wordId: idSchema })
     .meta({
       description: "The word's pronunciation guides stay; set them in the fix to change them",
