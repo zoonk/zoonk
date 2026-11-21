@@ -275,6 +275,7 @@ msgstr "{days, plural, one {About # day left} other {About # days left}}"
 #: src/today/today-action.tsx
 #: src/writing/writing-refused.tsx
 #: src/writing/writing-screen.tsx
+#: src/writing/writing-start.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continue"
@@ -375,6 +376,7 @@ msgid "Take a short break, then try again."
 msgstr "Take a short break, then try again."
 
 #: src/_components/help-limit-notice.tsx
+#: src/writing/writing-start.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "This needs a free account"
@@ -533,6 +535,7 @@ msgstr "{done, number} of {total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
+#: src/mock/mock-chooser-page.tsx
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
@@ -780,6 +783,7 @@ msgstr "View"
 
 #: src/_components/task-close.tsx
 #: src/mock/mock-runner-view.tsx
+#: src/writing/writing-write-screen.tsx
 msgctxt "fnihsY"
 msgid "Leave"
 msgstr "Leave"
@@ -2256,7 +2260,6 @@ msgstr "You see your result at the end."
 #: src/today/today-preparing.tsx
 #: src/today/today-shell.tsx
 #: src/writing/writing-screen.tsx
-#: src/writing/writing-start.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Today"
@@ -3058,27 +3061,20 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "That didn't go through. Your text is still here. Try again in a moment."
 
 #: src/essay/essay-status-line.tsx
-#: src/language/level-test/level-test-questions.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "aFV0Wu"
-msgid "Create your free account to continue."
-msgstr "Create your free account to continue."
-
-#: src/essay/essay-status-line.tsx
-msgctxt "Vl53xq"
-msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
-msgstr "You've used today's essay grades. Your text stays here; send it tomorrow."
-
-#: src/essay/essay-status-line.tsx
 #: src/mock/mock-result-essays.tsx
 msgctxt "mrTM3l"
 msgid "Still grading. This is taking longer than usual."
 msgstr "Still grading. This is taking longer than usual."
 
 #: src/essay/essay-status-line.tsx
-msgctxt "UqDNfF"
-msgid "Reading your essay against each criterion. It can take up to 30 seconds."
-msgstr "Reading your essay against each criterion. It can take up to 30 seconds."
+msgctxt "fzh_pw"
+msgid "Reading your answer against each criterion. It can take up to 30 seconds."
+msgstr "Reading your answer against each criterion. It can take up to 30 seconds."
+
+#: src/essay/essay-status-line.tsx
+msgctxt "epOkEr"
+msgid "Not saved yet. It's kept on this device."
+msgstr "Not saved yet. It's kept on this device."
 
 #: src/essay/essay-word-count.tsx
 #: src/writing/writing-editor.tsx
@@ -4010,6 +4006,12 @@ msgstr "stopped here"
 msgctxt "wSt267"
 msgid "not started yet"
 msgstr "not started yet"
+
+#: src/generation/indeterminate-wait.tsx
+#: src/writing/writing-start.tsx
+msgctxt "EY8lh9"
+msgid "Nothing was lost. Try again in a moment."
+msgstr "Nothing was lost. Try again in a moment."
 
 #: src/generation/lesson-generation-copy.ts
 msgctxt "57Hm5c"
@@ -5020,14 +5022,14 @@ msgid "Close to the {minimum} points needed"
 msgstr "Close to the {minimum} points needed"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "-xVO08"
-msgid "{part} asks for {share} of its points, whatever your other scores."
-msgstr "{part} asks for {share} of its points, whatever your other scores."
+msgctxt "iPMJIn"
+msgid "{part} needs {share} of its points, whatever your other scores."
+msgstr "{part} needs {share} of its points, whatever your other scores."
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "sA_m_k"
-msgid "{part} asks for {minimum} points, whatever your other scores."
-msgstr "{part} asks for {minimum} points, whatever your other scores."
+msgctxt "_XpN-M"
+msgid "{part} needs {minimum} points, whatever your other scores."
+msgstr "{part} needs {minimum} points, whatever your other scores."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "doYQpO"
@@ -5052,6 +5054,7 @@ msgstr "{part} isn't measured yet."
 #: src/journey/preparation/written-projection.tsx
 #: src/syllabus/subject-write-bar.tsx
 #: src/writing/writing-screen.tsx
+#: src/writing/writing-start.tsx
 msgctxt "k2veDA"
 msgid "Write"
 msgstr "Write"
@@ -6214,6 +6217,12 @@ msgstr "Skip this question"
 msgctxt "U86096"
 msgid "I didn't understand the audio"
 msgstr "I didn't understand the audio"
+
+#: src/language/level-test/level-test-questions.tsx
+#: src/language/pronunciation/pronunciation-word-card.tsx
+msgctxt "aFV0Wu"
+msgid "Create your free account to continue."
+msgstr "Create your free account to continue."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "chcgvC"
@@ -7835,10 +7844,11 @@ msgctxt "GCYYkV"
 msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
 msgstr "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
 
+#. Before handing in a mock exam with objective and written questions: how many written answers are blank.
 #: src/mock/mock-hand-in.tsx
-msgctxt "EJ9hwv"
-msgid "{count, plural, one {The essay is blank.} other {# essays are blank.}}"
-msgstr "{count, plural, one {The essay is blank.} other {# essays are blank.}}"
+msgctxt "KIPpp4"
+msgid "{count, plural, one {The written question is blank.} other {# written questions are blank.}}"
+msgstr "{count, plural, one {The written question is blank.} other {# written questions are blank.}}"
 
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-speaking.tsx
@@ -13681,6 +13691,28 @@ msgctxt "C3wT9_"
 msgid "Choose on Today"
 msgstr "Choose on Today"
 
+#: src/writing/writing-conflict-dialog.tsx
+msgctxt "7O580c"
+msgid "This answer changed on another device"
+msgstr "This answer changed on another device"
+
+#: src/writing/writing-conflict-dialog.tsx
+msgctxt "RaNNM6"
+msgid "Keep the version you're writing here, or switch to the other one."
+msgstr "Keep the version you're writing here, or switch to the other one."
+
+#. A choice between two versions of one written answer: replace what's typed here with the version saved on another device.
+#: src/writing/writing-conflict-dialog.tsx
+msgctxt "ngstJD"
+msgid "Use the other"
+msgstr "Use the other"
+
+#. A choice between two versions of one written answer: keep what's typed on this device and save it over the other.
+#: src/writing/writing-conflict-dialog.tsx
+msgctxt "qigA3g"
+msgid "Keep this one"
+msgstr "Keep this one"
+
 #: src/writing/writing-editor.tsx
 msgctxt "a2NxUG"
 msgid "0 of {lines} lines"
@@ -13691,6 +13723,11 @@ msgstr "0 of {lines} lines"
 msgctxt "6omgAR"
 msgid "about {used} of {lines} lines · {over} won't be read"
 msgstr "about {used} of {lines} lines · {over} won't be read"
+
+#: src/writing/writing-editor.tsx
+msgctxt "F6UFzM"
+msgid "This answer is {count} characters too long. Shorten it to save and grade it."
+msgstr "This answer is {count} characters too long. Shorten it to save and grade it."
 
 #. A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer.
 #: src/writing/writing-header.ts
@@ -13966,6 +14003,11 @@ msgctxt "scAuEr"
 msgid "Rewrite"
 msgstr "Rewrite"
 
+#: src/writing/writing-screen.tsx
+msgctxt "xaWNqy"
+msgid "This grade is for the version you sent first. Your changes are kept for your rewrite."
+msgstr "This grade is for the version you sent first. Your changes are kept for your rewrite."
+
 #: src/writing/writing-start.tsx
 msgctxt "mmyp7Y"
 msgid "Your exam notice changed, so it's out of your plan. Nothing was graded."
@@ -14006,11 +14048,6 @@ msgctxt "xj8ORz"
 msgid "Writing your question…"
 msgstr "Writing your question…"
 
-#: src/writing/writing-start.tsx
-msgctxt "EY8lh9"
-msgid "Nothing was lost. Try again in a moment."
-msgstr "Nothing was lost. Try again in a moment."
-
 #: src/writing/writing-text.tsx
 msgctxt "-QTlEJ"
 msgid "Past line {lines}: graders stop reading here"
@@ -14036,6 +14073,21 @@ msgstr "You wrote “{quote}” ({kind})"
 msgctxt "kgOBET"
 msgid "Question"
 msgstr "Question"
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "xNSBn4"
+msgid "Keep writing"
+msgstr "Keep writing"
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "0kG74Q"
+msgid "It's kept on this device and saves when you're back online."
+msgstr "It's kept on this device and saves when you're back online."
+
+#: src/writing/writing-write-screen.tsx
+msgctxt "g2F3WK"
+msgid "Your answer isn't saved yet"
+msgstr "Your answer isn't saved yet"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "osZlj7"

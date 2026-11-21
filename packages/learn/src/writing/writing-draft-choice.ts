@@ -1,7 +1,17 @@
+import { type WritingDraft } from "@zoonk/core/exams/essays/writing-contract";
 import { deviceStorage } from "../_utils/device-storage";
 
-/** What this device typed, with the saved draft's revision it was typed over. */
-export type Kept = { base: number; text: string };
+/**
+ * What this device typed, with the admission it was typed under and the saved draft's revision it
+ * was typed over. Null admission: typed before this device learned which one it was.
+ */
+export type Kept = { admissionId: string | null; base: number; text: string };
+
+/** A saved draft on the server, as a conflict or a save's answer returns it. */
+export type ServerDraft = { revision: number; text: string };
+
+/** Where the server's copy stands as far as this editor knows: the base of its next save. */
+export type DraftPosition = { admissionId: string | null; revision: number; text: string };
 
 export function keptDraftKey(blockId: string): string {
   return `writing:${blockId}`;
@@ -15,14 +25,21 @@ export function parseKeptDraft(raw: string | null): Kept | null {
   try {
     const parsed: unknown = JSON.parse(raw);
 
-    return typeof parsed === "object" &&
-      parsed !== null &&
-      "base" in parsed &&
-      "text" in parsed &&
-      typeof parsed.base === "number" &&
-      typeof parsed.text === "string"
-      ? { base: parsed.base, text: parsed.text }
-      : null;
+    if (
+      typeof parsed !== "object" ||
+      parsed === null ||
+      !("base" in parsed) ||
+      !("text" in parsed) ||
+      typeof parsed.base !== "number" ||
+      typeof parsed.text !== "string"
+    ) {
+      return null;
+    }
+
+    const admissionId =
+      "admissionId" in parsed && typeof parsed.admissionId === "string" ? parsed.admissionId : null;
+
+    return { admissionId, base: parsed.base, text: parsed.text };
   } catch {
     return null;
   }
@@ -33,16 +50,53 @@ export function keepDraftText(blockId: string, kept: Kept) {
 }
 
 /**
- * This device's text wins only when it was typed over the draft the server still has: a newer
- * draft saved on another device is the one to continue.
+ * What the editor opens with. This device's copy is never offered for another admission (a rewrite
+ * or another device's new start), and an edit typed over an older revision than the server's isn't
+ * chosen by number: the learner is asked. A cleared field is an edit like any other.
  */
-export function chooseDraftText({
-  kept,
-  saved,
+export function openDraft({ kept, saved }: { kept: Kept | null; saved: WritingDraft | null }): {
+  conflict: ServerDraft | null;
+  position: DraftPosition;
+  text: string;
+} {
+  const position = saved
+    ? { admissionId: saved.admissionId, revision: saved.revision, text: saved.text }
+    : { admissionId: kept?.admissionId ?? null, revision: 0, text: "" };
+
+  if (!kept || (saved && kept.admissionId && kept.admissionId !== saved.admissionId)) {
+    return { conflict: null, position, text: position.text };
+  }
+
+  if (!saved || kept.base >= saved.revision || kept.text === saved.text) {
+    return { conflict: null, position, text: kept.text };
+  }
+
+  // Until the learner answers, edits here stay typed over the revision they were typed over.
+  return {
+    conflict: { revision: saved.revision, text: saved.text },
+    position: { ...position, revision: kept.base },
+    text: kept.text,
+  };
+}
+
+/**
+ * A save of `sent` came back as `revision`: the server holds it now. Anything typed since stays
+ * this device's copy, over the new revision, to be saved next; nothing typed is kept when it's all
+ * on the server.
+ */
+export function acknowledgeSave({
+  admissionId,
+  latest,
+  revision,
+  sent,
 }: {
-  kept: Kept | null;
-  saved: { revision: number; text: string } | null;
-}): string {
-  const revision = saved?.revision ?? 0;
-  return kept && kept.text.trim() && kept.base >= revision ? kept.text : (saved?.text ?? "");
+  admissionId: string;
+  latest: string;
+  revision: number;
+  sent: string;
+}): { kept: Kept | null; position: DraftPosition } {
+  return {
+    kept: latest === sent ? null : { admissionId, base: revision, text: latest },
+    position: { admissionId, revision, text: sent },
+  };
 }

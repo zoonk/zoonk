@@ -33,13 +33,22 @@ type BrowserWrite = { body?: unknown; path: `/v1/${string}` };
  */
 export async function sendFromBrowser({
   body,
+  keepalive = false,
   method,
   path,
-}: BrowserWrite & { method: "PATCH" | "POST" | "PUT" }): Promise<Response | null> {
+}: BrowserWrite & {
+  /** For a save made as the page goes away: the request outlives the page. */
+  keepalive?: boolean;
+  method: "PATCH" | "POST" | "PUT";
+}): Promise<Response | null> {
   const { data: response } = await safeAsync(async () => {
     const headers = await getWorkflowAuthHeaders();
 
-    return fetch(`${getBrowserApiUrl()}${path}`, { ...toRequestBody({ body, headers }), method });
+    return fetch(`${getBrowserApiUrl()}${path}`, {
+      ...toRequestBody({ body, headers }),
+      keepalive,
+      method,
+    });
   });
 
   return response;

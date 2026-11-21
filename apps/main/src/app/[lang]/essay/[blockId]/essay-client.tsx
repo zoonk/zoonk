@@ -32,7 +32,8 @@ export function EssayClient({ essay }: { essay: EssayView }) {
       const outcome = await finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() });
       return outcome.status === "finished" && (await navigation.continueSession());
     },
-    saveDraft: (draft) => saveWritingDraftFromBrowser({ blockId: essay.blockId, draft }),
+    saveDraft: (draft, { keepalive }) =>
+      saveWritingDraftFromBrowser({ blockId: essay.blockId, draft, keepalive }),
     start: async ({ previousAttemptId }) => {
       const answer = await startWritingFromBrowser({ blockId: essay.blockId, previousAttemptId });
       return answer === "notWriting" ? { status: "failed" } : answer;
