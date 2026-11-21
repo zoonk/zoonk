@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
+import { CANT_LISTEN_TODAY, setChosenToday } from "../lesson/use-today-choice";
 import { buildLesson } from "../preview/preview-lesson";
 import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
 
@@ -91,5 +92,28 @@ describe("a learner who can't listen now", () => {
     await expect.element(page.getByRole("textbox")).toBeVisible();
     await expect.element(page.getByRole("group", { name: "Word bank" })).not.toBeInTheDocument();
     await expect.element(page.getByRole("button", { name: "I can talk now" })).toBeVisible();
+  });
+
+  it("keeps a spoken step answered by listening quiet when the learner comes back after turning listening off", async () => {
+    const plays = countPlays();
+    openLesson(spokenStepWithListening());
+
+    await page.getByRole("button", { name: "I can't talk now" }).click();
+    const bank = page.getByRole("group", { name: "Word bank" });
+
+    for (const word of [/^quanto$/iu, /^é$/iu, /^o$/iu, /^aluguel\?$/iu]) {
+      // oxlint-disable-next-line no-await-in-loop -- The words go in one at a time, in order.
+      await bank.getByRole("button", { name: word }).click();
+    }
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    setChosenToday(CANT_LISTEN_TODAY, true);
+    const playedBefore = plays.mock.calls.length;
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect.element(page.getByText("How much is the rent?")).toBeVisible();
+    expect(plays).toHaveBeenCalledTimes(playedBefore);
   });
 });

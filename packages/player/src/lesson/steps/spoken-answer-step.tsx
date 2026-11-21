@@ -199,8 +199,10 @@ function ListeningInstead({
   step: StepOf<"spokenAnswer"> & { listening: NonNullable<StepOf<"spokenAnswer">["listening"]> };
   wayOut: React.ReactNode;
 }) {
+  const [cantListen] = useTodayChoice(CANT_LISTEN_TODAY);
+
   return (
-    <PlayerAudioProvider audioUrl={step.listening.sentence?.audioUrl ?? null}>
+    <PlayerAudioProvider audioUrl={cantListen ? null : (step.listening.sentence?.audioUrl ?? null)}>
       <ExerciseStepView
         {...props}
         onCantListenChange={() => props.onAnswer(null)}
