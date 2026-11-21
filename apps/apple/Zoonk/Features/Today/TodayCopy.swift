@@ -19,6 +19,8 @@ protocol NamedBlock {
   var topics: [String] { get }
   /// A written block's drill or whole answer; nil for anything else.
   var writingUnit: WritingPrompt.Unit? { get }
+  /// How a whole answer is named before its question is assigned; nil from older servers.
+  var writingTask: WritingTaskName? { get }
 }
 
 struct BlockChallenge {
@@ -79,13 +81,9 @@ extension NamedBlock {
       return title
         ?? String(
           localized: "New lesson", table: "Today", comment: "A lesson block without a title")
-    // A drill and a whole answer never share a name.
-    case .produce where writingUnit == .drill:
-      return String(
-        localized: "Writing drill", table: "Today",
-        comment: "A short writing task after a lesson, to use what it taught")
+    // A drill and a whole answer never share a name; the notice's long sentence is never one.
     case .produce:
-      return title
+      return WritingLabels.taskTitle(unit: writingUnit, task: writingTask, fallback: title)
         ?? String(localized: "Writing practice", table: "Today", comment: "A writing block")
     case .practice, .checkpoint:
       return practiceTitle
@@ -163,16 +161,25 @@ extension StudyBlock {
       comment: "A short list of topics and how many more")
   }
 
-  /// A written task's row says when it waits for tomorrow.
-  private var writingDetail: String? {
+  /// A writing block's line under its name: when the day's grading is used up, that its draft is
+  /// kept, or what a drill is for, since its name is the same after every lesson.
+  private var writingLine: String? {
     switch writingAvailability {
-    case .tomorrow:
-      String(
-        localized: "Back tomorrow: no more grading today", table: "Today",
-        comment: "A written task that waits for tomorrow's grades")
-    case .available, .continue, nil:
-      nil
+    case .tomorrow(let returnsOn):
+      return WritingLabels.gradingReturns(returnsOn)
+    case .continue:
+      return String(localized: "Your draft is saved", table: "Today")
+    case .needsChoice(let choiceGroups):
+      return WritingLabels.choiceLine(choiceGroups)
+    case .available, nil:
+      break
     }
+
+    return writingUnit == .drill
+      ? String(
+        localized: "To use what you just learned", table: "Today",
+        comment: "Under a short writing exercise after a lesson: what it's for.")
+      : nil
   }
 
   /// The row's line where the block is told on its own, as "Up next" does.
@@ -202,15 +209,8 @@ extension StudyBlock {
       return nil
     }
 
-    if kind == .produce, writingUnit == .drill {
-      return writingDetail
-        ?? String(
-          localized: "Use what you just learned", table: "Today",
-          comment: "Under a writing drill after a lesson")
-    }
-
     if kind == .produce {
-      return writingDetail ?? canDo
+      return writingLine ?? subject ?? canDo
     }
 
     if fullReview {
@@ -231,6 +231,11 @@ extension StudyBlock {
 
   /// The row's one short line on Today's list: the subject, or what a challenge or review is.
   var label: String? {
+    // A refused start is the one thing to know before tapping it, even while lessons come first.
+    if case .tomorrow = writingAvailability {
+      return writingLine
+    }
+
     if waitReason != nil {
       return String(
         localized: "After today's lessons", table: "Today",
@@ -255,7 +260,7 @@ extension StudyBlock {
           comment: "A practice block's questions")
     }
 
-    return subject
+    return kind == .produce ? writingLine ?? subject : subject
   }
 }
 

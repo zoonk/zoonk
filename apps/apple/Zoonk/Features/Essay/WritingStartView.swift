@@ -13,17 +13,30 @@ struct WritingStartView: View {
 
   @State private var asking = VisitRequest<WritingStart>()
   @State private var viewedWait: String?
+  /// What's being written, kept once a wait names it so its failure still does.
+  @State private var unit: WritingPrompt.Unit?
 
   private var shown: WritingStart { asking.outcome ?? start }
+
+  private var shownUnit: WritingPrompt.Unit? {
+    if case .writing(_, let unit?) = shown { return unit }
+    if case .writing(_, let unit?) = start { return unit }
+    return unit
+  }
 
   var body: some View {
     Group {
       switch shown {
       case .limitReached(_, let task):
         WritingRefusedView(
-          task: task.map { .init(title: $0.description, minutes: $0.minutes) }, isBusy: false,
+          task: task.map {
+            .init(
+              title: WritingLabels.taskTitle(
+                unit: $0.unit, task: $0.writingTask, fallback: $0.description) ?? $0.description,
+              minutes: $0.minutes)
+          }, isBusy: false,
           onContinue: { dismiss() })
-      case .writing(let generationId):
+      case .writing(let generationId, _):
         waiting(generationId)
       case .unavailable:
         unavailable
@@ -36,9 +49,7 @@ struct WritingStartView: View {
         failed
       }
     }
-    .navigationTitle(
-      String(localized: "Written answer", table: "Essay", comment: "An exam's written question")
-    )
+    .navigationTitle(WritingLabels.header(shownUnit))
     .toolbar {
       ToolbarItem(placement: .cancellationAction) {
         Button(role: .close) { dismiss() }
@@ -47,30 +58,36 @@ struct WritingStartView: View {
     .onDisappear { asking.leave() }
   }
 
+  /// One model call writes the question: the wait says what's coming, with no steps it doesn't
+  /// have.
   private func waiting(_ generationId: String) -> some View {
     ZoonkList {
       Section {
         PageHeader(
-          Text("Writing your question…", tableName: "Essay", comment: "A question being written"),
-          supporting: Text(
-            "A new question, like the ones on your exam. It opens here when it's ready.",
-            tableName: "Essay", comment: "While a written question is being written")
+          shownUnit == .drill
+            ? Text("Writing your exercise…", tableName: "Essay")
+            : Text("Writing your question…", tableName: "Essay"),
+          supporting: shownUnit == .drill
+            ? Text(
+              "A short exercise on what you just learned. It opens here when it's ready.",
+              tableName: "Essay")
+            : Text(
+              "A new question like the ones on your exam. It opens here when it's ready.",
+              tableName: "Essay")
         ) {
           EmptyView()
         }
       }
       Section {
-        WritingWait(
-          title: Text(
-            "Writing a question like your exam's", tableName: "Essay",
-            comment: "The step of writing a question"),
-          hint: Text(
-            "Checking it against the exam's criteria…", tableName: "Essay",
-            comment: "Under the step of writing a question"))
+        ProgressView()
+          .frame(maxWidth: .infinity)
+          .listRowBackground(Color.clear)
       }
     }
     .lonePage()
     .onAppear {
+      if case .writing(_, let shownUnit?) = shown { unit = shownUnit }
+
       if viewedWait != generationId {
         viewedWait = generationId
         UsageAnalytics.track(
@@ -85,12 +102,10 @@ struct WritingStartView: View {
     ZoonkList {
       Section {
         PageHeader(
-          Text(
-            "This task is no longer on your exam", tableName: "Essay",
-            comment: "A written task the exam's notice removed"),
+          Text("This question is no longer on your exam", tableName: "Essay"),
           supporting: Text(
-            "Your exam's notice changed. Nothing was used.", tableName: "Essay",
-            comment: "Under a written task the notice removed")
+            "Your exam notice changed, so it's out of your plan. Nothing was graded.",
+            tableName: "Essay")
         ) {
           EmptyView()
         }
@@ -112,12 +127,10 @@ struct WritingStartView: View {
     ZoonkList {
       Section {
         PageHeader(
-          Text(
-            "We couldn't write your question", tableName: "Essay",
-            comment: "Writing a question failed"),
-          supporting: Text(
-            "Nothing was lost. Try again in a moment.", tableName: "Essay",
-            comment: "After a question's writing failed")
+          shownUnit == .drill
+            ? Text("We couldn't write your exercise", tableName: "Essay")
+            : Text("We couldn't write your question", tableName: "Essay"),
+          supporting: Text("Nothing was lost. Try again in a moment.", tableName: "Essay")
         ) {
           EmptyView()
         }

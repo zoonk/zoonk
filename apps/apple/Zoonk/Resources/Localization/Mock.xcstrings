@@ -5160,6 +5160,7 @@
         }
       }
     },
+    "Choose on Today" : {},
     "Continue" : {
       "comment" : "Hands in a section after its time\nLeaves a mock's result",
       "localizations" : {
@@ -8300,9 +8301,6 @@
         }
       }
     },
-    "No more grading today. You can start the written test on %@." : {
-      "comment" : "The written test refused before it starts: the day's extra grades are used until that day"
-    },
     "No written part" : {
       "comment" : "A mock exam with only the exam's objective questions, without its essay",
       "localizations" : {
@@ -9312,6 +9310,16 @@
         }
       }
     },
+    "Question %@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Question %1$@ of %2$@"
+          }
+        }
+      }
+    },
     "Question %lld" : {
       "comment" : "A question by number",
       "localizations" : {
@@ -9619,6 +9627,7 @@
         }
       }
     },
+    "Questions like the ones on your exam. Your mock exam starts here when they're ready." : {},
     "Questions per subject in the %@, as counted by %@." : {
       "comment" : "Where a mock's question counts come from",
       "localizations" : {
@@ -13923,6 +13932,7 @@
         }
       }
     },
+    "We couldn't write your questions" : {},
     "What stood out" : {
       "comment" : "The mock's insights",
       "localizations" : {
@@ -14041,6 +14051,7 @@
         }
       }
     },
+    "Writing your questions…" : {},
     "Writing your speaking paper" : {
       "comment" : "A mock's speaking paper is being written",
       "localizations" : {

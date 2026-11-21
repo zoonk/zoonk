@@ -119,14 +119,23 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     /// first answer.
     struct Subject: Decodable, Equatable, Sendable {
       struct Answer: Decodable, Equatable, Identifiable, Sendable {
+        /// How a levels answer went; nil on a points answer.
+        struct Criteria: Decodable, Equatable, Sendable {
+          let complete: Int
+          let total: Int
+        }
+
         let attemptId: String
+        let criteria: Criteria?
         let date: String
+        let decimals: Int?
         /// The server's count of the lines sent; nil on answers from before it was counted.
         let estimatedLines: Int?
         let lines: Int?
         let range: WritingRange?
         let taskKey: String
         let title: String
+        let unit: WritingPrompt.Unit?
         let versions: Int
 
         var id: String { attemptId }
@@ -147,15 +156,18 @@ struct GoalPlan: Decodable, Equatable, Sendable {
         let blockId: String?
         let taskKey: String
 
-        var waits: Bool {
-          if case .tomorrow = availability { true } else { false }
-        }
       }
 
       let answers: [Answer]
+      /// Set when the whole part waits for an exam choice; a server without write actions says it
+      /// only here.
+      let availability: WritingAvailability?
+      let decimals: Int?
       let minutes: Int?
       let points: WrittenPartPoints
       let questions: Int?
+      /// Nil from a server before it said; then a part measured in points is in points.
+      let scale: WritingScale?
       let share: Double?
       let trend: [Sample]
       let writeActions: [WriteAction]?
@@ -165,10 +177,37 @@ struct GoalPlan: Decodable, Equatable, Sendable {
         writeActions?.first { $0.availability == .continue && $0.blockId != nil }
       }
 
-      /// Every task waits for tomorrow's grades, so a tap would be refused.
-      var waitsForTomorrow: Bool {
-        guard let writeActions, !writeActions.isEmpty else { return false }
-        return writeActions.allSatisfy(\.waits)
+      /// Whether answers can be estimated in points.
+      var shownScale: WritingScale {
+        scale ?? (points.range != nil || answers.contains { $0.range != nil } ? .points : .levels)
+      }
+
+      /// When every task's grading is used up for today, the first day one returns.
+      var returnsOn: String? {
+        guard let writeActions, !writeActions.isEmpty else { return nil }
+        let days = writeActions.compactMap(\.availability.returnsOn)
+        return days.count == writeActions.count ? days.min() : nil
+      }
+
+      /// The exam choices some tasks wait for, whether every task does, and the one waiting task's
+      /// name when the others don't.
+      var pendingChoice: (groups: [String], all: Bool, task: String?)? {
+        guard let writeActions, !writeActions.isEmpty else {
+          return availability?.choiceGroups.map { ($0, true, nil) }
+        }
+
+        let waiting = writeActions.filter { $0.availability.choiceGroups != nil }
+        let groups = waiting.flatMap { $0.availability.choiceGroups ?? [] }
+        guard !groups.isEmpty else { return nil }
+
+        let task =
+          waiting.count == 1
+          ? points.tasks.first { $0.key == waiting[0].taskKey }?.name : nil
+
+        return (
+          groups.reduce(into: []) { if !$0.contains($1) { $0.append($1) } },
+          waiting.count == writeActions.count, task
+        )
       }
     }
 

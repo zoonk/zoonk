@@ -7,8 +7,6 @@ struct WritingResultSections: View {
   let grade: WritingResult
   let prompt: WritingPrompt
   let text: String
-  /// Which answer this is, where a result shows several (a written test).
-  var eyebrow: String?
 
   var body: some View {
     if let points = grade.points {
@@ -18,7 +16,7 @@ struct WritingResultSections: View {
     }
 
     WritingProgressSection(grade: grade)
-    WritingNextStepSection(grade: grade, chip: eyebrow)
+    WritingNextStepSection(step: WritingNextStep(grade: grade, text: text), lines: prompt.lines)
     WritingCriteriaSection(grade: grade, prompt: prompt)
     WritingMarkedTextSection(grade: grade, lines: prompt.lines, text: text)
   }
@@ -41,9 +39,11 @@ private struct WritingPointsSection: View {
 
         VStack(alignment: .leading, spacing: 2) {
           HStack(alignment: .lastTextBaseline, spacing: 6) {
-            Text(verbatim: WritingLabels.range(points.total))
-              .typeStyle(.momentReadout)
-              .monospacedDigit()
+            Text(
+              verbatim: WritingLabels.range(points.total, decimals: points.decimals, headline: true)
+            )
+            .typeStyle(.momentReadout)
+            .monospacedDigit()
             Text(
               "of \(WritingLabels.points(points.max))", tableName: "Essay",
               comment: "After a score: the question's total, like 'of 30'"
@@ -64,7 +64,7 @@ private struct WritingPointsSection: View {
             RangeBar(range: points.total, max: points.max, minimum: share * points.max)
             MinimumLegend(
               Text(
-                "Minimum to pass the written test: \(share.formatted(.percent.precision(.fractionLength(0)))) of the points",
+                "Minimum to pass the written test: \(WritingLabels.share(share)) of the points",
                 tableName: "Essay",
                 comment:
                   "Under a question's score: the written test's own minimum, on the sum of its questions"
@@ -80,14 +80,14 @@ private struct WritingPointsSection: View {
         Text(zeroReason)
       } else {
         LabeledContent {
-          Text(verbatim: WritingLabels.range(points.content))
+          Text(verbatim: WritingLabels.range(points.content, decimals: points.decimals))
             .typeStyle(.data)
         } label: {
           Text("Content", tableName: "Essay", comment: "A written answer's content points")
         }
 
         LabeledContent {
-          Text(verbatim: WritingLabels.deduction(points.deduction))
+          Text(verbatim: WritingLabels.deduction(points.deduction, decimals: points.decimals))
             .typeStyle(.data)
         } label: {
           VStack(alignment: .leading, spacing: 2) {
@@ -192,43 +192,131 @@ private struct WritingProgressSection: View {
   }
 }
 
-/// The one thing to work on: the same card for every rubric's result.
+/// The one thing to work on: the same card for every rubric's result. With nothing left, the
+/// card says so, with no chip, since there's no step.
 private struct WritingNextStepSection: View {
-  let grade: WritingResult
-  let chip: String?
+  let step: WritingNextStep
+  let lines: Int?
 
   var body: some View {
-    if let next = grade.nextStep {
-      Section {
-        VStack(alignment: .leading, spacing: 10) {
-          if let chip {
-            Chip(Text(chip))
-          }
-
-          Chip(Text("Next step", tableName: "Essay", comment: "The one thing to work on next"))
-
-          Text(
-            grade.nextStepCriterion?.name
+    Section {
+      VStack(alignment: .leading, spacing: 10) {
+        switch step {
+        case .done:
+          Text("Nothing left to work on", tableName: "Essay", comment: "Full marks")
+            .typeStyle(.stepHeading)
+          Text("Every criterion is complete.", tableName: "Essay")
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
+        case .limit:
+          card(title: limitTitle, text: limitText)
+        case .zero(let text, let zeroKind):
+          let copy = zeroKind.map(Self.zeroCopy)
+          card(
+            title: copy?.title
+              ?? String(localized: "Answer the question asked", table: "Essay"),
+            text: copy?.text
+              ?? (text.isEmpty
+                ? String(localized: "Rewrite it following the rule above.", table: "Essay") : text))
+        case .criterion(let title, let text, let quote, let example):
+          card(
+            title: title
               ?? String(
-                localized: "What to rewrite", table: "Essay", comment: "A next step's title")
-          )
-          .typeStyle(.stepHeading)
-
-          if let quote = next.quote {
-            QuotedPassage(quote, accent: .warning)
-          }
-
-          Text(next.text)
-            .typeStyle(.reading)
-
-          if let example = next.example {
-            Text("For example: \(example)", tableName: "Essay", comment: "A rewrite example")
-              .typeStyle(.body)
-              .foregroundStyle(.mutedForeground)
-          }
+                localized: "What to rewrite", table: "Essay", comment: "A next step's title"),
+            text: text, quote: quote, example: example)
         }
-        .padding(.vertical, 4)
       }
+      .padding(.vertical, 4)
+    }
+  }
+
+  @ViewBuilder
+  private func card(title: String, text: String, quote: String? = nil, example: String? = nil)
+    -> some View
+  {
+    Chip(Text("Next step", tableName: "Essay", comment: "The one thing to work on next"))
+
+    Text(title)
+      .typeStyle(.stepHeading)
+
+    if let quote {
+      QuotedPassage(quote, accent: .warning)
+    }
+
+    Text(text)
+      .typeStyle(.reading)
+
+    if let example {
+      Text("For example: \(example)", tableName: "Essay", comment: "A rewrite example")
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+    }
+  }
+
+  private var limitTitle: String {
+    lines.map { String(localized: "Fit it in \(String($0)) lines", table: "Essay") }
+      ?? String(localized: "Fit it in the line limit", table: "Essay")
+  }
+
+  private var limitText: String {
+    lines.map {
+      String(
+        localized: "Graders stop at line \(String($0)), so the rest isn't read.", table: "Essay")
+    }
+      ?? String(
+        localized: "Graders stop at the line limit, so the rest isn't read.", table: "Essay")
+  }
+
+  /// A zeroed answer's step, by the rule it broke. The notice's rule shows above it, so this says
+  /// what to do, never why it scored zero.
+  private static func zeroCopy(_ kind: WritingResult.ZeroKind) -> (title: String, text: String) {
+    switch kind {
+    case .blank:
+      (
+        String(localized: "Write an answer", table: "Essay"),
+        String(localized: "Start with the points the question asks for.", table: "Essay")
+      )
+    case .offTopic:
+      (
+        String(localized: "Answer the question asked", table: "Essay"),
+        String(localized: "Reread the question and write about what it asks.", table: "Essay")
+      )
+    case .wrongForm:
+      (
+        String(
+          localized: "Write it in the form asked", table: "Essay",
+          comment:
+            "The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked."
+        ),
+        String(
+          localized: "Check what kind of text the question asks for, and write that.",
+          table: "Essay")
+      )
+    case .tooFewLines:
+      (
+        String(
+          localized: "Reach the minimum length", table: "Essay",
+          comment:
+            "The next step of a written answer zeroed for being shorter than the exam's minimum number of lines."
+        ),
+        String(
+          localized: "Develop each point the question asks for until you reach it.",
+          table: "Essay")
+      )
+    case .copiedSupport:
+      (
+        String(localized: "Use your own words", table: "Essay"),
+        String(
+          localized: "Take the support text as a starting point, not as your answer.",
+          table: "Essay")
+      )
+    case .identification:
+      (
+        String(localized: "Leave out anything that identifies you", table: "Essay"),
+        String(
+          localized: "Remove names, signatures and marks that aren't part of the answer.",
+          table: "Essay")
+      )
     }
   }
 }
@@ -298,10 +386,12 @@ private struct WritingCriteriaSection: View {
     return LabeledContent {
       HStack(spacing: 10) {
         if let points {
-          Meter(value: points.earned, total: points.max)
-            .frame(width: 64)
+          RowMeter(
+            range: points.range ?? .init(high: points.earned, low: points.earned), max: points.max
+          )
+          .frame(width: 64)
           Text(
-            "\(WritingLabels.points(points.earned)) of \(WritingLabels.points(points.max))",
+            "\(WritingLabels.range(points.range ?? .init(high: points.earned, low: points.earned), decimals: decimals(points))) of \(WritingLabels.points(points.max, decimals: decimals(points)))",
             tableName: "Essay", comment: "A criterion's points, like '7.1 of 9.5'"
           )
           .typeStyle(.data)
@@ -315,6 +405,10 @@ private struct WritingCriteriaSection: View {
     } label: {
       Text(criterion.name)
     }
+  }
+
+  private func decimals(_ row: WritingResult.Row) -> Int? {
+    row.decimals ?? grade.points?.decimals
   }
 
   private var source: String? {
@@ -334,6 +428,26 @@ private struct WritingCriteriaSection: View {
         localized:
           "Criteria and points from the exam notice. The answer key is ours, for practice.",
         table: "Essay", comment: "Where a result's criteria come from, with Zoonk's practice key")
+  }
+}
+
+/// A criterion's points in ink: what's surely earned, then what may be, then the rest.
+private struct RowMeter: View {
+  let range: WritingRange
+  let max: Double
+
+  var body: some View {
+    let low = Swift.max(0, Swift.min(1, range.low / max))
+    let high = Swift.max(low, Swift.min(1, range.high / max))
+
+    MeterParts(
+      parts: [
+        low > 0 ? .init(weight: low, fill: .color(Color(.foreground))) : nil,
+        high > low ? .init(weight: high - low, fill: .color(Color(.foreground).opacity(0.3))) : nil,
+        high < 1 ? .init(weight: 1 - high, fill: .track) : nil,
+      ].compactMap { $0 }
+    )
+    .accessibilityHidden(true)
   }
 }
 

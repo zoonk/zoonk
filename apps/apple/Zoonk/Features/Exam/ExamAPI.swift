@@ -13,6 +13,8 @@ enum MockStartOutcome: Equatable, Sendable {
   case refused(HelpLimit)
   /// A written test past the day's extra grades: it can start again on `returnsOn`.
   case writingLimitReached(returnsOn: String)
+  /// The written test's questions depend on an exam choice the learner hasn't made.
+  case needsChoice(choiceGroups: [String])
 }
 
 enum MockQuestionsStart: Equatable, Sendable {
@@ -22,6 +24,16 @@ enum MockQuestionsStart: Equatable, Sendable {
   case refused(HelpLimit)
   /// The day's extra writing allowance is used until `returnsOn`.
   case writingLimitReached(returnsOn: String)
+  case needsChoice(choiceGroups: [String])
+}
+
+/// The exam choices a refused written or full mock waits for (`EXAM_CHOICE_REQUIRED`).
+private func pendingChoice(_ error: Components.Schemas._Error?) -> [String]? {
+  let refusal = voiceRefusal(status: 409, error: error)
+  guard refusal.code == "EXAM_CHOICE_REQUIRED" else { return nil }
+
+  let groups = (refusal.details?.value as? [String: (any Sendable)?])?["choiceGroups"]
+  return (groups as? [(any Sendable)?])?.compactMap { $0 as? String }
 }
 
 enum MockStepOutcome: String, Decodable, Sendable {
@@ -140,6 +152,11 @@ struct ExamAPI {
       case .code402: return .plusRequired
       case .tooManyRequests(let response):
         return .writingLimitReached(returnsOn: try response.body.json.returnsOn)
+      case .conflict(let response):
+        guard let groups = pendingChoice(try? response.body.json) else {
+          throw APIError.unavailable
+        }
+        return .needsChoice(choiceGroups: groups)
       case .unprocessableContent(let response):
         let code = try? response.body.json.error.code
         if code == "NOT_ENOUGH_QUESTIONS" { return .notEnoughQuestions }
@@ -190,6 +207,11 @@ struct ExamAPI {
         }
 
         return try refused(refusal)
+      case .conflict(let response):
+        guard let groups = pendingChoice(try? response.body.json) else {
+          throw APIError.unavailable
+        }
+        return .needsChoice(choiceGroups: groups)
       case .forbidden(let response):
         return try refused(voiceRefusal(status: 403, error: try? response.body.json))
       case .code402(let response):
@@ -494,13 +516,14 @@ struct WritingStartWire: Decodable {
   let runId: String?
   let status: String
   let task: WritingStart.Task?
+  let unit: WritingPrompt.Unit?
 
   static func recode(_ payload: some Encodable) throws -> WritingStart {
     let wire: Self = try PracticeJSON.recode(payload)
 
     switch (wire.status, wire.admissionId, wire.runId, wire.returnsOn) {
     case ("ready", let id?, _, _): return .ready(admissionId: id)
-    case ("writing", _, let run?, _): return .writing(generationId: run)
+    case ("writing", _, let run?, _): return .writing(generationId: run, unit: wire.unit)
     case ("limitReached", _, _, let day?): return .limitReached(returnsOn: day, task: wire.task)
     default: throw APIError.unavailable
     }

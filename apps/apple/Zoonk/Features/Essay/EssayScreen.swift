@@ -106,7 +106,7 @@ private struct EssayContent: View {
 
   var body: some View {
     content
-      .navigationTitle(WritingLabels.header(essay.writing))
+      .navigationTitle(WritingLabels.header(essay.writing.unit))
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
@@ -227,6 +227,17 @@ private struct EssayContent: View {
     .bottomBar(note: resultNote) {
       if essay.isClosed {
         todayButton
+      } else if WritingNextStep(grade: answer.grade, text: answer.text) == .done {
+        // Nothing left to rewrite: the one way on.
+        BusyButton(isBusy: finishing.isRunning) {
+          finish()
+        } label: {
+          Text(
+            "Continue", tableName: "Essay",
+            comment: "Goes on after a result with nothing left to rewrite")
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
       } else {
         Button {
           finish()
@@ -298,7 +309,7 @@ private struct EssayContent: View {
   }
 }
 
-/// The field fills the screen; the line count a board would see stays under it, in view while the
+/// The field fills the screen; the line count graders would read stays under it, in view while the
 /// keyboard is up.
 private struct WritingEditorPage: View {
   @Bindable var writer: EssayWriter
@@ -320,7 +331,7 @@ private struct WritingEditorPage: View {
         .typeStyle(.writing)
         .scrollContentBackground(.hidden)
         .focused($isFocused)
-        .fieldBorder(isFocused: isFocused)
+        .fieldBorder(isFocused: isFocused, holdsFocus: true)
         .frame(maxHeight: .infinity)
         .accessibilityLabel(label)
         .accessibilityHint(Text(count.words))

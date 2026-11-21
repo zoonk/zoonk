@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ depends on your choice of %@" : {
+      "comment" : "Under a written test where one question waits for an exam choice the learner hasn't made. {task} is the question, such as \"The 60-line question\"; {groups} names the choices.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ depends on your choice of %2$@"
+          }
+        }
+      }
+    },
     "%@ of %@" : {
       "comment" : "A criterion's score",
       "localizations" : {
@@ -276,6 +287,50 @@
         }
       }
     },
+    "0 of %lld lines" : {},
+    "A new question like the ones on your exam. It opens here when it's ready." : {},
+    "A short exercise on what you just learned. It opens here when it's ready." : {},
+    "Answer the question asked" : {},
+    "Back on %@: no more grading today" : {},
+    "Back tomorrow: no more grading today" : {},
+    "Check what kind of text the question asks for, and write that." : {},
+    "Depends on your choice of %@" : {
+      "comment" : "Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices."
+    },
+    "Develop each point the question asks for until you reach it." : {},
+    "Every criterion is complete." : {},
+    "Fit it in %@ lines" : {},
+    "Fit it in the line limit" : {},
+    "Graders stop at line %@, so the rest isn't read." : {},
+    "Graders stop at the line limit, so the rest isn't read." : {},
+    "Leave out anything that identifies you" : {},
+    "Past line %@: graders stop reading here" : {},
+    "Past the limit: graders stop reading here" : {},
+    "Reach the minimum length" : {
+      "comment" : "The next step of a written answer zeroed for being shorter than the exam's minimum number of lines."
+    },
+    "Remove names, signatures and marks that aren't part of the answer." : {},
+    "Reread the question and write about what it asks." : {},
+    "Rewrite it following the rule above." : {},
+    "Short writing exercise" : {
+      "comment" : "A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer."
+    },
+    "Start with the points the question asks for." : {},
+    "Take the support text as a starting point, not as your answer." : {},
+    "This question is no longer on your exam" : {},
+    "Use your own words" : {},
+    "We couldn't write your exercise" : {},
+    "Write an answer" : {},
+    "Write it in the form asked" : {
+      "comment" : "The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked."
+    },
+    "Write question %@" : {},
+    "Write the %@-line question" : {
+      "comment" : "A whole answer of an exam's written test, named by its line limit, such as 30 lines."
+    },
+    "Write the question" : {},
+    "Writing your exercise…" : {},
+    "Your exam notice changed, so it's out of your plan. Nothing was graded." : {},
     "−%@ to −%@" : {
       "comment" : "Points language errors take off an answer, as a range, like '−0.3 to −0.6'",
       "localizations" : {
@@ -349,9 +404,6 @@
         }
       }
     },
-    "A new question, like the ones on your exam. It opens here when it's ready." : {
-      "comment" : "While a written question is being written"
-    },
     "about %@" : {
       "comment" : "An estimated time to write an answer"
     },
@@ -390,7 +442,7 @@
       }
     },
     "about %lld of %lld lines · %lld won't be read" : {
-      "comment" : "The approximate line count of a written answer past its limit; the lines past it are ones the exam board won't read.",
+      "comment" : "The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -459,9 +511,6 @@
         }
       }
     },
-    "Checking it against the exam's criteria…" : {
-      "comment" : "Under the step of writing a question"
-    },
     "Comments" : {
       "comment" : "Comments on each criterion",
       "localizations" : {
@@ -528,7 +577,7 @@
       "comment" : "A written answer's content points"
     },
     "Continue" : {
-      "comment" : "Continues a saved draft\nGoes on after the refusal"
+      "comment" : "Continues a saved draft\nGoes on after a result with nothing left to rewrite\nGoes on after the refusal"
     },
     "Criteria" : {
       "comment" : "A written answer's criteria"
@@ -1463,20 +1512,12 @@
         }
       }
     },
-    "Nothing was lost. Try again in a moment." : {
-      "comment" : "After a question's writing failed"
-    },
+    "Nothing was lost. Try again in a moment." : {},
     "of %@" : {
       "comment" : "After a score: the question's total, like 'of 30'"
     },
     "Partly" : {
       "comment" : "A criterion of a written answer half met"
-    },
-    "Past line %lld: the board won't read from here" : {
-      "comment" : "Where an answer passes the question's line limit"
-    },
-    "Past the limit: the board won't read from here" : {
-      "comment" : "Where an answer passes the question's limit"
     },
     "present" : {
       "comment" : "A proposal element is there",
@@ -2331,9 +2372,6 @@
     "The question didn't load" : {
       "comment" : "Loading failed"
     },
-    "This task is no longer on your exam" : {
-      "comment" : "A written task the exam's notice removed"
-    },
     "To what end" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -2537,9 +2575,7 @@
         }
       }
     },
-    "We couldn't write your question" : {
-      "comment" : "Writing a question failed"
-    },
+    "We couldn't write your question" : {},
     "What the answer is judged on" : {
       "comment" : "Under the criteria row of a question without points"
     },
@@ -2729,12 +2765,6 @@
         }
       }
     },
-    "Writing a question like your exam's" : {
-      "comment" : "The step of writing a question"
-    },
-    "Writing drill" : {
-      "comment" : "A short writing exercise"
-    },
     "Writing practice" : {
       "comment" : "A writing task",
       "localizations" : {
@@ -2794,12 +2824,8 @@
         }
       }
     },
-    "Writing your question…" : {
-      "comment" : "A question being written"
-    },
-    "Written answer" : {
-      "comment" : "An exam's written question"
-    },
+    "Writing your question…" : {},
+    "Written answer" : {},
     "You skipped this essay." : {
       "comment" : "An essay the learner skipped without sending a draft",
       "localizations" : {
@@ -3049,9 +3075,6 @@
           }
         }
       }
-    },
-    "Your exam's notice changed. Nothing was used." : {
-      "comment" : "Under a written task the notice removed"
     },
     "Your last grade" : {
       "comment" : "The last grade while rewriting",

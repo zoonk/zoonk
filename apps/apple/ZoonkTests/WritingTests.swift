@@ -129,7 +129,11 @@ final class WritingResultDecodingTests: XCTestCase {
     XCTAssertEqual(grade.points?.deduction, WritingRange(high: 0.35, low: 0.35))
     XCTAssertEqual(grade.points?.rows.first?.max, 9.5)
     XCTAssertNil(grade.points?.zeroReason)
-    XCTAssertEqual(grade.nextStepCriterion?.name, "Powers of the Court")
+    XCTAssertEqual(
+      WritingNextStep(grade: grade, text: "The Court matters."),
+      .criterion(
+        title: "Powers of the Court", text: "Name at least two powers.",
+        quote: "The Court matters.", example: nil))
   }
 
   func testAZeroedResultSaysTheNoticesRule() throws {
@@ -137,6 +141,109 @@ final class WritingResultDecodingTests: XCTestCase {
       WritingResult.self, Self.points(zeroReason: #""An answer off the topic gets zero.""#))
 
     XCTAssertEqual(grade.points?.zeroReason, "An answer off the topic gets zero.")
+  }
+
+  func testAZeroedAnswerIsNeverToldItsDone() throws {
+    let grade = try decode(
+      WritingResult.self,
+      Self.points(zeroReason: #""Off topic.""#)
+        .replacingOccurrences(of: #""zeroReason""#, with: #""zeroKind":"offTopic","zeroReason""#))
+
+    XCTAssertEqual(
+      WritingNextStep(grade: grade, text: ""),
+      .zero(text: "Name at least two powers.", zeroKind: .offTopic))
+  }
+
+  func testNothingLeftOnlyWhenEveryCriterionIsCompleteAndEveryLineIsRead() throws {
+    let complete = WritingLinesTests.levels(ignoredFrom: nil, errors: "[]")
+      .replacingOccurrences(of: #""strong""#, with: #""complete""#)
+
+    XCTAssertEqual(
+      WritingNextStep(grade: try decode(WritingResult.self, complete), text: ""), .done)
+    XCTAssertEqual(
+      WritingNextStep(
+        grade: try decode(
+          WritingResult.self,
+          complete.replacingOccurrences(of: #""ignoredFrom":null"#, with: #""ignoredFrom":4"#)),
+        text: "abc def"),
+      .limit)
+    XCTAssertEqual(
+      WritingNextStep(
+        grade: try decode(
+          WritingResult.self, WritingLinesTests.levels(ignoredFrom: nil, errors: "[]")),
+        text: ""),
+      .criterion(title: "Content", text: "Clear.", quote: nil, example: nil))
+  }
+
+  func testTheGradersTitleLeadsAndAQuoteMissingFromTheTextIsDropped() throws {
+    let grade = try decode(
+      WritingResult.self,
+      Self.points(zeroReason: "null")
+        .replacingOccurrences(
+          of: #""text":"Name at least two powers."}"#,
+          with: #""text":"Name at least two powers.","kind":"criterion","title":"Name two powers"}"#
+        ))
+
+    XCTAssertEqual(
+      WritingNextStep(grade: grade, text: "Another text."),
+      .criterion(
+        title: "Name two powers", text: "Name at least two powers.", quote: nil, example: nil))
+  }
+
+  func testAHeadlineRangeRoundsOutwardSoItNeverClaimsMoreThanItsParts() {
+    XCTAssertEqual(
+      WritingLabels.roundedOutward(.init(high: 17.41, low: 12.06), decimals: 1),
+      .init(high: 17.5, low: 12.0))
+    XCTAssertEqual(
+      WritingLabels.roundedOutward(.init(high: 0.3, low: 0.3), decimals: 1),
+      .init(high: 0.3, low: 0.3))
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 26.8, low: 22.8), decimals: 0, headline: true), "22–27")
+    XCTAssertEqual(WritingLabels.range(.init(high: 27, low: 24), decimals: 1), "24.0–27.0")
+  }
+
+  func testAWholeAnswerIsNamedByItsLineLimitOnlyWhenNoOtherTaskSharesIt() {
+    func title(_ task: WritingTaskName?) -> String? {
+      WritingLabels.taskTitle(unit: .answer, task: task, fallback: "The notice's long sentence")
+    }
+
+    XCTAssertEqual(
+      title(.init(distinctLines: true, lines: 30, number: 1, points: 30, total: 2)),
+      "Write the 30-line question")
+    XCTAssertEqual(
+      title(.init(distinctLines: false, lines: 30, number: 2, points: 30, total: 2)),
+      "Write question 2")
+    XCTAssertEqual(
+      title(.init(distinctLines: false, lines: nil, number: 1, points: nil, total: 1)),
+      "Write the question")
+    XCTAssertEqual(title(nil), "The notice's long sentence")
+    XCTAssertEqual(
+      WritingLabels.taskTitle(unit: .drill, task: nil, fallback: nil), "Short writing exercise")
+  }
+
+  func testATaskWaitingForAnExamChoiceSaysWhichAndTheOthersStayOpen() throws {
+    let practice = try decode(
+      GoalPlan.WrittenPractice.self,
+      """
+      {
+        "cadence":"weekly","parts":["Written test"],"subjects":[{
+          "answers":[],"trend":[],"points":{"name":"Written test","max":100,"tasks":[
+            {"key":"short","max":30,"name":"Short question","range":null},
+            {"key":"long","max":70,"name":"Long question","range":null}
+          ]},
+          "writeActions":[
+            {"availability":{"status":"available"},"taskKey":"short"},
+            {"availability":{"status":"needsChoice","choiceGroups":["Specialty"]},"taskKey":"long"}
+          ]
+        }]
+      }
+      """)
+
+    let choice = try XCTUnwrap(practice.subjects?.first?.pendingChoice)
+    XCTAssertEqual(choice.groups, ["Specialty"])
+    XCTAssertFalse(choice.all)
+    XCTAssertEqual(choice.task, "Long question")
+    XCTAssertEqual(practice.subjects?.first?.shownScale, .levels)
   }
 
   func testAnUnknownKindIsAFailedReadNotAMadeUpGrade() {
@@ -152,8 +259,8 @@ final class WritingResultDecodingTests: XCTestCase {
       try WritingStartWire.recode(Wire(status: "ready", admissionId: "a1")),
       .ready(admissionId: "a1"))
     XCTAssertEqual(
-      try WritingStartWire.recode(Wire(status: "writing", runId: "wrun_1")),
-      .writing(generationId: "wrun_1"))
+      try WritingStartWire.recode(Wire(status: "writing", runId: "wrun_1", unit: "drill")),
+      .writing(generationId: "wrun_1", unit: .drill))
     XCTAssertEqual(
       try WritingStartWire.recode(Wire(status: "limitReached", returnsOn: "2026-11-21")),
       .limitReached(returnsOn: "2026-11-21", task: nil))
@@ -176,6 +283,7 @@ final class WritingResultDecodingTests: XCTestCase {
     var admissionId: String?
     var runId: String?
     var returnsOn: String?
+    var unit: String?
   }
 }
 

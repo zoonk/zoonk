@@ -19,13 +19,24 @@ struct WrittenPartPoints: Hashable, Decodable, Sendable {
     var id: String { key }
   }
 
+  var decimals: Int?
   var max: Double?
   var minimum: PointsMinimum?
   var name: String
   var range: WritingRange?
+  /// Nil from a server before it said; then a part measured in points is in points.
+  var scale: WritingScale?
   /// Nil when the part has no minimum.
   var standing: Standing?
   var tasks: [Task]
+
+  var shownScale: WritingScale { scale ?? (range != nil ? .points : .levels) }
+}
+
+/// Whether a written part can be estimated in points yet, or its answers are graded by level.
+enum WritingScale: String, Decodable, Sendable {
+  case levels
+  case points
 }
 
 /// The exam's projected score with its written part: a total once every part is measured.
@@ -42,16 +53,24 @@ struct WrittenProjection: Hashable, Decodable, Sendable {
     case unmeasured(WrittenPartPoints)
   }
 
+  /// A part graded by level has no points to wait for, so the headline never says it's waiting.
   var headline: Headline? {
     if let below = parts.first(where: { $0.standing == .below }) {
       return .below(below)
     }
 
-    if let unmeasured = parts.first(where: { $0.standing == .unmeasured || $0.range == nil }) {
+    if let unmeasured = parts.first(where: {
+      $0.shownScale == .points && ($0.standing == .unmeasured || $0.range == nil)
+    }) {
       return .unmeasured(unmeasured)
     }
 
     return nil
+  }
+
+  /// Writing is what moves a part not measured yet, or one below its minimum.
+  var needsWriting: Bool {
+    parts.contains { $0.range == nil || $0.standing == .below }
   }
 }
 
@@ -66,7 +85,7 @@ struct WrittenProjectionSections: View {
     Section {
       VStack(alignment: .leading, spacing: 4) {
         Text("Estimated score", tableName: "Plan", comment: "The exam's projected score")
-          .typeStyle(.label)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
         switch projection.headline {
@@ -81,7 +100,7 @@ struct WrittenProjectionSections: View {
             Group {
               if minimum.unit == .percent {
                 Text(
-                  "\(part.name) asks for \((minimum.value / 100).formatted(.percent.precision(.fractionLength(0)))) of its points, whatever your other scores.",
+                  "\(part.name) asks for \(WritingLabels.share(minimum.value / 100)) of its points, whatever your other scores.",
                   tableName: "Plan", comment: "Why a part's own minimum matters, as a share")
               } else {
                 Text(
@@ -92,14 +111,11 @@ struct WrittenProjectionSections: View {
             .foregroundStyle(.mutedForeground)
           }
         case .unmeasured(let part):
-          Text(
-            "\(part.name) isn't measured yet.", tableName: "Plan",
-            comment: "A written part with no graded answer yet"
-          )
-          .foregroundStyle(.mutedForeground)
+          unmeasured(part)
+            .foregroundStyle(.mutedForeground)
         case nil:
           if let combined = projection.combined, let max = projection.max {
-            PointsReadout(range: combined, max: max)
+            PointsReadout(range: combined, max: max, decimals: 0)
           }
         }
       }
@@ -111,7 +127,8 @@ struct WrittenProjectionSections: View {
 
       ForEach(projection.parts, id: \.name) { part in
         ScoreRow(
-          name: Text(part.name), range: part.range, max: part.max,
+          name: Text(part.name), range: part.range, max: part.max, decimals: part.decimals,
+          levels: part.shownScale == .levels,
           minimum: part.minimum.flatMap { minimum in
             part.max.map { minimum.unit == .percent ? minimum.value / 100 * $0 : minimum.value }
           }
@@ -120,22 +137,42 @@ struct WrittenProjectionSections: View {
         }
       }
     } footer: {
-      if projection.headline != nil {
+      if projection.needsWriting {
         WriteNowAction(goalId: goalId)
           .padding(.top, 12)
       }
     }
   }
+
+  /// "Written test, half your final score, isn't measured yet.": the part's share of the exam's
+  /// points, when both are known.
+  private func unmeasured(_ part: WrittenPartPoints) -> Text {
+    guard let partMax = part.max, let max = projection.max, max > 0 else {
+      return Text(
+        "\(part.name) isn't measured yet.", tableName: "Plan",
+        comment: "A written part with no graded answer yet")
+    }
+
+    let share = partMax / max
+
+    return share == 0.5
+      ? Text("\(part.name), half your final score, isn't measured yet.", tableName: "Plan")
+      : Text(
+        "\(part.name), \(WritingLabels.share(share)) of your final score, isn't measured yet.",
+        tableName: "Plan")
+  }
 }
 
-/// A block's one number: the range large, its scale small beside it ("54–61 of 100").
+/// A block's one number: the range large, its scale small beside it ("54–61 of 100"). A headline
+/// never claims more than its parts, so its ends round outward.
 struct PointsReadout: View {
   let range: WritingRange
   let max: Double
+  var decimals: Int?
 
   var body: some View {
     HStack(alignment: .lastTextBaseline, spacing: 6) {
-      Text(verbatim: WritingLabels.range(range))
+      Text(verbatim: WritingLabels.range(range, decimals: decimals, headline: true))
         .typeStyle(.momentReadout)
         .monospacedDigit()
       Text(
@@ -153,16 +190,21 @@ private struct ScoreRow<Detail: View>: View {
   let name: Text
   let range: WritingRange?
   let max: Double?
+  var decimals: Int?
+  /// Graded by level: no points to wait for, so no meter holds their place.
+  var levels: Bool
   var minimum: Double?
   @ViewBuilder var detail: Detail
 
   init(
-    name: Text, range: WritingRange?, max: Double?, minimum: Double? = nil,
-    @ViewBuilder detail: () -> Detail = { EmptyView() }
+    name: Text, range: WritingRange?, max: Double?, decimals: Int? = nil, levels: Bool = false,
+    minimum: Double? = nil, @ViewBuilder detail: () -> Detail = { EmptyView() }
   ) {
     self.name = name
     self.range = range
     self.max = max
+    self.decimals = decimals
+    self.levels = levels
     self.minimum = minimum
     self.detail = detail()
   }
@@ -171,8 +213,12 @@ private struct ScoreRow<Detail: View>: View {
     VStack(alignment: .leading, spacing: 8) {
       LabeledContent {
         if let range, let max {
-          Text(verbatim: WritingLabels.range(range, of: max))
+          Text(verbatim: WritingLabels.range(range, of: max, decimals: decimals))
             .typeStyle(.data)
+        } else if levels {
+          Text("Graded by level", tableName: "Plan")
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         } else {
           Text("Not measured yet", tableName: "Plan", comment: "A part with no graded answer yet")
             .typeStyle(.note)
@@ -182,7 +228,7 @@ private struct ScoreRow<Detail: View>: View {
         name.typeStyle(.rowTitle)
       }
 
-      if let max {
+      if let max, !(levels && range == nil) {
         if let range {
           RangeBar(range: range, max: max, minimum: minimum)
         } else {
@@ -207,9 +253,7 @@ private struct PartStanding: View {
       switch part.standing {
       case .met:
         Label {
-          Text(
-            "Above the \(points) points it asks for", tableName: "Plan",
-            comment: "A written part above its own minimum")
+          Text("Above the \(points) points needed", tableName: "Plan")
         } icon: {
           Image(systemName: "checkmark").foregroundStyle(.successText)
         }
@@ -218,18 +262,19 @@ private struct PartStanding: View {
       case .below:
         Label {
           Text(
-            "\(WritingLabels.range(.init(high: minimum - range.low, low: minimum - range.high))) points below the \(points) it asks for",
-            tableName: "Plan", comment: "How far a written part is below its own minimum")
+            "\(WritingLabels.range(.init(high: minimum - range.low, low: minimum - range.high), decimals: part.decimals)) points short of the \(points) needed",
+            tableName: "Plan")
         } icon: {
           Image(systemName: "xmark")
         }
         .typeStyle(.note)
         .foregroundStyle(.destructiveText)
       case .overlaps:
-        Text(
-          "Close to the \(points) points it asks for", tableName: "Plan",
-          comment: "A written part's range straddles its own minimum"
-        )
+        Label {
+          Text("Close to the \(points) points needed", tableName: "Plan")
+        } icon: {
+          Image(systemName: "exclamationmark.triangle")
+        }
         .typeStyle(.note)
         .foregroundStyle(.warningText)
       case .unmeasured, nil:

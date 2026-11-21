@@ -3819,9 +3819,6 @@
         }
       }
     },
-    "Back tomorrow: no more grading today" : {
-      "comment" : "A written task that waits for tomorrow's grades"
-    },
     "Beat the Trickster" : {
       "comment" : "Mission: a phase challenge",
       "localizations" : {
@@ -10837,6 +10834,9 @@
         }
       }
     },
+    "To use what you just learned" : {
+      "comment" : "Under a short writing exercise after a lesson: what it's for."
+    },
     "Today" : {
       "comment" : "Today tab's title",
       "localizations" : {
@@ -11910,9 +11910,6 @@
           }
         }
       }
-    },
-    "Use what you just learned" : {
-      "comment" : "Under a writing drill after a lesson"
     },
     "We couldn't confirm the exam's details" : {
       "comment" : "What research found didn't match the exam",
@@ -13046,9 +13043,6 @@
         }
       }
     },
-    "Writing drill" : {
-      "comment" : "A short writing task after a lesson, to use what it taught"
-    },
     "Writing practice" : {
       "comment" : "A writing block",
       "localizations" : {
@@ -13995,6 +13989,7 @@
         }
       }
     },
+    "Your draft is saved" : {},
     "Your end date has passed with %lld lessons left." : {
       "comment" : "A goal's end date passed with lessons left; the number is the lessons",
       "localizations" : {

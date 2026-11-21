@@ -602,6 +602,8 @@ struct MockOption: Hashable, Decodable, Sendable, Identifiable {
       case written
     }
 
+    /// `needsChoice` when its questions wait for an exam choice.
+    var availability: WritingAvailability?
     var kind: Kind
     var minutes: Int?
     var name: String
@@ -611,6 +613,8 @@ struct MockOption: Hashable, Decodable, Sendable, Identifiable {
   }
 
   var area: String?
+  /// `needsChoice` when its written questions wait for an exam choice.
+  var availability: WritingAvailability?
   var areas: [String]
   var covers: [String]?
   var day: Int?
@@ -631,6 +635,16 @@ struct MockOption: Hashable, Decodable, Sendable, Identifiable {
   /// Its start may write questions for a written part.
   var asksWriting: Bool {
     kind == .written || (sections ?? []).contains { $0.kind == .written } || !written.isEmpty
+  }
+
+  /// It holds the written test, so the day's grading limits it.
+  var hasWrittenTest: Bool {
+    kind == .written || (sections ?? []).contains { $0.kind == .written }
+  }
+
+  /// The exam choices its written test waits for, as the options say.
+  var pendingChoice: [String]? {
+    availability?.choiceGroups ?? sections?.lazy.compactMap { $0.availability?.choiceGroups }.first
   }
 }
 
