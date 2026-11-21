@@ -912,7 +912,7 @@
   }
 
   /// A lesson's code block, a question's option that is code and inline code, with long lines that
-  /// wrap on a phone and scroll on a wider screen.
+  /// wrap on a phone, and the same block as a wider screen draws it, scrolling sideways.
   private struct Code: View {
     private static let program = """
       async function abrir() {
@@ -941,6 +941,9 @@
           text: LessonRichText.typeset(
             "```java\nclass Exportador extends Servico {\n  Exportador() { Compactador c = new Compactador(); }\n}\n```"
           ), action: {})
+
+        CodeBlock(code: Self.program, language: "javascript")
+          .environment(\.horizontalSizeClass, .regular)
       }
       .padding(.vertical, 8)
     }
