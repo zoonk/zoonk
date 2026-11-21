@@ -183,6 +183,35 @@ describe(getPlotLayout, () => {
     });
   });
 
+  it("keeps a name on its dot's side of a reference line, so the point never reads as past it", () => {
+    const nearTarget: PlotVisual = {
+      ...scan,
+      references: [{ label: "Target", y: 960 }],
+      series: [
+        {
+          mark: "points",
+          name: "Scan",
+          points: (scan.series[0]?.points ?? []).map((point) =>
+            point.label === "C" ? { ...point, y: 952 } : point,
+          ),
+        },
+      ],
+    };
+
+    for (const width of [SMALL_PHONE_CARD, PHONE, DESKTOP_CARD]) {
+      const layout = layoutFor(nearTarget, width);
+      const line = layout.references[0]?.y ?? 0;
+
+      layout.labels.forEach((label, index) => {
+        const dot = layout.series[0]?.[index];
+        const box = labelBox(label);
+        const below = (dot?.y ?? 0) > line;
+
+        expect(below ? box.top >= line : box.bottom <= line).toBe(true);
+      });
+    }
+  });
+
   it("moves long names into a numbered key when they would crowd, dropping none", () => {
     const names = ["North", "South", "East", "West", "Center", "Harbor", "Airport", "Hills"].map(
       (place) => `${place} warehouse`,

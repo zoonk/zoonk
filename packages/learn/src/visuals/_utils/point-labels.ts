@@ -49,6 +49,16 @@ function dotBox({ x, y }: Pixel): Box {
   };
 }
 
+/** The label with the gap to its dot: a line through it, such as a reference, would part them. */
+function span(a: Box, b: Box): Box {
+  return {
+    bottom: Math.max(a.bottom, b.bottom),
+    left: Math.min(a.left, b.left),
+    right: Math.max(a.right, b.right),
+    top: Math.min(a.top, b.top),
+  };
+}
+
 function crosses([from, to]: Segment, box: Box): boolean {
   const low = Math.max(Math.min(from.x, to.x), box.left);
   const high = Math.min(Math.max(from.x, to.x), box.right);
@@ -104,6 +114,7 @@ function placeLabels({
 
   return named.map((item) => {
     const options = candidates(item, scene.textWidth);
+    const dot = dotBox(item.dot);
 
     const free = options
       .filter(
@@ -111,7 +122,8 @@ function placeLabels({
       )
       .map((option, order) => ({
         ...option,
-        crossings: scene.segments.filter((segment) => crosses(segment, option.box)).length,
+        crossings: scene.segments.filter((segment) => crosses(segment, span(option.box, dot)))
+          .length,
         order,
       }))
       .toSorted((a, b) => a.crossings - b.crossings || a.order - b.order);
