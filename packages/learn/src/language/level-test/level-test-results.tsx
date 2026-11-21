@@ -91,6 +91,7 @@ export function TestOutResult({
 }) {
   const t = useExtracted();
   const lessons = view.result?.lessonsSkipped ?? 0;
+  const unchecked = view.total === 0;
 
   return (
     <TestOutcome
@@ -98,9 +99,9 @@ export function TestOutResult({
       continueLabel={t("Done")}
       lead={
         <OnboardingDescription>
-          {lessons > 0
-            ? t("You already know them. They stay in your practice.")
-            : t("Your lessons keep adjusting as you answer.")}
+          {unchecked && t("There aren't enough questions for {level} yet.", { level: view.level })}
+          {!unchecked && lessons > 0 && t("You already know them. They stay in your practice.")}
+          {!unchecked && lessons === 0 && t("Your lessons keep adjusting as you answer.")}
         </OnboardingDescription>
       }
       onContinue={onDone}

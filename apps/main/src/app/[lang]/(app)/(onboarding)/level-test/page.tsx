@@ -1,6 +1,7 @@
 import { LearnNoGoal } from "@/app/[lang]/(app)/(learn)/_components/learn-no-goal";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { redirect } from "@/i18n/navigation";
+import { LEVEL_TEST_OUT_PARAM } from "@/lib/placement-test/level-check-href";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { OnboardingPage } from "@zoonk/learn/onboarding/frame";
@@ -16,8 +17,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Level test") };
 }
 
-async function LevelTestContent() {
-  const [locale, list] = await Promise.all([lang(), listCurrentUserGoals()]);
+type Props = PageProps<"/[lang]/level-test">;
+
+async function LevelTestContent({ searchParams }: Props) {
+  const [locale, list, query] = await Promise.all([lang(), listCurrentUserGoals(), searchParams]);
   const goal = list?.goals.find((candidate) => candidate.id === list.activeGoalId) ?? null;
 
   if (!goal) {
@@ -51,6 +54,7 @@ async function LevelTestContent() {
     <OnboardingPage backHref="/plan">
       <LevelTestClient
         goalId={goal.id}
+        testOutFirst={query[LEVEL_TEST_OUT_PARAM] !== undefined}
         targetLanguage={goal.targetLanguage}
         testOutLevel={test.nextTestOutLevel}
         wholeCourseMinutes={test.estimatedMinutes}
@@ -59,7 +63,7 @@ async function LevelTestContent() {
   );
 }
 
-export default function LevelTestPage() {
+export default function LevelTestPage(props: Props) {
   return (
     <Suspense
       fallback={
@@ -68,7 +72,7 @@ export default function LevelTestPage() {
         </OnboardingPage>
       }
     >
-      <LevelTestContent />
+      <LevelTestContent {...props} />
     </Suspense>
   );
 }

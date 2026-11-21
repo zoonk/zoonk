@@ -5,6 +5,7 @@ import {
   speakLevelTestAction,
   startLevelTestBankAction,
 } from "@/app/[lang]/(app)/(onboarding)/start/language-level-test-actions";
+import { readWarmUpAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { useRouter } from "@/i18n/navigation";
 import {
   type LanguagePlanTestActions,
@@ -17,6 +18,7 @@ import {
   finishLevelTestAttemptAction,
   finishLevelTestOutAction,
   getLevelTestAttemptAction,
+  getLevelTestOutAction,
   startLevelTestAttemptAction,
   startLevelTestOutAction,
   walkLevelTestTopicsAction,
@@ -44,6 +46,7 @@ function getActions({
       answer: (input) =>
         answerLevelTestOutAction(goalId, { ...input, timeZone: getLocalTimeZone() }),
       finish: (attemptId) => finishLevelTestOutAction(goalId, attemptId),
+      get: (attemptId) => getLevelTestOutAction(goalId, attemptId),
       start: (level) => startLevelTestOutAction(goalId, level),
     },
     walkTopics: async () => {
@@ -60,11 +63,14 @@ function getActions({
 
 export function LevelTestClient({
   goalId,
+  testOutFirst,
   targetLanguage,
   testOutLevel,
   wholeCourseMinutes,
 }: {
   goalId: string;
+  /** Opened from a lesson's offer to test out of a level, so that choice comes picked. */
+  testOutFirst: boolean;
   targetLanguage: string;
   testOutLevel: string | null;
   wholeCourseMinutes: number;
@@ -83,7 +89,9 @@ export function LevelTestClient({
       <LanguagePlanTestFlow
         actions={getActions({ goalId, walked: () => router.push("/placement-test") })}
         onDone={leave}
+        readWarmUp={readWarmUpAction}
         targetLanguage={targetLanguage}
+        testOutFirst={testOutFirst}
         testOutLevel={testOutLevel}
         trueFalseLabels="trueFalse"
         wholeCourseMinutes={wholeCourseMinutes}

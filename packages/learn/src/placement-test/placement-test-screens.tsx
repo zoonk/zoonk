@@ -37,6 +37,7 @@ type TestChoice = PlacementLength | "testOut";
 
 export function PlacementLengthChoice({
   failed,
+  initialChoice = "quick",
   onStart,
   onTestOut,
   pressed,
@@ -44,6 +45,7 @@ export function PlacementLengthChoice({
   wholeCourseMinutes,
 }: {
   failed: boolean;
+  initialChoice?: TestChoice;
   onStart: (length: PlacementLength) => void;
   onTestOut?: () => void;
   pressed: PlacementPressed;
@@ -53,7 +55,7 @@ export function PlacementLengthChoice({
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const [choice, setChoice] = useState<TestChoice>("quick");
+  const [choice, setChoice] = useState<TestChoice>(initialChoice);
 
   const start = () => {
     if (choice === "testOut") {

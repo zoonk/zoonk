@@ -2,7 +2,9 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { useExtracted } from "next-intl";
+import { type OnboardingActions } from "../../onboarding/onboarding-actions";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
+import { PlacementWaiting } from "../../onboarding/steps/placement-waiting";
 import { StepLoadFailed, StepLoading } from "../../onboarding/steps/step-parts";
 import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
 import { LevelTestPreparing } from "./level-test-preparing";
@@ -15,7 +17,9 @@ export type { LanguagePlanTestActions } from "./use-language-plan-test";
 export function LanguagePlanTestFlow({
   actions,
   onDone,
+  readWarmUp,
   targetLanguage,
+  testOutFirst = false,
   testOutLevel,
   trueFalseLabels,
   wholeCourseMinutes,
@@ -23,7 +27,10 @@ export function LanguagePlanTestFlow({
   actions: LanguagePlanTestActions;
   /** Goes back to the plan, read again; false when it didn't. */
   onDone: () => Promise<boolean>;
+  readWarmUp: OnboardingActions["readWarmUp"];
   targetLanguage: string;
+  /** Opened from a lesson's offer to test out of a level, so that choice comes picked. */
+  testOutFirst?: boolean;
   /** The next level the learner can test out of; null when none is left. */
   testOutLevel: string | null;
   trueFalseLabels: TrueFalseLabels;
@@ -43,6 +50,7 @@ export function LanguagePlanTestFlow({
         <PlacementLengthChoice
           failed={failed}
           onStart={test.onStart}
+          initialChoice={testOutFirst && testOutLevel ? "testOut" : "quick"}
           onTestOut={testOutLevel ? () => test.onTestOut(testOutLevel) : undefined}
           pressed={pressed}
           testOutLevel={testOutLevel}
@@ -105,6 +113,20 @@ export function LanguagePlanTestFlow({
           question={phase.question}
           subject={t("Test out of {level}", { level: phase.view.level })}
           trueFalseLabels={trueFalseLabels}
+        />
+      );
+    case "testOutWaiting":
+      return (
+        <PlacementWaiting
+          buildFailed={false}
+          onQuestions={test.continueTestOut}
+          onSkip={test.onLeave}
+          poll={test.testOutPoll}
+          questionsReady={test.arrivedTestOut}
+          readWarmUp={readWarmUp}
+          run={null}
+          skip={{ label: t("Not now"), note: null }}
+          skipping={pressed === "other"}
         />
       );
     case "testOutResult":

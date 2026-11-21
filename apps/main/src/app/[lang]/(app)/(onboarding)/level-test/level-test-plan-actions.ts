@@ -12,6 +12,7 @@ import { startLanguageLevelTest } from "@zoonk/core/language/level-test/start";
 import {
   type LanguageLevelTestOutResult,
   answerLanguageLevelTestOut,
+  getLanguageLevelTestOut,
   startLanguageLevelTestOut,
 } from "@zoonk/core/language/level-test/test-out";
 import { levelTestOutAnswerSchema } from "@zoonk/core/language/level-test/test-out-contract";
@@ -76,6 +77,18 @@ export async function startLevelTestOutAction(
   }
 
   return toTestOutView(await startLanguageLevelTestOut({ goalId, level: parsed.data }));
+}
+
+/** Read-only, while its questions are written. */
+export async function getLevelTestOutAction(
+  goalId: string,
+  attemptId: string,
+): Promise<TestOutView | null> {
+  if (!isUuid(goalId) || !isUuid(attemptId)) {
+    return null;
+  }
+
+  return toTestOutView(await getLanguageLevelTestOut({ attemptId, goalId }));
 }
 
 export async function answerLevelTestOutAction(

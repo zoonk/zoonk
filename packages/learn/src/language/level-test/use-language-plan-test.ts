@@ -48,6 +48,8 @@ export type LanguagePlanTestActions = Pick<LanguageLevelTestActions, "prepare" |
       itemId: string;
     }) => Promise<TestOutView | null>;
     finish: (attemptId: string) => Promise<TestOutView | null>;
+    /** Read-only. */
+    get: (attemptId: string) => Promise<TestOutView | null>;
     start: (level: string) => Promise<TestOutView | null>;
   };
   /** Opens the whole-course test's walk through the course's topics; false when it didn't. */
@@ -60,7 +62,9 @@ type Phase =
   | { attemptId: string; kind: "test"; test: ReadyTest }
   | { kind: "result"; length: LevelTestLength; result: LevelTestResult | null }
   | { failures: number; kind: "testOut"; question: PlacementQuestion; view: TestOutView }
-  | { kind: "testOutResult"; view: TestOutView };
+  | { kind: "testOutResult"; view: TestOutView }
+  /** A test-out whose questions are still being written. */
+  | { attemptId: string; kind: "testOutWaiting" };
 
 /** A page load goes on with an open test; otherwise the learner chooses one. */
 function toOpenedPhase(view: LanguageLevelTestView | null): Phase {
@@ -94,6 +98,10 @@ function toPlacementQuestion(question: TestOutQuestion): PlacementQuestion | nul
 }
 
 function toTestOutPhase(view: TestOutView): Phase {
+  if (view.preparing) {
+    return { attemptId: view.attemptId, kind: "testOutWaiting" };
+  }
+
   const question = view.next && toPlacementQuestion(view.next);
 
   return question
@@ -113,6 +121,8 @@ export function useLanguagePlanTest({
   const [pressed, setPressed] = useState<PlacementPressed>(null);
   const [isPending, startTransition] = useTransition();
   const [bank, setBank] = useState<BankWait>(INITIAL_BANK_WAIT);
+  // Test-out questions that arrived while the learner waited show once the wait moves on.
+  const [arrived, setArrived] = useState<TestOutView | null>(null);
 
   const reopen = useReadOnOpen({
     onRead: (view) => setPhase(toOpenedPhase(view)),
@@ -162,6 +172,23 @@ export function useLanguagePlanTest({
     },
   });
 
+  const testOutPoll = usePoll({
+    active: phase.kind === "testOutWaiting" && arrived === null,
+    intervalMs: POLL_MS,
+    onPoll: async () => {
+      const view =
+        phase.kind === "testOutWaiting" ? await actions.testOut.get(phase.attemptId) : null;
+
+      if (!view) {
+        throw new Error("The test couldn't be read");
+      }
+
+      if (!view.preparing) {
+        setArrived(view);
+      }
+    },
+  });
+
   const save = (button: PlacementPressed, action: () => Promise<boolean>) => {
     setPressed(button);
     setFailed(false);
@@ -193,7 +220,14 @@ export function useLanguagePlanTest({
     });
 
   return {
+    arrivedTestOut: arrived !== null,
     bankRun: toBankRun({ poll: poll.status, recheck: poll.restart, retry, wait: bank }),
+    continueTestOut: () => {
+      if (arrived) {
+        setArrived(null);
+        setPhase(toTestOutPhase(arrived));
+      }
+    },
     failed,
     isPending,
     onDone: () => save("main", () => onDone().catch(() => false)),
@@ -243,5 +277,6 @@ export function useLanguagePlanTest({
     poll,
     pressed,
     reopen,
+    testOutPoll,
   };
 }
