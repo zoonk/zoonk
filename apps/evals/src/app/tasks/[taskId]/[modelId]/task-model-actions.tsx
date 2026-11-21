@@ -153,7 +153,9 @@ export function TaskModelRunBar({
 }) {
   const hasOutputs = outputStatus.status !== "missing";
   const hasEveryOutput = outputStatus.status === "complete";
-  const needsEval = hasEveryOutput && summary.scored < outputStatus.totalOutputs;
+
+  const needsEval =
+    hasEveryOutput && summary.scored + summary.unscoredImages.length < outputStatus.totalOutputs;
 
   const generate = hasEveryOutput ? (
     <SubmitButton formAction={generateOutputsAction} key="generate" size="lg" variant="outline">

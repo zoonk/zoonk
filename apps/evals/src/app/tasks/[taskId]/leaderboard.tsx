@@ -26,6 +26,12 @@ function CasesScored({ entry, totalRuns }: { entry: LeaderboardEntry; totalRuns:
   return (
     <>
       {entry.summary.scored}/{totalRuns}
+      {entry.summary.unscoredImages.length > 0 && (
+        <span className="text-muted-foreground">
+          {FACT_SEPARATOR}
+          {entry.summary.unscoredImages.length} images without a score
+        </span>
+      )}
       {failed > 0 ? (
         <span className="text-destructive-text">
           {FACT_SEPARATOR}

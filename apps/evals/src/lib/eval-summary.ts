@@ -1,4 +1,4 @@
-import { calculateScore } from "./score-calculation";
+import { calculateScore, hasValidScore } from "./score-calculation";
 import { type FailureReason, type TaskEvalResults } from "./types";
 
 export const FAILURE_REASONS = ["schema", "provider", "other", "unknown"] as const;
@@ -10,6 +10,7 @@ export type EvalSummary = {
   generated: number;
   scored: number;
   averageScore: number | null;
+  unscoredImages: string[];
   needsListening: { audioPath: string; caseId: string }[];
   caseIds: { attempted: string[]; generated: string[]; scored: string[] };
   failures: Record<ReportedFailureReason, FailureCount>;
@@ -28,7 +29,7 @@ export function aggregateEvalResults({
   failedRuns = [],
 }: Pick<TaskEvalResults, "outputs" | "results" | "failedRuns">): EvalSummary {
   const generatedIds = outputs.map((output) => output.testCaseId);
-  const scored = results.filter((result) => !result.listeningReview);
+  const scored = results.filter((result) => hasValidScore(result));
   const scoredIds = scored.map((result) => result.testCase.id);
 
   const recorded = results.filter(
@@ -70,6 +71,9 @@ export function aggregateEvalResults({
       listeningReview ? [{ audioPath: listeningReview.audioPath, caseId: testCase.id }] : [],
     ),
     scored: scored.length,
+    unscoredImages: results.flatMap(({ imageReview, testCase }) =>
+      imageReview ? [testCase.id] : [],
+    ),
   };
 }
 

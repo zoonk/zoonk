@@ -2,15 +2,17 @@ import { defineScoreCategories } from "@/lib/score-categories";
 
 export const EXPLAIN_SPOKEN_ANSWER_SCORE_CATEGORIES = defineScoreCategories([
   {
-    expectations: `It says what we heard ("we heard X") without claiming to know for sure what went wrong, and every claim about sounds, stress or grammar is true for both languages. It covers the listed words and no others. A false rule, or a tip about a word that wasn't listed, sends the learner to fix the wrong thing.`,
+    expectations: `It says what we heard ("we heard X") without claiming to know for sure what went wrong, and every claim about sounds, stress or grammar is true for both languages. It covers the listed words and no others. Score at most 5 for a false rule or a tip about a word that wasn't listed.`,
     id: "accuracy",
     label: "Accurate and honest",
+    readerExpectations: `It says what we heard ("we heard X") without claiming to know for sure what went wrong, and every claim about sounds, stress or grammar is true for both languages. It covers the listed words and no others. A false rule, or a tip about a word that wasn't listed, sends the learner to fix the wrong thing.`,
     weight: 35,
   },
   {
-    expectations: `The likely cause comes from how the learner's own language works (for example, a Brazilian Portuguese speaker reading an English initial "r" as an "h"), and it gives one concrete thing to do with the mouth, stress or rhythm. When what we heard is another real word, it says the learner may have used the wrong form and shows the right one. A generic "practice more" gives the learner nothing to change.`,
+    expectations: `The likely cause comes from how the learner's own language works (for example, a Brazilian Portuguese speaker reading an English initial "r" as an "h"), and it gives one concrete thing to do with the mouth, stress or rhythm. When what we heard is another real word, it says the learner may have used the wrong form and shows the right one. A generic "practice more" scores at most 5.`,
     id: "helpfulness",
     label: "Useful for this learner",
+    readerExpectations: `The likely cause comes from how the learner's own language works (for example, a Brazilian Portuguese speaker reading an English initial "r" as an "h"), and it gives one concrete thing to do with the mouth, stress or rhythm. When what we heard is another real word, it says the learner may have used the wrong form and shows the right one. A generic "practice more" gives the learner nothing to change.`,
     weight: 35,
   },
   {

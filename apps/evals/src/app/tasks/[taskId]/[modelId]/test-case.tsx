@@ -1,7 +1,7 @@
 "use client";
 
 import { FoldRowTitle } from "@/components/fold-row-title";
-import { calculateScore } from "@/lib/score-calculation";
+import { calculateScore, hasValidScore } from "@/lib/score-calculation";
 import { getScoreClassName } from "@/lib/score-class-name";
 import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import {
@@ -154,14 +154,16 @@ function CategoryScoresSection({ categoryScores }: { categoryScores: CategorySco
 
 export function TestCase({ result, index }: { result: EvalResult; index: number }) {
   const testCaseTitle = result.testCase.id || `Test Case ${index + 1}`;
-  const score = result.listeningReview ? null : calculateScore(result);
+  const score = hasValidScore(result) ? calculateScore(result) : null;
+  const review = result.imageReview ?? result.listeningReview?.conclusion;
+  const status = result.listeningReview ? "Needs a listen" : "Not scored";
 
   return (
     <AccordionItem id={`case-${result.testCase.id}`} value={`test-case-${index}`}>
       <AccordionTrigger className="hover:no-underline">
         <FoldRowTitle title={testCaseTitle}>
           {score === null ? (
-            <span className="text-muted-foreground font-sans">Needs a listen</span>
+            <span className="text-muted-foreground font-sans">{status}</span>
           ) : (
             <span className={getScoreClassName(score)}>{score.toFixed(2)}</span>
           )}
@@ -179,8 +181,8 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
 
         <KeyFlawsSection flaws={result.keyFlaws} />
 
-        {result.listeningReview ? (
-          <p className="text-sm">{result.listeningReview.conclusion}</p>
+        {review ? (
+          <p className="text-sm">{review}</p>
         ) : (
           <EvaluationStepsSection steps={result.steps} />
         )}

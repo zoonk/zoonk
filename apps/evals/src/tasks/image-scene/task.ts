@@ -28,9 +28,11 @@ const scoreCategories = defineScoreCategories([
   },
   {
     expectations:
-      "Labels appear only when a word, number or price makes the idea readable, and a whole shown with its parts labels each part its screen names; each is at most four words, in the lesson's language, spelled right, and numbers match the screen exactly. None for language courses. Labels that repeat the obvious or act as captions clutter the picture.",
+      "Labels appear only when a word, number or price makes the idea readable, and a whole shown with its parts labels each part its screen names; each is at most four words, in the lesson's language, spelled right, and numbers match the screen exactly. None for language courses. Labels that repeat the obvious or act as captions cap this at 6.",
     id: "labels",
     label: "Labels",
+    readerExpectations:
+      "Labels appear only when a word, number or price makes the idea readable, and a whole shown with its parts labels each part its screen names; each is at most four words, in the lesson's language, spelled right, and numbers match the screen exactly. None for language courses. Labels that repeat the obvious or act as captions clutter the picture.",
     weight: 25,
   },
   {

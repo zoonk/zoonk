@@ -9,11 +9,15 @@ export const PLAIN_LANGUAGE_CRITERION: ReadCriterion = {
 };
 
 export function readCriteria(
-  categories: readonly ReadCriterion[],
+  categories: readonly (ReadCriterion & Pick<ScoreCategory, "readerExpectations">)[],
   ...extra: ReadCriterion[]
 ): ReadCriterion[] {
   return [
-    ...categories.map(({ expectations, id, label }) => ({ expectations, id, label })),
+    ...categories.map(({ expectations, id, label, readerExpectations }) => ({
+      expectations: readerExpectations ?? expectations,
+      id,
+      label,
+    })),
     ...extra,
   ];
 }

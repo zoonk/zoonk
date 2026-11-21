@@ -2,7 +2,7 @@ import { getBaseLanguage } from "@zoonk/utils/languages";
 import { summarizeClassification } from "./classification-metrics";
 import { formatPercent } from "./format";
 import { average } from "./math";
-import { calculateScore } from "./score-calculation";
+import { calculateScore, hasValidScore } from "./score-calculation";
 import { getBaseTestCaseId } from "./test-case-runs";
 import { type EvalResult, type TestCase } from "./types";
 
@@ -60,7 +60,7 @@ export function summarizeByLanguage({
   const casesById = new Map(testCases.map((testCase) => [testCase.id, testCase]));
 
   const groups = Map.groupBy(
-    results.filter((result) => !result.listeningReview),
+    results.filter((result) => hasValidScore(result)),
     (result) => {
       const testCase = casesById.get(getBaseTestCaseId(result.testCase.id)) ?? result.testCase;
       return getTestCaseLanguage(testCase) ?? UNKNOWN_LANGUAGE;
