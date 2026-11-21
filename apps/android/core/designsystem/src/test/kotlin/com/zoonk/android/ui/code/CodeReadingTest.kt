@@ -21,9 +21,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
-/** TalkBack keeps code's lines and their indentation apart, as main's screen readers do. */
+/** TalkBack keeps code's lines and their indentation apart, as main's screen readers do. Text measures as drawn. */
 @RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "w390dp-h800dp-mdpi")
 class CodeReadingTest {
     @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
@@ -82,6 +84,49 @@ class CodeReadingTest {
 
         assertTrue("the tag is beside the code, not under it", tag.top < code.bottom && tag.bottom > code.bottom - code.height / 2)
         assertTrue("the option keeps no row for the tag", option.bottom - code.bottom < tag.height * 2)
+    }
+
+    @Test
+    fun `a wide code option's tag ends its short last line at the option's edge`() {
+        show {
+            AnswerOption(
+                marker = 1,
+                picked = true,
+                result = null,
+                onClick = {},
+                modifier = Modifier.testTag("option"),
+                tag = { Text("Your answer", Modifier.testTag("tag")) },
+            ) {
+                CodeSnippet("class Exportador extends Servico {\n  Compactador c = new Compactador();\n}", "java", Modifier.testTag("code"))
+            }
+        }
+
+        val code = compose.onNodeWithTag("code", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        val tag = compose.onNodeWithTag("tag", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+
+        assertTrue("the tag is on the last line, not under it", tag.top < code.bottom && tag.bottom > code.bottom - code.height / 3)
+        assertEquals("the tag ends at the code's edge", code.right, tag.right, 1f)
+    }
+
+    @Test
+    fun `a code option whose last line fills the row puts its tag under it at the option's edge`() {
+        show {
+            AnswerOption(
+                marker = 1,
+                picked = true,
+                result = null,
+                onClick = {},
+                tag = { Text("Your answer", Modifier.testTag("tag")) },
+            ) {
+                CodeSnippet("console.log(frutas.map((fruta) => fruta.toUpperCase()));", "js", Modifier.testTag("code"))
+            }
+        }
+
+        val code = compose.onNodeWithTag("code", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        val tag = compose.onNodeWithTag("tag", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+
+        assertTrue("the tag is under the code", tag.top >= code.bottom)
+        assertEquals("the tag ends at the code's edge", code.right, tag.right, 1f)
     }
 
     private fun textOf(tag: String): String =

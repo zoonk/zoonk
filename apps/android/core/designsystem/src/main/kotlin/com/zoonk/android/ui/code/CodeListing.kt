@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -65,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.zIndex
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.CodeLastLineEnd
 import com.zoonk.android.ui.components.CodeWords
 import com.zoonk.android.ui.components.arrowKeyScroll
 import com.zoonk.android.ui.components.fadingHorizontalScroll
@@ -74,6 +76,7 @@ import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
+import kotlin.math.max
 
 enum class CodeLineTone { Plain, Current, Editable, Error }
 
@@ -516,8 +519,8 @@ fun CodeBlock(
 
 /**
  * Code inside something the learner presses or reads in one line, such as an answer option (main's
- * `CodeSnippet`): no panel and no line numbers, every line wrapped, its extra rows indented. An
- * option's tag sits beside its last line when its widest line leaves room, and under it otherwise.
+ * `CodeSnippet`): no panel and no line numbers, every line wrapped, its extra rows indented. It says
+ * where its last line ends, so an option's tag can end that line when it leaves room.
  */
 @Composable
 fun CodeSnippet(
@@ -530,8 +533,23 @@ fun CodeSnippet(
     val spoken = rememberSpokenCode()
 
     ProvideLayoutDirection(LayoutDirection.Ltr) {
-        Column(modifier.fillMaxWidth().then(CodeWords).clearAndSetSemantics { text = AnnotatedString(spoken.snippet(code)) }) {
-            lines.forEach { tokens -> CodeLineText(tokens, wraps = true, hang = SNIPPET_HANG, marksRows = false, column = column) }
+        Layout(
+            content = {
+                lines.forEach { tokens ->
+                    CodeLineText(tokens, wraps = true, hang = SNIPPET_HANG, marksRows = false, column = column)
+                }
+            },
+            modifier = modifier.fillMaxWidth().then(CodeWords).clearAndSetSemantics { text = AnnotatedString(spoken.snippet(code)) },
+        ) { measurables, constraints ->
+            val rows = measurables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }
+            val lastLineEnd = measurables.lastOrNull()?.maxIntrinsicWidth(constraints.maxHeight) ?: 0
+            val width = max(constraints.minWidth, rows.maxOfOrNull { it.width } ?: 0)
+            layout(width, rows.sumOf { it.height }, mapOf(CodeLastLineEnd to lastLineEnd)) {
+                rows.fold(0) { y, row ->
+                    row.placeRelative(0, y)
+                    y + row.height
+                }
+            }
         }
     }
 }
