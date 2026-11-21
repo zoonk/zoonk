@@ -51,7 +51,10 @@ const laterPhase = lesson(9, {
 
 const review = { estimatedMinutes: 2, lessonId: null, payload: {}, status: "pending" as const };
 
-function reserve(items: SessionPlanItem[]) {
+function reserve(
+  items: SessionPlanItem[],
+  session: Partial<Parameters<typeof getSessionLessonReservation>[0]["session"]> = {},
+) {
   return getSessionLessonReservation({
     access: { includesMockExams: true },
     plan: { graph, items, settings: {} },
@@ -61,6 +64,7 @@ function reserve(items: SessionPlanItem[]) {
       goal: { dailyMinutes: 25, kind: "learn", targetDate: null },
       localDate: TODAY,
       plannedMinutes: 10,
+      ...session,
     },
   });
 }
@@ -76,9 +80,30 @@ describe(getSessionLessonReservation, () => {
 
   it("waits on an unwritten lesson when it's the next one the day reaches", () => {
     expect(reserve([laterPhase])).toStrictEqual({
-      lessonPlaceholder: { minutes: 12.5, title: "Introducing yourself at work" },
+      lessonPlaceholder: { minutes: 8, title: "Introducing yourself at work" },
       lessonRoom: true,
       unwrittenRoom: true,
     });
+  });
+
+  it("fills the room with the written lesson that fits it exactly instead of asking for lessons", () => {
+    expect(reserve([lesson(1, { minutes: 8 }), laterPhase])).toStrictEqual({
+      lessonPlaceholder: null,
+      lessonRoom: true,
+      unwrittenRoom: false,
+    });
+  });
+
+  it("waits on the unwritten lesson the opened day's own room reaches", () => {
+    const opened = {
+      blocks: [
+        { estimatedMinutes: 12, lessonId: "lesson-1", payload: {}, status: "pending" as const },
+      ],
+      freshStart: null,
+      goal: { dailyMinutes: 10, kind: "learn" as const, targetDate: null },
+      plannedMinutes: 25,
+    };
+
+    expect(reserve([lesson(1, { minutes: 12 }), laterPhase], opened).unwrittenRoom).toBe(true);
   });
 });

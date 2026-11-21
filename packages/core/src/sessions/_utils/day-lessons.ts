@@ -12,7 +12,7 @@ export function getLessonLookahead(dayMinutes: number): number {
 }
 
 type DayItem = Pick<PlanItem, "chapterId" | "lessonId" | "scheduledFor" | "skillId"> &
-  Partial<Pick<PlanItem, "facts" | "lessons" | "minutes">>;
+  Partial<Pick<PlanItem, "facts" | "lessons">>;
 
 type AllocatedItem = Pick<PlanItem, "scheduledFor"> & Partial<Pick<PlanItem, "facts">>;
 
@@ -225,48 +225,15 @@ function listHeldSkillIds<TItem extends DayItem>({
   );
 }
 
-/**
- * The plan teaches in order, so an unwritten lesson takes a day's time only when the lessons before
- * it leave that day some. After a break, the written lessons left from earlier days come first.
- */
-function listReachedStandIns<TItem extends DayItem & Pick<PlanItem, "kind" | "status">>({
-  dayMinutes,
-  items,
-  today,
-}: {
-  dayMinutes: number;
-  items: readonly TItem[];
-  today: Date;
-}): TItem[] {
-  return items.reduce<{ before: number; reached: TItem[] }>(
-    ({ before, reached }, item) => {
-      const standIn = isStandIn(item);
-
-      const minutes = standIn
-        ? getUnwrittenMinutesOn({ items: [{ ...item, minutes: item.minutes ?? null }], today })
-        : (readSelectedItemFacts(item.facts)?.minutes ?? item.minutes ?? 0);
-
-      return {
-        before: before + minutes,
-        reached: standIn && before < dayMinutes ? [...reached, item] : reached,
-      };
-    },
-    { before: 0, reached: [] },
-  ).reached;
-}
-
 /** Returns lessons in plan order and held-subject skills for priority practice. */
 export function pickDayLessons<TItem extends DayItem & Pick<PlanItem, "kind" | "status">>({
   awaitingOutlines,
-  dayMinutes,
   goal,
   heldDay = false,
   localDate,
   plan,
 }: {
   awaitingOutlines: boolean;
-  /** The day's study time, which decides how far into the plan's order it reaches. */
-  dayMinutes: number;
   /** A shown day must retain its selected allocation instead of refilling from future work. */
   heldDay?: boolean;
   goal: Pick<Goal, "kind">;
@@ -300,14 +267,10 @@ export function pickDayLessons<TItem extends DayItem & Pick<PlanItem, "kind" | "
           prerequisites: plan.prerequisites ?? new Map(),
         }).filter((item) => isAllocatedOn({ item, today: localDate }))
       : pickDayLessonItems({ ...day, prerequisites: plan.prerequisites }),
-    reservedItems: listReachedStandIns({
-      dayMinutes,
-      items: listOpenLessons({
-        includeUnwritten: true,
-        items: day.items,
-        prerequisites: plan.prerequisites ?? new Map(),
-      }),
-      today: localDate,
-    }).filter((item) => isAllocatedOn({ item, today: localDate })),
+    reservedItems: listOpenLessons({
+      includeUnwritten: true,
+      items: day.items,
+      prerequisites: plan.prerequisites ?? new Map(),
+    }).filter((item) => isStandIn(item) && isAllocatedOn({ item, today: localDate })),
   };
 }

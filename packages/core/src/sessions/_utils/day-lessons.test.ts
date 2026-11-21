@@ -4,7 +4,6 @@ import { getLessonLookahead, getUnwrittenMinutesOn, pickDayLessons } from "./day
 
 const TODAY = new Date("2026-10-06T00:00:00Z");
 const TOMORROW = new Date("2026-10-07T00:00:00Z");
-const YESTERDAY = new Date("2026-10-05T00:00:00Z");
 
 const graph = {
   phases: [],
@@ -63,7 +62,6 @@ function pickDay({
 }) {
   return pickDayLessons({
     awaitingOutlines,
-    dayMinutes: 30,
     goal: { kind: isExam ? "exam" : "learn" },
     localDate: today,
     plan: { graph: dayGraph, idleSkillIds, items: dayItems, prerequisites },
@@ -93,7 +91,6 @@ describe(pickDayLessons, () => {
 
     const picked = pickDayLessons({
       awaitingOutlines: false,
-      dayMinutes: 30,
       goal: { kind: "learn" },
       heldDay: true,
       localDate: TODAY,
@@ -238,33 +235,6 @@ describe(getLessonLookahead, () => {
   });
 });
 
-function written(id: string, scheduledFor: Date) {
-  return { ...item(id, "reading", scheduledFor), minutes: 6 };
-}
-
-const later = {
-  ...item("later", "principles", YESTERDAY),
-  facts: {
-    days: [["2026-10-06", 25, 12.5]],
-    minutes: 864,
-    parts: { checkpoint: 0, practice: 432, unwritten: 432, written: 0 },
-    schemaVersion: 1,
-    skillIds: ["principles"],
-  },
-  lessonId: null,
-  minutes: 864,
-};
-
-function reserve({ dayMinutes, items: dayItems }: { dayMinutes: number; items: Item[] }) {
-  return pickDayLessons({
-    awaitingOutlines: false,
-    dayMinutes,
-    goal: { kind: "learn" },
-    localDate: TODAY,
-    plan: { graph, items: dayItems },
-  }).reservedItems.map((entry) => entry.id);
-}
-
 describe("writing reservations", () => {
   it.each([null, undefined])("holds legacy stand-ins' minutes without facts: %s", (facts) => {
     const writing = { ...item("legacy", "reading", TODAY), facts, lessonId: null, minutes: 20 };
@@ -305,16 +275,4 @@ describe("writing reservations", () => {
       expect(getUnwrittenMinutesOn({ items: [writing], today: TODAY })).toBe(unwritten);
     },
   );
-
-  it("holds no time for a later lesson while written lessons before it fill the day", () => {
-    const behind = [written("w-1", YESTERDAY), written("w-2", YESTERDAY), later];
-
-    expect(reserve({ dayMinutes: 10, items: behind })).toStrictEqual([]);
-  });
-
-  it("holds an unwritten lesson's time when the day reaches it after the written ones", () => {
-    expect(reserve({ dayMinutes: 25, items: [written("w-1", TODAY), later] })).toStrictEqual([
-      "later",
-    ]);
-  });
 });

@@ -11,7 +11,6 @@ import {
 } from "../../library/language/alphabet/alphabet-intro";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { getSessionDayMinutes } from "../fresh-start";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { listDayCheckpoints, loadDayBosses } from "./day-checkpoints";
 import { pickDayLessons } from "./day-lessons";
@@ -20,7 +19,7 @@ import { loadDayPlan } from "./day-plan";
 import {
   getDayFreshStart,
   getDayPracticeShare,
-  getDayWritingMinutes,
+  getDayUnwrittenTime,
   getPlanTestSkillIds,
 } from "./day-plan-facts";
 import { findPlannedReview } from "./day-review";
@@ -140,11 +139,8 @@ export async function loadSessionBuildInput(
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
 
-  const freshStart = getDayFreshStart({ plan, today: localDate });
-
   const { heldSkillIds, learnItems, fillItems, reservedItems } = pickDayLessons({
     awaitingOutlines,
-    dayMinutes: getSessionDayMinutes({ dailyMinutes: dayMinutes, freshStart }),
     goal,
     heldDay: context.selection !== undefined,
     localDate,
@@ -247,7 +243,7 @@ export async function loadSessionBuildInput(
     dailyMinutes: dayMinutes,
 
     fillLessons,
-    freshStart,
+    freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,
     lastSessionChallenges: plan.lastSessionChallenges,
     lessons,
@@ -265,7 +261,7 @@ export async function loadSessionBuildInput(
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay ? (reviewDay.key ?? getItemKey(reviewDay)) : null,
     topics: getPlanTopics({ goal, graph: plan.graph }),
-    writingMinutes: getDayWritingMinutes({ reservedItems, today: localDate }),
+    unwritten: getDayUnwrittenTime({ reservedItems, today: localDate }),
   };
 
   const work = { context, dueCapsules, isReviewDay, plan, practiceQuery };
