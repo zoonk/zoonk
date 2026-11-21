@@ -13,9 +13,14 @@ import {
   resolveMistakeCauseStep,
   saveDailyInsightStep,
   settleSessionDayStep,
+  updateLessonsShowingStep,
   voiceWordStep,
   writeDailyInsightStep,
 } from "./steps/background-task-steps";
+import {
+  finishProfileToolSuggestionsStep,
+  writeProfileToolSuggestionsStep,
+} from "./steps/suggest-profile-tools-steps";
 
 export type BackgroundTask = Exclude<
   OwedFollowUp,
@@ -56,6 +61,17 @@ async function checkDailyInsight({ input, userId }: InsightTask): Promise<void> 
   await saveDailyInsightStep({ claim, userId, written });
 }
 
+async function suggestProfileTools(
+  task: Extract<BackgroundTask, { kind: "suggestProfileTools" }>,
+): Promise<void> {
+  const result = await writeProfileToolSuggestionsStep(task).then(
+    (tools) => ({ status: "generated" as const, tools }),
+    () => ({ status: "failed" as const }),
+  );
+
+  await finishProfileToolSuggestionsStep({ result, task });
+}
+
 async function runTask(task: BackgroundTask): Promise<void> {
   const { userId } = task;
 
@@ -66,6 +82,8 @@ async function runTask(task: BackgroundTask): Promise<void> {
       return checkMistakePatternStep({ ...task.input, userId });
     case "rememberOnboarding":
       return rememberProposedMemory(await proposeOnboardingMemoryStep({ ...task.input, userId }));
+    case "suggestProfileTools":
+      return suggestProfileTools(task);
     case "rememberSession":
       return rememberProposedMemory(await proposeSessionMemoryStep({ ...task.input, userId }));
     case "checkDailyInsight":
@@ -76,6 +94,8 @@ async function runTask(task: BackgroundTask): Promise<void> {
       return settleSessionDayStep({ ...task.input, userId });
     case "voiceWord":
       return voiceWordStep(task.input);
+    case "updateLessonsShowing":
+      return updateLessonsShowingStep(task.input);
     case "prepareContentFixMedia":
     case "voiceContentFix":
       return prepareContentFixMedia(task.input.fixId);

@@ -128,11 +128,13 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "voiceWord":
       await startOnce(backgroundTaskWorkflow, [followUp], getBackgroundTaskToken(followUp));
       return;
-    // These read the learner's state as of when they run, and a run that's working may have read it
-    // before this ask. So each ask (a row at a revision) gets one run of its own, which waits its turn.
+    // These read the state as of when they run, and a run that's working may have read it before
+    // this ask. So each ask (a row at a revision) gets one run of its own, which waits its turn.
     case "checkDailyInsight":
     case "findMistakePattern":
-    case "rememberOnboarding": {
+    case "rememberOnboarding":
+    case "suggestProfileTools":
+    case "updateLessonsShowing": {
       const ask = `${getBackgroundTaskToken(followUp)}:${followUp.id}:${followUp.revision}`;
       await startOnce(backgroundTaskWorkflow, [followUp], ask);
       return;
@@ -162,7 +164,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 async function runFollowUp(followUp: OwedFollowUp): Promise<void> {
   await startFollowUp(followUp);
 
-  if (followUp.kind !== "rebuildGoalCurriculum") {
+  if (followUp.kind !== "rebuildGoalCurriculum" && followUp.kind !== "suggestProfileTools") {
     await endFollowUpStep({ id: followUp.id, revision: followUp.revision });
   }
 }

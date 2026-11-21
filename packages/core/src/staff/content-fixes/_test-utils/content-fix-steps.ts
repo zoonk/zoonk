@@ -1,8 +1,10 @@
 import { STAFF_PROPOSE_SCOPE, STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { type PasskeyAssertion } from "@zoonk/auth/passkey-approval-contract";
 import { type Step, prisma } from "@zoonk/db";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
 import { vi } from "vitest";
@@ -60,6 +62,13 @@ export async function publishedLesson() {
   ]);
 
   return { check, lesson, reading };
+}
+
+/** A language lesson linked to a skill, which every lesson with questions has. */
+export async function skilledLanguageLesson(options?: Parameters<typeof languageLessonFixture>[0]) {
+  const [created, skill] = await Promise.all([languageLessonFixture(options), skillFixture()]);
+  await lessonSkillFixture({ lessonId: created.lesson.id, skillId: skill.id });
+  return { ...created, skill };
 }
 
 export function fixedQuestion(step: Pick<Step, "id">) {

@@ -36,7 +36,7 @@ export function PatternHints({
           {visible.map((item) => (
             <li className="flex gap-2.5 text-sm leading-snug" key={item.mistake}>
               <Lightbulb aria-hidden="true" className="text-viz-highlight mt-0.5 size-4 shrink-0" />
-              <p className="text-pretty">
+              <p>
                 <span className="font-semibold after:content-[':_']">
                   <LessonRichText literalNumbers={literalNumbers} text={item.mistake} />
                 </span>

@@ -39,7 +39,7 @@ async function PatternsFinding({ patterns }: { patterns: ScorePatternsData }) {
 
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-lg font-medium text-pretty" data-slot="patterns-finding">
+      <p className="text-lg font-medium" data-slot="patterns-finding">
         {sentences.length > 0
           ? sentences.join(" ")
           : t("Answer more questions to see when you do best.")}

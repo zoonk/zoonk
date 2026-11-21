@@ -23,7 +23,7 @@ export function RevealNoticeDay() {
 
   return (
     <div className="flex flex-col gap-1">
-      <form className="text-muted-foreground text-sm text-pretty" data-slot="notice-day">
+      <form className="text-muted-foreground text-sm" data-slot="notice-day">
         {noticeDay ? (
           <>
             <span>{noticeDayText(noticeDay)}</span>

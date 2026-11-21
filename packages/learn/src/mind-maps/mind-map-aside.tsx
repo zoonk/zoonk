@@ -26,7 +26,7 @@ import { MindMapThumbnail } from "./mind-map-thumbnail";
 import { MindMapDownloadLink, MindMapViewer } from "./mind-map-viewer";
 import { type MindMapRequest, useLiveRefusal } from "./use-mind-map-request";
 
-const STATE_TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
+const STATE_TEXT_CLASS = "text-muted-foreground text-sm";
 
 function MindMapPicture({
   image,
@@ -132,8 +132,8 @@ function MapRequest({
       <StateHeading>
         <div aria-live="polite" className="flex flex-col gap-px">
           <ListRowTitle>{t("Mind map")}</ListRowTitle>
-          {line && <ListRowDescription className="text-pretty">{line}</ListRowDescription>}
-          {hint && <ListRowDescription className="text-pretty">{hint}</ListRowDescription>}
+          {line && <ListRowDescription>{line}</ListRowDescription>}
+          {hint && <ListRowDescription>{hint}</ListRowDescription>}
         </div>
 
         {(failure || canCreate) && (

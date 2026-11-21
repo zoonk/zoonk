@@ -20,7 +20,7 @@ function ResumeError({ outcome }: { outcome: Exclude<GoalStatusOutcome, "saved">
   }
 
   return (
-    <p className="text-destructive-text text-sm text-pretty" role="alert">
+    <p className="text-destructive-text text-sm" role="alert">
       {limitText}
     </p>
   );

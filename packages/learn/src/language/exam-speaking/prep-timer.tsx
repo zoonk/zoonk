@@ -28,9 +28,7 @@ function PrepTimeLeft({ deadline }: { deadline: number }) {
   const leftMs = useTimeLeft({ deadline, tickMs: TICK_MS });
 
   if (leftMs === 0) {
-    return (
-      <p className="text-compact leading-snug text-pretty">{t("Preparation time is over.")}</p>
-    );
+    return <p className="text-compact leading-snug">{t("Preparation time is over.")}</p>;
   }
 
   return <p className="text-readout text-2xl leading-tight">{formatClock(leftMs)}</p>;
@@ -69,7 +67,7 @@ export function PrepTimer({
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
           <p className="text-sm leading-5 font-medium">{t("Preparation")}</p>
-          <p className="text-muted-foreground text-compact leading-snug text-pretty">
+          <p className="text-muted-foreground text-compact leading-snug">
             {t("{time}, as in the exam", { time: formatDuration(task.prepMinutes) })}
           </p>
         </div>

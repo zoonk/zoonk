@@ -172,7 +172,7 @@ function MapCanvas({
   return (
     <ActivityCanvas labelId={labelId}>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <p className="text-sm font-medium text-pretty">{name}</p>
+        <p className="text-sm font-medium">{name}</p>
         <ActivityCanvasLabel className="max-w-full min-w-0 tabular-nums">
           {t("{count} of {total} explored", {
             count: format(visited.length),

@@ -170,7 +170,7 @@ function DateFieldStep({
         </InputError>
 
         {noSittingShown && (
-          <p className="text-muted-foreground text-sm text-pretty" data-slot="no-sitting">
+          <p className="text-muted-foreground text-sm" data-slot="no-sitting">
             <NoSittingWords
               disabled={pending}
               noSitting={noSittingShown}

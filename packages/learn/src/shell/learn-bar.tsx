@@ -168,7 +168,7 @@ export function LearnPageBar({
           {title && titleAway && (
             <span
               aria-hidden="true"
-              className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty"
+              className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold"
             >
               {title}
             </span>

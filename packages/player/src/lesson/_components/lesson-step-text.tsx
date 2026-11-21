@@ -9,7 +9,7 @@ import { LessonRichText } from "./lesson-rich-text";
 /** A reading step's heading: the size of the text it heads, set apart by its weight, never smaller. */
 export function LessonStepHeading({ children }: { children: string }) {
   return (
-    <h2 className="text-foreground mb-2 text-lg leading-snug font-semibold text-pretty sm:mb-3 md:text-xl">
+    <h2 className="text-foreground mb-2 text-lg leading-snug font-semibold sm:mb-3 md:text-xl">
       <SpokenMath>
         <LessonRichText text={children} />
       </SpokenMath>

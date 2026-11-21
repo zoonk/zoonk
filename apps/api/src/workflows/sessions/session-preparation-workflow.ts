@@ -13,6 +13,7 @@ import {
 } from "../goals/steps/field-items-steps";
 import { endLessonsAskStep } from "../goals/steps/goal-lookahead-steps";
 import { startChallengeQuestions } from "./challenge-question-starts";
+import { prepareExampleLines } from "./prepare-example-lines";
 import { prepareFieldChallenge } from "./prepare-field-challenge";
 import {
   type PlanLessonPreparationInput,
@@ -44,10 +45,12 @@ async function preparePersonalLayer({
   analytics,
   goalId,
   lessonIds,
+  userId,
 }: {
   analytics: ContentAnalytics;
   goalId: string;
   lessonIds: string[];
+  userId: string;
 }) {
   const { workflowRunId } = getWorkflowMetadata();
   const context = { analytics, workflowRunId };
@@ -62,6 +65,7 @@ async function preparePersonalLayer({
     ...fieldItems.map((target) => prepareSkillFieldItems({ ...context, target })),
     ...versions.tools.map((target) => prepareToolVersion({ ...context, target })),
     ...versions.challenges.map((target) => prepareFieldChallenge({ ...context, target })),
+    prepareExampleLines({ lessonIds, userId }),
   ]);
 }
 
@@ -99,6 +103,7 @@ async function personalizeLessons({
     analytics,
     goalId: input.goalId,
     lessonIds: preparation.plannedLessonIds,
+    userId: input.userId,
   });
 }
 

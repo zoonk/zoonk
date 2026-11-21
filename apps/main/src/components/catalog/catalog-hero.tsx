@@ -37,7 +37,7 @@ export async function PlanLine({ start = "known" }: { start?: PlanStart }) {
         <MapIcon aria-hidden="true" className="size-4" />
       </LineMarker>
 
-      <span className="text-pretty">{lines[start]}</span>
+      <span>{lines[start]}</span>
     </p>
   );
 }
