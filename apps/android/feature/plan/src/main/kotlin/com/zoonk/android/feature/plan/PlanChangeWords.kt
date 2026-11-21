@@ -317,6 +317,10 @@ private fun operationQuestion(
             stringResource(R.string.plan_ask_fit_lessons)
         }
 
+        is PlanOp.Extras -> {
+            stringResource(R.string.plan_extra_offer_title).takeIf { op.skillIds.isNotEmpty() }
+        }
+
         else -> {
             null
         }
@@ -428,6 +432,10 @@ private fun operationStatement(
 
         PlanOp.FitLessons -> {
             stringResource(R.string.plan_change_fit_lessons)
+        }
+
+        is PlanOp.Extras -> {
+            stringResource(if (op.skillIds.isEmpty()) R.string.plan_change_changed else R.string.plan_change_extras_added)
         }
 
         is PlanOp.ExamChoice -> {

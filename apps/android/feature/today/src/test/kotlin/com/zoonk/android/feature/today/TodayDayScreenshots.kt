@@ -102,6 +102,10 @@ class TodayDayScreenshots {
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
     fun earlierLessonsPhone() = render("today-earlier-lessons-phone", earlierLessons())
 
+    @Test
+    @Config(qualifiers = "w411dp-h1100dp-xxhdpi")
+    fun strategyLessonPhone() = render("today-strategy-lesson-phone", strategy())
+
     private class Day(
         val session: JsonObject,
         val today: List<Pair<String, Any?>> = emptyList(),
@@ -244,6 +248,20 @@ class TodayDayScreenshots {
                 left = 32,
                 done = 6,
                 dailyGoal = 38,
+            ),
+        )
+
+    /** An exam day with a lesson of the exam strategy the learner added, which the notice doesn't list. */
+    private fun strategy() =
+        Day(
+            day(
+                "underway",
+                listOf(
+                    lesson(0, "Principles of public administration", "subject" to "Public administration"),
+                    lesson(1, "How the exam is built", "subjectExtra" to "notice"),
+                    lesson(2, "Conflicts of interest", "subject" to "Public ethics"),
+                ),
+                next = 0,
             ),
         )
 

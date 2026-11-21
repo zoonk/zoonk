@@ -5,7 +5,6 @@
   "goalcontent_adjust_plan": "3d7265c4323202eefcda27104464ac78ef11e7fabcab634ef2d05948220d10fd",
   "goalcontent_also_in_exam_count": "f59428d55a41aec5a38f4c59d6762d34ecc6345951610c9f1c4d200e7c5b37c7",
   "goalcontent_also_in_exams": "238fa410145c103d7b1604b8a3b30c5a0bd382929cdef4850161d3d833a33f78",
-  "goalcontent_also_in_plan": "40b142a39287bf335dded0d1b18aaee0c92192bb211858ffd656a437fe31fe0e",
   "goalcontent_asked_a_lot": "6cd96110390465ff7596adab5e83f579f88e99834c7905e40775df82559b7ac5",
   "goalcontent_chapter_number": "b9a1166ee675087897c76b3af0cb159045ac1d8bade50a9de04220452d5963b1",
   "goalcontent_chapter_summary": "3afc9e3113e86b681023e29f8a19f0a6577ac572bb399bc41c22cbc02072c83b",
@@ -142,8 +141,6 @@
     <string name="goalcontent_preparation">Vorbereitung</string>
     <string name="goalcontent_coverage">Abdeckung</string>
     <string name="goalcontent_not_in_plan">Nicht in deinem Plan</string>
-    <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">Auch in deinem Plan</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">Fragen pro Fach für %1$s, gezählt von %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

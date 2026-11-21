@@ -21,6 +21,8 @@ import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanEffect
+import com.zoonk.api.models.PlanExtraOffer
 import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.Deferred
@@ -458,9 +460,9 @@ class PlanViewModel(
                 applied?.let { showInSlot(asker.item, it.change) }
             }
 
-            PlanAsker.FitLessons -> {
+            is PlanAsker.Offer -> {
                 if (result == null) outcomes.saveFailed.send(started, Unit)
-                applied?.let { showInSlot(SlotItem.FitLessons, it.change) }
+                applied?.let { showInSlot(asker.item, it.change) }
             }
 
             is PlanAsker.SuggestedChoice -> {
@@ -580,21 +582,33 @@ class PlanViewModel(
         slotPreviewState.value = PlanPreviewState.Idle
     }
 
-    /**
-     * Main's fit offer: adds its lessons when its numbers are today's, and applies the numbers a
-     * check showed instead on the next tap. Otherwise it checks today's first, in the slot's
-     * preview, and adds them only when they're the card's, while the suggestion's opening that asked
-     * lasts: Not now, closing the suggestion, a recreated layout that no longer shows it, or leaving the
-     * Plan drops the check, so a late answer adds nothing.
-     */
     fun addFitOffer(
         plan: Plan,
         offer: PlanFitOffer,
+    ) = addOffer(plan, SlotItem.FitLessons, offer.operations.map { it.op }, offer.effect, offer.canApply)
+
+    fun addExtraOffer(
+        plan: Plan,
+        offer: PlanExtraOffer,
+    ) = addOffer(plan, SlotItem.ExtraOffer, offer.operations.map { it.op }, offer.effect, offer.canApply)
+
+    /**
+     * Main's fit offer, which the exam strategy offer shares: adds its lessons when its numbers are
+     * today's, and applies the numbers a check showed instead on the next tap. Otherwise it checks
+     * today's first, in the slot's preview, and adds them only when they're the card's, while the
+     * suggestion's opening that asked lasts: Not now, closing the suggestion, a recreated layout that
+     * no longer shows it, or leaving the Plan drops the check, so a late answer adds nothing.
+     */
+    private fun addOffer(
+        plan: Plan,
+        item: SlotItem,
+        operations: List<PlanOp>,
+        effect: PlanEffect,
+        canApply: Boolean,
     ) {
-        val operations = offer.operations.map { it.op }
         val shown = slotPreviewState.value.of(operations, plan)
-        if (offer.canApply || (shown is PlanPreviewState.Ready && !shown.preview.unchanged && shown.preview.effect != null)) {
-            addFitLessons(operations)
+        if (canApply || (shown is PlanPreviewState.Ready && !shown.preview.unchanged && shown.preview.effect != null)) {
+            addOfferLessons(item, operations)
             return
         }
 
@@ -605,7 +619,7 @@ class PlanViewModel(
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
             val today = (result as? MutationResult.Done)?.value
-            val same = today != null && today.ready && !today.unchanged && today.effect == offer.effect
+            val same = today != null && today.ready && !today.unchanged && today.effect == effect
             val asking = opened == outcomes.suggestion.number
             var wanted = false
             slotPreviewState.update { current ->
@@ -616,11 +630,14 @@ class PlanViewModel(
                     else -> current.resolve(request, today)
                 }
             }
-            if (wanted && same) addFitLessons(operations)
+            if (wanted && same) addOfferLessons(item, operations)
         }
     }
 
-    private fun addFitLessons(operations: List<PlanOp>) = change(PlanPart.Suggestion, operations, PlanAsker.FitLessons)
+    private fun addOfferLessons(
+        item: SlotItem,
+        operations: List<PlanOp>,
+    ) = change(PlanPart.Suggestion, operations, PlanAsker.Offer(item))
 
     private fun ask(
         state: MutableStateFlow<PlanPreviewState>,

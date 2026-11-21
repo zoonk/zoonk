@@ -294,6 +294,17 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun theStrategyOfferAddsItsOwnChangeAndAnswersInItsCard() =
+        runTest {
+            val plan = shown(EXTRA_PLAN)
+
+            viewModel.addExtraOffer(plan, plan.extraOffer!!)
+
+            assertEquals(listOf(listOf(PlanOp.Extras(listOf("strategy-time")))), api.changes)
+            assertEquals(SlotItem.ExtraOffer, viewModel.slotState.result?.item)
+        }
+
+    @Test
     fun aFitCheckForAChangedPlanAddsNothing() =
         runTest {
             val plan = shown(FIT_PLAN)
@@ -1654,5 +1665,13 @@ class PlanViewModelTest {
                     """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}""",
             )
         val FIT_OPERATIONS = FIT_PLAN.fitOffer!!.operations.map { it.op }
+
+        /** Today's exam strategy offer, which adds at once. */
+        val EXTRA_PLAN =
+            plan(
+                """"extraOffer":{"canApply":true,"fits":true,"lessons":15,""" +
+                    """"operations":[{"kind":"setExtras","skillIds":["strategy-time"]}],""" +
+                    """"effect":{"lessonsAdded":15,"lessonsRemoved":0,"topicsAdded":[]}},"hasNotice":true""",
+            )
     }
 }

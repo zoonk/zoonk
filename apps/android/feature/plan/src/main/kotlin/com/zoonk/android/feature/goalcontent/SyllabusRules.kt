@@ -51,14 +51,14 @@ internal data class SubjectGroup(
     val subjects: List<SyllabusSubject>,
 )
 
-/** The notice's groups in its order, then the areas the plan adds outside it; a plan's modules are one group. */
+/** The notice's groups in its order, then the optional study the learner added; a plan's modules are one group. */
 internal fun groupSubjects(
     subjects: List<SyllabusSubject>,
     modules: Boolean,
 ): List<SubjectGroup> {
     if (modules) return listOf(SubjectGroup(extra = false, name = null, subjects = subjects))
 
-    fun key(subject: SyllabusSubject) = if (subject.source == SyllabusSubject.Source.PLAN) null else subject.group.orEmpty()
+    fun key(subject: SyllabusSubject) = if (subject.isExtra) null else subject.group.orEmpty()
 
     return subjects
         .map(::key)
@@ -69,6 +69,10 @@ internal fun groupSubjects(
             SubjectGroup(extra = key == null, name = if (key == null) null else inGroup.first().group, subjects = inGroup)
         }
 }
+
+/** Optional study beyond what the exam tests, such as exam strategy: it counts lessons, never readiness. */
+internal val SyllabusSubject.isExtra: Boolean
+    get() = extra == true
 
 /** "Asked a lot" on every row tells nothing, so it only marks rows when it sets some apart. */
 internal fun setsApart(frequencies: List<SyllabusTopic.Frequency?>): Boolean {

@@ -56,6 +56,7 @@ import com.zoonk.api.models.ExamChoice
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanExtraOffer
 import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.StudyNext
 import kotlinx.coroutines.delay
@@ -82,6 +83,10 @@ internal sealed interface SlotItem {
 
     data object FitLessons : SlotItem {
         override val key = "fitLessons"
+    }
+
+    data object ExtraOffer : SlotItem {
+        override val key = "extraOffer"
     }
 
     data object Coverage : SlotItem {
@@ -114,6 +119,7 @@ internal fun slotItems(
     val time =
         listOfNotNull(
             SlotItem.FitLessons.takeIf { open && plan.fitOffer != null },
+            SlotItem.ExtraOffer.takeIf { open && plan.extraOffer != null },
             SlotItem.Coverage.takeIf { open && planCoverage(plan) != null && !timeEnough(plan) },
         )
 
@@ -200,6 +206,7 @@ internal class SlotHost(
     val requestPreview: (List<PlanOp>) -> Unit = {},
     val clearPreview: () -> Unit = {},
     val addFitOffer: (PlanFitOffer) -> Unit = {},
+    val addExtraOffer: (PlanExtraOffer) -> Unit = {},
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,
     val onContinue: () -> Unit = {},
@@ -390,6 +397,10 @@ private fun SlotSuggestion(
 
         SlotItem.FitLessons -> {
             FitLessonsSuggestion(slot)
+        }
+
+        SlotItem.ExtraOffer -> {
+            ExtraOfferSuggestion(slot)
         }
 
         SlotItem.Coverage -> {
