@@ -316,10 +316,13 @@ test.describe("Essays API", () => {
         status: "limitReached",
         task: {
           description: TASK.description,
+          distinctLines: true,
           lines: TASK.lines,
           minutes: MINUTES,
+          number: 1,
           points: null,
           taskKey: TASK.key,
+          total: 1,
           unit: "answer",
         },
         unit: "answer",

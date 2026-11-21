@@ -43300,6 +43300,13 @@
                       "$ref": "#/components/schemas/WritingRangeOutput"
                     }
                   ]
+                },
+                "writingTask": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/WritingTask"
+                    }
+                  ]
                 }
               },
               "required": [
@@ -43319,6 +43326,50 @@
           "range",
           "standing",
           "tasks"
+        ],
+        "additionalProperties": false
+      },
+      "WritingTask": {
+        "type": "object",
+        "properties": {
+          "lines": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "points": {
+            "nullable": true,
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "distinctLines": {
+            "type": "boolean",
+            "description": "Whether only one question in the written test has this stated line limit"
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The first question number for this task in notice order"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The number of questions in the written test, counting repeats"
+          }
+        },
+        "required": [
+          "lines",
+          "points",
+          "distinctLines",
+          "number",
+          "total"
         ],
         "additionalProperties": false
       },
@@ -79017,6 +79068,13 @@
             ],
             "type": "object"
           },
+          "writingTask": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingTask"
+              }
+            ]
+          },
           "writingUnit": {
             "description": "The size of this writing block, when it is a writing drill or a whole answer",
             "type": "string",
@@ -86817,6 +86875,13 @@
                       },
                       "taskKey": {
                         "type": "string"
+                      },
+                      "writingTask": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/WritingTask"
+                          }
+                        ]
                       }
                     },
                     "required": [
@@ -96139,6 +96204,13 @@
                   ],
                   "type": "object"
                 },
+                "writingTask": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/WritingTask"
+                    }
+                  ]
+                },
                 "writingUnit": {
                   "description": "The size of this writing block, when it is a writing drill or a whole answer",
                   "type": "string",
@@ -100972,6 +101044,10 @@
                   "description": {
                     "type": "string"
                   },
+                  "distinctLines": {
+                    "type": "boolean",
+                    "description": "Whether only one question in the written test has this stated line limit"
+                  },
                   "lines": {
                     "nullable": true,
                     "type": "integer",
@@ -100985,6 +101061,13 @@
                     "exclusiveMinimum": true,
                     "maximum": 9007199254740991
                   },
+                  "number": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "description": "The first question number for this task in notice order"
+                  },
                   "points": {
                     "nullable": true,
                     "type": "number",
@@ -100994,6 +101077,13 @@
                   "taskKey": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "total": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "description": "The number of questions in the written test, counting repeats"
                   },
                   "unit": {
                     "type": "string",

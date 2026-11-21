@@ -22,6 +22,7 @@ import { parseSessionItem, toSessionQuestion } from "./_utils/session-items";
 import { type StudyBlockView, toStudyBlockView } from "./_utils/session-view";
 import { type OwnedStudyBlock, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { withoutReviewedSkills } from "./_utils/without-reviewed-skills";
+import { getBlueprintWritingTasks } from "./_utils/writing-block-tasks";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "./block-payload";
 import { type StudyBlockQuestion } from "./study-block-question";
 
@@ -86,47 +87,57 @@ export async function loadStudyBlock(
   const sessionId = owned.session.id;
   const storedPayload = readBlockPayload(owned.block);
   const storedItemIds = getBlockItemIds(storedPayload);
+  const blueprintId = owned.session.goal?.examBlueprintId;
 
   await io();
   const now = new Date();
 
-  const [rows, storedAnswers, drillLessons, structure, blockedTestOutChapters] = await Promise.all([
-    prisma.item.findMany({
-      include: {
-        ...ITEM_IMAGE_INCLUDE,
-        ...ITEM_SET_INCLUDE,
-        source: { select: citedSourceSelect },
-      },
-      where: { id: { in: storedItemIds } },
-    }),
-    prisma.attempt.findMany({
-      orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
-      select: { answer: true, id: true, isCorrect: true, itemId: true },
-      where: {
-        OR: [
-          { itemId: { in: storedItemIds } },
-          { id: { in: storedPayload.checkpointAnswers.map((answer) => answer.attemptId) } },
-        ],
-        studySessionId: sessionId,
-        userId: owned.userId,
-      },
-    }),
-    loadDrillLessons(storedPayload.drills.map((drill) => drill.lessonId)),
-    owned.session.goal ? loadExamStructure(owned.session.goal) : null,
-    owned.session.goalId && storedPayload.chapterId && owned.block.kind === "learn"
-      ? loadBlockedTestOutChapters({
-          chapterIds: [storedPayload.chapterId],
-          goalId: owned.session.goalId,
-          known: {
-            goal: owned.session.goal,
-            source: readSavedPlan(owned.userId, owned.session.goalId),
-          },
-          now,
-          timeZone: getAnswerTimeZone({ goal: owned.session.goal }),
+  const blueprintRead =
+    storedPayload.writing && blueprintId
+      ? Promise.resolve(prisma.examBlueprint.findUnique({ where: { id: blueprintId } }))
+      : undefined;
+
+  const [rows, storedAnswers, drillLessons, structure, blueprint, blockedTestOutChapters] =
+    await Promise.all([
+      prisma.item.findMany({
+        include: {
+          ...ITEM_IMAGE_INCLUDE,
+          ...ITEM_SET_INCLUDE,
+          source: { select: citedSourceSelect },
+        },
+        where: { id: { in: storedItemIds } },
+      }),
+      prisma.attempt.findMany({
+        orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
+        select: { answer: true, id: true, isCorrect: true, itemId: true },
+        where: {
+          OR: [
+            { itemId: { in: storedItemIds } },
+            { id: { in: storedPayload.checkpointAnswers.map((answer) => answer.attemptId) } },
+          ],
+          studySessionId: sessionId,
           userId: owned.userId,
-        })
-      : new Set<string>(),
-  ]);
+        },
+      }),
+      loadDrillLessons(storedPayload.drills.map((drill) => drill.lessonId)),
+      owned.session.goal
+        ? loadExamStructure(owned.session.goal, { blueprint: blueprintRead })
+        : null,
+      blueprintRead,
+      owned.session.goalId && storedPayload.chapterId && owned.block.kind === "learn"
+        ? loadBlockedTestOutChapters({
+            chapterIds: [storedPayload.chapterId],
+            goalId: owned.session.goalId,
+            known: {
+              goal: owned.session.goal,
+              source: readSavedPlan(owned.userId, owned.session.goalId),
+            },
+            now,
+            timeZone: getAnswerTimeZone({ goal: owned.session.goal }),
+            userId: owned.userId,
+          })
+        : new Set<string>(),
+    ]);
 
   const block = await withoutReviewedSkills({
     answeredItemIds: new Set(storedAnswers.map((answer) => answer.itemId)),
@@ -206,6 +217,7 @@ export async function loadStudyBlock(
         block,
         blockedTestOutChapters,
         blocks: owned.session.blocks,
+        writingTasks: getBlueprintWritingTasks(blueprint),
       }),
       payload,
       questions: questionCount,

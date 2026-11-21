@@ -6,6 +6,7 @@ import { toChosenStructure } from "../../exams/choices/exam-choices";
 import { unfinishedExtraWritingWhere } from "../../exams/essays/_utils/extra-writing-blocks";
 import { getWritingDecimals } from "../../exams/essays/_utils/writing-decimals";
 import { getWritingScope, writingNeedsChoice } from "../../exams/essays/_utils/writing-scope";
+import { indexWritingTasks } from "../../exams/essays/_utils/writing-task-positions";
 import { projectWrittenParts } from "../../exams/estimates/written-projection";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readExtraWritingLimit } from "../../learner/facts/extra-writing";
@@ -211,6 +212,8 @@ export async function loadWrittenPracticeView({
     return base;
   }
 
+  const writingTasks = indexWritingTasks(listWrittenTasks({ structure }));
+
   const scopes = new Map(
     tasks.map((task) => [task.key, getWritingScope({ picks: settings, structure, task })]),
   );
@@ -244,7 +247,10 @@ export async function loadWrittenPracticeView({
         ),
         decimals: part.decimals,
         minutes: ownTasks[0]?.minutes ?? null,
-        points: part,
+        points: {
+          ...part,
+          tasks: part.tasks.map((task) => ({ ...task, writingTask: writingTasks.get(task.key) })),
+        },
         questions: ownTasks.reduce((sum, task) => sum + task.count, 0),
         scale: part.scale,
         share,
@@ -280,13 +286,14 @@ export async function loadWrittenPracticeView({
         >((task) => {
           const scope = scopes.get(task.key);
           const availability = writingNeedsChoice(scope?.missingChoices ?? []);
+          const writingTask = writingTasks.get(task.key);
 
           if (availability) {
-            return [{ availability, taskKey: task.key }];
+            return [{ availability, taskKey: task.key, writingTask }];
           }
 
           const action = scope?.available && writeAction?.(task);
-          return action ? [action] : [];
+          return action ? [{ ...action, writingTask }] : [];
         }),
       };
     }),
