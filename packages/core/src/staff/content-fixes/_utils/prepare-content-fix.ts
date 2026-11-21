@@ -269,15 +269,17 @@ async function unitProblem(
   );
 }
 
+type ResolvedFix = Omit<PreparedFix, "effects"> & { changeEffects: ContentFixEffect[] };
+
 /**
  * Reads every row the changes touch and returns what the server will write: each field's value as
- * stored now and as fixed, and what applying it also does. Proposing and approving both run it, so
- * a rule added later applies to fixes already waiting.
+ * stored now and as fixed. Proposing and approving both run it, so a rule added later applies to
+ * fixes already waiting.
  */
-export async function prepareContentFix(
+export async function resolveContentFix(
   db: TransactionClient,
   resolvers: readonly ChangeResolver[],
-): Promise<Refusal | { fix: PreparedFix; ok: true }> {
+): Promise<Refusal | { fix: ResolvedFix; ok: true }> {
   const resolved = await Promise.all(resolvers.map((resolve) => resolve(db)));
 
   const refused = resolved.flatMap((change, index) =>
@@ -320,27 +322,44 @@ export async function prepareContentFix(
     return refuse(`The same media key has different inputs: ${conflicting.key}.`);
   }
 
-  const lessonVersion: ContentFixEffect[] =
-    first.unit.kind === "lesson" && stored.some((change) => changesLearnerLesson(change))
-      ? [{ kind: "lessonVersion", lessonId: first.unit.id }]
-      : [];
-
-  const effects = [
-    ...lessonVersion,
-    ...accepted.flatMap((change) => change.effects),
-    ...(await keptVariantEffects(db, stored)),
-    ...(isVocabularyUnit(first.unit)
-      ? await vocabularyEffects(db, { changes: stored, unit: first.unit })
-      : []),
-  ];
-
   return {
     fix: {
+      changeEffects: accepted.flatMap((change) => change.effects),
       changes: stored,
-      effects: uniqueEffects(effects),
       media: [...media.values()],
       unit: first.unit,
     },
     ok: true,
   };
+}
+
+/**
+ * A resolved fix with what applying it also does, which the approver reads. Approving only
+ * resolves it: a word's effects read every lesson of its language, too slow for that transaction.
+ */
+export async function prepareContentFix(
+  db: TransactionClient,
+  resolvers: readonly ChangeResolver[],
+): Promise<Refusal | { fix: PreparedFix; ok: true }> {
+  const resolved = await resolveContentFix(db, resolvers);
+
+  if (!resolved.ok) {
+    return resolved;
+  }
+
+  const { changeEffects, changes, media, unit } = resolved.fix;
+
+  const lessonVersion: ContentFixEffect[] =
+    unit.kind === "lesson" && changes.some((change) => changesLearnerLesson(change))
+      ? [{ kind: "lessonVersion", lessonId: unit.id }]
+      : [];
+
+  const effects = [
+    ...lessonVersion,
+    ...changeEffects,
+    ...(await keptVariantEffects(db, changes)),
+    ...(isVocabularyUnit(unit) ? await vocabularyEffects(db, { changes, unit }) : []),
+  ];
+
+  return { fix: { changes, effects: uniqueEffects(effects), media, unit }, ok: true };
 }
