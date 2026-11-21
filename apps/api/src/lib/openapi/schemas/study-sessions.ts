@@ -11,6 +11,7 @@ import {
   dayStateSchema,
   emptyDaySchema,
   examTomorrowSchema,
+  lessonPlaceholderSchema,
   lessonsComingSchema,
   lessonsToPrepareSchema,
 } from "./day-lessons";
@@ -113,6 +114,7 @@ export const studySessionResponseSchema = z
     goalId: idSchema.nullable(),
     hyperdrive: hyperdriveSchema,
     id: idSchema,
+    lessonPlaceholder: lessonPlaceholderSchema,
     lessonsComing: lessonsComingSchema,
     lessonsToPrepare: lessonsToPrepareSchema,
     localDate: logicalDateSchema,

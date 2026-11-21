@@ -3,7 +3,7 @@ import SwiftUI
 struct EmailLoginView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
-  @State private var code = ""
+  @State private var code = EmailVerificationCode()
   @State private var email = LoginEmail()
   @State private var hasSentCode = false
   @FocusState private var focusedField: Field?
@@ -23,7 +23,7 @@ struct EmailLoginView: View {
               isFocused: focusedField == .code
             ) {
               TextField(
-                text: $code,
+                text: $code.text,
                 prompt: Text(
                   "6-digit code",
                   tableName: "Account",
@@ -78,11 +78,11 @@ struct EmailLoginView: View {
               Text("Continue", tableName: "Account", comment: "Button that verifies an email code")
             }
             .buttonStyle(.mainAction)
-            .disabled(!isCodeValid && !session.isWorking)
+            .disabled(!code.canSubmit && !session.isWorking)
             .keyboardShortcut(.defaultAction)
 
             Button {
-              code = ""
+              code = EmailVerificationCode()
               hasSentCode = false
               session.clearFailure()
             } label: {
@@ -107,7 +107,9 @@ struct EmailLoginView: View {
         .listRowSeparator(.hidden)
       }
 
-      if let failure = hasSentCode ? session.failure : email.failure ?? session.failure {
+      if let failure = hasSentCode
+        ? code.displayedFailure(session.failure) : email.failure ?? session.failure
+      {
         Section {
           AccountFailureMessage(failure: failure)
         }
@@ -130,19 +132,11 @@ struct EmailLoginView: View {
       dismissAfterSignIn(state)
     }
     // The number pad has no Return key, so a complete code signs in on its own.
-    .onChange(of: normalizedCode, signIn)
+    .onChange(of: code.normalized, signIn)
   }
 
   private var normalizedEmail: String {
     email.normalized
-  }
-
-  private var normalizedCode: String {
-    code.filter(\.isNumber)
-  }
-
-  private var isCodeValid: Bool {
-    normalizedCode.count == 6
   }
 
   private func sendEmailCode() {
@@ -156,14 +150,14 @@ struct EmailLoginView: View {
   }
 
   private func signIn() {
-    guard isCodeValid, !session.isWorking else {
-      return
-    }
-
     Task {
-      await session.signInWithEmailCode(
-        email: normalizedEmail,
-        code: normalizedCode)
+      guard hasSentCode, code.canSubmit, !session.isWorking else {
+        return
+      }
+
+      let submittedCode = code.normalized
+      await session.signInWithEmailCode(email: normalizedEmail, code: submittedCode)
+      code.recordFailure(session.failure, for: submittedCode)
     }
   }
 

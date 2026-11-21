@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { isUuid } from "@zoonk/utils/uuid";
 import { trackOnboardingProgress } from "../analytics/track-onboarding-progress";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import {
@@ -16,15 +17,23 @@ import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { readTestedLanguage } from "../library/exams/blueprint-language";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { assertTargetDates, withPlannableDate } from "../plans/target-date-range";
-import { createGoal, selectCreatedGoal } from "./_utils/create-goal-records";
+import {
+  type CardPlace,
+  type CourseGoalOrigin,
+  createGoal,
+  selectCreatedGoal,
+} from "./_utils/create-goal-records";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { splitDailyBudget } from "./daily-budget";
 import { type GoalCreateInput, type GoalDraft, type GoalView } from "./goal-contract";
 
 export type GoalRefusal = { decision: RefusedUsage; index: number };
 
+/** The runs each goal has saved, which a card confirmed again follows instead of paying again. */
+export type SavedRuns = { generationId: string | null; goalId: string; researchId: string | null };
+
 export type GoalCreateResult =
-  | { goals: GoalView[]; refused: GoalRefusal[]; status: "created" }
+  | { goals: GoalView[]; refused: GoalRefusal[]; saved: SavedRuns[]; status: "created" }
   | { refused: GoalRefusal[]; status: "refused" }
   | { status: "invalidReference" }
   | { status: "unauthorized" };
@@ -96,6 +105,29 @@ async function chooseActiveGoalId({
   return (await findActiveGoalId(userId)) ?? mainId;
 }
 
+async function selectNewGoals({
+  input,
+  mainId,
+  userId,
+}: {
+  input: GoalCreateInput;
+  mainId: string;
+  userId: string;
+}): Promise<string> {
+  const activeGoalId = await chooseActiveGoalId({ input, mainId, userId });
+
+  await selectCreatedGoal({ activeGoalId, userId });
+
+  revalidateCacheTags([
+    getAllowanceCacheTag(userId),
+    getGoalsCacheTag(userId),
+    getLearningProfileCacheTag(userId),
+    ...(input.pauseGoalId ? [getLearnerModelCacheTag(userId)] : []),
+  ]);
+
+  return activeGoalId;
+}
+
 function isCardGoal(goal: GoalDraft): boolean {
   const onboardingId = goal.details?.onboardingId;
   return typeof onboardingId === "string" && onboardingId !== "";
@@ -126,7 +158,51 @@ function readNewGoalDates(input: GoalCreateInput): GoalCreateInput {
   return { ...input, goals };
 }
 
-export async function createGoals(requested: GoalCreateInput): Promise<GoalCreateResult> {
+/** `Goal.onboardingPlace` is a smallint. */
+const MAX_CARD_PLACE = 32_767;
+
+function isCardPlace(value: unknown): value is number {
+  return Number.isInteger(value) && Number(value) >= 0 && Number(value) <= MAX_CARD_PLACE;
+}
+
+/**
+ * "Looks right" sends a card's goals in its order, and a goal started later from the card's waiting
+ * row names its place.
+ */
+function readCardPlace({
+  draft,
+  index,
+}: {
+  draft: GoalDraft;
+  index: number;
+}): CardPlace | undefined {
+  const { onboardingId, onboardingPlace } = draft.details ?? {};
+
+  if (typeof onboardingId !== "string" || !isUuid(onboardingId)) {
+    return undefined;
+  }
+
+  return { draftId: onboardingId, place: isCardPlace(onboardingPlace) ? onboardingPlace : index };
+}
+
+type CourseGoalCreateResult = GoalCreateResult | { goalId: string; status: "existing" };
+
+type CreatedGoals = {
+  created: string[];
+  existingId?: string;
+  ids: string[];
+  refused: GoalRefusal[];
+};
+
+export function createGoals(requested: GoalCreateInput): Promise<GoalCreateResult>;
+export function createGoals(
+  requested: GoalCreateInput,
+  courseStart: CourseGoalOrigin,
+): Promise<CourseGoalCreateResult>;
+export async function createGoals(
+  requested: GoalCreateInput,
+  courseStart?: CourseGoalOrigin,
+): Promise<CourseGoalCreateResult> {
   const viewer = await getEntitlementViewer();
 
   if (!viewer) {
@@ -145,12 +221,19 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
   const testedLanguages = await loadTestedLanguages(input.goals);
 
   /** One at a time, so each claim counts the goals created before it. */
-  const results = await input.goals.reduce<Promise<{ ids: string[]; refused: GoalRefusal[] }>>(
+  const results = await input.goals.reduce<Promise<CreatedGoals>>(
     async (previous, draft, index) => {
       const state = await previous;
+
+      if (state.existingId) {
+        return state;
+      }
+
       const id = crypto.randomUUID();
 
       const decision = await createGoal({
+        card: readCardPlace({ draft, index }),
+        courseStart,
         dailyMinutes: minutes[index] ?? input.dailyMinutes,
         draft,
         id,
@@ -161,16 +244,26 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
         viewer,
       });
 
+      if (decision.status === "existing") {
+        return courseStart
+          ? { ...state, existingId: decision.goalId }
+          : { ...state, ids: [...state.ids, decision.goalId] };
+      }
+
       if (decision.status === "allowed") {
-        return { ...state, ids: [...state.ids, id] };
+        return { ...state, created: [...state.created, id], ids: [...state.ids, id] };
       }
 
       return isRefusedUsage(decision)
         ? { ...state, refused: [...state.refused, { decision, index }] }
         : state;
     },
-    Promise.resolve({ ids: [], refused: [] }),
+    Promise.resolve({ created: [], ids: [], refused: [] }),
   );
+
+  if (results.existingId) {
+    return { goalId: results.existingId, status: "existing" };
+  }
 
   const [mainId] = results.ids;
 
@@ -178,31 +271,33 @@ export async function createGoals(requested: GoalCreateInput): Promise<GoalCreat
     return { refused: results.refused, status: "refused" };
   }
 
-  const activeGoalId = await chooseActiveGoalId({ input, mainId, userId });
-
-  await selectCreatedGoal({ activeGoalId, userId });
-
-  revalidateCacheTags([
-    getAllowanceCacheTag(userId),
-    getGoalsCacheTag(userId),
-    getLearningProfileCacheTag(userId),
-    ...(input.pauseGoalId ? [getLearnerModelCacheTag(userId)] : []),
-  ]);
+  // A confirm that only found goals made before leaves the goal the learner studies as it is.
+  const activeGoalId =
+    results.created.length > 0
+      ? await selectNewGoals({ input, mainId, userId })
+      : ((await findActiveGoalId(userId)) ?? mainId);
 
   const rows = await prisma.goal.findMany({ where: { id: { in: results.ids } } });
   const goals = results.ids.flatMap((id) => rows.find((goal) => goal.id === id) ?? []);
 
-  goals.forEach((goal) =>
-    trackOnboardingProgress({
-      at: goal.createdAt.getTime(),
-      goalId: goal.id,
-      stage: "goal_created",
-    }),
-  );
+  goals
+    .filter((goal) => results.created.includes(goal.id))
+    .forEach((goal) =>
+      trackOnboardingProgress({
+        at: goal.createdAt.getTime(),
+        goalId: goal.id,
+        stage: "goal_created",
+      }),
+    );
 
   return {
     goals: await loadGoalViews({ activeGoalId, goals }),
     refused: results.refused,
+    saved: goals.map((goal) => ({
+      generationId: goal.generationRunId,
+      goalId: goal.id,
+      researchId: goal.researchRunId,
+    })),
     status: "created",
   };
 }

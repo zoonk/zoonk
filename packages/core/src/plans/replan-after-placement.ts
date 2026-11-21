@@ -9,7 +9,7 @@ import {
 } from "./_utils/level-listening-starts";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
-import { afterPlanInputWrite } from "./plan-conflict";
+import { unlessPlanConflict } from "./plan-conflict";
 
 export async function replanAfterPlacement({
   goalId,
@@ -22,7 +22,7 @@ export async function replanAfterPlacement({
   pastBasicsAreas?: readonly string[];
   timeZone: string;
 }): Promise<void> {
-  await afterPlanInputWrite(async () => {
+  await unlessPlanConflict(async () => {
     const loaded = await loadPlanAtToken(goalId, { now, timeZone });
 
     if (!loaded || !isPlanReady(loaded)) {

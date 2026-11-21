@@ -19,26 +19,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Identify Xcode toolchain
-        id: xcode
-        run: |
-          set -o pipefail
-          xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
-
       # Restores main's caches and saves none, so a branch's entries don't evict main's.
-      - name: Restore Swift packages
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      - name: Restore the last build
+        uses: ./.github/actions/apple-last-build
         with:
-          path: ${{ runner.temp }}/apple-source-packages
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
-
-      - name: Restore Xcode compilations
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: apps/apple/DerivedData/Make/CompilationCache.noindex
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-test-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-apple-test-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
+          build: simulator
 
       - name: Run unit tests
         env:
@@ -47,7 +32,6 @@ jobs:
             -onlyUsePackageVersionsFromResolvedFile
             -skipPackageUpdates
             -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
-            COMPILATION_CACHE_ENABLE_CACHING=YES
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         # The newest runtime the image installs, as in apple.yml's test job.

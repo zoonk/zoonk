@@ -48,6 +48,7 @@
   "onboarding_course_chapters": "99fec4c02b107eca987853a6d63fa47d5754f5c17b2a066bd75c466a93c8edf0",
   "onboarding_course_daily_minutes": "3c1511236b7d3cbddced93b6967ec0b0be75b6f1d104a4a25ff614c3ab41b650",
   "onboarding_course_failed": "3ebeaa0138a390e6bcfd12f1c99c0864c069a00fab4de163ad3d4bb148d14725",
+  "onboarding_course_language_note": "a3394410e5855281ca8f7455eaa3d9b2a25783ae5c17b7e47d0a99ba84fbb62c",
   "onboarding_course_lessons": "ede14005a156b1fc646bc9aa02d5430c13ed4cb8cb4d0755439645c968285cf5",
   "onboarding_course_more_chapters": "876d4449d7e1ef217243f6029cda7566b01c74a8e38113f849eb6529989cc6ec",
   "onboarding_course_start_free": "1e11c3d8021a70cb2dea22d2858beefa7778407868a271c8a0a3d44765b7ef06",
@@ -680,6 +681,8 @@
     <plurals name="onboarding_course_daily_minutes">
         <item quantity="other">우선 하루 %d분이에요. 다음 단계에서 바꿀 수 있어요.</item>
     </plurals>
+    <!-- Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence -->
+    <string name="onboarding_course_language_note">이 코스는 %1$s로 진행돼요. 레슨은 %2$s로 진행돼요.</string>
     <string name="onboarding_course_build">내 계획 만들기</string>
     <!-- Read out while Build my plan starts the course. -->
     <string name="onboarding_course_starting">계획을 준비하고 있어요…</string>

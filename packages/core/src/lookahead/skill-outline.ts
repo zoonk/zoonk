@@ -10,8 +10,12 @@ import { getBandRank } from "../learner/placement/placement-graph";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { type CourseOutlineNeed } from "../library/curriculum/curriculum-scope";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
-import { getOutlineStaleBefore } from "./outline-ahead";
 import { findSkillOutlineNeed, readSkillCourses } from "./plan-outline-needs";
+import {
+  type SkillOutlineAskRef,
+  hasFreshSkillOutlineAsk,
+  takeSkillOutlineAsk,
+} from "./skill-outline-ask";
 import { type SkillOutline } from "./skill-outline-contract";
 
 type OwnedSkillOutline<TResult> = TResult | { status: "notFound" } | { status: "unauthorized" };
@@ -33,33 +37,12 @@ async function findSkillCourse({ goalId, skillId }: { goalId: string; skillId: s
   }
 
   return prisma.course.findUnique({
-    select: { id: true, outlineStatus: true, updatedAt: true, userId: true, visibility: true },
+    select: { id: true, userId: true, visibility: true },
     where: { id: courseId },
   });
 }
 
 type SkillCourse = NonNullable<Awaited<ReturnType<typeof findSkillCourse>>>;
-
-function isBeingOutlined({ course, now }: { course: SkillCourse; now: Date }): boolean {
-  return (
-    (course.outlineStatus === "pending" || course.outlineStatus === "running") &&
-    course.updatedAt > getOutlineStaleBefore(now)
-  );
-}
-
-async function markOutlineAsked({ course, now }: { course: SkillCourse; now: Date }) {
-  await prisma.course.updateMany({
-    data: { outlineStatus: "pending", updatedAt: now },
-    where: {
-      OR: [
-        { outlineStatus: null },
-        { outlineStatus: { not: "running" } },
-        { updatedAt: { lt: getOutlineStaleBefore(now) } },
-      ],
-      id: course.id,
-    },
-  });
-}
 
 async function listSkillChapters({
   course,
@@ -103,7 +86,7 @@ async function listSkillChapters({
     .map((chapter) => ({ chapterId: chapter.id, title: chapter.title }));
 }
 
-/** Returns notFound for a skill outside the learner's plan; writing may be another learner's shared outline run. */
+/** Returns notFound for a skill outside the learner's plan; writing means the learner's own ask is still being written. */
 export async function getSkillOutline({
   goalId,
   skillId,
@@ -129,24 +112,28 @@ export async function getSkillOutline({
     return { outline: { chapters, status: "ready" }, status: "ready" };
   }
 
-  const status = isBeingOutlined({ course, now: new Date() }) ? "writing" : "available";
+  const status = (await hasFreshSkillOutlineAsk({ goalId, skillId })) ? "writing" : "available";
   return { outline: { chapters, status }, status: "ready" };
 }
 
-/** On start, generate need's band with skillId's chapter first; usage and the pending course mark are already saved. */
+/** On start, generate need's band with skillId's chapter first, and end `ask` when that run ends; usage and the ask are already saved. */
 export type SkillOutlineRequest =
   | { status: "ready" }
   | { status: "unavailable" }
   | { status: "writing" }
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
+      ask: SkillOutlineAskRef;
       forGuest: boolean;
       need: CourseOutlineNeed;
       status: "start";
     }
   | { decision: RefusedUsage; status: "refused" };
 
-/** Learner action only; existing/running outlines are free and each new topic is claimed once across retries. */
+/**
+ * Learner action only. A topic no chapter teaches yet is claimed once across retries, even while
+ * another run writes its course: that run may not cover it, and the outline workflow waits its turn.
+ */
 export async function requestSkillOutline({
   goalId,
   skillId,
@@ -183,12 +170,6 @@ export async function requestSkillOutline({
     return { status: "ready" };
   }
 
-  const now = new Date();
-
-  if (isBeingOutlined({ course, now })) {
-    return { status: "writing" };
-  }
-
   const decision = await claimUsage({ generated: true, kind: "outline", targetId: skillId });
 
   if (decision.status === "unauthorized") {
@@ -199,13 +180,20 @@ export async function requestSkillOutline({
     return { decision, status: "refused" };
   }
 
-  const [user] = await Promise.all([
-    prisma.user.findUnique({ select: { isAnonymous: true }, where: { id: owned.userId } }),
-    markOutlineAsked({ course, now }),
-  ]);
+  const ask = await takeSkillOutlineAsk({ goalId, now: new Date(), skillId });
+
+  if (!ask) {
+    return { status: "writing" };
+  }
+
+  const user = await prisma.user.findUnique({
+    select: { isAnonymous: true },
+    where: { id: owned.userId },
+  });
 
   return {
     analytics: { distinctId: owned.userId, goalId, platform: await getRequestPlatform() },
+    ask,
     forGuest: user?.isAnonymous ?? false,
     need: found.need,
     status: "start",

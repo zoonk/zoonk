@@ -58,7 +58,7 @@ test.describe("OTP Login Flow", () => {
     await cleanupVerifications(email);
   });
 
-  test("says a code is wrong, retries it after a dropped connection, and after too many wrong tries asks for a new code that signs in", async ({
+  test("says a code is wrong and doesn't check it again, retries a dropped check, and after too many wrong tries asks for a new code that signs in", async ({
     page,
   }) => {
     const email = `e2e-otp-attempts-${Date.now()}@zoonk.test`;
@@ -68,12 +68,26 @@ test.describe("OTP Login Flow", () => {
     await page.getByRole("button", { name: /^continue$/iu }).click();
     await page.waitForURL(/\/auth\/en\/otp/u);
 
-    const code = await getOTPForEmail(email);
-    const wrongCode = code === "000000" ? "111111" : "000000";
+    const code = (await getOTPForEmail(email)) ?? "";
+
+    const [wrongCode = "", secondWrongCode = "", thirdWrongCode = ""] = [
+      "000000",
+      "111111",
+      "222222",
+      "333333",
+    ].filter((candidate) => candidate !== code);
+
     const input = page.getByRole("textbox", { name: "Code from the email" });
     const continueButton = page.getByRole("button", { name: /^continue$/iu });
     const wrong = page.getByText("That code isn't right. Try again.");
     const tooMany = page.getByText("Too many wrong tries. Get a new code.");
+    const checkedCodes: string[] = [];
+
+    page.on("request", (request) => {
+      if (request.url().includes("/sign-in/email-otp")) {
+        checkedCodes.push(request.postDataJSON().otp);
+      }
+    });
 
     async function tryCode(attempt: string) {
       await expect(input).toBeEnabled();
@@ -88,29 +102,34 @@ test.describe("OTP Login Flow", () => {
       await checked;
     }
 
-    await tryCode(wrongCode);
-    await expect(wrong).toBeVisible();
-
-    await expect(continueButton).toBeEnabled();
     await page.route("**/sign-in/email-otp", (route) => route.abort("internetdisconnected"));
-    await page.keyboard.press("Enter");
+    await input.fill(wrongCode);
 
     await expect(page.getByText("Something went wrong. Try again in a moment.")).toBeVisible();
 
     await page.unroute("**/sign-in/email-otp");
+    await expect(continueButton).toBeEnabled();
     await page.keyboard.press("Enter");
     await expect(wrong).toBeVisible();
 
-    await tryCode(wrongCode);
+    await expect(continueButton).toBeDisabled();
+    await page.keyboard.press("Enter");
+    await input.fill("");
+    await input.fill(wrongCode);
+    await expect(continueButton).toBeDisabled();
 
-    await tryCode(code ?? "");
+    await tryCode(secondWrongCode);
+    expect(checkedCodes).toEqual([wrongCode, wrongCode, secondWrongCode]);
+
+    await tryCode(thirdWrongCode);
+    await tryCode(code);
     await expect(tooMany).toBeVisible();
 
     await expect(continueButton).toHaveCount(0);
     await expect(input).toBeDisabled();
 
     await page.getByRole("button", { name: "Send a new code" }).click();
-    await expect(page.getByText("We sent you a new code.")).toBeVisible();
+    await expect(page.getByText("We emailed you again.")).toBeVisible();
 
     const newCode = await getOTPForEmail(email);
     await input.fill(newCode ?? "");
@@ -120,7 +139,7 @@ test.describe("OTP Login Flow", () => {
     await cleanupVerifications(email);
   });
 
-  test("a code typed while the last one is checked is checked next, and only once", async ({
+  test("a code typed while the last one is checked is checked next, and a rejected one never again", async ({
     page,
   }) => {
     const email = `e2e-otp-in-flight-${Date.now()}@zoonk.test`;
@@ -148,14 +167,13 @@ test.describe("OTP Login Flow", () => {
 
     await input.fill("");
     await input.fill(wrongCode);
-    await expect.poll(checkedCodes).toEqual([wrongCode, wrongCode]);
-    await expect(page.getByRole("button", { name: "Send again" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: /^continue$/iu })).toBeDisabled();
     await input.fill("");
     await input.fill(code);
-    await checks[1]?.continue();
 
-    await expect.poll(checkedCodes).toEqual([wrongCode, wrongCode, code]);
-    await checks[2]?.continue();
+    await expect.poll(checkedCodes).toEqual([wrongCode, code]);
+    await expect(page.getByRole("button", { name: "Send again" })).toBeDisabled();
+    await checks[1]?.continue();
 
     await page.waitForURL(/\/auth\/en\/setup/u);
 
@@ -185,7 +203,9 @@ test.describe("OTP Login Flow", () => {
     await cleanupVerifications(email);
   });
 
-  test("sends a new code on request, and only the new one works", async ({ page }) => {
+  test("emails the same code again on request, so the first email still signs in", async ({
+    page,
+  }) => {
     const email = `e2e-otp-resend-${Date.now()}@zoonk.test`;
 
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
@@ -224,14 +244,12 @@ test.describe("OTP Login Flow", () => {
     await input.fill(firstCode);
     await newCodeRequests[0]?.continue();
 
-    await expect(page.getByText("We sent you a new code.")).toBeVisible();
+    await expect(page.getByText("We emailed you again.")).toBeVisible();
     await expect(input).toHaveValue("");
     expect(checkedCodes).toEqual([wrongCode]);
 
-    await expect.poll(() => getOTPForEmail(email)).not.toBe(firstCode);
-    const newCode = await getOTPForEmail(email);
-
-    await input.fill(newCode ?? "");
+    await expect(getOTPForEmail(email)).resolves.toBe(firstCode);
+    await input.fill(firstCode);
 
     await page.waitForURL(/\/auth\/en\/setup/u);
 

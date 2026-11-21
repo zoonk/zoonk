@@ -30,7 +30,7 @@ vi.mock("@zoonk/auth", async () => {
     auth: betterAuth({
       ...baseAuthConfig,
       advanced: { ...baseAuthConfig.advanced, disableOriginCheck: false },
-      plugins: [...baseAuthPlugins, createEmailOTPPlugin({ storeOTP: "hashed" })],
+      plugins: [...baseAuthPlugins, createEmailOTPPlugin({ storeOTP: "encrypted" })],
       rateLimit: { enabled: true, storage: "database" },
       secret: "web-email-code-action-test-secret",
     }),

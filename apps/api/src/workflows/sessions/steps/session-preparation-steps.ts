@@ -10,11 +10,9 @@ import {
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
 import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
-export async function listSessionPreparationStep(input: {
-  goalId: string;
-  timeZone: string;
-  userId: string;
-}): Promise<SessionPreparation> {
+export async function listSessionPreparationStep(
+  input: Parameters<typeof listSessionPreparation>[0],
+): Promise<SessionPreparation> {
   "use step";
 
   return listSessionPreparation(input);
@@ -25,6 +23,10 @@ export async function createSessionGenerationManifestStep(input: {
   lessonIds: string[];
 }): Promise<PlanStepOutcome<PlanGenerationManifest | null>> {
   "use step";
+
+  if (input.lessonIds.length === 0) {
+    return { conflict: false, value: null };
+  }
 
   return catchPlanConflict(() => createPlanGenerationManifest(input));
 }

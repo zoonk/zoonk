@@ -11,7 +11,11 @@ import {
   planChangePathParamsSchema,
   planLinkPathParamsSchema,
 } from "../schemas/paths";
-import { planChangeInvalidResponse, planDateChangeInvalidResponse } from "../schemas/plan-errors";
+import {
+  planChangeInvalidResponse,
+  planChangedWhileSavingResponse,
+  planDateChangeInvalidResponse,
+} from "../schemas/plan-errors";
 import {
   ownLevelChangeSchema,
   planChangeResultSchema,
@@ -70,6 +74,7 @@ export const planPaths = {
           content: { "application/json": { schema: planChangeResultSchema } },
           description: "The applied change",
         },
+        "409": planChangedWhileSavingResponse,
         "422": planDateChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -117,6 +122,7 @@ export const planPaths = {
           content: { "application/json": { schema: ownLevelChangeSchema } },
           description: "The new level, with the foundations added or the test-outs offered",
         },
+        "409": planChangedWhileSavingResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Change your own level",
@@ -140,6 +146,7 @@ export const planPaths = {
           description: "The applied change",
         },
         "202": contentWritingResponse("A run is writing the setup lessons; nothing is applied yet"),
+        "409": planChangedWhileSavingResponse,
         "422": planChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,

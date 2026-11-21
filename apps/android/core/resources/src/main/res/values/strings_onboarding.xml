@@ -321,6 +321,8 @@
         <item quantity="one">%d minute a day for now. You can change it in the next steps.</item>
         <item quantity="other">%d minutes a day for now. You can change it in the next steps.</item>
     </plurals>
+    <!-- Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence -->
+    <string name="onboarding_course_language_note">This course is in %1$s. Your lessons will be in %2$s.</string>
     <string name="onboarding_course_build">Build my plan</string>
     <!-- Read out while Build my plan starts the course. -->
     <string name="onboarding_course_starting">Starting your plan…</string>

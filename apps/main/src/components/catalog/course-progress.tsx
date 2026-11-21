@@ -118,11 +118,15 @@ export function CourseProgressScope({
   return <ProgressKeyContext value={key}>{children}</ProgressKeyContext>;
 }
 
-function useCourseGoal(courseId: string): LearnerSummaryGoal | null {
+function useCourseGoal(courseId: string, forStart = false): LearnerSummaryGoal | null {
   const learner = useLearnerSummary();
 
   return learner.status === "ready"
-    ? (learner.summary.goals.find((goal) => goal.courseId === courseId) ?? null)
+    ? (learner.summary.goals.find((goal) =>
+        forStart && goal.startCourseIds
+          ? goal.startCourseIds.includes(courseId)
+          : goal.courseId === courseId,
+      ) ?? null)
     : null;
 }
 
@@ -134,7 +138,7 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
   const t = useExtracted();
   const router = useRouter();
   const switchFailed = t("We couldn't switch goals. Try again.");
-  const goal = useCourseGoal(courseId);
+  const goal = useCourseGoal(courseId, true);
   const [isPending, startTransition] = useTransition();
 
   if (!goal) {
@@ -247,7 +251,7 @@ export function CourseGoalSwitch({
   startLinks: ReactNode;
 }) {
   const learner = useLearnerSummary();
-  const goal = useCourseGoal(courseId);
+  const goal = useCourseGoal(courseId, true);
 
   if (learner.status === "ready") {
     return goal ? continueLink : startLinks;

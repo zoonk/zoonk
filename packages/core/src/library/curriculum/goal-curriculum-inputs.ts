@@ -6,7 +6,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import { getGoalContentCountry } from "../../goals/_utils/goal-content-country";
-import { readCourseStart } from "../../goals/course-start-details";
+import { unpinnedCourseSourceId } from "../../goals/course-start-details";
 import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
 import { isOwnMaterialTest } from "../../learner/placement/placement-material";
 import { usesTools } from "../../plans/_utils/plan-tools";
@@ -30,7 +30,7 @@ import {
   formatMaterialOverview,
   toMaterialPages,
 } from "../sources/material-pages";
-import { type StartedCourse } from "./course-start-graph";
+import { type StartedCourse, toStartedCourse } from "./course-start-graph";
 import { listGoalReferences } from "./goal-references";
 import { getLessonBudget } from "./lesson-budget";
 import { toExamIdentity, toSharedContext } from "./shared-graph-prompt";
@@ -81,6 +81,7 @@ export type GoalCurriculumInputs = {
   /** Research decided whether the goal is about a product, linked or not; the graph waits for it. */
   productChecked: boolean;
   product: GoalProduct | null;
+  sourceCourse?: (StartedCourse & Pick<Course, "format">) | null;
   startedCourse: StartedCourse | null;
 };
 
@@ -224,23 +225,19 @@ export function getReferenceSyllabusNeed(
     : "notNeeded";
 }
 
-function toStartedCourse({
-  country,
-  kind,
-  course,
-  details,
-}: {
-  country: string | null;
-  kind: Goal["kind"];
-  course: Pick<Course, "country" | "id" | "title" | "userId" | "visibility"> | null;
-  details: Details;
-}): StartedCourse | null {
-  if (!course || (kind === "learn" && course.country !== country) || !readCourseStart(details)) {
-    return null;
-  }
-
-  const ownerId = course.visibility === "private" ? course.userId : null;
-  return { country: course.country, id: course.id, ownerId, title: course.title };
+function toSourceCourse(
+  course: Pick<Course, "format" | "id" | "title" | "userId"> | null,
+  country: string | null,
+) {
+  return (
+    course && {
+      country,
+      format: course.format,
+      id: course.id,
+      ownerId: course.userId,
+      title: course.title,
+    }
+  );
 }
 
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */
@@ -254,6 +251,7 @@ export async function loadGoalCurriculumInputs(
       primaryCourse: {
         select: { country: true, id: true, title: true, userId: true, visibility: true },
       },
+      sourceCourse: { select: { format: true, id: true, title: true, userId: true } },
       ...GOAL_PRODUCT_SELECT,
       user: { select: { isAnonymous: true } },
     },
@@ -280,11 +278,12 @@ export async function loadGoalCurriculumInputs(
 
   const exams = toGoalCandidateExams({ blueprint: goal.examBlueprint, kind: goal.kind });
   const product = toGoalProduct(goal);
+  const source = unpinnedCourseSourceId(goal) ? goal.sourceCourse : null;
 
   const country = getContentCountryScope({
     country:
       goal.kind === "exam"
-        ? (goal.examBlueprint?.country ?? null)
+        ? (goal.examBlueprint?.country ?? goal.contentCountry)
         : getGoalContentCountry({ existingCountry: goal.primaryCourse?.country, goal }),
     language: goal.language,
   });
@@ -329,9 +328,10 @@ export async function loadGoalCurriculumInputs(
     productChecked: goal.productCheckedAt !== null,
     references,
     sharedContext: toSharedContext(details),
+    sourceCourse: toSourceCourse(source, country),
     startedCourse: toStartedCourse({
       country,
-      course: goal.primaryCourse,
+      course: source ? null : goal.primaryCourse,
       details,
       kind: goal.kind,
     }),

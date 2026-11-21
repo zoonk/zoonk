@@ -3,6 +3,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type Resolution, refuse } from "../_utils/resolved-change";
 import { organizationSet, productReleaseSet, productSet } from "./brand-rows";
 import { courseCategories } from "./course-categories";
+import { courseEditions, unlinkEdition } from "./course-editions";
 import { blueprintSet, cutoffSet, weightsSet } from "./exam-facts";
 import { type FixHandler } from "./fix-handler";
 import { itemReplace, itemRestore, itemSet } from "./item-content";
@@ -93,6 +94,8 @@ export const FIX_HANDLERS = [
   wordRestoreClip,
   sentenceRestoreClip,
   courseCategories,
+  courseEditions,
+  unlinkEdition,
   productSet,
   productReleaseSet,
   organizationSet,
