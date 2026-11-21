@@ -177,7 +177,6 @@ export async function buildExtraLessons({
   }));
 }
 
-/** Practice is the fallback, so the goal's skills are read only when no lesson is left. */
 export async function planExtraBlocks({
   minutes,
   readSkillIds,

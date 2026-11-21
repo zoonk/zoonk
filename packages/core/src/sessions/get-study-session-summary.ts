@@ -137,10 +137,7 @@ async function readGoalSkillIds(goalId: string | null): Promise<string[]> {
   return plan.skills.map((skill) => skill.id);
 }
 
-/**
- * Requires ownership; completed sessions replay saved end state while stopped sessions reflect
- * current progress. Each part starts once the parts it needs are loaded.
- */
+/** Requires ownership; completed sessions replay saved end state while stopped sessions reflect current progress. */
 export async function getStudySessionSummary({
   input,
   sessionId,

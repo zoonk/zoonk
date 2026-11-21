@@ -105,7 +105,6 @@ export async function recordStudySessionStop({
   return { status: "ready" };
 }
 
-/** Records the stop like `recordStudySessionStop`, then returns the summary of what changed so far. */
 export async function stopStudySession(input: {
   input: StudySessionTimeZoneInput;
   sessionId: string;
