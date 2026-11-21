@@ -43,7 +43,7 @@ describe("preparing level test-out questions", () => {
     ).resolves.toMatchObject([
       {
         input: { goalId: goal.id, levelTestOutAttemptId: input.attemptId, skillIds: [topic.id] },
-        revision: 1,
+        revision: 0,
       },
     ]);
 

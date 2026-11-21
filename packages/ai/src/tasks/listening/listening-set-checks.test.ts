@@ -225,6 +225,33 @@ describe(toListeningItem, () => {
 });
 
 describe(findListeningSetProblems, () => {
+  it("requires one probe and three order questions with at least four distinct steps each", () => {
+    const steps = ["Ask", "Book", "Pay", "Collect"];
+
+    const orders = LINES.slice(1, 4).map((evidence): ListeningQuestion => ({
+      difficulty: "medium",
+      evidence,
+      format: "order",
+      question: "Put the events in the order you heard them.",
+      reason: "The caller gives the order.",
+      skill: 1,
+      steps,
+    }));
+
+    const request = { ...REQUEST, count: 4, formats: ["multipleChoice", "order"] } as const;
+    const probe = choice("Thursday the twelfth would be best", "Which day does Tom want the hall?");
+
+    expect(
+      findListeningSetProblems(setOf({ questions: [probe, ...orders] }), request),
+    ).toStrictEqual([]);
+
+    const invalid = orders.map((item) => ({ ...item, steps: ["Ask", " ask ", "Pay", "Collect"] }));
+
+    expect(findListeningSetProblems(setOf({ questions: [probe, ...invalid] }), request)).toContain(
+      "Write one single-answer question and order questions with at least four distinct steps.",
+    );
+  });
+
   it("hears a number answer through the sample's spoken words when only digits fit the limit", () => {
     const set = setOf({
       questions: [

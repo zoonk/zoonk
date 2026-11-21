@@ -4,6 +4,10 @@ import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 test("reopens the same preparing level test-out by attempt ID", async ({ baseURL }) => {
+  if (!baseURL) {
+    throw new Error("Expected the API server URL");
+  }
+
   const { apiContext, user } = await createAuthenticatedApiContext({
     baseURL,
     prefix: "level-test-out-preparation",

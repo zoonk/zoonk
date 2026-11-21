@@ -250,7 +250,8 @@ export function findListeningSetProblems(
   const validOrdering = set.questions.filter(
     (question) =>
       question.format === "order" &&
-      new Set(question.steps.map(normalizeTypedAnswer)).size === question.steps.length &&
+      new Set(question.steps.map((step) => normalizeTypedAnswer(step))).size ===
+        question.steps.length &&
       question.steps.length >= MIN_ORDER_STEPS,
   );
 

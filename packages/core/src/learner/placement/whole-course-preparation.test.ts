@@ -46,7 +46,7 @@ describe("Whole-course question preparation", () => {
       prisma.followUp.findMany({ where: { kind: "preparePlacementItems", userId: user.id } });
 
     await expect(owed()).resolves.toMatchObject([
-      { input: { skillIds: skillIds.slice(0, 20) }, revision: 1 },
+      { input: { skillIds: skillIds.slice(0, 20) }, revision: 0 },
     ]);
 
     await recordPlacementPrepared({
@@ -59,14 +59,14 @@ describe("Whole-course question preparation", () => {
       finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
     ).resolves.toMatchObject({ completion: { attempt: { id: attemptId, partComplete: true } } });
 
-    await expect(owed()).resolves.toMatchObject([{ revision: 1 }]);
+    await expect(owed()).resolves.toMatchObject([{ revision: 0 }]);
 
     await expect(start()).resolves.toMatchObject({
       placement: { attempt: { id: attemptId, part: 2 }, next: { itemId: laterItem.id } },
     });
 
     await expect(owed()).resolves.toMatchObject([
-      { input: { skillIds: skillIds.slice(10) }, revision: 2 },
+      { input: { skillIds: skillIds.slice(10) }, revision: 1 },
     ]);
 
     await recordPlacementPrepared({
@@ -80,6 +80,6 @@ describe("Whole-course question preparation", () => {
     });
 
     await start();
-    await expect(owed()).resolves.toMatchObject([{ revision: 2 }]);
+    await expect(owed()).resolves.toMatchObject([{ revision: 1 }]);
   });
 });
