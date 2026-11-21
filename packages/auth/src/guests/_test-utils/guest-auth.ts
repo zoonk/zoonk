@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth/minimal";
 import { oneTimeToken } from "better-auth/plugins";
 import { accessGuardsPlugin } from "../../plugins/access-guards";
 import { guestPlugin } from "../../plugins/guest";
-import { baseAuthConfig } from "../../server";
+import { baseAuthConfig, baseAuthPlugins } from "../../server";
 import { stripePlugin } from "../../stripe/plugin";
 
 const PASSWORD = "guest-test-password";
@@ -20,6 +20,7 @@ export const guestAuth = betterAuth({
     },
   },
   plugins: [
+    ...baseAuthPlugins,
     oneTimeToken({ storeToken: "plain" }),
     stripePlugin(),
     guestPlugin(),
