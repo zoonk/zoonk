@@ -68,7 +68,7 @@ export function MindMapOutline({
     <div className={cn("flex flex-col gap-8", className)} data-slot="mind-map-outline">
       <div className="flex flex-col gap-1">
         {titled && <h2 className="text-lg font-semibold text-balance">{outline.title}</h2>}
-        <p className="text-reading text-pretty">{outline.centralIdea}</p>
+        <p className="text-reading">{outline.centralIdea}</p>
       </div>
 
       <ol className="flex flex-col gap-8">
@@ -83,7 +83,7 @@ export function MindMapOutline({
               </span>
               {branch.title}
             </h3>
-            <p className="text-reading text-pretty">{branch.explanation}</p>
+            <p className="text-reading">{branch.explanation}</p>
             {branch.points.length > 0 && (
               <ul className={POINTS_CLASS}>
                 {branch.points.map((point) => (
@@ -97,7 +97,7 @@ export function MindMapOutline({
 
       {outline.comparison && <Comparison comparison={outline.comparison} />}
 
-      <p className="text-reading border-t pt-6 text-pretty">
+      <p className="text-reading border-t pt-6">
         <span className="font-semibold">{t("In short:")}</span> {outline.summary}
       </p>
     </div>

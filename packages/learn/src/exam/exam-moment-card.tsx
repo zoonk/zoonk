@@ -78,11 +78,7 @@ export function ExamMomentDay({ moment }: { moment: Moment }) {
   const dayText = useExamDayText();
   const day = moment.stage === "afterExam" ? null : moment.day;
 
-  return (
-    day && (
-      <p className="text-compact font-mono font-medium text-pretty tabular-nums">{dayText(day)}</p>
-    )
-  );
+  return day && <p className="text-compact font-mono font-medium tabular-nums">{dayText(day)}</p>;
 }
 
 /** What the learner has done, for the paragraph under the moment's title. */

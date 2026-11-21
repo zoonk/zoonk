@@ -11,8 +11,7 @@ import {
   ZoneChapterNames,
 } from "./outline-chapter-row";
 
-const LEVEL_LINE_CLASS =
-  "text-muted-foreground text-compact leading-snug font-normal text-pretty sm:text-sm";
+const LEVEL_LINE_CLASS = "text-muted-foreground text-compact leading-snug font-normal sm:text-sm";
 
 function LevelLabel({
   courseId,

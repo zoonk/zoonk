@@ -141,7 +141,7 @@ function DateTag() {
 
   return (
     <DetailsDrawer label={tag.label} title={tag.label} trigger="tag">
-      <p className="text-muted-foreground text-pretty">{tag.text}</p>
+      <p className="text-muted-foreground">{tag.text}</p>
     </DetailsDrawer>
   );
 }

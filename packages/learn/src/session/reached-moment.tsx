@@ -40,7 +40,7 @@ function ReachedRow({
         {mark}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="font-semibold text-balance">{title}</span>
-          {detail && <span className="text-muted-foreground text-xs text-pretty">{detail}</span>}
+          {detail && <span className="text-muted-foreground text-xs">{detail}</span>}
         </span>
       </span>
       {bar}
