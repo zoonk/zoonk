@@ -30,10 +30,7 @@ function DaySplitWords({ split }: { split: DaySplit }) {
     : t("This goal gets {main} a day and your other goals {other} together.", { main, other });
 }
 
-/**
- * What the time and days picked get the learner, whose number is its subject. It changes length
- * with them, so it goes after the days and the learner's other choices, with nothing they tap under it.
- */
+/** What the time and days picked get the learner, whose number is its subject. */
 export function TimeAnswer({
   aim = null,
   date,
