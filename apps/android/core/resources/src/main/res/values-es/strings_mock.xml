@@ -45,6 +45,7 @@
   "mock_next_section": "b5db20232403377ed300a790a1f6c31254537dae31f6558ef55540fb54b867fd",
   "mock_not_sure": "508172793bc275b8d61cba5ba8ae19f231d19d298440d8572cfc824c656a4326",
   "mock_not_sure_tip": "6ba85f6f35eff39d725c8481795015ce3ec8bac1719d86355c7c14b09494e061",
+  "mock_not_sure_tip_forward_only": "b686361242c79f4d4d8c6c5964bb4c8acd213f4c9dcbe735405198578c4348ae",
   "mock_place": "3c62648fa7cdc44e34015b2293ac8325bfbb48b1e822a7c6586aed1ebcb86a22",
   "mock_points_of": "f6d4efe6c4a7c9b41ca0da4c83f1721b6b46f7626122e49127f08f0ffb121e0b",
   "mock_progress_label": "b6cbf22d9e1486fb12a7c99ef358f520323098370a3a5c6ccc1f448e686390b3",
@@ -138,6 +139,7 @@
     <string name="mock_not_sure">Tengo dudas</string>
     <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
     <string name="mock_not_sure_tip">Vuelve a comprobarla antes de entregar. El resultado muestra cómo te fue con estas respuestas.</string>
+    <string name="mock_not_sure_tip_forward_only">Tu resultado muestra cómo te fue en estas respuestas.</string>
     <string name="mock_next">Siguiente</string>
     <string name="mock_hand_in_section">Entregar sección</string>
     <string name="mock_moves_review_any">Revisión: puedes volver a cualquier pregunta.</string>

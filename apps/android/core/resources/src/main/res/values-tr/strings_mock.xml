@@ -45,6 +45,7 @@
   "mock_next_section": "9accd0524c41c7ed9dabd437a95d03c394676217cab43dc1ae687d696acd7532",
   "mock_not_sure": "75c2dd39d3af6c2dd3819d2c609ada353f82c67e50b67325647251e9758d886b",
   "mock_not_sure_tip": "9320c0a795dd1ad8bc6d6459dd1733268a64cb0ca223c933264a3fc000da2130",
+  "mock_not_sure_tip_forward_only": "96d62b2f734d00ba6feb5d53c87bfd1c521c354d78071e852589578731f05a93",
   "mock_place": "6f4f79b8300799bfe604a1ac1c9ac4be246b1a501af1209a3eb14e629789f985",
   "mock_points_of": "ef001a020a1c9e8b03410ca6db37efc54b63b3386d11d16bd0a07b08efeb7537",
   "mock_progress_label": "42a5783daff8b0691a7af628f7da8ef664483c608077253e7a35d10bbf763748",
@@ -136,6 +137,7 @@
     <string name="mock_not_sure">Emin değilim</string>
     <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
     <string name="mock_not_sure_tip">Teslim etmeden önce bir daha kontrol et. Sonucun bu cevapların nasıl gittiğini gösteriyor.</string>
+    <string name="mock_not_sure_tip_forward_only">Sonucun bu cevapların nasıl geçtiğini gösteriyor.</string>
     <string name="mock_next">Devam et</string>
     <string name="mock_hand_in_section">Oturumu teslim et</string>
     <string name="mock_moves_review_any">Gözden geçirme: istediğin soruya geri dönebilirsin.</string>

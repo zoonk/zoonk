@@ -38,7 +38,6 @@
     <string name="mock_not_sure">Not sure</string>
     <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
     <string name="mock_not_sure_tip">Check it again before you hand in. Your result shows how these answers went.</string>
-    <!-- mock_not_sure_tip in a section the learner can't go back in, so there's no checking again before handing in. -->
     <string name="mock_not_sure_tip_forward_only">Your result shows how these answers went.</string>
     <string name="mock_next">Next</string>
     <string name="mock_hand_in_section">Hand in section</string>

@@ -45,6 +45,7 @@
   "mock_next_section": "43e7009d87a154e642198b4c8390381f4549aca9562cb30c421f1c2ebf85f08e",
   "mock_not_sure": "a3f177d906ede4771d12ddaf093981d049c32a7c91ebf749d3318228d1821642",
   "mock_not_sure_tip": "def6288cfda870984bdf493565870297a7f261eedaf9cca88e2e67f1fb7cad59",
+  "mock_not_sure_tip_forward_only": "b61c148a1ffb8fafb765f55b6ec99c44006727d35b7075d54c474f0f4195873d",
   "mock_place": "a3548fd6737b525c95e7c31890377fb6462ec90d34e26b250ed4d2686f5ca1ff",
   "mock_points_of": "51a9eccb09c7cd652a0230c441f1e992e3356ec099f5546d95f4f51036b0c0b8",
   "mock_progress_label": "59533957d73e7d46c57ac8b60f373b9d5571b712f0ec04a6f75eb2bf43a6ff3f",
@@ -136,6 +137,7 @@
     <string name="mock_not_sure">Unsicher</string>
     <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
     <string name="mock_not_sure_tip">Prüf die Antwort noch einmal, bevor du abgibst. Dein Ergebnis zeigt, wie du bei diesen Antworten abgeschnitten hast.</string>
+    <string name="mock_not_sure_tip_forward_only">Dein Ergebnis zeigt, wie diese Antworten ausgefallen sind.</string>
     <string name="mock_next">Weiter</string>
     <string name="mock_hand_in_section">Abschnitt abgeben</string>
     <string name="mock_moves_review_any">Überprüfung: Du kannst zu jeder Frage zurückgehen.</string>

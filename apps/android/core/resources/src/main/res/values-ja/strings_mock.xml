@@ -45,6 +45,7 @@
   "mock_next_section": "ff464d8b7c8aca10ff628a7398007c2a954ebc76be2822af58d952a59eec34ed",
   "mock_not_sure": "fccbba6168dfddb0ce4cba512a29760a519a2ac13f414d4f73954d426e5d4d3b",
   "mock_not_sure_tip": "40a551d0fe5141a7c258eff2a541b104c356b406b796d2cb785d4f81f97b73e5",
+  "mock_not_sure_tip_forward_only": "0374bd374ab58e18d38e49bdd23644d2dbecb8bb649e95adcde99f42cac10fa3",
   "mock_place": "71872615f909946fca7e9bc741ed97b205f02213e846f068751e1c13029998cd",
   "mock_points_of": "7ee7c2b96463f0b561165232cbccfaee0f65d1c4533122e72340302edb835f49",
   "mock_progress_label": "c3413be759f5d2a12f80514f416b944e202146657e7baf520faaf16d9f9b9559",
@@ -134,6 +135,7 @@
     <string name="mock_not_sure">自信なし</string>
     <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
     <string name="mock_not_sure_tip">提出する前にもう一度答えを見直しましょう。結果を見ると、これらの答えがどうだったかわかります。</string>
+    <string name="mock_not_sure_tip_forward_only">結果を見ると、これらの答えがどうだったかわかります。</string>
     <string name="mock_next">次へ</string>
     <string name="mock_hand_in_section">セクションを提出する</string>
     <string name="mock_moves_review_any">見直し：どの問題にも戻れます。</string>

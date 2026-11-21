@@ -45,6 +45,7 @@
   "mock_next_section": "bfa3e6ee5502569bbaf87be606ac356dcf4d197446027339bebd51af63b5452f",
   "mock_not_sure": "6a57eed27d8fdbf97285bd8b096bcff0b54bdbf3e5449cb961c9b8e622d9c81d",
   "mock_not_sure_tip": "e803845c73f5e63a21485a4320d8a284e7c29333be6dc3ff291cc47d08f49a9b",
+  "mock_not_sure_tip_forward_only": "39eb3f399a4116eadc4770e7f8ccdc15e918e72615d3c3273751285ebfe4e99f",
   "mock_place": "bfd44e514b37acddfd1cba0b38791b1360749df5d1dc3eeb8818889f3944d4bf",
   "mock_points_of": "ca41e3ca261b4ede73f3a487fc59f004c22b08e824658c49b6cfac0c6f8eb614",
   "mock_progress_label": "b2fe95a753be7a84831b820738c5ea21eaf7670b4793a9d4dd8a2512c90a6bce",
@@ -138,6 +139,7 @@
     <string name="mock_not_sure">J’hésite</string>
     <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
     <string name="mock_not_sure_tip">Vérifie à nouveau avant de rendre l’examen. Ton résultat montre comment tu as répondu à ces questions.</string>
+    <string name="mock_not_sure_tip_forward_only">Ton résultat montre comment tu as répondu à ces questions.</string>
     <string name="mock_next">Suivant</string>
     <string name="mock_hand_in_section">Rendre la partie</string>
     <string name="mock_moves_review_any">Vérification : tu peux revenir à n’importe quelle question.</string>

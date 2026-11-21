@@ -45,6 +45,7 @@
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
   "mock_not_sure": "ee8d186ca2278700ff52a2a339907c8978e5f91f825969ebb16631e0251257b4",
   "mock_not_sure_tip": "16bf5e9389e4eb54b51062907c56dfe0b8c110c9a28453bd5e6f85d8453cc81e",
+  "mock_not_sure_tip_forward_only": "8b7ccedd059c6afcf79462493fbb3b180ebf66f9094f1c2409dc135c3354691f",
   "mock_place": "e9eb53d1a8f80f75c0aff53b6fff21a0aa6b92046162912249e65e7c46c24be9",
   "mock_points_of": "1aa58bf2af61be9fe59464bc294e6e57a013a10c70094b514347408e4fe544a5",
   "mock_progress_label": "20e066bfe67d7fe655e19a34d7e7e62286a6a323a07662fc095e5c239844d21b",
@@ -134,6 +135,7 @@
     <string name="mock_not_sure">헷갈려요</string>
     <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
     <string name="mock_not_sure_tip">제출하기 전에 다시 확인해 보세요. 결과에서 이 답들이 어땠는지 확인할 수 있어요.</string>
+    <string name="mock_not_sure_tip_forward_only">결과에서 각 답변이 어땠는지 확인할 수 있어요.</string>
     <string name="mock_next">다음</string>
     <string name="mock_hand_in_section">파트 제출하기</string>
     <string name="mock_moves_review_any">답안 검토: 어느 문제로든 돌아갈 수 있어요.</string>
