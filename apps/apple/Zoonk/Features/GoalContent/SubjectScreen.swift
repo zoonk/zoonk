@@ -122,7 +122,9 @@ private struct SubjectContent: View {
       // when it returns instead of offering a tap that would be refused.
       if let written, written.waitsForTomorrow {
         Label {
-          Text("More grading tomorrow", tableName: "Plan", comment: "Every written task waits for tomorrow")
+          Text(
+            "More grading tomorrow", tableName: "Plan",
+            comment: "Every written task waits for tomorrow")
         } icon: {
           Image(systemName: "clock")
         }

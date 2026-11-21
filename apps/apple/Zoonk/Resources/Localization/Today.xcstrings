@@ -13995,9 +13995,6 @@
         }
       }
     },
-    "Your draft is saved" : {
-      "comment" : "A written task with a saved, unsent draft"
-    },
     "Your end date has passed with %lld lessons left." : {
       "comment" : "A goal's end date passed with lessons left; the number is the lessons",
       "localizations" : {
