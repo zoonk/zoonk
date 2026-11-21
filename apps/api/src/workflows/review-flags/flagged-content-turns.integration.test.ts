@@ -81,7 +81,7 @@ async function flaggedDrill() {
 }
 
 describe("flagged content turns", () => {
-  it("makes Rewrite now wait while the sweep's run rewrites the same drills, so they're written once", async () => {
+  it("makes Rewrite now wait while an earlier run rewrites the same drills, so they're written once", async () => {
     const flagIds = await flaggedDrill();
     const writing = Promise.withResolvers<null>();
     const written = Promise.withResolvers<null>();
@@ -98,7 +98,7 @@ describe("flagged content turns", () => {
         return drillsResult();
       });
 
-    const sweep = await start(flaggedContentWorkflow, [{}]);
+    const earlier = await start(flaggedContentWorkflow, [{ flagIds }]);
     await writing.promise;
 
     const rewrite = await start(flaggedContentWorkflow, [{ flagIds }]);
@@ -107,7 +107,7 @@ describe("flagged content turns", () => {
     assert(turn);
     written.resolve(null);
 
-    await expect(sweep.returnValue).resolves.toStrictEqual({
+    await expect(earlier.returnValue).resolves.toStrictEqual({
       drillsRewritten: 1,
       lessonsPulled: [],
     });
