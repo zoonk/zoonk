@@ -113,7 +113,7 @@ test.describe("Written exam practice", () => {
 
       // The written test's page knows the day's grading is used, so it offers no tap to refuse.
       await page.goto("/plan/written-test");
-      await expect(page.getByText("More grading tomorrow")).toBeVisible();
+      await expect(page.getByText("Back tomorrow: no more grading today")).toBeVisible();
       await expect(page.getByRole("button", { exact: true, name: "Write" })).toBeHidden();
     } finally {
       await page.context().close();

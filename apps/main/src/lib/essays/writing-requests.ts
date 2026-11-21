@@ -8,6 +8,7 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 
 const HTTP_CONFLICT = 409;
 const HTTP_NOT_FOUND = 404;
+const CONFLICT_CODE = "CONFLICT";
 
 function essayPath(blockId: string, rest: string) {
   return `/v1/essays/${encodeURIComponent(blockId)}/${rest}` as const;
@@ -36,6 +37,11 @@ export async function startWritingFromBrowser({
 
   if (code === LESSON_PLAYER_ERROR_CODES.signUpRequired) {
     return { status: "signUpRequired" };
+  }
+
+  // A first start's plain conflict: the exam's notice was read again and its task is gone.
+  if (!previousAttemptId && response.status === HTTP_CONFLICT && code === CONFLICT_CODE) {
+    return { status: "taskRemoved" };
   }
 
   const parsed = writingStartSchema.safeParse(body);

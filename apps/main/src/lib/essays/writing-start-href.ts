@@ -5,14 +5,21 @@ const WRITING_START_PARAM = "writing";
 
 const LIMIT = "limit";
 const FAILED = "failed";
+const TASK_REMOVED = "removed";
 const TASK_PARAM = "task";
 const MINUTES_PARAM = "minutes";
+const UNIT_PARAM = "unit";
+const DRILL = "drill";
 
 type Search = Record<string, string | string[] | undefined>;
 
 function startParams(answer: Exclude<WritingStartAnswer, { status: "ready" }>): string[][] {
   if (answer.status === "writing") {
     return [[WRITING_START_PARAM, answer.generationId]];
+  }
+
+  if (answer.status === "taskRemoved") {
+    return [[WRITING_START_PARAM, TASK_REMOVED]];
   }
 
   if (answer.status !== "limitReached") {
@@ -24,6 +31,7 @@ function startParams(answer: Exclude<WritingStartAnswer, { status: "ready" }>): 
     ? [
         [TASK_PARAM, answer.task.description],
         [MINUTES_PARAM, String(answer.task.minutes)],
+        [UNIT_PARAM, answer.task.unit],
       ]
     : [];
 
@@ -66,9 +74,17 @@ export function readWritingStart(search: Search): WritingStartState | null {
     return {
       status: "limitReached",
       task: title
-        ? { minutes: Number.isInteger(minutes) && minutes > 0 ? minutes : null, title }
+        ? {
+            minutes: Number.isInteger(minutes) && minutes > 0 ? minutes : null,
+            title,
+            unit: readParam(search, UNIT_PARAM) === DRILL ? DRILL : "answer",
+          }
         : null,
     };
+  }
+
+  if (value === TASK_REMOVED) {
+    return { status: "taskRemoved" };
   }
 
   return value === FAILED ? { status: "failed" } : { generationId: value };

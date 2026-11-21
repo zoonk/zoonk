@@ -1,21 +1,41 @@
 "use client";
 
+import { CircleSlash2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskHeaderTitle } from "../_components/task-header";
-import { TaskActions } from "../_components/task-layout";
+import { TaskActions, TaskStopMessage } from "../_components/task-layout";
 import { WritingWait } from "../generation/writing-wait";
 import { useLearnAnalytics } from "../learn-context";
-import { TaskFrame, TaskMainButton } from "../shell/task-frame";
+import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { WritingRefused } from "./writing-refused";
 import { type WritingStartAnswer } from "./writing-screen";
 import { type TomorrowTask } from "./writing-types";
 
 export type WritingStartState =
   | { generationId: string }
-  | { status: "failed" }
+  | { status: "failed" | "taskRemoved" }
   | { status: "limitReached"; task: TomorrowTask | null };
+
+function toStopState(
+  answer: Exclude<WritingStartAnswer, { status: "ready" | "writing" }>,
+): WritingStartState {
+  if (answer.status === "taskRemoved") {
+    return { status: "taskRemoved" };
+  }
+
+  if (answer.status !== "limitReached") {
+    return { status: "failed" };
+  }
+
+  const { task } = answer;
+
+  return {
+    status: "limitReached",
+    task: task ? { minutes: task.minutes, title: task.description, unit: task.unit } : null,
+  };
+}
 
 /** Once per run a learner sees being written, from a question's start or a written test's. */
 export function useWritingWaitViewed({
@@ -37,9 +57,36 @@ export function useWritingWaitViewed({
   }, [generationId, surface, track]);
 }
 
+/** The exam's notice was read again and dropped this task: nothing was admitted, so only the way back is left. */
+function WritingTaskRemoved({ hrefs }: { hrefs: { exit: string } }) {
+  const t = useExtracted();
+
+  return (
+    <TaskFrame
+      exitHref={hrefs.exit}
+      footer={
+        <TaskActions>
+          <TaskMainLink href={hrefs.exit}>{t("Today")}</TaskMainLink>
+        </TaskActions>
+      }
+      headerTitle={null}
+    >
+      <div className="flex flex-1 flex-col gap-6 pt-4 pb-8">
+        <TaskStopMessage
+          description={t("The exam notice changed. Nothing was counted.")}
+          heading="h1"
+          icon={<CircleSlash2Icon aria-hidden="true" />}
+          title={t("This task is no longer on your exam")}
+        />
+      </div>
+    </TaskFrame>
+  );
+}
+
 /**
- * Before the question exists: it's being written, its writing failed, or the day's extra grades
- * are used. Asking again is always the learner's tap, or the run they started ending.
+ * Before the question exists: it's being written, its writing failed, the day's extra grades are
+ * used, or the task left the exam. Asking again is always the learner's tap, or the run they started
+ * ending.
  */
 export function WritingStartScreen({
   finish,
@@ -77,22 +124,16 @@ export function WritingStartScreen({
       return answer.generationId;
     }
 
-    setState(
-      answer.status === "limitReached"
-        ? {
-            status: "limitReached",
-            task: answer.task
-              ? { minutes: answer.task.minutes, title: answer.task.description }
-              : null,
-          }
-        : { status: "failed" },
-    );
-
+    setState(toStopState(answer));
     return null;
   }
 
   if ("status" in state && state.status === "limitReached") {
     return <WritingRefused hrefs={hrefs} onContinue={finish} task={state.task} />;
+  }
+
+  if ("status" in state && state.status === "taskRemoved") {
+    return <WritingTaskRemoved hrefs={hrefs} />;
   }
 
   const header = (
@@ -116,7 +157,7 @@ export function WritingStartScreen({
           </TaskActions>
         )
       }
-      headerTitle={<TaskHeaderTitle title={t("Written answer")} />}
+      headerTitle={<TaskHeaderTitle title={t("Writing practice")} />}
     >
       {generationId ? (
         <WritingWait

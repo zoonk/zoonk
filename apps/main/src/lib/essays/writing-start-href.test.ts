@@ -27,7 +27,30 @@ describe(getWritingHref, () => {
 
     expect(readHref(href)).toStrictEqual({
       status: "limitReached",
-      task: { minutes: 140, title: "The 60-line question" },
+      task: { minutes: 140, title: "The 60-line question", unit: "answer" },
+    });
+  });
+
+  it("a refused drill keeps its unit, so the page names it as a drill and not as its task", () => {
+    const href = getWritingHref({
+      answer: {
+        returnsOn: "2026-11-21",
+        status: "limitReached",
+        task: {
+          description: "The 30-line question",
+          lines: 30,
+          minutes: 8,
+          points: 30,
+          taskKey: "short",
+          unit: "drill",
+        },
+      },
+      blockId: BLOCK_ID,
+    });
+
+    expect(readHref(href)).toStrictEqual({
+      status: "limitReached",
+      task: { minutes: 8, title: "The 30-line question", unit: "drill" },
     });
   });
 
@@ -40,16 +63,18 @@ describe(getWritingHref, () => {
     expect(readHref(href)).toStrictEqual({ status: "limitReached", task: null });
   });
 
-  it("a question being written and a failed start keep their own states", () => {
+  it("a question being written, a failed start and a removed task keep their own states", () => {
     const writing = getWritingHref({
       answer: { generationId: "wrun_1", status: "writing" },
       blockId: BLOCK_ID,
     });
 
     const failed = getWritingHref({ answer: { status: "failed" }, blockId: BLOCK_ID });
+    const removed = getWritingHref({ answer: { status: "taskRemoved" }, blockId: BLOCK_ID });
 
     expect(readHref(writing)).toStrictEqual({ generationId: "wrun_1" });
     expect(readHref(failed)).toStrictEqual({ status: "failed" });
+    expect(readHref(removed)).toStrictEqual({ status: "taskRemoved" });
 
     expect(
       getWritingHref({ answer: { admissionId: "a", status: "ready" }, blockId: BLOCK_ID }),

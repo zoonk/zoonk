@@ -69,7 +69,7 @@ export function WriteBottomBar({
       <BottomBar>
         <p className="text-muted-foreground flex min-h-11 items-center justify-center gap-2 text-sm lg:justify-end">
           <ClockIcon aria-hidden="true" className="size-4" />
-          {t("More grading tomorrow")}
+          {t("Back tomorrow: no more grading today")}
         </p>
       </BottomBar>
     );
