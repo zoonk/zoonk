@@ -1,5 +1,5 @@
 import { withUnit } from "@zoonk/utils/math-answer";
-import { getChartValueAxis, getPlotAxes } from "@zoonk/utils/plot-scale";
+import { formatTicks, getChartValueAxis, getPlotAxes } from "@zoonk/utils/plot-scale";
 import { type ChallengeContent } from "../steps/contract/challenge-content";
 import { placeChartUnit } from "../steps/contract/chart-unit";
 import {
@@ -93,14 +93,21 @@ function axisLabel(label: string, unit: string | null): string {
   return unit ? `${label} (${unit})` : label;
 }
 
+/** The labels a learner's screen prints under each tick, in English notation like the rest of the map. */
+function tickLabels(axis: "x" | "y", ticks: number[]): string {
+  return formatTicks({ axis, locale: "en", ticks })
+    .map((label) => `"${label}"`)
+    .join(" ");
+}
+
 function formatPlot(visual: PlotVisual): string[] {
   const axes = getPlotAxes(visual);
 
   return [
     `  X axis: ${axisLabel(visual.xLabel, visual.xUnit)}`,
     `  Y axis: ${axisLabel(visual.yLabel, visual.yUnit)}`,
-    `  X ticks (at most these): ${axes.x.ticks.join(", ")}`,
-    `  Y ticks: ${axes.y.ticks.join(", ")}`,
+    `  X tick labels (at most these): ${tickLabels("x", axes.x.ticks)}`,
+    `  Y tick labels: ${tickLabels("y", axes.y.ticks)}`,
     ...visual.series.map(({ mark, name, points }) => {
       const positions = points.map(
         ({ label, x, y }) => `${label ? `"${label}" ` : ""}(${x}, ${y})`,
