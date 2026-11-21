@@ -1,10 +1,9 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
-import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
@@ -12,14 +11,12 @@ import { type FinishedChapter } from "../../sessions/completion-contract";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
-import { type ChoiceItem, gradeChoiceAnswer, parseChoiceItem } from "../_utils/choice-items";
 import { markPlanItemsTestedOut } from "../_utils/known-skills";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { withTestSubmissionClaim } from "../_utils/test-submission-claim";
 import { writeLearnerChange } from "../_utils/write-learner-change";
-import { type ItemAnswerInput } from "../contract";
-import { recordLearnerAnswer } from "../record-learner-answer";
 import { countSkippableItems, getChapterSkills } from "./_utils/chapter-items";
+import { type GradedAnswer, scoreChapter } from "./_utils/score-chapter";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   type TestOutReceipt,
@@ -27,7 +24,6 @@ import {
   toTestOutContentIds,
 } from "./_utils/test-out-receipt";
 import { type ChapterTestOutInput } from "./test-out-contract";
-import { scoreTestOut } from "./test-out-rules";
 
 const PERCENT = 100;
 
@@ -46,74 +42,6 @@ export type SubmitChapterTestOutResult =
   | { status: "notFound" }
   | { status: "nothingToSkip" }
   | { status: "unauthorized" };
-
-type GradedAnswer = { answer: ItemAnswerInput; item: ChoiceItem } & ReturnType<
-  typeof gradeChoiceAnswer
->;
-
-function firstAnswerPerItem(answers: readonly ItemAnswerInput[]): ItemAnswerInput[] {
-  return answers.filter(
-    (answer, index) => answers.findIndex((other) => other.itemId === answer.itemId) === index,
-  );
-}
-
-async function gradeAnswers({
-  answers,
-  chapterSkillIds,
-}: {
-  answers: readonly ItemAnswerInput[];
-  chapterSkillIds: readonly string[];
-}): Promise<GradedAnswer[] | null> {
-  const rows = await prisma.item.findMany({
-    include: ITEM_IMAGE_INCLUDE,
-    where: { id: { in: answers.map((answer) => answer.itemId) } },
-  });
-
-  const graded = answers.map((answer) => {
-    const row = rows.find((candidate) => candidate.id === answer.itemId);
-    const item = row && chapterSkillIds.includes(row.skillId) ? parseChoiceItem(row) : null;
-
-    return item ? { answer, ...gradeChoiceAnswer({ answer: answer.answer, item }), item } : null;
-  });
-
-  return graded.every((entry) => entry !== null) ? graded : null;
-}
-
-/** Record answers on the same skill sequentially so their memory updates cannot race. */
-async function recordAnswers({
-  answeredAt,
-  graded,
-  timeZone,
-  userId,
-}: {
-  answeredAt: Date;
-  graded: readonly GradedAnswer[];
-  timeZone: string;
-  userId: string;
-}): Promise<void> {
-  const record = ({ answer, isCorrect, item, snapshot }: GradedAnswer) =>
-    recordLearnerAnswer({
-      answer: answer.answer,
-      answeredAt,
-      graded: { durationMs: answer.durationMs, isCorrect },
-      itemId: item.id,
-      language: item.language,
-      mistake: { questionText: snapshot.question, snapshot },
-      purpose: "diagnostic",
-      skillId: item.skillId,
-      timeZone,
-      userId,
-    });
-
-  await Promise.all(
-    [...Map.groupBy(graded, (entry) => entry.item.skillId).values()].map((answers) =>
-      answers.reduce<Promise<unknown>>(
-        (previous, entry) => previous.then(() => record(entry)),
-        Promise.resolve(),
-      ),
-    ),
-  );
-}
 
 function countTestOut({
   chapterId,
@@ -228,39 +156,32 @@ async function submitOwnedTestOut({
     return { status: "nothingToSkip" };
   }
 
-  const graded = await gradeAnswers({
-    answers: firstAnswerPerItem(input.answers),
-    chapterSkillIds: chapterSkills.map((skill) => skill.id),
-  });
+  const answeredAt = new Date();
+  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
+  const taken = await scoreChapter({ answeredAt, chapterSkills, goal, input, timeZone, userId });
 
-  if (!graded) {
+  if (!taken) {
     return { status: "invalidItem" };
   }
 
-  const score = scoreTestOut({
-    chapterSkillIds: chapterSkills.map((skill) => skill.id),
-    results: graded.map(({ isCorrect, item }) => ({ isCorrect, skillId: item.skillId })),
-  });
+  const { graded, knownSkillIds, score } = taken;
 
-  const answeredAt = new Date();
-  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
-  await recordAnswers({ answeredAt, graded, timeZone, userId });
-
-  const testedOut = score.passed
-    ? await markPlanItemsTestedOut({
-        finishesChapters: true,
-        goalId,
-        items: plan.items,
-        knownSkillIds: new Set(score.knownSkillIds),
-        testedOutAt: answeredAt,
-        timeZone,
-      })
-    : await refreshGoalPlan({ goalId }).then(() => ({
-        changeId: null,
-        finishedChapters: [],
-        lessonsSkipped: 0,
-        planVersion: null,
-      }));
+  const testedOut =
+    knownSkillIds.size > 0
+      ? await markPlanItemsTestedOut({
+          finishesChapters: true,
+          goalId,
+          items: plan.items,
+          knownSkillIds,
+          testedOutAt: answeredAt,
+          timeZone,
+        })
+      : await refreshGoalPlan({ goalId }).then(() => ({
+          changeId: null,
+          finishedChapters: [],
+          lessonsSkipped: 0,
+          planVersion: null,
+        }));
 
   const said = {
     changeId: testedOut.changeId,
@@ -270,7 +191,7 @@ async function submitOwnedTestOut({
         (chapter) => chapter.chapterId === chapterId && chapter.goalId === goalId,
       ) ?? null,
     lessonsSkipped: testedOut.lessonsSkipped,
-    passed: score.passed,
+    passed: score.passed && knownSkillIds.size === score.knownSkillIds.length,
     planVersion: testedOut.planVersion,
     total: score.total,
   };
@@ -295,7 +216,7 @@ async function submitOwnedTestOut({
           name: "Test-out Taken",
           properties: {
             chapter_id: chapterId,
-            passed: score.passed,
+            passed: score.passed && knownSkillIds.size === score.knownSkillIds.length,
             score: score.total > 0 ? Math.round((score.correct / score.total) * PERCENT) : 0,
           },
         },
@@ -327,7 +248,7 @@ export async function submitChapterTestOut({
   const { userId } = owned;
 
   return withTestSubmissionClaim({
-    key: `${userId}:${goalId}:${chapterId}:${input.requestId}`,
+    key: `chapter-test-out:${userId}`,
     replay: () => replaySavedReceipt({ chapterId, goalId, requestId: input.requestId, userId }),
     submit: () => submitOwnedTestOut({ chapterId, goal: owned.goal, input, userId }),
     userId,

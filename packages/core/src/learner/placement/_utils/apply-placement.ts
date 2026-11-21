@@ -7,6 +7,7 @@ import { listPlacementListeningAreas } from "../../../plans/_utils/load-listenin
 import { endPlanSetupTask, endPlanSetupTaskWith } from "../../../plans/_utils/plan-setup-tasks";
 import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../../_utils/known-skills";
+import { loadConfirmedSkills } from "../../_utils/load-skill-claims";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { isFocusTestStarted } from "../focus-test-state";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
@@ -14,16 +15,38 @@ import { type PlacementState, loadPlacementState } from "./load-placement-state"
 export async function loadPlacement({
   goalId,
   plan,
+  timeZone = "UTC",
   userId,
   tx = prisma,
 }: {
   goalId: string;
   plan?: GoalPlan;
+  timeZone?: string;
   userId: string;
   tx?: TransactionClient;
 }): Promise<{ goalPlan: GoalPlan; pastBasicsAreas: string[]; state: PlacementState }> {
   const goalPlan = plan ?? (await loadPlacementPlan(goalId, tx));
-  const state = await loadPlacementState({ goalId, plan: goalPlan, tx, userId });
+
+  const loaded = await loadPlacementState({
+    goalId,
+    ignoreAttempt: true,
+    plan: goalPlan,
+    tx,
+    userId,
+  });
+
+  const confirmed = await loadConfirmedSkills({
+    goalId,
+    skillIds: loaded.knownSkillIds,
+    timeZone,
+    tx,
+    userId,
+  });
+
+  const state = {
+    ...loaded,
+    knownSkillIds: loaded.knownSkillIds.filter((skillId) => confirmed.has(skillId)),
+  };
 
   const pastBasicsAreas = await listPlacementListeningAreas({
     goalId,
@@ -40,7 +63,7 @@ export async function loadPlacement({
 export async function applyPlacement({
   announceAlso,
   extraWrites,
-  followToday = true,
+  followToday = false,
   goalId,
   now,
   plan,
@@ -66,7 +89,12 @@ export async function applyPlacement({
   state: PlacementState;
   testedOutPlanItemIds: string[];
 }> {
-  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({ goalId, plan, userId });
+  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({
+    goalId,
+    plan,
+    timeZone,
+    userId,
+  });
 
   await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
 

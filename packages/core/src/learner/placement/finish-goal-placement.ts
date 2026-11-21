@@ -6,12 +6,14 @@ import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import { type PlacementCompletion, completePlacement } from "./_utils/complete-placement";
+import { finishPlacementAttempt } from "./_utils/finish-placement-attempt";
 import { type PlacementCompletionInput } from "./placement-contract";
 import { getScratchAreaStarts, getScratchPhaseStarts } from "./placement-steps";
 
 export type FinishPlacementResult =
   | { completion: PlacementCompletion; status: "ready" }
   | { status: "notFound" }
+  | { status: "staleAttempt" }
   | { status: "unauthorized" }
   | { status: "unavailable" };
 
@@ -51,6 +53,20 @@ export async function finishGoalPlacement({
 
   if (input.fromScratch && owned.goal.kind === "exam") {
     return { status: "unavailable" };
+  }
+
+  if (input.attemptId) {
+    const completion =
+      (owned.goal.kind === "learn" || owned.goal.kind === "language") && !input.fromScratch
+        ? await finishPlacementAttempt({
+            attemptId: input.attemptId,
+            goal: owned.goal,
+            part: input.part,
+            timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone }),
+          })
+        : null;
+
+    return completion ? { completion, status: "ready" } : { status: "staleAttempt" };
   }
 
   const plan = await loadPlacementPlan(goalId);

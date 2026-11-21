@@ -12,9 +12,9 @@ import { type GoalSkillNode } from "../../_utils/goal-skill-graph";
 import { type TestProgress, getAreaOrder, getTestProgress } from "../focus-test-progress";
 import { type FocusTestRecord, readFocusTestRecord } from "../focus-test-state";
 import { type TestSubject, listTestSubjects, mapSkillAreas } from "../focus-test-subjects";
-import { getKnownSubjects, getOwnLevel, isLevelMeasured } from "../placement-contract";
+import { getKnownSubjects, getOwnLevel } from "../placement-contract";
 import { isOwnMaterialTest } from "../placement-material";
-import { confirmsInWriting, getPlacementQuickFormat } from "../placement-quick-format";
+import { getPlacementQuickFormat } from "../placement-quick-format";
 import { type TestSkillAnswers } from "./placement-evidence";
 
 type TestGoal = Goal & { examBlueprint: ExamBlueprint | null };
@@ -67,11 +67,9 @@ export function summaryInputsKey({ goal, graph, settings }: SummaryInputs): stri
     focusAreas: settings.focusAreas,
     knownAreas: [...new Set(getKnownSubjects(goal))].toSorted(),
     level: getOwnLevel({ goal }),
-    measured: isLevelMeasured(goal),
     ownMaterial: isOwnMaterialTest(blueprint),
     quickFormat: getPlacementQuickFormat(structure ?? readNoticeFormats(goal.details)),
     subjects: listGoalSubjects({ goal, graph, settings, structure }),
-    typed: confirmsInWriting(goal),
   };
 
   return createHash("sha256").update(JSON.stringify(inputs)).digest("hex");

@@ -1,5 +1,6 @@
 import "server-only";
-import { type Plan, type PlanItem, prisma } from "@zoonk/db";
+import { DbNull, type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
@@ -11,7 +12,9 @@ import {
   type SkillClaim,
   listAnsweredWrong,
   listClaimed,
+  listConfirmedSkills,
   listKnownSkills,
+  listSkippedRechecks,
   listTakenToKnow,
   readDatedClaims,
   readSkillClaims,
@@ -104,50 +107,59 @@ async function loadPlanEvents({
 
 async function loadAnswerEvents({
   skillIds,
+  tx = prisma,
   userId,
 }: {
   skillIds: readonly string[];
+  tx?: TransactionClient;
   userId: string;
 }): Promise<ClaimEvent[]> {
-  const answers = await prisma.attempt.findMany({
-    orderBy: { answeredAt: "desc" },
+  const answers = await tx.attempt.findMany({
+    orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
     select: {
+      answer: true,
       answeredAt: true,
       isCorrect: true,
       isPlacement: true,
+      item: { select: { content: true, format: true } },
       itemId: true,
+      localDate: true,
       skillId: true,
       studySessionId: true,
     },
     take: MAX_ANSWERS,
-    where: { itemId: { not: null }, skillId: { in: [...skillIds] }, stepId: null, userId },
+    where: {
+      AND: [
+        { answer: { equals: DbNull, path: ["placementPending"] } },
+        { answer: { equals: DbNull, path: ["practiceMistakeId"] } },
+        { mockExamId: null },
+      ],
+      itemId: { not: null },
+      skillId: { in: [...skillIds] },
+      stepId: null,
+      userId,
+    },
   });
 
-  const itemIds = [...new Set(answers.flatMap((answer) => answer.itemId ?? []))];
-
-  const items =
-    itemIds.length > 0
-      ? await prisma.item.findMany({
-          select: { format: true, id: true },
-          where: { id: { in: itemIds } },
-        })
-      : [];
-
-  const formats = new Map(items.map((item) => [item.id, item.format]));
-
-  return answers.flatMap((answer): ClaimEvent[] =>
-    answer.skillId
-      ? [
-          {
-            at: answer.answeredAt,
-            format: formats.get(answer.itemId ?? "") ?? "multipleChoice",
-            isCorrect: answer.isCorrect,
-            kind: answer.studySessionId && !answer.isPlacement ? "practice" : "test",
-            skillId: answer.skillId,
-          },
-        ]
-      : [],
-  );
+  return answers
+    .toReversed()
+    .flatMap((answer): ClaimEvent[] =>
+      answer.skillId
+        ? [
+            {
+              at: answer.answeredAt,
+              content: answer.item?.content,
+              format: answer.item?.format ?? "multipleChoice",
+              isCorrect: answer.isCorrect,
+              itemId: answer.itemId,
+              kind: answer.studySessionId && !answer.isPlacement ? "practice" : "test",
+              localDate: answer.localDate,
+              recheck: isJsonObject(answer.answer) && answer.answer.placementRecheck === true,
+              skillId: answer.skillId,
+            },
+          ]
+        : [],
+    );
 }
 
 /** Includes basics skipped by choice, dated from that choice. */
@@ -211,6 +223,44 @@ export async function loadClaimEvents({
   ]);
 
   return [...fromPlan.filter((event) => asked.has(event.skillId)), ...answers];
+}
+
+export async function loadConfirmedSkills({
+  goalId,
+  skillIds,
+  timeZone,
+  tx = prisma,
+  userId,
+}: {
+  goalId: string;
+  skillIds: readonly string[];
+  timeZone: string;
+  tx?: TransactionClient;
+  userId: string;
+}) {
+  if (skillIds.length === 0) {
+    return new Set<string>();
+  }
+
+  const answers = await loadAnswerEvents({ skillIds, tx, userId });
+  const undone = await loadUndoneTestOuts(goalId, { timeZone, tx });
+  return listConfirmedSkills([...answers, ...undone]);
+}
+
+export async function loadSkippedRecheckSkills({
+  localDate,
+  ...input
+}: {
+  goalId: string;
+  localDate: Date;
+  skillIds: readonly string[];
+  userId: string;
+}): Promise<Set<string>> {
+  if (input.skillIds.length === 0) {
+    return new Set();
+  }
+
+  return listSkippedRechecks({ events: await loadClaimEvents(input), localDate });
 }
 
 export async function loadSkillEvidence({

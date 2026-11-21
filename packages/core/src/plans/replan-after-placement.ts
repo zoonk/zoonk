@@ -1,8 +1,8 @@
 import "server-only";
+import { keepOpenSessionSelection } from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { getCoverageChange } from "./_utils/coverage-change";
-import { followPlanToday } from "./_utils/follow-plan-today";
 import {
   getListeningPastBasicsEffect,
   withoutPastBasicsAreas,
@@ -44,15 +44,15 @@ export async function replanAfterPlacement({
       return;
     }
 
-    const changeId = await commitPlan({
+    await commitPlan({
       change: getCoverageChange({
         computed,
         ...getListeningPastBasicsEffect({ areas: added, state: context.state }),
       }),
       computed,
       context,
+      extraWrites: (tx) =>
+        keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 }),
     });
-
-    await followPlanToday({ changeId, context });
   });
 }

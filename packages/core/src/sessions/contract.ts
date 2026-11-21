@@ -95,6 +95,10 @@ const orderAnswerSchema = z
   .strict()
   .meta({ id: "OrderAnswer" });
 
+export const tapAnswerSchema = z
+  .union([itemAnswerInputSchema.shape.answer, matchAnswerSchema, orderAnswerSchema])
+  .meta({ id: "TapAnswer" });
+
 export const studyAnswerInputSchema = z
   .object({
     answer: z

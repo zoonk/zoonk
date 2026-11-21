@@ -5,7 +5,6 @@ import { announceSharedTestOuts } from "../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { unlessPlanConflict } from "../../plans/plan-conflict";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { skipTestedOutBlocks } from "../../sessions/_utils/skip-tested-out-blocks";
 import { type FinishedChapter } from "../../sessions/completion-contract";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
@@ -67,7 +66,7 @@ export async function markPlanItemsTestedOut({
   announceAlso = [],
   extraWrites,
   finishesChapters = false,
-  followToday = true,
+  followToday = false,
   goalId,
   items,
   knownSkillIds,
@@ -204,14 +203,11 @@ export async function markPlanItemsTestedOut({
       pastBasicsAdded: addedBasics,
       pastBasicsAreas: extraWrites ? pastBasicsAreas : [],
       planItemIds: announced,
+      skipBlocks: false,
       timeZone,
     });
 
   const announcement = extraWrites ? await announce() : await unlessPlanConflict(announce);
-
-  if (!announcement) {
-    await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds: announced });
-  }
 
   return {
     changeId: announcement?.changeId ?? null,

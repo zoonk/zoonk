@@ -1,7 +1,10 @@
 import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
 import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
-import { skipTestedOutBlocks } from "../sessions/_utils/skip-tested-out-blocks";
+import {
+  keepOpenSessionSelection,
+  skipTestedOutBlocks,
+} from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { followPlanToday } from "./_utils/follow-plan-today";
@@ -151,13 +154,14 @@ async function findUnseenSkip({
 
 export async function announceTestedOutItems({
   extraWrites,
-  followToday = true,
+  followToday = false,
   goalId,
+  mergeWithUnseen = true,
   now,
   pastBasicsAdded = [],
   pastBasicsAreas = [],
   planItemIds,
-  skipBlocks = true,
+  skipBlocks = false,
   timeZone,
 }: {
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
@@ -167,6 +171,7 @@ export async function announceTestedOutItems({
    */
   followToday?: boolean;
   goalId: string;
+  mergeWithUnseen?: boolean;
   now: Date;
   pastBasicsAdded?: readonly string[];
   pastBasicsAreas?: readonly string[];
@@ -199,8 +204,8 @@ export async function announceTestedOutItems({
 
     const lessonsSkipped = countLessons(context.items.filter((item) => skipped.has(item.id)));
 
-    const unseen = await findUnseenSkip({ context, now });
-    const recorded = unseen && parsePlanChangePayload(unseen.payload);
+    const latest = await findUnseenSkip({ context, now });
+    const recorded = latest && parsePlanChangePayload(latest.payload);
 
     if (
       recorded &&
@@ -214,11 +219,21 @@ export async function announceTestedOutItems({
       }
 
       if (followToday) {
-        await followPlanToday({ changeId: unseen.change.id, context });
+        await followPlanToday({ changeId: latest.change.id, context });
       }
 
-      return { changeId: unseen.change.id, lessonsSkipped, planVersion: context.plan.version };
+      return { changeId: latest.change.id, lessonsSkipped, planVersion: context.plan.version };
     }
+
+    const unseen = mergeWithUnseen ? latest : null;
+
+    const save = async (tx: TransactionClient) => {
+      await extraWrites?.(tx);
+
+      if (!followToday && !skipBlocks) {
+        await keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 });
+      }
+    };
 
     const computed = await computePlan({
       context,
@@ -250,7 +265,7 @@ export async function announceTestedOutItems({
         computed,
         context,
         extraWrites: async (tx) => {
-          await extraWrites?.(tx);
+          await save(tx);
 
           // Only the skip as it was read: a "Got it" since makes this one news of its own.
           const { count } = await tx.planChange.updateMany({
@@ -304,7 +319,7 @@ export async function announceTestedOutItems({
           },
           computed,
           context,
-          extraWrites,
+          extraWrites: save,
         });
 
     if (skipBlocks) {

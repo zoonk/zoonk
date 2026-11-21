@@ -229,7 +229,8 @@ export function readRecordedAnswer(answer: unknown): QuestionAnswer | null {
   const input = isJsonObject(answer)
     ? Object.fromEntries(
         Object.entries(answer).filter(
-          ([key]) => key !== "fixedMistakeIds" && key !== "practiceMistakeId",
+          ([key]) =>
+            key !== "fixedMistakeIds" && key !== "practiceMistakeId" && key !== "placementRecheck",
         ),
       )
     : answer;

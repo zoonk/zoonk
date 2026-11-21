@@ -25,6 +25,7 @@ export async function loadPlanBuild({
   goalId,
   knownAreas,
   ownLevel,
+  requestedSkillIds,
   tx = prisma,
 }: {
   /** When a Focus test started, which owes the questions a plan build skipped. */
@@ -37,6 +38,7 @@ export async function loadPlanBuild({
   knownAreas: readonly string[];
   /** The learner's own level, where placement starts asking in each subject. */
   ownLevel: OwnLevel | null;
+  requestedSkillIds?: readonly string[];
   tx?: TransactionClient;
 }): Promise<PlanBuild> {
   const plan = await tx.plan.findUnique({
@@ -69,18 +71,19 @@ export async function loadPlanBuild({
     failed: plan.buildFailedAt !== null,
     preparingSkillIds: new Set(
       writing
-        ? pickPlacementItemSkillIds({
-            everySkill,
-            focusAreas,
-            graph,
-            knownAreas,
-            listeningSkillIds: getListeningSkillIds({ exam: toListeningExam(plan.goal), graph }),
-            ownLevel,
-            prerequisites: await loadSkillPrerequisites(
-              graph.skills.map((skill) => skill.skillId),
-              tx,
-            ),
-          })
+        ? (requestedSkillIds ??
+            pickPlacementItemSkillIds({
+              everySkill,
+              focusAreas,
+              graph,
+              knownAreas,
+              listeningSkillIds: getListeningSkillIds({ exam: toListeningExam(plan.goal), graph }),
+              ownLevel,
+              prerequisites: await loadSkillPrerequisites(
+                graph.skills.map((skill) => skill.skillId),
+                tx,
+              ),
+            }))
         : [],
     ),
     waitsForExam: writing && awaitsExamBlueprint(plan.goal),

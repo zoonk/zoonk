@@ -1,10 +1,11 @@
 import { type Goal } from "@zoonk/db";
 import { CEFR_LEVELS, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { readCourseStart } from "../../goals/course-start-details";
-import { answerTimeZoneSchema, choiceAnswerSchema, itemAnswerInputSchema } from "../contract";
-import { MAX_TYPED_PLACEMENT_ANSWER_LENGTH } from "./placement-limits";
+import { tapAnswerSchema } from "../../sessions/contract";
+import { answerTimeZoneSchema, itemAnswerInputSchema } from "../contract";
 import { type OwnLevel } from "./placement-steps";
 
 export const ownLevelSchema = z
@@ -14,6 +15,40 @@ export const ownLevelSchema = z
       "The learner's own level (nothing yet, basic, intermediate or advanced): where placement starts",
     id: "OwnLevel",
   }) satisfies z.ZodType<OwnLevel>;
+
+export const placementLengthSchema = z
+  .enum(["quick", "wholeCourse"])
+  .meta({ id: "PlacementLength" });
+
+export const placementAttemptViewSchema = z
+  .object({
+    estimatedMinutes: z.number().int().nonnegative(),
+    id: uuidSchema(),
+    length: placementLengthSchema,
+    part: z.number().int().positive(),
+    partComplete: z.boolean(),
+  })
+  .meta({ id: "PlacementAttempt" });
+
+export const placementResultSchema = z
+  .object({
+    attemptId: uuidSchema(),
+    finishedAt: z.iso.datetime(),
+    lessonsSkipped: z.number().int().nonnegative(),
+  })
+  .meta({ id: "PlacementResult" });
+
+const attemptFields = {
+  attemptId: uuidSchema()
+    .optional()
+    .meta({ description: "The saved attempt. Omitted for onboarding clients without an attempt" }),
+  part: z
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .meta({ description: "The part number in the saved attempt" }),
+};
 
 export const placementQuerySchema = z
   .object({ level: ownLevelSchema.optional(), timeZone: answerTimeZoneSchema })
@@ -29,19 +64,10 @@ export const placementStatusSchema = z
 
 export type PlacementStatus = z.infer<typeof placementStatusSchema>;
 
-const placementAnswerSchema = z
-  .union([
-    choiceAnswerSchema,
-    z
-      .object({ text: z.string().trim().min(1).max(MAX_TYPED_PLACEMENT_ANSWER_LENGTH) })
-      .strict()
-      .meta({ description: "The learner's own words, for a `typed` question" }),
-  ])
-  .meta({ id: "PlacementAnswer" });
-
 export const placementAnswerInputSchema = itemAnswerInputSchema
   .extend({
-    answer: placementAnswerSchema,
+    ...attemptFields,
+    answer: tapAnswerSchema,
     level: ownLevelSchema.optional(),
     timeZone: answerTimeZoneSchema,
   })
@@ -52,6 +78,7 @@ export type PlacementAnswerInput = z.infer<typeof placementAnswerInputSchema>;
 
 export const placementCompletionInputSchema = z
   .object({
+    ...attemptFields,
     fromScratch: z
       .boolean()
       .optional()
@@ -96,11 +123,6 @@ export function getOwnLevel({
   const parsed = ownLevelSchema.safeParse(stored);
 
   return parsed.success ? parsed.data : fromCefrLevel(stored);
-}
-
-/** Only a measured level is evidence; a self-reported level merely identifies bands to confirm. */
-export function isLevelMeasured(goal: Pick<Goal, "details">): boolean {
-  return isJsonObject(goal.details) && isJsonObject(goal.details.levelTest);
 }
 
 export function isPlacementSkipped(goal: { details: unknown }): boolean {

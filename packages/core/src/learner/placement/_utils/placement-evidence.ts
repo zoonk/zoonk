@@ -18,10 +18,11 @@ const ATTEMPT_EVIDENCE_SELECT = {
   answer: true,
   answeredAt: true,
   durationMs: true,
+  focusTestId: true,
   id: true,
   isCorrect: true,
   isPlacement: true,
-  item: { select: { format: true } },
+  item: { select: { content: true, format: true } },
   itemId: true,
   localDate: true,
   mockExamId: true,
@@ -35,9 +36,10 @@ type AttemptRow = {
   id: string;
   answeredAt: Date;
   durationMs: number;
+  focusTestId: string | null;
   isCorrect: boolean;
   isPlacement: boolean;
-  item: { format: ItemFormat } | null;
+  item: { content: unknown; format: ItemFormat } | null;
   itemId: string | null;
   localDate: Date;
   mockExamId: string | null;
@@ -56,20 +58,19 @@ function getOutcome(
   return isJsonObject(attempt.answer) && attempt.answer.dontKnow === true ? "dontKnow" : "wrong";
 }
 
-function toEvidence(attempt: AttemptRow): PlacementEvidence | null {
+export function toPlacementEvidence(attempt: AttemptRow): PlacementEvidence | null {
   if (!attempt.skillId) {
     return null;
   }
 
   return {
+    content: attempt.item?.content,
     format: attempt.item?.format ?? "multipleChoice",
+    itemId: attempt.itemId,
+    localDate: attempt.localDate,
     outcome: getOutcome(attempt),
     skillId: attempt.skillId,
   };
-}
-
-function toEvidenceList(attempts: readonly AttemptRow[]): PlacementEvidence[] {
-  return attempts.map((attempt) => toEvidence(attempt)).filter((item) => item !== null);
 }
 
 export type TestSkillAnswers = {
@@ -106,7 +107,7 @@ async function loadTestSkills({
   `;
 }
 
-export async function loadAnsweredTestItems({
+export async function loadSeenPlacementItems({
   itemIds,
   tx = prisma,
   userId,
@@ -117,7 +118,7 @@ export async function loadAnsweredTestItems({
 }): Promise<Set<string | null>> {
   const answered = await tx.attempt.groupBy({
     by: ["itemId"],
-    where: { ...COVERAGE_ANSWER_FILTER, itemId: { in: itemIds }, userId },
+    where: { itemId: { in: itemIds }, userId },
   });
 
   return new Set(answered.map((attempt) => attempt.itemId));
@@ -173,10 +174,39 @@ export async function loadEvidence({
     ...testAnswers.filter((attempt) => !recentIds.has(attempt.id)),
   ].toSorted((a, b) => a.answeredAt.getTime() - b.answeredAt.getTime() || a.id.localeCompare(b.id));
 
+  const evidence: PlacementEvidence[] = [];
+  const placementAnswers: PlacementEvidence[] = [];
+  const confirmationAnswers: PlacementEvidence[] = [];
+
+  for (const attempt of chronological) {
+    const answer = toPlacementEvidence(attempt);
+
+    if (answer) {
+      evidence.push(answer);
+
+      const answerData = isJsonObject(attempt.answer) ? attempt.answer : {};
+
+      if (
+        attempt.itemId !== null &&
+        attempt.stepId === null &&
+        attempt.mockExamId === null &&
+        !("practiceMistakeId" in answerData) &&
+        answerData.placementPending !== true
+      ) {
+        confirmationAnswers.push(answer);
+
+        if (isPlacementAnswer(attempt)) {
+          placementAnswers.push(answer);
+        }
+      }
+    }
+  }
+
   return {
     attempts: chronological,
-    evidence: toEvidenceList(chronological),
-    placementAnswers: toEvidenceList(chronological.filter((attempt) => isPlacementAnswer(attempt))),
+    confirmationAnswers,
+    evidence,
+    placementAnswers,
     seenItemIds: new Set(chronological.map((attempt) => attempt.itemId)),
     sittingOutcomes: sittingAnswers.toReversed().map((attempt) => getOutcome(attempt)),
     testSkills,

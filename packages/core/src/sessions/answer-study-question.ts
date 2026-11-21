@@ -2,7 +2,7 @@ import "server-only";
 import { type Attempt, type StudySessionBlock, prisma } from "@zoonk/db";
 import { isBlockDuelDecided } from "../checkpoints/_utils/checkpoint-outcome";
 import { loadCheckpointReinforcement } from "../checkpoints/_utils/checkpoint-reinforcement";
-import { loadSkillsToRelearn } from "../learner/_utils/load-skill-claims";
+import { loadSkippedRecheckSkills } from "../learner/_utils/load-skill-claims";
 import { gradeTypedItemAnswer } from "../learner/_utils/typed-grading";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
@@ -25,26 +25,27 @@ import { getHyperdriveLevel, scoreAnswers } from "./brain-power";
 import { type StudyAnswerInput, type StudyAnswerResult } from "./contract";
 import { shouldSuggestPause } from "./pause-suggestion";
 
-async function isRelearnMiss({
-  isCorrect,
+async function isSkippedRecheck({
   item,
+  placement,
   session,
 }: {
-  isCorrect: boolean;
   item: SessionItem;
+  placement: boolean;
   session: StudySessionRow;
 }): Promise<boolean> {
-  if (isCorrect || !session.goalId || !item.skillId) {
+  if (!placement || !session.goalId || !item.skillId) {
     return false;
   }
 
-  const taken = await loadSkillsToRelearn({
+  const due = await loadSkippedRecheckSkills({
     goalId: session.goalId,
+    localDate: session.localDate,
     skillIds: [item.skillId],
     userId: session.userId,
   });
 
-  return taken.has(item.skillId);
+  return due.has(item.skillId);
 }
 
 /** Replays use the stored answer and avoid grading a changed typed submission with a model. */
@@ -192,7 +193,7 @@ export async function answerStudyQuestion({
     input,
     item,
     placement,
-    relearn: await isRelearnMiss({ isCorrect: drilled.isCorrect, item, session }),
+    recheck: await isSkippedRecheck({ item, placement, session }),
     session,
     sessionId,
     userId,

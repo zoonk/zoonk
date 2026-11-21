@@ -28,8 +28,10 @@ import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
 const SKILLS = 4;
+const TAPS_PER_SKILL = 3;
+const ORDER_STEPS = ["First", "Second", "Third", "Fourth"];
 
-async function createGoal(userId: string) {
+async function createGoal(userId: string, testOut = false) {
   const [goal, chapter, skills] = await Promise.all([
     goalFixture({ userId }),
     libraryChapterFixture({ title: "Percentages" }),
@@ -53,6 +55,24 @@ async function createGoal(userId: string) {
   const items = await Promise.all(
     skills.map((skill) => itemFixture({ content: choiceItemContent(), skillId: skill.id })),
   );
+
+  if (testOut) {
+    await Promise.all(
+      skills.flatMap((skill) =>
+        Array.from({ length: TAPS_PER_SKILL }, (_, index) =>
+          itemFixture({
+            content: {
+              question: `Order the steps in example ${index + 1}`,
+              reason: "The steps follow the numbered sequence.",
+              steps: ORDER_STEPS,
+            },
+            format: "order",
+            skillId: skill.id,
+          }),
+        ),
+      ),
+    );
+  }
 
   return { chapter, goal, items, skills };
 }
@@ -217,7 +237,7 @@ test.describe("Learner model API", () => {
       prefix: "learner-test-out",
     });
 
-    const { chapter, goal } = await createGoal(user.id);
+    const { chapter, goal } = await createGoal(user.id, true);
     const path = `/v1/goals/${goal.id}/chapters/${chapter.id}/test-out`;
 
     const testOut = await readBody({
@@ -225,7 +245,8 @@ test.describe("Learner model API", () => {
       schema: chapterTestOutResponseSchema,
     });
 
-    expect(testOut.questions).toHaveLength(SKILLS);
+    const count = SKILLS * (1 + TAPS_PER_SKILL);
+    expect(testOut.questions).toHaveLength(count);
 
     const requestId = randomUUID();
 
@@ -233,7 +254,10 @@ test.describe("Learner model API", () => {
       response: await apiContext.post(path, {
         data: {
           answers: testOut.questions.map((question) => ({
-            answer: { selectedIndex: 0 },
+            answer:
+              question.format === "order"
+                ? { order: ORDER_STEPS.map((step) => question.options.indexOf(step)) }
+                : { selectedIndex: 0 },
             durationMs: 6000,
             itemId: question.itemId,
           })),
@@ -243,7 +267,7 @@ test.describe("Learner model API", () => {
       schema: chapterTestOutResultSchema,
     });
 
-    const said = { correct: SKILLS, lessonsSkipped: SKILLS, passed: true, total: SKILLS };
+    const said = { correct: count, lessonsSkipped: SKILLS, passed: true, total: count };
     expect(result).toMatchObject(said);
 
     await expect(
@@ -262,7 +286,7 @@ test.describe("Learner model API", () => {
       createAuthenticatedApiContext({ baseURL, prefix: "learner-test-out-other" }),
     ]);
 
-    const { chapter, goal } = await createGoal(user.id);
+    const { chapter, goal } = await createGoal(user.id, true);
     const path = `/v1/goals/${goal.id}/chapters/${chapter.id}/test-out/generations`;
 
     await expect(

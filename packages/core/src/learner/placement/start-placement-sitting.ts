@@ -4,6 +4,7 @@ import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { completePlacement } from "./_utils/complete-placement";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
+import { openPlacementAttempt } from "./_utils/placement-attempt";
 import { openTestSitting, saveTestSummary } from "./_utils/test-sitting";
 import { type PlacementSittingInput } from "./focus-test-contract";
 
@@ -34,13 +35,35 @@ export async function startPlacementSitting({
 
   const { goal, userId } = owned;
 
-  if (goal.kind !== "exam") {
+  const length = input.length;
+
+  if (goal.kind !== "exam" && length === undefined) {
     return { status: "unavailable" };
   }
 
   const now = new Date();
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const today = getDateInTimeZone({ date: now, timeZone });
+
+  if (goal.kind !== "exam" && length !== undefined) {
+    const opened = await openPlacementAttempt({ goalId, length, userId });
+
+    if (!opened) {
+      return { status: "unavailable" };
+    }
+
+    const plan = await loadPlacementPlan(goalId);
+
+    const { state: placement } = await loadPlacementWithSummary({
+      goalId,
+      plan,
+      timeZone,
+      today,
+      userId,
+    });
+
+    return { placement, status: "ready" };
+  }
 
   const plan = await loadPlacementPlan(goalId);
   const open = await loadPlacementWithSummary({ goalId, plan, timeZone, today, userId });

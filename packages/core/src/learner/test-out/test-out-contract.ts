@@ -1,11 +1,15 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { tapAnswerSchema } from "../../sessions/contract";
 import { answerTimeZoneSchema, itemAnswerInputSchema } from "../contract";
 import { TEST_OUT_MAX_QUESTIONS } from "./test-out-rules";
 
 export const chapterTestOutInputSchema = z
   .object({
-    answers: z.array(itemAnswerInputSchema).min(1).max(TEST_OUT_MAX_QUESTIONS),
+    answers: z
+      .array(itemAnswerInputSchema.extend({ answer: tapAnswerSchema }))
+      .min(1)
+      .max(TEST_OUT_MAX_QUESTIONS),
     requestId: uuidSchema().meta({
       description:
         "The test's own id, made when it starts. Sending it again (a retry) returns what it already recorded instead of grading and counting it twice, and `GET .../test-out/results/{requestId}` reads that result back.",
