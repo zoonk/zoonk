@@ -13,20 +13,44 @@ import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
 import { type SkillAreas, getWritingTitle } from "./plan-phase-views";
 import { type PlanReadItem } from "./plan-read-projection";
 import { projectSavedAllocationOn } from "./saved-allocation";
+import { readSelectedItemFacts } from "./selected-item-contract";
 import { isWorkFinished } from "./work-progress";
 
-/** A written lesson is one; lessons still to be written count the day's share of their size. */
-function countDayLessons({ item, onDay }: { item: PlanReadItem; onDay: PlanReadItem }): number {
+/**
+ * A written lesson is one; lessons still to be written count the day's share of their size, rounded
+ * through the days before it so a topic's days add up to its lessons.
+ */
+function countDayLessons({
+  date,
+  item,
+  onDay,
+}: {
+  date: Date;
+  item: PlanReadItem;
+  onDay: PlanReadItem;
+}): number {
   if (!LEARN_KINDS.has(item.kind)) {
     return 0;
   }
 
-  if (item.lessonId !== null || !item.minutes || !onDay.minutes) {
+  const total = item.minutes;
+
+  if (item.lessonId !== null || !total || !onDay.minutes) {
     return 1;
   }
 
-  const share = onDay.minutes / item.minutes;
-  return Math.max(1, Math.round(Math.max(1, item.lessons ?? 1) * share));
+  const day = toIsoDate(date);
+  const lessons = Math.max(1, item.lessons ?? 1);
+  const days = readSelectedItemFacts(item.facts)?.days ?? [];
+
+  const before = days.reduce(
+    (sum, [allocated, minutes]) => (allocated < day ? sum + minutes : sum),
+    0,
+  );
+
+  const through = (minutes: number) => Math.round((lessons * minutes) / total);
+
+  return through(before + onDay.minutes) - through(before);
 }
 
 function toPlanItemView({
@@ -130,7 +154,7 @@ function buildPlanDays({
             toPlanItemView({
               access,
               item: onDay,
-              lessons: countDayLessons({ item, onDay }),
+              lessons: countDayLessons({ date, item, onDay }),
               skillAreas,
             }),
           ]
