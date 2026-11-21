@@ -42,7 +42,13 @@ internal fun mockOptionName(
         return section.name
     }
     if (!severalDays && option.kind == MockOption.Kind.FULL && tests > 1) {
-        return if (tests == 2) stringResource(R.string.mock_chooser_both_tests) else stringResource(R.string.mock_chooser_all_tests, tests)
+        return if (tests ==
+            2
+        ) {
+            stringResource(R.string.mock_chooser_both_tests)
+        } else {
+            pluralStringResource(R.plurals.mock_chooser_all_tests, tests, tests)
+        }
     }
     if (option.kind == MockOption.Kind.AREA) {
         return option.areas.firstOrNull() ?: option.area ?: stringResource(R.string.mock_chooser_one_subject)

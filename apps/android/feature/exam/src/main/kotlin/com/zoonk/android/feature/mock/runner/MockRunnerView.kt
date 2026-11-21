@@ -327,6 +327,10 @@ internal fun questionPlace(
 ): String {
     val area = question.question.area
     if (question.essay) {
+        // A written test counts its questions; the screen's header already names the test.
+        sectionPlace(run.position, run.questions)
+            ?.takeIf { it.total > 1 }
+            ?.let { return stringResource(R.string.mock_question_place, it.number, it.total) }
         return area?.let { stringResource(R.string.mock_written_part_area, it) }
             ?: stringResource(R.string.mock_written_part)
     }

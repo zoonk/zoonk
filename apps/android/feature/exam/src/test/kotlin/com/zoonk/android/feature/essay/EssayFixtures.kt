@@ -66,6 +66,30 @@ internal const val ZEROED_RESULT =
     "max":30,"content":{"low":0,"high":0},"deduction":{"low":0,"high":0},"total":{"low":0,"high":0},
     "zeroReason":"An answer off the topic asked gets zero.","rows":[{"id":"a1","earned":0,"max":9.5}]}"""
 
+private const val COMPLETE_CRITERIA =
+    """[{"comment":"Both controls, told apart.","id":"a1","level":"complete","name":"Internal and external control","quote":null},
+    {"comment":"Two powers and their article.","id":"a2","level":"complete","name":"The TCU's powers","quote":null},
+    {"comment":"Clear paragraphs in a sensible order.","id":"presentation","level":"complete",
+      "name":"Presentation and structure","quote":null}]"""
+
+/** Every criterion complete and every line read: nothing left to work on. */
+internal const val DONE_RESULT =
+    """{"kind":"levels","criteria":$COMPLETE_CRITERIA,"errors":[],"ignoredFrom":null,"nextStep":null,"progress":null}"""
+
+/** Full marks, but the text runs past the limit: the step is to fit it in. */
+internal const val LIMIT_RESULT =
+    """{"kind":"points","criteria":$COMPLETE_CRITERIA,"errors":[],"ignoredFrom":180,"decimals":1,
+    "nextStep":{"criterionId":"a1","kind":"limit","title":null,"text":"","quote":null,"example":null},"progress":null,
+    "max":30,"content":{"low":29,"high":30},"deduction":{"low":0,"high":0},"total":{"low":29,"high":30},"zeroReason":null,
+    "rows":[{"id":"a1","earned":9.5,"max":9.5},{"id":"a2","earned":9.5,"max":9.5},{"id":"presentation","earned":11,"max":11}]}"""
+
+/** Zeroed off topic, with the kind the server now names. */
+internal const val ZEROED_KIND_RESULT =
+    """{"kind":"points","criteria":$CRITERIA,"errors":[],"ignoredFrom":null,"progress":null,"zeroKind":"offTopic",
+    "nextStep":{"criterionId":"a1","kind":"zero","title":null,"text":"","quote":null,"example":null},
+    "max":30,"content":{"low":0,"high":0},"deduction":{"low":0,"high":0},"total":{"low":0,"high":0},"decimals":1,
+    "zeroReason":"An answer off the topic asked gets zero.","rows":[{"id":"a1","earned":0,"max":9.5}]}"""
+
 internal fun result(json: String): WritingResultOutput = ApiJson.decodeFromString(WritingResultOutput.serializer(), json)
 
 internal const val WRITING =

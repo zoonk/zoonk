@@ -256,6 +256,7 @@ sealed interface AppRoute : NavKey {
     /**
      * [writing]: what stood before the question when its start answered (the run writing it, the day's
      * limit, a failure); with the limit, the task it leaves for tomorrow when the refusal named it.
+     * [drill]: the task is a short exercise after a lesson, not a whole answer.
      */
     @Serializable
     data class Essay(
@@ -263,6 +264,11 @@ sealed interface AppRoute : NavKey {
         val writing: String? = null,
         val taskDescription: String? = null,
         val taskMinutes: Int? = null,
+        val taskLines: Int? = null,
+        val taskNumber: Int? = null,
+        val taskTotal: Int? = null,
+        val taskDistinctLines: Boolean = false,
+        val drill: Boolean = false,
     ) : AppRoute
 
     /** A past written answer, read as its result was. */

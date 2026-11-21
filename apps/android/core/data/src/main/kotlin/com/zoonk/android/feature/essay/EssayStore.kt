@@ -11,6 +11,7 @@ import com.zoonk.android.data.DraftHandle
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
+import com.zoonk.android.feature.writing.WritingTaskName
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CreateWritingBlockRequest
@@ -24,6 +25,8 @@ import com.zoonk.api.models.WritingDraft
 import com.zoonk.api.models.WritingResultOutput
 import com.zoonk.api.models.WritingStart
 import com.zoonk.api.models.WritingStartInput
+import com.zoonk.api.models.WritingStartOneOf1
+import com.zoonk.api.models.WritingStartOneOf2Task
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerializationException
 import retrofit2.Response
@@ -35,8 +38,10 @@ sealed interface WritingStartAnswer {
         val admissionId: UUID,
     ) : WritingStartAnswer
 
+    /** [drill]: the run writes a short exercise, not a whole answer's question. */
     data class Writing(
         val generationId: String,
+        val drill: Boolean = false,
     ) : WritingStartAnswer
 
     /** [task] is what's left for tomorrow, when the refusal names it. */
@@ -56,6 +61,10 @@ sealed interface WritingStartAnswer {
 data class RefusedTask(
     val description: String,
     val minutes: Int,
+    val lines: Int? = null,
+    val drill: Boolean = false,
+    /** Which question of the written test it is, when the server says. */
+    val name: WritingTaskName? = null,
 )
 
 /** A draft save: kept, refused because another device saved first (with the draft it saved), or the block is closed. */
@@ -209,6 +218,12 @@ private inline fun <reified T> Response<*>.refusalBody(): T? =
         null
     }
 
+private fun WritingStartOneOf2Task.name(): WritingTaskName? {
+    val number = number ?: return null
+    val total = total ?: return null
+    return WritingTaskName(lines?.toInt(), number.toInt(), total.toInt(), distinctLines == true)
+}
+
 private fun WritingStart.toAnswer(): WritingStartAnswer =
     when (this) {
         is WritingStart.WritingStartOneOfValue -> {
@@ -216,11 +231,22 @@ private fun WritingStart.toAnswer(): WritingStartAnswer =
         }
 
         is WritingStart.WritingStartOneOf1Value -> {
-            WritingStartAnswer.Writing(value.runId)
+            WritingStartAnswer.Writing(value.runId, drill = value.unit == WritingStartOneOf1.Unit.DRILL)
         }
 
         is WritingStart.WritingStartOneOf2Value -> {
-            WritingStartAnswer.LimitReached(value.returnsOn, value.task?.let { RefusedTask(it.description, it.minutes.toInt()) })
+            WritingStartAnswer.LimitReached(
+                value.returnsOn,
+                value.task?.let {
+                    RefusedTask(
+                        it.description,
+                        it.minutes.toInt(),
+                        it.lines?.toInt(),
+                        drill = it.unit == WritingStartOneOf2Task.Unit.DRILL,
+                        name = it.name(),
+                    )
+                },
+            )
         }
     }
 
@@ -301,6 +327,11 @@ suspend fun EssayApi.startRoute(
         writing = if (answer == null) WRITING_FAILED else answer.routeValue(),
         taskDescription = task?.description,
         taskMinutes = task?.minutes,
+        taskLines = task?.lines,
+        taskNumber = task?.name?.number,
+        taskTotal = task?.name?.total,
+        taskDistinctLines = task?.name?.distinctLines == true,
+        drill = (answer as? WritingStartAnswer.Writing)?.drill ?: task?.drill ?: false,
     )
 }
 
@@ -328,7 +359,11 @@ class EssayStore(
     suspend fun start(
         blockId: UUID,
         previousAttemptId: UUID? = null,
-    ): MutationResult<WritingStartAnswer> = cache.mutate { session -> api.startAnswer(session, blockId, previousAttemptId) }
+    ): MutationResult<WritingStartAnswer> =
+        cache
+            .mutate { session ->
+                api.startAnswer(session, blockId, previousAttemptId)
+            }.also { if (it is MutationResult.Done) dayChanged(blockId) }
 
     /** What [StudyOpener] asks as a tap opens a written block, so the essay opens past its start. */
     suspend fun startAnswer(
@@ -345,7 +380,14 @@ class EssayStore(
     suspend fun saveDraft(
         blockId: UUID,
         draft: SaveWritingDraft,
-    ): MutationResult<DraftSave> = cache.mutate { session -> api.saveDraft(session, blockId, draft) }
+    ): MutationResult<DraftSave> =
+        cache.mutate { session -> api.saveDraft(session, blockId, draft) }.also { if (it is MutationResult.Done) dayChanged(blockId) }
+
+    /**
+     * A start or a saved draft changes the block's row on Today ("Your draft is saved"), so the day
+     * reads again when shown; the open essay keeps what it shows rather than reading itself again.
+     */
+    private fun dayChanged(blockId: UUID) = cache.invalidate(setOf(DataDomain.UserSession), except = setOf(essays[blockId]))
 
     /**
      * Sending the same admission again replays its grade. The essay is read again afterwards, so the

@@ -31,10 +31,6 @@
     <string name="generation_skills_line_3">Checking nothing important is missing…</string>
     <!-- The wait while a written exam question is written for the learner. -->
     <string name="generation_writing_prompt">Writing your question</string>
-    <string name="generation_writing_prompt_question">Writing a question like your exam\'s</string>
-    <string name="generation_writing_prompt_line_1">Choosing the topic…</string>
-    <string name="generation_writing_prompt_line_2">Writing the support text…</string>
-    <string name="generation_writing_prompt_line_3">Checking it against the exam\'s criteria…</string>
     <!-- The wait while a typed goal is read. -->
     <string name="generation_understanding">Reading your goal</string>
     <string name="generation_understanding_read">Reading your goal</string>

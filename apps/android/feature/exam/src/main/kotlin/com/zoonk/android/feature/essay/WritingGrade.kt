@@ -3,6 +3,7 @@ package com.zoonk.android.feature.essay
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.models.WritingRangeOutput
 import com.zoonk.api.models.WritingResultOutput
+import com.zoonk.api.models.WritingResultOutputOneOf1
 import com.zoonk.api.models.WritingResultOutputOneOf1RowsInner
 import com.zoonk.api.models.WritingResultOutputOneOfCriteriaInner
 import com.zoonk.api.models.WritingResultOutputOneOfErrorsInner
@@ -38,7 +39,61 @@ data class WritingPoints(
     val rows: List<WritingResultOutputOneOf1RowsInner>,
     /** The notice's rule that zeroed the answer, in its words. */
     val zeroReason: String?,
+    /** Which rule zeroed it; older answers leave it out. */
+    val zeroKind: WritingResultOutputOneOf1.ZeroKind? = null,
+    /** How many decimals this scale shows; older answers leave it out. */
+    val decimals: Int? = null,
 )
+
+/** `Limit` and `Zero` have no grader's words: the app words them from the task and the zero's kind. */
+sealed interface NextStep {
+    data object Done : NextStep
+
+    data object Limit : NextStep
+
+    data class Zero(
+        val text: String,
+        val zeroKind: WritingResultOutputOneOf1.ZeroKind?,
+    ) : NextStep
+
+    data class Criterion(
+        val title: String?,
+        val text: String,
+        val quote: String?,
+        val example: String?,
+    ) : NextStep
+}
+
+/** With points, full marks on every row; with levels, every criterion complete. */
+private fun WritingGrade.isComplete(): Boolean =
+    points?.let { points -> points.zeroReason == null && points.rows.all { (it.range?.low ?: it.earned) >= it.max } }
+        ?: criteria.all { it.level == WritingResultOutputOneOfCriteriaInner.Level.COMPLETE }
+
+/**
+ * The one thing to work on next. "Nothing left" only when every criterion is complete and every
+ * line is read; a zeroed answer's step is the rule it broke; text past the limit is the step when
+ * nothing else is. A quote shows only when it's in [text], where it's underlined. Older saved
+ * answers have no `kind` or `title`, so the same rules read them.
+ */
+fun WritingGrade.nextStep(text: String): NextStep {
+    val step = nextStep
+    if (step?.kind == WritingResultOutputOneOfNextStep.Kind.ZERO || points?.zeroReason != null) {
+        return NextStep.Zero(step?.text.orEmpty(), points?.zeroKind)
+    }
+    if (step?.kind == WritingResultOutputOneOfNextStep.Kind.LIMIT || (ignoredFrom != null && isComplete())) return NextStep.Limit
+    if (step == null) {
+        if (isComplete()) return NextStep.Done
+        // Answers graded before the grader always named a step: the first criterion short of complete.
+        val criterion = criteria.firstOrNull { it.level != WritingResultOutputOneOfCriteriaInner.Level.COMPLETE }
+        return NextStep.Criterion(criterion?.name, criterion?.comment.orEmpty(), quote = null, example = null)
+    }
+    return NextStep.Criterion(
+        title = step.title ?: criteria.firstOrNull { it.id == step.criterionId }?.name,
+        text = step.text,
+        quote = step.quote?.takeIf { it.isNotEmpty() && text.contains(it) },
+        example = step.example,
+    )
+}
 
 fun WritingResultOutput.toGrade(): WritingGrade =
     when (this) {
@@ -61,7 +116,16 @@ fun WritingResultOutput.toGrade(): WritingGrade =
                 value.ignoredFrom?.toInt(),
                 value.nextStep,
                 value.progress,
-                WritingPoints(value.max, value.total, value.content, value.deduction, value.rows, value.zeroReason),
+                WritingPoints(
+                    value.max,
+                    value.total,
+                    value.content,
+                    value.deduction,
+                    value.rows,
+                    value.zeroReason,
+                    value.zeroKind,
+                    value.decimals?.toInt(),
+                ),
                 value.estimatedLines?.toInt(),
             )
         }

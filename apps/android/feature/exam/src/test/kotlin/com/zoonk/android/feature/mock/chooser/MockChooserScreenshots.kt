@@ -105,6 +105,14 @@ class MockChooserScreenshots {
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")
     fun phoneTwoTests() = capture("08-mock-options", options = TWO_TESTS)
 
+    /** The written test waits for the learner's specialty: its rows say so, Start stays off and the bar leads to Today. */
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun phoneTwoTestsWaitingForAChoice() =
+        capture("08-mock-options-needs-choice", options = TWO_TESTS_NEEDS_CHOICE) {
+            compose.onNodeWithText("Written test").performClick()
+        }
+
     @Test
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")
     fun phoneTwoTestsAtTwiceTheFontSize() {
@@ -250,6 +258,13 @@ class MockChooserScreenshots {
               "leftOut":[{"name":"Written test","part":"writtenInFull"}],"minutes":150,"objectiveOnly":true,"questions":85,"written":[],
               "sections":[{"kind":"objective","minutes":150,"name":"Objective test","questions":85,"session":"Morning"}]}]
             """.trimIndent()
+
+        private const val NEEDS_CHOICE = """"availability":{"status":"needsChoice","choiceGroups":["Specialty"]},"""
+
+        val TWO_TESTS_NEEDS_CHOICE =
+            TWO_TESTS
+                .replace(""""pacing":"official",""", """"pacing":"official",$NEEDS_CHOICE""")
+                .replace(""""kind":"full","leftOut":[],""", """"kind":"full","leftOut":[],$NEEDS_CHOICE""")
 
         val OPTIONS =
             """

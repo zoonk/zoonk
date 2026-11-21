@@ -33,34 +33,34 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.writing.formatPoints
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.WritingPacing
 import com.zoonk.api.models.WritingPromptOutput
 
-/** "Writing drill" or "Written answer": the bar's title on every screen of a written task. */
+/** "Writing practice" or "Written answer": the bar's title on every screen of a written task; the topic is the page's own title. */
 @Composable
 internal fun writingLabel(writing: WritingPromptOutput): String =
-    stringResource(if (writing.unit == WritingPromptOutput.Unit.DRILL) R.string.essay_writing_drill else R.string.essay_written_answer)
+    stringResource(if (writing.unit == WritingPromptOutput.Unit.DRILL) R.string.essay_writing_practice else R.string.essay_written_answer)
 
 /** "Up to 30 lines · 30 points · about 1 hr 10 min": the official clock reads as is, any other is an estimate. */
 @Composable
 internal fun writingFacts(
     writing: WritingPromptOutput,
     pacing: WritingPacing?,
-): String {
+): List<String> {
     val locale = currentLocale()
     val lines = writing.lines?.toInt()
     val time = pacing?.let { formatMinutes(it.minutes.toInt(), locale) }
-    return factsLine(
+    return listOfNotNull(
         lines?.let { pluralStringResource(R.plurals.essay_up_to_lines, it, it) },
         writing.points?.let { stringResource(R.string.essay_points, formatPoints(it, locale)) },
         time?.let { if (pacing.source == WritingPacing.Source.OFFICIAL) it else stringResource(R.string.essay_about_time, it) },
@@ -77,11 +77,8 @@ internal fun WritingQuestionPage(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(writing.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
-        Text(
-            writingFacts(writing, pacing),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-        )
+        // Its facts wrap between one another, so a line never starts with their separator.
+        Facts(writingFacts(writing, pacing))
     }
     WritingQuestionBody(context, question)
     CriteriaRow(writing)

@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The header of a written exam task that practices one writing move, such as a thesis or a paragraph. -->
-    <string name="essay_writing_drill">Writing drill</string>
+    <!-- The header of a short writing exercise after a lesson, and the name of a writing task with no other name. -->
+    <string name="essay_writing_practice">Writing practice</string>
+    <!-- A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer. -->
+    <string name="essay_short_exercise">Short writing exercise</string>
+    <!-- Under a short writing exercise after a lesson: what it's for. -->
+    <string name="essay_short_exercise_detail">To use what you just learned</string>
+    <!-- A whole answer of an exam's written test, named by its line limit, such as 30 lines. -->
+    <string name="essay_write_lines_question">Write the %1$d-line question</string>
+    <!-- A whole answer of an exam's written test whose questions share a line limit, named by its place in the test. -->
+    <string name="essay_write_question_number">Write question %1$d</string>
+    <!-- The whole answer of an exam's written test that has one question. -->
+    <string name="essay_write_the_question">Write the question</string>
+    <!-- One question of an exam's written test, named by its line limit, such as 30 lines. -->
+    <string name="essay_lines_question">The %1$d-line question</string>
+    <string name="essay_question_number">Question %1$d</string>
+    <!-- The only question of an exam's written test. -->
+    <string name="essay_the_question">The question</string>
+    <!-- Under a written task: the day's extra grades are used, so it waits for tomorrow. -->
+    <string name="essay_back_tomorrow">Back tomorrow: no more grading today</string>
+    <!-- Under a written task: the day's extra grades are used, so it waits for a later day. %1$s is the date, such as "Nov 24". -->
+    <string name="essay_back_on">Back on %1$s: no more grading today</string>
+    <!-- Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. %1$s names the choices. -->
+    <string name="essay_depends_on_choice">Depends on your choice of %1$s</string>
+    <!-- Under a written test where one question waits for an exam choice the learner hasn't made. %1$s is the question, such as "The 60-line question"; %2$s names the choices. -->
+    <string name="essay_task_depends_on_choice">%1$s depends on your choice of %2$s</string>
+    <string name="essay_choose_on_today">Choose on Today</string>
+    <!-- A written test whose answers are graded by level, with no points estimate yet. -->
+    <string name="essay_graded_by_level">Graded by level</string>
+    <!-- Under a written answer's score range. -->
+    <string name="essay_estimated_score">Estimated score</string>
     <!-- The header of a written exam task: a whole answer to one of the exam's written questions. -->
     <string name="essay_written_answer">Written answer</string>
     <string name="essay_your_answer">Your answer</string>
@@ -48,21 +76,36 @@
         <item quantity="other">%d words</item>
     </plurals>
     <!-- How many handwritten lines the typed answer would take, of the question's limit, such as "about 23 of 30 lines". -->
-    <string name="essay_lines_used">about %1$d of %2$d lines</string>
-    <!-- The typed answer would take more handwritten lines than the question allows; the exam's graders stop reading at the limit. -->
-    <string name="essay_lines_over">about %1$d of %2$d lines · %3$d won\'t be read</string>
+    <plurals name="essay_lines_used">
+        <item quantity="one">about %1$d of %2$d line</item>
+        <item quantity="other">about %1$d of %2$d lines</item>
+    </plurals>
+    <!-- An empty answer field's line count, against the question's limit. -->
+    <plurals name="essay_lines_empty">
+        <item quantity="one">0 of %1$d line</item>
+        <item quantity="other">0 of %1$d lines</item>
+    </plurals>
+    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
+    <plurals name="essay_lines_over">
+        <item quantity="one">about %1$d of %2$d line · %3$d won\'t be read</item>
+        <item quantity="other">about %1$d of %2$d lines · %3$d won\'t be read</item>
+    </plurals>
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
     <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
     <!-- While a new written question is written for the learner. -->
     <string name="essay_writing_question">Writing your question…</string>
-    <string name="essay_writing_question_detail">A new question, like the ones on your exam. It opens here when it\'s ready.</string>
+    <string name="essay_writing_question_detail">A new question like the ones on your exam. It opens here when it\'s ready.</string>
+    <!-- While a short writing exercise is written for the learner after a lesson. -->
+    <string name="essay_writing_exercise">Writing your exercise…</string>
+    <string name="essay_writing_exercise_detail">A short exercise on what you just learned. It opens here when it\'s ready.</string>
+    <string name="essay_exercise_failed">We couldn\'t write your exercise</string>
     <string name="essay_question_failed">We couldn\'t write your question</string>
     <string name="essay_nothing_lost">Nothing was lost. Try again in a moment.</string>
     <string name="essay_try_again">Try again</string>
     <!-- A written task the exam's notice no longer asks, after it was read again. -->
-    <string name="essay_removed">This task is no longer available</string>
-    <string name="essay_removed_detail">Your exam\'s notice changed, so it\'s out of your plan. Nothing was graded.</string>
+    <string name="essay_removed">This question is no longer on your exam</string>
+    <string name="essay_removed_detail">Your exam notice changed, so it\'s out of your plan. Nothing was graded.</string>
     <!-- The day's extra grades for written answers are used. -->
     <string name="essay_no_more_grading">No more grading today</string>
     <string name="essay_more_tomorrow">You\'ll have more tomorrow.</string>
@@ -93,7 +136,34 @@
     <string name="essay_what_to_rewrite">What to rewrite</string>
     <string name="essay_for_example">For example: %1$s</string>
     <string name="essay_nothing_left">Nothing left to work on</string>
-    <string name="essay_full_marks">Every criterion has full marks in this estimate.</string>
+    <string name="essay_full_marks">Every criterion is complete.</string>
+    <plurals name="essay_limit_title">
+        <item quantity="one">Fit it in %1$d line</item>
+        <item quantity="other">Fit it in %1$d lines</item>
+    </plurals>
+    <string name="essay_limit_title_any">Fit it in the line limit</string>
+    <string name="essay_limit_text">Graders stop at line %1$d, so the rest isn\'t read.</string>
+    <string name="essay_limit_text_any">Graders stop at the line limit, so the rest isn\'t read.</string>
+    <string name="essay_zero_title">Answer the question asked</string>
+    <string name="essay_zero_text">Rewrite it following the rule above.</string>
+    <string name="essay_zero_blank_title">Write an answer</string>
+    <string name="essay_zero_blank_text">Start with the points the question asks for.</string>
+    <string name="essay_zero_off_topic_text">Reread the question and write about what it asks.</string>
+    <!-- The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked. -->
+    <string name="essay_zero_wrong_form_title">Write it in the form asked</string>
+    <string name="essay_zero_wrong_form_text">Check what kind of text the question asks for, and write that.</string>
+    <!-- The next step of a written answer zeroed for being shorter than the exam's minimum number of lines. -->
+    <string name="essay_zero_too_few_lines_title">Reach the minimum length</string>
+    <string name="essay_zero_too_few_lines_text">Develop each point the question asks for until you reach it.</string>
+    <string name="essay_zero_copied_support_title">Use your own words</string>
+    <string name="essay_zero_copied_support_text">Take the support text as a starting point, not as your answer.</string>
+    <string name="essay_zero_identification_title">Leave out anything that identifies you</string>
+    <string name="essay_zero_identification_text">Remove names, signatures and marks that aren\'t part of the answer.</string>
+    <!-- A past written answer graded by level: how many of its criteria were fully met, out of all of them. -->
+    <plurals name="essay_criteria_complete">
+        <item quantity="one">%1$d of %2$d criterion complete</item>
+        <item quantity="other">%1$d of %2$d criteria complete</item>
+    </plurals>
     <string name="essay_criteria">Criteria</string>
     <!-- A criterion of a written answer fully met. -->
     <string name="essay_level_complete">Complete</string>
@@ -111,8 +181,8 @@
     <!-- The learner's answer as sent, with its errors marked. -->
     <string name="essay_your_text">Your text</string>
     <!-- Where the answer passes the question's line limit; the exam's graders stop reading there. %1$d is the limit. -->
-    <string name="essay_past_line">Past line %1$d: the board won\'t read from here</string>
-    <string name="essay_past_limit">Past the limit: the board won\'t read from here</string>
+    <string name="essay_past_line">Past line %1$d: graders stop reading here</string>
+    <string name="essay_past_limit">Past the limit: graders stop reading here</string>
     <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
     <string name="essay_you_wrote">You wrote “%1$s” · %2$s</string>
     <!-- On a written task the learner skipped, opened again from a link. -->

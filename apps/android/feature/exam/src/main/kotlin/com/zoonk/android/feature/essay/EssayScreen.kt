@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -61,13 +62,15 @@ import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.writing.WritingTaskName
+import com.zoonk.android.feature.writing.writingTaskTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.IndeterminateWait
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -86,6 +89,8 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
+import com.zoonk.android.ui.components.taskSideAction
+import com.zoonk.android.ui.components.writingAreaColors
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -133,8 +138,15 @@ fun EssayScreen(
             when {
                 // A written question appears once its start admits it; until then the start's answer shows.
                 read.error == ApiError.NotFound && before != null -> {
-                    val refused = route.taskDescription?.let { it to (route.taskMinutes ?: 0) }
-                    WritingStart(blockId, before, refused, signedIn, app, navigator)
+                    val refused =
+                        route.taskDescription?.let { description ->
+                            val name =
+                                route.taskNumber?.let { number ->
+                                    route.taskTotal?.let { WritingTaskName(route.taskLines, number, it, route.taskDistinctLines) }
+                                }
+                            RefusedTask(description, route.taskMinutes ?: 0, route.taskLines, route.drill, name)
+                        }
+                    WritingStart(blockId, before, route.drill, refused, signedIn, app, navigator)
                 }
 
                 read.error == ApiError.NotFound -> {
@@ -157,23 +169,29 @@ fun EssayScreen(
 private fun WritingStart(
     blockId: UUID,
     before: WritingBefore,
-    refused: Pair<String, Int>?,
+    drill: Boolean,
+    refused: RefusedTask?,
     signedIn: AuthenticatedSession,
     app: AppContainer,
     navigator: AppNavigator,
 ) {
     val viewModel =
         viewModel(key = "writing-start:$blockId:${signedIn.localId}") {
-            WritingStartViewModel(blockId, before, app.essays, LiveGenerationSource(app.api, signedIn))
+            WritingStartViewModel(blockId, before, drill, app.essays, LiveGenerationSource(app.api, signedIn))
         }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val asking by viewModel.asking.collectAsStateWithLifecycle()
     val run by viewModel.run.collectAsStateWithLifecycle()
+    val header = stringResource(if (drill) R.string.essay_writing_practice else R.string.essay_written_answer)
 
     when (val shown = state) {
         is WritingStartState.LimitReached -> {
+            val task = shown.task ?: refused
             WritingRefused(
-                task = shown.task?.let { it.description to it.minutes } ?: refused,
+                task =
+                    task?.let {
+                        writingTaskTitle(drill = it.drill, task = it.name, fallback = it.description, lines = it.lines) to it.minutes
+                    },
                 busy = false,
                 onContinue = navigator::closeTask,
                 onClose = navigator::closeTask,
@@ -185,46 +203,29 @@ private fun WritingStart(
         }
 
         WritingStartState.Removed -> {
-            RunPage(
-                onClose = navigator::closeTask,
-                title = { BarTitle(stringResource(R.string.essay_written_answer)) },
-                bottomBar = {
-                    TaskActionBar {
-                        TaskActions { width ->
-                            Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
-                                Text(stringResource(R.string.essay_back_to_today))
-                            }
-                        }
-                    }
-                },
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(R.string.essay_removed), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
-                    Text(
-                        stringResource(R.string.essay_removed_detail),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-            }
+            WritingRemoved(header, onToday = { navigator.showRoot(AppTab.Today) }, onClose = navigator::closeTask)
         }
 
         is WritingStartState.Writing -> {
             TrackShown(AnalyticsEvent.WritingPromptWaitViewed(shown.generationId, AnalyticsEvent.WritingSurface.Practice))
-            TaskScaffold(onClose = navigator::closeTask, title = { BarTitle(stringResource(R.string.essay_written_answer)) }) { padding ->
+            val exercise = shown.drill
+            TaskScaffold(
+                onClose = navigator::closeTask,
+                title = { BarTitle(stringResource(if (exercise) R.string.essay_writing_practice else R.string.essay_written_answer)) },
+            ) { padding ->
                 RunColumn(Modifier.padding(padding)) {
-                    GenerationWait(kind = com.zoonk.android.data.GenerationKind.WritingPrompt, run = run, onRetry = viewModel::retryRun) {
-                        Text(
-                            stringResource(R.string.essay_writing_question),
-                            Modifier.pageTitle(),
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
-                        Text(
-                            stringResource(R.string.essay_writing_question_detail),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
+                    // One model call writes the question: the wait says what's coming, with no steps it doesn't have.
+                    IndeterminateWait(
+                        title = stringResource(if (exercise) R.string.essay_writing_exercise else R.string.essay_writing_question),
+                        description =
+                            stringResource(
+                                if (exercise) R.string.essay_writing_exercise_detail else R.string.essay_writing_question_detail,
+                            ),
+                        failedTitle = stringResource(if (exercise) R.string.essay_exercise_failed else R.string.essay_question_failed),
+                        run = run,
+                        onRetry = viewModel::retryRun,
+                        titleModifier = Modifier.pageTitle(),
+                    )
                 }
             }
         }
@@ -232,7 +233,7 @@ private fun WritingStart(
         WritingStartState.Failed -> {
             RunPage(
                 onClose = navigator::closeTask,
-                title = { BarTitle(stringResource(R.string.essay_written_answer)) },
+                title = { BarTitle(header) },
                 bottomBar = {
                     TaskActionBar {
                         TaskActions { width ->
@@ -247,7 +248,7 @@ private fun WritingStart(
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        stringResource(R.string.essay_question_failed),
+                        stringResource(if (drill) R.string.essay_exercise_failed else R.string.essay_question_failed),
                         Modifier.pageTitle(),
                         style = MaterialTheme.typography.headlineSmall,
                     )
@@ -258,6 +259,35 @@ private fun WritingStart(
                     )
                 }
             }
+        }
+    }
+}
+
+/** A notice read again dropped this task: nothing was admitted or graded, and Today goes on without it. */
+@Composable
+internal fun WritingRemoved(
+    header: String,
+    onToday: () -> Unit,
+    onClose: () -> Unit,
+) {
+    RunPage(
+        onClose = onClose,
+        title = { BarTitle(header) },
+        bottomBar = {
+            TaskActionBar {
+                TaskActions { width ->
+                    Button(onClick = onToday, modifier = width) { Text(stringResource(R.string.essay_back_to_today)) }
+                }
+            }
+        },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(stringResource(R.string.essay_removed), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+            Text(
+                stringResource(R.string.essay_removed_detail),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+            )
         }
     }
 }
@@ -296,7 +326,13 @@ private fun EssayLoaded(
 
         ui.mode == WritingMode.Refused -> {
             WritingRefused(
-                task = essay.writing.title to essay.pacing.minutes.toInt(),
+                task =
+                    writingTaskTitle(
+                        drill = essay.writing.unit == WritingPromptOutput.Unit.DRILL,
+                        task = null,
+                        fallback = essay.writing.title,
+                        lines = essay.writing.lines?.toInt(),
+                    ) to essay.pacing.minutes.toInt(),
                 busy = finishing,
                 onContinue = viewModel::finish,
                 onClose = navigator::closeTask,
@@ -427,6 +463,7 @@ internal fun WriteScreen(
                     readOnly = ui.send == WritingSend.Pending,
                     textStyle = MaterialTheme.typography.bodyLarge,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                    colors = writingAreaColors(),
                 )
                 WritingLineCount(ui.text, essay.writing)
             }
@@ -461,8 +498,7 @@ internal fun WritingLineCount(
             com.zoonk.android.feature.player.language
                 .countWords(text)
         Text(
-            androidx.compose.ui.res
-                .pluralStringResource(R.plurals.essay_words, words, words),
+            pluralStringResource(R.plurals.essay_words, words, words),
             modifier,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = style,
@@ -473,15 +509,12 @@ internal fun WritingLineCount(
         remember(text, writing.charactersPerLine, limit) { countWritingLines(text, writing.charactersPerLine.toInt(), limit).estimated }
     val over = used > limit
     Text(
-        if (over) {
-            stringResource(
-                R.string.essay_lines_over,
-                used,
-                limit,
-                used - limit,
-            )
+        if (text.isBlank()) {
+            pluralStringResource(R.plurals.essay_lines_empty, limit, limit)
+        } else if (over) {
+            pluralStringResource(R.plurals.essay_lines_over, limit, used, limit, used - limit)
         } else {
-            stringResource(R.string.essay_lines_used, used, limit)
+            pluralStringResource(R.plurals.essay_lines_used, limit, used, limit)
         },
         modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = if (over) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -532,6 +565,7 @@ internal fun WritingResultScreen(
     val heading = remember { FocusRequester() }
     val moveFocus = rememberMoveFocus()
     val grade = remember(latest.grade) { latest.grade.toGrade() }
+    val done = remember(grade, latest.text) { grade.nextStep(latest.text) == NextStep.Done }
 
     LaunchedEffect(latest) { if (ui.switched) moveFocus(heading) }
 
@@ -561,10 +595,16 @@ internal fun WritingResultScreen(
                         Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
                             Text(stringResource(R.string.essay_back_to_today))
                         }
+                    } else if (done) {
+                        // Nothing left to work on: no rewrite to offer, so the bar's one action goes on.
+                        Button(onClick = viewModel::finish, modifier = width, busy = finishing) {
+                            Text(stringResource(R.string.essay_continue))
+                        }
                     } else {
                         OutlinedButton(
                             busy = finishing,
                             onClick = viewModel::finish,
+                            modifier = Modifier.taskSideAction(),
                             leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
                         ) {
                             Text(stringResource(R.string.essay_skip_rewrite))
@@ -692,7 +732,7 @@ fun WritingAnswerScreen(
         is LoadState.Loaded -> {
             val answer = read.value
             val grade = remember(answer.grade) { answer.grade.toGrade() }
-            RunPage(onClose = navigator::closeTask, title = { BarTitle(answer.writing.title) }) {
+            RunPage(onClose = navigator::closeTask, title = { BarTitle(writingLabel(answer.writing)) }) {
                 WritingResultView(grade, answer.writing, answer.text)
             }
         }

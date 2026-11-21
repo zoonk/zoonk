@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
@@ -131,6 +133,43 @@ fun GenerationWait(
 
         // Under the steps, as main's, so a failure moves none of them.
         run.failure.takeIf { run.status == GenerationRun.Status.Failed }?.let { GenerationFailureNotice(it, onRetry) }
+    }
+}
+
+/**
+ * Main's `IndeterminateWait`: a wait that's one model call has no steps or percentage to report, so
+ * it says what's coming and spins until it's there. A failure says so, with the run's own Try again,
+ * and the title never claims work that stopped.
+ */
+@Composable
+fun IndeterminateWait(
+    title: String,
+    description: String,
+    failedTitle: String,
+    run: GenerationRun,
+    onRetry: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    titleModifier: Modifier = Modifier,
+) {
+    val failure = run.failure.takeIf { run.status == GenerationRun.Status.Failed }
+    val stopped = failure != null && failure != GenerationFailure.Connection
+
+    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(
+                if (stopped) failedTitle else title,
+                titleModifier.semantics { heading() },
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            if (!stopped) {
+                Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+        if (failure != null) {
+            GenerationFailureNotice(failure, onRetry)
+        } else {
+            CircularProgressIndicator(Modifier.size(24.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 2.dp)
+        }
     }
 }
 

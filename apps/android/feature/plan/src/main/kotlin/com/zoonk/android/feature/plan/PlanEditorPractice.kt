@@ -87,15 +87,17 @@ internal fun WrittenCadenceChoice(
             label = stringResource(R.string.plan_when_to_practice_writing),
             options = cadences,
             value = shown,
-            optionLabel = { cadenceLabel(it) },
+            optionLabel = {
+                if (it ==
+                    WrittenPractice.Cadence.WEEKLY
+                ) {
+                    stringResource(R.string.plan_cadence_weekly_recommended)
+                } else {
+                    cadenceLabel(it)
+                }
+            },
             onPick = { if (it != practice.cadence) onChange(it) },
             enabled = !pending,
-        )
-        Text(
-            text = cadenceEffect(shown),
-            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         if (failed) SaveFailedText()
     }
@@ -108,16 +110,6 @@ private fun cadenceLabel(cadence: WrittenPractice.Cadence) =
             WrittenPractice.Cadence.WEEKLY -> R.string.plan_cadence_weekly
             WrittenPractice.Cadence.BIWEEKLY -> R.string.plan_cadence_biweekly
             WrittenPractice.Cadence.FINAL_WEEKS -> R.string.plan_cadence_final_weeks
-        },
-    )
-
-@Composable
-private fun cadenceEffect(cadence: WrittenPractice.Cadence) =
-    stringResource(
-        when (cadence) {
-            WrittenPractice.Cadence.WEEKLY -> R.string.plan_cadence_weekly_effect
-            WrittenPractice.Cadence.BIWEEKLY -> R.string.plan_cadence_biweekly_effect
-            WrittenPractice.Cadence.FINAL_WEEKS -> R.string.plan_cadence_final_weeks_effect
         },
     )
 

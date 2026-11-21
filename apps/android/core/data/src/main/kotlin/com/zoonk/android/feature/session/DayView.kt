@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.session
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.android.feature.writing.WritingTaskName
+import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCapsulesInner
@@ -23,6 +25,7 @@ import com.zoonk.api.models.UnstartedStudyDayBlocksInner
 import com.zoonk.api.models.UnstartedStudyDayMissionsInner
 import com.zoonk.api.models.UnstartedStudyDayMissionsInnerOpens
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import java.util.UUID
 
 /**
@@ -76,6 +79,10 @@ private fun StudyBlockWritingAvailability.toWritingRow(): WritingRow? =
         }
     }
 
+/** The day a written task waiting for tomorrow's grading returns. */
+private fun StudyBlockWritingAvailability.returnsOn(): java.time.LocalDate? =
+    (this as? StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value)?.value?.returnsOn?.toJavaLocalDate()
+
 enum class EmptyDay { LessonsComing, LessonsToPrepare, NothingNew }
 
 enum class FreshStart { WelcomeBack, NewWeek, NewPhase }
@@ -122,6 +129,10 @@ data class DayStep(
     val waitReason: StudyBlock.WaitReason?,
     /** A written task's row: its saved draft goes on, or today's extra grades are used and it waits for tomorrow. */
     val writing: WritingRow? = null,
+    /** When a [WritingRow.Tomorrow] task returns: tomorrow, or a later day. */
+    val writingReturnsOn: java.time.LocalDate? = null,
+    /** Which question of the written test a whole answer is, so its row names it rather than the notice's sentence. */
+    val writingTask: WritingTaskName? = null,
     /** A short writing task on what a lesson just taught, rather than a whole answer. */
     val drill: Boolean = false,
 ) {
@@ -331,6 +342,8 @@ fun StudyBlock.toDayStep(): DayStep =
         opensInPlayer = opensInPlayer,
         waitReason = waitReason,
         writing = writingAvailability?.toWritingRow(),
+        writingReturnsOn = writingAvailability?.returnsOn(),
+        writingTask = writingTask?.toName(),
         drill = writingUnit == StudyBlock.WritingUnit.DRILL,
     )
 
@@ -367,6 +380,8 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         opensInPlayer = opensInPlayer,
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
         writing = writingAvailability?.toWritingRow(),
+        writingReturnsOn = writingAvailability?.returnsOn(),
+        writingTask = writingTask?.toName(),
         drill = writingUnit == UnstartedStudyDayBlocksInner.WritingUnit.DRILL,
     )
 

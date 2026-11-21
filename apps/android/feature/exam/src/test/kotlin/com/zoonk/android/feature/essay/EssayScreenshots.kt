@@ -167,6 +167,29 @@ class EssayScreenshots {
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")
     fun refused() =
         show("12-grades-used-up") { _, _, essay ->
-            WritingRefused(essay.writing.title to essay.pacing.minutes.toInt(), busy = false, onContinue = {}, onClose = {})
+            WritingRefused(
+                com.zoonk.android.feature.writing
+                    .writingTaskTitle(drill = false, task = null, fallback = null, lines = 30) to
+                    essay.pacing.minutes.toInt(),
+                busy = false,
+                onContinue = {},
+                onClose = {},
+            )
         }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun resultDone() = result("06-result-levels-done", DONE_RESULT)
+
+    @Test
+    @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
+    fun resultPastTheLimit() = result("05-result-over-limit-full", LIMIT_RESULT)
+
+    @Test
+    @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
+    fun resultZeroedWithItsKind() = result("05-result-zeroed-kind-full", ZEROED_KIND_RESULT)
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun taskRemoved() = show("13-task-removed") { _, _, _ -> WritingRemoved("Written answer", onToday = {}, onClose = {}) }
 }

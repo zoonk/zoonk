@@ -94,16 +94,21 @@ private val spanishSubject =
 private val writtenEssay =
     """
     {"points":{"name":"Essay","max":100,"minimum":{"unit":"points","value":50},"range":{"low":54,"high":61},"standing":"overlaps",
-      "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":17,"high":19}},
-       {"key":"long","name":"60-line question","max":70,"range":{"low":37,"high":42}}]},
+      "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":17,"high":19},
+        "writingTask":{"lines":30,"points":30,"number":1,"total":2,"distinctLines":true}},
+       {"key":"long","name":"60-line question","max":70,"range":{"low":37,"high":42},
+        "writingTask":{"lines":60,"points":70,"number":2,"total":2,"distinctLines":true}}]},
+     "questions":2,"minutes":210,"share":0.5,"scale":"points","decimals":0,
      "trend":[{"date":"2026-11-02","contentShare":0.48,"presentationShare":0.6,"errors":7},
       {"date":"2026-11-08","contentShare":0.55,"presentationShare":0.7,"errors":5},
       {"date":"2026-11-14","contentShare":0.6,"presentationShare":0.72,"errors":4},
       {"date":"2026-11-19","contentShare":0.64,"presentationShare":0.75,"errors":3}],
      "answers":[{"attemptId":"00000000-0000-4000-8000-0000000000c1","date":"2026-11-19","lines":30,"range":{"low":17,"high":19},
-       "taskKey":"short","title":"Transparency and access to information","versions":2},
+       "taskKey":"short","title":"Transparency and access to information","versions":2,"estimatedLines":25,"decimals":0},
       {"attemptId":"00000000-0000-4000-8000-0000000000c2","date":"2026-11-14","lines":60,"range":{"low":37,"high":42},
-       "taskKey":"long","title":"Accountability of public managers","versions":1}],
+       "taskKey":"long","title":"Accountability of public managers","versions":1,"estimatedLines":52,"decimals":0},
+      {"attemptId":"00000000-0000-4000-8000-0000000000c3","date":"2026-11-12","lines":30,"range":null,"criteria":{"complete":2,"total":4},
+       "taskKey":"short","title":"Internal and external control","versions":1,"estimatedLines":6,"unit":"drill"}],
      "writeActions":[{"taskKey":"short","availability":{"status":"available"}}]}
     """.trimIndent()
 

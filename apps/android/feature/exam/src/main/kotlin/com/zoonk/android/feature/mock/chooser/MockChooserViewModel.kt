@@ -39,8 +39,15 @@ sealed interface ChooserStatus {
         val limit: Limit,
     ) : ChooserStatus
 
-    /** The written test would be graded as it starts, and today's extra grades are used. */
-    data object GradesUsed : ChooserStatus
+    /** The written test would be graded as it starts, and today's extra grades are used until [returnsOn]. */
+    data class GradesUsed(
+        val returnsOn: java.time.LocalDate?,
+    ) : ChooserStatus
+
+    /** The written test's questions depend on an exam choice the learner hasn't made yet. */
+    data class NeedsChoice(
+        val choiceGroups: List<String>,
+    ) : ChooserStatus
 }
 
 /**
@@ -211,8 +218,12 @@ class MockChooserViewModel(
                 metTheLock()
             }
 
-            QuestionWriting.GradesUsed -> {
-                mutableStatus.value = ChooserStatus.GradesUsed
+            is QuestionWriting.GradesUsed -> {
+                mutableStatus.value = ChooserStatus.GradesUsed(written.returnsOn)
+            }
+
+            is QuestionWriting.NeedsChoice -> {
+                mutableStatus.value = ChooserStatus.NeedsChoice(written.choiceGroups)
             }
 
             null -> {
@@ -244,7 +255,8 @@ class MockChooserViewModel(
                 MockStartOutcome.NotEnoughQuestions -> ChooserStatus.Failed(notEnoughQuestions = true)
                 MockStartOutcome.NeedsQuestions -> ChooserStatus.Failed(notEnoughQuestions = false)
                 MockStartOutcome.PlusRequired -> ChooserStatus.Choosing.also { metTheLock() }
-                MockStartOutcome.GradesUsed -> ChooserStatus.GradesUsed
+                is MockStartOutcome.GradesUsed -> ChooserStatus.GradesUsed(outcome.returnsOn)
+                is MockStartOutcome.NeedsChoice -> ChooserStatus.NeedsChoice(outcome.choiceGroups)
             }
     }
 

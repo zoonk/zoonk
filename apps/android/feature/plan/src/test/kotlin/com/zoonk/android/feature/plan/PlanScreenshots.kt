@@ -215,6 +215,7 @@ class PlanScreenshots {
                         )
                     },
                 "09-score-before" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_BEFORE)), links) },
+                "09-score-before-levels" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_LEVELS)), links) },
                 "10-score-after" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_AFTER)), links) },
                 "10b-score-below-minimum" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_BELOW)), links) },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
@@ -236,6 +237,7 @@ class PlanScreenshots {
                 "plan-sheet-preparation-review" to { stringResource(R.string.plan_your_preparation) },
                 "plan-sheet-preparation-reviewed" to { stringResource(R.string.plan_your_preparation) },
                 "09-score-before" to { stringResource(R.string.plan_your_preparation) },
+                "09-score-before-levels" to { stringResource(R.string.plan_your_preparation) },
                 "10-score-after" to { stringResource(R.string.plan_your_preparation) },
                 "10b-score-below-minimum" to { stringResource(R.string.plan_your_preparation) },
             )
@@ -972,7 +974,13 @@ class PlanScreenshots {
     private companion object {
         val WRITTEN_BEFORE =
             """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":null,"max":200,
-            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":null,"standing":"unmeasured",
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":null,"standing":"unmeasured","scale":"points",
+              "tasks":[{"key":"short","name":"30-line question","max":30,"range":null},{"key":"long","name":"60-line question","max":70,"range":null}]}]}"""
+
+        /** What learners see today: no rubric has passed its check, so the written test is graded by level. */
+        val WRITTEN_LEVELS =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":null,"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":null,"standing":"unmeasured","scale":"levels",
               "tasks":[{"key":"short","name":"30-line question","max":30,"range":null},{"key":"long","name":"60-line question","max":70,"range":null}]}]}"""
 
         val WRITTEN_AFTER =
