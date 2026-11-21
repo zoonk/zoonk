@@ -1,4 +1,3 @@
-import { getWritingGrader } from "@zoonk/ai/tasks/grading/grade-essay";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type WrittenSample } from "../../learner/facts/written-samples";
 import { type EstimatedScore } from "../../preparation/estimated-score";
@@ -9,17 +8,16 @@ import { projectWritten } from "./written-projection";
 
 vi.mock("../essays/_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
 
-const activeGrader = getWritingGrader("points");
-
-function allowWritingPoints(points: number, grader = activeGrader) {
+function allowWritingPoints(points: number) {
   const basis = { grading: CGU_WRITTEN_GRADING, points };
 
   Object.assign(passedWritingEvaluations, {
     [getWritingRubricFingerprint(basis)]: {
       arithmetic: { rounding: null, zeroRules: [] },
       corpus: "fixture",
-      model: grader.model,
-      promptRevision: grader.promptVersion,
+      kind: "points",
+      model: "fixture/model",
+      promptRevision: "fixture-revision",
     },
   });
 }
@@ -91,9 +89,10 @@ function sample({
 }
 
 describe(projectWritten, () => {
+  const evaluatedPoints = [30, 70];
+
   beforeEach(() => {
-    allowWritingPoints(30);
-    allowWritingPoints(70);
+    evaluatedPoints.forEach((points) => allowWritingPoints(points));
   });
 
   it("retains the objective and measured question while naming the missing written task", () => {
@@ -212,12 +211,18 @@ describe(projectWritten, () => {
     });
   });
 
-  it("excludes disabled rubrics and scoring bases that changed", () => {
-    allowWritingPoints(30, { ...activeGrader, promptVersion: "old" });
-    allowWritingPoints(70, { ...activeGrader, model: "old" });
-    const short = sample({ high: 20, key: "short", low: 15 });
-    const long = sample({ high: 50, key: "long", low: 45 });
-    const samples = [short, { ...long, prompt: { ...long.prompt, points: 60 } }];
+  it("reports levels for written tasks without a passed evaluation", () => {
+    for (const points of evaluatedPoints) {
+      Reflect.deleteProperty(
+        passedWritingEvaluations,
+        getWritingRubricFingerprint({ grading: CGU_WRITTEN_GRADING, points }),
+      );
+    }
+
+    const samples = [
+      sample({ high: 20, key: "short", low: 15 }),
+      sample({ high: 50, key: "long", low: 45 }),
+    ];
 
     expect(projectWritten({ objective: OBJECTIVE, samples, structure: CGU })).toMatchObject({
       combined: null,
