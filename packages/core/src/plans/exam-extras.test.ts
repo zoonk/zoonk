@@ -79,6 +79,20 @@ describe("exam strategy", () => {
     await expect(countExtraItems()).resolves.toBe(5);
     await expect(readPlanScreen()).resolves.toMatchObject({ extraOffer: null });
 
+    const accepted = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const changes = await prisma.planChange.count({ where: { planId: plan.id } });
+
+    await expect(edit(operations)).resolves.toStrictEqual({
+      reason: "alreadyIn",
+      status: "unchanged",
+    });
+
+    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(changes);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      accepted,
+    );
+
     await expect(getSyllabusView({ goalId: goal.id })).resolves.toMatchObject({
       status: "ready",
       syllabus: {
