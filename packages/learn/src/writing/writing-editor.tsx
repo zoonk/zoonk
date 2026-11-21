@@ -9,13 +9,6 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ESSAY_FIELD_CLASS } from "../essay/essay-labels";
 
-/**
- * The field holds focus for the whole answer, so its focus is a soft line, as the lesson's question
- * composer draws it; the usual ring returns with more contrast.
- */
-const WRITING_FOCUS_CLASS =
-  "focus-visible:border-foreground/35 focus-visible:ring-0 contrast-more:focus-visible:border-ring contrast-more:focus-visible:ring-[3px]";
-
 /** "about 23 of 30 lines": the count stays in view under the field, and what's past the limit says so. */
 export function WritingLineCount({
   id,
@@ -93,7 +86,7 @@ export function WritingEditor({
       </label>
       <Textarea
         aria-describedby={`${id}-count`}
-        className={cn(ESSAY_FIELD_CLASS, WRITING_FOCUS_CLASS, "field-sizing-fixed min-h-0 flex-1")}
+        className={cn(ESSAY_FIELD_CLASS, "field-sizing-fixed min-h-0 flex-1")}
         id={id}
         onChange={(event) => onChange(event.target.value)}
         spellCheck={false}
