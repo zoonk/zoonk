@@ -1,4 +1,3 @@
-import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, realpathSync } from "node:fs";
 import { homedir } from "node:os";
@@ -16,6 +15,7 @@ import {
   getPnpmCommand,
   runForegroundCommand,
 } from "./process.mts";
+import { startProxy } from "./proxy.mts";
 import { waitForTurn } from "./queue.mts";
 import { type Service, announceWhenReady, formatServices, sortServices } from "./ready.mts";
 import { writeAndroidDevelopmentConfiguration } from "./write-android-configuration.mts";
@@ -65,16 +65,6 @@ async function runDevelopmentCommand({
   });
 }
 
-/** Starts the dedicated proxy before Turbo launches apps so concurrent services never race to initialize shared state. */
-function startProxy(environment: NodeJS.ProcessEnv): void {
-  execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "proxy", "start"], {
-    cwd: currentDirectory,
-    env: environment,
-    // Its "already running" notice and restart advice answer nothing a `pnpm dev` asked; errors still show.
-    stdio: ["ignore", "ignore", "inherit"],
-  });
-}
-
 async function startDirectDevelopment(): Promise<CommandResult> {
   writeAppleDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
   writeAndroidDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
@@ -105,7 +95,8 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   const portlessEnvironment = getPortlessEnvironment({ homeDirectory: homedir(), lanMode });
   const environment = { ...process.env, ...portlessEnvironment };
 
-  startProxy(environment);
+  // Before Turbo launches apps, so concurrent services never race to initialize shared state.
+  startProxy({ currentDirectory, environment });
 
   const service = { currentDirectory, environment, projectName };
   const mainUrl = getServiceUrl({ ...service, serviceName: "main" });

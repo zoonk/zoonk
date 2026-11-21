@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-ligacao-covalente",
+        "claimId": "026d57eb47fd4ca4",
+        "criterion": "screenPlan",
+        "observationId": "71bd9c627b73b6545cf377cfcc0a706f9ab0d07a7eaab899d8ebaf6914dbc78a.first.165f0189-d92b-49ae-a05d-5d27eca8d513.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00288845,
+    "id": "6fa4604b07b304685daf3198e4e321ecb9871988e990ac57ac572a3891d00717",
+    "packet": [
+      {
+        "A": {
+          "blob": "0040280dbfd094a3d2513ffda5e05a5328758ebde7584f060083c40277c63617",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ba8ed1befe8d6efdd9aeda700e01a9ee19cd6bc565f3af48726753090e4f837b",
+          "format": "text"
+        },
+        "claim": "A checagem repete o mesmo caso H–H do exemplo resolvido, em vez de apresentar um problema semelhante novo com menos ajuda.",
+        "claimId": "026d57eb47fd4ca4",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "869c860b9a446c7f4575523b99b57163cce41c8b54accaa743ca398e69fc9682",
+          "format": "text"
+        },
+        "input": {
+          "blob": "00f4979a9bf56a9d3efe591af13ced5d5ca1292402be478f78bce9fb15bdabe6",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Pedir que represente dois hidrogênios que compartilham dois elétrons, escolhendo entre um traço e dois traços entre os H.",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "8f6813e1cb4f5116",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "026d57eb47fd4ca4",
+          "finding": "holds",
+          "reason": "In output A, the worked example shows H–H and the check asks again about two hydrogens sharing a pair, with the same answer format, so it repeats the same case rather than offering a new problem with less help. Output B changes the case to H–Cl in the worked example and F–F in the check, so the claim is true of A and not of B."
+        },
+        {
+          "claimId": "8f6813e1cb4f5116",
+          "finding": "doesn't hold",
+          "reason": "The worked example for the $20 to $23 wage computes $23 − $20 = $3, then 3 ÷ 20 = 0.15 and 15%, so it divides by the original $20 and reports 15%, not 13%. Both outputs have this same worked example, so the claim is false for both."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

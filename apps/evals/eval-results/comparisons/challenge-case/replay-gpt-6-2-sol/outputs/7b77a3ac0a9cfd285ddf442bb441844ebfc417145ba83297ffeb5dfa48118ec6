@@ -1,0 +1,572 @@
+{
+  "deadline": "A dose está programada para 14h30.",
+  "endings": [
+    {
+      "id": "resolved",
+      "outcome": "{{doctor}} confirmou a intenção de 50 mg/kg/dia e corrigiu a prescrição para 300 mg por via intravenosa a cada 8 h. Após a conferência de {{nurse}}, o preparo pode seguir com 3 mL da solução, antes da diluição prevista no protocolo."
+    },
+    {
+      "id": "pending",
+      "outcome": "O preparo permanece suspenso, sem administração, enquanto a prescrição aguarda esclarecimento de {{doctor}}. A equipe precisa acompanhar a pendência e concluir a conferência de enfermagem antes de prosseguir."
+    },
+    {
+      "id": "intercepted",
+      "outcome": "{{nurse}} identificou a divergência na conferência obrigatória e interrompeu o fluxo antes de qualquer preparo ou administração. O caso retorna para esclarecimento médico, gerando nova demanda para a equipe."
+    }
+  ],
+  "meters": [
+    {
+      "id": "risk",
+      "label": "Risco de erro de dose",
+      "start": 70,
+      "goodWhen": "low"
+    },
+    {
+      "id": "demand",
+      "label": "Demanda sobre a equipe",
+      "start": 20,
+      "goodWhen": "low"
+    }
+  ],
+  "mission": "Confira o cálculo de cefazolina antes do preparo e **resolva a divergência com o médico**. A administração depende da prescrição confirmada e da conferência final de enfermagem.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -15
+            },
+            {
+              "meter": "demand",
+              "change": 8
+            }
+          ],
+          "id": "compare",
+          "next": "calculate",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "Você comparou o que cada quantidade representa, além da via e do intervalo. Isso revelou a diferença entre total diário e dose por administração antes da conversão em volume.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A via e o intervalo coincidem, mas o plano traz a quantidade por dia e a prescrição, por administração. Vou interromper a separação enquanto conferimos essa diferença."
+            }
+          ],
+          "text": "Comparar a unidade da quantidade, a via e o intervalo nos documentos originais e depois calcular o volume.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 10
+            },
+            {
+              "meter": "demand",
+              "change": -5
+            }
+          ],
+          "id": "active-order",
+          "next": "recover",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "A organização avançou, mas a quantidade da prescrição seguiu sem comparação com o plano. Confira se cada documento expressa total diário ou dose por administração, além da via e do intervalo.",
+              "example": "Comparar as unidades da quantidade nos documentos originais antes de calcular o volume."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Consigo manter a organização da distribuição assim. Mas a quantidade que vai adiante ainda não foi comparada com a indicação por dia do plano."
+            }
+          ],
+          "text": "Organizar o preparo pela prescrição ativa e deixar a comparação com o plano terapêutico para a conferência final.",
+          "timeJump": null
+        }
+      ],
+      "id": "review",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "Ainda não comecei o preparo da cefazolina. Você organiza essa conferência?"
+        },
+        {
+          "from": "nurse",
+          "text": "Costumo organizar a distribuição pela prescrição ativa. Seguir por ela agora ajuda a manter os outros medicamentos andando."
+        }
+      ],
+      "prompt": "Como você organiza a conferência?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 10
+            },
+            {
+              "meter": "demand",
+              "change": -4
+            }
+          ],
+          "id": "current-volume",
+          "next": "intercepted",
+          "notes": [
+            {
+              "skill": "weight",
+              "kind": "improve",
+              "text": "A conversão encontrou o volume da prescrição ativa, mas não a dose correspondente ao plano. No cálculo de doses em mg/kg/dia, obtenha o total diário pelo peso e divida pelas administrações antes de converter em volume.",
+              "example": "Calcular o total diário com 18 kg e 50 mg/kg/dia, depois distribuir pelo intervalo de 8 h."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Pela prescrição ativa: 900 mg ÷ 100 mg/mL = 9 mL. Essa conversão dá o volume prescrito, mas não resolve a diferença em relação ao total diário do plano."
+            },
+            {
+              "from": "nurse",
+              "text": "Na conferência obrigatória, identifiquei a divergência e interrompi o fluxo para esclarecimento médico. Nenhuma dose foi preparada ou administrada; precisamos retomar a análise."
+            }
+          ],
+          "text": "Calcular o volume da prescrição ativa e levá-lo à conferência final como referência para organizar o preparo.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -25
+            },
+            {
+              "meter": "demand",
+              "change": 10
+            }
+          ],
+          "id": "ai-calculation",
+          "next": "contact",
+          "notes": [
+            {
+              "skill": "weight",
+              "kind": "good",
+              "text": "Você pediu resultados separados e conferiu as entradas: 900 mg/dia, 300 mg por administração e 3 mL. Isso tornou verificável a passagem do peso ao total diário, à dose e ao volume.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Pelo plano: 18 kg × 50 mg/kg/dia = 900 mg/dia. O intervalo de 8 h corresponde a 3 administrações por dia."
+            },
+            {
+              "from": "ai",
+              "text": "Por administração: 900 mg ÷ 3 = 300 mg. Para aspirar: 300 mg ÷ 100 mg/mL = 3 mL, antes da diluição prevista no protocolo."
+            },
+            {
+              "from": "nurse",
+              "text": "Conferi as entradas e as etapas com os originais. A conta separa total diário de dose, mas ainda precisamos da prescrição confirmada para liberar o preparo."
+            }
+          ],
+          "text": "Pedir a {{ai}} total diário, dose e volume separados e conferir cada etapa com os dados dos documentos originais.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -15
+            },
+            {
+              "meter": "demand",
+              "change": 12
+            }
+          ],
+          "id": "daily-only",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "weight",
+              "kind": "good",
+              "text": "Você calculou o total diário pelo peso e o apresentou como 900 mg/dia, sem tratá-lo como dose por administração.",
+              "example": null
+            },
+            {
+              "skill": "weight",
+              "kind": "improve",
+              "text": "O pedido ao médico preservou a suspensão do preparo, mas deixou a decomposição da conta para ele. Complete a divisão pelo número de administrações e a conversão em volume para apoiar a confirmação.",
+              "example": "Usar o intervalo de 8 h para distribuir o total diário e então aplicar a concentração de 100 mg/mL."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "O total do plano é 18 kg × 50 mg/kg/dia = 900 mg/dia. Esse resultado é a quantidade do dia, não a de cada administração."
+            },
+            {
+              "from": "nurse",
+              "text": "Mantenho o preparo suspenso com esse pedido a {{doctor}}. Ainda falta distribuir o total pelo intervalo e chegar ao volume; essa parte ficou para ele."
+            }
+          ],
+          "text": "Calcular o total diário pelo peso e pedir a {{doctor}} que defina a dose por administração na prescrição.",
+          "timeJump": null
+        }
+      ],
+      "id": "calculate",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "Precisamos levar uma referência de cálculo para {{doctor}}. O preparo continua parado."
+        },
+        {
+          "from": "nurse",
+          "text": "A prescrição ativa já está assinada. Calcular o volume dela parece um jeito de avançar sem interpretar o que {{doctor}} quis indicar."
+        }
+      ],
+      "prompt": "Que cálculo você encaminha?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -25
+            },
+            {
+              "meter": "demand",
+              "change": 15
+            }
+          ],
+          "id": "send-documents",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "Você encaminhou os documentos ao responsável pela prescrição e manteve o preparo suspenso. Isso impediu que uma quantidade ainda não conferida fosse usada.",
+              "example": null
+            },
+            {
+              "skill": "weight",
+              "kind": "improve",
+              "text": "Toda a comparação e a conta ficaram para o médico. Você pode apoiar o esclarecimento calculando o total diário pelo peso e separando esse resultado da dose por administração.",
+              "example": "Conferir o cálculo de 50 mg/kg/dia com o peso de 18 kg e distribuir o total conforme o intervalo."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Com os documentos enviados a {{doctor}}, mantenho o preparo suspenso. Ele terá de fazer a comparação e esclarecer a quantidade; vamos precisar acompanhar a resposta."
+            }
+          ],
+          "text": "Enviar os documentos a {{doctor}} e manter o preparo suspenso até receber a confirmação da prescrição.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -5
+            },
+            {
+              "meter": "demand",
+              "change": -3
+            }
+          ],
+          "id": "final-barrier",
+          "next": "intercepted",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "A conferência obrigatória interceptou a divergência, mas a identificação ficou toda para {{nurse}}. Compare as unidades, a via e o intervalo ao organizar o medicamento, sem depender apenas dessa etapa final.",
+              "example": "Confrontar a quantidade por dia do plano com a quantidade por administração da prescrição ativa."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Recebi o material e identifiquei a divergência entre os documentos na conferência obrigatória. Interrompi o fluxo para esclarecimento médico; nenhuma dose foi preparada ou administrada."
+            },
+            {
+              "from": "nurse",
+              "text": "A conferência segurou o preparo, mas agora preciso devolver o caso para análise. A quantidade chegou até aqui sem a comparação das unidades."
+            }
+          ],
+          "text": "Encaminhar a prescrição ativa e a solução para {{nurse}} realizar a conferência obrigatória prevista na rotina.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -40
+            },
+            {
+              "meter": "demand",
+              "change": 18
+            }
+          ],
+          "id": "recover-check",
+          "next": "contact",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "Você retomou os documentos originais e verificou o retorno de {{ai}}. Assim, identificou a diferença entre quantidade diária e quantidade por administração sem tratar o apoio ao cálculo como autorização médica.",
+              "example": null
+            },
+            {
+              "skill": "weight",
+              "kind": "good",
+              "text": "Você recuperou a sequência completa do cálculo: peso para total diário, divisão pelas administrações e conversão da dose em volume. Os resultados ficaram disponíveis para conferência com o médico.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Via e intervalo coincidem; o plano traz quantidade por dia e a prescrição, por administração. Pelo plano: 18 kg × 50 mg/kg/dia = 900 mg/dia."
+            },
+            {
+              "from": "ai",
+              "text": "A cada 8 h são 3 administrações por dia: 900 mg ÷ 3 = 300 mg por administração. Com 100 mg/mL: 300 mg ÷ 100 mg/mL = 3 mL, antes da diluição do protocolo."
+            },
+            {
+              "from": "nurse",
+              "text": "Interrompi a organização para conferir as fontes e as contas com você. Agora temos uma comparação verificável, mas o cálculo não altera a prescrição."
+            }
+          ],
+          "text": "Pedir a {{ai}} comparação e cálculo por etapas, conferindo os resultados com os dados dos documentos originais.",
+          "timeJump": null
+        }
+      ],
+      "id": "recover",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "A distribuição está organizada pela prescrição ativa. Ainda falta conferir a relação dela com o plano terapêutico."
+        },
+        {
+          "from": "nurse",
+          "text": "Minha conferência obrigatória ainda vai acontecer antes do preparo. Posso receber a prescrição e a solução nessa etapa, sem interromper a organização agora."
+        }
+      ],
+      "prompt": "Como você encaminha essa conferência?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -25
+            },
+            {
+              "meter": "demand",
+              "change": 12
+            }
+          ],
+          "id": "direct-call",
+          "next": "resolved",
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "good",
+              "text": "Você apresentou os dados conflitantes e o cálculo, pediu confirmação explícita e repetiu a orientação. O contato direto permitiu corrigir a prescrição e concluir a conferência de enfermagem.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "doctor",
+              "text": "Com esses dados, confirmo a intenção de 50 mg/kg/dia. Corrigi a prescrição para cefazolina 300 mg por via intravenosa a cada 8 h; a orientação que você repetiu está correta."
+            },
+            {
+              "from": "nurse",
+              "text": "Conferi a prescrição corrigida e o volume de 3 mL. A conversa exigiu a interrupção e o registro, mas o preparo pode seguir conforme o protocolo institucional de diluição e administração."
+            }
+          ],
+          "text": "Falar com {{doctor}} sobre peso, divergência e cálculo, pedir confirmação e correção, repetir a orientação recebida e registrar a conversa.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -10
+            },
+            {
+              "meter": "demand",
+              "change": 5
+            }
+          ],
+          "id": "written-message",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "good",
+              "text": "Você documentou a divergência e o cálculo e manteve o preparo suspenso até a confirmação. A mensagem reuniu os dados necessários para a revisão médica.",
+              "example": null
+            },
+            {
+              "skill": "communicate",
+              "kind": "improve",
+              "text": "O envio deixou a resolução dependente de resposta e acompanhamento. Como {{doctor}} estava disponível, use o contato direto para obter a confirmação e registre a conversa depois.",
+              "example": "\"O plano resulta em 300 mg por administração, mas a prescrição traz 900 mg a cada 8 h. Pode confirmar a intenção e corrigir a prescrição?\""
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A mensagem deixou a comparação completa registrada e poupou a interrupção agora. O preparo continua suspenso; precisamos acompanhar a resposta, mesmo com {{doctor}} disponível para falar."
+            }
+          ],
+          "text": "Registrar peso, divergência e cálculo em uma mensagem a {{doctor}}, pedir confirmação da prescrição e manter o preparo suspenso até a resposta.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -5
+            },
+            {
+              "meter": "demand",
+              "change": 10
+            }
+          ],
+          "id": "brief-alert",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "improve",
+              "text": "O alerta abriu espaço para revisão, mas faltaram a divergência e a conta já conferida. Inclua esses dados e um pedido explícito de confirmação para evitar outra rodada de esclarecimento.",
+              "example": "\"Com 18 kg, o plano resulta em 900 mg/dia e 300 mg por administração. A prescrição traz 900 mg a cada 8 h; pode confirmar e corrigir?\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "doctor",
+              "text": "Recebi o alerta, mas preciso saber quais dados estão diferentes e qual foi o cálculo. Só o aviso de dúvida não me dá elementos para resolver a prescrição."
+            },
+            {
+              "from": "nurse",
+              "text": "O alerta impediu que a prescrição seguisse para uso imediato. O preparo continua pendente, e agora precisamos completar as informações do pedido."
+            }
+          ],
+          "text": "Avisar a {{doctor}} que há uma dúvida na cefazolina e pedir que revise a prescrição para esclarecer a quantidade indicada.",
+          "timeJump": null
+        }
+      ],
+      "id": "contact",
+      "messages": [
+        {
+          "from": "doctor",
+          "text": "Estou disponível para falar sobre a cefazolina. Qual é a dúvida?"
+        },
+        {
+          "from": "nurse",
+          "text": "A comparação e os cálculos estão conferidos, mas o preparo segue parado. Uma mensagem escrita deixa tudo registrado e evita interromper {{doctor}} no plantão."
+        }
+      ],
+      "prompt": "Como você leva a divergência a {{doctor}}?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Documentos e solução disponíveis",
+      "metrics": [
+        {
+          "label": "Peso atual",
+          "value": "18 kg",
+          "note": "Registro de peso do prontuário."
+        },
+        {
+          "label": "Plano terapêutico",
+          "value": "50 mg/kg/dia; a cada 8 h",
+          "note": "Cefazolina por via intravenosa."
+        },
+        {
+          "label": "Prescrição ativa",
+          "value": "900 mg; a cada 8 h",
+          "note": "Cefazolina por via intravenosa."
+        },
+        {
+          "label": "Concentração fornecida",
+          "value": "100 mg/mL",
+          "note": "Etiqueta da solução da farmácia."
+        }
+      ],
+      "note": "Originais disponíveis. Alterações exigem autorização médica; há conferência de enfermagem antes do preparo."
+    }
+  ],
+  "setting": "Plantão na Clínica Vale Sereno",
+  "skills": [
+    {
+      "id": "weight",
+      "name": "Calcular dose por peso",
+      "practice": "Para um paciente de 18 kg, calcule 50 mg/kg/dia divididos a cada 8 h e explique a diferença entre total diário e dose."
+    },
+    {
+      "id": "check",
+      "name": "Conferir a prescrição",
+      "practice": "Compare uma prescrição com seu plano terapêutico e marque peso, unidade, intervalo e via antes de calcular o volume."
+    },
+    {
+      "id": "communicate",
+      "name": "Comunicar uma dúvida ao médico",
+      "practice": "Em uma fala curta, apresente a divergência deste caso, seu cálculo e o pedido de confirmação da prescrição."
+    }
+  ],
+  "startNodeId": "review",
+  "summary": [
+    "Em mg/kg/dia, o peso determina o total diário, que deve ser dividido pelo número de administrações para obter a dose.",
+    "A conversão de dose em volume depende de conferir o que a quantidade prescrita representa.",
+    "Uma dúvida de dose deve apresentar os dados conflitantes, o cálculo e um pedido explícito de confirmação da prescrição."
+  ],
+  "team": [
+    {
+      "id": "nurse",
+      "role": "Enfermeira responsável",
+      "expertise": "Confere o preparo antes da administração e quer evitar retrabalho na distribuição dos medicamentos.",
+      "ai": false
+    },
+    {
+      "id": "doctor",
+      "role": "Médico plantonista",
+      "expertise": "Confirma a intenção terapêutica e autoriza qualquer alteração na prescrição; está disponível para contato direto.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Assistente de cálculo",
+      "expertise": "Compara unidades e calcula doses e volumes quando recebe os dados; não valida nem altera prescrições.",
+      "ai": true
+    }
+  ],
+  "title": "Qual dose de cefazolina deve seguir para preparo?"
+}

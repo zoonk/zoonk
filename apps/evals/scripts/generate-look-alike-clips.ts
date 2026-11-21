@@ -14,7 +14,7 @@ async function generateClip({ userInput }: (typeof TEST_CASES)[number]) {
 
   const { data, error } = await generateLanguageAudio({
     language: userInput.voicedAs,
-    text: userInput.word,
+    text: userInput.speechText ?? userInput.word,
   });
 
   if (error) {
@@ -22,7 +22,7 @@ async function generateClip({ userInput }: (typeof TEST_CASES)[number]) {
   }
 
   await writeFile(file, data.audio);
-  logInfo(`Saved ${file}`);
+  logInfo(`Saved ${file} (speech cost: ${data.provenance.costUsd ?? "unavailable"} USD)`);
 }
 
 await mkdir(LOOK_ALIKE_CLIPS_DIR, { recursive: true });

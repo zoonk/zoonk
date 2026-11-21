@@ -1,0 +1,516 @@
+{
+  "title": "Is checkout B ready to launch?",
+  "setting": "Monday at Brindle Cart",
+  "mission": "You are a junior web analyst at Brindle Cart. Recommend **whether checkout B should replace checkout A**, using evidence the product team can explain and act on.",
+  "deadline": "Give {{product}} a recommendation today at 3 p.m.",
+  "panels": [
+    {
+      "title": "First look at the checkout experiment",
+      "metrics": [
+        {
+          "label": "Checkout A",
+          "value": "50 purchases / 1,000 visits",
+          "note": "5% of visitors purchased."
+        },
+        {
+          "label": "Checkout B",
+          "value": "60 purchases / 1,000 visits",
+          "note": "6% of visitors purchased."
+        },
+        {
+          "label": "Available traffic",
+          "value": "About 1,200 visitors per day",
+          "note": "Visitors can be split equally between A and B."
+        },
+        {
+          "label": "Improvement worth detecting",
+          "value": "5% → 6%",
+          "note": "One extra purchase per 100 visits."
+        }
+      ],
+      "note": "Visitors were randomly assigned. B changes a shipping message; prices and checkout steps stay the same. No sample size or stopping rule was set."
+    }
+  ],
+  "team": [
+    {
+      "id": "data",
+      "role": "Experimentation analyst",
+      "expertise": "Checks whether experiments can separate a real effect from chance.",
+      "ai": false
+    },
+    {
+      "id": "product",
+      "role": "Product manager",
+      "expertise": "Wants a useful checkout improvement without delaying other work.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI analysis assistant",
+      "expertise": "Calculates test results and sample sizes for people to review.",
+      "ai": true
+    }
+  ],
+  "meters": [
+    {
+      "id": "evidence",
+      "label": "Strength of the recommendation",
+      "start": 35,
+      "goodWhen": "high"
+    },
+    {
+      "id": "momentum",
+      "label": "Launch momentum",
+      "start": 70,
+      "goodWhen": "high"
+    }
+  ],
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Tell a real difference from chance",
+      "practice": "Write two sentences explaining why 60 purchases versus 50 does not, by itself, establish that one checkout works better."
+    },
+    {
+      "id": "sample",
+      "name": "Choose a sample size",
+      "practice": "Draft one AI request that includes the starting purchase rate, the improvement worth detecting, and a request for a sample-size explanation."
+    },
+    {
+      "id": "explain",
+      "name": "Explain a test result",
+      "practice": "Explain one experiment result in two sentences: what the evidence supports and what it does not promise."
+    }
+  ],
+  "startNodeId": "start",
+  "nodes": [
+    {
+      "id": "start",
+      "messages": [
+        {
+          "from": "product",
+          "text": "B got 10 more purchases with the same number of visitors. The change is cheap to release. Can we call it a winner today?"
+        },
+        {
+          "from": "data",
+          "text": "Under H₀ (p_A = p_B), a two-proportion z-test gives z ≈ 1.0 and p ≈ 0.33 > α = 0.05, so we fail to reject the null: the observed Δ of 1 pp is within the binomial sampling variance."
+        }
+      ],
+      "prompt": "How do you prepare your recommendation?",
+      "choices": [
+        {
+          "id": "use-gap",
+          "text": "Use the current purchase rates to prepare a decision for today's meeting.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "product",
+              "text": "That keeps us moving. I'll need you to explain how much confidence we should put in the gap."
+            },
+            {
+              "from": "data",
+              "text": "We still haven't checked how much random variation could explain."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": -10
+            },
+            {
+              "meter": "momentum",
+              "change": 10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "You compared the rates, but the size of the gap alone cannot tell you whether chance is a reasonable explanation.",
+              "example": "Ask for a test of the current gap before describing B as a winner."
+            }
+          ],
+          "next": "early"
+        },
+        {
+          "id": "ask-ai",
+          "text": "Ask {{ai}} to check the gap and plan a test for the improvement we care about.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "With α = 0.05 and 1 − β = 0.8, a minimum detectable effect of 1 pp off a 5% baseline implies n ≈ 8,200 per arm, from n = (z₁₋α/₂ + z₁₋β)² · [p₁(1 − p₁) + p₂(1 − p₂)] / Δ²."
+            },
+            {
+              "from": "data",
+              "text": "I'll review the calculation and the assumptions before we choose a plan."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 15
+            },
+            {
+              "meter": "momentum",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You tied the sample-size request to the starting rate and the improvement the business wants to detect.",
+              "example": null
+            },
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You used AI to check the evidence rather than asking it to justify a launch.",
+              "example": null
+            }
+          ],
+          "next": "plan"
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "messages": [
+        {
+          "from": "data",
+          "text": "I checked the plan: about 8,200 per version gives roughly an 80% chance of detecting the target improvement. We'll use a rule that falsely flags a difference about 5% of the time when there is none."
+        },
+        {
+          "from": "data",
+          "text": "Those are planning settings, not guarantees. Treat today's results as an early look and use fresh visitors for the planned test, without stopping early when B looks ahead."
+        },
+        {
+          "from": "product",
+          "text": "At our traffic level, that's about 14 days. Waiting is manageable, but it pushes back the launch and ties up our experiment slot."
+        }
+      ],
+      "prompt": "What plan do you agree to?",
+      "choices": [
+        {
+          "id": "fresh-test",
+          "text": "Run the fresh test to 8,200 visitors per version, then make the launch decision.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "product",
+              "text": "I'll reserve the experiment slot and move the launch review. We can make today's meeting about approving the plan."
+            },
+            {
+              "from": "data",
+              "text": "We'll keep the assignment random and compare purchase rates once the planned sample is complete."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 30
+            },
+            {
+              "meter": "momentum",
+              "change": -20
+            }
+          ],
+          "timeJump": {
+            "label": "About 14 days later",
+            "panel": {
+              "title": "Fresh test: planned sample complete",
+              "metrics": [
+                {
+                  "label": "Checkout A",
+                  "value": "410 purchases / 8,200 visits",
+                  "note": "5% purchased."
+                },
+                {
+                  "label": "Checkout B",
+                  "value": "492 purchases / 8,200 visits",
+                  "note": "6% purchased."
+                },
+                {
+                  "label": "Observed difference",
+                  "value": "1 percentage point",
+                  "note": "One extra purchase per 100 visits."
+                }
+              ],
+              "note": "Only fresh-test visitors are included. The team reached the planned sample without stopping early."
+            }
+          },
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You accepted a real scheduling cost to collect enough observations for the improvement that matters.",
+              "example": null
+            },
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You set the stopping rule before collecting fresh data, rather than stopping whenever the result looked favorable.",
+              "example": null
+            }
+          ],
+          "next": "result"
+        },
+        {
+          "id": "decide-now",
+          "text": "Keep the experiment slot free and make today's decision from the first 2,000 visits.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "product",
+              "text": "That avoids the delay. We still need to decide whether this supports a launch or just a promising lead."
+            },
+            {
+              "from": "data",
+              "text": "The sample-size calculation doesn't strengthen the data we already have. The initial gap is still uncertain."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": -10
+            },
+            {
+              "meter": "momentum",
+              "change": 10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "You identified the needed sample but chose not to collect it. Keep the recommendation tentative rather than treating the planning work as new evidence.",
+              "example": "\"B looks promising, but we have not collected enough evidence to call it better.\""
+            }
+          ],
+          "next": "early"
+        }
+      ]
+    },
+    {
+      "id": "early",
+      "messages": [
+        {
+          "from": "product",
+          "text": "We're still looking at 50 purchases for A and 60 for B, out of 1,000 visits each. What should I put in today's decision note?"
+        },
+        {
+          "from": "data",
+          "text": "A launch decision and a claim that B truly works better are different things. We can choose a business action without pretending the evidence is stronger than it is."
+        }
+      ],
+      "prompt": "What do you recommend with the evidence available?",
+      "choices": [
+        {
+          "id": "launch-winner",
+          "text": "Launch B and report that its higher purchase rate shows the new message works.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "product",
+              "text": "I'll launch it and schedule a review. But our launch note will be leaning heavily on just 10 extra purchases."
+            },
+            {
+              "from": "data",
+              "text": "That gap could still be chance. Watching purchases after launch won't replace a planned comparison with A."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": -20
+            },
+            {
+              "meter": "momentum",
+              "change": 15
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "You treated an observed lead as evidence of a real effect. A larger planned comparison is needed to make that claim responsibly.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Separate a decision to launch from a conclusion that the experiment established a benefit.",
+              "example": "\"We are launching a promising change, but this early comparison has not established that it increases purchases.\""
+            }
+          ],
+          "next": "early-launch"
+        },
+        {
+          "id": "hold-test",
+          "text": "Keep A for now and request a planned test before calling B the better checkout.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "data",
+              "text": "I'll review the sample target and stopping rule before new visitors enter the test. Today's results will remain an early look."
+            },
+            {
+              "from": "product",
+              "text": "I'll mark the result as inconclusive and find room for the test. That delays the release, but gives us a defensible next step."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 15
+            },
+            {
+              "meter": "momentum",
+              "change": -20
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You left room for chance instead of turning a promising result into a firm conclusion.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You paired uncertainty with a concrete next step, so the team can act without overstating what it knows.",
+              "example": null
+            }
+          ],
+          "next": "held"
+        }
+      ]
+    },
+    {
+      "id": "result",
+      "messages": [
+        {
+          "from": "ai",
+          "text": "The fresh test gives a p-value of about 0.005. If A and B were equally effective, a gap at least this large in either direction would occur about 0.5% of the time under this test's assumptions."
+        },
+        {
+          "from": "data",
+          "text": "I checked the counts and calculation. This meets our planned evidence rule, but it doesn't mean there's a 99.5% chance B is better or that future purchases will stay at 6%."
+        },
+        {
+          "from": "product",
+          "text": "The gap is still 5% versus 6%, just like the first look. What's different now, and can we launch?"
+        }
+      ],
+      "prompt": "How do you explain your recommendation?",
+      "choices": [
+        {
+          "id": "prove-forecast",
+          "text": "Recommend B: the larger test proves it is better, so use 6% as a dependable forecast.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "data",
+              "text": "The test supports B, but 'proves' and 'dependable forecast' go too far. I'll correct those claims before the launch note goes out."
+            },
+            {
+              "from": "product",
+              "text": "We'll schedule B, but keep the sales forecast provisional and watch performance after launch."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": -10
+            },
+            {
+              "meter": "momentum",
+              "change": 10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Strong evidence is not proof or a promise about future performance. Describe the observed result and leave room for uncertainty.",
+              "example": "\"The planned test supports B; 6% was its observed purchase rate, not a guaranteed future rate.\""
+            }
+          ],
+          "next": "corrected"
+        },
+        {
+          "id": "explain-evidence",
+          "text": "Recommend B: the same gap is harder to explain by chance with more visitors, but future results can vary.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "product",
+              "text": "That's clear. We'll launch B and describe the observed improvement as one extra purchase per 100 visits."
+            },
+            {
+              "from": "data",
+              "text": "The recommendation matches both the planned test and the size of the improvement we wanted to detect."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "evidence",
+              "change": 15
+            },
+            {
+              "meter": "momentum",
+              "change": 10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You explained why the same percentage gap can provide stronger evidence when it comes from a larger, properly planned comparison.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You gave a clear recommendation, translated the improvement into purchases per 100 visits, and avoided promising future results.",
+              "example": null
+            }
+          ],
+          "next": "supported"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "early-launch",
+      "outcome": "B launches on the strength of 60 purchases versus A's 50, with 1,000 visits each. The team schedules a review, but the early comparison has not established that B increases purchases."
+    },
+    {
+      "id": "held",
+      "outcome": "A stays live while the team arranges a planned test. The 5% versus 6% early result remains a promising lead, not a demonstrated improvement."
+    },
+    {
+      "id": "corrected",
+      "outcome": "B is scheduled after the fresh test records 5% for A and 6% for B, with 8,200 visits each. {{data}} corrects the certainty claim before release, and the sales forecast remains provisional."
+    },
+    {
+      "id": "supported",
+      "outcome": "B is approved after the fresh test records 410 purchases for A and 492 for B, with 8,200 visits each. The team communicates strong evidence of an improvement, not a guarantee that future purchases will rise by the same amount."
+    }
+  ],
+  "summary": [
+    "A point estimate of the effect size is insufficient: significance requires rejecting H₀ at a pre-specified α.",
+    "Derive n from the MDE, α and the target power, and fix the stopping rule ex ante to control the type I error rate.",
+    "Explain what the evidence supports without turning a test result into proof or a promise about future performance."
+  ]
+}

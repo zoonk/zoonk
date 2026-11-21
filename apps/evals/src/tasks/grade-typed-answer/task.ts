@@ -24,6 +24,14 @@ export const gradeTypedAnswerTask: Task<
   },
   id: "grade-typed-answer",
   name: "Grade typed answer",
+  priorities: {
+    distribution: "private",
+    first: "quality",
+    reads: "A learner sees right or wrong and feedback",
+    reason:
+      "A wrong verdict marks a learner wrong for being right; called only after exact matching fails",
+    waits: "A learner waits in the answer request",
+  },
   score: scoreTypedAnswerGrade,
   testCases: TEST_CASES,
 };

@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-soccer-formation",
+        "claimId": "682683a082de00dd",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "fb924d52187fc372acc12e4222aca7e413fa9097b685e56f9ee81277c71345f2.first.c7bf8d7c-c7d8-44ac-bd1d-3876e264fde1.2",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0030813499999999996,
+    "id": "b1bea1fc64ef011fb28f6ce18cd5d29ac72f455ce901722e98454359f633a7fb",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "5c829d06705bd67a",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "5570b3704b2488614761a77cba5717e2fcd791b5037d0b5664d83fb03a53d529",
+          "format": "text"
+        },
+        "B": {
+          "blob": "93d007cf86e8fdfdc3bdeb1233d4836262c7b6a5eef73ab850d899ceb3ba58d1",
+          "format": "text"
+        },
+        "claim": "The plan never shows or compares a 4-4-2, despite the requirement for a 4-3-3 and 4-4-2 comparison in one picture labeled 1 and 2.",
+        "claimId": "682683a082de00dd",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "dccc089b38eb45036a7c5a8d6e2cbd2731dca0f8f6228734d0755773c85e5e5b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "756d8ec6f2be545a0529ebd3f962e1f5bab37f9a3fa86a7648537d47891cf61f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Whole lesson: no screen includes a 4-4-2 formation or a comparison labeled 1 and 2.",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "5c829d06705bd67a",
+          "finding": "doesn't hold",
+          "reason": "Output A says the opposite: its guess screen answers that the rent is owed in full (\"O valor inteiro\") and its explanation says the monthly rent \"continua devido mesmo sem fazer nenhum bolo\". Its application screen also keeps aluguel de R$ 900,00 in the month's reserve."
+        },
+        {
+          "claimId": "682683a082de00dd",
+          "finding": "doesn't hold",
+          "reason": "It is true that neither output shows or compares a 4-4-2, but the expectations only ask for a 4-4-2 comparison as one picture labeled 1 and 2 \"when compared\", so no requirement is broken and the claim overstates the requirement."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

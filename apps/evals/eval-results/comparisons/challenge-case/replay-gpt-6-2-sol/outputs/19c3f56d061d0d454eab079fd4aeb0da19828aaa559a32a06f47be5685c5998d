@@ -1,0 +1,481 @@
+{
+  "title": "Qual dose deve ser administrada?",
+  "setting": "Plantão no Hospital Vale Sereno",
+  "mission": "Confira a dose de cefazolina prescrita para uma criança de 18 kg e defina **como proceder antes da administração**.",
+  "deadline": "Horário previsto da dose: 14h",
+  "panels": [
+    {
+      "title": "Dados para a dose",
+      "metrics": [
+        {
+          "label": "Peso registrado",
+          "value": "18 kg",
+          "note": "Peso atual confirmado no prontuário."
+        },
+        {
+          "label": "Plano médico",
+          "value": "10 mg/kg por dose",
+          "note": "Cefazolina por via intravenosa."
+        },
+        {
+          "label": "Prescrição atual",
+          "value": "200 mg IV",
+          "note": "Uma dose prevista para as 14h."
+        },
+        {
+          "label": "Solução da farmácia",
+          "value": "10 mg/mL",
+          "note": "Preparada e identificada para uso intravenoso."
+        }
+      ],
+      "note": "O plano médico e a prescrição precisam ser comparados antes da administração."
+    }
+  ],
+  "team": [
+    {
+      "id": "nurse",
+      "role": "Enfermeira de referência",
+      "expertise": "Acompanha as conferências de enfermagem e a segurança da administração.",
+      "ai": false
+    },
+    {
+      "id": "doctor",
+      "role": "Médico prescritor",
+      "expertise": "Avalia a indicação e é responsável por esclarecer e atualizar a prescrição.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Assistente de IA",
+      "expertise": "Ajuda a conferir cálculos informados pela equipe, sem autorizar medicamentos.",
+      "ai": true
+    }
+  ],
+  "meters": [
+    {
+      "id": "safety",
+      "label": "Segurança da conferência",
+      "start": 50,
+      "goodWhen": "high"
+    },
+    {
+      "id": "time",
+      "label": "Tempo até a dose",
+      "start": 70,
+      "goodWhen": "high"
+    }
+  ],
+  "skills": [
+    {
+      "id": "weight",
+      "name": "Dose por peso",
+      "practice": "Calcule uma dose para um paciente fictício de 20 kg usando uma orientação de 5 mg/kg por dose."
+    },
+    {
+      "id": "check",
+      "name": "Conferência da prescrição",
+      "practice": "Compare, em um exemplo fictício, a dose, a unidade e a via de uma prescrição com o plano médico."
+    },
+    {
+      "id": "communicate",
+      "name": "Comunicação com o médico",
+      "practice": "Em uma frase, informe ao médico uma divergência fictícia entre a dose calculada e a prescrita."
+    }
+  ],
+  "startNodeId": "start",
+  "nodes": [
+    {
+      "id": "start",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "A dose está prevista para as 14h. O plano médico registra 10 mg/kg por dose, mas a prescrição está em miligramas."
+        },
+        {
+          "from": "doctor",
+          "text": "Estou disponível se houver alguma divergência. Me avise antes de administrar."
+        }
+      ],
+      "prompt": "Como você começa a conferência?",
+      "choices": [
+        {
+          "id": "ask-ai",
+          "text": "Peço à IA para conferir o cálculo e comparo com a prescrição.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Com os dados informados, 18 kg × 10 mg/kg = 180 mg por dose. A prescrição registra 200 mg IV; confirme os dados e leve a divergência ao prescritor."
+            },
+            {
+              "from": "nurse",
+              "text": "Os dados da conta conferem com o prontuário. Precisamos esclarecer a diferença."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": 15
+            },
+            {
+              "meter": "time",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "weight",
+              "kind": "good",
+              "text": "Você usou a IA para conferir a conta e comparou o resultado com a prescrição.",
+              "example": null
+            }
+          ],
+          "next": "checked"
+        },
+        {
+          "id": "calculate",
+          "text": "Calculo a dose pelo peso e comparo com a prescrição.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A conta é 18 kg × 10 mg/kg = 180 mg por dose. A prescrição de 200 mg IV não coincide com o plano."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": 15
+            },
+            {
+              "meter": "time",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "weight",
+              "kind": "good",
+              "text": "Você calculou a dose por peso e identificou a diferença antes de administrar.",
+              "example": null
+            }
+          ],
+          "next": "checked"
+        },
+        {
+          "id": "use-order",
+          "text": "Sigo a dose da prescrição para não atrasar o preparo.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Antes do preparo, precisamos comparar os 200 mg com o plano por peso. Vou segurar a administração até esclarecermos."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": -15
+            },
+            {
+              "meter": "time",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "Mesmo com o horário próximo, compare a prescrição com o plano por peso antes de preparar a dose.",
+              "example": null
+            }
+          ],
+          "next": "unchecked"
+        }
+      ]
+    },
+    {
+      "id": "checked",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "O cálculo pelo plano dá 180 mg, e a prescrição diz 200 mg IV. Não devemos alterar a dose por conta própria."
+        },
+        {
+          "from": "doctor",
+          "text": "Posso revisar agora, mas preciso saber exatamente o que vocês encontraram."
+        }
+      ],
+      "prompt": "Como você encaminha a divergência?",
+      "choices": [
+        {
+          "id": "wait",
+          "text": "Seguro a dose e aguardo a próxima revisão médica.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A dose não será administrada enquanto houver dúvida. Sem avisar o prescritor agora, a revisão pode demorar."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": 5
+            },
+            {
+              "meter": "time",
+              "change": -20
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "improve",
+              "text": "Segurar a dose evita uma administração com dúvida; avise também o prescritor para que ele possa resolvê-la.",
+              "example": "“O plano resulta em 180 mg, mas a prescrição diz 200 mg IV. Pode revisar?”"
+            }
+          ],
+          "next": "held"
+        },
+        {
+          "id": "clarify",
+          "text": "Informo os 180 mg calculados e os 200 mg prescritos ao médico.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "doctor",
+              "text": "Revisei a indicação, a via e o esquema. A dose pretendida é 180 mg IV; vou atualizar a prescrição e confirmar as orientações de infusão."
+            },
+            {
+              "from": "nurse",
+              "text": "A prescrição atualizada já está disponível. Vamos conferir o volume e seguir as orientações de infusão."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": 20
+            },
+            {
+              "meter": "time",
+              "change": -10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "good",
+              "text": "Você comunicou os dois valores e deixou a decisão de alterar a prescrição com o médico.",
+              "example": null
+            }
+          ],
+          "next": "confirmed"
+        },
+        {
+          "id": "prepare",
+          "text": "Inicio o preparo de 200 mg e aviso o médico em seguida.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Vou interromper o preparo: a diferença precisa ser esclarecida antes. A dose ficará suspensa por enquanto."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": -20
+            },
+            {
+              "meter": "time",
+              "change": -15
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "Diante de uma divergência, suspenda o preparo e peça a revisão antes de prosseguir.",
+              "example": null
+            }
+          ],
+          "next": "held"
+        }
+      ]
+    },
+    {
+      "id": "unchecked",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "Ainda não comparamos os 200 mg com a orientação de 10 mg/kg. O prescritor está disponível agora."
+        }
+      ],
+      "prompt": "O que você faz antes de prosseguir?",
+      "choices": [
+        {
+          "id": "check-and-call",
+          "text": "Calculo a dose e informo ao médico qualquer diferença.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "São 18 kg × 10 mg/kg = 180 mg por dose, diferentes dos 200 mg prescritos."
+            },
+            {
+              "from": "doctor",
+              "text": "Revisei a indicação, a via e o esquema. A dose pretendida é 180 mg IV; atualizei a prescrição e confirmei as orientações de infusão."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": 20
+            },
+            {
+              "meter": "time",
+              "change": -10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "weight",
+              "kind": "good",
+              "text": "Você retomou o cálculo por peso e levou a divergência ao prescritor antes de prosseguir.",
+              "example": null
+            }
+          ],
+          "next": "confirmed"
+        },
+        {
+          "id": "wait-review",
+          "text": "Mantenho a dose suspensa até a próxima revisão médica.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A dose ficará suspensa, mas a dúvida ainda precisa ser comunicada ao prescritor."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": 5
+            },
+            {
+              "meter": "time",
+              "change": -20
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "improve",
+              "text": "Além de segurar a dose, calcule o valor pelo plano e comunique a comparação ao médico disponível.",
+              "example": "“Para 18 kg, o plano dá 180 mg, mas a prescrição diz 200 mg IV. Pode revisar?”"
+            }
+          ],
+          "next": "held"
+        }
+      ]
+    },
+    {
+      "id": "confirmed",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "A prescrição atualizada indica 180 mg IV. A solução identificada pela farmácia contém 10 mg/mL."
+        }
+      ],
+      "prompt": "Como você prossegue com a dose confirmada?",
+      "choices": [
+        {
+          "id": "twenty",
+          "text": "Separo 20 mL e peço a conferência antes da infusão.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A conferência detectou que 20 mL correspondem a 200 mg, não a 180 mg. Vamos suspender o preparo e corrigir a quantidade."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": -15
+            },
+            {
+              "meter": "time",
+              "change": -15
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "weight",
+              "kind": "improve",
+              "text": "Divida a dose confirmada pela concentração para encontrar o volume: 180 mg ÷ 10 mg/mL = 18 mL.",
+              "example": null
+            }
+          ],
+          "next": "held"
+        },
+        {
+          "id": "eighteen",
+          "text": "Confiro 18 mL e sigo as orientações de infusão e o protocolo.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Conferido: 180 mg ÷ 10 mg/mL = 18 mL. A dose, a via e as orientações de infusão estão de acordo com a prescrição atualizada."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "safety",
+              "change": 15
+            },
+            {
+              "meter": "time",
+              "change": -5
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "Você conferiu o volume com a concentração, a dose atualizada e a via antes de prosseguir.",
+              "example": null
+            }
+          ],
+          "next": "given"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "given",
+      "outcome": "Após a revisão médica e as conferências de enfermagem, a dose de 180 mg IV foi administrada seguindo as orientações de infusão. O volume correspondente da solução foi 18 mL."
+    },
+    {
+      "id": "held",
+      "outcome": "A dose ficou suspensa para esclarecer ou corrigir a divergência; nenhuma quantidade foi administrada. A equipe precisará concluir a revisão antes de prosseguir."
+    }
+  ],
+  "summary": [
+    "Uma dose por peso é calculada multiplicando o peso pela orientação em mg/kg e deve ser comparada com a prescrição.",
+    "Quando há divergência, suspenda o preparo e informe ao prescritor os valores encontrados; não altere a dose por conta própria.",
+    "Depois da confirmação, confira dose, concentração, volume e via, além das orientações de infusão."
+  ]
+}

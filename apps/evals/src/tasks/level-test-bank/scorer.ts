@@ -60,9 +60,7 @@ function getSpeakingProblems(bank: GenerateLevelTestBankSchema): string[] {
   ).map((level) => `${level} doesn't have exactly one sentence to say.`);
 }
 
-export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
-  const bank = JSON.parse(output) as GenerateLevelTestBankSchema;
-
+function checkBankStructure(bank: GenerateLevelTestBankSchema) {
   const groups = TEST_LEVELS.flatMap((level) =>
     SKILLS.map((skill) => getGroupProblems({ bank, level, skill })),
   );
@@ -70,16 +68,34 @@ export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
   const parts = [...groups, getSpeakingProblems(bank)];
 
   return {
-    judgedOutput: output,
     passed: parts.filter((problems) => problems.length === 0).length,
     problems: parts.flat(),
     total: parts.length,
+  };
+}
+
+export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
+  const bank = JSON.parse(output) as GenerateLevelTestBankSchema;
+
+  const questions = bank.questions.map((question, index) => ({
+    ...question,
+    itemLocator: `questions[${index}]`,
+  }));
+
+  return {
+    ...checkBankStructure(bank),
+    blockingProblems: questions.length === 0 ? ["No placement question passed its check."] : [],
+    judgedOutput: JSON.stringify({ ...bank, questions }),
+    keyFlawLocators: questions.map((question) => question.itemLocator),
   };
 };
 
 export const scoreLevelTestBank: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkLevelTestBank({ output: value, testCase }),
+    check: (value) => ({
+      ...checkBankStructure(JSON.parse(value) as GenerateLevelTestBankSchema),
+      judgedOutput: value,
+    }),
     output,
     scoreCategories: LEVEL_TEST_BANK_SCORE_CATEGORIES,
     testCase,

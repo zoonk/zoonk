@@ -1,7 +1,7 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityReason, ActivityReasons } from "../_components/activity-reasons";
 import { type MatchCard } from "./match-pairs-columns";
 

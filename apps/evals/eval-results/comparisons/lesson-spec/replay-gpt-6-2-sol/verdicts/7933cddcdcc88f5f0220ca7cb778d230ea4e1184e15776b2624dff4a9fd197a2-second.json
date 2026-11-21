@@ -1,0 +1,189 @@
+{
+  "attempt": "second",
+  "costUsd": 0.00888749,
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "7933cddcdcc88f5f0220ca7cb778d230ea4e1184e15776b2624dff4a9fd197a2",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach one idea, the 4-3-3 lines, with one skill and the same lesson boundaries.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both follow a sound screen order with a question hook, a non-counting guess, explanations before checks and a final application, so neither plan is clearly stronger.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "A's explanation screens each add a new part of the picture, while B repeats one identical picture across several screens and puts a visual on the hook that the question doesn't need.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are plain, short overview texts in US English with no formulas and light checks.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess asks where the three forwards spread across the field, but its visual is null, so the learner must picture the spread to answer.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner has to imagine the forwards' spread across the field to make the guess, which slows down a screen meant to be quick.",
+            "location": {
+              "detail": "Ask where the front three will usually spread out as the team attacks",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's visuals each add something new, and its hook stays text only, so it teaches the same idea with less repetition than B."
+        },
+        "pairId": "0680c6a2-3970-4a2e-a873-7df2d8fd8efc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach the same single idea with the same skill.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same screen order and the same checks.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so neither reader is served better.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in language, level and scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook shows a full picture of the formation, though the question asks only what the numbers mean, so the picture gives away the answer before the learner thinks.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the answer on the picture before trying to work it out, so the hook does less to make them think.",
+            "location": {
+              "detail": "screen 1 (hook)",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Several explanation screens reuse the same picture with nothing new added, so the repeated picture adds no information after the first.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same picture again and again, which adds clutter without teaching the next step.",
+            "location": {
+              "detail": "screens 2 and 4 to 7",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The hook shows a full picture of the formation, though the question asks only what the numbers mean, so the picture gives away the answer before the learner thinks.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the answer on the picture before trying to work it out, so the hook does less to make them think.",
+            "location": {
+              "detail": "screen 1 (hook)",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Several explanation screens reuse the same picture with nothing new added, so the repeated picture adds no information after the first.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same picture again and again, which adds clutter without teaching the next step.",
+            "location": {
+              "detail": "screens 2 and 4 to 7",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "1ebbcee9-2bf5-484a-bb4f-db3a4b3bd74d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach one skill, percent change, with the same canonical topic.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens with a simple everyday salary question, while B's hook gives a formula to a beginner before any intuition.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are text-only with tables shown where the data fits, so neither has a visual advantage.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A stays within the beginner level and the lesson's scope, while B brings in a formula before intuition and jargon from other ideas.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook gives the formal percent change formula before any intuition, which the beginner expectations do not allow.",
+            "criterion": "screenPlan",
+            "learnerCost": "A beginner who meets the formula first is likely to stop reading and will not see why the formula works.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The explanation brings in percentage-point change and logarithmic returns, which are out of scope for a beginner lesson on percent change.",
+            "criterion": "levelAndScope",
+            "learnerCost": "The learner meets terms they do not need yet and may get confused about which change is being discussed.",
+            "location": {
+              "detail": "distinguish it from percentage-point change and from logarithmic returns",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A begins with a plain everyday salary question and stays at beginner level, while B opens with a formula and adds out-of-scope terms."
+        },
+        "pairId": "715ea478-7be6-4436-8a5c-9ec246dbd6ed"
+      }
+    ]
+  }
+}

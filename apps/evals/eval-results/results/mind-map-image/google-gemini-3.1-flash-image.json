@@ -2,55 +2,29 @@
   "modelId": "google/gemini-3.1-flash-image",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "All parts are present and correctly placed: the title cloud in the center, the central idea at the top, four numbered colored branches with their sentences, bullets and sketches, the comparison table and the summary at the bottom. All text matches the structure exactly. Minor issues: the branch 1 bullet box nearly overlaps the cloud, and the extra bulbs add slight clutter.",
-          "score": 8,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "A warm paper study sheet with one soft color per branch, dashed bullet boxes and colored-pencil sketches. The lettering feels more like a clean font than hand marker, and the extra decorative bulbs add mild clutter.",
-          "score": 8,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "Text is large, high-contrast and well spaced, and every word is correct. The only issue is the small number/symbol marks on the meter sketch.",
-          "score": 9,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (27 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 7075,
-          "outputTokens": 1021,
-          "reasoningTokens": 431
+          "inputTokens": 7431,
+          "outputTokens": 1040,
+          "reasoningTokens": 423
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The electric meter sketch has symbol/number-like marks ('$ $ 3 $') on its display, though sketches should carry no words or numbers. Two unrequested light-bulb doodles add clutter, and branch 1's bulb competes with its own solar-cell sketch. The purple dashed bullet box of branch 1 touches the central cloud at its lower-right corner.",
+          "conclusion": "The sheet is cream or warm-tinted paper edge to edge, not plain white. The corners are visibly off-white, a departure from the house style. Two labels the scene does not list were added: 'Ideia central' and 'Resumo:'. The electric-meter sketch carries symbols that look like '$ $ 3 $', putting characters inside a sketch.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Branch 1 has two sketches, a light bulb and a solar cell. A second decorative bulb sits beside the summary. These add small clutter. The branch 4 sketch sits beside the bullets rather than near the branch title.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Remove the decorative bulbs and leave the meter display blank. Add a little spacing between branch 1's bullet box and the cloud. Use a slightly more hand-lettered marker feel instead of the uniform typeset look.",
+          "conclusion": "Use pure white paper. Drop the added labels or confirm they belong to the template. Keep the meter face free of characters. Use one sketch per branch.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -66,13 +40,19 @@
               {
                 "drawing": "a solar cell",
                 "explanation": "A luz solar movimenta cargas elétricas e gera corrente contínua.",
-                "points": ["A luz põe cargas em movimento", "Corrente elétrica acende uma lâmpada"],
+                "points": [
+                  "A luz põe cargas em movimento",
+                  "Corrente elétrica acende uma lâmpada"
+                ],
                 "title": "Células fotovoltaicas"
               },
               {
                 "drawing": "a solar panel",
                 "explanation": "Reúne células para gerarem eletricidade juntas, sob proteção.",
-                "points": ["Reúne células como ladrilhos", "Protege contra chuva e sujeira"],
+                "points": [
+                  "Reúne células como ladrilhos",
+                  "Protege contra chuva e sujeira"
+                ],
                 "title": "Painel fotovoltaico"
               },
               {
@@ -87,7 +67,10 @@
               {
                 "drawing": "an electric meter",
                 "explanation": "Sustentam, conduzem, protegem e medem a energia do sistema.",
-                "points": ["Estrutura fixa painéis no telhado", "Medidor registra a eletricidade"],
+                "points": [
+                  "Estrutura fixa painéis no telhado",
+                  "Medidor registra a eletricidade"
+                ],
                 "title": "Componentes do sistema"
               }
             ],
@@ -96,11 +79,17 @@
               "columns": [
                 {
                   "name": "Painel fotovoltaico",
-                  "points": ["Recebe luz do sol", "Fornece eletricidade"]
+                  "points": [
+                    "Recebe luz do sol",
+                    "Fornece eletricidade"
+                  ]
                 },
                 {
                   "name": "Aquecedor solar",
-                  "points": ["Recebe calor do sol", "Entrega água quente"]
+                  "points": [
+                    "Recebe calor do sol",
+                    "Entrega água quente"
+                  ]
                 }
               ],
               "title": "Uso da energia solar"
@@ -109,64 +98,71 @@
             "title": "Da luz à eletricidade"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "The title cloud, central idea, comparison table and summary are all present and correctly placed. However, branch 3 is duplicated, so the numbering runs 1, 2, 3, 3, 4, 5. Each copy shows only part of the bullets, and one bullet is truncated.",
-          "score": 4,
+          "reasoning": "Every structural part is present and in order: the title in a central cloud, the central idea at the top, four numbered branches with sentences, bullets and sketches, the comparison table and the summary. Lines join the branches to the center and nothing is cut off. There is minor clutter from extra bulbs, and the 'Ideia central' and 'Resumo:' labels were added.",
+          "score": 8,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "This is a warm paper sheet with one soft color per branch and colored-pencil sketches. The lettering is a uniform digital font rather than hand-drawn marker, and the doubled sketches add some clutter.",
-          "score": 7,
+          "reasoning": "The hand-drawn marker style, one color per branch and colored-pencil sketches fit well. However, the paper is a cream tint across the whole image instead of plain white, which caps this category.",
+          "score": 4,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "The text is large, high-contrast and easy to read. However, the card sketch contains the word 'Membership', which breaks the no-words-in-sketches rule.",
-          "score": 6,
+          "reasoning": "The text is large, high-contrast and well spaced. The meter sketch contains characters ('$ $ 3 $'), so a sketch carries words or numbers.",
+          "score": 7,
           "label": "Legibility",
           "weight": 25
         },
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'membership'",
-          "score": 8,
+          "reasoning": "Every word matches the structure.",
+          "score": 10,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 7205,
-          "outputTokens": 977,
-          "reasoningTokens": 276
+          "inputTokens": 7561,
+          "outputTokens": 913,
+          "reasoningTokens": 275
         }
       },
       "steps": [
         {
-          "conclusion": "Branch 3 'Taxa constante' is drawn twice, once on each side, giving six branches numbered 1, 2, 3, 3, 4, 5. Each copy is incomplete. The left copy cuts its first bullet to 'Taxa: mudança na saída' and drops '÷ mudança na entrada'. The right copy is missing the bullet 'Reta mais íngreme sobe mais'. The membership-card sketch carries the word 'Membership', but sketches must have no words.",
+          "conclusion": "Branch 3 'Taxa constante' appears twice, once on each side. The left copy cuts its first bullet to 'Taxa: mudança na saída' and drops '÷ mudança na entrada'. The right copy omits the bullet 'Reta mais íngreme sobe mais'. The membership-card sketch carries the unrequested English word 'Membership' along with fake writing. The paper is a warm cream tint instead of plain white.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The Parábola branch has two fountain sketches instead of one, and the second one floats loosely beside the bullets. The ramp sketch also appears twice because of the duplicated branch. The lettering looks like a clean digital font rather than a hand-drawn marker. 'Ideia central' and 'Resumo:' are extra labels not in the structure.",
+          "conclusion": "Branch 5 has two fountain sketches, one of them floating loose near the bullets, which adds clutter. Some sketches sit tight against their title pills. The extra labels 'Ideia central' and 'Resumo:' are not in the structure.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Merge the two branch 3 nodes into one with its full sentence and both bullets. Use one plain, wordless card sketch and a single fountain arc. Spread the five branches evenly around the central cloud.",
+          "conclusion": "Keep a single branch 3 with both complete bullets. Remove all text from the membership card. Use one fountain sketch only. Render the map on pure white paper.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 7
         }
       ],
       "testCase": {
@@ -180,13 +176,19 @@
               {
                 "drawing": "a vending machine",
                 "explanation": "A entrada é o que você informa; a saída é a resposta.",
-                "points": ["Tamanho do lanche leva ao preço", "Cada entrada, uma única saída"],
+                "points": [
+                  "Tamanho do lanche leva ao preço",
+                  "Cada entrada, uma única saída"
+                ],
                 "title": "Entrada e saída"
               },
               {
                 "drawing": "a box with an arrow in and an arrow out",
                 "explanation": "f(x) indica a saída quando a entrada é x.",
-                "points": ["f(4) é a saída para entrada 4", "Coloque a entrada no lugar de x"],
+                "points": [
+                  "f(4) é a saída para entrada 4",
+                  "Coloque a entrada no lugar de x"
+                ],
                 "title": "Notação f(x)"
               },
               {
@@ -201,13 +203,19 @@
               {
                 "drawing": "a membership card",
                 "explanation": "O preço quando a entrada é zero, antes de qualquer uso.",
-                "points": ["Assinatura R$ 12,00; uso R$ 3,00", "O valor inicial muda o preço"],
+                "points": [
+                  "Assinatura R$ 12,00; uso R$ 3,00",
+                  "O valor inicial muda o preço"
+                ],
                 "title": "Valor inicial"
               },
               {
                 "drawing": "an arc of water from a fountain",
                 "explanation": "Uma altura que sobe e desce muda de forma curva.",
-                "points": ["x² na regra: função quadrática", "a positivo abre para cima"],
+                "points": [
+                  "x² na regra: função quadrática",
+                  "a positivo abre para cima"
+                ],
                 "title": "Parábola"
               }
             ],
@@ -216,11 +224,17 @@
               "columns": [
                 {
                   "name": "Função linear",
-                  "points": ["Mesma mudança a cada unidade", "Gráfico é uma reta"]
+                  "points": [
+                    "Mesma mudança a cada unidade",
+                    "Gráfico é uma reta"
+                  ]
                 },
                 {
                   "name": "Função quadrática",
-                  "points": ["Mudança não é sempre igual", "Gráfico é uma parábola"]
+                  "points": [
+                    "Mudança não é sempre igual",
+                    "Gráfico é uma parábola"
+                  ]
                 }
               ],
               "title": "Variação constante ou quadrática"
@@ -229,62 +243,69 @@
             "title": "Funções e relações entre variáveis"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "Every part is present and placed correctly: the central cloud title, the central idea at the top, four numbered branches, the table and the summary at the bottom. Lines connect the branches and nothing overlaps or is cut off. Points are lost for the added labels and the extra sketch.",
-          "score": 8,
+          "reasoning": "The title cloud, central idea, comparison table and summary are all present and well placed. However, branch 3 is duplicated and each copy is incomplete: one truncates a bullet and the other drops a bullet. Branch 5 has a repeated sketch. This is confusing structural damage.",
+          "score": 4,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "This is a warm hand-drawn sheet on plain paper with one soft color per branch and colored-pencil sketches, and no frame or desk. The lettering reads somewhat digital and uniform.",
-          "score": 9,
+          "reasoning": "The friendly hand-drawn look, per-branch colors and colored-pencil sketches suit the style. The background is a cream/beige tint rather than pure white, which caps this category.",
+          "score": 4,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "All text matches the structure letter by letter and is large and high-contrast. The sketches carry no words or numbers.",
-          "score": 9,
+          "reasoning": "The main lettering is large, high-contrast and easy to read. However, the membership-card sketch contains the word 'Membership' and fake writing, which breaks the no-words-in-sketches rule.",
+          "score": 6,
           "label": "Legibility",
           "weight": 25
         },
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (30 texts).",
-          "score": 10,
+          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'membership'",
+          "score": 6,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 7160,
-          "outputTokens": 795,
-          "reasoningTokens": 270
+          "inputTokens": 7516,
+          "outputTokens": 994,
+          "reasoningTokens": 416
         }
       },
       "steps": [
         {
-          "conclusion": "The added labels 'Ideia central' and 'Resumo:' are not in the structure. The branch 2 badge has a photo placeholder and text lines, so it is not the requested blank name badge.",
+          "conclusion": "The paper is a warm cream tint rather than pure white; the corners are visibly off-white, so the sheet would look pasted onto a white lesson screen. The labels 'Ideia central' and 'Resumo:' are extra words not in the scene's allowed text.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 7
         },
         {
-          "conclusion": "An unrequested people sketch sits inside the branch 2 bullet box and crowds the text. The branch 3 and 4 connectors are very short stubs compared with the long curved lines for branches 1 and 2.",
+          "conclusion": "Branch 2 adds an unrequested people icon beside the bullets. Its badge sketch is not blank: it shows a photo and lines. The magnifying glass sits close to the branch 1 connector line.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Remove the extra header labels and the people icon, and draw the badge truly blank. Give branches 3 and 4 fuller curved connectors so the map feels more balanced.",
+          "conclusion": "Use a pure white background. Drop the extra 'Ideia central' and 'Resumo:' labels. Remove the extra people icon and draw the badge truly blank.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -309,19 +330,28 @@
               {
                 "drawing": "a blank name badge",
                 "explanation": "Convide quem viveu a tarefa, mesmo sem concluí-la.",
-                "points": ["Critério é o que a pessoa viveu", "Inclua tentativas interrompidas"],
+                "points": [
+                  "Critério é o que a pessoa viveu",
+                  "Inclua tentativas interrompidas"
+                ],
                 "title": "Participantes"
               },
               {
                 "drawing": "a trail of footprints",
                 "explanation": "Um caminho curto de perguntas abertas, sem suposições.",
-                "points": ["Comece por um episódio real", "Evite presumir dificuldade ou etapa"],
+                "points": [
+                  "Comece por um episódio real",
+                  "Evite presumir dificuldade ou etapa"
+                ],
                 "title": "Roteiro de entrevista"
               },
               {
                 "drawing": "a locked filing cabinet",
                 "explanation": "Anote ações e falas com permissão e sem dados desnecessários.",
-                "points": ["Use código no lugar do nome", "Combine acesso e data de exclusão"],
+                "points": [
+                  "Use código no lugar do nome",
+                  "Combine acesso e data de exclusão"
+                ],
                 "title": "Registro responsável"
               }
             ],
@@ -330,15 +360,24 @@
               "columns": [
                 {
                   "name": "Observação",
-                  "points": ["Mostra o que a pessoa faz", "Vê a ação na rotina"]
+                  "points": [
+                    "Mostra o que a pessoa faz",
+                    "Vê a ação na rotina"
+                  ]
                 },
                 {
                   "name": "Entrevista",
-                  "points": ["Ouve a versão da pessoa", "Não substitui ver a ação"]
+                  "points": [
+                    "Ouve a versão da pessoa",
+                    "Não substitui ver a ação"
+                  ]
                 },
                 {
                   "name": "Teste de usabilidade",
-                  "points": ["Verifica se conclui a tarefa", "Mostra onde avança ou trava"]
+                  "points": [
+                    "Verifica se conclui a tarefa",
+                    "Mostra onde avança ou trava"
+                  ]
                 }
               ],
               "title": "Três métodos de pesquisa"
@@ -347,62 +386,69 @@
             "title": "Planejamento de pesquisa com usuários"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "All parts are present: the central title cloud, the central idea at the top, six numbered branches with sketches, the comparison table and the summary. However, branch 4's bullet is truncated, the table overlaps branch 5's box, and the ruler and text overflow branch 6's box.",
-          "score": 5,
+          "reasoning": "All parts are present and in order: the title cloud, the central idea at the top, four numbered and colored branches with sentences, bullets and sketches, the comparison table and the summary at the bottom. Lines join the branches to the cloud, and nothing is cut off. Minor issues: an extra people icon in branch 2, a badge that is not blank, and two extra labels.",
+          "score": 8,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "A warm hand-drawn study sheet with neat marker lettering, one soft color per branch and colored-pencil sketches on plain paper. It is slightly dense, and the dark navy table header is a bit heavy.",
-          "score": 8,
+          "reasoning": "The hand-drawn marker look, the soft color for each branch and the colored-pencil sketches suit the style well. However, the paper is a cream or beige tint instead of plain white, which caps this category.",
+          "score": 5,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "Text is large, high-contrast and readable, and the sketches carry no words. The lower area is somewhat crammed where the boxes overlap.",
-          "score": 8,
+          "reasoning": "The lettering is large, dark and well spaced, and every word is spelled correctly. The sketches carry no words or numbers.",
+          "score": 9,
           "label": "Legibility",
           "weight": 25
         },
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (35 texts).",
+          "reasoning": "Every word matches the structure.",
           "score": 10,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 7245,
-          "outputTokens": 820,
-          "reasoningTokens": 246
+          "inputTokens": 7601,
+          "outputTokens": 902,
+          "reasoningTokens": 276
         }
       },
       "steps": [
         {
-          "conclusion": "Branch 4's second bullet is cut short: it reads 'Cytoskeleton fibers act' and drops 'as tracks', so the point is incomplete and misleading for learners.",
+          "conclusion": "Branch 4's second bullet is cut short to 'Cytoskeleton fibers act'; the words 'as tracks' are missing, so the point is incomplete. The paper is a cream/warm tint rather than plain white, which departs from the required style. Unrequested labels 'Central idea' and 'Summary:' have been added.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "The comparison table's header overlaps the bottom of branch 5's dashed bullet box. In branch 6, the ruler sketch overlaps the bullet box and 'then multiply' spills past its dashed border. The lower half feels crowded.",
+          "conclusion": "The comparison table overlaps the bottom of branch 5's dashed bullet box. The ruler sketch overlaps branch 6's bullet box, and that box's last line, 'then multiply', is awkwardly displaced. An extra lightbulb sketch beside the summary adds clutter.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Restore the full 'Cytoskeleton fibers act as tracks' text by widening branch 4's box. Move the comparison table down, or shrink it, so it clears branch 5's box. Keep the ruler outside branch 6's bullet box.",
+          "conclusion": "Use a pure white background. Letter every bullet in full. Give the table and the bottom branches enough room that boxes and sketches don't collide, and drop the added heading words.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -418,7 +464,10 @@
               {
                 "drawing": "a round cell",
                 "explanation": "The smallest unit that can carry out life's work.",
-                "points": ["A pond organism is one cell", "You are made of many cells"],
+                "points": [
+                  "A pond organism is one cell",
+                  "You are made of many cells"
+                ],
                 "title": "Cell as unit"
               },
               {
@@ -433,7 +482,10 @@
               {
                 "drawing": "a small conveyor belt",
                 "explanation": "Parts that build proteins and prepare them for delivery.",
-                "points": ["The nucleus keeps the recipe", "Ribosomes build; Golgi packages"],
+                "points": [
+                  "The nucleus keeps the recipe",
+                  "Ribosomes build; Golgi packages"
+                ],
                 "title": "Protein builders"
               },
               {
@@ -469,9 +521,18 @@
               "columns": [
                 {
                   "name": "Bacterial cell",
-                  "points": ["Prokaryotic cell", "DNA sits in cytoplasm"]
+                  "points": [
+                    "Prokaryotic cell",
+                    "DNA sits in cytoplasm"
+                  ]
                 },
-                { "name": "Animal cell", "points": ["Eukaryotic cell", "DNA sits in a nucleus"] }
+                {
+                  "name": "Animal cell",
+                  "points": [
+                    "Eukaryotic cell",
+                    "DNA sits in a nucleus"
+                  ]
+                }
               ],
               "title": "Bacterial and animal cells"
             },
@@ -479,7 +540,44 @@
             "title": "Cell structure and work"
           }
         }
-      }
+      },
+      "categoryScores": [
+        {
+          "categoryId": "layout",
+          "reasoning": "All six branches, the central idea, the title cloud, the comparison table and the summary are present and in order, with sketches that match their branches. However, branch 4's bullet is truncated, so part of the content is missing. The table and the ruler also overlap the bullet boxes of branches 5 and 6.",
+          "score": 5,
+          "label": "Every part, clearly laid out",
+          "weight": 50
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The friendly hand-drawn marker look uses distinct branch colors and colored-pencil sketches. The paper is a cream/warm tint rather than plain white, which caps this category.",
+          "score": 4,
+          "label": "Mind-map style",
+          "weight": 25
+        },
+        {
+          "categoryId": "legibility",
+          "reasoning": "Text is large and high-contrast, and the sketches carry no words. The truncated bullet loses content, and the 'then multiply' line in branch 6 is crowded and partly overlapped by the ruler.",
+          "score": 7,
+          "label": "Legibility",
+          "weight": 25
+        },
+        {
+          "categoryId": "text",
+          "label": "Text matches the structure",
+          "reasoning": "words of the map's text the picture leaves out: 'structure', 'tracks'",
+          "score": 6,
+          "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
+        }
+      ]
     }
   ],
   "taskId": "mind-map-image"

@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-en-syntax-tree",
+  "challenger": {
+    "costUsd": 0.0434416,
+    "durationMs": 57388.314249999996,
+    "hash": "cc2fe5638354ae5d6013fdbdbe10dc4e85b923da8b87acd8895d12d8ad0593e0",
+    "userPromptHash": "e56359c9f9eb75eec4c14147b3719c233c015e690a0e7b633f74e9d5137eb3e4"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0466224,
+    "durationMs": 97065.675334,
+    "hash": "d5ceec17237c7d0ba6059beb3cf48a278dbb09f32a593db09fa732597adf4e5b",
+    "userPromptHash": "e56359c9f9eb75eec4c14147b3719c233c015e690a0e7b633f74e9d5137eb3e4"
+  },
+  "run": 1
+}

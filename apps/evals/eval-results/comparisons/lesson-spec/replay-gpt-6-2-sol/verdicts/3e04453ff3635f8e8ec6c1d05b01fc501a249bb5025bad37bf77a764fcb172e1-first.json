@@ -1,0 +1,209 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00864029,
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Preferred one of two identical outputs."
+  ],
+  "packetId": "3e04453ff3635f8e8ec6c1d05b01fc501a249bb5025bad37bf77a764fcb172e1",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so they teach the same single idea: reading the three lines of a 4-3-3.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with the same screen order and the same repeated hook and explanation picture.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so they have the same visual strengths and the same repeated picture.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and fit the overview level and the 4-3-3 scope equally well.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The first explanation reuses the exact pregame picture from the hook and adds no new information, so the second screen shows nothing new.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner looks at the same picture twice without anything new to see.",
+            "location": {
+              "detail": "screens 1 and 2",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The first explanation reuses the exact pregame picture from the hook and adds no new information, so the second screen shows nothing new.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner looks at the same picture twice without anything new to see.",
+            "location": {
+              "detail": "screens 1 and 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The expectations call for a 4-4-2 comparison picture labeled 1 and 2, and no screen includes one.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner cannot see how a different formation spreads its players, so the 4-3-3 has no contrast.",
+            "location": {
+              "detail": "whole: no 4-4-2 comparison anywhere in the lesson",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The expectations call for a 4-4-2 comparison picture labeled 1 and 2, and no screen includes one.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner cannot see how a different formation spreads its players, so the 4-3-3 has no contrast.",
+            "location": {
+              "detail": "whole: no 4-4-2 comparison anywhere in the lesson",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": null,
+        "pairId": "23aec6b3-548d-4367-a1f1-2cba59325267"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "Both teach one idea, but B's explanations use distinct groups and a separate goalkeeper, making the lines easier to picture.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B opens with a scene that asks a question without a picture, and its explanations build in a clear order, while A repeats its hook picture.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B's visuals show positions where they matter, such as the defenders and forwards spread across the field, while A repeats the same hook picture as its first explanation.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both fit the overview level with everyday words and no formulas, and both are in US English.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess asks where the three forwards spread, but the screen has no visual, so the learner must picture the spread without seeing it.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner has to guess a spread they cannot see, which weakens the guess.",
+            "location": {
+              "detail": "guess screen about where the front three spread",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The expectations call for a 4-4-2 comparison picture labeled 1 and 2, and no screen includes one.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner cannot see how a different formation spreads its players, so the 4-3-3 has no contrast.",
+            "location": {
+              "detail": "whole: no 4-4-2 comparison anywhere in the lesson",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The hook and the first explanation show the same picture, so the explanation adds nothing new to see.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner looks at the same picture again without anything new to see.",
+            "location": {
+              "detail": "screens 1 and 2",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The expectations call for a 4-4-2 comparison picture labeled 1 and 2, and no screen includes one.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner cannot see how a different formation spreads its players, so the 4-3-3 has no contrast.",
+            "location": {
+              "detail": "whole: no 4-4-2 comparison anywhere in the lesson",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's explanations use distinct groups with a separate goalkeeper and a clearer hook, which serve the learner better than A's repeated picture, though B's guess lacks a visual."
+        },
+        "pairId": "95e0cb1e-0704-4394-abfe-e78890d3d45c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both teach one skill: a percent change measured against the starting value.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "A's check gives 13.04% as the correct answer for a rise from $40 to $46, which is wrong; B's correct answer of 15% is right.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same worked example, table and application, so their visual choices are identical.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both fit the beginner level with plain language and a worked example before the check, and both are in US English.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The check gives 13.04% as the correct answer for a fee rising from $40 to $46, but the increase is 6 ÷ 40 × 100 = 15%. The tempting answer 15% is actually right, and 13.04% comes from dividing by the new fee.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner is taught the wrong answer key and learns the trap in reverse, so they would apply the wrong method to real bills.",
+            "location": {
+              "detail": "Ask the learner to calculate the percent increase when a monthly service fee rises from $40 to $46: 13.04%.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A's check teaches a wrong answer key, which misleads the learner, while B's check is correct and keeps the right trap."
+        },
+        "pairId": "fba398c7-8482-42e7-bd32-3fb6a077ae64"
+      }
+    ]
+  }
+}

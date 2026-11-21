@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-porcentagem-field-retail",
+        "claimId": "59659b8882f82a89",
+        "criterion": "plainLanguage",
+        "observationId": "a9597dcd118a0d275af621afaaa62caa724bbe249b013ec6d4c8fbf58abb9fa9.first.b9ebf4f1-98ee-4d97-a820-e21923a9cd20.1",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0034147499999999994,
+    "id": "e76782ae313c8bf48d792d78d6e9656dc219000a6f232c64a01dfd6d0b45c2f0",
+    "packet": [
+      {
+        "A": {
+          "blob": "075b06063d8245bcc270298162212451171de1aa76d28e5952207233bc7818a4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "bc31519bfbea5609ee563404cbd97fb6704f7e77dc8cffbec98e063ab1c9db92",
+          "format": "text"
+        },
+        "claim": "A explicação inicial e o resumo usam linguagem acadêmica e abstrata, em vez de palavras e exemplos acessíveis ao público iniciante.",
+        "claimId": "59659b8882f82a89",
+        "criterion": "plainLanguage",
+        "expectations": {
+          "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
+          "format": "text"
+        },
+        "input": {
+          "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Padrão de linguagem na explicação inicial e no primeiro item do resumo",
+          "kind": "whole"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
+          "format": "text"
+        },
+        "B": {
+          "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
+          "format": "text"
+        },
+        "claim": "The product manager's first message uses the term 'statistical power' without explaining it.",
+        "claimId": "a438c78906fa8cc8",
+        "criterion": "plainLanguage",
+        "expectations": {
+          "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "59659b8882f82a89",
+          "finding": "doesn't hold",
+          "reason": "The claim names output B, but B's opening explanation and first summary item use plain Portuguese, such as \"Cada porcentagem representa uma parte de um valor\" and \"cada porcentagem deve ser aplicada ao valor resultante da etapa anterior\". Nothing in those sections is academic or abstract."
+        },
+        {
+          "claimId": "a438c78906fa8cc8",
+          "finding": "doesn't hold",
+          "reason": "The product manager's first message in output A is \"B got 10 more purchases with the same number of visitors. The change is cheap to release. Can we call it a winner today?\", and it never uses the term \"statistical power\". That term does not appear in the start node at all."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

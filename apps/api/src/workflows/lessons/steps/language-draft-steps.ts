@@ -34,10 +34,13 @@ function toReviewContext({ analytics, draft, serviceTier }: LanguageDraftStage) 
   return { analytics, draft, serviceTier };
 }
 
-export async function reviewLanguageDraftStep(stage: LanguageDraftStage): Promise<LessonProblem[]> {
+export async function reviewLanguageDraftStep(
+  stage: LanguageDraftStage,
+  lessonId?: string,
+): Promise<LessonProblem[]> {
   "use step";
 
-  return reviewLanguageLessonDraft(toReviewContext(stage));
+  return reviewLanguageLessonDraft({ ...toReviewContext(stage), lessonId });
 }
 
 export async function fixLanguageDraftStep({

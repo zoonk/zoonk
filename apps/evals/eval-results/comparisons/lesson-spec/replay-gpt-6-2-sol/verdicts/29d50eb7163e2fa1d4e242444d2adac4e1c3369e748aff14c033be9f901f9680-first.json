@@ -1,0 +1,176 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00890519,
+  "failures": [],
+  "packetId": "29d50eb7163e2fa1d4e242444d2adac4e1c3369e748aff14c033be9f901f9680",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so they teach the same single idea: a sentence split into NP and VP and drawn as a tree.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so the screen plan is the same in both and has the same strengths and weaknesses.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical; the guess screen describing an unseen drawing is equally weak in each.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and fit the intermediate level in plain English.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess depends on seeing how the drawn groups change, but the screen has no visual, so the learner must imagine the drawing.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot see the group they are asked to track and may guess without understanding the tree.",
+            "location": {
+              "detail": "A drawing of “The dog barked” puts “barked” in its own group",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The guess depends on seeing how the drawn groups change, but the screen has no visual, so the learner must imagine the drawing.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot see the group they are asked to track and may guess without understanding the tree.",
+            "location": {
+              "detail": "A drawing of “The dog barked” puts “barked” in its own group",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are identical, with the same guess screen gap, so neither serves its reader better."
+        },
+        "pairId": "09dbf091-3261-447f-aa67-580b063023cd"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both teach one skill, splitting a simple sentence into NP and VP and drawing it, so neither bundles unrelated ideas.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A's guess has a tempting wrong answer and its checks use the sentence's own structure; B's hook is a stronger everyday scene but its guess depends on an unshown drawing.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "A shows the tree at each stage as a picture where the learner needs to see the structure, while B leaves its guess to an unshown drawing.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both stay at the intermediate level in plain English with a short, concrete explanation of each term.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook's visual says six equal branches but then lists five words and asks for five branches, so the picture the writer must draw is inconsistent.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner may be confused about what the picture shows, weakening the opening.",
+            "location": {
+              "detail": "An unlabeled top point with six equal branches ending",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The guess depends on seeing how the drawn groups change, but the screen has no visual, so the learner must imagine the drawing.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot see the group they are asked to track and may guess without understanding the tree.",
+            "location": {
+              "detail": "A drawing of “The dog barked” puts “barked” in its own group",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has better-placed visuals for structure and a clearer check, and its one flaw is a minor count mismatch in the hook picture, while B's guess depends on a drawing the learner never sees."
+        },
+        "pairId": "80075266-2e42-4650-b76b-99d3613c9da5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A keeps one idea, percent change measured against the starting value; B's explanation adds percentage points and logarithmic returns, which are other ideas.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens on Leah's salary raise, a scene that ends on a question, and includes the dividing-by-the-new-value trap; B opens on a formula instead.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same table checks with no activity and no other visuals, so neither differs on this criterion.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses everyday words and gives the formula only after the intuition, which fits a beginner; B uses a formula in the hook and jargon such as relative change and logarithmic returns.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook for a beginner lesson opens with a formal definition in symbols instead of an everyday moment.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner would stop reading at the first screen, before any example.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The explanation introduces jargon and out-of-scope ideas: percentage-point change belongs to another lesson and logarithmic returns are not a beginner idea.",
+            "criterion": "levelAndScope",
+            "learnerCost": "The learner meets terms they cannot follow and is pulled away from the one idea of percent change.",
+            "location": {
+              "detail": "Introduce relative change as the ratio of the absolute change to the reference value, and distinguish it from percentage-point change and from logarithmic returns.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A is a beginner-friendly plan with an everyday hook and the same correct checks, while B's formula-first hook and out-of-scope terms would lose a beginner reader."
+        },
+        "pairId": "d5a81bfd-9da6-48cf-adc7-e0c032e4249c"
+      }
+    ]
+  }
+}

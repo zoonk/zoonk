@@ -1,0 +1,130 @@
+{
+  "lessons": [
+    {
+      "canDo": "Use contour spacing to identify steep and gentle slopes.",
+      "description": "Read the spacing of contour lines to spot steep climbs and find gentler routes on a map.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": "Top-down trail map of one hill with nested brown loops labeled 600, 620, 640, and 660 feet from outermost to innermost; the loops are tightly and evenly spaced on the west side and widely and evenly spaced on the east side, with straight trails A and B crossing from the 600-foot loop to the 660-foot loop on the west and east sides, respectively.",
+          "visualKind": "picture",
+          "brief": "Caleb unfolds a trail map and notices that the brown lines bunch up on one side of a hill. What do those gaps tell you about the climb?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Top-down trail map of one hill with nested brown loops labeled 600, 620, 640, and 660 feet from outermost to innermost; the loops are tightly and evenly spaced on the west side and widely and evenly spaced on the east side, with straight trails A and B crossing from the 600-foot loop to the 660-foot loop on the west and east sides, respectively.",
+          "visualKind": "picture",
+          "brief": "A contour line connects places at the same height above sea level: every point on the loop marked 640 feet is at that height.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Top-down trail map of one hill with nested brown loops labeled 600, 620, 640, and 660 feet from outermost to innermost; the loops are tightly and evenly spaced on the west side and widely and evenly spaced on the east side, with straight trails A and B crossing from the 600-foot loop to the 660-foot loop on the west and east sides, respectively.",
+          "visualKind": "picture",
+          "brief": "Which climb will feel steeper underfoot? Options: Trail A, Trail B, Both equally steep; Trail A is right, and Both equally steep is tempting because the trails gain the same height.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Top-down trail map of one hill with nested brown loops labeled 600, 620, 640, and 660 feet from outermost to innermost; the loops are tightly and evenly spaced on the west side and widely and evenly spaced on the east side, with straight trails A and B crossing from the 600-foot loop to the 660-foot loop on the west and east sides, respectively.",
+          "visualKind": "picture",
+          "brief": "The contour interval is the change in height between neighboring lines: on this map, each step from one loop to the next is 20 feet, even where the gaps look different.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Top-down trail map of one hill with nested brown loops labeled 600, 620, 640, and 660 feet from outermost to innermost; the loops are tightly and evenly spaced on the west side and widely and evenly spaced on the east side, with straight trails A and B crossing from the 600-foot loop to the 660-foot loop on the west and east sides, respectively.",
+          "visualKind": "picture",
+          "brief": "Close lines mean a steep slope: on Trail A, you gain 20 feet of height in a short distance across the ground.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Top-down trail map of one hill with nested brown loops labeled 600, 620, 640, and 660 feet from outermost to innermost; the loops are tightly and evenly spaced on the west side and widely and evenly spaced on the east side, with straight trails A and B crossing from the 600-foot loop to the 660-foot loop on the west and east sides, respectively.",
+          "visualKind": "picture",
+          "brief": "Widely spaced lines mean a gentler slope: Trail B spreads the same 20-foot gain over more ground.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": "Trail map showing one uphill path crossing the 310-, 320-, 330-, and 340-foot contours in order, nearly at right angles; mark stretch X between the closely spaced 310- and 320-foot lines and stretch Y between the widely spaced 330- and 340-foot lines.",
+          "visualKind": "picture",
+          "brief": "Find the steeper of two stretches on a park path. Read the two contour labels at each stretch, confirm each rises 10 feet, then compare the gaps along the path: the shorter gap at X makes X steeper.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Map of a ridge trail crossing four contours at near-right angles, labeled 850, 875, 900, and 925 feet in order; mark N between the closely spaced 850- and 875-foot lines and M between the widely spaced 900- and 925-foot lines.",
+          "visualKind": "picture",
+          "brief": "Ask which marked stretch of a ridge trail climbs more gently: M is correct because it spreads the same rise over more ground. Include N as the tempting choice for someone who assumes the lower stretch is gentler.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Top-down map of a hillside with closely spaced curved contours labeled 440, 460, and 480 feet, with a translucent trail mark tracing the 460-foot contour exactly so the line remains visible beneath it.",
+          "visualKind": "picture",
+          "brief": "A path that follows a contour line stays at the same height: this trail curves around the hill at 460 feet even though the hillside beside it is steep.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "Map of one hillside showing 200-, 220-, and 240-foot contours; stretch P traces the 220-foot contour where neighboring lines are close, while stretch Q runs uphill across the wide gap from the 220-foot line to the 240-foot line.",
+          "visualKind": "picture",
+          "brief": "Ask which marked stretch gains no height: P is correct because it follows a line. Include Q as the tempting choice because it runs across a part of the map where the lines are farther apart.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "One park trail map with a parking lot on the 700-foot contour and a picnic shelter on the 760-foot contour; both routes cross the 720- and 740-foot contours, but Route A takes a short path through a tight cluster just below the shelter, while the longer Route B follows the 700-foot contour around the hill before crossing all three uphill gaps on a side where they are widely spaced along the route.",
+          "visualKind": "picture",
+          "brief": "You’re pushing a cart from a parking lot to a picnic shelter and want to avoid a short, steep climb. Pick Route B and point out the tight cluster on Route A that makes the shorter route a worse choice.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Compare gaps between contour lines on the same map to tell where the ground rises sharply or gradually.",
+          "example": "A trail that gains 20 feet in a short stretch is steeper than one that gains 20 feet over a longer stretch.",
+          "hard": true,
+          "name": "Identify slope steepness from contour spacing",
+          "topic": "Contour lines",
+          "useCase": "Use a park trail map to choose a route without a sharp climb."
+        }
+      ],
+      "title": "Reading contour lines"
+    }
+  ]
+}

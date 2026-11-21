@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-career-change-data-cleaning",
+        "claimId": "fd4abb1aa6bed4ec",
+        "criterion": "accuracy",
+        "observationId": "46e1440a0b8782d2f41df7bbd788360aaa1c5746711af5edf454b3580b472dcc.first.de329662-f4d7-452a-9c03-29a4b1bc7c86.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00375715,
+    "id": "8fea2007c19d8cc2c5cf1f0d8ae2c47efbd20055b064ca57239654dda612052c",
+    "packet": [
+      {
+        "A": {
+          "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
+          "format": "text"
+        },
+        "B": {
+          "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
+          "format": "text"
+        },
+        "claim": "The analyst calls the p-value the probability that the new dressing works no better than the old one.",
+        "claimId": "dfe444824f60729c",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "4718c5a66e92dce26c93103fc12c2374d9bdd59fb78c1cfaf6aef6a7c7d836d4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "2e81785bf63c083a6506d42282c758a9f2d47a01b404e20b2c605950ac625cd4",
+          "format": "text"
+        },
+        "claim": "The initial panel shows only aggregate row and dollar totals, not the source spreadsheet’s individual order IDs, amounts, and channel labels. The row-level details later appear in AI messages, so the learner cannot independently compare those claims with the original data as the strong path requires.",
+        "claimId": "fd4abb1aa6bed4ec",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "1fb659b4c4f4184f918329e9177450c3ce0648495175e5db6ab799aac52a841a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "396b799b5d966a67349a9357a0e28a48d2bcce4b580e8b9ac64a21102deda4ab",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The initial “Paid-order export and AI draft” panel and the case as a whole; no source row-level table is provided.",
+          "kind": "whole"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "dfe444824f60729c",
+          "finding": "doesn't hold",
+          "reason": "The claim is about an analyst and a new dressing, which appears only in output B. Output A is the handoff-format case with no analyst, and its p-value wording is that a gap this uneven would occur about 30% of the time if the formats worked equally well. Output B also doesn't say the p-value is the probability the new dressing works no better; it says it is the chance of seeing a gap this big by luck alone, so the claim misstates it."
+        },
+        {
+          "claimId": "fd4abb1aa6bed4ec",
+          "finding": "holds",
+          "reason": "In output B the initial panel shows only aggregates: 8 original rows, $680.00, 6 draft rows and $520.00. Order IDs, amounts and channel labels appear only in later AI replies, and the case provides no source row-level table, so the learner cannot independently check those details. Output A does not contain this panel, so the claim applies only to B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

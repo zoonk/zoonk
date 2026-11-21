@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "e984d317e88ba68f",
+        "criterion": "clarity",
+        "observationId": "80704c69cb30681da7d69ed40142ef99ff81e08e1a03388b17ac3a0417999e6a.first.be8c8dab-50ae-477f-bb0a-7899fcb7acea.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0015986,
+    "id": "e1032ef018495558e79e0aee365b303cf304d8601c9b7b59b53815dbfd4b666e",
+    "packet": [
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
+          "format": "text"
+        },
+        "claim": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+        "claimId": "d3ddf2c5005e1d8a",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+          "format": "text"
+        },
+        "B": {
+          "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+          "format": "text"
+        },
+        "claim": "The term processo administrativo is used in the bullet list with no everyday explanation, although the expectations require it to be explained when it first appears.",
+        "claimId": "e984d317e88ba68f",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Screen 4 explanation, bullet 'um processo administrativo, se cometer uma falta'",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "d3ddf2c5005e1d8a",
+          "finding": "doesn't hold",
+          "reason": "Screen 5 is a math check; neither output uses the term “additive inverse” there or elsewhere."
+        },
+        {
+          "claimId": "e984d317e88ba68f",
+          "finding": "holds",
+          "reason": "In output A, the screen 4 bullet list says “um processo administrativo” without explaining it in everyday words. Output B uses the term in prose, not in a bullet list."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

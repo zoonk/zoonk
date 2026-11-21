@@ -49,6 +49,14 @@ export const citeMaterialTask: Task<CiteMaterialInput, CiteMaterialOutput, CiteM
   generate: citeMaterial,
   id: "cite-material",
   name: "Cite material",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "A learner reads citations beside lesson screens",
+    reason:
+      "Code keeps only real page references, so the cheapest model that cites every screen right",
+    waits: "Nobody: background work",
+  },
   score: scoreCiteMaterial,
   testCases: TEST_CASES,
 };

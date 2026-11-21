@@ -1,0 +1,220 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00505264,
+  "failures": [],
+  "packetId": "8f384184c56f97e625d9fcbc86f34545ca82001891e5619f4c1793f939109334",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Both focus mainly on slope steepness from contour spacing, but B adds a separate lesson about paths following a contour line and staying at the same height.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A keeps the opening scene text-only. B puts a map on the opening screen, contrary to the requirement that the opening scene stay text-only.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "Both show the maps needed to answer their questions, but B also puts a map visual on the opening scene, where the plan calls for text only.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "B adds the contour-following rule, which is outside the stated focus on identifying steep and gentle slopes from spacing.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The opening scene includes a map visual, although the opening scene is required to stay text-only.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The opening image supplies visual material before the lesson has introduced the idea and does not belong on this screen.",
+            "location": {
+              "detail": "Top-down trail map of one hill",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The plan adds a separate rule about a path following a contour line and staying at the same height, beyond the lesson’s stated focus on slope steepness from spacing.",
+            "criterion": "oneIdea",
+            "learnerCost": "The learner may leave with two takeaways instead of one clear skill.",
+            "location": {
+              "detail": "Screen explaining that a path follows the 460-foot contour, and the related check",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both plans teach contour spacing, but B adds an out-of-scope contour-following idea and puts a visual on the opening scene, which is required to be text-only."
+        },
+        "pairId": "41480657-71b6-4f31-9aeb-aba45bda441d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both give the same single skill: calculating percent changes using the starting value.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens with an everyday salary question and gives a usable worked example followed by a similar calculation. B’s opening screen is a formal definition rather than a hook for a beginner.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Neither plan asks the learner to picture a setup or comparison that needs a visual; the calculations and described table are textually specified.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "B introduces formal notation and logarithmic returns in a beginner lesson, including concepts outside the lesson’s scope. A stays in everyday language and within the topic.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hourly-wage table check says A and B tie because both add $4, but their percentage increases are different: A is 25% and B is 16%.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner could be taught to treat equal dollar changes as equal percentage changes and receive an incorrect answer key.",
+            "location": {
+              "detail": "Check screen with the hourly-wage table",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The hourly-wage table check says A and B tie because both add $4, but their percentage increases are different: A is 25% and B is 16%.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner could be taught to treat equal dollar changes as equal percentage changes and receive an incorrect answer key.",
+            "location": {
+              "detail": "Check screen with the hourly-wage table",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The opening screen gives a formula using Δ%, V₀, and V₁ instead of an everyday scene, and introduces notation before the learner has an intuitive grasp of the idea.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner may not understand the symbols or get a clear, approachable entry into the lesson.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The explanation introduces logarithmic returns and percentage-point change, which are outside this lesson’s scope and use advanced terminology.",
+            "criterion": "levelAndScope",
+            "learnerCost": "The learner may be distracted or confused by topics they are not meant to learn here.",
+            "location": {
+              "detail": "Introduce relative change as the ratio of the absolute change to the reference value, and distinguish it from percentage-point change and from logarithmic returns.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both plans contain the same incorrect table-check claim that two equal dollar raises have tied percentage increases. B also replaces the hook with a formal formula and introduces advanced, out-of-scope ideas, so A is better for the beginner."
+        },
+        "pairId": "bff08e38-4ded-4223-aa8e-3faa65a97660"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so neither does better on the lesson’s focus.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so neither has a screen-plan advantage.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, including the same visuals and their placement.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, so neither fits the scope and level better.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The opening scene includes a map visual, although the opening scene is required to stay text-only.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The opening image supplies visual material before the lesson has introduced the idea and does not belong on this screen.",
+            "location": {
+              "detail": "Top-down trail map of one hill",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The opening scene includes a map visual, although the opening scene is required to stay text-only.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The opening image supplies visual material before the lesson has introduced the idea and does not belong on this screen.",
+            "location": {
+              "detail": "Top-down trail map of one hill",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The plan adds a separate rule about a path following a contour line and staying at the same height, beyond the lesson’s stated focus on slope steepness from spacing.",
+            "criterion": "oneIdea",
+            "learnerCost": "The learner may leave with two takeaways instead of one clear skill.",
+            "location": {
+              "detail": "Screen explaining that a path follows the 460-foot contour, and the related check",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The plan adds a separate rule about a path following a contour line and staying at the same height, beyond the lesson’s stated focus on slope steepness from spacing.",
+            "criterion": "oneIdea",
+            "learnerCost": "The learner may leave with two takeaways instead of one clear skill.",
+            "location": {
+              "detail": "Screen explaining that a path follows the 460-foot contour, and the related check",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical: each includes the same out-of-focus contour-following idea and the same map visual on the opening scene."
+        },
+        "pairId": "d2e5c17f-7bcd-499a-b47e-a2b875304743"
+      }
+    ]
+  }
+}

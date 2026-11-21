@@ -51,6 +51,13 @@ export const languageAudioTask: Task<LanguageAudioInput, LanguageAudioOutput> = 
   id: TASK_ID,
   name: "Language audio",
   output: "speech",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "A learner hears word and sentence clips",
+    reason: "Clips are stored on shared words; a wrong reading teaches the wrong sound",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreLanguageAudio,
   testCases: TEST_CASES,
 };

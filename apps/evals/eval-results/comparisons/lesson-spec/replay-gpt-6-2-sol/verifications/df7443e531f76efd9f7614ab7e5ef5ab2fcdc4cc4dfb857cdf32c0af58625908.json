@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-contour-lines",
+        "claimId": "cc3cacc32a0bc8fd",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "ba4b61155e75f2d5507ea1e9d6d34f992ce0fe932f4d7b56f03d064675a2b71b.first.7072c5a6-241d-4a8a-aed1-218befda8385.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0030424499999999995,
+    "id": "df7443e531f76efd9f7614ab7e5ef5ab2fcdc4cc4dfb857cdf32c0af58625908",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "34325c36e8f32a48",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "ee5d2bbb20a544cd2a5284f2f51424009b1135c9162d5c529cfe42e845b1ff3b",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a53872d3805478aa5a1990ee4efd5b9f9a5d03f868c89c5c029970e02d694cb3",
+          "format": "text"
+        },
+        "claim": "Several questions asking which location is steeper or gentler use labels W/E or N/S instead of labeling the named places A and B as required.",
+        "claimId": "cc3cacc32a0bc8fd",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6518313475f590d6010d09d99c3fd02abfb9856b349d005ab75c8cc0e5372443",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3711807c38957f0fd5e7c5a03310250c86acd24ae0a17925a0d4cb558904a3ac",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The worked example comparing W and E and the check comparing N and S",
+          "kind": "range"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "34325c36e8f32a48",
+          "finding": "doesn't hold",
+          "reason": "The word 'depreciação' does not appear in output A or B. The first explanation in A ('O custo variável acompanha a quantidade produzida...') says nothing about depreciation, so the claim misquotes the output."
+        },
+        {
+          "claimId": "cc3cacc32a0bc8fd",
+          "finding": "holds",
+          "reason": "In output B, the worked example's visual labels the climbs 'W and E' and the check's visual labels them 'N and S', while the place-based guess uses the labels A and B as required. Those W/E and N/S labels are side-of-hill labels, not the named places, so the claim is true of B and not of A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

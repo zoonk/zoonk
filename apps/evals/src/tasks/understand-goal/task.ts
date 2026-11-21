@@ -52,6 +52,13 @@ export const understandGoalTask: Task<CaseParams, unknown, UnderstandGoalExpecte
     }),
   id: "understand-goal",
   name: "Understand goal",
+  priorities: {
+    distribution: "private",
+    first: "latency",
+    reads: "Code and the learner: the typed goal becomes its kind and details",
+    reason: "The first wait a new learner sees, so the fastest that passed",
+    waits: "A learner waits: the first wait a new learner sees",
+  },
   score: scoreUnderstandGoal,
   testCases: [...TEST_CASES, ...PERSONA_TEST_CASES, ...MATERIAL_TEST_CASES],
 };

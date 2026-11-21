@@ -1,6 +1,7 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import {
   type GeneratedItem,
+  type ItemFormat,
   type NumericEntry,
   type OptionSelect,
 } from "@zoonk/ai/tasks/items/schemas";
@@ -15,13 +16,19 @@ import {
 } from "../_utils/option-checks";
 import { getVisualProblems } from "../quality/_utils/visual-references";
 import { ANY_NUMBER } from "./_utils/numeric-entry";
-import { isOwnWording } from "./item-content";
+import { type ItemAnswerFormat, isOwnWording } from "./item-content";
 import { checkMathProblem } from "./item-math-checks";
+import { repairItem } from "./item-repairs";
 import { getItemWriting } from "./item-writing";
 import { optionsShowWorkedValues } from "./option-leaks";
 
 type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { format: FORMAT }>;
 type Problem = string | false;
+
+export type CheckedItem<Written extends GeneratedItem = GeneratedItem> = {
+  index: number;
+  item: Written;
+};
 
 function isBlank(value: string | null | undefined): boolean {
   return !value?.trim();
@@ -242,6 +249,37 @@ export function checkItem({
     ...checkWriting(item),
     ...checkVisuals(item, language),
   ].filter((problem) => typeof problem === "string");
+}
+
+export function toCheckedItem<Written extends GeneratedItem>({
+  answerFormat,
+  format,
+  index,
+  item: written,
+  language,
+  optionCount,
+  optionLanguage,
+}: {
+  answerFormat: ItemAnswerFormat;
+  format: ItemFormat;
+  index: number;
+  item: Written;
+  language: string;
+  optionCount: number | null;
+  optionLanguage?: string | null;
+}): CheckedItem<Written> & { problems: string[] } {
+  const item = repairItem({ item: written, language: optionLanguage ?? language, optionCount });
+
+  const problems = checkItem({
+    ...answerFormat,
+    expectedFormat: format,
+    item,
+    language,
+    optionCount,
+    optionLanguage,
+  });
+
+  return { index, item, problems };
 }
 
 export function findOwnEmDashes(item: GeneratedItem): string[] {

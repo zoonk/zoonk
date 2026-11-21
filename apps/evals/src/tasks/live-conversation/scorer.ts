@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { toWords } from "@/lib/words";
 import { hasLiveCallVariety } from "@zoonk/ai/tasks/language/live-conversation-instructions";
 import { type CallTurn } from "./learner";
@@ -168,17 +168,20 @@ function checkCall({
   const { turns } = JSON.parse(output) as LiveConversationOutput;
 
   const checks = [
-    checkOpening({ input, turns }),
-    ...checkObjectives({ expected, input, turns }),
-    ...checkTurnLengths({ input, turns }),
-    checkUnprompted(turns),
-    ...checkNoteQuotes({ input, turns }),
-  ];
+    { checks: [checkOpening({ input, turns })], criterion: "role" },
+    { checks: checkObjectives({ expected, input, turns }), criterion: "objectives" },
+    { checks: checkTurnLengths({ input, turns }), criterion: "level" },
+    { checks: [checkUnprompted(turns)], criterion: "role" },
+    { checks: checkNoteQuotes({ input, turns }), criterion: "memory" },
+  ].flatMap(({ checks: group, criterion }) => group.map((check) => ({ ...check, criterion })));
+
+  const failed = checks.filter((check) => !check.passed);
 
   return {
+    criteria: [...new Set(failed.map((check) => check.criterion))],
     judgedOutput: formatTranscript(turns),
-    passed: checks.filter((check) => check.passed).length,
-    problems: checks.filter((check) => !check.passed).map((check) => check.problem),
+    passed: checks.length - failed.length,
+    problems: failed.map((check) => check.problem),
     total: checks.length,
   };
 }
@@ -189,7 +192,7 @@ function checkCall({
  * quote of the learner's note), then a
  * judge reads the transcript for role, level and objectives, and for how a note was used.
  */
-export const scoreLiveConversation: TaskScorer<LiveConversationExpected> = ({
+export const checkLiveConversationOutput: TaskCodeChecks<LiveConversationExpected> = ({
   output,
   testCase,
 }) => {
@@ -200,8 +203,17 @@ export const scoreLiveConversation: TaskScorer<LiveConversationExpected> = ({
     throw new Error(`Live conversation case ${testCase.id} needs its expected objectives.`);
   }
 
+  return checkCall({ expected, input, output });
+};
+
+export const scoreLiveConversation: TaskScorer<LiveConversationExpected> = ({
+  output,
+  testCase,
+}) => {
+  const input = testCase.userInput as LiveConversationInput;
+
   return scoreWithCodeChecks({
-    check: (text) => checkCall({ expected, input, output: text }),
+    check: (value) => checkLiveConversationOutput({ output: value, testCase }),
     output,
     scoreCategories: input.call.learnerNote
       ? MEMORY_CALL_SCORE_CATEGORIES

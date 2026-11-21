@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { findUncoveredTopics } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import {
@@ -31,11 +31,22 @@ const CHECKS: readonly GraphCheck[] = [
   "writing",
 ];
 
+const CHECK_CRITERIA: Record<GraphCheck, string> = {
+  cycle: "orderAndPrerequisites",
+  deepChain: "orderAndPrerequisites",
+  nearDuplicate: "noFiller",
+  offNoticeFirst: "goalFit",
+  repeatedPhaseName: "noFiller",
+  textbookChain: "orderAndPrerequisites",
+  uncoveredTopic: "coverage",
+  writing: "goalFit",
+};
+
 function toCheck(code: SkillGraphProblem["code"]): GraphCheck {
   return code === "emDash" || code === "markdown" || code === "placeholder" ? "writing" : code;
 }
 
-type ExpectedCheck = { problem: string | null };
+type ExpectedCheck = { criterion: string; problem: string | null };
 
 function checkCoursePlacement({
   accepted,
@@ -57,6 +68,7 @@ function checkCoursePlacement({
   const skills = graph.skills.filter((skill) => skill.area === area);
 
   return {
+    criterion: "coverage",
     problem:
       skills.length > 0 && skills.every((skill) => keys.has(skill.course))
         ? null
@@ -77,11 +89,17 @@ function checkReuse({
 
   return [
     ...(expected.reuse
-      ? [{ problem: missed.length > 0 ? `Library skills not reused: ${missed.join(", ")}.` : null }]
+      ? [
+          {
+            criterion: "noFiller",
+            problem: missed.length > 0 ? `Library skills not reused: ${missed.join(", ")}.` : null,
+          },
+        ]
       : []),
     ...(expected.noReuse
       ? [
           {
+            criterion: "goalFit",
             problem:
               wrong.length > 0
                 ? `Library skills reused for another law: ${wrong.join(", ")}.`
@@ -104,11 +122,13 @@ function checkCourses({
 
   return [
     ...(expected.courses ?? []).map((accepted) => ({
+      criterion: "coverage",
       problem: accepted.some((title) => titles.has(normalizeString(title)))
         ? null
         : `No course titled ${accepted.map((title) => `"${title}"`).join(" or ")}.`,
     })),
     ...(expected.noCourses ?? []).map((title) => ({
+      criterion: "goalFit",
       problem: titles.has(normalizeString(title)) ? `Unexpected course titled "${title}".` : null,
     })),
     ...Object.entries(expected.coursesByArea ?? {}).map(([area, accepted]) =>
@@ -139,7 +159,12 @@ function checkFirstSkill({
     first.level === given.level &&
     first.prerequisites.length === 0;
 
-  return [{ problem: kept ? null : `The graph doesn't start with FIRST_SKILL as given.` }];
+  return [
+    {
+      criterion: "orderAndPrerequisites",
+      problem: kept ? null : `The graph doesn't start with FIRST_SKILL as given.`,
+    },
+  ];
 }
 
 function checkExpected({
@@ -150,13 +175,13 @@ function checkExpected({
   expected?: SkillGraphExpected;
   graph: SkillGraphOutput;
   input: SkillGraphCase;
-}): { problems: string[]; total: number } {
+}) {
   const checks = [
     ...(expected ? [...checkReuse({ expected, graph }), ...checkCourses({ expected, graph })] : []),
     ...checkFirstSkill({ graph, input }),
   ];
 
-  return { problems: checks.flatMap((check) => check.problem ?? []), total: checks.length };
+  return { failures: checks.filter(({ problem }) => problem !== null), total: checks.length };
 }
 
 function checkGraph({
@@ -193,21 +218,33 @@ function checkGraph({
   const cases = checkExpected({ expected, graph, input });
 
   return {
+    criteria: [
+      ...new Set([
+        ...[...failing].map((check) => CHECK_CRITERIA[check]),
+        ...cases.failures.map((check) => check.criterion),
+      ]),
+    ],
     judgedOutput: output,
-    passed: CHECKS.length + cases.total - failing.size - cases.problems.length,
-    problems: [...problems.map((problem) => problem.problem), ...uncovered, ...cases.problems],
+    passed: CHECKS.length + cases.total - failing.size - cases.failures.length,
+    problems: [
+      ...problems.map((problem) => problem.problem),
+      ...uncovered,
+      ...cases.failures.flatMap((check) => check.problem ?? []),
+    ],
     total: CHECKS.length + cases.total,
   };
 }
 
+export const checkSkillGraphOutput: TaskCodeChecks = ({ output, testCase }) =>
+  checkGraph({
+    expected: testCase.expected as SkillGraphExpected | undefined,
+    input: testCase.userInput as SkillGraphCase,
+    output,
+  });
+
 export const scoreSkillGraph: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) =>
-      checkGraph({
-        expected: testCase.expected as SkillGraphExpected | undefined,
-        input: testCase.userInput as SkillGraphCase,
-        output: value,
-      }),
+    check: (value) => checkSkillGraphOutput({ output: value, testCase }),
     output,
     scoreCategories: SKILL_GRAPH_SCORE_CATEGORIES,
     testCase,

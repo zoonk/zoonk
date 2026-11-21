@@ -61,4 +61,20 @@ describe("the images a PR body shows", () => {
       found.every(({ images, unsupported }) => images.length === 0 && unsupported.length > 0),
     );
   });
+
+  it("reads a file name in code as text, since code never shows media", () => {
+    const body = [
+      "| Finding | Pictures | Closed |",
+      "| --- | --- | --- |",
+      "| The helper sits low | `after/phone/light/today.png`, `after/laptop/light/today.png` | Not a fault: the base has it too |",
+      "",
+      "Replaces ``public/og.png`` and `<img src='logo.png'>`.",
+      "",
+      "```sh",
+      "pnpm pr:media device after/phone/light/today.png",
+      "```",
+    ].join("\n");
+
+    assert.deepEqual(bodyMedia(body), { images: [], unsupported: [] });
+  });
 });

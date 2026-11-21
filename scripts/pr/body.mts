@@ -23,6 +23,17 @@ function images(node: Nodes): Image[] {
   return "children" in node ? node.children.flatMap((child) => images(child)) : [];
 }
 
+/** Code shows its text as written, so a file name in it is never media. */
+function code(node: Nodes): { end: number; start: number }[] {
+  if (node.type === "code" || node.type === "inlineCode") {
+    const start = node.position?.start.offset;
+    const end = node.position?.end.offset;
+    return start === undefined || end === undefined ? [] : [{ end, start }];
+  }
+
+  return "children" in node ? node.children.flatMap((child) => code(child)) : [];
+}
+
 /**
  * Every image a PR body shows, wherever it's nested (in a link, emphasis, a table, a list, a
  * quote), in order, each occurrence apart. `unsupported` holds media written any other way, a path
@@ -43,7 +54,7 @@ export function bodyMedia(markdown: string): { images: BodyImage[]; unsupported:
   // The one form the check reads: `![description](path "optional title")`, the path unspaced.
   const read = found.filter(({ link }) => link && !/\s/u.test(link));
 
-  const rest = read.reduceRight(
+  const rest = [...read, ...code(root)].reduce(
     (text, { end, start }) => text.slice(0, start) + " ".repeat(end - start) + text.slice(end),
     markdown,
   );

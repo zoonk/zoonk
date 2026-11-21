@@ -17,6 +17,13 @@ export const librarySearchTermsTask: Task<
   generate: generateSearchTerms,
   id: "library-search-terms",
   name: "Library search terms",
+  priorities: {
+    distribution: "shared",
+    first: "latency",
+    reads: "Code searches Library candidates with these terms",
+    reason: "It sits on the path to the first question",
+    waits: "A learner waits on a new goal's path",
+  },
   score: scoreLibrarySearchTerms,
   testCases: TEST_CASES,
 };
