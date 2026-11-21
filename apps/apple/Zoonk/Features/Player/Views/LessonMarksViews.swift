@@ -104,6 +104,8 @@ private struct LessonMarkedText: View {
   }
 }
 
+/// As on main, the frame's border sits as far from the text below as from the text above, and the
+/// icon on its corner adds no room.
 private struct LessonExampleFrame<Content: View>: View {
   @Environment(\.colorSchemeContrast) private var contrast
   /// Half the label's height, so it sits across the frame's top edge.
@@ -120,7 +122,11 @@ private struct LessonExampleFrame<Content: View>: View {
 
   var body: some View {
     content
-      .padding(EdgeInsets(top: labelRise + 13, leading: 16, bottom: 16, trailing: 16))
+      .padding(
+        EdgeInsets(
+          top: labelRise + 13, leading: 16, bottom: 16,
+          trailing: icon == nil ? 16 : LessonCornerIcon.size)
+      )
       .frame(maxWidth: .infinity, alignment: .leading)
       .background {
         Self.shape
@@ -142,40 +148,21 @@ private struct LessonExampleFrame<Content: View>: View {
         .alignmentGuide(.top) { $0.height / 2 }
         .padding(.leading, 12)
       }
-      .lessonCornerIcon(icon, inset: labelRise + 11)
-      .padding(.top, labelRise)
-  }
-}
-
-/// A lesson's icon sits on a block's top trailing corner, mostly above it, and leave its text alone:
-/// their bottom stops `inset` into the block, above its first line. The block makes room above for
-/// them, so they cover nothing before it either.
-private struct LessonCornerIcon: ViewModifier {
-  static let size: CGFloat = 56
-
-  let icon: LessonIcon
-  let inset: CGFloat
-
-  func body(content: Content) -> some View {
-    content
       .overlay(alignment: .topTrailing) {
-        LessonIconImage(icon: icon, size: Self.size)
-          .alignmentGuide(.top) { $0[.bottom] - inset }
-          .alignmentGuide(.trailing) { $0[.trailing] - $0.width * 0.2 }
+        // A fifth of it outside the frame, as much as the text keeps clear of it.
+        if let icon {
+          LessonIconImage(icon: icon, size: LessonCornerIcon.size)
+            .alignmentGuide(.top) { $0[.top] + labelRise }
+            .alignmentGuide(.trailing) { $0[.trailing] - $0.width * 0.2 }
+        }
       }
-      .padding(.top, Self.size - inset)
+      .padding(.vertical, labelRise)
   }
 }
 
-extension View {
-  @ViewBuilder
-  fileprivate func lessonCornerIcon(_ icon: LessonIcon?, inset: CGFloat) -> some View {
-    if let icon {
-      modifier(LessonCornerIcon(icon: icon, inset: inset))
-    } else {
-      self
-    }
-  }
+/// A lesson's icon on the corner of a screen's words or of its example frame.
+private enum LessonCornerIcon {
+  static let size: CGFloat = 56
 }
 
 /// An icon from the lesson's library, loaded like its pictures. It's decorative: until it loads, or
