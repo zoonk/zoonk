@@ -47,6 +47,19 @@ const MINUS = "\u2212";
 /** 0.3 × 10 is 3.0000000000000004 in floating point, which must still round to 3. */
 const FLOAT_SLACK = 1e-9;
 
+/**
+ * A headline range rounded outward to `decimals`, its low end down and its high end up, so it never
+ * claims more than its parts. Zero stays zero, never "−0".
+ */
+export function roundOutward({ high, low }: Range, decimals: number): Range {
+  const step = 10 ** decimals;
+
+  return {
+    high: Math.ceil(high * step - FLOAT_SLACK) / step || 0,
+    low: Math.floor(low * step + FLOAT_SLACK) / step || 0,
+  };
+}
+
 /** Exactly `decimals` digits after the point, so every number of one scale reads alike. */
 export function fixedDecimals(decimals: number) {
   return { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
@@ -74,7 +87,6 @@ export function useFormatPointsRange() {
     const decimals =
       scaleDecimals ?? ([low, high].some((value) => Math.round(value * 10) % 10 !== 0) ? 1 : 0);
 
-    const step = 10 ** decimals;
     const options = fixedDecimals(decimals);
 
     const end = (value: number) => {
@@ -82,12 +94,8 @@ export function useFormatPointsRange() {
       return deduction && value > 0 ? `${MINUS}${written}` : written;
     };
 
-    return headline
-      ? formatRange(
-          end(Math.floor(low * step + FLOAT_SLACK) / step),
-          end(Math.ceil(high * step - FLOAT_SLACK) / step),
-        )
-      : formatRange(end(low), end(high));
+    const shown = headline ? roundOutward({ high, low }, decimals) : { high, low };
+    return formatRange(end(shown.low), end(shown.high));
   };
 }
 
