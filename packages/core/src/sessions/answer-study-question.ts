@@ -2,7 +2,8 @@ import "server-only";
 import { type Attempt, type StudySessionBlock, prisma } from "@zoonk/db";
 import { isBlockDuelDecided } from "../checkpoints/_utils/checkpoint-outcome";
 import { loadCheckpointReinforcement } from "../checkpoints/_utils/checkpoint-reinforcement";
-import { loadSkippedRecheckSkills } from "../learner/_utils/load-skill-claims";
+import { loadClaimEvents, loadSkippedRecheckSkills } from "../learner/_utils/load-skill-claims";
+import { listPassedOverToRelearn } from "../learner/_utils/skill-claims";
 import { gradeTypedItemAnswer } from "../learner/_utils/typed-grading";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
@@ -53,6 +54,30 @@ async function isSkippedRecheck({
   });
 
   return due.has(item.skillId);
+}
+
+async function isPassedOverMiss({
+  isCorrect,
+  item,
+  placement,
+  session,
+}: {
+  isCorrect: boolean;
+  item: SessionItem;
+  placement: boolean;
+  session: StudySessionRow;
+}): Promise<boolean> {
+  if (placement || isCorrect || !session.goalId || !item.skillId) {
+    return false;
+  }
+
+  const events = await loadClaimEvents({
+    goalId: session.goalId,
+    skillIds: [item.skillId],
+    userId: session.userId,
+  });
+
+  return listPassedOverToRelearn(events).has(item.skillId);
 }
 
 /** Replays use the stored answer and avoid grading a changed typed submission with a model. */
@@ -201,6 +226,12 @@ export async function answerStudyQuestion({
     graded,
     input,
     item,
+    passedOverMiss: await isPassedOverMiss({
+      isCorrect: drilled.isCorrect,
+      item,
+      placement,
+      session,
+    }),
     placement,
     recheck: await isSkippedRecheck({
       item,

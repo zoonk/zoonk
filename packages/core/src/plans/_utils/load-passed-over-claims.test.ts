@@ -36,7 +36,7 @@ describe("passed-over claims on a fresh read", () => {
     expect(askedHistory.rows).toBe(1);
 
     expect(askedHistory.result).toStrictEqual([
-      expect.objectContaining({ kind: "claim", skillId: skipped.id }),
+      expect.objectContaining({ kind: "passedOver", skillId: skipped.id }),
     ]);
   });
 });

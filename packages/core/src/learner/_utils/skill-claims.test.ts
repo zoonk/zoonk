@@ -5,6 +5,7 @@ import {
   isSkillConfirmed,
   listAnsweredWrong,
   listKnownSkills,
+  listPassedOverToRelearn,
   listSkippedRechecks,
   listTakenToKnow,
   readSkillClaims,
@@ -64,6 +65,16 @@ describe(readSkillClaims, () => {
   it("makes a claim missed in practice a gap, whatever comes after in practice", () => {
     const claims = readSkillClaims([test(1, true), practice(2, false), practice(3, true)]);
     expect(claims.get("organelles")).toBe("gap");
+  });
+
+  it("opens a gap immediately after a practice miss on basics passed over by choice", () => {
+    const choice = { ...claim(1), kind: "passedOver" as const };
+    const missed = [choice, { ...practice(2, false), localDate: day(0) }];
+
+    expect(listPassedOverToRelearn([choice])).toStrictEqual(new Set(["organelles"]));
+    expect(readSkillClaims(missed).get("organelles")).toBe("gap");
+    expect(listKnownSkills({ events: missed })).toStrictEqual(new Set());
+    expect(listSkippedRechecks({ events: missed, localDate: day(1) })).toStrictEqual(new Set());
   });
 
   it("keeps a skipped topic through a practice miss until its later tap recheck fails", () => {

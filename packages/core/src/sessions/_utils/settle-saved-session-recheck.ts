@@ -14,26 +14,28 @@ export async function settleSavedSessionRecheck({
   session: StudySessionRow;
   timeZone?: string | null;
 }): Promise<void> {
-  const { answer, isCorrect, skillId } = attempt;
+  const { answer, answeredAt, isCorrect, skillId } = attempt;
   const { goalId } = session;
 
-  if (
-    isCorrect ||
-    !goalId ||
-    !skillId ||
-    !isJsonObject(answer) ||
-    answer.placementRecheck !== true
-  ) {
+  if (isCorrect || !goalId || !skillId || !isJsonObject(answer)) {
     return;
   }
 
-  const livingPlanDay = toIsoDate(session.localDate);
+  const recheck = answer.placementRecheck === true;
+
+  if (!recheck && answer.passedOverMiss !== true) {
+    return;
+  }
+
+  const livingPlanDay = recheck ? toIsoDate(session.localDate) : undefined;
 
   const recorded = await prisma.planChange.findFirst({
     select: { id: true },
     where: {
       AND: [
-        { payload: { equals: livingPlanDay, path: ["livingPlanDay"] } },
+        livingPlanDay
+          ? { payload: { equals: livingPlanDay, path: ["livingPlanDay"] } }
+          : { createdAt: { gte: answeredAt } },
         { payload: { array_contains: [skillId], path: ["recheckedSkillIds"] } },
       ],
       kind: "relearn",
