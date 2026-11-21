@@ -304,10 +304,20 @@ enum WritingStart: Hashable, Sendable {
   /// The task a refusal leaves for tomorrow, before any question is assigned.
   struct Task: Hashable, Decodable, Sendable {
     var description: String
+    var distinctLines: Bool?
     var lines: Int?
     var minutes: Int
+    var number: Int?
+    var points: Double?
+    var total: Int?
     var unit: WritingPrompt.Unit?
-    var writingTask: WritingTaskName?
+
+    /// Its place in the written test, which names it; nil from older servers.
+    var writingTask: WritingTaskName? {
+      guard let distinctLines, let number, let total else { return nil }
+      return WritingTaskName(
+        distinctLines: distinctLines, lines: lines, number: number, points: points, total: total)
+    }
   }
 
   case ready(admissionId: String)

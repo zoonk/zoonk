@@ -15,6 +15,7 @@ struct WrittenPartPoints: Hashable, Decodable, Sendable {
     var max: Double?
     var name: String
     var range: WritingRange?
+    var writingTask: WritingTaskName?
 
     var id: String { key }
   }
@@ -331,7 +332,10 @@ private struct WriteNowAction: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
+      // As wide as the rows above it, as main's sheet draws it.
       WriteNowButton(goalId: goalId, failed: $failed)
+        .controlSize(.large)
+        .buttonSizing(.flexible)
 
       if failed {
         FailureLine(

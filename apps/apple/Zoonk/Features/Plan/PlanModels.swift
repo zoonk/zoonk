@@ -155,7 +155,7 @@ struct GoalPlan: Decodable, Equatable, Sendable {
         let availability: WritingAvailability
         let blockId: String?
         let taskKey: String
-
+        let writingTask: WritingTaskName?
       }
 
       let answers: [Answer]
@@ -200,13 +200,16 @@ struct GoalPlan: Decodable, Equatable, Sendable {
         let groups = waiting.flatMap { $0.availability.choiceGroups ?? [] }
         guard !groups.isEmpty else { return nil }
 
-        let task =
-          waiting.count == 1
-          ? points.tasks.first { $0.key == waiting[0].taskKey }?.name : nil
+        let task = waiting.count == 1 ? waiting.first : nil
+        let name = task.map { action in
+          WritingLabels.taskName(
+            action.writingTask,
+            title: points.tasks.first { $0.key == action.taskKey }?.name ?? "")
+        }
 
         return (
           groups.reduce(into: []) { if !$0.contains($1) { $0.append($1) } },
-          waiting.count == writeActions.count, task
+          waiting.count == writeActions.count, name
         )
       }
     }

@@ -87,7 +87,7 @@ private struct WritingPointsSection: View {
         }
 
         LabeledContent {
-          Text(verbatim: WritingLabels.deduction(points.deduction, decimals: points.decimals))
+          Text(verbatim: WritingLabels.deduction(points.deduction, decimals: 1))
             .typeStyle(.data)
         } label: {
           VStack(alignment: .leading, spacing: 2) {
@@ -380,31 +380,51 @@ private struct WritingCriteriaSection: View {
     }
   }
 
+  /// The name wraps; the meter and its value end every row at one place, the value as wide as the
+  /// widest, so the meters line up (main's `WritingCriteria`).
   private func row(_ criterion: WritingResult.Criterion) -> some View {
     let points = grade.points?.rows.first { $0.id == criterion.id }
 
-    return LabeledContent {
+    return AccessibilityStack(alignment: .center, spacing: 12, stackedSpacing: 6) {
+      Text(criterion.name)
+        .frame(maxWidth: .infinity, alignment: .leading)
+
       HStack(spacing: 10) {
         if let points {
           RowMeter(
             range: points.range ?? .init(high: points.earned, low: points.earned), max: points.max
           )
           .frame(width: 64)
-          Text(
-            "\(WritingLabels.range(points.range ?? .init(high: points.earned, low: points.earned), decimals: decimals(points))) of \(WritingLabels.points(points.max, decimals: decimals(points)))",
-            tableName: "Essay", comment: "A criterion's points, like '7.1 of 9.5'"
-          )
-          .typeStyle(.data)
+          valueColumn(score(points), widest: grade.points?.rows.map(score) ?? [])
+            .typeStyle(.data)
         } else {
           LevelCells(level: criterion.level)
-          Text(WritingLabels.level(criterion.level))
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          valueColumn(
+            WritingLabels.level(criterion.level),
+            widest: [.complete, .strong, .partial, .missing].map(WritingLabels.level)
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       }
-    } label: {
-      Text(criterion.name)
+      .fixedSize()
     }
+    .accessibilityElement(children: .combine)
+  }
+
+  /// One value, trailing in a column as wide as the widest of its kind.
+  private func valueColumn(_ value: String, widest: [String]) -> some View {
+    ZStack(alignment: .trailing) {
+      ForEach(Array(Set(widest)), id: \.self) { Text($0).hidden().accessibilityHidden(true) }
+      Text(value)
+    }
+  }
+
+  private func score(_ row: WritingResult.Row) -> String {
+    String(
+      localized:
+        "\(WritingLabels.range(row.range ?? .init(high: row.earned, low: row.earned), decimals: decimals(row))) of \(WritingLabels.points(row.max, decimals: decimals(row)))",
+      table: "Essay", comment: "A criterion's points, like '7.1 of 9.5'")
   }
 
   private func decimals(_ row: WritingResult.Row) -> Int? {

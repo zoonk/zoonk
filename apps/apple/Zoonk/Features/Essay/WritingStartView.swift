@@ -63,25 +63,23 @@ struct WritingStartView: View {
   private func waiting(_ generationId: String) -> some View {
     ZoonkList {
       Section {
-        PageHeader(
-          shownUnit == .drill
-            ? Text("Writing your exercise…", tableName: "Essay")
-            : Text("Writing your question…", tableName: "Essay"),
-          supporting: shownUnit == .drill
-            ? Text(
-              "A short exercise on what you just learned. It opens here when it's ready.",
-              tableName: "Essay")
-            : Text(
-              "A new question like the ones on your exam. It opens here when it's ready.",
-              tableName: "Essay")
-        ) {
-          EmptyView()
+        VStack(alignment: .leading, spacing: 20) {
+          PageHeader(
+            shownUnit == .drill
+              ? Text("Writing your exercise…", tableName: "Essay")
+              : Text("Writing your question…", tableName: "Essay"),
+            supporting: shownUnit == .drill
+              ? Text(
+                "A short exercise on what you just learned. It opens here when it's ready.",
+                tableName: "Essay")
+              : Text(
+                "A new question like the ones on your exam. It opens here when it's ready.",
+                tableName: "Essay")
+          ) {
+            EmptyView()
+          }
+          ProgressView()
         }
-      }
-      Section {
-        ProgressView()
-          .frame(maxWidth: .infinity)
-          .listRowBackground(Color.clear)
       }
     }
     .lonePage()

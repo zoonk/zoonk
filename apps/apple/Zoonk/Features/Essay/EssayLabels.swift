@@ -138,6 +138,26 @@ enum WritingLabels {
     )
   }
 
+  /// A task named where it labels something rather than asks for it, such as its points on the
+  /// written test's page: "The 30-line question", "Question 2", or the notice's name without its
+  /// place.
+  static func taskName(_ task: WritingTaskName?, title: String) -> String {
+    guard let task else { return title }
+
+    if task.distinctLines, let lines = task.lines {
+      return String(
+        localized: "The \(String(lines))-line question", table: "Essay",
+        comment:
+          "One question of an exam's written test, named by its line limit, such as 30 lines.")
+    }
+
+    return task.total > 1
+      ? String(localized: "Question \(String(task.number))", table: "Essay")
+      : String(
+        localized: "The question", table: "Essay",
+        comment: "The only question of an exam's written test.")
+  }
+
   /// The one line a row shows when the day's grading is used up, under the row it limits.
   static func gradingReturns(_ returnsOn: String) -> String {
     let today = PlanDate.today()

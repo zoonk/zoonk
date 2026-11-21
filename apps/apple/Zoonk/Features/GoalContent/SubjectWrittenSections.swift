@@ -32,7 +32,7 @@ private struct SubjectWrittenLevels: View {
           minimumText(minimum, max: points.max)
         }
       }
-      .typeStyle(.note)
+      .typeStyle(.body)
       .foregroundStyle(.mutedForeground)
     }
   }
@@ -84,7 +84,7 @@ private struct SubjectWrittenPoints: View {
               .foregroundStyle(.mutedForeground)
           }
         } label: {
-          Text(task.name)
+          Text(WritingLabels.taskName(task.writingTask, title: task.name))
         }
       }
     }
