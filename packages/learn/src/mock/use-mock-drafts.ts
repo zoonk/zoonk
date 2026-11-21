@@ -24,6 +24,10 @@ function toDrafts(view: MockView): Drafts {
   return Object.fromEntries((view.current?.drafts ?? []).map((draft) => [draft.itemId, draft]));
 }
 
+function withoutDraft(drafts: Partial<Drafts>, itemId: string): Partial<Drafts> {
+  return drafts[itemId] ? { ...drafts, [itemId]: undefined } : drafts;
+}
+
 function emptyDraft(itemId: string): MockDraft {
   return { answer: null, durationMs: 0, flagged: false, itemId };
 }
@@ -45,6 +49,7 @@ export function useMockDrafts({
   const [saveStatus, setSaveStatus] = useState<DraftSaveStatus>("saved");
   // Read by the first question's visit, which runs right after the restore and before it renders.
   const latestDrafts = useRef(drafts);
+  const entered = useRef(false);
   const shown = useRef<{ at: number; itemId: string } | null>(null);
   const unsavedText = useRef<MockDraft | null>(null);
   const textTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -60,10 +65,7 @@ export function useMockDrafts({
         onStored: (draft) => {
           dropUnsentMockDraft({ blockId, draft });
           setSavedDrafts((current) => ({ ...current, [draft.itemId]: draft }));
-
-          setFailedDrafts((current) =>
-            current[draft.itemId] ? { ...current, [draft.itemId]: undefined } : current,
-          );
+          setFailedDrafts((current) => withoutDraft(current, draft.itemId));
         },
         save,
       }),
@@ -86,7 +88,15 @@ export function useMockDrafts({
     onEnter(next, kept);
   }
 
-  const enterOnMount = useEffectEvent(() => enter(view));
+  // Back and forward show this screen again as it was, so only what's still unsent goes out again.
+  const enterOnMount = useEffectEvent(() => {
+    if (entered.current) {
+      restoreUnsentMockDrafts({ blockId, view }).forEach((draft) => queue.add(draft));
+    } else {
+      entered.current = true;
+      enter(view);
+    }
+  });
 
   useEffect(() => {
     // oxlint-disable-next-line react/set-state-in-effect -- Device storage can be read only after hydration.
@@ -95,10 +105,7 @@ export function useMockDrafts({
     globalThis.addEventListener("online", retry);
 
     return () => {
-      if (textTimer.current) {
-        clearTimeout(textTimer.current);
-      }
-
+      clearTimeout(textTimer.current ?? undefined);
       globalThis.removeEventListener("online", retry);
       queue.stop();
     };

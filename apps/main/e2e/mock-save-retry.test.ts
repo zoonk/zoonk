@@ -131,4 +131,31 @@ test.describe("Mock answers on a bad connection", () => {
 
     await page.context().close();
   });
+
+  test("going back to a mock after leaving keeps the answers it already saved", async ({
+    browser,
+  }) => {
+    const { answers, user } = await createAnytimeMockLearner({ plus: true });
+    const page = await openAs(browser, user);
+
+    await page.goto("/mock/new");
+    const subjects = page.getByRole("radiogroup", { name: "One subject" });
+    await subjects.getByText("Mathematics", { exact: true }).click();
+    await expect(subjects.getByRole("radio", { name: /^Mathematics/u })).toBeChecked();
+    await page.getByRole("button", { name: /^Start/u }).click();
+    await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
+
+    const right = await answerShown(page, answers);
+    await expect.poll(() => countStoredAnswers(user.id)).toBe(1);
+
+    await page.getByRole("link", { name: "Leave" }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: "Leave" }).click();
+    await expect(page).toHaveURL(/\/today/u);
+
+    await page.goBack();
+    await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
+    await expect(page.getByRole("radio", { checked: true, name: right })).toBeVisible();
+    await expect.poll(() => countStoredAnswers(user.id)).toBe(1);
+    await page.context().close();
+  });
 });
