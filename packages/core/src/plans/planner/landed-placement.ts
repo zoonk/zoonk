@@ -2,6 +2,7 @@ import { type BuildPlanInput } from "./build-plan";
 import {
   type DayTime,
   type Held,
+  type KeptTime,
   findHeld,
   listHeldFrom,
   listHeldTime,
@@ -13,8 +14,7 @@ import {
 import { getOneDayStudy } from "./interval-study-minutes";
 import { getBaseDays, getLastKeptLessonDays, getStandInDays } from "./landed-days";
 import { type LandedUnits, withoutWrittenStandIns } from "./landed-lessons";
-import { isStandIn, isUnwrittenLesson } from "./plan-item-rules";
-import { type ExistingPlanItem, getItemKey } from "./plan-items";
+import { isUnwrittenLesson } from "./plan-item-rules";
 import { PLAN_EPSILON } from "./plan-precision";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import {
@@ -25,24 +25,6 @@ import {
 } from "./schedule-units";
 
 const BETWEEN = 0.5;
-
-type KeptTime = { date: Date; minutes: number };
-
-export function listKeptTime({
-  frozen,
-  units,
-}: {
-  frozen: readonly ExistingPlanItem[];
-  units: ReadonlyMap<string, QueueUnit>;
-}): KeptTime[] {
-  return frozen.flatMap((item) => {
-    const unit = units.get(getItemKey(item));
-
-    return unit && item.scheduledFor && !isStandIn(item)
-      ? [{ date: item.scheduledFor, minutes: unit.minutes }]
-      : [];
-  });
-}
 
 type Placed = { anchor: number; unit: ScheduledUnit };
 
@@ -180,17 +162,19 @@ function placeSkill({
   const from = lessons.length * perLesson;
   const minutes = Math.min(rest?.minutes ?? 0, total - from);
 
+  // Written lessons longer than their estimate take room from the rest, which gives it up.
   const pieces = rest
-    ? listHeldFrom({ from, held, minutes }).map((piece) =>
-        toPlaced({
-          anchor: piece.index,
-          date: piece.date,
-          layout,
-          part: layout.laid[piece.index],
-          portions: [piece],
-          unit: { ...rest, minutes: piece.minutes },
-        }),
-      )
+    ? listHeldFrom({ from, held, minutes }).flatMap((piece) => {
+        const room = layout.limitOn(piece.date) - layout.usedOn(piece.date);
+        const left = Math.min(piece.minutes, room);
+        const portions = [{ date: piece.date, minutes: left }];
+        const part = layout.laid[piece.index];
+        const unit = { ...rest, minutes: left };
+
+        return left > PLAN_EPSILON
+          ? [toPlaced({ anchor: piece.index, date: piece.date, layout, part, portions, unit })]
+          : [];
+      })
     : [];
 
   return {
@@ -241,8 +225,15 @@ export function putLandedLessons({
     return day ? getLessonCapacity(day) : 0;
   };
 
+  const keptKeys = new Set(kept?.map((time) => time.key));
+
   const others = kept
-    ? [...kept, ...laid.filter((unit) => isUnwrittenLesson(unit) && !isPart(unit))]
+    ? [
+        ...kept,
+        ...laid.filter(
+          (unit) => isUnwrittenLesson(unit) && !isPart(unit) && !keptKeys.has(unit.key),
+        ),
+      ]
     : laid.filter((unit) => !isPart(unit));
 
   const other = sumByPortionDay(others);

@@ -7,6 +7,7 @@ import { type CarryOver } from "./carry-over";
 import { getKeptBaseChoices, hasBaseChoices, withBaseChoices } from "./chosen-bases";
 import { listEndsBeforeLessons } from "./ends-before-lessons";
 import { type ExamBossDays, listBossDayFacts } from "./exam-boss-days";
+import { listKeptTime } from "./held-time";
 import { listLessonDays } from "./interval-study-minutes";
 import {
   keepThisWeek,
@@ -25,7 +26,7 @@ import {
   listLandedUnits,
   withoutRepeatedLandings,
 } from "./landed-lessons";
-import { listKeptTime, putLandedLessons } from "./landed-placement";
+import { putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toLaidOutOrder } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";

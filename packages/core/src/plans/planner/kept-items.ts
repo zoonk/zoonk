@@ -1,5 +1,6 @@
 import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type BuildPlanInput } from "./build-plan";
+import { type StudyPortion } from "./interval-study-minutes";
 import { getKeptMinutes } from "./kept-minutes";
 import { toIsoDate } from "./plan-calendar";
 import { LEARN_KINDS, isStandIn } from "./plan-item-rules";
@@ -137,8 +138,17 @@ export function countKeptLessons({
   );
 }
 
-/** `share` of the unit stays where it was saved, from `date`; `later` is laid out after the kept days. */
-export type KeptPiece = { date: Date; key: string; later: number; share: number };
+/**
+ * `share` of the unit stays where it was saved, from `date`, on its saved `days` when it has them;
+ * `later` is laid out after the kept days.
+ */
+export type KeptPiece = {
+  date: Date;
+  days?: StudyPortion[];
+  key: string;
+  later: number;
+  share: number;
+};
 
 function getKeptShare({
   item,
@@ -152,13 +162,18 @@ function getKeptShare({
 }
 
 /** An item saved this week can teach past it, as a stand-in split into lessons does. */
-function getShareUntil({ end, item }: { end: Date | null; item: ExistingPlanItem }): number {
+function listSavedDaysUntil({ end, item }: { end: Date | null; item: ExistingPlanItem }) {
   const days = readSelectedItemFacts(item.facts)?.days ?? [];
   const last = end && toIsoDate(end);
   const total = days.reduce((sum, day) => sum + day[2], 0);
-  const until = days.reduce((sum, [date, , raw]) => (!last || date <= last ? sum + raw : sum), 0);
 
-  return total > 0 ? until / total : 1;
+  const until = days.flatMap(([date, minutes, lessonMinutes]) =>
+    !last || date <= last ? [{ date, lessonMinutes, minutes }] : [],
+  );
+
+  const kept = until.reduce((sum, day) => sum + day.lessonMinutes, 0);
+
+  return total > 0 ? { days: until, share: kept / total } : { share: 1 };
 }
 
 export function listThisWeekWork({
@@ -176,14 +191,15 @@ export function listThisWeekWork({
     }
 
     const kept = getKeptShare({ item, units });
-    const thisWeek = getShareUntil({ end, item });
+    const { days, share } = listSavedDaysUntil({ end, item });
 
     return [
       {
         date: item.scheduledFor,
+        ...(days && { days }),
         key: getItemKey(item),
-        later: kept * (1 - thisWeek),
-        share: kept * thisWeek,
+        later: kept * (1 - share),
+        share: kept * share,
       },
     ];
   });

@@ -1,11 +1,42 @@
+import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type StudyPortion } from "./interval-study-minutes";
 import { fromIsoDate } from "./plan-calendar";
+import { isStandIn } from "./plan-item-rules";
+import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
+import { type QueueUnit } from "./plan-units";
 import { type PlanDay, type ScheduledUnit } from "./schedule-units";
 
 export type Held = { date: Date; index: number; minutes: number };
 
 export type DayTime = { date: Date; minutes: number };
+
+export type KeptTime = { date: Date; key: string; minutes: number };
+
+/** A kept item takes the days it was saved on, as a lesson or stand-in that runs over several does. */
+export function listKeptTime({
+  frozen,
+  units,
+}: {
+  frozen: readonly ExistingPlanItem[];
+  units: ReadonlyMap<string, QueueUnit>;
+}): KeptTime[] {
+  return frozen.flatMap((item) => {
+    const key = getItemKey(item);
+    const unit = units.get(key);
+    const days = readSelectedItemFacts(item.facts)?.days;
+
+    if (!unit || !item.scheduledFor) {
+      return [];
+    }
+
+    if (days) {
+      return days.map(([date, , minutes]) => ({ date: fromIsoDate(date), key, minutes }));
+    }
+
+    return isStandIn(item) ? [] : [{ date: item.scheduledFor, key, minutes: unit.minutes }];
+  });
+}
 
 export function sumByDay(units: readonly { date: Date; minutes: number }[]): Map<number, number> {
   return units.reduce(
@@ -59,9 +90,9 @@ export function listHeldTime({
 
     const previous = laid[index - 1]?.date ?? days[0]?.date ?? part.date;
     const from = floor && floor > previous ? floor : previous;
-    const back = days.filter((day) => day.date >= from && day.date <= part.date).toReversed();
+    const span = days.filter((day) => day.date >= from && day.date <= part.date);
 
-    const taken = back.reduce<{ held: Held[]; left: number }>(
+    const taken = span.reduce<{ held: Held[]; left: number }>(
       (state, day) => {
         const key = day.date.getTime();
         const room = Math.max(0, free(day.date) - (claimed.get(key) ?? 0));

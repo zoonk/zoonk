@@ -79,6 +79,7 @@ function listKeptPortions({
   units: readonly QueueUnit[];
 }): Map<string, StudyPortion[]> {
   const cumulative = getCumulativeCapacity(days);
+  const saved = new Map(kept.flatMap((piece) => (piece.days ? [[piece.key, piece.days]] : [])));
 
   return listKeptIntervals({ cumulative, days, kept, units }).reduce((portions, interval) => {
     if (interval.kind === "boss" || interval.end <= interval.start) {
@@ -87,19 +88,21 @@ function listKeptPortions({
 
     const { end, start } = interval;
 
-    const own = listIntervalPortions({ cumulative, days, end, start }).flatMap((portion) => {
-      const day = days[portion.index];
+    const own =
+      saved.get(interval.key) ??
+      listIntervalPortions({ cumulative, days, end, start }).flatMap((portion) => {
+        const day = days[portion.index];
 
-      return day
-        ? [
-            {
-              date: toIsoDate(day.date),
-              lessonMinutes: portion.lessonMinutes,
-              minutes: portion.studyMinutes,
-            },
-          ]
-        : [];
-    });
+        return day
+          ? [
+              {
+                date: toIsoDate(day.date),
+                lessonMinutes: portion.lessonMinutes,
+                minutes: portion.studyMinutes,
+              },
+            ]
+          : [];
+      });
 
     return portions.set(interval.key, [...(portions.get(interval.key) ?? []), ...own]);
   }, new Map<string, StudyPortion[]>());

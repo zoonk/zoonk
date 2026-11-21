@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { findCurrentPhase, getPhaseStates, isPhaseFinished } from "../_utils/phase-states";
 import { isPlanFinished } from "../_utils/plan-end";
+import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import { withPlannedLessons } from "./core-first";
@@ -1181,6 +1182,13 @@ function situationMinutesByDay(built: BuiltPlan): Map<string, Map<string, number
   }, new Map<string, Map<string, number>>());
 }
 
+function daysOverTime(built: BuiltPlan, dailyMinutes: number) {
+  return [...situationMinutesByDay(built)].flatMap(([date, minutes]) => {
+    const total = [...minutes.values()].reduce((sum, spent) => sum + spent, 0);
+    return total > dailyMinutes + 0.01 ? [[date, total]] : [];
+  });
+}
+
 /** The phase's last situation ends alone, so the turns are measured before its last weeks. */
 function longestTurn(built: BuiltPlan): number {
   const leaders = [...situationMinutesByDay(built)]
@@ -1199,10 +1207,14 @@ function longestTurn(built: BuiltPlan): number {
   ).most;
 }
 
-function lessonDates(built: BuiltPlan) {
-  return built.items.flatMap((item) =>
-    item.lessonId && item.scheduledFor ? [[item.lessonId, item.scheduledFor] as const] : [],
-  );
+/** A lesson that runs over into later days starts on the first day it takes time. */
+function lessonStarts(built: BuiltPlan) {
+  return built.items.flatMap((item) => {
+    const first = [...(built.lessonRawMinutes.get(item.key)?.keys() ?? [])].toSorted()[0];
+    const date = first ? fromIsoDate(first) : item.scheduledFor;
+
+    return item.lessonId && date ? [[item.lessonId, date] as const] : [];
+  });
 }
 
 function todoLessonItems(built: BuiltPlan) {
@@ -1459,8 +1471,8 @@ describe("language plans", () => {
       mode: "automatic" as const,
     };
 
-    const kept = new Map(lessonDates(buildPlan(written)));
-    const replanned = lessonDates(buildPlan({ ...written, mode: "forced" }));
+    const kept = new Map(lessonStarts(buildPlan(written)));
+    const replanned = lessonStarts(buildPlan({ ...written, mode: "forced" }));
 
     expect([...kept.keys()].toSorted()).toStrictEqual(replanned.map(([id]) => id).toSorted());
 
@@ -1469,6 +1481,47 @@ describe("language plans", () => {
         ([lessonId, date]) => Math.abs(daysBetween(date, kept.get(lessonId) ?? date)) > 7,
       ),
     ).toStrictEqual([]);
+  });
+
+  it("keeps every other situation's saved days when the only news is newly written lessons", () => {
+    const input = situations(40);
+    const items = saveWithFacts(input);
+
+    const landed = buildPlan({
+      ...input,
+      items,
+      landedOnly: true,
+      lessons: writtenLessons("order", 1, 10).map((written) => ({ ...written, minutes: 4 })),
+      mode: "automatic",
+    });
+
+    const savedDays = (key: string) =>
+      readSelectedItemFacts(items.find((item) => item.id === key)?.facts)?.days?.map(
+        ([date, minutes]) => [date, minutes],
+      );
+
+    const keptDays = (key: string) =>
+      [...(landed.lessonDayMinutes.get(key) ?? [])].toSorted(([a], [b]) => a.localeCompare(b));
+
+    expect(
+      ["skill:work", "skill:plans", "skill:directions"].map((key) => keptDays(key)),
+    ).toStrictEqual(["skill:work", "skill:plans", "skill:directions"].map((key) => savedDays(key)));
+
+    expect(longestTurn(landed)).toBeLessThanOrEqual(2);
+    expect(daysOverTime(landed, 15)).toStrictEqual([]);
+  });
+
+  it("keeps each day to its time when newly written lessons run longer than their estimate", () => {
+    const input = situations(40);
+
+    const landed = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      lessons: writtenLessons("order", 1, 10),
+      mode: "automatic",
+    });
+
+    expect(daysOverTime(landed, 15)).toStrictEqual([]);
   });
 });
 
