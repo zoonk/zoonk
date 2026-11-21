@@ -31,14 +31,17 @@ export async function changePlanAction(
 
   const result = await changeGoalPlan({ goalId, input: input.data });
 
+  // Such as an offer another device already accepted, or one its change no longer allows: the page
+  // reads the plan again, so it offers only what the plan still allows.
+  if (result.status === "unchanged" || result.status === "invalid") {
+    refresh();
+  }
+
   if (result.status === "unchanged") {
     return { reason: result.reason, status: "unchanged" };
   }
 
-  // Such as an offer another device's change no longer allows: the page reads the plan again, so
-  // it offers only what the plan still allows.
   if (result.status === "invalid") {
-    refresh();
     return { status: "refused" };
   }
 
