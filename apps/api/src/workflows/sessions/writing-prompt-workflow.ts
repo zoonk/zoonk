@@ -103,17 +103,22 @@ export async function ensureWritingPrompts(
   const runId = await startOnce(
     writingPromptWorkflow,
     [input],
-    writingRunToken(input, supply.chosenSubjects),
+    writingRunToken(input, supply.blueprint.id, supply.chosenSubjects),
   );
 
   const current = await loadWritingSupply(input);
   return current?.missing === 0 ? { status: "ready" } : { runId, status: "writing" };
 }
 
-function writingRunToken(input: WritingSupplyInput, choices: string[]): string {
+function writingRunToken(
+  input: WritingSupplyInput,
+  blueprintId: string,
+  choices: string[],
+): string {
   return writingToken("writing-prompt", [
     input.userId,
     input.goalId,
+    blueprintId,
     input.taskKey,
     input.unit,
     String(input.count),
