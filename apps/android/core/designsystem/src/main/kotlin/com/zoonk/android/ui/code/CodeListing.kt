@@ -239,8 +239,9 @@ private const val COLUMN_SAMPLE = 20
 
 /**
  * A code line's text. Wrapped, each extra row starts at the line's own indentation plus [hang]
- * columns (an editor's "same indent"), and with [marksRows] an arrow under the line's number marks
- * each one (main's `CodeLine`). A listing measures [column] once for all its lines.
+ * columns (an editor's "same indent"), and an arrow marks each one: under the line's number
+ * (main's `CodeLine`), or with a [hang], where the row hangs in, at the line's own indentation
+ * (main's `CodeSnippet`). A listing measures [column] once for all its lines.
  */
 @Composable
 fun CodeLineText(
@@ -249,21 +250,20 @@ fun CodeLineText(
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.zoonkType.code,
     hang: Int = 0,
-    marksRows: Boolean = true,
     column: TextUnit = columnWidth(style),
 ) {
+    val indent = remember(tokens) { indentOf(tokens) }
     val colors = codeColors()
     val text =
-        remember(tokens, colors, column, hang) {
-            val indent = indentOf(tokens) + hang
+        remember(tokens, indent, colors, column, hang) {
             val line = styledCodeLine(tokens, colors)
-            if (indent == 0) {
+            if (indent + hang == 0) {
                 line
             } else {
                 AnnotatedString
                     .Builder()
                     .apply {
-                        withStyle(ParagraphStyle(textIndent = TextIndent(restLine = column * indent))) { append(line) }
+                        withStyle(ParagraphStyle(textIndent = TextIndent(restLine = column * (indent + hang)))) { append(line) }
                     }.toAnnotatedString()
             }
         }
@@ -276,15 +276,17 @@ fun CodeLineText(
         text = text,
         modifier =
             modifier.then(
-                if (wraps && marksRows) {
+                if (wraps) {
                     Modifier.drawBehind {
                         val rows = layout ?: return@drawBehind
-                        val size =
+                        val em =
                             rows.layoutInput.style.fontSize
-                                .toPx() * ARROW_SIZE
+                                .toPx()
+                        val size = em * ARROW_SIZE
+                        val left = if (hang > 0) indent * column.value * em else -gap.toPx() - size
                         for (row in 1 until rows.lineCount) {
                             val top = rows.getLineTop(row) + (rows.getLineBottom(row) - rows.getLineTop(row) - size) / 2
-                            translate(left = -gap.toPx() - size, top = top) {
+                            translate(left = left, top = top) {
                                 with(arrow) { draw(Size(size, size), colorFilter = ColorFilter.tint(ink)) }
                             }
                         }
@@ -519,7 +521,8 @@ fun CodeBlock(
 
 /**
  * Code inside something the learner presses or reads in one line, such as an answer option (main's
- * `CodeSnippet`): no panel and no line numbers, every line wrapped, its extra rows indented. It says
+ * `CodeSnippet`): no panel and no line numbers, every line wrapped, its extra rows indented after an
+ * arrow, as a block marks them under its numbers. It says
  * where its last line ends, so an option's tag can end that line when it leaves room.
  */
 @Composable
@@ -536,7 +539,7 @@ fun CodeSnippet(
         Layout(
             content = {
                 lines.forEach { tokens ->
-                    CodeLineText(tokens, wraps = true, hang = SNIPPET_HANG, marksRows = false, column = column)
+                    CodeLineText(tokens, wraps = true, hang = SNIPPET_HANG, column = column)
                 }
             },
             modifier = modifier.fillMaxWidth().then(CodeWords).clearAndSetSemantics { text = AnnotatedString(spoken.snippet(code)) },
