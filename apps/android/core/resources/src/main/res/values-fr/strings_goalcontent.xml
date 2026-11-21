@@ -86,7 +86,7 @@
   "goalcontent_topics_studied_spoken": "02c70dfefdac562f4bcb440a231a7e4fc38b9465c42a235a6e261825e6785cef",
   "goalcontent_written_answers": "595e39f9cb989d479fbb12bbe565778e67934bf261a66ed270d26b6fc14f6773",
   "goalcontent_written_estimated": "4b952bf0c17b64c9650fbbd54c8960abb8dcc6782eb717df31dd03dab7804fa2",
-  "goalcontent_written_last_answers": "56a21a14dd6cde0c86797892b293f8210293e99542e59a28489aa4d62a06617c",
+  "goalcontent_written_last_answers": "c4d15d20d23c7825aedc43518ce72e5a159d14f613584bed96c3beb4477b4f89",
   "goalcontent_written_levels": "cb5ddae1fa08b57175275d926bffce7115f85c9bc3d954fdd900744ed0ff6a85",
   "goalcontent_written_lines": "e857614ceba725065e1136abfac66515f15a45f7f769f20b321589f0fe2e40a6",
   "goalcontent_written_minimum": "01e3e5c9904a6f713eaac385da815d15b7110172f5be86b6464866445fa7423f",
@@ -319,7 +319,7 @@
         <item quantity="other">%d versions</item>
     </plurals>
     <plurals name="goalcontent_written_last_answers">
-        <item quantity="one">dernière réponse</item>
+        <item quantity="one">%d dernière réponse</item>
         <item quantity="many">%d dernières réponses</item>
         <item quantity="other">%d dernières réponses</item>
     </plurals>
