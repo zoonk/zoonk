@@ -11017,6 +11017,9 @@
         }
       }
     },
+    "Part %lld" : {
+      "comment" : "Over a whole-course test's question: which of its parts this is"
+    },
     "Pass a certificate" : {
       "comment" : "A reason to learn a language",
       "localizations" : {
