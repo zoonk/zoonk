@@ -30,7 +30,7 @@ const GRID_SNAP = 1;
 
 type Mark = PlotVisual["series"][number]["mark"];
 
-export type PlotTick = { label: string; line: boolean; value: number };
+type PlotTick = { label: string; line: boolean; value: number };
 
 export type PlotLayout = {
   key: KeyEntry[];

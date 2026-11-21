@@ -148,7 +148,7 @@ function placeRows({
 }
 
 /** Keeps every Nth tick label, the fewest skipped that leaves none touching where they're drawn. */
-export function thinTicks({
+function thinTicks({
   start,
   ticks,
   width,
