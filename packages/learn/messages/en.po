@@ -7709,6 +7709,11 @@ msgid "Questions like the ones on your exam. Your mock exam starts here when the
 msgstr "Questions like the ones on your exam. Your mock exam starts here when they're ready."
 
 #: src/mock/mock-chooser-page.tsx
+msgctxt "G2-rbQ"
+msgid "We couldn't write your questions"
+msgstr "We couldn't write your questions"
+
+#: src/mock/mock-chooser-page.tsx
 msgctxt "AmTABH"
 msgid "Writing your questions…"
 msgstr "Writing your questions…"
@@ -13946,6 +13951,11 @@ msgid "A short exercise on what you just learned. It opens here when it's ready.
 msgstr "A short exercise on what you just learned. It opens here when it's ready."
 
 #: src/writing/writing-start.tsx
+msgctxt "X8PfXM"
+msgid "We couldn't write your exercise"
+msgstr "We couldn't write your exercise"
+
+#: src/writing/writing-start.tsx
 msgctxt "CzL4pW"
 msgid "Writing your exercise…"
 msgstr "Writing your exercise…"
@@ -13956,14 +13966,14 @@ msgid "A new question like the ones on your exam. It opens here when it's ready.
 msgstr "A new question like the ones on your exam. It opens here when it's ready."
 
 #: src/writing/writing-start.tsx
-msgctxt "xj8ORz"
-msgid "Writing your question…"
-msgstr "Writing your question…"
-
-#: src/writing/writing-start.tsx
 msgctxt "drzL_F"
 msgid "We couldn't write your question"
 msgstr "We couldn't write your question"
+
+#: src/writing/writing-start.tsx
+msgctxt "xj8ORz"
+msgid "Writing your question…"
+msgstr "Writing your question…"
 
 #: src/writing/writing-start.tsx
 msgctxt "EY8lh9"
