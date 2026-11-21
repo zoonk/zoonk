@@ -17,7 +17,7 @@ export const STATUS_LABELS: Record<Decision["rows"][number]["status"], string> =
   disqualified: "Ruled out",
   dominated: "Beaten on every measure",
   eligible: "Qualifies",
-  trade: "A trade-off to judge",
+  trade: "Has trade-offs",
 };
 
 export const DIRECTION_LABELS: Record<Direction, string> = {
