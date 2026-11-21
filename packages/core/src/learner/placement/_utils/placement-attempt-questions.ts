@@ -1,5 +1,6 @@
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
+import { type PlacementEvidence } from "../placement-beliefs";
 import { getPlacementBudgetSpent } from "../placement-budget";
 import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
 import { listKnownSkillIds } from "../placement-known";
@@ -37,6 +38,22 @@ function estimateRemaining({
   return completed > 0 && elapsed > 0
     ? Math.ceil(((elapsed / completed) * remaining) / MINUTE_MS)
     : getPlacementEstimate({ length: attempt.length, topics: remaining });
+}
+
+function listQuickFollowUps({
+  bySkill,
+  known,
+}: {
+  bySkill: ReadonlyMap<string, readonly PlacementEvidence[]>;
+  known: ReadonlySet<string>;
+}): string[] {
+  return [...bySkill].flatMap(([skillId, answers]) =>
+    !known.has(skillId) &&
+    answers.every((answer) => answer.outcome === "correct") &&
+    answers.some((answer) => isQuickChoice(answer))
+      ? [skillId]
+      : [],
+  );
 }
 
 export function readAttemptQuestions({
@@ -126,8 +143,9 @@ export function readAttemptQuestions({
 
   return {
     answered: part.length,
-    complete: !next?.item && !next?.waiting,
+    complete: !next,
     estimatedMinutes,
+    followUpSkillIds: whole ? [] : listQuickFollowUps({ bySkill, known }),
     hasMore:
       Boolean(next) ||
       Boolean(walk?.remaining.some((skill) => !walk.ready.includes(skill) && nextIn(skill.id))),

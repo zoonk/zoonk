@@ -1,6 +1,7 @@
+import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { withApiImageUrls } from "@/lib/file-urls";
-import { learnerAccessError, noFocusTestError } from "@/lib/learner-errors";
+import { learnerAccessError } from "@/lib/learner-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { placementSittingInputSchema } from "@zoonk/core/learner/placement/focus-test-contract";
@@ -19,7 +20,7 @@ async function createPlacementSitting(
   const result = await startPlacementSitting({ goalId: path.goalId, input: body });
 
   if (result.status === "unavailable") {
-    return noFocusTestError();
+    return errors.notFound("This goal has no placement test available");
   }
 
   if (result.status !== "ready") {

@@ -107,7 +107,7 @@ async function loadTestSkills({
   `;
 }
 
-export async function loadAnsweredTestItems({
+export async function loadSeenPlacementItems({
   itemIds,
   tx = prisma,
   userId,

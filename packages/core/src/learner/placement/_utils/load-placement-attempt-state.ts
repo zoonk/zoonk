@@ -25,6 +25,7 @@ export async function loadAttemptState({
   const statuses = new Map(questions.knownSkillIds.map((id) => [id, "known" as const]));
 
   return {
+    attemptFollowUps: questions.followUpSkillIds,
     attemptHasMore: questions.hasMore,
     focusTest: null,
     state: {

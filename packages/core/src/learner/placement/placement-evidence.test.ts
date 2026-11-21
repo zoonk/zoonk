@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { PLAN_SHOWN, examTestGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
 import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
-import { loadAnsweredTestItems, loadEvidence } from "./_utils/placement-evidence";
+import { loadEvidence, loadSeenPlacementItems } from "./_utils/placement-evidence";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { readFocusTestRecord } from "./focus-test-state";
@@ -66,7 +66,7 @@ describe("diagnostic progress outside the recent model evidence window", () => {
       { answered: 5, paceAnswers: 5, paceDurationMs: 660_000 },
     ]);
 
-    const answered = await loadAnsweredTestItems({
+    const answered = await loadSeenPlacementItems({
       itemIds: items.map((item) => item.id),
       userId: user.id,
     });

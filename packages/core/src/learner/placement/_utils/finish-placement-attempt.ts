@@ -53,7 +53,7 @@ export async function finishPlacementAttempt({
 
       const plan = await loadPlacementPlan(goalId, tx);
 
-      const { attemptHasMore, state } = await loadPlacementWithSummary({
+      const { attemptFollowUps, attemptHasMore, state } = await loadPlacementWithSummary({
         goalId,
         plan,
         timeZone,
@@ -107,11 +107,12 @@ export async function finishPlacementAttempt({
         testedOutPlanItemIds,
       };
 
-      const canContinue = attempt.length === "wholeCourse" && attemptHasMore && state.answered > 0;
+      const canContinue = attempt.length === "wholeCourse" && attemptHasMore;
 
       await savePlacementAttempt({
         goal: current,
         record: {
+          ...record,
           attempt: canContinue
             ? {
                 ...attempt,
@@ -121,6 +122,7 @@ export async function finishPlacementAttempt({
               }
             : null,
           lastPart: receipt,
+          ...(attempt.length === "quick" && { quickFollowUpSkillIds: attemptFollowUps ?? [] }),
           result: canContinue ? record.result : { attemptId, finishedAt, lessonsSkipped },
         },
         tx,

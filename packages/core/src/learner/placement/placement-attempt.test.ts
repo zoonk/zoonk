@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -5,10 +6,15 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { gradeOrder, parseOrderItem } from "../../sessions/_utils/order-items";
+import { loadSessionPlacement } from "../../sessions/_utils/session-placement";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
+import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
+import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
@@ -40,6 +46,132 @@ describe("learn placement attempts", () => {
     });
 
     await expect(finish()).resolves.toStrictEqual({ status: "staleAttempt" });
+  });
+
+  it("opens one language topic walk per completed whole-course assessment", async () => {
+    const user = await userFixture();
+    const { goal } = await learnerGoalFixture({ itemsPerSkill: 1, phases: [1], userId: user.id });
+
+    await prisma.goal.update({
+      data: { kind: "language", targetLanguage: "en" },
+      where: { id: goal.id },
+    });
+
+    mockSession(user.id);
+
+    const begin = () =>
+      startPlacementSitting({ goalId: goal.id, input: { length: "wholeCourse" } });
+
+    await expect(begin()).resolves.toStrictEqual({ status: "unavailable" });
+
+    const assessmentId = randomUUID();
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          levelTest: { attempt: { attemptId: assessmentId, result: { wholeCourseReady: true } } },
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    const opened = await begin();
+
+    if (opened.status !== "ready" || !opened.placement.attempt) {
+      throw new Error("Expected the language topic walk");
+    }
+
+    const attemptId = opened.placement.attempt.id;
+    await expect(begin()).resolves.toMatchObject({ placement: { attempt: { id: attemptId } } });
+
+    await expect(
+      finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
+    ).resolves.toMatchObject({
+      completion: { attempt: { id: attemptId, partComplete: true } },
+      status: "ready",
+    });
+
+    const resumed = await begin();
+    expect(resumed).toMatchObject({ placement: { attempt: { id: attemptId, part: 2 } } });
+
+    if (resumed.status !== "ready" || !resumed.placement.next) {
+      throw new Error("Expected the first topic question");
+    }
+
+    await answerPlacementQuestion({
+      goalId: goal.id,
+      input: {
+        answer: { dontKnow: true },
+        attemptId,
+        durationMs: 1000,
+        itemId: resumed.placement.next.itemId,
+        part: 2,
+      },
+    });
+
+    await expect(
+      finishGoalPlacement({ goalId: goal.id, input: { attemptId, part: 2 } }),
+    ).resolves.toMatchObject({ completion: { result: { attemptId } }, status: "ready" });
+
+    await expect(begin()).resolves.toMatchObject({
+      placement: { attempt: null, result: { attemptId } },
+    });
+  });
+
+  it("carries a partial Quick confirmation into a session after week one", async () => {
+    const user = await userFixture();
+
+    const { goal, items, skills } = await learnerGoalFixture({
+      itemsPerSkill: 1,
+      phases: [1],
+      userId: user.id,
+    });
+
+    const taps = await lowGuessTapItems(skills[0]!.id);
+    mockSession(user.id);
+
+    const begin = await startPlacementSitting({ goalId: goal.id, input: { length: "quick" } });
+
+    if (begin.status !== "ready" || !begin.placement.attempt) {
+      throw new Error("Expected a Quick attempt");
+    }
+
+    const attemptId = begin.placement.attempt.id;
+
+    await answerPlacementQuestion({
+      goalId: goal.id,
+      input: { answer: { selectedIndex: 0 }, attemptId, durationMs: 1000, itemId: items[0]!.id },
+    });
+
+    await expect(
+      finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
+    ).resolves.toMatchObject({ completion: { result: { lessonsSkipped: 0 } }, status: "ready" });
+
+    const [current, goalPlan] = await Promise.all([
+      prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      loadPlacementPlan(goal.id),
+    ]);
+
+    const now = new Date(Date.now() + 14 * MS_PER_DAY);
+    const localDate = getDateInTimeZone({ date: now, timeZone: "UTC" });
+
+    const selected = await loadSessionPlacement({
+      context: { goal: current, localDate, now, timeZone: "UTC", userId: user.id },
+      isReviewDay: false,
+      plan: {
+        finalStretchStart: null,
+        goalPlan,
+        graph: { phases: [], skills: [] },
+        listeningSkillIds: new Set(),
+        settings: {},
+        skills: goalPlan.skills,
+        structure: null,
+      },
+      used: new Set(),
+    });
+
+    expect(selected).toHaveLength(1);
+    expect(taps.map(({ item }) => item.id)).toContain(selected[0]);
   });
 
   it("skips the lesson on the plan while retaining the shown session's active and pending blocks", async () => {

@@ -29,8 +29,10 @@ const attemptSchema = placementAttemptViewSchema.extend({
 });
 
 const recordSchema = z.object({
+  assessmentId: uuidSchema().optional(),
   attempt: attemptSchema.nullable(),
   lastPart: partReceiptSchema.extend({ attemptId: uuidSchema() }).nullable(),
+  quickFollowUpSkillIds: z.array(uuidSchema()).optional(),
   result: placementResultSchema.nullable(),
 });
 

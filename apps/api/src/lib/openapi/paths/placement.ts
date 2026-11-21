@@ -237,7 +237,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/sittings": {
     post: {
       description:
-        "Starts or resumes a learn goal’s placement attempt with length quick or wholeCourse. For an exam goal, opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for an unsupported goal or a learn goal without a length.",
+        "Starts or resumes a learn goal's placement attempt with length quick or wholeCourse. A language goal can start its whole-course topic walk after the Whole-course level assessment. For an exam goal, opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 when the goal has no test available or an attempt requires a length.",
       operationId: "createPlacementSitting",
       requestBody: {
         content: { "application/json": { schema: placementSittingInputSchema } },

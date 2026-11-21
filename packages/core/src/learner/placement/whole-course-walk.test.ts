@@ -55,4 +55,25 @@ describe(readWholeCourseWalk, () => {
       readWholeCourseWalk({ answers, partAnsweredItemIds: new Set(), skills }).ready,
     ).toStrictEqual(skills);
   });
+
+  it("stops before a third chapter after two chapters confirm nothing", () => {
+    const inOrder = skills.map((topic, index) => ({
+      ...topic,
+      areaId: `chapter-${index}`,
+      prerequisiteIds: [],
+    }));
+
+    const answers = inOrder
+      .slice(0, 2)
+      .map((topic) => ({
+        format: "multipleChoice" as const,
+        itemId: topic.id,
+        outcome: "dontKnow" as const,
+        skillId: topic.id,
+      }));
+
+    expect(
+      readWholeCourseWalk({ answers, partAnsweredItemIds: new Set(), skills: inOrder }).ready,
+    ).toStrictEqual([]);
+  });
 });

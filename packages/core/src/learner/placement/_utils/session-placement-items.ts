@@ -14,7 +14,7 @@ import { type PlacementQuickFormat } from "../placement-quick-format";
 import { type SkillStatuses } from "../placement-status";
 import { type AreaPriority, getUndecidedSkills, rankAreasToAsk } from "../placement-steps";
 import { loadPlacementItems } from "./placement-bank-items";
-import { type TestSkillAnswers, loadAnsweredTestItems, loadEvidence } from "./placement-evidence";
+import { type TestSkillAnswers, loadEvidence, loadSeenPlacementItems } from "./placement-evidence";
 
 type StartSkill = { id: string; phase: number; sectionTitle: string | null };
 
@@ -108,6 +108,7 @@ export async function pickSessionPlacementItems({
   blueprint: knownBlueprint,
   excludeItemIds,
   focusAreas,
+  followUpSkillIds = new Set(),
   goal,
   limit,
   listeningSkillIds,
@@ -121,6 +122,7 @@ export async function pickSessionPlacementItems({
   /** The goal's exam blueprint when the day's build already read it; without it, it's read fresh. */
   blueprint?: Pick<ExamBlueprint, "ownerId"> | null;
   excludeItemIds: ReadonlySet<string>;
+  followUpSkillIds?: ReadonlySet<string>;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
   limit: number;
   /** The day plan's listening-only skills; without them, they're read fresh. */
@@ -136,7 +138,9 @@ export async function pickSessionPlacementItems({
   const skills = planSkills.filter((skill) => !listening.has(skill.id));
 
   const skillIds = skills
-    .filter((skill) => !recheckOnly || recheckSkillIds.has(skill.id))
+    .filter(
+      (skill) => !recheckOnly || recheckSkillIds.has(skill.id) || followUpSkillIds.has(skill.id),
+    )
     .map((skill) => skill.id);
 
   const [{ confirmationAnswers, evidence, seenItemIds, testSkills }, bankItems, blueprint] =
@@ -178,7 +182,7 @@ export async function pickSessionPlacementItems({
     statuses: questionStatuses,
   });
 
-  const answeredItems = await loadAnsweredTestItems({
+  const answeredItems = await loadSeenPlacementItems({
     itemIds: bankItems.map((item) => item.id),
     userId,
   });
@@ -198,8 +202,21 @@ export async function pickSessionPlacementItems({
       }) ?? [],
   );
 
-  if (recheckOnly || rechecks.length >= limit) {
-    return rechecks.slice(0, limit).map((item) => item.id);
+  const followUps = [...followUpSkillIds].flatMap((skillId) =>
+    recheckSkillIds.has(skillId) || ["known", "unknown"].includes(statuses.get(skillId) ?? "")
+      ? []
+      : (pickPlacementItem({
+          confirming: true,
+          items: candidates.filter((item) => isLowGuessTap(item)),
+          quickFormat,
+          skillId,
+        }) ?? []),
+  );
+
+  const priority = [...rechecks, ...followUps];
+
+  if (recheckOnly || priority.length >= limit) {
+    return priority.slice(0, limit).map((item) => item.id);
   }
 
   const walk = interleaveByStart({
@@ -221,5 +238,5 @@ export async function pickSessionPlacementItems({
       }) ?? [],
   );
 
-  return [...rechecks, ...regular].slice(0, limit).map((item) => item.id);
+  return [...priority, ...regular].slice(0, limit).map((item) => item.id);
 }

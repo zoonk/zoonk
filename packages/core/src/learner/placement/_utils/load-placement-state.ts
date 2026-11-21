@@ -24,7 +24,7 @@ import { countPlacementAnswers } from "./placement-answers";
 import { getAskingBudget } from "./placement-asking-budget";
 import { type PlacementAttemptView, type PlacementResult } from "./placement-attempt-record";
 import { loadPlacementItems } from "./placement-bank-items";
-import { loadAnsweredTestItems, loadEvidence } from "./placement-evidence";
+import { loadEvidence, loadSeenPlacementItems } from "./placement-evidence";
 import { loadGoalExam } from "./placement-goal-exam";
 import { type PlacementQuestionView } from "./placement-items";
 import { loadPlanBuild } from "./placement-plan-build";
@@ -55,6 +55,7 @@ export type PlacementState = {
 };
 
 export type PlacementLoad = {
+  attemptFollowUps?: string[];
   attemptHasMore: boolean;
   /** What an exam goal's writes need beside the state; null for other goals. */
   focusTest: Awaited<ReturnType<typeof loadFocusTest>>;
@@ -108,7 +109,7 @@ async function loadPlacementFacts({
     () => loadPlacementItems({ examBlueprintId: exam.examBlueprintId, skillIds, tx }),
   );
 
-  const answeredItems = await loadAnsweredTestItems({
+  const answeredItems = await loadSeenPlacementItems({
     itemIds: bankItems.map((item) => item.id),
     tx,
     userId,

@@ -5,6 +5,7 @@ import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules"
 import { type GoalPlan, type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { loadSkippedRecheckSkills } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent, listSkippedRechecks } from "../../learner/_utils/skill-claims";
+import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
 import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
 import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
 import { readSessionQuestions } from "../../learner/placement/focus-test-summary";
@@ -141,8 +142,9 @@ export async function loadSessionPlacement({
     !asksPlacement(context) || placesNothing({ context, finalStretchStart, isReviewDay });
 
   const recheckSkillIds = await readRechecks({ context, skillIds });
+  const followUpSkillIds = new Set(readPlacementAttempt(context.goal).quickFollowUpSkillIds);
 
-  if (recheckOnly && recheckSkillIds.size === 0) {
+  if (recheckOnly && recheckSkillIds.size === 0 && followUpSkillIds.size === 0) {
     return [];
   }
 
@@ -153,6 +155,7 @@ export async function loadSessionPlacement({
     blueprint: context.blueprint,
     excludeItemIds: used,
     focusAreas: settings.focusAreas,
+    followUpSkillIds,
     goal: context.goal,
     limit: SESSION_PLACEMENT_QUESTIONS,
     listeningSkillIds: plan.listeningSkillIds,
