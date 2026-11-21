@@ -53,7 +53,6 @@ msgstr "MU"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -796,6 +795,11 @@ msgstr "Opcje ekranu"
 msgctxt "WE1eNa"
 msgid "The test didn't open. Try again."
 msgstr "Nie udało się otworzyć testu. Spróbuj ponownie."
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "Znasz już następny rozdział?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"
