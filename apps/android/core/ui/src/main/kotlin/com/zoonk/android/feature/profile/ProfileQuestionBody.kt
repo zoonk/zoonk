@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilterChipDefaults
@@ -17,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -329,7 +333,15 @@ private fun TypedTools(
     enabled: Boolean,
     onChange: (ProfileDraft) -> Unit,
 ) {
+    val canAdd = draft.canAdd(question.options)
     val add = { onChange(draft.added(question.options)) }
+    val newest = remember { BringIntoViewRequester() }
+    var shownTyped by remember { mutableIntStateOf(draft.typed.size) }
+    LaunchedEffect(draft.typed.size) {
+        // A tool just added shows above the action bar, even while the keyboard covers the screen's lower half.
+        if (draft.typed.size > shownTyped) newest.bringIntoView()
+        shownTyped = draft.typed.size
+    }
     OutlinedTextField(
         draft.text,
         { onChange(draft.typing(it, question.options)) },
@@ -340,17 +352,17 @@ private fun TypedTools(
         trailingIcon = {
             TextButton(
                 onClick = add,
-                enabled = enabled && draft.text.isNotBlank(),
+                enabled = enabled && canAdd,
                 size = ButtonSize.Small,
             ) { Text(stringResource(R.string.profile_questions_add)) }
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = { if (draft.text.isBlank()) defaultKeyboardAction(ImeAction.Done) else add() }),
+        keyboardActions = KeyboardActions(onDone = { if (canAdd) add() else defaultKeyboardAction(ImeAction.Done) }),
         singleLine = true,
     )
     if (draft.typed.isNotEmpty()) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            draft.typed.forEach { tool ->
+            draft.typed.forEachIndexed { index, tool ->
                 val remove = { onChange(draft.removing(tool)) }
                 val name = stringResource(R.string.profile_questions_remove_tool, tool)
                 SelectionChip(
@@ -359,19 +371,26 @@ private fun TypedTools(
                     enabled = enabled,
                     onClick = remove,
                     trailingIcon = {
-                        Icon(painterResource(R.drawable.ic_close), contentDescription = null, Modifier.size(FilterChipDefaults.IconSize))
+                        Icon(
+                            painterResource(R.drawable.ic_close),
+                            contentDescription = null,
+                            Modifier.size(FilterChipDefaults.IconSize * LocalDensity.current.fontScale),
+                        )
                     },
                     // The whole chip removes the tool, so TalkBack reads it as that one action.
                     modifier =
-                        Modifier.defaultMinSize(minHeight = 48.dp).clearAndSetSemantics {
-                            contentDescription = name
-                            role = Role.Button
-                            onClick {
-                                remove()
-                                true
-                            }
-                            if (!enabled) disabled()
-                        },
+                        Modifier
+                            .defaultMinSize(minHeight = 48.dp)
+                            .then(if (index == draft.typed.lastIndex) Modifier.bringIntoViewRequester(newest) else Modifier)
+                            .clearAndSetSemantics {
+                                contentDescription = name
+                                role = Role.Button
+                                onClick {
+                                    remove()
+                                    true
+                                }
+                                if (!enabled) disabled()
+                            },
                 )
             }
         }

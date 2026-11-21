@@ -160,20 +160,50 @@ class ProfileDraftTest {
 
     @Test
     fun textLeftInTheFieldIsSentAsAdded() {
-        val draft = ProfileDraft(typed = listOf("SAP"), text = " Excel ")
-        assertTrue(ProfileDraft(text = "Excel").valid(ProfileQuestion.TOOLS))
-        assertEquals("SAP, Excel", favorites(draft))
+        val draft = ProfileDraft(typed = listOf("SAP"), text = " Excel, Python ")
+        assertTrue(ProfileDraft(text = "Excel").submitted(tools).valid(ProfileQuestion.TOOLS))
         val submitted = draft.submitted(tools)
         assertEquals(listOf("excel"), submitted.picks)
-        assertEquals("SAP", favorites(submitted))
+        assertEquals("SAP, Python", favorites(submitted))
     }
 
     @Test
-    fun theFieldStopsAtTheServersLimit() {
+    fun theFieldTakesNoMoreTextThanTheServersLimitLeaves() {
         val full = ProfileDraft(typed = listOf("a".repeat(60), "b".repeat(55)))
         assertEquals(117, favorites(full).length)
-        assertEquals("c", full.typing("c", tools.options).text)
-        assertEquals(full, full.typing("cc", tools.options))
-        assertEquals(full, full.typing("c, d", tools.options))
+        val typed = full.typing("c", tools.options)
+        assertEquals("c", typed.text)
+        assertEquals(typed, typed.typing("cc", tools.options))
+        assertEquals("Microsoft Dynami", full.copy(text = "Microsoft Dynamics").typing("Microsoft Dynami", tools.options).text)
+        assertEquals(full, full.typing("Microsoft Dynamics", tools.options))
+        assertEquals(listOf("a".repeat(60), "b".repeat(55), "c"), typed.typing("c,", tools.options).typed)
+    }
+
+    @Test
+    fun aPasteAddsTheNamesThatFitWholeAndLeavesTheRestInTheField() {
+        val almostFull = ProfileDraft(typed = listOf("a".repeat(100)))
+        val pasted = almostFull.typing("Photoshop, Illustrator, excel, Figma", tools.options)
+        assertEquals(listOf("a".repeat(100), "Photoshop", "Figma"), pasted.typed)
+        assertEquals(listOf("excel"), pasted.picks)
+        assertEquals("Illustrator", pasted.text)
+        assertEquals(118, favorites(pasted).length)
+        assertFalse(pasted.canAdd(tools.options))
+        assertFalse(pasted.submitted(tools).valid(ProfileQuestion.TOOLS))
+        assertTrue(pasted.copy(text = "").submitted(tools).valid(ProfileQuestion.TOOLS))
+    }
+
+    @Test
+    fun theLimitCountsCharactersAsTheServerDoes() {
+        val almostFull = ProfileDraft(typed = listOf("a".repeat(115)))
+        val emoji = almostFull.typing("🙂🙂🙂", tools.options)
+        assertEquals("🙂🙂🙂", emoji.text)
+        assertTrue(emoji.canAdd(tools.options))
+        assertEquals(listOf("a".repeat(115), "🙂🙂🙂"), emoji.added(tools.options).typed)
+    }
+
+    @Test
+    fun addIsOffForAnEmptyField() {
+        assertFalse(ProfileDraft(text = "  ").canAdd(tools.options))
+        assertTrue(ProfileDraft(text = "Excel").canAdd(tools.options))
     }
 }

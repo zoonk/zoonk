@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fitInside
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -330,9 +332,10 @@ internal class ProfileQuestionViewModel(
 
     fun canSave(memoryEnabled: Boolean): Boolean {
         val question = source ?: return false
-        if (!draft.empty(question.id, memoryEnabled)) return draft.valid(question.id, memoryEnabled)
+        val sent = draft.submitted(question)
+        if (!sent.empty(question.id, memoryEnabled)) return sent.valid(question.id, memoryEnabled)
         return question.status == ProfileQuestionView.Status.ANSWERED ||
-            (draft.declined && (question.id == ProfileQuestion.WORK || question.id == ProfileQuestion.ADDRESS_FORM))
+            (sent.declined && (question.id == ProfileQuestion.WORK || question.id == ProfileQuestion.ADDRESS_FORM))
     }
 
     fun save(
@@ -371,7 +374,9 @@ private fun ProfilePage(
                     .fillMaxSize()
                     .padding(padding)
                     .consumeWindowInsets(padding)
-                    .fitInside(WindowInsetsRulers.Ime.current),
+                    // Above the keyboard by where the page sits, over the tab bar it covers; the bar then adds no keyboard room again.
+                    .fitInside(WindowInsetsRulers.Ime.current)
+                    .consumeWindowInsets(WindowInsets.ime),
             ) {
                 Box(
                     Modifier
