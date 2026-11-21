@@ -1043,7 +1043,7 @@ msgstr "~{date}"
 #: src/_utils/range.ts
 msgctxt "zi1f8F"
 msgid "{low} to {high}"
-msgstr ""
+msgstr "{low} ile {high} arası"
 
 #: src/_utils/range.ts
 msgctxt "kV-RMr"
@@ -3069,12 +3069,12 @@ msgstr "Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor."
 #: src/essay/essay-status-line.tsx
 msgctxt "fzh_pw"
 msgid "Reading your answer against each criterion. It can take up to 30 seconds."
-msgstr ""
+msgstr "Cevabını her ölçüte göre değerlendiriyoruz. 30 saniyeye kadar sürebilir."
 
 #: src/essay/essay-status-line.tsx
 msgctxt "epOkEr"
 msgid "Not saved yet. It's kept on this device."
-msgstr ""
+msgstr "Henüz kaydedilmedi. Bu cihazda saklanıyor."
 
 #: src/essay/essay-word-count.tsx
 #: src/writing/writing-editor.tsx
@@ -4011,7 +4011,7 @@ msgstr "henüz başlamadı"
 #: src/writing/writing-start.tsx
 msgctxt "EY8lh9"
 msgid "Nothing was lost. Try again in a moment."
-msgstr ""
+msgstr "Hiçbir şey kaybolmadı. Birazdan tekrar dene."
 
 #: src/generation/lesson-generation-copy.ts
 msgctxt "57Hm5c"
@@ -4415,7 +4415,7 @@ msgstr "Her branşta ne soracağımızı seçiyoruz…"
 #: src/generation/use-generation-copy.ts
 msgctxt "xwzlmV"
 msgid "Writing your question"
-msgstr ""
+msgstr "Sorunu hazırlıyoruz"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -4998,58 +4998,58 @@ msgstr "{range} / {max}"
 #: src/journey/preparation/written-projection.tsx
 msgctxt "RfVIN3"
 msgid "Graded by level"
-msgstr ""
+msgstr "Düzeye göre puanlanıyor"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "dau4p7"
 msgid "Not measured yet"
-msgstr ""
+msgstr "Henüz ölçülmedi"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "uOG8dr"
 msgid "Above the {minimum} points needed"
-msgstr ""
+msgstr "Gerekli {minimum} puanın üzerinde"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "qjfXcf"
 msgid "{points} points short of the {minimum} needed"
-msgstr ""
+msgstr "Gerekli {minimum} puana ulaşmak için {points} puan eksiğin var"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "vUZHcz"
 msgid "Close to the {minimum} points needed"
-msgstr ""
+msgstr "Gerekli {minimum} puana yakın"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
-msgstr ""
+msgstr "Diğer puanların ne olursa olsun, {part} puanlarının {share} kadarını almalı."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "_XpN-M"
 msgid "{part} needs {minimum} points, whatever your other scores."
-msgstr ""
+msgstr "Diğer puanların ne olursa olsun, {part} {minimum} puan almalı."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "doYQpO"
 msgid "Below the minimum to pass"
-msgstr ""
+msgstr "Geçmek için gereken minimum puanın altında"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
 msgid "{part}, half your final score, isn't measured yet."
-msgstr ""
+msgstr "Nihai puanının yarısını oluşturan {part} henüz ölçülmedi."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "Km7c1e"
 msgid "{part}, {share} of your final score, isn't measured yet."
-msgstr ""
+msgstr "Nihai puanının {share} kadarını oluşturan {part} henüz ölçülmedi."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "XmqNXc"
 msgid "{part} isn't measured yet."
-msgstr ""
+msgstr "{part} henüz ölçülmedi."
 
 #: src/journey/preparation/written-projection.tsx
 #: src/syllabus/subject-write-bar.tsx
@@ -5057,12 +5057,12 @@ msgstr ""
 #: src/writing/writing-start.tsx
 msgctxt "k2veDA"
 msgid "Write"
-msgstr ""
+msgstr "Yaz"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "r70P1f"
 msgid "Objective test"
-msgstr ""
+msgstr "Objektif test"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx
@@ -7715,17 +7715,17 @@ msgstr "Deneme sınavını başlatamadık. Tekrar dene."
 #: src/mock/mock-chooser-page.tsx
 msgctxt "QsctwF"
 msgid "Questions like the ones on your exam. Your mock exam starts here when they're ready."
-msgstr ""
+msgstr "Sınavındakilere benzer sorular. Hazır olduklarında deneme sınavın burada başlayacak."
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "G2-rbQ"
 msgid "We couldn't write your questions"
-msgstr ""
+msgstr "Sorularını hazırlayamadık"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "AmTABH"
 msgid "Writing your questions…"
-msgstr ""
+msgstr "Sorularını hazırlıyoruz…"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qFtRJW"
@@ -7740,7 +7740,7 @@ msgstr "Senin için sınavdakilere benzer sorular hazırlıyoruz. Sorular hazır
 #: src/mock/mock-chooser.tsx
 msgctxt "aDMxKM"
 msgid "{count, plural, other {Your exam has # tests}}"
-msgstr ""
+msgstr "{count, plural, other {Sınavında # test var}}"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7750,7 +7750,7 @@ msgstr "Sınav"
 #: src/mock/mock-chooser.tsx
 msgctxt "9yIpY-"
 msgid "Shorter, objective questions only"
-msgstr ""
+msgstr "Daha kısa, yalnızca test soruları"
 
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-option-labels.ts
@@ -7848,7 +7848,7 @@ msgstr "{count, plural, one {# soru işaretlendi.} other {# soru işaretlendi.}}
 #: src/mock/mock-hand-in.tsx
 msgctxt "KIPpp4"
 msgid "{count, plural, one {The written question is blank.} other {# written questions are blank.}}"
-msgstr ""
+msgstr "{count, plural, one {Yazılı sorunun cevabı boş.} other {# yazılı sorunun cevabı boş.}}"
 
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-speaking.tsx
@@ -7997,7 +7997,7 @@ msgstr "{count, plural, other {# soru daha önce de sorulmuştu.}}"
 #: src/mock/mock-option-labels.ts
 msgctxt "EZ8FbD"
 msgid "{count, plural, =2 {Both tests} other {All # tests}}"
-msgstr ""
+msgstr "{count, plural, =2 {İki test de} other {Tüm # test}}"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "8ChI8a"
@@ -11350,7 +11350,7 @@ msgstr "Yazma pratiği artık her hafta."
 #: src/plan/written-cadence.tsx
 msgctxt "u6mbz4"
 msgid "When to practice writing"
-msgstr ""
+msgstr "Yazma çalışması ne zaman yapılmalı"
 
 #: src/plan/written-cadence.tsx
 msgctxt "1Jh2wI"
@@ -12720,7 +12720,7 @@ msgstr "Sonraki tarih"
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "z50pCl"
 msgid "Grading"
-msgstr ""
+msgstr "Puanlama"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "jSqwdW"
@@ -12853,91 +12853,91 @@ msgstr "{total, plural, other {{done, number} / # konu çalışıldı}}"
 #: src/syllabus/subject-write-bar.tsx
 msgctxt "dCMmZj"
 msgid "{share} of the score"
-msgstr ""
+msgstr "Puanın {share} kadarı"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "Ycseyb"
 msgid "{count, plural, one {last answer} other {last # answers}}"
-msgstr ""
+msgstr "{count, plural, one {son cevap} other {son # cevap}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "Jq3FDz"
 msgid "Content"
-msgstr ""
+msgstr "İçerik"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "j1okGc"
 msgid "Presentation and structure"
-msgstr ""
+msgstr "Sunum ve yapı"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 #: src/writing/writing-text.tsx
 msgctxt "a7of83"
 msgid "Language errors"
-msgstr ""
+msgstr "Dil hataları"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 #: src/writing/writing-text.tsx
 msgctxt "VXgrSB"
 msgid "{count, plural, one {# error} other {# errors}}"
-msgstr ""
+msgstr "{count, plural, one {# hata} other {# tane hata}}"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "AFTxeG"
 msgid "{count, plural, one {# line} other {# lines}}"
-msgstr ""
+msgstr "{count, plural, one {# satır} other {# tane satır}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "gPyDLV"
 msgid "{count, plural, one {about # line} other {about # lines}}"
-msgstr ""
+msgstr "{count, plural, one {yaklaşık # satır} other {yaklaşık # tane satır}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-editor.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "sKcJTn"
 msgid "about {used} of {lines} lines"
-msgstr ""
+msgstr "{lines} satırın yaklaşık {used} kadarı"
 
 #. A past written answer graded by level: how many of its criteria were fully met, out of all of them.
 #: src/syllabus/subject-written-score.tsx
 msgctxt "SPW5wO"
 msgid "{complete} of {total} criteria complete"
-msgstr ""
+msgstr "{complete} / {total} ölçüt tamamlandı"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "a0Vmlb"
 msgid "{count, plural, one {# version} other {# versions}}"
-msgstr ""
+msgstr "{count, plural, one {# sürüm} other {# tane sürüm}}"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "5m07cc"
 msgid "Your answers"
-msgstr ""
+msgstr "Cevapların"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "QRfeh-"
 msgid "Minimum to pass: {share} of the points"
-msgstr ""
+msgstr "Geçmek için gereken minimum puan oranı: {share}"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "B96Fmq"
 msgid "Minimum to pass: {minimum}"
-msgstr ""
+msgstr "Geçmek için gereken minimum: {minimum}"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "76yuN2"
 msgid "Minimum to pass: {minimum} of {max}"
-msgstr ""
+msgstr "Geçmek için gereken minimum: {minimum} / {max}"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "ieVB-d"
 msgid "Your answers are graded by level. A points estimate isn't available for this test yet."
-msgstr ""
+msgstr "Cevapların düzeylerine göre değerlendiriliyor. Bu test için henüz puan tahmini yapılamıyor."
 
 #: src/syllabus/syllabus-chapter-row.tsx
 msgctxt "PPs9To"
@@ -13673,86 +13673,86 @@ msgstr "{topic} · {from} → {to}"
 #: src/writing/points-readout.tsx
 msgctxt "j8q20J"
 msgid "of {max}"
-msgstr ""
+msgstr "{max} üzerinden"
 
 #. Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices.
 #: src/writing/writing-choice.tsx
 msgctxt "JsmQZC"
 msgid "Depends on your choice of {groups}"
-msgstr ""
+msgstr "Seçim yapmana bağlı: {groups}"
 
 #. Under a written test where one question waits for an exam choice the learner hasn't made. {task} is the question, such as "The 60-line question"; {groups} names the choices.
 #: src/writing/writing-choice.tsx
 msgctxt "dwIEAG"
 msgid "{task} depends on your choice of {groups}"
-msgstr ""
+msgstr "{task}, {groups} arasından yapacağın seçime bağlı"
 
 #: src/writing/writing-choice.tsx
 msgctxt "C3wT9_"
 msgid "Choose on Today"
-msgstr ""
+msgstr "Bugün seç"
 
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "7O580c"
 msgid "This answer changed on another device"
-msgstr ""
+msgstr "Bu cevap başka bir cihazda değişti"
 
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "RaNNM6"
 msgid "Keep the version you're writing here, or switch to the other one."
-msgstr ""
+msgstr "Burada yazdığın sürümü koru ya da diğerine geç."
 
 #. A choice between two versions of one written answer: replace what's typed here with the version saved on another device.
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "ngstJD"
 msgid "Use the other"
-msgstr ""
+msgstr "Diğer sürümü kullan"
 
 #. A choice between two versions of one written answer: keep what's typed on this device and save it over the other.
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "qigA3g"
 msgid "Keep this one"
-msgstr ""
+msgstr "Bu sürümü koru"
 
 #: src/writing/writing-editor.tsx
 msgctxt "a2NxUG"
 msgid "0 of {lines} lines"
-msgstr ""
+msgstr "0 / {lines} satır"
 
 #. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
 #: src/writing/writing-editor.tsx
 msgctxt "6omgAR"
 msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr ""
+msgstr "Yaklaşık {used} / {lines} satır · {over} satır okunmayacak"
 
 #: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"
 msgid "This answer is {count} characters too long. Shorten it to save and grade it."
-msgstr ""
+msgstr "Bu cevap {count} karakter fazla. Kaydedip puanlatmak için kısalt."
 
 #. A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer.
 #: src/writing/writing-header.ts
 msgctxt "k2IfPK"
 msgid "Short writing exercise"
-msgstr ""
+msgstr "Kısa yazma alıştırması"
 
 #. A whole answer of an exam's written test, named by its line limit, such as 30 lines.
 #: src/writing/writing-header.ts
 msgctxt "Ys6nu8"
 msgid "Write the {lines}-line question"
-msgstr ""
+msgstr "{lines} satır uzunluğundaki soruyu yaz"
 
 #. A whole answer of an exam's written test whose questions share a line limit, named by its place in the test.
 #: src/writing/writing-header.ts
 msgctxt "csNSR1"
 msgid "Write question {number}"
-msgstr ""
+msgstr "{number}. soruyu yaz"
 
 #. The whole answer of an exam's written test that has one question.
 #: src/writing/writing-header.ts
 msgctxt "6VrHwB"
 msgid "Write the question"
-msgstr ""
+msgstr "Soruyu yaz"
 
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
@@ -13764,64 +13764,64 @@ msgstr "Yazma alıştırması"
 #: src/writing/writing-header.ts
 msgctxt "VKYO0K"
 msgid "The {lines}-line question"
-msgstr ""
+msgstr "{lines} satır uzunluğundaki soru"
 
 #. The only question of an exam's written test.
 #: src/writing/writing-header.ts
 msgctxt "qUDRXP"
 msgid "The question"
-msgstr ""
+msgstr "Soru"
 
 #: src/writing/writing-header.ts
 msgctxt "0cmsKD"
 msgid "Your draft is saved"
-msgstr ""
+msgstr "Taslağın kaydedildi"
 
 #. Under a short writing exercise after a lesson: what it's for.
 #: src/writing/writing-header.ts
 msgctxt "mKxwIN"
 msgid "To use what you just learned"
-msgstr ""
+msgstr "Az önce öğrendiklerini kullanmak için"
 
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
 msgctxt "neJLv4"
 msgid "Written answer"
-msgstr ""
+msgstr "Yazılı cevap"
 
 #. A criterion of a written answer fully met.
 #: src/writing/writing-labels.ts
 msgctxt "U78NhE"
 msgid "Complete"
-msgstr ""
+msgstr "Tamamlandı"
 
 #. A criterion of a written answer mostly met.
 #: src/writing/writing-labels.ts
 msgctxt "6xap9L"
 msgid "Good"
-msgstr ""
+msgstr "İyi"
 
 #. A criterion of a written answer half met.
 #: src/writing/writing-labels.ts
 msgctxt "B0ZRIZ"
 msgid "Partly"
-msgstr ""
+msgstr "Kısmen"
 
 #. A criterion of a written answer not met.
 #: src/writing/writing-labels.ts
 msgctxt "DkkVJF"
 msgid "Missing"
-msgstr ""
+msgstr "Eksik"
 
 #: src/writing/writing-labels.ts
 msgctxt "bL2guL"
 msgid "Back tomorrow: no more grading today"
-msgstr ""
+msgstr "Yarın tekrar deneyebilirsin: bugün başka puanlama yapılmayacak"
 
 #: src/writing/writing-labels.ts
 msgctxt "cvptXL"
 msgid "Back on {date}: no more grading today"
-msgstr ""
+msgstr "{date} tarihinde tekrar deneyebilirsin: bugün başka puanlama yapılmayacak"
 
 #: src/writing/writing-next-step.tsx
 msgctxt "BQrBD9"
@@ -13831,7 +13831,7 @@ msgstr "Üzerinde çalışılacak bir şey kalmadı"
 #: src/writing/writing-next-step.tsx
 msgctxt "xpK1rU"
 msgid "Every criterion is complete."
-msgstr ""
+msgstr "Tüm ölçütler tamamlandı."
 
 #: src/writing/writing-next-step.tsx
 msgctxt "HiVJjN"
@@ -13841,52 +13841,52 @@ msgstr "Örneğin: {example}"
 #: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"
 msgid "Minimum to pass the written test: {share} of the points"
-msgstr ""
+msgstr "Yazılı sınavı geçmek için gereken en düşük puan oranı: {share}"
 
 #: src/writing/writing-question.tsx
 msgctxt "U413N1"
 msgid "{lines, plural, one {Up to # line} other {Up to # lines}}"
-msgstr ""
+msgstr "{lines, plural, one {En çok # satır} other {En fazla # satır}}"
 
 #: src/writing/writing-question.tsx
 msgctxt "wHT3hs"
 msgid "{points} points"
-msgstr ""
+msgstr "{points} puan"
 
 #: src/writing/writing-question.tsx
 msgctxt "1g9mZ7"
 msgid "about {time}"
-msgstr ""
+msgstr "yaklaşık {time}"
 
 #: src/writing/writing-question.tsx
 msgctxt "h5Dspx"
 msgid "From the exam notice."
-msgstr ""
+msgstr "Sınav ilanından."
 
 #: src/writing/writing-question.tsx
 msgctxt "1MSsHI"
 msgid "From the exam notice. The answer key is ours, for practice."
-msgstr ""
+msgstr "Sınav ilanından. Cevap anahtarı bize ait, pratik yapman için hazırlandı."
 
 #: src/writing/writing-question.tsx
 msgctxt "qPK58Y"
 msgid "How the {points} points are split"
-msgstr ""
+msgstr "{points} puanın dağılımı"
 
 #: src/writing/writing-question.tsx
 msgctxt "GHkFy1"
 msgid "What the answer is judged on"
-msgstr ""
+msgstr "Cevap neye göre değerlendiriliyor"
 
 #: src/writing/writing-question.tsx
 msgctxt "gsRERV"
 msgid "Grading criteria"
-msgstr ""
+msgstr "Değerlendirme ölçütleri"
 
 #: src/writing/writing-question.tsx
 msgctxt "guQrMp"
 msgid "Support text"
-msgstr ""
+msgstr "Destek metni"
 
 #: src/writing/writing-question.tsx
 msgctxt "2rkYNm"
@@ -13896,48 +13896,48 @@ msgstr "Yazman gerekenler"
 #: src/writing/writing-refused.tsx
 msgctxt "K9ytBU"
 msgid "Left for tomorrow"
-msgstr ""
+msgstr "Yarına kalanlar"
 
 #: src/writing/writing-refused.tsx
 msgctxt "5WNc7Y"
 msgid "No more grading today"
-msgstr ""
+msgstr "Bugünlük değerlendirme sınırına ulaştın"
 
 #: src/writing/writing-refused.tsx
 msgctxt "rMmqh8"
 msgid "You'll have more tomorrow."
-msgstr ""
+msgstr "Yarın daha fazla değerlendirme yapabileceksin."
 
 #: src/writing/writing-result.tsx
 msgctxt "QYZhu-"
 msgid "Graders stop at line {lines}, so the rest isn't read."
-msgstr ""
+msgstr "Değerlendirenler {lines} satırdan sonrasını okumaz."
 
 #: src/writing/writing-result.tsx
 msgctxt "UIwidi"
 msgid "Graders stop at the line limit, so the rest isn't read."
-msgstr ""
+msgstr "Değerlendirenler satır sınırından sonrasını okumaz."
 
 #: src/writing/writing-result.tsx
 msgctxt "rxvcLB"
 msgid "Fit it in {lines} lines"
-msgstr ""
+msgstr "Yanıtın en fazla {lines} satır olsun"
 
 #: src/writing/writing-result.tsx
 msgctxt "EEutpJ"
 msgid "Fit it in the line limit"
-msgstr ""
+msgstr "Satır sınırına sığdır"
 
 #: src/writing/writing-result.tsx
 msgctxt "ySOM1S"
 msgid "Rewrite it following the rule above."
-msgstr ""
+msgstr "Yukarıdaki kurala göre yeniden yaz."
 
 #: src/writing/writing-result.tsx
 #: src/writing/writing-zero-step.ts
 msgctxt "rY8RUj"
 msgid "Answer the question asked"
-msgstr ""
+msgstr "Sorulan soruyu cevapla"
 
 #: src/writing/writing-result.tsx
 msgctxt "TvkYzM"
@@ -13947,32 +13947,32 @@ msgstr "Yeniden yazılacak kısım"
 #: src/writing/writing-result.tsx
 msgctxt "RwlK46"
 msgid "Since your last version"
-msgstr ""
+msgstr "Son yanıtından beri"
 
 #: src/writing/writing-result.tsx
 msgctxt "P2923Q"
 msgid "Fixed: {criteria}"
-msgstr ""
+msgstr "Düzeltilenler: {criteria}"
 
 #: src/writing/writing-result.tsx
 msgctxt "8Fj-Q0"
 msgid "Still to work on: {criteria}"
-msgstr ""
+msgstr "Üzerinde çalışılacaklar: {criteria}"
 
 #: src/writing/writing-result.tsx
 msgctxt "G_D1yr"
 msgid "The exam notice doesn't say how many points each criterion is worth."
-msgstr ""
+msgstr "Sınav ilanında her ölçütün kaç puan değerinde olduğu belirtilmiyor."
 
 #: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
-msgstr ""
+msgstr "Sınav ilanındaki ölçütler ve puanlar."
 
 #: src/writing/writing-result.tsx
 msgctxt "dMVJUV"
 msgid "Criteria and points from the exam notice. The answer key is ours, for practice."
-msgstr ""
+msgstr "Sınav ilanındaki ölçütler ve puanlar. Cevap anahtarı bize ait, pratik yapman için hazırlandı."
 
 #: src/writing/writing-result.tsx
 msgctxt "LLXwbj"
@@ -13982,7 +13982,7 @@ msgstr "{score} / {max}"
 #: src/writing/writing-result.tsx
 msgctxt "xZdNA0"
 msgid "Criteria"
-msgstr ""
+msgstr "Ölçütler"
 
 #: src/writing/writing-result.tsx
 msgctxt "H9233U"
@@ -14007,98 +14007,98 @@ msgstr "Yeniden yaz"
 #: src/writing/writing-screen.tsx
 msgctxt "xaWNqy"
 msgid "This grade is for the version you sent first. Your changes are kept for your rewrite."
-msgstr ""
+msgstr "Bu puan, ilk gönderdiğin sürüm için. Yeniden yazman için yaptığın değişiklikler saklandı."
 
 #: src/writing/writing-start.tsx
 msgctxt "mmyp7Y"
 msgid "Your exam notice changed, so it's out of your plan. Nothing was graded."
-msgstr ""
+msgstr "Sınav ilanı değiştiği için planından çıktı. Puanlama yapılmadı."
 
 #: src/writing/writing-start.tsx
 msgctxt "oZMZx-"
 msgid "This question is no longer on your exam"
-msgstr ""
+msgstr "Bu soru artık sınavında yok"
 
 #: src/writing/writing-start.tsx
 msgctxt "y4dgHy"
 msgid "A short exercise on what you just learned. It opens here when it's ready."
-msgstr ""
+msgstr "Az önce öğrendiklerinle ilgili kısa bir alıştırma. Hazır olunca burada açılır."
 
 #: src/writing/writing-start.tsx
 msgctxt "X8PfXM"
 msgid "We couldn't write your exercise"
-msgstr ""
+msgstr "Alıştırmanı hazırlayamadık"
 
 #: src/writing/writing-start.tsx
 msgctxt "CzL4pW"
 msgid "Writing your exercise…"
-msgstr ""
+msgstr "Alıştırmanı hazırlıyoruz…"
 
 #: src/writing/writing-start.tsx
 msgctxt "0zf91l"
 msgid "A new question like the ones on your exam. It opens here when it's ready."
-msgstr ""
+msgstr "Sınavındakilere benzer yeni bir soru. Hazır olunca burada açılır."
 
 #: src/writing/writing-start.tsx
 msgctxt "drzL_F"
 msgid "We couldn't write your question"
-msgstr ""
+msgstr "Sorunu hazırlayamadık"
 
 #: src/writing/writing-start.tsx
 msgctxt "xj8ORz"
 msgid "Writing your question…"
-msgstr ""
+msgstr "Sorunu hazırlıyoruz…"
 
 #: src/writing/writing-start.tsx
 msgctxt "lECQ5R"
 msgid "With one, we write your exercise and grade what you write."
-msgstr ""
+msgstr "Hesap açınca alıştırmanı hazırlayıp yazdıklarını puanlarız."
 
 #: src/writing/writing-start.tsx
 msgctxt "KyaG5d"
 msgid "With one, we write your question and grade what you write."
-msgstr ""
+msgstr "Hesap açınca sorunu hazırlayıp yazdıklarını puanlarız."
 
 #: src/writing/writing-text.tsx
 msgctxt "-QTlEJ"
 msgid "Past line {lines}: graders stop reading here"
-msgstr ""
+msgstr "{lines} satır geçildikten sonra değerlendirenler okumayı bırakır"
 
 #: src/writing/writing-text.tsx
 msgctxt "ecaPI4"
 msgid "Past the limit: graders stop reading here"
-msgstr ""
+msgstr "Sınırdan sonrası: değerlendirenler okumayı bırakır"
 
 #: src/writing/writing-text.tsx
 msgctxt "agrPL7"
 msgid ", language error"
-msgstr ""
+msgstr ", dil hatası"
 
 #. Under a correction: what the learner wrote, then the kind of error, like "grammar".
 #: src/writing/writing-text.tsx
 msgctxt "9GNJHe"
 msgid "You wrote “{quote}” ({kind})"
-msgstr ""
+msgstr "“{quote}” yazdın ({kind})"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "kgOBET"
 msgid "Question"
-msgstr ""
+msgstr "Soru"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
-msgstr ""
+msgstr "Yazmaya devam et"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "0kG74Q"
 msgid "It's kept on this device and saves when you're back online."
-msgstr ""
+msgstr "Bu cihazda saklanıyor ve tekrar çevrimiçi olduğunda kaydediliyor."
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "g2F3WK"
 msgid "Your answer isn't saved yet"
-msgstr ""
+msgstr "Cevabın henüz kaydedilmedi"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "osZlj7"
@@ -14108,7 +14108,7 @@ msgstr "Yeniden yazımı değerlendir"
 #: src/writing/writing-write-screen.tsx
 msgctxt "QIqC-9"
 msgid "Grade answer"
-msgstr ""
+msgstr "Cevabı değerlendir"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "othn-n"
@@ -14118,56 +14118,56 @@ msgstr "Geliştirmen gereken yerleri yeniden yaz"
 #: src/writing/writing-zero-step.ts
 msgctxt "7Q6f_R"
 msgid "Start with the points the question asks for."
-msgstr ""
+msgstr "Sorunun istediği noktalarla başla."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "QMI2b6"
 msgid "Write an answer"
-msgstr ""
+msgstr "Cevap yaz"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "ympxc-"
 msgid "Reread the question and write about what it asks."
-msgstr ""
+msgstr "Soruyu yeniden oku ve istediği konu hakkında yaz."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "uYf4Eh"
 msgid "Check what kind of text the question asks for, and write that."
-msgstr ""
+msgstr "Sorunun istediği metin türünü kontrol et ve o türde yaz."
 
 #. The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked.
 #: src/writing/writing-zero-step.ts
 msgctxt "bzU48P"
 msgid "Write it in the form asked"
-msgstr ""
+msgstr "İstenen biçimde yaz"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "aIyijN"
 msgid "Develop each point the question asks for until you reach it."
-msgstr ""
+msgstr "Sorunun istediği her noktayı, istenen uzunluğa ulaşana kadar geliştir."
 
 #. The next step of a written answer zeroed for being shorter than the exam's minimum number of lines.
 #: src/writing/writing-zero-step.ts
 msgctxt "PERlo3"
 msgid "Reach the minimum length"
-msgstr ""
+msgstr "Asgari uzunluğa ulaş"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "taNC0x"
 msgid "Take the support text as a starting point, not as your answer."
-msgstr ""
+msgstr "Destek metnini cevabın olarak değil, başlangıç noktası olarak kullan."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "iQwWzc"
 msgid "Use your own words"
-msgstr ""
+msgstr "Kendi sözcüklerini kullan"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "1L_DMq"
 msgid "Remove names, signatures and marks that aren't part of the answer."
-msgstr ""
+msgstr "Cevabın parçası olmayan adları, imzaları ve işaretleri kaldır."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
-msgstr ""
+msgstr "Seni tanıtabilecek şeyleri çıkar"

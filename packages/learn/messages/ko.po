@@ -1043,7 +1043,7 @@ msgstr "{date}쯤"
 #: src/_utils/range.ts
 msgctxt "zi1f8F"
 msgid "{low} to {high}"
-msgstr ""
+msgstr "{low}에서 {high}까지"
 
 #: src/_utils/range.ts
 msgctxt "kV-RMr"
@@ -3069,12 +3069,12 @@ msgstr "아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있�
 #: src/essay/essay-status-line.tsx
 msgctxt "fzh_pw"
 msgid "Reading your answer against each criterion. It can take up to 30 seconds."
-msgstr ""
+msgstr "답변을 각 기준에 따라 검토하고 있어요. 최대 30초까지 걸릴 수 있어요."
 
 #: src/essay/essay-status-line.tsx
 msgctxt "epOkEr"
 msgid "Not saved yet. It's kept on this device."
-msgstr ""
+msgstr "아직 저장되지 않았어요. 이 기기에 보관되어 있어요."
 
 #: src/essay/essay-word-count.tsx
 #: src/writing/writing-editor.tsx
@@ -4011,7 +4011,7 @@ msgstr "아직 시작 전"
 #: src/writing/writing-start.tsx
 msgctxt "EY8lh9"
 msgid "Nothing was lost. Try again in a moment."
-msgstr ""
+msgstr "사라진 내용은 없어요. 잠시 후 다시 시도해 보세요."
 
 #: src/generation/lesson-generation-copy.ts
 msgctxt "57Hm5c"
@@ -4415,7 +4415,7 @@ msgstr "과목마다 무엇을 물어볼지 고르고 있어요…"
 #: src/generation/use-generation-copy.ts
 msgctxt "xwzlmV"
 msgid "Writing your question"
-msgstr ""
+msgstr "질문을 만들고 있어요"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -4998,58 +4998,58 @@ msgstr "{range} / {max}"
 #: src/journey/preparation/written-projection.tsx
 msgctxt "RfVIN3"
 msgid "Graded by level"
-msgstr ""
+msgstr "수준별 채점"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "dau4p7"
 msgid "Not measured yet"
-msgstr ""
+msgstr "아직 측정되지 않았어요"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "uOG8dr"
 msgid "Above the {minimum} points needed"
-msgstr ""
+msgstr "필요한 최소 점수인 {minimum}점보다 높아요"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "qjfXcf"
 msgid "{points} points short of the {minimum} needed"
-msgstr ""
+msgstr "필요 점수 {minimum}점에 {points}점 모자라요"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "vUZHcz"
 msgid "Close to the {minimum} points needed"
-msgstr ""
+msgstr "필요한 최소 점수 {minimum}점에 가까워요"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
-msgstr ""
+msgstr "다른 점수와 관계없이 {part}에서 배점의 {share}를 받아야 해요."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "_XpN-M"
 msgid "{part} needs {minimum} points, whatever your other scores."
-msgstr ""
+msgstr "다른 점수와 관계없이 {part}에서 {minimum}점을 받아야 해요."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "doYQpO"
 msgid "Below the minimum to pass"
-msgstr ""
+msgstr "합격 최소 점수 미달"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
 msgid "{part}, half your final score, isn't measured yet."
-msgstr ""
+msgstr "{part}은(는) 최종 점수의 절반인데 아직 측정되지 않았어요."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "Km7c1e"
 msgid "{part}, {share} of your final score, isn't measured yet."
-msgstr ""
+msgstr "{part}은(는) 최종 점수의 {share}에 해당하며 아직 측정되지 않았어요."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "XmqNXc"
 msgid "{part} isn't measured yet."
-msgstr ""
+msgstr "{part}은(는) 아직 측정되지 않았어요."
 
 #: src/journey/preparation/written-projection.tsx
 #: src/syllabus/subject-write-bar.tsx
@@ -5057,12 +5057,12 @@ msgstr ""
 #: src/writing/writing-start.tsx
 msgctxt "k2veDA"
 msgid "Write"
-msgstr ""
+msgstr "쓰기"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "r70P1f"
 msgid "Objective test"
-msgstr ""
+msgstr "객관식 시험"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx
@@ -7715,17 +7715,17 @@ msgstr "모의고사를 시작하지 못했어요. 다시 시도해 보세요."
 #: src/mock/mock-chooser-page.tsx
 msgctxt "QsctwF"
 msgid "Questions like the ones on your exam. Your mock exam starts here when they're ready."
-msgstr ""
+msgstr "시험과 비슷한 문제예요. 준비되면 여기서 모의고사를 시작할 수 있어요."
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "G2-rbQ"
 msgid "We couldn't write your questions"
-msgstr ""
+msgstr "문제를 만들지 못했어요"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "AmTABH"
 msgid "Writing your questions…"
-msgstr ""
+msgstr "문제를 만들고 있어요…"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qFtRJW"
@@ -7740,7 +7740,7 @@ msgstr "실제 시험과 비슷한 문제를 만들고 있어요. 준비가 끝�
 #: src/mock/mock-chooser.tsx
 msgctxt "aDMxKM"
 msgid "{count, plural, other {Your exam has # tests}}"
-msgstr ""
+msgstr "{count, plural, other {시험에 테스트가 #개 있어요}}"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7750,7 +7750,7 @@ msgstr "시험"
 #: src/mock/mock-chooser.tsx
 msgctxt "9yIpY-"
 msgid "Shorter, objective questions only"
-msgstr ""
+msgstr "더 짧고 객관식 문제만 있는 시험"
 
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-option-labels.ts
@@ -7848,7 +7848,7 @@ msgstr "{count, plural, other {표시한 문제 #개입니다.}}"
 #: src/mock/mock-hand-in.tsx
 msgctxt "KIPpp4"
 msgid "{count, plural, one {The written question is blank.} other {# written questions are blank.}}"
-msgstr ""
+msgstr "{count, plural, =1 {서술형 문제가 비어 있어요.} other {서술형 문제 #개가 비어 있어요.}}"
 
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-speaking.tsx
@@ -7997,7 +7997,7 @@ msgstr "{count, plural, other {이전에 나온 문제가 #개 있었어요.}}"
 #: src/mock/mock-option-labels.ts
 msgctxt "EZ8FbD"
 msgid "{count, plural, =2 {Both tests} other {All # tests}}"
-msgstr ""
+msgstr "{count, plural, =2 {두 테스트 모두} other {전체 #개 테스트}}"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "8ChI8a"
@@ -11350,7 +11350,7 @@ msgstr "앞으로 매주 쓰기 연습을 해요."
 #: src/plan/written-cadence.tsx
 msgctxt "u6mbz4"
 msgid "When to practice writing"
-msgstr ""
+msgstr "쓰기 연습 시기"
 
 #: src/plan/written-cadence.tsx
 msgctxt "1Jh2wI"
@@ -12720,7 +12720,7 @@ msgstr "다음 학습일"
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "z50pCl"
 msgid "Grading"
-msgstr ""
+msgstr "채점"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "jSqwdW"
@@ -12853,91 +12853,91 @@ msgstr "{total, plural, other {주제 {done, number}/#개 학습 완료}}"
 #: src/syllabus/subject-write-bar.tsx
 msgctxt "dCMmZj"
 msgid "{share} of the score"
-msgstr ""
+msgstr "점수의 {share}"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "Ycseyb"
 msgid "{count, plural, one {last answer} other {last # answers}}"
-msgstr ""
+msgstr "{count, plural, =1 {마지막 답변} other {마지막 답변 #개}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "Jq3FDz"
 msgid "Content"
-msgstr ""
+msgstr "내용"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "j1okGc"
 msgid "Presentation and structure"
-msgstr ""
+msgstr "표현 및 구성"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 #: src/writing/writing-text.tsx
 msgctxt "a7of83"
 msgid "Language errors"
-msgstr ""
+msgstr "언어 오류"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 #: src/writing/writing-text.tsx
 msgctxt "VXgrSB"
 msgid "{count, plural, one {# error} other {# errors}}"
-msgstr ""
+msgstr "{count, plural, other {#개 오류}}"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "AFTxeG"
 msgid "{count, plural, one {# line} other {# lines}}"
-msgstr ""
+msgstr "{count, plural, other {#줄}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "gPyDLV"
 msgid "{count, plural, one {about # line} other {about # lines}}"
-msgstr ""
+msgstr "{count, plural, other {약 #줄}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-editor.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "sKcJTn"
 msgid "about {used} of {lines} lines"
-msgstr ""
+msgstr "전체 {lines}줄 중 약 {used}줄"
 
 #. A past written answer graded by level: how many of its criteria were fully met, out of all of them.
 #: src/syllabus/subject-written-score.tsx
 msgctxt "SPW5wO"
 msgid "{complete} of {total} criteria complete"
-msgstr ""
+msgstr "전체 {total}개 기준 중 {complete}개 충족"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "a0Vmlb"
 msgid "{count, plural, one {# version} other {# versions}}"
-msgstr ""
+msgstr "{count, plural, other {#개 버전}}"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "5m07cc"
 msgid "Your answers"
-msgstr ""
+msgstr "내 답변"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "QRfeh-"
 msgid "Minimum to pass: {share} of the points"
-msgstr ""
+msgstr "합격에 필요한 최소 점수: 총점의 {share}"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "B96Fmq"
 msgid "Minimum to pass: {minimum}"
-msgstr ""
+msgstr "합격에 필요한 최소 점수: {minimum}"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "76yuN2"
 msgid "Minimum to pass: {minimum} of {max}"
-msgstr ""
+msgstr "합격에 필요한 최소 점수: {max}점 중 {minimum}점"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "ieVB-d"
 msgid "Your answers are graded by level. A points estimate isn't available for this test yet."
-msgstr ""
+msgstr "답변은 수준별로 채점해요. 아직 이 시험의 예상 점수는 확인할 수 없어요."
 
 #: src/syllabus/syllabus-chapter-row.tsx
 msgctxt "PPs9To"
@@ -13673,86 +13673,86 @@ msgstr "{topic} · {from}에서 {to}로"
 #: src/writing/points-readout.tsx
 msgctxt "j8q20J"
 msgid "of {max}"
-msgstr ""
+msgstr "총 {max}점 중"
 
 #. Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices.
 #: src/writing/writing-choice.tsx
 msgctxt "JsmQZC"
 msgid "Depends on your choice of {groups}"
-msgstr ""
+msgstr "선택한 {groups}에 따라 달라져요"
 
 #. Under a written test where one question waits for an exam choice the learner hasn't made. {task} is the question, such as "The 60-line question"; {groups} names the choices.
 #: src/writing/writing-choice.tsx
 msgctxt "dwIEAG"
 msgid "{task} depends on your choice of {groups}"
-msgstr ""
+msgstr "{task}은(는) 선택한 {groups}에 따라 달라져요"
 
 #: src/writing/writing-choice.tsx
 msgctxt "C3wT9_"
 msgid "Choose on Today"
-msgstr ""
+msgstr "오늘에서 선택하기"
 
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "7O580c"
 msgid "This answer changed on another device"
-msgstr ""
+msgstr "다른 기기에서 답변이 변경됐어요"
 
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "RaNNM6"
 msgid "Keep the version you're writing here, or switch to the other one."
-msgstr ""
+msgstr "여기서 작성 중인 버전을 유지하거나 다른 버전으로 바꿀 수 있어요."
 
 #. A choice between two versions of one written answer: replace what's typed here with the version saved on another device.
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "ngstJD"
 msgid "Use the other"
-msgstr ""
+msgstr "다른 버전 사용"
 
 #. A choice between two versions of one written answer: keep what's typed on this device and save it over the other.
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "qigA3g"
 msgid "Keep this one"
-msgstr ""
+msgstr "이 버전 유지"
 
 #: src/writing/writing-editor.tsx
 msgctxt "a2NxUG"
 msgid "0 of {lines} lines"
-msgstr ""
+msgstr "0/{lines}줄"
 
 #. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
 #: src/writing/writing-editor.tsx
 msgctxt "6omgAR"
 msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr ""
+msgstr "약 {used}/{lines}줄 · {over}줄은 채점자가 읽지 않아요"
 
 #: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"
 msgid "This answer is {count} characters too long. Shorten it to save and grade it."
-msgstr ""
+msgstr "답변이 글자 수 제한보다 {count}자 많아요. 저장하고 채점하려면 줄여 주세요."
 
 #. A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer.
 #: src/writing/writing-header.ts
 msgctxt "k2IfPK"
 msgid "Short writing exercise"
-msgstr ""
+msgstr "짧은 글쓰기 연습"
 
 #. A whole answer of an exam's written test, named by its line limit, such as 30 lines.
 #: src/writing/writing-header.ts
 msgctxt "Ys6nu8"
 msgid "Write the {lines}-line question"
-msgstr ""
+msgstr "{lines}줄 문제 쓰기"
 
 #. A whole answer of an exam's written test whose questions share a line limit, named by its place in the test.
 #: src/writing/writing-header.ts
 msgctxt "csNSR1"
 msgid "Write question {number}"
-msgstr ""
+msgstr "{number}번 문제 쓰기"
 
 #. The whole answer of an exam's written test that has one question.
 #: src/writing/writing-header.ts
 msgctxt "6VrHwB"
 msgid "Write the question"
-msgstr ""
+msgstr "문제 쓰기"
 
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
@@ -13764,64 +13764,64 @@ msgstr "쓰기 연습"
 #: src/writing/writing-header.ts
 msgctxt "VKYO0K"
 msgid "The {lines}-line question"
-msgstr ""
+msgstr "{lines}줄 문제"
 
 #. The only question of an exam's written test.
 #: src/writing/writing-header.ts
 msgctxt "qUDRXP"
 msgid "The question"
-msgstr ""
+msgstr "문제"
 
 #: src/writing/writing-header.ts
 msgctxt "0cmsKD"
 msgid "Your draft is saved"
-msgstr ""
+msgstr "초안이 저장됐어요"
 
 #. Under a short writing exercise after a lesson: what it's for.
 #: src/writing/writing-header.ts
 msgctxt "mKxwIN"
 msgid "To use what you just learned"
-msgstr ""
+msgstr "방금 배운 내용 활용하기"
 
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
 msgctxt "neJLv4"
 msgid "Written answer"
-msgstr ""
+msgstr "서술형 답변"
 
 #. A criterion of a written answer fully met.
 #: src/writing/writing-labels.ts
 msgctxt "U78NhE"
 msgid "Complete"
-msgstr ""
+msgstr "충족"
 
 #. A criterion of a written answer mostly met.
 #: src/writing/writing-labels.ts
 msgctxt "6xap9L"
 msgid "Good"
-msgstr ""
+msgstr "양호"
 
 #. A criterion of a written answer half met.
 #: src/writing/writing-labels.ts
 msgctxt "B0ZRIZ"
 msgid "Partly"
-msgstr ""
+msgstr "일부 충족"
 
 #. A criterion of a written answer not met.
 #: src/writing/writing-labels.ts
 msgctxt "DkkVJF"
 msgid "Missing"
-msgstr ""
+msgstr "미충족"
 
 #: src/writing/writing-labels.ts
 msgctxt "bL2guL"
 msgid "Back tomorrow: no more grading today"
-msgstr ""
+msgstr "내일 다시: 오늘은 더 이상 채점할 수 없어요"
 
 #: src/writing/writing-labels.ts
 msgctxt "cvptXL"
 msgid "Back on {date}: no more grading today"
-msgstr ""
+msgstr "{date}에 다시: 오늘은 더 이상 채점할 수 없어요"
 
 #: src/writing/writing-next-step.tsx
 msgctxt "BQrBD9"
@@ -13831,7 +13831,7 @@ msgstr "더 고칠 부분이 없어요"
 #: src/writing/writing-next-step.tsx
 msgctxt "xpK1rU"
 msgid "Every criterion is complete."
-msgstr ""
+msgstr "모든 기준을 충족했어요."
 
 #: src/writing/writing-next-step.tsx
 msgctxt "HiVJjN"
@@ -13841,52 +13841,52 @@ msgstr "예: {example}"
 #: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"
 msgid "Minimum to pass the written test: {share} of the points"
-msgstr ""
+msgstr "서술형 시험 합격에 필요한 최소 점수: 총점의 {share}"
 
 #: src/writing/writing-question.tsx
 msgctxt "U413N1"
 msgid "{lines, plural, one {Up to # line} other {Up to # lines}}"
-msgstr ""
+msgstr "{lines, plural, =1 {최대 #줄} other {최대 #줄}}"
 
 #: src/writing/writing-question.tsx
 msgctxt "wHT3hs"
 msgid "{points} points"
-msgstr ""
+msgstr "{points}점"
 
 #: src/writing/writing-question.tsx
 msgctxt "1g9mZ7"
 msgid "about {time}"
-msgstr ""
+msgstr "약 {time}"
 
 #: src/writing/writing-question.tsx
 msgctxt "h5Dspx"
 msgid "From the exam notice."
-msgstr ""
+msgstr "시험 공고에 나온 내용이에요."
 
 #: src/writing/writing-question.tsx
 msgctxt "1MSsHI"
 msgid "From the exam notice. The answer key is ours, for practice."
-msgstr ""
+msgstr "시험 공고에 나온 내용이에요. 답안 기준은 연습용으로 저희가 만들었어요."
 
 #: src/writing/writing-question.tsx
 msgctxt "qPK58Y"
 msgid "How the {points} points are split"
-msgstr ""
+msgstr "{points}점 배점 기준"
 
 #: src/writing/writing-question.tsx
 msgctxt "GHkFy1"
 msgid "What the answer is judged on"
-msgstr ""
+msgstr "답안을 평가하는 기준"
 
 #: src/writing/writing-question.tsx
 msgctxt "gsRERV"
 msgid "Grading criteria"
-msgstr ""
+msgstr "채점 기준"
 
 #: src/writing/writing-question.tsx
 msgctxt "guQrMp"
 msgid "Support text"
-msgstr ""
+msgstr "제시문"
 
 #: src/writing/writing-question.tsx
 msgctxt "2rkYNm"
@@ -13896,48 +13896,48 @@ msgstr "쓸 내용"
 #: src/writing/writing-refused.tsx
 msgctxt "K9ytBU"
 msgid "Left for tomorrow"
-msgstr ""
+msgstr "내일 할 일"
 
 #: src/writing/writing-refused.tsx
 msgctxt "5WNc7Y"
 msgid "No more grading today"
-msgstr ""
+msgstr "오늘은 더 이상 채점할 수 없어요"
 
 #: src/writing/writing-refused.tsx
 msgctxt "rMmqh8"
 msgid "You'll have more tomorrow."
-msgstr ""
+msgstr "내일 다시 이용할 수 있어요."
 
 #: src/writing/writing-result.tsx
 msgctxt "QYZhu-"
 msgid "Graders stop at line {lines}, so the rest isn't read."
-msgstr ""
+msgstr "채점은 {lines}번째 줄까지만 진행돼요. 그 뒤는 읽지 않아요."
 
 #: src/writing/writing-result.tsx
 msgctxt "UIwidi"
 msgid "Graders stop at the line limit, so the rest isn't read."
-msgstr ""
+msgstr "채점은 줄 수 제한까지만 진행돼요. 그 뒤는 읽지 않아요."
 
 #: src/writing/writing-result.tsx
 msgctxt "rxvcLB"
 msgid "Fit it in {lines} lines"
-msgstr ""
+msgstr "답안을 {lines}줄에 맞추기"
 
 #: src/writing/writing-result.tsx
 msgctxt "EEutpJ"
 msgid "Fit it in the line limit"
-msgstr ""
+msgstr "줄 수 제한에 맞추기"
 
 #: src/writing/writing-result.tsx
 msgctxt "ySOM1S"
 msgid "Rewrite it following the rule above."
-msgstr ""
+msgstr "위 규칙에 따라 다시 써 보세요."
 
 #: src/writing/writing-result.tsx
 #: src/writing/writing-zero-step.ts
 msgctxt "rY8RUj"
 msgid "Answer the question asked"
-msgstr ""
+msgstr "질문에 맞게 답하기"
 
 #: src/writing/writing-result.tsx
 msgctxt "TvkYzM"
@@ -13947,32 +13947,32 @@ msgstr "다시 쓸 부분"
 #: src/writing/writing-result.tsx
 msgctxt "RwlK46"
 msgid "Since your last version"
-msgstr ""
+msgstr "이전 답안과 비교"
 
 #: src/writing/writing-result.tsx
 msgctxt "P2923Q"
 msgid "Fixed: {criteria}"
-msgstr ""
+msgstr "수정됨: {criteria}"
 
 #: src/writing/writing-result.tsx
 msgctxt "8Fj-Q0"
 msgid "Still to work on: {criteria}"
-msgstr ""
+msgstr "아직 고칠 점: {criteria}"
 
 #: src/writing/writing-result.tsx
 msgctxt "G_D1yr"
 msgid "The exam notice doesn't say how many points each criterion is worth."
-msgstr ""
+msgstr "시험 공고에 각 기준의 배점이 나와 있지 않아요."
 
 #: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
-msgstr ""
+msgstr "시험 공고에 나온 채점 기준과 배점이에요."
 
 #: src/writing/writing-result.tsx
 msgctxt "dMVJUV"
 msgid "Criteria and points from the exam notice. The answer key is ours, for practice."
-msgstr ""
+msgstr "시험 공고에 나온 채점 기준과 배점이에요. 답안 기준은 연습용으로 저희가 만들었어요."
 
 #: src/writing/writing-result.tsx
 msgctxt "LLXwbj"
@@ -13982,7 +13982,7 @@ msgstr "{score} / {max}"
 #: src/writing/writing-result.tsx
 msgctxt "xZdNA0"
 msgid "Criteria"
-msgstr ""
+msgstr "채점 기준"
 
 #: src/writing/writing-result.tsx
 msgctxt "H9233U"
@@ -14007,98 +14007,98 @@ msgstr "고쳐 쓰기"
 #: src/writing/writing-screen.tsx
 msgctxt "xaWNqy"
 msgid "This grade is for the version you sent first. Your changes are kept for your rewrite."
-msgstr ""
+msgstr "이 점수는 처음 제출한 답안에 대한 점수예요. 수정한 내용은 다시 작성할 답안에 남아 있어요."
 
 #: src/writing/writing-start.tsx
 msgctxt "mmyp7Y"
 msgid "Your exam notice changed, so it's out of your plan. Nothing was graded."
-msgstr ""
+msgstr "시험 공고가 바뀌어 계획에서 제외됐어요. 채점된 내용은 없어요."
 
 #: src/writing/writing-start.tsx
 msgctxt "oZMZx-"
 msgid "This question is no longer on your exam"
-msgstr ""
+msgstr "이 문제는 더 이상 시험에 나오지 않아요"
 
 #: src/writing/writing-start.tsx
 msgctxt "y4dgHy"
 msgid "A short exercise on what you just learned. It opens here when it's ready."
-msgstr ""
+msgstr "방금 배운 내용을 짧게 연습해요. 준비되면 여기에 표시돼요."
 
 #: src/writing/writing-start.tsx
 msgctxt "X8PfXM"
 msgid "We couldn't write your exercise"
-msgstr ""
+msgstr "연습 문제를 만들지 못했어요"
 
 #: src/writing/writing-start.tsx
 msgctxt "CzL4pW"
 msgid "Writing your exercise…"
-msgstr ""
+msgstr "연습 문제를 만들고 있어요…"
 
 #: src/writing/writing-start.tsx
 msgctxt "0zf91l"
 msgid "A new question like the ones on your exam. It opens here when it's ready."
-msgstr ""
+msgstr "시험에 나오는 문제와 비슷한 새 문제예요. 준비되면 여기에 표시돼요."
 
 #: src/writing/writing-start.tsx
 msgctxt "drzL_F"
 msgid "We couldn't write your question"
-msgstr ""
+msgstr "문제를 만들지 못했어요"
 
 #: src/writing/writing-start.tsx
 msgctxt "xj8ORz"
 msgid "Writing your question…"
-msgstr ""
+msgstr "문제를 만들고 있어요…"
 
 #: src/writing/writing-start.tsx
 msgctxt "lECQ5R"
 msgid "With one, we write your exercise and grade what you write."
-msgstr ""
+msgstr "계정이 있으면 연습 문제를 만들고, 작성한 답변을 채점해요."
 
 #: src/writing/writing-start.tsx
 msgctxt "KyaG5d"
 msgid "With one, we write your question and grade what you write."
-msgstr ""
+msgstr "계정이 있으면 문제를 만들고, 작성한 답변을 채점해요."
 
 #: src/writing/writing-text.tsx
 msgctxt "-QTlEJ"
 msgid "Past line {lines}: graders stop reading here"
-msgstr ""
+msgstr "{lines}번째 줄 이후: 여기부터 채점자가 읽지 않아요"
 
 #: src/writing/writing-text.tsx
 msgctxt "ecaPI4"
 msgid "Past the limit: graders stop reading here"
-msgstr ""
+msgstr "분량 제한 이후: 여기부터 채점자가 읽지 않아요"
 
 #: src/writing/writing-text.tsx
 msgctxt "agrPL7"
 msgid ", language error"
-msgstr ""
+msgstr ", 언어 오류"
 
 #. Under a correction: what the learner wrote, then the kind of error, like "grammar".
 #: src/writing/writing-text.tsx
 msgctxt "9GNJHe"
 msgid "You wrote “{quote}” ({kind})"
-msgstr ""
+msgstr "작성한 내용: “{quote}” ({kind})"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "kgOBET"
 msgid "Question"
-msgstr ""
+msgstr "문제"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
-msgstr ""
+msgstr "계속 쓰기"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "0kG74Q"
 msgid "It's kept on this device and saves when you're back online."
-msgstr ""
+msgstr "이 기기에 저장되어 있고, 다시 온라인 상태가 되면 저장돼요."
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "g2F3WK"
 msgid "Your answer isn't saved yet"
-msgstr ""
+msgstr "답안이 아직 저장되지 않았어요"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "osZlj7"
@@ -14108,7 +14108,7 @@ msgstr "다시 쓴 에세이 채점"
 #: src/writing/writing-write-screen.tsx
 msgctxt "QIqC-9"
 msgid "Grade answer"
-msgstr ""
+msgstr "답안 채점하기"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "othn-n"
@@ -14118,56 +14118,56 @@ msgstr "수정할 부분 다시 쓰기"
 #: src/writing/writing-zero-step.ts
 msgctxt "7Q6f_R"
 msgid "Start with the points the question asks for."
-msgstr ""
+msgstr "문제에서 요구한 항목부터 써 보세요."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "QMI2b6"
 msgid "Write an answer"
-msgstr ""
+msgstr "답안 작성"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "ympxc-"
 msgid "Reread the question and write about what it asks."
-msgstr ""
+msgstr "문제를 다시 읽고, 요구하는 내용에 대해 써 보세요."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "uYf4Eh"
 msgid "Check what kind of text the question asks for, and write that."
-msgstr ""
+msgstr "문제에서 요구하는 글의 형식을 확인하고, 그 형식에 맞춰 써 보세요."
 
 #. The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked.
 #: src/writing/writing-zero-step.ts
 msgctxt "bzU48P"
 msgid "Write it in the form asked"
-msgstr ""
+msgstr "요구한 형식으로 작성하기"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "aIyijN"
 msgid "Develop each point the question asks for until you reach it."
-msgstr ""
+msgstr "문제에서 요구한 각 항목을 충분히 풀어 써 보세요."
 
 #. The next step of a written answer zeroed for being shorter than the exam's minimum number of lines.
 #: src/writing/writing-zero-step.ts
 msgctxt "PERlo3"
 msgid "Reach the minimum length"
-msgstr ""
+msgstr "최소 분량 채우기"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "taNC0x"
 msgid "Take the support text as a starting point, not as your answer."
-msgstr ""
+msgstr "참고 자료는 답안 대신 쓰지 말고, 글을 시작할 때 참고해 보세요."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "iQwWzc"
 msgid "Use your own words"
-msgstr ""
+msgstr "내 말로 쓰기"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "1L_DMq"
 msgid "Remove names, signatures and marks that aren't part of the answer."
-msgstr ""
+msgstr "답안에 필요하지 않은 이름, 서명, 표시를 지우세요."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
-msgstr ""
+msgstr "나를 알아볼 수 있는 내용 빼기"

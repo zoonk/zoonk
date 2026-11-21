@@ -2568,7 +2568,7 @@ msgstr "Yazma alıştırması"
 #: src/app/[lang]/essay/answers/[attemptId]/page.tsx
 msgctxt "1nJY2_"
 msgid "Your answer"
-msgstr ""
+msgstr "Cevabın"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "UOYMne"

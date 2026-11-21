@@ -27,6 +27,7 @@
 - “share” (personal facts): “contar”
 - “question” in a lesson, practice or chat: “pergunta”; an exam or mock exam item: “questão”
 - “task” (a speaking exam's task): “tarefa”, not “atividade” (a lesson activity)
+- “written test”, “written part” (the part of an exam answered in writing): “prova discursiva”; its “written answer”: “resposta discursiva”; a “question” of it, including one Zoonk writes for the learner to answer in writing: “questão”, never “pergunta”
 - “practice questions”: “perguntas de prática”, not “perguntas práticas”
 - “options” (multiple choice): “alternativas”
 - “guess”, and the learner's “estimate” before the answer shows: “palpite”; a blind guess on an exam question: “chutar”; an estimated score: “estimativa”

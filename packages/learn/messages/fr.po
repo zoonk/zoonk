@@ -1043,7 +1043,7 @@ msgstr "~{date}"
 #: src/_utils/range.ts
 msgctxt "zi1f8F"
 msgid "{low} to {high}"
-msgstr ""
+msgstr "{low} à {high}"
 
 #: src/_utils/range.ts
 msgctxt "kV-RMr"
@@ -3069,12 +3069,12 @@ msgstr "La correction est toujours en cours. Elle prend plus de temps que d’ha
 #: src/essay/essay-status-line.tsx
 msgctxt "fzh_pw"
 msgid "Reading your answer against each criterion. It can take up to 30 seconds."
-msgstr ""
+msgstr "Ta réponse est évaluée selon chaque critère. Ça peut prendre jusqu’à 30 secondes."
 
 #: src/essay/essay-status-line.tsx
 msgctxt "epOkEr"
 msgid "Not saved yet. It's kept on this device."
-msgstr ""
+msgstr "Pas encore enregistré. C’est conservé sur cet appareil."
 
 #: src/essay/essay-word-count.tsx
 #: src/writing/writing-editor.tsx
@@ -4011,7 +4011,7 @@ msgstr "pas encore commencé"
 #: src/writing/writing-start.tsx
 msgctxt "EY8lh9"
 msgid "Nothing was lost. Try again in a moment."
-msgstr ""
+msgstr "Rien n’a été perdu. Réessaie dans un instant."
 
 #: src/generation/lesson-generation-copy.ts
 msgctxt "57Hm5c"
@@ -4415,7 +4415,7 @@ msgstr "Choix des questions pour chaque sujet…"
 #: src/generation/use-generation-copy.ts
 msgctxt "xwzlmV"
 msgid "Writing your question"
-msgstr ""
+msgstr "Préparation de ta question"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -4998,58 +4998,58 @@ msgstr "{range} sur {max}"
 #: src/journey/preparation/written-projection.tsx
 msgctxt "RfVIN3"
 msgid "Graded by level"
-msgstr ""
+msgstr "Évalué par niveau"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "dau4p7"
 msgid "Not measured yet"
-msgstr ""
+msgstr "Pas encore évalué"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "uOG8dr"
 msgid "Above the {minimum} points needed"
-msgstr ""
+msgstr "Au-dessus des {minimum} points requis"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "qjfXcf"
 msgid "{points} points short of the {minimum} needed"
-msgstr ""
+msgstr "Il te manque {points} points pour atteindre le minimum de {minimum}"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "vUZHcz"
 msgid "Close to the {minimum} points needed"
-msgstr ""
+msgstr "Presque au minimum de {minimum} points"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
-msgstr ""
+msgstr "Il faut obtenir {share} des points de {part}, quels que soient tes autres scores."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "_XpN-M"
 msgid "{part} needs {minimum} points, whatever your other scores."
-msgstr ""
+msgstr "Il faut obtenir {minimum} points dans {part}, quels que soient tes autres scores."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "doYQpO"
 msgid "Below the minimum to pass"
-msgstr ""
+msgstr "En dessous du minimum requis pour réussir"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
 msgid "{part}, half your final score, isn't measured yet."
-msgstr ""
+msgstr "La mesure de {part}, qui compte pour la moitié de ton Score final, n’est pas encore disponible."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "Km7c1e"
 msgid "{part}, {share} of your final score, isn't measured yet."
-msgstr ""
+msgstr "Le résultat de {part} ({share} de ton Score final) n’est pas encore mesuré."
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "XmqNXc"
 msgid "{part} isn't measured yet."
-msgstr ""
+msgstr "Le résultat de {part} n’est pas encore mesuré."
 
 #: src/journey/preparation/written-projection.tsx
 #: src/syllabus/subject-write-bar.tsx
@@ -5057,12 +5057,12 @@ msgstr ""
 #: src/writing/writing-start.tsx
 msgctxt "k2veDA"
 msgid "Write"
-msgstr ""
+msgstr "Écrire"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "r70P1f"
 msgid "Objective test"
-msgstr ""
+msgstr "Épreuve objective"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx
@@ -7715,17 +7715,17 @@ msgstr "Impossible de lancer l’examen blanc. Réessaie."
 #: src/mock/mock-chooser-page.tsx
 msgctxt "QsctwF"
 msgid "Questions like the ones on your exam. Your mock exam starts here when they're ready."
-msgstr ""
+msgstr "Des questions comme celles de ton examen. Ton examen blanc commencera ici dès qu’elles seront prêtes."
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "G2-rbQ"
 msgid "We couldn't write your questions"
-msgstr ""
+msgstr "On n’a pas pu préparer tes questions"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "AmTABH"
 msgid "Writing your questions…"
-msgstr ""
+msgstr "Préparation de tes questions…"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qFtRJW"
@@ -7740,7 +7740,7 @@ msgstr "Nous préparons pour toi des questions comme celles de l’examen. Ton e
 #: src/mock/mock-chooser.tsx
 msgctxt "aDMxKM"
 msgid "{count, plural, other {Your exam has # tests}}"
-msgstr ""
+msgstr "{count, plural, other {Ton examen comporte # tests}}"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -7750,7 +7750,7 @@ msgstr "L’examen"
 #: src/mock/mock-chooser.tsx
 msgctxt "9yIpY-"
 msgid "Shorter, objective questions only"
-msgstr ""
+msgstr "Questions plus courtes, à réponse objective uniquement"
 
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-option-labels.ts
@@ -7848,7 +7848,7 @@ msgstr "{count, plural, one {# question est marquée.} other {# questions sont m
 #: src/mock/mock-hand-in.tsx
 msgctxt "KIPpp4"
 msgid "{count, plural, one {The written question is blank.} other {# written questions are blank.}}"
-msgstr ""
+msgstr "{count, plural, =1 {La réponse rédigée est vide.} one {Aucune réponse rédigée n’est remplie.} other {# réponses rédigées sont vides.}}"
 
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-speaking.tsx
@@ -7997,7 +7997,7 @@ msgstr "{count, plural, one {# question avait déjà été posée.} other {# que
 #: src/mock/mock-option-labels.ts
 msgctxt "EZ8FbD"
 msgid "{count, plural, =2 {Both tests} other {All # tests}}"
-msgstr ""
+msgstr "{count, plural, =2 {Les deux tests} other {Les # tests}}"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "8ChI8a"
@@ -11350,7 +11350,7 @@ msgstr "À partir de maintenant, entraînement à l’écrit chaque semaine."
 #: src/plan/written-cadence.tsx
 msgctxt "u6mbz4"
 msgid "When to practice writing"
-msgstr ""
+msgstr "Quand s’entraîner à écrire"
 
 #: src/plan/written-cadence.tsx
 msgctxt "1Jh2wI"
@@ -12720,7 +12720,7 @@ msgstr "Prochaine date"
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "z50pCl"
 msgid "Grading"
-msgstr ""
+msgstr "Évaluation"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "jSqwdW"
@@ -12853,91 +12853,91 @@ msgstr "{total, plural, one {{done, number} sujet étudié sur #} other {{done, 
 #: src/syllabus/subject-write-bar.tsx
 msgctxt "dCMmZj"
 msgid "{share} of the score"
-msgstr ""
+msgstr "{share} du Score"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "Ycseyb"
 msgid "{count, plural, one {last answer} other {last # answers}}"
-msgstr ""
+msgstr "{count, plural, =1 {dernière réponse} one {# dernière réponse} other {# dernières réponses}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "Jq3FDz"
 msgid "Content"
-msgstr ""
+msgstr "Contenu"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "j1okGc"
 msgid "Presentation and structure"
-msgstr ""
+msgstr "Présentation et structure"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 #: src/writing/writing-text.tsx
 msgctxt "a7of83"
 msgid "Language errors"
-msgstr ""
+msgstr "Erreurs de langue"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 #: src/writing/writing-text.tsx
 msgctxt "VXgrSB"
 msgid "{count, plural, one {# error} other {# errors}}"
-msgstr ""
+msgstr "{count, plural, one {# erreur} other {# erreurs}}"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "AFTxeG"
 msgid "{count, plural, one {# line} other {# lines}}"
-msgstr ""
+msgstr "{count, plural, one {# ligne} other {# lignes}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "gPyDLV"
 msgid "{count, plural, one {about # line} other {about # lines}}"
-msgstr ""
+msgstr "{count, plural, one {environ # ligne} other {environ # lignes}}"
 
 #: src/syllabus/subject-written-score.tsx
 #: src/writing/writing-editor.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "sKcJTn"
 msgid "about {used} of {lines} lines"
-msgstr ""
+msgstr "environ {used} lignes sur {lines}"
 
 #. A past written answer graded by level: how many of its criteria were fully met, out of all of them.
 #: src/syllabus/subject-written-score.tsx
 msgctxt "SPW5wO"
 msgid "{complete} of {total} criteria complete"
-msgstr ""
+msgstr "{complete} critères sur {total} remplis"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "a0Vmlb"
 msgid "{count, plural, one {# version} other {# versions}}"
-msgstr ""
+msgstr "{count, plural, one {# version} other {# versions}}"
 
 #: src/syllabus/subject-written-score.tsx
 msgctxt "5m07cc"
 msgid "Your answers"
-msgstr ""
+msgstr "Tes réponses"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "QRfeh-"
 msgid "Minimum to pass: {share} of the points"
-msgstr ""
+msgstr "Minimum pour réussir : {share} des points"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "B96Fmq"
 msgid "Minimum to pass: {minimum}"
-msgstr ""
+msgstr "Minimum pour réussir : {minimum}"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "76yuN2"
 msgid "Minimum to pass: {minimum} of {max}"
-msgstr ""
+msgstr "Minimum pour réussir : {minimum} sur {max}"
 
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "ieVB-d"
 msgid "Your answers are graded by level. A points estimate isn't available for this test yet."
-msgstr ""
+msgstr "Tes réponses sont évaluées par niveau. L’estimation du Score n’est pas encore disponible pour ce test."
 
 #: src/syllabus/syllabus-chapter-row.tsx
 msgctxt "PPs9To"
@@ -13673,86 +13673,86 @@ msgstr "{topic} · de {from} à {to}"
 #: src/writing/points-readout.tsx
 msgctxt "j8q20J"
 msgid "of {max}"
-msgstr ""
+msgstr "sur {max}"
 
 #. Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices.
 #: src/writing/writing-choice.tsx
 msgctxt "JsmQZC"
 msgid "Depends on your choice of {groups}"
-msgstr ""
+msgstr "Dépend de ton choix parmi {groups}"
 
 #. Under a written test where one question waits for an exam choice the learner hasn't made. {task} is the question, such as "The 60-line question"; {groups} names the choices.
 #: src/writing/writing-choice.tsx
 msgctxt "dwIEAG"
 msgid "{task} depends on your choice of {groups}"
-msgstr ""
+msgstr "{task} dépend de ton choix parmi {groups}"
 
 #: src/writing/writing-choice.tsx
 msgctxt "C3wT9_"
 msgid "Choose on Today"
-msgstr ""
+msgstr "Choisir dans Aujourd’hui"
 
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "7O580c"
 msgid "This answer changed on another device"
-msgstr ""
+msgstr "Cette réponse a changé sur un autre appareil"
 
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "RaNNM6"
 msgid "Keep the version you're writing here, or switch to the other one."
-msgstr ""
+msgstr "Garde la version que tu écris ici ou passe à l’autre."
 
 #. A choice between two versions of one written answer: replace what's typed here with the version saved on another device.
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "ngstJD"
 msgid "Use the other"
-msgstr ""
+msgstr "Utiliser l’autre"
 
 #. A choice between two versions of one written answer: keep what's typed on this device and save it over the other.
 #: src/writing/writing-conflict-dialog.tsx
 msgctxt "qigA3g"
 msgid "Keep this one"
-msgstr ""
+msgstr "Garder celle-ci"
 
 #: src/writing/writing-editor.tsx
 msgctxt "a2NxUG"
 msgid "0 of {lines} lines"
-msgstr ""
+msgstr "0 sur {lines} lignes"
 
 #. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
 #: src/writing/writing-editor.tsx
 msgctxt "6omgAR"
 msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr ""
+msgstr "environ {used} sur {lines} lignes · {over} ne seront pas lues"
 
 #: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"
 msgid "This answer is {count} characters too long. Shorten it to save and grade it."
-msgstr ""
+msgstr "Cette réponse dépasse de {count} caractères. Raccourcis-la pour pouvoir l’enregistrer et l’évaluer."
 
 #. A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer.
 #: src/writing/writing-header.ts
 msgctxt "k2IfPK"
 msgid "Short writing exercise"
-msgstr ""
+msgstr "Petit exercice d’écriture"
 
 #. A whole answer of an exam's written test, named by its line limit, such as 30 lines.
 #: src/writing/writing-header.ts
 msgctxt "Ys6nu8"
 msgid "Write the {lines}-line question"
-msgstr ""
+msgstr "Rédige la question de {lines} lignes"
 
 #. A whole answer of an exam's written test whose questions share a line limit, named by its place in the test.
 #: src/writing/writing-header.ts
 msgctxt "csNSR1"
 msgid "Write question {number}"
-msgstr ""
+msgstr "Rédige la réponse à la question {number}"
 
 #. The whole answer of an exam's written test that has one question.
 #: src/writing/writing-header.ts
 msgctxt "6VrHwB"
 msgid "Write the question"
-msgstr ""
+msgstr "Rédige ta réponse à la question"
 
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
@@ -13764,64 +13764,64 @@ msgstr "Entraînement à l’écriture"
 #: src/writing/writing-header.ts
 msgctxt "VKYO0K"
 msgid "The {lines}-line question"
-msgstr ""
+msgstr "La question de {lines} lignes"
 
 #. The only question of an exam's written test.
 #: src/writing/writing-header.ts
 msgctxt "qUDRXP"
 msgid "The question"
-msgstr ""
+msgstr "La question"
 
 #: src/writing/writing-header.ts
 msgctxt "0cmsKD"
 msgid "Your draft is saved"
-msgstr ""
+msgstr "Ton brouillon est enregistré"
 
 #. Under a short writing exercise after a lesson: what it's for.
 #: src/writing/writing-header.ts
 msgctxt "mKxwIN"
 msgid "To use what you just learned"
-msgstr ""
+msgstr "Pour mettre en pratique ce que tu viens d’apprendre"
 
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
 msgctxt "neJLv4"
 msgid "Written answer"
-msgstr ""
+msgstr "Réponse écrite"
 
 #. A criterion of a written answer fully met.
 #: src/writing/writing-labels.ts
 msgctxt "U78NhE"
 msgid "Complete"
-msgstr ""
+msgstr "Entièrement respecté"
 
 #. A criterion of a written answer mostly met.
 #: src/writing/writing-labels.ts
 msgctxt "6xap9L"
 msgid "Good"
-msgstr ""
+msgstr "Bien respecté"
 
 #. A criterion of a written answer half met.
 #: src/writing/writing-labels.ts
 msgctxt "B0ZRIZ"
 msgid "Partly"
-msgstr ""
+msgstr "Partiellement respecté"
 
 #. A criterion of a written answer not met.
 #: src/writing/writing-labels.ts
 msgctxt "DkkVJF"
 msgid "Missing"
-msgstr ""
+msgstr "Non respecté"
 
 #: src/writing/writing-labels.ts
 msgctxt "bL2guL"
 msgid "Back tomorrow: no more grading today"
-msgstr ""
+msgstr "De retour demain : plus d’évaluation aujourd’hui"
 
 #: src/writing/writing-labels.ts
 msgctxt "cvptXL"
 msgid "Back on {date}: no more grading today"
-msgstr ""
+msgstr "De retour le {date} : plus d’évaluation aujourd’hui"
 
 #: src/writing/writing-next-step.tsx
 msgctxt "BQrBD9"
@@ -13831,7 +13831,7 @@ msgstr "Plus rien à améliorer"
 #: src/writing/writing-next-step.tsx
 msgctxt "xpK1rU"
 msgid "Every criterion is complete."
-msgstr ""
+msgstr "Tous les critères sont remplis."
 
 #: src/writing/writing-next-step.tsx
 msgctxt "HiVJjN"
@@ -13841,52 +13841,52 @@ msgstr "Par exemple : {example}"
 #: src/writing/writing-points-header.tsx
 msgctxt "frKEhM"
 msgid "Minimum to pass the written test: {share} of the points"
-msgstr ""
+msgstr "Minimum requis pour réussir l’épreuve écrite : {share} des points"
 
 #: src/writing/writing-question.tsx
 msgctxt "U413N1"
 msgid "{lines, plural, one {Up to # line} other {Up to # lines}}"
-msgstr ""
+msgstr "{lines, plural, one {Jusqu’à # ligne} other {Jusqu’à # lignes}}"
 
 #: src/writing/writing-question.tsx
 msgctxt "wHT3hs"
 msgid "{points} points"
-msgstr ""
+msgstr "{points} points"
 
 #: src/writing/writing-question.tsx
 msgctxt "1g9mZ7"
 msgid "about {time}"
-msgstr ""
+msgstr "environ {time}"
 
 #: src/writing/writing-question.tsx
 msgctxt "h5Dspx"
 msgid "From the exam notice."
-msgstr ""
+msgstr "D’après l’avis d’examen."
 
 #: src/writing/writing-question.tsx
 msgctxt "1MSsHI"
 msgid "From the exam notice. The answer key is ours, for practice."
-msgstr ""
+msgstr "D’après l’avis d’examen. Nous avons préparé le corrigé pour t’entraîner."
 
 #: src/writing/writing-question.tsx
 msgctxt "qPK58Y"
 msgid "How the {points} points are split"
-msgstr ""
+msgstr "Répartition des {points} points"
 
 #: src/writing/writing-question.tsx
 msgctxt "GHkFy1"
 msgid "What the answer is judged on"
-msgstr ""
+msgstr "Ce qui est évalué dans ta réponse"
 
 #: src/writing/writing-question.tsx
 msgctxt "gsRERV"
 msgid "Grading criteria"
-msgstr ""
+msgstr "Critères de correction"
 
 #: src/writing/writing-question.tsx
 msgctxt "guQrMp"
 msgid "Support text"
-msgstr ""
+msgstr "Texte d’appui"
 
 #: src/writing/writing-question.tsx
 msgctxt "2rkYNm"
@@ -13896,48 +13896,48 @@ msgstr "Ce que tu dois écrire"
 #: src/writing/writing-refused.tsx
 msgctxt "K9ytBU"
 msgid "Left for tomorrow"
-msgstr ""
+msgstr "Pour demain"
 
 #: src/writing/writing-refused.tsx
 msgctxt "5WNc7Y"
 msgid "No more grading today"
-msgstr ""
+msgstr "Plus de copies corrigées aujourd’hui"
 
 #: src/writing/writing-refused.tsx
 msgctxt "rMmqh8"
 msgid "You'll have more tomorrow."
-msgstr ""
+msgstr "Tu pourras en faire corriger d’autres demain."
 
 #: src/writing/writing-result.tsx
 msgctxt "QYZhu-"
 msgid "Graders stop at line {lines}, so the rest isn't read."
-msgstr ""
+msgstr "Les correcteurs s’arrêtent à la ligne {lines} et ne lisent pas la suite."
 
 #: src/writing/writing-result.tsx
 msgctxt "UIwidi"
 msgid "Graders stop at the line limit, so the rest isn't read."
-msgstr ""
+msgstr "Les correcteurs s’arrêtent à la limite de lignes et ne lisent pas la suite."
 
 #: src/writing/writing-result.tsx
 msgctxt "rxvcLB"
 msgid "Fit it in {lines} lines"
-msgstr ""
+msgstr "Fais tenir ta réponse en {lines} lignes"
 
 #: src/writing/writing-result.tsx
 msgctxt "EEutpJ"
 msgid "Fit it in the line limit"
-msgstr ""
+msgstr "Respecte la limite de lignes"
 
 #: src/writing/writing-result.tsx
 msgctxt "ySOM1S"
 msgid "Rewrite it following the rule above."
-msgstr ""
+msgstr "Réécris ta réponse en suivant la règle ci-dessus."
 
 #: src/writing/writing-result.tsx
 #: src/writing/writing-zero-step.ts
 msgctxt "rY8RUj"
 msgid "Answer the question asked"
-msgstr ""
+msgstr "Réponds à la question posée"
 
 #: src/writing/writing-result.tsx
 msgctxt "TvkYzM"
@@ -13947,32 +13947,32 @@ msgstr "À réécrire"
 #: src/writing/writing-result.tsx
 msgctxt "RwlK46"
 msgid "Since your last version"
-msgstr ""
+msgstr "Depuis ta dernière version"
 
 #: src/writing/writing-result.tsx
 msgctxt "P2923Q"
 msgid "Fixed: {criteria}"
-msgstr ""
+msgstr "Corrigé : {criteria}"
 
 #: src/writing/writing-result.tsx
 msgctxt "8Fj-Q0"
 msgid "Still to work on: {criteria}"
-msgstr ""
+msgstr "À travailler encore : {criteria}"
 
 #: src/writing/writing-result.tsx
 msgctxt "G_D1yr"
 msgid "The exam notice doesn't say how many points each criterion is worth."
-msgstr ""
+msgstr "L’avis d’examen ne précise pas le nombre de points attribués à chaque critère."
 
 #: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
-msgstr ""
+msgstr "Critères et points indiqués dans l’avis d’examen."
 
 #: src/writing/writing-result.tsx
 msgctxt "dMVJUV"
 msgid "Criteria and points from the exam notice. The answer key is ours, for practice."
-msgstr ""
+msgstr "Critères et points indiqués dans l’avis d’examen. Nous avons préparé le corrigé pour t’entraîner."
 
 #: src/writing/writing-result.tsx
 msgctxt "LLXwbj"
@@ -13982,7 +13982,7 @@ msgstr "{score} sur {max}"
 #: src/writing/writing-result.tsx
 msgctxt "xZdNA0"
 msgid "Criteria"
-msgstr ""
+msgstr "Critères"
 
 #: src/writing/writing-result.tsx
 msgctxt "H9233U"
@@ -14007,98 +14007,98 @@ msgstr "Réécrire"
 #: src/writing/writing-screen.tsx
 msgctxt "xaWNqy"
 msgid "This grade is for the version you sent first. Your changes are kept for your rewrite."
-msgstr ""
+msgstr "Ce Score correspond à la première version que tu as envoyée. Tes modifications sont conservées pour ta réécriture."
 
 #: src/writing/writing-start.tsx
 msgctxt "mmyp7Y"
 msgid "Your exam notice changed, so it's out of your plan. Nothing was graded."
-msgstr ""
+msgstr "L’avis d’examen a changé : cette question ne fait plus partie de ton plan. Rien n’a été évalué."
 
 #: src/writing/writing-start.tsx
 msgctxt "oZMZx-"
 msgid "This question is no longer on your exam"
-msgstr ""
+msgstr "Cette question ne figure plus à ton examen"
 
 #: src/writing/writing-start.tsx
 msgctxt "y4dgHy"
 msgid "A short exercise on what you just learned. It opens here when it's ready."
-msgstr ""
+msgstr "Un petit exercice sur ce que tu viens d’apprendre. Il s’affichera ici quand il sera prêt."
 
 #: src/writing/writing-start.tsx
 msgctxt "X8PfXM"
 msgid "We couldn't write your exercise"
-msgstr ""
+msgstr "Impossible de préparer ton exercice"
 
 #: src/writing/writing-start.tsx
 msgctxt "CzL4pW"
 msgid "Writing your exercise…"
-msgstr ""
+msgstr "Préparation de ton exercice…"
 
 #: src/writing/writing-start.tsx
 msgctxt "0zf91l"
 msgid "A new question like the ones on your exam. It opens here when it's ready."
-msgstr ""
+msgstr "Une nouvelle question du même type que celles de ton examen. Elle s’affichera ici quand elle sera prête."
 
 #: src/writing/writing-start.tsx
 msgctxt "drzL_F"
 msgid "We couldn't write your question"
-msgstr ""
+msgstr "Impossible de préparer ta question"
 
 #: src/writing/writing-start.tsx
 msgctxt "xj8ORz"
 msgid "Writing your question…"
-msgstr ""
+msgstr "Préparation de ta question…"
 
 #: src/writing/writing-start.tsx
 msgctxt "lECQ5R"
 msgid "With one, we write your exercise and grade what you write."
-msgstr ""
+msgstr "Avec un compte, on prépare ton exercice et on évalue ta réponse."
 
 #: src/writing/writing-start.tsx
 msgctxt "KyaG5d"
 msgid "With one, we write your question and grade what you write."
-msgstr ""
+msgstr "Avec un compte, on prépare ta question et on évalue ta réponse."
 
 #: src/writing/writing-text.tsx
 msgctxt "-QTlEJ"
 msgid "Past line {lines}: graders stop reading here"
-msgstr ""
+msgstr "Au-delà de la ligne {lines} : les correcteurs ne lisent plus"
 
 #: src/writing/writing-text.tsx
 msgctxt "ecaPI4"
 msgid "Past the limit: graders stop reading here"
-msgstr ""
+msgstr "Au-delà de la limite : les correcteurs ne lisent plus"
 
 #: src/writing/writing-text.tsx
 msgctxt "agrPL7"
 msgid ", language error"
-msgstr ""
+msgstr ", erreur de langue"
 
 #. Under a correction: what the learner wrote, then the kind of error, like "grammar".
 #: src/writing/writing-text.tsx
 msgctxt "9GNJHe"
 msgid "You wrote “{quote}” ({kind})"
-msgstr ""
+msgstr "Tu as écrit « {quote} » ({kind})"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "kgOBET"
 msgid "Question"
-msgstr ""
+msgstr "Question"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
-msgstr ""
+msgstr "Continuer à écrire"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "0kG74Q"
 msgid "It's kept on this device and saves when you're back online."
-msgstr ""
+msgstr "Ta réponse est conservée sur cet appareil et sera enregistrée dès que tu seras de nouveau en ligne."
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "g2F3WK"
 msgid "Your answer isn't saved yet"
-msgstr ""
+msgstr "Ta réponse n’est pas encore enregistrée"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "osZlj7"
@@ -14108,7 +14108,7 @@ msgstr "Évaluer la réécriture"
 #: src/writing/writing-write-screen.tsx
 msgctxt "QIqC-9"
 msgid "Grade answer"
-msgstr ""
+msgstr "Évaluer la réponse"
 
 #: src/writing/writing-write-screen.tsx
 msgctxt "othn-n"
@@ -14118,56 +14118,56 @@ msgstr "Réécris ce qui peut être amélioré"
 #: src/writing/writing-zero-step.ts
 msgctxt "7Q6f_R"
 msgid "Start with the points the question asks for."
-msgstr ""
+msgstr "Commence par les points demandés dans la question."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "QMI2b6"
 msgid "Write an answer"
-msgstr ""
+msgstr "Rédiger une réponse"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "ympxc-"
 msgid "Reread the question and write about what it asks."
-msgstr ""
+msgstr "Relis la question et réponds à ce qui est demandé."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "uYf4Eh"
 msgid "Check what kind of text the question asks for, and write that."
-msgstr ""
+msgstr "Vérifie quel type de texte est demandé et rédige-le."
 
 #. The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked.
 #: src/writing/writing-zero-step.ts
 msgctxt "bzU48P"
 msgid "Write it in the form asked"
-msgstr ""
+msgstr "Rédige dans le format demandé"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "aIyijN"
 msgid "Develop each point the question asks for until you reach it."
-msgstr ""
+msgstr "Développe chaque point demandé jusqu’à atteindre la longueur minimale."
 
 #. The next step of a written answer zeroed for being shorter than the exam's minimum number of lines.
 #: src/writing/writing-zero-step.ts
 msgctxt "PERlo3"
 msgid "Reach the minimum length"
-msgstr ""
+msgstr "Atteindre la longueur minimale"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "taNC0x"
 msgid "Take the support text as a starting point, not as your answer."
-msgstr ""
+msgstr "Prends le texte fourni comme point de départ, pas comme réponse."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "iQwWzc"
 msgid "Use your own words"
-msgstr ""
+msgstr "Utilise tes propres mots"
 
 #: src/writing/writing-zero-step.ts
 msgctxt "1L_DMq"
 msgid "Remove names, signatures and marks that aren't part of the answer."
-msgstr ""
+msgstr "Supprime les noms, signatures et marques qui ne font pas partie de la réponse."
 
 #: src/writing/writing-zero-step.ts
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
-msgstr ""
+msgstr "Enlève tout ce qui permet de t’identifier"

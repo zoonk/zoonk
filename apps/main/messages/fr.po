@@ -2568,7 +2568,7 @@ msgstr "Entraînement à l’écriture"
 #: src/app/[lang]/essay/answers/[attemptId]/page.tsx
 msgctxt "1nJY2_"
 msgid "Your answer"
-msgstr ""
+msgstr "Ta réponse"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "UOYMne"
