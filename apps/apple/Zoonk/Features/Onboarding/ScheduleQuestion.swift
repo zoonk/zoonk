@@ -465,14 +465,8 @@ struct ScheduleQuestion: View {
 
   private func weekSection(_ shown: Shown) -> some View {
     Section {
-      ForEach(ScheduleTime.mondayFirst, id: \.self) { day in
-        Toggle(
-          PlanDate.weekdayName(number: day, label: true),
-          isOn: Binding(
-            get: { days.contains(day) },
-            set: { on in
-              days = on ? (days + [day]).sorted() : days.filter { $0 != day }
-            }))
+      WeekdayToggles(isOn: { days.contains($0) }) { day, on in
+        days = on ? (days + [day]).sorted() : days.filter { $0 != day }
       }
 
       if studiesOnWeekends {
