@@ -30,16 +30,21 @@ struct LevelRange: Decodable, Hashable, Sendable {
 /// The last finished test, which stays readable while another is open. A language course's also
 /// has each skill's range and the levels it skipped.
 struct PlacementTestResult: Decodable, Equatable, Sendable {
-  let finishedAt: String
+  let finishedAt: Date
   let lessonsSkipped: Int
   var levelsSkipped: [String]?
   var ranges: [String: LevelRange]?
   /// A language course's whole-course test goes on through the course's topics.
   var wholeCourseReady: Bool?
 
+  init(finishedAt: Date, lessonsSkipped: Int) {
+    self.finishedAt = finishedAt
+    self.lessonsSkipped = lessonsSkipped
+  }
+
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    finishedAt = try container.decode(String.self, forKey: .finishedAt)
+    finishedAt = try container.decode(Date.self, forKey: .finishedAt)
     lessonsSkipped = try container.decodeIfPresent(Int.self, forKey: .lessonsSkipped) ?? 0
     levelsSkipped = try container.decodeIfPresent([String].self, forKey: .levelsSkipped)
     ranges = try container.decodeIfPresent([String: LevelRange].self, forKey: .ranges)

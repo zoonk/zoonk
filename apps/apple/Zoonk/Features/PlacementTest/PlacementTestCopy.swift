@@ -72,12 +72,11 @@ enum PlacementTestCopy {
       ]
     }
 
-    let date = Date(serverInstant: result.finishedAt).map { PlanDate.moment($0) }
     let found =
       test.kind == .language
       ? result.skillRanges.map { skillRange($0.skill, $0.range) }
       : [lessonsSkipped(result.lessonsSkipped)]
 
-    return found + (date.map { [$0] } ?? [])
+    return found + [PlanDate.moment(result.finishedAt)]
   }
 }

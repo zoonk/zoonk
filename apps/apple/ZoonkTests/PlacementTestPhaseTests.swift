@@ -48,11 +48,8 @@ final class PlacementTestPhaseTests: XCTestCase {
       PlacementTestPhase(finished: end, length: .wholeCourse), .between(next, lessonsSkipped: 20))
   }
 
-  func testTheLastPartShowsTheWholeTestsResult() throws {
-    let result = try JSONDecoder().decode(
-      PlacementTestResult.self,
-      from: Data(
-        #"{"attemptId":"a1","finishedAt":"2026-11-21T12:00:00Z","lessonsSkipped":40}"#.utf8))
+  func testTheLastPartShowsTheWholeTestsResult() {
+    let result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 40)
     let end = PlacementPartEnd(attempt: nil, lessonsSkipped: 12, result: result)
 
     XCTAssertEqual(

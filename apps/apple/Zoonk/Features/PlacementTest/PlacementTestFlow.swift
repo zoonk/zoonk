@@ -301,21 +301,15 @@ struct PlacementTestScreen: View {
     let plan = plans.plan(goalId: goalId)
 
     NavigationStack {
-      Group {
-        if let read = plan.value {
-          PlacementTestFlow(
-            goalID: goalId, subject: goal?.displayName ?? "",
-            wholeCourseMinutes: read.plan.placementTest?.estimatedMinutes ?? 0,
-            nextTopic: { plan.value?.plan.nextTopic }
-          ) {
-            dismiss()
-          }
-          // A new session opens the test again from its own read.
-          .id(session.authenticatedSession)
-        } else {
-          StepLoading()
-        }
+      PlacementTestFlow(
+        goalID: goalId, subject: goal?.displayName ?? "",
+        wholeCourseMinutes: plan.value?.plan.placementTest?.estimatedMinutes ?? 0,
+        nextTopic: { plan.value?.plan.nextTopic }
+      ) {
+        dismiss()
       }
+      // A new session opens the test again from its own read.
+      .id(session.authenticatedSession)
       .navigationTitle(Text(PlacementTestCopy.learnName))
       .navigationBarTitleDisplayMode(.inline)
       .toolbar(removing: .title)

@@ -17,7 +17,7 @@ enum PlacementPartOutcome: Equatable, Sendable {
 /// A language level's short test: a few questions at that level, in reading and listening.
 struct LevelTestOut: Decodable, Equatable, Sendable {
   struct Result: Decodable, Equatable, Sendable {
-    let finishedAt: String
+    let finishedAt: Date
     let lessonsSkipped: Int
   }
 

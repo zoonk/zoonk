@@ -460,11 +460,11 @@ struct LevelTestScreen: View {
 
     NavigationStack {
       Group {
-        if let targetLanguage = standing.value?.goal.targetLanguage, let read = plan.value {
+        if let targetLanguage = standing.value?.goal.targetLanguage {
           LevelTestFlow(
             goalID: goalId, targetLanguage: targetLanguage,
-            wholeCourseMinutes: read.plan.placementTest?.estimatedMinutes ?? 0,
-            testOutLevel: read.plan.placementTest?.nextTestOutLevel,
+            wholeCourseMinutes: plan.value?.plan.placementTest?.estimatedMinutes ?? 0,
+            testOutLevel: plan.value?.plan.placementTest?.nextTestOutLevel,
             testOutFirst: testOutFirst, subject: goal?.displayName ?? "",
             nextTopic: { plan.value?.plan.nextTopic }
           ) {
