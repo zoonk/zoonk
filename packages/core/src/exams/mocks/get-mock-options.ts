@@ -14,8 +14,9 @@ import {
 } from "./_utils/anytime-mock-setup";
 import { canReuseMockItems, isCompleteMock, planFromBank } from "./_utils/create-anytime-mock";
 import { findLastMock } from "./_utils/finished-mocks";
+import { readMockSupplyRequest } from "./_utils/mock-supply-request";
 import { getBankTypedParts } from "./_utils/mock-typed-parts";
-import { type MockOptionsView, mockConditionsSchema, mockShapeSchema } from "./mock-contract";
+import { type MockOptionsView, mockConditionsSchema } from "./mock-contract";
 
 export type MockOptionsResult =
   | { status: "ready"; view: MockOptionsView }
@@ -58,7 +59,7 @@ export async function getMockOptions({
 
   const conditions = running ? mockConditionsSchema.safeParse(running.conditions).data : null;
 
-  const shape = mockShapeSchema.safeParse(goal.requestedMock).data;
+  const { shape } = readMockSupplyRequest(goal.requestedMock);
   const option = shape && resolveAnytimeOption({ choice: { shape }, setup });
 
   const requestedPlan =

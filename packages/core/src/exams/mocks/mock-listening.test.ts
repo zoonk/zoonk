@@ -12,6 +12,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { listListeningParts } from "../listening/listening-parts";
 import { pickListeningSets } from "../listening/pick-listening-sets";
+import { mockPaperKey } from "./_utils/mock-supply-request";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
@@ -144,10 +145,13 @@ describe("a mock's listening section", () => {
       })),
     });
 
-    await prisma.goal.update({ data: { requestedMock: FULL }, where: { id: goal.id } });
+    await prisma.goal.update({
+      data: { requestedMock: { papers: [], shape: FULL } },
+      where: { id: goal.id },
+    });
+
     const writing = await listMockPrepWrites({ goalId: goal.id });
-    expect(writing).toMatchObject({ urgentShort: false, writes: [] });
-    expect(writing).not.toHaveProperty("recordings");
+    expect(writing).toMatchObject({ papers: [], urgentShort: false });
 
     const repeated = await start();
 
@@ -179,7 +183,7 @@ describe("a mock's listening section", () => {
     expect(full?.leftOut).not.toContainEqual({ name: "Listening", part: "listening" });
 
     await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
-      recordings: { parts: [{ sectionName: "Listening" }] },
+      papers: [{ recordings: { parts: [{ sectionName: "Listening" }] } }],
     });
 
     const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
@@ -187,7 +191,6 @@ describe("a mock's listening section", () => {
     expect(started.status).toBe("preparing");
 
     await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
-      learnerWaiting: true,
       urgentShort: true,
     });
 
@@ -230,9 +233,25 @@ describe("a mock's listening section", () => {
       ),
     );
 
+    await prisma.goal.update({
+      data: { requestedMock: { papers: [], shape: FULL } },
+      where: { id: goal.id },
+    });
+
+    const priority = await listMockPrepWrites({ goalId: goal.id, priority: mockPaperKey(FULL) });
+
+    expect(
+      priority.papers
+        .filter((paper) => !paper.later)
+        .flatMap((paper) => paper.recordings?.parts ?? [])
+        .map((part) => part.task),
+    ).toStrictEqual(parts.map((part) => part.task));
+
     const request = await listMockPrepWrites({ goalId: goal.id });
 
-    expect(request.recordings?.parts.map((part) => part.task)).toStrictEqual([
+    expect(
+      request.papers.flatMap((paper) => paper.recordings?.parts ?? []).map((part) => part.task),
+    ).toStrictEqual([
       parts[1]?.task,
       parts[0]?.task,
       parts[1]?.task,
@@ -273,9 +292,11 @@ describe("a mock's listening section", () => {
 
     const request = await listMockPrepWrites({ goalId: goal.id });
 
-    expect(request.recordings).toBeUndefined();
+    expect(request.papers.every((paper) => !paper.recordings)).toBe(true);
 
-    expect(request.writes.flatMap((write) => write.skillIds)).toStrictEqual([reading.id]);
+    expect(
+      request.papers.flatMap((paper) => paper.writes).flatMap((write) => write.skillIds),
+    ).toStrictEqual([reading.id]);
   });
 
   it("counts each recording's plays on the mock, so no other tab or device plays one past the exam's limit", async () => {

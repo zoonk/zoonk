@@ -207,8 +207,7 @@ export async function planFromBank({
     userId,
   });
 
-  const protectedIds =
-    exclude ?? (reuse ? await reserveScheduled({ client, goal, now, setup }) : new Set<string>());
+  const protectedIds = exclude ?? (await reserveScheduled({ client, goal, now, setup }));
 
   const available =
     reuse || protectedIds.size > 0 || client !== prisma

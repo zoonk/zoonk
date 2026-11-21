@@ -173,19 +173,18 @@ describe("a mock in the exam's own mix of formats", () => {
     ).resolves.toStrictEqual({ status: "preparing" });
 
     const request = await listMockPrepWrites({ goalId: goal.id });
-    const writes = request.writes;
+    const writes = request.papers.flatMap((paper) => paper.writes);
 
     expect(
-      writes.map(({ format, questionsPerSkill, skillIds, target }) => ({
+      writes.map(({ format, questionsPerSkill, skillIds }) => ({
         key: format.key,
         questionsPerSkill,
         skillIds,
-        target,
       })),
     ).toStrictEqual([
-      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 2 },
-      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id], target: 1 },
-      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
+      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id] },
+      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id] },
     ]);
   });
 
@@ -204,17 +203,18 @@ describe("a mock in the exam's own mix of formats", () => {
     const first = await listMockPrepWrites({ goalId: goal.id });
 
     expect(
-      first.writes.map(({ format, questionsPerSkill, skillIds, target }) => ({
-        key: format.key,
-        questionsPerSkill,
-        skillIds,
-        target,
-      })),
+      first.papers
+        .flatMap((paper) => paper.writes)
+        .map(({ format, questionsPerSkill, skillIds }) => ({
+          key: format.key,
+          questionsPerSkill,
+          skillIds,
+        })),
     ).toStrictEqual([
-      { key: "choice", questionsPerSkill: 1, skillIds: [kinematics?.id], target: 2 },
-      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 2 },
-      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id], target: 1 },
-      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id], target: 3 },
+      { key: "choice", questionsPerSkill: 1, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 2, skillIds: [kinematics?.id] },
+      { key: "picks:all", questionsPerSkill: 1, skillIds: [probability?.id] },
+      { key: "numeric:integer:", questionsPerSkill: 2, skillIds: [kinematics?.id] },
     ]);
 
     const laterLearner = await userFixture();
@@ -227,8 +227,8 @@ describe("a mock in the exam's own mix of formats", () => {
     });
 
     await expect(listMockPrepWrites({ goalId: later.id })).resolves.toStrictEqual({
-      quickFormat: "multipleChoice",
-      writes: [],
+      papers: [],
+      urgentShort: false,
     });
   });
 
@@ -319,7 +319,8 @@ describe("a mock in the exam's own mix of formats", () => {
       data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
     });
 
-    const { writes } = await listMockPrepWrites({ goalId: goal.id });
+    const { papers } = await listMockPrepWrites({ goalId: goal.id });
+    const writes = papers.flatMap((paper) => paper.writes);
 
     expect(
       writes

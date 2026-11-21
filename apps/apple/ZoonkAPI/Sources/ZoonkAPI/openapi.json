@@ -46886,8 +46886,7 @@
               "conversation",
               "assist",
               "mindMap",
-              "outline",
-              "mockQuestions"
+              "outline"
             ]
           },
           "rollingLimit": {

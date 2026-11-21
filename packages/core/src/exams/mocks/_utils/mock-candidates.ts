@@ -14,7 +14,7 @@ import { fitsExamChoice, getExamChoiceFormats } from "../../../library/exams/exa
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { getItemFormatKey, getMockFormatMix } from "../mock-format-mix";
 import { type MockCandidate } from "../mock-plan";
-import { listMockItemClaims } from "./mock-item-uses";
+import { unavailableMockUse } from "./mock-item-uses";
 
 type AreaPlanItem = Pick<PlanItem, "chapterId" | "lessonId" | "skillId">;
 
@@ -146,6 +146,8 @@ export async function loadMockCandidates({
   const mix = getMockFormatMix(structure);
   const choices = getExamChoiceFormats(structure);
 
+  const blocked = itemIds ? null : await unavailableMockUse(client, userId, reuse, now);
+
   const [items, areas] = await Promise.all([
     client.item.findMany({
       orderBy: { id: "asc" },
@@ -154,7 +156,7 @@ export async function loadMockCandidates({
         difficulty: true,
         format: true,
         id: true,
-        mockUses: { select: { mockExamId: true, section: true, spentAt: true }, where: { userId } },
+        mockUses: { select: { spentAt: true }, where: { userId } },
         set: { select: { _count: { select: { items: true } } } },
         setId: true,
         setPosition: true,
@@ -162,6 +164,7 @@ export async function loadMockCandidates({
       },
       where: {
         ...getFormatFilter(typed),
+        ...(blocked && { mockUses: { none: blocked } }),
         ...(itemIds
           ? { id: { in: [...itemIds] } }
           : {
@@ -176,32 +179,8 @@ export async function loadMockCandidates({
     goal.id ? loadSkillAreas(goal.id, plan) : new Map<string, string>(),
   ]);
 
-  const mockIds = new Set(
-    items.flatMap((item) =>
-      item.mockUses
-        .filter((use) => use.section > 0 && (!use.spentAt || reuse))
-        .map((use) => use.mockExamId),
-    ),
-  );
-
-  const claims =
-    !itemIds && mockIds.size > 0
-      ? await listMockItemClaims(client, userId, [...mockIds], now)
-      : null;
-
   return items
-    .filter((item) => {
-      const use = item.mockUses[0];
-
-      return (
-        itemIds ||
-        (!claims?.held.has(item.id) &&
-          (!use ||
-            (!use.spentAt && claims?.expired.has(use.mockExamId)) ||
-            (reuse && use.spentAt && use.spentAt <= now)) &&
-          (typed.includes(item.format) || fitsExamChoice({ choices, item })))
-      );
-    })
+    .filter((item) => itemIds || typed.includes(item.format) || fitsExamChoice({ choices, item }))
     .map((item) => ({
       answered: Boolean(item.mockUses[0]?.spentAt),
       area: areas.get(item.skillId) ?? null,

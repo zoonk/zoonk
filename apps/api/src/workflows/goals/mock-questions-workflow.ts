@@ -1,3 +1,4 @@
+import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { getWorkflowMetadata } from "workflow";
 import { startOnce, waitForRunToken } from "../_shared/run-token";
 import { endFollowUpStep } from "../follow-ups/steps/follow-up-steps";
@@ -9,7 +10,13 @@ import {
   listMockPrepWritesStep,
 } from "./steps/mock-question-steps";
 
-type SupplyRequest = { goalId: string; examBlueprintId: string | null; later: boolean };
+type SupplyRequest = {
+  goalId: string;
+  examBlueprintId: string | null;
+  later: boolean;
+  paper?: string;
+};
+
 type SupplyAsk = { id: string; revision: number };
 
 function supplyKey(input: SupplyRequest) {
@@ -22,44 +29,69 @@ export function startMockSupply(input: SupplyRequest, ask?: SupplyAsk) {
   return startOnce(mockSupplyWorkflow, [{ ...input, ask }], `${supplyKey(input)}:${request}`);
 }
 
+async function prepareSets({
+  goalId,
+  workflowRunId,
+  supply,
+}: {
+  goalId: string;
+  workflowRunId: string;
+  supply: MockQuestionWrites;
+}) {
+  if (!supply.allowStimulusSets) {
+    return false;
+  }
+
+  const sets = await pickMockSetTargetsStep({
+    goalId,
+    quickFormat: supply.quickFormat,
+    writes: supply.writes,
+  });
+
+  const stored = await Promise.all(
+    sets.map((target) =>
+      prepareItemSet({ goalId, target, wait: supply.later ? "later" : "learner", workflowRunId }),
+    ),
+  );
+
+  return stored.some(Boolean);
+}
+
 async function prepareGoalSupply({
   ask,
   goalId,
-  background,
+  paper,
   workflowRunId,
 }: {
   ask?: SupplyAsk;
   goalId: string;
-  background: boolean;
+  paper?: string;
   workflowRunId: string;
 }) {
   try {
-    let supply = await listMockPrepWritesStep(goalId);
-    const later = background && !supply.learnerWaiting;
+    const input = { goalId, priority: paper };
+    const planned = await listMockPrepWritesStep(input);
 
-    if (supply.allowStimulusSets) {
-      const sets = await pickMockSetTargetsStep({
-        goalId,
-        quickFormat: supply.quickFormat,
-        writes: supply.writes,
-      });
+    const stored = await Promise.all(
+      planned.papers.map((supply) => prepareSets({ goalId, supply, workflowRunId })),
+    );
 
-      const stored = await Promise.all(
-        sets.map((target) =>
-          prepareItemSet({ goalId, target, wait: later ? "later" : "learner", workflowRunId }),
-        ),
-      );
+    const { papers } = stored.some(Boolean) ? await listMockPrepWritesStep(input) : planned;
+    // The next batch compares its questions against those already written.
+    /* oxlint-disable no-await-in-loop */
+    for (const supply of papers.toSorted((a, b) => Number(a.later) - Number(b.later))) {
+      await writeMockQuestions({ ...supply, goalId, workflowRunId });
 
-      if (stored.some(Boolean)) {
-        supply = await listMockPrepWritesStep(goalId);
+      if (supply.recordings) {
+        await prepareMockRecordings({
+          goalId,
+          later: supply.later,
+          recordings: supply.recordings,
+          workflowRunId,
+        });
       }
     }
-
-    await writeMockQuestions({ ...supply, goalId, later, workflowRunId });
-
-    if (supply.recordings) {
-      await prepareMockRecordings({ goalId, later, recordings: supply.recordings, workflowRunId });
-    }
+    /* oxlint-enable no-await-in-loop */
   } finally {
     await checkMockSupplyStep(goalId);
 
@@ -86,8 +118,8 @@ export async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAs
     // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
     await prepareGoalSupply({
       ask: input.ask,
-      background: input.later || goalId !== input.goalId,
       goalId,
+      paper: !input.later && goalId === input.goalId ? input.paper : undefined,
       workflowRunId,
     });
   }

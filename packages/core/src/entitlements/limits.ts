@@ -83,7 +83,6 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
     goal: { day: 3, rolling30Days: 10 },
     lessonStart: { rolling30Days: FREE_LESSON_LIMIT },
     mindMap: { day: 3, rolling30Days: 10 },
-    mockQuestions: { total: 0 },
     outline: { day: 3, rolling30Days: 10 },
     tutorMessage: { day: 10, rolling30Days: 100 },
     upload: { day: 3, rolling30Days: 10 },
@@ -95,7 +94,6 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
     goal: { total: 1 },
     lessonStart: { generatedTotal: 1, total: 3 },
     mindMap: { total: 1 },
-    mockQuestions: { total: 0 },
     outline: { total: 1 },
     tutorMessage: { total: 0 },
     upload: { total: 0 },
@@ -110,7 +108,6 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
     goal: { day: 10 },
     lessonStart: { fairUseDay: 200 },
     mindMap: { day: 300, rolling30Days: 1200 },
-    mockQuestions: {},
     outline: { fairUseDay: 30 },
     tutorMessage: { fairUseDay: 300 },
     upload: { fairUseDay: 30 },
@@ -135,8 +132,6 @@ const MIND_MAP_COST_MICROS = 15_000;
 
 const OUTLINE_COST_MICROS = 150_000;
 
-const MOCK_QUESTIONS_COST_MICROS = 600_000;
-
 /** A grade a feature's own cap admits; a guest's also takes from the day all guests share. */
 export const ESSAY_GRADE_COST_MICROS = 20_000;
 
@@ -149,7 +144,6 @@ const COST_MICROS: Record<Exclude<UsageKind, "conversation">, number> = {
   goal: GOAL_COST_MICROS,
   lessonStart: GENERATED_LESSON_COST_MICROS,
   mindMap: MIND_MAP_COST_MICROS,
-  mockQuestions: MOCK_QUESTIONS_COST_MICROS,
   outline: OUTLINE_COST_MICROS,
   tutorMessage: 5000,
   upload: 30_000,

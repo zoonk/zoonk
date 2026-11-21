@@ -1,15 +1,10 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
-import { type MockConditions, mockConditionsSchema } from "../mock-contract";
+import { type MockConditions } from "../mock-contract";
 import { type MockCandidate } from "../mock-plan";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
 
-export async function listMockItemClaims(
-  client: TransactionClient,
-  userId: string,
-  mockIds?: readonly string[],
-  instant = new Date(),
-) {
+async function listExpiredMocks(client: TransactionClient, userId: string, instant = new Date()) {
   const sittings = await client.mockExam.findMany({
     select: {
       answers: { select: { answer: true } },
@@ -19,33 +14,28 @@ export async function listMockItemClaims(
       sectionStartedAt: true,
       status: true,
     },
-    where: {
-      status: "active",
-      userId,
-      ...(mockIds ? { id: { in: [...mockIds] } } : { itemUses: { some: {} } }),
-    },
+    where: { itemUses: { some: {} }, status: "active", userId },
   });
 
-  const now = instant.getTime();
-  const expired = new Set<string>();
-  const held = new Set<string>();
+  return sittings
+    .filter((mock) => hasStoredTimeRunOutAway({ mock, now: instant.getTime() }))
+    .map((mock) => mock.id);
+}
 
-  for (const mock of sittings) {
-    if (hasStoredTimeRunOutAway({ mock, now })) {
-      expired.add(mock.id);
-    } else {
-      const conditions = mockConditionsSchema.safeParse(mock.conditions).data;
-      const next = mock.sectionIndex + (mock.sectionStartedAt.getTime() <= now ? 1 : 0);
+export async function unavailableMockUse(
+  client: TransactionClient,
+  userId: string,
+  reuse: boolean,
+  now?: Date,
+) {
+  const expired = await listExpiredMocks(client, userId, now);
 
-      for (const section of conditions?.sections.slice(next) ?? []) {
-        for (const id of sectionItemIds(section)) {
-          held.add(id);
-        }
-      }
-    }
-  }
-
-  return { expired, held };
+  return {
+    userId,
+    ...(reuse
+      ? { mockExam: { status: "active" as const }, mockExamId: { notIn: expired } }
+      : { OR: [{ spentAt: { not: null } }, { mockExamId: { notIn: expired } }] }),
+  };
 }
 
 function sectionItemIds(section: MockConditions["sections"][number]) {
@@ -53,11 +43,11 @@ function sectionItemIds(section: MockConditions["sections"][number]) {
 }
 
 export async function releaseExpiredMockItems(tx: TransactionClient, userId: string) {
-  const { expired } = await listMockItemClaims(tx, userId);
+  const expired = await listExpiredMocks(tx, userId);
 
-  if (expired.size > 0) {
+  if (expired.length > 0) {
     await tx.mockItemUse.deleteMany({
-      where: { mockExamId: { in: [...expired] }, spentAt: null, userId },
+      where: { mockExamId: { in: expired }, spentAt: null, userId },
     });
   }
 }

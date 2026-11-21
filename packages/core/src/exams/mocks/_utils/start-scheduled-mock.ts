@@ -5,6 +5,7 @@ import { readBlockPayload } from "../../../sessions/block-payload";
 import { readExamPicks } from "../../choices/exam-choices";
 import { buildMockConditions } from "./mock-conditions";
 import { claimMockItems, releaseExpiredMockItems } from "./mock-item-uses";
+import { clearStartedPaperRequest, recordMockPaperRequest } from "./mock-supply-request";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
 import { readScheduledStructure, readUnpickedChoices } from "./read-mock-structure";
 
@@ -82,11 +83,22 @@ export async function startScheduledSitting({
     tx,
   );
 
+  const scheduledDate = sessionDate.toISOString();
+
+  if (!complete && !(await recordMockPaperRequest({ goal, paper: scheduledDate, tx }))) {
+    return "preparing";
+  }
+
   await oweFollowUps({
     db: tx,
     followUps: [
       {
-        input: { examBlueprintId: goal.examBlueprintId, goalId: goal.id, later: complete },
+        input: {
+          examBlueprintId: goal.examBlueprintId,
+          goalId: goal.id,
+          later: complete,
+          ...(!complete && { paper: scheduledDate }),
+        },
         kind: "prepareMockSupply",
       },
     ],
@@ -110,5 +122,6 @@ export async function startScheduledSitting({
   });
 
   await claimMockItems({ conditions, mockExamId: sitting.id, now, tx, userId });
+  await clearStartedPaperRequest({ goal, paper: scheduledDate, tx });
   return "created";
 }

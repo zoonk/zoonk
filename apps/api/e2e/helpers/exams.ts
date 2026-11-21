@@ -30,7 +30,7 @@ export function examEdition(examDay: string) {
   };
 }
 
-export async function createExamGoal(userId: string) {
+export async function createExamGoal(userId: string, reserveQuestions = MOCK_QUESTIONS) {
   const [blueprint, skill, lesson] = await Promise.all([
     examBlueprintFixture({
       edition: examEdition(isoDayFromToday(EXAM_IN_DAYS)),
@@ -69,7 +69,7 @@ export async function createExamGoal(userId: string) {
   });
 
   await Promise.all([
-    ...Array.from({ length: MOCK_QUESTIONS }, () =>
+    ...Array.from({ length: reserveQuestions }, () =>
       itemFixture({
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,

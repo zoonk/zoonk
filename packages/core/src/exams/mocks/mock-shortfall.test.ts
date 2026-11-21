@@ -258,7 +258,7 @@ describe(getMockQuestionsShortfall, () => {
         structure: null,
       }),
     ).toStrictEqual([
-      { format: getMockFormatMix(null)[0], questionsPerSkill: 4, skillIds: ["skill"], target: 8 },
+      { format: getMockFormatMix(null)[0], questionsPerSkill: 4, skillIds: ["skill"] },
     ]);
   });
 

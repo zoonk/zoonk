@@ -123,9 +123,9 @@ describe("a scheduled mock for a learner who took a subject out of the plan", ()
     expect(supply.urgentShort).toBe(true);
     await expect(checkMockSupply(goal.id)).resolves.toBe(false);
 
-    expect(supply.writes.flatMap((write) => write.skillIds)).toStrictEqual(
-      expect.arrayContaining(retained),
-    );
+    expect(
+      supply.papers.flatMap((paper) => paper.writes).flatMap((write) => write.skillIds),
+    ).toStrictEqual(expect.arrayContaining(retained));
   });
 
   it("starts the scheduled paper with only retained subjects", async () => {
