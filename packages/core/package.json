@@ -474,6 +474,7 @@
     "./library/tools/write-setup-lesson": "./src/library/tools/find-or-create-setup-lesson.ts",
     "./library/variants/example-line": "./src/library/variants/get-step-example-line.ts",
     "./library/variants/get-or-create": "./src/library/variants/get-or-create-step-variant.ts",
+    "./library/variants/prepare-example-lines": "./src/library/variants/prepare-example-lines.ts",
     "./library/variants/tool-token": "./src/library/variants/tool-version-token.ts",
     "./library/variants/version-targets": "./src/library/variants/learner-version-targets.ts",
     "./library/warm-ups/check": "./src/library/warm-ups/check-warm-up.ts",
