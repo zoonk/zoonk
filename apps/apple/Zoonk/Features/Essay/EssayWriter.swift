@@ -242,6 +242,12 @@ final class EssayWriter {
   private func acknowledge(_ saved: WritingDraft) {
     revision = saved.revision
     savedText = saved.text
+    // Opening the block again on this device starts from this draft, not the one read first.
+    essay.update { view in
+      var view = view
+      view.draft = saved
+      return view
+    }
     sending = nil
     saveFailed = false
     saveRetries = 0

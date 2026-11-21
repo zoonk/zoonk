@@ -626,6 +626,21 @@ final class WritingDraftTests: XCTestCase {
     XCTAssertEqual(reopened.text, "A, improved", "Rewrite starts from the changed answer")
   }
 
+  func testOpeningTheBlockAgainStartsFromItsLastSave() async {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."))
+    let store = Self.store(server)
+    let essay = store.essay(blockId: blockId)
+    await essay.refresh()
+    let writer = EssayWriter(store: store, view: essay.value!, admissionId: nil)
+
+    writer.write("Saved later.")
+    await writer.flush()
+
+    let reopened = EssayWriter(store: store, view: essay.value!, admissionId: nil)
+    XCTAssertEqual(reopened.text, "Saved later.")
+    XCTAssertEqual(essay.value?.draft?.revision, 2)
+  }
+
   func testTheFieldStopsAtTheLongestAnswerTheServerTakes() {
     let server = WritingServer(draft: .init(revision: 1, text: "Started."))
     let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
