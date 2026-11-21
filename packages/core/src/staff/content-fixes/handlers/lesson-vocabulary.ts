@@ -2,6 +2,7 @@ import { type TransactionClient, sql } from "@zoonk/db";
 import { z } from "zod";
 import { lessonProblem } from "../_utils/lesson-problem";
 import { type Json, type Resolution, changedFields, refuse } from "../_utils/resolved-change";
+import { type ContentFixEffect } from "../contract";
 import {
   type FieldChange,
   defineFixHandler,
@@ -9,6 +10,7 @@ import {
   idSchema,
   setFieldsSchema,
 } from "./fix-handler";
+import { translationDistractorEffects } from "./word-distractors";
 
 type LessonRowModel = "LessonSentence" | "LessonWord";
 
@@ -75,6 +77,31 @@ async function loadLessonRow(
   });
 }
 
+async function lessonWordEffects(
+  db: TransactionClient,
+  { id, lessonId, set }: { id: string; lessonId: string; set: Record<string, Json> },
+): Promise<ContentFixEffect[]> {
+  const { distractors, translation } = z.strictObject(FIELDS.LessonWord).partial().parse(set);
+
+  if (!distractors) {
+    return [];
+  }
+
+  const links = await db.lessonWord.findMany({
+    select: { translation: true, word: { select: { word: true } }, wordId: true },
+    where: { lessonId },
+  });
+
+  return translationDistractorEffects({
+    distractors,
+    wordId: id,
+    words: links.map((link) => ({
+      translation: link.wordId === id ? (translation ?? link.translation) : link.translation,
+      word: link.word.word,
+    })),
+  });
+}
+
 async function resolveLessonRow<Model extends LessonRowModel>(
   db: TransactionClient,
   {
@@ -115,7 +142,7 @@ async function resolveLessonRow<Model extends LessonRowModel>(
   }
 
   return {
-    effects: [],
+    effects: model === "LessonWord" ? await lessonWordEffects(db, { id, lessonId, set }) : [],
     ok: true,
     stored: { fields, id, lessonId, model, op: "set" },
     unit: { id, kind: UNIT_KIND[model] },

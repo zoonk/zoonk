@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { format } from "oxfmt";
 import { type Rgba, toDisplayP3 } from "../../../scripts/theme/color.mts";
-import { type Mode, modePalette } from "../../../scripts/theme/palette.mts";
+import { type Mode, modePalette, seeThroughColor } from "../../../scripts/theme/palette.mts";
 import { readPalette } from "../../../scripts/theme/read-palette.mts";
 import { subjectPalette } from "../../../scripts/theme/subject-palette.mts";
 
@@ -30,6 +30,9 @@ const MODES: { appearances?: Appearance[]; mode: Mode }[] = [
 function colorsForMode(mode: Mode): Map<string, Rgba> {
   const lookup = { clipToSrgb: false, palette, tokens: tokens[mode] };
   const colors = modePalette(lookup);
+  // A sheet's ground in dark is lighter than the page's, which a pick's tint laid on the page's
+  // background would match.
+  colors.set("selected-tint", seeThroughColor({ ...lookup, name: "selected-tint" }));
 
   for (const [name, modes] of subjects) {
     for (const [role, color] of subjectPalette({ ...lookup, subject: modes[mode] })) {

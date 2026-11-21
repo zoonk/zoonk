@@ -137,6 +137,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "checkDailyInsight":
     case "findMistakePattern":
     case "rememberOnboarding":
+    case "suggestProfileTools":
     case "updateLessonsShowing": {
       const ask = `${getBackgroundTaskToken(followUp)}:${followUp.id}:${followUp.revision}`;
       await startOnce(backgroundTaskWorkflow, [followUp], ask);
@@ -167,7 +168,11 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 async function runFollowUp(followUp: OwedFollowUp): Promise<void> {
   await startFollowUp(followUp);
 
-  if (followUp.kind !== "rebuildGoalCurriculum" && followUp.kind !== "prepareMockSupply") {
+  if (
+    followUp.kind !== "rebuildGoalCurriculum" &&
+    followUp.kind !== "prepareMockSupply" &&
+    followUp.kind !== "suggestProfileTools"
+  ) {
     await endFollowUpStep({ id: followUp.id, revision: followUp.revision });
   }
 }

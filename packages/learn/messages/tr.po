@@ -587,13 +587,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Bu işlem normalden uzun sürüyor. Kendiliğinden açılacak, tekrar dokunmana gerek yok."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Sola kaydır"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Sağa kaydır"
@@ -1315,7 +1313,6 @@ msgstr "Merhaba! Ben {name}, yapay zekâ destekli ders arkadaşın. Ne öğrenme
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Önceki sorular"
@@ -7783,11 +7780,6 @@ msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# soru cevaplandı} other {# soru cevaplandı}}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "Sonraki sorulara git"
-
-#: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -7982,6 +7974,21 @@ msgstr "Bundan sonra cevaplarını değiştiremezsin."
 msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Cevaplamaya devam et"
+
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Oturum {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Soru {number} / {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Soru {number} / {total}"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8180,16 +8187,6 @@ msgstr "Yazılı bölüm · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Yazılı bölüm"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Soru {number} / {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Soru {number} / {total}"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8553,12 +8550,6 @@ msgid "After this mock exam"
 msgstr "Bu deneme sınavından sonra"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Soru {number}"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "Gözden geçirilecek sorular"
@@ -8621,11 +8612,6 @@ msgstr "Cevapların kaydedildi."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Teslim edildi"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Oturum {number, number}"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
@@ -8693,6 +8679,11 @@ msgstr "En güçlü alanın: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Çalışman gereken alan: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Soru {number}"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
@@ -11607,6 +11598,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Örn. ekmek yapmak, arabalar, astronomi"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Ekle"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11636,6 +11633,12 @@ msgstr "{field}: ders veya konu (isteğe bağlı)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Örn. gazetecilik"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "{tool} öğesini kaldır"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11705,9 +11708,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "Bu bilgiyle ilgini çekecek örnekler seçiyoruz."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "Önceki ya da devam eden eğitimlerinden en fazla 3 tane seç. Bitirmiş olman gerekmez."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "Geçmişte ya da şu anda, tamamlanmış olsun ya da olmasın."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11723,11 +11726,6 @@ msgstr "İsteğe bağlı. İçeriği ihtiyaçlarına göre uyarlamak için seçt
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Sana yardımcı olan her şeyi seç."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "En fazla 3 tane seç."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

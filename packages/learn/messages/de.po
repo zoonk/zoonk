@@ -587,13 +587,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Das dauert länger als üblich. Es öffnet sich von selbst, du musst nicht noch einmal tippen."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Nach links scrollen"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Nach rechts scrollen"
@@ -1315,7 +1313,6 @@ msgstr "Hallo! Ich bin {name}, dein KI-Lernbuddy. Sag mir, was du lernen möchte
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Frühere Fragen"
@@ -7783,11 +7780,6 @@ msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# beantwortet} other {# beantwortet}}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "Nachfolgende Fragen"
-
-#: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -7982,6 +7974,21 @@ msgstr "Danach kannst du deine Antworten nicht mehr ändern."
 msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Weiter antworten"
+
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Abschnitt {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Frage {number} von {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Frage {number} von {total}"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -8180,16 +8187,6 @@ msgstr "Schriftlicher Teil · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Schriftlicher Teil"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Frage {number} von {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Frage {number} von {total}"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8553,12 +8550,6 @@ msgid "After this mock exam"
 msgstr "Nach dieser Probeprüfung"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Frage {number}"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "Fragen zum Nacharbeiten"
@@ -8621,11 +8612,6 @@ msgstr "Deine Antworten sind gespeichert."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Abgegeben"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Abschnitt {number, number}"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
@@ -8693,6 +8679,11 @@ msgstr "Am stärksten: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Hier solltest du üben: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Frage {number}"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
@@ -11607,6 +11598,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Z. B. Brot backen, Autos, Astronomie"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Hinzufügen"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11636,6 +11633,12 @@ msgstr "{field}: Kurs oder Fach (optional)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Z. B. Journalismus"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "{tool} entfernen"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11705,9 +11708,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "Damit wählen wir Beispiele aus, die dich interessieren."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "Früher oder heute, abgeschlossen oder nicht. Wähl bis zu 3 aus."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "Früher oder heute, abgeschlossen oder nicht."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11723,11 +11726,6 @@ msgstr "Optional. Mit deiner Auswahl passen wir die Inhalte an deine Bedürfniss
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Wähl alles aus, was dir hilft."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Wähl bis zu 3 aus."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
