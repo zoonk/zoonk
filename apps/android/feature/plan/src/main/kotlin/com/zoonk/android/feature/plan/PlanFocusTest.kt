@@ -76,7 +76,13 @@ internal fun PlanFocusTestRow(
 /** "B1–B2": the levels a skill's answers place it between, never one level it can't promise. */
 @Composable
 fun levelRange(range: LanguageLevelTestOneOfResultRangesValue): String =
-    if (range.low.value == range.high.value) range.low.value else stringResource(R.string.placementtest_level_range, range.low.value, range.high.value)
+    if (range.low.value ==
+        range.high.value
+    ) {
+        range.low.value
+    } else {
+        stringResource(R.string.placementtest_level_range, range.low.value, range.high.value)
+    }
 
 /** A language test's ranges, reading then listening, each named by its skill. */
 @Composable
@@ -100,8 +106,21 @@ private fun placementTestLine(test: PlanPlacementTest): String {
     val locale = currentLocale()
     val (state, minutes, finishedAt) =
         when (test) {
-            is PlanPlacementTest.PlanPlacementTestOneOfValue -> Triple(test.value.state.value, test.value.estimatedMinutes, test.value.result?.finishedAt)
-            is PlanPlacementTest.PlanPlacementTestOneOf1Value -> Triple(test.value.state.value, test.value.estimatedMinutes, test.value.result?.finishedAt)
+            is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
+                Triple(
+                    test.value.state.value,
+                    test.value.estimatedMinutes,
+                    test.value.result?.finishedAt,
+                )
+            }
+
+            is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
+                Triple(
+                    test.value.state.value,
+                    test.value.estimatedMinutes,
+                    test.value.result?.finishedAt,
+                )
+            }
         }
     if (state == CONTINUE) {
         return factsLine(
@@ -112,8 +131,22 @@ private fun placementTestLine(test: PlanPlacementTest): String {
     finishedAt ?: return stringResource(if (test.isLanguage) R.string.placementtest_find_level else R.string.placementtest_skip_lessons)
     val result =
         when (test) {
-            is PlanPlacementTest.PlanPlacementTestOneOfValue -> listOf(lessonsSkippedLine(test.value.result?.lessonsSkipped?.toInt() ?: 0))
-            is PlanPlacementTest.PlanPlacementTestOneOf1Value -> test.value.result?.ranges?.let { levelRangeFacts(it) }.orEmpty()
+            is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
+                listOf(
+                    lessonsSkippedLine(
+                        test.value.result
+                            ?.lessonsSkipped
+                            ?.toInt() ?: 0,
+                    ),
+                )
+            }
+
+            is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
+                test.value.result
+                    ?.ranges
+                    ?.let { levelRangeFacts(it) }
+                    .orEmpty()
+            }
         }
     return (result + formatMomentDay(finishedAt, locale)).factsLine()
 }
@@ -127,8 +160,14 @@ val PlanPlacementTest.opensLevelTest: Boolean
 /** A test there's nothing left to check with has no row, as main hides it. */
 fun PlanPlacementTest.isShown(): Boolean =
     when (this) {
-        is PlanPlacementTest.PlanPlacementTestOneOfValue -> value.state != PlanPlacementTestOneOf.State.START || value.estimatedMinutes > 0
-        is PlanPlacementTest.PlanPlacementTestOneOf1Value -> value.state != PlanPlacementTestOneOf1.State.START || value.estimatedMinutes > 0
+        is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
+            value.state != PlanPlacementTestOneOf.State.START || value.estimatedMinutes > 0
+        }
+
+        is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
+            value.state != PlanPlacementTestOneOf1.State.START ||
+                value.estimatedMinutes > 0
+        }
     }
 
 /** Main's `PlanPlacementTest`: the plan's way into the test of what the learner already knows, the same piece as the Focus test's. */

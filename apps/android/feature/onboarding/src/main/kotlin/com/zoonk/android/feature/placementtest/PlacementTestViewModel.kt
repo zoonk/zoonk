@@ -131,7 +131,9 @@ internal class PlacementTestViewModel(
         if (finished == WriteOutcome.Obsolete) return true
         val placements = store.placements[goalId]
         if (!placements.refreshed()) return false
-        val now = placements.state.value.value?.attempt
+        val now =
+            placements.state.value.value
+                ?.attempt
         return now == null || now.id != attempt.id || now.part != attempt.part || now.partComplete
     }
 

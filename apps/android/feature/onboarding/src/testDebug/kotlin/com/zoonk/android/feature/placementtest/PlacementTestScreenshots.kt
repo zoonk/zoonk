@@ -69,7 +69,14 @@ class PlacementTestScreenshots(
     @Test
     fun chooseLanguage() =
         shoot("choose-language") {
-            LengthChoice(wholeCourseMinutes = 60, pressed = null, failed = false, onStart = {}, testOutLevel = "B2", initial = TestChoice.TestOut)
+            LengthChoice(
+                wholeCourseMinutes = 60,
+                pressed = null,
+                failed = false,
+                onStart = {},
+                testOutLevel = "B2",
+                initial = TestChoice.TestOut,
+            )
         }
 
     @Test
@@ -107,11 +114,16 @@ class PlacementTestScreenshots(
         }
 
     @Test
-    fun resultQuick() = shoot("result-quick") { PlacementResult(PlacementLength.QUICK, lessonsSkipped = 4, nextTopic = "Contracts", onDone = {}) }
+    fun resultQuick() =
+        shoot("result-quick") {
+            PlacementResult(PlacementLength.QUICK, lessonsSkipped = 4, nextTopic = "Contracts", onDone = {})
+        }
 
     @Test
     fun resultNothingSkipped() =
-        shoot("result-nothing-skipped") { PlacementResult(PlacementLength.WHOLE_COURSE, lessonsSkipped = 0, nextTopic = "Torts", onDone = {}) }
+        shoot(
+            "result-nothing-skipped",
+        ) { PlacementResult(PlacementLength.WHOLE_COURSE, lessonsSkipped = 0, nextTopic = "Torts", onDone = {}) }
 
     @Test
     fun levelResult() =
@@ -130,7 +142,10 @@ class PlacementTestScreenshots(
         }
 
     @Test
-    fun testOutResult() = shoot("test-out-result") { TestOutResult(ApiJson.decodeFromString(LanguageLevelTestOut.serializer(), TEST_OUT), onDone = {}) }
+    fun testOutResult() =
+        shoot("test-out-result") {
+            TestOutResult(ApiJson.decodeFromString(LanguageLevelTestOut.serializer(), TEST_OUT), onDone = {})
+        }
 
     @Test
     fun levelResultAtTwiceTheFontSize() {

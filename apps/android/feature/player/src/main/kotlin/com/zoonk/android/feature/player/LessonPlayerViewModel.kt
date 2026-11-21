@@ -15,9 +15,9 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.MutationResult
-import com.zoonk.android.data.Visit
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.savedJson
 import com.zoonk.android.feature.audio.GradeOutcome
@@ -1092,8 +1092,14 @@ class LessonPlayerViewModel(
         val asked = visit.number
         viewModelScope.launch {
             when (cache.mutate { session -> store.api.dismissPlacementOffer(session, lessonId, runId) }) {
-                is MutationResult.Done -> offerDismissed = true
-                is MutationResult.Failed -> offerFailure.send(asked, Unit)
+                is MutationResult.Done -> {
+                    offerDismissed = true
+                }
+
+                is MutationResult.Failed -> {
+                    offerFailure.send(asked, Unit)
+                }
+
                 MutationResult.Obsolete -> {}
             }
             dismissingOffer = false

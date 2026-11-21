@@ -67,7 +67,10 @@ class PlacementTestViewModelTest {
     fun anOpenAttemptGoesOnAtItsQuestionAndOneClosedOnAnotherDeviceWaitsBetweenParts() {
         assertEquals(PlacementTestPhase.Choose, placementTestPhase(LoadState.Loaded(placement(attempt = null)), closed = null))
         assertTrue(placementTestPhase(LoadState.Loaded(placement(PART_ONE)), closed = null) is PlacementTestPhase.Question)
-        assertEquals(PlacementTestPhase.Waiting, placementTestPhase(LoadState.Loaded(placement(PART_ONE, status = "waitingForQuestions")), closed = null))
+        assertEquals(
+            PlacementTestPhase.Waiting,
+            placementTestPhase(LoadState.Loaded(placement(PART_ONE, status = "waitingForQuestions")), closed = null),
+        )
         assertTrue(placementTestPhase(LoadState.Loaded(placement(PART_ONE, next = null)), closed = null) is PlacementTestPhase.PartOver)
         val between = placementTestPhase(LoadState.Loaded(placement(PART_ONE_CLOSED)), closed = null)
         assertEquals(null, (between as PlacementTestPhase.Between).lessonsSkipped)
@@ -189,7 +192,7 @@ class PlacementTestViewModelTest {
                 PlacementCompletion.serializer(),
                 """
                 {"areas":[],"complete":true,"knownSkillIds":[],"phases":[],"testedOutPlanItemIds":[],"focusTest":null,
-                 "attempt":${attempt ?: "null"},"partLessonsSkipped":$skipped,
+                 "attempt":${attempt ?: "null"},"lessonsSkipped":$skipped,"partLessonsSkipped":$skipped,
                  "result":${if (result) """{"attemptId":"$ATTEMPT","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":$skipped}""" else "null"}}
                 """.trimIndent(),
             )

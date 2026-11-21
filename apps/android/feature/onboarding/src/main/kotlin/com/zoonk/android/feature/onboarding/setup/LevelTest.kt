@@ -53,7 +53,11 @@ internal fun levelTestPhase(
     val value = (test as? LoadState.Loaded)?.value
     val ready = (value as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value
     val preparing = (value as? LanguageLevelTest.LanguageLevelTestOneOfValue)?.value
-    val ended = ready?.next.let { it is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value || it is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf3Value }
+    val ended =
+        ready?.next.let {
+            it is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value ||
+                it is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf3Value
+        }
 
     return when {
         stopped -> LevelTestPhase.Done(ready?.levels.orEmpty())

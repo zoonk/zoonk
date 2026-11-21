@@ -74,12 +74,12 @@ import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.feature.tutor.tutorIdentity
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.VisitOf
 import kotlinx.coroutines.launch
 
 /** `/learn/{lessonId}`: the lesson's screens, its outline while it waits to be written, or a visitor's way in. */

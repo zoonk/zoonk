@@ -27,9 +27,9 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
-import com.zoonk.api.models.PlacementLength
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

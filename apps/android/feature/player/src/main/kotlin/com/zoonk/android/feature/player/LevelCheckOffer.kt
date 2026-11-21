@@ -46,12 +46,24 @@ internal fun LevelCheckOffer(
     SuggestionCard(label = title, card = {
         SuggestionHeader(title)
         SuggestionDescription(
-            if (level != null) stringResource(R.string.placementtest_offer_level, level) else stringResource(R.string.placementtest_offer_quick),
+            if (level !=
+                null
+            ) {
+                stringResource(R.string.placementtest_offer_level, level)
+            } else {
+                stringResource(R.string.placementtest_offer_quick)
+            },
         )
         if (failed) SuggestionSaveError()
         SuggestionActions {
             SuggestionMainAction(
-                if (level != null) stringResource(R.string.placementtest_test_out, level) else stringResource(R.string.placementtest_check_my_level),
+                if (level !=
+                    null
+                ) {
+                    stringResource(R.string.placementtest_test_out, level)
+                } else {
+                    stringResource(R.string.placementtest_check_my_level)
+                },
                 onClick = { onOpen(offer.route()) },
                 enabled = !dismissing,
             )

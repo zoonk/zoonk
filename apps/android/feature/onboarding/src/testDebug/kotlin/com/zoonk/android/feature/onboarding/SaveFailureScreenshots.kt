@@ -15,11 +15,11 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.feature.questions.Question
-import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.practice.SaveErrorText
+import com.zoonk.android.feature.questions.Question
+import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme

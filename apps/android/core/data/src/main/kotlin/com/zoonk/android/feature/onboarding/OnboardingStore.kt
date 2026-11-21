@@ -45,15 +45,15 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementLength
-import com.zoonk.api.models.StartLanguageLevelTestInput
-import com.zoonk.api.models.StartLanguageLevelTestOutInput
-import com.zoonk.api.models.TapAnswer
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
+import com.zoonk.api.models.StartLanguageLevelTestInput
+import com.zoonk.api.models.StartLanguageLevelTestOutInput
+import com.zoonk.api.models.TapAnswer
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -598,7 +598,9 @@ class OnboardingStore(
     suspend fun startLevelTestOut(
         goalId: String,
         level: StartLanguageLevelTestOutInput.Level,
-    ) = write(replacing = { test: LanguageLevelTestOut -> listOf(levelTestOuts[LevelTestAttempt(goalId, test.attemptId)].replacing(test)) }) {
+    ) = write(replacing = { test: LanguageLevelTestOut ->
+        listOf(levelTestOuts[LevelTestAttempt(goalId, test.attemptId)].replacing(test))
+    }) {
         api.startLevelTestOut(it, goalId, level)
     }
 

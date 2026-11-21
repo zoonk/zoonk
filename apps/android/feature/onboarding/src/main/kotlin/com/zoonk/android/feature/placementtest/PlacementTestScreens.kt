@@ -46,7 +46,11 @@ internal fun ColumnScope.LengthChoice(
     onTestOut: () -> Unit = {},
 ) {
     val locale = currentLocale()
-    var choice by rememberSaveable { mutableStateOf(initial.takeIf { it != TestChoice.TestOut || testOutLevel != null } ?: TestChoice.Quick) }
+    var choice by rememberSaveable {
+        mutableStateOf(
+            initial.takeIf { it != TestChoice.TestOut || testOutLevel != null } ?: TestChoice.Quick,
+        )
+    }
     val title = stringResource(R.string.placementtest_choose_title)
     val choices =
         listOfNotNull(

@@ -88,7 +88,8 @@ private fun topicWalk(
     plans: PlanStore,
     goalId: UUID,
 ): Boolean? {
-    val plan = plans.plan[goalId].collectShown().value?.plan ?: return null
+    val read by plans.plan[goalId].collectShown()
+    val plan = read.value?.plan ?: return null
     return (plan.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value?.attempt != null
 }
 
@@ -192,7 +193,11 @@ private fun ColumnScope.PlacementTestFlow(
 
         PlacementTestPhase.Choose -> {
             LengthChoice(
-                wholeCourseMinutes = plan.value?.plan?.placementTest?.estimatedMinutes ?: 0,
+                wholeCourseMinutes =
+                    plan.value
+                        ?.plan
+                        ?.placementTest
+                        ?.estimatedMinutes ?: 0,
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onStart = vm::start,

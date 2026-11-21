@@ -172,7 +172,11 @@ internal fun ColumnScope.LevelResult(
     onWalkTopics: () -> Unit,
     onTestOut: (String) -> Unit,
 ) {
-    val skipped = result.result?.levelsSkipped.orEmpty().map { it.value }
+    val skipped =
+        result.result
+            ?.levelsSkipped
+            .orEmpty()
+            .map { it.value }
     val lessons = result.result?.lessonsSkipped?.toInt() ?: 0
     val ranges = result.result?.ranges.orEmpty()
     TestOutcome(
@@ -209,7 +213,11 @@ internal fun ColumnScope.LevelResult(
                 ranges[key]?.let { range ->
                     val low = CEFR_LEVELS.indexOf(range.low.value)
                     val high = CEFR_LEVELS.indexOf(range.high.value)
-                    LevelRow(com.zoonk.android.feature.onboarding.setup.skillName(skill), levelRange(range)) { LevelRangeBar(low, high, it) }
+                    LevelRow(
+                        com.zoonk.android.feature.onboarding.setup
+                            .skillName(skill),
+                        levelRange(range),
+                    ) { LevelRangeBar(low, high, it) }
                 }
             }
         if (rows.isNotEmpty()) LevelRows(rows)

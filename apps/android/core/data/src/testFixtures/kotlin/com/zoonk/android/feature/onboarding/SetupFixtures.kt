@@ -53,7 +53,7 @@ fun placementOf(
 
 fun completionOf(focusTest: String? = null): PlacementCompletion =
     ApiJson.decodeFromString(
-        """{"areas":[],"complete":true,"knownSkillIds":[],"phases":[],"testedOutPlanItemIds":[],"focusTest":${focusTest ?: "null"}}""",
+        """{"areas":[],"complete":true,"knownSkillIds":[],"lessonsSkipped":0,"phases":[],"testedOutPlanItemIds":[],"focusTest":${focusTest ?: "null"}}""",
     )
 
 /** The subjects of a fictional public-service exam, in its notice's order, before its written Essay. */

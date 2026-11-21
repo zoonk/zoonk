@@ -28,6 +28,7 @@ import com.zoonk.android.feature.onboarding.course.onboardingCourseEntries
 import com.zoonk.android.feature.onboarding.setup.onboardingSetupEntries
 import com.zoonk.android.feature.onboarding.start.onboardingStartEntries
 import com.zoonk.android.feature.pattern.patternEntries
+import com.zoonk.android.feature.placementtest.placementTestEntries
 import com.zoonk.android.feature.plan.planEntries
 import com.zoonk.android.feature.planlink.planLinkEntries
 import com.zoonk.android.feature.player.playerEntries
@@ -42,7 +43,6 @@ import com.zoonk.android.feature.stats.statsEntries
 import com.zoonk.android.feature.subscription.subscriptionEntries
 import com.zoonk.android.feature.testout.testOutEntries
 import com.zoonk.android.feature.today.todayEntries
-import com.zoonk.android.feature.placementtest.placementTestEntries
 
 /**
  * Every route's screen, one call per feature's `<Name>Navigation.kt`, where each feature registers

@@ -114,7 +114,18 @@ fun ColumnScope.LanguageLevelTestStep(
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
     onProgressLabel: (String?) -> Unit = {},
-) = LevelTestSteps(goalId, language, targetLanguage, testMinutes, store, navigator, onProgress, onDone, onReportSaveFailure, onProgressLabel)
+) = LevelTestSteps(
+    goalId,
+    language,
+    targetLanguage,
+    testMinutes,
+    store,
+    navigator,
+    onProgress,
+    onDone,
+    onReportSaveFailure,
+    onProgressLabel,
+)
 
 @Composable
 internal fun ColumnScope.LevelTestSteps(
@@ -221,9 +232,23 @@ internal fun ColumnScope.LevelTestSteps(
         is LevelTestPhase.Done -> {
             val result = vm.result
             when {
-                plan == null -> LevelTestDone(shown.levels, targetLanguage, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
-                result != null -> plan.finished(this, result)
-                else -> PlacementDone(pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
+                plan == null -> {
+                    LevelTestDone(
+                        shown.levels,
+                        targetLanguage,
+                        pending = vm.isSaving,
+                        failed = vm.finishFailed,
+                        onContinue = finish,
+                    )
+                }
+
+                result != null -> {
+                    plan.finished(this, result)
+                }
+
+                else -> {
+                    PlacementDone(pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
+                }
             }
         }
     }

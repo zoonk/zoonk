@@ -68,7 +68,14 @@ internal class LevelTestPlanViewModel(
 
     fun start(length: PlacementLength) =
         save(Pressed.Main) {
-            val asked = if (length == PlacementLength.WHOLE_COURSE) StartLanguageLevelTestInput.Length.WHOLE_COURSE else StartLanguageLevelTestInput.Length.QUICK
+            val asked =
+                if (length ==
+                    PlacementLength.WHOLE_COURSE
+                ) {
+                    StartLanguageLevelTestInput.Length.WHOLE_COURSE
+                } else {
+                    StartLanguageLevelTestInput.Length.QUICK
+                }
             when (val started = store.startLevelTest(goalId, asked)) {
                 is WriteOutcome.Done -> started.value.attemptId?.let(::openAttempt) != null
                 WriteOutcome.Obsolete -> true
@@ -81,23 +88,23 @@ internal class LevelTestPlanViewModel(
         level: String,
         button: Pressed = Pressed.Main,
     ) = save(button) {
-            val asked = StartLanguageLevelTestOutInput.Level.entries.firstOrNull { it.value == level } ?: return@save false
-            when (val started = store.startLevelTestOut(goalId, asked)) {
-                is WriteOutcome.Done -> {
-                    testOutId = started.value.attemptId
-                    savedTestOut = started.value.attemptId.toString()
-                    true
-                }
+        val asked = StartLanguageLevelTestOutInput.Level.entries.firstOrNull { it.value == level } ?: return@save false
+        when (val started = store.startLevelTestOut(goalId, asked)) {
+            is WriteOutcome.Done -> {
+                testOutId = started.value.attemptId
+                savedTestOut = started.value.attemptId.toString()
+                true
+            }
 
-                WriteOutcome.Obsolete -> {
-                    true
-                }
+            WriteOutcome.Obsolete -> {
+                true
+            }
 
-                else -> {
-                    false
-                }
+            else -> {
+                false
             }
         }
+    }
 
     /** After a whole-course level test, opens its walk through the course's topics. */
     fun walkTopics() =

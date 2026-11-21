@@ -14,13 +14,13 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.PlacementPart
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.focusSittingOf
 import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
-import com.zoonk.android.feature.onboarding.PlacementPart
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
