@@ -10,20 +10,31 @@ import { useLearnAnalytics } from "../learn-context";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
 import { WritingRefused } from "./writing-refused";
 import { type WritingStartAnswer } from "./writing-screen";
+import { type TomorrowTask } from "./writing-types";
 
-export type WritingStartState = { generationId: string } | { status: "failed" | "limitReached" };
+export type WritingStartState =
+  | { generationId: string }
+  | { status: "failed" }
+  | { status: "limitReached"; task: TomorrowTask | null };
 
-function useWaitViewed(generationId: string | null) {
+/** Once per run a learner sees being written, from a question's start or a written test's. */
+export function useWritingWaitViewed({
+  generationId,
+  surface,
+}: {
+  generationId: string | null;
+  surface: "mock" | "practice";
+}) {
   const { track } = useLearnAnalytics();
 
   useEffect(() => {
     if (generationId) {
       track({
         name: "Writing Prompt Wait Viewed",
-        properties: { generation_id: generationId, surface: "practice" },
+        properties: { generation_id: generationId, surface },
       });
     }
-  }, [generationId, track]);
+  }, [generationId, surface, track]);
 }
 
 /**
@@ -49,7 +60,7 @@ export function WritingStartScreen({
   const [asking, setAsking] = useState(false);
   const generationId = "generationId" in state ? state.generationId : null;
 
-  useWaitViewed(generationId);
+  useWritingWaitViewed({ generationId, surface: "practice" });
 
   async function ask(): Promise<string | null | undefined> {
     setAsking(true);
@@ -66,12 +77,22 @@ export function WritingStartScreen({
       return answer.generationId;
     }
 
-    setState({ status: answer.status === "limitReached" ? "limitReached" : "failed" });
+    setState(
+      answer.status === "limitReached"
+        ? {
+            status: "limitReached",
+            task: answer.task
+              ? { minutes: answer.task.minutes, title: answer.task.description }
+              : null,
+          }
+        : { status: "failed" },
+    );
+
     return null;
   }
 
   if ("status" in state && state.status === "limitReached") {
-    return <WritingRefused hrefs={hrefs} onContinue={finish} task={null} />;
+    return <WritingRefused hrefs={hrefs} onContinue={finish} task={state.task} />;
   }
 
   const header = (
