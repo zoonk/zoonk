@@ -16,26 +16,26 @@ function typeset({
   return typesetProse({ locale, segments, typeset: (text) => typesetNumbers({ locale, text }) });
 }
 
-export function LessonRichText({
-  literalNumbers = false,
-  mark,
-  text,
-}: {
-  literalNumbers?: boolean;
-  mark?: string | null;
-  text: string;
-}) {
+type LessonRichLineProps = { literalNumbers?: boolean; mark?: string | null; text: string };
+
+/** Lesson text on one line, such as a quote of it: a code block in it reads as one run of code. */
+export function LessonRichLine({ literalNumbers = false, mark, text }: LessonRichLineProps) {
   const locale = useAppLocale();
-  const code = readWholeCodeFence(text);
-
-  if (code) {
-    return <CodeSnippet code={code.code} language={code.language} />;
-  }
-
   const parsed = parseRichLine({ parseProse: (prose) => parseRichInline(toOneLine(prose)), text });
   const segments = mark ? markRichInline(parsed, mark) : parsed;
 
   return (
     <RichInlineSegments segments={literalNumbers ? segments : typeset({ locale, segments })} />
   );
+}
+
+/** A text that is one code block, such as an option that is a program, shows as code. */
+export function LessonRichText(props: LessonRichLineProps) {
+  const code = readWholeCodeFence(props.text);
+
+  if (code) {
+    return <CodeSnippet code={code.code} language={code.language} />;
+  }
+
+  return <LessonRichLine {...props} />;
 }

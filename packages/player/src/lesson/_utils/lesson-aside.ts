@@ -170,7 +170,9 @@ export function getTutorQuoteText(step: PlayableLibraryStep): string | null {
     case "typedAnswer":
       return shorten(splitQuestionData(step.content.question).question) || null;
     case "hook":
-      return step.content.variant === "guess" ? shorten(step.content.question) : null;
+      return step.content.variant === "guess"
+        ? shorten(splitQuestionData(step.content.question).question) || null
+        : null;
     case "activity":
     case "spokenAnswer":
       return shorten(step.content.prompt) || null;

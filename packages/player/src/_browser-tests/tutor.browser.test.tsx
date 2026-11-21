@@ -54,6 +54,12 @@ const FORMATTED_ANSWER = [
   "```mermaid\nflowchart TD\n  accTitle: How an orbit forms\n  accDescr: Gravity and forward motion produce an orbit.\n  A[Gravity] --> B[Orbit]\n  C[Forward motion] --> B\n```",
 ].join("\n\n");
 
+const CODE_QUESTION_PROGRAM = "```python\nfor i in range(3):\n    print(i)\n```";
+
+function codeOption({ code, id, isCorrect }: { code: string; id: string; isCorrect: boolean }) {
+  return { id, isCorrect, reason: "It starts at 0.", text: `\`\`\`python\n${code}\n\`\`\`` };
+}
+
 function lessonWithTutor({
   pageSize,
   steps = [teachingStep("check")],
@@ -232,6 +238,63 @@ describe("asking the tutor", () => {
       },
       question: "Why isn't it this one?",
     });
+  });
+
+  it("quotes a guess's question without the code shown above it", async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [
+        contentStep("hook", {
+          content: {
+            options: [
+              { id: "one", isCorrect: false, text: "`1`" },
+              { id: "zero", isCorrect: true, text: "`0`" },
+            ],
+            question: `What does this print first?\n${CODE_QUESTION_PROGRAM}`,
+            reveal: "It prints 0 first.",
+            variant: "guess",
+          },
+        }),
+      ],
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+
+    expect(sheet.element().querySelector("[data-slot='tutor-quote']")?.textContent).toBe(
+      "About “What does this print first?”",
+    );
+  });
+
+  it("quotes a picked code option as one line of code, never as raw Markdown", async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [
+        contentStep("check", {
+          content: {
+            basis: null,
+            options: [
+              codeOption({ code: "print(1)\nprint(2)", id: "one", isCorrect: false }),
+              codeOption({ code: "print(0)", id: "zero", isCorrect: true }),
+            ],
+            question: `What does this print first?\n${CODE_QUESTION_PROGRAM}`,
+          },
+        }),
+      ],
+    });
+
+    playLesson({ lesson });
+
+    await page.getByRole("radio", { name: /print\(1\)\s*print\(2\)/u }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByText("It starts at 0.")).toBeVisible();
+
+    const sheet = await openTutor();
+    const quote = sheet.element().querySelector("[data-slot='tutor-quote']");
+
+    expect(quote?.textContent).toBe(
+      "You picked print(1) print(2) on “What does this print first?”",
+    );
+
+    expect(quote?.querySelector("[data-slot='code-snippet']")).toBeNull();
   });
 
   it("recovers a lost question before sending a follow-up typed while it waited", async () => {
