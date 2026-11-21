@@ -598,13 +598,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "This is taking longer than usual. It opens on its own, no need to tap again."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Scroll left"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Scroll right"
@@ -1326,7 +1324,6 @@ msgstr "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Earlier questions"
@@ -7777,11 +7774,6 @@ msgstr "Not sorted yet"
 msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
-
-#: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "Later questions"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx

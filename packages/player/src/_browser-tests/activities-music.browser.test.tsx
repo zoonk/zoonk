@@ -58,6 +58,8 @@ const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 const PHONE = { height: 812, width: 375 };
 const PHONE_LANDSCAPE = { height: 375, width: 812 };
 const SMALL_PHONE = { height: 640, width: 320 };
+// Room for the whole keyboard in large text between the lesson's top and its bottom bar.
+const TALL_SMALL_PHONE = { height: 900, width: 320 };
 const HALF_TAP_TARGET_PX = 21;
 // Above a white key's rounded bottom corners, where its whole width takes a tap.
 const KEY_CORNER_PX = 12;
@@ -150,6 +152,28 @@ function marksOutsideTheirKey() {
       return !key || inner.left < key.left || inner.right > key.right;
     },
   );
+}
+
+const SCAN_STEP_PX = 4;
+const SCAN_ROWS = [0.25, 0.5, 0.75];
+
+/** Points across all of the keyboard in view, at several heights, where a tap lands on no key. */
+function pointsOffTheKeys() {
+  const keys = page.getByRole("group", { name: "Piano keys" }).element();
+  keys.scrollIntoView({ block: "start" });
+  const shown = keys.getBoundingClientRect();
+  const xs = Array.from(
+    { length: Math.floor((shown.width - 2) / SCAN_STEP_PX) },
+    (_, step) => shown.left + 1 + step * SCAN_STEP_PX,
+  );
+
+  return SCAN_ROWS.flatMap((share) => {
+    const y = shown.top + shown.height * share;
+
+    return xs
+      .filter((x) => !document.elementFromPoint(x, y)?.closest("[data-slot='piano-key']"))
+      .map((x) => `${Math.round(x)},${Math.round(y)}`);
+  });
 }
 
 function tapRhythm() {
@@ -447,6 +471,21 @@ describe("music activities with a keyboard only", () => {
       await expectVerdict("Correct!");
       expect(marksOutsideTheirKey()).toStrictEqual([]);
       expect(keySpans()).toStrictEqual(answering);
+    });
+  });
+
+  it("keyboard: when the keys scroll, nothing covers the keys in view, so every one can be pressed where it is", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport(TALL_SMALL_PHONE, async () => {
+      openActivity({ template: "keyboardFretboard" });
+      await expect.element(pianoKey("C")).toBeVisible();
+      expect(cutOffKeys(["C", "D", "E", "F", "G", "A", "B"])).not.toStrictEqual([]);
+      expect(pointsOffTheKeys()).toStrictEqual([]);
     });
   });
 });

@@ -1,7 +1,6 @@
 import { AdminSectionEmpty } from "@/components/admin-section";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
-import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
   Table,
@@ -154,7 +153,7 @@ function AdminTable({
 
   return (
     <Table
-      scrollLabels={SCROLL_LABELS}
+      scrollLabel="Table"
       className={cn(
         CONTROL_CELL_CLASS,
         FIXED_TABLE_CLASS,

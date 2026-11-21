@@ -11,7 +11,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -104,7 +104,8 @@ function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
   );
 }
 
-const SCROLL_FADE_PX = 64;
+// `scroll-fade-x`'s widest fade.
+const SCROLL_FADE_PX = 40;
 
 export function MockQuestionMap({ className }: { className?: string }) {
   const t = useExtracted();
@@ -147,11 +148,7 @@ export function MockQuestionMap({ className }: { className?: string }) {
   }
 
   return (
-    <HorizontalScroll
-      box={{ label: t("Questions") }}
-      className={className}
-      labels={{ left: t("Earlier questions"), right: t("Later questions") }}
-    >
+    <SidewaysScroll className={className} label={t("Questions")}>
       <ol className="flex w-max min-w-full gap-2 p-0.5" data-slot="mock-question-map" ref={row}>
         {questions.map((question, index) => (
           <li className="w-11 shrink-0 grow" key={question.itemId}>
@@ -159,7 +156,7 @@ export function MockQuestionMap({ className }: { className?: string }) {
           </li>
         ))}
       </ol>
-    </HorizontalScroll>
+    </SidewaysScroll>
   );
 }
 

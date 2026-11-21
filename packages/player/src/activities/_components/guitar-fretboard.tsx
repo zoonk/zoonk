@@ -1,12 +1,12 @@
 "use client";
 
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { GUITAR_TUNING, type GuitarVoicing, stringNoteMidi } from "../_utils/guitar-voicing";
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
-import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 import { NoteMark, type NoteMarkKind } from "./note-mark";
 
 export const FRETBOARD_SPAN = 4;
@@ -222,11 +222,7 @@ export function GuitarFretboard(props: FretboardProps) {
   // The shape alone always fits; the strings to pick from can be wider than a narrow card.
   return (
     <div className="flex flex-col gap-2">
-      {onChange ? (
-        <ActivityHorizontalScroll box={{ label }}>{board}</ActivityHorizontalScroll>
-      ) : (
-        board
-      )}
+      {onChange ? <SidewaysScroll label={label}>{board}</SidewaysScroll> : board}
       <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
         <span className="flex items-center gap-1.5">
           <OpenOrMuted fret={0} />

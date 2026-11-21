@@ -16,15 +16,12 @@ const POINTS_CLASS = "text-muted-foreground text-reading flex list-disc flex-col
 
 /** The things the map sets side by side, a column each, their points row by row. */
 function Comparison({ comparison }: { comparison: NonNullable<Outline["comparison"]> }) {
-  const t = useExtracted();
   const rows = Math.max(...comparison.columns.map((column) => column.points.length));
 
   return (
     <section className="flex flex-col gap-3">
       <h3 className="text-base font-semibold text-balance">{comparison.title}</h3>
-      <Table
-        scrollLabels={{ box: comparison.title, left: t("Scroll left"), right: t("Scroll right") }}
-      >
+      <Table scrollLabel={comparison.title}>
         <TableHeader>
           <TableRow>
             {comparison.columns.map((column) => (

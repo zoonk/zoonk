@@ -1,7 +1,7 @@
-import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
+import { SIDEWAYS_SCROLL_FOCUS_CLASS, SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { SHORTCUTS, type ShortcutName, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
-import { SCROLL_LABELS } from "../../_utils/scroll-labels";
 import { DocHeader, DocRules, DocSection } from "../_components/doc";
 import { KeyCap } from "./key-cap";
 
@@ -64,9 +64,11 @@ export default function KeyboardPage() {
       </DocSection>
 
       <DocSection title="Keys">
-        <HorizontalScroll box={{ label: "Keys" }} className="max-w-column" labels={SCROLL_LABELS}>
-          <KeysTable />
-        </HorizontalScroll>
+        <div className={cn("max-w-column rounded-lg", SIDEWAYS_SCROLL_FOCUS_CLASS)}>
+          <SidewaysScroll label="Keys">
+            <KeysTable />
+          </SidewaysScroll>
+        </div>
       </DocSection>
     </>
   );
