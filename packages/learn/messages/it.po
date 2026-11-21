@@ -937,10 +937,11 @@ msgctxt "DvdMdt"
 msgid "Covering everything takes about {time} a day."
 msgstr "Per studiare tutto servono circa {time} al giorno."
 
+#. When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more.
 #: src/_components/time-answer-texts.ts
-msgctxt "-50pNu"
-msgid "The most you can cover is about {share}, at {time} a day."
-msgstr "Puoi coprire al massimo circa il {share}, con {time} al giorno."
+msgctxt "Wd6OxU"
+msgid "{time} a day covers as much as any time can."
+msgstr "Con {time} al giorno copri il massimo possibile."
 
 #: src/_components/time-answer-texts.ts
 msgctxt "hU_Swh"

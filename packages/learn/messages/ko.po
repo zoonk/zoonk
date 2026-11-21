@@ -937,10 +937,11 @@ msgctxt "DvdMdt"
 msgid "Covering everything takes about {time} a day."
 msgstr "하루 약 {time}씩 공부하면 전부 학습할 수 있어요."
 
+#. When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more.
 #: src/_components/time-answer-texts.ts
-msgctxt "-50pNu"
-msgid "The most you can cover is about {share}, at {time} a day."
-msgstr "하루 {time} 동안 공부하면 최대 약 {share}까지 다룰 수 있어요."
+msgctxt "Wd6OxU"
+msgid "{time} a day covers as much as any time can."
+msgstr "하루 {time}씩 공부하면 목표를 가장 많이 다룰 수 있어요."
 
 #: src/_components/time-answer-texts.ts
 msgctxt "hU_Swh"
