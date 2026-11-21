@@ -73,6 +73,7 @@ import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LanguageProgress
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.Syllabus
 
 class PlanLinks(
@@ -451,6 +452,20 @@ internal fun PlanContent(
                     countryRebuild?.let { rebuild ->
                         item(key = "country-rebuild", contentType = "notice") {
                             CountryRebuildNotice(rebuild, edits.isPending(PlanPart.CountryRebuild), edits.retryCountryRebuild)
+                        }
+                    }
+                    val testedOut = page.plan.changes.firstOrNull { it.kind == "testedOut" }
+                    if (testedOut != null && (testedOut.canUndo || testedOut.status == PlanChange.Status.UNDONE)) {
+                        item(key = testedOut.id, contentType = "tested-out-change") {
+                            val state = edits.changes[testedOut.id]
+                            TestedOutChangeCard(
+                                change = testedOut,
+                                dateKind = page.dateKind,
+                                undone = state?.undone == true,
+                                saving = state?.undoing == true,
+                                failed = state?.undoFailed == true,
+                                onUndo = { edits.undo(testedOut) },
+                            )
                         }
                     }
                     item(key = "roadmap", contentType = "roadmap") {

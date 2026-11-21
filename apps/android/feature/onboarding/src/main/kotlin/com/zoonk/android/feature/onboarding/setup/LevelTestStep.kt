@@ -63,6 +63,8 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.placementtest.SetupLengthChoice
+import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
@@ -140,6 +142,7 @@ internal fun ColumnScope.LevelTestSteps(
     onReportSaveFailure: () -> Unit = {},
     onProgressLabel: (String?) -> Unit = {},
     plan: PlanAttempt? = null,
+    lengthChoice: SetupTestChoice? = null,
 ) {
     val attemptId = plan?.attemptId
     val vm =
@@ -186,17 +189,21 @@ internal fun ColumnScope.LevelTestSteps(
         LevelTestPhase.Intro -> {
             com.zoonk.android.data
                 .TrackOnboardingQuestion(goalId, "placement")
-            LevelTestIntro(
-                language,
-                targetLanguage,
-                testMinutes,
-                showAlphabetNote = (test as? LoadState.Loaded)?.value?.showAlphabetNote == true,
-                pending = vm.isSaving,
-                starting = vm.isStarting,
-                failed = vm.finishFailed,
-                onStart = vm::begin,
-                onSkip = finish,
-            )
+            if (lengthChoice != null) {
+                SetupLengthChoice(lengthChoice, vm.isStarting || vm.isSaving, vm.finishFailed, vm::begin, finish)
+            } else {
+                LevelTestIntro(
+                    language,
+                    targetLanguage,
+                    testMinutes,
+                    showAlphabetNote = (test as? LoadState.Loaded)?.value?.showAlphabetNote == true,
+                    pending = vm.isSaving,
+                    starting = vm.isStarting,
+                    failed = vm.finishFailed,
+                    onStart = vm::begin,
+                    onSkip = finish,
+                )
+            }
         }
 
         LevelTestPhase.Waiting -> {

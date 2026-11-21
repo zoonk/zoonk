@@ -545,9 +545,10 @@ class OnboardingStore(
     suspend fun startLevelTest(
         goalId: String,
         length: StartLanguageLevelTestInput.Length,
-    ) = write(replacing = { test: LanguageLevelTest -> test.attemptId?.let { listOf(levelTest(goalId, it).replacing(test)) }.orEmpty() }) {
-        api.startLevelTest(it, goalId, length)
-    }
+    ) = write(
+        invalidating = setOf(DataDomain.Goals),
+        replacing = { test: LanguageLevelTest -> test.attemptId?.let { listOf(levelTest(goalId, it).replacing(test)) }.orEmpty() },
+    ) { api.startLevelTest(it, goalId, length) }
 
     /** [answerIndices] answers a level's confirmation, where every right option is picked. */
     suspend fun answerLevelTest(

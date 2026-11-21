@@ -46,6 +46,8 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.placementtest.SetupLengthChoice
+import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
@@ -90,6 +92,7 @@ internal fun ColumnScope.PlacementStep(
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
     onProgressLabel: (String?) -> Unit = {},
+    lengthChoice: SetupTestChoice? = null,
 ) {
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle(), onDone) }
     VisitOf(vm.visit)
@@ -132,15 +135,19 @@ internal fun ColumnScope.PlacementStep(
         PlacementPhase.Intro -> {
             com.zoonk.android.data
                 .TrackOnboardingQuestion(goalId, "placement")
-            PlacementIntro(
-                subject = subject,
-                areaCount = areaCount,
-                pending = vm.isSaving,
-                starting = vm.isStarting,
-                failed = vm.finishFailed,
-                onStart = vm::start,
-                onScratch = { finish(true) },
-            )
+            if (lengthChoice != null) {
+                SetupLengthChoice(lengthChoice, vm.isStarting || vm.isSaving, vm.finishFailed, vm::start) { finish(true) }
+            } else {
+                PlacementIntro(
+                    subject = subject,
+                    areaCount = areaCount,
+                    pending = vm.isSaving,
+                    starting = vm.isStarting,
+                    failed = vm.finishFailed,
+                    onStart = vm::start,
+                    onScratch = { finish(true) },
+                )
+            }
         }
 
         PlacementPhase.Waiting -> {

@@ -26,6 +26,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setup.PlacementDone
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
@@ -78,7 +79,9 @@ fun PlacementTestScreen(
         }
     val deciding = goal?.kind == LearnerSummaryGoal.Kind.LANGUAGE && walk == null
     TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator, deciding) { goalId, setProgress ->
-        PlacementTestFlow(goalId.toString(), goal?.displayName.orEmpty(), app.onboarding, app.plans, setProgress, navigator::closeTask)
+        val vm = viewModel(key = "placement-test:$goalId") { PlacementTestViewModel(goalId.toString(), app.onboarding) }
+        VisitOf(vm.visit)
+        PlacementTestFlow(goalId, goal?.displayName.orEmpty(), app.onboarding, app.plans, setProgress, navigator::closeTask, vm)
     }
 }
 
@@ -159,20 +162,20 @@ internal fun TestTask(
 }
 
 @Composable
-private fun ColumnScope.PlacementTestFlow(
-    goalId: String,
+internal fun ColumnScope.PlacementTestFlow(
+    goalId: UUID,
     subject: String,
     store: OnboardingStore,
     plans: PlanStore,
     onProgress: (Float?) -> Unit,
     onLeave: () -> Unit,
+    vm: PlacementTestViewModel,
+    onboarding: PlacementSetupEnd? = null,
 ) {
-    val vm = viewModel(key = "placement-test:$goalId") { PlacementTestViewModel(goalId, store) }
-    VisitOf(vm.visit)
-    val resource = store.placements[goalId]
+    val resource = store.placements[goalId.toString()]
     val placement by resource.collectShown()
-    val plan by plans.plan[UUID.fromString(goalId)].collectShown()
-    val phase = vm.phase(placement)
+    val plan by plans.plan[goalId].collectShown()
+    val phase = if (onboarding == null) vm.phase(placement) else vm.setupPhase(placement)
     val scope = rememberCoroutineScope()
     val waiting = phase == PlacementTestPhase.Waiting
     val run = remember { GenerationRun() }
@@ -209,10 +212,15 @@ private fun ColumnScope.PlacementTestFlow(
                 run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else null,
                 hold = hold,
-                pending = false,
-                failed = false,
-                onSkip = onLeave,
-                skipLabel = stringResource(R.string.placementtest_not_now),
+                pending = onboarding != null && vm.busy,
+                failed = onboarding != null && vm.failed,
+                onSkip = {
+                    if (onboarding == null) onLeave() else placement.value?.attempt?.let(vm::finishPart)
+                },
+                skipLabel =
+                    stringResource(
+                        if (onboarding == null) R.string.placementtest_not_now else R.string.onboarding_placement_stop,
+                    ),
             )
         }
 
@@ -248,15 +256,27 @@ private fun ColumnScope.PlacementTestFlow(
             BetweenParts(
                 lessonsSkipped = shown.lessonsSkipped,
                 minutesLeft = shown.attempt.estimatedMinutes.toInt(),
-                pressed = vm.pressed,
+                pressed = if (onboarding?.saving == true) Pressed.Main else vm.pressed,
                 failed = vm.failed,
                 onFinishForToday = onLeave,
-                onKeepGoing = { vm.start(shown.attempt.length) },
+                onKeepGoing = {
+                    if (onboarding == null) vm.start(shown.attempt.length) else onboarding.continueWith(shown.attempt.id)
+                },
+                undo = { PlacementUndo(plans, goalId, shown.changeId, enabled = !vm.busy && onboarding?.saving != true) },
+                inSetup = onboarding != null,
             )
         }
 
         is PlacementTestPhase.Result -> {
-            PlacementResult(shown.length, shown.lessonsSkipped, plan.value?.plan?.nextTopic(), onDone = onLeave)
+            PlacementResult(
+                shown.length,
+                shown.lessonsSkipped,
+                plan.value?.plan?.nextTopic(),
+                onDone = { if (onboarding == null) onLeave() else onboarding.continueWith(checkNotNull(shown.attemptId)) },
+                undo = { PlacementUndo(plans, goalId, shown.changeId, enabled = onboarding?.saving != true) },
+                inSetup = onboarding != null,
+                saving = onboarding?.saving == true,
+            )
         }
     }
 }
@@ -265,7 +285,7 @@ private fun ColumnScope.PlacementTestFlow(
 internal fun Plan.nextTopic(): String? =
     phases.flatMap { it.chapters }.firstOrNull { it.state != PlanPhaseChaptersInner.State.DONE && !it.testedOut }?.title
 
-private val PlanPlacementTest.estimatedMinutes: Int
+internal val PlanPlacementTest.estimatedMinutes: Int
     get() =
         when (this) {
             is PlanPlacementTest.PlanPlacementTestOneOfValue -> value.estimatedMinutes.toInt()

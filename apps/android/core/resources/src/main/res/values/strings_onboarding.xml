@@ -205,7 +205,6 @@
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">Question %1$d</string>
     <string name="onboarding_placement_progress">Questions answered</string>
-    <string name="onboarding_placement_your_answer">Your answer, in your own words</string>
     <string name="onboarding_placement_dont_know">I don\'t know yet</string>
     <string name="onboarding_placement_confirm">Confirm</string>
     <string name="onboarding_placement_stop">Stop and use my answers</string>

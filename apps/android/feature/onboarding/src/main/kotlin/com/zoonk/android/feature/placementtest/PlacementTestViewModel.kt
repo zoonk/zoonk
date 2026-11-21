@@ -53,6 +53,13 @@ internal class PlacementTestViewModel(
 
     fun phase(placement: LoadState<Placement>) = placementTestPhase(placement, closed)
 
+    fun setupPhase(placement: LoadState<Placement>): PlacementTestPhase {
+        val phase = phase(placement)
+        if (phase != PlacementTestPhase.Choose) return phase
+        val result = placement.value?.result ?: return phase
+        return PlacementTestPhase.Result(PlacementLength.WHOLE_COURSE, result.lessonsSkipped.toInt(), attemptId = result.attemptId)
+    }
+
     /** One of the wait's reads: true when it came back. */
     suspend fun check(): Boolean = store.placements[goalId].refreshed()
 
@@ -122,10 +129,16 @@ internal class PlacementTestViewModel(
         val finished = store.finishPlacement(goalId, fromScratch = false, attempt = attempt.part())
         if (finished is WriteOutcome.Done) {
             val completion = finished.value
-            val skipped = completion.partLessonsSkipped?.toInt() ?: 0
+            val skipped = completion.lessonsSkipped.toInt()
+            val changeId = completion.changeId.takeIf { skipped > 0 }
             closed =
-                completion.attempt?.let { PlacementTestPhase.Between(it, skipped) }
-                    ?: PlacementTestPhase.Result(attempt.length, completion.result?.lessonsSkipped?.toInt() ?: skipped)
+                completion.attempt?.let { PlacementTestPhase.Between(it, skipped, changeId) }
+                    ?: PlacementTestPhase.Result(
+                        attempt.length,
+                        completion.result?.lessonsSkipped?.toInt() ?: skipped,
+                        changeId = changeId,
+                        attemptId = attempt.id,
+                    )
             return true
         }
         if (finished == WriteOutcome.Obsolete) return true

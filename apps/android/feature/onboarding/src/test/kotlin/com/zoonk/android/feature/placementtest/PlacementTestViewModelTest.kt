@@ -152,7 +152,10 @@ class PlacementTestViewModelTest {
             api.placement = placement(attempt = null)
 
             assertEquals(listOf<PlacementLength?>(PlacementLength.QUICK), api.sittingLengths)
-            assertEquals(PlacementTestPhase.Result(PlacementLength.QUICK, 3), vm.phase(store.placements[GOAL_ID].state.value))
+            assertEquals(
+                PlacementTestPhase.Result(PlacementLength.QUICK, 3, attemptId = ATTEMPT),
+                vm.phase(store.placements[GOAL_ID].state.value),
+            )
         }
 
     private companion object {

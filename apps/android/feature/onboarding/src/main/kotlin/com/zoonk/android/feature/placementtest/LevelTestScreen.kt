@@ -36,6 +36,7 @@ import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.setup.StepLoading
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
 import com.zoonk.android.feature.onboarding.setup.withPoll
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.lessonsSkippedLine
 import com.zoonk.android.feature.plan.levelRange
 import com.zoonk.android.feature.questions.Question
@@ -106,7 +107,7 @@ private fun ColumnScope.LevelTestPlanFlow(
 
     when {
         testOut != null -> {
-            TestOutFlow(goalId, testOut, store, vm, onProgress, onLeave = navigator::closeTask)
+            TestOutFlow(goalId, testOut, store, app.plans, vm, onProgress, onLeave = navigator::closeTask)
         }
 
         attempt != null -> {
@@ -131,6 +132,10 @@ private fun ColumnScope.LevelTestPlanFlow(
                             onDone = navigator::closeTask,
                             onWalkTopics = vm::walkTopics,
                             onTestOut = { vm.testOut(it, Pressed.Other) },
+                            undo = {
+                                val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
+                                PlacementUndo(app.plans, goal.id, changeId, enabled = !vm.busy)
+                            },
                         )
                     },
             )
@@ -171,6 +176,7 @@ internal fun ColumnScope.LevelResult(
     onDone: () -> Unit,
     onWalkTopics: () -> Unit,
     onTestOut: (String) -> Unit,
+    undo: (@Composable () -> Unit)? = null,
 ) {
     val skipped =
         result.result
@@ -221,6 +227,7 @@ internal fun ColumnScope.LevelResult(
                 }
             }
         if (rows.isNotEmpty()) LevelRows(rows)
+        undo?.invoke()
     }
 }
 
@@ -230,6 +237,7 @@ private fun ColumnScope.TestOutFlow(
     goalId: String,
     attemptId: UUID,
     store: OnboardingStore,
+    plans: PlanStore,
     vm: LevelTestPlanViewModel,
     onProgress: (Float?) -> Unit,
     onLeave: () -> Unit,
@@ -293,7 +301,10 @@ private fun ColumnScope.TestOutFlow(
         }
 
         else -> {
-            TestOutResult(test, onLeave)
+            TestOutResult(test, onLeave) {
+                val changeId = test.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
+                PlacementUndo(plans, UUID.fromString(goalId), changeId)
+            }
         }
     }
 }
@@ -303,6 +314,7 @@ private fun ColumnScope.TestOutFlow(
 internal fun ColumnScope.TestOutResult(
     test: LanguageLevelTestOut,
     onDone: () -> Unit,
+    undo: (@Composable () -> Unit)? = null,
 ) {
     val lessons = test.result?.lessonsSkipped?.toInt() ?: 0
     val level = test.level.value
@@ -316,7 +328,7 @@ internal fun ColumnScope.TestOutResult(
             },
         action = stringResource(R.string.placementtest_done),
         onAction = onDone,
-    )
+    ) { undo?.invoke() }
 }
 
 private val CEFR_LEVELS = listOf("A1", "A2", "B1", "B2", "C1", "C2")

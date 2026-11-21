@@ -7,6 +7,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.plan.FOCUS_TEST_SOURCE
 import com.zoonk.android.feature.plan.GoalDateKind
 import com.zoonk.android.feature.plan.PlanEffectDiff
+import com.zoonk.android.feature.plan.TestedOutChangeCard
 import com.zoonk.android.feature.plan.countsByDate
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
@@ -51,7 +52,17 @@ internal fun PlanChangeNotice(
     val change = answer?.change ?: repriced ?: state.read.today.planChange ?: return
     val behind = change.behind
 
-    if (change.kind == MISSED_DAYS && behind != null) {
+    if (change.kind == "testedOut") {
+        TestedOutChangeCard(
+            change = change,
+            dateKind = state.read.today.goal.dateKind,
+            undone = answer?.status == PlanChangeDecisionInput.Status.UNDONE,
+            saving = viewModel.isSavingPlanChange,
+            failed = viewModel.planChangeFailedOn == state.read.noticeVisit(),
+            onUndo = { viewModel.decidePlanChange(state.read, change, PlanChangeDecisionInput.Status.UNDONE) },
+            modifier = modifier,
+        )
+    } else if (change.kind == MISSED_DAYS && behind != null) {
         FallingBehindNotice(change, behind, state, modifier)
     } else {
         ChangeNotice(change, answer, repriced != null, state, modifier)

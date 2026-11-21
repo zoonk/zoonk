@@ -26,7 +26,9 @@ import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.PlacementPart
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.completionOf
 import com.zoonk.android.feature.onboarding.orderQuestion
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
@@ -35,6 +37,9 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.OnboardingAnswerInput
+import com.zoonk.api.models.PlacementAttempt
+import com.zoonk.api.models.PlacementLength
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +49,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -178,6 +184,31 @@ class PlacementStepFlowTest {
         assertEquals(3, api.answers.size)
         rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
         rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
+    }
+
+    @Test
+    fun wholeCourseContinuesSetupWithTheFinishedPartsAttempt() {
+        val id = UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d")
+        val part = PlacementAttempt(estimatedMinutes = 20, id = id, length = PlacementLength.WHOLE_COURSE, part = 1, partComplete = false)
+        api.setup = { setupView(steps = listOf("placement", "plan")) }
+        api.reply = { _, _ -> setupView(steps = listOf("plan")) }
+        api.sitting = { placementOf(next = orderQuestion()).copy(attempt = part) }
+        api.answered = { placementOf(status = "done", next = null, answered = 1).copy(attempt = part) }
+        api.completion = completionOf().copy(attempt = part.copy(partComplete = true), lessonsSkipped = 3)
+
+        show(inSetup = true)
+        tap("Whole course")
+        tap("Start")
+        for (step in listOf("Complaint", "Answer", "Discovery", "Trial")) tap(step)
+        tap("Confirm")
+
+        assertEquals(listOf(PlacementPart(id, 1)), api.finishedParts)
+        assertEquals(emptyList<Pair<String, OnboardingAnswerInput>>(), api.answers)
+        tap("Continue")
+
+        val answer = api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
+        assertEquals(id, answer.value.attemptId)
+        assertEquals(listOf(PlacementLength.WHOLE_COURSE), api.sittingLengths)
     }
 
     @Test

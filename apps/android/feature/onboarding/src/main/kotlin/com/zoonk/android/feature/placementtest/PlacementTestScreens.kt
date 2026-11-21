@@ -44,6 +44,7 @@ internal fun ColumnScope.LengthChoice(
     testOutLevel: String? = null,
     initial: TestChoice = TestChoice.Quick,
     onTestOut: () -> Unit = {},
+    onSkip: (() -> Unit)? = null,
 ) {
     val locale = currentLocale()
     var choice by rememberSaveable {
@@ -62,7 +63,11 @@ internal fun ColumnScope.LengthChoice(
             Choice(
                 TestChoice.WholeCourse,
                 stringResource(R.string.placementtest_whole_course),
-                stringResource(R.string.placementtest_about_in_parts, formatMinutes(wholeCourseMinutes, locale)),
+                if (wholeCourseMinutes > 0) {
+                    stringResource(R.string.placementtest_about_in_parts, formatMinutes(wholeCourseMinutes, locale))
+                } else {
+                    stringResource(R.string.placementtest_in_parts)
+                },
             ),
             testOutLevel?.let {
                 Choice(
@@ -93,6 +98,11 @@ internal fun ColumnScope.LengthChoice(
             ) {
                 Text(stringResource(R.string.placementtest_start))
             }
+            if (onSkip != null) {
+                TextButton(onClick = onSkip, modifier = Modifier.fillMaxWidth(), enabled = pressed == null) {
+                    Text(stringResource(R.string.onboarding_skip))
+                }
+            }
         }
     }
 }
@@ -106,12 +116,16 @@ internal fun ColumnScope.BetweenParts(
     failed: Boolean,
     onFinishForToday: () -> Unit,
     onKeepGoing: () -> Unit,
+    undo: (@Composable () -> Unit)? = null,
+    inSetup: Boolean = false,
 ) {
     SetupContent {
         OnboardingHeading(
             lessonsSkipped?.let { lessonsSkippedLine(it) } ?: stringResource(R.string.placementtest_continue_title),
             stringResource(R.string.placementtest_left_saved, formatMinutes(minutesLeft, currentLocale())),
         )
+        undo?.invoke()
+        if (inSetup) Note(stringResource(R.string.placementtest_continue_from_plan))
         OnboardingActions {
             FinishFailed(failed)
             Button(
@@ -120,14 +134,16 @@ internal fun ColumnScope.BetweenParts(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = pressed == null,
             ) {
-                Text(stringResource(R.string.placementtest_keep_going))
+                Text(stringResource(if (inSetup) R.string.onboarding_continue else R.string.placementtest_keep_going))
             }
-            TextButton(
-                onClick = onFinishForToday,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pressed == null,
-            ) {
-                Text(stringResource(R.string.placementtest_finish_for_today))
+            if (!inSetup) {
+                TextButton(
+                    onClick = onFinishForToday,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = pressed == null,
+                ) {
+                    Text(stringResource(R.string.placementtest_finish_for_today))
+                }
             }
         }
     }
@@ -140,17 +156,23 @@ internal fun ColumnScope.PlacementResult(
     lessonsSkipped: Int,
     nextTopic: String?,
     onDone: () -> Unit,
+    undo: (@Composable () -> Unit)? = null,
+    inSetup: Boolean = false,
+    saving: Boolean = false,
 ) {
     TestOutcome(
         title = lessonsSkippedLine(lessonsSkipped),
         lead = stringResource(if (lessonsSkipped > 0) R.string.placementtest_known else R.string.placementtest_plan_stays),
-        action = stringResource(R.string.placementtest_done),
+        action = stringResource(if (inSetup) R.string.onboarding_continue else R.string.placementtest_done),
         onAction = onDone,
+        busy = saving,
+        enabled = !saving,
     ) {
         nextTopic?.let {
             Eyebrow(stringResource(R.string.placementtest_up_next))
             Text(it, style = MaterialTheme.typography.titleMedium)
         }
+        undo?.invoke()
         if (length == PlacementLength.QUICK) Note(stringResource(R.string.placementtest_whole_course_skips_more))
     }
 }

@@ -9,6 +9,7 @@ import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlacementStatus
 import com.zoonk.api.models.TrueFalseLabels
+import java.util.UUID
 import com.zoonk.android.feature.questions.Question as ItemQuestion
 
 /** Main's `PlacementTestPhase`: where a read of the test taken from the plan leaves the learner. */
@@ -41,11 +42,14 @@ internal sealed interface PlacementTestPhase {
     data class Between(
         val attempt: PlacementAttempt,
         val lessonsSkipped: Int?,
+        val changeId: UUID? = null,
     ) : PlacementTestPhase
 
     data class Result(
         val length: PlacementLength,
         val lessonsSkipped: Int,
+        val changeId: UUID? = null,
+        val attemptId: UUID? = null,
     ) : PlacementTestPhase
 }
 

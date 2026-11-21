@@ -415,7 +415,9 @@ class PlanViewModel(
 
     fun undo(change: PlanChange) {
         if (trackedChanges.value[change.id]?.undoing == true) return
-        update(change.id) { copy(undoing = true, undoFailed = false) }
+        trackedChanges.update { all ->
+            all + (change.id to (all[change.id] ?: EditorChange(change)).copy(undoing = true, undoFailed = false))
+        }
         viewModelScope.launch {
             val result = store.undo(goalId, change.id)
             if (result is MutationResult.Done) dropBasesAdvice()

@@ -31,6 +31,7 @@
     <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
     <string name="placementtest_about_in_parts">About %1$s, in parts</string>
     <!-- A short test of one language level, such as "Test out of B2". -->
+    <string name="placementtest_in_parts">In parts</string>
     <string name="placementtest_test_out">Test out of %1$s</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Skip %1$s if you already know it</string>
@@ -41,6 +42,7 @@
     <string name="placementtest_continue_title">Continue your test</string>
     <!-- %1$s is a duration with its unit, such as "15 min". -->
     <string name="placementtest_left_saved">About %1$s left. Your answers are saved.</string>
+    <string name="placementtest_continue_from_plan">You can finish the test from Plan.</string>
     <string name="placementtest_finish_for_today">Finish for today</string>
     <string name="placementtest_keep_going">Keep going</string>
     <string name="placementtest_known">You already know them. They stay in your practice.</string>
@@ -48,6 +50,7 @@
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">Up next</string>
     <string name="placementtest_whole_course_skips_more">The whole-course test can skip more.</string>
+    <string name="placementtest_undo_restored">The lessons are back in your plan.</string>
     <string name="placementtest_done">Done</string>
     <string name="placementtest_not_now">Not now</string>
     <!-- %1$s is a language's name, such as "Italian". -->
