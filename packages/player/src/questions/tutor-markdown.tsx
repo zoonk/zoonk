@@ -175,8 +175,8 @@ function AnswerSpan({ node, ...props }: ComponentProps<"span"> & ExtraProps) {
 /** Whether Streamdown can draw a diagram yet; until then its source shows as code. */
 const DiagramsReadyContext = createContext(false);
 
-/** What code's parts are called, where no translations load. */
-type TutorCodeLabels = { code: string; scroll: { left: string; right: string } };
+/** What code is called, and what a screen reader says for each of its lines, where no translations load. */
+type TutorCodeLabels = { code: string; line: (text: string, number: number) => string };
 
 const CodeLabelsContext = createContext<TutorCodeLabels | undefined>(undefined);
 
@@ -201,7 +201,7 @@ function AnswerCodeBlock(props: ComponentProps<"code"> & ExtraProps) {
         code={code}
         label={labels.code}
         language={language}
-        scrollLabels={labels.scroll}
+        speakLine={labels.line}
         variant="panel"
       />
     );

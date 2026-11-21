@@ -2,7 +2,7 @@ import { LearnProvider } from "@zoonk/learn/provider";
 import { QuestionBlock } from "@zoonk/learn/session/block";
 import { type ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import { render } from "../_test-utils/render";
 
 type Detail = ComponentProps<typeof QuestionBlock>["detail"];
@@ -122,16 +122,17 @@ function openStatement() {
 }
 
 describe("a true or false statement that holds a program", () => {
-  it("scrolls the program with its buttons and picks no answer", async () => {
+  it("scrolls the program and picks no answer", async () => {
     openStatement();
 
-    const line = page.getByText("totals = {name");
-    await expect.element(line).toBeVisible();
-    const scroller = line.element().closest("[data-slot='code-lines']")?.parentElement;
+    const scroller = page.getByRole("group", { name: "Code" });
+    await expect.element(scroller).toBeVisible();
+    await expect.poll(() => scroller.element().getAttribute("tabindex")).toBe("0");
 
-    await page.getByRole("button", { name: "Scroll right" }).click();
+    await userEvent.click(scroller);
+    await userEvent.keyboard("{End}");
 
-    await expect.poll(() => scroller?.scrollLeft).toBeGreaterThan(0);
+    await expect.poll(() => scroller.element().scrollLeft).toBeGreaterThan(0);
     await expect.element(page.getByRole("radio", { name: "True" })).not.toBeChecked();
     await expect.element(page.getByRole("radio", { name: "False" })).not.toBeChecked();
   });

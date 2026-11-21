@@ -283,7 +283,7 @@ describe("asking the tutor", () => {
 
     playLesson({ lesson });
 
-    await page.getByRole("radio", { name: /print\(1\)\s*print\(2\)/u }).click();
+    await page.getByRole("radio", { name: "Line 1: print(1) Line 2: print(2)" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByText("It starts at 0.")).toBeVisible();
 

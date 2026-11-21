@@ -2,6 +2,7 @@
 
 import { CodeFrame, CodeLine, CodeTokens } from "@zoonk/learn/code";
 import { highlightCode } from "@zoonk/learn/code/highlight";
+import { useSpokenCode } from "@zoonk/learn/code/spoken";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -64,6 +65,7 @@ export function CodeRunnerActivity({
 }: CodeRunnerProps) {
   const t = useExtracted();
   const locale = useAppLocale();
+  const spoken = useSpokenCode();
   const { fields } = content;
   const isChecked = phase === "checked";
   const isExploring = phase === "explore";
@@ -147,7 +149,7 @@ export function CodeRunnerActivity({
           )}
         </div>
 
-        <CodeFrame field label={t("Code")}>
+        <CodeFrame field label={t("Code")} lineCount={lines.length}>
           {lines.map((line, index) => {
             const number = index + 1;
 
@@ -155,7 +157,12 @@ export function CodeRunnerActivity({
             const hasError = run?.error?.line === number && !isStale;
 
             return (
-              <CodeLine key={number} number={number} tone={runnerLineTone({ canEdit, hasError })}>
+              <CodeLine
+                key={number}
+                number={number}
+                spoken={canEdit ? undefined : spoken.line(line, number)}
+                tone={runnerLineTone({ canEdit, hasError })}
+              >
                 {canEdit ? (
                   <ActivityCodeLineInput
                     aria-label={t("Line {number}, yours to edit", { number: String(number) })}

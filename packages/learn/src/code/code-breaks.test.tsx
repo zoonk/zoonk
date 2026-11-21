@@ -1,5 +1,6 @@
+import { isValidElement } from "react";
 import { describe, expect, it } from "vitest";
-import { breaksBetween, withBreakPoints } from "./code-breaks";
+import { breaksBetween, withBreakPoints, withWordBreakPoints } from "./code-breaks";
 
 function pieces(text: string): string[] {
   return withBreakPoints(text).filter((node): node is string => typeof node === "string");
@@ -20,6 +21,29 @@ describe(withBreakPoints, () => {
   it("keeps an empty pair and a leading dot whole", () => {
     expect(pieces(".then()")).toStrictEqual([".then()"]);
     expect(pieces("items[]")).toStrictEqual(["items[]"]);
+  });
+});
+
+describe(withWordBreakPoints, () => {
+  it("keeps a word short enough to fit on a line whole, so it moves to the next line as one", () => {
+    expect(withWordBreakPoints("print(fruta)")).toStrictEqual(["print(fruta)"]);
+
+    expect(withWordBreakPoints("for i in range(3):")).toStrictEqual([
+      "for",
+      " ",
+      "i",
+      " ",
+      "in",
+      " ",
+      "range(3):",
+    ]);
+  });
+
+  it("lets only a word too long for a line split, at its break points", () => {
+    const nodes = withWordBreakPoints("x numeros.append(valor_muito_grande)");
+
+    expect(nodes.slice(0, 2)).toStrictEqual(["x", " "]);
+    expect(isValidElement(nodes[2])).toBe(true);
   });
 });
 

@@ -1,10 +1,11 @@
-import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
-import { breaksBetween, withBreakPoints } from "./code-breaks";
+import { SidewaysScroll } from "../_components/sideways-scroll";
+import { BreakPoint, breaksBetween, withBreakPoints, withWordBreakPoints } from "./code-breaks";
 import { type CodeTokenKind } from "./code-languages";
 import { type CodeToken, codeLineText, highlightCode } from "./highlight-code";
+import { useSpokenCode } from "./spoken-code";
 
 const TAB_SIZE = 4;
 
@@ -58,7 +59,7 @@ export function CodeTokens({
 
     return (
       <Fragment key={key}>
-        {breaksBefore && <wbr />}
+        {breaksBefore && <BreakPoint />}
         <span className={TOKEN_CLASSES[token.kind]}>
           {token.kind === "plain" && !field ? withBreakPoints(token.text) : token.text}
         </span>
@@ -67,11 +68,15 @@ export function CodeTokens({
   });
 }
 
+/**
+ * A line's number, in a column that stays put while the code scrolls sideways under it, on the
+ * code's own ground (`--code-surface`).
+ */
 export function CodeLineNumber({ number, style }: { number: number; style?: React.CSSProperties }) {
   return (
     <span
       aria-hidden="true"
-      className="text-muted-foreground col-start-1 flex flex-col self-stretch pr-3 text-right tabular-nums select-none"
+      className="text-muted-foreground sticky left-0 z-10 col-start-1 flex w-(--code-gutter) flex-col self-stretch bg-(--code-surface) pr-1.5 text-right tabular-nums select-none"
       style={style}
     >
       {number}
@@ -99,37 +104,54 @@ function wrapIndent(indent: number): React.CSSProperties | undefined {
   return indent > 0 ? { paddingInlineStart: `${indent}ch`, textIndent: `-${indent}ch` } : undefined;
 }
 
+/** Below this, a block wraps its lines; from it, they keep their shape and the block scrolls. */
+const KEEPS_SHAPE = "@min-[30rem]:whitespace-pre";
+
 /**
- * A line wraps on a phone, its extra rows marked under its number and starting at the line's own
- * `indent`, and keeps its shape from `sm`.
+ * A numbered line. In a narrow block it wraps, its extra rows marked under its number and starting
+ * at the line's own `indent`; in a wide one it keeps its shape. Its `tone` starts after its number.
+ * `spoken` is what a screen reader says for it (`useSpokenCode`), in place of its code; a line of
+ * fields leaves it out and labels its fields.
  */
 export function CodeLine({
   children,
   className,
   indent = 0,
   number,
+  spoken,
   tone = "plain",
   ...props
-}: React.ComponentProps<"div"> & { indent?: number; number: number; tone?: CodeLineTone }) {
+}: React.ComponentProps<"div"> & {
+  indent?: number;
+  number: number;
+  spoken?: string;
+  tone?: CodeLineTone;
+}) {
   return (
     <div
-      className={cn(
-        "col-span-full -mx-1.5 grid grid-cols-subgrid items-start rounded-lg px-1.5 wrap-anywhere whitespace-pre-wrap sm:whitespace-pre",
-        tone === "current" &&
-          "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
-        tone === "editable" &&
-          "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1 ring-inset",
-        tone === "error" && "bg-destructive/10",
-        className,
-      )}
+      className={cn("col-span-full grid grid-cols-subgrid items-start", className)}
       data-slot="code-line"
       data-tone={tone}
       {...props}
     >
       <CodeLineNumber number={number} />
-      <div className="min-w-0" style={wrapIndent(indent)}>
-        {children}
+
+      <div
+        aria-hidden={spoken === undefined ? undefined : true}
+        className={cn(
+          "min-w-0 rounded-lg px-1.5 wrap-anywhere whitespace-pre-wrap",
+          KEEPS_SHAPE,
+          tone === "current" &&
+            "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
+          tone === "editable" &&
+            "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1 ring-inset",
+          tone === "error" && "bg-destructive/10",
+        )}
+      >
+        <div style={wrapIndent(indent)}>{children}</div>
       </div>
+
+      {spoken !== undefined && <span className="sr-only select-none">{spoken}</span>}
     </div>
   );
 }
@@ -140,87 +162,103 @@ export function CodeLine({
  */
 type CodeFrameVariant = "inset" | "panel";
 
-/** The scroll buttons' names; given only where no translations load, such as Admin. */
-type ScrollLabels = { left: string; right: string };
+const CODE_SURFACE: Record<CodeFrameVariant, string> = {
+  inset: "var(--background)",
+  panel: "var(--muted)",
+};
 
-type CodeFrameProps = {
+/**
+ * Lines of code (`lineCount` of them), which wrap in a narrow block and scroll sideways in a wide
+ * one, as a table does, their numbers staying put (`label` says what scrolls). `field` sizes it for
+ * a field inside it. Code reads left to right in every language.
+ */
+export function CodeFrame({
+  children,
+  className,
+  field = false,
+  label,
+  lineCount,
+  variant = "inset",
+}: {
   children: React.ReactNode;
   className?: string;
   field?: boolean;
   label: string;
-  scrollLabels?: ScrollLabels;
+  lineCount: number;
   variant?: CodeFrameVariant;
-};
-
-function TranslatedCodeFrame(props: CodeFrameProps) {
-  const t = useExtracted();
-
-  return (
-    <CodeFrame {...props} scrollLabels={{ left: t("Scroll left"), right: t("Scroll right") }} />
-  );
-}
-
-/**
- * Lines of code under one sideways scroller, for when a line is wider than the room (`label` says
- * what scrolls). `field` sizes it for a field inside it.
- */
-export function CodeFrame(props: CodeFrameProps) {
-  const { children, className, field = false, label, scrollLabels, variant = "inset" } = props;
-
-  if (!scrollLabels) {
-    return <TranslatedCodeFrame {...props} />;
-  }
+}) {
+  const style: React.CSSProperties & Record<`--${string}`, string> = {
+    "--code-gutter": `calc(${String(lineCount).length}ch + 0.375rem)`,
+    "--code-surface": CODE_SURFACE[variant],
+  };
 
   return (
-    <HorizontalScroll
-      box={{ label }}
+    <div
       className={cn(
-        CODE_SCROLL_SIGN,
-        variant === "inset" && "-mx-2",
+        "has-[[data-slot=sideways-scroll]:focus-visible]:ring-ring/50 @container rounded-lg has-[[data-slot=sideways-scroll]:focus-visible]:ring-[3px]",
+        variant === "inset" && "-mx-2 pl-2",
         variant === "panel" &&
-          "bg-muted text-foreground rounded-xl font-normal tracking-normal not-italic *:[[role=group]]:rounded-xl",
+          "bg-muted text-foreground rounded-xl pl-3 font-normal tracking-normal not-italic",
         className,
       )}
       data-variant={variant}
-      labels={scrollLabels}
+      dir="ltr"
+      style={style}
+      translate="no"
     >
-      <div
+      <SidewaysScroll
         className={cn(
-          "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] sm:w-max",
-          variant === "inset" ? "px-2 pb-1" : "px-3 py-2.5",
           field ? CODE_FIELD_TEXT : CODE_TEXT,
+          "[--scroll-fade-x-inset:var(--code-gutter)]",
         )}
-        data-slot="code-lines"
-        dir="ltr"
-        translate="no"
+        label={label}
+        role="group"
       >
-        {children}
-      </div>
-    </HorizontalScroll>
+        <div
+          className={cn(
+            "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] @min-[30rem]:w-max",
+            variant === "inset" ? "pr-2 pb-1" : "py-2.5 pr-3",
+          )}
+          data-slot="code-lines"
+        >
+          {children}
+        </div>
+      </SidewaysScroll>
+    </div>
   );
 }
 
-/** A program with its lines numbered. `language` is a fence's name for it, or null. */
-export function CodeListing({
-  code,
-  label,
-  language,
-  scrollLabels,
-  toneOf,
-  variant,
-}: {
+type CodeListingProps = {
   code: string;
   label: string;
   language: string | null;
-  scrollLabels?: ScrollLabels;
+  /** What a screen reader says for a line; given only where no translations load, such as Admin. */
+  speakLine?: (text: string, number: number) => string;
   toneOf?: (lineNumber: number) => CodeLineTone;
   variant?: CodeFrameVariant;
-}) {
+};
+
+function TranslatedCodeListing(props: CodeListingProps) {
+  const { line } = useSpokenCode();
+  return <CodeListing {...props} speakLine={line} />;
+}
+
+/** A program with its lines numbered. `language` is a fence's name for it, or null. */
+export function CodeListing(props: CodeListingProps) {
+  const { code, label, language, speakLine, toneOf, variant } = props;
+
+  if (!speakLine) {
+    return <TranslatedCodeListing {...props} />;
+  }
+
+  const lines = highlightCode(code, language);
+
   return (
-    <CodeFrame label={label} scrollLabels={scrollLabels} variant={variant}>
-      {highlightCode(code, language).map((tokens, index) => {
+    <CodeFrame label={label} lineCount={lines.length} variant={variant}>
+      {lines.map((tokens, index) => {
         const tone = toneOf?.(index + 1) ?? "plain";
-        const key = `${index}:${codeLineText(tokens)}`;
+        const text = codeLineText(tokens);
+        const key = `${index}:${text}`;
 
         return (
           <CodeLine
@@ -228,6 +266,7 @@ export function CodeListing({
             indent={indentOf(tokens)}
             key={key}
             number={index + 1}
+            spoken={speakLine(text, index + 1)}
             tone={tone}
           >
             <CodeTokens tokens={tokens} />
@@ -244,36 +283,46 @@ const SNIPPET_HANG = 2;
 /**
  * Code inside something the learner presses or reads in one line, such as an answer option: no
  * scroller and no line numbers, each line wrapped with its extra rows indented. Spans, so it fits
- * inside a button or a sentence.
+ * inside a button or a sentence. As wide as its widest line, so an option's tag sits after its last
+ * line when there's room, as it follows an answer's words.
  */
 export function CodeSnippet({ code, language }: { code: string; language: string | null }) {
+  const { snippet } = useSpokenCode();
+
   return (
     <span
-      className={cn(CODE_TEXT, "block text-start font-normal tracking-normal not-italic")}
+      className={cn(
+        CODE_TEXT,
+        "inline-block max-w-full text-start align-baseline font-normal tracking-normal not-italic",
+      )}
       data-slot="code-snippet"
       dir="ltr"
       translate="no"
     >
-      {highlightCode(code, language).map((tokens, index) => {
-        const key = `${index}:${codeLineText(tokens)}`;
+      <span aria-hidden="true">
+        {highlightCode(code, language).map((tokens, index) => {
+          const key = `${index}:${codeLineText(tokens)}`;
 
-        return (
-          <span
-            className="block wrap-anywhere whitespace-pre-wrap"
-            key={key}
-            style={wrapIndent(indentOf(tokens) + SNIPPET_HANG)}
-          >
-            <CodeTokens tokens={tokens} />
-          </span>
-        );
-      })}
+          return (
+            <span
+              className="block wrap-anywhere whitespace-pre-wrap"
+              key={key}
+              style={wrapIndent(indentOf(tokens) + SNIPPET_HANG)}
+            >
+              <CodeTokens tokens={tokens} />
+            </span>
+          );
+        })}
+      </span>
+
+      <span className="sr-only select-none">{snippet(code)}</span>
     </span>
   );
 }
 
 /**
- * Code inside a sentence. Its pieces end flush where it splits over two lines, so a long run never
- * reaches past the column; text splits where a code line would.
+ * Code inside a sentence. A word of it short enough to fit on a line moves to the next one whole;
+ * a longer one splits where a code line would, its pieces ending flush with the column.
  */
 export function InlineCode({ children }: { children: React.ReactNode }) {
   return (
@@ -281,7 +330,7 @@ export function InlineCode({ children }: { children: React.ReactNode }) {
       className="bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.85em] leading-tight wrap-break-word"
       translate="no"
     >
-      {typeof children === "string" ? withBreakPoints(children) : children}
+      {typeof children === "string" ? withWordBreakPoints(children) : children}
     </code>
   );
 }

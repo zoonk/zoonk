@@ -1,6 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type MarkdownTableAlign } from "@zoonk/utils/markdown-table";
 import { SpokenMath } from "../rich-text/spoken-math";
+import { SidewaysScroll } from "./sideways-scroll";
 import { SURFACE_CLASS } from "./surface";
 
 function getCellClass(align: MarkdownTableAlign | undefined) {
@@ -50,13 +51,7 @@ export function RichTable<TCell>({
       )}
       data-slot="rich-table"
     >
-      <div
-        aria-label={label}
-        className="scroll-fade-x overflow-x-auto pb-0.5 outline-none"
-        role="region"
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A wide table scrolls sideways, which needs focus by keyboard.
-        tabIndex={0}
-      >
+      <SidewaysScroll className="pb-0.5" label={label} role="region">
         <table className="text-foreground w-full border-collapse text-sm leading-snug">
           <thead className="bg-muted">
             <tr>
@@ -92,7 +87,7 @@ export function RichTable<TCell>({
             })}
           </tbody>
         </table>
-      </div>
+      </SidewaysScroll>
     </div>
   );
 }

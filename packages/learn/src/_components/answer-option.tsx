@@ -168,7 +168,9 @@ function ReservedTag({ children }: { children: React.ReactNode }) {
         />
       ))}
 
-      {children && <span className="col-start-1 row-start-1 min-w-0">{children}</span>}
+      {children && (
+        <span className={cn(ANSWER_TAG_CLASS, "col-start-1 row-start-1")}>{children}</span>
+      )}
     </span>
   );
 }
@@ -301,7 +303,8 @@ const ROW_FORMULA_CLASS =
 
 /**
  * `reservesTag` holds room for the verdict from the start. The space before the inline tag
- * disappears at a line break, so the tag starts at the text edge if it needs its own line.
+ * disappears at a line break, so the tag starts at the text edge if it needs its own line. After
+ * code, the tag sits on its last line's baseline when the code leaves room beside it.
  */
 export function TagBesideOrUnder({
   children,
@@ -335,7 +338,7 @@ export function TagBesideOrUnder({
 
       {(tag || reservesTag) && <span className="[word-spacing:0.5rem]"> </span>}
       {(tag || reservesTag) && (
-        <LineMarker className="inline-flex h-auto min-h-lh max-w-full align-top">
+        <LineMarker className="inline-flex h-auto min-h-lh max-w-full align-top [:has([data-slot=code-snippet])>&]:align-baseline">
           {reservesTag ? <ReservedTag>{tag}</ReservedTag> : tag}
         </LineMarker>
       )}

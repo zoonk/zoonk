@@ -1,5 +1,8 @@
+/// <reference types="@vitest/browser-playwright" />
+
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { cdp, page, userEvent } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
@@ -10,6 +13,11 @@ const PROGRAM = [
   "    if i > 0:",
   '        print(i, "is more than zero, so the loop prints it on its own line")',
   'print("done")',
+];
+
+const LONG_LINE = [
+  'const resumo = frutas.map((fruta, posicao) => String(posicao + 1) + ". " + fruta).join(", ");',
+  "console.log(resumo);",
 ];
 
 const fence = (language: string, lines: readonly string[]) =>
@@ -23,6 +31,34 @@ function codeLines(block: Element): string[] {
 
 function noSidewaysScroll() {
   return document.documentElement.scrollWidth <= window.innerWidth;
+}
+
+function aside() {
+  return page.getByRole("complementary", { name: "Help with this screen" });
+}
+
+type FrameTree = { childFrames?: FrameTree[]; frame: { id: string } };
+
+function frameIds({ childFrames = [], frame }: FrameTree): string[] {
+  return [frame.id, ...childFrames.flatMap((child) => frameIds(child))];
+}
+
+/**
+ * What Chrome itself names each node of `role`, as a screen reader hears it. Locators compute names
+ * their own way, which reads a `<wbr>` differently.
+ */
+async function chromeNames(role: string): Promise<string[]> {
+  const session = cdp();
+  const { frameTree } = await session.send("Page.getFrameTree");
+
+  const trees = await Promise.all(
+    frameIds(frameTree).map((frameId) => session.send("Accessibility.getFullAXTree", { frameId })),
+  );
+
+  return trees
+    .flatMap(({ nodes }) => nodes)
+    .filter((node) => !node.ignored && node.role?.value === role)
+    .map((node) => String(node.name?.value ?? ""));
 }
 
 describe("code in a lesson", () => {
@@ -63,7 +99,7 @@ describe("code in a lesson", () => {
       expect(document.querySelector("h2 [data-slot='code-lines']")).toBeNull();
       expect(noSidewaysScroll()).toBe(true);
 
-      const right = page.getByRole("radio", { name: /print\(1\)\s*print\(2\)/u });
+      const right = page.getByRole("radio", { name: "Line 1: print(1) Line 2: print(2)" });
       await expect.element(right).toBeVisible();
       expect(right.element().querySelector("[data-slot='code-snippet']")).not.toBeNull();
 
@@ -71,6 +107,146 @@ describe("code in a lesson", () => {
       await page.getByRole("button", { name: /^Check/u }).click();
       await page.getByRole("button", { name: /^Continue/u }).click();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    });
+  });
+
+  it("names code by its lines and how far each is indented, and inline code as written", async () => {
+    const lesson = buildLesson([
+      contentStep("check", {
+        content: {
+          basis: null,
+          options: [
+            {
+              id: "inside",
+              isCorrect: true,
+              reason: "The `print` is inside the loop.",
+              text: fence("python", ["for fruta in frutas:", "    print(fruta)"]),
+            },
+            {
+              id: "outside",
+              isCorrect: false,
+              reason: "This `print` runs once, after the loop.",
+              text: fence("python", ["for fruta in frutas:", "print(fruta)"]),
+            },
+            {
+              id: "list",
+              isCorrect: false,
+              reason: "This builds a list.",
+              text: "`resultado=list(range(1,6))`",
+            },
+          ],
+          question: `Which one prints every fruit?\n${fence("python", ["frutas = ['maçã']", "", "\tprint(frutas)"])}`,
+        },
+      }),
+    ]);
+
+    renderLessonPlayer({ lesson });
+    await expect.element(page.getByRole("radio").first()).toBeVisible();
+
+    const names = await chromeNames("radio");
+
+    expect(names.toSorted()).toStrictEqual([
+      "Line 1: for fruta in frutas: Line 2, indented 4 spaces: print(fruta)",
+      "Line 1: for fruta in frutas: Line 2: print(fruta)",
+      "resultado=list(range(1,6))",
+    ]);
+
+    const text = await chromeNames("StaticText");
+
+    expect(text).toStrictEqual(
+      expect.arrayContaining([
+        "Line 1: frutas = ['maçã']",
+        "Line 2: blank",
+        "Line 3, indented 1 tab: print(frutas)",
+      ]),
+    );
+
+    expect(text).not.toContain("frutas = ['maçã']");
+  });
+
+  it("wraps code in a narrow panel, and in a wide column scrolls it as a table under numbers that stay put", async () => {
+    const lesson = buildLesson([
+      explanationStep({ text: `In JavaScript:\n\n${fence("js", LONG_LINE)}`, title: "A map" }),
+      contentStep("check", { content: { ...playableStepContent.check, basis: null } }),
+    ]);
+
+    renderLessonPlayer({ lesson });
+
+    const frame = page.getByRole("group", { name: "Code" });
+    await expect.element(frame).toBeVisible();
+
+    const scroller = frame.element();
+    const frameBox = scroller.closest("[data-variant]");
+    const number = scroller.querySelector<HTMLElement>("[data-slot='code-line'] > span");
+    const start = number?.getBoundingClientRect().left;
+
+    expect(scroller.scrollWidth).toBeGreaterThan(scroller.clientWidth);
+    expect(frameBox?.querySelector("button")).toBeNull();
+
+    await expect.poll(() => scroller.getAttribute("tabindex")).toBe("0");
+    await userEvent.click(scroller);
+    await userEvent.keyboard("{End}");
+
+    await expect
+      .poll(() => scroller.scrollLeft)
+      .toBeGreaterThanOrEqual(scroller.scrollWidth - scroller.clientWidth - 1);
+
+    expect(number?.getBoundingClientRect().left).toBe(start);
+    expect(number?.checkVisibility()).toBe(true);
+
+    await userEvent.keyboard("{Home}");
+    await expect.poll(() => scroller.scrollLeft).toBe(0);
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    const panel = aside().getByRole("group", { name: "Code" });
+    await expect.element(panel).toBeVisible();
+    expect(panel.element().scrollWidth).toBeLessThanOrEqual(panel.element().clientWidth + 1);
+    expect(panel.element().getAttribute("tabindex")).toBeNull();
+  });
+
+  it("keeps a code option's tag beside its last line, picked or not", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const lesson = buildLesson([
+        contentStep("check", {
+          content: {
+            basis: null,
+            options: [
+              { id: "one", isCorrect: true, reason: "It prints both.", text: "```\n8 12\n```" },
+              { id: "two", isCorrect: false, reason: "One per line.", text: "```\n8\n12\n```" },
+            ],
+            question: "What does it print?",
+          },
+        }),
+      ]);
+
+      renderLessonPlayer({ lesson });
+
+      const option = page.getByRole("radio", { name: "Line 1: 8 Line 2: 12" });
+      await expect.element(option).toBeVisible();
+
+      const tagRow = () => {
+        const lines = option.element().querySelectorAll("[data-slot='code-snippet'] > * > *");
+        const tags = option.element().querySelectorAll("[data-slot='line-marker']");
+        const last = [...lines].at(-1)?.getBoundingClientRect();
+        const tag = [...tags].at(-1)?.getBoundingClientRect();
+
+        return { height: option.element().getBoundingClientRect().height, last, tag };
+      };
+
+      await document.fonts.ready;
+      const before = tagRow();
+
+      expect((before.tag?.top ?? 0) + (before.tag?.height ?? 0) / 2).toBeLessThan(
+        before.last?.bottom ?? 0,
+      );
+
+      await option.click();
+      await expect.element(option.getByText("Your answer")).toBeVisible();
+
+      const after = tagRow();
+      expect(after.height).toBe(before.height);
+      expect(after.tag?.top).toBe(before.tag?.top);
     });
   });
 
