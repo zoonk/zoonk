@@ -115,8 +115,12 @@ export function getChartValueAxis(chart: {
 
 function getPlotAxis(values: number[]) {
   const domain = niceDomain(values, { includeZero: false });
+  const wholeNumbers = values.every((value) => Number.isInteger(value));
 
-  return { domain, ticks: niceTicks(domain) };
+  return {
+    domain,
+    ticks: niceTicks(domain).filter((tick) => !wholeNumbers || Number.isInteger(tick)),
+  };
 }
 
 export function getPlotAxes(plot: {

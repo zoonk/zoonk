@@ -81,12 +81,29 @@ describe(getPlotAxes, () => {
       ],
     });
 
-    expect(x).toStrictEqual({ domain: [10, 20], ticks: [10, 12.5, 15, 17.5, 20] });
+    expect(x).toStrictEqual({ domain: [10, 20], ticks: [10, 15, 20] });
     expect(y).toStrictEqual({ domain: [25, 40], ticks: [25, 30, 35, 40] });
 
     const scale = createLinearScale({ domain: x.domain, range: [0, 100] });
 
     expect(scale.toPixel(11)).toBe(10);
+  });
+
+  it("keeps fractional ticks only when the data has fractions", () => {
+    const axes = getPlotAxes({
+      references: [],
+      series: [
+        {
+          points: [
+            { x: 1, y: 0.5 },
+            { x: 10, y: 1.5 },
+          ],
+        },
+      ],
+    });
+
+    expect(axes.x.ticks).toStrictEqual([0, 5, 10]);
+    expect(axes.y.ticks).toStrictEqual([0.5, 0.75, 1, 1.25, 1.5]);
   });
 });
 
