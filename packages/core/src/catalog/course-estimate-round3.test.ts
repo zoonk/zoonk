@@ -328,7 +328,7 @@ describe("honest course estimates", () => {
       topics: [],
     });
 
-    expect(findBeyondNoticeSkillIds(inputs!.graph)).toContain(writtenMathId);
+    expect(findBeyondNoticeSkillIds({ graph: inputs!.graph })).toContain(writtenMathId);
 
     if (!estimate || !("areas" in estimate)) {
       throw new Error("Expected a dated exam estimate");

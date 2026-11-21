@@ -153,7 +153,11 @@ function rankSkills(input: QueueInput): RankedSkill[] {
   const settled = getSettledSkillIds(input);
   const pastStart = getHarderStartSkillIds(input);
   const phases = getStudyPhases(input);
-  const beyond = findBeyondNoticeSkillIds(input.graph);
+
+  const beyond = findBeyondNoticeSkillIds({
+    graph: input.graph,
+    prerequisites: input.prerequisites,
+  });
 
   const studied = input.graph.skills
     .map((skill, index) => ({ area: getSkillArea({ graph: input.graph, skill }), index, skill }))

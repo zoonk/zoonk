@@ -151,7 +151,11 @@ describe("an exam subject with a skill beyond the notice", () => {
       ),
     };
 
-    expect(findBeyondNoticeSkillIds(graph)).toStrictEqual(new Set(["formats"]));
+    expect(findBeyondNoticeSkillIds({ graph })).toStrictEqual(new Set());
+
+    expect(findBeyondNoticeSkillIds({ graph, prerequisites: input.prerequisites })).toStrictEqual(
+      new Set(["formats"]),
+    );
 
     const items = lessonsOf(
       {
