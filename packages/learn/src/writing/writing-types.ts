@@ -8,7 +8,7 @@ export type WritingStartAnswer =
   | { admissionId: string; status: "ready" }
   | { generationId: string; status: "writing" }
   | { returnsOn: string; status: "limitReached"; task?: WritingTaskSummary }
-  | { status: "failed" | "signUpRequired" };
+  | { status: "failed" | "signUpRequired" | "taskRemoved" };
 
 export type WritingDraftAnswer =
   | { draft: Pick<WritingDraft, "revision" | "text">; status: "conflict" | "saved" }
@@ -33,4 +33,8 @@ export type WritingActions = {
 export type WrittenEssay = EssayView;
 
 /** What a refusal lists for tomorrow: the task by its name and its time. */
-export type TomorrowTask = { minutes: number | null; title: string };
+export type TomorrowTask = {
+  minutes: number | null;
+  title: string;
+  unit?: WritingTaskSummary["unit"];
+};

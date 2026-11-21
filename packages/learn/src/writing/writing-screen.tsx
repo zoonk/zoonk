@@ -155,7 +155,11 @@ export function WritingScreen({
         <WritingRefused
           hrefs={hrefs}
           onContinue={actions.finish}
-          task={{ minutes: essay.pacing?.minutes ?? null, title: essay.writing.title }}
+          task={{
+            minutes: essay.pacing?.minutes ?? null,
+            title: essay.writing.title,
+            unit: essay.writing.unit,
+          }}
         />
       );
     }

@@ -78,6 +78,10 @@ function toStatus({ option, outcome }: { option: MockOptionView; outcome: MockSt
     } as const;
   }
 
+  if (outcome.status === "limitReached") {
+    return { kind: "writingUsedUp", returnsOn: outcome.returnsOn } as const;
+  }
+
   return outcome.status === "notEnoughQuestions"
     ? ({ kind: "failed", reason: "notEnoughQuestions" } as const)
     : ({ kind: "failed", reason: "failed" } as const);
@@ -202,6 +206,11 @@ function MockChooserVisit({
 
     if (result.status === "refused") {
       setStatus({ kind: "refused", limit: result.limit });
+      return;
+    }
+
+    if (result.status === "writingUsedUp") {
+      setStatus({ kind: "writingUsedUp", returnsOn: result.returnsOn });
       return;
     }
 

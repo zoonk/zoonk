@@ -138,7 +138,12 @@ export function WritingMarkedText({
               <span className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-pretty">{error.correction}</span>
                 <span className="text-muted-foreground text-xs text-pretty">
-                  {t("You wrote “{quote}” · {kind}", { kind: error.kind, quote: error.quote })}
+                  {t({
+                    description:
+                      'Under a correction: what the learner wrote, then the kind of error, like "grammar".',
+                    message: "You wrote “{quote}” ({kind})",
+                    values: { kind: error.kind, quote: error.quote },
+                  })}
                 </span>
               </span>
             </StepRow>

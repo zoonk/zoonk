@@ -17,6 +17,7 @@ import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { isMultiPick } from "../questions/pick-rule";
 import { WritingLineCount } from "../writing/writing-editor";
+import { WritingQuestionBody } from "../writing/writing-question";
 import { useMockScreen } from "./mock-context";
 import { MockOptions, MockPicks, useLocked } from "./mock-options";
 
@@ -190,8 +191,25 @@ export function MockQuestionCard({ question }: { question: MockQuestion }) {
         <ItemSetStimulus continued={previous?.set?.id === question.set.id} set={question.set} />
       )}
 
-      <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <QuestionTitle text={question.question} />
+      {question.writing ? (
+        // A written question reads as on its practice screen, so its field stays in reach.
+        <>
+          <QuestionTitle>{question.writing.title}</QuestionTitle>
+          <WritingQuestionBody
+            className="pb-4"
+            question={{
+              context: question.context,
+              question: question.question,
+              writing: question.writing,
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <ItemSupport context={question.context} image={question.image} visual={question.visual} />
+          <QuestionTitle text={question.question} />
+        </>
+      )}
 
       <MockAnswerInput question={question} />
     </div>

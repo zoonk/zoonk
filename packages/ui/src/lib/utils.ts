@@ -17,6 +17,8 @@ export const cn = createCn({
       container: ["column", "form", "wide"],
       ease: ["spring", "accelerate", "swing", "follow"],
       radius: ["meter"],
+      /** The frame's gutter (`--spacing-frame`), so a later `px-0` replaces a `px-frame`. */
+      spacing: ["frame"],
       text: ["2xs", "compact", "reading"],
     },
   },

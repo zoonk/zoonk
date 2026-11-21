@@ -64,7 +64,8 @@ function promptContent({
 export async function createWrittenExamDay({
   plus = false,
   prompts = true,
-}: { plus?: boolean; prompts?: boolean } = {}) {
+  taskKey = "short",
+}: { plus?: boolean; prompts?: boolean; taskKey?: string } = {}) {
   const [user, skill, blueprint] = await Promise.all([
     createE2EUser(getBaseURL()),
     skillFixture({ name: `Write answers about public control ${randomUUID()}` }),
@@ -132,9 +133,10 @@ export async function createWrittenExamDay({
       itemIds: [],
       skillIds: [],
       title: "The 30-line question",
-      writing: { admissionId: null, draft: null, taskKey: "short", unit: "answer" },
+      writing: { admissionId: null, draft: null, taskKey, unit: "answer" },
       writingPacing: "estimated",
     },
+    position: 0,
     sessionId: session.id,
     status: "pending",
   });
@@ -247,6 +249,30 @@ export async function addGradedAnswer({
   });
 
   return { text: GRADED_TEXT };
+}
+
+/** A drill on the same task after the answer, as a lesson of a written skill leaves one. */
+export async function addWritingDrill({
+  sessionId,
+  skillId,
+}: {
+  sessionId: string;
+  skillId: string;
+}) {
+  await studySessionBlockFixture({
+    estimatedMinutes: 8,
+    kind: "produce",
+    payload: {
+      itemIds: [],
+      skillIds: [skillId],
+      title: "The 30-line question",
+      writing: { admissionId: null, draft: null, taskKey: "short", unit: "drill" },
+      writingPacing: "estimated",
+    },
+    position: 1,
+    sessionId,
+    status: "pending",
+  });
 }
 
 /** Every extra grade of the day used, as six rewrites or "Write now" starts would. */

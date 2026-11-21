@@ -16,14 +16,6 @@ import { useFormatPointsRange } from "./writing-labels";
 
 type Points = Extract<WritingResult, { kind: "points" }>;
 
-/** "−0.3–0.6": what language errors take away, as a range like the rest. */
-function useFormatDeduction() {
-  const formatRange = useFormatPointsRange();
-
-  return (deduction: Points["deduction"]) =>
-    deduction.high > 0 ? `−${formatRange(deduction)}` : formatRange(deduction);
-}
-
 /** The written test's minimum, drawn on this question's scale at the same share of its points. */
 function PartMinimum({ prompt }: { prompt: WritingPrompt }) {
   const t = useExtracted();
@@ -55,7 +47,6 @@ export function PointsHeader({
 }) {
   const t = useExtracted();
   const formatRange = useFormatPointsRange();
-  const formatDeduction = useFormatDeduction();
   const minimum = prompt.partMinimum;
   const errors = grade.errors.length;
 
@@ -110,7 +101,7 @@ export function PointsHeader({
               </span>
             </span>
             <span className="font-mono text-xs tabular-nums">
-              {formatDeduction(grade.deduction)}
+              {formatRange(grade.deduction, { deduction: true })}
             </span>
           </StepRow>
         </StepRows>

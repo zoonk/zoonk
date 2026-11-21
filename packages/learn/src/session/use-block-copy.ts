@@ -2,6 +2,7 @@
 
 import { useExtracted, useFormatter } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
+import { useWritingTaskTitle } from "../writing/writing-header";
 import { getPracticeFocus } from "./practice-focus";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
@@ -22,6 +23,7 @@ type BlockCopyInput = Pick<
   | "topics"
   | "weakest"
   | "writingAvailability"
+  | "writingUnit"
 >;
 
 /** A challenge's row has one name, from what the learner does in it. */
@@ -71,6 +73,7 @@ export function useBlockTitle() {
   const format = useFormatter();
   const checkpointTitle = useCheckpointTitle();
   const reviewTitle = useReviewTitle();
+  const writingTitle = useWritingTaskTitle();
 
   return (block: BlockCopyInput): string => {
     if (block.checkpoint) {
@@ -91,7 +94,7 @@ export function useBlockTitle() {
     }
 
     if (block.kind === "produce") {
-      return block.title ?? t("Writing practice");
+      return writingTitle({ title: block.title, unit: block.writingUnit });
     }
 
     if (block.mistakesOnly) {
@@ -142,13 +145,24 @@ export function useBlockDetail() {
   const t = useExtracted();
   const shortList = useShortList();
 
-  /** A written task's row says when it waits for tomorrow, or that its draft is kept. */
-  function writingDetail({ writingAvailability }: BlockCopyInput): string | null {
+  /**
+   * A written task's row says when it waits for tomorrow, or that its draft is kept. A drill says
+   * what it's for, since its name is the same after every lesson.
+   */
+  function writingDetail({
+    canDo,
+    writingAvailability,
+    writingUnit,
+  }: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null {
     if (writingAvailability?.status === "tomorrow") {
       return t("Back tomorrow: no more grading today");
     }
 
-    return writingAvailability?.status === "continue" ? t("Your draft is saved") : null;
+    if (writingAvailability?.status === "continue") {
+      return t("Your draft is saved");
+    }
+
+    return writingUnit === "drill" ? t("Use what you just learned") : canDo;
   }
 
   function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null {
@@ -174,7 +188,7 @@ export function useBlockDetail() {
     }
 
     if (block.kind === "produce") {
-      return writingDetail(block) ?? block.canDo;
+      return writingDetail(block);
     }
 
     // A call has no questions to count, and its name says what it is.

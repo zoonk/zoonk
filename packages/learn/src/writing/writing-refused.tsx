@@ -17,11 +17,13 @@ import { TaskActions } from "../_components/task-layout";
 import { useFormatDuration } from "../_utils/time-format";
 import { useFinishTask } from "../essay/use-finish-essay";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
+import { useWritingTaskTitle } from "./writing-header";
 import { type TomorrowTask } from "./writing-types";
 
 function TomorrowTaskList({ task }: { task: TomorrowTask }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
+  const writingTitle = useWritingTaskTitle();
 
   return (
     <section className="flex flex-col gap-2">
@@ -32,7 +34,7 @@ function TomorrowTaskList({ task }: { task: TomorrowTask }) {
             <KindMark kind="essay" />
           </ListRowLeading>
           <ListRowBody>
-            <ListRowTitle>{task.title}</ListRowTitle>
+            <ListRowTitle>{writingTitle(task)}</ListRowTitle>
           </ListRowBody>
           {task.minutes !== null && (
             <ListRowTrailing className="font-mono text-xs">

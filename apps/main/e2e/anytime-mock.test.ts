@@ -60,9 +60,8 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await expect(page.getByText(/^Written part · Mathematics$/u)).toBeVisible();
 
-    await expect(
-      page.getByRole("heading", { level: 2, name: WRITTEN_ESSAY.question }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Controle externo" })).toBeVisible();
+    await expect(page.getByText(WRITTEN_ESSAY.question)).toBeVisible();
 
     const answer = page.getByLabel("Your answer");
 

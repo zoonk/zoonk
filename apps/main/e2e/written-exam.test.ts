@@ -4,6 +4,7 @@ import { openAs } from "./study-day";
 import {
   SHORT_TITLE,
   addGradedAnswer,
+  addWritingDrill,
   createWrittenExamDay,
   useTodayExtraGrades,
 } from "./written-exam-fixtures";
@@ -97,6 +98,9 @@ test.describe("Written exam practice", () => {
         page.getByText("Minimum to pass the written test: 50% of the points"),
       ).toBeVisible();
 
+      // Two signed ends joined by a dash would read as a subtraction.
+      await expect(page.getByText("−0.3 to −0.4", { exact: true })).toBeVisible();
+
       await expect(
         page.getByRole("list", { name: "Language errors" }).getByRole("listitem"),
       ).toHaveCount(1);
@@ -113,7 +117,7 @@ test.describe("Written exam practice", () => {
 
       // The written test's page knows the day's grading is used, so it offers no tap to refuse.
       await page.goto("/plan/written-test");
-      await expect(page.getByText("More grading tomorrow")).toBeVisible();
+      await expect(page.getByText("Back tomorrow: no more grading today")).toBeVisible();
       await expect(page.getByRole("button", { exact: true, name: "Write" })).toBeHidden();
     } finally {
       await page.context().close();
@@ -148,6 +152,66 @@ test.describe("Written exam practice", () => {
       await expect(page.getByText(/^about 0 of (?<lines>30|60) lines$/u)).toBeVisible();
     } finally {
       await Promise.all([waiting.context().close(), page.context().close()]);
+    }
+  });
+
+  test("a drill after a lesson has its own name, apart from the whole answer on the same task", async ({
+    browser,
+  }) => {
+    const day = await createWrittenExamDay();
+    await addWritingDrill({ sessionId: day.sessionId, skillId: day.skillId });
+    const page = await openAs(browser, day.user);
+
+    try {
+      await page.goto("/today");
+      await expect(page.getByText("Short writing exercise").first()).toBeVisible();
+      await expect(page.getByText("The 30-line question").first()).toBeVisible();
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a task the exam's notice dropped says so before any writing, and leads back to Today", async ({
+    browser,
+  }) => {
+    const day = await createWrittenExamDay({ prompts: false, taskKey: "retired" });
+    const page = await openAs(browser, day.user);
+
+    try {
+      await page.goto("/today");
+      await page.getByRole("button", { name: "Start" }).click();
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: "This task is no longer on your exam" }),
+      ).toBeVisible();
+
+      await page.getByRole("link", { exact: true, name: "Today" }).click();
+      await expect(page).toHaveURL(/\/today/u);
+      expect(await prisma.writingAdmission.count({ where: { userId: day.user.id } })).toBe(0);
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a written mock with today's extra writing used says when it's back, before any wait", async ({
+    browser,
+  }) => {
+    const day = await createWrittenExamDay({ plus: true, prompts: false });
+    await useTodayExtraGrades(day.user.id);
+    const page = await openAs(browser, day.user);
+
+    try {
+      await page.goto("/mock/new");
+      await page.getByRole("radio", { name: /^Written test/u }).click();
+      await page.getByRole("button", { name: "Start" }).click();
+
+      await expect(
+        page.getByText("No more grading today. The written test is back tomorrow."),
+      ).toBeVisible();
+
+      await expect(page).toHaveURL(/\/mock\/new/u);
+    } finally {
+      await page.context().close();
     }
   });
 });

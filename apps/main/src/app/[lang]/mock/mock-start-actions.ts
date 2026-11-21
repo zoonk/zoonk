@@ -11,7 +11,7 @@ const goalIdSchema = uuidSchema();
 
 export type MockStartOutcome =
   | { id: string; status: "running" | "started" }
-  | Extract<StartAnytimeMockResult, { status: "short" }>
+  | Extract<StartAnytimeMockResult, { status: "limitReached" | "short" }>
   | { status: "failed" | "needsQuestions" | "notEnoughQuestions" };
 
 type KeptRefusal = "needsQuestions" | "notEnoughQuestions";
@@ -39,7 +39,7 @@ export async function startAnytimeMockAction(
     return { id: result.id, status: result.status };
   }
 
-  if (result.status === "short") {
+  if (result.status === "short" || result.status === "limitReached") {
     return result;
   }
 
