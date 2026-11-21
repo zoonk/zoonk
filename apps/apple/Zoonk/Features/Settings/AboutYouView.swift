@@ -280,7 +280,9 @@ private enum AboutYouCopy {
       case .learningSupport:
         saved.picks.isEmpty
           ? [saved.text] : [saved.picks.map(label).formatted(.list(type: .and, width: .narrow))]
-      case .tools, .watch, .listen, .play, .read, .activities:
+      case .tools:
+        [(saved.picks.map(label) + favorites).formatted(.list(type: .and, width: .narrow))]
+      case .watch, .listen, .play, .read, .activities:
         [saved.picks.map(label), favorites].filter { !$0.isEmpty }.map {
           $0.formatted(.list(type: .and, width: .narrow))
         }
