@@ -722,7 +722,7 @@ describe("onboarding a new goal", () => {
     ]);
 
     await expect(getOnboarding({ goalId: language.id })).resolves.toMatchObject({
-      onboarding: { quickTestMinutes: 3 },
+      onboarding: { quickTestMinutes: 4 },
     });
 
     await expect(getOnboarding({ goalId: learn.id })).resolves.toMatchObject({
