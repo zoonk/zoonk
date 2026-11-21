@@ -33,21 +33,26 @@ export function useWrittenFacts({
 
 type WriteAction = NonNullable<WrittenSubject["writeActions"]>[number];
 
-/** Every task waits for the same exam choice, so there's nothing to write until it's made. */
-function getPendingChoice(written: WrittenSubject): string[] | null {
-  if (written.availability?.status === "needsChoice") {
-    return written.availability.choiceGroups;
-  }
-
+/**
+ * The exam choices some of the part's tasks wait for, and whether every task does, so there's
+ * nothing to write until they're made. A server without write actions says it for the whole part.
+ */
+function getPendingChoice(written: WrittenSubject): { all: boolean; groups: string[] } | null {
   const actions = written.writeActions ?? [];
+
+  if (actions.length === 0) {
+    return written.availability?.status === "needsChoice"
+      ? { all: true, groups: written.availability.choiceGroups }
+      : null;
+  }
 
   const groups = actions.flatMap(({ availability }) =>
     availability.status === "needsChoice" ? availability.choiceGroups : [],
   );
 
-  const allWait = actions.every(({ availability }) => availability.status === "needsChoice");
+  const all = actions.every(({ availability }) => availability.status === "needsChoice");
 
-  return actions.length > 0 && allWait ? [...new Set(groups)] : null;
+  return groups.length > 0 ? { all, groups: [...new Set(groups)] } : null;
 }
 
 /** When every task's grading is used up for today, the first day one returns. */
@@ -99,14 +104,13 @@ export function WriteBottomBar({
     );
   }
 
-  const choiceGroups = getPendingChoice(written);
+  const choice = getPendingChoice(written);
+  const choiceNote = choice && <ChooseOnToday choiceGroups={choice.groups} />;
 
-  if (choiceGroups) {
+  if (choice?.all) {
     return (
       <BottomBar>
-        <div className="flex min-h-11 items-center lg:justify-end">
-          <ChooseOnToday choiceGroups={choiceGroups} />
-        </div>
+        <div className="flex min-h-11 items-center lg:justify-end">{choiceNote}</div>
       </BottomBar>
     );
   }
@@ -125,7 +129,7 @@ export function WriteBottomBar({
   }
 
   return (
-    <BottomBar>
+    <BottomBar note={choiceNote}>
       <BottomBarActions>
         <EnterButton
           busy={busy}
