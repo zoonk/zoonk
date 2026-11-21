@@ -9997,6 +9997,7 @@ msgstr "Tu pourras tout modifier plus tard."
 
 #: src/onboarding/understood/understood-source-link.tsx
 #: src/visuals/chart-visual.tsx
+#: src/visuals/plot-visual.tsx
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Source : {source}"
@@ -13527,6 +13528,31 @@ msgstr "{dateKind, select, month {Commence en {start}} other {Commence le {start
 msgctxt "83fmM5"
 msgid "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}"
 msgstr "{dateKind, select, month {{count} · commence en {start}} other {{count} · commence le {start}}}"
+
+#: src/visuals/plot-visual.tsx
+msgctxt "VlX3Tz"
+msgid "Horizontal axis: {label}, from {min} to {max}"
+msgstr ""
+
+#: src/visuals/plot-visual.tsx
+msgctxt "8Zy2Zw"
+msgid "Vertical axis: {label}, from {min} to {max}"
+msgstr ""
+
+#: src/visuals/plot-visual.tsx
+msgctxt "QcdIBf"
+msgid "Point"
+msgstr ""
+
+#: src/visuals/plot-visual.tsx
+msgctxt "bhsStc"
+msgid "Reference lines"
+msgstr ""
+
+#: src/visuals/plot-visual.tsx
+msgctxt "NNFAc_"
+msgid "{label}: {value}"
+msgstr ""
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"
