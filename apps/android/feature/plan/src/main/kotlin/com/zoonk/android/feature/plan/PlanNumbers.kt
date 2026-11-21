@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import com.zoonk.android.R
+import com.zoonk.android.feature.goalcontent.WriteNow
 import com.zoonk.android.feature.language.CanDoList
 import com.zoonk.android.feature.language.LevelValue
 import com.zoonk.android.feature.language.SkillLevelsCard
@@ -639,22 +640,22 @@ private fun estimateSource(
 ): String {
     val taken = score.mocks.toInt()
     return when {
-                mocks.kind == PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
-                    pluralStringResource(
-                        R.plurals.plan_estimate_based_on_reviews,
-                        taken,
-                        taken,
-                    )
-                }
+        mocks.kind == PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
+            pluralStringResource(
+                R.plurals.plan_estimate_based_on_reviews,
+                taken,
+                taken,
+            )
+        }
 
-                taken == 1 -> {
-                    stringResource(R.string.plan_estimate_based_on_last)
-                }
+        taken == 1 -> {
+            stringResource(R.string.plan_estimate_based_on_last)
+        }
 
-                else -> {
-                    pluralStringResource(R.plurals.plan_estimate_based_on, taken, taken)
-                }
-            }
+        else -> {
+            pluralStringResource(R.plurals.plan_estimate_based_on, taken, taken)
+        }
+    }
 }
 
 /** Always a range, so it never reads as a promise; whole-number scales as their reports print them. */

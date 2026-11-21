@@ -83,13 +83,13 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.scaffold.taskAsideBeside
-import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Essay
@@ -130,9 +130,18 @@ fun EssayScreen(
         is LoadState.Failed -> {
             when {
                 // A written question appears once its start admits it; until then the start's answer shows.
-                read.error == ApiError.NotFound && before != null -> WritingStart(blockId, before, signedIn, app, navigator)
-                read.error == ApiError.NotFound -> TaskNotFound(navigator)
-                else -> RunLoadFailed(close, onRetry = { scope.launch { app.essays.essays[blockId].refresh() } })
+                read.error == ApiError.NotFound && before != null -> {
+                    val refused = route.taskDescription?.let { it to (route.taskMinutes ?: 0) }
+                    WritingStart(blockId, before, refused, signedIn, app, navigator)
+                }
+
+                read.error == ApiError.NotFound -> {
+                    TaskNotFound(navigator)
+                }
+
+                else -> {
+                    RunLoadFailed(close, onRetry = { scope.launch { app.essays.essays[blockId].refresh() } })
+                }
             }
         }
 
@@ -146,6 +155,7 @@ fun EssayScreen(
 private fun WritingStart(
     blockId: UUID,
     before: WritingBefore,
+    refused: Pair<String, Int>?,
     signedIn: AuthenticatedSession,
     app: AppContainer,
     navigator: AppNavigator,
@@ -159,8 +169,13 @@ private fun WritingStart(
     val run by viewModel.run.collectAsStateWithLifecycle()
 
     when (val shown = state) {
-        WritingStartState.LimitReached -> {
-            WritingRefused(task = null, busy = false, onContinue = navigator::closeTask, onClose = navigator::closeTask)
+        is WritingStartState.LimitReached -> {
+            WritingRefused(
+                task = shown.task?.let { it.description to it.minutes } ?: refused,
+                busy = false,
+                onContinue = navigator::closeTask,
+                onClose = navigator::closeTask,
+            )
         }
 
         WritingStartState.Ready -> {
@@ -172,7 +187,11 @@ private fun WritingStart(
             TaskScaffold(onClose = navigator::closeTask, title = { BarTitle(stringResource(R.string.essay_written_answer)) }) { padding ->
                 RunColumn(Modifier.padding(padding)) {
                     GenerationWait(kind = com.zoonk.android.data.GenerationKind.WritingPrompt, run = run, onRetry = viewModel::retryRun) {
-                        Text(stringResource(R.string.essay_writing_question), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            stringResource(R.string.essay_writing_question),
+                            Modifier.pageTitle(),
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
                         Text(
                             stringResource(R.string.essay_writing_question_detail),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -190,13 +209,21 @@ private fun WritingStart(
                 bottomBar = {
                     TaskActionBar {
                         TaskActions { width ->
-                            Button(onClick = viewModel::retry, modifier = width, busy = asking) { Text(stringResource(R.string.essay_try_again)) }
+                            Button(
+                                onClick = viewModel::retry,
+                                modifier = width,
+                                busy = asking,
+                            ) { Text(stringResource(R.string.essay_try_again)) }
                         }
                     }
                 },
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(R.string.essay_question_failed), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        stringResource(R.string.essay_question_failed),
+                        Modifier.pageTitle(),
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
                     Text(
                         stringResource(R.string.essay_nothing_lost),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -380,7 +407,10 @@ internal fun WriteScreen(
     }
 
     if (questionOpen) {
-        ModalBottomSheet(onDismissRequest = { questionOpen = false }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        ModalBottomSheet(
+            onDismissRequest = { questionOpen = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        ) {
             SheetColumn {
                 Text(essay.writing.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
                 WritingQuestionBody(essay.context, essay.question)
@@ -400,16 +430,20 @@ internal fun WritingLineCount(
     val limit = writing.lines?.toInt()
     val style = MaterialTheme.typography.labelMedium.withTabularFigures()
     if (limit == null) {
-        val words = com.zoonk.android.feature.player.language.countWords(text)
+        val words =
+            com.zoonk.android.feature.player.language
+                .countWords(text)
         Text(
-            androidx.compose.ui.res.pluralStringResource(R.plurals.essay_words, words, words),
+            androidx.compose.ui.res
+                .pluralStringResource(R.plurals.essay_words, words, words),
             modifier,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = style,
         )
         return
     }
-    val used = remember(text, writing.charactersPerLine, limit) { countWritingLines(text, writing.charactersPerLine.toInt(), limit).estimated }
+    val used =
+        remember(text, writing.charactersPerLine, limit) { countWritingLines(text, writing.charactersPerLine.toInt(), limit).estimated }
     val over = used > limit
     Text(
         stringResource(if (over) R.string.essay_lines_over else R.string.essay_lines_used, used, limit),
@@ -492,7 +526,11 @@ internal fun WritingResultScreen(
                             Text(stringResource(R.string.essay_back_to_today))
                         }
                     } else {
-                        OutlinedButton(busy = finishing, onClick = viewModel::finish, leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) }) {
+                        OutlinedButton(
+                            busy = finishing,
+                            onClick = viewModel::finish,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                        ) {
                             Text(stringResource(R.string.essay_skip_rewrite))
                         }
                         Button(onClick = viewModel::rewrite, modifier = width, busy = ui.rewriting, enabled = !ui.finished) {
@@ -554,9 +592,17 @@ internal fun WritingRefused(
                     ListRow(
                         headline = { Text(title) },
                         leading = { KindMark(LearnKind.Essay) },
-                        meta = {
-                            Text(formatMinutes(minutes, currentLocale()), style = MaterialTheme.typography.labelMedium.withTabularFigures())
-                        },
+                        meta =
+                            if (minutes > 0) {
+                                {
+                                    Text(
+                                        formatMinutes(minutes, currentLocale()),
+                                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                                    )
+                                }
+                            } else {
+                                null
+                            },
                     )
                     HorizontalDivider()
                 }

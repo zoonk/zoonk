@@ -115,7 +115,13 @@ internal fun PracticeChooser(
     val examChoices = practiceChoices(view.options.filter(leads), severalDays, tests)
     val subjectChoices = practiceChoices(view.options.filterNot(leads), severalDays, tests, objectiveTitled = tests > 1)
     val examTitle =
-        if (tests > 1) pluralStringResource(R.plurals.mock_chooser_exam_tests, tests, tests) else stringResource(R.string.mock_chooser_the_exam)
+        if (tests >
+            1
+        ) {
+            pluralStringResource(R.plurals.mock_chooser_exam_tests, tests, tests)
+        } else {
+            stringResource(R.string.mock_chooser_the_exam)
+        }
     val restTitle = stringResource(if (tests > 1) R.string.mock_chooser_objective_only else R.string.mock_chooser_one_subject)
 
     // The bar's button becomes Subscribe once a Start met the lock, until a purchase opens the mocks.

@@ -5,7 +5,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.essay.LiveEssayApi
-import com.zoonk.android.feature.essay.startRouteValue
+import com.zoonk.android.feature.essay.startRoute
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
@@ -29,7 +29,7 @@ class LiveStudyApi(
     override suspend fun startWriting(
         session: AuthenticatedSession,
         blockId: UUID,
-    ): String? = essays.startRouteValue(session, blockId)
+    ) = essays.startRoute(session, blockId)
 
     override suspend fun openDay(
         session: AuthenticatedSession,

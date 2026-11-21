@@ -170,6 +170,7 @@ internal class FakeEssayApi(
     override suspend fun createBlock(
         session: AuthenticatedSession,
         goalId: UUID,
+        taskKey: String?,
     ): UUID = ESSAY_BLOCK
 }
 

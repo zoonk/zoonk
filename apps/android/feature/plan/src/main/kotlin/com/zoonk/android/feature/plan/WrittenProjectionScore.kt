@@ -82,7 +82,7 @@ internal fun WrittenProjectionScore(
         }
 
         if ((below != null || unmeasured != null) && writeNow != null) {
-            Button(onClick = writeNow.write, modifier = Modifier.fillMaxWidth(), busy = writeNow.busy) {
+            Button(onClick = { writeNow.write(null) }, modifier = Modifier.fillMaxWidth(), busy = writeNow.busy) {
                 Text(stringResource(R.string.essay_write))
             }
         }
@@ -142,8 +142,6 @@ private fun Standing(part: WrittenPartPoints) {
             )
         }
 
-        WrittenPartPoints.Standing.UNMEASURED, null -> {
-            Unit
-        }
+        WrittenPartPoints.Standing.UNMEASURED, null -> {}
     }
 }

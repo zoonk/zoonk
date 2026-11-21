@@ -79,7 +79,7 @@ internal fun WritingResultView(
     Column(verticalArrangement = Arrangement.spacedBy(40.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             eyebrow?.let { Eyebrow(it) }
-            grade.points?.let { PointsHeader(it, grade.errors.size, prompt, text) }
+            grade.points?.let { PointsHeader(it, grade, prompt, text) }
             WritingProgress(grade)
             WritingNextStep(grade, headingFirst = grade.points == null)
         }
@@ -92,11 +92,13 @@ internal fun WritingResultView(
 @Composable
 private fun PointsHeader(
     points: WritingPoints,
-    errorCount: Int,
+    grade: WritingGrade,
     prompt: WritingPromptOutput,
     text: String,
 ) {
-    val lines = countWritingLines(text, prompt.charactersPerLine.toInt(), prompt.lines?.toInt()).estimated
+    val errorCount = grade.errors.size
+    val lines = grade.estimatedLines ?: countWritingLines(text, prompt.charactersPerLine.toInt(), prompt.lines?.toInt()).estimated
+    val partMinimum = prompt.partMinimum?.let { part -> minimumShare(part.minimum.unit.value, part.minimum.value, part.max) }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -107,7 +109,16 @@ private fun PointsHeader(
             )
             PointsReadout(points.total.low, points.total.high, points.max)
         }
-        RangeMeter(points.total.low, points.total.high, points.max)
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            RangeMeter(points.total.low, points.total.high, points.max, minimum = partMinimum?.let { it * points.max })
+            prompt.partMinimum?.let { part ->
+                Text(
+                    partMinimumLine(part.minimum.unit.value, part.minimum.value, part.max),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
         val zero = points.zeroReason
         if (zero != null) {
             Text(zero, style = MaterialTheme.typography.bodyLarge)
@@ -127,6 +138,33 @@ private fun PointsHeader(
                 )
             }
         }
+    }
+}
+
+/** The written test's minimum as a share of its points, drawn at the same share of this question's. */
+private fun minimumShare(
+    unit: String,
+    value: Double,
+    max: Double?,
+): Double? =
+    when {
+        unit == "percent" -> value / PERCENT
+        max != null && max > 0 -> value / max
+        else -> null
+    }?.coerceIn(0.0, 1.0)
+
+/** Named as the written test's, never as this question's: CGU asks 50 of 100 on the sum of both questions. */
+@Composable
+private fun partMinimumLine(
+    unit: String,
+    value: Double,
+    max: Double?,
+): String {
+    val locale = currentLocale()
+    return if (unit == "percent" || max == null) {
+        stringResource(R.string.essay_part_minimum_percent, formatPoints(value, locale))
+    } else {
+        stringResource(R.string.essay_part_minimum, formatPoints(value, locale), formatPoints(max, locale))
     }
 }
 
@@ -187,14 +225,21 @@ private fun WritingNextStep(
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Eyebrow(stringResource(R.string.essay_next_step))
             Text(
-                nextStep?.let { grade.criteria.firstOrNull { it.id == nextStep.criterionId }?.name ?: stringResource(R.string.essay_what_to_rewrite) }
+                nextStep?.let {
+                    grade.criteria.firstOrNull { it.id == nextStep.criterionId }?.name
+                        ?: stringResource(R.string.essay_what_to_rewrite)
+                }
                     ?: stringResource(R.string.essay_nothing_left),
                 heading.semantics { heading() },
                 style = MaterialTheme.typography.headlineSmall,
             )
         }
         if (nextStep == null) {
-            Text(stringResource(R.string.essay_full_marks), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                stringResource(R.string.essay_full_marks),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+            )
             return
         }
         nextStep.quote?.let { QuotedLine(it, MaterialTheme.zoonk.warning) }
@@ -314,7 +359,10 @@ private fun WritingCriteria(
     }
 
     if (comments) {
-        ModalBottomSheet(onDismissRequest = { comments = false }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        ModalBottomSheet(
+            onDismissRequest = { comments = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        ) {
             SheetColumn {
                 Text(stringResource(R.string.essay_comments), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
                 grade.criteria.forEach { criterion ->
@@ -443,9 +491,10 @@ private fun markText(
     val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length) ?: text.length
     val errors = grade.errors.map { it.start.toInt().coerceIn(0, text.length) until minOf(text.length, it.start.toInt() + it.quote.length) }
     val cuts =
-        (listOf(0, text.length, ignoredFrom) + errors.flatMap { listOf(it.first, it.last + 1) } +
-            listOfNotNull(stepRange?.first, stepRange?.let { it.last + 1 }))
-            .filter { it in 0..text.length }
+        (
+            listOf(0, text.length, ignoredFrom) + errors.flatMap { listOf(it.first, it.last + 1) } +
+                listOfNotNull(stepRange?.first, stepRange?.let { it.last + 1 })
+        ).filter { it in 0..text.length }
             .distinct()
             .sorted()
     val offsets = IntArray(text.length + 1)
@@ -474,4 +523,5 @@ private fun markText(
 }
 
 private const val LEVEL_CELLS = 4
+private const val PERCENT = 100.0
 private const val ERROR_TINT = 0.1f

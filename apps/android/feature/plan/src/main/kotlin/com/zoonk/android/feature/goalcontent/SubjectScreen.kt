@@ -61,10 +61,13 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.StudyBlockWritingAvailability
+import com.zoonk.api.models.StudyBlockWritingAvailabilityOneOf
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.WrittenPractice
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerWriteActionsInner
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -244,8 +247,8 @@ internal fun SubjectPage(
         ask = ask,
         menu = menu,
         action =
-            if (writeNow != null) {
-                { modifier -> WriteButton(writeNow, modifier) }
+            if (writeNow != null && written != null) {
+                { modifier -> WriteButton(writeNow, written.writeActions?.firstOrNull(), modifier) }
             } else {
                 subject.nextChapterId?.let { next ->
                     { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }
@@ -348,12 +351,26 @@ internal fun knownLine(subject: SyllabusSubject): String? {
     }
 }
 
+/** The part's next question: written now, its saved draft continued, or back tomorrow once the day's extra grades are used. */
 @Composable
 private fun WriteButton(
     writeNow: WriteNow,
+    action: WrittenPracticeSubjectsInnerWriteActionsInner?,
     modifier: Modifier,
 ) {
+    val availability = action?.availability
+    val tomorrow = availability is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value
+    val draft =
+        (availability as? StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOfValue)?.value?.status ==
+            StudyBlockWritingAvailabilityOneOf.Status.CONTINUE
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (tomorrow) {
+            Text(
+                stringResource(R.string.session_block_writing_tomorrow),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
         if (writeNow.failed) {
             Text(
                 stringResource(R.string.essay_finish_failed),
@@ -362,7 +379,13 @@ private fun WriteButton(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        Button(onClick = writeNow.write, modifier = modifier, busy = writeNow.busy, size = ButtonSize.Large) { Text(stringResource(R.string.essay_write)) }
+        Button(
+            onClick = { writeNow.write(action?.taskKey) },
+            modifier = modifier,
+            enabled = !tomorrow,
+            busy = writeNow.busy,
+            size = ButtonSize.Large,
+        ) { Text(stringResource(if (draft) R.string.essay_continue else R.string.essay_write)) }
     }
 }
 

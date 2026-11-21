@@ -34,13 +34,14 @@ internal class WriteNowViewModel(
     var busy by mutableStateOf(false)
         private set
 
-    fun write() {
+    /** [taskKey] names the written question; without it, the goal's next one. */
+    fun write(taskKey: String? = null) {
         if (busy) return
         busy = true
         failed.clear()
         val started = visit.number
         viewModelScope.launch {
-            when (val result = essays.writeNow(goalId)) {
+            when (val result = essays.writeNow(goalId, taskKey)) {
                 is MutationResult.Done -> opened.send(started, result.value)
                 is MutationResult.Failed -> failed.send(started, Unit)
                 MutationResult.Obsolete -> Unit
@@ -54,7 +55,7 @@ internal class WriteNowViewModel(
 data class WriteNow(
     val busy: Boolean,
     val failed: Boolean,
-    val write: () -> Unit,
+    val write: (taskKey: String?) -> Unit,
 )
 
 @Composable
@@ -66,5 +67,5 @@ internal fun rememberWriteNow(
     val viewModel = viewModel(key = "write-now-$goalId") { WriteNowViewModel(app.essays, goalId) }
     VisitOf(viewModel.visit)
     ActOn(viewModel.opened) { navigator.open(it) }
-    return WriteNow(viewModel.busy, viewModel.failed.value != null, viewModel::write)
+    return WriteNow(viewModel.busy, viewModel.failed.value != null) { viewModel.write(it) }
 }

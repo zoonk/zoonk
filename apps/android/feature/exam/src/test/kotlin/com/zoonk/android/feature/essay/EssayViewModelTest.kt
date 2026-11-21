@@ -108,7 +108,11 @@ class EssayViewModelTest {
 
             assertEquals(ADMISSION, api.submitted.single().admissionId)
             assertEquals(WritingMode.Result, viewModel.ui.value.mode)
-            assertEquals(ANSWER_TEXT, viewModel.ui.value.latest?.text)
+            assertEquals(
+                ANSWER_TEXT,
+                viewModel.ui.value.latest
+                    ?.text,
+            )
         }
 
     @Test

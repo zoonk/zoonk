@@ -415,6 +415,7 @@ enum class GenerationKind(
                 "writeSetupLessons" to StepPlace.Phase("write"),
             ),
     ),
+
     /** The question a written task opens on (`apps/api/src/workflows/sessions/writing-prompt-workflow.ts`). */
     WritingPrompt(
         label = R.string.generation_writing_prompt,

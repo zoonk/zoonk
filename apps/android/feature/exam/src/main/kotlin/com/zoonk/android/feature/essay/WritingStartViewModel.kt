@@ -23,7 +23,10 @@ sealed interface WritingStartState {
 
     data object Failed : WritingStartState
 
-    data object LimitReached : WritingStartState
+    /** [task] is what's left for tomorrow, when a later start's refusal named it. */
+    data class LimitReached(
+        val task: RefusedTask? = null,
+    ) : WritingStartState
 
     /** The question is admitted: the essay reads now. */
     data object Ready : WritingStartState
@@ -44,7 +47,7 @@ class WritingStartViewModel(
             when (initial) {
                 is WritingBefore.Writing -> WritingStartState.Writing(initial.generationId)
                 WritingBefore.Failed -> WritingStartState.Failed
-                WritingBefore.LimitReached -> WritingStartState.LimitReached
+                WritingBefore.LimitReached -> WritingStartState.LimitReached()
             },
         )
     val state: StateFlow<WritingStartState> = mutableState.asStateFlow()
@@ -112,7 +115,7 @@ class WritingStartViewModel(
         mutableState.value =
             when (answer) {
                 is WritingStartAnswer.Ready -> WritingStartState.Ready.also { store.essays[blockId].refresh() }
-                is WritingStartAnswer.LimitReached -> WritingStartState.LimitReached
+                is WritingStartAnswer.LimitReached -> WritingStartState.LimitReached(answer.task)
                 else -> WritingStartState.Failed
             }
     }

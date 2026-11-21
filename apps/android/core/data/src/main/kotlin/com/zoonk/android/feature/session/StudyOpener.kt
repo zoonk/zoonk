@@ -92,11 +92,11 @@ interface StudyApi {
         timeZone: String,
     )
 
-    /** Opening a written block is its start: what its essay's route carries ([com.zoonk.android.feature.essay.routeValue]). */
+    /** Opening a written block is its start: its essay opens past it ([com.zoonk.android.feature.essay.startRoute]). */
     suspend fun startWriting(
         session: AuthenticatedSession,
         blockId: UUID,
-    ): String?
+    ): AppRoute.Essay
 }
 
 /**
@@ -215,7 +215,7 @@ class StudyOpener(
     ): AppRoute? =
         when (opening) {
             is StudyBlockOpening.UnwrittenlessonWrapper -> unwritten(session, opening.value)
-            is StudyBlockOpening.EssayWrapper -> AppRoute.Essay(opening.value.blockId.toString(), api.startWriting(session, opening.value.blockId))
+            is StudyBlockOpening.EssayWrapper -> api.startWriting(session, opening.value.blockId)
             else -> opening.route()
         }
 

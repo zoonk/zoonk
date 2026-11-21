@@ -192,7 +192,13 @@ private fun WritingCriteriaList(writing: WritingPromptOutput) {
         }
         Text(
             stringResource(
-                if (writing.keySource == WritingPromptOutput.KeySource.NOTICE) R.string.essay_from_notice else R.string.essay_from_notice_practice_key,
+                if (writing.keySource ==
+                    WritingPromptOutput.KeySource.NOTICE
+                ) {
+                    R.string.essay_from_notice
+                } else {
+                    R.string.essay_from_notice_practice_key
+                },
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,

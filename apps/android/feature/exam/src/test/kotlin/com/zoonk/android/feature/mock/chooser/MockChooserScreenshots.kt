@@ -220,6 +220,25 @@ class MockChooserScreenshots {
     private companion object {
         const val WRITING_FOR = 4_000L
 
+        val TWO_TESTS =
+            """
+            "examName":"CGU",
+            "options":[
+             {"area":null,"areas":["Public administration"],"covers":null,"day":null,"estimatedMinutes":300,"kind":"objective","leftOut":[],
+              "minutes":300,"objectiveOnly":true,"questions":170,"written":[],
+              "sections":[{"kind":"objective","minutes":300,"name":"Objective test","questions":170,"session":"Morning"}]},
+             {"area":null,"areas":[],"covers":null,"day":null,"estimatedMinutes":210,"kind":"written","leftOut":[],"minutes":210,
+              "objectiveOnly":false,"questions":0,"written":["Written test"],"pacing":"official",
+              "sections":[{"kind":"written","minutes":210,"name":"Written test","questions":2,"session":"Afternoon"}]},
+             {"area":null,"areas":["Public administration"],"covers":null,"day":null,"estimatedMinutes":510,"kind":"full","leftOut":[],
+              "minutes":510,"objectiveOnly":false,"questions":170,"written":["Written test"],
+              "sections":[{"kind":"objective","minutes":300,"name":"Objective test","questions":170,"session":"Morning"},
+               {"kind":"written","minutes":210,"name":"Written test","questions":2,"session":"Afternoon"}]},
+             {"area":null,"areas":["Public administration"],"covers":null,"day":null,"estimatedMinutes":150,"kind":"half",
+              "leftOut":[{"name":"Written test","part":"writtenInFull"}],"minutes":150,"objectiveOnly":true,"questions":85,"written":[],
+              "sections":[{"kind":"objective","minutes":150,"name":"Objective test","questions":85,"session":"Morning"}]}]
+            """.trimIndent()
+
         val OPTIONS =
             """
             "examName":"ENEM",

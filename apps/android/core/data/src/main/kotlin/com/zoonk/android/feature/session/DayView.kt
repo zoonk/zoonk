@@ -3,9 +3,9 @@ package com.zoonk.android.feature.session
 import androidx.compose.runtime.Immutable
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockCapsulesInner
 import com.zoonk.api.models.StudyBlockWritingAvailability
 import com.zoonk.api.models.StudyBlockWritingAvailabilityOneOf
-import com.zoonk.api.models.StudyBlockCapsulesInner
 import com.zoonk.api.models.StudyCheckpoint
 import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudyExtraTime

@@ -253,11 +253,16 @@ sealed interface AppRoute : NavKey {
         val sessionId: String? = null,
     ) : AppRoute
 
-    /** [writing]: what stood before the question when its start answered (the run writing it, the day's limit, a failure). */
+    /**
+     * [writing]: what stood before the question when its start answered (the run writing it, the day's
+     * limit, a failure); with the limit, the task it leaves for tomorrow when the refusal named it.
+     */
     @Serializable
     data class Essay(
         val blockId: String,
         val writing: String? = null,
+        val taskDescription: String? = null,
+        val taskMinutes: Int? = null,
     ) : AppRoute
 
     /** A past written answer, read as its result was. */

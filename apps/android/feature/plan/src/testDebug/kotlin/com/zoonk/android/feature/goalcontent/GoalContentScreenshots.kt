@@ -136,7 +136,16 @@ class GoalContentScreenshots {
 
     private companion object {
         val TODAY: LocalDate = LocalDate.of(2026, 10, 28)
-        val NO_ACTIONS = SubjectActions(back = {}, openChapter = {}, adjustPlan = {}, restore = {}, setCadence = {}, openMindMaps = {})
+        val NO_ACTIONS =
+            SubjectActions(
+                back = {},
+                openChapter = {},
+                adjustPlan = {},
+                restore = {},
+                setCadence = {},
+                openMindMaps = {},
+                writeNow = WriteNow(busy = false, failed = false) {},
+            )
 
         /** What each screen's opened shot taps first. */
         val OPENED =

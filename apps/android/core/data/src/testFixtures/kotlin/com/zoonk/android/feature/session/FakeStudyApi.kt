@@ -2,6 +2,7 @@ package com.zoonk.android.feature.session
 
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.OpenStudyDayRequest
@@ -52,9 +53,9 @@ class FakeStudyApi : StudyApi {
     override suspend fun startWriting(
         session: AuthenticatedSession,
         blockId: UUID,
-    ): String? {
+    ): AppRoute.Essay {
         writingStarts += blockId
-        return writingStart
+        return AppRoute.Essay(blockId.toString(), writingStart)
     }
 
     override suspend fun openDay(

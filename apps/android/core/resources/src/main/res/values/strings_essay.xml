@@ -50,7 +50,7 @@
     <!-- The typed answer would take more handwritten lines than the question allows; the exam's graders stop reading at the limit. -->
     <string name="essay_lines_over">about %1$d of %2$d lines · the board won\'t read past line %2$d</string>
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
-    <string name="essay_grading">Reading your answer against each criterion. It can take up to a minute.</string>
+    <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
     <!-- While a new written question is written for the learner. -->
     <string name="essay_writing_question">Writing your question…</string>
@@ -63,6 +63,10 @@
     <string name="essay_more_tomorrow">You\'ll have more tomorrow.</string>
     <!-- A written task that waits for the next day. -->
     <string name="essay_left_for_tomorrow">Left for tomorrow</string>
+    <!-- Under a question's score: the written test's minimum, on the sum of all its questions, never this question's own. -->
+    <string name="essay_part_minimum">Written test minimum: %1$s of %2$s, on the sum of its questions</string>
+    <!-- Under a question's score: the written test's minimum as a percent of its points. %1$s is a number, such as "50". -->
+    <string name="essay_part_minimum_percent">Written test minimum: %1$s%% of its points</string>
     <!-- The part of a written answer's score that its content earned. -->
     <string name="essay_content">Content</string>
     <string name="essay_language_errors">Language errors</string>

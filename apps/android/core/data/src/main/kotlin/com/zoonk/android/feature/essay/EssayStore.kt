@@ -39,13 +39,21 @@ sealed interface WritingStartAnswer {
         val generationId: String,
     ) : WritingStartAnswer
 
+    /** [task] is what's left for tomorrow, when the refusal names it. */
     data class LimitReached(
         val returnsOn: LocalDate,
+        val task: RefusedTask? = null,
     ) : WritingStartAnswer
 
     /** A guest whose question would cost a model call: signing up funds it. */
     data object SignUpRequired : WritingStartAnswer
 }
+
+/** The written task a refused start leaves for tomorrow. */
+data class RefusedTask(
+    val description: String,
+    val minutes: Int,
+)
 
 /** A draft save: kept, refused because another device saved first (with the draft it saved), or the block is closed. */
 sealed interface DraftSave {
@@ -102,6 +110,7 @@ interface EssayApi {
     suspend fun createBlock(
         session: AuthenticatedSession,
         goalId: UUID,
+        taskKey: String?,
     ): UUID
 }
 
@@ -179,7 +188,8 @@ class LiveEssayApi(
     override suspend fun createBlock(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): UUID = perform { api.clients(session).exams.createWritingBlock(goalId, CreateWritingBlockRequest()) }.blockId
+        taskKey: String?,
+    ): UUID = perform { api.clients(session).exams.createWritingBlock(goalId, CreateWritingBlockRequest(taskKey)) }.blockId
 
     private companion object {
         const val CONFLICT = 409
@@ -198,9 +208,17 @@ private inline fun <reified T> Response<*>.refusalBody(): T? =
 
 private fun WritingStart.toAnswer(): WritingStartAnswer =
     when (this) {
-        is WritingStart.WritingStartOneOfValue -> WritingStartAnswer.Ready(value.admissionId)
-        is WritingStart.WritingStartOneOf1Value -> WritingStartAnswer.Writing(value.runId)
-        is WritingStart.StartAnytimeMock429ResponseValue -> WritingStartAnswer.LimitReached(value.returnsOn)
+        is WritingStart.WritingStartOneOfValue -> {
+            WritingStartAnswer.Ready(value.admissionId)
+        }
+
+        is WritingStart.WritingStartOneOf1Value -> {
+            WritingStartAnswer.Writing(value.runId)
+        }
+
+        is WritingStart.WritingStartOneOf2Value -> {
+            WritingStartAnswer.LimitReached(value.returnsOn, value.task?.let { RefusedTask(it.description, it.minutes.toInt()) })
+        }
     }
 
 /**
@@ -250,17 +268,29 @@ suspend fun EssayApi.startAnswer(
         if (e.code == SIGN_UP_REQUIRED) WritingStartAnswer.SignUpRequired else throw e
     }
 
-/** Opening a written block is its start, as on main: a start that couldn't answer opens the essay on its Try again. */
-suspend fun EssayApi.startRouteValue(
+/**
+ * Opening a written block is its start, as on main: the essay opens past it, on what stands before
+ * its question, or on its Try again when the start couldn't answer.
+ */
+suspend fun EssayApi.startRoute(
     session: AuthenticatedSession,
     blockId: UUID,
-): String? =
-    try {
-        startAnswer(session, blockId).routeValue()
-    } catch (e: ApiException) {
-        if (e.error == ApiError.Network) throw e
-        WRITING_FAILED
-    }
+): AppRoute.Essay {
+    val answer =
+        try {
+            startAnswer(session, blockId)
+        } catch (e: ApiException) {
+            if (e.error == ApiError.Network) throw e
+            null
+        }
+    val task = (answer as? WritingStartAnswer.LimitReached)?.task
+    return AppRoute.Essay(
+        blockId.toString(),
+        writing = if (answer == null) WRITING_FAILED else answer.routeValue(),
+        taskDescription = task?.description,
+        taskMinutes = task?.minutes,
+    )
+}
 
 private const val SIGN_UP_REQUIRED = "SIGN_UP_REQUIRED"
 
@@ -325,12 +355,13 @@ class EssayStore(
         cache.mutate(invalidating = FINISHED) { session -> api.finish(session, sessionId, blockId, timeZone()) }
 
     /** "Write" on a page: the learner's own block, then its start, as the tap's one request chain. */
-    suspend fun writeNow(goalId: UUID): MutationResult<AppRoute.Essay> =
+    suspend fun writeNow(
+        goalId: UUID,
+        taskKey: String? = null,
+    ): MutationResult<AppRoute.Essay> =
         cache.mutate(invalidating = OPENED) { session ->
-            val blockId = api.createBlock(session, goalId)
-            AppRoute.Essay(blockId.toString(), writing = api.startRouteValue(session, blockId))
+            api.startRoute(session, api.createBlock(session, goalId, taskKey))
         }
-
 
     /** What this device typed, kept through process death until the server has it. */
     fun keptText(

@@ -43,9 +43,9 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.essay.WritingLineCount
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.essay.WritingLineCount
 import com.zoonk.android.feature.player.language.countWords
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemLine
@@ -445,6 +445,7 @@ internal fun ItemCountdown(
 }
 
 private const val NUMBER_DIGITS = 4
+
 /** The API's longest written answer. */
 private const val MAX_ESSAY_CHARACTERS = 48_000
 private const val ESSAY_LINES = 10

@@ -22,6 +22,8 @@ data class WritingGrade(
     val nextStep: WritingResultOutputOneOfNextStep?,
     val progress: WritingResultOutputOneOfProgress?,
     val points: WritingPoints?,
+    /** The server's count of the sent text's lines; older grades leave it out. */
+    val estimatedLines: Int? = null,
 ) {
     fun criterionName(id: String): String = criteria.firstOrNull { it.id == id }?.name ?: id
 }
@@ -41,7 +43,15 @@ data class WritingPoints(
 fun WritingResultOutput.toGrade(): WritingGrade =
     when (this) {
         is WritingResultOutput.WritingResultOutputOneOfValue -> {
-            WritingGrade(value.criteria, value.errors, value.ignoredFrom?.toInt(), value.nextStep, value.progress, points = null)
+            WritingGrade(
+                value.criteria,
+                value.errors,
+                value.ignoredFrom?.toInt(),
+                value.nextStep,
+                value.progress,
+                points = null,
+                estimatedLines = value.estimatedLines?.toInt(),
+            )
         }
 
         is WritingResultOutput.WritingResultOutputOneOf1Value -> {
@@ -52,6 +62,7 @@ fun WritingResultOutput.toGrade(): WritingGrade =
                 value.nextStep,
                 value.progress,
                 WritingPoints(value.max, value.total, value.content, value.deduction, value.rows, value.zeroReason),
+                value.estimatedLines?.toInt(),
             )
         }
     }

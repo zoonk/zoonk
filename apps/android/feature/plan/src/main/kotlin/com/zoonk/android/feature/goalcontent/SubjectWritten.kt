@@ -85,12 +85,26 @@ internal fun LazyListScope.subjectWritten(
                             Text(
                                 factsLine(
                                     lines?.let { pluralStringResource(R.plurals.goalcontent_written_lines, it, it) },
-                                    if (versions > 1) pluralStringResource(R.plurals.goalcontent_written_versions, versions, versions) else null,
+                                    if (versions >
+                                        1
+                                    ) {
+                                        pluralStringResource(R.plurals.goalcontent_written_versions, versions, versions)
+                                    } else {
+                                        null
+                                    },
                                     formatDate(answer.date.toJavaLocalDate(), locale),
                                 ),
                             )
                         },
-                        meta = answer.range?.let { { Text(pointsRange(it.low, it.high), style = MaterialTheme.typography.labelMedium.withTabularFigures()) } },
+                        meta =
+                            answer.range?.let {
+                                {
+                                    Text(
+                                        pointsRange(it.low, it.high),
+                                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                                    )
+                                }
+                            },
                     )
                 }
             }
@@ -157,7 +171,11 @@ private fun WrittenTrend(written: WrittenPracticeSubjectsInner) {
         val rows =
             listOf(
                 Triple(stringResource(R.string.essay_content), samples.map { it.contentShare }, share(latest.contentShare)),
-                Triple(stringResource(R.string.goalcontent_written_presentation), samples.map { it.presentationShare }, share(latest.presentationShare)),
+                Triple(
+                    stringResource(R.string.goalcontent_written_presentation),
+                    samples.map { it.presentationShare },
+                    share(latest.presentationShare),
+                ),
                 Triple(
                     stringResource(R.string.essay_language_errors),
                     samples.map { it.errors.toDouble() },

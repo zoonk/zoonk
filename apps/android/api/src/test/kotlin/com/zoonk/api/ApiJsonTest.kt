@@ -34,7 +34,10 @@ class ApiJsonTest {
 
     @Test
     fun theWrittenTestIsSentAsItsOwnShape() {
-        val written = AnytimeMockInputShape.WrittenTestShapeValue(WrittenTestShape(area = null, day = null, kind = WrittenTestShape.Kind.WRITTEN))
+        val written =
+            AnytimeMockInputShape.WrittenTestShapeValue(
+                WrittenTestShape(area = null, day = null, kind = WrittenTestShape.Kind.WRITTEN),
+            )
         assertEquals(
             """{"shape":{"area":null,"day":null,"kind":"written"}}""",
             ApiRequestJson.encodeToString(AnytimeMockInput.serializer(), AnytimeMockInput(shape = written)),

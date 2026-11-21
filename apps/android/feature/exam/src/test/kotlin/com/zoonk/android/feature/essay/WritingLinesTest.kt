@@ -9,7 +9,10 @@ class WritingLinesTest {
     @Test
     fun countsGraphemesKeepsUtf16OffsetsAndCountsBlankLines() {
         val text = "é🙂\r\n\r\nnext"
-        assertEquals(WritingLines(estimated = 4, ignoredFrom = text.indexOf("next")), countWritingLines(text, charactersPerLine = 2, limit = 2))
+        assertEquals(
+            WritingLines(estimated = 4, ignoredFrom = text.indexOf("next")),
+            countWritingLines(text, charactersPerLine = 2, limit = 2),
+        )
     }
 
     @Test
