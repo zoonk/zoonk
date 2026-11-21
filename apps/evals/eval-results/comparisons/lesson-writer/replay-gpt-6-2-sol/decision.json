@@ -14,7 +14,7 @@
       "caseId": "en-python-range-beginner",
       "language": "en",
       "owner": null,
-      "result": "incumbent",
+      "result": "unresolved",
       "votes": {
         "anthropic": "incumbent",
         "google": "split",
@@ -323,8 +323,8 @@
       "status": "eligible",
       "succeeded": 12,
       "ties": 0,
-      "unresolved": 5,
-      "wins": 1
+      "unresolved": 6,
+      "wins": 0
     },
     {
       "attempted": 12,
@@ -348,7 +348,7 @@
           "successful": 6
         }
       },
-      "losses": 1,
+      "losses": 0,
       "missingMatches": 0,
       "p50": 23.197736166999995,
       "p95": 72.82296191699999,
@@ -508,7 +508,7 @@
       "status": "eligible",
       "succeeded": 12,
       "ties": 0,
-      "unresolved": 5,
+      "unresolved": 6,
       "wins": 0
     }
   ]
