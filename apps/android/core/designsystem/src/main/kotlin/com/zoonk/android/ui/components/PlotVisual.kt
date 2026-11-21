@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,34 +21,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalResources
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import java.util.Locale
-import kotlin.math.abs
 import kotlin.math.max
-import kotlin.math.min
 
 @Composable
 internal fun PlotVisual(
@@ -69,43 +71,43 @@ internal fun PlotVisual(
     val grid = MaterialTheme.zoonk.vizGrid
     val rule = MaterialTheme.colorScheme.onSurfaceVariant
     val reading = plotReading(visual, locale)
+    // How much larger than 12 the reader's text size draws a 12 sp label.
+    val textScale = with(density) { labelStyle.fontSize.toPx() } / (labelStyle.fontSize.value * density.density)
 
-    OutlinedCard(modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(text = visual.title, style = MaterialTheme.typography.titleSmall)
-            if (visual.series.size > 1) PlotLegend(visual, marks, surface)
+    ChartCard(visual.title, visual.source, modifier) {
+        if (visual.series.size > 1) PlotLegend(visual, marks, surface)
 
-            BoxWithConstraints(Modifier.fillMaxWidth()) {
-                val width = constraints.maxWidth.toFloat()
-                val layout =
-                    remember(visual, width, labelStyle, nameStyle, density, locale) {
-                        PlotGeometry(visual, width, ChartText(measurer, labelStyle, nameStyle, density, locale))
-                    }
-
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    // TalkBack reads the ranges before the points they place.
-                    AxisCaption(axisTitle(visual.yLabel, visual.yUnit), reading.axes)
-                    Box {
-                        Canvas(Modifier.fillMaxWidth().height(with(density) { layout.height.toDp() })) {
-                            drawPlot(layout, marks, surface, grid, rule)
-                        }
-                        Column(Modifier.matchParentSize()) {
-                            reading.parts.forEach { part ->
-                                Box(Modifier.fillMaxWidth().weight(1f).semantics { contentDescription = part })
-                            }
-                        }
-                    }
-                    AxisCaption(axisTitle(visual.xLabel, visual.xUnit))
-                    if (layout.key.isNotEmpty()) PointKey(layout.key, Modifier.padding(top = 8.dp))
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            val boxWidth = constraints.maxWidth / density.density
+            val drawing =
+                remember(visual, boxWidth, textScale, labelStyle, nameStyle, density, locale) {
+                    val text = PlotText(label = unitWidth(measurer, labelStyle), name = unitWidth(measurer, nameStyle))
+                    val scale = plotTextScale(visual, boxWidth, textScale, text, locale)
+                    PlotDrawing(
+                        PlotGeometry(visual, boxWidth / scale, text, locale),
+                        scale,
+                        density.density,
+                        measurer,
+                        labelStyle,
+                        nameStyle,
+                    )
                 }
-            }
 
-            visual.source?.let {
-                Text(
-                    text = stringResource(R.string.visual_source, it),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                // TalkBack reads the ranges before the points they place.
+                AxisCaption(axisTitle(visual.yLabel, visual.yUnit), reading.axes)
+                Box {
+                    Canvas(Modifier.fillMaxWidth().height(with(density) { (PLOT_HEIGHT * drawing.scale * density.density).toDp() })) {
+                        drawPlot(drawing, marks, surface, grid, rule)
+                    }
+                    Column(Modifier.matchParentSize()) {
+                        reading.parts.forEach { part ->
+                            Box(Modifier.fillMaxWidth().weight(1f).semantics { contentDescription = part })
+                        }
+                    }
+                }
+                AxisCaption(axisTitle(visual.xLabel, visual.xUnit))
+                if (drawing.layout.key.isNotEmpty()) PointKey(drawing.layout.key, Modifier.padding(top = 8.dp))
             }
         }
     }
@@ -116,16 +118,16 @@ private fun axisTitle(
     unit: String?,
 ) = if (unit.isNullOrEmpty()) label else "$label ($unit)"
 
-/** Large numbers shorten to "12K"; x groups its digits only then, so years don't read as "2,024". */
-private fun isLarge(values: List<Double>) = values.maxOfOrNull { abs(it) }?.let { it >= COMPACT_FROM } == true
-
-/** A bare line marks its end with its series' shape only when there are other series to tell it from. */
-internal fun drawsDot(
-    mark: LessonVisual.Plot.Mark,
-    index: Int,
-    pointCount: Int,
-    seriesCount: Int,
-) = mark != LessonVisual.Plot.Mark.Line || (seriesCount > 1 && index == pointCount - 1)
+/** A label's width in layout units: drawn at 12 units, whatever the reader's text size. */
+private fun unitWidth(
+    measurer: TextMeasurer,
+    style: TextStyle,
+): (String) -> Float =
+    { text ->
+        measurer
+            .measure(text, style.copy(textDirection = TextDirection.Content), density = UNIT_DENSITY, layoutDirection = LayoutDirection.Ltr)
+            .multiParagraph.maxIntrinsicWidth
+    }
 
 @Composable
 private fun PlotLegend(
@@ -240,163 +242,74 @@ private fun plotReading(
     }
 }
 
-private class PlotTick(
-    val value: Double,
-    val label: TextLayoutResult,
-)
-
-private class ReferenceMark(
-    val y: Float,
-    val label: TextLayoutResult,
-    val top: Float,
-)
-
-private class PlacedName(
-    val label: PointLabel,
-    val text: TextLayoutResult,
-)
-
-private class PlotGeometry(
-    val visual: LessonVisual.Plot,
-    width: Float,
-    text: ChartText,
+/**
+ * The layout's text measured for drawing at 12 units, [unit] pixels to a layout unit; the whole drawing, its text,
+ * lines and points, then grows by [scale], as main's drawing does.
+ */
+private class PlotDrawing(
+    val layout: PlotGeometry,
+    val scale: Float,
+    val unit: Float,
+    measurer: TextMeasurer,
+    labelStyle: TextStyle,
+    nameStyle: TextStyle,
 ) {
-    val gap = with(text.density) { CHART_LABEL_GAP.toPx() }
-    private val unit = with(text.density) { 1.dp.toPx() }
-    private val axes = plotAxes(visual)
-    private val points = visual.series.flatMap { it.points }
-    private val compactX = isLarge(points.map { it.x })
-    private val compactY = isLarge(points.map { it.y } + visual.references.map { it.y })
+    private val density = Density(unit, 1f)
+    private val label = { text: String -> measure(measurer, text, labelStyle) }
 
-    private val lineHeight =
-        text
-            .label("0")
-            .size.height
-            .toFloat()
-    private val top = lineHeight + gap
+    val yTicks = layout.yTicks.map { it to label(it.label) }
+    val references = layout.references.map { reference -> reference to reference.lines.map(label) }
+    val names = layout.labels.map { it to measure(measurer, it.text, nameStyle) }
+    val xTicks = layout.xTicks.map { it to label(it.label) }
 
-    // Grows with the font, so a large font's axis labels don't crowd each other.
-    val bottom = top + max(with(text.density) { CHART_PLOT_HEIGHT.toPx() }, lineHeight * CHART_PLOT_LINES)
-    val tickBaseline = bottom + with(text.density) { TICK_OFFSET.toPx() }
-    val height = bottom + with(text.density) { PLOT_BOTTOM.toPx() }
-
-    val yTicks = axes.second.ticks.map { PlotTick(it, text.label(formatAmount(it, text.locale, compact = compactY))) }
-    val left = (yTicks.maxOfOrNull { it.label.size.width } ?: 0) + gap
-
-    // Never narrower than the longest word, which would break inside it.
-    private val room =
-        visual.references.takeIf { it.isNotEmpty() }?.let { references ->
-            val widest =
-                references.maxOf {
-                    text
-                        .label(it.label)
-                        .size.width
-                        .toFloat()
-                }
-            val word =
-                references.flatMap { it.label.split(' ') }.maxOf {
-                    text
-                        .label(it)
-                        .size.width
-                        .toFloat()
-                }
-            min(widest, max(width * MAX_GUTTER_SHARE, word))
-        } ?: 0f
-    private val edge = plotEdge(width, left, room, unit)
-    val plotRight = edge.plotRight
-    val referenceLeft = edge.referenceLeft
-
-    val x = LinearScale(axes.first.domain, left to plotRight)
-    val y = LinearScale(axes.second.domain, bottom to top)
-
-    val series = visual.series.map { series -> series.points.map { Offset(x.toPixel(it.x), y.toPixel(it.y)) } }
-
-    val references =
-        stackReferences(visual.references.map { reference -> y.toPixel(reference.y) to text.wrappedLabel(reference.label, room) })
-
-    private val labeled =
-        pointLabels(
-            named =
-                visual.series.flatMapIndexed { seriesIndex, entry ->
-                    entry.points.mapIndexedNotNull { index, point -> point.label?.let { series[seriesIndex][index] to it } }
-                },
-            scene =
-                LabelScene(
-                    bounds = Rect(left, 0f, if (room > 0) plotRight else width, bottom),
-                    dots =
-                        series.flatMapIndexed { seriesIndex, pixels ->
-                            pixels.filterIndexed { index, _ -> drawsDot(visual.series[seriesIndex].mark, index, pixels.size, series.size) }
-                        },
-                    segments = segments(),
-                ),
-            size = { text.value(it).size.toSize() },
-            unit = unit,
-        )
-
-    val key = labeled.key
-    val names = labeled.labels.map { PlacedName(it, text.value(it.text)) }
-
-    val xTicks: List<Pair<Float, TextLayoutResult>> =
-        axes.first.ticks
-            .map { tick ->
-                val label = text.label(formatAmount(tick, text.locale, compact = compactX, grouping = compactX))
-                axisLabelStart(x.toPixel(tick), label.size.width.toFloat(), left, width, gap / 2) + label.size.width / 2f to label
-            }.let { ticks ->
-                val kept =
-                    fittingTickIndices(
-                        ticks.map { (center, label) ->
-                            center - label.size.width / 2f to
-                                center + label.size.width / 2f
-                        },
-                        gap,
-                    )
-                ticks.filterIndexed { index, _ -> index in kept }
-            }
-
-    private fun segments(): List<Pair<Offset, Offset>> {
-        val lines =
-            series.flatMapIndexed { index, pixels ->
-                if (visual.series[index].mark == LessonVisual.Plot.Mark.Points) emptyList() else pixels.zipWithNext()
-            }
-        return lines + references.map { Offset(left, it.y) to Offset(plotRight, it.y) }
-    }
-
-    private fun stackReferences(marks: List<Pair<Float, TextLayoutResult>>): List<ReferenceMark> {
-        val spacing = REFERENCE_SPACING * unit
-        val stacked =
-            marks.sortedBy { it.first }.fold(emptyList<ReferenceMark>()) { placed, (lineY, label) ->
-                val floor = placed.lastOrNull()?.let { it.top + it.label.size.height + spacing } ?: 0f
-                placed + ReferenceMark(lineY, label, max(lineY - label.size.height / 2f, floor))
-            }
-        val overflow = stacked.lastOrNull()?.let { it.top + it.label.size.height - bottom } ?: 0f
-        return if (overflow > 0) stacked.map { ReferenceMark(it.y, it.label, it.top - overflow) } else stacked
-    }
+    private fun measure(
+        measurer: TextMeasurer,
+        text: String,
+        style: TextStyle,
+    ) = measurer.measure(text, style.copy(textDirection = TextDirection.Content), density = density, layoutDirection = LayoutDirection.Ltr)
 }
 
 private fun DrawScope.drawPlot(
-    layout: PlotGeometry,
+    drawing: PlotDrawing,
     marks: List<SeriesMark>,
     surface: Color,
     grid: Color,
     rule: Color,
 ) {
-    val stroke = 1.dp.toPx()
+    scale(drawing.scale, pivot = Offset.Zero) { drawLayout(drawing, marks, surface, grid, rule) }
+}
 
-    layout.yTicks.forEach { tick ->
+private fun DrawScope.drawLayout(
+    drawing: PlotDrawing,
+    marks: List<SeriesMark>,
+    surface: Color,
+    grid: Color,
+    rule: Color,
+) {
+    val layout = drawing.layout
+    val unit = drawing.unit
+    val at = { x: Float, y: Float -> Offset(x * unit, y * unit) }
+    val stroke = 1.dp.toPx()
+    val middle = { text: TextLayoutResult, x: Float, y: Float -> Offset(x, y * unit - text.size.height / 2f) }
+
+    drawing.yTicks.forEach { (tick, label) ->
         val y = layout.y.toPixel(tick.value)
-        drawLine(grid, Offset(layout.left, y), Offset(layout.plotRight, y), strokeWidth = stroke)
-        drawText(tick.label, topLeft = Offset(layout.left - layout.gap - tick.label.size.width, y - tick.label.size.height / 2f))
+        if (tick.line) drawLine(grid, at(layout.left, y), at(layout.plotRight, y), strokeWidth = stroke)
+        drawText(label, topLeft = middle(label, (layout.left - PLOT_LABEL_GAP) * unit - label.size.width, y))
     }
 
     val dash = PathEffect.dashPathEffect(floatArrayOf(REFERENCE_DASH.toPx(), REFERENCE_DASH.toPx()))
-    layout.references.forEach { reference ->
-        drawLine(rule, Offset(layout.left, reference.y), Offset(layout.plotRight, reference.y), strokeWidth = stroke, pathEffect = dash)
-        drawText(reference.label, topLeft = Offset(layout.referenceLeft, reference.top))
+    drawing.references.forEach { (reference, lines) ->
+        drawLine(rule, at(layout.left, reference.y), at(layout.plotRight, reference.y), strokeWidth = stroke, pathEffect = dash)
+        lines.forEachIndexed { index, line ->
+            drawText(line, topLeft = middle(line, reference.x * unit, reference.top + PLOT_LINE_HEIGHT * (index + 0.5f)))
+        }
     }
 
-    layout.series.forEachIndexed { seriesIndex, pixels ->
+    layout.series.forEachIndexed { seriesIndex, points ->
         val mark = marks[seriesIndex]
         val kind = layout.visual.series[seriesIndex].mark
+        val pixels = points.map { at(it.x, it.y) }
         if (kind != LessonVisual.Plot.Mark.Points && pixels.size > 1) {
             val path =
                 Path().apply {
@@ -410,13 +323,23 @@ private fun DrawScope.drawPlot(
         }
     }
 
-    layout.names.forEach { name ->
-        val box = boxOf(name.label, name.text.size.toSize())
-        drawText(name.text, topLeft = Offset(box.left, box.top))
+    // A halo in the card's color keeps a name readable where it crosses a line.
+    val halo = Stroke(width = HALO_WIDTH.toPx(), join = StrokeJoin.Round)
+    drawing.names.forEach { (label, text) ->
+        val width = text.size.width.toFloat()
+        val start =
+            when (label.anchor) {
+                LabelAnchor.Start -> label.x * unit
+                LabelAnchor.End -> label.x * unit - width
+                LabelAnchor.Middle -> label.x * unit - width / 2
+            }
+        val topLeft = middle(text, start, label.y)
+        drawText(text, color = surface, topLeft = topLeft, drawStyle = halo)
+        drawText(text, topLeft = topLeft, drawStyle = Fill)
     }
 
-    layout.xTicks.forEach { (center, label) ->
-        drawText(label, topLeft = Offset(center - label.size.width / 2f, layout.tickBaseline - label.firstBaseline))
+    drawing.xTicks.forEach { (tick, label) ->
+        drawText(label, topLeft = Offset(tick.center * unit - label.size.width / 2f, layout.xTickY * unit - label.firstBaseline))
     }
 }
 
@@ -435,28 +358,6 @@ internal fun axisLabelStart(
     return (center - labelWidth / 2).coerceIn(start, max(width - inset - labelWidth, start))
 }
 
-internal class PlotEdge(
-    val plotRight: Float,
-    val referenceLeft: Float,
-)
-
-/** A point on the plot's right edge keeps clear of the reference names past it. [unit] is one dp in pixels. */
-internal fun plotEdge(
-    width: Float,
-    left: Float,
-    referenceRoom: Float,
-    unit: Float,
-): PlotEdge {
-    if (referenceRoom <= 0) return PlotEdge(max(width - CHART_PLOT_END.value * unit, left + 1), width)
-
-    val gutter = (PLOT_DOT_ROOM + CHART_LABEL_GAP.value) * unit
-    val plotRight = max(width - referenceRoom - gutter, left + 1)
-    return PlotEdge(plotRight, plotRight + gutter)
-}
-
-private const val COMPACT_FROM = 10_000
-private const val MAX_GUTTER_SHARE = 0.3f
-private const val REFERENCE_SPACING = 2
+private val UNIT_DENSITY = Density(1f, 1f)
+private val HALO_WIDTH = 3.dp
 private val REFERENCE_DASH = 4.dp
-private val TICK_OFFSET = 16.sp
-private val PLOT_BOTTOM = 26.sp

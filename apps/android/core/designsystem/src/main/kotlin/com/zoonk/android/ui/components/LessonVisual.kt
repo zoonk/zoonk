@@ -52,6 +52,7 @@ import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.moneyUnit
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -76,12 +77,25 @@ private fun ChartVisual(
     visual: LessonVisual.Chart,
     modifier: Modifier,
 ) {
+    ChartCard(visual.title, visual.source, modifier) {
+        if (visual.series.size > 1) Legend(visual)
+        Plot(visual)
+    }
+}
+
+/** A chart's card: its title, the drawing and the data's source. */
+@Composable
+internal fun ChartCard(
+    title: String,
+    source: String?,
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
     OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(text = visual.title, style = MaterialTheme.typography.titleSmall)
-            if (visual.series.size > 1) Legend(visual)
-            Plot(visual)
-            visual.source?.let {
+            Text(text = title, style = MaterialTheme.zoonkType.sectionTitle)
+            content()
+            source?.let {
                 Text(
                     text = stringResource(R.string.visual_source, it),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -592,10 +606,10 @@ fun uprightBarLabels(
 
 private val LABEL_BREAK = Regex("(?<=[\\s-])")
 
-private fun labelWords(label: String): List<String> = label.split(LABEL_BREAK).filter(String::isNotEmpty)
+internal fun labelWords(label: String): List<String> = label.split(LABEL_BREAK).filter(String::isNotEmpty)
 
 /** Wraps at spaces and hyphens; only a word wider than the whole room breaks between letters. */
-private fun wrapLabel(
+internal fun wrapLabel(
     label: String,
     room: Float,
     width: (String) -> Float,
@@ -639,7 +653,7 @@ private fun TimelineVisual(
 
     OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(text = visual.title, style = MaterialTheme.typography.titleSmall)
+            Text(text = visual.title, style = MaterialTheme.zoonkType.sectionTitle)
 
             Column {
                 visual.events.forEachIndexed { index, event ->

@@ -47,12 +47,12 @@ class LessonVisualScreenshots {
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
     @Test
-    @Config(qualifiers = "w320dp-h1600dp-xxhdpi")
-    fun narrowPhone() = capture("320-light", CHARTS)
+    @Config(qualifiers = "w360dp-h1600dp-xxhdpi")
+    fun narrowPhone() = capture("360-light", CHARTS)
 
     @Test
-    @Config(qualifiers = "w320dp-h1600dp-night-xxhdpi")
-    fun narrowPhoneDark() = capture("320-dark", CHARTS, dark = true)
+    @Config(qualifiers = "w360dp-h1600dp-night-xxhdpi")
+    fun narrowPhoneDark() = capture("360-dark", CHARTS, dark = true)
 
     @Test
     @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
@@ -63,10 +63,10 @@ class LessonVisualScreenshots {
     fun phoneDark() = capture("390-dark", CHARTS, dark = true)
 
     @Test
-    @Config(qualifiers = "w320dp-h1600dp-xxhdpi")
+    @Config(qualifiers = "w360dp-h1600dp-xxhdpi")
     fun narrowPhoneAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        capture("320-light-font200", CHARTS.filterKeys { it in LARGE_FONT })
+        capture("360-light-font200", CHARTS.filterKeys { it in LARGE_FONT })
     }
 
     @Test
@@ -107,7 +107,7 @@ class LessonVisualScreenshots {
     private companion object {
         const val TAG = "chart"
 
-        val LARGE_FONT = setOf("regions", "plot-scatter", "plot-control")
+        val LARGE_FONT = setOf("regions", "plot-scatter", "plot-control", "plot-fine-scan", "plot-german", "plot-close-lines")
 
         private val REGIONS = listOf("Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste")
 
@@ -149,6 +149,83 @@ class LessonVisualScreenshots {
                                 Plot.Reference("Target", 500.0),
                                 Plot.Reference("Lower limit", 497.0),
                             ),
+                    ),
+                "plot-fine-scan" to
+                    plot(
+                        "Finer scan, B to D",
+                        "Detector position",
+                        "mm",
+                        "Count rate",
+                        "counts/s",
+                        Plot.Series(
+                            "Fine scan",
+                            Plot.Mark.LineWithPoints,
+                            listOf(
+                                1.5 to 880.0,
+                                2.0 to 930.0,
+                                2.25 to 968.0,
+                                2.5 to 992.0,
+                                2.75 to 975.0,
+                                3.0 to 952.0,
+                                3.25 to 925.0,
+                                3.5 to 905.0,
+                                4.0 to 893.0,
+                                4.5 to 890.0,
+                            ).map { (x, y) -> Plot.Point(x, y) },
+                        ),
+                    ).copy(references = listOf(Plot.Reference("Needed tonight", 960.0))),
+                "plot-german" to
+                    plot(
+                        "Temperatur im Kühlraum",
+                        "Tag",
+                        null,
+                        "Temperatur",
+                        "°C",
+                        Plot.Series(
+                            "Temperatur",
+                            Plot.Mark.LineWithPoints,
+                            listOf(3.1, 3.4, 3.0, 3.8, 4.2, 4.6, 4.1).mapIndexed { day, value -> Plot.Point(day + 1.0, value) },
+                        ),
+                    ).copy(references = listOf(Plot.Reference("Temperaturgrenze", 4.5))),
+                "plot-close-lines" to
+                    plot(
+                        "Bottle fill weight, last 10 days",
+                        "Day",
+                        null,
+                        "Fill weight",
+                        "ml",
+                        Plot.Series(
+                            "Fill weight",
+                            Plot.Mark.LineWithPoints,
+                            listOf(499.8, 500.6, 499.3, 501.0, 500.4, 501.6, 502.3, 503.8, 502.9, 502.1).mapIndexed { day, weight ->
+                                Plot.Point(day + 1.0, weight)
+                            },
+                        ),
+                    ).copy(
+                        references =
+                            listOf(
+                                Plot.Reference("Upper limit", 501.0),
+                                Plot.Reference("Upper warning limit", 500.6),
+                                Plot.Reference("Target", 500.0),
+                            ),
+                    ),
+                "plot-single-point" to
+                    plot(
+                        "Detector scan",
+                        "Detector position",
+                        "mm",
+                        "Count rate",
+                        "counts/s",
+                        Plot.Series("Scan", Plot.Mark.Points, listOf(Plot.Point(3.0, 952.0, "Peak"))),
+                    ),
+                "plot-ten-thousand" to
+                    plot(
+                        "Visitors by price",
+                        "Price",
+                        null,
+                        "Visitors",
+                        null,
+                        Plot.Series("Visitors", Plot.Mark.LineWithPoints, listOf(10_000.0, 10_150.0, 10_400.0).map { Plot.Point(it, it) }),
                     ),
                 "plot-named-countries" to
                     plot(
@@ -262,6 +339,11 @@ class LessonVisualScreenshots {
                         30,
                         22,
                     ).copy(chart = Chart.Kind.Line),
+                "cropped-line-ten-thousand" to
+                    bars("Visitors per day", "Day", "Visitors", listOf("Mon", "Tue", "Wed"), null, 10_050, 10_200, 10_380)
+                        .copy(chart = Chart.Kind.Line, axisStart = 10_000.0),
+                "japanese-names" to
+                    bars("地方別の割合", "地方", "割合", listOf("北海道地方", "東北地方", "関東地方", "中部地方", "近畿地方"), "%", 18, 42, 64, 30, 22),
                 "five-series" to months(5),
                 "five-series-line" to months(5).copy(chart = Chart.Kind.Line),
                 "eight-series" to months(8),

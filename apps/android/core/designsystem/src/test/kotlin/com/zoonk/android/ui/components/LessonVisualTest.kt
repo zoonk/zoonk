@@ -2,7 +2,6 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import com.zoonk.android.ui.components.LessonVisual.Plot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -48,7 +47,7 @@ class LessonVisualTest {
         val (x, y) = plotAxes(plot)
 
         assertEquals(10.0..20.0, x.domain)
-        assertEquals(listOf(10.0, 15.0, 20.0), x.ticks)
+        assertEquals(listOf(10.0, 12.0, 14.0, 16.0, 18.0, 20.0), x.ticks)
         assertEquals(25.0..40.0, y.domain)
         assertEquals(listOf(25.0, 30.0, 35.0, 40.0), y.ticks)
     }
@@ -65,13 +64,13 @@ class LessonVisualTest {
 
         val (x, y) = plotAxes(plot)
 
-        assertEquals(listOf(0.0, 5.0, 10.0), x.ticks)
+        assertEquals(listOf(2.0, 4.0, 6.0, 8.0, 10.0), x.ticks)
         assertEquals(listOf(0.5, 0.75, 1.0, 1.25, 1.5), y.ticks)
     }
 
     @Test
     fun pointNamesSitBesideTheirDotsWhenThereIsRoom() {
-        val labels = pointLabels(listOf(Offset(50f, 50f) to "Brazil", Offset(150f, 80f) to "Japan"), scene(), ::nameSize, unit = 1f)
+        val labels = pointLabels(listOf(Offset(50f, 50f) to "Brazil", Offset(150f, 80f) to "Japan"), scene(), ::nameWidth)
 
         assertEquals(emptyList<KeyEntry>(), labels.key)
         assertEquals(listOf(LabelAnchor.Start, LabelAnchor.Start), labels.labels.map { it.anchor })
@@ -82,7 +81,7 @@ class LessonVisualTest {
     fun crowdedNamesMoveToANumberedKeyAndNoneIsDropped() {
         val crowded = (0 until 10).map { Offset(150f + it * 0.5f, 80f) to "Country ${it + 1}" }
 
-        val labels = pointLabels(crowded, scene(), ::nameSize, unit = 1f)
+        val labels = pointLabels(crowded, scene(), ::nameWidth)
 
         assertEquals(crowded.map { it.second }, labels.key.map { it.label })
         assertEquals((1..10).map(Int::toString), labels.labels.map { it.text })
@@ -96,15 +95,6 @@ class LessonVisualTest {
     }
 
     @Test
-    fun aPointOnThePlotsRightEdgeKeepsClearOfTheReferenceNames() {
-        val unit = 2.75f
-        val edge = plotEdge(width = 900f, left = 120f, referenceRoom = 220f, unit = unit)
-
-        assertTrue(edge.referenceLeft - (edge.plotRight + PLOT_DOT_ROOM * unit) >= 4 * unit)
-        assertEquals(900f, edge.referenceLeft + 220f, 0.01f)
-    }
-
-    @Test
     fun anAxisLabelOnTheYAxisStartsClearOfItsNumbers() {
         val gap = 6f
         val start = axisLabelStart(center = 120f, labelWidth = 20f, left = 120f, width = 900f, inset = gap / 2)
@@ -114,14 +104,9 @@ class LessonVisualTest {
         assertEquals(877f, axisLabelStart(center = 900f, labelWidth = 20f, left = 120f, width = 900f, inset = 3f))
     }
 
-    @Test
-    fun aPlotWithoutReferencesRunsToTheCardsEdge() {
-        assertEquals(892f, plotEdge(width = 900f, left = 120f, referenceRoom = 0f, unit = 1f).plotRight)
-    }
-
     private fun scene() = LabelScene(Rect(0f, 0f, 300f, 160f), emptyList(), emptyList())
 
-    private fun nameSize(name: String) = Size(name.length * 7f, 14f)
+    private fun nameWidth(name: String) = name.length * 7f
 
     @Test
     fun aDomainNearTheLargestNumberStaysDrawable() {
