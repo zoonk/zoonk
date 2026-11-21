@@ -13,6 +13,8 @@ struct LanguageTestResultView: View {
   let testOutLevel: String?
   let pressed: FocusTestPress?
   let failed: Bool
+  var undo: PlacementResultUndo?
+  var onboarding = false
   let onContinue: () -> Void
   let onTestOut: () -> Void
 
@@ -23,7 +25,7 @@ struct LanguageTestResultView: View {
       StepHeader(
         title: Text(
           "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding"),
-        description: Text(lead))
+        description: undo?.restored ?? Text(lead))
 
       if let result, !result.skillRanges.isEmpty {
         Section {
@@ -42,6 +44,10 @@ struct LanguageTestResultView: View {
           }
         }
       }
+
+      if let undo, undo.restored == nil {
+        undo.row
+      }
     }
     .bottomBar(note: failed && pressed == nil ? BarNote(saveFailure) : nil) {
       StepButtons(
@@ -49,12 +55,14 @@ struct LanguageTestResultView: View {
           ? Text(
             "Keep going", tableName: "Onboarding",
             comment: "Goes on from the whole-course level test to the course's topics")
-          : Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
+          : onboarding
+            ? nil : Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
         skipLabel: testOutLevel.map { Text(verbatim: PlacementTestCopy.testOut($0)) },
         onContinue: onContinue,
         onSkip: !walks && testOutLevel != nil ? onTestOut : nil)
     }
     .onboardingColumn()
+    .announcesStatus(undo?.announcement)
     .environment(\.isSavingAnswer, pressed != nil)
   }
 
@@ -107,6 +115,7 @@ struct LevelTestOutResult: View {
   let view: LevelTestOut
   let isSaving: Bool
   let failed: Bool
+  var undo: PlacementResultUndo?
   let onDone: () -> Void
 
   var body: some View {
@@ -120,18 +129,25 @@ struct LevelTestOutResult: View {
           comment:
             "After a level's test-out that skipped nothing, such as \"B2 stays in your plan\""
         ),
-      description: view.total == 0
-        ? Text(
-          "There aren't enough questions for \(view.level) yet.", tableName: "Onboarding",
-          comment: "After a level's test-out that had too few questions to check, such as B2")
-        : lessons > 0
+      description: undo?.restored
+        ?? (view.total == 0
           ? Text(
-            "You already know them. They stay in your practice.", tableName: "Onboarding",
-            comment: "Under how many lessons a test skipped")
-          : Text(
-            "Your lessons keep adjusting as you answer.", tableName: "Onboarding",
-            comment: "Under a level test's result that skipped no level"),
+            "There aren't enough questions for \(view.level) yet.", tableName: "Onboarding",
+            comment: "After a level's test-out that had too few questions to check, such as B2")
+          : lessons > 0
+            ? Text(
+              "You already know them. They stay in your practice.", tableName: "Onboarding",
+              comment: "Under how many lessons a test skipped")
+            : Text(
+              "Your lessons keep adjusting as you answer.", tableName: "Onboarding",
+              comment: "Under a level test's result that skipped no level")),
       continueLabel: Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
-      isSaving: isSaving, failed: failed, onContinue: onDone)
+      isSaving: isSaving, failed: failed, onContinue: onDone
+    ) {
+      if let undo, undo.restored == nil {
+        undo.row
+      }
+    }
+    .announcesStatus(undo?.announcement)
   }
 }

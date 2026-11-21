@@ -2,6 +2,12 @@ import Foundation
 
 /// The words of the test taken from the plan, shared by its row, its screens and the lesson's offer.
 enum PlacementTestCopy {
+  static func lessonsRestored(_ count: Int) -> LocalizedStringResource {
+    count == 1
+      ? LocalizedStringResource("The lesson is back in your plan.", table: "Onboarding")
+      : LocalizedStringResource("The lessons are back in your plan.", table: "Onboarding")
+  }
+
   static let learnName = LocalizedStringResource(
     "Test what you know", table: "Onboarding",
     comment: "The test of what the learner already knows in a course, taken from the plan")

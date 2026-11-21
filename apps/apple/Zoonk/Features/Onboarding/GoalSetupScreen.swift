@@ -433,11 +433,13 @@ private struct GoalSteps: View {
     return role?.isEmpty == false ? String(role?.prefix(80) ?? "") : nil
   }
 
-  private func finishPlacement() async throws {
+  private func finishPlacement(_ attemptId: String?) async throws {
     isSaving = true
     defer { isSaving = false }
 
-    try await save(["question": "placement"])
+    var answer: [String: Any] = ["question": "placement"]
+    answer["attemptId"] = attemptId
+    try await save(answer)
   }
 
   private func save(_ input: [String: Any]) async throws {
@@ -538,7 +540,7 @@ private struct StepScreen: View {
   let profile: ProfileStepModel?
   let onAnswer: ([String: Any]) -> Void
   let onChangeDate: (ScheduleQuestion.Draft) -> Void
-  let onPlacementDone: () async throws -> Void
+  let onPlacementDone: (String?) async throws -> Void
   let onStartLesson: ([String: Any]?) -> Void
   let onPickConditions: ([String]) -> Void
 
@@ -562,12 +564,12 @@ private struct StepScreen: View {
       Group {
         if view.goal.kind == .language, let targetLanguage = view.goal.targetLanguage {
           LevelTestStep(
-            goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
-            testMinutes: view.quickTestMinutes, onDone: onPlacementDone)
+            goalID: view.goal.id, targetLanguage: targetLanguage, subject: subject,
+            onDone: onPlacementDone)
         } else if view.goal.kind == .exam {
           FocusTestFlow(
             goalID: view.goal.id, subject: subject, host: .onboarding, onboarding: view,
-            onDone: onPlacementDone)
+            onDone: { try await onPlacementDone(nil) })
         } else {
           PlacementStep(view: view, subject: subject, onDone: onPlacementDone)
         }

@@ -236,6 +236,7 @@ struct GoalPlan: Decodable, Equatable, Sendable {
 
   let areas: [Area]
   let bases: Bases?
+  var changes: [TodayView.PlanChange]?
   let course: Course?
 
   var libraryCourse: Course? {

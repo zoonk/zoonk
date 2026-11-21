@@ -216,6 +216,21 @@ struct TodayPlanChangeSection: View {
   private var answersInSheet: Bool { isOpen && shown.decision == nil && !isBehind }
 
   var body: some View {
+    if change.kind == "testedOut",
+      shown.decision == .undone || (change.status == "applied" && change.canUndo)
+    {
+      TestedOutChangeCard(
+        change: change, today: view.session.localDate, isUndone: shown.decision == .undone,
+        isSaving: isSaving, failed: failed
+      ) {
+        answer(.undone)
+      }
+    } else {
+      standardChange
+    }
+  }
+
+  private var standardChange: some View {
     Section {
       if let decision = shown.decision {
         SuggestionLine {
