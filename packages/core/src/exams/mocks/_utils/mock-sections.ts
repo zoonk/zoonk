@@ -17,14 +17,12 @@ export function getEssayItemIds(conditions: MockConditions): string[] {
   return conditions.sections.flatMap((section) => section.essays);
 }
 
-export function getFirstNumber({
-  conditions,
-  section,
-}: {
-  conditions: MockConditions;
-  section: number;
-}): number {
-  return conditions.sections.slice(0, section).reduce((sum, item) => sum + item.questions, 1);
+export function numberMockQuestions<Question>(questions: readonly Question[]) {
+  return questions.map((question, index) => ({
+    number: index + 1,
+    question,
+    total: questions.length,
+  }));
 }
 
 export function toSectionViews({

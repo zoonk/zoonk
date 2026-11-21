@@ -7980,6 +7980,21 @@ msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Weiter antworten"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Abschnitt {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Frage {number} von {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Frage {number} von {total}"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8166,16 +8181,6 @@ msgstr "Schriftlicher Teil · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Schriftlicher Teil"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Frage {number} von {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Frage {number} von {total}"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8539,12 +8544,6 @@ msgid "After this mock exam"
 msgstr "Nach dieser Probeprüfung"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Frage {number}"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "Fragen zum Nacharbeiten"
@@ -8607,11 +8606,6 @@ msgstr "Deine Antworten sind gespeichert."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Abgegeben"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Abschnitt {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8711,6 +8705,11 @@ msgstr "Am stärksten: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Hier solltest du üben: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Frage {number}"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
