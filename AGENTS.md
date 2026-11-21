@@ -59,7 +59,7 @@ Each rule's detail is in the file it links.
 
 ## Verification
 
-- When you finish work, before each commit, and before handing off, run the [verify skill](.agents/skills/verify/SKILL.md): it sizes the checks to the change and has you use the change in the running app. [Checks for a change](.agents/guides/checks.md) lists what to run; CI runs every suite on each PR push, so don't run them all locally.
+- When you finish work, before each commit, and before handing off, run the [verify skill](.agents/skills/verify/SKILL.md): it sizes the checks to the change and has you use the change in the running app. Use [Checks for a change](.agents/guides/checks.md) to see what to run locally and what CI covers on a PR or after merge.
 - Investigate a failing check, an intermittent one included, and fix what the change caused; never rerun until green. An unrelated failure gets its own thread ([scope](#scope-and-completion)).
 - Judge performance by what a learner waits for: how long queries take, whether a request runs the same read more than once, and how long the page takes to load. A count of statements or requests is a lead to look into, never a limit to hold in a test.
 - Write and change tests with [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md), at the cheapest layer that reproduces the risk, with a failing regression test first when practical. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
