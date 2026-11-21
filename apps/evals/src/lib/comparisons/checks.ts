@@ -105,12 +105,11 @@ export async function checkRuns(task: RegisteredTask | null, comparison: Compari
 
         await writeRecord(`${prefix}.json`, checkSchema, {
           ...base,
+          blockingProblems: blank.data ? ["The image is a blank frame."] : undefined,
           costUsd: 0,
           name: "background and frame",
           passed: edges.passed + Number(!blank.data),
-          problems: blank.data
-            ? [...edges.problems, "The image is a blank frame."]
-            : edges.problems,
+          problems: edges.problems,
           total: edges.total + 1,
         });
 
