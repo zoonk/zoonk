@@ -378,5 +378,8 @@ struct CodeSnippet: View {
     .typeStyle(.code)
     .environment(\.codeWraps, true)
     .environment(\.layoutDirection, .leftToRight)
+    // Main's option names its code as the browser reads it: the lines on one line, unindented.
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(Text(verbatim: CodeFence.oneLine(code)))
   }
 }

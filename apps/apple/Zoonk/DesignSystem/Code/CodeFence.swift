@@ -1,9 +1,10 @@
 import Foundation
 
-/// Main's `code-fence`: a CommonMark fenced code block written with backticks. The opening fence's
-/// info string can't hold a backtick, so "```x```" stays inline code.
+/// Main's `code-fence`: a CommonMark fenced code block, written with backticks or tildes and closed
+/// by a line of the same character at least as long. A backtick fence's info string can't hold a
+/// backtick, so "```x```" stays inline code.
 struct CodeFence: Equatable {
-  /// The lines between the fences, exactly as written.
+  /// The lines between the fences as written, less the opening fence's own indentation.
   let code: String
   /// The info string's first word, lowercased, such as `python`.
   let language: String?
@@ -19,13 +20,18 @@ struct CodeFence: Equatable {
       return nil
     }
 
-    let ticks = opening.output.ticks.count
+    let fence = opening.output.fence
+    let indent = opening.output.indent.count
+    // A fence is one character repeated, so a closing one as long or longer starts with the opening one.
     let close = lines.indices.first { line in
-      line > index && (lines[line].wholeMatch(of: closingFence)?.output.ticks.count ?? 0) >= ticks
+      line > index
+        && lines[line].wholeMatch(of: closingFence)?.output.fence.hasPrefix(fence) == true
     }
 
     return CodeFence(
-      code: lines[(index + 1)..<(close ?? lines.count)].joined(separator: "\n"),
+      code: lines[(index + 1)..<(close ?? lines.count)]
+        .map { line in String(line.dropFirst(min(indent, line.prefix { $0 == " " }.count))) }
+        .joined(separator: "\n"),
       language: opening.output.info.split(whereSeparator: \.isWhitespace).first?.lowercased(),
       isClosed: close != nil, start: index, end: close.map { $0 + 1 } ?? lines.count)
   }
@@ -89,18 +95,23 @@ struct CodeFence: Equatable {
 
   /// The code as one run of inline code, for a line that can't show a block.
   var inlineCode: AttributedString {
-    let text = code.split(separator: "\n", omittingEmptySubsequences: false)
-      .map { $0.trimmingCharacters(in: .whitespaces) }
-      .filter { !$0.isEmpty }
-      .joined(separator: " ")
-    var run = AttributedString(CodeBreaks.inserted(into: text))
+    var run = AttributedString(CodeBreaks.inserted(into: Self.oneLine(code)))
     run.inlinePresentationIntent = .code
     return run
   }
 
+  /// Code's lines on one line, each without its indentation, as main's one-line code reads it.
+  static func oneLine(_ code: String) -> String {
+    code.split(separator: "\n", omittingEmptySubsequences: false)
+      .map { $0.trimmingCharacters(in: .whitespaces) }
+      .filter { !$0.isEmpty }
+      .joined(separator: " ")
+  }
+
   // Regex isn't Sendable, but these are built once and never mutated: matching only reads them.
-  nonisolated(unsafe) private static let openingFence = /[ ]{0,3}(?<ticks>`{3,})(?<info>[^`]*)/
-  nonisolated(unsafe) private static let closingFence = /[ ]{0,3}(?<ticks>`{3,})[ ]*/
+  nonisolated(unsafe) private static let openingFence =
+    /(?<indent>[ ]{0,3})(?<fence>`{3,}(?=[^`]*$)|~{3,})(?<info>.*)/
+  nonisolated(unsafe) private static let closingFence = /[ ]{0,3}(?<fence>`{3,}|~{3,})[ ]*/
 }
 
 /// Main's `code-breaks`: where a wrapped line of code reads best when it splits, before a `.` and

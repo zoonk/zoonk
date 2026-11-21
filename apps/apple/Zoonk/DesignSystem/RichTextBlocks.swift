@@ -75,8 +75,8 @@ struct RichTextBlocks: View {
         case .paragraph(let lines):
           line(inline(lines.joined(separator: "\n")), mark: mark, underline: underline)
             .accessibilityAddTraits(wordTraits)
-        case .list(let items, let ordered):
-          list(items, ordered: ordered, mark: mark, underline: underline)
+        case .list(let items, let start):
+          list(items, start: start, mark: mark, underline: underline)
             .accessibilityAddTraits(wordTraits)
         case .table(let header, let alignments, let rows):
           RichTable(header: header, alignments: alignments, rows: rows, inline: inline)
@@ -89,12 +89,12 @@ struct RichTextBlocks: View {
   }
 
   private func list(
-    _ items: [String], ordered: Bool, mark: RichTextBlock.Mark?, underline: RichTextBlock.Mark?
+    _ items: [String], start: Int?, mark: RichTextBlock.Mark?, underline: RichTextBlock.Mark?
   ) -> some View {
     VStack(alignment: .leading, spacing: 6) {
       ForEach(Array(items.enumerated()), id: \.offset) { index, item in
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-          Text(ordered ? "\(index + 1)." : "•")
+          Text(start.map { "\($0 + index)." } ?? "•")
             .monospacedDigit()
             .accessibilityHidden(true)
 
@@ -197,7 +197,9 @@ enum RichTextBlock: Equatable {
   }
 
   case paragraph(lines: [String])
-  case list(items: [String], ordered: Bool)
+  /// A numbered list starts at its first item's number, as in CommonMark, so steps split by a code
+  /// block number on; `start` is nil for bullets.
+  case list(items: [String], start: Int?)
   case table(header: [String], alignments: [ColumnAlignment], rows: [[String]])
   /// Its code exactly as written.
   case code(code: String, language: String?)
@@ -242,7 +244,7 @@ enum RichTextBlock: Equatable {
     return blocks
   }
 
-  static var orderedItem: Regex<(Substring, Substring)> { /\s*\d{1,3}[.)]\s+(.+)/ }
+  static var orderedItem: Regex<(Substring, Substring, Substring)> { /\s*(\d{1,3})[.)]\s+(.+)/ }
 
   /// A list numbers its items from 1, so text split inside a numbered list restarts its numbers.
   static func cutsNumberedList(_ text: String, at cut: String.Index) -> Bool {
@@ -334,11 +336,11 @@ enum RichTextBlock: Equatable {
     switch (line, blocks.last, previous) {
     case (.blank, _, _):
       break
-    case (.item(let text, let ordered), .list(let items, let listOrdered)?, .item?)
-    where ordered == listOrdered:
-      blocks[blocks.count - 1] = .list(items: items + [text], ordered: ordered)
-    case (.item(let text, let ordered), _, _):
-      blocks.append(.list(items: [text], ordered: ordered))
+    case (.item(let text, let number), .list(let items, let start)?, .item?)
+    where (number == nil) == (start == nil):
+      blocks[blocks.count - 1] = .list(items: items + [text], start: start)
+    case (.item(let text, let number), _, _):
+      blocks.append(.list(items: [text], start: number))
     case (.text(let text), .paragraph(let lines)?, .text?):
       blocks[blocks.count - 1] = .paragraph(lines: lines + [text])
     case (.text(let text), _, _):
@@ -350,14 +352,14 @@ enum RichTextBlock: Equatable {
 
   private enum Line {
     case blank
-    case item(String, ordered: Bool)
+    case item(String, number: Int?)
     case text(String)
 
     init(_ line: String) {
       if let match = line.wholeMatch(of: /\s*[-*•]\s+(.+)/) {
-        self = .item(String(match.output.1), ordered: false)
+        self = .item(String(match.output.1), number: nil)
       } else if let match = line.wholeMatch(of: RichTextBlock.orderedItem) {
-        self = .item(String(match.output.1), ordered: true)
+        self = .item(String(match.output.2), number: Int(match.output.1))
       } else {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         self = trimmed.isEmpty ? .blank : .text(trimmed)

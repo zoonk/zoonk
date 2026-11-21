@@ -33,6 +33,20 @@ final class CodeFenceTests: XCTestCase {
     XCTAssertEqual(CodeFence.read(["````md", "```", "texto", "````"], at: 0)?.code, "```\ntexto")
   }
 
+  func testReadsAFenceOfTildesWhichOnlyTildesClose() {
+    XCTAssertEqual(
+      CodeFence.read(["~~~js `x`", "f(`a`);", "```", "~~~~"], at: 0),
+      CodeFence(code: "f(`a`);\n```", language: "js", isClosed: true, start: 0, end: 4))
+    XCTAssertEqual(CodeFence.read(["```", "x", "~~~"], at: 0)?.isClosed, false)
+    XCTAssertNil(CodeFence.read(["~~", "x", "~~"], at: 0))
+  }
+
+  func testTakesTheOpeningFencesIndentationOffItsCode() {
+    XCTAssertEqual(
+      CodeFence.read(["  ```py", "  if x:", "      y()", " z", "  ```"], at: 0)?.code,
+      "if x:\n    y()\nz")
+  }
+
   func testReadsInlineCodeAndAnIndentedBlockAsNoFence() {
     XCTAssertNil(CodeFence.read(["```x``` e mais"], at: 0))
     XCTAssertNil(CodeFence.read(["    ```", "x", "```"], at: 0))
