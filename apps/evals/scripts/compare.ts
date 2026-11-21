@@ -518,14 +518,11 @@ async function run() {
     await forecastFirstRead(manifest, sealed !== null);
   }
 
-  if (!(await readOptional(path.join(dir, "checks-complete.json"), z.literal(true)))) {
-    const task = getTaskById(taskId);
-
-    if (!task) {
-      throw new Error("The frozen checks have not completed and the task is unavailable.");
-    }
-
-    await checkRuns(task, await current());
+  if (
+    manifest.requiresAnswerKeyCheck ||
+    !(await readOptional(path.join(dir, "checks-complete.json"), z.literal(true)))
+  ) {
+    await checkRuns(getTaskById(taskId), await current());
   }
 
   if (stopAfter === "checks") {

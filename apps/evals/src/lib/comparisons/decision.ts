@@ -167,7 +167,7 @@ export function uncheckedAnswerKeys({ manifest, checks }: Comparison) {
               check.caseId === caseId &&
               check.run === run &&
               check.side === side &&
-              check.total > 0,
+              (check.total > 0 || (check.total === 0 && check.passed === 0)),
           ),
       )
       .map((side) => ({ caseId, run, side })),

@@ -5,6 +5,7 @@ import { hash } from "./identity";
 import { imageContent, readPacket } from "./readers";
 import {
   type Comparison,
+  type Manifest,
   type Reader,
   blindOutputs,
   verificationAttemptSchema,
@@ -13,6 +14,38 @@ import {
 import { directory, readOptional, writeRecord } from "./storage";
 
 type Claim = ReturnType<typeof decisiveClaims>[number];
+
+function verificationControls(bank: Manifest["controls"]["pairs"][number], id: string) {
+  const cleanFirst = Number.parseInt(id.at(-1) ?? "0", 16) % 2 === 0;
+
+  const expected = [
+    {
+      claim: bank.falseAllegation,
+      finding: "doesn't hold",
+      kind: "false",
+      output: cleanFirst ? "A" : "B",
+    },
+    { claim: bank.defect, finding: "holds", kind: "planted", output: cleanFirst ? "B" : "A" },
+  ]
+    .map(({ kind, ...entry }) => ({ ...entry, claimId: hash(id + kind).slice(0, 16) }))
+    .toSorted((first, second) => first.claimId.localeCompare(second.claimId));
+
+  return {
+    expected,
+    pair: {
+      ...blindOutputs(cleanFirst ? bank.clean : bank.flawed, cleanFirst ? bank.flawed : bank.clean),
+      claims: expected.map(({ claim, claimId, output }) => ({
+        claim,
+        claimId,
+        criterion: bank.criterion,
+        location: { detail: "Across the explanation", kind: "whole" },
+        output,
+      })),
+      expectations: bank.expectations,
+      input: bank.input,
+    },
+  };
+}
 
 async function verifyBatch(
   comparison: Comparison,
@@ -35,6 +68,7 @@ async function verifyBatch(
       related.map((claim) => claim.id),
       reader,
       manifest.protocols.verifier,
+      "planted-defect-control",
       attempt,
     ]),
   );
@@ -52,23 +86,8 @@ async function verifyBatch(
     throw new Error("Missing control bank.");
   }
 
-  const controlId = hash(`${id}false`).slice(0, 16);
+  const { expected, pair: control } = verificationControls(bank, id);
   const real = first.pair;
-
-  const control = {
-    ...blindOutputs(bank.clean, bank.flawed),
-    claims: [
-      {
-        claim: bank.falseAllegation,
-        claimId: controlId,
-        criterion: bank.criterion,
-        location: { detail: "Across the explanation", kind: "whole" },
-        output: "A",
-      },
-    ],
-    expectations: bank.expectations,
-    input: bank.input,
-  };
 
   const claimId = (claim: Claim) => hash(id + claim.id).slice(0, 16);
 
@@ -105,7 +124,7 @@ async function verifyBatch(
     },
   ];
 
-  if (controlId > claimId(first)) {
+  if ((expected[0]?.claimId ?? "") > claimId(first)) {
     batch.reverse();
   }
 
@@ -124,9 +143,12 @@ async function verifyBatch(
   });
 
   const passed =
-    response.results.length === stored.length + 1 &&
-    response.results.some(
-      (result) => result.claimId === controlId && result.finding === "doesn't hold",
+    response.results.length === stored.length + expected.length &&
+    expected.every((controlClaim) =>
+      response.results.some(
+        (result) =>
+          result.claimId === controlClaim.claimId && result.finding === controlClaim.finding,
+      ),
     ) &&
     stored.every((claim) => response.results.some((result) => result.claimId === claim.claimId));
 
@@ -136,6 +158,7 @@ async function verifyBatch(
     id,
     packet,
     passed,
+    ...(passed && { plantedDefectPassed: true }),
     protocolHash: hash(manifest.protocols.verifier),
     reader: { ...reader, channel },
     response,

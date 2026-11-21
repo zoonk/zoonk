@@ -234,6 +234,7 @@ export const verificationAttemptSchema = z.object({
   id: digest,
   packet: text,
   passed: z.boolean(),
+  plantedDefectPassed: z.literal(true).optional(),
   protocolHash: digest,
   reader: readerSchema,
   response: verificationSchema,

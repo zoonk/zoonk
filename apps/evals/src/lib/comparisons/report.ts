@@ -41,12 +41,19 @@ export function formatDecision(decision: Decision, comparison: Comparison) {
         `${reader.model}: own-family preference ${reader.ownWins}/${reader.ownOpportunities}, owner agreement ${reader.ownerAgrees}/${reader.ownerCompared}, failed packets ${reader.failedPackets}.`,
     ),
     ...comparison.checks.map(
-      (check) =>
-        `${check.caseId}-${check.run} ${check.side} ${check.name}: ${check.passed}/${check.total}. ${check.problems.join(" ")}`,
+      (check) => `${check.caseId}-${check.run} ${check.side} ${check.name}: ${checkText(check)}`,
     ),
     ...uncheckedAnswerKeys(comparison).map(
       ({ caseId, run, side }) => `${caseId}-${run} ${side} answer keys: unchecked.`,
     ),
     `Delivery sample frozen ${manifest.date}.\n`,
   ].join("\n");
+}
+
+function checkText(check: Comparison["checks"][number]) {
+  if (check.name === "answer keys" && check.total === 0 && check.passed === 0) {
+    return "none to check.";
+  }
+
+  return `${check.passed}/${check.total}. ${check.problems.join(" ")}`;
 }

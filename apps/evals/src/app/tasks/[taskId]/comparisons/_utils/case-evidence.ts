@@ -20,7 +20,7 @@ type Verdict = Read["verdict"];
 type Observation = Verdict["observations"][number];
 type Choice = Side | "tie";
 
-export type CheckResult = { family: string; finding: Claim["finding"]; reason: string };
+export type CheckResult = Claim["results"][number];
 
 export type ObservationView = {
   check: (Pick<Claim, "checked" | "finding" | "source"> & { results: CheckResult[] }) | null;
@@ -58,30 +58,12 @@ function choiceOf(preference: "A" | "B" | "tie", first: Side): Choice {
   return preference === "tie" ? "tie" : sideOf(preference, first);
 }
 
-function checkResults(comparison: Comparison, claimId: string): CheckResult[] {
-  return comparison.verifications
-    .filter((attempt) => attempt.passed)
-    .flatMap((attempt) =>
-      attempt.claims
-        .filter((claim) => claim.observationId === claimId)
-        .flatMap((claim) => {
-          const result = attempt.response.results.find((entry) => entry.claimId === claim.claimId);
-
-          return result
-            ? [{ family: attempt.reader.family, finding: result.finding, reason: result.reason }]
-            : [];
-        }),
-    );
-}
-
 function observationView({
   claims,
-  comparison,
   first,
   observation,
 }: {
   claims: Claim[];
-  comparison: Comparison;
   first: Side;
   observation: Observation;
 }): ObservationView {
@@ -92,7 +74,7 @@ function observationView({
       ? {
           checked: claim.checked,
           finding: claim.finding,
-          results: checkResults(comparison, claim.id),
+          results: claim.results,
           source: claim.source,
         }
       : null,
@@ -101,7 +83,7 @@ function observationView({
   };
 }
 
-function readView(comparison: Comparison, claims: Claim[], read: Read): ReadView {
+function readView(claims: Claim[], read: Read): ReadView {
   const { first } = read.mapping;
   const { verdict } = read;
 
@@ -113,7 +95,7 @@ function readView(comparison: Comparison, claims: Claim[], read: Read): ReadView
     })),
     key: `${read.packet.id}-${read.attempt.attempt}`,
     observations: verdict.observations.map((observation) =>
-      observationView({ claims, comparison, first, observation }),
+      observationView({ claims, first, observation }),
     ),
     order: { first, paired: read.verdict.overall !== null },
     overall: verdict.overall && {
@@ -165,7 +147,7 @@ export function caseRuns(comparison: Comparison, caseId: string): RunView[] {
       outputs: { challenger: output(run.challenger), incumbent: output(run.incumbent) },
       reads: reads
         .filter((read) => read.mapping.caseId === caseId && read.mapping.run === run.run)
-        .map((read) => readView(comparison, claims, read)),
+        .map((read) => readView(claims, read)),
       run: run.run,
     }));
 }

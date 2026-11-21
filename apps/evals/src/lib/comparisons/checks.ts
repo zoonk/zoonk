@@ -4,15 +4,37 @@ import { runInOrder } from "../concurrency";
 import { checkImageEdges } from "../image-edges";
 import { solveAnswerKeys } from "../key-check";
 import { type RegisteredTask } from "../types";
+import { uncheckedAnswerKeys } from "./decision";
 import { hash } from "./identity";
 import { type Comparison, checkSchema } from "./schemas";
 import { directory, readOptional, writeRecord } from "./storage";
 
-export async function checkRuns(task: RegisteredTask, comparison: Comparison) {
-  const doneFile = path.join(directory(task.id, comparison.manifest.id), "checks-complete.json");
+function possibleZeroKeyRuns(comparison: Comparison) {
+  return uncheckedAnswerKeys(comparison).filter(({ caseId, run, side }) =>
+    comparison.checks.some(
+      (check) =>
+        check.name === "code checks" &&
+        check.caseId === caseId &&
+        check.run === run &&
+        check.side === side &&
+        check.passed === check.total &&
+        check.problems.length === 0,
+    ),
+  );
+}
 
-  if (await readOptional(doneFile, z.literal(true))) {
+export async function checkRuns(task: RegisteredTask | null, comparison: Comparison) {
+  const { manifest } = comparison;
+  const doneFile = path.join(directory(manifest.taskId, manifest.id), "checks-complete.json");
+  const complete = await readOptional(doneFile, z.literal(true));
+  const possibleZeroKeys = complete ? possibleZeroKeyRuns(comparison) : [];
+
+  if (complete && (!task || possibleZeroKeys.length === 0)) {
     return;
+  }
+
+  if (!task) {
+    throw new Error("The frozen checks have not completed and the task is unavailable.");
   }
 
   const check = task.codeChecks;
@@ -22,8 +44,8 @@ export async function checkRuns(task: RegisteredTask, comparison: Comparison) {
     return;
   }
 
-  await runInOrder(comparison.manifest.runsCompared, async (run) => {
-    const frozen = comparison.manifest.cases.find((candidate) => candidate.id === run.caseId);
+  await runInOrder(manifest.runsCompared, async (run) => {
+    const frozen = manifest.cases.find((candidate) => candidate.id === run.caseId);
 
     if (!frozen) {
       throw new Error("Missing frozen case.");
@@ -39,14 +61,21 @@ export async function checkRuns(task: RegisteredTask, comparison: Comparison) {
     await runInOrder(["incumbent", "challenger"] as const, async (side) => {
       const slot = run[side];
 
-      if (!slot) {
+      if (
+        !slot ||
+        (complete &&
+          !possibleZeroKeys.some(
+            (pending) =>
+              pending.caseId === run.caseId && pending.run === run.run && pending.side === side,
+          ))
+      ) {
         return;
       }
 
       const base = { caseId: run.caseId, run: run.run, side };
 
       const prefix = path.join(
-        directory(task.id, comparison.manifest.id),
+        directory(task.id, manifest.id),
         "checks",
         hash(JSON.stringify(base)),
       );
@@ -79,26 +108,44 @@ export async function checkRuns(task: RegisteredTask, comparison: Comparison) {
         testCase: { ...testCase, expected: frozen.expected },
       } as never);
 
-      await writeRecord(`${prefix}.json`, checkSchema, {
-        ...base,
-        costUsd: 0,
-        name: "code checks",
-        passed: checks.passed,
-        problems: checks.problems,
-        total: checks.total,
-      });
+      if (!complete) {
+        await writeRecord(`${prefix}.json`, checkSchema, {
+          ...base,
+          costUsd: 0,
+          name: "code checks",
+          passed: checks.passed,
+          problems: checks.problems,
+          total: checks.total,
+        });
+      }
 
       const locators = checks.keyFlawLocators;
 
-      if (!locators?.length || (await readOptional(`${prefix}-keys.json`, checkSchema))) {
+      if (
+        !locators ||
+        (complete && locators.length > 0) ||
+        (await readOptional(`${prefix}-keys.json`, checkSchema))
+      ) {
         return;
       }
 
-      const { keyFlaws, costUsd } = await solveAnswerKeys({
-        locators,
-        output: checks.judgedOutput,
-        prompt: JSON.stringify(testCase),
-      });
+      if (
+        locators.length === 0 &&
+        (!manifest.requiresAnswerKeyCheck ||
+          checks.passed !== checks.total ||
+          checks.problems.length > 0)
+      ) {
+        return;
+      }
+
+      const { keyFlaws, costUsd } =
+        locators.length === 0
+          ? { costUsd: 0, keyFlaws: [] }
+          : await solveAnswerKeys({
+              locators,
+              output: checks.judgedOutput,
+              prompt: JSON.stringify(testCase),
+            });
 
       await writeRecord(`${prefix}-keys.json`, checkSchema, {
         ...base,

@@ -1,5 +1,5 @@
 import { type Decision, type Direction } from "./decision-schema";
-import { type Comparison } from "./schemas";
+import { type Comparison, type Reader } from "./schemas";
 
 export const sides = ["incumbent", "challenger"] as const;
 type Side = (typeof sides)[number];
@@ -261,27 +261,67 @@ export function readerRecords(comparison: Comparison, reads: ReturnType<typeof a
     };
   });
 }
-export function verifiedClaims(comparison: Comparison) {
-  return majorClaims(comparison).map((claim) => {
-    const checks = comparison.verifications
-      .filter((vote) => vote.passed && vote.reader.family !== claim.reader.family)
-      .flatMap((vote) =>
-        vote.response.results.filter((record) =>
-          vote.claims.some(
-            (item) => item.claimId === record.claimId && item.observationId === claim.id,
-          ),
-        ),
-      )
-      .map((record) => record.finding);
+function verifierKey({ channel, family, model }: Reader) {
+  return JSON.stringify([channel, family, model]);
+}
 
-    const findings = checks.filter((finding) => finding !== "unsure");
+function qualifiedVerifications(comparison: Comparison) {
+  const plantedPackets = new Map(
+    comparison.manifest.packets
+      .filter(
+        (packet) =>
+          packet.reader.channel !== "owner" &&
+          packet.mapping.some((entry) => entry.kind === "defect"),
+      )
+      .map((packet) => [packet.id, packet]),
+  );
+
+  const qualifiedReaders = new Set(
+    comparison.attempts.flatMap((attempt) => {
+      const packet = plantedPackets.get(attempt.packetId);
+
+      return attempt.passed && packet?.reader.model === attempt.reader.model
+        ? [verifierKey(attempt.reader)]
+        : [];
+    }),
+  );
+
+  return comparison.verifications.filter(
+    (attempt) =>
+      attempt.passed &&
+      attempt.reader.channel !== "owner" &&
+      (attempt.plantedDefectPassed || qualifiedReaders.has(verifierKey(attempt.reader))),
+  );
+}
+
+export function verifiedClaims(comparison: Comparison) {
+  const verifications = qualifiedVerifications(comparison);
+
+  return majorClaims(comparison).map((claim) => {
+    const results = verifications
+      .filter((vote) => vote.reader.family !== claim.reader.family)
+      .flatMap((vote) =>
+        vote.response.results
+          .filter((record) =>
+            vote.claims.some(
+              (item) => item.claimId === record.claimId && item.observationId === claim.id,
+            ),
+          )
+          .map(({ finding, reason }) => ({ family: vote.reader.family, finding, reason })),
+      );
+
+    const findings = results
+      .map(({ finding }) => finding)
+      .filter((finding) => finding !== "unsure");
+
     const verified = new Set(findings);
     const finding = verified.size === 1 ? (findings[0] ?? "unsure") : "unsure";
 
     return {
       ...claim,
-      checked: checks.length > 0,
+      checked: results.length > 0,
       finding: claim.source === "owner" ? ("holds" as const) : finding,
+      results,
     };
   });
 }
