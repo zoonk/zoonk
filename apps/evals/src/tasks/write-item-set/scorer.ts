@@ -5,7 +5,7 @@ import {
   type WrittenItemSet,
   toSetItem,
 } from "@zoonk/ai/tasks/items/write-set";
-import { toCheckedItem } from "@zoonk/core/library/items/create";
+import { toCheckedItem } from "@zoonk/core/library/items/checks";
 import {
   MIN_SET_QUESTIONS,
   checkWrittenItemSet,

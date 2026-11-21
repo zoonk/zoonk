@@ -6,7 +6,7 @@ import {
   type WriteListeningSetParams,
   type writeListeningSet,
 } from "@zoonk/ai/tasks/listening/write-set";
-import { toCheckedItem } from "@zoonk/core/library/items/create";
+import { toCheckedItem } from "@zoonk/core/library/items/checks";
 import { WRITE_LISTENING_SET_SCORE_CATEGORIES } from "./score-categories";
 
 type WriteListeningSetOutput = Awaited<ReturnType<typeof writeListeningSet>>["data"];

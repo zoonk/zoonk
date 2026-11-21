@@ -6,7 +6,7 @@ import {
   type StatuteDrillParams,
   type generateStatuteDrills,
 } from "@zoonk/ai/tasks/items/statute-drills";
-import { toCheckedItem } from "@zoonk/core/library/items/create";
+import { toCheckedItem } from "@zoonk/core/library/items/checks";
 import { STATUTE_DRILLS_SCORE_CATEGORIES } from "./score-categories";
 
 type StatuteDrillsOutput = Awaited<ReturnType<typeof generateStatuteDrills>>["data"];
