@@ -93,24 +93,14 @@ internal fun longerTime(found: PlanTimeToCover?): EverythingTakes? {
 fun everythingTakesNote(found: PlanTimeToCover?): EverythingTakes? =
     EverythingTakes(fullTime(found)).takeIf { found?.suggested?.kind == PlanTimeToCoverSuggested.Kind.FOCUS }
 
-/**
- * Beside a suggestion that covers everything (so a realistic time), that time: [shown] while a shorter one is shown,
- * and otherwise kept in its place, unseen, so offering it moves nothing.
- */
-data class TimeOffer(
-    val minutes: Int,
-    val shown: Boolean,
-)
-
-/** Main's `getOffer`: null beside a focus suggestion, which is never offered. */
+/** The suggested time that covers everything, offered while a shorter one is shown; a focus suggestion is never offered. */
 fun timeOffer(
     found: PlanTimeToCover?,
     line: TimeLine,
     minutes: Int?,
-): TimeOffer? {
+): Int? {
     val suggested = found?.suggested?.takeIf { it.kind == PlanTimeToCoverSuggested.Kind.EVERYTHING } ?: return null
-    val time = suggested.minutes.toInt()
-    return TimeOffer(time, shown = time != minutes && line !is TimeLine.Everything)
+    return suggested.minutes.toInt().takeIf { it != minutes && line !is TimeLine.Everything }
 }
 
 /** [found] is the plan's answer for the days shown, [advice] what the time shown covers on them; either is null while it's asked for. */

@@ -1,9 +1,7 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +55,7 @@ fun TimeAnswer(
     line: TimeLine,
     minutes: Int?,
     takes: EverythingTakes?,
-    offer: TimeOffer?,
+    offer: Int?,
     onRetry: () -> Unit,
     onUseOffer: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -66,7 +64,6 @@ fun TimeAnswer(
     split: DaySplit? = null,
     updating: Boolean = false,
     today: LocalDate = LocalDate.now(),
-    action: (@Composable () -> Unit)? = null,
     aim: String? = null,
 ) {
     val failed = line == TimeLine.AskFailed || line == TimeLine.FindFailed
@@ -78,62 +75,48 @@ fun TimeAnswer(
     val lineWords = lineWords(date, exam, line, minutes, today, aim)
     // The sentence above already names the date, so "not enough time" doesn't repeat it.
     val takesWords =
-        date?.takeUnless { line is TimeLine.Share && line.reachedShare == null }?.let { shown ->
+        date?.takeUnless { line is TimeLine.Everything || (line is TimeLine.Share && line.reachedShare == null) }?.let { shown ->
             takes?.let {
                 if (it.full == null) stringResource(R.string.plan_time_none_by_then) else everythingTakesText(shown, it.full, today)
             }
         }
     val shared = split?.let { splitWords(it) }
 
-    Column(modifier.heightIn(min = 48.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(
-            Modifier
-                .alpha(if (updating) UPDATING_ALPHA else 1f)
-                .semantics {
-                    liveRegion = LiveRegionMode.Polite
-                    if (busy) stateDescription = busyWords
-                },
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Box {
-                Text(
-                    buildAnnotatedString {
-                        append(lineWords)
-                        shared?.let { append(spaceAfterSentence(lineWords.text) + it) }
-                    },
-                    color = muted,
-                    style = style,
-                )
-                // On a goal with a date, the line keeps the room of the longest one, so a shorter one moves nothing.
-                date?.let { Text(reachedWords(it, exam, LONGEST_SHARE, today), Modifier.hiddenIf(true), style = style) }
+    Column(
+        modifier
+            .alpha(if (updating) UPDATING_ALPHA else 1f)
+            .semantics {
+                liveRegion = LiveRegionMode.Polite
+                if (busy) stateDescription = busyWords
+            },
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            buildAnnotatedString {
+                append(lineWords)
+                shared?.let { append(spaceAfterSentence(lineWords.text) + it) }
+            },
+            color = muted,
+            style = style,
+        )
+        takesWords?.let { Text(it, color = muted, style = style) }
+        when {
+            failed -> {
+                TextButton(onClick = onRetry, edge = ButtonEdge.Start) {
+                    Text(stringResource(R.string.plan_try_again))
+                }
             }
-            // A time that covers everything needs no such line, but keeps its room so picking it moves nothing.
-            takesWords?.let { Text(it, Modifier.hiddenIf(line is TimeLine.Everything), color = muted, style = style) }
-            when {
-                failed -> {
-                    TextButton(onClick = onRetry, edge = ButtonEdge.Start) {
-                        Text(stringResource(R.string.plan_try_again))
-                    }
-                }
 
-                offered != null && offerAsButton -> {
-                    OutlinedButton(onClick = { onUseOffer(offered.minutes) }, Modifier.hiddenIf(!offered.shown)) {
-                        Text(offerLabel(offered.minutes))
-                    }
-                }
+            offered != null && offerAsButton -> {
+                OutlinedButton(onClick = { onUseOffer(offered) }) { Text(offerLabel(offered)) }
+            }
 
-                offered != null -> {
-                    TextButton(
-                        onClick = { onUseOffer(offered.minutes) },
-                        modifier = Modifier.hiddenIf(!offered.shown),
-                        edge = ButtonEdge.Start,
-                    ) {
-                        Text(offerLabel(offered.minutes))
-                    }
+            offered != null -> {
+                TextButton(onClick = { onUseOffer(offered) }, edge = ButtonEdge.Start) {
+                    Text(offerLabel(offered))
                 }
             }
         }
-        action?.invoke()
     }
 }
 
@@ -321,6 +304,3 @@ private fun lineWords(
 }
 
 private const val UPDATING_ALPHA = 0.5f
-
-/** The share in the longest sentence a dated goal's time gets, whose room every other one keeps. */
-private const val LONGEST_SHARE = 0.99

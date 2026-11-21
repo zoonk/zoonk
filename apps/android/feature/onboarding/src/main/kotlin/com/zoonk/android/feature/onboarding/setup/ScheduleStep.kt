@@ -307,41 +307,6 @@ private fun ColumnScope.ScheduleTime(
                 full = marked.full,
                 stale = stale,
             )
-            TimeAnswer(
-                date = date,
-                exam = exam,
-                line = shown.line,
-                aim =
-                    LocalSetupAim.current.aim?.let { selected ->
-                        selected.aim?.value?.takeIf { value ->
-                            selected.choices.any {
-                                it.aim.value ==
-                                    value
-                            }
-                        }
-                    },
-                minutes = minutes,
-                takes = everythingTakesNote(shown.found),
-                offer = timeOffer(shown.found, shown.line, minutes),
-                onRetry = if (findFailed) covering.restart else timeAdvice.restart,
-                onUseOffer = { choose(it, found) },
-                split =
-                    (
-                        daySplit(
-                            minutes,
-                            timeChoices,
-                            answers,
-                        ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
-                    ).takeIf { hasDays },
-                updating = shown.updating,
-                action = { DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate) },
-            )
-        }
-
-        val short = shown.line is TimeLine.Share
-        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
-            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
-            FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -359,10 +324,50 @@ private fun ColumnScope.ScheduleTime(
         }
 
         ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
+
+        DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate)
+
+        // It shows only under a time that doesn't cover everything, so it comes after every other input: showing it
+        // moves only the answer under it.
+        val short = shown.line is TimeLine.Share
+        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
+            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
+            FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
+        }
+
+        // What the time and days get changes length as they change, so it comes last, with nothing to tap under it.
+        TimeAnswer(
+            date = date,
+            exam = exam,
+            line = shown.line,
+            aim =
+                LocalSetupAim.current.aim?.let { selected ->
+                    selected.aim?.value?.takeIf { value ->
+                        selected.choices.any {
+                            it.aim.value ==
+                                value
+                        }
+                    }
+                },
+            minutes = minutes,
+            takes = everythingTakesNote(shown.found),
+            offer = timeOffer(shown.found, shown.line, minutes),
+            onRetry = if (findFailed) covering.restart else timeAdvice.restart,
+            onUseOffer = { choose(it, found) },
+            split =
+                (
+                    daySplit(
+                        minutes,
+                        timeChoices,
+                        answers,
+                    ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
+                ).takeIf { hasDays },
+            updating = shown.updating,
+        )
     }
 }
 
-/** Under the time's answer, its words lined up with the answer's. */
+/** Its words lined up with the column's, as the other inputs' labels are. */
 @Composable
 private fun DateLink(
     dated: Boolean,
