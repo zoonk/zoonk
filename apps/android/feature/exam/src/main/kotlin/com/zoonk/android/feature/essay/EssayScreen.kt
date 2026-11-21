@@ -89,6 +89,7 @@ import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskSideAction
+import com.zoonk.android.ui.components.writingAreaColors
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -201,28 +202,7 @@ private fun WritingStart(
         }
 
         WritingStartState.Removed -> {
-            RunPage(
-                onClose = navigator::closeTask,
-                title = { BarTitle(header) },
-                bottomBar = {
-                    TaskActionBar {
-                        TaskActions { width ->
-                            Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
-                                Text(stringResource(R.string.essay_back_to_today))
-                            }
-                        }
-                    }
-                },
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(R.string.essay_removed), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
-                    Text(
-                        stringResource(R.string.essay_removed_detail),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-            }
+            WritingRemoved(header, onToday = { navigator.showRoot(AppTab.Today) }, onClose = navigator::closeTask)
         }
 
         is WritingStartState.Writing -> {
@@ -278,6 +258,35 @@ private fun WritingStart(
                     )
                 }
             }
+        }
+    }
+}
+
+/** A notice read again dropped this task: nothing was admitted or graded, and Today goes on without it. */
+@Composable
+internal fun WritingRemoved(
+    header: String,
+    onToday: () -> Unit,
+    onClose: () -> Unit,
+) {
+    RunPage(
+        onClose = onClose,
+        title = { BarTitle(header) },
+        bottomBar = {
+            TaskActionBar {
+                TaskActions { width ->
+                    Button(onClick = onToday, modifier = width) { Text(stringResource(R.string.essay_back_to_today)) }
+                }
+            }
+        },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(stringResource(R.string.essay_removed), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+            Text(
+                stringResource(R.string.essay_removed_detail),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+            )
         }
     }
 }
@@ -453,6 +462,7 @@ internal fun WriteScreen(
                     readOnly = ui.send == WritingSend.Pending,
                     textStyle = MaterialTheme.typography.bodyLarge,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                    colors = writingAreaColors(),
                 )
                 WritingLineCount(ui.text, essay.writing)
             }

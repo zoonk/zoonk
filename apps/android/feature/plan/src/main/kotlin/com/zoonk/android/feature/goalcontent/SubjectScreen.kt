@@ -51,6 +51,8 @@ import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.feature.writing.ChooseOnToday
 import com.zoonk.android.feature.writing.gradingReturnsLine
+import com.zoonk.android.feature.writing.toName
+import com.zoonk.android.feature.writing.writingTaskName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -259,7 +261,7 @@ internal fun SubjectPage(
         title = subject.shortName,
         onBack = actions.back,
         hero = { SubjectHero(syllabus, subject, written) },
-        aside = { SubjectAside(syllabus, subject, today, written = written != null) },
+        aside = { SubjectAside(syllabus, subject, today, written) },
         ask = ask,
         menu = menu,
         action =
@@ -279,7 +281,7 @@ internal fun SubjectPage(
         }
 
         item(key = "not-planned", contentType = "notice") { NotPlannedNotice(subject, writes, actions) }
-        written?.let { subjectWritten(it, actions.openAnswer) }
+        written?.let { subjectWritten(it, actions.openAnswer, standing = !asideBeside) }
 
         subjectChapters(subject, today, actions)
 
@@ -403,8 +405,8 @@ private val WrittenPracticeSubjectsInnerWriteActionsInner.choiceGroups: List<Str
 private data class PendingChoice(
     val all: Boolean,
     val groups: List<String>,
-    /** The one task that waits when others don't, as the notice names it. */
-    val task: String?,
+    /** The one task that waits when others don't. */
+    val task: WrittenPracticeSubjectsInnerWriteActionsInner?,
 )
 
 private fun pendingChoice(written: WrittenPracticeSubjectsInner): PendingChoice? {
@@ -417,13 +419,7 @@ private fun pendingChoice(written: WrittenPracticeSubjectsInner): PendingChoice?
     val waiting = actions.filter { it.status == NEEDS_CHOICE }
     val groups = waiting.flatMap { it.choiceGroups }.distinct()
     if (groups.isEmpty()) return null
-    val task =
-        waiting.singleOrNull()?.let { only ->
-            written.points.tasks
-                .firstOrNull { it.key == only.taskKey }
-                ?.name
-        }
-    return PendingChoice(all = waiting.size == actions.size, groups, task)
+    return PendingChoice(all = waiting.size == actions.size, groups, waiting.singleOrNull())
 }
 
 /** When every task's grading is used up for today, the first day one returns. */
@@ -483,7 +479,18 @@ private fun WriteButton(
     }
     // The bar's modifier sizes the action within the bar, so it goes on the outermost piece.
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        choice?.let { ChooseOnToday(it.groups, onChoose = openToday, task = it.task) }
+        choice?.let { pending ->
+            val task =
+                pending.task?.let { only ->
+                    writingTaskName(
+                        only.writingTask?.toName(),
+                        written.points.tasks
+                            .firstOrNull { it.key == only.taskKey }
+                            ?.name ?: only.taskKey,
+                    )
+                }
+            ChooseOnToday(pending.groups, onChoose = openToday, task = task)
+        }
         if (writeNow.failed) {
             Text(
                 stringResource(R.string.essay_finish_failed),

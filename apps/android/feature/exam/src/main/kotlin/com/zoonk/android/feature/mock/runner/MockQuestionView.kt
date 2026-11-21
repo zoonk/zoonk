@@ -65,6 +65,7 @@ import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.writingAreaColors
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
@@ -256,6 +257,7 @@ private fun EssayAnswer(
         onValueChange = { if (it.length <= MAX_ESSAY_CHARACTERS) viewModel.write(Answer.Text(it)) },
         modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
         readOnly = run.pending,
+        colors = writingAreaColors(),
         label =
             stringResource(
                 if (run.view.essayRubric == MockExam.EssayRubric.ENEM) R.string.mock_your_essay else R.string.questions_your_answer,

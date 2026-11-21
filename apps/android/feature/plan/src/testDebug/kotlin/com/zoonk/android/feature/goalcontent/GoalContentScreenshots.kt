@@ -48,6 +48,13 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.GoalChapter
+import com.zoonk.api.models.StudyBlockWritingAvailabilityOneOf
+import com.zoonk.api.models.WritingTask
+import com.zoonk.api.models.WrittenPracticeSubjectsInner
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerAnswersInnerCriteria
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerAvailability
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerWriteActionsInner
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerWriteActionsInnerAvailability
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -187,6 +194,49 @@ class GoalContentScreenshots {
             SubjectPage(syllabus, syllabus.subjects.first { it.key == key }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
         }
 
+        /** The written subject as [edit] changes it: graded by level, or waiting for an exam choice. */
+        @Composable
+        fun WrittenSubject(edit: (WrittenPracticeSubjectsInner) -> WrittenPracticeSubjectsInner) {
+            val exam = examSyllabus()
+            val practice = checkNotNull(exam.writtenPractice)
+            val syllabus = exam.copy(writtenPractice = practice.copy(subjects = practice.subjects?.map(edit)))
+            val (menu, ask) = tools(TutorScope.Subject(GOAL, "essay"))
+            SubjectPage(syllabus, syllabus.subjects.first { it.key == "essay" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
+        }
+
+        private fun gradedByLevel(written: WrittenPracticeSubjectsInner) =
+            written.copy(
+                scale = WrittenPracticeSubjectsInner.Scale.LEVELS,
+                points = written.points.copy(range = null, standing = null, tasks = written.points.tasks.map { it.copy(range = null) }),
+                answers =
+                    written.answers.map {
+                        it.copy(range = null, criteria = WrittenPracticeSubjectsInnerAnswersInnerCriteria(complete = 1L, total = 4L))
+                    },
+            )
+
+        private fun waitingForAChoice(written: WrittenPracticeSubjectsInner) =
+            gradedByLevel(written).copy(
+                writeActions =
+                    listOf(
+                        WrittenPracticeSubjectsInnerWriteActionsInner(
+                            WrittenPracticeSubjectsInnerWriteActionsInnerAvailability.StudyBlockWritingAvailabilityOneOfValue(
+                                StudyBlockWritingAvailabilityOneOf(StudyBlockWritingAvailabilityOneOf.Status.AVAILABLE),
+                            ),
+                            taskKey = "short",
+                        ),
+                        WrittenPracticeSubjectsInnerWriteActionsInner(
+                            WrittenPracticeSubjectsInnerWriteActionsInnerAvailability.WrittenPracticeSubjectsInnerAvailabilityValue(
+                                WrittenPracticeSubjectsInnerAvailability(
+                                    listOf("Specialty"),
+                                    WrittenPracticeSubjectsInnerAvailability.Status.NEEDS_CHOICE,
+                                ),
+                            ),
+                            taskKey = "long",
+                            writingTask = WritingTask(lines = 60L, points = 70.0, distinctLines = true, number = 2L, total = 2L),
+                        ),
+                    ),
+            )
+
         @Composable
         fun Chapter() {
             val (menu, ask) = tools(TutorScope.Chapter(chapterId(3)))
@@ -240,6 +290,8 @@ class GoalContentScreenshots {
                 "subject-exam" to { Subject("natural-sciences") },
                 "subject-skipped" to { Subject("spanish") },
                 "subject-written" to { Subject("essay") },
+                "subject-written-levels" to { WrittenSubject(::gradedByLevel) },
+                "subject-written-needs-choice" to { WrittenSubject(::waitingForAChoice) },
                 "subject-module" to { Subject("basics") },
                 "chapter" to { Chapter() },
                 "chapter-not-found" to {

@@ -70,6 +70,7 @@ import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.SyllabusTopic
+import com.zoonk.api.models.WrittenPracticeSubjectsInner
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import kotlinx.datetime.LocalDate as KotlinLocalDate
@@ -262,15 +263,21 @@ internal fun ColumnScope.SubjectAside(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     today: LocalDate,
-    written: Boolean = false,
+    written: WrittenPracticeSubjectsInner? = null,
 ) {
-    if (!written && (subject.notPlannedReason == null || subject.preparation != null)) {
+    // A written test leads with where it stands in points or levels: lessons are a small part of its time.
+    if (written != null) {
+        WrittenStanding(written)
+    } else if (subject.notPlannedReason == null || subject.preparation != null) {
         AsideSection(
             stringResource(if (subject.preparation == null) R.string.goalcontent_coverage else R.string.goalcontent_preparation),
         ) { SubjectCoverage(subject) }
     }
 
-    AsideSection(stringResource(R.string.goalcontent_details)) { SubjectDetails(syllabus, subject, today) }
+    // Details only when there's one to show: a written test has no question count, date or known lessons.
+    if (subject.questions?.let { it > 0 } == true || subject.nextDate != null || subject.lessonsKnown > 0) {
+        AsideSection(stringResource(R.string.goalcontent_details)) { SubjectDetails(syllabus, subject, today) }
+    }
 }
 
 @Composable

@@ -360,7 +360,10 @@ class EssayStore(
         blockId: UUID,
         previousAttemptId: UUID? = null,
     ): MutationResult<WritingStartAnswer> =
-        cache.mutate { session -> api.startAnswer(session, blockId, previousAttemptId) }.also { if (it is MutationResult.Done) dayChanged(blockId) }
+        cache
+            .mutate { session ->
+                api.startAnswer(session, blockId, previousAttemptId)
+            }.also { if (it is MutationResult.Done) dayChanged(blockId) }
 
     /** What [StudyOpener] asks as a tap opens a written block, so the essay opens past its start. */
     suspend fun startAnswer(

@@ -13,6 +13,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -40,6 +41,24 @@ fun writingTaskTitle(
         task != null -> stringResource(R.string.essay_write_the_question)
         lines != null -> stringResource(R.string.essay_write_lines_question, lines)
         else -> fallback ?: stringResource(R.string.essay_writing_practice)
+    }
+}
+
+/**
+ * A task named where it labels something rather than asks for it, such as its points on the written
+ * test's page: "The 30-line question", "Question 2", or [fallback], the notice's name, without its place.
+ */
+@Composable
+fun writingTaskName(
+    task: WritingTaskName?,
+    fallback: String,
+): String {
+    val lines = task?.lines
+    return when {
+        task != null && task.distinctLines && lines != null -> stringResource(R.string.essay_lines_question, lines)
+        task != null && task.total > 1 -> stringResource(R.string.essay_question_number, task.number)
+        task != null -> stringResource(R.string.essay_the_question)
+        else -> fallback
     }
 }
 
@@ -89,6 +108,6 @@ fun ChooseOnToday(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        TextButton(onClick = onChoose) { Text(stringResource(R.string.essay_choose_on_today)) }
+        TextButton(onClick = onChoose, edge = ButtonEdge.Start) { Text(stringResource(R.string.essay_choose_on_today)) }
     }
 }

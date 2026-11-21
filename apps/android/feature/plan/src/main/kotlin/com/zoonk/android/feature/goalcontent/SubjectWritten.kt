@@ -31,6 +31,8 @@ import com.zoonk.android.feature.writing.RangeMeter
 import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.minimumShare
 import com.zoonk.android.feature.writing.pointsRange
+import com.zoonk.android.feature.writing.toName
+import com.zoonk.android.feature.writing.writingTaskName
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -57,8 +59,10 @@ internal fun writtenSubject(
 internal fun LazyListScope.subjectWritten(
     written: WrittenPracticeSubjectsInner,
     openAnswer: (UUID) -> Unit,
+    /** Where the learner stands leads the list, unless the aside beside it shows it. */
+    standing: Boolean = true,
 ) {
-    item(key = "written-points", contentType = "written-points") { WrittenPoints(written) }
+    if (standing) item(key = "written-points", contentType = "written-points") { WrittenStanding(written) }
 
     val trend = written.trend.takeLast(TREND_SAMPLES)
     if (trend.isNotEmpty()) {
@@ -163,7 +167,7 @@ private fun minimumLine(points: WrittenPartPoints): String? {
  * question's share of them; or, while no points estimate exists for it, how its answers are graded.
  */
 @Composable
-private fun WrittenPoints(written: WrittenPracticeSubjectsInner) {
+internal fun WrittenStanding(written: WrittenPracticeSubjectsInner) {
     val points = written.points
     val minimumLine = minimumLine(points)
 
@@ -215,7 +219,11 @@ private fun WrittenPoints(written: WrittenPracticeSubjectsInner) {
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(task.name, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        writingTaskName(task.writingTask?.toName(), task.name),
+                        Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
                     PointsValue(task.range?.low, task.range?.high, task.max, decimals = decimals)
                 }
             }

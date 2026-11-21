@@ -37,6 +37,7 @@ import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.StudyBlock.Kind.LEARN
 import com.zoonk.api.models.StudyBlock.Kind.PRACTICE
+import com.zoonk.api.models.StudyBlock.Kind.PRODUCE
 import com.zoonk.api.models.StudyBlock.Kind.REVIEW
 import com.zoonk.api.models.StudyBlock.Status.COMPLETED
 import com.zoonk.api.models.StudyBlock.Status.PENDING
@@ -44,6 +45,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -135,6 +139,12 @@ class LessonEndScreenshots {
     @Config(qualifiers = PHONE)
     fun phoneDayPastMidpoint() =
         capture("past-midpoint", inSession(DAY_PAST_MIDPOINT, completed = 5, total = 8, deferred = 2), IN_SESSION_END)
+
+    /** A lesson of a written-area skill leaves a short writing exercise as the next row. */
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneDrillNext() =
+        capture("02-lesson-end", inSession(DAY_BEFORE_MIDPOINT, completed = 1, total = 3, blocks = DRILL_NEXT), IN_SESSION_END)
 
     @Test
     @Config(qualifiers = PHONE)
@@ -356,6 +366,27 @@ private val FIT: LessonFit =
          "course":{"chapterCount":8,"id":"00000000-0000-4000-8000-000000000032","minutes":240,"startChapterId":null,"title":"Weather, from the ground up"}}
         """.trimIndent(),
     )
+
+/** A lesson done, then a short writing exercise on what it taught, then another lesson. */
+private val DRILL_NEXT: JsonArray =
+    studyBlocks(LEARN to COMPLETED, PRODUCE to PENDING, LEARN to PENDING).let { blocks ->
+        JsonArray(
+            blocks.mapIndexed { index, block ->
+                if (index != 1) {
+                    block
+                } else {
+                    JsonObject(
+                        block.jsonObject +
+                            mapOf(
+                                "title" to JsonPrimitive("The 30-line question"),
+                                "writingUnit" to JsonPrimitive("drill"),
+                                "estimatedMinutes" to JsonPrimitive(8),
+                            ),
+                    )
+                }
+            },
+        )
+    }
 
 private val IN_SESSION_RENDER =
     inSession("""{"catchUp":null,"lead":"done","lessonsComing":false,"percent":33}""", completed = 1, total = 3, deferred = 2)

@@ -8,10 +8,15 @@
     <string name="essay_short_exercise_detail">To use what you just learned</string>
     <!-- A whole answer of an exam's written test, named by its line limit, such as 30 lines. -->
     <string name="essay_write_lines_question">Write the %1$d-line question</string>
-    <!-- A whole answer of an exam's written test, named by its place in the test when its line limit doesn't tell it apart, such as "Write question 2". -->
+    <!-- A whole answer of an exam's written test whose questions share a line limit, named by its place in the test. -->
     <string name="essay_write_question_number">Write question %1$d</string>
-    <!-- The one whole answer of an exam's written test. -->
+    <!-- The whole answer of an exam's written test that has one question. -->
     <string name="essay_write_the_question">Write the question</string>
+    <!-- One question of an exam's written test, named by its line limit, such as 30 lines. -->
+    <string name="essay_lines_question">The %1$d-line question</string>
+    <string name="essay_question_number">Question %1$d</string>
+    <!-- The only question of an exam's written test. -->
+    <string name="essay_the_question">The question</string>
     <!-- Under a written task: the day's extra grades are used, so it waits for tomorrow. -->
     <string name="essay_back_tomorrow">Back tomorrow: no more grading today</string>
     <!-- Under a written task: the day's extra grades are used, so it waits for a later day. %1$s is the date, such as "Nov 24". -->

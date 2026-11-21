@@ -101,7 +101,8 @@ internal fun WrittenProjectionScore(
             }
         }
 
-        if ((below != null || unmeasured != null) && writeNow != null) {
+        // Writing is the way on while any part has no points yet, graded by level too, or sits below its minimum.
+        if (projection.parts.any { it.range == null || it.standing == WrittenPartPoints.Standing.BELOW } && writeNow != null) {
             Button(onClick = { writeNow.write(null) }, modifier = Modifier.fillMaxWidth(), busy = writeNow.busy) {
                 Text(stringResource(R.string.essay_write))
             }

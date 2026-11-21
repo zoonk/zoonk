@@ -45,6 +45,8 @@ fun pointsRange(
     decimals: Int? = null,
     headline: Boolean = false,
 ): String {
+    // A zeroed score is "0", never "0.0" or "0–0".
+    if (low == 0.0 && high == 0.0) return formatNumber(0.0, currentLocale())
     val (from, to) = rangeEnds(low, high, decimals, headline, currentLocale())
     return if (from == to) from else stringResource(R.string.essay_range, from, to)
 }
@@ -58,7 +60,7 @@ fun deductionRange(
 ): String {
     val (from, to) = rangeEnds(low, high, decimals, headline = false, currentLocale())
     return when {
-        high <= 0 -> from
+        high <= 0 -> formatNumber(0.0, currentLocale())
         from == to -> stringResource(R.string.essay_minus, from)
         else -> stringResource(R.string.essay_minus_range, from, to)
     }
