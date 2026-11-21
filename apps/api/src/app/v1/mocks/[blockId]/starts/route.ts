@@ -2,7 +2,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { examError } from "@/lib/exam-errors";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { ensureWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
+import { ensureMockWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
 import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { startMock } from "@zoonk/core/exams/mocks/start";
 import { type NextRequest, NextResponse } from "next/server";
@@ -21,7 +21,7 @@ async function postStart(
   const result = await startMock({ blockId: path.blockId, input: body });
 
   if (result.status === "writing") {
-    const supply = await ensureWritingPrompts(result.request);
+    const supply = await ensureMockWritingPrompts(result.requests);
 
     return supply.status === "writing"
       ? NextResponse.json(

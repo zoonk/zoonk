@@ -1,26 +1,33 @@
+import { createHash } from "node:crypto";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { type WritingPromptStepName } from "@zoonk/core/library/generation/steps";
+import { getWritingPromptId, writeWritingItem } from "@zoonk/core/library/items/write-writing-item";
 import {
   type WritingSupplyInput,
-  getWritingPromptId,
   loadWritingSupply,
-  writeWritingItem,
-} from "@zoonk/core/library/items/write-writing-item";
+} from "@zoonk/core/library/items/writing-prompt-pool";
 import { reserveWritingPromptSpend } from "@zoonk/core/library/items/writing-prompt-spend";
 import { getWorkflowMetadata } from "workflow";
-import { startOnce } from "../_shared/run-token";
+import { getRun } from "workflow/api";
+import { claimRunToken, startOnce, waitForRun, waitForRunToken } from "../_shared/run-token";
 import { progressStep } from "../_shared/stream-status";
 
-async function writePromptStep(input: WritingSupplyInput, runId: string, slot: number) {
+type WritingPromptRun = { input: WritingSupplyInput; poolToken: string };
+
+async function writePromptStep(
+  { input, poolToken }: WritingPromptRun,
+  runId: string,
+  slot: number,
+) {
   "use step";
 
-  await writeWritingItem(input, getWritingPromptId(runId, slot));
+  await writeWritingItem(input, getWritingPromptId(runId, slot), poolToken);
 }
 
-async function admitPromptWorkStep(input: WritingSupplyInput, runId: string) {
+async function admitPromptWorkStep({ input, poolToken }: WritingPromptRun, runId: string) {
   "use step";
 
-  const supply = await loadWritingSupply(input);
+  const supply = await loadWritingSupply(input, poolToken);
   const count = supply?.missing ?? 0;
 
   if (count === 0) {
@@ -44,13 +51,21 @@ async function trackFailureStep() {
 }
 
 /** @internal */
-export async function writingPromptWorkflow(input: WritingSupplyInput) {
+export async function writingPromptWorkflow(run: WritingPromptRun) {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
 
   try {
-    const { count, status } = await admitPromptWorkStep(input, workflowRunId);
+    const token = run.poolToken;
+    // Only this run reports its learner's status. The pool claim serializes the shared writes.
+    using claim = await claimRunToken(token);
+
+    if (claim.conflict && !(await waitForRunToken(token))) {
+      throw new Error("The writing prompt pool is still being prepared.");
+    }
+
+    const { count, status } = await admitPromptWorkStep(run, workflowRunId);
 
     if (status !== "writing") {
       await progressStep<WritingPromptStepName>(
@@ -63,7 +78,7 @@ export async function writingPromptWorkflow(input: WritingSupplyInput) {
 
     for (let slot = 0; slot < count; slot += 1) {
       // oxlint-disable-next-line no-await-in-loop -- Each item changes the number of prompts still needed.
-      await writePromptStep(input, workflowRunId, slot);
+      await writePromptStep(run, workflowRunId, slot);
     }
 
     await progressStep<WritingPromptStepName>(
@@ -95,12 +110,78 @@ export async function ensureWritingPrompts(
     return { status: "ready" };
   }
 
-  const runId = await startOnce(
-    writingPromptWorkflow,
-    [input],
-    [`writing-prompt:${supply.blueprint.id}:${input.taskKey}`, ...supply.chosenSubjects].join(":"),
-  );
+  const { poolToken } = supply;
+
+  const runToken = writingToken("writing-prompt", [
+    input.userId,
+    input.goalId,
+    String(input.count),
+    poolToken,
+  ]);
+
+  const runId = await startOnce(writingPromptWorkflow, [{ input, poolToken }], runToken);
 
   const current = await loadWritingSupply(input);
-  return current?.missing === 0 ? { status: "ready" } : { runId, status: "writing" };
+  return !current || current.missing === 0 ? { status: "ready" } : { runId, status: "writing" };
+}
+
+function writingToken(prefix: string, parts: string[]): string {
+  return `${prefix}:${createHash("sha256").update(JSON.stringify(parts)).digest("hex")}`;
+}
+
+async function readWritingResultStep(runId: string) {
+  "use step";
+
+  const result = await getRun<Awaited<ReturnType<typeof writingPromptWorkflow>>>(runId).returnValue;
+  return result.status;
+}
+
+async function waitForWriting(runId: string) {
+  return (await waitForRun(runId)) ? readWritingResultStep(runId) : "failed";
+}
+
+async function writingBatchWorkflow(runIds: string[]) {
+  "use workflow";
+
+  const results = await Promise.all(runIds.map((runId) => waitForWriting(runId)));
+
+  if (results.every((status) => status !== "failed")) {
+    await progressStep<WritingPromptStepName>(
+      {
+        status: "completed",
+        step: results.includes("signUpRequired") ? "signUpRequired" : "writeWritingPrompt",
+      },
+      { last: true },
+    );
+
+    return;
+  }
+
+  await progressStep<WritingPromptStepName>(
+    { reason: "aiGenerationFailed", status: "error", step: "writeWritingPrompt" },
+    { last: true },
+  );
+
+  throw new Error("Writing prompt preparation did not finish.");
+}
+
+export async function ensureMockWritingPrompts(requests: WritingSupplyInput[]) {
+  const results = await Promise.all(requests.map((request) => ensureWritingPrompts(request)));
+  const runIds = results.flatMap((result) => (result.status === "writing" ? [result.runId] : []));
+  const first = runIds[0];
+
+  if (!first) {
+    return { status: "ready" as const };
+  }
+
+  const runId =
+    runIds.length === 1
+      ? first
+      : await startOnce(
+          writingBatchWorkflow,
+          [runIds],
+          writingToken("writing-batch", runIds.toSorted()),
+        );
+
+  return { runId, status: "writing" as const };
 }

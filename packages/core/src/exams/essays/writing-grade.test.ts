@@ -15,7 +15,11 @@ import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./_utils/writing-feedback";
-import { getWritingTaskBasis, matchesWritingTaskBasis } from "./_utils/writing-task-basis";
+import {
+  getWritingRubricFingerprint,
+  getWritingTaskBasis,
+  matchesWritingTaskBasis,
+} from "./_utils/writing-task-basis";
 import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS, essaySubmissionInputSchema } from "./essay-contract";
 import { getWritingAttempt } from "./get-writing-attempt";
 import { type WritingConditions, type WritingResult, writtenItemSchema } from "./writing-contract";
@@ -23,7 +27,6 @@ import { countWritingLines } from "./writing-lines";
 import {
   type WritingArithmetic,
   getWritingArithmetic,
-  getWritingRubricFingerprint,
   isNumericWritingRubric,
 } from "./writing-rubric-policy";
 

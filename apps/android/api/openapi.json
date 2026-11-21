@@ -2032,6 +2032,16 @@
               }
             }
           },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -20240,6 +20250,16 @@
               }
             }
           },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -20313,7 +20333,7 @@
     },
     "/goals/{goalId}/mocks/generations": {
       "post": {
-        "description": "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "description": "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. When today's extra writing allowance is used, the latter includes `details.returnsOn` and no written prompts are started.",
         "operationId": "createMockQuestionsGeneration",
         "security": [
           {
@@ -20927,6 +20947,16 @@
           },
           "402": {
             "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request forbidden",
             "content": {
               "application/json": {
                 "schema": {
@@ -41457,7 +41487,8 @@
           "gradesLeft": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991
+            "maximum": 9007199254740991,
+            "description": "Extra writing starts left today. A scheduled or already admitted answer can still be submitted."
           },
           "pacing": {
             "$ref": "#/components/schemas/WritingPacing"
@@ -78821,6 +78852,14 @@
               }
             ],
             "type": "object"
+          },
+          "writingUnit": {
+            "description": "The size of this writing block, when it is a writing drill or a whole answer",
+            "type": "string",
+            "enum": [
+              "drill",
+              "answer"
+            ]
           }
         },
         "required": [
@@ -95755,6 +95794,14 @@
                     }
                   ],
                   "type": "object"
+                },
+                "writingUnit": {
+                  "description": "The size of this writing block, when it is a writing drill or a whole answer",
+                  "type": "string",
+                  "enum": [
+                    "drill",
+                    "answer"
+                  ]
                 }
               },
               "required": [

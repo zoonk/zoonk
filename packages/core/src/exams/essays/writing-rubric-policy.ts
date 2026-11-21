@@ -1,7 +1,6 @@
-import { createHash } from "node:crypto";
 import { type z } from "zod";
 import { ENEM_WRITING_MAX, hasEnemCompetences } from "./_utils/enem-writing";
-import { getWritingGradingFacts, getWritingRounding } from "./_utils/writing-task-basis";
+import { getWritingRounding, getWritingRubricFingerprint } from "./_utils/writing-task-basis";
 import { type writtenItemSchema } from "./writing-contract";
 
 type Basis = Pick<z.infer<typeof writtenItemSchema>, "criteria" | "grading" | "points">;
@@ -48,12 +47,6 @@ export function getWritingArithmetic(
   }
 
   return passed.arithmetic;
-}
-
-export function getWritingRubricFingerprint({ grading, points }: Basis): string {
-  return createHash("sha256")
-    .update(JSON.stringify({ ...getWritingGradingFacts(grading), points }))
-    .digest("hex");
 }
 
 export function isNumericWritingRubric(basis: Basis): boolean {

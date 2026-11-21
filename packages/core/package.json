@@ -388,6 +388,7 @@
     "./library/items/repairs": "./src/library/items/item-repairs.ts",
     "./library/items/set-checks": "./src/library/items/item-set-checks.ts",
     "./library/items/set-view": "./src/library/items/item-set-view.ts",
+    "./library/items/writing-prompt-pool": "./src/library/items/writing-prompt-pool.ts",
     "./library/items/writing-prompt-spend": "./src/library/items/_utils/writing-prompt-spend.ts",
     "./library/items/write-writing-item": "./src/library/items/write-writing-item.ts",
     "./library/language/alphabet-identity": "./src/library/language/alphabet/alphabet-identity.ts",

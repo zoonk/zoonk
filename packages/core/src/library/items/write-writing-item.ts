@@ -1,29 +1,24 @@
 import "server-only";
-import { type CallWait } from "@zoonk/ai/provider-options";
 import {
   type WritingPromptOutput,
   writeWritingPrompt,
 } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { prisma } from "@zoonk/db";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
-import { readExamPicks } from "../../exams/choices/exam-choices";
 import { ENEM_WRITING_MAX, hasEnemCompetences } from "../../exams/essays/_utils/enem-writing";
-import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
-import { getWritingScope, toChosenSubjects } from "../../exams/essays/_utils/writing-scope";
+import { type listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { getWritingTaskBasis } from "../../exams/essays/_utils/writing-task-basis";
 import { getNamedEssayRubric } from "../../exams/essays/essay-rubric";
 import { type WritingPrompt, writtenItemSchema } from "../../exams/essays/writing-contract";
 import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
-import { type WritingRequest, findWritingPrompts } from "../../exams/essays/writing-supply";
 import { getWrittenPartMinimum } from "../../exams/scoring/written-points";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getWritingSkillIds } from "../../learner/writing-skills";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toProvenanceData } from "../_utils/library-rows";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
-import { readBlueprintContent } from "../exams/save-exam-blueprint";
 import { createSkill } from "../skills/create-skill";
-import { readWritingPool } from "./writing-prompt-pool";
+import { type WritingSupplyInput, loadWritingSupply, readWritingPool } from "./writing-prompt-pool";
 
 const DRILL_WORD_FLOOR = 5;
 const WHOLE_ANSWER_WORD_FLOOR = 30;
@@ -32,61 +27,6 @@ const MINIMUM_WORDS_PER_LINE = 3;
 
 export function getWritingPromptId(runId: string, slot: number): string {
   return getAnswerAttemptId({ key: String(slot), questionId: runId, userId: "writing-prompt" });
-}
-
-export type WritingSupplyInput = Omit<WritingRequest, "count"> & {
-  count: number;
-  goalId: string;
-  userId: string;
-  wait?: CallWait;
-};
-
-export async function loadWritingSupply(input: WritingSupplyInput) {
-  const { goalId, userId } = input;
-
-  const goal = await prisma.goal.findFirst({
-    select: {
-      examBlueprint: true,
-      language: true,
-      plan: { select: { graph: true, settings: true } },
-    },
-    where: { id: goalId, kind: "exam", userId },
-  });
-
-  const blueprint = goal?.examBlueprint;
-
-  if (!goal || !blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
-    return null;
-  }
-
-  const { structure } = readBlueprintContent(blueprint);
-
-  const task = listPracticeWritingTasks({ classTest: Boolean(blueprint.ownerId), structure }).find(
-    ({ key }) => key === input.taskKey,
-  );
-
-  if (!task) {
-    return null;
-  }
-
-  const scope = getWritingScope({ picks: readExamPicks(goal.plan?.settings), structure, task });
-
-  if (!scope.available) {
-    return null;
-  }
-
-  const result = await findWritingPrompts({ goalId, requests: [input], tx: prisma, userId });
-  const missing = result.status === "missing" ? (result.requests[0]?.count ?? 0) : 0;
-
-  return {
-    blueprint,
-    chosenSubjects: toChosenSubjects(scope.choices),
-    goal,
-    missing,
-    scope,
-    structure,
-    task,
-  };
 }
 
 function getAnswerWordFloor({
@@ -207,7 +147,11 @@ export function promptContent({
   };
 }
 
-export async function writeWritingItem(input: WritingSupplyInput, itemId: string) {
+export async function writeWritingItem(
+  input: WritingSupplyInput,
+  itemId: string,
+  poolToken?: string,
+) {
   const alreadySaved = await prisma.item.findUnique({
     select: { id: true },
     where: { id: itemId },
@@ -217,7 +161,7 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
     return;
   }
 
-  const supply = await loadWritingSupply(input);
+  const supply = await loadWritingSupply(input, poolToken);
 
   if (!supply || supply.missing === 0) {
     return;

@@ -55,9 +55,20 @@ describe("ending a session", () => {
     const { lessons, session, user } = await setup();
     const [first, second] = session.blocks;
 
-    await startStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId: session.id });
+    await expect(
+      startStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId: session.id }),
+    ).resolves.toMatchObject({ status: "ready" });
 
     await Promise.all([
+      prisma.studySession.update({
+        data: {
+          missions: {
+            picks: [{ anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 }],
+            version: 1,
+          },
+        },
+        where: { id: session.id },
+      }),
       learningEventFixture({
         brainPower: 40,
         contentIds: { lessonId: lessons[0]?.id ?? "", studySessionId: session.id },

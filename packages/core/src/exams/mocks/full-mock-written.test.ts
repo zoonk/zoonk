@@ -275,9 +275,15 @@ describe("written mock sittings", () => {
       itemId: short.id,
     });
 
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 5000));
+
     await expect(saveMockAnswer({ blockId: id, input })).resolves.toStrictEqual({
       status: "saved",
     });
+
+    await expect(
+      prisma.mockExamAnswer.findFirst({ where: { itemId: short.id, mockExamId: id } }),
+    ).resolves.toMatchObject({ durationMs: 5000 });
 
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + SESSION_LENGTH_MS - 1000));
     await submitMockSection({ blockId: id, input: UTC, section: 0 });

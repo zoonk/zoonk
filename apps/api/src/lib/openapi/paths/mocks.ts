@@ -79,6 +79,7 @@ export const mockPaths = {
         },
         ...commonErrors,
         "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
+        "403": forbiddenResponse,
         "409": { ...conflictResponse, description: "The goal is paused" },
         "422": {
           ...unprocessableEntityResponse,
@@ -101,7 +102,7 @@ export const mockPaths = {
   "/goals/{goalId}/mocks/generations": {
     post: {
       description:
-        "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. When today's extra writing allowance is used, the latter includes `details.returnsOn` and no written prompts are started.",
       operationId: "createMockQuestionsGeneration",
       requestBody: {
         content: { "application/json": { schema: mockQuestionsInputSchema } },
@@ -238,6 +239,7 @@ export const mockPaths = {
         "204": { description: "Running" },
         ...commonErrors,
         "402": paymentRequiredResponse,
+        "403": forbiddenResponse,
         "409": {
           ...conflictResponse,
           description: "The mock or its block already finished, or the mock expired",

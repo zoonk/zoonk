@@ -82,12 +82,15 @@ export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status">
   };
 }
 
-export function getNextBlockId(blocks: readonly StudySessionBlock[]): string | null {
-  const next =
+export function getNextBlock<Block extends Pick<StudyBlockView, "status" | "writingAvailability">>(
+  blocks: readonly Block[],
+): Block | undefined {
+  return (
     blocks.find((block) => block.status === "active") ??
-    blocks.find((block) => block.status === "pending");
-
-  return next?.id ?? null;
+    blocks.find(
+      (block) => block.status === "pending" && block.writingAvailability?.status !== "tomorrow",
+    )
+  );
 }
 
 /** Adds only persisted session and block ids to the shared display projection. */
@@ -110,23 +113,28 @@ export function toStudySessionView(
 
   const answeredItemIds = new Set(input.answers.flatMap((answer) => answer.itemId ?? []));
 
+  const blocks =
+    input.blockViews ??
+    session.blocks.map((block) =>
+      toStudyBlockView({
+        answeredItemIds,
+        block,
+        blockedTestOutChapters,
+        blocks: session.blocks,
+        oftenTestedSkillIds,
+        subject: blockSubjects.get(block.position) ?? null,
+      }),
+    );
+
+  const next = getNextBlock(blocks);
+
   return withDayState({
     ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
-    blocks:
-      input.blockViews ??
-      session.blocks.map((block) =>
-        toStudyBlockView({
-          answeredItemIds,
-          block,
-          blockedTestOutChapters,
-          blocks: session.blocks,
-          oftenTestedSkillIds,
-          subject: blockSubjects.get(block.position) ?? null,
-        }),
-      ),
+    blocks,
     id: session.id,
     missions: input.missions,
-    nextBlockId: getNextBlockId(session.blocks),
+    nextBlockId: next?.id ?? null,
+    nextPosition: next?.position ?? null,
     status: session.status,
   });
 }

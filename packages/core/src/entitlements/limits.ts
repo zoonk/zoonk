@@ -137,6 +137,8 @@ const OUTLINE_COST_MICROS = 150_000;
 
 const MOCK_QUESTIONS_COST_MICROS = 600_000;
 
+export const ESSAY_GRADE_COST_MICROS = 20_000;
+
 export const TYPED_GRADE_COST_MICROS = 5000;
 
 /** Costs are USD millionths; reusable content is free. */

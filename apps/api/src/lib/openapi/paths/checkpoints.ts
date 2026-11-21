@@ -25,6 +25,7 @@ import {
 import { planChangeInvalidResponse } from "../schemas/plan-errors";
 import {
   conflictResponse,
+  forbiddenResponse,
   guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
@@ -161,6 +162,7 @@ export const checkpointPaths = {
           ...paymentRequiredResponse,
           description: `The learner's plan leaves it to Plus (\`status\` \`plusRequired\` on the challenge): a language phase/final call on Free or after Plus lapses, a mock without mocks in the plan. Error code: ${studySessionErrorCodes.plusRequired}.`,
         },
+        "403": forbiddenResponse,
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,

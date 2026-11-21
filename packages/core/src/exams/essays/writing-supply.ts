@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { readExamPicks } from "../choices/exam-choices";
 import { readEssayContent } from "./_utils/essay-content";
@@ -15,11 +15,13 @@ export type WritingRequest = {
 };
 
 export async function findWritingPrompts({
+  goal: ownedGoal,
   goalId,
   requests,
   tx,
   userId,
 }: {
+  goal?: WritingGoal;
   goalId: string;
   requests: WritingRequest[];
   tx: TransactionClient;
@@ -27,7 +29,7 @@ export async function findWritingPrompts({
 }): Promise<
   { itemIds: string[]; status: "ready" } | { requests: WritingRequest[]; status: "missing" }
 > {
-  const bank = await loadUnseenWritingPrompts({ goalId, requests, tx, userId });
+  const bank = await loadUnseenWritingPrompts({ goal: ownedGoal, goalId, requests, tx, userId });
   const used = new Set<string>();
   const missing: WritingRequest[] = [];
   const itemIds: string[] = [];
@@ -60,25 +62,53 @@ export async function findWritingPrompts({
     : { itemIds, status: "ready" };
 }
 
+type WritingGoal = Pick<Goal, "examBlueprintId" | "id" | "kind" | "language" | "userId">;
+
+async function loadWritingContext({
+  goal,
+  goalId,
+  tx,
+  userId,
+}: {
+  goal?: WritingGoal;
+  goalId: string;
+  tx: TransactionClient;
+  userId: string;
+}) {
+  if (!goal) {
+    return tx.goal.findFirst({
+      select: { examBlueprint: true, language: true, plan: { select: { settings: true } } },
+      where: { id: goalId, kind: "exam", userId },
+    });
+  }
+
+  if (!goal.examBlueprintId || goal.kind !== "exam" || goal.userId !== userId) {
+    return null;
+  }
+
+  const examBlueprint = await tx.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } });
+  const plan = await tx.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } });
+
+  return { examBlueprint, language: goal.language, plan };
+}
+
 export async function loadUnseenWritingPrompts({
+  goal: ownedGoal,
   goalId,
   requests,
   tx,
   userId,
 }: {
+  goal?: WritingGoal;
   goalId: string;
   requests?: readonly WritingRequest[];
   tx: TransactionClient;
   userId: string;
 }) {
-  const goal = await tx.goal.findFirst({
-    select: { examBlueprint: true, language: true, plan: { select: { settings: true } } },
-    where: { id: goalId, kind: "exam", userId },
-  });
-
+  const goal = await loadWritingContext({ goal: ownedGoal, goalId, tx, userId });
   const blueprint = goal?.examBlueprint;
 
-  if (!blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
+  if (!goal || !blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
     return [];
   }
 

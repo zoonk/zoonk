@@ -595,10 +595,8 @@ describe("a class test days away", () => {
     const { goal, plan } = await setup({ dailyMinutes: 30, days: 3, plus: false });
     await addAnnouncedEssay(goal);
 
-    const [session, items] = await Promise.all([
-      getTodayStudySession({ goalId: goal.id }),
-      loadItems(plan.id),
-    ]);
+    const session = await getTodayStudySession({ goalId: goal.id });
+    const items = await loadItems(plan.id);
 
     if (session.status !== "ready") {
       throw new Error(`Expected the day's session, got ${session.status}`);
