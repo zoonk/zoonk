@@ -49,6 +49,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextIndent
@@ -93,6 +94,13 @@ private const val ARROW_SIZE = 0.75f
 
 /** Zero width: where a wrapped line may split, invisible while it fits. */
 private const val BREAK_POINT = '\u200B'
+
+/**
+ * Geist Mono has no glyph for [BREAK_POINT], so Android draws it in a fallback font, and keeps a `.`
+ * or `,` right after it in that font, narrower than a column. Set in the system font, it ends the
+ * mono run, and the character after it starts one of its own.
+ */
+private val BREAK_POINT_STYLE = SpanStyle(fontFamily = FontFamily.Default)
 private const val OPENERS = "([{,"
 private const val CLOSERS = ")]}"
 
@@ -133,11 +141,15 @@ internal fun breaksBetween(
     after: Char,
 ): Boolean = after == '.' || (before in OPENERS && after !in CLOSERS)
 
+private fun AnnotatedString.Builder.appendBreakPoint() {
+    withStyle(BREAK_POINT_STYLE) { append(BREAK_POINT) }
+}
+
 /** [text] with its break points, for inline code in a sentence. */
-fun withBreakPoints(text: String): String =
-    buildString {
+fun withBreakPoints(text: String): AnnotatedString =
+    buildAnnotatedString {
         text.forEachIndexed { index, char ->
-            if (index > 0 && breaksBetween(text[index - 1], char)) append(BREAK_POINT)
+            if (index > 0 && breaksBetween(text[index - 1], char)) appendBreakPoint()
             append(char)
         }
     }
@@ -160,7 +172,7 @@ fun styledCodeLine(
             withStyle(colors.style(token.kind)) {
                 token.text.forEachIndexed { index, char ->
                     val splittable = index == 0 || token.kind == CodeTokenKind.Plain
-                    if (!field && splittable && previous?.let { breaksBetween(it, char) } == true) append(BREAK_POINT)
+                    if (!field && splittable && previous?.let { breaksBetween(it, char) } == true) appendBreakPoint()
 
                     if (char == '\t' && !field) {
                         val spaces = TAB_SIZE - column % TAB_SIZE
