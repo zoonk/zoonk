@@ -13,7 +13,7 @@ export const exampleLinesTask: Task<
   OptionalCountry<
     Omit<
       GenerateExampleLinesParams,
-      "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback"
+      "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback" | "wait"
     > & { learnerHomeCountry?: string | null }
   >,
   ExampleLinesOutput
@@ -25,6 +25,7 @@ export const exampleLinesTask: Task<
       ...input,
       country: input.country ?? null,
       learnerHomeCountry: input.learnerHomeCountry ?? null,
+      wait: "learner",
     }),
   id: "example-lines",
   name: "Example lines",

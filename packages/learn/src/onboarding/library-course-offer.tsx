@@ -25,7 +25,7 @@ export function LibraryCourseOffer({
       <BookOpenIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-sm font-medium">{course.title}</span>
-        <span className="text-muted-foreground text-xs text-pretty">
+        <span className="text-muted-foreground text-xs">
           {t("Or start this ready-made course now")}
         </span>
       </span>

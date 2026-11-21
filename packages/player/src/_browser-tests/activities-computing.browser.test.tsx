@@ -9,6 +9,7 @@ import {
   openActivity,
   press,
 } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { runProgram } from "../activities/_sandbox/run-program";
 import { REGEX_TIME_LIMIT_MS } from "../activities/_sandbox/sandbox-host";
 
@@ -113,6 +114,26 @@ describe("computing activities", () => {
     await expect.element(page.getByText("map returns a new array.")).toBeVisible();
     await checkActivity();
     await expectVerdict("Not quite");
+  });
+
+  it("code runner: output wider than its box can be reached and scrolled by keyboard", async () => {
+    const wide = {
+      ...javascriptRunner,
+      fields: {
+        ...javascriptRunner.fields,
+        starterCode: `const numbers = [1, 2, 3];\nconst doubled = numbers.map((n) => n);\nconsole.log("${"wide ".repeat(30)}");`,
+      },
+    };
+
+    await atViewport({ height: 800, width: 320 }, async () => {
+      openActivity({ content: wide, template: "codeRunner" });
+      await page.getByRole("button", { name: "Run" }).click();
+      await expect.element(page.getByText(/^wide(?: wide)+$/u)).toBeVisible();
+
+      await expect
+        .element(page.getByRole("group", { name: "Output" }))
+        .toHaveAttribute("tabindex", "0");
+    });
   });
 
   it("code runner: a run still going at Check never replaces the checked output", async () => {

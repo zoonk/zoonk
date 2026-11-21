@@ -3,6 +3,7 @@ import { type TransactionClient } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type ContentFixMediaNeed, clipMediaKey } from "../../media-schema";
+import { translationDistractorEffects } from "../word-distractors";
 import {
   type ScreenList,
   type ScreenMediaLink,
@@ -92,6 +93,24 @@ function declarationRomanization({
   }
 
   return row ? row.romanization : (entry.romanization ?? null);
+}
+
+export function distractorEffects({
+  list,
+  wordRefs,
+  words,
+}: {
+  list: ScreenList;
+  wordRefs: Map<string, string>;
+  words: ScreenSnapshot["words"];
+}) {
+  return (list.words ?? []).flatMap((entry) => {
+    const wordId = wordRefs.get("id" in entry ? entry.id : entry.key);
+
+    return entry.distractors && wordId
+      ? translationDistractorEffects({ distractors: entry.distractors, wordId, words })
+      : [];
+  });
 }
 
 export async function resolveVocabulary(

@@ -188,7 +188,7 @@ function TomorrowRow() {
       <StepRows>
         <StepRow>
           <BookOpenIcon aria-hidden="true" />
-          <span className="min-w-0 flex-1 font-medium text-pretty">{summary.tomorrow.title}</span>
+          <span className="min-w-0 flex-1 font-medium">{summary.tomorrow.title}</span>
         </StepRow>
       </StepRows>
 

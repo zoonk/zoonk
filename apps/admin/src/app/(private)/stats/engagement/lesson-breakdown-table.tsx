@@ -1,7 +1,6 @@
 import { AdminTableRow } from "@/components/admin-table-row";
 import { formatDuration } from "@/lib/format-duration";
 import { getAdminLessonKindLabel } from "@/lib/lesson-label";
-import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 
 type LessonBreakdownData = {
@@ -13,7 +12,7 @@ type LessonBreakdownData = {
 
 export function LessonBreakdownTable({ data }: { data: LessonBreakdownData[] }) {
   return (
-    <Table scrollLabels={SCROLL_LABELS}>
+    <Table scrollLabel="Table">
       <TableHeader>
         <AdminTableRow>
           <TableHead>Lesson type</TableHead>

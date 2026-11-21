@@ -6,7 +6,6 @@
   "profile_questions_activities_title": "61f58f998b64f088580cd78ebaabcbf6d61755ec5da99fa50d232b7697a1f975",
   "profile_questions_add": "4238e8fa919a305c4f74c19bf8c197c18de1696a7e4ce9abb25af15bf27d1e90",
   "profile_questions_address_title": "e71d318fde0e986d61f15900981456887390aa0cf5494e8451e839884e062f88",
-  "profile_questions_cap": "8a9fb1ca1e5b0404ad8b1c9a2afbe6603f8fb338197bcc8b208902c938e64b14",
   "profile_questions_condition_note": "e2afcfb8dc366b8d5242621ff58d9f10e105e50a2641c356ae45916ff1a11747",
   "profile_questions_conditions_description": "624689c00ff76a75f543fb53ce9f25e18db4490010d4915390f82e31a8dd1fd7",
   "profile_questions_conditions_description_settings": "8922208c59406c12e480d7034a6d0b4c151e2cf9511d91a1103d54d2434702dc",
@@ -16,7 +15,6 @@
   "profile_questions_earlier_answer": "90b240362418afb2f966535b67754f0f46c9edcb53c90845a6308dc2481255d6",
   "profile_questions_for_fun": "269be49c952b69e4ab195380d92c2ba5f6822059022cd071344a98296f2772e9",
   "profile_questions_how_learn": "77465e7305b0abd137c82484ee95e6474a2d93e046f11a3cf83e6bb24fdbd97b",
-  "profile_questions_interest_description": "0dfb5354541625c784c0bd07c3cf31fba18b433d2193d1e7ac3c39a4b7a56785",
   "profile_questions_job": "fc92fc3bd65d78dd70efe08a6e462d3795fae3af6ad68b9f2a2c05bf69e2d963",
   "profile_questions_job_placeholder": "65be8768dd5f0866015f9196f2b7a905d1b8376b6dd931ffe556b2af832959bd",
   "profile_questions_lesson_ready": "9652974b5c0042e721988347358993c971b959387df944eb7dca33270069c04a",
@@ -35,6 +33,7 @@
   "profile_questions_read_favorites": "a42531ce0f1758408e8e0c5b700e9044b819ee47cfc0fa4650f574c3972071d3",
   "profile_questions_read_placeholder": "65402e3ce374eb6debf3b8bd8514641bcd574c14c42993c0b81f8714df9727a7",
   "profile_questions_read_title": "eff5ffa1c87a4c2fb7c825cbeb52b1b5ec1f71d444e8538a5b1154254459350f",
+  "profile_questions_remove_tool": "8281fd346471c666b32aeadc8e930747d3f0bf01eed37e4ccd1a32c7784d065a",
   "profile_questions_row_activities": "01193cfe585c51ef5d64edd643a21c373d4ee76872a3219397f460e1cd97802f",
   "profile_questions_row_address": "54364d804306e95c8d4cc21a160a0e677682910c24c36778d0e69f4ba58151f4",
   "profile_questions_row_conditions": "97db39ca153eb04964682aec2b63d36db72c2d593c4d9be60f2bf01e3c386d20",
@@ -52,7 +51,7 @@
   "profile_questions_skip_all_label": "7e0c89cd93c05a8accb8a5b6cf8575f20994da19d7d103f2a9398c9d88427b3b",
   "profile_questions_something_else": "901331e4746338e6b22ba82495a9b6db18786e3388a3354a25be2989fc136b9b",
   "profile_questions_start_lesson": "d566b892b0a489ff1ba0d910910a63570fc79472e26eb280b3646a7053b0a692",
-  "profile_questions_studies_description": "1542a9543fd227f3c6b50ba427f90e986057dbe261a23802099a132757124d86",
+  "profile_questions_studies_description": "d88bb7d0467febbe5dabb7cf1507e790ca424fa35511c4c488e30770f676ef58",
   "profile_questions_studies_title": "9bafda741be87e066b67e66dda667db7d964fc86d5ed169a2a5a3455fae3b766",
   "profile_questions_subject": "14f0007c8c421f42ec5a99e58581b4348f8336d808a5f1ef2a44099a7bbd1a4a",
   "profile_questions_subject_placeholder": "9511fcd427d8d6521c6dfcdfa08fe1c876148139fb9bfd06146a62c8a365d83c",
@@ -64,7 +63,6 @@
   "profile_questions_support_placeholder": "3cd2038085f57512e8b9f67839b9ec62264b8f400cc7d8b2f24738b623a8c1b5",
   "profile_questions_support_title": "6488b1e8816c173042d4c824c2d76c0c80eff315e3bef1c14a1fbfd3bbe7856c",
   "profile_questions_title": "abda59ef7fe3ccced5a0ac2d892f5c575b09136e1805b3262110c13cec4e7dfc",
-  "profile_questions_tools_description": "cfdaadd91c853c31fe1a96d9136271e98e2b128a814ab2e58bbe1220ce464b65",
   "profile_questions_tools_other": "fc6b323840a9892a7a57486670ebafc072ffdff1b53762d4c32f4dd3b586671b",
   "profile_questions_tools_placeholder": "4466f004b14875dceee71ce974f79a85d4bed2f87cf0a1d4344e180e35efa80a",
   "profile_questions_tools_title": "de543972e1c7693d24ca698d38f4a4936da1d61b82e1a498ca207bcef1f1d8b8",
@@ -85,7 +83,6 @@
     <string name="profile_questions_skip_all_label">Seninle ilgili kalan soruları atla</string>
     <string name="profile_questions_never_ask">Bu soruları bir daha sorma</string>
     <string name="profile_questions_never_ask_help">Bu soruları istediğin zaman Ayarlar › Seni tanıyalım bölümünden cevaplayabilirsin.</string>
-    <string name="profile_questions_cap">En fazla 3 tane seç.</string>
     <string name="profile_questions_work_title">Şu anda ne işle uğraşıyorsun?</string>
     <string name="profile_questions_work_description">Örneklerinde günlük hayatından durumlara yer vereceğiz.</string>
     <string name="profile_questions_job">Mesleğin (isteğe bağlı)</string>
@@ -93,15 +90,13 @@
     <string name="profile_questions_earlier_answer">Önceki cevabından</string>
     <string name="profile_questions_prefer_not">Söylemek istemiyorum</string>
     <string name="profile_questions_tools_title">En çok hangi uygulamaları ve araçları kullanıyorsun?</string>
-    <string name="profile_questions_tools_description">En fazla 3 tane seç. Bunları örneklerinde kullanacağız.</string>
     <string name="profile_questions_tools_other">Diğerleri (isteğe bağlı)</string>
     <string name="profile_questions_tools_placeholder">Örn. Photoshop, Python, SAP</string>
     <string name="profile_questions_studies_title">Hangi alanlarda eğitim aldın?</string>
-    <string name="profile_questions_studies_description">Geçmişte aldığın ya da şu an devam ettiğin eğitimler olabilir. Bitirmiş olman veya işinle ilgili olması gerekmez.</string>
+    <string name="profile_questions_studies_description">Geçmişte ya da şu anda, tamamlanmış olsun ya da olmasın.</string>
     <string name="profile_questions_subject">%1$s: program veya alan (isteğe bağlı)</string>
     <string name="profile_questions_which_field">Hangi alan?</string>
     <string name="profile_questions_subject_placeholder">Örn. gazetecilik</string>
-    <string name="profile_questions_interest_description">En fazla 3 tane seç. Bunları derslerindeki örneklerde kullanacağız.</string>
     <string name="profile_questions_watch_title">Neler izlemeyi seversin?</string>
     <string name="profile_questions_watch_favorites">En sevdiğin diziler, filmler, takımlar veya kanallar (isteğe bağlı)</string>
     <string name="profile_questions_watch_placeholder">Örn. Star Trek, Formula 1</string>
@@ -159,6 +154,8 @@
     <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Kaydedildi</string>
     <string name="profile_questions_add">Ekle</string>
+    <!-- Removes a tool the learner typed. {tool} is its name, such as Photoshop. -->
+    <string name="profile_questions_remove_tool">%1$s öğesini kaldır</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d kaydedildi</item>
         <item quantity="other">%1$d kaydedildi</item>

@@ -2357,11 +2357,6 @@ msgid "Play or pause the audio"
 msgstr "Lire ou mettre en pause l’audio"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "PpAjCi"
-msgid "Flag a question in a mock exam"
-msgstr "Marquer une question dans un examen blanc"
-
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "uY3Caj"
 msgid "Close or leave"
 msgstr "Fermer ou quitter"
@@ -2405,6 +2400,11 @@ msgstr "Afficher ou masquer la barre latérale"
 msgctxt "DOENlK"
 msgid "Tap the rhythm in a music question"
 msgstr "Appuyer en rythme dans une question de musique"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "HmGSbZ"
+msgid "Mark an answer as not sure in a mock exam"
+msgstr "Marquer une réponse comme « J’hésite » dans un examen blanc"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"
@@ -3067,10 +3067,11 @@ msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
 msgstr "{goals, plural, one {# objectif} other {# objectifs}} · {lessons, plural, one {# leçon} other {# leçons}} par mois"
 
+#. Beside the numbers 1 to 4, one per week, in a picture of a month of study.
 #: src/components/pricing/plus-adds.tsx
-msgctxt "RdGReZ"
-msgid "Week {number, number}"
-msgstr "Semaine {number, number}"
+msgctxt "g6-IGw"
+msgid "Weeks"
+msgstr "Semaines"
 
 #. Small label over a section that shows what a subscription adds.
 #: src/components/pricing/plus-adds.tsx

@@ -1,12 +1,14 @@
 import "server-only";
 import { type MasteryState, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { loadAnswersReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
+import {
+  loadAnswersReviewSkillIds,
+  loadLessonReviewSkillIds,
+} from "../../learner/_utils/lesson-plan-skills";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { readBlockPayload } from "../block-payload";
-import { capReviewDay } from "../capsules";
+import { capReviewDay, getCapsuleOpening } from "../capsules";
 import { isExamTomorrow } from "./exam-tomorrow";
-import { getLessonComesBack } from "./lesson-block";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { type SessionAnswer, getDueItemIds } from "./session-answers";
 import { type StudySessionRow } from "./study-session-access";
@@ -61,7 +63,7 @@ export async function loadComesBack({
     }));
 }
 
-/** Returns learner-local opening date labels for completed lessons. */
+/** Returns learner-local opening date labels for completed lessons, never later than the goal's date. */
 export async function loadSealedCapsules({
   session,
   timeZone,
@@ -71,22 +73,50 @@ export async function loadSealedCapsules({
   timeZone: string;
   userId: string;
 }): Promise<{ lessonId: string; opensOn: Date | null; title: string | null }[]> {
-  const lessons = session.blocks.filter(
-    (block) => block.kind === "learn" && block.status === "completed" && block.lessonId,
+  const lessons = session.blocks.flatMap((block) =>
+    block.kind === "learn" && block.status === "completed" && block.lessonId
+      ? [{ block, lessonId: block.lessonId }]
+      : [],
   );
 
-  return Promise.all(
-    lessons.map(async (block) => ({
-      lessonId: block.lessonId ?? "",
-      opensOn: await getLessonComesBack({
-        lessonId: block.lessonId,
-        targetDate: session.goal?.targetDate ?? null,
-        timeZone,
-        userId,
-      }),
-      title: readBlockPayload(block).title,
-    })),
-  );
+  if (lessons.length === 0) {
+    return [];
+  }
+
+  const skillIdsOf = await loadLessonReviewSkillIds({
+    lessonIds: [...new Set(lessons.map((lesson) => lesson.lessonId))],
+    userId,
+  });
+
+  const memories = await prisma.learnerSkill.findMany({
+    select: { due: true, skillId: true },
+    where: { skillId: { in: [...new Set([...skillIdsOf.values()].flat())] }, userId },
+  });
+
+  const dueOf = new Map(memories.map((memory) => [memory.skillId, memory.due]));
+  const today = getDateInTimeZone({ date: new Date(), timeZone });
+
+  const opensOn = (lessonId: string) => {
+    const skillIds = skillIdsOf.get(lessonId) ?? [];
+
+    const opening = getCapsuleOpening(
+      skillIds.map((skillId) => ({ due: dueOf.get(skillId) ?? null })),
+    );
+
+    return opening
+      ? capReviewDay({
+          day: getDateInTimeZone({ date: opening, timeZone }),
+          targetDate: session.goal?.targetDate ?? null,
+          today,
+        })
+      : null;
+  };
+
+  return lessons.map(({ block, lessonId }) => ({
+    lessonId,
+    opensOn: opensOn(lessonId),
+    title: readBlockPayload(block).title,
+  }));
 }
 
 export async function loadBuddyMeal({

@@ -2,6 +2,7 @@
 
 import { getChallengeMeters } from "@zoonk/core/library/challenges/run";
 import { QuestionTitle } from "@zoonk/learn/question-title";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { useExtracted } from "next-intl";
@@ -11,7 +12,6 @@ import {
   PlayerChoiceSceneOptions,
 } from "../../../components/player-choice-scene";
 import { PlayerReadScene } from "../../../components/player-read-scene";
-import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type ChallengeProgress } from "../../_utils/challenge-progress";
 import { LESSON_CONTENT_ID } from "../../_utils/lesson-focus";
 import { type StepOf } from "../lesson-step-view-props";

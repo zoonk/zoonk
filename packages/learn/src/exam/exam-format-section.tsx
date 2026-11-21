@@ -110,7 +110,7 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
         <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">
           {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
         </span>
-        <span className="text-muted-foreground basis-full pt-0.5 text-xs text-pretty">
+        <span className="text-muted-foreground basis-full pt-0.5 text-xs">
           {parts}
           {/* Unbroken from " ·" on, so a wrapped line never starts or ends on the dot. */}
           {count && <span className="whitespace-nowrap">{` · ${count}`}</span>}

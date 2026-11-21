@@ -26,6 +26,7 @@ import { isBlockedFrameProbe } from "./frame-console.mts";
 import { installPageHelpers } from "./page-helpers.mts";
 import { installProbe, readProbe } from "./probe.mts";
 import { type RequestRecord } from "./requests.mts";
+import { screenshot as takeScreenshot } from "./screenshot.mts";
 import { type Scheme, THROTTLING, VIEWPORTS, type ViewportName } from "./viewports.mts";
 
 const QUIET_MS = 1000;
@@ -313,7 +314,7 @@ export async function checkSchemes(
 
     const screenshot = `${name}-${colorScheme}.png`;
     // oxlint-disable-next-line no-await-in-loop -- Shoots the scheme showing now.
-    await page.screenshot({ animations: "disabled", fullPage: true, path: screenshot });
+    await takeScreenshot(page, { fullPage: true, path: screenshot });
     screenshots.push(screenshot);
   }
 

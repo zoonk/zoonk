@@ -7,6 +7,7 @@ enum FollowUpKind {
   writeLesson                @map("write_lesson")
   classifyMistakeCause       @map("classify_mistake_cause")
   findMistakePattern         @map("find_mistake_pattern")
+  suggestProfileTools        @map("suggest_profile_tools")
   rememberOnboarding         @map("remember_onboarding")
   rememberSession            @map("remember_session")
   checkDailyInsight          @map("check_daily_insight")
@@ -23,6 +24,7 @@ enum FollowUpKind {
   prepareContentFixMedia     @map("prepare_content_fix_media")
   voiceContentFix            @map("voice_content_fix")
   writeSentenceOrders        @map("write_sentence_orders")
+  updateLessonsShowing       @map("update_lessons_showing")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,

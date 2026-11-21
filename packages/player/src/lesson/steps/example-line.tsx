@@ -1,10 +1,10 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { safeAsync } from "@zoonk/utils/error";
 import { UserRoundIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
-import { LessonRichText } from "../_components/lesson-rich-text";
 import { useLessonPlayerConfig } from "../lesson-player-context";
 import { type LessonPlayerAdapters } from "../lesson-player-types";
 

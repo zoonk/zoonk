@@ -40,7 +40,7 @@ export function UsageDataNotice({ className }: { className: string }) {
           "flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6",
         )}
       >
-        <p className="text-muted-foreground text-sm text-pretty">
+        <p className="text-muted-foreground text-sm">
           {t.rich(
             "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>",
             { link: PrivacyLink },

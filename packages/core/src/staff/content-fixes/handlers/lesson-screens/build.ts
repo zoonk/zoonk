@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
+import { getLessonScreenSkillId } from "../../../../library/lessons/_utils/lesson-screen-skill";
 import { STEP_CONTRACT_VERSION } from "../../../../library/steps/contract/step-contract";
 import { type ContentFixEffect } from "../../contract";
 import { prepareAdded } from "./added";
@@ -15,7 +16,13 @@ import { type resolveVocabulary } from "./vocabulary";
 type Entry = ScreenList["screens"][number];
 type Vocabulary = Awaited<ReturnType<typeof resolveVocabulary>>;
 
-function blankScreen(entry: Extract<Entry, { kind: string }>): Screen {
+function blankScreen({
+  entry,
+  lesson,
+}: {
+  entry: Extract<Entry, { kind: string }>;
+  lesson: ScreenLesson;
+}): Screen {
   return {
     content: {},
     contractVersion: STEP_CONTRACT_VERSION,
@@ -30,7 +37,10 @@ function blankScreen(entry: Extract<Entry, { kind: string }>): Screen {
     position: 0,
     provenance: null,
     sentenceId: null,
-    skillId: entry.skillId ?? null,
+    skillId: getLessonScreenSkillId({
+      lessonSkillIds: lesson.skillIds,
+      skillId: entry.skillId ?? null,
+    }),
     sourceId: null,
     sourcePage: null,
     sources: [],
@@ -122,7 +132,7 @@ export function buildScreens({
     const original =
       "id" in entry ? lesson.before.screens.find(({ id }) => id === entry.id) : undefined;
 
-    const base = "kind" in entry ? blankScreen(entry) : original;
+    const base = "kind" in entry ? blankScreen({ entry, lesson }) : original;
 
     if (!base) {
       problems.push(`${path}.id: use an ID from the current lesson version.`);

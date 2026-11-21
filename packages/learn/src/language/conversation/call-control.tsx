@@ -181,7 +181,7 @@ export function CallTurn({
   return (
     <div className="flex min-h-11 items-center gap-3" data-slot="call-turn">
       {state.mark}
-      <p className="flex min-w-0 flex-col text-pretty">
+      <p className="flex min-w-0 flex-col">
         <span className="text-sm leading-5 font-medium">{state.title}</span>
         {detail && (
           <span className="text-muted-foreground text-compact leading-snug">{detail}</span>

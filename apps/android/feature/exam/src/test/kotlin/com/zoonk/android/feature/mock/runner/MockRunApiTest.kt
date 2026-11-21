@@ -35,7 +35,7 @@ class MockRunApiTest {
 
             assertEquals(
                 SaveOutcome.Stored,
-                api.save(ana, RUN_BLOCK, MockDraft(ITEM_ONE, answer = null, durationMs = 1200, flagged = true)),
+                api.save(ana, RUN_BLOCK, MockDraft(ITEM_ONE, answer = null, durationMs = 1200, unsure = true)),
             )
 
             val request = server.takeRequest(5, TimeUnit.SECONDS)!!

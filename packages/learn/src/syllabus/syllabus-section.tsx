@@ -122,7 +122,7 @@ function SubjectRow({
             {subject.shortName ?? subject.name}
           </ListRowTitle>
 
-          {alsoIn && <ListRowDescription className="text-pretty">{alsoIn}</ListRowDescription>}
+          {alsoIn && <ListRowDescription>{alsoIn}</ListRowDescription>}
         </span>
 
         <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">

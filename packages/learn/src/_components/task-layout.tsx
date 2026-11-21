@@ -369,7 +369,7 @@ export function TaskStopMessage({
       <span className="text-muted-foreground -ms-0.5 flex [&_svg]:size-6">{icon}</span>
       <div className="flex flex-col gap-2" role="status">
         <Heading className="text-title">{title}</Heading>
-        {description && <p className="text-muted-foreground text-sm text-pretty">{description}</p>}
+        {description && <p className="text-muted-foreground text-sm">{description}</p>}
       </div>
     </>
   );

@@ -56,10 +56,7 @@ type IndexTabProps = TabProps & { subject: string | null };
 
 function EmptyTab({ children }: { children: React.ReactNode }) {
   return (
-    <p
-      className="text-muted-foreground max-w-prose text-sm text-pretty"
-      data-slot="mind-maps-empty"
-    >
+    <p className="text-muted-foreground max-w-prose text-sm" data-slot="mind-maps-empty">
       {children}
     </p>
   );

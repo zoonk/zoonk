@@ -53,6 +53,7 @@ test("names the tap-target rule separately from axe and includes its required an
             },
           ];
     },
+    frames: () => [],
     locator: () => ({ count: () => Promise.resolve(0) }),
     screenshot: () => Promise.resolve(),
   };

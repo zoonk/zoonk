@@ -270,8 +270,8 @@ private fun CalibrationInsight(result: MockResult) {
     val gain = calibration.blankingGain
 
     Insight(
-        R.drawable.ic_balance,
-        stringResource(R.string.mock_result_flagged_answers),
+        R.drawable.ic_bookmark,
+        stringResource(R.string.mock_result_unsure_answers),
         listOfNotNull(
             stringResource(
                 R.string.mock_result_calibration_detail,

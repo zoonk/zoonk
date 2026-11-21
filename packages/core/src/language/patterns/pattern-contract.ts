@@ -16,6 +16,13 @@ export const mistakePatternContentSchema = z.object({
       feedback: z.string(),
       options: z.array(z.string()),
       sentence: z.string(),
+      translation: z
+        .string()
+        .default("")
+        .meta({
+          description:
+            "The sentence, answered, in the learner's language, shown under it so they know what it says. Empty when they learn the language they read the app in, and for drills written before it.",
+        }),
     }),
   ),
   examples: z.array(

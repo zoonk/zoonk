@@ -30,7 +30,7 @@ import { loadMockReview } from "./_utils/mock-review";
 import {
   getAskedItemIds,
   getEssayItemIds,
-  getFirstNumber,
+  numberMockQuestions,
   toSectionViews,
 } from "./_utils/mock-sections";
 import { loadMockSpeaking } from "./_utils/mock-speaking";
@@ -83,52 +83,46 @@ async function loadCurrentSection({
     loadMockEssayItems(section.essays),
   ]);
 
-  const first = getFirstNumber({ conditions: mock.conditions, section: mock.sectionIndex });
-
   const answered = new Set(
     mock.answers.flatMap((answer) =>
       isMockAnswerPresent(readMockAnswer(answer.answer)) ? [answer.itemId] : [],
     ),
   );
 
-  const questions = section.itemIds.flatMap((itemId, index): MockQuestion[] => {
+  const askedItems = section.itemIds.flatMap((itemId) => {
     const item = items.get(itemId);
 
-    return item && isStillAsked({ answered: answered.has(itemId), item })
-      ? [
-          {
-            ...toMockQuestionView({ item, mockId: mock.id }),
-            area: areas.get(item.skillId) ?? null,
-            number: first + index,
-          },
-        ]
-      : [];
+    return item && isStillAsked({ answered: answered.has(itemId), item }) ? [item] : [];
   });
 
-  const written = section.essays.flatMap((itemId, index): MockQuestion[] => {
+  const questions = numberMockQuestions(askedItems).map(({ number, question: item }) => ({
+    ...toMockQuestionView({ item, mockId: mock.id }),
+    area: areas.get(item.skillId) ?? null,
+    number,
+  }));
+
+  const askedEssays = section.essays.flatMap((itemId) => {
     const essay = essays.get(itemId);
 
-    return essay
-      ? [
-          {
-            area: areas.get(essay.item.skillId) ?? null,
-            context: essay.content.context,
-            entry: null,
-            format: "essay",
-            image: null,
-            itemId,
-            number: first + section.questions + index,
-            options: null,
-            question: essay.content.question,
-            select: null,
-            set: null,
-            skillId: essay.item.skillId,
-            unit: null,
-            visual: null,
-          },
-        ]
-      : [];
+    return essay ? [essay] : [];
   });
+
+  const written = askedEssays.map(({ content, item }, index): MockQuestion => ({
+    area: areas.get(item.skillId) ?? null,
+    context: content.context,
+    entry: null,
+    format: "essay",
+    image: null,
+    itemId: item.id,
+    number: questions.length + index + 1,
+    options: null,
+    question: content.question,
+    select: null,
+    set: null,
+    skillId: item.skillId,
+    unit: null,
+    visual: null,
+  }));
 
   const asked = new Set([...section.itemIds, ...section.essays]);
   const shownIds = [...questions, ...written].map((question) => question.itemId);
@@ -147,6 +141,7 @@ async function loadCurrentSection({
     drafts,
     kind: section.kind ?? null,
     plays: listSectionPlays({ plays: mock.listeningPlays, questions }),
+    questionTotal: questions.length,
     questions: [...questions, ...written],
     section: mock.sectionIndex,
   };
@@ -202,7 +197,7 @@ async function loadFinished({
   const reached = keptReachedSchema.safeParse(owned.mock.result).data?.reached ?? NOTHING_REACHED;
 
   const [review, offers, essays] = await Promise.all([
-    loadMockReview({ areas, conditions, mockExamId: owned.mock.id, userId: owned.userId }),
+    loadMockReview({ areas, mock: owned.mock, userId: owned.userId }),
     loadMockPlanOffers({ goal: owned.goal, purpose: conditions.purpose, result }),
     loadMockEssayViews({ areas, mock: owned.mock }),
   ]);

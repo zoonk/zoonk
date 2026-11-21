@@ -2,15 +2,12 @@ import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
-import { loadLessonReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { NOT_A_CAPSULE } from "../../lesson-player/_utils/lesson-runs";
 import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { readBlockPayload } from "../block-payload";
-import { capReviewDay, getCapsuleOpening } from "../capsules";
 import { oweDaySettlement } from "../settle-owed-session-day";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "./plan-items";
 import { type StudySessionRow } from "./study-session-access";
@@ -175,49 +172,4 @@ export async function markLessonBlockDone({
   }
 
   return true;
-}
-
-/** Returns a learner-local UTC-midnight label, never later than the goal's date. */
-export async function getLessonComesBack({
-  lessonId,
-  targetDate,
-  timeZone,
-  userId,
-}: {
-  lessonId: string | null;
-  targetDate: Date | null;
-  timeZone: string;
-  userId: string;
-}): Promise<Date | null> {
-  if (!lessonId) {
-    return null;
-  }
-
-  const skills = await prisma.lessonSkill.findMany({
-    select: { skillId: true },
-    where: { lessonId },
-  });
-
-  const skillIds = await loadLessonReviewSkillIds({
-    lessonId,
-    ownSkillIds: skills.map((skill) => skill.skillId),
-    userId,
-  });
-
-  const memories = await prisma.learnerSkill.findMany({
-    select: { due: true },
-    where: { skillId: { in: skillIds }, userId },
-  });
-
-  const opening = getCapsuleOpening(memories);
-
-  if (!opening) {
-    return null;
-  }
-
-  return capReviewDay({
-    day: getDateInTimeZone({ date: opening, timeZone }),
-    targetDate,
-    today: getDateInTimeZone({ date: new Date(), timeZone }),
-  });
 }

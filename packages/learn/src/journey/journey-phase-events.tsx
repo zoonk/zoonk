@@ -33,7 +33,7 @@ export function PathRowBody({
       data-slot="path-row-body"
     >
       <span
-        className="flex min-w-0 flex-[1_1_9rem] flex-col text-pretty wrap-break-word *:first:text-balance"
+        className="flex min-w-0 flex-[1_1_9rem] flex-col wrap-break-word *:first:text-balance"
         data-slot="path-row-words"
       >
         {children}
@@ -114,7 +114,7 @@ export function CheckpointRow({
         </span>
 
         {!isDone && (
-          <span className="text-muted-foreground text-xs text-pretty">
+          <span className="text-muted-foreground text-xs">
             {goal.kind === "language"
               ? t("A live call where you get your point across")
               : t("Questions on this phase, with no hints")}
@@ -175,7 +175,7 @@ export function MockRow({
         <KindDot kind="mock" />
       </span>
       <PathRowBody value={<PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />}>
-        <span className="font-medium text-pretty">{t("Mock exam")}</span>
+        <span className="font-medium">{t("Mock exam")}</span>
         {funded?.minutes ? (
           <span className="text-muted-foreground font-mono text-xs tabular-nums">
             {formatDuration(funded.minutes)}

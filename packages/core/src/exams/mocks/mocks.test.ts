@@ -141,13 +141,13 @@ describe("mock exams", () => {
     });
 
     await Promise.all(
-      rest.map((question) =>
+      rest.map((question, index) =>
         saveMockAnswer({
           blockId,
           input: {
             answer: { selectedIndex: 0 },
             durationMs: 30_000,
-            flagged: false,
+            flagged: index === 0,
             itemId: question.itemId,
           },
         }),
@@ -180,10 +180,11 @@ describe("mock exams", () => {
 
     const review = finished.status === "ready" ? finished.mock.review : [];
 
-    expect(review.map((entry) => entry.outcome).toSorted()).toStrictEqual([
-      "blank",
-      "wrong",
-      "wrong",
+    expect(review).toMatchObject([
+      { itemId: first?.itemId, number: 1, outcome: "wrong", unsure: true },
+      { itemId: second?.itemId, number: 2, outcome: "wrong", unsure: false },
+      { itemId: third?.itemId, number: 3, outcome: "blank", unsure: false },
+      { itemId: rest[0]?.itemId, number: 4, outcome: "right", unsure: true },
     ]);
 
     const [event, planItem] = await Promise.all([

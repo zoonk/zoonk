@@ -10,12 +10,15 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import basePrompt from "./check-sentence-orders.prompt.md";
 
 /**
- * Reviewing Terra's candidates for 12 lessons, Gemini 3.8 Flash kept the most right orders and
- * rejected the fewest; Opus 5.5 kept fewer wrong ones but rejected more right ones, at about four
- * times the cost. OpenAI's models kept nearly every candidate at every tier (8 Nov 2026).
+ * In the `check-sentence-orders` eval (340 orders labeled by three model families, three runs each),
+ * Sonnet 5.5 kept 0.9% of the wrong orders and dropped 9% of the right ones, at $10.21 per 1k
+ * lessons; high reasoning didn't help. Opus 5.5 kept 0.2% but dropped 20.1%, German verb-second
+ * orders among them, at $18.06. Gemini 4 Argon kept 0.7% and dropped 20.1% at $3.20; Gemini 3.8
+ * Flash kept 2% and dropped 15.3%. GPT-6.2 Sol kept 12.7%, and every smaller model kept more
+ * (20 Nov 2026).
  */
-const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
+const defaultModel = "anthropic/claude-sonnet-5.5";
+const fallbackModels = ["google/gemini-4-argon"] as const;
 
 const verdicts = z.array(z.boolean());
 
