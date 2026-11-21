@@ -66,8 +66,8 @@ final class LayoutCaptureTests: XCTestCase {
 
   /// What clips a view is read from the views that hold it, whatever its position.
   @MainActor
-  func testFindsTheScrollViewsThatHoldAView() {
-    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 420, height: 912))
+  func testFindsTheScrollViewsThatHoldAView() throws {
+    let window = try sceneWindow(CGRect(x: 0, y: 0, width: 420, height: 912))
     let scroll = UIScrollView(frame: CGRect(x: 0, y: 100, width: 420, height: 600))
     let other = UIScrollView(frame: CGRect(x: 0, y: 0, width: 420, height: 912))
     let part = UIView(frame: CGRect(x: 20, y: -20, width: 200, height: 30))
@@ -83,8 +83,8 @@ final class LayoutCaptureTests: XCTestCase {
   /// A view that never reached the window or left it, or one under a screen that covers it, isn't
   /// on the screen; under a sheet it still is.
   @MainActor
-  func testOnlyAViewInTheWindowAndNotUnderACoverIsOnScreen() {
-    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 420, height: 912))
+  func testOnlyAViewInTheWindowAndNotUnderACoverIsOnScreen() throws {
+    let window = try sceneWindow(CGRect(x: 0, y: 0, width: 420, height: 912))
     let page = UIView(frame: window.bounds)
     let action = UIView(frame: CGRect(x: 16, y: 800, width: 388, height: 44))
     window.addSubview(page)
@@ -151,5 +151,14 @@ final class LayoutCaptureTests: XCTestCase {
       content: Text(verbatim: words).typeStyle(.body).textRenderer(LayoutRunsProbe(part: part)))
     _ = renderer.uiImage
     return LayoutRuns.shared.lines(of: part)
+  }
+
+  @MainActor
+  private func sceneWindow(_ frame: CGRect) throws -> UIWindow {
+    let scene = try XCTUnwrap(
+      UIApplication.shared.connectedScenes.first { $0 is UIWindowScene } as? UIWindowScene)
+    let window = UIWindow(windowScene: scene)
+    window.frame = frame
+    return window
   }
 }

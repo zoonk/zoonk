@@ -9,13 +9,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { registerServerSinks } from "../server-sinks";
 import { sendAiGenerationAnalytics } from "./ai-generations";
 
-const posthogClient = {
-  capture: vi.fn<(event: { distinctId: string; properties: Record<string, unknown> }) => void>(),
-  shutdown: vi.fn(),
-};
+const posthogClient = { captureAi: vi.fn<PostHog["captureAi"]>(), shutdown: vi.fn() };
 
 class TestPostHog {
-  capture = posthogClient.capture;
+  captureAi = posthogClient.captureAi;
   shutdown = posthogClient.shutdown;
 }
 
@@ -50,7 +47,7 @@ async function learnerGeneration(profile: { shareUsageData?: boolean }) {
 }
 
 function sentEvent() {
-  const [captured] = posthogClient.capture.mock.calls[0] ?? [];
+  const [captured] = posthogClient.captureAi.mock.calls[0] ?? [];
   return captured;
 }
 
@@ -76,8 +73,11 @@ describe(sendAiGenerationAnalytics, () => {
       host: "https://posthog.test",
     });
 
-    expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith(toAiGenerationEvent(generation));
-    expect(posthogClient.shutdown).toHaveBeenCalledOnce();
+    expect(posthogClient.captureAi).toHaveBeenCalledExactlyOnceWith(
+      toAiGenerationEvent(generation),
+    );
+
+    expect(posthogClient.shutdown).toHaveBeenCalledExactlyOnceWith(5000);
   });
 
   it("names the learner as the person behind the generation", async () => {
@@ -85,7 +85,7 @@ describe(sendAiGenerationAnalytics, () => {
 
     await sendThroughRegisteredSink(sent);
 
-    expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith(toAiGenerationEvent(sent));
+    expect(posthogClient.captureAi).toHaveBeenCalledExactlyOnceWith(toAiGenerationEvent(sent));
   });
 
   it("counts a generation for a learner who turned usage data off as system work", async () => {
@@ -95,7 +95,8 @@ describe(sendAiGenerationAnalytics, () => {
 
     expect(sentEvent()).toMatchObject({
       distinctId: POSTHOG_SYSTEM_DISTINCT_ID,
-      properties: { $ai_trace_id: "trace-1", $process_person_profile: false },
+      options: { process_person_profile: false },
+      properties: { $ai_trace_id: "trace-1" },
     });
 
     expect(sentEvent()?.properties).not.toHaveProperty("goal_id");

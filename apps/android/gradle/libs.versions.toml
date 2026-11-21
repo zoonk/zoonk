@@ -1,25 +1,25 @@
 [versions]
 activityCompose = "1.13.0"
-agp = "9.5.1"
+agp = "9.5.2"
 androidxAnnotation = "1.11.0"
 androidxCore = "1.19.1"
 # activity-compose alone resolves lifecycle 2.9.4, whose lint checks no longer load in current lint.
-androidxLifecycle = "2.11.0"
+androidxLifecycle = "2.11.1"
 androidxTest = "1.7.0"
 androidxTestEspresso = "3.7.0"
 androidxTestExtJunit = "1.3.0"
-composeBom = "2026.09.00"
+composeBom = "2026.11.01"
 #noinspection NewerVersionAvailable
 kotlin = "2.4.21"
 # Custom detectors must compile and test against the lint version bundled with our pinned AGP.
 #noinspection GradleDependency
-lint = "32.5.1"
+lint = "32.5.2"
 junit = "4.13.2"
-spotless = "8.11.0"
+spotless = "8.12.0"
 
-robolectric = "4.18"
+robolectric = "4.18.1"
 
-commonmark = "0.32.0"
+commonmark = "0.33.0"
 
 # Navigation, routes and the adaptive shell.
 androidxBrowser = "1.10.0"
@@ -27,7 +27,7 @@ androidxWindow = "1.5.1"
 composeAdaptive = "1.3.0"
 kotlinxCoroutines = "1.11.0"
 kotlinxSerialization = "1.13.0"
-navigation3 = "1.2.1"
+navigation3 = "1.2.2"
 
 # Data layer, API client and session.
 coil = "3.6.3"
@@ -55,7 +55,7 @@ media3 = "1.11.1"
 androidxPrint = "1.1.0"
 
 # Live calls.
-webrtc = "150.7871.04"
+webrtc = "150.7871.08"
 
 # Code sandbox.
 androidxWebkit = "1.18.0"
@@ -65,11 +65,11 @@ firebaseMessaging = "26.0.2"
 googleServices = "4.6.0"
 
 # Crash and error reports.
-sentry = "8.64.0"
+sentry = "8.65.0"
 sentryGradlePlugin = "6.27.0"
 
 # Product analytics.
-posthog = "3.77.1"
+posthog = "4.0.0"
 
 [libraries]
 # Build logic.

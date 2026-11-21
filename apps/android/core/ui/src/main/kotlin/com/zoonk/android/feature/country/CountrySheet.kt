@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +58,7 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.controlInk
+import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.launch
 import java.text.Normalizer
@@ -103,7 +103,7 @@ fun CountrySheet(
         }
     val matches = query.takeIf { it.isNotBlank() }?.let { text -> (all.value ?: suggested).filter { matchesCountry(text, it.name) } }
 
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberExpandedBottomSheetState()) {
         Column(Modifier.fillMaxHeight()) {
             Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)

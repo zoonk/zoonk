@@ -1,13 +1,21 @@
 package com.zoonk.android.feature.session
 
+import android.content.Context
+import android.view.accessibility.AccessibilityManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -37,9 +45,11 @@ import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -49,6 +59,9 @@ import java.util.UUID
 class NextStopTest {
     @get:Rule
     val rule = createComposeRule()
+
+    private lateinit var inputMode: InputModeManager
+    private lateinit var context: Context
 
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val signIn = FakeSession(ana)
@@ -115,6 +128,8 @@ class NextStopTest {
 
         rule.setContent {
             ZoonkTheme {
+                inputMode = LocalInputModeManager.current
+                context = LocalContext.current
                 key(drawn) {
                     NextStop(
                         viewModel = viewModel,
@@ -151,7 +166,28 @@ class NextStopTest {
         assertEquals(0, api.targets.size)
         assertEquals(0, api.opened.size)
         rule.onNodeWithText("Your lesson is ready.").assertExists()
+        rule.onNodeWithText("Start").assertIsNotFocused()
+    }
+
+    @Test
+    fun aLessonWrittenWhileATalkBackLearnerWaitedTakesTheirFocus() {
+        show()
+        rule.runOnIdle { shadowOf(context.getSystemService(AccessibilityManager::class.java)).setTouchExplorationEnabled(true) }
+        writeTheLesson()
+
         rule.onNodeWithText("Start").assertIsFocused()
+    }
+
+    /** Keyboard mode always focuses something on the screen, so the ready lesson's Start doesn't take it. */
+    @Test
+    fun aLessonWrittenWhileAKeyboardLearnerWaitedKeepsTheirFocus() {
+        show()
+        rule.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
+        rule.onNodeWithContentDescription("Leave").assertIsFocused()
+        writeTheLesson()
+
+        rule.onNodeWithText("Start").assertIsNotFocused()
+        rule.onNodeWithContentDescription("Leave").assertIsFocused()
     }
 
     @Test

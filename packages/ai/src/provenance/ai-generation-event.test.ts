@@ -63,17 +63,18 @@ describe(toAiGenerationEvent, () => {
   });
 
   it("sends system work as shared content without a person profile", () => {
-    const { distinctId, properties } = toAiGenerationEvent({ provenance, task: "course-chapters" });
-
-    expect(distinctId).toBe("zoonk-system");
-
-    expect(properties).toMatchObject({
-      $ai_trace_id: "run-1",
-      $process_person_profile: false,
-      content_scope: "shared",
+    const { distinctId, options, properties } = toAiGenerationEvent({
+      provenance,
+      task: "course-chapters",
     });
 
+    expect(distinctId).toBe("zoonk-system");
+    expect(options).toStrictEqual({ process_person_profile: false });
+
+    expect(properties).toMatchObject({ $ai_trace_id: "run-1", content_scope: "shared" });
+
     expect(properties).not.toHaveProperty("goal_id");
+    expect(properties).not.toHaveProperty("$process_person_profile");
   });
 
   it("lets PostHog estimate the cost when none was reported", () => {

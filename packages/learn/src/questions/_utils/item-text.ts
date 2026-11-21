@@ -41,20 +41,23 @@ function parseInline(text: string): RichInlineSegment[] {
 }
 
 function toLines(segments: readonly RichInlineSegment[]): RichInlineSegment[][] {
-  return segments.reduce<RichInlineSegment[][]>(
-    (lines, segment) =>
-      (isProse(segment) ? segment.text.split("\n") : [segment.text]).reduce(
-        (current, text, index) => {
-          const piece = text ? [{ ...segment, text }] : [];
+  const lines: RichInlineSegment[][] = [[]];
 
-          return index === 0
-            ? [...current.slice(0, -1), [...(current.at(-1) ?? []), ...piece]]
-            : [...current, piece];
-        },
-        lines,
-      ),
-    [[]],
-  );
+  for (const segment of segments) {
+    const parts = isProse(segment) ? segment.text.split("\n") : [segment.text];
+
+    for (const [index, text] of parts.entries()) {
+      if (index > 0) {
+        lines.push([]);
+      }
+
+      if (text) {
+        lines.at(-1)?.push({ ...segment, text });
+      }
+    }
+  }
+
+  return lines;
 }
 
 function isBlank(line: string | undefined): boolean {

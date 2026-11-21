@@ -483,8 +483,15 @@ private struct LineCrossingNamesLayout: Layout {
 }
 
 #if DEBUG
+  /// A class, so the environment compares it by identity rather than redrawing for a new closure.
+  @MainActor final class LineCrossingNameFrames {
+    let report: (String, CGRect) -> Void
+
+    init(_ report: @escaping (String, CGRect) -> Void) { self.report = report }
+  }
+
   extension EnvironmentValues {
-    @Entry var lineCrossingNameFrame: ((String, CGRect) -> Void)?
+    @Entry var lineCrossingNameFrame: LineCrossingNameFrames?
   }
 
   private struct LineCrossingNameFrameReporter: ViewModifier {
@@ -496,7 +503,7 @@ private struct LineCrossingNamesLayout: Layout {
         content.onGeometryChange(for: CGRect.self) {
           $0.frame(in: .global)
         } action: {
-          report(id, $0)
+          report.report(id, $0)
         }
       } else {
         content

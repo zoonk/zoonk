@@ -60,7 +60,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "axe-core": "4.14.0",
+    "axe-core": "4.14.1",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

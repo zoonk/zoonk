@@ -248,7 +248,7 @@
     "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/openai": "4.0.118",
+    "@ai-sdk/openai": "4.0.122",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",

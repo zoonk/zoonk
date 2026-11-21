@@ -85,6 +85,8 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   reactCompiler: true,
   redirects: async () => [...oldStartRedirects, ...movedPageRedirects],
+  // Mediabunny detects duplicate initialization across the RSC and SSR bundles.
+  serverExternalPackages: ["mediabunny"],
   turbopack: {
     resolveAlias: { ...e2eAliases },
     rules: { ...tailwindRules, "*.md": { as: "*.js", loaders: ["raw-loader"] } },

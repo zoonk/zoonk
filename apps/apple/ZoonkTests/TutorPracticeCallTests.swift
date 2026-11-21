@@ -65,11 +65,11 @@ final class TutorPracticeCallTests: XCTestCase {
   }
 
   private func callShows(in window: UIWindow) -> Bool {
-    guard let sheet = window.rootViewController?.presentedViewController else {
+    guard let sheet = window.rootViewController?.presentedViewController?.view else {
       return false
     }
 
-    return spoken(in: sheet.view).contains { $0.contains("At the market") }
+    return spoken(in: sheet).contains { $0.contains("At the market") }
   }
 
   private static let account = CurrentAccount(

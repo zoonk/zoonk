@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -81,6 +80,8 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.focusMoveTarget
+import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
@@ -419,6 +420,7 @@ internal fun NextStop(
         val startsFor = goalId?.takeIf { ready }
         val written = startsFor != null && viewModel.writtenWhileWaiting == step.position
         val startFocus = remember { FocusRequester() }
+        val moveFocus = rememberMoveFocus()
         var screenFocused by remember { mutableStateOf(false) }
         val reviewStarts = rememberReviewStarts()
         val opening = rememberWaitState(viewModel.busy == SessionAction.Start)
@@ -485,14 +487,14 @@ internal fun NextStop(
                                     ) { Text(stringResource(R.string.session_next_stop)) }
                                 }
                                 startsFor?.let { goal ->
-                                    LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
+                                    LaunchedEffect(written) { if (written && !screenFocused) moveFocus(startFocus) }
                                     Button(
                                         busy = viewModel.busy == SessionAction.Start,
                                         onClick = {
                                             reviewStarts.note(step, goal)
                                             viewModel.start(day, step, goal)
                                         },
-                                        modifier = main.focusRequester(startFocus),
+                                        modifier = main.focusMoveTarget(startFocus),
                                         enabled = !busy,
                                     ) {
                                         Text(

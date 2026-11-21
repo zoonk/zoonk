@@ -16,6 +16,7 @@ export type AiGenerationContext = {
 export type AiGenerationEvent = {
   distinctId: string;
   event: "$ai_generation";
+  options?: { process_person_profile: false };
   properties: Record<string, EventPropertyValue>;
 };
 
@@ -49,7 +50,6 @@ export function toAiGenerationEvent({
     $ai_span_name: task,
     $ai_total_cost_usd: costUsd,
     $ai_trace_id: context.traceId ?? provenance.runId,
-    $process_person_profile: context.distinctId ? undefined : false,
     completed_at: Date.parse(provenance.generatedAt),
     content_scope: context.contentScope ?? "shared",
     goal_id: context.goalId,
@@ -65,6 +65,7 @@ export function toAiGenerationEvent({
   return {
     distinctId: context.distinctId ?? POSTHOG_SYSTEM_DISTINCT_ID,
     event: "$ai_generation",
+    ...(context.distinctId ? {} : { options: { process_person_profile: false } }),
     properties: Object.fromEntries(
       Object.entries(properties).filter(
         (entry): entry is [string, EventPropertyValue] => entry[1] !== undefined,

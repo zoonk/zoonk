@@ -4,9 +4,14 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
@@ -39,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -54,6 +60,8 @@ import java.util.UUID
 class MockChooserGateTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
+
+    private lateinit var inputMode: InputModeManager
 
     private val navigator =
         AppNavigator(
@@ -85,6 +93,7 @@ class MockChooserGateTest {
         val viewModel = MockChooserViewModel(GOAL, MockStarter(starts, cache), session, { ReadyRuns() }) { store.refused(GOAL) }
         rule.setContent {
             ZoonkTheme {
+                inputMode = LocalInputModeManager.current
                 val state by store.options[GOAL].collectShown()
                 state.value?.let { PracticeChooser(it, viewModel, navigator, rememberLazyListState()) }
             }
@@ -93,6 +102,11 @@ class MockChooserGateTest {
     }
 
     private fun start() = rule.onNodeWithText("Start").performClick()
+
+    private fun SemanticsNodeInteraction.pressEnter() {
+        rule.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
+        requestFocus().assertIsFocused().performKeyInput { pressKey(Key.Enter) }
+    }
 
     /** A read of the options after the server [answer]s, as a purchase or a pull to refresh starts one. */
     private fun readAgain(next: () -> MockOptions) {
@@ -116,7 +130,7 @@ class MockChooserGateTest {
         show()
         start()
 
-        rule.onNodeWithText("Subscribe").requestFocus().performKeyInput { pressKey(Key.Enter) }
+        rule.onNodeWithText("Subscribe").pressEnter()
 
         rule.runOnIdle { assertEquals(AppRoute.Subscription, navigator.currentRoute) }
     }
@@ -128,7 +142,7 @@ class MockChooserGateTest {
         answer = { WITH_LAST }
         show()
 
-        rule.onNodeWithText("Mock exam 2").requestFocus().performKeyInput { pressKey(Key.Enter) }
+        rule.onNodeWithText("Mock exam 2").pressEnter()
 
         rule.runOnIdle {
             assertEquals(AppRoute.Mock(LAST_BLOCK), navigator.currentRoute)
@@ -142,11 +156,7 @@ class MockChooserGateTest {
         answer = { OPEN }
         show()
 
-        rule
-            .onAllNodes(isSelectable())
-            .onFirst()
-            .requestFocus()
-            .performKeyInput { pressKey(Key.Enter) }
+        rule.onAllNodes(isSelectable()).onFirst().pressEnter()
 
         rule.runOnIdle { assertEquals(1, starts.started.size) }
     }
@@ -157,7 +167,7 @@ class MockChooserGateTest {
         answer = { OPEN }
         show()
 
-        rule.onNodeWithText("Start").requestFocus().performKeyInput { pressKey(Key.Enter) }
+        rule.onNodeWithText("Start").pressEnter()
 
         rule.runOnIdle { assertEquals(1, starts.started.size) }
     }

@@ -2,7 +2,7 @@ import "server-only";
 import { toAiGenerationEvent } from "@zoonk/ai/ai-generation-event";
 import { type AiGeneration } from "@zoonk/ai/ai-generation-sink";
 import { prisma } from "@zoonk/db";
-import { getPostHogConfig } from "@zoonk/utils/posthog";
+import { POSTHOG_SHUTDOWN_TIMEOUT_MS, getPostHogConfig } from "@zoonk/utils/posthog";
 import { PostHog } from "posthog-node";
 
 /**
@@ -36,7 +36,7 @@ export async function sendAiGenerationAnalytics(generation: AiGeneration): Promi
     return;
   }
 
-  const { distinctId, event, properties } = await toLearnerAiGenerationEvent(generation);
+  const event = await toLearnerAiGenerationEvent(generation);
 
   const posthog = new PostHog(config.projectToken, {
     flushAt: 1,
@@ -45,8 +45,8 @@ export async function sendAiGenerationAnalytics(generation: AiGeneration): Promi
   });
 
   try {
-    posthog.capture({ distinctId, event, properties });
+    posthog.captureAi(event);
   } finally {
-    await posthog.shutdown();
+    await posthog.shutdown(POSTHOG_SHUTDOWN_TIMEOUT_MS);
   }
 }

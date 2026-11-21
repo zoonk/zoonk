@@ -297,7 +297,9 @@ final class LineCrossingPlacementParityTests: XCTestCase {
         .activityPanel().padding(16)
       }.frame(width: width).frame(maxWidth: .infinity)
         .environment(ActivityWork()).zoonkStyles().dynamicTypeSize(size)
-        .environment(\.lineCrossingNameFrame) { id, frame in frames[id] = frame }
+        .environment(
+          \.lineCrossingNameFrame, LineCrossingNameFrames { id, frame in frames[id] = frame }
+        )
         .preferredColorScheme(.light))
     window.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
     defer { window.isHidden = true }
