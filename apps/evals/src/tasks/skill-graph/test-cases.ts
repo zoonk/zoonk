@@ -921,6 +921,30 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   },
   {
     expectations: `
+      - MUST be in Korean
+      - The learner names neither the exam nor anything it covers, so nothing says what it tests: the graph is never empty, and it never guesses a subject (no Korean, mathematics, English or any other discipline the learner didn't name)
+      - A small path for preparing for any written exam, in one course on study and test-taking skills and one or two phases: reading what a question asks, pacing the time, ruling out wrong options, checking answers, recalling from one's own notes, reviewing what's weakest first and a timed practice run
+      - Lesson-sized skills, a few hours in all at most
+      - Nothing about the exam day's procedures, such as documents to bring or sleep
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "ko-exam-named-only-by-its-date",
+    userInput: {
+      context: JSON.stringify({
+        examDay: "official",
+        examMonth: 12,
+        examYear: 2026,
+        subject: "시험",
+      }),
+      goal: "12월 5일 시험",
+      goalKind: "exam",
+      language: "ko",
+      ownLevel: "basic",
+    },
+  },
+  {
+    expectations: `
       - MUST be in Brazilian Portuguese
       - A class test on Friday from the learner's own notes, read into a blueprint with one subject (Biologia) and six topics (S1.1 to S1.6): one skill for each topic at least, never one skill for several topics, each skill's \`topics\` listing its topic id; every topic id appears in a skill
       - Sized by the notes, not by the budget (LESSON_BUDGET 15, the most two days hold): roughly one to three lessons a topic, more for membrane transport (osmosis, active transport, endocytosis) and organelles (the notes say they come up a lot), never above 15 in all
