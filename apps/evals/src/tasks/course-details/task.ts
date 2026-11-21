@@ -9,6 +9,7 @@ import { readCriteria } from "../plain-language-criterion";
 import {
   COURSE_DETAILS_SCORE_CATEGORIES,
   type CourseDetailsExpected,
+  checkCourseDetailsOutput,
   scoreCourseDetails,
 } from "./scorer";
 import { TEST_CASES } from "./test-cases";
@@ -18,6 +19,7 @@ export const courseDetailsTask: Task<
   CourseDetails,
   CourseDetailsExpected
 > = {
+  codeChecks: checkCourseDetailsOutput,
   criteria: readCriteria(COURSE_DETAILS_SCORE_CATEGORIES),
   description:
     "Write a shared course's public page from its outline: description, landing copy (the promise, audience and outcomes) and 1 or 2 catalog categories",

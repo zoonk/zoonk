@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type FindMistakePatternSchema } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { isWellFormedDrillQuestion } from "@zoonk/ai/tasks/language/mistake-pattern-rules";
 import { MISTAKE_PATTERN_SCORE_CATEGORIES } from "./score-categories";
@@ -56,14 +56,17 @@ function checkMistakePattern({
 
   const checks = [
     {
+      criterion: "rule",
       passed: parsed.kind === expected.kind,
       problem: `Kind is ${parsed.kind} instead of ${expected.kind}.`,
     },
     {
+      criterion: "rule",
       passed: checkMistakeNumbers({ expected, output: parsed }),
       problem: `Mistake numbers [${parsed.mistakeNumbers.join(", ")}] don't match the labeled [${expected.mistakeNumbers.join(", ")}].`,
     },
     {
+      criterion: "drill",
       passed: checkDrill({ expected, output: parsed }),
       problem:
         expected.kind === "pattern"
@@ -72,25 +75,34 @@ function checkMistakePattern({
     },
   ];
 
+  const failed = checks.filter((check) => !check.passed);
+
   return {
+    criteria: [...new Set(failed.map((check) => check.criterion))],
     judgedOutput: output,
-    passed: checks.filter((check) => check.passed).length,
-    problems: checks.filter((check) => !check.passed).map((check) => check.problem),
+    passed: checks.length - failed.length,
+    problems: failed.map((check) => check.problem),
     total: checks.length,
   };
 }
 
-export const scoreMistakePattern: TaskScorer<MistakePatternExpected> = ({ output, testCase }) => {
+export const checkMistakePatternOutput: TaskCodeChecks<MistakePatternExpected> = ({
+  output,
+  testCase,
+}) => {
   const { expected } = testCase;
 
   if (!expected) {
     throw new Error(`Test case ${testCase.id} needs a labeled kind.`);
   }
 
-  return scoreWithCodeChecks({
-    check: (value) => checkMistakePattern({ expected, output: value }),
+  return checkMistakePattern({ expected, output });
+};
+
+export const scoreMistakePattern: TaskScorer<MistakePatternExpected> = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkMistakePatternOutput({ output: value, testCase }),
     output,
     scoreCategories: MISTAKE_PATTERN_SCORE_CATEGORIES,
     testCase,
   });
-};

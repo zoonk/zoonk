@@ -7,10 +7,11 @@ import {
 } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { PLAIN_LANGUAGE_CRITERION, readCriteria } from "../plain-language-criterion";
 import { ALPHABET_LESSON_SCORE_CATEGORIES } from "./score-categories";
-import { scoreAlphabetLesson } from "./scorer";
+import { checkAlphabetLessonOutput, scoreAlphabetLesson } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 export const alphabetLessonTask: Task<GenerateAlphabetLessonParams, AlphabetLessonContent> = {
+  codeChecks: checkAlphabetLessonOutput,
   criteria: readCriteria(ALPHABET_LESSON_SCORE_CATEGORIES, PLAIN_LANGUAGE_CRITERION),
   description:
     "Write the first alphabet lesson for a non-Latin script: the letters, their sounds for the learner's language, real forms and a short intro: code checks, then a judge",

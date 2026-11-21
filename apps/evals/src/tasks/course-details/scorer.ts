@@ -1,6 +1,6 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { defineScoreCategories } from "@/lib/score-categories";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type CourseDetails,
   PAGE_LIST_ITEMS,
@@ -71,19 +71,27 @@ function checkCourseDetails({
   const details = parseDetails(output);
 
   if (!details) {
-    return { judgedOutput: output, passed: 0, problems: ["The output isn't JSON."], total: 1 };
+    const problems = ["The output isn't JSON."];
+    return { blockingProblems: problems, judgedOutput: output, passed: 0, problems, total: 1 };
   }
 
   const checks = [
-    checkText(details),
-    ...(["audience", "outcomes"] as const).map((field) => checkList({ details, field })),
-    expected?.categories ? checkCategories({ details, expected }) : [],
+    { criterion: "language", problems: checkText(details) },
+    { criterion: "audience", problems: checkList({ details, field: "audience" }) },
+    { criterion: "fit", problems: checkList({ details, field: "outcomes" }) },
+    {
+      criterion: "fit",
+      problems: expected?.categories ? checkCategories({ details, expected }) : [],
+    },
   ];
 
+  const failed = checks.filter((check) => check.problems.length > 0);
+
   return {
+    criteria: [...new Set(failed.map((check) => check.criterion))],
     judgedOutput: output,
-    passed: checks.filter((problems) => problems.length === 0).length,
-    problems: checks.flat(),
+    passed: checks.length - failed.length,
+    problems: failed.flatMap((check) => check.problems),
     total: checks.length,
   };
 }
@@ -126,9 +134,14 @@ export const COURSE_DETAILS_SCORE_CATEGORIES = defineScoreCategories([
   },
 ]);
 
+export const checkCourseDetailsOutput: TaskCodeChecks<CourseDetailsExpected> = ({
+  output,
+  testCase,
+}) => checkCourseDetails({ expected: testCase.expected, output });
+
 export const scoreCourseDetails: TaskScorer<CourseDetailsExpected> = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) => checkCourseDetails({ expected: testCase.expected, output: value }),
+    check: (value) => checkCourseDetailsOutput({ output: value, testCase }),
     output,
     scoreCategories: COURSE_DETAILS_SCORE_CATEGORIES,
     testCase,

@@ -8,13 +8,14 @@ import {
 } from "@zoonk/ai/tasks/language/conversation-feedback";
 import { PLAIN_LANGUAGE_CRITERION, readCriteria } from "../plain-language-criterion";
 import { CONVERSATION_FEEDBACK_SCORE_CATEGORIES } from "./score-categories";
-import { scoreConversationFeedback } from "./scorer";
+import { checkConversationFeedbackOutput, scoreConversationFeedback } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 export const conversationFeedbackTask: Task<
   WriteConversationFeedbackParams,
   WriteConversationFeedbackSchema
 > = {
+  codeChecks: checkConversationFeedbackOutput,
   criteria: readCriteria(
     CONVERSATION_FEEDBACK_SCORE_CATEGORIES,
     PLAIN_LANGUAGE_CRITERION,

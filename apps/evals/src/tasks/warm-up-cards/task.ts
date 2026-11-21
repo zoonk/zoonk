@@ -1,6 +1,6 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
-import { type OptionalCountry, type Task } from "@/lib/types";
+import { type OptionalCountry, type Task, type TaskCodeChecks } from "@/lib/types";
 import {
   type RawWarmUpCard,
   WARM_UP_DECK_SIZE,
@@ -20,7 +20,7 @@ type WarmUpCardsOutput = { cards: RawWarmUpCard[] };
  * The judge reads the cards the pipeline would keep, as learners would see them. A deck with fewer
  * cards than one shows is never shown, so none of it passes.
  */
-function checkOutput(output: string): CodeCheckResult {
+const checkOutput: TaskCodeChecks = ({ output }) => {
   const { cards } = JSON.parse(output) as WarmUpCardsOutput;
   const kept = toWarmUpCards(cards);
   const keptIds = new Set(kept.map((card) => card.id));
@@ -30,20 +30,25 @@ function checkOutput(output: string): CodeCheckResult {
     keptIds.has(String(index + 1)) ? [] : [`Card ${index + 1} ("${card.question}")`],
   );
 
+  const blockingProblems = shown ? [] : [`Only ${kept.length} cards passed, too few for a deck.`];
+
   return {
+    blockingProblems,
+    criteria: ["format"],
     judgedOutput: JSON.stringify({ cards: kept }, null, 1),
     passed: shown ? kept.length : 0,
     problems: [
       ...(dropped.length > 0
         ? [`${dropped.join(", ")} failed the code checks and would be dropped.`]
         : []),
-      ...(shown ? [] : [`Only ${kept.length} cards passed, too few for a deck.`]),
+      ...blockingProblems,
     ],
     total: cards.length,
   };
-}
+};
 
 export const warmUpCardsTask: Task<OptionalCountry<WriteWarmUpCardsParams>, WarmUpCardsOutput> = {
+  codeChecks: checkOutput,
   criteria: readCriteria(WARM_UP_CARDS_SCORE_CATEGORIES),
   description:
     "Write about 10 guess cards (a question, 2 or 3 options with one right, a short reveal) a new learner plays while their plan is built: the shared validator, then a judge",
@@ -66,7 +71,7 @@ export const warmUpCardsTask: Task<OptionalCountry<WriteWarmUpCardsParams>, Warm
   },
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
-      check: checkOutput,
+      check: (value) => checkOutput({ output: value, testCase }),
       output,
       scoreCategories: WARM_UP_CARDS_SCORE_CATEGORIES,
       testCase,

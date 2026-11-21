@@ -6,7 +6,7 @@ import {
 } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { readCriteria } from "../plain-language-criterion";
 import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
-import { type CourseOutlineExpected, scoreCourseOutline } from "./scorer";
+import { type CourseOutlineExpected, checkCourseOutlineOutput, scoreCourseOutline } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 type CourseOutlineOutput = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
@@ -16,6 +16,7 @@ export const courseOutlineTask: Task<
   CourseOutlineOutput,
   CourseOutlineExpected
 > = {
+  codeChecks: checkCourseOutlineOutput,
   criteria: readCriteria(COURSE_OUTLINE_SCORE_CATEGORIES),
   description:
     "Write one level band of a shared course: chapters with objectives and tools, and every lesson's title, description, can-do line, minutes and skills",

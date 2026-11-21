@@ -11,6 +11,7 @@ import {
 import {
   type LiveConversationExpected,
   type LiveConversationOutput,
+  checkLiveConversationOutput,
   scoreLiveConversation,
 } from "./scorer";
 import { TEST_CASES } from "./test-cases";
@@ -20,6 +21,7 @@ export const liveConversationTask: Task<
   LiveConversationOutput,
   LiveConversationExpected
 > = {
+  codeChecks: checkLiveConversationOutput,
   criteria: readCriteria(MEMORY_CALL_SCORE_CATEGORIES),
   description:
     "Play a practice call's character on GPT-Live with the production instructions and cues, against a text model playing the learner through the app's typed replies, with objectives marked by the production check: code checks the opening, objectives, reply length, that the character waits while the learner writes and that a learner's note is never quoted, then a judge reads the call for role, level, objectives and how the character used the note",

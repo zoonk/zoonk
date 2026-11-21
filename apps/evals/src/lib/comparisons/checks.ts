@@ -42,6 +42,10 @@ export async function checkRuns(task: RegisteredTask | null, comparison: Compari
   const check = task.codeChecks;
 
   if (!check && task.output !== "image") {
+    if (manifest.codeCheck === "code checks") {
+      throw new Error(`The comparison requires code checks, but ${task.id} has none registered.`);
+    }
+
     await writeRecord(doneFile, z.literal(true), true);
     return;
   }

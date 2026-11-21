@@ -1,6 +1,6 @@
-import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
+import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
-import { type OptionalCountry, type Task } from "@/lib/types";
+import { type OptionalCountry, type Task, type TaskCodeChecks } from "@/lib/types";
 import { sumLanguageModelUsage } from "@zoonk/ai/combine-task-provenance";
 import { assembleChallengeCase } from "@zoonk/ai/tasks/challenge/assemble";
 import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
@@ -44,14 +44,23 @@ async function generateFirstChallengeDraft(params: ChallengeCaseParams) {
   };
 }
 
-function checkOutput(output: string, variant: ChallengeCaseParams["variant"]): CodeCheckResult {
+const checkOutput: TaskCodeChecks = ({ output, testCase }) => {
+  const { variant } = testCase.userInput as ChallengeCaseParams;
   const written = JSON.parse(output) as WrittenChallengeCase;
   const { problems } = checkWrittenChallenge({ variant, written });
 
-  return { judgedOutput: output, passed: problems.length === 0 ? 1 : 0, problems, total: 1 };
-}
+  return {
+    blockingProblems: problems,
+    criteria: ["decisions"],
+    judgedOutput: output,
+    passed: problems.length === 0 ? 1 : 0,
+    problems,
+    total: 1,
+  };
+};
 
 export const challengeCaseTask: Task<OptionalCountry<ChallengeCaseParams>, WrittenChallengeCase> = {
+  codeChecks: checkOutput,
   criteria: readCriteria(CHALLENGE_CASE_SCORE_CATEGORIES, PLAIN_LANGUAGE_CRITERION),
   description:
     "Write the challenge that closes a chapter: a work case with a team and decisions that change the state, or a light What if for overview courses. Code checks the decision graph, then a judge",
@@ -81,7 +90,7 @@ export const challengeCaseTask: Task<OptionalCountry<ChallengeCaseParams>, Writt
   },
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
-      check: (text) => checkOutput(text, (testCase.userInput as ChallengeCaseParams).variant),
+      check: (value) => checkOutput({ output: value, testCase }),
       output,
       scoreCategories: CHALLENGE_CASE_SCORE_CATEGORIES,
       testCase,

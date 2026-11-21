@@ -8,7 +8,11 @@ import {
 } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { readCriteria } from "../plain-language-criterion";
 import { MISTAKE_PATTERN_SCORE_CATEGORIES } from "./score-categories";
-import { type MistakePatternExpected, scoreMistakePattern } from "./scorer";
+import {
+  type MistakePatternExpected,
+  checkMistakePatternOutput,
+  scoreMistakePattern,
+} from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 export const mistakePatternTask: Task<
@@ -16,6 +20,7 @@ export const mistakePatternTask: Task<
   FindMistakePatternSchema,
   MistakePatternExpected
 > = {
+  codeChecks: checkMistakePatternOutput,
   criteria: readCriteria(MISTAKE_PATTERN_SCORE_CATEGORIES, LEARNER_INSTRUCTIONS),
   description:
     "Name one repeated pattern in a learner's recent language mistakes with a rule, contrast and drill, or say they were typos or unrelated: code checks, then a judge",

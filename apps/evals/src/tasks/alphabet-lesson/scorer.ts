@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type AlphabetLessonContent,
   type GenerateAlphabetLessonParams,
@@ -18,6 +18,7 @@ function checkLesson({
   const checks = checkAlphabetLesson({ lesson, targetLanguage });
 
   return {
+    criteria: ["accuracy"],
     judgedOutput: output,
     passed: checks.filter((check) => check.passed).length,
     problems: checks.flatMap((check) => (check.passed ? [] : [check.problem])),
@@ -25,13 +26,16 @@ function checkLesson({
   };
 }
 
-export const scoreAlphabetLesson: TaskScorer = ({ output, testCase }) => {
+export const checkAlphabetLessonOutput: TaskCodeChecks = ({ output, testCase }) => {
   const { targetLanguage } = testCase.userInput as GenerateAlphabetLessonParams;
 
-  return scoreWithCodeChecks({
-    check: (text) => checkLesson({ output: text, targetLanguage }),
+  return checkLesson({ output, targetLanguage });
+};
+
+export const scoreAlphabetLesson: TaskScorer = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkAlphabetLessonOutput({ output: value, testCase }),
     output,
     scoreCategories: ALPHABET_LESSON_SCORE_CATEGORIES,
     testCase,
   });
-};

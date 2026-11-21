@@ -7,10 +7,11 @@ import {
 } from "@zoonk/ai/tasks/language/exam-speaking-card";
 import { readCriteria } from "../plain-language-criterion";
 import { EXAM_SPEAKING_CARD_SCORE_CATEGORIES } from "./score-categories";
-import { scoreExamSpeakingCardOutput } from "./scorer";
+import { checkExamSpeakingCardOutput, scoreExamSpeakingCardOutput } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 export const examSpeakingCardTask: Task<GenerateExamSpeakingCardParams, ExamSpeakingCardOutput> = {
+  codeChecks: checkExamSpeakingCardOutput,
   criteria: readCriteria(EXAM_SPEAKING_CARD_SCORE_CATEGORIES),
   description:
     "Write one task card of a DELE, DELF, Goethe or Cambridge speaking paper like the exam's sheet: instructions, prompts, the material (photo scenes, a text or a table), and the script of the examiner or partner the voice model plays",

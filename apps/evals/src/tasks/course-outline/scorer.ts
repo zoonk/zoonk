@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type CourseOutlineParams } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { findMixedAreaChapters } from "@zoonk/ai/tasks/curriculum/outline-areas";
 import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
@@ -73,6 +73,30 @@ function getAreaProblems({
   );
 }
 
+function checkChapters({
+  chapters,
+  params,
+}: {
+  chapters: OutlineChapter[];
+  params: CourseOutlineParams;
+}) {
+  const checks = chapters.map((chapter) => ({
+    area: getAreaProblems({ chapter, params }),
+    tools: getToolProblems({
+      chapter,
+      level: params.level,
+      withoutTools: params.withoutTools ?? false,
+    }),
+  }));
+
+  return {
+    hasAreaProblems: checks.some(({ area }) => area.length > 0),
+    hasToolProblems: checks.some(({ tools }) => tools.length > 0),
+    passed: checks.filter(({ area, tools }) => area.length === 0 && tools.length === 0).length,
+    problems: checks.flatMap(({ area, tools }) => [...tools, ...area]),
+  };
+}
+
 function checkOutline({
   expected,
   output,
@@ -82,16 +106,12 @@ function checkOutline({
   output: string;
   params: CourseOutlineParams;
 }): CodeCheckResult {
-  const { level, withoutTools = false } = params;
   const { chapters, uncoveredSkillKeys } = parseOutline(output);
 
   const coversSkills =
     (params.requiredSkills?.length ?? 0) + (params.extendSkills?.length ?? 0) > 0;
 
-  const chapterProblems = chapters.map((chapter) => [
-    ...getToolProblems({ chapter, level, withoutTools }),
-    ...getAreaProblems({ chapter, params }),
-  ]);
+  const checked = checkChapters({ chapters, params });
 
   const pattern = expected ? new RegExp(expected.tool, "iu") : null;
 
@@ -102,30 +122,46 @@ function checkOutline({
   const leavesSkillsOut = coversSkills && uncoveredSkillKeys.length > 0;
 
   const problems = [
-    ...chapterProblems.flat(),
+    ...checked.problems,
     !found && `No chapter names the tool the course practices with (${expected?.tool}).`,
     leavesSkillsOut &&
       `No chapter teaches ${uncoveredSkillKeys.length} required skill(s): ${uncoveredSkillKeys.join(", ")}.`,
   ].filter((problem) => typeof problem === "string");
 
+  const blockingProblems = chapters.length === 0 ? ["The output has no chapters."] : [];
+  const hasToolExpectation = Boolean(pattern);
+
   return {
+    blockingProblems,
+    criteria: [
+      ...(checked.hasToolProblems || !found ? ["levelFit"] : []),
+      ...(checked.hasAreaProblems || leavesSkillsOut || blockingProblems.length > 0
+        ? ["coverage"]
+        : []),
+    ],
     judgedOutput: output,
     passed:
-      chapterProblems.filter((list) => list.length === 0).length +
-      (pattern && found ? 1 : 0) +
-      (coversSkills && !leavesSkillsOut ? 1 : 0),
-    problems: chapters.length === 0 ? ["The output has no chapters."] : problems,
-    total: Math.max(chapters.length + (pattern ? 1 : 0) + (coversSkills ? 1 : 0), 1),
+      checked.passed +
+      Number(hasToolExpectation && found) +
+      Number(coversSkills && !leavesSkillsOut),
+    problems: blockingProblems.length > 0 ? blockingProblems : problems,
+    total: Math.max(chapters.length + Number(hasToolExpectation) + Number(coversSkills), 1),
   };
 }
 
-export const scoreCourseOutline: TaskScorer<CourseOutlineExpected> = ({ output, testCase }) => {
+export const checkCourseOutlineOutput: TaskCodeChecks<CourseOutlineExpected> = ({
+  output,
+  testCase,
+}) => {
   const params = testCase.userInput as CourseOutlineParams;
 
-  return scoreWithCodeChecks({
-    check: (value) => checkOutline({ expected: testCase.expected, output: value, params }),
+  return checkOutline({ expected: testCase.expected, output, params });
+};
+
+export const scoreCourseOutline: TaskScorer<CourseOutlineExpected> = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkCourseOutlineOutput({ output: value, testCase }),
     output,
     scoreCategories: COURSE_OUTLINE_SCORE_CATEGORIES,
     testCase,
   });
-};

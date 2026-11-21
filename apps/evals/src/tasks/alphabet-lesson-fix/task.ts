@@ -6,10 +6,11 @@ import {
 } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { PLAIN_LANGUAGE_CRITERION, readCriteria } from "../plain-language-criterion";
 import { ALPHABET_LESSON_FIX_SCORE_CATEGORIES } from "./score-categories";
-import { scoreAlphabetLessonFix } from "./scorer";
+import { checkAlphabetLessonFixOutput, scoreAlphabetLessonFix } from "./scorer";
 import { type AlphabetLessonFixInput, TEST_CASES } from "./test-cases";
 
 export const alphabetLessonFixTask: Task<AlphabetLessonFixInput, PublishedAlphabetLesson> = {
+  codeChecks: checkAlphabetLessonFixOutput,
   criteria: readCriteria(ALPHABET_LESSON_FIX_SCORE_CATEGORIES, PLAIN_LANGUAGE_CRITERION),
   description:
     "Fix only the parts of an alphabet lesson a reviewer flagged (letter cards, intro screens or the lesson's words), right for the learner's language, and keep everything else as it was",

@@ -4,7 +4,7 @@ import { generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { readCriteria } from "../plain-language-criterion";
 import { type SkillGraphCase, toLibraryLookup } from "./library-cases";
 import { SKILL_GRAPH_SCORE_CATEGORIES } from "./score-categories";
-import { type SkillGraphOutput, scoreSkillGraph } from "./scorer";
+import { type SkillGraphOutput, checkSkillGraphOutput, scoreSkillGraph } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 async function generate({ library, ...params }: SkillGraphCase) {
@@ -14,6 +14,7 @@ async function generate({ library, ...params }: SkillGraphCase) {
 }
 
 export const skillGraphTask: Task<SkillGraphCase, SkillGraphOutput> = {
+  codeChecks: checkSkillGraphOutput,
   criteria: readCriteria(SKILL_GRAPH_SCORE_CATEGORIES),
   description:
     "Turn a goal into a skill graph: skills with prerequisites, the courses that teach them and phases sized in hours",
