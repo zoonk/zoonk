@@ -26,14 +26,9 @@ const LIVE_CALL_POLICY_TEST = "src/language/conversations/live-calls.test.ts";
 const MISSION_COMPLETION_TEST = "src/mistakes/mission-completion-paths.test.ts";
 /** Table-wide locks must run after parallel files and apart from one another. */
 const REQUEST_INSTANT_TEST = "src/learner/facts/request-instant.test.ts";
-const OPEN_GOAL_INPUT_RACE_TEST = "src/sessions/open-goal-input-race.test.ts";
 const MIND_MAP_CLAIM_RACE_TEST = "src/mind-maps/mind-map-claim-race.test.ts";
 
-const TABLE_LOCK_TESTS = [
-  REQUEST_INSTANT_TEST,
-  OPEN_GOAL_INPUT_RACE_TEST,
-  MIND_MAP_CLAIM_RACE_TEST,
-];
+const TABLE_LOCK_TESTS = [REQUEST_INSTANT_TEST, MIND_MAP_CLAIM_RACE_TEST];
 
 const ORDERED_CALL_TESTS = [LIVE_CALL_POLICY_TEST, MISSION_COMPLETION_TEST];
 const ORDERED_TESTS = [...ORDERED_CALL_TESTS, ...TABLE_LOCK_TESTS];
