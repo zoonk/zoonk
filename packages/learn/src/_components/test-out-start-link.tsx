@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { useSentenceSpace } from "../_utils/locale";
+import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type HelpLimit, HelpLimitNotice } from "./help-limit-notice";
@@ -17,7 +18,6 @@ import {
   ListRowTitle,
 } from "./list-group";
 import { StatusRegion } from "./status-region";
-import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 
 export type TestOutStart =
   | { limit: HelpLimit; status: "refused" }

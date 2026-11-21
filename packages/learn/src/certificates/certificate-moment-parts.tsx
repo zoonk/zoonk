@@ -11,10 +11,10 @@ import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
+import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateSentence } from "./certificate-labels";
 import { CertificateSheet } from "./certificate-sheet";
-import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
 
 const BEHIND_CLASS =
   "absolute inset-0 origin-top-right translate-x-3 -translate-y-3 scale-96 sm:translate-x-5.5 sm:-translate-y-5";

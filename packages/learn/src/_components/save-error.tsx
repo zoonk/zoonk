@@ -6,8 +6,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useSentenceSpace } from "../_utils/locale";
-import { useContentFeedback } from "../feedback/feedback-context";
 import { SENTENCE_WITH_ACTION_CLASS } from "../_utils/sentence-action";
+import { useContentFeedback } from "../feedback/feedback-context";
 
 function ReportSaveProblem() {
   const t = useExtracted("feedback");
