@@ -9,12 +9,14 @@ import {
   loadLivingPlanBatch,
   mergeChangeTopics,
 } from "./_utils/living-plan-change";
-import { toPlanChangePayload } from "./_utils/plan-change-payload";
+import { type PlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { type ComputedPlan, computePlan } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
 import { getSkillArea } from "./planner/graph-areas";
+import { type PlanEffect } from "./planner/plan-effect";
+import { type PlanGraph } from "./planner/plan-state";
 
 /** For logs and admin only; the apps word it from its topics. */
 const RELEARN_NOTE = "A miss in practice brought back the lessons of a topic taken as known.";
@@ -95,6 +97,29 @@ function getPlannedIds({
   );
 }
 
+function restorationEffect({
+  effect,
+  graph,
+  missed,
+  previous,
+}: {
+  effect: PlanEffect;
+  graph: PlanGraph;
+  missed: readonly string[];
+  previous?: PlanChangePayload;
+}): PlanEffect {
+  return {
+    ...effect,
+    endDateBefore: previous?.effect?.endDateBefore ?? effect.endDateBefore,
+    topicsAdded: mergeChangeTopics(
+      previous?.effect?.topicsAdded,
+      listChangeTopics({ graph, skillIds: new Set(missed) }),
+      effect.topicsAdded,
+    ),
+    topicsLeftOut: mergeChangeTopics(previous?.effect?.topicsLeftOut, effect.topicsLeftOut),
+  };
+}
+
 /**
  * The caller says which skills the learner was taken to know before the miss
  * (`loadSkillsToRelearn`).
@@ -134,12 +159,16 @@ export async function bringBackMissedLessons({
 
     const missed = skillIds.filter((skillId) => !takenOut.has(skillId));
 
+    if (missed.length === 0) {
+      return;
+    }
+
     const [ids, batch] = await Promise.all([
       findTestedOutItemIds({ context, skillIds: new Set(missed) }),
       livingPlanDay ? loadLivingPlanBatch({ context, day: livingPlanDay }) : null,
     ]);
 
-    if (ids.size === 0) {
+    if (livingPlanDay && ids.size === 0) {
       return;
     }
 
@@ -153,29 +182,15 @@ export async function bringBackMissedLessons({
 
     const restoredIds = getPlannedIds({ computed, ids: plannedIds });
 
-    if (restoredIds.size === 0) {
+    if (livingPlanDay && restoredIds.size === 0) {
       return;
     }
 
     const previous = batch?.payload;
 
-    const effect = {
-      ...computed.effect,
-      endDateBefore: previous?.effect?.endDateBefore ?? computed.effect.endDateBefore,
-      topicsAdded: mergeChangeTopics(
-        previous?.effect?.topicsAdded,
-        listChangeTopics({ graph, skillIds: new Set(missed) }),
-        computed.effect.topicsAdded,
-      ),
-      topicsLeftOut: mergeChangeTopics(
-        previous?.effect?.topicsLeftOut,
-        computed.effect.topicsLeftOut,
-      ),
-    };
-
     const payload = {
       carriedItemIds: [...new Set([...(previous?.carriedItemIds ?? []), ...restoredIds])],
-      effect,
+      effect: restorationEffect({ effect: computed.effect, graph, missed, previous }),
       ...recheckChangeDay(livingPlanDay),
       recheckedSkillIds: [...new Set([...(previous?.recheckedSkillIds ?? []), ...missed])],
       source: "system",
