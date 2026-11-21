@@ -182,13 +182,8 @@
   "plan_date_estimate_spoken": "df55a1ad97a556d57366f607334d4540574bf16f3c11c99b20e89355d19d4bc7",
   "plan_date_range": "4ffb9e72b56cd3482d3e90f259bb30cb45dc9a9cfd53787197f5bbf814cc4f89",
   "plan_date_to_be_confirmed": "f5a65bb177fa910f93cb200cdf9a2405e8abaca6677c6f80b2c9dd9b01a92251",
-  "plan_day_done": "3dc34a4beb5220b4d9c0130eeaa371805ff27f34d60298142ecc3184a5cba920",
   "plan_day_is_here": "21445ec7a9349a6eb1087796118302ed0d0a6e696edbb0ce90ea5b3b344ef9a0",
-  "plan_day_missed": "8b979d04373ec9ab299278fe1201b90b897b02f4983ae383a09585010f5c3f91",
-  "plan_day_planned": "1f262bb30ecbe4a70f54101233f95c3495d37ab85adb61b46f7467826962c7d3",
   "plan_day_range": "69e5c49184b264d835125602799e66edcc6d7cf2f0a73616bce8564e905d6ca1",
-  "plan_day_rest": "f5265b99008c31bce94a09e67e7cd3d030ae549bdf4414559757b6963750540c",
-  "plan_day_today": "6d1e87d92777a7308fd807e2950fbd0ad691285e1960c5e1f6147584c78ea8a6",
   "plan_days_left": "aea1daf90d59c8fce971aa94d52b72e62daaaf6ce46b70d32fcfd05aaeb0e222",
   "plan_days_left_estimate": "b0596957e4bb956461c200308de312214255b6d3b48cbb7c739bbc8c03fed49d",
   "plan_days_left_estimate_spoken": "780f507547596a51d1a54dbb664d1ba2dcef0a9889d1e1e5c6652da911cd6446",
@@ -515,7 +510,6 @@
   "plan_use_this_date": "d8364f4c4dd35babd35af83d007a5cde4ac8faac838c7ca6bcc218eef6a3b1b7",
   "plan_use_time": "fb0fb04c2be3333c0e12b760043504800a5977eae2d0bbff9da5916f1a28243e",
   "plan_wednesdays": "dd57c5210adabcb5ae4970c270132a7637b719cfa639b6073cd293a8a7d62e48",
-  "plan_week_day": "337125a33fd290c0efd209198b5b1dc27c18c7fe76ea7a7c21565e0369eb1790",
   "plan_week_time": "f3cb1974ab0eea4ec74de156fdce07524398876930e7d43edafdd8f877abc730",
   "plan_weekly_challenges": "01c239cd61095378b213640131e6de05e0cdc610aa99ac3517c326fcb264cc6d",
   "plan_what_you_practice": "9c8504139742c75c4ba140e37eff772d6c8943821cf112a558149953cb712ada",
@@ -751,12 +745,6 @@
     </plurals>
     <string name="plan_this_week">今週</string>
     <string name="plan_week_time">%1$s / %2$s</string>
-    <string name="plan_week_day">%1$s：%2$s</string>
-    <string name="plan_day_done">完了</string>
-    <string name="plan_day_missed">未学習</string>
-    <string name="plan_day_rest">休みの日</string>
-    <string name="plan_day_today">今日</string>
-    <string name="plan_day_planned">学習予定</string>
     <string name="plan_preparation">準備状況</string>
     <string name="plan_progress">進み具合</string>
     <string name="plan_your_preparation">準備状況</string>

@@ -1364,7 +1364,17 @@ class PlanViewModelTest {
     ) = plan.copy(
         week =
             plan.week.copy(
-                days = listOf(PlanDay(kotlinx.datetime.LocalDate.parse(date), emptyList(), 20.0, null, PlanDay.State.TODAY)),
+                days =
+                    listOf(
+                        PlanDay(
+                            kotlinx.datetime.LocalDate.parse(date),
+                            emptyList(),
+                            20.0,
+                            null,
+                            PlanDay.State.TODAY,
+                            ApiJson.decodeFromString(studyDay(date, isToday = true)),
+                        ),
+                    ),
             ),
     )
 
