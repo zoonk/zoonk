@@ -1,0 +1,153 @@
+{
+  "attempt": "second",
+  "costUsd": 0.00901049,
+  "failures": [],
+  "packetId": "cb86ddf1f9be6b2d137d6ccd63bcc598248c228051feab8ed2266e516272360e",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both lessons teach one idea: reading contour spacing to tell steep ground from gentle ground.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both plans follow the same order: a hook, a guess before the first explanation, a worked example, checks and an application.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "A's guess and checks name the labeled maps (A and B, N and S, the three sections) and its guess uses a shared scale bar, so the learner compares the two hills at the same scale.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both fit a beginner reader, use everyday words and stay within the lesson's scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The same two-map picture is reused on the guess and on three explanation screens, and the later three add no new detail.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The repeated figure gives the learner nothing new to look at and makes the lesson feel padded.",
+            "location": {
+              "detail": "screens 3 to 6 (guess and the three explanations about contour interval and spacing)",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The same hill map is reused on five screens, with the hook and the explanations repeating the picture without new detail.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The repeated figure adds little and the learner may stop noticing it.",
+            "location": {
+              "detail": "hook and explanation screens 1 to 5",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's checks cover more of the skill, including a section-by-section check on one climb, and its visuals are tied to the spacing comparison, with a guess that uses a scale bar."
+        },
+        "pairId": "6e1e9875-7cbb-4147-93d7-758cf21326dc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A teaches one idea, percent change from the starting value; B adds percentage-point change and logarithmic returns, which belong to other lessons.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens on a real scene (Leah's raise) and builds from the guess to the procedure; B opens with a formal definition and no scene for the learner.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same table checks and the same application, with no visuals added beyond the tables.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses everyday words and a concrete calculation for a beginner; B opens with a formula and brings in advanced terms.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook gives a formal formula with Greek notation and variables before any scene or everyday example.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner who has never studied percent change would stop reading at the first screen.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The explanation brings in percentage-point change and logarithmic returns, which are outside this beginner lesson and the chapter's other lessons.",
+            "criterion": "levelAndScope",
+            "learnerCost": "The learner meets terms they cannot use yet and the lesson loses focus.",
+            "location": {
+              "detail": "distinguish it from percentage-point change and from logarithmic returns",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A starts with a real scene and keeps formulas and out-of-scope terms away from a beginner, while B opens with a formula the reader cannot yet follow."
+        },
+        "pairId": "8fd53310-d245-4505-8ffb-b8d3a21bf599"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they teach the same single idea.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the screen plans are the same.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the visuals and activities are the same.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the level and scope are the same.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "cfc97923-4936-4fab-bf58-cd606c256bc0"
+      }
+    ]
+  }
+}

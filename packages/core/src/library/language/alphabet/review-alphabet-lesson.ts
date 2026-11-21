@@ -14,6 +14,7 @@ import { type LibraryProvenance } from "../../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
 import { CURRENT_STEPS, lockCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { BACKGROUND_TIER } from "../../quality/_utils/published-versions";
+import { recordLessonQualityDecision } from "../../quality/lesson-quality-decision";
 import { parseStepContent } from "../../steps/contract/step-contract";
 import { toAlphabetLessonCheck } from "./alphabet-lesson-check";
 import { buildAlphabetLessonSteps } from "./alphabet-lesson-steps";
@@ -52,6 +53,7 @@ async function loadPublishedAlphabetLesson(lessonId: string) {
       description: true,
       language: true,
       model: true,
+      runId: true,
       steps: {
         orderBy: { position: "asc" },
         select: {
@@ -107,6 +109,7 @@ async function loadPublishedAlphabetLesson(lessonId: string) {
     targetLanguage: lesson.targetLanguage,
     version: first.version,
     writerModel: lesson.model,
+    writerRunId: lesson.runId,
   };
 }
 
@@ -124,7 +127,7 @@ export async function reviewAlphabetLesson(
     return null;
   }
 
-  const { data } = await checkLessonQuality({
+  const { data, provenance } = await checkLessonQuality({
     ...toAlphabetLessonCheck({
       learnerLanguage: published.learnerLanguage,
       lesson: context.lesson ?? published.content,
@@ -135,11 +138,23 @@ export async function reviewAlphabetLesson(
     writerModel: published.writerModel,
   });
 
-  return data.issues.map((issue) => ({
+  const problems = data.issues.map((issue) => ({
     problem: `${issue.problem} Fix: ${issue.fix}`,
     screen: issue.screen,
     source: "review" as const,
   }));
+
+  if (!context.lesson) {
+    await recordLessonQualityDecision({
+      blocking: problems,
+      lessonId: context.lessonId,
+      phase: "firstReview",
+      reviewerRunId: provenance.runId,
+      writerRunId: published.writerRunId,
+    });
+  }
+
+  return problems;
 }
 
 /**

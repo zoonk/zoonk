@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { getPlanInputsKey, shouldSkipPlanBuild } from "../_utils/plan-inputs-key";
-import { type BuildPlanInput, buildPlan } from "./build-plan";
-import { putLandedLessons } from "./landed-placement";
+import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
+import { placeLandedLessons } from "./landed-placement";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson, type QueueUnit } from "./plan-units";
-import { type PlanDay, type ScheduledUnit } from "./schedule-units";
+import { type PlanDay } from "./schedule-units";
+import { listSelectedItemFacts } from "./selected-item-facts";
 
 const TODAY = fromIsoDate("2026-10-12");
 
@@ -43,18 +44,10 @@ function unit(attrs: Partial<QueueUnit> & Pick<QueueUnit, "key" | "skillId">): Q
   };
 }
 
-function laid(entry: QueueUnit, offset: number): ScheduledUnit {
-  return { ...entry, date: addDays(TODAY, offset), studyMinutes: entry.minutes * 2 };
-}
-
 const days: PlanDay[] = Array.from({ length: 7 }, (_, offset) => ({
   date: addDays(TODAY, offset),
   shape: { events: [], minutes: 20, open: true, phase: 0, share: 0.5 },
 }));
-
-function part(skillId: string): QueueUnit {
-  return unit({ key: `skill:${skillId}`, lessons: 6, minutes: 4, skillId });
-}
 
 function lessonUnits(skillId: string, count: number): QueueUnit[] {
   return Array.from({ length: count }, (_, index) =>
@@ -101,190 +94,198 @@ const input = {
   today: TODAY,
 } satisfies BuildPlanInput;
 
-function datesOf(placed: { landed: ScheduledUnit[]; laidOut: ScheduledUnit[] }, skillId: string) {
-  return [...placed.landed, ...placed.laidOut]
-    .filter((entry) => entry.skillId === skillId)
-    .map((entry) => [entry.key, toIsoDate(entry.date)]);
+/** A stand-in saved with the lesson minutes each day from today holds for it. */
+function standIn(skillId: string, held: readonly number[]): ExistingPlanItem {
+  const total = held.reduce((sum, minutes) => sum + minutes, 0);
+
+  return item({
+    facts: {
+      days: held.flatMap((minutes, offset) =>
+        minutes > 0 ? [[toIsoDate(addDays(TODAY, offset)), minutes * 2, minutes]] : [],
+      ),
+      minutes: total * 2,
+      parts: { checkpoint: 0, practice: 0, unwritten: total, written: 0 },
+      schemaVersion: 1,
+      skillIds: [skillId],
+    },
+    id: skillId,
+    position: 0,
+    skillId,
+  });
 }
 
-describe(putLandedLessons, () => {
-  it("starts a landed skill on its stand-in's day though other stand-ins hold that day's time", () => {
-    const placed = putLandedLessons({
-      days,
-      input: { ...input, items: [item({ id: "law", position: 1, skillId: "law" })] },
-      keptParts: [],
-      landed: new Map([["law", lessonUnits("law", 2)]]),
-      start: addDays(TODAY, 7),
-      units: [
-        laid(part("politics"), 0),
-        laid(part("politics"), 0),
-        laid(part("law"), 1),
-        laid(part("law"), 1),
-        laid(unit({ key: "lesson:essays-1", lessonId: "essays-1", skillId: "essays" }), 2),
-      ],
+/** A written lesson the run keeps on its day. */
+function keptLesson(lessonId: string, offset: number, minutes = 5) {
+  const skillId = lessonId.split("-")[0] ?? "";
+
+  return {
+    item: item({
+      id: lessonId,
+      lessonId,
+      position: 1,
+      scheduledFor: addDays(TODAY, offset),
+      skillId,
+    }),
+    unit: unit({ key: `lesson:${lessonId}`, lessonId, minutes, skillId }),
+  };
+}
+
+function place({
+  done = [],
+  end = null,
+  kept,
+  landed,
+  planDays = days,
+  skillId = "law",
+  standIn: held,
+}: {
+  done?: ExistingPlanItem[];
+  end?: Date | null;
+  kept: ReturnType<typeof keptLesson>[];
+  landed: QueueUnit[];
+  planDays?: PlanDay[];
+  skillId?: string;
+  standIn: ExistingPlanItem;
+}) {
+  const frozen = kept.map((entry) => entry.item);
+  const units = [...kept.map((entry) => entry.unit), ...landed];
+
+  const { dropped, placed } = placeLandedLessons({
+    days: planDays,
+    end,
+    frozen,
+    input: { ...input, items: [held, ...frozen, ...done] },
+    landed: new Map([[skillId, landed]]),
+    units,
+    unitsByKey: new Map(units.map((entry) => [entry.key, entry])),
+  });
+
+  return {
+    dates: placed.map((entry) => [entry.key, toIsoDate(entry.date)]),
+    dropped: dropped.map((entry) => entry.key),
+  };
+}
+
+describe(placeLandedLessons, () => {
+  it("starts a topic's lessons where its stand-in's time did, in the room kept lessons leave", () => {
+    const placed = place({
+      kept: [keptLesson("politics-0", 0)],
+      landed: lessonUnits("law", 2),
+      standIn: standIn("law", [5, 5]),
     });
 
-    expect(datesOf(placed, "law")).toStrictEqual([
+    expect(placed.dates).toStrictEqual([
       ["lesson:law-0", "2026-10-12"],
       ["lesson:law-1", "2026-10-13"],
     ]);
   });
 
-  it("leaves out for time the lessons no day by the goal's date has room for", () => {
-    const placed = putLandedLessons({
-      days,
-      input: { ...input, items: [item({ id: "law", position: 1, skillId: "law" })] },
-      keptParts: [],
-      landed: new Map([["law", lessonUnits("law", 3)]]),
-      start: addDays(TODAY, 7),
-      units: [
-        laid({ ...part("law"), minutes: 12 }, 0),
-        ...days.map((_, offset) => laid({ ...part("politics"), minutes: 10 }, offset)),
-      ],
+  it("keeps the stand-in's own time for its lessons on a day kept work fills past its time", () => {
+    const placed = place({
+      kept: [keptLesson("politics-0", 0), keptLesson("politics-1", 0), keptLesson("politics-2", 0)],
+      landed: lessonUnits("law", 2),
+      standIn: standIn("law", [5, 5]),
     });
 
-    expect(datesOf(placed, "law")).toStrictEqual([
+    expect(placed.dates).toStrictEqual([
       ["lesson:law-0", "2026-10-12"],
-      ["lesson:law-1", "2026-10-12"],
+      ["lesson:law-1", "2026-10-13"],
     ]);
-
-    expect(placed.dropped.map((entry) => entry.key)).toStrictEqual(["lesson:law-2"]);
   });
 
-  it("puts more lessons than its stand-in's time held on the next days with room", () => {
-    const placed = putLandedLessons({
-      days,
-      input: { ...input, items: [item({ id: "law", position: 1, skillId: "law" })] },
-      keptParts: [],
-      landed: new Map([["law", lessonUnits("law", 3)]]),
-      start: addDays(TODAY, 7),
-      units: [laid({ ...part("law"), minutes: 8 }, 0)],
+  it("puts lessons that take longer than their stand-in held on the next days with room", () => {
+    const placed = place({
+      kept: [keptLesson("politics-0", 1, 10)],
+      landed: lessonUnits("law", 3),
+      standIn: standIn("law", [8]),
     });
 
-    expect(datesOf(placed, "law")).toStrictEqual([
+    expect(placed.dates).toStrictEqual([
       ["lesson:law-0", "2026-10-12"],
       ["lesson:law-1", "2026-10-12"],
-      ["lesson:law-2", "2026-10-13"],
+      ["lesson:law-2", "2026-10-14"],
     ]);
-
-    expect(placed.dropped).toStrictEqual([]);
   });
 
-  it("leaves out lessons past its stand-in's time when the run's cut left part of the skill out", () => {
-    const placed = putLandedLessons({
-      days,
-      dropped: [{ ...part("law"), fittedMinutes: 0 }],
-      input: { ...input, items: [item({ id: "law", position: 1, skillId: "law" })] },
-      keptParts: [],
-      landed: new Map([["law", lessonUnits("law", 3)]]),
-      start: addDays(TODAY, 7),
-      units: [laid({ ...part("law"), minutes: 8 }, 0)],
-    });
-
-    expect(datesOf(placed, "law")).toStrictEqual([
-      ["lesson:law-0", "2026-10-12"],
-      ["lesson:law-1", "2026-10-12"],
-    ]);
-
-    expect(placed.dropped.map((entry) => entry.key)).toStrictEqual(["lesson:law-2"]);
-  });
-
-  it("never puts a lesson longer than a day's time on a day with no lesson time", () => {
+  it("never puts a lesson on a day with no lesson time", () => {
     const mock = { key: "mock", kind: "mock", minutes: 20, replacesDay: true, title: "" } as const;
 
-    const placed = putLandedLessons({
-      days: days.map((day, offset) =>
+    const placed = place({
+      kept: [keptLesson("politics-0", 0)],
+      landed: lessonUnits("law", 2),
+      planDays: days.map((day, offset) =>
         offset === 1 ? { ...day, shape: { ...day.shape, events: [mock] } } : day,
       ),
-      input: { ...input, items: [item({ id: "law", position: 1, skillId: "law" })] },
-      keptParts: [],
-      landed: new Map([
-        [
-          "law",
-          [
-            unit({ key: "lesson:law-0", lessonId: "law-0", skillId: "law" }),
-            unit({ key: "lesson:law-1", lessonId: "law-1", minutes: 15, skillId: "law" }),
-          ],
-        ],
-      ]),
-      start: addDays(TODAY, 7),
-      units: [laid({ ...part("law"), minutes: 8 }, 0)],
+      standIn: standIn("law", [5, 5]),
     });
 
-    expect(datesOf(placed, "law")).toStrictEqual([
+    expect(placed.dates).toStrictEqual([
       ["lesson:law-0", "2026-10-12"],
       ["lesson:law-1", "2026-10-14"],
     ]);
   });
 
-  it("keeps a landed stand-in in the session Today showed, with no time left that day", () => {
-    const placed = putLandedLessons({
-      days,
-      input: {
-        ...input,
-        items: [item({ id: "writing", position: 1, skillId: "law" })],
-        todayShown: true,
-      },
-      keptParts: [],
-      landed: new Map([["law", lessonUnits("law", 2)]]),
-      start: addDays(TODAY, 7),
-      units: [
-        laid(part("politics"), 0),
-        laid(part("politics"), 0),
-        laid(part("politics"), 0),
-        laid(part("law"), 0),
-        laid(part("law"), 0),
-      ],
+  it("places only the lessons that begin by the last day the run keeps", () => {
+    const placed = place({
+      end: addDays(TODAY, 1),
+      kept: [keptLesson("politics-0", 0), keptLesson("politics-1", 1, 7)],
+      landed: lessonUnits("law", 3),
+      standIn: standIn("law", [5, 3, 0, 0, 8]),
     });
 
-    expect(datesOf(placed, "law")).toStrictEqual([
+    expect(placed.dates).toStrictEqual([
       ["lesson:law-0", "2026-10-12"],
-      ["lesson:law-1", "2026-10-13"],
+      ["lesson:law-1", "2026-10-14"],
     ]);
+
+    expect(placed.dropped).toStrictEqual([]);
+  });
+
+  it("leaves out for time the lessons no day by the goal's date has room for", () => {
+    const placed = place({
+      kept: days.slice(1).map((_, index) => keptLesson(`politics-${index}`, index + 1, 10)),
+      landed: lessonUnits("law", 3),
+      standIn: standIn("law", [10]),
+    });
+
+    expect(placed.dates).toStrictEqual([
+      ["lesson:law-0", "2026-10-12"],
+      ["lesson:law-1", "2026-10-12"],
+    ]);
+
+    expect(placed.dropped).toStrictEqual(["lesson:law-2"]);
   });
 });
 
-function placeEssays(lawItems: ExistingPlanItem[]) {
-  return putLandedLessons({
-    days,
-    input: {
-      ...input,
-      items: [item({ id: "essays", position: 0, skillId: "essays" }), ...lawItems],
-    },
-    keptParts: [],
-    landed: new Map([["essays", lessonUnits("essays", 2)]]),
-    start: addDays(TODAY, 7),
-    units: [
-      laid(part("essays"), 0),
-      laid(part("essays"), 0),
-      laid(unit({ key: "lesson:law-1", lessonId: "law-1", skillId: "law" }), 3),
-    ],
+function placeEssays(done: ExistingPlanItem[]) {
+  return place({
+    done,
+    kept: [keptLesson("law-1", 3)],
+    landed: lessonUnits("essays", 2),
+    skillId: "essays",
+    standIn: standIn("essays", [10]),
   });
 }
 
 describe("a landed skill's lessons and the base it builds on", () => {
   it("waits for the first lesson of a base the learner hasn't begun", () => {
-    const placed = placeEssays([]);
-
-    expect(datesOf(placed, "essays")).toStrictEqual([
+    expect(placeEssays([]).dates).toStrictEqual([
       ["lesson:essays-0", "2026-10-15"],
       ["lesson:essays-1", "2026-10-16"],
     ]);
   });
 
   it("keeps its stand-in's days when the learner began the base", () => {
-    const placed = placeEssays([
-      item({
-        completedAt: TODAY,
-        id: "law-0",
-        lessonId: "law-0",
-        position: 1,
-        skillId: "law",
-        status: "done",
-      }),
-    ]);
+    const begun = item({
+      completedAt: TODAY,
+      id: "law-0",
+      lessonId: "law-0",
+      position: 1,
+      skillId: "law",
+      status: "done",
+    });
 
-    expect(datesOf(placed, "essays")).toStrictEqual([
+    expect(placeEssays([begun]).dates).toStrictEqual([
       ["lesson:essays-0", "2026-10-12"],
       ["lesson:essays-1", "2026-10-12"],
     ]);
@@ -326,6 +327,22 @@ function others(plan: { items: readonly (ExistingPlanItem | PlannedItem)[] }) {
 
 function lessonsAndChallenges(plan: { items: readonly PlannedItem[] }) {
   return others(plan).filter(([key]) => !key?.startsWith("checkpoint:"));
+}
+
+function firstTopic(plan: { items: readonly PlannedItem[] }) {
+  return lessonsAndChallenges(plan).filter(([key]) => key?.startsWith("lesson:first-"));
+}
+
+/** A lesson can run over two days, so a day's time is what each lesson spends on it. */
+function busiestDay(plan: Pick<BuiltPlan, "lessonDayMinutes">) {
+  const perDay = [...plan.lessonDayMinutes.values()]
+    .flatMap((byDay) => [...byDay])
+    .reduce(
+      (totals, [date, minutes]) => totals.set(date, (totals.get(date) ?? 0) + minutes),
+      new Map<string, number>(),
+    );
+
+  return Math.max(...perDay.values());
 }
 
 function busiest(plan: { items: readonly PlannedItem[] }) {
@@ -380,7 +397,7 @@ describe.each([false, true])(
       expect(next.items.filter((entry) => entry.skillId === "landed")).toHaveLength(8);
     });
 
-    it("never push a day past the learner's time when they take longer than planned", () => {
+    it("push what follows later, and no day past the learner's time, when they take longer than planned", () => {
       const first = buildPlan(learn);
 
       const next = buildPlan({
@@ -391,8 +408,13 @@ describe.each([false, true])(
         mode: "automatic",
       });
 
-      expect(lessonsAndChallenges(next)).toStrictEqual(lessonsAndChallenges(first));
-      expect(busiest(next)).toBeLessThanOrEqual(learn.goal.dailyMinutes);
+      expect(lessonsAndChallenges(next).map(([key]) => key)).toStrictEqual(
+        lessonsAndChallenges(first).map(([key]) => key),
+      );
+
+      expect(firstTopic(next)).toStrictEqual(firstTopic(first));
+      expect(next.items.filter((entry) => entry.skillId === "landed")).toHaveLength(8);
+      expect(busiestDay(next)).toBeLessThanOrEqual(learn.goal.dailyMinutes);
     });
   },
 );
@@ -566,5 +588,179 @@ describe("a topic whose first chapter the learner already began", () => {
     });
 
     expect(begunStandIns(next)).toStrictEqual([]);
+  });
+});
+
+const TOPICS = ["t1", "t2", "t3", "t4"];
+const TOPIC_LESSONS = 40;
+const CHAPTER = 10;
+const DAILY_MINUTES = 15;
+
+/** Four topics no lesson is written for yet, studied 15 minutes a day from Monday to Friday. */
+function topics(kind: "language" | "learn") {
+  return {
+    goal: { dailyMinutes: DAILY_MINUTES, kind, targetDate: null },
+    graph: {
+      phases: [{ milestone: null, name: "Only" }],
+      skills: TOPICS.map((skillId) => ({
+        area: skillId,
+        lessons: TOPIC_LESSONS,
+        name: skillId,
+        phase: 0,
+        skillId,
+        weight: 1,
+      })),
+    },
+    items: [],
+    lessons: [],
+    mockMinutes: 150,
+    mode: "forced",
+    paceFactor: 1,
+    prerequisites: new Map(),
+    readiness: new Map(),
+    settings: parsePlanSettings({
+      startDate: "2026-09-28",
+      weekdayMinutes: [0, 15, 15, 15, 15, 15, 0],
+    }),
+    today: fromIsoDate("2026-09-28"),
+  } satisfies BuildPlanInput;
+}
+
+function firstChapter(skillId: string, minutes: number): PlannerLesson[] {
+  return Array.from({ length: CHAPTER }, (_, index) => ({
+    chapterId: `${skillId}-first`,
+    lessonId: `${skillId}-${index}`,
+    minutes,
+    skillIds: [skillId],
+    title: `${skillId} ${index}`,
+  }));
+}
+
+function saveWithDays(plan: BuildPlanInput): ExistingPlanItem[] {
+  const built = buildPlan(plan);
+  const facts = listSelectedItemFacts({ built, input: plan });
+
+  return built.items.map((entry, position) => ({
+    ...entry,
+    facts: { ...facts.get(entry.key), schemaVersion: 1 } as ExistingPlanItem["facts"],
+    id: entry.id ?? entry.key,
+    position,
+  }));
+}
+
+function daysOver(plan: Pick<BuiltPlan, "lessonDayMinutes">): string[] {
+  const perDay = [...plan.lessonDayMinutes.values()]
+    .flatMap((byDay) => [...byDay])
+    .reduce(
+      (totals, [date, minutes]) => totals.set(date, (totals.get(date) ?? 0) + minutes),
+      new Map<string, number>(),
+    );
+
+  return [...perDay].flatMap(([date, minutes]) =>
+    minutes > DAILY_MINUTES + 0.01 ? [`${date}: ${Math.round(minutes)}`] : [],
+  );
+}
+
+function chapterEnd(plan: { items: readonly PlannedItem[] }, skillId: string): Date {
+  const dates = plan.items.flatMap((entry) =>
+    entry.lessonId?.startsWith(`${skillId}-`) && entry.scheduledFor ? [entry.scheduledFor] : [],
+  );
+
+  return new Date(Math.max(...dates.map((date) => date.getTime())));
+}
+
+function unwrittenMinutes(plan: Pick<BuiltPlan, "lessonRawMinutes">, skillId: string): number {
+  return [...(plan.lessonRawMinutes.get(`skill:${skillId}`)?.values() ?? [])].reduce(
+    (total, minutes) => total + minutes,
+    0,
+  );
+}
+
+function daysApart(a: Date, b: Date): number {
+  return Math.abs(a.getTime() - b.getTime()) / 86_400_000;
+}
+
+/** The first chapters of three topics are written on the plan's first day. */
+function writtenOnDayOne(kind: "language" | "learn", minutes: number) {
+  const plan = topics(kind);
+
+  return {
+    landed: ["t1", "t2", "t3"],
+    next: {
+      ...plan,
+      items: saveWithDays(plan),
+      lessons: ["t1", "t2", "t3"].flatMap((skillId) => firstChapter(skillId, minutes)),
+    },
+  };
+}
+
+/**
+ * The learner studied every lesson of the first topic the plan gave them, and the next topic's
+ * first chapter is written five weeks in.
+ */
+function writtenFiveWeeksIn(kind: "language" | "learn", minutes: number) {
+  const base = topics(kind);
+  const today = fromIsoDate("2026-11-02");
+
+  const plan = {
+    ...base,
+    lessons: [
+      ...firstChapter("t1", 5),
+      ...Array.from({ length: TOPIC_LESSONS - CHAPTER }, (_, index) => ({
+        chapterId: "t1-second",
+        lessonId: `t1-next-${index}`,
+        minutes: 4,
+        skillIds: ["t1"],
+        title: `t1 next ${index}`,
+      })),
+    ],
+  };
+
+  const items = saveWithDays(plan).map((entry) =>
+    entry.skillId === "t1" && entry.scheduledFor && entry.scheduledFor < today
+      ? { ...entry, completedAt: entry.scheduledFor, status: "done" as const }
+      : entry,
+  );
+
+  return {
+    landed: ["t2"],
+    next: { ...plan, items, lessons: [...plan.lessons, ...firstChapter("t2", minutes)], today },
+  };
+}
+
+describe.each(["language", "learn"] as const)("lessons written for a %s plan's topics", (kind) => {
+  describe.each([4, 5, 8, 12])("each %s minutes long", (minutes) => {
+    describe.each([
+      ["on the plan's first day", writtenOnDayOne],
+      ["five weeks in", writtenFiveWeeksIn],
+    ] as const)("%s", (_, write) => {
+      it.each([false, true])(
+        "keep every day to the learner's time, near a full re-plan, with the rest of the topic (landing only: %s)",
+        (landedOnly) => {
+          const { landed, next } = write(kind, minutes);
+          const forced = buildPlan({ ...next, mode: "forced" });
+          const built = buildPlan({ ...next, landedOnly, mode: "automatic" });
+
+          expect(daysOver(built)).toStrictEqual([]);
+
+          expect(
+            landed.map(
+              (skillId) =>
+                built.items.filter((entry) => entry.lessonId?.startsWith(`${skillId}-`)).length,
+            ),
+          ).toStrictEqual(landed.map(() => CHAPTER));
+
+          expect(
+            landed.filter(
+              (skillId) => daysApart(chapterEnd(built, skillId), chapterEnd(forced, skillId)) > 7,
+            ),
+          ).toStrictEqual([]);
+
+          expect(
+            landed.map((skillId) => Math.round(unwrittenMinutes(built, skillId))),
+          ).toStrictEqual(landed.map(() => (TOPIC_LESSONS - CHAPTER) * 4));
+        },
+      );
+    });
   });
 });

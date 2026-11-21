@@ -114,6 +114,13 @@ export const extractQuestionFormatsTask: Task<
   generate: generateQuestionFormats,
   id: "extract-question-formats",
   name: "Extract question formats",
+  priorities: {
+    distribution: "shared",
+    first: "latency",
+    reads: "Code adds question formats to the blueprint and placement",
+    reason: "It adds to a wait the learner sees, so speed at low reasoning",
+    waits: "A learner waits: placement's first questions follow it",
+  },
   score: scoreFormats,
   testCases: TEST_CASES,
 };

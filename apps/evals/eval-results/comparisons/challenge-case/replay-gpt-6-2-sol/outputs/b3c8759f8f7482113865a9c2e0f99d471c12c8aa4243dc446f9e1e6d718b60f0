@@ -1,0 +1,309 @@
+{
+  "deadline": null,
+  "endings": [
+    {
+      "id": "pattern",
+      "outcome": "Com as duas frestas abertas, cada chegada deixou um ponto num lugar só. Depois de 1 minuto, os pontos formaram listras, como as que ondas fazem ao se encontrar."
+    },
+    {
+      "id": "band",
+      "outcome": "Com uma fresta aberta, os pontos formaram uma faixa larga no meio da tela depois de 1 minuto. Ficou a curiosidade de ver o que mudaria com as duas frestas abertas."
+    },
+    {
+      "id": "spots",
+      "outcome": "Você viu os primeiros pontos surgirem separados, cada um num lugar só. Ainda não dava pra distinguir o desenho que as marcas poderiam formar juntas."
+    }
+  ],
+  "meters": [],
+  "mission": "{{friend}} olha para a luz quase apagada e pergunta: será que, desse jeito, ela ainda consegue fazer um desenho? Experimente mudar o brilho e brincar com as frestas para descobrir **o que aparece na tela**.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [],
+          "id": "compare",
+          "next": "watch",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Você manteve a cor e comparou tanto o número de marcas no mesmo tempo quanto a energia de cada uma. Isso mostrou que chegaram menos pacotes, não pacotes menores.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Tive que prestar mais atenção: no mesmo tempo apareceram menos marcas. Mas cada uma recebeu a mesma energia de antes!"
+            },
+            {
+              "from": "friend",
+              "text": "Então esse pacotinho de energia que chega em cada marca é o quantum: o menor pacote de energia dessa cor de luz."
+            }
+          ],
+          "text": "Baixe mais o brilho e compare as marcas sem mudar a cor.",
+          "timeJump": null
+        },
+        {
+          "effects": [],
+          "id": "ask-friend",
+          "next": "watch",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "good",
+              "text": "Você aproveitou o que {{friend}} já tinha visto: as marcas surgiam separadas, em lugares diferentes, sem precisar mexer no brilho.",
+              "example": null
+            },
+            {
+              "skill": "packets",
+              "kind": "improve",
+              "text": "O relato mostrou onde os pontos apareceram, mas não se a energia por marca mudava. Pra descobrir isso, compare o que a tela mostra por marca antes e depois de baixar o brilho, mantendo a cor.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Vi os pontos aparecerem separados, em lugares diferentes da tela. Nem precisei mexer no brilho pra ver isso."
+            },
+            {
+              "from": "friend",
+              "text": "Só de ver os pontos, não dá pra dizer se baixar o brilho muda a energia de cada chegada. Penso nesse pacotinho mínimo de energia da luz como o quantum."
+            }
+          ],
+          "text": "Pergunte a {{friend}} o que ela viu de perto na tela.",
+          "timeJump": null
+        },
+        {
+          "effects": [],
+          "id": "step-back",
+          "next": "watch",
+          "notes": [
+            {
+              "skill": "packets",
+              "kind": "improve",
+              "text": "De longe deu pra ver que o brilho era fraco, mas não se isso vinha de menos pacotes ou de pacotes menores. Compare a energia por marca e quantas marcas aparecem no mesmo tempo ao baixar o brilho sem mudar a cor.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Nossa, de longe a tela parece quase apagada. Deu pra ver isso de relance."
+            },
+            {
+              "from": "friend",
+              "text": "Mas daqui não dá pra ver quanto de energia chega em cada marca. É esse pacotinho mínimo de energia da luz que eu queria enxergar: o quantum."
+            }
+          ],
+          "text": "Dê um passo pra trás e olhe o brilho da tela inteira.",
+          "timeJump": null
+        }
+      ],
+      "id": "dim",
+      "messages": [
+        {
+          "from": "friend",
+          "text": "Será que essa luz fraquinha ainda consegue desenhar alguma coisa na tela?"
+        },
+        {
+          "from": "friend",
+          "text": "Eu daria uma olhada de longe. Dá pra ter uma ideia do brilho de uma vez, sem ficar caçando marca por marca."
+        }
+      ],
+      "prompt": "Como você quer espiar essa luz?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [],
+          "id": "watch-close",
+          "next": "spots",
+          "notes": [
+            {
+              "skill": "wave-particle",
+              "kind": "improve",
+              "text": "De perto deu pra ver cada chegada num lugar só. Pra descobrir que desenho esses pontos fazem juntos, deixe as duas frestas abertas e veja a tela inteira enquanto as marcas se acumulam.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Olha, cada pontinho aparece num lugar só! Com essas primeiras marcas separadas, ainda não dá pra distinguir um desenho."
+            }
+          ],
+          "text": "Chegue perto e acompanhe as primeiras marcas assim que elas aparecerem.",
+          "timeJump": null
+        },
+        {
+          "effects": [],
+          "id": "one-slit",
+          "next": "band",
+          "notes": [
+            {
+              "skill": "wave-particle",
+              "kind": "good",
+              "text": "Você deixou só uma fresta aberta e viu o que os pontos formam juntos nesse caso: uma faixa larga no meio da tela.",
+              "example": null
+            },
+            {
+              "skill": "wave-particle",
+              "kind": "improve",
+              "text": "A faixa mostra o desenho de uma fresta só. Pra ver o desenho das duas passagens juntas, observe como os pontos se acumulam com as duas frestas abertas.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "Olha o meio da tela! Deu pra ver o que uma fresta faz sozinha, mas fiquei curiosa pra saber o que muda com as duas abertas."
+            }
+          ],
+          "text": "Feche uma fresta e veja que desenho os pontos fazem na tela.",
+          "timeJump": {
+            "label": "Depois de 1 minuto",
+            "panel": {
+              "title": "Depois de 1 minuto",
+              "metrics": [
+                {
+                  "label": "Passagem da luz",
+                  "value": "Uma fresta aberta",
+                  "note": null
+                },
+                {
+                  "label": "Chegadas",
+                  "value": "Pontos separados",
+                  "note": null
+                },
+                {
+                  "label": "Desenho que mais se destaca",
+                  "value": "Faixa larga no meio da tela",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [],
+          "id": "watch-wide",
+          "next": "pattern",
+          "notes": [
+            {
+              "skill": "wave-particle",
+              "kind": "good",
+              "text": "Você deixou as duas frestas abertas e esperou os pontos se acumularem. Assim deu pra ver tanto as chegadas em lugares separados quanto as listras que lembram ondas se encontrando.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "friend",
+              "text": "De longe eu não vi cada ponto tão de pertinho, mas olha o que apareceu com a espera!"
+            },
+            {
+              "from": "friend",
+              "text": "As marcas chegam separadas, mas juntas fazem listras, como as que aparecem quando ondas se encontram."
+            }
+          ],
+          "text": "Deixe as duas frestas abertas e veja os pontos se acumularem.",
+          "timeJump": {
+            "label": "Depois de 1 minuto",
+            "panel": {
+              "title": "Depois de 1 minuto",
+              "metrics": [
+                {
+                  "label": "Passagens da luz",
+                  "value": "Duas frestas abertas",
+                  "note": null
+                },
+                {
+                  "label": "Chegadas",
+                  "value": "Pontos separados",
+                  "note": null
+                },
+                {
+                  "label": "Desenho na tela",
+                  "value": "Listras",
+                  "note": "Faixas com muitos pontos e faixas com bem poucos."
+                }
+              ],
+              "note": null
+            }
+          }
+        }
+      ],
+      "id": "watch",
+      "messages": [
+        {
+          "from": "friend",
+          "text": "Olha, a tela abriu uma página limpinha. A luz ainda tá bem fraquinha."
+        },
+        {
+          "from": "friend",
+          "text": "Tô com vontade de chegar pertinho. Tem graça ver um pontinho surgir bem na nossa frente!"
+        }
+      ],
+      "prompt": "Como você quer ver as próximas marcas aparecerem?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "O quarto de faz de conta",
+      "metrics": [
+        {
+          "label": "Luz",
+          "value": "Uma só cor",
+          "note": "Dá para baixar o brilho sem mudar a cor."
+        },
+        {
+          "label": "Passagens da luz",
+          "value": "Duas frestas estreitas abertas",
+          "note": "Você pode fechar uma delas."
+        },
+        {
+          "label": "Tela",
+          "value": "Guarda as marcas",
+          "note": "Mostra quanta energia chega em cada marca."
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Quarto escuro, numa noite de chuva",
+  "skills": [
+    {
+      "id": "packets",
+      "name": "Explicar os pacotes de energia",
+      "practice": "Em uma frase, compare o que muda no total que chega e no que chega de cada vez quando você baixa o brilho sem trocar a cor da luz."
+    },
+    {
+      "id": "wave-particle",
+      "name": "Reconhecer pontos e ondas na luz",
+      "practice": "Imagine uma marca aparecendo na tela e depois o desenho feito pelo acúmulo das marcas; diga o que cada olhar revela sobre a luz."
+    }
+  ],
+  "startNodeId": "dim",
+  "summary": [
+    "Se a cor da luz não muda, baixar o brilho faz chegar menos pacotes de energia no mesmo tempo, não pacotes menores.",
+    "Marcas de luz que chegam uma a uma em pontos separados podem se acumular num desenho como o que ondas fazem ao se encontrar."
+  ],
+  "team": [
+    {
+      "id": "friend",
+      "role": "Amiga curiosa",
+      "expertise": "Adora espiar o que acontece de perto e acha que, com tão pouca luz, a tela vai ficar quase lisa.",
+      "ai": false
+    }
+  ],
+  "title": "E se a luz chegasse aos pouquinhos?"
+}

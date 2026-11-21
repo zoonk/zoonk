@@ -1,0 +1,142 @@
+{
+  "lessons": [
+    {
+      "canDo": "Calcular o valor acumulado com juros compostos",
+      "description": "Entender por que os juros compostos aceleram o crescimento e calcular o valor acumulado.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Mesmo sem depositar mais dinheiro, Raimundo recebe um acréscimo maior no segundo mês de uma aplicação com taxa fixa. Por que o ganho aumenta?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Juro é o acréscimo calculado sobre um valor durante um período: R$ 1.000,00 rendendo 1% em um mês ganham R$ 10,00. Mostrar 1.000 × 0,01 = 10.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Perguntar quanto essa aplicação ganhará apenas no segundo mês, mantendo os ganhos aplicados e a taxa de 1% ao mês: R$ 10,00, R$ 10,10 ou R$ 20,00. Revelar R$ 10,10; a alternativa tentadora é R$ 10,00, por parecer que uma taxa fixa produz sempre o mesmo ganho.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Nos juros compostos, o ganho permanece no saldo e também passa a render: no segundo mês, 1% incide sobre R$ 1.010,00 e gera R$ 10,10. A taxa continua igual; o valor sobre o qual ela incide aumentou.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "table",
+          "brief": "Nos juros simples, a taxa incide sempre sobre o valor inicial; com a mesma taxa positiva, os compostos empatam no primeiro período e depois crescem mais. Comparar R$ 1.000,00 a 1% ao mês, sem movimentações: mês 0, simples R$ 1.000,00 e compostos R$ 1.000,00; mês 1, R$ 1.010,00 e R$ 1.010,00; mês 2, R$ 1.020,00 e R$ 1.020,10.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma aplicação de R$ 2.000,00 a juros compostos chegou a R$ 2.040,00 após um mês, sem movimentações: sobre qual valor calcular os juros do mês seguinte? Resposta: R$ 2.040,00; incluir R$ 2.000,00 como erro de continuar usando apenas o valor inicial.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Para acrescentar 1% ao saldo, multiplicar por 1 + 0,01 = 1,01: esse número é o fator de crescimento. No exemplo, R$ 1.000,00 × 1,01 = R$ 1.010,00.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "formulaModel",
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Repetir o fator a cada mês permite escrever R$ 1.000,00 × 1,01 × 1,01 como 1.000 × 1,01²; a potência indica quantas vezes multiplicar pelo fator. Oferecer exploração com meses inteiros n de 0 a 12, inicialmente 2, saída saldo = 1000 × 1.01^n e gráfico de meses por saldo, mantendo taxa de 1% e nenhum depósito ou saque.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A quantidade de períodos precisa acompanhar a unidade da taxa: com 1% ao mês durante um ano, são 12 multiplicações por 1,01. Usar 1 no expoente contaria só um mês, não um ano.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Resolver em etapas R$ 1.500,00 a 2% ao mês por três meses, sem movimentações: fator = 1 + 0,02 = 1,02; fator repetido = 1,02³ = 1,061208; valor final = 1.500 × 1,061208 = R$ 1.591,81. Orientar a manter as casas decimais durante a conta e arredondar para centavos apenas no final.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Pedir o valor final de R$ 800,00 aplicados a 5% ao mês durante dois meses, sem movimentações: 800 × 1,05² = R$ 882,00. Incluir R$ 880,00 como alternativa tentadora, obtida somando duas vezes o ganho do primeiro mês.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Você dispõe de R$ 2.400,00 e precisa de R$ 2.700,00 daqui a um ano; uma aplicação hipotética oferece 1% ao mês em juros compostos, sem taxas, impostos ou movimentações. Pedir que escolha o número de períodos, calcule o saldo e decida se alcança a meta: 12 meses, R$ 2.704,38, sim; incluir R$ 2.688,00 e a decisão de que falta dinheiro como erro de usar juros simples.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Calcular o valor final multiplicando o valor inicial pelo fator de crescimento repetido em cada período.",
+          "example": "R$ 1.500,00 a 2% ao mês por três meses resultam em 1.500 × 1,02³ = R$ 1.591,81.",
+          "hard": true,
+          "name": "Calcular o montante com juros compostos",
+          "topic": "Juros compostos",
+          "useCase": "Estimar o saldo de uma aplicação com taxa fixa e ganhos reinvestidos, sem depósitos ou saques."
+        }
+      ],
+      "title": "Juros compostos"
+    }
+  ]
+}

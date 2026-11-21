@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
   type SpeakingCriterion,
   type SpeakingGrade,
@@ -93,10 +93,20 @@ function checkGrade({
   ].filter((problem) => problem !== null);
 
   const total = criteria.length + (expected.brief === undefined ? 1 : 2);
-  return { judgedOutput: output, passed: total - problems.length, problems, total };
+
+  return {
+    criteria: ["evidence"],
+    judgedOutput: output,
+    passed: total - problems.length,
+    problems,
+    total,
+  };
 }
 
-export const scoreSpeakingOutput: TaskScorer<SpeakingScoreExpected> = ({ output, testCase }) => {
+export const checkSpeakingOutput: TaskCodeChecks<SpeakingScoreExpected> = ({
+  output,
+  testCase,
+}) => {
   const { expected } = testCase;
   const input = testCase.userInput as SpeakingScoreInput;
   const criteria = listRatedCriteria(input);
@@ -105,10 +115,13 @@ export const scoreSpeakingOutput: TaskScorer<SpeakingScoreExpected> = ({ output,
     throw new Error(`Test case ${testCase.id} needs an expected band window.`);
   }
 
-  return scoreWithCodeChecks({
-    check: (value) => checkGrade({ criteria, expected, output: value }),
+  return checkGrade({ criteria, expected, output });
+};
+
+export const scoreSpeakingOutput: TaskScorer<SpeakingScoreExpected> = ({ output, testCase }) =>
+  scoreWithCodeChecks({
+    check: (value) => checkSpeakingOutput({ output: value, testCase }),
     output,
     scoreCategories: SPEAKING_SCORE_CATEGORIES,
     testCase,
   });
-};

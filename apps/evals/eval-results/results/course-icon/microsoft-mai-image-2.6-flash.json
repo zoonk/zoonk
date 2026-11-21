@@ -2,48 +2,29 @@
   "modelId": "microsoft/mai-image-2.6-flash",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "subject",
-          "reasoning": "A shield with a crossed-out virus reads immediately as the body's defense against germs. It is a good fit for immunology. The cell motifs are weakly drawn and there is no clear antibody, which keeps it from top marks.",
-          "score": 8,
-          "label": "Stands for the subject",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image shows one centered shield with a clean silhouette in smooth matte 3D. Lighting is soft, there is a subtle shadow, the palette is limited to blues and white, and the background is plain white. It reads like an app icon. The interior is slightly busy with small details.",
-          "score": 9,
-          "label": "Icon style",
-          "weight": 40
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
-          "score": 10,
-          "label": "No text",
-          "weight": 20
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3006,
-          "outputTokens": 500,
+          "inputTokens": 3402,
+          "outputTokens": 518,
           "reasoningTokens": 0
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The cell shapes on the left half are vague: one plain dot and one 'fried egg' blob that do not clearly read as immune cells or antibodies. The glyphs on the shield face are small relative to the object, so the icon loses detail at small sizes.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The two blue dots on the left half are ambiguous; the lower one reads loosely as a cell, but the upper plain dot carries little meaning and adds mild visual noise. The 'no virus' prohibition sign leans slightly toward a generic anti-germ or hygiene badge rather than specifically immune defense.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Replace the ambiguous dots with a clear Y-shaped antibody or a recognizable immune cell. Enlarge the crossed-out virus mark so the shield reads strongly at icon size. Add a slightly warmer accent color for contrast within the blue palette.",
+          "conclusion": "Replace the dots with a clear Y-shaped antibody or a single distinct immune cell so the shield reads as the body's defenses rather than a generic antiviral badge. Simplify to one strong central motif for a cleaner silhouette at small sizes.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -57,51 +38,62 @@
           "language": "en",
           "title": "Immunology"
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "A coin with a currency sign and a bar chart reads as economics, money and prices at a glance. The '$' is slightly US-centric for a Portuguese course.",
-          "score": 9,
+          "reasoning": "A shield with a blocked virus clearly signals defense against germs, which fits immunology for a beginner. The cell-like dots are weak, and the motif could also suggest antiviral or hygiene products. It is still on-topic, not generic.",
+          "score": 8,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "It is a single centered coin in smooth matte 3D, with soft lighting, a subtle shadow and a plain white background, like an app icon. It is slightly oversized in the frame and nearly monochrome.",
-          "score": 8,
+          "reasoning": "This is a single centered shield in smooth matte 3D with soft lighting and a subtle shadow. It uses about three blues plus white and sits on a plain white background with no frame. The inner details are slightly busy but acceptable.",
+          "score": 9,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions. The '$' currency symbol is a glyph, though, and edges toward the no-text rule.",
-          "score": 8,
+          "reasoning": "There are no letters, numbers or captions; the prohibition sign is a symbol, which is allowed.",
+          "score": 10,
           "label": "No text",
           "weight": 20
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3013,
-          "outputTokens": 818,
-          "reasoningTokens": 289
+          "inputTokens": 3409,
+          "outputTokens": 786,
+          "reasoningTokens": 318
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The coin fills most of the frame, which leaves little breathing room around it. The palette is almost entirely one gold hue, at the low edge of the requested 2 to 4 colors. The '$' currency glyph comes close to the no-text rule. The bar chart does not rise cleanly: the two right-hand bars are close in height and crowd the dollar sign.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The coin is almost entirely one gold hue, at the low end of the requested 2 to 4 colors, so it can read as monochrome. The embossed bars sit at nearly the same height and are split by the dollar sign, which weakens the 'rising' read.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Shrink the coin slightly so there is more white space around it. Add one accent color, such as a green rising arrow, to make the growth idea read clearly. Consider replacing the '$' with a neutral coin emboss or a rising arrow, which avoids glyphs and a US-specific currency for a Portuguese course.",
+          "conclusion": "Add a contrasting accent color, such as a green rising arrow or a darker rim tone. Make the bar chart rise more clearly. A more neutral currency sign could also fit a Portuguese-language course better.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -115,51 +107,62 @@
           "language": "pt",
           "title": "Economia"
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "subject",
-          "reasoning": "A magnifying glass over a bar chart with a rising trend line clearly reads as data analysis at a glance. It is exactly the suggested motif and not a generic computer.",
+          "reasoning": "A coin with a currency sign and an embossed bar chart clearly signals money, prices and markets. A beginner instantly connects it to economics.",
           "score": 9,
           "label": "Stands for the subject",
           "weight": 40
         },
         {
           "categoryId": "style",
-          "reasoning": "It is a single object in smooth matte 3D with soft lighting and a subtle shadow on a plain white background, like an app icon. Small weaknesses: the palette is monochrome blue with low internal contrast, the lens has a slight glossy sheen and the object sits a little off-center.",
+          "reasoning": "There is a single centered object with a clean silhouette, smooth soft-lit 3D, a subtle shadow and a plain white background. The surface is mostly matte with a slight sheen. The near-monochrome gold palette falls short of the requested 2 to 4 colors.",
           "score": 8,
           "label": "Icon style",
           "weight": 40
         },
         {
           "categoryId": "text",
-          "reasoning": "There are no letters, numbers or captions anywhere in the image.",
+          "reasoning": "There are no letters, numbers or captions. Only a dollar symbol appears, which the rubric allows.",
           "score": 10,
           "label": "No text",
           "weight": 20
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
-          "cacheReadTokens": 1114,
+          "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2996,
-          "outputTokens": 702,
-          "reasoningTokens": 214
+          "inputTokens": 3392,
+          "outputTokens": 437,
+          "reasoningTokens": 0
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The palette is almost entirely blue with no distinct accent, so the light-blue bars have weak contrast against the pale lens. The lens also shows a faint glassy sheen that edges slightly toward gloss instead of a fully matte finish.",
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The palette is almost entirely blue shades, so the icon reads as fairly monochrome. The lens has a slight glossy highlight rather than a fully matte finish. The object sits a bit left and high of center, with the handle extending toward the bottom right.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Add one contrasting accent color, for example warm orange on the tallest bar or on the trend line, to make the chart pop. Strengthen the soft shadow under the handle so the object feels grounded. Center the whole silhouette more evenly, since the lens currently sits up and to the left.",
+          "conclusion": "Add a contrasting accent color, for example an orange or green trend line, to reach a clearer 2–4 color scheme. Center the whole object's mass in the frame. Reduce the lens sheen for a more consistently matte look.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -173,7 +176,37 @@
           "language": "en",
           "title": "Data analysis"
         }
-      }
+      },
+      "categoryScores": [
+        {
+          "categoryId": "subject",
+          "reasoning": "A magnifying glass over a bar chart with a trend line clearly signals data analysis to a beginner at a glance.",
+          "score": 9,
+          "label": "Stands for the subject",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "There is a single object in smooth 3D with soft lighting and a subtle shadow on a plain white background with no frame. Minor issues are the near-monochrome blue palette, a slightly glossy lens and a slightly off-center placement.",
+          "score": 8,
+          "label": "Icon style",
+          "weight": 40
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "No letters, numbers or captions appear anywhere.",
+          "score": 10,
+          "label": "No text",
+          "weight": 20
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "Plain white at the edges with no solid frame.",
+          "score": 10,
+          "weight": 30
+        }
+      ]
     }
   ],
   "taskId": "course-icon"

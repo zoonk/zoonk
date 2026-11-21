@@ -37,6 +37,13 @@ export const examIdentityDecisionTask: Task<
   generate: decidePair,
   id: "exam-identity-decision",
   name: "Exam identity decision",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Code decides whether a requested exam matches a stored blueprint",
+    reason: "Code checks the answer; the cheapest model that got every pair right",
+    waits: "A learner waits in onboarding",
+  },
   score: createDeterministicStringFieldScorer<ExamIdentityExpected>({
     expectedLabel: "Expected",
     field: "same",

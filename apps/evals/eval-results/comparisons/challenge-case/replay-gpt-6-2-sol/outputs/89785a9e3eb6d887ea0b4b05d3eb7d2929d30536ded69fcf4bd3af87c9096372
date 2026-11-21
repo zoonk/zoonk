@@ -1,0 +1,639 @@
+{
+  "title": "Do the new IV dressings really stop skin irritation?",
+  "setting": "Med-Surg Ward · Shift huddle",
+  "mission": "Decide whether to **switch the ward to the new IV dressing** or keep testing before the supply order locks.",
+  "deadline": "Supply order closes Friday at 4:00 p.m.",
+  "panels": [
+    {
+      "title": "IV Dressing Trial · First 3 Days",
+      "metrics": [
+        {
+          "label": "Standard dressing",
+          "value": "4 of 25 (16%)",
+          "note": "Patients with redness"
+        },
+        {
+          "label": "NewGentle dressing",
+          "value": "1 of 25 (4%)",
+          "note": "Patients with redness"
+        },
+        {
+          "label": "Extra cost per box",
+          "value": "$45.00",
+          "note": "NewGentle vs. Standard"
+        }
+      ],
+      "note": "50 patients total · randomly assigned on admission"
+    }
+  ],
+  "team": [
+    {
+      "id": "charge",
+      "role": "Charge nurse",
+      "expertise": "Wants comfortable patients and a fast decision before Friday's supply order.",
+      "ai": false
+    },
+    {
+      "id": "quality",
+      "role": "Quality analyst",
+      "expertise": "Tracks hospital trials and makes sure numbers hold up before budgets change.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Ward AI assistant",
+      "expertise": "Runs quick statistical checks and sample size estimates on ward data.",
+      "ai": true
+    }
+  ],
+  "meters": [
+    {
+      "id": "risk",
+      "label": "Risk of a wrong call",
+      "start": 50,
+      "goodWhen": "low"
+    },
+    {
+      "id": "patience",
+      "label": "{{charge}}'s patience",
+      "start": 80,
+      "goodWhen": "high"
+    }
+  ],
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Tell a real difference from chance",
+      "practice": "Look at one small two-group comparison today and ask how many swapped outcomes it would take to make the groups tie."
+    },
+    {
+      "id": "sample",
+      "name": "Choose a sample size",
+      "practice": "Before your next comparison, ask an AI tool or calculator how many observations per group you need to spot the difference you care about."
+    },
+    {
+      "id": "explain",
+      "name": "Explain a test result",
+      "practice": "Rewrite one sentence containing 'p-value' or 'statistically significant' into plain everyday words for a busy coworker."
+    }
+  ],
+  "startNodeId": "day3-huddle",
+  "nodes": [
+    {
+      "id": "day3-huddle",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "Look at the board: 4 red arms with our standard dressing and only 1 with NewGentle! Supply orders lock Friday at 4:00 p.m. Let's switch the whole ward now."
+        },
+        {
+          "from": "quality",
+          "text": "Hold on. We have only checked 25 patients in each group. When we do **hypothesis testing**, we start by asking if a gap like 4 versus 1 could happen just by random luck."
+        }
+      ],
+      "prompt": "How do you respond to {{charge}}'s push to switch right now?",
+      "choices": [
+        {
+          "id": "ask-ai-check",
+          "text": "Ask {{ai}} to check how often a 4-versus-1 split happens by pure chance.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "If both dressings actually caused redness 10% of the time, a split as big as 4 vs. 1 would happen by random chance about 35% of the time (that's a **p-value** of 0.35)."
+            },
+            {
+              "from": "quality",
+              "text": "Right—a p-value is just the chance of seeing a gap this big by luck alone. Usually we want that chance below 5% before we trust it."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -20
+            },
+            {
+              "meter": "patience",
+              "change": -10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You checked whether a 4-versus-1 split in 50 patients could be everyday luck before spending extra budget.",
+              "example": null
+            }
+          ],
+          "next": "plan-sample"
+        },
+        {
+          "id": "agree-switch",
+          "text": "Agree with {{charge}} that 16% down to 4% is four times better and sign off on the switch.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "Love the speed. Let's get the order ready so our patients stop getting itchy skin."
+            },
+            {
+              "from": "quality",
+              "text": "Wait—if just two patients had gone the other way, the score would be 3 to 2. I can't sign the budget form until we look at how many patients we really need."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 25
+            },
+            {
+              "meter": "patience",
+              "change": 10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "Percentages like 16% vs. 4% look huge, but in 25 patients that is only 3 people apart—easy to see by pure chance.",
+              "example": "\"16% vs. 4% sounds big, but it's really 4 patients vs. 1. Let's check if that could be luck.\""
+            }
+          ],
+          "next": "plan-sample"
+        },
+        {
+          "id": "eyeball-wait",
+          "text": "Tell {{charge}} that 50 patients feels small, so we should wait a bit without running numbers.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "Wait based on a gut feeling? If we delay the order, give me a real reason, not just a hunch."
+            },
+            {
+              "from": "quality",
+              "text": "Your instinct is right that 25 per group is small. Let's put an actual number on how many patients we need."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -5
+            },
+            {
+              "meter": "patience",
+              "change": -15
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "Spotting that 25 patients per group is small helps, but running a quick check gives your team a solid reason instead of a hunch.",
+              "example": "\"Let's have {{ai}} check the exact odds that a 4-to-1 split happens by luck.\""
+            }
+          ],
+          "next": "plan-sample"
+        }
+      ]
+    },
+    {
+      "id": "plan-sample",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "Okay, if 25 patients per group isn't enough, how long do you want to drag this out? I can ask central supply for a one-time extension, or we can just check 15 more patients by tomorrow."
+        }
+      ],
+      "prompt": "How do you decide how many more patients to include in the trial?",
+      "choices": [
+        {
+          "id": "ask-ai-size",
+          "text": "Ask {{ai}} how many patients per group we need to reliably spot a drop from 16% to 6%.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "To have an 80% chance of catching a real drop from 16% to 6%, you need about **150 patients per group** (300 total). At your ward's pace, that takes two more weeks."
+            },
+            {
+              "from": "charge",
+              "text": "Two weeks is longer than I wanted, but central supply will extend our deadline if we show them a real target of 150 per group."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -20
+            },
+            {
+              "meter": "patience",
+              "change": -10
+            }
+          ],
+          "timeJump": {
+            "label": "Two weeks later",
+            "panel": {
+              "title": "IV Dressing Trial · Full 300 Patients",
+              "metrics": [
+                {
+                  "label": "Standard dressing",
+                  "value": "21 of 150 (14.0%)",
+                  "note": "Patients with redness"
+                },
+                {
+                  "label": "NewGentle dressing",
+                  "value": "19 of 150 (12.7%)",
+                  "note": "Patients with redness"
+                },
+                {
+                  "label": "Chance of luck (p-value)",
+                  "value": "74%",
+                  "note": "Calculated by {{ai}}"
+                }
+              ],
+              "note": "300 patients total · trial complete"
+            }
+          },
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You used a sample size estimate before collecting more data, so the trial was big enough to give a clear answer.",
+              "example": null
+            }
+          ],
+          "next": "explain-full-result"
+        },
+        {
+          "id": "add-15-each",
+          "text": "Compromise with {{charge}} and add 15 patients per group by tomorrow so we make Friday's deadline.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "Great, 40 per group keeps us on schedule for Friday's order."
+            },
+            {
+              "from": "quality",
+              "text": "Forty per group is still pretty small for catching a difference in skin redness, so the numbers might stay blurry."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 10
+            },
+            {
+              "meter": "patience",
+              "change": 5
+            }
+          ],
+          "timeJump": {
+            "label": "Friday at 2:00 p.m.",
+            "panel": {
+              "title": "IV Dressing Trial · 80 Patients",
+              "metrics": [
+                {
+                  "label": "Standard dressing",
+                  "value": "6 of 40 (15.0%)",
+                  "note": "Patients with redness"
+                },
+                {
+                  "label": "NewGentle dressing",
+                  "value": "4 of 40 (10.0%)",
+                  "note": "Patients with redness"
+                },
+                {
+                  "label": "Chance of luck (p-value)",
+                  "value": "50%",
+                  "note": "Calculated by {{ai}}"
+                }
+              ],
+              "note": "80 patients total · 2 hours until order locks"
+            }
+          },
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "Picking a sample size just to fit a calendar deadline left you with 40 per group—too few to tell if a 5% gap is real.",
+              "example": "\"Before we pick a day to stop, let's ask {{ai}} how many patients per group we actually need.\""
+            }
+          ],
+          "next": "explain-small-result"
+        },
+        {
+          "id": "peek-daily",
+          "text": "Check the numbers after every shift and stop the moment the chance of luck drops below 5%.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "quality",
+              "text": "Careful—if we peek every shift and stop as soon as NewGentle pulls ahead, we're basically waiting for a lucky streak."
+            },
+            {
+              "from": "charge",
+              "text": "Even I know that sounds like tilting the game. Let's just look at Friday's 80 patients and decide then."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 20
+            },
+            {
+              "meter": "patience",
+              "change": -10
+            }
+          ],
+          "timeJump": {
+            "label": "Friday at 2:00 p.m.",
+            "panel": {
+              "title": "IV Dressing Trial · 80 Patients",
+              "metrics": [
+                {
+                  "label": "Standard dressing",
+                  "value": "6 of 40 (15.0%)",
+                  "note": "Patients with redness"
+                },
+                {
+                  "label": "NewGentle dressing",
+                  "value": "4 of 40 (10.0%)",
+                  "note": "Patients with redness"
+                },
+                {
+                  "label": "Chance of luck (p-value)",
+                  "value": "50%",
+                  "note": "Calculated by {{ai}}"
+                }
+              ],
+              "note": "80 patients total · 2 hours until order locks"
+            }
+          },
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "Stopping a trial the moment the numbers look good catches random lucky streaks. Set your sample size ahead of time and wait until it finishes.",
+              "example": "\"Let's set a fixed target of patients before we look for a winner.\""
+            }
+          ],
+          "next": "explain-small-result"
+        }
+      ]
+    },
+    {
+      "id": "explain-full-result",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "Wait a second—with 150 patients in each group, Standard had 21 red arms (14.0%) and NewGentle had 19 (12.7%)? NewGentle is still slightly lower! Should we still buy it?"
+        }
+      ],
+      "prompt": "How do you explain the 300-patient result and your final recommendation to {{charge}}?",
+      "choices": [
+        {
+          "id": "plain-keep-standard",
+          "text": "Explain that 21 vs. 19 is a tiny 2-patient gap that happens by luck 3 times out of 4, so we should keep Standard.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "Got it—two patients out of 300 is basically a tie. Thank goodness we didn't spend an extra $45.00 a box based on the first three days!"
+            },
+            {
+              "from": "quality",
+              "text": "Clear and right on the mark. We can put that saved budget toward our skin-prep swabs instead."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -10
+            },
+            {
+              "meter": "patience",
+              "change": 20
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You translated the statistical result into patient counts and plain odds that {{charge}} could act on immediately.",
+              "example": null
+            }
+          ],
+          "next": "end-saved-budget"
+        },
+        {
+          "id": "jargon-keep-standard",
+          "text": "Tell {{charge}} that since $p = 0.74 > \\alpha = 0.05$, we fail to reject the null hypothesis and must keep Standard.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "Speak nursing to me! Do you mean the dressings work the same? I'll keep Standard, but please skip the textbook talk at shift huddle."
+            },
+            {
+              "from": "quality",
+              "text": "Right conclusion, though translating 'fail to reject the null' into everyday words makes it much easier for the ward."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -10
+            },
+            {
+              "meter": "patience",
+              "change": -20
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Your decision was sound, but terms like 'fail to reject the null hypothesis' confuse teammates who aren't data specialists.",
+              "example": "\"A 21-to-19 split in 300 patients happens by everyday luck about 3 times out of 4, so the two dressings perform basically the same.\""
+            }
+          ],
+          "next": "end-saved-budget"
+        },
+        {
+          "id": "switch-on-1-percent",
+          "text": "Tell {{charge}} that 12.7% is still lower than 14.0%, so we should switch to NewGentle just to be safe.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "quality",
+              "text": "Hold on—that's a 2-patient difference across 300 people, and {{ai}} showed a 74% chance it's pure noise."
+            },
+            {
+              "from": "charge",
+              "text": "Yeah, if it's basically a tie after 300 patients, I don't want to blow $45.00 extra per box."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 25
+            },
+            {
+              "meter": "patience",
+              "change": -15
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "Even when one percentage is slightly lower, a 74% chance of random luck means the trial found no real advantage.",
+              "example": "\"12.7% vs. 14.0% is just 2 patients apart—too close to tell from random luck.\""
+            }
+          ],
+          "next": "end-costly-switch"
+        }
+      ]
+    },
+    {
+      "id": "explain-small-result",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "Okay, the order locks in two hours. We're at 6 red arms on Standard (15%) versus 4 on NewGentle (10%). Do we switch or extend the trial?"
+        },
+        {
+          "from": "quality",
+          "text": "{{ai}} says a 6-versus-4 gap in 80 patients happens by pure luck 50% of the time—like flipping a coin."
+        }
+      ],
+      "prompt": "What do you tell {{charge}} before the 4:00 p.m. order locks?",
+      "choices": [
+        {
+          "id": "plain-extend",
+          "text": "Tell {{charge}} that a 6-vs-4 split is like a coin toss, and ask supply for a two-week extension to reach 150 patients per group.",
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "'Like a coin toss' makes total sense—6 versus 4 is only two patients apart. I'll call central supply now to hold our current order for two weeks."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -20
+            },
+            {
+              "meter": "patience",
+              "change": 10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "Comparing a 50% p-value to a coin toss gave {{charge}} a clear, jargon-free reason to finish collecting a full sample.",
+              "example": null
+            }
+          ],
+          "next": "end-extended-trial"
+        },
+        {
+          "id": "jargon-extend",
+          "text": "Tell {{charge}} the result is statistically insignificant at $p = 0.50$, so the study is underpowered and must continue.",
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I don't know what 'underpowered' means, but if you and {{quality}} say 6 versus 4 is too close to call, I'll ask supply for an extension."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -15
+            },
+            {
+              "meter": "patience",
+              "change": -15
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "You made the right call to extend the trial, but words like 'statistically insignificant' and 'underpowered' leave non-data colleagues guessing.",
+              "example": "\"Six patients versus four is only two people apart—that happens by chance half the time, so we need a larger group.\""
+            }
+          ],
+          "next": "end-extended-trial"
+        },
+        {
+          "id": "switch-on-80",
+          "text": "Tell {{charge}} that 10% beats 15%, so we should lock in the switch to NewGentle right now.",
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "Done! I'm submitting the NewGentle order before 4:00 p.m."
+            },
+            {
+              "from": "quality",
+              "text": "I'll log it, though we're committing the ward's budget on a 2-patient difference."
+            }
+          ],
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 25
+            },
+            {
+              "meter": "patience",
+              "change": 10
+            }
+          ],
+          "timeJump": null,
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "A 6-versus-4 split has a 50% chance of being pure luck. Switching supplies on a small sample often wastes money on a mirage.",
+              "example": "\"Six versus four is only two patients apart—let's extend the trial before spending extra budget.\""
+            }
+          ],
+          "next": "end-costly-switch"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "end-saved-budget",
+      "outcome": "With 300 patients checked, redness rates were nearly identical (14.0% vs. 12.7%). The ward kept the standard dressing and redirected $5,400.00 a year to better skin-prep swabs that cut redness to 6.5%."
+    },
+    {
+      "id": "end-extended-trial",
+      "outcome": "You paused the Friday order until the ward reached 150 patients per group. Once the full 300-patient trial showed a near-tie (14.0% vs. 12.7%), the team confidently kept the standard dressing."
+    },
+    {
+      "id": "end-costly-switch",
+      "outcome": "The ward switched to NewGentle at $45.00 extra per box. Over the next 300 patients, redness settled at 12.7% versus 14.0% previously—no real improvement for the patient comfort budget."
+    }
+  ],
+  "summary": [
+    "Small samples can show big percentage gaps by pure luck, so check how often a split could happen by chance (the p-value) before acting.",
+    "Decide how many observations per group you need before stopping a trial, rather than peeking until the numbers look good.",
+    "When sharing results with teammates, translate p-values and percentages into actual counts and everyday odds like a coin toss."
+  ]
+}

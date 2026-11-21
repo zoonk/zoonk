@@ -1,0 +1,586 @@
+{
+  "cases": [
+    {
+      "caseId": "en-tax-deadlines-sourced",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "pt-estabilidade-sourced",
+      "language": "pt",
+      "owner": null,
+      "result": "challenger",
+      "votes": {
+        "anthropic": "tie",
+        "openai": "challenger",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-en-brain-lobes",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "tie",
+        "openai": "incumbent",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-en-water-cycle",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-mapa-imperio-romano",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "split",
+        "openai": "split",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-en-lever",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-deslocamento-demanda",
+      "language": "pt",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-en-syntax-tree",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-ligacao-covalente",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "challenger",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-en-soccer-formation",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "challenger",
+        "google": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-juros-compostos",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "challenger",
+        "google": "challenger"
+      }
+    },
+    {
+      "caseId": "visual-pt-circuito-serie-paralelo",
+      "language": "pt",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-pt-partes-da-flor",
+      "language": "pt",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    },
+    {
+      "caseId": "visual-en-contour-lines",
+      "language": "en",
+      "owner": null,
+      "result": "incumbent",
+      "votes": {
+        "anthropic": "incumbent",
+        "openai": "incumbent"
+      }
+    }
+  ],
+  "outcome": "retain",
+  "readers": [
+    {
+      "failedPackets": 10,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 2,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "google",
+      "model": "google/gemini-4-neon",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "More cases prefer the incumbent. The open cases and claims can’t change the decision.",
+  "replay": {
+    "priorities": {
+      "comparison": {
+        "criteria": {
+          "activitiesAndVisuals": "counts",
+          "levelAndScope": "counts",
+          "oneIdea": "counts",
+          "screenPlan": "counts"
+        },
+        "preference": "canBlock",
+        "trade": {
+          "majorIncreasePer100": 1,
+          "saveCostShare": 0.7,
+          "saveSeconds": null
+        }
+      },
+      "distribution": "shared",
+      "first": "quality",
+      "reads": "The lesson writer reads the plan",
+      "reason": "Every shared lesson is built from it",
+      "waits": "Prepared ahead in a workflow, before a learner needs it"
+    }
+  },
+  "rows": [
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "en": 7,
+        "pt": 7
+      },
+      "costPer1000": 47.83060000000001,
+      "date": "2026-11-20T13:04:04.999Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 46.586400000000005,
+          "p50": 80.83184466600001,
+          "p95": 100.75379733300001,
+          "successful": 7
+        },
+        "pt": {
+          "costPer1000": 49.074799999999996,
+          "p50": 86.825352833,
+          "p95": 128.086574958,
+          "successful": 7
+        }
+      },
+      "losses": 1,
+      "missingMatches": 0,
+      "p50": 80.83184466600001,
+      "p95": 128.086574958,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "oneIdea",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            }
+          ],
+          "criterion": "screenPlan",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-water-cycle",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-lever",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-soccer-formation",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-contour-lines",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-water-cycle",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-lever",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-soccer-formation",
+              "run": 1
+            }
+          ],
+          "criterion": "activitiesAndVisuals",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "levelAndScope",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "visual-pt-ligacao-covalente",
+              "run": 1
+            }
+          ],
+          "both": [],
+          "criterion": "oneIdea",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-ligacao-covalente",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
+          ],
+          "criterion": "screenPlan",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "visual-pt-mapa-imperio-romano",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-circuito-serie-paralelo",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-partes-da-flor",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "visual-pt-mapa-imperio-romano",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-circuito-serie-paralelo",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-partes-da-flor",
+              "run": 1
+            }
+          ],
+          "criterion": "activitiesAndVisuals",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "levelAndScope",
+          "language": "pt",
+          "weight": 1
+        }
+      ],
+      "side": "incumbent",
+      "status": "trade",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 5,
+      "weightedMajorsByLanguage": {
+        "en": 5,
+        "pt": 5
+      },
+      "wins": 8
+    },
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "en": 7,
+        "pt": 7
+      },
+      "costPer1000": 40.59002857142857,
+      "date": "2026-11-20T13:04:04.999Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 38.663085714285714,
+          "p50": 39.18764595800004,
+          "p95": 57.38831424999999,
+          "successful": 7
+        },
+        "pt": {
+          "costPer1000": 42.51697142857142,
+          "p50": 52.340869999999995,
+          "p95": 61.84251887500001,
+          "successful": 7
+        }
+      },
+      "losses": 8,
+      "missingMatches": 0,
+      "p50": 40.910047542000015,
+      "p95": 61.84251887500001,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "oneIdea",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            }
+          ],
+          "criterion": "screenPlan",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-water-cycle",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-lever",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-syntax-tree",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-soccer-formation",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-water-cycle",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-lever",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-soccer-formation",
+              "run": 1
+            }
+          ],
+          "criterion": "activitiesAndVisuals",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "levelAndScope",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "oneIdea",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
+          ],
+          "criterion": "screenPlan",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "visual-pt-mapa-imperio-romano",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-juros-compostos",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-circuito-serie-paralelo",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-partes-da-flor",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "visual-pt-mapa-imperio-romano",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-circuito-serie-paralelo",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-partes-da-flor",
+              "run": 1
+            }
+          ],
+          "criterion": "activitiesAndVisuals",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "levelAndScope",
+          "language": "pt",
+          "weight": 1
+        }
+      ],
+      "side": "challenger",
+      "status": "trade",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 5,
+      "weightedMajorsByLanguage": {
+        "en": 5,
+        "pt": 5
+      },
+      "wins": 1
+    }
+  ]
+}

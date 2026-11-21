@@ -1,0 +1,220 @@
+{
+  "attempt": "first",
+  "costUsd": 0.01079549,
+  "failures": [],
+  "packetId": "558edee1f235500dbc0c299dcf26068113af6aaf915ce015dcc1e933daaea4dd",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach one idea, percent change measured against the starting value, with the same screens and examples.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A opens with a scene about Leah's raise and gets to the rule after it. Output B opens with a formal formula, which asks nothing and loses a beginner at the first screen.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same text-only screens and the same wage table, and neither has an activity that would help more.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "Output B introduces formal notation and out-of-scope ideas (percentage points, logarithmic returns) that a beginner doesn't need, while Output A stays in everyday words.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The opening screen gives a formal formula instead of a scene that asks a question, which a beginner cannot follow on first read.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner who has never studied percent change meets symbols on the first screen and is likely to stop reading.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The explanation brings in percentage-point change and logarithmic returns, which belong to other lessons (percentage points is a later lesson in the chapter) and are far beyond a beginner's scope.",
+            "criterion": "levelAndScope",
+            "learnerCost": "The learner is pulled toward ideas they don't yet need, making the single idea harder to hold onto.",
+            "location": {
+              "detail": "distinguish it from percentage-point change and from logarithmic returns",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The decrease example, a price falling from $90 to $72, is a discount, which the chapter's later lesson on discounts covers; the plan spends a full screen on it instead of a sentence.",
+            "criterion": "levelAndScope",
+            "learnerCost": "The learner meets the discount idea before the lesson that is built for it, and the lesson's scope spreads a little.",
+            "location": {
+              "detail": "a price falling from $90 to $72 loses $18",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A follows the beginner level with a scene hook and everyday words, while Output B opens with a formula and out-of-scope terms."
+        },
+        "pairId": "150419ac-e50f-4c53-ada3-7f47df8ce469"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are the same lever lesson, built around one idea: arm lengths decide the push needed.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the screen plan is the same.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their visuals and activities are the same.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their fit to level and scope is the same.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The formula activity introduces a product-and-divide formula (160 × load arm ÷ push arm) in a beginner lesson, before the learner has worked the balancing idea with the picture.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner has to handle a formula with three numbers, which can make the lever idea feel like algebra.",
+            "location": {
+              "detail": "Set up a 160-newton load with push-arm and load-arm sliders from 5 to 60 cm in 5 cm steps",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Several explanation screens reuse the same lever picture with no new detail, so the picture adds little on those screens.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same drawing repeatedly and gets no new information from it.",
+            "location": {
+              "detail": "the explanation screens that show the lever with its fulcrum and arms",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The formula activity introduces a product-and-divide formula (160 × load arm ÷ push arm) in a beginner lesson, before the learner has worked the balancing idea with the picture.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner has to handle a formula with three numbers, which can make the lever idea feel like algebra.",
+            "location": {
+              "detail": "Set up a 160-newton load with push-arm and load-arm sliders from 5 to 60 cm in 5 cm steps",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Several explanation screens reuse the same lever picture with no new detail, so the picture adds little on those screens.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same drawing repeatedly and gets no new information from it.",
+            "location": {
+              "detail": "the explanation screens that show the lever with its fulcrum and arms",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "67f506a7-b8b5-4e53-95b4-8ee49ab00070"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach one lever idea, the arm ratio sets the push, with a trade-off of distance.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A's guess tests the key idea (doubling both arms keeps the push the same) and its check and application lead to a real decision. Output B's checks are more arithmetic than insight.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B uses a formula activity the learner can play with and labels every distance on its pictures. Output A has no activity and repeats one picture across screens.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A uses the ratio of the two arms and simple metric values that a beginner can follow, while Output B asks the learner to multiply and divide large products in a beginner lesson.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Three explanation screens (effort arm, load arm, ratio) reuse the same board picture and add no new information on the later two.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees one drawing three times without anything new to look at, wasting attention on the key idea.",
+            "location": {
+              "detail": "the explanation screens for the effort arm, the load arm and the ratio",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The lesson has no interactive activity, even though moving the fulcrum or a weight would let the learner feel the arm-ratio idea.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner only reads and answers; they never test the ratio themselves.",
+            "location": {
+              "detail": "whole lesson",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The formula activity introduces a product-and-divide formula (160 × load arm ÷ push arm) in a beginner lesson, before the learner has worked the balancing idea with the picture.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner has to handle a formula with three numbers, which can make the lever idea feel like algebra.",
+            "location": {
+              "detail": "Set up a 160-newton load with push-arm and load-arm sliders from 5 to 60 cm in 5 cm steps",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Output A teaches the arm ratio with a guess and checks that test it and simple numbers a beginner can follow, while Output B is more arithmetic-heavy even though it has a useful activity."
+        },
+        "pairId": "9fa6de76-987f-4ea3-a16b-cf9f0d379e71"
+      }
+    ]
+  }
+}

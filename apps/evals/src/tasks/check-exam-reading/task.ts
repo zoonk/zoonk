@@ -123,6 +123,14 @@ export const checkExamReadingTask: Task<
   generate: generateReadingCheck,
   id: "check-exam-reading",
   name: "Check exam reading",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code finds what the reading left out and asks for a re-read",
+    reason:
+      "A gap in the blueprint reaches every learner of that exam; a cheap model from another family than the reader",
+    waits: "Prepared ahead; a learner may wait on the research",
+  },
   score: scoreReadingCheck,
   testCases: TEST_CASES,
 };

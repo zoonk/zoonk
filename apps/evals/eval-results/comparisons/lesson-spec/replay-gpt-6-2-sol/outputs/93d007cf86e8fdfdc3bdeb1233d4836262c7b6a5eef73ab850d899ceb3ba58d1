@@ -1,0 +1,130 @@
+{
+  "lessons": [
+    {
+      "canDo": "Read a 4-3-3 and say where each line plays",
+      "description": "Learn where the defenders, midfielders, and forwards line up in a 4-3-3 so you can read a soccer lineup graphic.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": "A pregame broadcast graphic titled “4-3-3,” with the team’s own goal at the bottom, the opponent’s goal at the top, and ten unnumbered dots arranged four at the back, three in the middle, and three up front.",
+          "visualKind": "picture",
+          "brief": "Just before kickoff, Leah sees “4-3-3” above a field full of dots on the broadcast. What do those numbers tell her about where the players start?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A pregame broadcast graphic titled “4-3-3,” with the team’s own goal at the bottom, the opponent’s goal at the top, and ten unnumbered dots arranged four at the back, three in the middle, and three up front.",
+          "visualKind": "picture",
+          "brief": "The pregame dots show the team’s basic setup on the field: its formation.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "The broadcast adds a dot for the player guarding the goal; what will happen to the formation label? Options: “The first number goes up” (tempting), “An extra number appears,” or “It stays the same” (right).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "An overhead 4-3-3 field diagram labeled “Own goal” at the bottom and “Opponent’s goal” at the top, with one distinct dot labeled “Goalkeeper” and three clearly separated, unlabeled groups of four, three, and three dots from bottom to top.",
+          "visualKind": "picture",
+          "brief": "The player who guards the goal is the goalkeeper, whose spot isn’t counted in the formation numbers. Adding that dot behind the four still leaves the label 4-3-3.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "An overhead 4-3-3 field diagram labeled “Own goal” at the bottom and “Opponent’s goal” at the top, with one distinct dot labeled “Goalkeeper” and three clearly separated, unlabeled groups of four, three, and three dots from bottom to top.",
+          "visualKind": "picture",
+          "brief": "Read the numbers from your own goal toward the other goal: the four dots just ahead of the goalkeeper are the defenders.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "An overhead 4-3-3 field diagram labeled “Own goal” at the bottom and “Opponent’s goal” at the top, with one distinct dot labeled “Goalkeeper” and three clearly separated, unlabeled groups of four, three, and three dots from bottom to top.",
+          "visualKind": "picture",
+          "brief": "The middle number counts the midfielders: the three dots between the back group and the front group.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "An overhead 4-3-3 field diagram labeled “Own goal” at the bottom and “Opponent’s goal” at the top, with one distinct dot labeled “Goalkeeper” and three clearly separated, unlabeled groups of four, three, and three dots from bottom to top.",
+          "visualKind": "picture",
+          "brief": "The last number counts the forwards: the three dots farthest upfield toward the opponent’s goal.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "labeledDiagram",
+          "kind": "activity",
+          "visual": "A sideways overhead soccer field with a distinct goalkeeper dot at the right goal, four dots near that goal marked 2, three central dots marked 3, and three dots toward the left goal marked 1; no words on the field.",
+          "visualKind": "template",
+          "brief": "Match the numbered groups on a sideways field to 1 Forwards, 2 Defenders, and 3 Midfielders. Include feedback for swapping the two groups of three: count alone can’t tell them apart, but position can.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "An overhead 4-3-3 field diagram with own goal at the bottom, opponent’s goal at the top, and a short arrow from one forward’s starting dot back toward the three midfielders.",
+          "visualKind": "picture",
+          "brief": "A formation describes the team’s basic setup, not where everyone stands on every play. A forward can drop back to get the ball without the team switching out of its 4-3-3.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "An overhead soccer field with own goal at the bottom, a goalkeeper dot behind the three groups, and an arrow from one of the four back dots toward the middle group; no formation label.",
+          "visualKind": "picture",
+          "brief": "A team starts in a 4-3-3, but one of its defenders runs up to help in the middle for a single play. Ask what that run alone does to the formation label: “Still 4-3-3” is right; “Now 3-4-3” is tempting.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "A match preview field graphic titled “4-3-3,” with own goal at the top, opponent’s goal at the bottom, a distinct goalkeeper dot, and unlabeled groups of four near the goalkeeper, two in the middle, and three toward the opponent’s goal; no placeholder for the missing dot.",
+          "visualKind": "picture",
+          "brief": "A match preview says 4-3-3, but its field graphic shows only the goalkeeper, four dots at the back, two in the middle, and three up front. Ask what dot should be added where: “Midfielder in the middle” is right; “Defender at the back” is tempting if the learner counts the goalkeeper as one of the four.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Read the three groups in a 4-3-3 from your own goal toward the opponent’s goal without counting the goalkeeper.",
+          "example": "A 4-3-3 has four defenders at the back, three midfielders in the middle, and three forwards up front.",
+          "hard": false,
+          "name": "Describe the lines of a 4-3-3 formation",
+          "topic": "4-3-3 formation",
+          "useCase": "Read a pregame lineup graphic to see how a team sets up."
+        }
+      ],
+      "title": "The 4-3-3 formation"
+    }
+  ]
+}

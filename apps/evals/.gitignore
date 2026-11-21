@@ -36,3 +36,4 @@ messages/*.d.json.ts
 
 # anonymized production samples: label test cases from them by hand instead of committing the sample
 /datasets/production-inputs.json
+/datasets/library-sample.json

@@ -19,6 +19,13 @@ export const courseIntentTask: Task<CourseIntentParams, CourseIntentSchema, Cour
     generate: classifyCourseIntent,
     id: "course-intent",
     name: "Course intent",
+    priorities: {
+      distribution: "private",
+      first: "cost",
+      reads: "Code declines unsafe goals in onboarding",
+      reason: "Code checks the label; a miss costs a harmless extra step",
+      waits: "A learner waits in the request",
+    },
     score: scoreCourseIntent,
     testCases: TEST_CASES,
   };

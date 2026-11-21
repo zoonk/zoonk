@@ -1,0 +1,703 @@
+{
+  "deadline": "Handoff with {{charge}} on Friday at 3:30 p.m.",
+  "endings": [
+    {
+      "id": "trial",
+      "outcome": "{{charge}} puts the new labels in the handoff for the next shift. The note says the quick-pickup rate was 20 percentage points higher with the new labels in the comparison, without promising the same gain next shift."
+    },
+    {
+      "id": "keep",
+      "outcome": "The handoff keeps the current labels for the next shift and leaves open whether the new labels would help."
+    },
+    {
+      "id": "rewrite",
+      "outcome": "{{charge}} keeps the current labels for the next shift and sends back the draft. He asks for a note that separates what the comparison can say from what you recommend."
+    }
+  ],
+  "meters": [
+    {
+      "id": "risk",
+      "label": "Risk of a misleading handoff",
+      "start": 57,
+      "goodWhen": "low"
+    },
+    {
+      "id": "setup",
+      "label": "Room for other shift setup",
+      "start": 69,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Use timed blanket pickups to decide **whether to recommend the new cart labels for the next shift**. Give the charge nurse a handoff note that says what the comparison found and what it leaves open.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -12
+            },
+            {
+              "meter": "setup",
+              "change": -13
+            }
+          ],
+          "id": "friday",
+          "next": "test-full",
+          "notes": [
+            {
+              "skill": "size",
+              "kind": "good",
+              "text": "You picked the readout that met the 80% planning goal and would still be ready for Friday’s handoff.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "quality",
+              "text": "That gives us an estimated 83% chance of spotting the target gain if it’s real. It meets our 80% goal and fits the handoff."
+            },
+            {
+              "from": "charge",
+              "text": "I’ll leave the cart plan open until Friday morning. That gives me less wiggle room for the rest of setup."
+            }
+          ],
+          "text": "Set the readout at 100 pickups per layout and open it Friday morning.",
+          "timeJump": {
+            "label": "4 days later, on Friday morning",
+            "panel": {
+              "title": "Friday morning readout",
+              "metrics": [
+                {
+                  "label": "Quick with current labels",
+                  "value": "50%",
+                  "note": "50 of 100 pickups"
+                },
+                {
+                  "label": "Quick with new labels",
+                  "value": "70%",
+                  "note": "70 of 100 pickups"
+                },
+                {
+                  "label": "Lead for new labels",
+                  "value": "20 percentage points",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 9
+            },
+            {
+              "meter": "setup",
+              "change": 12
+            }
+          ],
+          "id": "early",
+          "next": "test-early",
+          "notes": [
+            {
+              "skill": "size",
+              "kind": "improve",
+              "text": "Opening early bought setup time, but the estimated chance of spotting the target gain was only 45% if it was real. Look for a readout that meets the planning goal without missing handoff.",
+              "example": "Use the Friday morning readout: it reaches 83% and is ready before handoff."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That frees up some time for setup, and the floor has fewer pickups to time."
+            },
+            {
+              "from": "quality",
+              "text": "With 40 pickups per layout, we had an estimated 45% chance of spotting the target gain if it was real. That’s well short of what we planned for."
+            }
+          ],
+          "text": "Set the readout at 40 pickups per layout and get a head start on shift prep.",
+          "timeJump": {
+            "label": "2 days later",
+            "panel": {
+              "title": "Early readout",
+              "metrics": [
+                {
+                  "label": "Quick with current labels",
+                  "value": "50%",
+                  "note": "20 of 40 pickups"
+                },
+                {
+                  "label": "Quick with new labels",
+                  "value": "67.5%",
+                  "note": "27 of 40 pickups"
+                },
+                {
+                  "label": "Lead for new labels",
+                  "value": "17.5 percentage points",
+                  "note": null
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "setup",
+              "change": -8
+            }
+          ],
+          "id": "larger",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "size",
+              "kind": "good",
+              "text": "You chose a readout with a better chance of catching the gain the ward cares about. That helps if the decision can wait.",
+              "example": null
+            },
+            {
+              "skill": "size",
+              "kind": "improve",
+              "text": "The larger readout leaves Friday’s shift without a result. For this handoff, the Friday morning readout already meets the planning goal.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "quality",
+              "text": "That takes more timing on the floor, but it puts our estimated chance of spotting the target gain at 96% if it’s real. We won’t have a result for Friday’s handoff."
+            }
+          ],
+          "text": "Set the readout at 160 pickups per layout and open it after the handoff.",
+          "timeJump": null
+        }
+      ],
+      "id": "sample",
+      "messages": [
+        {
+          "from": "quality",
+          "text": "We’ll time pickups during rounds. The schedule is shuffled to decide which labels are on the cart for each pickup."
+        },
+        {
+          "from": "quality",
+          "text": "The blankets stay in the same bins, and we’ll time each staff member just once. I need to lock in when we’ll open the results."
+        },
+        {
+          "from": "charge",
+          "text": "I’d love an early read. If we’re changing the cart, I can fit it around the rest of shift prep."
+        }
+      ],
+      "prompt": "Which readout do you put on the schedule?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 15
+            },
+            {
+              "meter": "setup",
+              "change": 8
+            }
+          ],
+          "id": "use-gap",
+          "next": "rewrite",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The Friday gap matched a gain worth noticing, but the planning target doesn’t tell you how unusual that gap is. Run the agreed check on the logged counts.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That’s quick to put in the note, and it’s a gap we’d care about. I still can’t tell from those rates how easily we could see a gap like that by chance."
+            },
+            {
+              "from": "quality",
+              "text": "That’s where hypothesis testing comes in: we use the pickup counts to check how unusual the gap would be if the labels made no difference."
+            }
+          ],
+          "text": "Recommend the new labels in the handoff using the rates. The gap matches the gain we planned for.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -16
+            },
+            {
+              "meter": "setup",
+              "change": -7
+            }
+          ],
+          "id": "run-test",
+          "next": "explain-full",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You checked whether the Friday gap would be unusual if the labels made no difference. Matching the inputs to the log let you verify the check instead of relying on the size of the gap alone.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Using 50 of 100 and 70 of 100, if labels made no difference, a gap this large or larger in either direction would show up about 0.4% of the time under this test. That’s below the 5% cutoff."
+            },
+            {
+              "from": "quality",
+              "text": "That’s hypothesis testing here: using the pickups to check the idea that the labels made no difference. The counts and cutoff match the log, though checking them took a bit of setup time."
+            }
+          ],
+          "text": "Ask {{ai}} to run the agreed check, then match the counts and cutoff to the study log.",
+          "timeJump": null
+        }
+      ],
+      "id": "test-full",
+      "messages": [
+        {
+          "from": "quality",
+          "text": "Friday’s log is closed: 50 of 100 pickups were quick with the current labels, and 70 of 100 with the new ones."
+        },
+        {
+          "from": "charge",
+          "text": "I can picture what that gap would mean on rounds. If the rates are enough for the note, I’ve got time to get the cart ready."
+        }
+      ],
+      "prompt": "What do you use to judge the Friday gap?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 14
+            },
+            {
+              "meter": "setup",
+              "change": 7
+            }
+          ],
+          "id": "follow-lead",
+          "next": "rewrite",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "Following the early lead gives the shift a quick direction, but even a noticeable lead can turn up by chance in a small batch. Check the counts against the agreed cutoff.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That gives me a quick call for the cart. The new labels came out ahead, but the note doesn’t tell me how easily that lead could happen by chance."
+            },
+            {
+              "from": "quality",
+              "text": "We set up hypothesis testing for that: use the early counts to see whether a lead this big would be unusual if the labels didn’t matter."
+            }
+          ],
+          "text": "Recommend the new labels for the next shift based on which layout had more quick pickups.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -14
+            },
+            {
+              "meter": "setup",
+              "change": -7
+            }
+          ],
+          "id": "run-test",
+          "next": "explain-early",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You checked the early lead using the pickups you’d planned to count, without adding more after seeing the numbers. The lead didn’t clear the agreed cutoff.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Using 20 of 40 and 27 of 40, if labels made no difference, a gap this large or larger in either direction would show up about 11.2% of the time under this test. That’s above the 5% cutoff."
+            },
+            {
+              "from": "quality",
+              "text": "That’s hypothesis testing: we use the counts we planned to collect to check what chance alone might explain. The inputs match the early log, but checking them ate into setup time."
+            }
+          ],
+          "text": "Have {{ai}} run the agreed check and match its counts and cutoff to the early log.",
+          "timeJump": null
+        }
+      ],
+      "id": "test-early",
+      "messages": [
+        {
+          "from": "quality",
+          "text": "The early log has 20 of 40 quick pickups with the current labels and 27 of 40 with the new ones."
+        },
+        {
+          "from": "charge",
+          "text": "The new labels are ahead, and we can swap them back if we need to. If I get a direction now, I can finish the cart setup early."
+        }
+      ],
+      "prompt": "How do you judge the lead in the early log?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 17
+            }
+          ],
+          "id": "use-target",
+          "next": "rewrite",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The planned gain made the trial sound concrete, but that number was a target, not a result. Give staff an interim instruction without presenting the target as evidence.",
+              "example": "Keep the current labels this shift. The pickup results aren’t ready yet."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That gives staff a clear instruction and a reason to try it. But the number came from the planner, not from timed pickups."
+            },
+            {
+              "from": "quality",
+              "text": "Hypothesis testing means using what we actually observe to check an idea about the labels. The planner tells us what gain we set out to look for, not what we found."
+            }
+          ],
+          "text": "Recommend a trial for the next shift and give the planned gain as the improvement we expect.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -12
+            },
+            {
+              "meter": "setup",
+              "change": 5
+            }
+          ],
+          "id": "keep-pending",
+          "next": "keep",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You gave staff a clear instruction while the larger readout was pending. The note didn’t turn the planner’s target into a finding.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "Got it. Staff know what to leave on the cart, even if it means holding off on a change that might help."
+            },
+            {
+              "from": "quality",
+              "text": "We picked a gain to look for, but we haven’t measured it yet. Hypothesis testing is the part where we use the pickup results to check whether chance alone could account for the gap."
+            }
+          ],
+          "text": "Keep the current labels for the next shift and say the pickup results aren’t ready for handoff.",
+          "timeJump": null
+        }
+      ],
+      "id": "pending",
+      "messages": [
+        {
+          "from": "quality",
+          "text": "The larger readout comes after handoff. I won’t have pickup results for the note."
+        },
+        {
+          "from": "charge",
+          "text": "I still need to tell the next shift what goes on the cart. Can we use the 20 percentage points from the planner to make the case for a trial?"
+        }
+      ],
+      "prompt": "What do you put in the handoff while the results are pending?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 13
+            },
+            {
+              "meter": "setup",
+              "change": 5
+            }
+          ],
+          "id": "use-confidence",
+          "next": "rewrite",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The test percentage made for a short note, but it isn’t the chance that the new labels won’t help. Say what staff saw, then explain what the check says about the gap.",
+              "example": "More pickups were quick with the new labels. A gap this large would be unusual if the labels made no difference."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That fits in the note, but it sounds like we know the odds the labels won’t help. The check was about how often a gap like ours could show up if the labels made no difference."
+            }
+          ],
+          "text": "Try the new labels next shift. Use the test percentage to say how likely it is they won’t help.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -10
+            },
+            {
+              "meter": "setup",
+              "change": -4
+            }
+          ],
+          "id": "describe-trial",
+          "next": "trial",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You connected the observed pickup lead to what the test actually checked. That supports a next-shift trial without promising the same improvement.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I can spare the extra space. Staff get a reason to try the new labels without reading it as a promise they’ll see the same gain."
+            }
+          ],
+          "text": "Try the new labels next shift: more pickups were quick, by a gap we’d rarely see if labels made no difference.",
+          "timeJump": null
+        }
+      ],
+      "id": "explain-full",
+      "messages": [
+        {
+          "from": "quality",
+          "text": "The counts match the log, and the chance check came in below the cutoff."
+        },
+        {
+          "from": "charge",
+          "text": "The handoff’s packed. Can we make that test percentage do the work and keep the cart note short?"
+        }
+      ],
+      "prompt": "How do you explain the Friday result to {{charge}}?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -11
+            }
+          ],
+          "id": "keep-open",
+          "next": "keep",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You kept the early lead in the note without treating it as enough evidence to switch. The shift gets a clear instruction, and the comparison stays open.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I can leave the cart as is without saying both sets of labels work the same. We’re passing on a trial this shift, not closing the question."
+            }
+          ],
+          "text": "Keep the current labels: the new ones led, but the early results don’t give us a clear reason to switch.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 11
+            },
+            {
+              "meter": "setup",
+              "change": 5
+            }
+          ],
+          "id": "call-even",
+          "next": "rewrite",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Keeping the current labels gives staff a clear direction. Leave out the tie: a small comparison that misses the cutoff doesn’t show that the labels work equally well.",
+              "example": "Keep the current labels for now. The early results didn’t give us clear evidence of a difference."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That’s a short note, but ‘tied’ sounds like we found the layouts work equally well. All this early check tells us is that we didn’t make a clear case for a difference."
+            }
+          ],
+          "text": "Keep the current labels for the next shift and record the layouts as tied so we can close the question.",
+          "timeJump": null
+        }
+      ],
+      "id": "explain-early",
+      "messages": [
+        {
+          "from": "quality",
+          "text": "The counts match the early log. The chance check came in above the cutoff."
+        },
+        {
+          "from": "charge",
+          "text": "Could we call it a tie? That would give staff a simple reason to leave the cart alone and let me close this out."
+        }
+      ],
+      "prompt": "What do you tell {{charge}} to put in the handoff?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Blanket pickup comparison",
+      "metrics": [
+        {
+          "label": "Quick pickup",
+          "value": "Within 1 minute",
+          "note": "Timed as staff get a blanket from the cart."
+        },
+        {
+          "label": "Current quick-pickup rate",
+          "value": "50%",
+          "note": "Baseline used in planning."
+        },
+        {
+          "label": "Gain worth detecting",
+          "value": "20 percentage points",
+          "note": "Target used in planning."
+        },
+        {
+          "label": "Chance-check cutoff",
+          "value": "5%",
+          "note": "The test looks for a gap in either direction."
+        }
+      ],
+      "note": "Handoff: Friday at 3:30 p.m."
+    },
+    {
+      "title": "Pickup sample planner",
+      "metrics": [
+        {
+          "label": "40 pickups per layout",
+          "value": "45%",
+          "note": "Early readout, 2 days after planning."
+        },
+        {
+          "label": "100 pickups per layout",
+          "value": "83%",
+          "note": "Friday morning readout, 4 days after planning."
+        },
+        {
+          "label": "160 pickups per layout",
+          "value": "96%",
+          "note": "Readout after handoff."
+        }
+      ],
+      "note": "Values show the estimated chance of detecting the target gain if it's real. Planning goal: at least 80%."
+    }
+  ],
+  "setting": "Monday on the Fernwake wards",
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Tell a real difference from chance",
+      "practice": "Take a pair of group counts and explain what you would check before treating the gap as more than chance."
+    },
+    {
+      "id": "size",
+      "name": "Choose a sample size",
+      "practice": "Compare three sample sizes on a planning sheet and explain which meets the study goal in time."
+    },
+    {
+      "id": "explain",
+      "name": "Explain a test result",
+      "practice": "Write a handoff sentence that says what a test found and what it did not settle."
+    }
+  ],
+  "startNodeId": "sample",
+  "summary": [
+    "Choose a sample size that gives you the planned chance of detecting a difference worth acting on by the time you need to decide.",
+    "A chance check tells you how often a gap at least as large as the one you saw would show up if there were no real difference.",
+    "A test that misses the cutoff doesn’t show that the groups are equal."
+  ],
+  "team": [
+    {
+      "id": "quality",
+      "role": "Quality improvement nurse",
+      "expertise": "She set up the randomized pickup comparison and can explain how the sample planner works.",
+      "ai": false
+    },
+    {
+      "id": "charge",
+      "role": "Charge nurse",
+      "expertise": "He sets up the next shift and wants a note that tells staff what to use and why.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Can check the pickup rates and run the agreed test from the group counts; the nursing team makes the recommendation.",
+      "ai": true
+    }
+  ],
+  "title": "Should the next shift try the new blanket-cart labels?"
+}

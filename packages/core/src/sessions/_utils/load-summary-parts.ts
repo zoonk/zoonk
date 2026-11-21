@@ -121,12 +121,10 @@ export async function loadSealedCapsules({
 
 export async function loadBuddyMeal({
   answers,
-  newIdeas,
   session,
   userId,
 }: {
   answers: readonly SessionAnswer[];
-  newIdeas: number;
   session: StudySessionRow;
   userId: string;
 }) {
@@ -140,7 +138,6 @@ export async function loadBuddyMeal({
 
   return {
     fixes,
-    newIdeas,
     reviews: answers.filter((answer) => answer.itemId && due.has(answer.itemId)).length,
   };
 }

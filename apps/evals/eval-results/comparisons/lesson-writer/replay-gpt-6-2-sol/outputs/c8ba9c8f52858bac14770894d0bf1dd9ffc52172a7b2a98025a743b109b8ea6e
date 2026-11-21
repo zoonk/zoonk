@@ -1,0 +1,102 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Mei’s team writes _Add a progress bar to checkout_ as its goal. What does that line tell you about what the team wants to change?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "What changes for people",
+      "text": "At checkout, you want fewer people to give up at payment. A goal names what should change for people, not what you plan to build, like a progress bar. This is called a **UX goal**.",
+      "exampleLineIdea": "a change the learner wants when booking an appointment online, before deciding how the booking page should work",
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "At an online store, shoppers often have to try more than once to pay.",
+      "question": "Which statement gives the team a UX goal for that problem?",
+      "options": [
+        {
+          "text": "More shoppers finish paying on their first try.",
+          "isCorrect": true,
+          "reason": "You’re naming what should get easier for shoppers without deciding how to make it happen.",
+          "picture": null
+        },
+        {
+          "text": "Redesign the payment button.",
+          "isCorrect": false,
+          "reason": "That tells the team what to work on, but not what shoppers should be able to do afterward.",
+          "picture": null
+        },
+        {
+          "text": "Add a message that explains how to retry a payment.",
+          "isCorrect": false,
+          "reason": "A retry message might help after a failed payment, but it’s something to build, not a change in what shoppers experience.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "A goal names what should change for people, not what you plan to build, like a progress bar."
+      }
+    },
+    {
+      "kind": "activity",
+      "template": "findError",
+      "content": "{\"prompt\":\"Find the step where the AI assistant mistakes a design choice for a UX goal.\",\"fields\":{\"author\":\"ai\",\"problem\":\"In interviews for a food delivery app, people said they gave up on orders when the delivery fee appeared late. What UX goal would you write from these notes?\",\"steps\":[{\"id\":\"read_notes\",\"text\":\"The notes show that people give up on orders when the delivery fee comes as a surprise near the end.\"},{\"id\":\"set_goal\",\"text\":\"I’d set the UX goal: Show the delivery fee on the home screen.\"},{\"id\":\"pick_measure\",\"text\":\"To measure success, I’d track the share of customers who see the delivery fee on the home screen.\"},{\"id\":\"summarize\",\"text\":\"In short, the redesign succeeds if more customers see the fee on the home screen.\"}],\"errorStepId\":\"set_goal\",\"why\":\"Putting the fee on the home screen is one design choice. The goal should say what changes for people, regardless of where the fee goes.\",\"correction\":\"Fewer people give up on an order because the delivery fee surprises them near the end.\"},\"check\":{\"kind\":\"interaction\",\"explanation\":\"Showing the fee on the home screen is one possible fix. A better goal is for fewer people to give up when the fee surprises them. You can measure that change without picking a place for the fee.\"}}"
+    },
+    {
+      "kind": "check",
+      "context": "At Alderline Bank, customers contact support because they can’t find where to change their card limit in the app.",
+      "question": "Which UX goal should the team agree on before it picks a design?",
+      "options": [
+        {
+          "text": "More customers find where to change their card limit.",
+          "isCorrect": true,
+          "reason": "Finding the setting is what customers struggle with. This goal leaves the team free to try different ways to help.",
+          "picture": null
+        },
+        {
+          "text": "Put a card limit shortcut on the home screen.",
+          "isCorrect": false,
+          "reason": "A shortcut might help, but this locks in both what to build and where to put it.",
+          "picture": null
+        },
+        {
+          "text": "Move the card limit setting into the Cards tab.",
+          "isCorrect": false,
+          "reason": "Moving the setting is one possible fix. It doesn’t say what should get easier for customers.",
+          "picture": null
+        },
+        {
+          "text": "More customers raise their card limit.",
+          "isCorrect": false,
+          "reason": "Customers might want to raise or lower their limit. The problem is finding the setting, not choosing a higher limit.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": null
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Change for people",
+        "text": "A UX goal names what should change for people, like fewer shoppers giving up at payment."
+      },
+      {
+        "label": "What you build",
+        "text": "Adding a progress bar tells the team what to build, not what should change for shoppers."
+      }
+    ],
+    "shape": "hub"
+  }
+}

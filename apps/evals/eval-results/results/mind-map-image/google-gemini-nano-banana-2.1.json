@@ -2,55 +2,29 @@
   "modelId": "google/gemini-nano-banana-2.1",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every part is present and well placed: the title in the central cloud, the central idea at the top, four numbered and color-coded branches each with its sentence, bullets and sketch, plus the comparison table and the summary at the bottom. Nothing is cut off. Branch 1's line runs tight against the central-idea text, and the top area is crowded.",
-          "score": 8,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a warm hand-drawn study sheet on plain paper with marker lettering, one soft color per branch and colored-pencil sketches. The sketches are slightly detailed and shaded but still fit the style. The extra header labels add a little clutter.",
-          "score": 8,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "All text matches the structure letter for letter and is high-contrast and readable. The sketches carry no words. The text is dense overall, and the central idea is hyphenated mid-word.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (27 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 7075,
-          "outputTokens": 935,
-          "reasoningTokens": 378
+          "cacheWriteTokens": 0,
+          "inputTokens": 7431,
+          "outputTokens": 938,
+          "reasoningTokens": 357
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Branch 1's purple connector runs very close to the left edge of the central-idea text ('inversor e compo-'), which crowds the top center. The central idea is hyphenated awkwardly across lines ('compo-/nentes'). The unrequested labels 'Ideia central' and 'Resumo:' were added.",
+          "conclusion": "The paper is a warm cream tint across the whole sheet, corners included, instead of plain white. That breaks the style required by the categories and will look like a pasted photo on a white lesson screen.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The labels 'Ideia central' and 'Resumo:' are not in the scene text, though they act as harmless headers. The inverter sketch and its wires sit right against the left edge. The 'Ideia central' block is not connected to the center by a line.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Give the central-idea block more clearance from the branch connectors and avoid the word break. Drop the extra labels. Ease the text density slightly so each branch has more breathing room.",
+          "conclusion": "Use pure white paper. Give the inverter sketch a little margin from the left edge. Center the comparison table and the summary a bit more evenly in the space below the branches.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -66,13 +40,19 @@
               {
                 "drawing": "a solar cell",
                 "explanation": "A luz solar movimenta cargas elétricas e gera corrente contínua.",
-                "points": ["A luz põe cargas em movimento", "Corrente elétrica acende uma lâmpada"],
+                "points": [
+                  "A luz põe cargas em movimento",
+                  "Corrente elétrica acende uma lâmpada"
+                ],
                 "title": "Células fotovoltaicas"
               },
               {
                 "drawing": "a solar panel",
                 "explanation": "Reúne células para gerarem eletricidade juntas, sob proteção.",
-                "points": ["Reúne células como ladrilhos", "Protege contra chuva e sujeira"],
+                "points": [
+                  "Reúne células como ladrilhos",
+                  "Protege contra chuva e sujeira"
+                ],
                 "title": "Painel fotovoltaico"
               },
               {
@@ -87,7 +67,10 @@
               {
                 "drawing": "an electric meter",
                 "explanation": "Sustentam, conduzem, protegem e medem a energia do sistema.",
-                "points": ["Estrutura fixa painéis no telhado", "Medidor registra a eletricidade"],
+                "points": [
+                  "Estrutura fixa painéis no telhado",
+                  "Medidor registra a eletricidade"
+                ],
                 "title": "Componentes do sistema"
               }
             ],
@@ -96,11 +79,17 @@
               "columns": [
                 {
                   "name": "Painel fotovoltaico",
-                  "points": ["Recebe luz do sol", "Fornece eletricidade"]
+                  "points": [
+                    "Recebe luz do sol",
+                    "Fornece eletricidade"
+                  ]
                 },
                 {
                   "name": "Aquecedor solar",
-                  "points": ["Recebe calor do sol", "Entrega água quente"]
+                  "points": [
+                    "Recebe calor do sol",
+                    "Entrega água quente"
+                  ]
                 }
               ],
               "title": "Uso da energia solar"
@@ -109,62 +98,69 @@
             "title": "Da luz à eletricidade"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "Every part is present and in place: the title is in the central cloud, the central idea is at the top, five numbered colored branches each have a sentence, bullets and a sketch, and the comparison table and summary sit at the bottom. Lines join each branch to the center. The only flaw is that two sketches overlap their dashed boxes.",
-          "score": 8,
+          "reasoning": "Every part is present and in order: the title cloud, the central idea, four numbered branches each with its sentence, bullets and a fitting sketch (cell, panel, inverter, meter), the comparison table and the summary. All text matches the scene. Lines join each branch to the center. The only small issues are the inverter sketch hugging the left edge and the extra header labels.",
+          "score": 9,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "This is a warm hand-drawn sheet with neat marker lettering, one soft color per branch and colored-pencil sketches on plain paper that fills the frame, with no clutter.",
-          "score": 9,
+          "reasoning": "The hand-drawn marker lettering, one soft color per branch and colored-pencil sketches suit the style. However, the sheet is a cream/tinted paper rather than white, which caps this category at 5.",
+          "score": 5,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "The text is large, high contrast and spelled correctly. However, the card sketch contains the word 'VIP', which breaks the rule that sketches carry no words.",
-          "score": 7,
+          "reasoning": "The lettering is large and high-contrast with good spacing. The sketches carry no words, and the meter's gauge ticks are not readable text. Nothing is crammed.",
+          "score": 9,
           "label": "Legibility",
           "weight": 25
         },
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'vip'",
-          "score": 8,
+          "reasoning": "Every word matches the structure.",
+          "score": 10,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 7205,
-          "outputTokens": 834,
-          "reasoningTokens": 226
+          "cacheWriteTokens": 0,
+          "inputTokens": 7561,
+          "outputTokens": 919,
+          "reasoningTokens": 353
         }
       },
       "steps": [
         {
-          "conclusion": "The membership-card sketch in branch 4 carries the word 'VIP' plus symbol marks, so a sketch contains text when sketches are required to carry no words. All other lettering, including the title, central idea, five branches, comparison table and summary, matches the structure exactly.",
+          "conclusion": "The paper is a cream/warm tint rather than pure white; the corners are clearly off-white, so the sheet would read as a tinted page on a white lesson screen. The membership-card sketch contains the word 'VIP', breaking the no-words-in-sketches rule. The headings 'Ideia central' and 'Resumo:' were also added beyond the scene's allowed words.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "The ramp sketch in branch 3 and the card sketch in branch 4 overlap the dashed borders of their bullet boxes. The branch 3 bullets run close to the ramp, which makes that corner feel slightly crowded.",
+          "conclusion": "The fountain and card sketches sit close to their bullet boxes and overlap their dashed borders slightly. The left half is denser than the right.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Remove 'VIP' and the marks from the card. Move the ramp and card fully outside or fully inside their dashed boxes with a little clearance. Give the central-idea text slightly more breathing room from the branch 1 and branch 2 lines.",
+          "conclusion": "Use pure white paper, remove 'VIP' and any lettering from the card sketch, and give the sketches a little more clearance from the bullet boxes.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -180,13 +176,19 @@
               {
                 "drawing": "a vending machine",
                 "explanation": "A entrada é o que você informa; a saída é a resposta.",
-                "points": ["Tamanho do lanche leva ao preço", "Cada entrada, uma única saída"],
+                "points": [
+                  "Tamanho do lanche leva ao preço",
+                  "Cada entrada, uma única saída"
+                ],
                 "title": "Entrada e saída"
               },
               {
                 "drawing": "a box with an arrow in and an arrow out",
                 "explanation": "f(x) indica a saída quando a entrada é x.",
-                "points": ["f(4) é a saída para entrada 4", "Coloque a entrada no lugar de x"],
+                "points": [
+                  "f(4) é a saída para entrada 4",
+                  "Coloque a entrada no lugar de x"
+                ],
                 "title": "Notação f(x)"
               },
               {
@@ -201,13 +203,19 @@
               {
                 "drawing": "a membership card",
                 "explanation": "O preço quando a entrada é zero, antes de qualquer uso.",
-                "points": ["Assinatura R$ 12,00; uso R$ 3,00", "O valor inicial muda o preço"],
+                "points": [
+                  "Assinatura R$ 12,00; uso R$ 3,00",
+                  "O valor inicial muda o preço"
+                ],
                 "title": "Valor inicial"
               },
               {
                 "drawing": "an arc of water from a fountain",
                 "explanation": "Uma altura que sobe e desce muda de forma curva.",
-                "points": ["x² na regra: função quadrática", "a positivo abre para cima"],
+                "points": [
+                  "x² na regra: função quadrática",
+                  "a positivo abre para cima"
+                ],
                 "title": "Parábola"
               }
             ],
@@ -216,11 +224,17 @@
               "columns": [
                 {
                   "name": "Função linear",
-                  "points": ["Mesma mudança a cada unidade", "Gráfico é uma reta"]
+                  "points": [
+                    "Mesma mudança a cada unidade",
+                    "Gráfico é uma reta"
+                  ]
                 },
                 {
                   "name": "Função quadrática",
-                  "points": ["Mudança não é sempre igual", "Gráfico é uma parábola"]
+                  "points": [
+                    "Mudança não é sempre igual",
+                    "Gráfico é uma parábola"
+                  ]
                 }
               ],
               "title": "Variação constante ou quadrática"
@@ -229,58 +243,69 @@
             "title": "Funções e relações entre variáveis"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "Every element is present and placed correctly: the title sits in the central cloud, the central idea is at the top, and the four numbered branches each have their sentence, bullets and sketch. The comparison table and the summary are at the bottom. Colored lines join each branch to the cloud, and nothing overlaps or is cut off. The only weaknesses are slight crowding and a footprint sketch that floats a little loosely.",
-          "score": 9,
+          "reasoning": "All parts are present and in order: the title in the central cloud, the central idea at the top, five numbered colored branches each with an explanation, bullets and a fitting sketch, plus the comparison table and the summary. Lines connect each branch to the center. Small extra headings and slight sketch-box crowding cost a little.",
+          "score": 8,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "This is a warm hand-drawn study sheet: neat marker lettering, one soft color per branch, colored-pencil sketches and plain paper filling the frame. It is a bit text-heavy but not cluttered.",
-          "score": 9,
+          "reasoning": "The friendly hand-drawn marker style with one color per branch is right, but the paper is cream/tinted rather than plain white, which caps this category.",
+          "score": 5,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "Every word matches the structure letter by letter and reads easily, with good contrast and size. The sketches carry no words, although the badge has a person icon and lines.",
-          "score": 9,
+          "reasoning": "Text is large, high-contrast and spelled correctly, but the card sketch carries the word 'VIP', and a couple of sketches crowd their text boxes.",
+          "score": 6,
           "label": "Legibility",
           "weight": 25
         },
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (30 texts).",
-          "score": 10,
+          "reasoning": "words that aren't in the map's text (misspelled, garbled or extra): 'vip'",
+          "score": 6,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 7160,
-          "outputTokens": 947,
-          "reasoningTokens": 376
+          "cacheWriteTokens": 0,
+          "inputTokens": 7516,
+          "outputTokens": 849,
+          "reasoningTokens": 306
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The page is dense, with little breathing room between the branch text blocks, the comparison table and the summary. The name badge carries a person icon and placeholder lines instead of being blank. The footprint trail is small and sits loosely between branch 3 and the cloud. The 'Ideia central' and 'Resumo:' labels were added, though they are harmless.",
+          "conclusion": "The background is cream or warm-tinted paper rather than plain white; the corners are visibly off-white. This departs from the white-sheet house style.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The 'blank name badge' sketch includes a small person icon and line marks, so it is not truly blank. The 'Ideia central' and 'Resumo:' labels are added beyond the scene's listed words. The magnifying glass and footprints sit somewhat apart from their branch blocks.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the badge truly blank. Enlarge the footprints and anchor them closer to branch 3. Add a bit more spacing above the comparison table so the layout breathes.",
+          "conclusion": "Render the map on pure white paper. Keep the name badge plain. Tuck each sketch closer to its branch bullets for a tighter grouping.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -305,19 +330,28 @@
               {
                 "drawing": "a blank name badge",
                 "explanation": "Convide quem viveu a tarefa, mesmo sem concluí-la.",
-                "points": ["Critério é o que a pessoa viveu", "Inclua tentativas interrompidas"],
+                "points": [
+                  "Critério é o que a pessoa viveu",
+                  "Inclua tentativas interrompidas"
+                ],
                 "title": "Participantes"
               },
               {
                 "drawing": "a trail of footprints",
                 "explanation": "Um caminho curto de perguntas abertas, sem suposições.",
-                "points": ["Comece por um episódio real", "Evite presumir dificuldade ou etapa"],
+                "points": [
+                  "Comece por um episódio real",
+                  "Evite presumir dificuldade ou etapa"
+                ],
                 "title": "Roteiro de entrevista"
               },
               {
                 "drawing": "a locked filing cabinet",
                 "explanation": "Anote ações e falas com permissão e sem dados desnecessários.",
-                "points": ["Use código no lugar do nome", "Combine acesso e data de exclusão"],
+                "points": [
+                  "Use código no lugar do nome",
+                  "Combine acesso e data de exclusão"
+                ],
                 "title": "Registro responsável"
               }
             ],
@@ -326,15 +360,24 @@
               "columns": [
                 {
                   "name": "Observação",
-                  "points": ["Mostra o que a pessoa faz", "Vê a ação na rotina"]
+                  "points": [
+                    "Mostra o que a pessoa faz",
+                    "Vê a ação na rotina"
+                  ]
                 },
                 {
                   "name": "Entrevista",
-                  "points": ["Ouve a versão da pessoa", "Não substitui ver a ação"]
+                  "points": [
+                    "Ouve a versão da pessoa",
+                    "Não substitui ver a ação"
+                  ]
                 },
                 {
                   "name": "Teste de usabilidade",
-                  "points": ["Verifica se conclui a tarefa", "Mostra onde avança ou trava"]
+                  "points": [
+                    "Verifica se conclui a tarefa",
+                    "Mostra onde avança ou trava"
+                  ]
                 }
               ],
               "title": "Três métodos de pesquisa"
@@ -343,27 +386,25 @@
             "title": "Planejamento de pesquisa com usuários"
           }
         }
-      }
-    },
-    {
+      },
       "categoryScores": [
         {
           "categoryId": "layout",
-          "reasoning": "Every required part is present and placed correctly: the title in the central cloud, the central idea at the top, and six numbered, colored branches, each with its sentence, bullets and sketch. The comparison table and the summary line are also there. Lines join each branch to the center and nothing is cut off. The only weaknesses are small overlaps between sketches and box borders, plus a non-sequential branch order.",
-          "score": 8,
+          "reasoning": "Every part is present and in order: the title in the central cloud, the central idea at the top, four numbered colored branches with sentences, bullets and sketches, then the comparison table and the summary. Connectors link the center to each branch, and nothing overlaps or is cut off. The badge sketch shows a small figure rather than being blank.",
+          "score": 9,
           "label": "Every part, clearly laid out",
           "weight": 50
         },
         {
           "categoryId": "style",
-          "reasoning": "This is a warm, hand-drawn study sheet on plain paper. The marker lettering is neat, each branch has its own soft color, and the sketches look colored-pencil. There is no frame or desk, and no 3D or photo rendering. It is slightly dense overall.",
-          "score": 9,
+          "reasoning": "The hand-drawn marker lettering, soft branch colors and colored-pencil sketches fit the style well. However, the paper is a cream tint across the whole image instead of white, which caps this category.",
+          "score": 5,
           "label": "Mind-map style",
           "weight": 25
         },
         {
           "categoryId": "legibility",
-          "reasoning": "I read all text letter by letter and it matches the structure exactly. It is large and high-contrast. The sketches carry no words; the ruler has only tick marks. Some blocks feel a bit tightly packed.",
+          "reasoning": "All text is large, high-contrast and well spaced, with no crammed lines. The sketches carry no words or numbers.",
           "score": 9,
           "label": "Legibility",
           "weight": 25
@@ -371,30 +412,43 @@
         {
           "categoryId": "text",
           "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (35 texts).",
+          "reasoning": "Every word matches the structure.",
           "score": 10,
           "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
         }
-      ],
+      ]
+    },
+    {
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1114,
-          "inputTokens": 7245,
-          "outputTokens": 1030,
-          "reasoningTokens": 403
+          "cacheWriteTokens": 0,
+          "inputTokens": 7601,
+          "outputTokens": 1022,
+          "reasoningTokens": 443
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Several sketches overlap or sit on the dashed bullet-box borders: the conveyor belt, recycling bin, leaf and ruler. The sheet is dense and leaves little breathing room, especially around the comparison table and the lower branches. The branch order zigzags (1 top-left, 2 top-right, 3 right, 4 left), which makes the numbering slightly harder to follow.",
+          "conclusion": "The paper is a warm cream/beige tint across the whole sheet, including the corners, instead of plain white. This departs from the white-paper style the categories require.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Two areas are crowded. In branch 6, the line 'Magnification changes' presses against the right edge of its dashed box, and the ruler sketch overlaps that box's border. The added labels 'Central idea' and 'Summary:' are structural headings rather than scene text, which is harmless but unrequested.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Move each sketch fully outside its bullet box. Arrange the branches in a clockwise sequence so the numbers read in order. Shrink the body text slightly to open up more whitespace around the central cloud and the table.",
+          "conclusion": "Use pure white paper. Give the branch 6 bullets more internal padding and keep the ruler fully outside its box. Branch 3 could move nearer the top so the numbers read in clockwise order.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -410,7 +464,10 @@
               {
                 "drawing": "a round cell",
                 "explanation": "The smallest unit that can carry out life's work.",
-                "points": ["A pond organism is one cell", "You are made of many cells"],
+                "points": [
+                  "A pond organism is one cell",
+                  "You are made of many cells"
+                ],
                 "title": "Cell as unit"
               },
               {
@@ -425,7 +482,10 @@
               {
                 "drawing": "a small conveyor belt",
                 "explanation": "Parts that build proteins and prepare them for delivery.",
-                "points": ["The nucleus keeps the recipe", "Ribosomes build; Golgi packages"],
+                "points": [
+                  "The nucleus keeps the recipe",
+                  "Ribosomes build; Golgi packages"
+                ],
                 "title": "Protein builders"
               },
               {
@@ -461,9 +521,18 @@
               "columns": [
                 {
                   "name": "Bacterial cell",
-                  "points": ["Prokaryotic cell", "DNA sits in cytoplasm"]
+                  "points": [
+                    "Prokaryotic cell",
+                    "DNA sits in cytoplasm"
+                  ]
                 },
-                { "name": "Animal cell", "points": ["Eukaryotic cell", "DNA sits in a nucleus"] }
+                {
+                  "name": "Animal cell",
+                  "points": [
+                    "Eukaryotic cell",
+                    "DNA sits in a nucleus"
+                  ]
+                }
               ],
               "title": "Bacterial and animal cells"
             },
@@ -471,7 +540,44 @@
             "title": "Cell structure and work"
           }
         }
-      }
+      },
+      "categoryScores": [
+        {
+          "categoryId": "layout",
+          "reasoning": "Every part is present and correctly lettered: the title in the central cloud, the central idea at the top, all six numbered branches with their sentences, bullets and fitting sketches, the comparison table and the summary. Colored lines join each branch to the center. The only flaws are slight crowding and the ruler overlapping its box in branch 6.",
+          "score": 8,
+          "label": "Every part, clearly laid out",
+          "weight": 50
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "This is a friendly hand-drawn marker-and-colored-pencil map with one soft color per branch. However, the sheet is tinted cream rather than plain white, which caps this category at 5.",
+          "score": 5,
+          "label": "Mind-map style",
+          "weight": 25
+        },
+        {
+          "categoryId": "legibility",
+          "reasoning": "The lettering is large, high-contrast and easy to read, and the sketches contain no words. One line in branch 6 sits tight against its box border.",
+          "score": 9,
+          "label": "Legibility",
+          "weight": 25
+        },
+        {
+          "categoryId": "text",
+          "label": "Text matches the structure",
+          "reasoning": "Every word matches the structure.",
+          "score": 10,
+          "weight": 100
+        },
+        {
+          "categoryId": "imageEdges",
+          "label": "Background and frame",
+          "reasoning": "The edges are not plain white.",
+          "score": 5.5,
+          "weight": 30
+        }
+      ]
     }
   ],
   "taskId": "mind-map-image"

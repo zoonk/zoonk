@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-juros-compostos",
+        "claimId": "7a3ff8f0779e0353",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "68e29afa358249028477a008d0500e7ada45c831c01d0cfe4eb62c203bfb230a.first.bf67c7cc-09d2-44d6-bf01-c01d9077b9b9.2",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00331105,
+    "id": "21b62de42a5f4a25eaa06d4150432c242ed502698fe92611ac226c00e1229f6e",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "404dba5048d91adb",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "320fd609f961604737471a5ddb87c3036d17788bcdc9b230a40bf033aabb9897",
+          "format": "text"
+        },
+        "B": {
+          "blob": "21f040ef8f1426bfd908ff8204b2110b257ed34b31a846203d900b96a1b91e8a",
+          "format": "text"
+        },
+        "claim": "A atividade explora meses de 0 a 36, mas não fornece uma tabela ou gráfico com os saldos ano a ano e valores exatos no brief, como exigido.",
+        "claimId": "7a3ff8f0779e0353",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "971015ca59b57b94e7a94542039865598d4fce17b0194575b14799c0d106fcfd",
+          "format": "text"
+        },
+        "input": {
+          "blob": "10728946981695791410e8b2198a572247d8ca8d1a3a5363508a973a7d2697ff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "A atividade com controle mensal e o restante do plano; não há dados de saldo ano a ano.",
+          "kind": "range"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "404dba5048d91adb",
+          "finding": "doesn't hold",
+          "reason": "Output A says the opposite: the explanation screen states that the contracted monthly rent 'continua devido mesmo sem fazer nenhum bolo', and the application screen asks which costs still enter the reserve, naming 'aluguel e internet'. The app never says the R$ 900,00 rent stops being paid in a month without production."
+        },
+        {
+          "claimId": "7a3ff8f0779e0353",
+          "finding": "holds",
+          "reason": "Output B's activity does use months from 0 to 36, but its brief gives no table or chart of balances year by year with exact values. It only mentions a difference plotted over months and a single exact figure (R$ 59,47 at month 24), so the claim is true of B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

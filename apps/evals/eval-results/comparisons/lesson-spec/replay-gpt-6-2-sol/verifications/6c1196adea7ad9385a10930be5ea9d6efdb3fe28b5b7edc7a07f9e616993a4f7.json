@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-lever",
+        "claimId": "6e4b5b520bf9bc71",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "7db5210ea16df200f68fb9acefee5643870fead8bda1a1a80f5d65d807994343.first.1b27a131-022f-4ab2-85e8-9f22de4167e1.3",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0030336499999999997,
+    "id": "6c1196adea7ad9385a10930be5ea9d6efdb3fe28b5b7edc7a07f9e616993a4f7",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "564feec849f48278",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "23ec55f7392e02a620ebf46011ecf8211485fedba0d6d843aa68686d44c73f91",
+          "format": "text"
+        },
+        "B": {
+          "blob": "6d723fb0be86c2907d11e6e86aa402ca2e2043628a8c081b986007a2a87636c8",
+          "format": "text"
+        },
+        "claim": "The check shows the weight moving farther from the support but gives no distances for the setup.",
+        "claimId": "6e4b5b520bf9bc71",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "ecb3e1ce8f62834f931c552f3375a418fdf3add71626616b972edcf4570b6069",
+          "format": "text"
+        },
+        "input": {
+          "blob": "5dfdee9df303c4e1d37fbf7e82588e2ea0c51d2ea106ebe3553ff672a3250263",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Side view of a level test lever on a fixed support, with a hand at a marked point on the right and an exercise weight on the left; a horizontal arrow points from the weight’s starting spot to a marked spot farther left.",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "564feec849f48278",
+          "finding": "doesn't hold",
+          "reason": "Output A's application screen is about Malik's monthly pay ($4,000, then $2,000, then $3,000), asking the learner to find the overall change from the original pay, which is 25% lower. It never mentions a compound annual growth rate, so the claim is false."
+        },
+        {
+          "claimId": "6e4b5b520bf9bc71",
+          "finding": "holds",
+          "reason": "Output A's check screen shows an exercise weight sliding from its starting spot to a marked spot farther left, with no distances on the visual or in the brief. The claim is accurate for A, and it isn't true of B, whose checks show distances and no moving weight."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

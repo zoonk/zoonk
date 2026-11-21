@@ -1,0 +1,642 @@
+{
+  "deadline": "Send the scan request to {{scan}} by 2:00 p.m.",
+  "endings": [
+    {
+      "id": "ready",
+      "outcome": "The request records 980 counts/s as the observation at 1.2 V and about 940 counts/s as the fitted estimate at 1.3 V. {{method}} accepts the labels, and {{scan}} can queue the request."
+    },
+    {
+      "id": "deferred",
+      "outcome": "No complete scan request is submitted; you ask for a new measurement at 1.3 V. The fitted estimate remains unanswered even though the request did not require a new observation."
+    },
+    {
+      "id": "returned",
+      "outcome": "The submitted request carries the observed 980 counts/s from 1.2 V into the nominal-rate field at 1.3 V. {{method}} returns it for correction before {{scan}} queues it."
+    }
+  ],
+  "meters": [
+    {
+      "id": "reliability",
+      "label": "Scan-note reliability",
+      "start": 35,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Team capacity for other lab work",
+      "start": 80,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Prepare the next photon-detector scan request. Record the observed rate at 1.2 V, then give **the fitted curve’s estimated rate at 1.3 V**, keeping the plot’s axis scale intact.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 8
+            },
+            {
+              "meter": "capacity",
+              "change": 3
+            }
+          ],
+          "id": "use-bands",
+          "next": "observation",
+          "notes": [
+            {
+              "skill": "truncated-axis",
+              "kind": "good",
+              "text": "Using the labeled lines preserved the displayed starting value of 800 counts/s instead of assuming the bottom meant zero.",
+              "example": null
+            },
+            {
+              "skill": "intervals",
+              "kind": "improve",
+              "text": "Broad ranges left the small spaces unused. Work out their value from neighboring labels to make the rate entries more precise.",
+              "example": "(1,000 − 900) ÷ 5 = 20 counts/s per small space."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "scan",
+              "text": "That gives me ranges to work with without much extra work. The displayed axis starts at 800 counts/s, not zero."
+            },
+            {
+              "from": "method",
+              "text": "Those labels keep the rates on the right scale. We'll still need closer readings for the entries; the small spaces carry information too."
+            }
+          ],
+          "text": "Use the large labeled lines and keep the initial readings as broad ranges.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 18
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "check-scale",
+          "next": "observation",
+          "notes": [
+            {
+              "skill": "intervals",
+              "kind": "good",
+              "text": "You requested a specific scale check: the difference between neighboring labels divided among the equal small spaces.",
+              "example": null
+            },
+            {
+              "skill": "truncated-axis",
+              "kind": "good",
+              "text": "Checking the displayed starting value kept 800 counts/s in the reading rather than treating the bottom of the window as zero.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The displayed vertical axis begins at 800 counts/s, not zero. Each small space represents (1,000 − 900) ÷ 5 = 20 counts/s."
+            },
+            {
+              "from": "scan",
+              "text": "Thanks for checking that against the labels. It took some attention, but I've now got a usable scale for the form."
+            }
+          ],
+          "text": "Ask {{ai}} to check the axis's starting value and each small space's value.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "use-window-height",
+          "next": "observation",
+          "notes": [
+            {
+              "skill": "truncated-axis",
+              "kind": "improve",
+              "text": "Reading height from the bottom saved effort but treated the displayed starting line as zero. Include its labeled value when reading an absolute detector rate.",
+              "example": "Read from the numbered axis labels, not just the bottom of the plotting window."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "scan",
+              "text": "That's quick, and I can compare the heights easily."
+            },
+            {
+              "from": "method",
+              "text": "But height above the bottom only tells us how far the rate has risen from that line. It doesn't give the detector rate unless we include the line's labeled value."
+            }
+          ],
+          "text": "Use the height above the bottom line as the detector-rate reading.",
+          "timeJump": null
+        }
+      ],
+      "id": "axes",
+      "messages": [
+        {
+          "from": "scan",
+          "text": "I've got the form beside the plot—the picture of detector rate against voltage. Can we send it by 2:00 p.m.?"
+        },
+        {
+          "from": "scan",
+          "text": "Reading up from the bottom would be quick. Or we could stick to the big labeled lines and keep things moving."
+        },
+        {
+          "from": "method",
+          "text": "The fitted curve is the smooth line showing the pattern in the readings. I'll check how the entries are labeled before {{scan}} queues the request."
+        }
+      ],
+      "prompt": "How will you handle the plot's vertical scale?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 22
+            },
+            {
+              "meter": "capacity",
+              "change": -7
+            }
+          ],
+          "id": "read-dot",
+          "next": "estimate",
+          "notes": [
+            {
+              "skill": "read-plot",
+              "kind": "good",
+              "text": "You matched the voltage position to the detector-rate axis and retained its starting value, giving the observed reading of 980 counts/s.",
+              "example": null
+            },
+            {
+              "skill": "data-points",
+              "kind": "good",
+              "text": "You used the marked dot for the observed-rate field rather than substituting the smoother fitted curve.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The vertical axis starts at 800 counts/s, and each small space is 20 counts/s. The measured dot at 1.2 V reads 980 counts/s."
+            },
+            {
+              "from": "method",
+              "text": "That's the observation we need. Checking the dot against the labels took a little work, but the curve doesn't replace a measured result."
+            }
+          ],
+          "text": "Follow the measured dot to the labeled rate axis and enter its reading as the observation.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -12
+            },
+            {
+              "meter": "capacity",
+              "change": 4
+            }
+          ],
+          "id": "use-fit",
+          "next": "repair",
+          "notes": [
+            {
+              "skill": "data-points",
+              "kind": "improve",
+              "text": "The smooth curve supplied a tidy estimate, but the field asked for an observation. Read the marked dot at the requested voltage for that entry.",
+              "example": "\"I'll use the dot for the observed rate and label any curve reading as fitted.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "scan",
+              "text": "The fitted curve at 1.2 V reads about 960 counts/s. That's a quick entry for the form."
+            },
+            {
+              "from": "method",
+              "text": "That number describes the fitted curve, though. Calling it observed changes what the entry claims; the observation comes from the dot."
+            }
+          ],
+          "text": "Follow the smooth curve to the labeled rate axis and enter its reading as the observation.",
+          "timeJump": null
+        }
+      ],
+      "id": "observation",
+      "messages": [
+        {
+          "from": "scan",
+          "text": "The observed-rate field asks for 1.2 V. The dot and the smooth curve sit at different heights there."
+        },
+        {
+          "from": "scan",
+          "text": "Could we use the smooth curve's reading? It looks steadier, and I wouldn't need to explain why the dot sits off the line."
+        },
+        {
+          "from": "method",
+          "text": "I'm checking the wording on the request. What would you put in that field?"
+        }
+      ],
+      "prompt": "What will you enter as the observed detector rate at 1.2 V?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 3
+            },
+            {
+              "meter": "capacity",
+              "change": -12
+            }
+          ],
+          "id": "wait-for-dot",
+          "next": "deferred",
+          "notes": [
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You kept an unmeasured result from being presented as an observation by leaving the field blank.",
+              "example": null
+            },
+            {
+              "skill": "between-ticks",
+              "kind": "improve",
+              "text": "The extra acquisition left the requested estimate unfinished. Locate the target voltage between its neighboring labels and read the existing curve there.",
+              "example": "\"I'll locate 1.3 V between the labeled ticks and report an approximate fitted rate.\""
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "method",
+              "text": "I'll request the measurement. Leaving the field blank avoids presenting an estimate as something we measured."
+            },
+            {
+              "from": "scan",
+              "text": "The request is still incomplete, and that acquisition will take lab work. The existing curve could supply the fitted estimate this field asks for."
+            }
+          ],
+          "text": "Leave the target rate blank and request a measured dot at that voltage before submitting.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": -15
+            },
+            {
+              "meter": "capacity",
+              "change": 3
+            }
+          ],
+          "id": "carry-observation",
+          "next": "returned",
+          "notes": [
+            {
+              "skill": "curve",
+              "kind": "improve",
+              "text": "Reusing 980 counts/s completed the form quickly, but it carried an observation to a different voltage. Read the curve at the requested position instead.",
+              "example": "\"The observation stays at 1.2 V; the fitted-rate entry needs a reading at 1.3 V.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "scan",
+              "text": "That fills the remaining field with 980 counts/s without more reading."
+            },
+            {
+              "from": "method",
+              "text": "But that dot belongs to 1.2 V. Moving its rate into the 1.3 V field doesn't tell us what the fitted curve says there."
+            }
+          ],
+          "text": "Enter the nearby observed rate as the target rate and submit the completed request.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 18
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "read-target-curve",
+          "next": "ready",
+          "notes": [
+            {
+              "skill": "between-ticks",
+              "kind": "good",
+              "text": "You located 1.3 V halfway between the neighboring horizontal labels rather than borrowing a reading from another voltage.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You read the curve at the requested position and labeled about 940 counts/s as a fitted estimate, not a new observation.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "1.3 V is halfway between the 1.2 and 1.4 V ticks. The curve is two small spaces above 900 counts/s there, so its fitted estimate is about 940 counts/s."
+            },
+            {
+              "from": "scan",
+              "text": "I've marked that as approximate and fitted. Checking both axes took attention, but the request is complete without another acquisition."
+            }
+          ],
+          "text": "Locate the target voltage between the labeled ticks and submit its approximate fitted-curve reading.",
+          "timeJump": null
+        }
+      ],
+      "id": "estimate",
+      "messages": [
+        {
+          "from": "scan",
+          "text": "The observation is entered as 980 counts/s at 1.2 V. I still need the fitted estimate at 1.3 V, where there's no measured dot."
+        },
+        {
+          "from": "method",
+          "text": "I can request another measurement there. Having a dot at the exact voltage would feel easier to defend."
+        },
+        {
+          "from": "scan",
+          "text": "The request asks for a fitted expectation, and it's due at 2:00 p.m. What should I put in the remaining field?"
+        }
+      ],
+      "prompt": "How will you handle the fitted-rate entry at 1.3 V?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 32
+            },
+            {
+              "meter": "capacity",
+              "change": -15
+            }
+          ],
+          "id": "separate-and-check",
+          "next": "ready",
+          "notes": [
+            {
+              "skill": "data-points",
+              "kind": "good",
+              "text": "You asked for the axis steps and checked the output, replacing the curve value in the observed field with the dot's 980 counts/s.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You separated the target-curve task from the observation task, obtaining about 940 counts/s at 1.3 V as a fitted estimate.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The axis begins at 800 counts/s, with 20 counts/s per small space. The measured dot at 1.2 V is one space below 1,000 counts/s, giving 980 counts/s."
+            },
+            {
+              "from": "method",
+              "text": "I've checked the working: 1.3 V is halfway between 1.2 and 1.4 V, where the curve reads about 940 counts/s. Explaining the revision took time, but the measured and fitted entries now match."
+            }
+          ],
+          "text": "Ask {{ai}} for both readings and the axis steps; verify the dot and curve entries, then submit.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 5
+            },
+            {
+              "meter": "capacity",
+              "change": 2
+            }
+          ],
+          "id": "anchor-to-dot",
+          "next": "returned",
+          "notes": [
+            {
+              "skill": "data-points",
+              "kind": "good",
+              "text": "You corrected the observed-rate entry by reading the measured dot against the labeled axis.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "improve",
+              "text": "The correction stopped short of the target estimate. A dot at 1.2 V cannot supply the requested fitted-curve reading at 1.3 V.",
+              "example": "\"Keep 980 counts/s as the observation; read the curve separately at the target voltage.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The displayed axis starts at 800 counts/s, and each small space is 20 counts/s. The measured dot at 1.2 V reads 980 counts/s."
+            },
+            {
+              "from": "method",
+              "text": "That repairs the observed field with less rework. But putting 980 counts/s in both fields still leaves the fitted estimate at 1.3 V unread."
+            }
+          ],
+          "text": "Read the measured dot against the axis labels; use its rate in both fields, then submit.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "reliability",
+              "change": 4
+            },
+            {
+              "meter": "capacity",
+              "change": -12
+            }
+          ],
+          "id": "withdraw-draft",
+          "next": "deferred",
+          "notes": [
+            {
+              "skill": "data-points",
+              "kind": "good",
+              "text": "Withdrawing the draft prevented a fitted-curve reading from being approved under the observation label.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "improve",
+              "text": "Requesting new data left the fitted-estimate question unanswered and used more lab capacity. The existing curve could answer that question without another measurement.",
+              "example": "\"I'll correct the observation label and use the existing curve for the requested estimate.\""
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "method",
+              "text": "I've pulled the draft from review. That keeps the curve reading from being approved as an observation."
+            },
+            {
+              "from": "scan",
+              "text": "I'll request a measurement at 1.3 V, but that adds lab work and leaves the form unfinished. We already have a curve for the fitted estimate the request needs."
+            }
+          ],
+          "text": "Withdraw the draft and request a new measurement at the target voltage instead of submitting an estimate.",
+          "timeJump": null
+        }
+      ],
+      "id": "repair",
+      "messages": [
+        {
+          "from": "method",
+          "text": "The draft's observed-rate field contains the curve reading, about 960 counts/s at 1.2 V. The form also asks which entry is measured and which is fitted."
+        },
+        {
+          "from": "scan",
+          "text": "Reworking both entries will take time away from the instrument session. Could we keep the draft moving by using the nearby measured dot for the remaining field?"
+        }
+      ],
+      "prompt": "How will you handle the draft before submission?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Detector plot: axes",
+      "metrics": [
+        {
+          "label": "Control voltage ticks",
+          "value": "1.0, 1.2, and 1.4 V",
+          "note": "Equally spaced horizontal-axis labels."
+        },
+        {
+          "label": "Detector rate ticks",
+          "value": "800, 900, and 1,000 counts/s",
+          "note": "Each labeled gap contains 5 equal small spaces."
+        }
+      ],
+      "note": "Dots show measured rates; the smooth curve shows fitted estimates."
+    },
+    {
+      "title": "Detector plot: trace positions",
+      "metrics": [
+        {
+          "label": "Measured dot at 1.2 V",
+          "value": "One space below 1,000 counts/s",
+          "note": "Position of the marked observation."
+        },
+        {
+          "label": "Fitted curve at 1.2 V",
+          "value": "Two spaces below 1,000 counts/s",
+          "note": "Position of the smooth curve."
+        },
+        {
+          "label": "Curve midway from 1.2 to 1.4 V",
+          "value": "Two spaces above 900 counts/s",
+          "note": "Position of the smooth curve."
+        }
+      ],
+      "note": "Positions are transcribed from the experimental plot."
+    }
+  ],
+  "setting": "Afternoon at Lumen Reach Lab",
+  "skills": [
+    {
+      "id": "read-plot",
+      "name": "Read experimental plot values",
+      "practice": "Choose one experimental plot and explain its horizontal quantity, vertical quantity, and units in one sentence."
+    },
+    {
+      "id": "between-ticks",
+      "name": "Estimate between axis ticks",
+      "practice": "Mark three positions between neighboring labeled ticks and estimate their values."
+    },
+    {
+      "id": "data-points",
+      "name": "Read plotted data points",
+      "practice": "Read three marked observations from a plot without substituting values from its fitted curve."
+    },
+    {
+      "id": "curve",
+      "name": "Estimate from a plotted curve",
+      "practice": "Choose one horizontal position without a measured dot and estimate the curve’s vertical value."
+    },
+    {
+      "id": "truncated-axis",
+      "name": "Read a truncated axis",
+      "practice": "Read two values from a plot whose vertical axis starts above zero, stating the displayed baseline each time."
+    },
+    {
+      "id": "intervals",
+      "name": "Interpret axis intervals",
+      "practice": "Use neighboring labels on one plot to calculate the value of a small axis division."
+    }
+  ],
+  "startNodeId": "axes",
+  "summary": [
+    "Read absolute values from the axis labels, since the bottom of a plot may not represent zero.",
+    "Find each small space's value by dividing the difference between neighboring labels by the number of equal spaces.",
+    "Use a marked dot for an observation or the fitted curve at the requested horizontal position for an estimate."
+  ],
+  "team": [
+    {
+      "id": "method",
+      "role": "Research scientist",
+      "expertise": "She checks how experimental observations and fitted curves are described.",
+      "ai": false
+    },
+    {
+      "id": "scan",
+      "role": "Instrument researcher",
+      "expertise": "He prepares the next detector scan and wants a usable request before the shared instrument session.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Plot-reading assistant",
+      "expertise": "Transcribes axis markings and checks calculations when given specific instructions; people approve the scan request.",
+      "ai": true
+    }
+  ],
+  "title": "What detector rate belongs on the next scan request?"
+}

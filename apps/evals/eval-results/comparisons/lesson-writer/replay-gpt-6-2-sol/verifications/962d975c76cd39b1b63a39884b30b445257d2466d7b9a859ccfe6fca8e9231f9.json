@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-glicolise-from-slides",
+        "claimId": "fdc04d2f17439c49",
+        "criterion": "checks",
+        "observationId": "2f87628605f8d71d8784e2672de8e2e18ff11b354f4e189199dc5760ca719f0c.first.2f99d97d-8ecf-470e-9b26-81c20e27bcbd.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00246825,
+    "id": "962d975c76cd39b1b63a39884b30b445257d2466d7b9a859ccfe6fca8e9231f9",
+    "packet": [
+      {
+        "A": {
+          "blob": "0733ddc7d7bae100ea43ceb6c075fd3bc14fda54a584a2030339469f1fa35e44",
+          "format": "text"
+        },
+        "B": {
+          "blob": "95f6d6772b08928c46d7c915bbf324299e24b7755024ced6bacf7cff4b9e0c7a",
+          "format": "text"
+        },
+        "claim": "A tela 3 usa a fórmula E = mc² para explicar por que o elétron não cai no núcleo.",
+        "claimId": "35b5b80dd840364c",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "cf25d30a2f7ed26898c712e07e8da0c2c8df66c2ec9f15ffef62ebd229a84366",
+          "format": "text"
+        },
+        "input": {
+          "blob": "8deabd1feacc5cbbe3d5a51a56ff61fb1fc463b629439869ab15774ffb79cf8e",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "df10745d29beb1afbf1d455704a7686b1ecc41ebccd4c150f4e49636004d0b75",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cbd91bfcd22fdbd4cb730d6ce2db0018883929710d0be438c07540378eb5cfb2",
+          "format": "text"
+        },
+        "claim": "O saldo cobrado é para três glicoses e as opções geradas não incluem a pegadinha pedida de responder 4 em vez de 2 para uma glicose.",
+        "claimId": "fdc04d2f17439c49",
+        "criterion": "checks",
+        "expectations": {
+          "blob": "c8d309173686dd83105ca87472fe4dc581bf68413c032357fd9979b2f4bbc687",
+          "format": "text"
+        },
+        "input": {
+          "blob": "313e55433bac56ffbd19b031c3cf973ef7f2b60bf3141ed1a613e38c565d640c",
+          "format": "json"
+        },
+        "location": {
+          "detail": "mathCheck: contexto, pergunta e erros comuns",
+          "kind": "range"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "35b5b80dd840364c",
+          "finding": "doesn't hold",
+          "reason": "Output A's screen 3 is a hookGuess about why the electron doesn't collapse into the nucleus, and it contains no formula. Nowhere in output A is E = mc² used, and the expectations ask for no formulas at all. Output B's formula is a Bohr-style energy expression, not E = mc², so the claim is false for both."
+        },
+        {
+          "claimId": "fdc04d2f17439c49",
+          "finding": "holds",
+          "reason": "In output B, the mathCheck sets glicoses to 3 and its solution is glicoses * (producao - gasto), giving 3 × (4 − 2) = 6. The common mistakes are 3 × 4 = 12 (producao alone), 3 × 6 (adding the cost), and 2 for one glicose, so none gives 4 per glicose, and the 4-instead-of-2 trap is absent."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

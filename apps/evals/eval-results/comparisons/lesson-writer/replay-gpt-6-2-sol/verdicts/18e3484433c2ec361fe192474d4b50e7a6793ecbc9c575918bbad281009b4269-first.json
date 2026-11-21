@@ -1,0 +1,235 @@
+{
+  "attempt": "first",
+  "costUsd": 0.014410489999999998,
+  "failures": [],
+  "packetId": "18e3484433c2ec361fe192474d4b50e7a6793ecbc9c575918bbad281009b4269",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "A's worked example states that −3 °C rising 5 degrees gives 3 °C, and its second step says 3 degrees remain after reaching zero; the correct answer is 2 °C, which B gives.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "Both share the same hook and explanations, but A's worked example contradicts the reveal on the screen before it, which would confuse a beginner. B's example shows each step with its sum.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "B",
+            "reason": "B's worked example adds up cleanly (−3 + 3 = 0, then 0 + 2 = 2). A's second step says 3 degrees remain when only 2 do, so the reader can't follow the arithmetic.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "The checks, the typed answer and the activity are identical in both outputs, so neither serves the learner better here.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "B",
+            "reason": "B's worked example applies the plan's brief correctly; A's example is wrong on the very skill the lesson teaches.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The worked example gives the result as 3 °C, but −3 °C plus a 5 degree rise is 2 °C. This also contradicts the hookGuess reveal, which says 2 °C.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner who reads this worked example learns the wrong answer for the skill the lesson teaches.",
+            "location": {
+              "detail": "It's 3 °C: three degrees above zero.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The second step says 3 degrees remain after reaching zero, but the rise is 5 and the first step uses 3, so only 2 degrees remain.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner is taught a step that doesn't add up, so they can't check their own answers.",
+            "location": {
+              "detail": "The rest of the rise, 3 degrees, takes you above zero.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B's worked example teaches the correct answer with the steps shown, while A's worked example teaches a wrong answer that contradicts the reveal. Otherwise the outputs match."
+        },
+        "pairId": "1cec49d5-c68d-4c64-873a-fd3e72ea41fe"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and both have the same accuracy with no errors found in the numbers, derivation, or answer keys.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither is more engaging for the learner.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither is clearer for the learner.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the checks are equally good or equally weak.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the level and application fit match.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The phrase The wave pattern stays put is vague, and a reader can't tell what stays put in the box or why energy gaps grow.",
+            "criterion": "clarity",
+            "learnerCost": "A reader at this level has to reread the sentence to see that it means the stationary pattern doesn't change over time.",
+            "location": {
+              "detail": "Waves that fit screen, final sentences",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The final check asks how the energy changes, but the screen has no basis for this question. The 1/L² rule from the earlier result screen decides the answer.",
+            "criterion": "checks",
+            "learnerCost": "After a wrong answer the learner gets no sentence pointing back to the rule that decides it.",
+            "location": {
+              "detail": "Final check screen",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The phrase The wave pattern stays put is vague, and a reader can't tell what stays put in the box or why energy gaps grow.",
+            "criterion": "clarity",
+            "learnerCost": "A reader at this level has to reread the sentence to see that it means the stationary pattern doesn't change over time.",
+            "location": {
+              "detail": "Waves that fit screen, final sentences",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The final check asks how the energy changes, but the screen has no basis for this question. The 1/L² rule from the earlier result screen decides the answer.",
+            "criterion": "checks",
+            "learnerCost": "After a wrong answer the learner gets no sentence pointing back to the rule that decides it.",
+            "location": {
+              "detail": "Final check screen",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical in every screen, so neither serves its reader better."
+        },
+        "pairId": "30f1b4c8-c2f1-4f7b-a143-e413e7be5537"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs give correct values, and the derivation and check answers are right in each.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens on five labeled vials and explains the box with a concrete guitar-string picture; it also names the misconception with a character, Owen. B's hook and explanations are the same, but its checks are less engaging.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "A",
+            "reason": "A's derivation moves one step at a time, with the ħ-to-h conversion on its own line. B compresses that conversion into the final line, so the reader can't follow it.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "The checks are equally strong: each tests a real misconception with reasons for every option, and both mostly match.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both apply the lesson to quantum dots and tie the application back to the hook, and the level suits an advanced reader in each.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The symbol ħ appears in the Schrödinger equation before it is defined; it is only defined later, in the worked example.",
+            "criterion": "clarity",
+            "learnerCost": "A reader meets the equation with an undefined symbol and has to read ahead to find out what it means.",
+            "location": {
+              "detail": "Screen 3, first sentence of the equation",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Many QLED TVs now use cadmium-free quantum dots, so saying they all use cadmium selenide may be outdated. I am not certain of current products.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "A learner may come away with a wrong belief about the TV they own.",
+            "location": {
+              "detail": "QLED TVs make their red and green light with tiny cadmium selenide crystals.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The final check's question relies on the 1/L² rule from the worked-example result screen, but its basis is null.",
+            "criterion": "checks",
+            "learnerCost": "After a wrong answer the learner gets no sentence pointing back to the rule that decides the answer.",
+            "location": {
+              "detail": "Final check screen",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The last derivation step combines the ħ-to-h conversion with the final formula in one line, which skips a move.",
+            "criterion": "clarity",
+            "learnerCost": "A reader can't see how π²ħ² becomes h²/4, so the key step of the derivation is missed.",
+            "location": {
+              "detail": "Derivation worked example, last step",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's derivation is clearer step by step, and its hook and checks engage the learner more. Its ħ symbol is undefined on first use, but that cost is small compared with B's compressed derivation."
+        },
+        "pairId": "c81c1604-63e7-45a4-bae3-026d7cb406e7"
+      }
+    ]
+  }
+}

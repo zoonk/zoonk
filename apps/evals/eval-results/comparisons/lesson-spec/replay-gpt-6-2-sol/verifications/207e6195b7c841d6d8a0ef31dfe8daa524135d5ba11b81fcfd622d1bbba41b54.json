@@ -1,0 +1,87 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-deslocamento-demanda",
+        "claimId": "09914e14df7d286e",
+        "criterion": "screenPlan",
+        "observationId": "eef034b65ba5548650284e756f008eb939a8f2cd7b8a34050e748e3b35d0ac76.first.5f42a9f5-3316-47e4-abe6-4e92aad07acf.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00305055,
+    "id": "207e6195b7c841d6d8a0ef31dfe8daa524135d5ba11b81fcfd622d1bbba41b54",
+    "packet": [
+      {
+        "A": {
+          "blob": "06331ee798cfdae5825c6492dcf78036f7ceb23678566159b089a293c4bc0db8",
+          "format": "text"
+        },
+        "B": {
+          "blob": "41a018c234986f9d011d6c2dbefc1ad5c5061b9a06c81221aebdc7f46e14a6a9",
+          "format": "text"
+        },
+        "claim": "The guess brief identifies the correct choice, so it gives away the prediction rather than letting the learner make it.",
+        "claimId": "09914e14df7d286e",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "d3b6c90f84fbda83324df1eec30aef49cb74d63b07a088ea82a24efa0189fc2b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "4c0bf4d0f20b1fd8bfd9461375213bba372d7ebe280368ef3eadb5a699d15f87",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Se apenas o ingresso baixar de R$ 30,00 para R$ 20,00, onde ficará o ponto que representa as compras desejadas: na curva atual, numa curva à direita ou numa curva à esquerda? Resposta: na curva atual; a tentadora é à direita, confundindo comprar mais com mudar toda a relação.",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "2879459a4d0757e4",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": false,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2879459a4d0757e4",
+          "finding": "doesn't hold",
+          "reason": "Output A says the opposite: its guess screen answers that the full rent is still owed in a month without production, and its explanation says the contracted monthly rent 'continua devido mesmo sem fazer nenhum bolo'. Its application also keeps aluguel de R$ 900,00 in the month's reserve, so the claim that the rent stops being paid is false."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}
