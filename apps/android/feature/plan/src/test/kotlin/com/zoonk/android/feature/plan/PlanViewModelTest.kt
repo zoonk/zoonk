@@ -305,6 +305,32 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun anOfferThePlanRefusesReadsThePlanAgainInsteadOfSayingItFailed() =
+        runTest {
+            val plan = shown(EXTRA_PLAN)
+            api.changeFailure = ApiException(ApiError.Unavailable, "PLAN_CHANGE_INVALID", 422)
+
+            viewModel.addExtraOffer(plan, plan.extraOffer!!)
+
+            assertEquals(2, api.plans)
+            assertNull(viewModel.outcomes.saveFailed.value)
+            assertNull(viewModel.slotState.result)
+        }
+
+    @Test
+    fun anOfferWhoseCheckThePlanRefusesReadsThePlanAgainInsteadOfFailingTheCheck() =
+        runTest {
+            val plan = shown(FIT_PLAN)
+            api.previewFailure = ApiException(ApiError.Unavailable, "PLAN_CHANGE_INVALID", 422)
+
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+
+            assertEquals(2, api.plans)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            assertTrue(api.changes.isEmpty())
+        }
+
+    @Test
     fun aFitCheckForAChangedPlanAddsNothing() =
         runTest {
             val plan = shown(FIT_PLAN)

@@ -406,6 +406,8 @@ class PlanViewModel(
             if (saved != null && shown == PlanShown.Current) {
                 if (saved.status == PlanChangeResult.Status.APPLIED) saved.change?.let { report(it, editor = sameOpening) }
                 answer(asker, started, opened, saved)
+            } else if (asker is PlanAsker.Offer && result.refused()) {
+                store.plan[goalId].refresh()
             } else if (result is MutationResult.Failed || shown == PlanShown.Stale) {
                 if (sameOpening) markFailed(part, editorOpened)
                 answer(asker, started, opened, null)
@@ -618,6 +620,11 @@ class PlanViewModel(
         viewModelScope.launch {
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
+            if (result.refused()) {
+                store.plan[goalId].refresh()
+                slotPreviewState.compareAndSet(request, PlanPreviewState.Idle)
+                return@launch
+            }
             val today = (result as? MutationResult.Done)?.value
             val same = today != null && today.ready && !today.unchanged && today.effect == effect
             val asking = opened == outcomes.suggestion.number
@@ -633,6 +640,12 @@ class PlanViewModel(
             if (wanted && same) addOfferLessons(item, operations)
         }
     }
+
+    /**
+     * The plan no longer holds what an offer asked for: it changed since it was read, on this device or another. Asking
+     * again would be refused again, so the plan is read again and shows the offer it holds now, if any.
+     */
+    private fun MutationResult<*>.refused() = this is MutationResult.Failed && status == UNPROCESSABLE
 
     private fun addOfferLessons(
         item: SlotItem,
@@ -690,6 +703,7 @@ class PlanViewModel(
 
     private companion object {
         const val TOO_MANY_REQUESTS = 429
+        const val UNPROCESSABLE = 422
     }
 }
 

@@ -46,6 +46,7 @@ class FakePlanApi : PlanApi {
     val statuses = mutableListOf<LearnerSummaryGoal.Status>()
     val askedSince = mutableListOf<Instant>()
     var changeFailure: ApiException? = null
+    var previewFailure: ApiException? = null
     var planFailure: ApiException? = null
 
     /** Holds a change asking for one of these operations until its gate opens. */
@@ -213,6 +214,7 @@ class FakePlanApi : PlanApi {
         operations: List<PlanOp>,
     ): PlanChangePreview {
         previewGate?.await()
+        previewFailure?.let { throw it }
         return preview
     }
 
