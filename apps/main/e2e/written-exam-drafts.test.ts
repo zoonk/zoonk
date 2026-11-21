@@ -205,7 +205,7 @@ test.describe("Written answer drafts", () => {
     }
   });
 
-  test("text typed offline is saved when the connection is back, with no new keystroke", async ({
+  test("offline, leaving asks first, and the text is saved when the connection is back with no new keystroke", async ({
     browser,
   }) => {
     const day = await createWrittenExamDay();
@@ -217,6 +217,14 @@ test.describe("Written answer drafts", () => {
       await page.context().setOffline(true);
       await field.fill("Typed on the train");
       await expect(notSaved).toBeVisible();
+
+      // Leaving still asks first, though the connection is gone.
+      await page.getByRole("link", { exact: true, name: "Leave" }).click();
+
+      await page
+        .getByRole("alertdialog", { name: "Your answer isn't saved yet" })
+        .getByRole("button", { name: "Keep writing" })
+        .click();
 
       await page.context().setOffline(false);
       await expect.poll(() => savedDraftText(day.blockId)).toBe("Typed on the train");

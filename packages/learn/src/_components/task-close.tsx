@@ -15,6 +15,12 @@ import { type TaskExitConfirmation } from "../shell/task-exit-dialog";
 
 const exitDialog = createOnDemand(() => import("../shell/task-exit-dialog"));
 
+/**
+ * For a screen whose leave question comes only once something failed to save, often because the
+ * connection is gone: its dialog loads while the screen opens, so it can still be asked offline.
+ */
+export const preloadTaskExitDialog = exitDialog.load;
+
 type CloseLinkProps = {
   "aria-keyshortcuts"?: string;
   children: React.ReactNode;
