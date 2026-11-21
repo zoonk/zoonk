@@ -183,7 +183,7 @@ describe(levelTestBankWorkflow, () => {
             questions: levels
               .flatMap(({ data }) => data.questions)
               .map((question, index) => ({ ...question, id: `q${index}` })),
-            speaking: levels.map(({ data }) => data.speaking),
+            speaking: [],
           },
           model: "anthropic/claude-fable-5.2",
         },

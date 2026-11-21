@@ -2,7 +2,7 @@ import { defineScoreCategories } from "@/lib/score-categories";
 
 export const LEVEL_TEST_BANK_SCORE_CATEGORIES = defineScoreCategories([
   {
-    expectations: `Each passage, question and speaking sentence sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text. Speaking sentences grow from about 5 simple words at A1 to about 20 with complex structures at C1. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.`,
+    expectations: `Each passage and question sits clearly at its CEFR level, and the levels clearly increase: A1 asks for one stated fact in very common words, A2 simple stated facts, B1 the main point, a reason or a stated opinion (not a detail found by matching a word), B2 attitude, purpose or something implied in denser text, C1 tone and implication in nuanced text, C2 a fine shade of meaning, an allusion, how an argument is built or an unstated assumption in demanding text that a careful C1 reader would miss. Score at most 5 when two neighboring levels are indistinguishable or a question is clearly at the wrong level.`,
     id: "calibration",
     label: "Levels calibrated and increasing",
     weight: 40,
@@ -14,7 +14,7 @@ export const LEVEL_TEST_BANK_SCORE_CATEGORIES = defineScoreCategories([
     weight: 35,
   },
   {
-    expectations: `Passages and speaking sentences are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions, options and translations are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.`,
+    expectations: `Passages are natural and correct in the target variant (US English, Brazilian Portuguese, Mexican Spanish). Reading passages read like real written texts and listening passages like natural speech (voicemail, announcement, audio message). Questions and options are in the learner's language and its variant. Situations vary across the bank; no brands, real people or stereotypes. Score at most 5 for a field in the wrong language.`,
     id: "language",
     label: "Languages and variety",
     weight: 25,

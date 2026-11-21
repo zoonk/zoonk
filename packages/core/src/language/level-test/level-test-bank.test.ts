@@ -121,10 +121,7 @@ function uncheckedBank(passage: string) {
     })),
   );
 
-  return {
-    questions,
-    speaking: TEST_LEVELS.map((level) => writtenLevel({ level, passage }).data.speaking),
-  };
+  return { questions, speaking: [] };
 }
 
 function freshPair() {
