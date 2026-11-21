@@ -191,7 +191,7 @@ final class MockRun {
     draft.answer = answer
     drafts[question.itemId] = draft
     unsavedText = draft
-    unsent.keep(draft)
+    unsent.keep(draft, inPlace: queue.isWaiting(draft.itemId))
     textTask?.cancel()
     textTask = Task { [weak self] in
       try? await Task.sleep(for: Self.textSaveDelay)
@@ -450,7 +450,7 @@ final class MockRun {
 
   private func persist(_ draft: MockDraft) {
     drafts[draft.itemId] = draft
-    unsent.keep(draft)
+    unsent.keep(draft, inPlace: queue.isWaiting(draft.itemId))
     queue.add(draft)
   }
 

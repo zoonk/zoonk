@@ -17,12 +17,14 @@ struct UnsentMockDrafts {
       ?? []
   }
 
-  func keep(_ draft: MockDraft) {
+  /// Mirrors the queue: a newer answer takes an older one's place only while that one is still in line.
+  func keep(_ draft: MockDraft, inPlace: Bool) {
     var current = read()
 
-    if let index = current.firstIndex(where: { $0.itemId == draft.itemId }) {
+    if inPlace, let index = current.firstIndex(where: { $0.itemId == draft.itemId }) {
       current[index] = draft
     } else {
+      current.removeAll { $0.itemId == draft.itemId }
       current.append(draft)
     }
 

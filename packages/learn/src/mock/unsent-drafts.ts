@@ -37,11 +37,22 @@ function isSameDraft(first: MockDraft, second: MockDraft): boolean {
   );
 }
 
-/** One key per question avoids cross-tab read-modify-write races on a shared array. */
-export function keepUnsentMockDraft({ blockId, draft }: { blockId: string; draft: MockDraft }) {
+/**
+ * One key per question avoids cross-tab read-modify-write races on a shared array. `keepPlace`
+ * mirrors the queue: a newer answer takes an older one's place only while that one is still in line.
+ */
+export function keepUnsentMockDraft({
+  blockId,
+  draft,
+  keepPlace,
+}: {
+  blockId: string;
+  draft: MockDraft;
+  keepPlace: boolean;
+}) {
   const key = getDraftKey({ blockId, itemId: draft.itemId });
   const existing = storedMockDraftSchema.safeParse(deviceStorage.getJson(key));
-  const keptAt = existing.success ? existing.data.keptAt : nextKeptAt();
+  const keptAt = keepPlace && existing.success ? existing.data.keptAt : nextKeptAt();
 
   deviceStorage.set(key, JSON.stringify({ draft, keptAt }));
 }

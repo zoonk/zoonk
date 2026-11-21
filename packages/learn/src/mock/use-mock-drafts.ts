@@ -106,7 +106,7 @@ export function useMockDrafts({
 
   function persist(draft: MockDraft) {
     setAllDrafts({ ...latestDrafts.current, [draft.itemId]: draft });
-    keepUnsentMockDraft({ blockId, draft });
+    keepUnsentMockDraft({ blockId, draft, keepPlace: queue.isWaiting(draft.itemId) });
     queue.add(draft);
   }
 
@@ -188,7 +188,7 @@ export function useMockDrafts({
 
       setAllDrafts({ ...latestDrafts.current, [itemId]: draft });
       unsavedText.current = draft;
-      keepUnsentMockDraft({ blockId, draft });
+      keepUnsentMockDraft({ blockId, draft, keepPlace: queue.isWaiting(draft.itemId) });
 
       if (textTimer.current) {
         clearTimeout(textTimer.current);

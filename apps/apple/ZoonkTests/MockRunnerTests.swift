@@ -412,6 +412,21 @@ final class MockRunKeptAnswersTests: XCTestCase {
     UnsentMockDrafts(blockId: Self.blockId, defaults: defaults)
   }
 
+  func testANewerAnswerKeepsItsPlaceOnlyWhileTheOlderOneIsStillInLine() {
+    let first = MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne)
+    let second = MockDraft(answer: .choice(1), durationMs: 0, flagged: false, itemId: Self.itemTwo)
+    var newer = first
+    newer.answer = .choice(2)
+
+    unsent.keep(first, inPlace: false)
+    unsent.keep(second, inPlace: false)
+    unsent.keep(newer, inPlace: true)
+    XCTAssertEqual(unsent.read().map(\.itemId), [Self.itemOne, Self.itemTwo])
+
+    unsent.keep(first, inPlace: false)
+    XCTAssertEqual(unsent.read().map(\.itemId), [Self.itemTwo, Self.itemOne])
+  }
+
   func testAnAnswerKeptWhenClosingOfflineGoesOutWhenTheMockOpensAgain() async throws {
     let transport = MockTransport(itemIds: [Self.itemOne, Self.itemTwo])
     let store = makeStore(transport, session: .preview(account: .keptAnswersFixture))
@@ -458,7 +473,9 @@ final class MockRunKeptAnswersTests: XCTestCase {
   }
 
   func testAnAnswerSavedBeforeTheAccountLoadsReplacesItsOlderKeptCopy() async throws {
-    unsent.keep(MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne))
+    unsent.keep(
+      MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne),
+      inPlace: false)
     let account = HeldAccountAPI()
     let session = SessionStore(
       api: account, credentialStore: InMemorySessionCredentialStore(token: "cold-launch"),
@@ -499,7 +516,7 @@ final class MockRunKeptAnswersTests: XCTestCase {
     let transport = MockTransport(
       itemIds: [Self.itemOne, Self.itemTwo, Self.itemThree], drafts: [changedOnce] + stored[1...],
       review: (allowed: 2, changed: [Self.itemOne]))
-    unsent.keep(stored[0])
+    unsent.keep(stored[0], inPlace: false)
 
     let run = try await open(makeStore(transport, session: .preview(account: .keptAnswersFixture)))
 
@@ -520,7 +537,9 @@ final class MockRunKeptAnswersTests: XCTestCase {
   }
 
   func testAFinishedMockClearsItsKeptAnswers() async throws {
-    unsent.keep(MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne))
+    unsent.keep(
+      MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne),
+      inPlace: false)
     let transport = MockTransport(itemIds: [Self.itemOne], status: "finished")
 
     _ = try await open(makeStore(transport, session: .preview(account: .keptAnswersFixture)))

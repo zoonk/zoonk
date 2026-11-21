@@ -57,6 +57,10 @@ final class MockDraftQueue {
 
   var isBusy: Bool { sending || !waiting.isEmpty }
 
+  func isWaiting(_ itemId: String) -> Bool {
+    waiting.contains { $0.itemId == itemId }
+  }
+
   func add(_ draft: MockDraft) {
     guard !isStopped else {
       return

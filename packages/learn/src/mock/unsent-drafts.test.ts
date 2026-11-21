@@ -107,8 +107,8 @@ describe("unsent mock drafts", () => {
     };
 
     // Two tabs answering different questions write independent keys without overwriting each other.
-    keepUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: q2 });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q1v1, keepPlace: false });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q2, keepPlace: false });
     expect(globalThis.localStorage.getItem("mock:mock-1:q1")).not.toBeNull();
     expect(globalThis.localStorage.getItem("mock:mock-1:q2")).not.toBeNull();
 
@@ -117,13 +117,13 @@ describe("unsent mock drafts", () => {
       q2,
     ]);
 
-    // Replacing q1 while q1v1 is in flight keeps q1v2 in its original enqueue slot when q1v1 finishes storing.
-    keepUnsentMockDraft({ blockId: "mock-1", draft: q1v2 });
+    // A newer q1 given while q1v1 is on its way goes after q2, as the queue sends it.
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q1v2, keepPlace: false });
     dropUnsentMockDraft({ blockId: "mock-1", draft: q1v1 });
 
     expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([
-      q1v2,
       q2,
+      q1v2,
     ]);
 
     dropUnsentMockDraft({ blockId: "mock-1", draft: q1v2 });
@@ -139,7 +139,7 @@ describe("unsent mock drafts", () => {
       itemId: "q1",
     };
 
-    keepUnsentMockDraft({ blockId: "mock-1", draft: kept });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: kept, keepPlace: false });
     globalThis.localStorage.setItem("mock:mock-1:bad", JSON.stringify({ bad: true }));
 
     expect(restoreUnsentMockDrafts({ blockId: "mock-1", view: makeView() })).toStrictEqual([kept]);
@@ -166,8 +166,8 @@ describe("unsent mock drafts", () => {
       itemId: "q-next",
     };
 
-    keepUnsentMockDraft({ blockId: "mock-1", draft: first });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: next });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: first, keepPlace: false });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: next, keepPlace: false });
 
     const section1 = makeView({ questionIds: ["q1", "q2"] });
     const section2 = makeView({ questionIds: ["q-next"], section: 1 });
@@ -211,11 +211,11 @@ describe("unsent mock drafts", () => {
     };
 
     // Offline learner answers q1 -> q2 -> q3, then reviews q1 and q2 (updating duration on leave).
-    keepUnsentMockDraft({ blockId: "mock-1", draft: q1 });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: q2 });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: q3 });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: { ...q1, durationMs: 2500 } });
-    keepUnsentMockDraft({ blockId: "mock-1", draft: { ...q2, durationMs: 3000 } });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q1, keepPlace: false });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q2, keepPlace: false });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: q3, keepPlace: false });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: { ...q1, durationMs: 2500 }, keepPlace: true });
+    keepUnsentMockDraft({ blockId: "mock-1", draft: { ...q2, durationMs: 3000 }, keepPlace: true });
 
     const restored = restoreUnsentMockDrafts({
       blockId: "mock-1",
@@ -230,6 +230,7 @@ describe("unsent mock drafts", () => {
     keepUnsentMockDraft({
       blockId: "mock-1",
       draft: { ...q1, answer: { selectedIndex: 1 }, durationMs: 4000 },
+      keepPlace: false,
     });
 
     const afterReviewChange = restoreUnsentMockDrafts({

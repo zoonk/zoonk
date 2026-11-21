@@ -160,6 +160,10 @@ export function createDraftSaveQueue<TDraft>({
       });
     },
     isBusy,
+    /** Whether a newer answer to this key would take the place of one still in line. */
+    isWaiting(key: string): boolean {
+      return waiting.some((other) => keyOf(other) === key);
+    },
     retryNow() {
       if (!retryTimer) {
         return;

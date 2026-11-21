@@ -54,6 +54,16 @@ describe(createDraftSaveQueue, () => {
     vi.useRealTimers();
   });
 
+  it("lets a newer answer take an older one's place only while that one is still in line", () => {
+    const { queue } = setup();
+
+    queue.add({ answer: "A", itemId: "q1" });
+    queue.add({ answer: "B", itemId: "q2" });
+
+    expect(queue.isWaiting("q1")).toBe(false);
+    expect(queue.isWaiting("q2")).toBe(true);
+  });
+
   it("sends answers one after another, in the order they were given", async () => {
     const { queue, requests, statuses } = setup();
 
