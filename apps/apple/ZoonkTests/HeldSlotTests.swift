@@ -5,6 +5,71 @@ import XCTest
 
 @MainActor
 final class HeldSlotTests: XCTestCase {
+  func testOpeningAPracticeCallKeepsTheNextRowInPlace() async throws {
+    let session = SessionStore.preview(account: .planTestAccount)
+    let cache = AppCache(session: session)
+    let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+    let start = CallStart()
+    let learner = LearnerSummaryStore(api: LearnerSummaryAPI(clients: clients), cache: cache)
+    let voice = VoiceServices(clients: clients, cache: cache)
+    let router = AppRouter()
+    try await checkOpening(action: "Start call", anchor: "Words") { date in
+      List {
+        PracticeCallSection(
+          conversation: .init(
+            character: nil, defaultMinutes: 5, minutes: [], paused: false, plusMinutes: [],
+            limit: .init(availableAt: date, period: "rolling30Days", tier: .plus)),
+          chapterId: "chapter", goalId: nil, minutes: .constant(nil), start: start,
+          onStarted: { _ in })
+        Section { Text(verbatim: "Words") }
+      }
+      .environment(learner)
+      .environment(voice)
+      .environment(router)
+    }
+  }
+
+  func testACallOpeningKeepsEndCallInPlace() async throws {
+    let router = AppRouter()
+    for tier in [LearnerTier.plus, .free] {
+      try await checkOpening(action: "Call again", anchor: "End call") { date in
+        DroppedCallView(
+          dropped: DroppedCall(reason: .limit, retry: nil),
+          limit: .usedUp(tier: tier, availableAt: date),
+          name: "Zu", onAction: { _ in }
+        ).environment(router)
+      }
+    }
+  }
+
+  private func checkOpening(
+    action: String, anchor: String, @ViewBuilder content: @escaping (Date) -> some View
+  ) async throws {
+    try await readsWhatVoiceOverReads()
+    let opening = Opening()
+    let window = try show(AtOpening(opening: opening, content: content))
+    defer { window.isHidden = true }
+
+    func element(_ label: String) -> NSObject? {
+      accessibilityElements(in: window).first {
+        $0.isAccessibilityElement && $0.accessibilityLabel == label
+          && $0.accessibilityFrame.height > 0
+      }
+    }
+    func actionIsEnabled() -> Bool {
+      guard let button = element(action) else { return false }
+      return !button.accessibilityTraits.contains(.notEnabled)
+    }
+
+    try await waitForTestCondition("The gated screen did not appear") {
+      element(anchor) != nil && !actionIsEnabled()
+    }
+    let before = try XCTUnwrap(element(anchor)).accessibilityFrame
+    opening.date = .now.addingTimeInterval(-3600)
+    try await waitForTestCondition("The action did not open") { actionIsEnabled() }
+    XCTAssertEqual(try XCTUnwrap(element(anchor)).accessibilityFrame, before, anchor)
+  }
+
   func testOpeningTheGateKeepsTheClosedHeight() async throws {
     let gate = Gate()
     try show(MeasuredSlot(gate: gate))
@@ -36,6 +101,18 @@ final class HeldSlotTests: XCTestCase {
       gate.contentHeight < narrow && gate.slotHeights.last == gate.contentHeight
     }
   }
+}
+
+@Observable
+private final class Opening {
+  var date = Date.now.addingTimeInterval(3600)
+}
+
+private struct AtOpening<Content: View>: View {
+  let opening: Opening
+  @ViewBuilder let content: (Date) -> Content
+
+  var body: some View { content(opening.date) }
 }
 
 @Observable
