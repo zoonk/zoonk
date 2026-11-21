@@ -1,5 +1,5 @@
-import { LESSON_BODY_CLASS } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
+import { LESSON_BODY_CLASS } from "../rich-text/rich-text-blocks";
 
 export function NumberedLine({
   children,
