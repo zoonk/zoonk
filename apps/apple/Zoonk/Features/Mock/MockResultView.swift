@@ -824,8 +824,14 @@ private struct MockEssaySections: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        LessonTextBlocks(essay.question)
-          .typeStyle(.body.weight(.semibold))
+        // The question's topic names it; its whole prompt was on the question's own page.
+        if let title = essay.writing?.title {
+          Text(title)
+            .typeStyle(.rowTitle)
+        } else {
+          LessonTextBlocks(essay.question)
+            .typeStyle(.body.weight(.semibold))
+        }
         status
       }
     } header: {

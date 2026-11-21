@@ -25,14 +25,7 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      // The page's own overlay sits in its safe area, so the note ends on the bar's top edge and,
-      // unlike a view drawn outside the bar's bounds, its action takes taps.
-      .overlay(alignment: .bottom) {
-        if let note = bar.note {
-          note.floatingNote()
-        }
-      }
-      .announcesStatus(bar.note?.politeLine)
+      .barNote(bar.note)
       .onPreferenceChange(ColumnMarginsKey.self) { columns = $0 }
       .safeAreaBar(edge: .bottom) {
         bar.environment(\.barColumn, columns.count == 1 ? columns.first : nil)
@@ -131,17 +124,16 @@ extension BarNote {
 }
 
 extension View {
-  /// `content` over the screen, its bottom on this view's top edge, so this view never moves when
-  /// it shows.
-  func floatingAbove<Above: View>(@ViewBuilder _ content: () -> Above) -> some View {
-    overlay(alignment: .top) {
-      Color.clear
-        .frame(height: 0)
-        .overlay(alignment: .bottom) {
-          content()
-            .fixedSize(horizontal: false, vertical: true)
-        }
+  /// A bottom bar's one line, over the page just above its bar. Apply it to the page before the
+  /// bar's `safeAreaBar`: the page's own overlay sits in its safe area, so the note ends on the
+  /// bar's top edge and, unlike a view drawn outside the bar's bounds, its action takes taps.
+  func barNote(_ note: BarNote?) -> some View {
+    overlay(alignment: .bottom) {
+      if let note {
+        note.floatingNote()
+      }
     }
+    .announcesStatus(note?.politeLine)
   }
 }
 

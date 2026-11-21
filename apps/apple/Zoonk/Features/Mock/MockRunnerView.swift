@@ -95,7 +95,7 @@ struct MockRunnerView: View {
   private func pages(_ question: MockQuestion) -> some View {
     if showsAnswerSheet, fitsTwoPages {
       PaneSplit(primaryShare: 0.5) {
-        QuestionColumn(readableWidth: 720, spacing: 16) {
+        QuestionColumn(readableWidth: 720, spacing: 16, note: run.barNote) {
           progress
         } content: {
           questionParts(question)
@@ -114,7 +114,7 @@ struct MockRunnerView: View {
   }
 
   private func spread(_ question: MockQuestion) -> some View {
-    QuestionSpread(readableWidth: 720, spacing: 16) {
+    QuestionSpread(readableWidth: 720, spacing: 16, note: run.barNote) {
       progress
     } stimulus: {
       MockQuestionMeta(run: run, view: view, question: question)
@@ -155,7 +155,7 @@ struct MockRunnerView: View {
   }
 
   private var actionBar: some View {
-    MockActionBar(run: run) {
+    MockActionBar {
       FlagButton(run: run)
       nextButton
     }
@@ -212,13 +212,17 @@ private struct MockQuestionMeta: View {
 
   var body: some View {
     AccessibilityStack {
-      if let area = question.area {
+      if writtenTestPlace != nil, let area = question.area {
+        Chip(Text(verbatim: [MockLabels.title(number: view.number), area].joinedFacts()))
+      } else if let area = question.area {
         Chip(Text(area))
       }
       Spacer(minLength: 0)
       if let place = writtenTestPlace {
         // A written test counts its questions; the chip already names the test.
-        Text("Question \(String(place.number)) of \(String(place.total))", tableName: "Mock")
+        Text(
+          "\(String(place.number)) of \(String(place.total))", tableName: "Mock",
+          comment: "A written test question's place, like '1 of 2'")
       } else if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
       } else if let place = sectionPlace {
@@ -328,6 +332,7 @@ private struct MockQuestionCard: View {
   }
 }
 
+/// A written question reads as it does in practice: its topic, the support text, what to write.
 private struct MockEssayPrompt: View {
   let question: MockQuestion
 
@@ -337,8 +342,25 @@ private struct MockEssayPrompt: View {
         ItemSetStimulusView(set: set)
       }
 
-      ItemSupportView(context: question.context, image: nil, visual: nil)
-      QuestionTitle(text: question.question)
+      if let writing = question.writing {
+        Text(writing.title)
+          .typeStyle(.section)
+          .accessibilityAddTraits(.isHeader)
+
+        if let context = question.context, !context.isEmpty {
+          SectionTitle(
+            Text("Support text", tableName: "Essay", comment: "Text to read before writing"))
+          QuotedPassage(context, isItalic: false)
+        }
+
+        SectionTitle(
+          Text("What to write", tableName: "Essay", comment: "A written question's task"))
+        LessonTextBlocks(question.question)
+          .typeStyle(.reading)
+      } else {
+        ItemSupportView(context: question.context, image: nil, visual: nil)
+        QuestionTitle(text: question.question)
+      }
     }
   }
 }
@@ -394,7 +416,8 @@ private struct MockEssayBox: View {
         if case .text(let text) = answer.wrappedValue { return text }
         return ""
       },
-      set: { answer.wrappedValue = .text($0) })
+      // The server takes no longer answer, so the field stops there.
+      set: { answer.wrappedValue = .text(EssayWriter.fitted($0)) })
   }
 }
 
@@ -526,8 +549,8 @@ struct MockSectionCounts {
       if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blank += 1 }
     }
 
-    // A written test numbers its questions, so a blank one is a blank question, never "the essay".
-    if essays > 1, essays == total {
+    // A written test is all questions, so a blank one is a blank question.
+    if essays == total {
       blank = blankEssays
       blankEssays = 0
     }
@@ -566,8 +589,11 @@ struct MockSectionCounts {
     if blankEssays > 0 {
       parts.append(
         String(
-          localized: "\(blankEssays) essays are blank.", table: "Mock",
-          comment: "Blank essays when handing in"))
+          localized: "\(blankEssays) written questions are blank.", table: "Mock",
+          comment:
+            "Before handing in a mock exam with objective and written questions: how many written answers are blank."
+        )
+      )
     }
 
     return parts.joinedSentences()

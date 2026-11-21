@@ -1143,178 +1143,22 @@
         }
       }
     },
-    "%lld essays are blank." : {
-      "comment" : "Blank essays when handing in",
+    "%lld written questions are blank." : {
+      "comment" : "Before handing in a mock exam with objective and written questions: how many written answers are blank.",
       "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Der Aufsatz ist leer."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Aufsätze sind leer."
-                }
-              }
-            }
-          }
-        },
         "en" : {
           "variations" : {
             "plural" : {
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "The essay is blank."
+                  "value" : "The written question is blank."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "%lld essays are blank."
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Hay %lld redacción en blanco."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Hay %lld redacciones en blanco."
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "La rédaction est vide."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld rédactions sont vides."
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Il tema è in bianco."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld temi sono in bianco."
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld題の小論文が未記入です。"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "에세이 %lld개가 비어 있어요."
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld wypracowania są puste."
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Wypracowanie jest puste."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld wypracowań jest pustych."
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "A redação está em branco."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld redações estão em branco."
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Kompozisyon boş."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld kompozisyon boş."
+                  "value" : "%lld written questions are blank."
                 }
               }
             }

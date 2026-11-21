@@ -522,7 +522,7 @@ private struct MockChooser: View {
 
     // A test of an exam of several says when it happens, if the notice says; its name says the rest.
     if !(option.sections ?? []).isEmpty, option.kind != .half {
-      return sessions.formatted(.list(type: .and))
+      return sessions.joinedFacts()
     }
 
     let subjects = severalDays && option.kind != .area ? option.areas : []
