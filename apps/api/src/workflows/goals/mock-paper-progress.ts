@@ -32,6 +32,7 @@ export async function openMockPaperProgress({ goalId, paper }: { goalId: string;
       );
 
       ended = true;
+      writer[Symbol.dispose]();
     },
 
     async step<T>(step: PaperStep, work: () => Promise<T>): Promise<T> {

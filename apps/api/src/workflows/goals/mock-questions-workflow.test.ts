@@ -187,6 +187,33 @@ describe(mockSupplyWorkflow, () => {
       expect(writeMockQuestions).toHaveBeenCalledTimes(2);
     });
 
+    it("releases a paper's claim before writing the next paper", async () => {
+      plan([paper(DAY_1, { later: false }), paper(DAY_2)]);
+
+      let releasesAtNextPaper = 0;
+
+      vi.mocked(writeMockQuestions).mockImplementation(async ({ key }) => {
+        if (key === DAY_2) {
+          const claim = vi
+            .mocked(createHook)
+            .mock.results.find(
+              (result) =>
+                result.type === "return" && result.value.token === `mock-paper:${GOAL_ID}:${DAY_1}`,
+            );
+
+          releasesAtNextPaper = claim ? vi.mocked(claim.value.dispose).mock.calls.length : 0;
+        }
+
+        return { failed: 0, written: 1 };
+      });
+
+      await mockSupplyWorkflow(waitedRequest());
+
+      expect(releasesAtNextPaper).toBe(1);
+      expect(streamedSteps(DAY_1).at(-1)).toBe("mockPaperReady:completed");
+      expect(streamedSteps(DAY_2).at(-1)).toBe("mockPaperReady:completed");
+    });
+
     it("says the paper is still short when its questions didn't fill it", async () => {
       plan([paper(DAY_1, { later: false })], [paper(DAY_1, { later: false })]);
 
