@@ -128,8 +128,9 @@ struct AnswerOption: View {
 }
 
 /// An answer's words, or its code, and its tag. The tag moves under the words rather than leave them
-/// less than half the row or narrower than their widest line-break unit. Beside code it sits on its
-/// last line, and only while the code's widest line still fits: code never wraps to make room.
+/// less than half the row or narrower than their widest line-break unit. Code keeps its shape, so its
+/// tag holds the card's end edge: on its last line while that line leaves room, and otherwise under
+/// it. Code never wraps to make room.
 struct TagBesideOrUnder: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.legibilityWeight) private var legibilityWeight
@@ -183,7 +184,17 @@ struct TagBesideOrUnder: View {
           }
         }
       }
+
+      if let snippet = text.snippet, tag != nil {
+        CodeSnippet(code: lastLine(of: snippet.code), language: snippet.language)
+          .hidden()
+          .accessibilityHidden(true)
+      }
     }
+  }
+
+  private func lastLine(of code: String) -> String {
+    String(code.split(separator: "\n", omittingEmptySubsequences: false).last ?? "")
   }
 
   private func readingUnits(in text: AttributedString) -> [AttributedString] {
@@ -229,6 +240,12 @@ private struct AnswerOptionLayout: Layout {
     let fitting =
       proposal.width == nil && hasMarker
       ? ProposedViewSize(width: widestUnit(in: subviews), height: proposal.height) : proposal
+
+    if let width = fitting.width, tagEndsLastLine(width: width, subviews: subviews) {
+      let words = subviews[0].sizeThatFits(ProposedViewSize(width: width, height: nil))
+      return CGSize(width: width, height: words.height)
+    }
+
     let layout = layout(for: fitting, subviews: subviews)
     var layoutCache = layout.makeCache(subviews: content)
     return layout.sizeThatFits(proposal: fitting, subviews: content, cache: &layoutCache)
@@ -237,6 +254,20 @@ private struct AnswerOptionLayout: Layout {
   func placeSubviews(
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
+    if tagEndsLastLine(width: bounds.width, subviews: subviews) {
+      let wordsProposal = ProposedViewSize(width: bounds.width, height: nil)
+      let lastBaseline = subviews[0].dimensions(in: wordsProposal)[
+        VerticalAlignment.lastTextBaseline]
+      let tag = subviews[1].dimensions(in: .unspecified)
+      subviews[0].place(at: bounds.origin, proposal: wordsProposal)
+      subviews[1].place(
+        at: CGPoint(
+          x: bounds.maxX - tag.width,
+          y: bounds.minY + lastBaseline - tag[VerticalAlignment.firstTextBaseline]),
+        proposal: .unspecified)
+      return
+    }
+
     let content = subviews.prefix(hasTag ? 2 : 1)
     let layout = layout(
       for: ProposedViewSize(width: bounds.width, height: proposal.height), subviews: subviews)
@@ -244,28 +275,34 @@ private struct AnswerOptionLayout: Layout {
     layout.placeSubviews(in: bounds, proposal: proposal, subviews: content, cache: &layoutCache)
   }
 
+  /// Code's last line is the last subview, measured on its own.
+  private func tagEndsLastLine(width: CGFloat, subviews: Subviews) -> Bool {
+    guard isCode, hasTag, !isStacked, width.isFinite, let lastLine = subviews.last else {
+      return false
+    }
+
+    let tagWidth = subviews[1].sizeThatFits(.unspecified).width
+    return lastLine.sizeThatFits(.unspecified).width + spacing + tagWidth <= width
+  }
+
   private func layout(for proposal: ProposedViewSize, subviews: Subviews) -> AnyLayout {
     var stacked = isStacked
 
     if hasTag, let width = proposal.width, width.isFinite {
       let tagWidth = subviews[1].sizeThatFits(.unspecified).width
-
-      let readingWidth =
-        isCode
-        ? subviews[0].sizeThatFits(.unspecified).width
-        : max(width / 2, min(widestUnit(in: subviews), width))
-
+      let readingWidth = isCode ? width : max(width / 2, min(widestUnit(in: subviews), width))
       stacked = stacked || width - tagWidth - spacing < readingWidth
     }
 
+    // Under code, the tag keeps the card's end edge it holds on code's last line.
     return stacked
-      ? AnyLayout(VStackLayout(alignment: .leading, spacing: spacing))
-      : AnyLayout(
-        HStackLayout(alignment: isCode ? .lastTextBaseline : .firstTextBaseline, spacing: spacing))
+      ? AnyLayout(VStackLayout(alignment: isCode ? .trailing : .leading, spacing: spacing))
+      : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: spacing))
   }
 
   private func widestUnit(in subviews: Subviews) -> CGFloat {
-    subviews.dropFirst(2).map { $0.sizeThatFits(.unspecified).width }.max() ?? 0
+    subviews.dropFirst(2).dropLast(isCode && hasTag ? 1 : 0)
+      .map { $0.sizeThatFits(.unspecified).width }.max() ?? 0
   }
 }
 
