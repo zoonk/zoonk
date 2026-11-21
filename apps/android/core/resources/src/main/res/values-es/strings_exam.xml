@@ -5,9 +5,9 @@
   "exam_add_result": "4b1f0fdd7c3839aae2aa7b79c6a4f379659dc3c6a34c8108b5f63a4ad686798b",
   "exam_add_result_detail": "37990236095178d544d8f9e06040aceed9b97c1e8251bf5c4c1206c2dfef0a2d",
   "exam_by_subject": "2f85f2ebcb3b5b3f629e7a08f7b6ac7cce938f08205d8021b03e4b399deaec98",
-  "exam_calibration": "453340e123027ba873d5f912c456889e6546b39a593e5ca537ac2d797a270829",
-  "exam_calibration_blank_unsure": "1c365aa6b4922f41efa1a49dee9bcb93a3c2287cc6f15390fd8b96d6af525fba",
-  "exam_calibration_keep_answering": "d1a66fa87afcf500ea69fe7c12f18825303dde5dfea958d01b2b1fb208c2283e",
+  "exam_calibration": "37b6f636e53bfa577c50da5cdf11c216e7afa08bd670be7487784479e477414b",
+  "exam_calibration_blank_unsure": "b3fb21329049724516a19ac45ad7be08524ac3142118d848bb25655748b3a400",
+  "exam_calibration_keep_answering": "7f04f819c3518d4796c30fb3955104fc3a8c185f54b2addfea3885c2adaaefb4",
   "exam_calibration_right": "4fc8b219f3c598decde5c7f834b94134a5c4642fa9b5d3684b139a8022b25ade",
   "exam_checklist_black_pen": "44c689f499ffb2b4408f3b6865109dca21061bc436be070eda649ba6a57ad368",
   "exam_checklist_count": "b5a142ef979ccaef10ec24af7b4e6e9297c4286596ccd759b8549be785eabea4",
@@ -230,15 +230,15 @@
     <string name="exam_rule_irt">Fallar una pregunta fácil resta más puntos que fallar una difícil, así que resuelve primero las fáciles.</string>
     <string name="exam_rule_raw_title">Cada respuesta correcta vale un punto</string>
     <string name="exam_rule_raw">Responde todas las preguntas.</string>
-    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">En tus simulacros: %1$s en las respuestas sin marcar y %2$s en las marcadas.</string>
+    <!-- How the learner did in mock exams on the answers they were sure of and on those they marked "Not sure". %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">En tus simulacros: %1$s con seguridad, %2$s con dudas.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d acierto de %2$d</item>
         <item quantity="many">%1$d aciertos de %2$d</item>
         <item quantity="other">%1$d aciertos de %2$d</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">Tus respuestas marcadas restan más puntos de los que suman: déjalas en blanco.</string>
-    <string name="exam_calibration_keep_answering">Tus respuestas marcadas aún suman puntos: sigue respondiéndolas.</string>
+    <string name="exam_calibration_blank_unsure">Cuando tengas dudas, déjala en blanco: esas respuestas te quitan más puntos de los que te dan.</string>
+    <string name="exam_calibration_keep_answering">Cuando tengas dudas, responde de todos modos: esas respuestas suman puntos.</string>
     <string name="exam_to_pass">Para aprobar</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">En %1$s, tal como aparece en los documentos del examen.</string>

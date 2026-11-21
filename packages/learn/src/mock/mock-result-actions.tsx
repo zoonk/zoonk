@@ -13,7 +13,9 @@ export const BAR_SECOND_ACTION_CLASS = "shrink-0 max-lg:basis-full";
 function useMistakeCount(): number {
   const { runner } = useMockScreen();
   // A question with several picks answered partly right missed some, so the notebook keeps it too.
-  return runner.view.review.filter((entry) => entry.outcome !== "blank").length;
+  return runner.view.review.filter(
+    (entry) => entry.outcome === "wrong" || entry.outcome === "partial",
+  ).length;
 }
 
 export function MockResultActions() {

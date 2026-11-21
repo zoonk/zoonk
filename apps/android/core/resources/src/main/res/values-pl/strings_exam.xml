@@ -5,9 +5,9 @@
   "exam_add_result": "9fbee87861f99dd43c1128171d4c716927368cbe6157489f8637ee1c4c3a3464",
   "exam_add_result_detail": "7475ecab293fbf9a626a6c25e852f0ccffc64c76a218d5d066d18609d480eae4",
   "exam_by_subject": "a0502053f695ec2dbd597ad2ca72d126e6c9aaa63f87cb2771b2d1cc576084b8",
-  "exam_calibration": "421d3317e4819b392b5105b18a92df02a5aade2279d11ffcfa1af6b952d92ef1",
-  "exam_calibration_blank_unsure": "b6f70bf23ebc029344c8d408c7d04948459892cc2aafc319d863427442e14b32",
-  "exam_calibration_keep_answering": "1fa760247a75375a2638f7e59c5cf351be358dc465178eaa5eaa6534680f9097",
+  "exam_calibration": "f506791b13936e22b5ae38d87bb5fde7c9ce7e34ad46a5881036d18c1e7f3dea",
+  "exam_calibration_blank_unsure": "0dcbff22092edb6cb48b2b616d213d8ee204f4e9b120f65aff9782475ba7dbdf",
+  "exam_calibration_keep_answering": "1b0431c9df6d06b16adb0784dd83e406d325c82bd7c6d93f13680e8d5b4aff7b",
   "exam_calibration_right": "30a9d06bc97e63c6bc7f57631f2f1781a040323bb37510bb184fd3098fa0a073",
   "exam_checklist_black_pen": "76bfd0635f5943766f067330b9326758f5daddaf4cf9dfd48f01b92b88d8995b",
   "exam_checklist_count": "530cd3d7ae39940f38cc01b996f057b7e5a5955ed2f3bd9cc7a907cdf5f2ab41",
@@ -236,16 +236,16 @@
     <string name="exam_rule_irt">Błędna odpowiedź na łatwe pytanie kosztuje więcej niż na trudne, więc zacznij od łatwych pytań.</string>
     <string name="exam_rule_raw_title">Każda poprawna odpowiedź to jeden punkt</string>
     <string name="exam_rule_raw">Odpowiedz na każde pytanie.</string>
-    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">Na egzaminach próbnych: %1$s wśród nieoznaczonych odpowiedzi, %2$s wśród oznaczonych.</string>
+    <!-- How the learner did in mock exams on the answers they were sure of and on those they marked "Not sure". %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">W egzaminach próbnych: %1$s odpowiedzi, co do których masz pewność, %2$s oznaczonych jako „Niepewne”.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">Poprawnie rozwiązano %1$d z %2$d</item>
         <item quantity="few">Poprawnie rozwiązano %1$d z %2$d</item>
         <item quantity="many">Poprawnie rozwiązano %1$d z %2$d</item>
         <item quantity="other">Poprawnie rozwiązano %1$d z %2$d</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">Na oznaczonych pytaniach tracisz więcej punktów, niż zyskujesz: zostawiaj je bez odpowiedzi.</string>
-    <string name="exam_calibration_keep_answering">Na oznaczonych pytaniach nadal zyskujesz punkty: odpowiadaj na nie.</string>
+    <string name="exam_calibration_blank_unsure">Jeśli nie masz pewności, zostaw odpowiedź pustą: takie odpowiedzi kosztują więcej punktów, niż przynoszą.</string>
+    <string name="exam_calibration_keep_answering">Jeśli nie masz pewności, i tak odpowiedz: za takie odpowiedzi dostajesz punkty.</string>
     <string name="exam_to_pass">Próg zaliczenia</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">Tak jak w dokumentach egzaminu. Język: %1$s.</string>

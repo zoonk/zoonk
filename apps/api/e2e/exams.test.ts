@@ -108,7 +108,7 @@ test.describe("Exams API", () => {
         data: {
           answer: index === 0 ? null : { selectedIndex: 0 },
           durationMs: 5000,
-          flagged: index === 0,
+          flagged: index < 2,
           itemId: question.itemId,
         },
       });
@@ -133,6 +133,10 @@ test.describe("Exams API", () => {
         net: { blank: 1, net: MOCK_QUESTIONS - 1, right: MOCK_QUESTIONS - 1, wrong: 0 },
         scoring: "net",
       },
+      review: [
+        { itemId: questions[0]?.itemId, outcome: "blank", unsure: true },
+        { itemId: questions[1]?.itemId, outcome: "right", unsure: true },
+      ],
       status: "finished",
     });
 

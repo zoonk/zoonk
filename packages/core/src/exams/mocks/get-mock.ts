@@ -197,7 +197,7 @@ async function loadFinished({
   const reached = keptReachedSchema.safeParse(owned.mock.result).data?.reached ?? NOTHING_REACHED;
 
   const [review, offers, essays] = await Promise.all([
-    loadMockReview({ areas, conditions, mockExamId: owned.mock.id, userId: owned.userId }),
+    loadMockReview({ areas, mock: owned.mock, userId: owned.userId }),
     loadMockPlanOffers({ goal: owned.goal, purpose: conditions.purpose, result }),
     loadMockEssayViews({ areas, mock: owned.mock }),
   ]);

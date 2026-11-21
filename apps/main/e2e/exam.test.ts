@@ -124,6 +124,16 @@ test.describe("Exam goal", () => {
       await expect(
         page.getByRole("heading", { level: 1, name: /^Mock exam 2\s*\d+–\d+$/u }),
       ).toBeVisible();
+
+      const review = page.getByRole("region", { name: "Questions to review" });
+
+      await expect(
+        review.getByRole("button", { name: /Question 1\b.+Wrong.+Not sure$/u }),
+      ).toBeVisible();
+
+      await expect(
+        review.getByRole("button", { name: /Question 2\b.+Right.+Not sure$/u }),
+      ).toBeVisible();
     });
   });
 
