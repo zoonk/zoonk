@@ -46,6 +46,7 @@ export const writeWritingPromptTask: Task<WriteWritingPromptInput, WritingPrompt
     reason: "A misleading command or wrong key affects every learner who practices the question",
     waits: "Usually prepared ahead, but learners can wait when a question is missing",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreWriteWritingPrompt,
   scoreCategories: WRITE_WRITING_PROMPT_SCORE_CATEGORIES,
   testCases: TEST_CASES,

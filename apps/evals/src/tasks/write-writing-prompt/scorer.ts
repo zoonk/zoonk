@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
@@ -116,19 +117,23 @@ function checkValidator({
   }
 }
 
-const CHECKS = [checkValidator, checkPoints, checkTitle, checkEnem];
+const CHECKS = [checkPoints, checkTitle, checkEnem];
 
 export const checkWriteWritingPrompt: TaskCodeChecks = ({ output, testCase }) => {
   const input = testCase.userInput as WriteWritingPromptInput;
   const parsed = JSON.parse(output) as WritingPromptOutput;
-  const results = CHECKS.map((check) => check({ input, output: parsed }));
+  const blockingProblems = checkValidator({ input, output: parsed });
+  const results = [blockingProblems, ...CHECKS.map((check) => check({ input, output: parsed }))];
 
   return {
-    blockingProblems: results[0],
+    ...(blockingProblems.length === 0
+      ? answerKeyEvidence((label) => label(parsed, "question"))
+      : {}),
+    blockingProblems,
     judgedOutput: JSON.stringify(parsed, null, 2),
     passed: results.filter((problems) => problems.length === 0).length,
     problems: results.flat(),
-    total: CHECKS.length,
+    total: results.length,
   };
 };
 
