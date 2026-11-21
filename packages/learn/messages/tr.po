@@ -8592,11 +8592,6 @@ msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Teslim edildi"
 
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Oturum {number, number}"
-
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
 msgid "Task {number, number} · {time}"

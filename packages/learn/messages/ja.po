@@ -8592,11 +8592,6 @@ msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "提出済み"
 
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "セクション{number, number}"
-
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
 msgid "Task {number, number} · {time}"
