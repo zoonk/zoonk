@@ -85391,7 +85391,7 @@
               },
               "reachedShare": {
                 "nullable": true,
-                "description": "Share whose topics this plan reaches by the deadline, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a deadline.",
+                "description": "Share whose topics this plan reaches by the deadline, including topics the learner already knows. Measured when the plan is laid out, in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null without a deadline, and for a plan laid out before it was measured.",
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1
@@ -87095,8 +87095,9 @@
             ]
           },
           "reachedShare": {
+            "default": null,
+            "description": "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null without a date, while not ready, or from a server that doesn't measure it.",
             "nullable": true,
-            "description": "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a date or while not ready.",
             "type": "number",
             "minimum": 0,
             "maximum": 1
@@ -87221,10 +87222,12 @@
                 "maximum": 9007199254740991
               },
               "reachedShare": {
+                "default": null,
+                "description": "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null from a server that doesn't measure it.",
+                "nullable": true,
                 "type": "number",
                 "minimum": 0,
-                "maximum": 1,
-                "description": "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise."
+                "maximum": 1
               },
               "split": {
                 "default": null,
