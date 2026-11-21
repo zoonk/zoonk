@@ -4,6 +4,7 @@ import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { findUncoveredTopics, formatExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
+import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { toGoalCandidateExams } from "../exams/candidate-exams";
@@ -181,6 +182,12 @@ export async function addMissingExamGraphSkills(examBlueprintId: string): Promis
   return saved ? added.map((skill) => skill.name) : [];
 }
 
+type NoticeSubjects = ReturnType<typeof noticeSubjects>;
+
+function toNoticeRepair({ graph, subjects }: { graph: PlanGraph; subjects: NoticeSubjects }) {
+  return { extraSkills: graph.extraSkills ?? [], skills: joinOptionSkills(graph).skills, subjects };
+}
+
 export async function prepareNoticeGraphRepair(examBlueprintId: string) {
   const [stored, blueprint] = await Promise.all([
     prisma.examSkillGraph.findUnique({ select: { graph: true }, where: { examBlueprintId } }),
@@ -199,7 +206,7 @@ export async function prepareNoticeGraphRepair(examBlueprintId: string) {
   const { dropped } = await prunePlanNoticeGraph({ graph, subjects });
 
   if (dropped.length === 0) {
-    return { extraSkills: graph.extraSkills ?? [], subjects };
+    return toNoticeRepair({ graph, subjects });
   }
 
   return writePlanInputs(async (tx) => {
@@ -226,6 +233,6 @@ export async function prepareNoticeGraphRepair(examBlueprintId: string) {
       await tx.examSkillGraph.update({ data: { graph: pruned.graph }, where: { examBlueprintId } });
     }
 
-    return { extraSkills: pruned.graph.extraSkills ?? [], subjects: currentSubjects };
+    return toNoticeRepair({ graph: pruned.graph, subjects: currentSubjects });
   });
 }

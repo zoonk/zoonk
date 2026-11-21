@@ -1,6 +1,8 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { normalizeString } from "@zoonk/utils/string";
+import { matchAreasToSubjects } from "../exams/_utils/match-areas";
 import { loadSkillSurvivors } from "../learner/_utils/update-learner-skill";
 import { type prepareNoticeGraphRepair } from "../library/curriculum/exam-graph-repair";
 import { noticeSubjects } from "../library/curriculum/prune-notice-skills";
@@ -14,7 +16,7 @@ import { computePlan } from "./_utils/replan";
 import { NOTICE_SOURCE } from "./plan-change-contract";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
 import { followNoticeGraph } from "./planner/follow-notice-graph";
-import { joinOptionSkills } from "./planner/option-skills";
+import { addSharedOptionSkills, joinOptionSkills } from "./planner/option-skills";
 import {
   type PlanGraph,
   type PlanGraphSkill,
@@ -89,29 +91,75 @@ function addSharedExtras(graph: PlanGraph, shared: readonly PlanGraphSkill[]): P
     : { ...graph, extraSkills: [...(graph.extraSkills ?? []), ...missing] };
 }
 
+function listNoticeSubjects({
+  notice,
+  skills,
+}: {
+  notice: NoticeRepair;
+  skills: readonly PlanGraphSkill[];
+}): Set<number> {
+  const studied = skills.filter((skill) => !skill.extra);
+  const topics = new Set(studied.flatMap((skill) => skill.topics?.map(normalizeString) ?? []));
+
+  const named = matchAreasToSubjects({
+    areas: [...new Set(studied.flatMap((skill) => skill.area ?? []))],
+    subjects: notice.subjects,
+  });
+
+  return new Set([
+    ...named.values(),
+    ...notice.subjects.flatMap((subject, index) =>
+      subject.topics.some((topic) => topics.has(normalizeString(topic))) ? [index] : [],
+    ),
+  ]);
+}
+
+/** A subject an earlier reading left out comes back once a corrected reading lists it again. */
+function addSharedSubjects(graph: PlanGraph, notice: NoticeRepair): PlanGraph {
+  const taught = listNoticeSubjects({ notice, skills: joinOptionSkills(graph).skills });
+
+  const missing = notice.skills.flatMap((skill) =>
+    skill.area &&
+    !skill.extra &&
+    [...listNoticeSubjects({ notice, skills: [skill] })].some((subject) => !taught.has(subject))
+      ? [skill.area]
+      : [],
+  );
+
+  return missing.length === 0
+    ? graph
+    : addSharedOptionSkills({
+        areas: new Set(missing),
+        graph,
+        shared: { phases: [], skills: notice.skills },
+      });
+}
+
 async function verifyNoticeInputs({
-  addsExtras,
+  addsShared,
   blueprintId,
   notice,
   tx,
 }: {
-  addsExtras: boolean;
+  addsShared: boolean;
   blueprintId: string;
   notice: NoticeRepair;
   tx: TransactionClient;
 }) {
   const latest = await tx.examBlueprint.findUnique({
-    select: { ...(addsExtras && { skillGraph: { select: { graph: true } } }), structure: true },
+    select: { ...(addsShared && { skillGraph: { select: { graph: true } } }), structure: true },
     where: { id: blueprintId },
   });
+
+  const shared = addsShared && parsePlanGraph(latest?.skillGraph?.graph);
 
   if (
     !latest ||
     !isDeepStrictEqual(notice.subjects, noticeSubjects(latest.structure)) ||
-    (addsExtras &&
+    (shared &&
       !isDeepStrictEqual(
-        notice.extraSkills,
-        parsePlanGraph(latest.skillGraph?.graph).extraSkills ?? [],
+        { extraSkills: notice.extraSkills, skills: notice.skills },
+        { extraSkills: shared.extraSkills ?? [], skills: joinOptionSkills(shared).skills },
       ))
   ) {
     throw new PlanConflictError();
@@ -152,7 +200,11 @@ async function checkNoticeGraph({
       .findUnique({ select: { structure: true }, where: { id: blueprintId } })
       .then(
         (blueprint) =>
-          blueprint && { extraSkills: [], subjects: noticeSubjects(blueprint.structure) },
+          blueprint && {
+            extraSkills: [],
+            skills: [],
+            subjects: noticeSubjects(blueprint.structure),
+          },
       ));
 
   if (!checkedNotice) {
@@ -178,14 +230,18 @@ async function checkNoticeGraph({
     ...droppedSkillIds.filter((id) => !protectedIds?.has(id)),
   ]);
 
-  const repaired = addSharedExtras(checked.graph, checkedNotice.extraSkills);
-  const addsExtras = repaired !== checked.graph;
+  const repaired = addSharedExtras(
+    addSharedSubjects(checked.graph, checkedNotice),
+    checkedNotice.extraSkills,
+  );
 
-  if (!graph && dropped.size === 0 && !addsExtras) {
+  const addsShared = repaired !== checked.graph;
+
+  if (!graph && dropped.size === 0 && !addsShared) {
     return null;
   }
 
-  return { addsExtras, checkedNotice, current, dropped, repaired, saved };
+  return { addsShared, checkedNotice, current, dropped, repaired, saved };
 }
 
 async function settleNoticeGraph(input: NoticeGraphInput): Promise<boolean> {
@@ -196,7 +252,7 @@ async function settleNoticeGraph(input: NoticeGraphInput): Promise<boolean> {
     return false;
   }
 
-  const { addsExtras, checkedNotice, current, dropped, repaired, saved } = repair;
+  const { addsShared, checkedNotice, current, dropped, repaired, saved } = repair;
   const context = await loadPlanAtToken(goalId);
 
   if (
@@ -252,7 +308,7 @@ async function settleNoticeGraph(input: NoticeGraphInput): Promise<boolean> {
         : null,
     computed,
     context,
-    extraWrites: (tx) => verifyNoticeInputs({ addsExtras, blueprintId, notice: checkedNotice, tx }),
+    extraWrites: (tx) => verifyNoticeInputs({ addsShared, blueprintId, notice: checkedNotice, tx }),
   });
 
   await followPlanToday({ changeId, context });

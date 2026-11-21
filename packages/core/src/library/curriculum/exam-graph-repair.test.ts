@@ -222,7 +222,7 @@ describe(addMissingExamGraphSkills, () => {
     ).resolves.toMatchObject({ country: null });
   });
 
-  it("restores a subject to the shared graph after a correction, while an existing plan still lacks it", async () => {
+  it("brings a subject a wrong reading removed back to an existing plan after the corrected reading", async () => {
     const [{ blueprint, graph }, user] = await Promise.all([writtenGraph(), userFixture()]);
     const parsed = examStructureSchema.parse(blueprint.structure);
 
@@ -317,7 +317,61 @@ describe(addMissingExamGraphSkills, () => {
     expect(areas(await loadGraph(blueprint.id))).toStrictEqual([LANGUAGES, MATH]);
 
     await repair();
-    expect(areas(await readPlan())).toStrictEqual([LANGUAGES]);
+    expect(areas(await readPlan())).toStrictEqual([LANGUAGES, MATH]);
+
+    const restored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    await repair();
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      graph: restored.graph,
+      version: restored.version,
+    });
+  });
+
+  it("brings in no shared skills for a subject the plan teaches with its own", async () => {
+    const [{ blueprint, graph }, user, own] = await Promise.all([
+      writtenGraph(),
+      userFixture(),
+      skillFixture({ language: "pt", name: `Calcular ${uniqueWord()}` }),
+    ]);
+
+    const [reading, math] = graph.skills;
+
+    if (!reading || !math) {
+      throw new Error("Expected both notice skills");
+    }
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      graph: {
+        ...graph,
+        skills: [reading, { ...math, area: "Cálculo", name: own.name, skillId: own.id }],
+      },
+    });
+
+    const notice = await prepareNoticeGraphRepair(blueprint.id);
+
+    if (!notice) {
+      throw new Error("Expected the notice blueprint");
+    }
+
+    await repairNoticePlan({
+      blueprintId: blueprint.id,
+      goalId: goal.id,
+      movesExamDays: false,
+      notice,
+    });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      graph: plan.graph,
+      version: plan.version,
+    });
   });
 
   it("asks no model when the graph already teaches every topic", async () => {
