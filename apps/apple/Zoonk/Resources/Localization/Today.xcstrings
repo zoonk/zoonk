@@ -3047,7 +3047,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mehr Zeit einplanen"
+            "value" : "Lernzeit erhöhen"
           }
         },
         "es" : {
@@ -3065,7 +3065,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aumenta il tempo"
+            "value" : "Aggiungi tempo"
           }
         },
         "ja" : {
@@ -3083,13 +3083,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wydłuż czas nauki"
+            "value" : "Zwiększ czas nauki"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aumentar o tempo"
+            "value" : "Adicionar tempo"
           }
         },
         "tr" : {
@@ -4528,7 +4528,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähl deine Schwerpunkte"
+            "value" : "Schwerpunkte wählen"
           }
         },
         "es" : {
@@ -4540,7 +4540,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisir les domaines à privilégier"
+            "value" : "Choisir tes priorités"
           }
         },
         "it" : {
@@ -4552,13 +4552,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重点分野を選ぶ"
+            "value" : "重点的に学ぶ科目を選ぶ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "집중할 영역 선택하기"
+            "value" : "집중할 과목 선택하기"
           }
         },
         "pl" : {
@@ -6501,13 +6501,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine Lernzeit beibehalten"
+            "value" : "Lernzeit beibehalten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantener mi tiempo"
+            "value" : "Mantener mi tiempo de estudio"
           }
         },
         "fr" : {
@@ -6519,7 +6519,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantieni il mio tempo di studio"
+            "value" : "Mantieni il tempo giornaliero"
           }
         },
         "ja" : {
@@ -6531,13 +6531,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "하루 학습 시간 유지하기"
+            "value" : "학습 시간 유지하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zachowaj mój czas nauki"
+            "value" : "Zachowaj obecny czas nauki"
           }
         },
         "pt" : {
@@ -6549,7 +6549,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çalışma süremi koru"
+            "value" : "Günlük süreni koru"
           }
         }
       }
@@ -7688,55 +7688,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Okay. Deine tägliche Lernzeit bleibt gleich."
+            "value" : "Okay. Deine Lernzeit bleibt gleich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De acuerdo. Tu tiempo diario sigue igual."
+            "value" : "De acuerdo. Tu tiempo sigue igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "D’accord. Ta durée quotidienne reste la même."
+            "value" : "D’accord. Ton temps d’étude reste le même."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Va bene. Il tempo di studio giornaliero resta lo stesso."
+            "value" : "Va bene. Il tuo tempo di studio resta lo stesso."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "わかりました。1日の学習時間はそのままです。"
+            "value" : "わかりました。学習時間はそのままです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "알겠어요. 하루 학습 시간은 그대로예요."
+            "value" : "알겠어요. 학습 시간은 그대로예요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dobrze. Dzienny czas nauki się nie zmienia."
+            "value" : "Okej. Twój czas nauki się nie zmienia."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo bem. Seu tempo diário continua o mesmo."
+            "value" : "Tudo bem. Seu tempo continua o mesmo."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tamam. Günlük çalışma süren değişmiyor."
+            "value" : "Tamam. Çalışma süren aynı kalıyor."
           }
         }
       }
@@ -9702,7 +9702,64 @@
         }
       }
     },
-    "See what changes" : {},
+    "See what changes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderungen ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver qué cambia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir ce qui change"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vedi cosa cambia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更内容を見る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "달라지는 내용 보기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobacz, co się zmienia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver mudanças"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nelerin değişeceğini gör"
+          }
+        }
+      }
+    },
     "See your exam" : {
       "comment" : "Opens the exam",
       "localizations" : {
@@ -9998,8 +10055,122 @@
         }
       }
     },
-    "Some lessons no longer fit before your date." : {},
-    "Some lessons no longer fit before your exam." : {},
+    "Some lessons no longer fit before your date." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einige Lektionen passen nicht mehr vor dein Datum."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunas lecciones ya no caben antes de tu fecha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certaines leçons ne tiennent plus avant ta date."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcune lezioni non rientrano più nel tempo che resta prima della data."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期日までに一部のレッスンを終えられなくなりました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜 전까지 마치기 어려운 레슨이 생겼어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niektóre lekcje nie zmieszczą się już przed wyznaczoną datą."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algumas aulas não cabem mais antes dessa data."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedef tarihine kadar bazı derslere artık zaman yetmiyor."
+          }
+        }
+      }
+    },
+    "Some lessons no longer fit before your exam." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einige Lektionen passen nicht mehr vor deine Prüfung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunas lecciones ya no caben antes de tu examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certaines leçons ne tiennent plus avant ton examen."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcune lezioni non rientrano più nel tempo che resta prima dell’esame."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験までに一部のレッスンを終えられなくなりました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시험 전까지 마치기 어려운 레슨이 생겼어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niektóre lekcje nie zmieszczą się już przed egzaminem."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algumas aulas não cabem mais antes da sua prova."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınavına kadar bazı derslere artık zaman yetmiyor."
+          }
+        }
+      }
+    },
     "Start" : {
       "comment" : "Accepts the suggested goal\nStarts the Focus test\nStarts today's session",
       "localizations" : {
@@ -13588,13 +13759,13 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai saltato qualche giorno"
+            "value" : "Hai fatto qualche giorno di pausa"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習が数日空いています"
+            "value" : "数日間、学習をお休みしました"
           }
         },
         "ko" : {
@@ -13606,7 +13777,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kilka dni przerwy"
+            "value" : "Kilka dni bez nauki"
           }
         },
         "pt" : {
