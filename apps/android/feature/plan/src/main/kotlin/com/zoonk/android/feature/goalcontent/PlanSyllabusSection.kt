@@ -117,12 +117,11 @@ private fun SubjectRow(
     onClick: () -> Unit,
 ) {
     val notPlanned = subject.notPlannedReason != null
-    val bar = if (notPlanned) null else subject.bar
+    // Optional study's count says its progress where a bar goes; a share or a bar would sit under Preparation, which the exam doesn't measure for it.
+    val bar = if (notPlanned || subject.isExtra) null else subject.bar
     val share = bar?.share ?: subject.preparation
     val locale = currentLocale()
-    // Optional study's count says its progress; a share or a bar would sit under Preparation, which the exam doesn't measure for it.
     val progressText = if (subject.isExtra) "" else share?.let { formatProgressShare(it, locale) }.orEmpty()
-    val showsBar = !notPlanned && !subject.isExtra
     val questions = subject.questions?.takeIf { it > 0 }?.toInt()
 
     val name: @Composable (Modifier) -> Unit = { nameModifier ->
@@ -134,13 +133,6 @@ private fun SubjectRow(
             if (alsoIn != null) {
                 Text(alsoIn, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
             }
-            if (subject.isExtra) {
-                Text(
-                    lessonsDoneText(subject),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
         }
     }
     val progress: @Composable (Modifier) -> Unit = { progressModifier ->
@@ -148,7 +140,7 @@ private fun SubjectRow(
             CoverageBar(studied = bar.studied, known = bar.known, modifier = progressModifier)
         } else {
             Text(
-                planOutsideReason(subject.notPlannedReason),
+                if (subject.isExtra) lessonsDoneText(subject) else planOutsideReason(subject.notPlannedReason),
                 progressModifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
@@ -173,12 +165,12 @@ private fun SubjectRow(
                             maxLines = 1,
                         )
                     }
-                    if (showsBar) progress(Modifier.width(barWidth))
+                    if (!notPlanned) progress(Modifier.width(barWidth))
                 }
             }
         },
         onClick = onClick,
-        supporting = if ((layout == RowLayout.Stacked && showsBar) || notPlanned) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
+        supporting = if (layout == RowLayout.Stacked || notPlanned) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
         meta = {
             Text(
                 text = progressText,
