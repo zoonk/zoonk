@@ -50,7 +50,11 @@ export async function buildMockContextSnapshot({
   }
 
   const { mock } = result;
-  const missed = mock.review.slice(0, MAX_MISSED_QUESTIONS);
+
+  const missed = mock.review
+    .flatMap(({ outcome, ...entry }) => (outcome === "right" ? [] : [{ ...entry, outcome }]))
+    .slice(0, MAX_MISSED_QUESTIONS);
+
   const skills = await loadSkillNames(missed.map((entry) => entry.itemId));
 
   return {

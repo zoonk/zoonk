@@ -20,7 +20,6 @@ const NUMBER_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
  */
 export const SHORTCUTS = {
   audio: { cap: "P", does: "Play or pause the screen's audio", keys: ["p", "P"] },
-  flag: { cap: "F", does: "Flag this question in a mock exam", keys: ["f", "F"] },
   leave: {
     cap: "Esc",
     does: "Close what is open; with nothing open, do what ✕ or the way back on screen does",
@@ -35,6 +34,7 @@ export const SHORTCUTS = {
   shortcuts: { cap: "?", does: "Show the keyboard shortcuts", keys: ["?"], typed: true },
   sidebar: { cap: "B", does: "Collapse or expand the sidebar on screen", keys: ["b"], mod: true },
   tap: { cap: "Space", does: "Tap the beat", keys: [" "] },
+  unsure: { cap: "U", does: "Mark this answer as not sure in a mock exam", keys: ["u", "U"] },
 } as const satisfies Record<string, Shortcut>;
 
 export type ShortcutName = keyof typeof SHORTCUTS;
@@ -45,7 +45,7 @@ export type ShortcutName = keyof typeof SHORTCUTS;
  */
 export const SHORTCUT_GROUPS = {
   anywhere: ["search", "sidebar", "main", "leave", "shortcuts"],
-  study: ["next", "previous", "pick", "audio", "flag", "save", "tap"],
+  study: ["next", "previous", "pick", "audio", "unsure", "save", "tap"],
 } as const satisfies Record<string, readonly ShortcutName[]>;
 
 export type ShortcutGroup = keyof typeof SHORTCUT_GROUPS;

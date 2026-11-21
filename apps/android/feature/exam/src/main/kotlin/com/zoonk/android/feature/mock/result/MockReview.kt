@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +40,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.recode
@@ -45,6 +54,7 @@ import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.mock.mockQuestionPlace
 import com.zoonk.android.feature.mock.mockSectionTitle
+import com.zoonk.android.feature.mock.runner.UnsureMark
 import com.zoonk.android.feature.mock.runner.trueFalseWords
 import com.zoonk.android.feature.questions.Citation
 import com.zoonk.android.feature.questions.ItemCitationNote
@@ -64,11 +74,13 @@ import com.zoonk.android.ui.components.TagBesideOrUnder
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.iconButtonEdge
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamReviewInner
@@ -129,8 +141,8 @@ internal class ReviewPlace(
 internal fun rememberReviewPlace(): ReviewPlace = rememberSaveable(saver = ReviewPlace.Saver) { ReviewPlace(anchor = null) }
 
 /**
- * Main's `MockReview`: every question the learner missed as rows of one list, each saying what it
- * asked and which it was. A row opens in place to its passage, the two answers and why.
+ * Main's `MockReview`: every question the learner missed or wasn't sure of as rows of one list, each
+ * saying what it asked and which it was. A row opens in place to its passage, the answers and why.
  */
 @Composable
 internal fun ReviewSection(
@@ -199,22 +211,59 @@ private class Restore(
     var done = false
 }
 
-/** The row says which question it is and how it went; a wrong answer needs no word, the list is of them. */
+/** The row says which question it is, how it went and, in amber with its bookmark, whether the learner wasn't sure. */
 @Composable
-private fun entryFacts(
+private fun EntryFacts(
     entry: MockExamReviewInner,
     sectionTitle: String?,
-): String =
-    factsLine(
-        entry.total?.let { mockQuestionPlace(entry.number.toInt(), it.toInt()) }
-            ?: stringResource(R.string.mock_result_question, entry.number.toInt()),
-        sectionTitle ?: entry.area,
-        when (entry.outcome) {
-            MockExamReviewInner.Outcome.BLANK -> stringResource(R.string.mock_result_blank)
-            MockExamReviewInner.Outcome.PARTIAL -> stringResource(R.string.mock_result_partly_right)
-            MockExamReviewInner.Outcome.WRONG -> null
-        },
+) {
+    UnsureFacts(
+        factsLine(
+            entry.total?.let { mockQuestionPlace(entry.number.toInt(), it.toInt()) }
+                ?: stringResource(R.string.mock_result_question, entry.number.toInt()),
+            sectionTitle ?: entry.area,
+            when (entry.outcome) {
+                MockExamReviewInner.Outcome.BLANK -> stringResource(R.string.mock_result_blank)
+                MockExamReviewInner.Outcome.PARTIAL -> stringResource(R.string.mock_result_partly_right)
+                MockExamReviewInner.Outcome.RIGHT -> stringResource(R.string.mock_result_right)
+                MockExamReviewInner.Outcome.WRONG -> stringResource(R.string.mock_result_wrong)
+            },
+        ),
+        unsure = entry.unsure,
     )
+}
+
+/** [facts] followed, when the learner marked it, by Not sure in amber with its bookmark, which a wrapped line keeps together. */
+@Composable
+internal fun UnsureFacts(
+    facts: String,
+    unsure: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    if (!unsure) {
+        if (facts.isNotEmpty()) Text(facts, modifier)
+        return
+    }
+    val amber = MaterialTheme.zoonk.warningText
+    Text(
+        buildAnnotatedString {
+            if (facts.isNotEmpty()) append(facts + FACT_SEPARATOR)
+            withStyle(SpanStyle(color = amber)) {
+                appendInlineContent(UNSURE_MARK, " ")
+                append("\u00A0")
+                append(stringResource(R.string.mock_not_sure))
+            }
+        },
+        modifier,
+        inlineContent =
+            mapOf(
+                UNSURE_MARK to
+                    InlineTextContent(Placeholder(1.em, 1.em, PlaceholderVerticalAlign.TextCenter)) {
+                        UnsureMark(Modifier.fillMaxSize())
+                    },
+            ),
+    )
+}
 
 @Composable
 private fun ReviewEntry(
@@ -235,7 +284,7 @@ private fun ReviewEntry(
             modifier = Modifier.bleed(LIST_ITEM_INSET),
             onClick = onToggle,
             expanded = open,
-            supporting = { Text(entryFacts(entry, sectionTitle)) },
+            supporting = { EntryFacts(entry, sectionTitle) },
         )
         if (open) {
             Column(Modifier.padding(top = 4.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -265,8 +314,13 @@ private fun ReviewAnswers(
     val right = entry.correctAnswer
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        yours?.let { ReviewAnswer(it, entry, right = false, numbered, words) }
-        right?.let { ReviewAnswer(it, entry, right = true, numbered, words) }
+        if (entry.outcome == MockExamReviewInner.Outcome.RIGHT) {
+            // The learner's answer is the right one, so it shows once, as theirs.
+            (yours ?: right)?.let { ReviewAnswer(it, entry, AnswerResult.Right, picked = true, numbered, words) }
+        } else {
+            yours?.let { ReviewAnswer(it, entry, AnswerResult.Wrong, picked = true, numbered, words) }
+            right?.let { ReviewAnswer(it, entry, AnswerResult.Right, picked = false, numbered, words) }
+        }
     }
 }
 
@@ -278,12 +332,13 @@ private fun ReviewAnswers(
 private fun ReviewAnswer(
     answer: String,
     entry: MockExamReviewInner,
-    right: Boolean,
+    result: AnswerResult,
+    picked: Boolean,
     numbered: Boolean,
     words: TrueFalseWords,
 ) {
-    val result = if (right) AnswerResult.Right else AnswerResult.Wrong
-    val tone = answerTone(picked = !right, result = result)
+    val right = result == AnswerResult.Right
+    val tone = answerTone(picked = picked, result = result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
     val statement = entry.format == MockExamReviewInner.Format.TRUE_FALSE && (answer == "true" || answer == "false")
     val isTrue = answer == "true"
@@ -326,9 +381,10 @@ private fun ReviewAnswer(
                     else -> ItemLine(answer)
                 }
             },
-            tag = { AnswerTag(picked = !right, result = result) },
+            tag = { AnswerTag(picked = picked, result = result) },
         )
     }
 }
 
 private const val REVIEW = "review:"
+private const val UNSURE_MARK = "unsure"
