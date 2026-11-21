@@ -1,7 +1,7 @@
 import { type PlotVisual } from "@zoonk/core/library/steps/contract";
 import { describe, expect, it } from "vitest";
 import { getLabelWidth } from "./category-labels";
-import { HEIGHT, LABEL_GAP, PADDING } from "./chart-layout";
+import { LABEL_GAP, PADDING } from "./chart-layout";
 import { type PlotLayout, drawsDot, getPlotLayout } from "./plot-layout";
 import { type PointLabel } from "./point-labels";
 
@@ -202,7 +202,18 @@ describe(getPlotLayout, () => {
     const [first, second] = layout.references;
 
     expect((second?.top ?? 0) - (first?.top ?? 0)).toBeGreaterThanOrEqual(14);
-    expect((second?.top ?? 0) + 14).toBeLessThanOrEqual(HEIGHT);
+    expect((second?.top ?? 0) + 14).toBeLessThanOrEqual(layout.plotBottom);
+  });
+
+  it("keeps wrapped names clear of the x axis's numbers on a narrow chart", () => {
+    const layout = layoutFor(control, 127);
+    const last = layout.references.at(-1);
+
+    expect(last?.lines.length).toBeGreaterThan(1);
+
+    expect((last?.top ?? 0) + (last?.lines.length ?? 0) * 14).toBeLessThanOrEqual(
+      layout.plotBottom,
+    );
   });
 
   it("fits the y axis to the data and references, with no forced zero", () => {

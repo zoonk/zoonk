@@ -37,8 +37,17 @@ function blockHeight(mark: ReferenceMark): number {
   return mark.lines.length * LABEL_LINE_HEIGHT;
 }
 
-/** Stacks names top to bottom so close lines don't overlap, then lifts them back inside the chart. */
-function stackReferences(marks: ReferenceMark[]): ReferenceMark[] {
+/**
+ * Stacks names top to bottom so close lines don't overlap, then lifts them back above the x axis's
+ * numbers.
+ */
+function stackReferences({
+  bottom,
+  marks,
+}: {
+  bottom: number;
+  marks: ReferenceMark[];
+}): ReferenceMark[] {
   const stacked: ReferenceMark[] = [];
 
   for (const mark of marks.toSorted((a, b) => a.y - b.y)) {
@@ -48,7 +57,7 @@ function stackReferences(marks: ReferenceMark[]): ReferenceMark[] {
   }
 
   const last = stacked.at(-1);
-  const overflow = last ? last.top + blockHeight(last) - HEIGHT : 0;
+  const overflow = last ? last.top + blockHeight(last) - bottom : 0;
 
   return overflow > 0 ? stacked.map((mark) => ({ ...mark, top: mark.top - overflow })) : stacked;
 }
@@ -63,15 +72,15 @@ function getReferences({
   room: number;
   y: LinearScale;
 }): ReferenceMark[] {
-  return stackReferences(
-    references.map((reference) => {
-      const lines = wrapLabel({ label: reference.label, room });
-      const lineY = y.toPixel(reference.y);
-      const top = lineY - (lines.length * LABEL_LINE_HEIGHT) / 2;
+  const marks = references.map((reference) => {
+    const lines = wrapLabel({ label: reference.label, room });
+    const lineY = y.toPixel(reference.y);
+    const top = lineY - (lines.length * LABEL_LINE_HEIGHT) / 2;
 
-      return { label: reference.label, lines, top, y: lineY };
-    }),
-  );
+    return { label: reference.label, lines, top, y: lineY };
+  });
+
+  return stackReferences({ bottom: y.range[0], marks });
 }
 
 function getGutter({ references, width }: { references: PlotVisual["references"]; width: number }) {
