@@ -16,6 +16,7 @@ import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { planToolChoiceInputSchema } from "@zoonk/core/plans/tool-choice-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type PlanChangeOutcome } from "@zoonk/learn/journey";
+import { refresh } from "next/cache";
 import { z } from "zod";
 
 export async function changePlanAction(
@@ -32,6 +33,12 @@ export async function changePlanAction(
 
   if (result.status === "unchanged") {
     return { reason: result.reason, status: "unchanged" };
+  }
+
+  // Refused for the plan as it now is, such as an offer another device already answered: the page
+  // reads the plan again, so what it offers is what the plan still allows.
+  if (result.status === "invalid") {
+    refresh();
   }
 
   if (result.status !== "applied") {
