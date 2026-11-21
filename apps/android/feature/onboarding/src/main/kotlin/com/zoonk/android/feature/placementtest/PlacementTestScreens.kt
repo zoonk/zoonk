@@ -1,8 +1,12 @@
 package com.zoonk.android.feature.placementtest
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.focustest.Note
 import com.zoonk.android.feature.focustest.Pressed
@@ -169,8 +174,16 @@ internal fun ColumnScope.PlacementResult(
         enabled = !saving,
     ) {
         nextTopic?.let {
-            Eyebrow(stringResource(R.string.placementtest_up_next))
-            Text(it, style = MaterialTheme.typography.titleMedium)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Eyebrow(stringResource(R.string.placementtest_up_next))
+                    Text(it, style = MaterialTheme.typography.titleMedium)
+                }
+            }
         }
         undo?.invoke()
         if (length == PlacementLength.QUICK) Note(stringResource(R.string.placementtest_whole_course_skips_more))

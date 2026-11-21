@@ -41,8 +41,10 @@ import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlanPlacementTest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -146,7 +148,15 @@ class OnboardingSpreadScreenshots {
         GoalSetupScreen(
             AppRoute.GoalSetup(GOAL_ID),
             remember { OnboardingStore(api, cache, session) { SignInResult.SignedIn } },
-            remember { PlanStore(FakePlanApi(), cache) },
+            remember {
+                val plans = FakePlanApi()
+                val placement =
+                    ApiJson.decodeFromString<PlanPlacementTest>(
+                        """{"kind":"learn","state":"start","estimatedMinutes":36,"attempt":null,"result":null}""",
+                    )
+                plans.shownPlan = plans.shownPlan.copy(placementTest = placement)
+                PlanStore(plans, cache)
+            },
             isGuest = false,
             rememberAppNavigator(),
         )
