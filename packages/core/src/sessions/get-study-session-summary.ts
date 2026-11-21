@@ -106,7 +106,7 @@ async function measureSummaryState({
   timeZone: string;
   userId: string;
 }): Promise<SessionState> {
-  const end = session.status === "completed" ? readSessionEnd(session.endSnapshot) : null;
+  const end = session.endedAt ? readSessionEnd(session.endSnapshot) : null;
 
   return (
     end ??

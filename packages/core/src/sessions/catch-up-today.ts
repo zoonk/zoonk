@@ -46,7 +46,11 @@ export async function catchUpToday({
       }
 
       const first = Math.max(-1, ...session.blocks.map((block) => block.position)) + 1;
-      const planned = lessons.map((lesson) => toLessonBlock(lesson, session.endedAt !== null));
+
+      const planned = lessons.map((lesson) => {
+        const block = toLessonBlock(lesson, false);
+        return { ...block, payload: { ...block.payload, ...(session.endedAt && { extra: true }) } };
+      });
 
       await transaction.studySessionBlock.createMany({
         data: planned.map((block, index) => ({

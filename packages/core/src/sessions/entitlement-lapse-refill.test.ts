@@ -5,9 +5,12 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getLearnerSummary } from "../learner/summary/get-learner-summary";
+import { loadStudyWeek } from "../progress/_utils/load-study-week";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { lapsedDayFixture, readLapsedDayState } from "./_test-utils/entitlement-lapse";
 import { SESSION_NOW } from "./_test-utils/session-goal";
+import { loadCompletionQueue } from "./_utils/completion-queue";
+import { settleSessionDay } from "./_utils/settle-session-day";
 import { toDayBlockRef } from "./day-block";
 import { openStudyDay } from "./open-study-day";
 
@@ -102,6 +105,67 @@ describe("entitlement lapse keeps a free way forward", () => {
 
     expect(replay.writes).toBe(0);
     await expect(readLapsedDayState(day.user.id)).resolves.toStrictEqual(after);
+  });
+
+  it("finishes the free replacement without counting the locked Plus challenge", async () => {
+    const day = await lapsedDayFixture();
+    await openStudyDay({ goalId: day.goal.id, shownDate: "2026-09-30", timeZone: "UTC" });
+
+    const replacement = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "learn", sessionId: day.sessionId },
+    });
+
+    await prisma.studySessionBlock.update({
+      data: { completedAt: SESSION_NOW, status: "completed" },
+      where: { id: replacement.id },
+    });
+
+    await settleSessionDay({ sessionId: day.sessionId, timeZone: "UTC", userId: day.user.id });
+
+    const queue = await loadCompletionQueue({
+      blockId: replacement.id,
+      sessionId: day.sessionId,
+      timeZone: "UTC",
+      userId: day.user.id,
+    });
+
+    expect(queue).toMatchObject({ sessionBar: { completed: 1, total: 1 }, sessionCompleted: true });
+    const today = await getTodayView({ goalId: day.goal.id, timeZone: "UTC" });
+
+    expect(today).toMatchObject({
+      status: "ready",
+      today: { session: { sessionBar: { completed: 1, total: 1 } } },
+    });
+
+    const week = await loadStudyWeek({
+      goal: day.goal,
+      localDate: new Date("2026-09-30T00:00:00Z"),
+    });
+
+    expect(week.days.find((entry) => entry.isToday)).toMatchObject({
+      completed: 1,
+      hitGoal: true,
+      total: 1,
+    });
+
+    await prisma.subscription.updateMany({
+      data: { status: "active" },
+      where: { referenceId: day.user.id },
+    });
+
+    const renewed = await getTodayView({ goalId: day.goal.id, timeZone: "UTC" });
+
+    if (renewed.status !== "ready") {
+      throw new Error("Expected renewed Today");
+    }
+
+    expect(renewed.today.session.blocks).toHaveLength(2);
+
+    expect(renewed.today.session.blocks.find((block) => block.kind === "checkpoint")).toMatchObject(
+      { status: "pending" },
+    );
+
+    expect(renewed.today.session.dayProgress.lead).toBe("complete");
   });
 
   it("two concurrent Opens append once with conservative freshness and a replay leaves state unchanged", async () => {

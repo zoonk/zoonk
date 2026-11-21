@@ -153,13 +153,15 @@ async function lookUpSchedule({
     }),
   };
 
+  const timeZone = getAnswerTimeZone({ goal });
+
   const days = Array.from({ length: SCHEDULE_DAYS }, (_, offset) => {
     const date = addDays(from, offset);
 
     return {
       date: toIsoDate(date),
       items: saved.items.flatMap((item) => {
-        const projected = projectItemOnDay({ date, item, timeZone: getAnswerTimeZone({ goal }) });
+        const projected = projectItemOnDay({ date, item, timeZone });
 
         return projected
           ? [{ ...item, minutes: projected.minutes ?? null, scheduledFor: projected.scheduledFor }]

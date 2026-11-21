@@ -2,7 +2,12 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import {
+  arePhaseChallengesRequired,
+  withoutLockedPhaseChallenges,
+} from "../../checkpoints/_utils/phase-challenge-access";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import {
@@ -48,7 +53,7 @@ async function loadWeekFacts({
 }) {
   const where = { goalId: goal.id, localDate: { gte: from, lt: until }, userId: goal.userId };
 
-  const [days, sessions, settings, counts] = await Promise.all([
+  const [days, sessions, settings, blocks, required] = await Promise.all([
     // Session rows repeat their blocks' seconds and answers.
     prisma.learningEvent.groupBy({
       _sum: { correctAnswers: true, incorrectAnswers: true, seconds: true },
@@ -60,13 +65,18 @@ async function loadWeekFacts({
       where,
     }),
     planSettings === undefined ? loadSavedSettings(goal.id) : Promise.resolve(planSettings),
-    prisma.studySessionBlock.groupBy({
-      _count: true,
-      by: ["sessionId", "status"],
+    prisma.studySessionBlock.findMany({
+      select: { kind: true, payload: true, sessionId: true, status: true },
       where: { ...DAY_BLOCK_WHERE, session: where, status: { not: "skipped" } },
+    }),
+    arePhaseChallengesRequired({
+      goalKind: goal.kind,
+      readSubscription: readActiveSubscription,
+      userId: goal.userId,
     }),
   ]);
 
+  const counts = withoutLockedPhaseChallenges({ blocks, phaseChallengesRequired: required });
   return { counts, days, sessions, settings };
 }
 
@@ -115,9 +125,9 @@ function buildStudyWeek({
       const counts = facts.counts.filter((count) => count.sessionId === session.id);
 
       return {
-        completed: counts.find((count) => count.status === "completed")?._count ?? 0,
+        completed: counts.filter((count) => count.status === "completed").length,
         date: session.localDate,
-        total: counts.reduce((sum, count) => sum + count._count, 0),
+        total: counts.length,
       };
     }),
     days: studied,
