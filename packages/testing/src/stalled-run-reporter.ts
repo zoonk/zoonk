@@ -1,18 +1,23 @@
-import { type Reporter, type TestCase } from "vitest/node";
+import { type Reporter, type TestCase, type TestModule } from "vitest/node";
 
-function nameOf(testCase: TestCase) {
-  return `${testCase.project.name} › ${testCase.module.relativeModuleId} › ${testCase.fullName}`;
+function moduleName(testModule: TestModule) {
+  return `${testModule.project.name} › ${testModule.relativeModuleId}`;
+}
+
+function caseName(testCase: TestCase) {
+  return `${moduleName(testCase.module)} › ${testCase.fullName}`;
 }
 
 /**
  * Ends a run with an error naming what was running once nothing has started or finished for
- * `quietMs`. A browser test's timeouts run in its page, and Chrome's network process answers
- * Vitest's heartbeat, so a page Chrome blocks never times out and the run waits forever
- * (https://github.com/vitest-dev/vitest/pull/10956).
+ * `quietMs`, unless a debugger is attached or awaited. A browser test's timeouts run in its page,
+ * and Chrome's network process answers Vitest's heartbeat, so a page Chrome blocks never times out
+ * and the run waits forever (https://github.com/vitest-dev/vitest/pull/10956).
  */
 export function stalledRunReporter({ quietMs }: { quietMs: number }): Reporter {
   const running = new Set<string>();
   const timer: { current?: NodeJS.Timeout } = {};
+  const debugging = { current: false };
 
   function fail() {
     const names = running.size > 0 ? [...running].join("\n  ") : "nothing reported as started";
@@ -27,7 +32,10 @@ export function stalledRunReporter({ quietMs }: { quietMs: number }): Reporter {
 
   function heard() {
     clearTimeout(timer.current);
-    timer.current = setTimeout(fail, quietMs).unref();
+
+    if (!debugging.current) {
+      timer.current = setTimeout(fail, quietMs).unref();
+    }
   }
 
   function started(name: string) {
@@ -43,12 +51,15 @@ export function stalledRunReporter({ quietMs }: { quietMs: number }): Reporter {
   return {
     onHookEnd: heard,
     onHookStart: heard,
-    onTestCaseReady: (testCase) => started(nameOf(testCase)),
-    onTestCaseResult: (testCase) => finished(nameOf(testCase)),
+    onInit: (vitest) => {
+      debugging.current = Boolean(vitest.config.inspector.enabled);
+    },
+    onTestCaseReady: (testCase) => started(caseName(testCase)),
+    onTestCaseResult: (testCase) => finished(caseName(testCase)),
     onTestModuleCollected: heard,
-    onTestModuleEnd: (testModule) => finished(testModule.relativeModuleId),
-    onTestModuleQueued: heard,
-    onTestModuleStart: (testModule) => started(testModule.relativeModuleId),
+    onTestModuleEnd: (testModule) => finished(moduleName(testModule)),
+    onTestModuleQueued: (testModule) => started(moduleName(testModule)),
+    onTestModuleStart: heard,
     onTestRunEnd: () => clearTimeout(timer.current),
     onTestRunStart: heard,
   };
