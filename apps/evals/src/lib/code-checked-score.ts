@@ -44,19 +44,22 @@ export async function scoreWithCodeChecks({
 }): Promise<TaskScoreResult> {
   const result = await check(output);
 
+  const legacyKeyLocators =
+    result.keySolveOutput === undefined ? result.keyFlawLocators : undefined;
+
   if (result.passed === 0) {
     return {
       ...createFixedScore({
         conclusion: `No part passed the code checks. ${result.problems.join(" ")}`,
         score: MIN_SCORE,
       }),
-      ...(result.keyFlawLocators ? { itemsScored: 0, keyFlaws: [] } : {}),
+      ...(legacyKeyLocators ? { itemsScored: 0, keyFlaws: [] } : {}),
     };
   }
 
   const judged = await generateScore({
     expectations: getJudgeExpectations(testCase),
-    keyFlawLocators: result.keyFlawLocators,
+    keyFlawLocators: legacyKeyLocators,
     output: result.judgedOutput,
     prompt: JSON.stringify(testCase.userInput, null, 2),
     scoreCategories,

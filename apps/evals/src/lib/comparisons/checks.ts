@@ -5,7 +5,7 @@ import z from "zod";
 import { runInOrder } from "../concurrency";
 import { checkImageEdges } from "../image-edges";
 import { solveAnswerKeys } from "../key-check";
-import { type RegisteredTask } from "../types";
+import { type CodeCheckResult, type RegisteredTask } from "../types";
 import { uncheckedAnswerKeys } from "./decision";
 import { hash } from "./identity";
 import { lessonBlockingProblems } from "./lesson-save-check";
@@ -24,6 +24,20 @@ function possibleZeroKeyRuns(comparison: Comparison) {
         check.problems.length === 0,
     ),
   );
+}
+
+async function solveKeys({
+  checks,
+  locators,
+  prompt,
+}: {
+  checks: CodeCheckResult;
+  locators: string[];
+  prompt: string;
+}) {
+  return locators.length === 0
+    ? { costUsd: 0, keyFlaws: [] }
+    : solveAnswerKeys({ locators, output: checks.keySolveOutput ?? checks.judgedOutput, prompt });
 }
 
 export async function checkRuns(task: RegisteredTask | null, comparison: Comparison) {
@@ -165,14 +179,11 @@ export async function checkRuns(task: RegisteredTask | null, comparison: Compari
         return;
       }
 
-      const { keyFlaws, costUsd } =
-        locators.length === 0
-          ? { costUsd: 0, keyFlaws: [] }
-          : await solveAnswerKeys({
-              locators,
-              output: checks.judgedOutput,
-              prompt: JSON.stringify(testCase),
-            });
+      const { keyFlaws, costUsd } = await solveKeys({
+        checks,
+        locators,
+        prompt: JSON.stringify(testCase),
+      });
 
       await writeRecord(`${prefix}-keys.json`, checkSchema, {
         ...base,

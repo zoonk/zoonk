@@ -171,6 +171,7 @@ export type CodeCheckResult = {
   problems: string[];
   judgedOutput: string;
   keyFlawLocators?: string[];
+  keySolveOutput?: string;
 };
 
 export type TaskCodeChecks<TExpected = unknown> = (

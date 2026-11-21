@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
@@ -138,6 +139,24 @@ function checkOrders({
   return {
     criteria: checks.flatMap((check) => check.criteria),
     judgedOutput: JSON.stringify({ sentences: judged }),
+    ...answerKeyEvidence((label) => ({
+      sentences: judged.flatMap((sentence, index) =>
+        sides.flatMap(({ side }) =>
+          sentence[side].length > 0
+            ? [
+                label(
+                  {
+                    acceptedOrders: sentence[side],
+                    sentence: side === "otherOrders" ? sentence.sentence : sentence.translation,
+                    translation: side === "otherOrders" ? sentence.translation : sentence.sentence,
+                  },
+                  `sentences[${index}].${side}`,
+                ),
+              ]
+            : [],
+        ),
+      ),
+    })),
     passed: checks.reduce((sum, check) => sum + check.passed, 0),
     problems: checks.flatMap((check) => check.problems),
     total: checks.reduce((sum, check) => sum + check.total, 0),

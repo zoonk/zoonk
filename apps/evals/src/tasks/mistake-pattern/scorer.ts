@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type FindMistakePatternSchema } from "@zoonk/ai/tasks/language/mistake-pattern";
@@ -80,6 +81,10 @@ function checkMistakePattern({
   return {
     criteria: [...new Set(failed.map((check) => check.criterion))],
     judgedOutput: output,
+    ...answerKeyEvidence((label) => ({
+      ...parsed,
+      drill: parsed.drill.map((question, index) => label(question, `drill[${index}]`)),
+    })),
     passed: checks.length - failed.length,
     problems: failed.map((check) => check.problem),
     total: checks.length,

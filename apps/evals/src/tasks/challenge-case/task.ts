@@ -12,6 +12,7 @@ import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-content";
 import { checkChallengePlan } from "@zoonk/core/library/challenges/plan-check";
 import { PLAIN_LANGUAGE_CRITERION, readCriteria } from "../plain-language-criterion";
+import { challengeAnswerKeys } from "./answer-keys";
 import { CHALLENGE_CASE_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
@@ -52,6 +53,7 @@ const checkOutput: TaskCodeChecks = ({ output, testCase }) => {
   return {
     blockingProblems: problems,
     criteria: ["decisions"],
+    ...(problems.length === 0 ? challengeAnswerKeys(written) : {}),
     judgedOutput: output,
     passed: problems.length === 0 ? 1 : 0,
     problems,
@@ -88,6 +90,7 @@ export const challengeCaseTask: Task<OptionalCountry<ChallengeCaseParams>, Writt
     reason: "Shared cases are reused across learners, and the case is the lesson's practice",
     waits: "Set by the lesson's wait: a learner, soon or later",
   },
+  requiresAnswerKeyCheck: true,
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: (value) => checkOutput({ output: value, testCase }),

@@ -45,6 +45,7 @@ export const mistakePatternTask: Task<
     reason: "Private and in the background; the cheaper model kept the rules true",
     waits: "Nobody: background work",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreMistakePattern,
   scoreCategories: MISTAKE_PATTERN_SCORE_CATEGORIES,
   testCases: TEST_CASES,

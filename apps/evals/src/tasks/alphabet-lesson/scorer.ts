@@ -6,6 +6,7 @@ import {
 } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { buildAlphabetLessonSteps } from "@zoonk/core/library/language/alphabet-lesson-steps";
 import { checkAlphabetLesson } from "@zoonk/core/library/language/alphabet-lesson-validator";
+import { alphabetAnswerKeys } from "./answer-keys";
 import { ALPHABET_LESSON_SCORE_CATEGORIES } from "./score-categories";
 
 function checkLesson({
@@ -25,6 +26,7 @@ function checkLesson({
       : ["The lesson did not contain any usable alphabet symbols."],
     criteria: ["accuracy"],
     judgedOutput: output,
+    ...alphabetAnswerKeys({ lesson, steps }),
     passed: checks.filter((check) => check.passed).length,
     problems: checks.flatMap((check) => (check.passed ? [] : [check.problem])),
     total: checks.length,

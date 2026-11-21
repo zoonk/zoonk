@@ -6,6 +6,7 @@ import {
   pickWholeLesson,
 } from "@zoonk/ai/tasks/language/alphabet-lesson";
 import { checkAlphabetFix } from "@zoonk/core/library/language/alphabet-lesson-validator";
+import { alphabetAnswerKeys } from "../alphabet-lesson/answer-keys";
 import { ALPHABET_LESSON_FIX_SCORE_CATEGORIES } from "./score-categories";
 import { type AlphabetLessonFixInput } from "./test-cases";
 
@@ -45,6 +46,7 @@ function checkFix({
     blockingProblems: problems,
     criteria: ["fixed"],
     judgedOutput: JSON.stringify(listFixedParts({ fixed, input }), null, 2),
+    ...alphabetAnswerKeys({ lesson: fixed }),
     passed: checks.filter((check) => check.passed).length,
     problems,
     total: checks.length,

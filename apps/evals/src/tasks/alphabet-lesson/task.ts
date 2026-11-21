@@ -36,6 +36,7 @@ export const alphabetLessonTask: Task<GenerateAlphabetLessonParams, AlphabetLess
     reason: "Written once per script and learner language and reused, so quality spreads its cost",
     waits: "A learner may wait when the lesson is opened before it's written",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreAlphabetLesson,
   scoreCategories: ALPHABET_LESSON_SCORE_CATEGORIES,
   testCases: TEST_CASES,

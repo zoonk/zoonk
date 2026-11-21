@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import {
@@ -133,6 +134,16 @@ function checkLessonSpecs({
       ...(expectedChecks.problems.length > 0 ? ["activitiesAndVisuals"] : []),
     ],
     judgedOutput: JSON.stringify({ lessons: passing.map((result) => result.lesson) }, null, 2),
+    ...answerKeyEvidence((label) => ({
+      lessons: lessons.map((lesson, lessonIndex) => ({
+        ...lesson,
+        screens: lesson.screens.map((screen, screenIndex) =>
+          QUESTION_KINDS.has(screen.kind)
+            ? label(screen, `lessons[${lessonIndex}].screens[${screenIndex}]`)
+            : screen,
+        ),
+      })),
+    })),
     passed:
       passing.length === 0
         ? 0

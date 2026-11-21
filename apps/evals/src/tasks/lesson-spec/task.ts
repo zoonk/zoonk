@@ -38,6 +38,7 @@ export const lessonSpecTask: Task<
     reason: "Every shared lesson is built from it",
     waits: "Prepared ahead in a workflow, before a learner needs it",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreLessonSpec,
   scoreCategories: LESSON_SPEC_SCORE_CATEGORIES,
   testCases: TEST_CASES,

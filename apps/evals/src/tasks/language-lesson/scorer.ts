@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { generateScore } from "@/lib/score";
 import { type TaskCodeChecks, type TaskScorer, getJudgeExpectations } from "@/lib/types";
@@ -57,9 +58,20 @@ export const checkLanguageLessonOutput: TaskCodeChecks = ({ output, testCase }) 
     return { blockingProblems: problems, judgedOutput: output, passed: 0, problems, total: 1 };
   }
 
-  return isSameLanguage(input)
+  const checks = isSameLanguage(input)
     ? checkDefinitions(lesson)
     : { judgedOutput: output, passed: 1, problems: [], total: 1 };
+
+  return {
+    ...checks,
+    ...answerKeyEvidence((label) => ({
+      ...cleaned,
+      practice: cleaned.practice.map((item, index) => label(item, `practice[${index}]`)),
+      sentences: cleaned.sentences.map((sentence, index) => label(sentence, `sentences[${index}]`)),
+      words: cleaned.words.map((word, index) => label(word, `words[${index}]`)),
+      writing: label(cleaned.writing, "writing"),
+    })),
+  };
 };
 
 export const scoreLanguageLesson: TaskScorer = ({ output, testCase }) => {

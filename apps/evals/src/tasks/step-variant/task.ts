@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task, type TaskCodeChecks } from "@/lib/types";
 import {
@@ -14,17 +15,24 @@ type StepVariantOutput = Awaited<ReturnType<typeof generateStepVariant>>["data"]
 const checkOutput: TaskCodeChecks = ({ output, testCase }) => {
   const { language, level, screen } = testCase.userInput as GenerateStepVariantParams;
 
+  const written = JSON.parse(output) as StepVariantOutput;
+
   const checked = toVariantContent({
     language,
     level,
     original: screen.content,
     stepKind: screen.kind,
-    written: JSON.parse(output) as StepVariantOutput,
+    written,
   });
 
   return {
     blockingProblems: checked.ok ? undefined : checked.problems,
     criteria: ["writing"],
+    ...(checked.ok
+      ? answerKeyEvidence((label) =>
+          written.kind === "check" ? label(written, "screen") : written,
+        )
+      : {}),
     judgedOutput: output,
     passed: Number(checked.ok),
     problems: checked.ok ? [] : checked.problems,
@@ -63,6 +71,7 @@ export const stepVariantTask: Task<
     reason: "Stored per screen and version and reused; the cheapest that scored well and fast",
     waits: "Prepared ahead in a workflow, before a learner needs it",
   },
+  requiresAnswerKeyCheck: true,
   scoreCategories: STEP_VARIANT_SCORE_CATEGORIES,
   testCases: TEST_CASES,
 };

@@ -4,11 +4,19 @@ type Check = Comparison["checks"][number];
 type Rules = NonNullable<Comparison["manifest"]["priorities"]["comparison"]>;
 
 const keyCriteria: Readonly<Record<string, string>> = {
+  "alphabet-lesson": "accuracy",
+  "challenge-case": "accuracy",
   "generate-items": "correctness",
+  "language-lesson": "accuracy",
+  "language-sentence-orders": "precision",
+  "lesson-writer": "accuracy",
   "level-test-bank": "answers",
   "past-questions": "keys",
   "placement-items": "correctness",
+  "quick-explanation": "accuracy",
   "statute-drills": "legalAccuracy",
+  "step-variant": "faithful",
+  "warm-up-cards": "accuracy",
   "write-item-set": "keys",
   "write-listening-set": "keys",
 };

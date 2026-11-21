@@ -41,6 +41,7 @@ export const lessonWriterTask: Task<
       "Shared lessons spread a pricier model's cost over many readers; personal lessons use a cheaper model",
     waits: "A learner waits when the lesson is opened live; otherwise prepared ahead",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreLessonWriter,
   scoreCategories: LESSON_WRITER_SCORE_CATEGORIES,
   testCases: TEST_CASES,

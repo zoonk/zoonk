@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task, type TaskCodeChecks } from "@/lib/types";
@@ -24,6 +25,9 @@ const checkOutput: TaskCodeChecks = ({ output }) => {
 
   return {
     blockingProblems: problems,
+    ...(parsed.success && problems.length === 0
+      ? answerKeyEvidence((label) => ({ ...parsed.data, check: label(parsed.data.check, "check") }))
+      : {}),
     judgedOutput: output,
     passed: problems.length === 0 ? 1 : 0,
     problems,
@@ -64,6 +68,7 @@ export const quickExplanationTask: Task<
       "The first screen must arrive fast; a pricier model scored a little higher at eight times the cost",
     waits: "A learner waits: the first screen should show in about 20 seconds",
   },
+  requiresAnswerKeyCheck: true,
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: (value) => checkOutput({ output: value, testCase }),

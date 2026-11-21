@@ -29,6 +29,7 @@ export const alphabetLessonFixTask: Task<AlphabetLessonFixInput, PublishedAlphab
     reason: "Fixes reach every learner of the script, and nobody waits on them",
     waits: "Nobody: background work",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreAlphabetLessonFix,
   scoreCategories: ALPHABET_LESSON_FIX_SCORE_CATEGORIES,
   testCases: TEST_CASES,

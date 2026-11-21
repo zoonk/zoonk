@@ -1,3 +1,4 @@
+import { answerKeyEvidence } from "@/lib/answer-key-evidence";
 import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { COMPARISON_TRADES } from "@/lib/comparisons/trade-defaults";
 import { type OptionalCountry, type Task, type TaskCodeChecks } from "@/lib/types";
@@ -35,6 +36,11 @@ const checkOutput: TaskCodeChecks = ({ output }) => {
   return {
     blockingProblems,
     criteria: ["format"],
+    ...(shown
+      ? answerKeyEvidence((label) => ({
+          cards: kept.map((card) => label(card, `cards[${Number(card.id) - 1}]`)),
+        }))
+      : {}),
     judgedOutput: JSON.stringify({ cards: kept }, null, 1),
     passed: shown ? kept.length : 0,
     problems: [
@@ -69,6 +75,7 @@ export const warmUpCardsTask: Task<OptionalCountry<WriteWarmUpCardsParams>, Warm
       "A deck is shared, and a checker drops doubtful cards; the chosen model is cheap and fast enough",
     waits: "A learner waits during the goal build",
   },
+  requiresAnswerKeyCheck: true,
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: (value) => checkOutput({ output: value, testCase }),

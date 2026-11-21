@@ -385,10 +385,8 @@ function assessEligibleChallenger({
     return assessment(open, hard);
   }
 
-  if (best.outcome === "switch" && unchecked.some((slot) => slot.side === "challenger")) {
-    return assessment(
-      result("insufficient evidence", "Some challenger answer keys are unchecked."),
-    );
+  if (best.outcome === "switch" && unchecked.length > 0) {
+    return assessment(result("insufficient evidence", "Some answer keys are unchecked."));
   }
 
   if (best.outcome !== worst.outcome) {

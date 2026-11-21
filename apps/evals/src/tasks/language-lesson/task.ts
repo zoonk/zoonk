@@ -39,6 +39,7 @@ export const languageLessonTask: Task<LanguageLessonParams, LanguageLessonConten
       "Shared lessons; the chosen model scored higher at a fraction of the pricier one's cost",
     waits: "Prepared ahead, or a learner waits when it's opened live",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreLanguageLesson,
   scoreCategories: LANGUAGE_LESSON_SCORE_CATEGORIES,
   testCases: TEST_CASES,

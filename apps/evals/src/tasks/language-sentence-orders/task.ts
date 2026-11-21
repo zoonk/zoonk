@@ -59,6 +59,7 @@ export const languageSentenceOrdersTask: Task<
     reason: "A wrong order marks a learner's wrong sentence right for every learner",
     waits: "Prepared ahead in a workflow, before a learner needs it",
   },
+  requiresAnswerKeyCheck: true,
   score: scoreLanguageSentenceOrders,
   scoreCategories: SENTENCE_ORDERS_SCORE_CATEGORIES,
   testCases: TEST_CASES,
