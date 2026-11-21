@@ -6,7 +6,7 @@
   "testout_continue": "100b49ed6044b4460e0759324f8caad37d1282c0b41a129f63263f892f650950",
   "testout_intro_detail": "9beb79e0450fe98793dfbeda6a5620ef37eee9224bbe362c0a3794be73eb9ad1",
   "testout_intro_title": "5aa8d14696cc085ec5904a5a135e0e4af249ba3aeb02349d9f2050cc6363459b",
-  "testout_lessons_back": "7d00c62e34e4c8d7c185c1d0aa82bf2064746326da83a66e715a0041afe39fe0",
+  "testout_lessons_back": "2ba033a0293f5c501a20a84ca0e41738c4d1096b2c7c406fbd0a161fd0b6997d",
   "testout_lessons_left": "99de0a8d350fe0b974896b0b0ea14e7bf39424f164ddadf4a57ebd7f97fd25d3",
   "testout_lessons_off": "ddd27dc381c2be353c699d6e13a8bf0bb103e8a75310985a06c9926d5ac004d8",
   "testout_not_passed": "c4cf2d7260ac893511a9e476aa0e2b84c99b9bef6d7d0bb8e1a8d861ccd17e81",
@@ -52,6 +52,10 @@
         <item quantity="many">Ton plan saute %d leçons que tu connais déjà.</item>
         <item quantity="other">Ton plan saute %d leçons que tu connais déjà.</item>
     </plurals>
-    <string name="testout_lessons_back">Les leçons sont de retour dans ton plan.</string>
+    <plurals name="testout_lessons_back">
+        <item quantity="one">La leçon est de retour dans ton plan.</item>
+        <item quantity="many">Les leçons sont de retour dans ton plan.</item>
+        <item quantity="other">Les leçons sont de retour dans ton plan.</item>
+    </plurals>
     <string name="testout_continue">Continuer</string>
 </resources>

@@ -6,7 +6,7 @@
   "testout_continue": "ce4e519ba5e8d78af76802649c2f8d887dee2ee7b9110a1032af68477f85f9c9",
   "testout_intro_detail": "981e5e8c1f2ae5f066e888c799324bfece1db81e7b407ae745f79606204d367a",
   "testout_intro_title": "7cf977a16c3e44adaecf5eed9e94826aa8ddbf71e5333bcbc787d76c804fba2b",
-  "testout_lessons_back": "73c6ca64dfb10f112104f1566df6e26846b902299e02f61a89e284be3db595a2",
+  "testout_lessons_back": "7f6f3fcd0f7f50bbe21835f940a52bdb65749ba2757b792ae907c4a999b10e54",
   "testout_lessons_left": "c8c3d0617f55116f8e7113afcae4a24d678007669f9e62dc170a0f6616dc3c41",
   "testout_lessons_off": "6f8ae41a0cb0170f383609603b209646f9e5afb04605f42f91a851cc18db15f8",
   "testout_not_passed": "a93df887e359d38c304b54ccde85521a26cf01f02c4a27fdde30bf1fa47b2729",
@@ -52,6 +52,10 @@
         <item quantity="many">Tu plan se salta %d lecciones que ya conoces.</item>
         <item quantity="other">Tu plan se salta %d lecciones que ya conoces.</item>
     </plurals>
-    <string name="testout_lessons_back">Las lecciones están de nuevo en tu plan.</string>
+    <plurals name="testout_lessons_back">
+        <item quantity="one">La lección volvió a tu plan.</item>
+        <item quantity="many">Las lecciones volvieron a tu plan.</item>
+        <item quantity="other">Las lecciones volvieron a tu plan.</item>
+    </plurals>
     <string name="testout_continue">Continuar</string>
 </resources>

@@ -112,7 +112,7 @@
   "onboarding_join_waitlist": "97afc30d40883631237d29351eadae743fab88eda4ed8b766fceb9d59cb30a5d",
   "onboarding_language_test_audio_on_its_way": "2e7959aa25658ad9b3849082d59334ae55b4c4f2689712dfaa048e800dbf1956",
   "onboarding_language_test_build_plan": "9abd3fba9f02c6d328554825acd240f1c6d5d25facbe51c65eb1729b556ac7bf",
-  "onboarding_language_test_description": "b0d76f6dc5839f0b925a9fb79cc16252f0d447da3fc74b241547affe651c8a0b",
+  "onboarding_language_test_description": "719cb735d5b1b4c93c49883fcb69c9556480e95eb10a9bd2c861c5870e97266b",
   "onboarding_language_test_did_not_understand": "d439c6878e73b9e51ca6d93d2bf08643b14f346a001c1120a6f14ed234233197",
   "onboarding_language_test_done_description": "fc0ae32b3f33218a9f40344eca1852b07fc3cc2f0d56e48e4cf0c94bf8cd8d28",
   "onboarding_language_test_done_title": "f039d77cac459e0720b907b64811cc036885a18f92d73ef16492287e115127a5",
@@ -125,10 +125,8 @@
   "onboarding_language_test_preparing_description": "3264888fd9fbb9ee945e527a3f5613d9d623bc85a640dccd7dfb039eb9454f3e",
   "onboarding_language_test_preparing_title": "d0daeba8170246a4dfaf4e75d64f693072a7ede984187c2ac36c9ebaa937126d",
   "onboarding_language_test_reading": "c077d2b97434eafda710e3c909b6ec95172d965c4192eb053e549fe7949624f9",
-  "onboarding_language_test_say_it": "dd4282e4ab3d88cb05674e686a687f7a54398882bee59afd55e098eff91e2cb9",
   "onboarding_language_test_skip": "047d1c5e23328805c6889eb13a119f7192920515ac5d0b2cae14d58b50228e36",
   "onboarding_language_test_skip_note": "22208729ad6515eea7a763c3ea5b4c0aedd3717de7fd863794cff21d2473f748",
-  "onboarding_language_test_skip_part": "57ad51fef57e906679fcc2737f001519a66b633962fc5da52ea7dfc3b5e4f261",
   "onboarding_language_test_skip_question": "09f3cd807662109852f53d31b7b354e3cb68a57b055e35e03d262c2c0c85b923",
   "onboarding_language_test_speaking": "00907f2b68c5fa08834f29dd191f65a64144ef228b20924683b88c46c747789f",
   "onboarding_language_test_title": "597d7ec334b498da4535fdef75fe7f89d994608fc0f6dae62c0511f1c6d5e284",
@@ -188,7 +186,6 @@
   "onboarding_placement_waiting_material": "bb3a180eb5132d02129e83bd79dded77f5ece664659102af55909235bf256b97",
   "onboarding_placement_waiting_time": "d2eeec8910a8157e0ac8011ab23fc37ad6bed253f01dea1613bdf4481e2125a7",
   "onboarding_placement_wrong": "aa91fc0e46c88414d4523d3a0a0807e1c49bd430276bd4761e8bd1bbd99d3d7f",
-  "onboarding_placement_your_answer": "a6c1b0799dc28acf8e1bb68b80ed795d2fa0e44fda04a8feaa1004f1e97ddbc7",
   "onboarding_plan_answers_saved": "c80211b5bc65effe895b97724d68f4604805b8569ec9941072b45bcee12abe1d",
   "onboarding_plan_not_started": "d793cb8f05f781891dacef9e273bbe2271d68bf884fa23d0d4fb7e67aac23cdd",
   "onboarding_plan_ready_goal": "f102cc208bcc4286c01e9e85426397e06478400cc5655a8c1f75a89806290c0d",
@@ -577,7 +574,6 @@
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">Domanda %1$d</string>
     <string name="onboarding_placement_progress">Domande a cui hai risposto</string>
-    <string name="onboarding_placement_your_answer">La tua risposta, con parole tue</string>
     <string name="onboarding_placement_dont_know">Non lo so ancora</string>
     <string name="onboarding_placement_confirm">Conferma</string>
     <string name="onboarding_placement_stop">Interrompi e usa le mie risposte</string>
@@ -591,11 +587,11 @@
     <string name="onboarding_placement_wrong">Errato</string>
     <string name="onboarding_placement_see_plan">Vedi il piano</string>
     <string name="onboarding_placement_unavailable_title">Nei primi giorni vedremo cosa sai già</string>
-    <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
+    <!-- The level test: a language goal's placement, in reading and listening. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">Vediamo il tuo livello in %1$s</string>
     <!-- %1$s is how long the test takes, such as "3 min". -->
-    <string name="onboarding_language_test_description">In circa %1$s leggi, ascolti e dici una frase ad alta voce, così il piano parte dal tuo livello.</string>
+    <string name="onboarding_language_test_description">Circa %1$s di lettura e ascolto, così il tuo piano parte dal tuo livello.</string>
     <string name="onboarding_language_test_new_alphabet">Non conosci ancora l’alfabeto? Salta il test. La tua prima sessione inizia con una breve lezione per imparare a leggerlo.</string>
     <string name="onboarding_language_test_skip">Salta il test</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
@@ -614,8 +610,6 @@
     <string name="onboarding_language_test_play_again">Riascolta il messaggio</string>
     <string name="onboarding_language_test_message_loading">Stiamo preparando il messaggio. La prima volta può volerci qualche secondo.</string>
     <string name="onboarding_language_test_message">Hai ricevuto un messaggio vocale. Ascolta e rispondi.</string>
-    <string name="onboarding_language_test_say_it">Dillo ad alta voce</string>
-    <string name="onboarding_language_test_skip_part">Salta questa parte</string>
     <string name="onboarding_language_test_done_title">Il tuo livello di %1$s</string>
     <string name="onboarding_language_test_done_description">Una stima basata sul test. Diventa più precisa ogni settimana.</string>
     <string name="onboarding_language_test_build_plan">Crea il mio piano</string>

@@ -145,9 +145,10 @@
   "plan_change_relearn_topics": "71664c4a2782e8e6e8fbc8441ca8256025d19ca5de24dc0304745b2d02e3dfb2",
   "plan_change_rest_day": "f317e02782c07836c43e8be036b9177760b0c8805a3b36cf64d111b80b4fa3aa",
   "plan_change_sentence": "105e2d47ce84e3ee00f9885871fcfd05b32698b71e6b4cec7ee0fd610f07c168",
+  "plan_change_skipped_and_back": "02c5af96d5b9f60c0193de08fddc1e3249ced57b4870a5588a52b0e200db05c5",
   "plan_change_start_past_basics": "5e3495226b7c306ed2ebf5ea340c682b1a089492fe1bff6f0dfa0d5277c5c49f",
   "plan_change_such_as": "a76b8574b040f7bcf1f12333a35476176c391a025a83c90a31f40a2053a7cebf",
-  "plan_change_tested_out": "6d229f81aeed32ae7c570b6eb2ba21b3a9063d73942f14a50c0fcfbf811a1b0d",
+  "plan_change_tested_out": "c464f626e6876ddb8f5f52306a9c80e16de271aa7d632c120d24884b5250835a",
   "plan_change_today_changed": "6692392f3fd4d557ca22c27079350e329034754fbf3591951a41a1bfa8886ffa",
   "plan_change_today_unchanged": "d014ecc02f25dc81b5170475ba18988fbea147defb960e612e5dd6117b3d809b",
   "plan_change_tool_have": "7b88ee324d92bd90d4968f1a2204d6b6049701a05f758b64387b838b608716f9",
@@ -912,9 +913,11 @@
     <string name="plan_system_phone">Nur Smartphone</string>
     <string name="plan_change_missed_days">Dein Plan wurde angepasst, damit du die verpassten Tage nachholen kannst.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Du hast den Test bestanden, deshalb überspringt dein Plan %d Lektion.</item>
-        <item quantity="other">Du hast den Test bestanden, deshalb überspringt dein Plan %d Lektionen.</item>
+        <item quantity="one">Übersprungen: %d Lektion, die du schon kennst.</item>
+        <item quantity="other">Übersprungen: %d Lektionen, die du schon kennst.</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="one">%1$s steht wieder in deinem Plan: Du hast dazu eine Frage falsch beantwortet.</item>
         <item quantity="other">%1$s stehen wieder in deinem Plan: Du hast dazu Fragen falsch beantwortet.</item>

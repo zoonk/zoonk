@@ -145,9 +145,10 @@
   "plan_change_relearn_topics": "eab9cf13db763e7f77ad322b1d7bd9d894ef32c457632b6f0a870d249d693e67",
   "plan_change_rest_day": "625ac75211298cc321540e5b13765775010b016bc36934516ed4321c33ec3ad2",
   "plan_change_sentence": "b2316a4901ee569ce05cb8d7aaced94e74289f6eeb3ceb62d3a05efc1910f2d7",
+  "plan_change_skipped_and_back": "b3fdb3e346392e9e572833595b795ec77e5ec8ce8f2044922b8e703a6d143b50",
   "plan_change_start_past_basics": "8dd0b10f6157533140115bc55f2bacc0fdc16b71504dfe1313f4e274fc6b2df9",
   "plan_change_such_as": "895b855c1416b9b1642e486247dfe6414680c182cfd0eec4317c07ea1e0ebbe8",
-  "plan_change_tested_out": "a072d4ae66ffa793fae7a22c6f20817aaa0868bd2ae8449f1a6fa1fa123748ab",
+  "plan_change_tested_out": "9a2a2b4ea014bc7594625dee1b232d42299e58a2bd170d7271bd7570f841ec8a",
   "plan_change_today_changed": "b7a59fc9ffa82eb5ba1884bb8e82dea629cc3562dc400f3382984038402f75b9",
   "plan_change_today_unchanged": "61a79127344d7072b1c5367c0130cd955e4b365f100b4e6ae11eab876c451d5c",
   "plan_change_tool_have": "595b77f918ee42f5c051bd887fb161bbed694abb5af113e04ed06423b3940fc6",
@@ -943,10 +944,12 @@
     <string name="plan_system_phone">Solo celular</string>
     <string name="plan_change_missed_days">Tu plan cambió para compensar los días que no estudiaste.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Aprobaste la prueba, así que tu plan se salta %d lección.</item>
-        <item quantity="many">Aprobaste la prueba, así que tu plan se salta %d lecciones.</item>
-        <item quantity="other">Aprobaste la prueba, así que tu plan se salta %d lecciones.</item>
+        <item quantity="one">Saltaste %d lección que ya conocías.</item>
+        <item quantity="many">Saltaste %d lecciones que ya conocías.</item>
+        <item quantity="other">Saltaste %d lecciones que ya conocías.</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="one">%1$s vuelve a tu plan: te equivocaste en una pregunta sobre ese tema.</item>
         <item quantity="many">%1$s vuelven a tu plan: te equivocaste en preguntas sobre esos temas.</item>

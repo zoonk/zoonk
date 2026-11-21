@@ -6,7 +6,7 @@
   "testout_continue": "c3b992b176a0ec7791648c9731d64162e14bbebe276d1aa483905a6750b89c87",
   "testout_intro_detail": "28a012e9e245cf79fdadca11455d87999dde41f2feab9d6c3aa9ac70548ff312",
   "testout_intro_title": "52fe104bac79127c632c7fcc7d0a613609c7498e05dc606dba3124f9bab5f12b",
-  "testout_lessons_back": "8bfbfb37b4e96be7395d893df3fb4e8355efccbd1acf73531850429dd54cb89a",
+  "testout_lessons_back": "450c0e1e6cad9c5f016e85c450a54e85184b8797e880e8cd596c03f787e28a59",
   "testout_lessons_left": "48d3eff3b2c10defb4cea2491cda2e80c3b7d1358ceb484e4372c27da2e0e8cc",
   "testout_lessons_off": "4c510e1d5f4b6914022f9ebf1937322c5adab2d987c212d9c6daf1c6ad9a9b45",
   "testout_not_passed": "ef9a262bb4eaf5cfc14c1be74ada7ac61f98e0e369363a63cc20ff2311902531",
@@ -52,6 +52,10 @@
         <item quantity="many">Seu plano pula %d aulas sobre o que você já sabe.</item>
         <item quantity="other">Seu plano pula %d aulas sobre o que você já sabe.</item>
     </plurals>
-    <string name="testout_lessons_back">As aulas estão de volta ao seu plano.</string>
+    <plurals name="testout_lessons_back">
+        <item quantity="one">A aula voltou para o seu plano.</item>
+        <item quantity="many">As aulas voltaram para o seu plano.</item>
+        <item quantity="other">As aulas voltaram para o seu plano.</item>
+    </plurals>
     <string name="testout_continue">Continuar</string>
 </resources>

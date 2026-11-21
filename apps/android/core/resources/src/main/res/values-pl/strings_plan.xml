@@ -145,9 +145,10 @@
   "plan_change_relearn_topics": "e91163aa4f76261fc9bfb6ad9af4dc635ee7a8c9c2d5e4d8d0b524faac6aeecf",
   "plan_change_rest_day": "1355baa0001112fe7a65b59023337fe9512483c16fcd72b25f0d4f9d211aabe8",
   "plan_change_sentence": "61cda4e01dedec2dfe9935e134deb44f4b26ebd160d41b6f11d2c431c738b01d",
+  "plan_change_skipped_and_back": "2781a570a0a9938692d0e54b397bac523952091a74328d0b2e96c919b732da8c",
   "plan_change_start_past_basics": "b19195af72907d93577929622956fc0fdd7f7aeca04375a947177103f01f85aa",
   "plan_change_such_as": "2ec187ca5e618216602c5e4452b0b5267ceceb39aafe6aad74f3e453929ab843",
-  "plan_change_tested_out": "7c8451e1feeb00a763d265642b895757c4ada337c1e6b4c031e2dccef8aab3b4",
+  "plan_change_tested_out": "c17f2456f4277fbe0a42bcdbd036e9992d30c5ed99f1287cf7415c685558d325",
   "plan_change_today_changed": "25db008f4fdb8da8ee7e88c9799de0f45ba3bcad14c9837ec4f4f8974270dc2d",
   "plan_change_today_unchanged": "e8cf5021856ab45acd485e988272145417ff02a88f0bc1e2a6f8f7b75765ec4f",
   "plan_change_tool_have": "2b8f003a660d2778b3fdfa3518249798aabfb4c74cef7bd873bb74537ce8cc67",
@@ -974,11 +975,13 @@
     <string name="plan_system_phone">Tylko telefon</string>
     <string name="plan_change_missed_days">Twój plan został zmieniony, żeby nadrobić opuszczone dni.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Test zaliczony, więc twój plan pomija %d lekcję.</item>
-        <item quantity="few">Test zaliczony, więc twój plan pomija %d lekcje.</item>
-        <item quantity="many">Test zaliczony, więc twój plan pomija %d lekcji.</item>
-        <item quantity="other">Test zaliczony, więc twój plan pomija %d lekcji.</item>
+        <item quantity="one">Pominięto %d znaną ci lekcję.</item>
+        <item quantity="few">Pominięto %d lekcje, które już znasz.</item>
+        <item quantity="many">Pominięto %d lekcji, które już znasz.</item>
+        <item quantity="other">Pominięto %d lekcji, które były ci już znane.</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="one">Po błędnej odpowiedzi na pytanie do twojego planu wraca temat: %1$s.</item>
         <item quantity="few">Po błędnych odpowiedziach na pytania do twojego planu wracają tematy: %1$s.</item>

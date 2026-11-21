@@ -145,9 +145,10 @@
   "plan_change_relearn_topics": "ecd2e612a3d27112a20f7bb9a4bad1bf5f7d634923bab2f8adfa59747e6ae32a",
   "plan_change_rest_day": "893f0ee7656030fdd47a8c8dc852996fc20acd2d2576262f31e3e801cf45b61f",
   "plan_change_sentence": "6b0c234aa110195cb914064d535e64ddda04d69613e76168df8a874774109c90",
+  "plan_change_skipped_and_back": "b93efbefda6cc06cf751ec43da3df46c6878ef7b13e56e151b381bc3a5b29d87",
   "plan_change_start_past_basics": "92453e8ba8f703b3e56840a5853a409514d2b36fd7d1229b13753b45297e7a32",
   "plan_change_such_as": "8425ae7bfb7cbd7947a3604de64ca6057e63081b2d02357330a74c8b8dfb257f",
-  "plan_change_tested_out": "61080334be469bbc7d506438d5d745476f473b0b433932f10611f166e42f407e",
+  "plan_change_tested_out": "620e2f949bad6e7cb30c3b5f5e24d23c74f411c3a96d8179c28ab6710774bd2d",
   "plan_change_today_changed": "dcc4261111de660969619e2eca3b07a03f1943a5a539458418c6b48ea2aded7f",
   "plan_change_today_unchanged": "468c66957d4406210cd45afedbd78d93430b012d86369c9c0d633f2d0f6def75",
   "plan_change_tool_have": "ec171c87623dd983ebd1c64e4e94abc282ff745db458ab3a3bfe3c3094940463",
@@ -881,8 +882,10 @@
     <string name="plan_system_phone">휴대폰만</string>
     <string name="plan_change_missed_days">놓친 날짜를 만회할 수 있도록 계획이 변경됐어요.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="other">테스트를 통과해서 계획에서 레슨 %d개를 건너뛰어요.</item>
+        <item quantity="other">이미 아는 레슨 %d개 건너뜀</item>
     </plurals>
+    <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
+    <string name="plan_change_skipped_and_back">%1$s %2$s</string>
     <plurals name="plan_change_relearn_topics">
         <item quantity="other">틀린 문제가 있어 %1$s을(를) 계획에 다시 포함해요.</item>
     </plurals>
