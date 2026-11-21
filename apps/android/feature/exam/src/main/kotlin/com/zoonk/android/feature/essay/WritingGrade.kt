@@ -69,16 +69,16 @@ private fun WritingGrade.isComplete(): Boolean =
     points?.let { points -> points.zeroReason == null && points.rows.all { (it.range?.low ?: it.earned) >= it.max } }
         ?: criteria.all { it.level == WritingResultOutputOneOfCriteriaInner.Level.COMPLETE }
 
+/** The answer broke a rule that scores it zero, whatever its criteria say. */
+val WritingGrade.zeroed: Boolean
+    get() = nextStep?.kind == WritingResultOutputOneOfNextStep.Kind.ZERO || points?.zeroReason != null
+
 /**
  * The one thing to work on next. "Nothing left" only when every criterion is complete and every
  * line is read; a zeroed answer's step is the rule it broke; text past the limit is the step when
  * nothing else is. A quote shows only when it's in [text], where it's underlined. Older saved
  * answers have no `kind` or `title`, so the same rules read them.
  */
-/** The answer broke a rule that scores it zero, whatever its criteria say. */
-val WritingGrade.zeroed: Boolean
-    get() = nextStep?.kind == WritingResultOutputOneOfNextStep.Kind.ZERO || points?.zeroReason != null
-
 fun WritingGrade.nextStep(text: String): NextStep {
     val step = nextStep
     if (zeroed) {
