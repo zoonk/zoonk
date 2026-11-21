@@ -1,5 +1,5 @@
 import { challengeChartCaseFixture } from "@zoonk/testing/fixtures/challenge-chart-case";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
@@ -93,6 +93,38 @@ describe("challenge charts", () => {
         await expect
           .poll(() => next.element().getBoundingClientRect().top)
           .toBeLessThan(window.innerHeight);
+      }),
+    );
+  });
+
+  it("brings the next decision into view without moving the page sideways at a large text size", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport({ height: 640, width: 360 }, async () => {
+        renderChartCase();
+        await press("Enter");
+
+        await expect.element(page.getByRole("figure", { name: "Detector scan" })).toBeVisible();
+        await page.getByRole("radio", { name: "Scan again in finer steps from B to D" }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+
+        const next = page.getByRole("figure", { name: "Finer scan, B to D" });
+        await expect.element(next).toBeVisible();
+
+        await expect
+          .poll(() => next.element().getBoundingClientRect().top)
+          .toBeLessThan(window.innerHeight);
+
+        const scrolledSideways = [...document.querySelectorAll<HTMLElement>("html, html *")]
+          .filter((element) => element.scrollLeft !== 0)
+          .map((element) => element.dataset.slot ?? element.tagName);
+
+        expect(scrolledSideways).toStrictEqual([]);
       }),
     );
   });

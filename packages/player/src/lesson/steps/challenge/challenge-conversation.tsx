@@ -13,6 +13,7 @@ import {
 import { PlayerReadScene } from "../../../components/player-read-scene";
 import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type ChallengeProgress } from "../../_utils/challenge-progress";
+import { LESSON_CONTENT_ID } from "../../_utils/lesson-focus";
 import { type StepOf } from "../lesson-step-view-props";
 import { ChallengeEffectsView, ChallengeMeters } from "./challenge-meters";
 import { ChallengeMessageView, ChallengePickView, ChallengeTimeJump } from "./challenge-parts";
@@ -111,6 +112,38 @@ function ChallengeDecision({
   );
 }
 
+function pixels(value: string): number {
+  return Number(value.replace("px", ""));
+}
+
+/**
+ * `scrollIntoView({ block: "nearest" })` on the lesson's own scroller only: the browser's version
+ * also scrolls every ancestor sideways, which slides the whole player when anything in it is wider
+ * than the screen.
+ */
+function scrollNearest(element: HTMLElement): void {
+  const scroller = element.closest(`#${LESSON_CONTENT_ID}`);
+
+  if (!scroller) {
+    return;
+  }
+
+  const style = getComputedStyle(element);
+  const box = element.getBoundingClientRect();
+  const view = scroller.getBoundingClientRect();
+  const top = box.top - pixels(style.scrollMarginTop) - view.top;
+  const bottom = box.bottom + pixels(style.scrollMarginBottom) - view.top - scroller.clientHeight;
+
+  if ((top >= 0 && bottom <= 0) || (top < 0 && bottom > 0)) {
+    return;
+  }
+
+  scroller.scrollBy({
+    behavior: getScrollBehavior(),
+    top: top < 0 ? Math.max(top, bottom) : Math.min(top, bottom),
+  });
+}
+
 /** A decision's chart comes into view with the decision when both fit, and from its top when not. */
 function useNewestInView(count: number) {
   const decisionRef = useRef<HTMLDivElement>(null);
@@ -130,7 +163,7 @@ function useNewestInView(count: number) {
       visual.style.scrollMarginBottom = `calc(${String(below)}px + ${margin})`;
     }
 
-    (visual ?? decision).scrollIntoView({ behavior: getScrollBehavior(), block: "nearest" });
+    scrollNearest(visual ?? decision);
   }, [count]);
 
   return { decisionRef, visualRef };
