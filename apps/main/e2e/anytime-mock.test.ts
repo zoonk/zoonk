@@ -252,8 +252,7 @@ test.describe("Mocks whenever the learner wants", () => {
     const startBox = await start.boundingBox();
     await start.click();
 
-    await expect(page.getByText("This mock exam is being prepared")).toBeVisible();
-    await expect(page.getByText("Come back to this page to start it.")).toBeVisible();
+    await expect(page.getByText("Getting this mock exam ready")).toBeVisible();
     await expect(keepStudying).toHaveAttribute("href", /\/today$/u);
     await expect(start).toBeHidden();
 
@@ -269,7 +268,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await exam.getByText("Half the exam", { exact: true }).click();
     await expect(start).toBeEnabled();
-    await expect(page.getByText("This mock exam is being prepared")).toBeHidden();
+    await expect(page.getByText("Getting this mock exam ready")).toBeHidden();
 
     await exam.getByText("The full exam", { exact: true }).click();
     await expect(keepStudying).toBeVisible();
