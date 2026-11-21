@@ -301,15 +301,6 @@ export const EXCEPTIONS: AlignmentException[] = [
   },
   {
     configuration: "laptop keys pt",
-    issue: 2952,
-    piece: "page",
-    reason:
-      "The capture reads the document's scroll, not the task's own scroller, so the bar seems to cover a check's last row, on main too",
-    relation: "pinned",
-    scenario: "/pt/learn/5b3c5a16-014a-8708-8542-85118dccfd75",
-  },
-  {
-    configuration: "laptop keys pt",
     issue: 2843,
     piece: "page",
     reason: "The buddy's suggestion button leaves a word alone on its last line, on main too",
