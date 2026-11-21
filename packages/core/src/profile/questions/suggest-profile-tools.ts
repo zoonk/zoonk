@@ -54,6 +54,7 @@ export async function writeProfileToolSuggestions(task: ToolsTask): Promise<stri
   }
 
   const { data } = await suggestProfileTools({
+    analytics: { contentScope: "personal", distinctId: userId },
     country: state.profile?.homeCountry ?? null,
     goals: goals.map(({ title }) => title),
     job: work.answer.job,

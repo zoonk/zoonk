@@ -48,6 +48,7 @@ describe("the profile tools workflow", () => {
     await backgroundTaskWorkflow(task);
 
     expect(vi.mocked(suggestProfileTools)).toHaveBeenCalledExactlyOnceWith({
+      analytics: { contentScope: "personal", distinctId: userId },
       country: "BR",
       goals: ["Learn triage"],
       job: "nurse",
