@@ -96,8 +96,15 @@ test.describe("Written answer drafts", () => {
       await expect(secondField).toHaveValue("Stale device draft");
       expect(await savedDraftText(day.blockId)).toBe("New server draft");
 
-      // "Keep this one" saves what's typed here over the other device's draft.
-      await dialog.getByRole("button", { name: "Keep this one" }).click();
+      const keep = dialog.getByRole("button", { name: "Keep this one" });
+      await expect(keep).toBeFocused();
+      await second.keyboard.press("Escape");
+      await expect(dialog).toBeVisible();
+      await expect(keep).toBeFocused();
+      await expect(secondField).toHaveValue("Stale device draft");
+      expect(await savedDraftText(day.blockId)).toBe("New server draft");
+
+      await second.keyboard.press("Enter");
       await expect.poll(() => savedDraftText(day.blockId)).toBe("Stale device draft");
 
       // The first device's next save finds it, asks, and takes it on "Use the other".

@@ -102,6 +102,8 @@ test.describe("Written exam practice", () => {
         page.getByText("Minimum to pass the written test: 50% of the points"),
       ).toBeVisible();
 
+      await expect(page.getByText("17–19", { exact: true })).toBeVisible();
+
       // Two signed ends joined by a dash would read as a subtraction.
       await expect(page.getByText("−0.3 to −0.4", { exact: true })).toBeVisible();
 
@@ -174,9 +176,11 @@ test.describe("Written exam practice", () => {
       await page.getByRole("button", { name: "Start" }).click();
       await expect(page).toHaveURL(/\/mock\/[0-9a-f-]{36}/u);
       await expect(page.getByText(/^0 of (?<lines>30|60) lines$/u)).toBeVisible();
+      await expect(page.getByText("1 of 2", { exact: true })).toBeVisible();
       await expect(page.getByText("Question 1 of 2", { exact: true })).toBeVisible();
 
       await page.getByRole("button", { exact: true, name: "Question 2" }).first().click();
+      await expect(page.getByText("2 of 2", { exact: true })).toBeVisible();
       await expect(page.getByText("Question 2 of 2", { exact: true })).toBeVisible();
     } finally {
       await Promise.all([waiting.context().close(), page.context().close()]);

@@ -18,7 +18,7 @@ import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
-import { useMockTitle } from "./mock-labels";
+import { isNumberedMockQuestion, useMockTitle } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
 import { MockQuestionCard, MockRecording, useQuestionPlace } from "./mock-question";
 import { useSectionCounts } from "./mock-section-counts";
@@ -31,6 +31,10 @@ function RunnerProgress({ question, total }: { question: MockQuestion; total: nu
   const counts = useSectionCounts();
   const title = useMockTitle();
   const place = useQuestionPlace({ question, total });
+  const writtenOnly = runner.view.shape?.kind === "written";
+
+  const numbered =
+    question.format !== "essay" || (writtenOnly && isNumberedMockQuestion({ question, total }));
 
   return (
     <>
@@ -54,11 +58,13 @@ function RunnerProgress({ question, total }: { question: MockQuestion; total: nu
         </Eyebrow>
         <span className="flex shrink-0 items-center gap-3 font-mono text-xs tabular-nums">
           <ItemClock />
-          <span aria-hidden="true">
-            {question.format === "essay"
-              ? t("Written part")
-              : t("{number} of {total}", { number: String(question.number), total: String(total) })}
-          </span>
+          {numbered ? (
+            <span aria-hidden="true">
+              {t("{number} of {total}", { number: String(question.number), total: String(total) })}
+            </span>
+          ) : (
+            !writtenOnly && <span aria-hidden="true">{t("Written part")}</span>
+          )}
         </span>
         <span className="sr-only">{place}</span>
       </div>
@@ -127,7 +133,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   return (
     <>
       {/* In the bar, so the numbers stay in one place whatever a question's length. */}
-      <MockQuestionMap className="with-aside:hidden w-full" />
+      <MockQuestionMap className="with-aside:hidden -mx-0.5 self-stretch" />
       <QuestionActions className="w-full lg:w-auto">
         <FlagButton />
         {isLastQuestion ? (

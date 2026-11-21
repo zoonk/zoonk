@@ -17,6 +17,7 @@ import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
+import { TaskHeaderAction } from "../_components/task-header";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { countsTowardMockProgress } from "./mock-answer-progress";
 import { SectionClock } from "./mock-clock";
@@ -272,7 +273,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
     <Drawer onOpenChange={setOpen} open={open}>
       <DrawerTrigger
         aria-label={t("Answer sheet")}
-        render={<Button className="with-aside:hidden shrink-0" size="sm" variant="outline" />}
+        render={<TaskHeaderAction className="with-aside:hidden" />}
       >
         {t({
           description:
