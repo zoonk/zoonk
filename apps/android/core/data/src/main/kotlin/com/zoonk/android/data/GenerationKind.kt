@@ -338,7 +338,6 @@ enum class GenerationKind(
                 "writeChallengeQuestions" to StepPlace.Phase("questions"),
             ),
     ),
-    /** Main's `mockPaper`: the run writing the paper of a mock the learner waits to start, with main's durations. */
     MockPaper(
         label = R.string.mock_preparing_title,
         phases =

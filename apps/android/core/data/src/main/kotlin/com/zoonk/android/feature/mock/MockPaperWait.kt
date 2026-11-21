@@ -32,7 +32,6 @@ class MockPaperWait(
 
     fun stop() = follower.stop()
 
-    /** The follower treats a read that throws as a run still starting. */
     private suspend fun readId(): String? {
         val writing = read()
         if (writing?.status == MockWriting.Status.NONE) {

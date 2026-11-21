@@ -19,7 +19,6 @@ import java.util.UUID
 class MockChooserViewModel(
     private val goalId: UUID,
     private val starter: MockStarter,
-    /** The wait on the paper of the mock the learner asked for, while it's being prepared. */
     val paperWait: (CoroutineScope) -> MockPaperWait,
     private val refused: suspend () -> Unit = {},
 ) : ViewModel() {
