@@ -48,6 +48,7 @@ function promptContent({
       keySource: "practiceKey",
       lines,
       minimumWords: 5,
+      partMinimum: { max: 100, minimum: { unit: "points", value: 50 } },
       points,
       taskKey: key,
       title,
