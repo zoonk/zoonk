@@ -694,9 +694,11 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Every line of text avoids leaving a word alone on its last line; titles' type roles balance theirs instead. */
   body {
     @apply bg-background text-foreground;
     letter-spacing: -0.006em;
+    text-wrap-style: pretty;
   }
 
   /* Preflight sets bold text to `bolder`, which is 700; the heaviest weight here is 600. */
@@ -991,7 +993,6 @@
   font-size: 1.0625rem;
   line-height: 1.625rem;
   letter-spacing: -0.01em;
-  text-wrap: pretty;
   color: var(--muted-foreground);
 
   @media (width >= 40rem) {

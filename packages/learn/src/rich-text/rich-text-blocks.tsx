@@ -148,7 +148,7 @@ export function RichTextBlocks({
 
   return (
     <div
-      className={cn("flex max-w-full min-w-0 flex-col gap-3 text-pretty", className)}
+      className={cn("flex max-w-full min-w-0 flex-col gap-3", className)}
       data-slot="lesson-rich-text"
     >
       {(mark ? markRichBlocks(blocks, mark) : blocks).map((block, index) => {

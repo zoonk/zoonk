@@ -11,35 +11,25 @@ import { buttonVariants } from "./button";
  */
 const SCROLL_BUTTON_CLASS = cn(
   buttonVariants({ size: "icon-sm", variant: "outline" }),
-  "bg-background hover:bg-muted absolute z-10 pointer-coarse:hidden",
+  "bg-background hover:bg-muted absolute top-0 z-10 pointer-coarse:hidden",
 );
 
-const BUTTON_PLACE_CLASS = { box: "top-1/2 -translate-y-1/2", row: "top-0" } as const;
-
-const FOCUSABLE = "a[href],button,input,select,textarea,[tabindex]";
-
 /**
- * The one way the web says something is wider than its room: the cut edge fades out, and with a
- * mouse a chevron button on that edge scrolls it (`labels` name the two). A row of chips keeps the
- * buttons on the chips' line. A `box` (a table, a code block, a keyboard) centers them on its
- * height and, while it scrolls and nothing inside it takes focus, takes keyboard focus itself; its
- * `label` says what scrolls. What scrolls is measured from its children's boxes, so a child is as
- * wide as its content (`w-max` or `min-w-max`), not cut by its own width.
+ * A row of chips or tabs wider than its room: the cut edge fades out, and with a mouse a chevron
+ * button on that edge, on the chips' line, scrolls it (`labels` name the two). Anything else that
+ * can be wider than its room (a table, a program, a keyboard) is a `SidewaysScroll`, which puts
+ * nothing over what it scrolls. What scrolls is measured from its children's boxes, so a child is
+ * as wide as its content (`w-max` or `min-w-max`), not cut by its own width.
  */
 function HorizontalScroll({
-  box,
   className,
   children,
   labels,
   ...props
-}: React.ComponentProps<"div"> & {
-  box?: { label: string };
-  labels: { left: string; right: string };
-}) {
+}: React.ComponentProps<"div"> & { labels: { left: string; right: string } }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [holdsFocus, setHoldsFocus] = useState(false);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -60,7 +50,6 @@ function HorizontalScroll({
 
       setCanScrollLeft(el.scrollLeft > 1);
       setCanScrollRight(el.scrollLeft < reach - el.clientWidth - 1);
-      setHoldsFocus(el.querySelector(FOCUSABLE) !== null);
     };
 
     checkScroll();
@@ -81,9 +70,6 @@ function HorizontalScroll({
     };
   }, []);
 
-  const place = box ? "box" : "row";
-  const takesFocus = Boolean(box) && (canScrollLeft || canScrollRight) && !holdsFocus;
-
   function scroll(direction: "left" | "right") {
     scrollRef.current?.scrollBy({ behavior: "smooth", left: direction === "left" ? -200 : 200 });
   }
@@ -91,10 +77,8 @@ function HorizontalScroll({
   return (
     <div className={cn("relative", className)} data-slot="horizontal-scroll" {...props}>
       <div
-        aria-label={box?.label}
         className={cn(
           "scrollbar-none overflow-x-auto overflow-y-hidden [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden",
-          box && "focus-visible:ring-ring/50 rounded-lg outline-none focus-visible:ring-[3px]",
           canScrollLeft &&
             canScrollRight &&
             "mask-[linear-gradient(to_right,transparent,black_64px,black_calc(100%-64px),transparent)]",
@@ -106,9 +90,6 @@ function HorizontalScroll({
             "mask-[linear-gradient(to_right,black_calc(100%-64px),transparent)]",
         )}
         ref={scrollRef}
-        role={box ? "group" : undefined}
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- What scrolls must be reachable by keyboard when nothing inside it takes focus.
-        tabIndex={takesFocus ? 0 : undefined}
       >
         {children}
       </div>
@@ -116,11 +97,7 @@ function HorizontalScroll({
       {canScrollLeft && (
         <button
           aria-label={labels.left}
-          className={cn(
-            SCROLL_BUTTON_CLASS,
-            BUTTON_PLACE_CLASS[place],
-            "left-(--scroll-inset,0px)",
-          )}
+          className={cn(SCROLL_BUTTON_CLASS, "left-(--scroll-inset,0px)")}
           onClick={() => scroll("left")}
           type="button"
         >
@@ -131,11 +108,7 @@ function HorizontalScroll({
       {canScrollRight && (
         <button
           aria-label={labels.right}
-          className={cn(
-            SCROLL_BUTTON_CLASS,
-            BUTTON_PLACE_CLASS[place],
-            "right-(--scroll-inset,0px)",
-          )}
+          className={cn(SCROLL_BUTTON_CLASS, "right-(--scroll-inset,0px)")}
           onClick={() => scroll("right")}
           type="button"
         >

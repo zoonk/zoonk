@@ -65,7 +65,7 @@ export function ChallengePanelView({
             <dd className="flex flex-col gap-0.5">
               <span
                 className={cn(
-                  "text-foreground font-semibold text-pretty",
+                  "text-foreground font-semibold",
                   METRIC_NUMBER.test(metric.value) && "text-2xl tabular-nums",
                 )}
               >

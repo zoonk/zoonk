@@ -23,7 +23,7 @@ export function TodayStatusLine({
       >
         {icon}
       </span>
-      <p className="min-w-0 text-sm leading-5 text-pretty">{children}</p>
+      <p className="min-w-0 text-sm leading-5">{children}</p>
     </div>
   );
 }

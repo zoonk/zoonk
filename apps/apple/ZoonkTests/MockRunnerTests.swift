@@ -1,3 +1,5 @@
+import HTTPTypes
+import OpenAPIRuntime
 import SwiftUI
 import XCTest
 
@@ -9,7 +11,7 @@ final class MockSectionMovesTests: XCTestCase {
 
   func testAFreeSectionOpensAnyQuestion() {
     let moves = MockSectionMoves(
-      answered: false, changed: [], changesLeft: nil, navigation: nil, position: 0, reached: 0,
+      answered: false, changed: [], changesAllowed: nil, navigation: nil, position: 0, reached: 0,
       total: 5)
 
     XCTAssertTrue(moves.canOpen(4))
@@ -21,7 +23,7 @@ final class MockSectionMovesTests: XCTestCase {
 
   func testAForwardOnlySectionOpensOnlyTheNextQuestionAndKeepsEarlierAnswers() {
     let moves = MockSectionMoves(
-      answered: true, changed: [], changesLeft: 2, navigation: forwardOnly, position: 2,
+      answered: true, changed: [], changesAllowed: 2, navigation: forwardOnly, position: 2,
       reached: 2, total: 5)
 
     XCTAssertTrue(moves.canOpen(3))
@@ -34,7 +36,7 @@ final class MockSectionMovesTests: XCTestCase {
 
   func testItsReviewOpensEveryQuestionAndCountsTheChangesLeft() {
     let moves = MockSectionMoves(
-      answered: true, changed: [1], changesLeft: 2, navigation: forwardOnly, position: 4,
+      answered: true, changed: [1], changesAllowed: 2, navigation: forwardOnly, position: 4,
       reached: 4, total: 5)
 
     XCTAssertTrue(moves.reviewing)
@@ -47,7 +49,7 @@ final class MockSectionMovesTests: XCTestCase {
 
   func testTheReviewRefusesChangesOnceTheyAreUsed() {
     let moves = MockSectionMoves(
-      answered: true, changed: [0, 1], changesLeft: 2, navigation: forwardOnly, position: 4,
+      answered: true, changed: [0, 1], changesAllowed: 2, navigation: forwardOnly, position: 4,
       reached: 4, total: 5)
 
     XCTAssertEqual(moves.changesLeft, 0)
@@ -59,7 +61,7 @@ final class MockSectionMovesTests: XCTestCase {
     let navigation = MockSection.Navigation(
       answerChanges: nil, forwardOnly: true, itemSeconds: 60, mustAnswer: true)
     let moves = MockSectionMoves(
-      answered: false, changed: [], changesLeft: nil, navigation: navigation, position: 0,
+      answered: false, changed: [], changesAllowed: nil, navigation: navigation, position: 0,
       reached: 0, total: 3)
 
     XCTAssertFalse(moves.canAdvance)
@@ -391,4 +393,350 @@ private final class Gate {
   func wait(file: StaticString = #filePath, line: UInt = #line) async {
     _ = try? await waitForTestCondition("The draft gate was never released") { self.isOpen }
   }
+}
+
+@MainActor
+final class MockRunKeptAnswersTests: XCTestCase {
+  private static let blockId = "01a18235-e60e-7dbb-a938-b0ae54987c58"
+  private static let itemOne = "11111111-1111-4111-8111-111111111111"
+  private static let itemTwo = "22222222-2222-4222-8222-222222222222"
+  private static let itemThree = "55555555-5555-4555-8555-555555555555"
+
+  private lazy var defaults: UserDefaults = {
+    let suite = "MockRunKeptAnswersTests.\(UUID().uuidString)"
+    addTeardownBlock { UserDefaults.standard.removePersistentDomain(forName: suite) }
+    return UserDefaults(suiteName: suite)!
+  }()
+
+  private var unsent: UnsentMockDrafts {
+    UnsentMockDrafts(blockId: Self.blockId, defaults: defaults)
+  }
+
+  func testANewerAnswerKeepsItsPlaceOnlyWhileTheOlderOneIsStillInLine() {
+    let first = MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne)
+    let second = MockDraft(answer: .choice(1), durationMs: 0, flagged: false, itemId: Self.itemTwo)
+    var newer = first
+    newer.answer = .choice(2)
+
+    unsent.keep(first, inPlace: false)
+    unsent.keep(second, inPlace: false)
+    unsent.keep(newer, inPlace: true)
+    XCTAssertEqual(unsent.read().map(\.itemId), [Self.itemOne, Self.itemTwo])
+
+    unsent.keep(first, inPlace: false)
+    XCTAssertEqual(unsent.read().map(\.itemId), [Self.itemTwo, Self.itemOne])
+  }
+
+  func testAnAnswerKeptWhenClosingOfflineGoesOutWhenTheMockOpensAgain() async throws {
+    let transport = MockTransport(itemIds: [Self.itemOne, Self.itemTwo])
+    let store = makeStore(transport, session: .preview(account: .keptAnswersFixture))
+    let firstVisit = try await open(store)
+    firstVisit.show(Self.itemOne)
+
+    await transport.setOffline(true)
+    firstVisit.answer(.choice(1))
+    try await waitForTestCondition("The answer never waited to go again") {
+      firstVisit.queue.status == .retrying
+    }
+    firstVisit.queue.stop()
+    XCTAssertEqual(unsent.read().map(\.answer), [.choice(1)])
+
+    await transport.setOffline(false)
+    let reopened = try await open(store)
+    await reopened.queue.idle()
+
+    XCTAssertEqual(reopened.drafts[Self.itemOne]?.answer, .choice(1))
+    XCTAssertTrue(reopened.isCountedAsAnswered(Self.itemOne))
+    let saved = await transport.saved
+    XCTAssertEqual(saved.map(\.answer), [.choice(1)])
+    XCTAssertTrue(unsent.read().isEmpty)
+    let fetches = await transport.fetches
+    XCTAssertEqual(fetches, 2, "Opening again reads the mock again")
+  }
+
+  func testAnAnswerWhoseSessionEndedStaysKeptAndUnsaved() async throws {
+    let transport = MockTransport(itemIds: [Self.itemOne])
+    let session = SessionStore.preview(account: .keptAnswersFixture)
+    let run = try await open(makeStore(transport, session: session))
+    run.show(Self.itemOne)
+
+    await transport.endSession()
+    run.answer(.choice(1))
+    try await waitForTestCondition("The answer never waited to go again") {
+      run.queue.status == .retrying
+    }
+
+    XCTAssertNil(session.authenticatedSession)
+    XCTAssertFalse(run.isCountedAsAnswered(Self.itemOne))
+    XCTAssertEqual(unsent.read().map(\.answer), [.choice(1)])
+    run.queue.stop()
+  }
+
+  func testAnAnswerSavedBeforeTheAccountLoadsReplacesItsOlderKeptCopy() async throws {
+    unsent.keep(
+      MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne),
+      inPlace: false)
+    let account = HeldAccountAPI()
+    let session = SessionStore(
+      api: account, credentialStore: InMemorySessionCredentialStore(token: "cold-launch"),
+      googleAuthentication: GoogleAuthenticationClient())
+    let restoring = Task { await session.restore() }
+    try await waitForTestCondition("The session never started restoring") {
+      session.authenticatedSession != nil
+    }
+    XCTAssertNil(session.account)
+
+    let transport = MockTransport(itemIds: [Self.itemOne])
+    let store = makeStore(transport, session: session)
+    let coldLaunch = try await open(store)
+    coldLaunch.show(Self.itemOne)
+    coldLaunch.answer(.choice(1))
+    await coldLaunch.queue.idle()
+    coldLaunch.queue.stop()
+
+    account.answer(.keptAnswersFixture)
+    await restoring.value
+    let reopened = try await open(store)
+    await reopened.queue.idle()
+
+    XCTAssertEqual(reopened.drafts[Self.itemOne]?.answer, .choice(1))
+    let saved = await transport.saved
+    XCTAssertEqual(saved.last?.answer, .choice(1))
+    XCTAssertTrue(unsent.read().isEmpty)
+  }
+
+  /// The server charges a review one change per question, so editing a changed answer again
+  /// offline leaves the other questions' changes as they were.
+  func testAKeptAnswerToAnAlreadyChangedQuestionUsesNoOtherChange() async throws {
+    let stored = [Self.itemOne, Self.itemTwo, Self.itemThree].map {
+      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: $0)
+    }
+    var changedOnce = stored[0]
+    changedOnce.answer = .choice(1)
+    let transport = MockTransport(
+      itemIds: [Self.itemOne, Self.itemTwo, Self.itemThree], drafts: [changedOnce] + stored[1...],
+      review: (allowed: 2, changed: [Self.itemOne]))
+    unsent.keep(stored[0], inPlace: false)
+
+    let run = try await open(makeStore(transport, session: .preview(account: .keptAnswersFixture)))
+
+    XCTAssertEqual(run.position, 2)
+    XCTAssertEqual(run.drafts[Self.itemOne]?.answer, .choice(0))
+    XCTAssertEqual(run.moves.changesLeft, 1)
+    XCTAssertTrue(run.moves.canChange(1), "Question 2 can still change")
+
+    run.go(to: 1)
+    run.answer(.choice(1))
+    XCTAssertEqual(run.moves.changesLeft, 0)
+    XCTAssertTrue(run.moves.canChange(0), "A changed answer changes again for free")
+
+    await run.queue.idle()
+    let saved = await transport.saved
+    XCTAssertEqual(saved.map(\.itemId).first, Self.itemOne)
+    run.queue.stop()
+  }
+
+  func testAKeptChangeTheServerHasNoChangeLeftForStaysLocked() async throws {
+    let stored = [Self.itemOne, Self.itemTwo, Self.itemThree].map {
+      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: $0)
+    }
+    var keptChange = stored[0]
+    keptChange.answer = .choice(1)
+    let transport = MockTransport(
+      itemIds: [Self.itemOne, Self.itemTwo, Self.itemThree], drafts: stored,
+      review: (allowed: 1, changed: [Self.itemTwo]))
+    unsent.keep(keptChange, inPlace: false)
+
+    let run = try await open(makeStore(transport, session: .preview(account: .keptAnswersFixture)))
+
+    XCTAssertEqual(run.moves.changesLeft, 0)
+    XCTAssertFalse(run.moves.canChange(0), "No change was left for question 1")
+    XCTAssertTrue(run.moves.canChange(1), "Question 2's change was already used on it")
+    run.queue.stop()
+  }
+
+  func testAFinishedMockClearsItsKeptAnswers() async throws {
+    unsent.keep(
+      MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne),
+      inPlace: false)
+    let transport = MockTransport(itemIds: [Self.itemOne], status: "finished")
+
+    _ = try await open(makeStore(transport, session: .preview(account: .keptAnswersFixture)))
+
+    XCTAssertTrue(unsent.read().isEmpty)
+    let saved = await transport.saved
+    XCTAssertTrue(saved.isEmpty)
+  }
+
+  private func makeStore(_ transport: MockTransport, session: SessionStore) -> ExamStore {
+    ExamStore(
+      api: ExamAPI(
+        clients: APIClientFactory(
+          baseURL: URL(string: "https://api.zoonk.test")!, transport: transport)),
+      cache: AppCache(session: session))
+  }
+
+  private func open(_ store: ExamStore) async throws -> MockRun {
+    let run = MockRun(store: store, blockId: Self.blockId, defaults: defaults)
+    await run.mock.load()
+    run.adopt(try XCTUnwrap(run.view))
+    return run
+  }
+}
+
+/// Holds `/me` until the test answers it, as a cold launch does before the account loads.
+private struct HeldAccountAPI: AccountAPIClient {
+  private let answers = AsyncStream.makeStream(of: CurrentAccount.self)
+
+  func answer(_ account: CurrentAccount) {
+    answers.continuation.yield(account)
+  }
+
+  func getCurrentAccount(token: String) async throws -> CurrentAccount {
+    for await account in answers.stream {
+      return account
+    }
+
+    throw CancellationError()
+  }
+
+  func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws -> String
+  {
+    throw AccountAPIError.invalidResponse
+  }
+
+  func signOut(token: String) async throws {}
+
+  func synchronizeAppleSubscription(token: String, signedTransaction: String) async throws
+    -> AppleSubscriptionSynchronization
+  {
+    throw AccountAPIError.invalidResponse
+  }
+}
+
+/// Serves one mock and stores its answers, as the API does, so opening it again shows them.
+private actor MockTransport: ClientTransport {
+  private let itemIds: [String]
+  private let drafts: [MockDraft]
+  private let review: (allowed: Int, changed: [String])?
+  private let status: String
+  private var offline = false
+  private var sessionEnded = false
+  private(set) var saved: [MockDraft] = []
+  private(set) var fetches = 0
+
+  init(
+    itemIds: [String], drafts: [MockDraft] = [], review: (allowed: Int, changed: [String])? = nil,
+    status: String = "running"
+  ) {
+    self.itemIds = itemIds
+    self.drafts = drafts
+    self.review = review
+    self.status = status
+  }
+
+  func setOffline(_ value: Bool) {
+    offline = value
+  }
+
+  func endSession() {
+    sessionEnded = true
+  }
+
+  func send(
+    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    let json: HTTPFields = [.contentType: "application/json"]
+
+    if sessionEnded {
+      return (
+        HTTPResponse(status: .unauthorized, headerFields: json),
+        HTTPBody(#"{"error":{"code":"UNAUTHORIZED","message":"Authentication required"}}"#)
+      )
+    }
+
+    if operationID == "getMock" {
+      fetches += 1
+      return (HTTPResponse(status: .ok, headerFields: json), HTTPBody(mockJSON()))
+    }
+
+    if offline {
+      throw URLError(.notConnectedToInternet)
+    }
+
+    if let body {
+      let data = try await Data(collecting: body, upTo: 1 << 20)
+      saved.append(try JSONDecoder().decode(MockDraft.self, from: data))
+    }
+
+    return (HTTPResponse(status: .noContent), nil)
+  }
+
+  private func mockJSON() -> String {
+    var current = drafts
+
+    for draft in saved {
+      current.removeAll { $0.itemId == draft.itemId }
+      current.append(draft)
+    }
+
+    let draftsJSON = String(decoding: try! JSONEncoder().encode(current), as: UTF8.self)
+    let changedJSON = String(
+      decoding: try! JSONEncoder().encode(review?.changed ?? []), as: UTF8.self)
+    let changesLeft = review.map { String($0.allowed - $0.changed.count) } ?? "null"
+    let navigation =
+      review.map {
+        #"{"answerChanges":\#($0.allowed),"forwardOnly":true,"itemSeconds":null,"mustAnswer":false}"#
+      } ?? "null"
+    let resume = review == nil ? 0 : itemIds.count - 1
+    let questions = itemIds.enumerated().map { index, id in
+      """
+      {"area":null,"context":null,"entry":null,"format":"multipleChoice","image":null,"itemId":"\(id)","number":\(index + 1),"options":["Alpha","Beta"],"question":"Question \(index + 1)","select":null,"set":null,"skillId":"33333333-3333-4333-8333-333333333333","unit":null,"visual":null}
+      """
+    }.joined(separator: ",")
+    let currentJSON =
+      status == "running"
+      ? """
+      {"changedItemIds":\(changedJSON),"changesLeft":\(changesLeft),"deadline":"2030-01-01T00:00:00.000Z","drafts":\(draftsJSON),"kind":null,"plays":[],"questions":[\(questions)],"resume":\(resume),"section":0}
+      """
+      : "null"
+
+    return """
+      {
+        "adapt": null, "blockId": "01a18235-e60e-7dbb-a938-b0ae54987c58", "brainPower": 0,
+        "breakUntil": null, "canMove": false, "ceremony": null, "certificates": [], "checklist": [],
+        "current": \(currentJSON), "date": "2026-10-29", "day": null, "essayRubric": null,
+        "essays": [], "examDocument": "notice", "examName": "Sample Exam", "examQuestions": null,
+        "fullLength": true, "goalId": "44444444-4444-4444-8444-444444444444", "leftOut": [],
+        "minutes": 30, "missionMoment": null, "mistakes": [], "number": 1, "passMarks": null,
+        "planItemId": null, "purpose": "practice", "questions": \(itemIds.count),
+        "reached": {"energy": null, "level": null}, "result": null, "reusedQuestions": 0,
+        "review": [], "scoreNotes": {"noticeScoring": null, "relative": false, "scale": null},
+        "scoring": "raw", "scoringNote": null,
+        "sections": [
+          {
+            "breakAfterMinutes": null, "essays": 0, "index": 0, "minutes": 30, "name": "Part 1",
+            "navigation": \(navigation), "questions": \(itemIds.count), "status": "current",
+            "tools": null
+          }
+        ],
+        "sessionId": null, "shape": {"area": null, "day": 1, "kind": "full"},
+        "sizeSource": {
+          "formats": null, "material": false, "pastEdition": null, "questions": "notice",
+          "subjects": null, "time": "notice"
+        },
+        "speaking": null, "startTime": null, "status": "\(status)", "timeZone": "UTC",
+        "trueFalseLabels": "trueFalse", "verdict": null
+      }
+      """
+  }
+}
+
+extension CurrentAccount {
+  fileprivate static let keptAnswersFixture = CurrentAccount(
+    account: AccountAccess(
+      deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
+    user: AccountUser(
+      email: "learner@zoonk.test", id: "kept-answers-learner", image: nil, name: "Learner",
+      username: "learner"))
 }

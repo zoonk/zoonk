@@ -12,14 +12,6 @@ extension ProfileQuestion {
     case .work, .tools, .studies, .watch, .listen, .play, .read, .activities: true
     }
   }
-
-  /// Chips, of which a learner picks up to three.
-  var pickLimit: Int? {
-    switch self {
-    case .tools, .studies, .watch, .listen, .play, .read, .activities: 3
-    case .addressForm, .work, .conditions, .learningSupport: nil
-    }
-  }
 }
 
 extension Components.Schemas.OnboardingStep {
@@ -39,6 +31,8 @@ struct ProfileDraft: Equatable {
 
   static let noSoundEffects = "noSoundEffects"
   static let otherOption = "other"
+  /// Core's limit on favorites, as saving joins them.
+  static let favoritesLimit = 120
 
   let question: ProfileQuestion
   /// In pick order, which studies' subject fields follow. For `work`, the one status; for
@@ -46,7 +40,7 @@ struct ProfileDraft: Equatable {
   private(set) var picks: [String]
   private(set) var decline: Decline?
   /// Favorites, the job, the `other` condition's note or the support note. Typing answers the
-  /// question, as a pick does.
+  /// question, as a pick does. For tools, what's in the field and not yet added.
   var text: String {
     didSet {
       if !text.isEmpty {
@@ -56,15 +50,28 @@ struct ProfileDraft: Equatable {
   }
   /// Studies: each picked field's course or subject.
   var subjects: [String: String]
+  /// Tools: each tool typed and added, a chip under the field.
+  private(set) var typedTools: [String]
+  /// Tools: the offered chips' ids by their names in lowercase, so typing one picks it.
+  private let offeredTools: [String: String]
 
   /// A declined question opens on the row that declined it; conditions have none, so they open
   /// empty. With memory off, the support note is hidden, so it's left out of the answer and its
   /// saved fact stays as it is.
   init(_ view: ProfileQuestionView, memoryEnabled: Bool = true) {
+    let isTools = view.id == .tools
+
     question = view.id
     picks = view.saved.picks
-    text = view.id == .learningSupport && !memoryEnabled ? "" : view.saved.text
+    text = isTools || (view.id == .learningSupport && !memoryEnabled) ? "" : view.saved.text
     subjects = [:]
+    typedTools = isTools ? Self.favorites(in: view.saved.text) : []
+    offeredTools =
+      isTools
+      ? Dictionary(
+        view.options.map { ($0.label.lowercased(), $0.id) }, uniquingKeysWith: { first, _ in first }
+      )
+      : [:]
 
     for study in view.saved.studies {
       picks.append(study.field)
@@ -82,7 +89,6 @@ struct ProfileDraft: Equatable {
       }
   }
 
-  /// A chip screen that already has its three picks takes no fourth.
   mutating func toggle(_ id: String) {
     decline = nil
 
@@ -96,12 +102,97 @@ struct ProfileDraft: Equatable {
       return
     }
 
-    if let limit = question.pickLimit, picks.count >= limit {
-      return
-    }
-
     picks.append(id)
   }
+
+  /// Tools, once the field shows what was typed: a comma or a semicolon typed or pasted adds the
+  /// names before it, and the field takes no more once the name in it can't be added; deleting
+  /// always works. It runs after the field shows the typed text, since a field whose value comes
+  /// back unchanged keeps what it shows.
+  mutating func settleToolText(from old: String) {
+    let count = Self.characters(trimmed(text))
+
+    if Self.separatorCount(text) > Self.separatorCount(old) {
+      addTypedTools()
+    } else if count > Self.characters(trimmed(old)), count > toolRoom {
+      text = old
+    }
+  }
+
+  /// Tools: what's in the field becomes chips. A name an offered chip has picks that chip, a name
+  /// already added is left out, and a name that would pass the favorites' limit stays in the field,
+  /// whole.
+  mutating func addTypedTools() {
+    var left: [String] = []
+
+    for name in Self.favorites(in: text) {
+      let key = name.lowercased()
+
+      if let id = offeredTools[key] {
+        if !picks.contains(id) {
+          picks.append(id)
+        }
+      } else if !typedTools.contains(where: { $0.lowercased() == key }) {
+        if Self.characters((typedTools + [name]).joined(separator: ", "))
+          <= Self.favoritesLimit
+        {
+          typedTools.append(name)
+        } else {
+          left.append(name)
+        }
+      }
+    }
+
+    text = left.joined(separator: ", ")
+  }
+
+  /// Tools: Add would change the field, so it's enabled; not for an empty field or names that
+  /// can't fit.
+  var canAddTypedTools: Bool {
+    var added = self
+    added.addTypedTools()
+    return added.text != Self.favorites(in: text).joined(separator: ", ")
+  }
+
+  /// Tools: a name that can't fit is still in the field, so saving would drop it.
+  private var holdsToolsThatDontFit: Bool {
+    var added = self
+    added.addTypedTools()
+    return !added.text.isEmpty
+  }
+
+  mutating func removeTypedTool(_ name: String) {
+    typedTools.removeAll { $0 == name }
+  }
+
+  /// What one more typed tool can hold, after the ones added and the ", " before it.
+  private var toolRoom: Int {
+    Self.favoritesLimit
+      - (typedTools.isEmpty ? 0 : Self.characters(typedTools.joined(separator: ", ") + ", "))
+  }
+
+  /// Core's count of a text's length: Zod's `.max()` counts code points, so an emoji is one and an
+  /// accent typed as its own mark is another.
+  private static func characters(_ text: String) -> Int {
+    text.unicodeScalars.count
+  }
+
+  private static func separatorCount(_ text: String) -> Int {
+    text.count(where: separators.contains)
+  }
+
+  /// Core's `splitProfileFavorites`: favorites as saved text holds them, each once.
+  static func favorites(in text: String) -> [String] {
+    var seen = Set<String>()
+
+    return text.split(whereSeparator: separators.contains).compactMap { item in
+      let name = trimmed(String(item))
+      return !name.isEmpty && seen.insert(name.lowercased()).inserted ? name : nil
+    }
+  }
+
+  /// Core's favorites separators. A Character holds "\r\n" as one, so it's listed too.
+  private static let separators: Set<Character> = [",", ";", "、", "，", "\n", "\r", "\r\n"]
 
   /// Picking a declining row clears everything else, as any other pick clears it.
   mutating func toggle(_ decline: Decline) {
@@ -119,6 +210,7 @@ struct ProfileDraft: Equatable {
     draft.picks = []
     draft.text = ""
     draft.subjects = [:]
+    draft.typedTools = []
     return draft
   }
 
@@ -150,12 +242,17 @@ struct ProfileDraft: Equatable {
 
     switch question {
     case .addressForm, .work, .studies, .conditions: return picks.isEmpty
-    default: return picks.isEmpty && trimmed(text).isEmpty
+    default: return picks.isEmpty && trimmed(text).isEmpty && typedTools.isEmpty
     }
   }
 
-  /// Another field needs its name, and Something else needs its words, while picked.
+  /// Another field needs its name, and Something else needs its words, while picked. A typed tool
+  /// that can't fit waits in its field until there's room.
   var isComplete: Bool {
+    if question == .tools {
+      return !holdsToolsThatDontFit
+    }
+
     guard picks.contains(Self.otherOption) else {
       return true
     }
@@ -226,7 +323,17 @@ struct ProfileDraft: Equatable {
         "note": text.isEmpty ? NSNull() : text,
         "soundEffects": declined || !picks.contains(Self.noSoundEffects),
       ]
-    case .tools, .watch, .listen, .play, .read, .activities:
+    case .tools:
+      // Continue counts what's still in the field as added.
+      var added = self
+      added.addTypedTools()
+
+      return [
+        "declined": declined,
+        "favorites": declined ? "" : added.typedTools.joined(separator: ", "),
+        "picks": declined ? [] : added.picks,
+      ]
+    case .watch, .listen, .play, .read, .activities:
       return ["declined": declined, "favorites": text, "picks": declined ? [] : picks]
     }
   }

@@ -100,7 +100,7 @@ export function TestIntro({
       </OnboardingHeading>
 
       {showAlphabetNote && (
-        <p className="text-muted-foreground text-sm text-pretty">
+        <p className="text-muted-foreground text-sm">
           {t("New to its alphabet? Skip the test. Your first lesson teaches you to read it.")}
         </p>
       )}

@@ -6,7 +6,7 @@ import { type StoredChange, contentFixChangesSchema } from "../contract";
 import { type ContentFixMedia, readContentFixMedia } from "../media-schema";
 import { applyFixChanges, lockFixPlans, lockFixRows } from "./apply-content-fix";
 import { changedSince } from "./changed-since";
-import { prepareContentFix, storedChange } from "./prepare-content-fix";
+import { resolveContentFix, storedChange } from "./prepare-content-fix";
 import { readyFixMedia } from "./ready-fix-media";
 import { type FixUnit } from "./resolved-change";
 
@@ -31,7 +31,7 @@ async function staleReasonFor(
     return STALE_CONTENT;
   }
 
-  const fresh = await prepareContentFix(
+  const fresh = await resolveContentFix(
     tx,
     stored.map((change) => storedChange(change)),
   );

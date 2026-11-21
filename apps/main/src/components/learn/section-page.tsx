@@ -125,7 +125,7 @@ export function SectionPageHeader({
     <PageHeader className="md:contents">
       <PageHeaderContent className="md:contents">
         <PageTitle className="md:sr-only">{title}</PageTitle>
-        {description && <PageSubtitle className="text-pretty md:pt-0">{description}</PageSubtitle>}
+        {description && <PageSubtitle className="md:pt-0">{description}</PageSubtitle>}
       </PageHeaderContent>
     </PageHeader>
   );

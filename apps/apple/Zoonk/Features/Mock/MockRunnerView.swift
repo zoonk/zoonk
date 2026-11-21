@@ -117,7 +117,7 @@ struct MockRunnerView: View {
     QuestionSpread(readableWidth: 720, spacing: 16) {
       progress
     } stimulus: {
-      MockQuestionMeta(run: run, view: view, question: question)
+      MockQuestionMeta(run: run, question: question)
       MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
     } response: {
       MockQuestionCard(run: run, view: view, question: question, part: .response)
@@ -129,7 +129,7 @@ struct MockRunnerView: View {
 
   @ViewBuilder
   private func questionParts(_ question: MockQuestion) -> some View {
-    MockQuestionMeta(run: run, view: view, question: question)
+    MockQuestionMeta(run: run, question: question)
     MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
     MockQuestionCard(run: run, view: view, question: question, part: .response)
     MovesNote(moves: run.moves)
@@ -207,10 +207,10 @@ struct MockRunnerView: View {
 
 private struct MockQuestionMeta: View {
   let run: MockRun
-  let view: MockView
   let question: MockQuestion
 
   var body: some View {
+    let place = sectionPlace
     AccessibilityStack {
       if let area = question.area {
         Chip(Text(area))
@@ -218,7 +218,7 @@ private struct MockQuestionMeta: View {
       Spacer(minLength: 0)
       if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
-      } else if let place = sectionPlace {
+      } else {
         Text("\(place.number) of \(place.total)", tableName: "Mock", comment: "Question place")
           .monospacedDigit()
       }
@@ -226,31 +226,24 @@ private struct MockQuestionMeta: View {
     .typeStyle(.data)
     .foregroundStyle(.mutedForeground)
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(accessibilityPlace)
+    .accessibilityLabel(accessibilityPlace(number: place.number, total: place.total))
   }
 
-  private var sectionPlace: (number: Int, total: Int)? {
-    let questions = run.questions.filter { $0.format != .essay }
-    guard let index = questions.firstIndex(of: question) else { return nil }
-    return (index + 1, questions.count)
+  private var sectionPlace: (number: Int, total: Int) {
+    if let total = run.current?.questionTotal {
+      return (question.number, total)
+    }
+    return (run.position + 1, run.questions.count { $0.format != .essay })
   }
 
-  private var accessibilityPlace: Text {
+  private func accessibilityPlace(number: Int, total: Int) -> Text {
     if question.format == .essay {
       return question.area.map {
         Text("Written part\u{00A0}· \($0)", tableName: "Mock", comment: "An essay's place")
       } ?? Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
     }
 
-    if let area = question.area {
-      return Text(
-        "Question \(question.number) of \(view.questions)\u{00A0}· \(area)", tableName: "Mock",
-        comment: "A question's place in the mock, with its subject")
-    }
-
-    return Text(
-      "Question \(question.number) of \(view.questions)", tableName: "Mock",
-      comment: "A question's place in the mock")
+    return Text(MockLabels.questionPlace(number: number, total: total, area: question.area))
   }
 }
 
@@ -608,11 +601,7 @@ private struct MockAnswerSheet: View {
                 Text(MockLabels.duration(minutes: section.minutes)).monospacedDigit()
               }
             } label: {
-              Text(
-                section.name
-                  ?? String(
-                    localized: "Section \(section.index + 1)", table: "Mock",
-                    comment: "A section without a name"))
+              Text(MockLabels.sectionTitle(section))
             }
             .typeWeight(section.status == .current ? .semibold : .regular)
           }

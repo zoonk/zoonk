@@ -80,7 +80,8 @@ data class MockRun(
     val position: Int,
     val reached: Int,
     val drafts: Map<String, MockDraft>,
-    val moves: SectionMoves,
+    /** The questions a forward-only section's review changed, each charged once. */
+    val changed: Set<Int>,
     val timeUp: Boolean,
     val busy: MockStep? = null,
     val error: Boolean = false,
@@ -91,6 +92,27 @@ data class MockRun(
     val pending: Boolean get() = busy != null
     val question: MockQuestion? get() = questions.getOrNull(position)
     val counts: SectionCounts get() = sectionCounts(questions, drafts, ::isCountedAsAnswered)
+    val moves: SectionMoves =
+        SectionMoves.of(
+            navigation = currentSection?.navigation,
+            answered = drafts[question?.itemId].isAnswered,
+            position = position,
+            reached = reached,
+            total = questions.size,
+            changed = changed,
+            changesLeft =
+                view.current?.changesLeft?.toInt()?.let {
+                    (
+                        it -
+                            (
+                                changed -
+                                    view.chargedPositions(
+                                        questions,
+                                    )
+                            ).size
+                    ).coerceAtLeast(0)
+                },
+        )
 
     fun isCountedAsAnswered(itemId: String): Boolean {
         val draft = drafts[itemId]
@@ -128,7 +150,6 @@ class MockRunnerViewModel(
     private val unsent = owner?.let { store.unsent(it, blockId) }
     private val queue = MockSaveQueue(scope = viewModelScope, send = ::send, onPendingChange = ::keepOnDevice)
     private var questionTimeUp = isLastQuestionExpired(opened.view)
-    private var changed = emptySet<Int>()
     private val run = MutableStateFlow(start(opened.view, opened.keptHere))
     private var shown: Pair<String, TimeMark>? = null
     private var unsavedText: MockDraft? = null
@@ -185,7 +206,7 @@ class MockRunnerViewModel(
         val question = run.value.question ?: return
         if (!canAnswer(answer)) return
         val draft = (run.value.drafts[question.itemId] ?: MockDraft(question.itemId)).copy(answer = answer)
-        run.update { it.copy(drafts = it.drafts + (draft.itemId to draft)).withMoves() }
+        run.update { it.copy(drafts = it.drafts + (draft.itemId to draft)) }
         unsavedText = draft
         keepOnDevice()
         textSave?.cancel()
@@ -421,7 +442,6 @@ class MockRunnerViewModel(
 
     private fun reset(next: MockExam) {
         shown = null
-        changed = emptySet()
         questionTimeUp = false
         timedOutDuringStep = false
         heldRead = null
@@ -461,39 +481,19 @@ class MockRunnerViewModel(
                 it.itemId.toString() to
                     MockDraft(it.itemId.toString(), it.answer?.toAnswer(), it.durationMs, it.flagged)
             }
-        val drafts = storedDrafts + kept.associateBy(MockDraft::itemId)
         val deadline = view.current?.deadline
-        return MockRun(
-            view = view,
-            questions = questions,
-            position = resume,
-            reached = resume,
-            drafts = drafts,
-            storedDrafts = storedDrafts,
-            moves = moves(view, questions, drafts, resume, resume),
-            timeUp = (deadline != null && clock.now() >= deadline) || questionTimeUp,
-        )
-    }
-
-    private fun MockRun.withMoves(): MockRun = copy(moves = moves(view, questions, drafts, position, reached))
-
-    private fun moves(
-        view: MockExam,
-        questions: List<MockQuestion>,
-        drafts: Map<String, MockDraft>,
-        position: Int,
-        reached: Int,
-    ): SectionMoves {
-        val changesLeft = view.current?.changesLeft?.toInt()
-        return SectionMoves.of(
-            navigation = view.sections.firstOrNull { it.status == MockExamSectionsInner.Status.CURRENT }?.navigation,
-            answered = drafts[questions.getOrNull(position)?.itemId].isAnswered,
-            position = position,
-            reached = reached,
-            total = questions.size,
-            changed = changed,
-            changesLeft = changesLeft?.let { (it - changed.size).coerceAtLeast(0) },
-        )
+        val stored =
+            MockRun(
+                view = view,
+                questions = questions,
+                position = resume,
+                reached = resume,
+                drafts = storedDrafts,
+                changed = view.chargedPositions(questions),
+                timeUp = (deadline != null && clock.now() >= deadline) || questionTimeUp,
+            )
+        val replayed = kept.fold(stored) { run, draft -> run.replaying(draft) }
+        return replayed.copy(position = if (replayed.moves.forwardOnly) replayed.reached else resume)
     }
 
     private fun move(
@@ -513,19 +513,16 @@ class MockRunnerViewModel(
         }
         if (!(if (timedOut) current.moves.canOpenAfterTimeout(target) else current.moves.canOpen(target))) return
         current.question?.takeIf { target != current.position }?.let { leaveQuestion(it.itemId) }
-        run.update { it.copy(position = target, reached = maxOf(it.reached, target)).withMoves() }
+        run.update { it.copy(position = target, reached = maxOf(it.reached, target)) }
         syncShown()
     }
 
     private fun canAnswer(next: Answer?): Boolean {
         val current = run.value
         val question = current.question ?: return false
-        if (current.pending || current.timeUp || !current.moves.canChange(current.position)) return false
-        val saved = current.drafts[question.itemId]?.answer
-        if (current.moves.reviewing && current.position < current.reached && saved != next && current.position !in changed) {
-            changed = changed + current.position
-            run.update { it.withMoves() }
-        }
+        if (current.pending || current.timeUp) return false
+        val changed = current.moves.changedAfter(current.drafts[question.itemId]?.answer, next) ?: return false
+        run.update { it.copy(changed = changed) }
         return true
     }
 
@@ -535,7 +532,7 @@ class MockRunnerViewModel(
     }
 
     private fun persist(draft: MockDraft) {
-        run.update { it.copy(drafts = it.drafts + (draft.itemId to draft)).withMoves() }
+        run.update { it.copy(drafts = it.drafts + (draft.itemId to draft)) }
         queue.add(draft)
     }
 
@@ -664,6 +661,27 @@ private val OpenedMock.keptHere: List<MockDraft>
                 .toSet()
         return unsent.filter { it.itemId in items }
     }
+
+/** The questions the server already charged a review change for: each may change again for free. */
+private fun MockExam.chargedPositions(questions: List<MockQuestion>): Set<Int> {
+    val charged =
+        current
+            ?.changedItemIds
+            .orEmpty()
+            .map(UUID::toString)
+            .toSet()
+    return questions.indices.filter { questions[it].itemId in charged }.toSet()
+}
+
+/** A kept answer given again, through the rule a live change follows, so the place reached and the review's changes come back. */
+private fun MockRun.replaying(draft: MockDraft): MockRun {
+    val target = questions.indexOfFirst { it.itemId == draft.itemId }
+    val at = copy(position = target, reached = maxOf(reached, target))
+    return at.copy(
+        drafts = drafts + (draft.itemId to draft),
+        changed = at.moves.changedAfter(drafts[draft.itemId]?.answer, draft.answer) ?: changed,
+    )
+}
 
 private val MockExam.hasPendingEssays: Boolean
     get() = status == MockExam.Status.FINISHED && essays.any { it.status == MockEssay.Status.PENDING }

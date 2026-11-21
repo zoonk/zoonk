@@ -120,7 +120,7 @@ function ReviewItem({
           )}
         </LineMarker>
 
-        <div className="min-w-0 flex-1 font-medium text-pretty">
+        <div className="min-w-0 flex-1 font-medium">
           <ItemStem text={question.question} />
         </div>
 

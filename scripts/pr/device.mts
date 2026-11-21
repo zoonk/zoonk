@@ -1,10 +1,19 @@
 import { execFile } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { z } from "zod";
+import { carryReads } from "./carry.mts";
 import { REFERENCE, captionWords, unwritablePath } from "./device-section.mts";
-import { type CaptureItem, fileName, pathWithin, registerItems } from "./media.mts";
+import {
+  type CaptureItem,
+  fileName,
+  isRecorded,
+  pathWithin,
+  readManifest,
+  registerItems,
+} from "./media.mts";
 import { readCheckoutBuild, sha256File, sha256Text } from "./provenance.mts";
 
 const run = promisify(execFile);
@@ -288,9 +297,25 @@ export async function takeDevicePicture({
   }
 
   await mkdir(to, { recursive: true });
-  await bridge.screenshot(deviceId, join(to, file));
+  const shot = await mkdtemp(join(tmpdir(), "device-"));
 
-  const taken = { ...item, sha256: await sha256File(join(to, file)) };
-  await registerItems(to, [taken]);
-  return taken;
+  try {
+    await bridge.screenshot(deviceId, join(shot, file));
+    const taken = { ...item, sha256: await sha256File(join(shot, file)) };
+
+    // Before the new picture overwrites the old one: a retake keeps the read it retakes.
+    const [carried = taken] = await carryReads({
+      folder: shot,
+      items: [taken],
+      keep: to,
+      previous: ((await readManifest(to)) ?? []).filter((earlier) => isRecorded(earlier)),
+      previousFolder: to,
+    });
+
+    await copyFile(join(shot, file), join(to, file));
+    await registerItems(to, [carried]);
+    return carried;
+  } finally {
+    await rm(shot, { force: true, recursive: true });
+  }
 }

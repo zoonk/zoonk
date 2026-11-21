@@ -70,7 +70,7 @@ export async function UserMessages({ userId }: { userId: string }) {
                     className="text-muted-foreground mt-0.5 size-4 shrink-0"
                   />
                   <span className="flex min-w-0 flex-col gap-0.5">
-                    <span className="line-clamp-2 text-sm text-pretty">{row.text}</span>
+                    <span className="line-clamp-2 text-sm">{row.text}</span>
                     <span className="text-muted-foreground text-xs">
                       {formatDate(row.date)} · {row.note}
                     </span>
