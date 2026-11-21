@@ -569,10 +569,10 @@
     <string name="plan_time_first_lessons_every_goal_part">Covers the first lessons of every part of your goal by %1$s.</string>
     <!-- Under a daily time that starts every part of the goal but doesn't cover everything. %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_first_lessons_every_goal_part_month">Covers the first lessons of every part of your goal by %1$s.</string>
-    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a day, such as "May 5". The topics asked most often come first. -->
-    <string name="plan_time_first_lessons_share_exam">Covers the first lessons of about %1$s of your exam by %2$s, most-asked topics first.</string>
-    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a month and year, such as "May 2027". The topics asked most often come first. -->
-    <string name="plan_time_first_lessons_share_exam_month">Covers the first lessons of about %1$s of your exam by %2$s, most-asked topics first.</string>
+    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a day, such as "May 5". The percentage is a share of the whole exam, by how much it asks, not a share of its topics. -->
+    <string name="plan_time_first_lessons_share_exam">Covers the first lessons of about %1$s of your exam by %2$s.</string>
+    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a month and year, such as "May 2027". The percentage is a share of the whole exam, by how much it asks, not a share of its topics. -->
+    <string name="plan_time_first_lessons_share_exam_month">Covers the first lessons of about %1$s of your exam by %2$s.</string>
     <!-- Under a daily time that starts only some parts of the goal. %1$s is a percentage of the goal, such as "60%"; %2$s is a day, such as "May 5". -->
     <string name="plan_time_first_lessons_share_goal">Covers the first lessons of about %1$s of your goal by %2$s.</string>
     <!-- Under a daily time that starts only some parts of the goal. %1$s is a percentage of the goal, such as "60%"; %2$s is a month and year, such as "May 2027". -->
@@ -615,7 +615,8 @@
     <string name="plan_time_covers_everything_by_month">Your time covers everything by %1$s</string>
     <string name="plan_time_covers_every_exam_topic">%1$s a day covers the first lessons of every exam topic</string>
     <string name="plan_time_covers_every_goal_part">%1$s a day covers the first lessons of every part of your goal</string>
-    <string name="plan_time_covers_first_lessons_exam">%1$s a day covers the first lessons of about %2$s of your exam, most-asked topics first</string>
+    <!-- {share} is a share of the whole exam, by how much it asks, not a share of its topics. -->
+    <string name="plan_time_covers_first_lessons_exam">%1$s a day covers the first lessons of about %2$s of your exam</string>
     <string name="plan_time_covers_first_lessons_goal">%1$s a day covers the first lessons of about %2$s of your goal</string>
     <string name="plan_covered_not_enough">%1$s a day isn\'t enough time to cover your goal.</string>
     <string name="plan_finding">Finding the time…</string>
