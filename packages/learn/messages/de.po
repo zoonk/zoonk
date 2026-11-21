@@ -1008,6 +1008,63 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Diesmal nicht geprüft"
 
+#: src/_components/week-row.tsx
+#: src/generation/generation-wait.tsx
+msgctxt "B7ijKz"
+msgid "done"
+msgstr "Erledigt"
+
+#: src/_components/week-row.tsx
+msgctxt "F8phHs"
+msgid "studied"
+msgstr "Gelernt"
+
+#: src/_components/week-row.tsx
+msgctxt "uMBOLl"
+msgid "exam day"
+msgstr "Prüfungstag"
+
+#: src/_components/week-row.tsx
+msgctxt "WcEyrI"
+msgid "end date"
+msgstr "Zieldatum"
+
+#: src/_components/week-row.tsx
+msgctxt "KQR6jo"
+msgid "before your plan"
+msgstr "Vor deinem Plan"
+
+#: src/_components/week-row.tsx
+msgctxt "1RBuve"
+msgid "after your exam"
+msgstr "nach deiner Prüfung"
+
+#: src/_components/week-row.tsx
+msgctxt "coog-B"
+msgid "after your end date"
+msgstr "nach deinem Zieldatum"
+
+#: src/_components/week-row.tsx
+msgctxt "1sq74z"
+msgid "rest day"
+msgstr "Pausentag"
+
+#: src/_components/week-row.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "heute"
+
+#: src/_components/week-row.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "sl8z6d"
+msgid "planned"
+msgstr "geplant"
+
+#: src/_components/week-row.tsx
+msgctxt "LeNKyW"
+msgid "not studied"
+msgstr "nicht gelernt"
+
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
 msgid "Weekend time"
@@ -4222,13 +4279,6 @@ msgid "in progress"
 msgstr "in Bearbeitung"
 
 #: src/generation/generation-wait.tsx
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "B7ijKz"
-msgid "done"
-msgstr "Erledigt"
-
-#: src/generation/generation-wait.tsx
 msgctxt "tc4dTE"
 msgid "stopped here"
 msgstr "Hier gestoppt"
@@ -5250,31 +5300,6 @@ msgstr "Du bist fertig"
 msgctxt "pwcc1H"
 msgid "exam"
 msgstr "Prüfung"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "LeNKyW"
-msgid "not studied"
-msgstr "nicht gelernt"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "1sq74z"
-msgid "rest day"
-msgstr "Pausentag"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "kkpP2k"
-msgid "today"
-msgstr "heute"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-segment-popover.tsx
-#: src/today/today-week-day.tsx
-msgctxt "sl8z6d"
-msgid "planned"
-msgstr "geplant"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -13074,6 +13099,12 @@ msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "Wir bereiten alles vor…"
 
+#. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
+#: src/today/today-block-row.tsx
+msgctxt "pE58D7"
+msgid "Extra"
+msgstr "Extra"
+
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
 msgid "What changed"
@@ -13427,36 +13458,6 @@ msgstr "Wöchentliche Herausforderung"
 msgctxt "J3eMtx"
 msgid "every topic"
 msgstr "alle Themen"
-
-#: src/today/today-week-day.tsx
-msgctxt "F8phHs"
-msgid "studied"
-msgstr "Gelernt"
-
-#: src/today/today-week-day.tsx
-msgctxt "uMBOLl"
-msgid "exam day"
-msgstr "Prüfungstag"
-
-#: src/today/today-week-day.tsx
-msgctxt "WcEyrI"
-msgid "end date"
-msgstr "Zieldatum"
-
-#: src/today/today-week-day.tsx
-msgctxt "KQR6jo"
-msgid "before your plan"
-msgstr "Vor deinem Plan"
-
-#: src/today/today-week-day.tsx
-msgctxt "1RBuve"
-msgid "after your exam"
-msgstr "nach deiner Prüfung"
-
-#: src/today/today-week-day.tsx
-msgctxt "coog-B"
-msgid "after your end date"
-msgstr "nach deinem Zieldatum"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
