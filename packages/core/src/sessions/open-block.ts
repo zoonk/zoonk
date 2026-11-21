@@ -12,13 +12,13 @@ import { loadExtraWritingAvailability } from "./_utils/extra-writing-availabilit
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
 import { followSavedDay } from "./_utils/refresh-study-day-selection";
-import { findRemovedWritingBlocks } from "./_utils/removed-writing-blocks";
 import { type StudyBlockView, getNextBlock, toStudyBlockView } from "./_utils/session-view";
 import {
   STUDY_SESSION_INCLUDE,
   type StudySessionRow,
   findStudySessionFor,
 } from "./_utils/study-session-access";
+import { loadSessionWritingTasks } from "./_utils/writing-block-tasks";
 import { getSessionPageView } from "./get-session-page-view";
 import { type OpenStudyBlockInput, type OpenStudyBlockResult } from "./open-block-contract";
 
@@ -51,7 +51,7 @@ async function loadOpenedBlockViews({
   timeZone: string;
   userId: string;
 }) {
-  const removed = await findRemovedWritingBlocks({ fresh: true, session });
+  const { removed, writingTasks } = await loadSessionWritingTasks({ fresh: true, session });
   const blocks = session.blocks.filter(({ id }) => !removed.has(id));
 
   const withWritingAvailability = await loadExtraWritingAvailability({
@@ -62,7 +62,9 @@ async function loadOpenedBlockViews({
   });
 
   return blocks.map((block) =>
-    withWritingAvailability(toStudyBlockView({ answeredItemIds: new Set(), block, blocks })),
+    withWritingAvailability(
+      toStudyBlockView({ answeredItemIds: new Set(), block, blocks, writingTasks }),
+    ),
   );
 }
 

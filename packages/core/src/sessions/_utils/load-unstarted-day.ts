@@ -19,6 +19,7 @@ import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-pl
 import { getSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionDayContext } from "./session-placement";
 import { getSessionBar } from "./session-view";
+import { getBlueprintWritingTasks } from "./writing-block-tasks";
 
 /** Read-only display data; never invents session or block ids. */
 export async function loadUnstartedDayView({
@@ -121,6 +122,8 @@ export async function loadUnstartedDayView({
     ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
     : null;
 
+  const writingTasks = getBlueprintWritingTasks(blueprint);
+
   return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
     blocks: blocks.map((block) =>
@@ -131,6 +134,7 @@ export async function loadUnstartedDayView({
         blocks,
         oftenTestedSkillIds,
         subject: subjects.get(block.position) ?? null,
+        writingTasks,
       }),
     ),
     catchUp: previewCatchUp,
