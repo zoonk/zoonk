@@ -7,11 +7,7 @@ final class LessonAskLayoutTests: XCTestCase {
     XCTAssertTrue(showsLessonAsk(isExplanation: true, hasPanel: true, hasOwnAsk: false))
   }
 
-  func testAPhoneKnowledgeExplanationKeepsOnlyItsOwnAsk() {
-    XCTAssertFalse(showsLessonAsk(isExplanation: true, hasPanel: true, hasOwnAsk: true))
-  }
-
-  func testAWideExplanationKeepsOnlyTheAsideAsk() {
+  func testAnExplanationWithItsOwnAskGetsNoSecondAsk() {
     XCTAssertFalse(showsLessonAsk(isExplanation: true, hasPanel: true, hasOwnAsk: true))
   }
 

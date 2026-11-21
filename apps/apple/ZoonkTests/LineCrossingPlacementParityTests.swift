@@ -247,12 +247,16 @@ final class LineCrossingPlacementParityTests: XCTestCase {
               shown: shown, revealed: [], in: area, guides: [], obstacles: [])
             let afterCheck = LineCrossingLabelLayout.chart(
               shown: shown, revealed: [answer], in: area, guides: [], obstacles: [])
+            XCTAssertEqual(beforeCheck.count, shown.count)
+            XCTAssertEqual(afterCheck.count, shown.count + 1)
+            XCTAssertNotNil(afterCheck.last ?? nil)
             for box in afterCheck.compactMap({ $0 }) {
               XCTAssertFalse(LineCrossingLabelLayout.touches(box, answer.segment))
             }
             for (index, pair) in zip(beforeCheck, afterCheck).enumerated() {
               let (before, after) = pair
               guard let before else {
+                XCTAssertEqual(index, 2, "Only the optional before-line label may be hidden")
                 XCTAssertNil(after)
                 continue
               }
