@@ -69,9 +69,14 @@ export async function loadWritingSupply(input: WritingSupplyInput) {
     return null;
   }
 
+  const scope = getWritingScope({ picks: readExamPicks(goal.plan?.settings), structure, task });
+
+  if (!scope.available) {
+    return null;
+  }
+
   const result = await findWritingPrompts({ goalId, requests: [input], tx: prisma, userId });
   const missing = result.status === "missing" ? (result.requests[0]?.count ?? 0) : 0;
-  const scope = getWritingScope({ picks: readExamPicks(goal.plan?.settings), structure, task });
 
   return {
     blueprint,

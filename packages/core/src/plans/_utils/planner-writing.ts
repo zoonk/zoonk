@@ -1,30 +1,26 @@
 import "server-only";
 import { getEstimatedMinutes, loadWritingPace } from "../../exams/essays/_utils/load-produce";
 import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
-import { getWritingSkillIds } from "../../learner/writing-skills";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { type PlanGraph } from "../planner/plan-state";
 import { type PlanWriting } from "../planner/writing-allocation";
 import { listWrittenPapers } from "../planner/written-test-planning";
 
 export async function loadPlanWriting({
   classTest,
   examBlueprintId,
-  graph,
+  skillIds,
   structure,
   userId,
 }: {
   classTest: boolean;
   examBlueprintId: string;
-  graph: PlanGraph;
+  skillIds: ReadonlySet<string>;
   structure: ExamStructure;
   userId: string;
 }): Promise<PlanWriting | undefined> {
   const tasks = listPracticeWritingTasks({ classTest, structure });
 
-  const skillIds = getWritingSkillIds({ graph, structure });
-
-  if (tasks.length === 0 || skillIds.size === 0) {
+  if (tasks.length === 0) {
     return;
   }
 

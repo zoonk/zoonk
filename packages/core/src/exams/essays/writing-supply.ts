@@ -129,7 +129,7 @@ export async function loadUnseenWritingPrompts({
     const own = writing && tasks.get(writing.taskKey);
 
     return writing &&
-      own &&
+      own?.scope.available &&
       !used.has(item.id) &&
       matchesWritingTaskBasis({ prompt: writing, task: own.task }) &&
       isSameWritingScope({ choices: own.scope.choices, prompt: writing })

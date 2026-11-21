@@ -1,4 +1,5 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { type ExamChoice } from "./exam-choices";
 
 type Subject = ExamStructure["subjects"][number];
 
@@ -43,4 +44,21 @@ export function listCountedSubjects<T extends Pick<Subject, "choiceGroup" | "nam
     const group = choices.find((choice) => choice.name === item.choiceGroup);
     return !group || group.options.slice(0, group.take).includes(item);
   });
+}
+
+/** The options a pick names, in the notice's order; null unless it names one to `take` of its choice's options. */
+export function findChosenOptions({
+  choice,
+  structure,
+}: {
+  choice: ExamChoice;
+  structure: ExamStructure;
+}): Subject[] | null {
+  const group = listChoiceGroups(structure).find((item) => item.name === choice.group);
+  const names = new Set(choice.subjects);
+  const options = group?.options.filter((option) => names.has(option.name)) ?? [];
+
+  return group && options.length > 0 && options.length === names.size && names.size <= group.take
+    ? options
+    : null;
 }

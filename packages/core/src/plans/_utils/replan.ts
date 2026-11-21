@@ -148,27 +148,25 @@ export async function computePlan({
 
   const targetDate = getStateTargetDate(state);
 
-  const [{ areaShares, examSubjects, topicLevels, ...loaded }, carryOver, todayShown, quick] =
-    await Promise.all([
-      loadPlannerInputs({
-        difficultyBias: state.settings.difficultyBias,
-        examPicks: state.settings,
-        goal: context.goal,
-        graph: resolved,
-        targetDate,
-        userId: context.goal.userId,
-      }),
-      loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }).then(
-        (loadedCarry) =>
-          loadedCarry && {
-            ...loadedCarry,
-            todayExceptAreas: options.todayExceptAreas ?? loadedCarry.todayExceptAreas ?? null,
-          },
-      ),
-      shownToday ??
-        (mode === "automatic" && isTodayShown({ goalId: context.goal.id, today: context.today })),
-      loadQuickBaseLessons(state.settings),
-    ]);
+  const [
+    { areaShares, examSubjects, topicLevels, writtenSkillIds, ...loaded },
+    carryOver,
+    todayShown,
+    quick,
+  ] = await Promise.all([
+    loadPlannerInputs({
+      difficultyBias: state.settings.difficultyBias,
+      examPicks: state.settings,
+      goal: context.goal,
+      graph: resolved,
+      targetDate,
+      userId: context.goal.userId,
+    }),
+    loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }),
+    shownToday ??
+      (mode === "automatic" && isTodayShown({ goalId: context.goal.id, today: context.today })),
+    loadQuickBaseLessons(state.settings),
+  ]);
 
   const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
     bands: loaded.bands,
@@ -188,7 +186,10 @@ export async function computePlan({
     bossFacts: await bossFacts,
     bossMinutes: listSavedBossMinutes(context.items),
     bringBackSetAside: options.bringBackSetAside ?? false,
-    carryOver,
+    carryOver: carryOver && {
+      ...carryOver,
+      todayExceptAreas: options.todayExceptAreas ?? carryOver.todayExceptAreas ?? null,
+    },
     examWindows: toExamWindows(context.phases),
     finishedOn: listFinishedDays({ items: context.items, timeZone: context.timeZone }),
     goal: { dailyMinutes: state.goal.dailyMinutes, kind: context.goal.kind, targetDate },
@@ -222,13 +223,14 @@ export async function computePlan({
     topicLevels,
   });
 
-  // Compare the inputs before the producer changes its own funding: its output isn't news.
-  if (shouldSkipPlanBuild({ input, savedKey: context.plan.inputsKey, skipUnchangedInputs })) {
+  const savedKey =
+    writtenSkillIds && !state.settings.writtenSkillIds ? null : context.plan.inputsKey;
+
+  if (shouldSkipPlanBuild({ input, savedKey, skipUnchangedInputs })) {
     return null;
   }
 
   const builtInput = { ...input, ...readLanding({ input, savedKey: context.plan.inputsKey }) };
-
   const built = buildPlan(builtInput);
 
   const laidOut = await layOutUnmetPhaseDates({
@@ -261,7 +263,7 @@ export async function computePlan({
 
   const saved = withPlannedLessons({ graph: fullGraph, skillLessons: built.skillLessons });
 
-  const savedSettings = withBuiltSettings({ built, settings });
+  const savedSettings = withBuiltSettings({ built, settings, writtenSkillIds });
 
   return {
     get bases() {

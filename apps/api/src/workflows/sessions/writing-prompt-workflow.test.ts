@@ -1,20 +1,27 @@
+import { POST as startWriting } from "@/app/v1/essays/[blockId]/starts/route";
 import { writeWritingPrompt } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { reserveWritingPromptSpend } from "@zoonk/core/library/items/writing-prompt-spend";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { getWorkflowMetadata } from "workflow";
 import { getRun } from "workflow/api";
 import { HookConflictError } from "workflow/errors";
+import { mockSession } from "../../../../../packages/core/src/_test-utils/mock-session";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import { ensureWritingPrompts, writingPromptWorkflow } from "./writing-prompt-workflow";
 
 // The writer's provider is external. The prompt bank, guest spend, and step persistence use the local test database.
 vi.mock("@zoonk/ai/tasks/items/write-writing-prompt", () => ({ writeWritingPrompt: vi.fn() }));
+vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 
 async function setup() {
   const [blueprint, user] = await Promise.all([
@@ -137,6 +144,36 @@ describe(writingPromptWorkflow, () => {
     }
   });
 
+  it("returns a conflict without generating for a pending block whose task was removed", async () => {
+    const {
+      input: { goalId, userId },
+    } = await setup();
+
+    const session = await studySessionFixture({ goalId, userId });
+
+    const block = await studySessionBlockFixture({
+      kind: "produce",
+      payload: { writing: { admissionId: null, draft: null, taskKey: "removed", unit: "answer" } },
+      sessionId: session.id,
+    });
+
+    mockSession(userId);
+
+    const response = await startWriting(
+      new Request(`http://localhost/v1/essays/${block.id}/starts`, {
+        body: "{}",
+        headers: { "content-type": "application/json" },
+        method: "POST",
+      }),
+      { params: Promise.resolve({ blockId: block.id }) },
+    );
+
+    expect(response.status).toBe(409);
+    expect(getStartMock()).not.toHaveBeenCalled();
+    expect(writeWritingPrompt).not.toHaveBeenCalled();
+    await expect(prisma.writingAdmission.count({ where: { userId } })).resolves.toBe(0);
+  });
+
   it("claims a specialty's prompt apart from another specialty's", async () => {
     const citation = { passage: "Each candidate picks one specialty.", sourceId: "notice" };
 
@@ -182,7 +219,7 @@ describe(writingPromptWorkflow, () => {
       },
     });
 
-    const learner = async (option: string) => {
+    const learner = async (option: string | null) => {
       const user = await userFixture();
 
       const goal = await goalFixture({
@@ -193,7 +230,7 @@ describe(writingPromptWorkflow, () => {
 
       await planFixture({
         goalId: goal.id,
-        settings: { examChoices: [{ group: "Specialty", subjects: [option] }] },
+        settings: { examChoices: option ? [{ group: "Specialty", subjects: [option] }] : [] },
       });
 
       return {
@@ -212,6 +249,11 @@ describe(writingPromptWorkflow, () => {
       return { runId: crypto.randomUUID() } as never;
     });
 
+    await expect(ensureWritingPrompts(await learner(null))).resolves.toStrictEqual({
+      status: "ready",
+    });
+
+    expect(tokens).toStrictEqual([]);
     await ensureWritingPrompts(await learner("Audit"));
     await ensureWritingPrompts(await learner("Systems"));
     await ensureWritingPrompts(await learner("Audit"));

@@ -140,7 +140,11 @@ function hashKeyed(value: unknown): string {
 }
 
 function readKeyedInput(input: BuildPlanInput) {
-  const { writingSchedule: _schedule, ...settings } = input.settings ?? {};
+  const {
+    writingSchedule: _schedule,
+    writtenSkillIds: _writtenSkills,
+    ...settings
+  } = input.settings ?? {};
 
   return {
     ...input,

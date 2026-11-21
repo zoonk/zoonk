@@ -1,8 +1,8 @@
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 import { namesMatch } from "../../_utils/name-match";
-import { listChoiceGroups } from "../../choices/choice-groups";
-import { type ExamPicks, findChosenOptions } from "../../choices/exam-choices";
+import { findChosenOptions, listChoiceGroups } from "../../choices/choice-groups";
+import { type ExamPicks } from "../../choices/exam-choices";
 
 type Subject = ExamStructure["subjects"][number];
 
@@ -17,7 +17,7 @@ export type WritingChoice = { group: string; subject: string };
  * `choices` are the learner's options the task's questions can depend on: a prompt is shared only
  * by learners with the same options. `subjects` are the subjects its questions may be on.
  */
-export type WritingScope = { choices: WritingChoice[]; subjects: Subject[] };
+export type WritingScope = { available: boolean; choices: WritingChoice[]; subjects: Subject[] };
 
 /** A blueprint read before its tasks recorded their subjects: the subjects named like the task. */
 function findNamedSubjects({ structure, task }: { structure: ExamStructure; task: Task }) {
@@ -48,23 +48,28 @@ export function getWritingScope({
     ? structure.subjects.filter((subject) => linked.includes(subject.name))
     : findNamedSubjects({ structure, task });
 
-  const choices = groups
-    .filter((group) => !linked || group.options.some((option) => candidates.includes(option)))
-    .flatMap((group) => {
-      const choice = picks.examChoices.find((pick) => pick.group === group.name);
-      const options = choice ? findChosenOptions({ choice, structure }) : null;
-      return (options ?? []).map((option) => ({ group: group.name, subject: option.name }));
-    });
+  const relevant = linked
+    ? groups.filter((group) => group.options.some((option) => candidates.includes(option)))
+    : groups;
+
+  const choices = relevant.flatMap((group) => {
+    const choice = picks.examChoices.find((pick) => pick.group === group.name);
+    const options = choice ? findChosenOptions({ choice, structure }) : null;
+    return (options ?? []).map((option) => ({ group: group.name, subject: option.name }));
+  });
 
   const options = new Set(groups.flatMap((group) => group.options.map((option) => option.name)));
   const chosen = new Set(choices.map((choice) => choice.subject));
 
-  return {
-    choices,
-    subjects: candidates.filter(
-      (subject) => !options.has(subject.name) || chosen.has(subject.name),
-    ),
-  };
+  const subjects = candidates.filter(
+    (subject) => !options.has(subject.name) || chosen.has(subject.name),
+  );
+
+  const available = linked
+    ? subjects.length > 0 || (candidates.length === 0 && groups.length === 0)
+    : relevant.every(({ name }) => choices.some(({ group }) => group === name));
+
+  return { available, choices, subjects };
 }
 
 export function toChosenSubjects(choices: readonly WritingChoice[]): string[] {

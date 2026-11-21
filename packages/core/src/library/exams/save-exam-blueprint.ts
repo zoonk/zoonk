@@ -4,14 +4,14 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { compareBoards } from "@zoonk/utils/exam-boards";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
-import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
+import { refreshBlueprintWritingSkills } from "../../learner/writing-skills";
 import {
   type LibraryProvenance,
   createOrFindByIdentity,
   toLibraryVisibility,
   toProvenanceData,
 } from "../_utils/library-rows";
-import { lockPlanInputWrite, writePlanInputs } from "../_utils/plan-input-write";
+import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { createSourceChangeNotice } from "../sources/content-review-flags";
 import {
   type BlueprintContent,
@@ -219,13 +219,7 @@ async function updateBlueprint({
   const notice = changes.length > 0 ? input.notice : null;
 
   const { blueprint, noticeId } = await writePlanInputs(async (tx) => {
-    await lockPlanInputWrite({
-      loadPlanIds: () => resolvePlanInputDependents(tx, { blueprintIds: [current.id] }),
-      lockSources: async () => {
-        await tx.$queryRaw`SELECT id FROM exam_blueprints WHERE id = ${current.id}::uuid FOR UPDATE`;
-      },
-      tx,
-    });
+    await lockPlanBlueprintWrite(tx, current.id);
 
     const updated = await tx.examBlueprint.update({
       data: {
@@ -236,6 +230,16 @@ async function updateBlueprint({
       },
       where: { id: current.id },
     });
+
+    if (
+      changes.some(({ field }) => field === "mock" || field === "subjects" || field === "formats")
+    ) {
+      await refreshBlueprintWritingSkills({
+        blueprintId: updated.id,
+        structure: content.structure,
+        tx,
+      });
+    }
 
     if (!notice) {
       return { blueprint: updated, noticeId: null };

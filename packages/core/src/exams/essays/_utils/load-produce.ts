@@ -1,13 +1,15 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { loadWrittenSamples } from "../../../learner/facts/written-samples";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 import { daysBetween, fromIsoDate } from "../../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../../plans/planner/plan-state";
 import { getDaysBetweenEssays, isWrittenDay } from "../../../plans/planner/written-cadence";
+import { readExamPicks } from "../../choices/exam-choices";
 import { type PlannedProduce } from "../produce-block";
-import { writtenAnswerSchema } from "../writing-contract";
 import { listPracticeWritingTasks } from "./practice-writing-tasks";
+import { getWritingScope } from "./writing-scope";
 
 const MS_PER_MINUTE = 60_000;
 const SHARED_CLOCK_PRACTICE_MINUTES = 45;
@@ -51,39 +53,15 @@ export async function loadWritingPace({
     return [];
   }
 
-  const samples = await prisma.attempt.findMany({
-    orderBy: { answeredAt: "desc" },
-    select: {
-      answer: true,
-      durationMs: true,
-      item: { select: { content: true } },
-      localDate: true,
-    },
-    where: {
-      item: {
-        content: { equals: "answer", path: ["writing", "unit"] },
-        examBlueprintId,
-        format: "essay",
-      },
-      userId,
-    },
+  const independent = await loadWrittenSamples({
+    scope: { examBlueprintId, firstDraft: true, wholeAnswers: true },
+    userId,
   });
 
-  const independent = samples.filter(
-    ({ answer }) => writtenAnswerSchema.safeParse(answer).data?.conditions.version === "firstDraft",
-  );
+  const byTask = Map.groupBy(independent, ({ prompt }) => prompt.taskKey);
 
   const ranked = tasks.map((task) => {
-    const history = independent.filter(
-      ({ item }) =>
-        typeof item?.content === "object" &&
-        item.content !== null &&
-        "writing" in item.content &&
-        typeof item.content.writing === "object" &&
-        item.content.writing !== null &&
-        "taskKey" in item.content.writing &&
-        item.content.writing.taskKey === task.key,
-    );
+    const history = byTask.get(task.key) ?? [];
 
     const durations = history
       .map(({ durationMs }) => durationMs)
@@ -148,10 +126,13 @@ export async function loadSessionProduce({
     return null;
   }
 
+  const { structure } = readBlueprintContent(blueprint);
+  const picks = readExamPicks(planSettings);
+
   const tasks = listPracticeWritingTasks({
     classTest: Boolean(blueprint.ownerId),
-    structure: readBlueprintContent(blueprint).structure,
-  });
+    structure,
+  }).filter((task) => getWritingScope({ picks, structure, task }).available);
 
   const ordered = await loadWritingPace({
     examBlueprintId: blueprint.id,

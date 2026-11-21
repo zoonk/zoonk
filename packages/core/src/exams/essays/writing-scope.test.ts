@@ -203,6 +203,23 @@ describe("written tasks scoped to the learner's subjects", () => {
     });
   });
 
+  it("offers the shared question while the learner has no specialty and waits for the case", async () => {
+    const blueprint = await examBlueprintFixture({ structure: cguStructure({ linked: true }) });
+    const learner = await learnerFixture({ blueprintId: blueprint.id, specialty: null });
+
+    const caseId = await writePrompt(learner, "long");
+    expect(writeWritingPrompt).not.toHaveBeenCalled();
+    await expect(prisma.item.findUnique({ where: { id: caseId } })).resolves.toBeNull();
+
+    const questionId = await writePrompt(learner, "short");
+    expect(lastWriterInput()).toMatchObject({ choices: [], subject: { name: COMPLEMENTARY[0] } });
+
+    await expect(findPrompt(learner, "short")).resolves.toStrictEqual({
+      itemIds: [questionId],
+      status: "ready",
+    });
+  });
+
   it("spreads the 30-line question across the complementary subjects, shared by every specialty", async () => {
     const blueprint = await examBlueprintFixture({ structure: cguStructure({ linked: true }) });
     const auditor = await learnerFixture({ blueprintId: blueprint.id, specialty: AUDIT });

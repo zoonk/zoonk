@@ -91,11 +91,7 @@ export async function ensureWritingPrompts(
 
   const supply = await loadWritingSupply(input);
 
-  if (!supply) {
-    throw new Error("Writing supply requires an owned exam and a saved written task.");
-  }
-
-  if (supply.missing === 0) {
+  if (!supply || supply.missing === 0) {
     return { status: "ready" };
   }
 

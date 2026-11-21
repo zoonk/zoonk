@@ -29,7 +29,7 @@ export function countWritingLines({
     }
 
     if (lineBreak) {
-      estimatedLines += 1;
+      estimatedLines += Number(index + segment.length < text.length);
       used = 0;
     } else {
       used += 1;

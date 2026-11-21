@@ -10,10 +10,12 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { creditWrittenSkills } from "../../learner/written-evidence";
+import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./_utils/writing-feedback";
+import { getWritingTaskBasis, matchesWritingTaskBasis } from "./_utils/writing-task-basis";
 import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS, essaySubmissionInputSchema } from "./essay-contract";
 import { getWritingAttempt } from "./get-writing-attempt";
 import { type WritingConditions, type WritingResult, writtenItemSchema } from "./writing-contract";
@@ -21,6 +23,7 @@ import { countWritingLines } from "./writing-lines";
 import {
   type WritingArithmetic,
   getWritingArithmetic,
+  getWritingRubricFingerprint,
   isNumericWritingRubric,
 } from "./writing-rubric-policy";
 
@@ -372,15 +375,58 @@ describe("writing grades", () => {
   });
 });
 
-describe(countWritingLines, () => {
-  it("counts graphemes, preserves UTF-16 offsets and counts blank lines", () => {
-    const text = "e\u0301🙂\r\n\r\nnext";
-
-    expect(countWritingLines({ charactersPerLine: 2, limit: 2, text })).toStrictEqual({
-      estimatedLines: 4,
-      ignoredFrom: text.indexOf("next"),
-    });
+const rounded = (passage: string) =>
+  getWritingRubricFingerprint({
+    ...basis,
+    grading: {
+      ...basis.grading,
+      rounding: { citation: { passage, sourceId: "notice" }, text: "Scoring precision" },
+    },
   });
+
+describe(getWritingRubricFingerprint, () => {
+  it("keeps cosmetic changes out of the rubric and task compatibility keys", () => {
+    const revised = {
+      ...basis,
+      grading: {
+        ...basis.grading,
+        criteria: basis.grading.criteria.map((criterion) => ({
+          ...criterion,
+          citation: { passage: "Shorter quotation", sourceId: "reread" },
+          id: "thesis",
+          text: "State the main point",
+        })),
+      },
+      minimumWords: basis.minimumWords + 10,
+    };
+
+    const prompt = { ...basis, taskBasis: getWritingTaskBasis(basis) };
+
+    expect(matchesWritingTaskBasis({ prompt, task: revised })).toBe(true);
+    expect(matchesWritingTaskBasis({ prompt, task: { ...revised, lines: 40 } })).toBe(false);
+    expect(getWritingRubricFingerprint(revised)).toBe(getWritingRubricFingerprint(basis));
+
+    expect(getWritingRubricFingerprint({ ...revised, points: 10 })).not.toBe(
+      getWritingRubricFingerprint(basis),
+    );
+
+    expect(getWritingArithmetic(revised)).toBeNull();
+  });
+
+  it("fingerprints the verified rounding rule independently of its wording", () => {
+    expect(rounded("Round to two places.")).toBe(rounded("Rounded to 2 decimal places."));
+    expect(rounded("Round down to 2 decimals.")).not.toBe(rounded("Round to 2 decimals."));
+    expect(rounded("Round to 3 decimals.")).not.toBe(rounded("Round to 2 decimals."));
+  });
+});
+
+describe(countWritingLines, () => {
+  it.each(lineFixtures)(
+    "counts lines and retains UTF-16 cutoff offsets for $text",
+    ({ estimatedLines, ignoredFrom, ...input }) => {
+      expect(countWritingLines(input)).toStrictEqual({ estimatedLines, ignoredFrom });
+    },
+  );
 });
 
 describe(recordEssayGrade, () => {

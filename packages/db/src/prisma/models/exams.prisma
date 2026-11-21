@@ -93,10 +93,9 @@ model EssayGradeClaim {
   id        String   @id @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  localDate DateTime @map("local_date") @db.Date
+  /// Unused.
+  localDate DateTime @default(dbgenerated("CURRENT_DATE")) @map("local_date") @db.Date @ignore
   createdAt DateTime @default(now()) @map("created_at")
-
-  @@index([userId, localDate])
   @@map("essay_grade_claims")
 }
 

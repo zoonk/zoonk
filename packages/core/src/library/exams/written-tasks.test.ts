@@ -176,6 +176,32 @@ describe(listWrittenTasks, () => {
     expect(reread?.points).toBe(31.5);
   });
 
+  it("preserves a uniquely matched unnamed task through rewording", () => {
+    const original = readWrittenTest();
+    const section = original.mock!.sections[0]!;
+    const task = { ...section.tasks![0]!, officialIdentifier: undefined };
+
+    const change = (tasks: typeof section.tasks): ExamStructure => ({
+      ...original,
+      mock: { ...original.mock!, sections: [{ ...section, tasks }] },
+    });
+
+    const current = withWrittenTaskKeys({ current: null, next: change([task]) });
+    const [prior] = listWrittenTasks({ structure: current });
+    const reread = { ...task, description: "Write both long answers" };
+
+    const keys = (tasks: typeof section.tasks) =>
+      listWrittenTasks({ structure: withWrittenTaskKeys({ current, next: change(tasks) }) }).map(
+        ({ key }) => key,
+      );
+
+    expect(keys([reread])).toStrictEqual([prior?.key]);
+    expect(keys([{ ...task, lines: 40 }])).not.toContain(prior?.key);
+    expect(keys([{ ...task, points: 40 }])).not.toContain(prior?.key);
+    expect(keys([task, { ...reread, lines: 40 }])[0]).toBe(prior?.key);
+    expect(keys([{ ...reread, lines: 40 }])).not.toContain(prior?.key);
+  });
+
   it("uses practice pacing for a writing task named in a mixed sitting", () => {
     const old = readWrittenTest();
     const written = old.mock!.sections[0]!;

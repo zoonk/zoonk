@@ -1,7 +1,9 @@
 import { type Goal, prisma } from "@zoonk/db";
+import { normalizeString } from "@zoonk/utils/string";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { namesMatch } from "../../exams/_utils/name-match";
 import { unfinishedExtraWritingWhere } from "../../exams/essays/_utils/extra-writing-blocks";
+import { getWritingScope } from "../../exams/essays/_utils/writing-scope";
 import { projectWrittenParts } from "../../exams/estimates/written-projection";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readExtraWritingLimit } from "../../learner/facts/extra-writing";
@@ -137,6 +139,39 @@ async function loadWriteActions({
   };
 }
 
+const PRESENTATION_WORD =
+  /(?:^|[^a-z])(?:presentation|structure|apresentacao|estrutura)(?:$|[^a-z])/u;
+
+const LEVEL_SHARE = { complete: 1, missing: 0, partial: 1 / 3, strong: 2 / 3 };
+
+function presentationShare({ answer: { grade }, numericEligible, prompt }: WrittenSample) {
+  const criteria = new Set(
+    prompt.criteria.flatMap(({ id, name }) =>
+      PRESENTATION_WORD.test(normalizeString(`${id} ${name}`)) ? [id] : [],
+    ),
+  );
+
+  if (numericEligible && grade.kind === "points") {
+    const rows = grade.rows.filter(({ id }) => criteria.has(id));
+    const max = rows.reduce((sum, row) => sum + row.max, 0);
+
+    const earned = rows.reduce(
+      (sum, row) => sum + (row.range ? (row.range.low + row.range.high) / 2 : row.earned),
+      0,
+    );
+
+    if (max > 0) {
+      return Math.min(1, Math.max(0, earned / max));
+    }
+  }
+
+  const levels = grade.criteria.filter(({ id }) => criteria.has(id));
+
+  return levels.length > 0
+    ? levels.reduce((sum, { level }) => sum + LEVEL_SHARE[level], 0) / levels.length
+    : null;
+}
+
 const TREND_SAMPLES = 4;
 
 export async function loadWrittenPracticeView({
@@ -161,9 +196,15 @@ export async function loadWrittenPracticeView({
     return base;
   }
 
+  const writable = tasks.filter(
+    (task) => structure && getWritingScope({ picks: settings, structure, task }).available,
+  );
+
+  const writableKeys = new Set(writable.map(({ key }) => key));
+
   const [samples, writeAction] = await Promise.all([
     readWrittenSamples({ goalId: goal.id, userId: goal.userId }),
-    loadWriteActions({ goal, tasks }),
+    writable.length > 0 ? loadWriteActions({ goal, tasks: writable }) : null,
   ]);
 
   const points = projectWrittenParts({ samples, structure });
@@ -194,19 +235,29 @@ export async function loadWrittenPracticeView({
           )
           .slice(0, TREND_SAMPLES)
           .toReversed()
-          .map(({ answer: { grade }, localDate, numericEligible }) => ({
-            contentShare:
-              numericEligible && grade.kind === "points"
-                ? Math.min(
-                    1,
-                    Math.max(0, (grade.content.low + grade.content.high) / (2 * grade.max)),
-                  )
-                : null,
-            date: toIsoDate(localDate),
-            errors: grade.errors.length,
-            presentationShare: null,
-          })),
-        writeActions: ownTasks.map((task) => writeAction(task)),
+          .map((sample) => {
+            const {
+              answer: { grade },
+              localDate,
+              numericEligible,
+            } = sample;
+
+            return {
+              contentShare:
+                numericEligible && grade.kind === "points"
+                  ? Math.min(
+                      1,
+                      Math.max(0, (grade.content.low + grade.content.high) / (2 * grade.max)),
+                    )
+                  : null,
+              date: toIsoDate(localDate),
+              errors: grade.errorCount,
+              presentationShare: presentationShare(sample),
+            };
+          }),
+        writeActions: writeAction
+          ? ownTasks.filter(({ key }) => writableKeys.has(key)).map((task) => writeAction(task))
+          : [],
       };
     }),
   };

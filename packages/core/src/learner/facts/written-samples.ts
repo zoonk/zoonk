@@ -1,48 +1,152 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
+import { type TransactionClient, prisma, sql } from "@zoonk/db";
 import { cacheTag } from "next/cache";
+import { z } from "zod";
 import { getLearnerModelCacheTag } from "../../cache/tags";
-import { writtenAnswerSchema, writtenItemSchema } from "../../exams/essays/writing-contract";
+import {
+  writingRangeSchema,
+  writtenAnswerSchema,
+  writtenItemSchema,
+} from "../../exams/essays/writing-contract";
 import { isNumericWritingRubric } from "../../exams/essays/writing-rubric-policy";
+
+const samplePrompt = writtenItemSchema.pick({
+  assessedSkillIds: true,
+  criteria: true,
+  grading: true,
+  lines: true,
+  points: true,
+  taskBasis: true,
+  taskKey: true,
+  title: true,
+  unit: true,
+});
+
+const feedback = {
+  criteria: z.array(
+    z.object({ id: z.string(), level: z.enum(["missing", "partial", "strong", "complete"]) }),
+  ),
+  errorCount: z.int().nonnegative(),
+};
+
+const sampleGrade = z.discriminatedUnion("kind", [
+  z.object({ ...feedback, kind: z.literal("levels") }),
+  z.object({
+    ...feedback,
+    content: writingRangeSchema,
+    kind: z.literal("points"),
+    max: z.number().positive(),
+    rows: z.array(
+      z.object({
+        earned: z.number(),
+        id: z.string(),
+        max: z.number().positive(),
+        range: writingRangeSchema.optional(),
+      }),
+    ),
+    total: writingRangeSchema,
+  }),
+]);
+
+type SampleRow = {
+  answeredAt: Date;
+  conditions: unknown;
+  durationMs: number;
+  grade: unknown;
+  id: string;
+  itemId: string;
+  localDate: Date;
+  mockExamId: string | null;
+  prompt: unknown;
+  studySessionId: string | null;
+};
+
+type SampleScope =
+  | { goalId: string }
+  | { examBlueprintId: string | null; firstDraft: true; wholeAnswers?: boolean };
+
+export async function loadWrittenSamples({
+  scope,
+  tx = prisma,
+  userId,
+}: {
+  scope: SampleScope;
+  tx?: TransactionClient;
+  userId: string;
+}) {
+  const filter =
+    "goalId" in scope
+      ? sql`AND (
+      (mock.goal_id = ${scope.goalId}::uuid AND mock.status = 'finished' AND mock.user_id = a.user_id)
+      OR (a.mock_exam_id IS NULL AND session.goal_id = ${scope.goalId}::uuid AND session.user_id = a.user_id)
+    )`
+      : sql`AND i.exam_blueprint_id IS NOT DISTINCT FROM ${scope.examBlueprintId}::uuid
+      AND a.answer #>> '{conditions,version}' = 'firstDraft'
+      ${scope.wholeAnswers ? sql`AND i.content #>> '{writing,unit}' = 'answer'` : sql``}`;
+
+  const attempts = await tx.$queryRaw<SampleRow[]>(sql`
+    SELECT a.id, a.item_id AS "itemId", a.answered_at AS "answeredAt", a.local_date AS "localDate",
+           a.duration_ms AS "durationMs", a.mock_exam_id AS "mockExamId",
+           a.study_session_id AS "studySessionId", a.answer -> 'conditions' AS conditions,
+           jsonb_build_object(
+             'kind', a.answer #> '{grade,kind}',
+             'criteria', COALESCE((
+               SELECT jsonb_agg(jsonb_build_object('id', entry -> 'id', 'level', entry -> 'level'))
+               FROM jsonb_array_elements(a.answer #> '{grade,criteria}') entry
+             ), '[]'::jsonb),
+             'errorCount', jsonb_array_length(a.answer #> '{grade,errors}'),
+             'content', a.answer #> '{grade,content}',
+             'max', a.answer #> '{grade,max}',
+             'rows', a.answer #> '{grade,rows}',
+             'total', a.answer #> '{grade,total}'
+           ) AS grade,
+           (i.content -> 'writing') - ARRAY[
+             'aspects', 'charactersPerLine', 'chosenSubjects', 'keySource',
+             'minimumWords', 'partMinimum', 'subject'
+           ] AS prompt
+    FROM attempts a
+    JOIN items i ON i.id = a.item_id
+    ${
+      "goalId" in scope
+        ? sql`
+      LEFT JOIN mock_exams mock ON mock.id = a.mock_exam_id
+      LEFT JOIN study_sessions session ON session.id = a.study_session_id
+    `
+        : sql``
+    }
+    WHERE a.user_id = ${userId}::uuid AND i.format = 'essay'
+      AND jsonb_typeof(a.answer #> '{grade,criteria}') = 'array'
+      AND jsonb_typeof(a.answer #> '{grade,errors}') = 'array'
+      AND jsonb_typeof(i.content -> 'writing') = 'object'
+      ${filter}
+    ORDER BY a.answered_at DESC, a.id DESC
+  `);
+
+  return attempts.flatMap(({ conditions, grade, prompt, ...attempt }) => {
+    const savedConditions = writtenAnswerSchema.shape.conditions.safeParse(conditions).data;
+    const savedGrade = sampleGrade.safeParse(grade).data;
+    const savedPrompt = samplePrompt.safeParse(prompt).data;
+    const origin = attempt.mockExamId ? "mock" : "block";
+
+    return savedConditions?.origin === origin && savedGrade && savedPrompt
+      ? [
+          {
+            ...attempt,
+            answer: { conditions: savedConditions, grade: savedGrade },
+            numericEligible: isNumericWritingRubric(savedPrompt),
+            prompt: savedPrompt,
+          },
+        ]
+      : [];
+  });
+}
 
 export async function readWrittenSamples({ goalId, userId }: { goalId: string; userId: string }) {
   "use cache: private";
 
   cacheTag(getLearnerModelCacheTag(userId));
 
-  const attempts = await prisma.attempt.findMany({
-    orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
-    select: {
-      answer: true,
-      id: true,
-      item: { select: { content: true } },
-      itemId: true,
-      localDate: true,
-      mockExamId: true,
-      studySessionId: true,
-    },
-    where: {
-      OR: [
-        { mockExam: { goalId, status: "finished", userId } },
-        { mockExamId: null, studySession: { goalId, userId } },
-      ],
-      item: { format: "essay" },
-      userId,
-    },
-  });
-
-  return attempts.flatMap((attempt) => {
-    const { itemId } = attempt;
-    const answer = writtenAnswerSchema.safeParse(attempt.answer).data;
-    const content = attempt.item?.content;
-    const prompt = writtenItemSchema.safeParse(isJsonObject(content) ? content.writing : null).data;
-    const origin = attempt.mockExamId ? "mock" : "block";
-
-    return answer && prompt && itemId && answer.conditions.origin === origin
-      ? [{ ...attempt, answer, itemId, numericEligible: isNumericWritingRubric(prompt), prompt }]
-      : [];
-  });
+  return loadWrittenSamples({ scope: { goalId }, userId });
 }
 
 export type WrittenSample = Awaited<ReturnType<typeof readWrittenSamples>>[number];
