@@ -111,10 +111,7 @@ function ChallengeDecision({
   );
 }
 
-/**
- * Brings the new decision into view. When it shows a chart, the chart and the decision under it
- * come into view together when they fit, and the chart's top when they don't.
- */
+/** A decision's chart comes into view with the decision when both fit, and from its top when not. */
 function useNewestInView(count: number) {
   const decisionRef = useRef<HTMLDivElement>(null);
   const visualRef = useRef<HTMLLIElement>(null);

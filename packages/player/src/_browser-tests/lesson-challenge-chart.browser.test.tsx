@@ -19,7 +19,11 @@ function renderChartCase() {
   });
 }
 
-/** Where an element sits in the conversation, wherever the page is scrolled to. */
+function containerLive(element: Element): string | null {
+  const root = element.closest("[aria-live], [role='log'], [role='status'], [role='alert']");
+  return root?.getAttribute("aria-live") ?? (root ? "polite" : null);
+}
+
 function topInLog(element: Element): number {
   const log = page.getByRole("log").element();
   return element.getBoundingClientRect().top - log.getBoundingClientRect().top;
@@ -45,6 +49,21 @@ describe("challenge charts", () => {
     expect(chartBox.top).toBeGreaterThanOrEqual(messageBox.bottom);
     expect(prompt.element().getBoundingClientRect().top).toBeGreaterThanOrEqual(chartBox.bottom);
     expect(page.getByRole("log").element().contains(chart.element())).toBe(true);
+  });
+
+  it("announces a decision's chart by its title and leaves its data for the learner to move through", async () => {
+    renderChartCase();
+    await press("Enter");
+
+    const chart = page.getByRole("figure", { name: "Detector scan" });
+    await expect.element(chart).toBeVisible();
+
+    const title = chart.element().querySelector("figcaption");
+    const cell = chart.getByRole("cell", { name: "952 counts/s" });
+    await expect.element(cell).toBeInTheDocument();
+
+    expect(title && containerLive(title)).toBe("polite");
+    expect(containerLive(cell.element())).toBe("off");
   });
 
   it("keeps the chart where it was after the pick and brings the next chart's top into view", async () => {
