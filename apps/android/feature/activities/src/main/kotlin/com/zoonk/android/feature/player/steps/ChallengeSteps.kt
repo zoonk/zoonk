@@ -273,7 +273,8 @@ private fun ChallengeConversation(
                     names,
                     moves,
                     progress,
-                    Modifier.bringIntoViewRequester(chart).onGloballyPositioned { placed.chart = it },
+                    chart,
+                    placed,
                 )
             }
 
@@ -320,7 +321,8 @@ private fun ChallengeMoves(
     names: ChallengeNames,
     moves: List<ChallengeMove>,
     progress: ChallengeProgress,
-    upcomingVisual: Modifier,
+    chart: BringIntoViewRequester,
+    placed: DecisionPlace,
 ) {
     ChallengeMeters(challengeMeters(content, moves), names, moved = moves.isNotEmpty())
 
@@ -360,7 +362,9 @@ private fun ChallengeMoves(
             }
             // Between the messages and the question, where it stays once the decision is made.
             progress.walk.node.visual
-                ?.let { ChallengeVisual(it, upcomingVisual) }
+                ?.let { visual ->
+                    ChallengeVisual(visual, Modifier.bringIntoViewRequester(chart).onGloballyPositioned { placed.chart = it })
+                }
         }
     }
 }
