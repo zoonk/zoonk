@@ -8198,26 +8198,22 @@ msgid "Question {number} of {total}"
 msgstr "Question {number} sur {total}"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
 msgstr "Partiellement correctes"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
 msgstr "Bonnes réponses"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "y2fpaL"
 msgid "Wrong"
 msgstr "Incorrectes"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Sans réponse"
@@ -8566,6 +8562,30 @@ msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Question {number}"
 
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewBlank"
+msgid "Blank"
+msgstr "Sans réponse"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewPartlyRight"
+msgid "Partly right"
+msgstr "Partiellement correct"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewRight"
+msgid "Right"
+msgstr "Correct"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewWrong"
+msgid "Wrong"
+msgstr "Incorrect"
+
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
@@ -8589,7 +8609,7 @@ msgstr "Vérifie à nouveau avant de rendre l’examen. Ton résultat montre com
 #: src/mock/mock-runner-view.tsx
 msgctxt "vmWccn"
 msgid "Your result shows how these answers went."
-msgstr ""
+msgstr "Ton résultat montre comment tu as répondu à ces questions."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx

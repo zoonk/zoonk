@@ -8198,26 +8198,22 @@ msgid "Question {number} of {total}"
 msgstr "Pregunta {number} de {total}"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
 msgstr "Parcialmente correctas"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
 msgstr "Correctas"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "y2fpaL"
 msgid "Wrong"
 msgstr "Incorrectas"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "En blanco"
@@ -8566,10 +8562,34 @@ msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Pregunta {number}"
 
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewBlank"
+msgid "Blank"
+msgstr "En blanco"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewPartlyRight"
+msgid "Partly right"
+msgstr "Parcialmente correcta"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewRight"
+msgid "Right"
+msgstr "Correcta"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewWrong"
+msgid "Wrong"
+msgstr "Incorrecta"
+
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
-msgstr "Preguntas para revisar"
+msgstr "Preguntas por revisar"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "rD-WPb"
@@ -8589,7 +8609,7 @@ msgstr "Vuelve a comprobarla antes de entregar. El resultado muestra cómo te fu
 #: src/mock/mock-runner-view.tsx
 msgctxt "vmWccn"
 msgid "Your result shows how these answers went."
-msgstr ""
+msgstr "Tu resultado muestra cómo te fue en estas respuestas."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx

@@ -8198,26 +8198,22 @@ msgid "Question {number} of {total}"
 msgstr "Soru {number} / {total}"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
 msgstr "Kısmen doğru"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
 msgstr "Doğru"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "y2fpaL"
 msgid "Wrong"
 msgstr "Yanlış"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "Boş"
@@ -8566,6 +8562,30 @@ msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Soru {number}"
 
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewBlank"
+msgid "Blank"
+msgstr "Boş"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewPartlyRight"
+msgid "Partly right"
+msgstr "Kısmen doğru"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewRight"
+msgid "Right"
+msgstr "Doğru"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewWrong"
+msgid "Wrong"
+msgstr "Yanlış"
+
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
@@ -8589,7 +8609,7 @@ msgstr "Teslim etmeden önce bir daha kontrol et. Sonucun bu cevapların nasıl 
 #: src/mock/mock-runner-view.tsx
 msgctxt "vmWccn"
 msgid "Your result shows how these answers went."
-msgstr ""
+msgstr "Sonucun bu cevapların nasıl geçtiğini gösteriyor."
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx

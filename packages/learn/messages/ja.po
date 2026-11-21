@@ -8198,26 +8198,22 @@ msgid "Question {number} of {total}"
 msgstr "第{number}問（全{total}問）"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "EVKFmp"
 msgid "Partly right"
 msgstr "一部正解"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "gAnLDP"
 msgid "Right"
 msgstr "正解"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "y2fpaL"
 msgid "Wrong"
 msgstr "不正解"
 
 #: src/mock/mock-result-answers.tsx
-#: src/mock/mock-review.tsx
 msgctxt "hrJRMj"
 msgid "Blank"
 msgstr "未解答"
@@ -8566,6 +8562,30 @@ msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "第{number}問"
 
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewBlank"
+msgid "Blank"
+msgstr "未回答"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewPartlyRight"
+msgid "Partly right"
+msgstr "部分正解"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewRight"
+msgid "Right"
+msgstr "正解"
+
+#. How the learner's answer to one question went, on its row in the mock exam's review list, like "Question 3 · Biology · Right".
+#: src/mock/mock-review.tsx
+msgctxt "mockReviewWrong"
+msgid "Wrong"
+msgstr "不正解"
+
 #: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
@@ -8589,7 +8609,7 @@ msgstr "提出する前にもう一度答えを見直しましょう。結果を
 #: src/mock/mock-runner-view.tsx
 msgctxt "vmWccn"
 msgid "Your result shows how these answers went."
-msgstr ""
+msgstr "結果を見ると、これらの答えがどうだったかわかります。"
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx

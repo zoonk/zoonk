@@ -66,9 +66,32 @@ function useEntryFacts() {
   return (entry: MockReviewEntry): (string | null)[] => [
     t("Question {number}", { number: String(entry.number) }),
     entry.area,
-    { blank: t("Blank"), partial: t("Partly right"), right: t("Right"), wrong: t("Wrong") }[
-      entry.outcome
-    ],
+    {
+      blank: t({
+        description:
+          "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+        id: "mockReviewBlank",
+        message: "Blank",
+      }),
+      partial: t({
+        description:
+          "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+        id: "mockReviewPartlyRight",
+        message: "Partly right",
+      }),
+      right: t({
+        description:
+          "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+        id: "mockReviewRight",
+        message: "Right",
+      }),
+      wrong: t({
+        description:
+          "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+        id: "mockReviewWrong",
+        message: "Wrong",
+      }),
+    }[entry.outcome],
   ];
 }
 
