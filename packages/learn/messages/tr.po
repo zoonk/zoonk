@@ -53,7 +53,6 @@ msgstr "BG"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -796,6 +795,11 @@ msgstr "Ekran seçenekleri"
 msgctxt "WE1eNa"
 msgid "The test didn't open. Try again."
 msgstr "Test açılmadı. Tekrar dene."
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "Bir sonraki üniteyi zaten biliyor musun?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"

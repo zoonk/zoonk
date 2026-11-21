@@ -1,8 +1,10 @@
 import SwiftUI
 
 /// Main's one quiet line before a chapter the learner may already know, the link in ink and
-/// underlined in its muted words.
+/// underlined in its muted words. Where nothing on screen names the chapter the next lesson
+/// starts, `isNextChapter` says it's that one.
 struct TestOutLine: View {
+  var isNextChapter = false
   let open: () -> Void
 
   var body: some View {
@@ -16,7 +18,10 @@ struct TestOutLine: View {
   }
 
   private var line: AttributedString {
-    let question = String(localized: "Already know this chapter?", table: "Today")
+    let question =
+      isNextChapter
+      ? String(localized: "Already know the next chapter?", table: "Today")
+      : String(localized: "Already know this chapter?", table: "Today")
     var link = AttributedString(localized: "Take the test", table: "Today")
     link.foregroundColor = Color(.foreground)
     link.underlineStyle = .single

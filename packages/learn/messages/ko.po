@@ -53,7 +53,6 @@ msgstr "두뇌력"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -796,6 +795,11 @@ msgstr "화면 옵션"
 msgctxt "WE1eNa"
 msgid "The test didn't open. Try again."
 msgstr "테스트가 열리지 않았어요. 다시 시도해 보세요."
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "다음 챕터를 이미 알고 있나요?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"
