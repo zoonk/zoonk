@@ -119,7 +119,7 @@ struct HandMarksRenderer: TextRenderer {
       let bounds = line.typographicBounds
 
       for code in marks.code {
-        if let chip = Self.chip(of: code, in: glyphs, from: start) {
+        if let chip = Self.chip(of: code, in: glyphs, from: start, lineStart: bounds.rect.minX) {
           context.fill(
             Path(roundedRect: chip, cornerRadius: Radius.sm, style: .continuous),
             with: .color(.muted))
@@ -149,9 +149,11 @@ struct HandMarksRenderer: TextRenderer {
   }
 
   /// Main's chip around a line's piece of inline code, 2 points above and below its glyphs. The text
-  /// keeps the padding beside it (`InlineCode.drawn`), the end's inside the run's last glyph.
+  /// keeps the padding beside the run (`InlineCode.drawn`), the end's inside its last glyph; where
+  /// the run splits over two lines, each piece ends flush, so it never reaches past the column.
   private static func chip(
-    of range: Range<Int>, in glyphs: [Text.Layout.RunSlice], from start: Text.Layout.CharacterIndex
+    of range: Range<Int>, in glyphs: [Text.Layout.RunSlice], from start: Text.Layout.CharacterIndex,
+    lineStart: CGFloat
   ) -> CGRect? {
     let marked = glyphs.filter { glyph in
       glyph.characterIndices.contains { range.contains(start.distance(to: $0)) }
@@ -164,14 +166,12 @@ struct HandMarksRenderer: TextRenderer {
       return nil
     }
 
-    let endsHere = marked.contains { glyph in
-      glyph.characterIndices.contains { start.distance(to: $0) == range.upperBound - 1 }
+    let startsHere = marked.contains { glyph in
+      glyph.characterIndices.contains { start.distance(to: $0) == range.lowerBound }
     }
-    let padding = InlineCode.padding
+    let left = startsHere ? max(minX - InlineCode.padding, lineStart) : minX
 
-    return CGRect(
-      x: minX - padding, y: minY - 2, width: maxX - minX + padding + (endsHere ? 0 : padding),
-      height: maxY - minY + 4)
+    return CGRect(x: left, y: minY - 2, width: maxX - left, height: maxY - minY + 4)
   }
 
   private static func span(
