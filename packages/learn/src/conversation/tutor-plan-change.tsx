@@ -189,7 +189,7 @@ export function TutorPlanChange({
       tabIndex={-1}
     >
       <div className="flex flex-col gap-1">
-        <h3 className="text-sm leading-snug font-semibold text-pretty" id={titleId}>
+        <h3 className="text-sm leading-snug font-semibold" id={titleId}>
           {words.title}
         </h3>
 

@@ -5,7 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
 
 export const DISCLOSURE_ANSWER_CLASS =
-  "text-muted-foreground max-w-column text-reading leading-relaxed text-pretty sm:text-base";
+  "text-muted-foreground max-w-column text-reading leading-relaxed sm:text-base";
 
 export const DISCLOSURE_LINK_CLASS =
   "text-foreground hit-area relative font-medium underline underline-offset-4";
@@ -40,7 +40,7 @@ export function PublicDisclosure({
     <details className={cn("group not-first:border-t", className)} open={open}>
       <summary className="hover:text-foreground focus-visible:ring-ring/50 text-reading flex cursor-pointer list-none gap-4 rounded-md py-4 leading-5.5 font-medium outline-none select-none focus-visible:ring-[3px] sm:text-base sm:leading-6 [&::-webkit-details-marker]:hidden">
         <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-          <span className="text-pretty">{summary}</span>
+          <span>{summary}</span>
 
           {aside && (
             <span className="text-muted-foreground flex-none font-mono text-xs font-normal tabular-nums">

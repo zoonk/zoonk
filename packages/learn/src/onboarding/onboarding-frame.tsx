@@ -144,7 +144,7 @@ export function OnboardingTitle({ children, className, ...props }: React.Compone
   if (section) {
     return (
       <h2
-        className={cn("text-xl leading-snug font-semibold text-pretty outline-none", className)}
+        className={cn("text-xl leading-snug font-semibold outline-none", className)}
         data-slot="onboarding-title"
         tabIndex={-1}
         {...props}
@@ -176,7 +176,7 @@ export function OnboardingDescription({
 }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-muted-foreground text-sm text-pretty", className)}
+      className={cn("text-muted-foreground text-sm", className)}
       data-slot="onboarding-description"
       {...props}
     >
@@ -284,7 +284,7 @@ export function OnboardingBottomBar({ children, failed = false, note }: ActionsP
 
 /** A quiet line about the actions, for `OnboardingActions`' `note`. */
 export function OnboardingActionsNote({ children }: { children: ReactNode }) {
-  return <p className="text-muted-foreground text-sm text-pretty lg:text-right">{children}</p>;
+  return <p className="text-muted-foreground text-sm lg:text-right">{children}</p>;
 }
 
 /** The screen's main action: one look with a lesson's, and Enter presses it. */

@@ -1,6 +1,6 @@
 ---
 name: zoonk-pull-request
-description: Open the pull request that ends a Zoonk task, watch its CI checks and reviews, judge each review comment as a claim, fix or answer it, and hand back once no check fails and every comment is resolved. Use when finishing a task, after pushing to an open PR, or when handling review comments.
+description: Open the pull request that ends a Zoonk task, watch its CI checks and reviews, judge each review comment as a claim, fix or answer it, and hand back once it's ready, no check fails, the AI reviewers have reviewed it and every comment is resolved. Use when finishing a task, after pushing to an open PR, or when handling review comments.
 license: MIT
 metadata:
   author: zoonk
@@ -9,12 +9,12 @@ metadata:
 
 # Pull requests
 
-A task is done when its one pull request is ready for the user's review: no check failing or still running on its head commit, and every review comment answered and resolved. Never merge it; the user reviews and merges.
+A task is done when its one pull request is marked ready, no check is failing or still running on its head commit, the AI reviewers have reviewed it, and every review comment is answered and resolved. Never merge it; the user reviews and merges.
 
 ## 1. Open it
 
 - Push the task's branch and open the PR against `main` as a draft (`gh pr create --draft`) once the branch has its first commit, with the title and body from [zoonk-commit](../zoonk-commit/SKILL.md). CI runs on drafts, so it checks the work as you push; AI reviewers skip drafts, so they review only the finished change.
-- Mark it ready (`gh pr ready <pr>`) once the change is complete, its copy [translated](../../guides/translations.md), CI passing on the draft, [verify](../verify/SKILL.md) done with the change's [checks](../../guides/checks.md) passing on the final tree, and the [cross-model review](../../guides/cross-model-review.md) done. Each push after that can start the AI reviewers again, so batch fixes into as few pushes as you can.
+- Mark it ready (`gh pr ready <pr>`) once the change is complete, its copy [translated](../../guides/translations.md), CI passing on the draft, [verify](../verify/SKILL.md) done with the change's [checks](../../guides/checks.md) passing on the final tree, and the [cross-model review](../../guides/cross-model-review.md) done. You run every verify step the change needs that can run here, the learner walk included, before that; none is left in the handoff for the user to do or to decide on. A verify step that can't run here (no simulator or emulator free, an overloaded machine, a missing service) doesn't keep it a draft: name it under what remains unverified in the PR body and mark it ready anyway. Each push after that can start the AI reviewers again, so batch fixes into as few pushes as you can.
 - A body that shows pictures passes `pnpm pr:media check` before it's sent, and its files go up with `--attach`: [a PR body with pictures](references/pictures.md).
 - Another task's PR that needs this one's unmerged change goes in a GitHub stack, never as a loose PR on its branch: [stacked pull requests](references/stacks.md).
 - The root instructions approve opening the task's PR and answering reviews on it from the user's account, so neither needs [post-on-behalf](../zoonk-post-on-behalf/SKILL.md)'s note.
@@ -47,11 +47,9 @@ Handle every open comment before pushing, so each round runs CI and the reviewer
 
 ## 4. Hand back
 
-Each push starts CI and some reviewers again: watch and judge once more until no check fails and every thread is resolved. Then update the PR body when the fixes changed what a reviewer reads there ([new commits on an open PR](../zoonk-commit/SKILL.md#new-commits-on-an-open-pr)), retaking pictures a push made stale ([pictures](references/pictures.md#after-a-push)).
+Each push starts CI and some reviewers again: watch and judge once more until no check fails and every thread is resolved. Mark it ready yourself: never hand back a draft, or ask whether to mark it ready. Then update the PR body when the fixes changed what a reviewer reads there ([new commits on an open PR](../zoonk-commit/SKILL.md#new-commits-on-an-open-pr)), retaking pictures a push made stale ([pictures](references/pictures.md#after-a-push)).
 
 A bigger UX change the user should try by hand gets a Vercel preview as the very last step; a small UI change needs only its screenshots ([preview](references/preview.md)).
-
-You mark the PR ready yourself before handing it back: never hand back a draft or ask the user whether to mark it ready. Every step [verify](../verify/SKILL.md) requires for the change, the learner walk included, is done before that, never listed in the handoff as left for the user or as a decision for them. When something truly blocks a step, such as an outage or access only the user can give, raise it as a blocker as soon as you meet it, saying what you need, and finish the step once it's cleared.
 
 Hand back with:
 

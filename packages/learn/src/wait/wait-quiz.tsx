@@ -210,7 +210,7 @@ function QuizReveal({ card, pickedId }: { card: Card; pickedId: string }) {
   return (
     <div className="flex flex-col gap-1.5">
       <VerdictLabel verdict={right ? "guessRight" : "guess"} />
-      <p className="text-reading leading-normal text-pretty">{card.reveal}</p>
+      <p className="text-reading leading-normal">{card.reveal}</p>
     </div>
   );
 }
@@ -342,7 +342,7 @@ export function WaitQuizCard({
       {/* The live region stays rendered, so the reveal is announced as it lands in it. */}
       <div>
         {pickedId === null && (
-          <p className="text-muted-foreground text-sm text-pretty">
+          <p className="text-muted-foreground text-sm">
             {t("Just for fun. Your answers don't count.")}
           </p>
         )}

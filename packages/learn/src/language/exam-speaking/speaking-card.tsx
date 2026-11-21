@@ -59,9 +59,7 @@ function CardText({
     >
       <h3 className="font-semibold text-balance">{text.title}</h3>
       {text.body.split(/\n\s*\n/u).map((paragraph) => (
-        <p className="text-pretty" key={paragraph}>
-          {paragraph}
-        </p>
+        <p key={paragraph}>{paragraph}</p>
       ))}
     </article>
   );
@@ -70,7 +68,7 @@ function CardText({
 function CardTable({ table }: { table: NonNullable<SpeakingCardData["table"]> }) {
   return (
     <figure className="flex flex-col gap-2">
-      <figcaption className="text-sm font-medium text-pretty">{table.title}</figcaption>
+      <figcaption className="text-sm font-medium">{table.title}</figcaption>
       <RichTable
         align={table.columns.map(() => "left")}
         header={table.columns}
@@ -104,7 +102,7 @@ export function SpeakingCard({
     >
       <div className="flex flex-col gap-1.5">
         {card.instructions.map((line) => (
-          <p className="font-medium text-pretty" key={line}>
+          <p className="font-medium" key={line}>
             {line}
           </p>
         ))}
@@ -129,9 +127,7 @@ export function SpeakingCard({
       {card.prompts.length > 0 && (
         <ul className="flex list-disc flex-col gap-1.5 ps-5 text-sm leading-5">
           {card.prompts.map((prompt) => (
-            <li className="text-pretty" key={prompt}>
-              {prompt}
-            </li>
+            <li key={prompt}>{prompt}</li>
           ))}
         </ul>
       )}

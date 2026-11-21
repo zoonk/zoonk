@@ -40,7 +40,7 @@ export async function ContentCountryLine({
   ].filter(Boolean);
 
   return (
-    <p className="text-muted-foreground mt-3 text-sm text-pretty">
+    <p className="text-muted-foreground mt-3 text-sm">
       <FactSegments facts={parts} />
     </p>
   );

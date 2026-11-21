@@ -76,7 +76,7 @@ function PronunciationTip({
           </span>{" "}
           <span className="text-muted-foreground font-mono text-xs">{item.respelling}</span>
         </span>
-        <span className="text-muted-foreground text-pretty">
+        <span className="text-muted-foreground">
           <ItemLine text={item.tip} />
         </span>
       </span>
@@ -106,7 +106,7 @@ function BetterWay({
         />
       </div>
       <div className="flex items-start justify-between gap-3">
-        <p className="text-muted-foreground text-compact leading-snug text-pretty">{improve.why}</p>
+        <p className="text-muted-foreground text-compact leading-snug">{improve.why}</p>
         <SpeakButton language={language} personal text={improve.better} />
       </div>
     </div>

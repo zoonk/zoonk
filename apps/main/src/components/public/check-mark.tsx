@@ -14,7 +14,7 @@ export function CheckItem({ children, className }: { children: ReactNode; classN
         {/* The glyph's ink starts 2px inside its box: the pull puts it on the list's edge. */}
         <CheckIcon aria-hidden="true" className="text-muted-foreground size-4 -translate-x-0.5" />
       </LineMarker>
-      <span className="text-pretty">{children}</span>
+      <span>{children}</span>
     </li>
   );
 }

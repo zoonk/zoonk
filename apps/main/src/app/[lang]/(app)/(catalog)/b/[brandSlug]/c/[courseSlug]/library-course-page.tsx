@@ -163,7 +163,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
         continueLink={null}
         courseId={courseId}
         startLinks={
-          <p className="text-muted-foreground max-w-column text-reading leading-relaxed text-pretty">
+          <p className="text-muted-foreground max-w-column text-reading leading-relaxed">
             {t("A few quick questions, then your plan and your first lesson.")}
           </p>
         }

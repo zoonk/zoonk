@@ -156,7 +156,7 @@ export function CertificateDetails({
         {owner && <CertificateLinkRow url={links.url} />}
       </dl>
       {owner && (
-        <p className="text-muted-foreground border-border border-t pt-2.5 text-xs text-pretty">
+        <p className="text-muted-foreground border-border border-t pt-2.5 text-xs">
           {t("Anyone with the link can see this certificate.")}
         </p>
       )}

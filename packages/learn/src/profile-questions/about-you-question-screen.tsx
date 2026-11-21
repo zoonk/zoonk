@@ -100,7 +100,7 @@ export function AboutYouQuestionScreen({
             <PageTitle className={cn(SECTION_SUBPAGE_TITLE_CLASS, "outline-none")} tabIndex={-1}>
               {title}
             </PageTitle>
-            {description && <PageSubtitle className="text-pretty">{description}</PageSubtitle>}
+            {description && <PageSubtitle>{description}</PageSubtitle>}
           </PageHeaderContent>
         </PageHeader>
 

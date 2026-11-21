@@ -19,7 +19,7 @@ export function PlanBases() {
     <section className="flex flex-col gap-2" data-slot="plan-bases">
       <div className="flex flex-col gap-0.5">
         <h3 className="text-sm font-medium">{t("Prerequisites")}</h3>
-        <p className="text-muted-foreground text-sm text-pretty">{summaryText(bases)}</p>
+        <p className="text-muted-foreground text-sm">{summaryText(bases)}</p>
       </div>
       <Button
         aria-haspopup="dialog"

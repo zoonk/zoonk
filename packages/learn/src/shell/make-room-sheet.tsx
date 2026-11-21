@@ -153,7 +153,7 @@ export function MakeRoomSheet({
       <DrawerPopup>
         <SheetHeader>
           <DrawerTitle>{t("Make room for {goal}", { goal })}</DrawerTitle>
-          <DrawerDescription className="text-pretty">
+          <DrawerDescription>
             {t("That's as many goals as you can study at once. Pause one to start this one.")}
           </DrawerDescription>
         </SheetHeader>

@@ -63,7 +63,7 @@ function DroppedCallReason({
   }
 
   if (microphoneText) {
-    return <p className="text-muted-foreground text-pretty">{microphoneText}</p>;
+    return <p className="text-muted-foreground">{microphoneText}</p>;
   }
 
   if (reason === "plusRequired") {
@@ -71,11 +71,11 @@ function DroppedCallReason({
   }
 
   if (reason === "callInProgress" || reason === "callsPaused" || reason === "ended") {
-    return <p className="text-muted-foreground text-pretty">{copy[reason].text}</p>;
+    return <p className="text-muted-foreground">{copy[reason].text}</p>;
   }
 
   return (
-    <p className="text-muted-foreground text-pretty">
+    <p className="text-muted-foreground">
       {t("Call again, or end the call to get feedback on what you said.")}
     </p>
   );

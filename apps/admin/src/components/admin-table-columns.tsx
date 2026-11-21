@@ -56,11 +56,11 @@ const FIXED_TABLE_CLASS =
  * sort the list, as one line of links.
  */
 const PHONE_ROWS_CLASS = cn(
-  "max-md:block max-md:[&_:is(tbody,td)]:block max-md:[&_tbody_tr]:flex max-md:[&_tbody_tr]:flex-col max-md:[&_tbody_tr]:gap-1.5 max-md:[&_tbody_tr]:py-3",
+  "max-md:block max-md:[&_tbody]:block max-md:[&_tbody_tr]:flex max-md:[&_tbody_tr]:flex-col max-md:[&_tbody_tr]:gap-1.5 max-md:[&_tbody_tr]:py-3 max-md:[&_td]:flow-root",
   "max-md:[&_td]:py-0! max-md:[&_td]:ps-0 max-md:[&_td]:pe-0 max-md:[&_td]:text-left max-md:[&_td]:whitespace-normal",
   // Floated into the cell's start padding, so the cell stays unpositioned and a row's link still
-  // stretches over the whole row.
-  "max-md:[&_td]:before:text-muted-foreground max-md:[&_td]:before:float-start max-md:[&_td]:before:-ms-32 max-md:[&_td]:before:w-28 max-md:[&_td]:before:truncate max-md:[&_td]:before:font-sans max-md:[&_td]:before:text-sm max-md:[&_td]:before:leading-5",
+  // stretches over the whole row. A long name wraps, and the cell holds it.
+  "max-md:[&_td]:before:text-muted-foreground max-md:[&_td]:before:float-start max-md:[&_td]:before:-ms-32 max-md:[&_td]:before:w-28 max-md:[&_td]:before:font-sans max-md:[&_td]:before:text-sm max-md:[&_td]:before:leading-5",
   "max-md:[&_th]:w-auto max-md:[&_th]:px-0 max-md:[&_th:not(:has(a))]:hidden max-md:[&_thead_tr]:flex max-md:[&_thead_tr]:flex-wrap max-md:[&_thead_tr]:gap-x-6 max-md:[&_thead:not(:has(a))]:hidden",
 );
 

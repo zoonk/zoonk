@@ -25,7 +25,7 @@ export function OnboardingHowItWorks({ hasAccount }: { hasAccount: boolean }) {
             >
               {index + 1}
             </span>
-            <span className="min-w-0 flex-1 text-pretty">{step}</span>
+            <span className="min-w-0 flex-1">{step}</span>
           </li>
         ))}
       </ol>
