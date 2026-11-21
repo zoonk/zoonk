@@ -44,6 +44,7 @@ import com.zoonk.android.ui.richtext.findCodeFenceLines
 import com.zoonk.android.ui.richtext.findMarkdownTableLines
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.balanced
+import com.zoonk.android.ui.theme.zoonkType
 
 /**
  * Main's `LessonStepPicture`: the picture, centered in a compact window and start-aligned otherwise,
@@ -153,5 +154,5 @@ fun QuestionText(text: String) {
 @Composable
 fun ContextText(text: String?) {
     if (text.isNullOrBlank()) return
-    RichText(text = text, style = MaterialTheme.typography.bodyLarge)
+    RichText(text = text, style = MaterialTheme.zoonkType.context)
 }

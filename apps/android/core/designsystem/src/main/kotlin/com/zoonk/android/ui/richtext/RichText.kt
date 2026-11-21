@@ -159,8 +159,6 @@ private val ITEM_GAP = 6.dp
 private val MARKER_WIDTH = 20.dp
 private val MARKER_GAP = 4.dp
 
-private const val CODE_SIZE = 0.85f
-
 @Composable
 fun rememberMathWords(): MathWords {
     val resources = LocalResources.current
@@ -397,6 +395,7 @@ fun RichTextLine(
     maxLines: Int = Int.MAX_VALUE,
 ) {
     val spoken = text.spoken
+    val shown = remember(text.text) { withCodeRoom(text.text) }
     val marks = remember(text.text) { textMarks(text.text) }
     var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
     val highlight = MaterialTheme.zoonk.warning.copy(alpha = MARK_ALPHA)
@@ -404,7 +403,7 @@ fun RichTextLine(
     val code = MaterialTheme.colorScheme.surfaceContainerHigh
 
     Text(
-        text = text.text,
+        text = shown,
         modifier =
             (if (spoken == null) modifier else modifier.semantics { contentDescription = spoken })
                 .then(

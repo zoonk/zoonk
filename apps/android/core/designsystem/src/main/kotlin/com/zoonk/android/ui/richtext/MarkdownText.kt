@@ -106,7 +106,6 @@ private val MARKER_WIDTH = 20.dp
 private val MARKER_GAP = 4.dp
 private val QUOTE_RULE = 3.dp
 private val QUOTE_PADDING = 12.dp
-private const val CODE_SIZE = 0.85f
 
 /** Where a formula was taken out of an answer's Markdown, so its LaTeX never reads as Markdown. */
 private const val FORMULA_OPEN = '\uE000'
