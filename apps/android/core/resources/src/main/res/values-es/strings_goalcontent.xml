@@ -83,7 +83,20 @@
   "goalcontent_topics_in_notice": "a08d6e500745023f1a60c32a1a63661b1d0f1af9bf963071721189814efa76b0",
   "goalcontent_topics_known_skipped": "e75c94cbe18dfc9ef0eac34cba89dd1741911c18cf085d57b186c69ca3ca445c",
   "goalcontent_topics_studied_of": "de350a07460ec97ee7c8558bb3721337359536a6035ea5f39e39c20c3478fe75",
-  "goalcontent_topics_studied_spoken": "9eaf6f5a07807af290ab19b81cbd2785e2b9a9ace47caf48a47c888ad9dbcccf"
+  "goalcontent_topics_studied_spoken": "9eaf6f5a07807af290ab19b81cbd2785e2b9a9ace47caf48a47c888ad9dbcccf",
+  "goalcontent_written_answers": "7374dc8c5c3467f36960e38d80c480ff21120851efe2f51c833fdf218a253955",
+  "goalcontent_written_estimated": "119f48f8d29bd27c4e0129e4e1d1b8a3d43d79efe943cdabd9e4746f1bfff433",
+  "goalcontent_written_last_answers": "0eeee02e37dc58b72124ddd1f824994e985dbe365d034c57c0bf8e371231723d",
+  "goalcontent_written_levels": "6ac01180105ebae0c25ffb55df80a8b7bab0c4f2f67a5249ebb6048bf98b6ef6",
+  "goalcontent_written_lines": "792580f182e4c9f642ff7a19a3c147d7cc7b63ef1910d83838af7053c6c4794c",
+  "goalcontent_written_minimum": "03bbb4493db33a0ae4a1ffb711e36841552348ef8340e74960f1658431829b9f",
+  "goalcontent_written_minimum_of": "704f86d954442c2701ed28b818d49a17e7e413099d297b301e5b1354d1595d75",
+  "goalcontent_written_minimum_share": "f9756159a5baf2cc4b63b1b825c72468bd6a8c2ee3e78ecee3f3508907894852",
+  "goalcontent_written_presentation": "a97afb30404fe22c8a8cda0294e0ca5f170f56908177b277f67d0490073b7c82",
+  "goalcontent_written_progress": "3cba02c46c53cf87626eb7eff8a9d247a84219b96dea06539d47f0f7be84cef7",
+  "goalcontent_written_questions": "5de01a093e24a026dc23dee3ba0fe82a50cf4d7c6a4177277178a74369ba69ed",
+  "goalcontent_written_share": "2020de0945ccdbfb5dc19d0be4771d744015573a88301fec9c6f9ffe7fdd6e30",
+  "goalcontent_written_versions": "87c2b71e65376a63988ce50dc940f82816e2f8401f526053c0b21c07e2f7efaa"
 }
 -->
 <resources>
@@ -280,4 +293,34 @@
     <string name="goalcontent_skill_solid">Firme</string>
     <string name="goalcontent_skill_mastered">Dominado</string>
     <string name="goalcontent_chapters_progress">%1$s de %2$s</string>
+    <string name="goalcontent_written_estimated">Puntaje estimado</string>
+    <string name="goalcontent_written_minimum">Mínimo para aprobar: %1$s</string>
+    <string name="goalcontent_written_minimum_of">Mínimo para aprobar: %1$s de %2$s</string>
+    <string name="goalcontent_written_levels">Tus respuestas se califican por nivel. Aún no hay una estimación del puntaje para esta prueba.</string>
+    <plurals name="goalcontent_written_questions">
+        <item quantity="one">%d pregunta</item>
+        <item quantity="many">%d preguntas</item>
+        <item quantity="other">%d preguntas</item>
+    </plurals>
+    <string name="goalcontent_written_share">%1$s del puntaje</string>
+    <string name="goalcontent_written_minimum_share">Mínimo para aprobar: %1$s de los puntos</string>
+    <string name="goalcontent_written_progress">Tu progreso</string>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">última respuesta</item>
+        <item quantity="many">últimas %d respuestas</item>
+        <item quantity="other">últimas %d respuestas</item>
+    </plurals>
+    <string name="goalcontent_written_presentation">Presentación y estructura</string>
+    <string name="goalcontent_written_answers">Tus respuestas</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="one">%d línea</item>
+        <item quantity="many">%d líneas</item>
+        <item quantity="other">%d líneas</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="one">%d versión</item>
+        <item quantity="many">%d versiones</item>
+        <item quantity="other">%d versiones</item>
+    </plurals>
 </resources>

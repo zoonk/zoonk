@@ -93,6 +93,7 @@
   "mock_words": "09bea6696784497561148eb3b0daa415cfadf75894d07ef11e3c5cd4857b7e35",
   "mock_written_part": "6394e671851eb17368937215e9a5700250292edfa3dbd6f32df4769d8c3706a6",
   "mock_written_part_area": "b43f3a2581a6f24450f38dc40c9c8920a7c5a5d0031d2105e31516cbc48973d3",
+  "mock_written_questions_blank": "dbeaa453f26d727d7da7a0365dc4df4c9a3f96980102fd90b972b631a4a434d4",
   "mock_your_essay": "724e58e8832e908e0d0c917af8d1825bb46d456b8931e292c59ab41a37af3eb1"
 }
 -->
@@ -167,6 +168,11 @@
     </plurals>
     <string name="mock_every_answered">Tüm sorular cevaplandı.</string>
     <string name="mock_essay_blank">Kompozisyon boş.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <plurals name="mock_written_questions_blank">
+        <item quantity="one">Yazılı soruya cevap verilmemiş.</item>
+        <item quantity="other">%d yazılı soruya cevap verilmemiş.</item>
+    </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">%d kompozisyon boş.</item>
         <item quantity="other">%d kompozisyon boş.</item>

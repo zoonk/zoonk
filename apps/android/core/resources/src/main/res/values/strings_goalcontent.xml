@@ -176,31 +176,22 @@
     <string name="goalcontent_skill_solid">Solid</string>
     <string name="goalcontent_skill_mastered">Mastered</string>
     <string name="goalcontent_chapters_progress">%1$s of %2$s</string>
-    <!-- The learner's estimated points on an exam's written test. -->
     <string name="goalcontent_written_estimated">Estimated score</string>
-    <!-- %1$s is the written test's minimum points. -->
     <string name="goalcontent_written_minimum">Minimum to pass: %1$s</string>
-    <!-- %1$s is the written test's minimum points; %2$s its most points, such as "50 of 100". -->
     <string name="goalcontent_written_minimum_of">Minimum to pass: %1$s of %2$s</string>
-    <!-- On a written test's page while its answers are graded by level, with no points estimate yet. -->
     <string name="goalcontent_written_levels">Your answers are graded by level. A points estimate isn\'t available for this test yet.</string>
     <plurals name="goalcontent_written_questions">
         <item quantity="one">%d question</item>
         <item quantity="other">%d questions</item>
     </plurals>
-    <!-- A written test's share of the exam's score. %1$s is a share, such as "50%". -->
     <string name="goalcontent_written_share">%1$s of the score</string>
-    <!-- %1$s is the written test's minimum as a share of its points, such as "50%". -->
     <string name="goalcontent_written_minimum_share">Minimum to pass: %1$s of the points</string>
-    <!-- How the learner's written answers are moving, over their last few answers. -->
     <string name="goalcontent_written_progress">Your progress</string>
     <plurals name="goalcontent_written_last_answers">
         <item quantity="one">last answer</item>
         <item quantity="other">last %d answers</item>
     </plurals>
-    <!-- How much of a written answer's score its presentation and structure earned. -->
     <string name="goalcontent_written_presentation">Presentation and structure</string>
-    <!-- The learner's past written answers. -->
     <string name="goalcontent_written_answers">Your answers</string>
     <plurals name="goalcontent_written_lines">
         <item quantity="one">%d line</item>

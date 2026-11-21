@@ -7740,7 +7740,7 @@ msgstr "A gente está criando perguntas parecidas com as da prova para você. O 
 #: src/mock/mock-chooser.tsx
 msgctxt "aDMxKM"
 msgid "{count, plural, other {Your exam has # tests}}"
-msgstr "{count, plural, other {Sua prova tem # testes}}"
+msgstr "{count, plural, other {Sua prova tem # provas}}"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"

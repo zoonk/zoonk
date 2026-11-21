@@ -21,7 +21,7 @@
   "session_block_weakest": "de205fe105c1b01710f2b7969d475e194888d70a8abaacac0b84fa6e53f95d12",
   "session_block_weekly_challenge": "41e153484c78fca7f2841fbb07a860ec17cee7696a32787cb9d85348a706e7b7",
   "session_block_what_you_know": "cb5e042632c802c3c1ff5141ba94599313830eb1e175367f47d4018519a545f5",
-  "session_block_writing_practice": "70ccf869e4be592528ddac5b8351a6a5d7af6d11f1bcca1865b936dc1a834479",
+  "session_block_writing_draft_saved": "9faef689e59ef4a6932654ffd0ec44f8dbd8d379212eb738f1793f35e090238a",
   "session_catch_up_to_go": "d29c4592d88507732da58fee39590af31e65c0130c627f8f9d2090031ebc2a1e",
   "session_caught_up_today": "c6de479b114db3084c60087ce815a394dd093bd37036d07c3e46bc560ca80dba",
   "session_day_done": "435c51b74b0894c77a876bb7dfc0379ceebf801d6af032ae7de01d1a91461562",
@@ -100,7 +100,7 @@
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">Quello che sai già</string>
     <string name="session_block_new_lesson">Nuova lezione</string>
-    <string name="session_block_writing_practice">Esercizi di scrittura</string>
+    <string name="session_block_writing_draft_saved">La bozza è stata salvata</string>
     <string name="session_block_practice_mistakes">Esercitati sugli errori</string>
     <string name="session_block_bonus_practice">Esercizi bonus</string>
     <string name="session_block_mixed_practice">Esercizi misti</string>

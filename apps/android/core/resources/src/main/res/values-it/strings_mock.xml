@@ -93,6 +93,7 @@
   "mock_words": "22ef9b29a0d007c7f61d8d22a7620e454e385e1ab5786a814cc9d6684401247f",
   "mock_written_part": "38d912581656bce5d564d96091edfd85b4d3fedb2e94343bbfc94659ec034ed2",
   "mock_written_part_area": "721469c5d441abe7b0a7c07990677b60714863180a911f4348e00080a360b18e",
+  "mock_written_questions_blank": "012d0bf993b10c6416a59cc62acf15733d5ca9867297ac152992e920be2db282",
   "mock_your_essay": "3af4ecd25f9befcafe647b9e38cd8fae99f54e80f3004c16c760d089e99d0e4f"
 }
 -->
@@ -174,6 +175,12 @@
     </plurals>
     <string name="mock_every_answered">Hai risposto a tutte le domande.</string>
     <string name="mock_essay_blank">Il tema è in bianco.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <plurals name="mock_written_questions_blank">
+        <item quantity="one">La domanda scritta è vuota.</item>
+        <item quantity="many">%d domande scritte sono vuote.</item>
+        <item quantity="other">%d domande scritte sono vuote.</item>
+    </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">%d tema è in bianco.</item>
         <item quantity="many">%d temi sono in bianco.</item>

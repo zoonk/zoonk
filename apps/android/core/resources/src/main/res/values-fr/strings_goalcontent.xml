@@ -83,7 +83,20 @@
   "goalcontent_topics_in_notice": "bf56f29bbb201de9f6887be8a2a4dbd33fe14f8544608d111361fda2a4090554",
   "goalcontent_topics_known_skipped": "6e8218018e85d2fabeadeca06beb2e0b808a0220f2a71158fe15f3ed128d0827",
   "goalcontent_topics_studied_of": "5d44338493922e290283ba0d7dc0f3efd6df74f7c527dd354dcbf21652061eff",
-  "goalcontent_topics_studied_spoken": "02c70dfefdac562f4bcb440a231a7e4fc38b9465c42a235a6e261825e6785cef"
+  "goalcontent_topics_studied_spoken": "02c70dfefdac562f4bcb440a231a7e4fc38b9465c42a235a6e261825e6785cef",
+  "goalcontent_written_answers": "595e39f9cb989d479fbb12bbe565778e67934bf261a66ed270d26b6fc14f6773",
+  "goalcontent_written_estimated": "4b952bf0c17b64c9650fbbd54c8960abb8dcc6782eb717df31dd03dab7804fa2",
+  "goalcontent_written_last_answers": "c4d15d20d23c7825aedc43518ce72e5a159d14f613584bed96c3beb4477b4f89",
+  "goalcontent_written_levels": "cb5ddae1fa08b57175275d926bffce7115f85c9bc3d954fdd900744ed0ff6a85",
+  "goalcontent_written_lines": "e857614ceba725065e1136abfac66515f15a45f7f769f20b321589f0fe2e40a6",
+  "goalcontent_written_minimum": "01e3e5c9904a6f713eaac385da815d15b7110172f5be86b6464866445fa7423f",
+  "goalcontent_written_minimum_of": "54f52adc6d18b50a8d41f293cb4fa5fa33a54f7858e9d2073c8a395edb86ae03",
+  "goalcontent_written_minimum_share": "51c9440a4a0e577a5686df8323fe87b09b5c68ec92a0acb38b1dc859183dfe17",
+  "goalcontent_written_presentation": "6d7b2bec27c6941be3968d4b41d0656623eca55f0dea8b9caefd9daf6b8c91a6",
+  "goalcontent_written_progress": "7237fc247297f8e8261951ea7be45a1586caf6f34f46adbc0b1a0ab65ca9c6a0",
+  "goalcontent_written_questions": "500428180772c39ebb938a5e4656ee3558e38b739146503dbc688bfe76398c05",
+  "goalcontent_written_share": "653d4c1b7c77521d2c2632db0d71052fa4c4360e94d5d71ddb4231e2692ff086",
+  "goalcontent_written_versions": "ee81f1eec3bb7c7fab4096117a01bc9eb5b10db1f6ce6e22f9e4f54963e03339"
 }
 -->
 <resources>
@@ -280,4 +293,34 @@
     <string name="goalcontent_skill_solid">Solide</string>
     <string name="goalcontent_skill_mastered">Maîtrisé</string>
     <string name="goalcontent_chapters_progress">%1$s sur %2$s</string>
+    <string name="goalcontent_written_estimated">Score estimé</string>
+    <string name="goalcontent_written_minimum">Minimum pour réussir : %1$s</string>
+    <string name="goalcontent_written_minimum_of">Minimum pour réussir : %1$s sur %2$s</string>
+    <string name="goalcontent_written_levels">Tes réponses sont évaluées par niveau. L’estimation du Score n’est pas encore disponible pour ce test.</string>
+    <plurals name="goalcontent_written_questions">
+        <item quantity="one">%d question</item>
+        <item quantity="many">%d questions</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <string name="goalcontent_written_share">%1$s du Score</string>
+    <string name="goalcontent_written_minimum_share">Minimum pour réussir : %1$s des points</string>
+    <string name="goalcontent_written_progress">Ta progression</string>
+    <string name="goalcontent_written_presentation">Présentation et structure</string>
+    <string name="goalcontent_written_answers">Tes réponses</string>
+    <plurals name="goalcontent_written_lines">
+        <item quantity="one">%d ligne</item>
+        <item quantity="many">%d lignes</item>
+        <item quantity="other">%d lignes</item>
+    </plurals>
+    <!-- How many times the learner wrote a written answer, its first draft and rewrites. -->
+    <plurals name="goalcontent_written_versions">
+        <item quantity="one">%d version</item>
+        <item quantity="many">%d versions</item>
+        <item quantity="other">%d versions</item>
+    </plurals>
+    <plurals name="goalcontent_written_last_answers">
+        <item quantity="one">%d dernière réponse</item>
+        <item quantity="many">%d dernières réponses</item>
+        <item quantity="other">%d dernières réponses</item>
+    </plurals>
 </resources>

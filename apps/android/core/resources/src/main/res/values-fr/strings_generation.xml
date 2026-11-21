@@ -48,7 +48,8 @@
   "generation_understanding_read": "872ff311fc64c5e761308671f2b55b906a55e8d08f59c9e39f506553561636ec",
   "generation_understanding_read_line_1": "aa5e9e37776ae3339934a8ac3d9e695d377f118b5f7a722bc4ed13e3022bd6f3",
   "generation_understanding_read_line_2": "680795d7df35545824f267f51bd2e4aee01418388aa7d4b475f5199c76e10089",
-  "generation_understanding_read_line_3": "1ac6544aa446a5a71b4305903de5ac7b1d596a3ce8ccfca8dcb4499ac73439f4"
+  "generation_understanding_read_line_3": "1ac6544aa446a5a71b4305903de5ac7b1d596a3ce8ccfca8dcb4499ac73439f4",
+  "generation_writing_prompt": "fd4e7ef25c9b27994888a789c97f668a74d8b196416b985347a8c63cdf45ab9a"
 }
 -->
 <resources>
@@ -81,6 +82,7 @@
     <string name="generation_skills_line_1">Liste des compétences nécessaires à ton objectif…</string>
     <string name="generation_skills_line_2">Classement des compétences…</string>
     <string name="generation_skills_line_3">Vérification que rien d’important ne manque…</string>
+    <string name="generation_writing_prompt">Préparation de ta question</string>
     <!-- The wait while a typed goal is read. -->
     <string name="generation_understanding">Lecture de ton objectif</string>
     <string name="generation_understanding_read">Lecture de ton objectif</string>
