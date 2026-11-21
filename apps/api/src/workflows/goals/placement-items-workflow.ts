@@ -18,6 +18,7 @@ import { readShortPlanPracticeStep } from "./steps/short-plan-practice-step";
 export type PlacementItemsInput = {
   analytics?: ContentAnalytics;
   goalId: string;
+  placementPart?: { attemptId: string; part: number };
   skillIds?: string[];
   waitsForNotice?: boolean;
 };
@@ -36,7 +37,7 @@ export async function placementItemsWorkflow(
 ): Promise<PlacementItemsResult> {
   "use workflow";
 
-  const { analytics, goalId, skillIds, waitsForNotice = false } = input;
+  const { analytics, goalId, placementPart, skillIds, waitsForNotice = false } = input;
   const { workflowRunId } = getWorkflowMetadata();
 
   if (!(await waitForRunToken(`placement-items:${goalId}`))) {
@@ -57,6 +58,7 @@ export async function placementItemsWorkflow(
 
   const { failed, written } = await preparePlacementItems({
     analytics,
+    exceptAnswered: Boolean(placementPart),
     forPlacement: true,
     goalId,
     skillIds,
@@ -64,8 +66,8 @@ export async function placementItemsWorkflow(
   });
 
   const [practice] = await Promise.all([
-    readShortPlanPracticeStep(goalId),
-    recordPlacementPreparedStep({ failed, goalId, planRunId, written }),
+    placementPart ? null : readShortPlanPracticeStep(goalId),
+    recordPlacementPreparedStep({ failed, goalId, placementPart, planRunId, written }),
     failed > 0
       ? trackGenerationFailedStep({
           analytics,

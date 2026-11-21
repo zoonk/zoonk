@@ -6,9 +6,11 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import { toCefrLevel } from "@zoonk/utils/cefr";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import {
   type LessonWindowAnswer,
+  readLivingPlanWindow,
   recordLivingPlanAnswers,
 } from "../../sessions/_utils/living-plan-window";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
@@ -178,7 +180,7 @@ export async function recordLanguageLessonWindow(
   const where = { userLanguageSkill: { language, skill, userId } };
 
   const current = await tx.languageSkillLevel.findUnique({
-    select: { livingPlanWindow: true },
+    select: { livingPlanWindow: true, score: true, startScore: true },
     where,
   });
 
@@ -191,11 +193,30 @@ export async function recordLanguageLessonWindow(
 
   const startScore = getStartScore({ details, skill });
 
+  const closed = livingPlanWindow.total === 0 ? livingPlanWindow.closed : null;
+
+  if (closed && current && (skill === "reading" || skill === "listening")) {
+    const previous = readLivingPlanWindow(current.livingPlanWindow).closed;
+    const from = previous?.score ?? current.startScore;
+    const level = toCefrLevel(current.score);
+    const transition = current.score > from && level !== toCefrLevel(from) ? level : undefined;
+
+    closed.score = current.score;
+
+    const levelTestOut =
+      transition ??
+      (previous?.streak === 1 && previous.result === "easy" ? previous.levelTestOut : undefined);
+
+    if (closed.result === "easy" && levelTestOut) {
+      closed.levelTestOut = levelTestOut;
+    }
+  }
+
   await tx.languageSkillLevel.upsert({
     create: { language, livingPlanWindow, score: startScore, skill, startScore, userId },
     update: { livingPlanWindow },
     where,
   });
 
-  return livingPlanWindow.total === 0 ? livingPlanWindow.closed : null;
+  return closed;
 }

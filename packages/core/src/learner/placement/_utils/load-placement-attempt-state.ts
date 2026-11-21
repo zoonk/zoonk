@@ -27,6 +27,7 @@ export async function loadAttemptState({
   return {
     attemptFollowUps: questions.followUpSkillIds,
     attemptHasMore: questions.hasMore,
+    attemptRemainingSkillIds: questions.remainingSkillIds,
     focusTest: null,
     state: {
       answered: questions.answered,

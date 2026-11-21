@@ -18,6 +18,7 @@ import {
  */
 const MIN_SCRIPT_WORDS = 40;
 const MAX_SCRIPT_WORDS = 1000;
+const MIN_ORDER_STEPS = 4;
 
 /** Stage directions and sound cues a voice would read aloud: "[laughs]", "(pause)". */
 const STAGE_DIRECTIONS = /\[[^\]]*\]|\([^)]*\)/gu;
@@ -244,8 +245,21 @@ export function findListeningSetProblems(
   request: ListeningSetRequest,
 ): string[] {
   const script = getScriptText(set.turns);
+  const needsOrdering = request.formats.includes("order");
+
+  const validOrdering = set.questions.filter(
+    (question) =>
+      question.format === "order" &&
+      new Set(question.steps.map(normalizeTypedAnswer)).size === question.steps.length &&
+      question.steps.length >= MIN_ORDER_STEPS,
+  );
+
+  const quick = set.questions.filter((question) => question.format === "multipleChoice");
 
   return [
+    ...(needsOrdering && (quick.length !== 1 || validOrdering.length !== request.count - 1)
+      ? ["Write one single-answer question and order questions with at least four distinct steps."]
+      : []),
     ...findScriptProblems(set),
     ...(set.questions.length < request.count
       ? [`Wrote ${set.questions.length} questions instead of ${request.count}.`]

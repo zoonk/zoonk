@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { readGoalDetails } from "../../_utils/language-goal";
-import { type LevelTestOutProgress } from "../level-test-out-contract";
+import { type LevelTestOutProgress, isPreparingLevelTestOut } from "../level-test-out-contract";
 import { readLevelTestDetails } from "../read-level-test-summary";
 import { loadTestOutItem, toTestOutQuestion } from "./level-test-out-items";
 
@@ -92,6 +92,7 @@ export async function readTestOutView({
     attemptId: progress.id,
     level: progress.level,
     next: next?.question ?? null,
+    preparing: isPreparingLevelTestOut(progress),
     result: progress.result
       ? {
           finishedAt: progress.result.finishedAt,

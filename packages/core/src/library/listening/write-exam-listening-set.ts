@@ -2,7 +2,7 @@ import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import {
-  LISTENING_QUESTION_FORMATS,
+  EXAM_LISTENING_QUESTION_FORMATS,
   type ListeningQuestion,
   toListeningItem,
 } from "@zoonk/ai/tasks/listening/schema";
@@ -54,7 +54,7 @@ export async function writeExamListeningSet({
     analytics: { ...analytics, contentScope: "shared" },
     count: part.count,
     exam: exam.name,
-    formats: LISTENING_QUESTION_FORMATS,
+    formats: EXAM_LISTENING_QUESTION_FORMATS,
     language,
     level: null,
     plays: part.plays,

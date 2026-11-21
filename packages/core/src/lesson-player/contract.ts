@@ -1,5 +1,6 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { levelTestOutLevelSchema } from "../language/level-test/level-test-contract";
 import { answerDurationSchema, answerTimeZoneSchema } from "../learner/contract";
 import { activityAnswerSchema } from "../library/activities/activity-answer-schema";
 import { activityExpectedSchema } from "../library/activities/activity-expected-answer";
@@ -243,10 +244,14 @@ export const libraryLessonOpenedSchema = z
 
 export type LibraryLessonRun = z.infer<typeof libraryLessonRunSchema>;
 
-export const lessonPlacementOfferSchema = z.object({
-  goalId: uuidSchema(),
-  kind: z.literal("quick"),
-});
+export const lessonPlacementOfferSchema = z.discriminatedUnion("kind", [
+  z.object({ goalId: uuidSchema(), kind: z.literal("quick") }),
+  z.object({
+    goalId: uuidSchema(),
+    kind: z.literal("levelTestOut"),
+    level: levelTestOutLevelSchema,
+  }),
+]);
 
 export const libraryLessonCompletionSchema = z
   .object({

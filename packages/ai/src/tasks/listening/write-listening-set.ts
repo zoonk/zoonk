@@ -73,9 +73,15 @@ function getAccents({ accents }: WriteListeningSetParams) {
 function formatAccents(params: WriteListeningSetParams): string {
   const accents = getAccents(params);
 
-  return accents
-    ? accents.join("; ")
-    : `the ones EXAM's recordings use, as varieties of ${getScriptLanguageName(params.scriptLanguage)}`;
+  if (accents) {
+    return accents.join("; ");
+  }
+
+  const language = getScriptLanguageName(params.scriptLanguage);
+
+  return params.formats.includes("order")
+    ? `natural varieties of ${language} for the situation`
+    : `the ones EXAM's recordings use, as varieties of ${language}`;
 }
 
 function getCount(count: number): number {
@@ -96,7 +102,7 @@ function buildUserPrompt(params: WriteListeningSetParams): string {
     : "";
 
   return `
-    EXAM: ${params.exam ?? "none"}
+    ${params.exam ? `EXAM: ${params.exam}` : ""}
     TASK: ${params.task}
     SCRIPT_LANGUAGE: ${getScriptLanguageName(params.scriptLanguage)}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
@@ -114,9 +120,12 @@ ${formatSkills(params.skills)}
 function buildSystemPrompt(formats: readonly ListeningQuestionFormat[]): string {
   return selectPromptVariants({
     template: taskPrompt,
-    variants: Object.fromEntries(
-      LISTENING_QUESTION_FORMATS.map((format) => [format, formats.includes(format)]),
-    ),
+    variants: {
+      ...Object.fromEntries(
+        LISTENING_QUESTION_FORMATS.map((format) => [format, formats.includes(format)]),
+      ),
+      exam: !formats.includes("order"),
+    },
   });
 }
 
@@ -167,10 +176,9 @@ export async function writeListeningSet(params: WriteListeningSetParams) {
     };
   };
 
-  const { problems, provenance, set, usage } = await draftAgainWhenFlawed({
-    countProblems: (output) => output.problems.length,
-    draft,
-  });
+  const { problems, provenance, set, usage } = await (formats.includes("order")
+    ? draft()
+    : draftAgainWhenFlawed({ countProblems: (output) => output.problems.length, draft }));
 
   return { data: { problems, set }, provenance, systemPrompt, usage, userPrompt };
 }

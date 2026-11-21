@@ -166,6 +166,12 @@ export const languageLevelTestOutViewSchema = z
       })
       .extend({ skill: z.enum(["reading", "listening"]) })
       .nullable(),
+    preparing: z
+      .boolean()
+      .meta({
+        description:
+          "Whether questions are still being prepared. A zero total after preparation means there were insufficient questions.",
+      }),
     result: z
       .object({
         finishedAt: z.iso.datetime(),

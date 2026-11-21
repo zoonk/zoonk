@@ -7,6 +7,7 @@ import {
   type TransactionClient,
 } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { levelTestOutLevelSchema } from "../../language/level-test/level-test-contract";
 import { recordLanguageLessonWindow } from "../../language/levels/record-language-evidence";
 import { getStepLanguageSkill } from "../../language/levels/skill-level-rules";
 import { getRunStudySessionId } from "../../lesson-player/_utils/lesson-runs";
@@ -20,7 +21,17 @@ function selectPlacementOffer({
   goalId: string;
   window: ClosedLivingPlanWindow | null;
 }) {
-  return window?.result === "easy" && window.streak >= 2 ? { goalId, kind: "quick" } : null;
+  if (window?.result !== "easy" || window.streak < 2) {
+    return null;
+  }
+
+  const level = levelTestOutLevelSchema.safeParse(window.levelTestOut).data;
+
+  if (level) {
+    return { goalId, kind: "levelTestOut", level } as const;
+  }
+
+  return window.streak === 2 ? ({ goalId, kind: "quick" } as const) : null;
 }
 
 export async function recordLessonWindowAnswer(

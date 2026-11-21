@@ -10,6 +10,7 @@ import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change
 import {
   type PlacementLength,
   type PlacementRecord,
+  TOPICS_PER_PART,
   getPlacementEstimate,
   getTopicsAhead,
   readPlacementAttempt,
@@ -30,6 +31,44 @@ export async function savePlacementAttempt({
       details: { ...(isJsonObject(goal.details) ? goal.details : {}), placementTest: record },
     },
     where: { id: goal.id },
+  });
+}
+
+async function owePartQuestions({
+  goalId,
+  placementPart,
+  skillIds,
+  tx,
+  userId,
+}: {
+  goalId: string;
+  placementPart?: { attemptId: string; part: number };
+  skillIds: string[];
+  tx: TransactionClient;
+  userId: string;
+}) {
+  if (placementPart && skillIds.length === 0) {
+    return;
+  }
+
+  if (!placementPart) {
+    await tx.plan.updateMany({ data: { placementPreparedAt: null }, where: { goalId } });
+  }
+
+  await oweFollowUps({
+    db: tx,
+    followUps: [
+      {
+        input: {
+          goalId,
+          ...(placementPart && { placementPart }),
+          ...(skillIds.length > 0 && { skillIds }),
+          waitsForNotice: false,
+        },
+        kind: "preparePlacementItems",
+      },
+    ],
+    userId,
   });
 }
 
@@ -69,14 +108,28 @@ export async function openPlacementAttempt({
       const at = new Date().toISOString();
 
       if (record.attempt) {
+        const remaining = record.attempt.remainingSkillIds ?? record.attempt.skillIds;
+        const partSkillIds = remaining.slice(0, TOPICS_PER_PART);
+        const part = record.attempt.part + 1;
+
+        await owePartQuestions({
+          goalId,
+          placementPart: { attemptId: record.attempt.id, part },
+          skillIds: remaining.slice(0, TOPICS_PER_PART * 2),
+          tx,
+          userId,
+        });
+
         await savePlacementAttempt({
           goal,
           record: {
             ...record,
             attempt: {
               ...record.attempt,
-              part: record.attempt.part + 1,
+              part,
               partComplete: false,
+              partPrepared: false,
+              partSkillIds,
               partStartedAt: at,
             },
           },
@@ -87,6 +140,11 @@ export async function openPlacementAttempt({
       }
 
       const plan = await loadPlacementPlan(goalId, tx);
+
+      if (length === "wholeCourse" && plan.skills.length === 0) {
+        return unchanged(false);
+      }
+
       const skillIds = getTopicsAhead(plan).map((skill) => skill.id);
 
       const attempt = {
@@ -96,6 +154,10 @@ export async function openPlacementAttempt({
         lessonsSkipped: 0,
         part: 1,
         partComplete: false,
+        ...(length === "wholeCourse" && {
+          partPrepared: false,
+          partSkillIds: skillIds.slice(0, TOPICS_PER_PART),
+        }),
         partStartedAt: at,
         skillIds,
         topicCount: skillIds.length,
@@ -107,16 +169,11 @@ export async function openPlacementAttempt({
         tx,
       });
 
-      await tx.plan.updateMany({ data: { placementPreparedAt: null }, where: { goalId } });
-
-      await oweFollowUps({
-        db: tx,
-        followUps: [
-          {
-            input: { goalId, ...(skillIds.length > 0 && { skillIds }), waitsForNotice: false },
-            kind: "preparePlacementItems",
-          },
-        ],
+      await owePartQuestions({
+        goalId,
+        placementPart: length === "wholeCourse" ? { attemptId: attempt.id, part: 1 } : undefined,
+        skillIds: length === "wholeCourse" ? skillIds.slice(0, TOPICS_PER_PART * 2) : skillIds,
+        tx,
         userId,
       });
 
