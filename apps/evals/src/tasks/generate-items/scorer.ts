@@ -9,6 +9,7 @@ import {
 import { checkItem, findOwnEmDashes } from "@zoonk/core/library/items/checks";
 import { toCheckedItem } from "@zoonk/core/library/items/create";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "./score-categories";
+import { type GenerateItemsExpected } from "./test-cases";
 
 type GenerateItemsCase = {
   examFormat?: {
@@ -44,12 +45,25 @@ function blockedItems(items: GeneratedItem[], input: GenerateItemsCase) {
     : [];
 }
 
-export const checkGeneratedItems: TaskCodeChecks = ({ output, testCase }) => {
+export const checkGeneratedItems: TaskCodeChecks<GenerateItemsExpected> = ({
+  output,
+  testCase,
+}) => {
   const input = testCase.userInput as GenerateItemsCase;
   const { items } = JSON.parse(output) as { items: GeneratedItem[] };
 
   if (items.length === 0) {
-    return { judgedOutput: output, keyFlawLocators: [], passed: 1, problems: [], total: 1 };
+    const emptyExpected = testCase.expected?.empty === true;
+    const problems = emptyExpected ? [] : ["The output has no items to save."];
+
+    return {
+      blockingProblems: problems,
+      judgedOutput: output,
+      keyFlawLocators: [],
+      passed: Number(emptyExpected),
+      problems,
+      total: 1,
+    };
   }
 
   const checked = items.map((item, index) => ({
@@ -84,7 +98,7 @@ export const checkGeneratedItems: TaskCodeChecks = ({ output, testCase }) => {
   };
 };
 
-export const scoreGeneratedItems: TaskScorer = ({ output, testCase }) =>
+export const scoreGeneratedItems: TaskScorer<GenerateItemsExpected> = ({ output, testCase }) =>
   scoreWithCodeChecks({
     check: (value) => checkGeneratedItems({ output: value, testCase }),
     output,

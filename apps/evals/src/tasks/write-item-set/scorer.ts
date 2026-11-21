@@ -5,8 +5,7 @@ import {
   type WrittenItemSet,
   toSetItem,
 } from "@zoonk/ai/tasks/items/write-set";
-import { checkItem } from "@zoonk/core/library/items/checks";
-import { repairItem } from "@zoonk/core/library/items/repairs";
+import { toCheckedItem } from "@zoonk/core/library/items/create";
 import {
   MIN_SET_QUESTIONS,
   checkWrittenItemSet,
@@ -14,7 +13,10 @@ import {
 } from "@zoonk/core/library/items/set-checks";
 import { WRITE_ITEM_SET_SCORE_CATEGORIES } from "./score-categories";
 
-type WriteItemSetCase = Pick<WriteItemSetParams, "examFormat" | "format" | "language" | "skills">;
+type WriteItemSetCase = Pick<
+  WriteItemSetParams,
+  "examFormat" | "format" | "language" | "skills" | "targetLanguage"
+>;
 
 const SET_CHECKS = 1;
 
@@ -27,14 +29,21 @@ export const checkWriteItemSetOutput: TaskCodeChecks = ({ output, testCase }) =>
     input.format === "multipleChoice" ? (input.examFormat?.optionCount ?? null) : null;
 
   const checked = set.questions.map((question, index) => {
-    const item = repairItem({ item: toSetItem(question), language: input.language, optionCount });
+    const { problems } = toCheckedItem({
+      answerFormat: {},
+      format: input.format,
+      index,
+      item: toSetItem(question),
+      language: input.language,
+      optionCount,
+      optionLanguage: input.targetLanguage,
+    });
 
     return {
       itemLocator: `questions[${index}]`,
-      problems: [
-        ...(check.questions[index] ?? []),
-        ...checkItem({ item, language: input.language, optionCount }),
-      ].map((problem) => `Question ${index + 1}: ${problem}`),
+      problems: [...(check.questions[index] ?? []), ...problems].map(
+        (problem) => `Question ${index + 1}: ${problem}`,
+      ),
       question,
     };
   });

@@ -127,6 +127,7 @@ function checkLessonSpecs({
   const expectedChecks = checkExpected({ expected, lessons });
 
   return {
+    blockingProblems: lessons.length === 0 ? ["The output has no valid lesson specs."] : [],
     criteria: [
       ...(passing.length === lessons.length && lessons.length > 0 ? [] : ["screenPlan"]),
       ...(expectedChecks.problems.length > 0 ? ["activitiesAndVisuals"] : []),

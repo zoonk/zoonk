@@ -6,8 +6,7 @@ import {
   type WriteListeningSetParams,
   type writeListeningSet,
 } from "@zoonk/ai/tasks/listening/write-set";
-import { checkItem } from "@zoonk/core/library/items/checks";
-import { repairItem } from "@zoonk/core/library/items/repairs";
+import { toCheckedItem } from "@zoonk/core/library/items/create";
 import { WRITE_LISTENING_SET_SCORE_CATEGORIES } from "./score-categories";
 
 type WriteListeningSetOutput = Awaited<ReturnType<typeof writeListeningSet>>["data"];
@@ -34,12 +33,20 @@ export const checkWriteListeningSetOutput: TaskCodeChecks = ({ output, testCase 
 
   const checked = set.questions.map((question, index) => {
     const optionCount = question.format === "multipleChoice" ? (input.optionCount ?? null) : null;
-    const language = input.scriptLanguage;
-    const item = repairItem({ item: toListeningItem(question), language, optionCount });
+
+    const { item, problems } = toCheckedItem({
+      answerFormat: {},
+      format: question.format,
+      index,
+      item: toListeningItem(question),
+      language: input.language,
+      optionCount,
+      optionLanguage: input.scriptLanguage,
+    });
 
     return {
       itemLocator: `set.questions[${index}]`,
-      problems: checkItem({ item, language, optionCount }),
+      problems,
       question:
         item.format === "typed"
           ? { ...question, acceptedAnswers: item.acceptedAnswers, sampleAnswer: item.sampleAnswer }
@@ -50,7 +57,10 @@ export const checkWriteListeningSetOutput: TaskCodeChecks = ({ output, testCase 
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
-    blockingProblems,
+    blockingProblems: [
+      ...blockingProblems,
+      ...(passing.length === 0 ? ["No listening question passed the save checks."] : []),
+    ],
     judgedOutput: JSON.stringify(
       {
         ...set,

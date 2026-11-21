@@ -4,11 +4,12 @@ import { type GenerateItemsParams, generateItems } from "@zoonk/ai/tasks/items/g
 import { readCriteria } from "../plain-language-criterion";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "./score-categories";
 import { checkGeneratedItems, scoreGeneratedItems } from "./scorer";
-import { TEST_CASES } from "./test-cases";
+import { type GenerateItemsExpected, TEST_CASES } from "./test-cases";
 
 export const generateItemsTask: Task<
   OptionalCountry<GenerateItemsParams>,
-  Awaited<ReturnType<typeof generateItems>>["data"]
+  Awaited<ReturnType<typeof generateItems>>["data"],
+  GenerateItemsExpected
 > = {
   codeChecks: checkGeneratedItems,
   criteria: readCriteria(GENERATE_ITEMS_SCORE_CATEGORIES),

@@ -121,7 +121,9 @@ export const checkPlacementItems: TaskCodeChecks = ({ output, testCase }) => {
   const saveChecks = roles.flatMap((role) => role.saveChecks);
 
   return {
-    blockingProblems: saveChecks.every((problems) => problems.length > 0) ? saveChecks.flat() : [],
+    blockingProblems: saveChecks.every((problems) => problems.length > 0)
+      ? ["No placement item passed the save checks.", ...saveChecks.flat()]
+      : [],
     judgedOutput: JSON.stringify(
       {
         skills: perSkill.map(({ name, roles: [quick, typed] }) => ({

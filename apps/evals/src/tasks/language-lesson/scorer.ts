@@ -16,42 +16,14 @@ export function parseLesson(output: string): LanguageLessonContent | null {
   }
 }
 
-function checkDefinitions({
-  input,
-  output,
-}: {
-  input: LanguageLessonInput;
-  output: string;
-}): CodeCheckResult {
-  const lesson = parseLesson(output);
-
-  if (!lesson) {
-    const problems = ["The output isn't a lesson."];
-    return { blockingProblems: problems, judgedOutput: output, passed: 0, problems, total: 1 };
-  }
-
+function checkDefinitions(lesson: LanguageLessonContent): CodeCheckResult {
   const named = lesson.words.filter((word) =>
     definitionNamesWord({ definition: word.translation, word: word.word }),
   );
 
   const kept = lesson.words.filter((word) => !named.includes(word));
 
-  const cleaned =
-    named.length > 0
-      ? cleanWrittenLanguageLesson({
-          content: lesson,
-          inputs: {
-            learnerLanguage: input.learnerLanguage,
-            skillId: null,
-            targetLanguage: input.targetLanguage,
-            writerInput: input,
-          },
-        })
-      : undefined;
-
   return {
-    blockingProblems:
-      cleaned === null ? ["The lesson could not supply enough usable language exercises."] : [],
     criteria: ["pairAwareness"],
     judgedOutput: JSON.stringify({ ...lesson, words: kept }),
     passed: kept.length,
@@ -62,10 +34,32 @@ function checkDefinitions({
 
 export const checkLanguageLessonOutput: TaskCodeChecks = ({ output, testCase }) => {
   const input = testCase.userInput as LanguageLessonInput;
+  const lesson = parseLesson(output);
+
+  if (!lesson) {
+    const problems = ["The output isn't a lesson."];
+    return { blockingProblems: problems, judgedOutput: output, passed: 0, problems, total: 1 };
+  }
+
+  const cleaned = cleanWrittenLanguageLesson({
+    content: lesson,
+    inputs: {
+      learnerLanguage: input.learnerLanguage,
+      skillId: null,
+      targetLanguage: input.targetLanguage,
+      writerInput: input,
+    },
+  });
+
+  if (!cleaned) {
+    const problems = ["The lesson could not supply enough usable language exercises."];
+
+    return { blockingProblems: problems, judgedOutput: output, passed: 0, problems, total: 1 };
+  }
 
   return isSameLanguage(input)
-    ? checkDefinitions({ input, output })
-    : { judgedOutput: output, passed: 0, problems: [], total: 0 };
+    ? checkDefinitions(lesson)
+    : { judgedOutput: output, passed: 1, problems: [], total: 1 };
 };
 
 export const scoreLanguageLesson: TaskScorer = ({ output, testCase }) => {

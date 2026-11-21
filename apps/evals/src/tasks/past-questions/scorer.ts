@@ -33,7 +33,7 @@ export const checkQuestions: TaskCodeChecks = ({ output, testCase }) => {
   const passing = checked.filter((entry) => entry.problems.length === 0);
 
   return {
-    blockingProblems: passing.length === 0 ? checked.flatMap((entry) => entry.problems) : [],
+    blockingProblems: passing.length === 0 ? ["No past question passed the import checks."] : [],
     judgedOutput: JSON.stringify(
       { questions: passing.map(({ question, itemLocator }) => ({ ...question, itemLocator })) },
       null,
@@ -41,7 +41,10 @@ export const checkQuestions: TaskCodeChecks = ({ output, testCase }) => {
     ),
     keyFlawLocators: passing.map((entry) => entry.itemLocator),
     passed: passing.length,
-    problems: checked.flatMap((entry) => entry.problems),
+    problems:
+      questions.length === 0
+        ? ["The output has no past questions."]
+        : checked.flatMap((entry) => entry.problems),
     total: Math.max(questions.length, 1),
   };
 };

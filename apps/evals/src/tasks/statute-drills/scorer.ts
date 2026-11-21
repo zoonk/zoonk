@@ -6,7 +6,7 @@ import {
   type StatuteDrillParams,
   type generateStatuteDrills,
 } from "@zoonk/ai/tasks/items/statute-drills";
-import { checkItem } from "@zoonk/core/library/items/checks";
+import { toCheckedItem } from "@zoonk/core/library/items/create";
 import { STATUTE_DRILLS_SCORE_CATEGORIES } from "./score-categories";
 
 type StatuteDrillsOutput = Awaited<ReturnType<typeof generateStatuteDrills>>["data"];
@@ -49,15 +49,18 @@ export const checkStatuteDrillsOutput: TaskCodeChecks = ({ output, testCase }) =
   const input = testCase.userInput as StatuteDrillsCase;
   const { drills, dropped } = JSON.parse(output) as StatuteDrillsOutput;
 
-  const checked = drills.map((drill, index) => ({
-    drill,
-    itemLocator: `drills[${index}] (${drill.reference})`,
-    problems: checkItem({
+  const checked = drills.map((drill, index) => {
+    const { item, problems } = toCheckedItem({
+      answerFormat: {},
+      format: drill.format,
+      index,
       item: drill,
       language: input.language,
-      optionCount: STATUTE_DRILL_OPTION_COUNT,
-    }),
-  }));
+      optionCount: drill.format === "multipleChoice" ? STATUTE_DRILL_OPTION_COUNT : null,
+    });
+
+    return { drill: item, itemLocator: `drills[${index}] (${drill.reference})`, problems };
+  });
 
   const passing = checked.filter((entry) => entry.problems.length === 0);
   const all = [...dropped, ...checked];
@@ -68,7 +71,7 @@ export const checkStatuteDrillsOutput: TaskCodeChecks = ({ output, testCase }) =
   ].filter((problem) => typeof problem === "string");
 
   return {
-    blockingProblems: drills.length === 0 ? dropped.flatMap((entry) => entry.problems) : [],
+    blockingProblems: passing.length === 0 ? ["No statute drill passed the save checks."] : [],
     judgedOutput: JSON.stringify(
       { drills: passing.map(({ drill, itemLocator }) => ({ ...drill, itemLocator })) },
       null,

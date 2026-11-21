@@ -1,5 +1,6 @@
 import path from "node:path";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
+import { isNearSolidImage } from "@zoonk/core/images/quality";
 import z from "zod";
 import { runInOrder } from "../concurrency";
 import { checkImageEdges } from "../image-edges";
@@ -93,13 +94,24 @@ export async function checkRuns(task: RegisteredTask | null, comparison: Compari
       }
 
       if (Buffer.isBuffer(output)) {
-        const edges = await checkImageEdges(output);
+        const [edges, blank] = await Promise.all([
+          checkImageEdges(output),
+          isNearSolidImage({ image: output }),
+        ]);
+
+        if (blank.error) {
+          throw blank.error;
+        }
 
         await writeRecord(`${prefix}.json`, checkSchema, {
           ...base,
-          ...edges,
           costUsd: 0,
           name: "background and frame",
+          passed: edges.passed + Number(!blank.data),
+          problems: blank.data
+            ? [...edges.problems, "The image is a blank frame."]
+            : edges.problems,
+          total: edges.total + 1,
         });
 
         return;
