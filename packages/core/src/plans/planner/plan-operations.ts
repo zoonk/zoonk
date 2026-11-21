@@ -3,6 +3,7 @@ import { type AddedSkill, type PlanOperation } from "../plan-contract";
 import { type UnfundedMove } from "../plan-error-contract";
 import { applyAreaOperation, isAreaOperation } from "./area-operations";
 import { moveWeeklyEvent } from "./move-weekly-event";
+import { joinOptionSkills } from "./option-skills";
 import { addDays, fromIsoDate, scaleWeekdayMinutes, toIsoDate } from "./plan-calendar";
 import { DAYS_PER_WEEK, type PlanGraph, type PlanState } from "./plan-state";
 import { setTools } from "./plan-tools";
@@ -132,26 +133,34 @@ function addSkills({
   return { ...state, graph: { ...state.graph, skills: graphSkills } };
 }
 
-function followNotice({ graph, state }: { graph: PlanGraph | null; state: PlanState }): PlanState {
-  if (!graph) {
-    return state;
-  }
-
-  const noticeIds = new Set(graph.skills.map((skill) => skill.skillId));
-  const current = state.graph.skills;
+export function followNoticeGraph({
+  droppedIds = new Set<string>(),
+  graph,
+  state,
+}: {
+  droppedIds?: ReadonlySet<string>;
+  graph: PlanGraph;
+  state: PlanState;
+}): PlanState {
+  const reading = joinOptionSkills(graph);
+  const noticeIds = new Set(reading.skills.map((skill) => skill.skillId));
+  const current = joinOptionSkills(state.graph).skills;
 
   const skills = current.reduce((list, skill, index) => {
-    if (noticeIds.has(skill.skillId)) {
+    if (skill.extra || noticeIds.has(skill.skillId) || droppedIds.has(skill.skillId)) {
       return list;
     }
 
     const next = current.slice(index + 1).find((later) => noticeIds.has(later.skillId));
     const at = next ? list.findIndex((item) => item.skillId === next.skillId) : -1;
+    const kept = { ...skill, phase: Math.min(skill.phase, Math.max(0, graph.phases.length - 1)) };
 
-    return at === -1 ? [...list, skill] : [...list.slice(0, at), skill, ...list.slice(at)];
-  }, graph.skills);
+    return at === -1 ? [...list, kept] : [...list.slice(0, at), kept, ...list.slice(at)];
+  }, reading.skills);
 
-  return { ...state, graph: { phases: graph.phases, skills } };
+  const extraSkills = reading.extraSkills ?? state.graph.extraSkills;
+
+  return { ...state, graph: { ...reading, ...(extraSkills && { extraSkills }), skills } };
 }
 
 function withTargetDate({
@@ -204,13 +213,11 @@ function setExamChoice({
 
 function applyOperation({
   goalKind,
-  noticeGraph,
   operation,
   state,
   today,
 }: {
   goalKind: GoalKind;
-  noticeGraph: PlanGraph | null;
   operation: PlanOperation;
   state: PlanState;
   today: string;
@@ -278,7 +285,7 @@ function applyOperation({
     case "setTools":
       return { state: setTools({ state, tools: operation.tools }) };
     case "followNotice":
-      return { state: followNotice({ graph: noticeGraph, state }) };
+      return { state };
     case "setNoticeDate":
       return withTargetDate({
         noticeDate: operation.targetDate,
@@ -310,13 +317,11 @@ function applyOperation({
 /** The first operation that can't apply stops the change, so none of it applies. */
 export function applyPlanOperations({
   goalKind,
-  noticeGraph = null,
   operations,
   state,
   today,
 }: {
   goalKind: GoalKind;
-  noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
   state: PlanState;
   today: Date;
@@ -327,7 +332,7 @@ export function applyPlanOperations({
     (result, operation) =>
       "error" in result
         ? result
-        : applyOperation({ goalKind, noticeGraph, operation, state: result.state, today: day }),
+        : applyOperation({ goalKind, operation, state: result.state, today: day }),
     { state },
   );
 }

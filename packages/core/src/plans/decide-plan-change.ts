@@ -90,11 +90,11 @@ async function acceptProposal({
 }: Decision & { quote: PlanChangeQuote | null }) {
   const payload = parsePlanChangePayload(change.payload);
 
-  const result = await applyChangeOperations({
-    context,
-    noticeGraph: payload.noticeGraph,
-    operations: payload.operations,
-  });
+  if (payload.operations.some(({ kind }) => kind === "followNotice")) {
+    return { status: "conflict" as const };
+  }
+
+  const result = await applyChangeOperations({ context, operations: payload.operations });
 
   if ("error" in result) {
     return { error: result.error, status: "invalid" as const };

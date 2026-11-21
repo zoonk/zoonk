@@ -1,4 +1,5 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { findUncoveredTopics, formatExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
@@ -8,9 +9,10 @@ import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-wr
 import { toGoalCandidateExams } from "../exams/candidate-exams";
 import { applyGraphCoverage } from "./add-coverage-skills";
 import { type CurriculumScope } from "./curriculum-scope";
-import { toExamOutline } from "./goal-curriculum-inputs";
+import { toExamOutline } from "./exam-curriculum-outline";
 import { toGoalPlanGraph } from "./goal-plan-graph";
 import { type PlanSkillGraph, buildPlanSkillGraph } from "./plan-skill-graph";
+import { prunePlanNoticeGraph } from "./prune-plan-notice-graph";
 import {
   type GoalSkillGraph,
   linkGoalSkillPrerequisites,
@@ -76,7 +78,7 @@ function insertAddedSkills({ added, stored }: { added: PlanGraph; stored: PlanGr
   const isComplete = stored.skills.every((skill) => skills.includes(skill));
 
   return {
-    phases: stored.phases,
+    ...stored,
     skills: isComplete
       ? skills
       : [...stored.skills, ...skills.filter((skill) => !kept.has(skill.skillId))],
@@ -153,10 +155,73 @@ export async function addMissingExamGraphSkills(examBlueprintId: string): Promis
     stored: parsePlanGraph(stored.graph),
   });
 
-  await writePlanInputs(async (tx) => {
+  const saved = await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
-    await tx.examSkillGraph.update({ data: { graph }, where: { examBlueprintId } });
+    const current = await tx.examSkillGraph.findUnique({ where: { examBlueprintId } });
+
+    if (!current || !isDeepStrictEqual(current.graph, stored.graph)) {
+      return false;
+    }
+
+    const currentBlueprint = await tx.examBlueprint.findUniqueOrThrow({
+      where: { id: examBlueprintId },
+    });
+
+    const pruned = await prunePlanNoticeGraph({
+      db: tx,
+      graph,
+      subjects: toExamOutline(currentBlueprint).subjects,
+    });
+
+    await tx.examSkillGraph.update({ data: { graph: pruned.graph }, where: { examBlueprintId } });
+    return true;
   });
 
-  return added.map((skill) => skill.name);
+  return saved ? added.map((skill) => skill.name) : [];
+}
+
+export async function pruneSharedExamGraph(examBlueprintId: string): Promise<boolean> {
+  const [stored, blueprint] = await Promise.all([
+    prisma.examSkillGraph.findUnique({ where: { examBlueprintId } }),
+    prisma.examBlueprint.findUnique({ where: { id: examBlueprintId } }),
+  ]);
+
+  if (!stored || !blueprint) {
+    return false;
+  }
+
+  const { dropped } = await prunePlanNoticeGraph({
+    graph: parsePlanGraph(stored.graph),
+    subjects: toExamOutline(blueprint).subjects,
+  });
+
+  if (dropped.length === 0) {
+    return false;
+  }
+
+  return writePlanInputs(async (tx) => {
+    await lockPlanBlueprintWrite(tx, examBlueprintId);
+
+    const [current, notice] = await Promise.all([
+      tx.examSkillGraph.findUnique({ where: { examBlueprintId } }),
+      tx.examBlueprint.findUnique({ where: { id: examBlueprintId } }),
+    ]);
+
+    if (!current || !notice) {
+      return false;
+    }
+
+    const pruned = await prunePlanNoticeGraph({
+      db: tx,
+      graph: parsePlanGraph(current.graph),
+      subjects: toExamOutline(notice).subjects,
+    });
+
+    if (pruned.dropped.length === 0) {
+      return false;
+    }
+
+    await tx.examSkillGraph.update({ data: { graph: pruned.graph }, where: { examBlueprintId } });
+    return true;
+  });
 }

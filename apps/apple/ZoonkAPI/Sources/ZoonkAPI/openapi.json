@@ -37395,6 +37395,13 @@
             ],
             "additionalProperties": false
           },
+          "noticeRemoved": {
+            "description": "Areas and skills removed when the plan followed the official exam notice",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "outcomesAdded": {
             "description": "For moving the phase dates (fitPhaseDates): the goal's outcome skills (a career's job search) keeping the dates leaves out by the goal's date and moving them fits in, by name",
             "type": "array",
@@ -42159,7 +42166,7 @@
           },
           "kind": {
             "type": "string",
-            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
+            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
           },
           "lessonsSkipped": {
             "type": "integer",

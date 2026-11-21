@@ -4,6 +4,8 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { findActiveGoalId, loadGoalViews } from "../goals/_utils/goal-view";
 import { type GoalRefusal, createGoals } from "../goals/create-goals";
 import { type GoalView } from "../goals/goal-contract";
+import { toExamOutline } from "../library/curriculum/exam-curriculum-outline";
+import { prunePlanNoticeGraph } from "../library/curriculum/prune-plan-notice-graph";
 import { getSession } from "../users/get-session";
 import { getLinkSubject, keepPublicGraph, loadLinkedPlan } from "./_utils/linked-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -35,6 +37,26 @@ function readStartTime(dailyMinutes: number | undefined): {
   return dailyMinutes === undefined
     ? { dailyMinutes: DEFAULT_DAILY_MINUTES, details: {} }
     : { dailyMinutes, details: { answered: ["schedule"] } };
+}
+
+async function readLinkedGraph(source: NonNullable<Awaited<ReturnType<typeof loadLinkedPlan>>>) {
+  const [graph, blueprint] = await Promise.all([
+    keepPublicGraph(joinOptionSkills(parsePlanGraph(source.graph))),
+    source.goal.examBlueprint?.visibility === "public"
+      ? prisma.examBlueprint.findUnique({ where: { id: source.goal.examBlueprint.id } })
+      : null,
+  ]);
+
+  if (!blueprint) {
+    return graph;
+  }
+
+  const { graph: pruned } = await prunePlanNoticeGraph({
+    graph,
+    subjects: toExamOutline(blueprint).subjects,
+  });
+
+  return pruned;
 }
 
 /**
@@ -116,7 +138,7 @@ export async function startGoalFromPlanLink({
   await createGoalPlan({
     fromPlanLink: true,
     goalId: goal.id,
-    graph: await keepPublicGraph(joinOptionSkills(parsePlanGraph(source.graph))),
+    graph: await readLinkedGraph(source),
   });
 
   return {

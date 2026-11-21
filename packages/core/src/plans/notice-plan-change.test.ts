@@ -10,6 +10,9 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { followNoticeReading, noticeWaitFixture } from "./_test-utils/notice-landing";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { seenQuote } from "./_test-utils/seen-quote";
+import { loadTodayPlanChange } from "./_utils/today-plan-change";
+import { acknowledgeTodayPlanChange } from "./acknowledge-today-plan-change";
+import { applyNoticeGraph } from "./apply-notice-graph";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { proposeNoticeChange } from "./notice-plan-change";
@@ -152,50 +155,6 @@ describe(proposeNoticeChange, () => {
     await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("none");
     await expect(findProposals(goal.id)).resolves.toHaveLength(0);
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-12-20");
-  });
-
-  it("offers the notice's subjects again once per new edition after Keep mine", async () => {
-    const { blueprint, goal, library } = await plannedExam({
-      days: [],
-      targetDate: "2020-12-20",
-      year: 2020,
-    });
-
-    const noticeGraph: PlanGraph = {
-      ...library.graph,
-      skills: library.graph.skills.map((skill) => ({ ...skill, area: "Immunology", weight: 3 })),
-    };
-
-    const offer = () => proposeNoticeChange({ goalId: goal.id, graph: noticeGraph });
-
-    const keepMine = async () => {
-      const [proposal] = await findProposals(goal.id);
-      await decide({ changeId: proposal?.id ?? "", goalId: goal.id, status: "declined" });
-    };
-
-    await expect(offer()).resolves.toBe("proposed");
-    await keepMine();
-    await expect(offer()).resolves.toBe("none");
-
-    await prisma.examBlueprint.update({
-      data: {
-        edition: {
-          check: null,
-          citations: [],
-          dates: [],
-          noticeUrl: null,
-          questionCount: null,
-          sourceHash: null,
-          timeZone: null,
-          year: 2021,
-        },
-      },
-      where: { id: blueprint.id },
-    });
-
-    await expect(offer()).resolves.toBe("proposed");
-    await keepMine();
-    await expect(offer()).resolves.toBe("none");
   });
 
   it("never proposes an estimated day over the goal's date, nor a day it already has", async () => {
@@ -462,173 +421,204 @@ describe(proposeNoticeChange, () => {
     ).resolves.toStrictEqual([{ status: "replaced" }]);
   });
 
-  it("proposes the graph the notice gave with its day, and Apply keeps the skills only the plan has", async () => {
-    const [extra, added] = await Promise.all([
-      skillFixture({ name: "A setup lesson only this plan has" }),
-      skillFixture({ name: "A topic the notice expects" }),
+  it("follows a late notice once, retaining plan-only additions, completed work and the learner's date", async () => {
+    const [library, extra, added] = await Promise.all([
+      planLibraryFixture({ skills: [{ lessons: 1 }, { lessons: 1 }] }),
+      skillFixture({ name: "Setup lesson" }),
+      skillFixture({ name: "Compare antibody types" }),
     ]);
 
-    const library = await planLibraryFixture({ skills: [{ lessons: 1 }, { lessons: 1 }] });
-    const [first, second] = library.graph.skills;
+    const [first, outside] = library.graph.skills;
 
-    if (!first || !second) {
-      throw new Error("The library has two skills");
+    if (!first || !outside) {
+      throw new Error("The library needs two skills");
     }
 
-    const extraSkill = { ...first, area: null, name: extra.name, skillId: extra.id };
+    const extraSkill = { ...first, area: "Setup", name: extra.name, skillId: extra.id };
 
-    const { goal } = await plannedExam({
+    const { blueprint, goal } = await plannedExam({
       days: ["2020-11-08"],
-      graph: { ...library.graph, skills: [first, extraSkill, second] },
+      graph: { ...library.graph, skills: [first, { ...outside, area: "English" }, extraSkill] },
       targetDate: "2020-12-20",
       year: 2020,
     });
 
-    const noticeGraph: PlanGraph = {
-      phases: library.graph.phases,
-      skills: [
-        { ...first, area: "Immunology", topics: ["1 Antibodies"], weight: 3 },
-        { ...first, area: "Immunology", name: added.name, skillId: added.id, weight: 5 },
-        { ...second, area: "Immunology", weight: 2 },
-      ],
-    };
-
-    await expect(proposeNoticeChange({ goalId: goal.id, graph: noticeGraph })).resolves.toBe(
-      "proposed",
-    );
-
     const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-    const [proposal] = await findProposals(goal.id);
 
-    expect(parsePlanGraph(before.graph).skills.map((skill) => skill.skillId)).toStrictEqual([
-      first.skillId,
-      extra.id,
-      second.skillId,
-    ]);
-
-    expect(proposal?.payload).toMatchObject({
-      operations: [
-        { kind: "followNotice" },
-        { estimated: false, kind: "setNoticeDate", targetDate: "2020-11-08" },
-      ],
+    const done = await prisma.planItem.findFirstOrThrow({
+      where: { planId: before.id, skillId: outside.skillId },
     });
 
-    await decide({ changeId: proposal?.id ?? "", goalId: goal.id, status: "applied" });
+    await prisma.planItem.update({
+      data: { completedAt: NOW, status: "done" },
+      where: { id: done.id },
+    });
+
+    const reading = {
+      blueprintId: blueprint.id,
+      droppedSkillIds: [outside.skillId],
+      goalId: goal.id,
+      graph: {
+        phases: library.graph.phases,
+        skills: [
+          { ...first, area: "Immunology", topics: ["1 Antibodies"] },
+          { ...first, area: "Immunology", name: added.name, skillId: added.id },
+        ],
+      },
+    };
+
+    await expect(applyNoticeGraph(reading)).resolves.toBe(true);
+    await applyNoticeGraph(reading);
 
     const after = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-    expect(
-      parsePlanGraph(after.graph).skills.map((skill) => [skill.skillId, skill.area, skill.weight]),
-    ).toStrictEqual([
-      [first.skillId, "Immunology", 3],
-      [added.id, "Immunology", 5],
-      [extra.id, null, first.weight],
-      [second.skillId, "Immunology", 2],
+    expect(parsePlanGraph(after.graph).skills.map((skill) => skill.skillId)).toStrictEqual([
+      first.skillId,
+      added.id,
+      extra.id,
     ]);
 
-    await expect(readTargetDate(goal.id)).resolves.toBe("2020-11-08");
+    await expect(prisma.planItem.findUnique({ where: { id: done.id } })).resolves.toMatchObject({
+      status: "done",
+    });
+
+    await expect(
+      prisma.planChange.findMany({ where: { kind: "noticeChanged", planId: before.id } }),
+    ).resolves.toMatchObject([
+      { payload: { effect: { noticeRemoved: ["English"] } }, status: "applied" },
+    ]);
+
+    await expect(readTargetDate(goal.id)).resolves.toBe("2020-12-20");
+    await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("proposed");
+
+    await expect(findProposals(goal.id)).resolves.toMatchObject([
+      {
+        payload: {
+          operations: [{ estimated: false, kind: "setNoticeDate", targetDate: "2020-11-08" }],
+        },
+      },
+    ]);
+
+    const notice = await loadTodayPlanChange({ goal, now: NOW, timeZone: "UTC" });
+
+    expect(notice).toMatchObject({
+      canApply: false,
+      canUndo: false,
+      effect: { noticeRemoved: ["English"] },
+      kind: "noticeChanged",
+    });
+
+    await expect(
+      acknowledgeTodayPlanChange({ changeId: notice?.id ?? "", kind: "stored" }),
+    ).resolves.toMatchObject({ status: "acknowledged" });
+
+    await expect(loadTodayPlanChange({ goal, now: NOW, timeZone: "UTC" })).resolves.toMatchObject({
+      operations: [{ kind: "setNoticeDate" }],
+      status: "proposed",
+    });
   });
 
-  it("keeps the subjects a waiting notice change proposes when a newer one only moves the date, and leaves the buddy's proposals alone", async () => {
-    const [added, source] = await Promise.all([
-      skillFixture({ name: "A topic the corrected notice expects" }),
-      sourceFixture({ language: "en" }),
-    ]);
-
+  it("repairs a stored plan without using a plan-only addition as a notice root", async () => {
     const { blueprint, goal, library } = await plannedExam({
       days: ["2020-11-08"],
       targetDate: "2020-12-20",
       year: 2020,
     });
 
-    const [first, second] = library.graph.skills;
+    const [finance, logic] = library.graph.skills;
 
-    if (!first || !second) {
-      throw new Error("The library has two skills");
+    if (!finance || !logic) {
+      throw new Error("The library needs two skills");
     }
 
-    const noticeGraph: PlanGraph = {
-      phases: library.graph.phases,
+    const setup = await skillFixture({ name: "Use the learner's setup" });
+
+    const setupSkill = {
+      ...finance,
+      area: "Tools",
+      name: setup.name,
+      skillId: setup.id,
+      topics: [],
+    };
+
+    const graph = {
+      ...library.graph,
       skills: [
-        { ...first, area: "Immunology", weight: 3 },
-        { ...first, area: "Immunology", name: added.name, skillId: added.id, weight: 5 },
-        { ...second, area: "Immunology", weight: 2 },
+        { ...finance, area: "Finance", topics: ["Budget laws"] },
+        { ...logic, area: "Logic", topics: [] },
+        setupSkill,
       ],
     };
 
-    await expect(proposeNoticeChange({ goalId: goal.id, graph: noticeGraph })).resolves.toBe(
-      "proposed",
-    );
-
-    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-
-    const buddyProposal = await planChangeFixture({
-      kind: "edited",
-      payload: {
-        operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
-        source: "planEdit",
-      },
-      planId: plan.id,
-      reason: "Saturdays are off.",
-      status: "proposed",
-    });
-
     await prisma.examBlueprint.update({
       data: {
-        edition: {
-          check: null,
-          citations: [],
-          dates: [{ citation, date: "2020-11-15", kind: "exam", label: "Exam", startTime: null }],
-          noticeUrl: null,
-          questionCount: null,
-          sourceHash: null,
-          timeZone: null,
-          year: 2020,
+        structure: {
+          formats: [],
+          mock: null,
+          rules: [],
+          subjects: [
+            { citation, name: "Finance", questions: 1, topics: ["Budget laws"], weight: 1 },
+          ],
         },
       },
       where: { id: blueprint.id },
     });
 
-    const notice = await prisma.sourceChangeNotice.create({
-      data: {
-        contentHash: "corrected",
-        examBlueprintId: blueprint.id,
-        language: "en",
-        message: "The exam moved to November 15, 2020.",
-        model: "test",
-        previousHash: "first",
-        promptVersion: "test",
-        runId: "test",
-        sourceId: source.id,
-      },
+    await createGoalPlan({ goalId: goal.id, graph });
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    await planChangeFixture({
+      payload: { operations: [{ kind: "addSkills", skills: [setupSkill] }], source: "learner" },
+      planId: plan.id,
+      status: "applied",
     });
 
-    await expect(proposeNoticeChange({ goalId: goal.id, noticeId: notice.id })).resolves.toBe(
-      "proposed",
+    await expect(applyNoticeGraph({ blueprintId: blueprint.id, goalId: goal.id })).resolves.toBe(
+      true,
     );
 
-    const proposals = await findProposals(goal.id);
-    const noticeProposal = proposals.find((change) => change.id !== buddyProposal.id);
-
-    expect(proposals.map((change) => change.id)).toContain(buddyProposal.id);
-    expect(proposals).toHaveLength(2);
-    expect(noticeProposal?.reason).toBe("");
-
-    expect(noticeProposal?.payload).toMatchObject({
-      noticeId: notice.id,
-      operations: [
-        { kind: "followNotice" },
-        { estimated: false, kind: "setNoticeDate", targetDate: "2020-11-15" },
-      ],
-    });
-
-    await decide({ changeId: noticeProposal?.id ?? "", goalId: goal.id, status: "applied" });
+    await expect(applyNoticeGraph({ blueprintId: blueprint.id, goalId: goal.id })).resolves.toBe(
+      false,
+    );
 
     const after = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-    expect(parsePlanGraph(after.graph).skills.map((skill) => skill.skillId)).toContain(added.id);
-    await expect(readTargetDate(goal.id)).resolves.toBe("2020-11-15");
-    await expect(findProposals(goal.id)).resolves.toMatchObject([{ id: buddyProposal.id }]);
+    expect(parsePlanGraph(after.graph).skills.map((skill) => skill.skillId)).toStrictEqual([
+      finance.skillId,
+      setup.id,
+    ]);
+  });
+
+  it("replaces a legacy graph proposal with the exam-day question", async () => {
+    const { goal } = await plannedExam({
+      days: ["2020-11-08"],
+      targetDate: "2020-12-20",
+      year: 2020,
+    });
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    const legacy = await planChangeFixture({
+      kind: "edited",
+      payload: { operations: [{ kind: "followNotice" }], source: NOTICE_SOURCE },
+      planId: plan.id,
+      status: "proposed",
+    });
+
+    await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("proposed");
+
+    await expect(prisma.planChange.findUnique({ where: { id: legacy.id } })).resolves.toMatchObject(
+      { status: "replaced" },
+    );
+
+    await expect(findProposals(goal.id)).resolves.toMatchObject([
+      {
+        payload: {
+          operations: [{ estimated: false, kind: "setNoticeDate", targetDate: "2020-11-08" }],
+        },
+      },
+    ]);
   });
 
   it("says the notice's change once on Today: the news a change carries isn't shown again", async () => {

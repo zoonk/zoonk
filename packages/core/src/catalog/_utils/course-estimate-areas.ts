@@ -1,7 +1,7 @@
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type CourseOutlineChapter } from "../../goals/_utils/course-plan-graph";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 
 export function getCourseEstimateAreas({
   chapters,

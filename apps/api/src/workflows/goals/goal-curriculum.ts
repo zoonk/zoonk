@@ -177,7 +177,10 @@ function saveBuiltGraph({
 }): SavingCurriculum {
   const { goal, startedCourse } = inputs;
   const { graph, provenance, savedSkillIds = {} } = built;
-  const toSave = graph.skills.filter((skill) => !savedSkillIds[skill.key]);
+
+  const toSave = [...graph.skills, ...(graph.extraSkills ?? [])].filter(
+    (skill) => !savedSkillIds[skill.key],
+  );
 
   const slices = [
     ...toSlices(toSave).map((skills) =>

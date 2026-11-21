@@ -115,11 +115,7 @@ async function prepareProposalPreviews({
     survivors.map(async (proposal) => {
       const payload = parsePlanChangePayload(proposal.payload);
 
-      const result = await applyChangeOperations({
-        context,
-        noticeGraph: payload.noticeGraph,
-        operations: payload.operations,
-      });
+      const result = await applyChangeOperations({ context, operations: payload.operations });
 
       const change =
         "error" in result

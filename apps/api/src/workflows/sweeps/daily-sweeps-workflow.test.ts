@@ -94,6 +94,74 @@ function bankRow(checkedAt: Date | null, model = "test") {
 }
 
 describe(dailySweepsWorkflow, () => {
+  it("repairs old shared exam graphs and their active plans on the scheduled sweep", async () => {
+    const [blueprint, user, required, outside] = await Promise.all([
+      examBlueprintFixture({
+        structure: {
+          formats: [],
+          mock: null,
+          rules: [],
+          subjects: [
+            {
+              citation: { passage: "", sourceId: "notice" },
+              name: "Public finance",
+              questions: 1,
+              topics: ["Budgets"],
+              weight: 1,
+            },
+          ],
+        },
+      }),
+      userFixture(),
+      skillFixture({ name: "Read a budget" }),
+      skillFixture({ name: "Choose when to leave an answer blank" }),
+    ]);
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    const [official, strategy] = plannedSkills([required, outside]);
+
+    const graph = {
+      phases: [{ milestone: null, name: "Exam preparation" }],
+      skills: [
+        { ...official, area: "Public finance", skillId: required.id, topics: ["Budgets"] },
+        { ...strategy, area: "Strategy", skillId: outside.id, topics: [] },
+      ],
+    };
+
+    const [plan, shared] = await Promise.all([
+      planFixture({ goalId: goal.id, graph }),
+      prisma.examSkillGraph.create({
+        data: {
+          examBlueprintId: blueprint.id,
+          generatedAt: new Date(),
+          graph,
+          model: "test",
+          promptVersion: "test",
+          runId: "test",
+        },
+      }),
+    ]);
+
+    await dailySweepsWorkflow(scheduledRun());
+    await dailySweepsWorkflow(scheduledRun());
+
+    const [updated, reused, changes] = await Promise.all([
+      prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      prisma.examSkillGraph.findUniqueOrThrow({ where: { id: shared.id } }),
+      prisma.planChange.findMany({ where: { kind: "noticeChanged", planId: plan.id } }),
+    ]);
+
+    const skills = [{ skillId: required.id, topics: ["Budgets"] }];
+    expect(updated.graph).toMatchObject({ skills });
+    expect(reused.graph).toMatchObject({ skills });
+    expect(changes).toMatchObject([{ payload: { effect: { noticeRemoved: ["Strategy"] } } }]);
+  });
+
   it("checks due exams and sources, deletes inactive guests, purges old memory and evaluation runs, recalibrates questions, starts the later check of lessons made ahead, deletes lesson versions replaced days ago and sign-in codes expired days ago", async () => {
     const now = Date.now();
 
