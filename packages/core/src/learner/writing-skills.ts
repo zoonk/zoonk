@@ -68,15 +68,15 @@ export async function loadWritingSkillIds(
   goalId: string,
   tx: TransactionClient = prisma,
 ): Promise<Set<string>> {
-  const goal = await tx.goal.findUnique({
-    select: { examBlueprint: true, kind: true, plan: { select: { graph: true } } },
-    where: { id: goalId },
+  const plan = await tx.plan.findUnique({
+    select: { goal: { select: { examBlueprint: true } }, graph: true },
+    where: { goal: { examBlueprintId: { not: null }, kind: "exam" }, goalId },
   });
 
-  return goal?.kind === "exam" && goal.examBlueprint
+  return plan?.goal.examBlueprint
     ? getWritingSkillIds({
-        graph: parsePlanGraph(goal.plan?.graph),
-        structure: readBlueprintContent(goal.examBlueprint).structure,
+        graph: parsePlanGraph(plan.graph),
+        structure: readBlueprintContent(plan.goal.examBlueprint).structure,
       })
     : new Set();
 }
