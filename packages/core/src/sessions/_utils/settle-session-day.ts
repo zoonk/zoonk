@@ -8,6 +8,7 @@ import {
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getSessionMemoryFollowUps } from "../../memory/memory-follow-ups";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
+import { readBlockPayload } from "../block-payload";
 import { isDayBlock } from "../day-blocks";
 import { type Mission } from "../missions";
 import { type BlockMissionResult } from "../missions/block-mission-result";
@@ -156,6 +157,19 @@ async function completeIfFinished({
 
       const lastFinish =
         lockedFinishes.length > 0 ? new Date(Math.max(...lockedFinishes)) : endedAt;
+
+      const visibleIds = new Set(visible.map((block) => block.id));
+
+      await Promise.all(
+        current.blocks
+          .filter((block) => !visibleIds.has(block.id) && isDayBlock(block))
+          .map((block) =>
+            tx.studySessionBlock.update({
+              data: { payload: { ...readBlockPayload(block), extra: true } },
+              where: { id: block.id },
+            }),
+          ),
+      );
 
       await tx.studySession.update({
         data: { endedAt: lastFinish, status },

@@ -160,12 +160,24 @@ describe("entitlement lapse keeps a free way forward", () => {
     }
 
     expect(renewed.today.session.blocks).toHaveLength(2);
+    expect(renewed.today.session.sessionBar).toMatchObject({ completed: 1, total: 1 });
 
     expect(renewed.today.session.blocks.find((block) => block.kind === "checkpoint")).toMatchObject(
-      { status: "pending" },
+      { extra: true, status: "pending" },
     );
 
     expect(renewed.today.session.state).toBe("done");
+
+    const renewedWeek = await loadStudyWeek({
+      goal: day.goal,
+      localDate: new Date("2026-09-30T00:00:00Z"),
+    });
+
+    expect(renewedWeek.days.find((entry) => entry.isToday)).toMatchObject({
+      completed: 1,
+      hitGoal: true,
+      total: 1,
+    });
   });
 
   it("two concurrent Opens append once with conservative freshness and a replay leaves state unchanged", async () => {
