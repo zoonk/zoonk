@@ -43,11 +43,11 @@ internal data class EssayStep(
     val id = "essay-${essay.itemId}"
 }
 
-@Composable
 internal fun essaySteps(view: MockExam): List<EssayStep> {
     val essays = view.essays
-    return essays.mapIndexed { index, essay ->
-        EssayStep(essay, if (essays.size > 1) stringResource(R.string.mock_result_written_part, index + 1, essays.size) else essay.area)
+    return essays.map { essay ->
+        // One chip sits over a title, and the next step has its own: several answers are told apart by their topic alone.
+        EssayStep(essay, if (essays.size > 1) essay.writing?.title else null)
     }
 }
 

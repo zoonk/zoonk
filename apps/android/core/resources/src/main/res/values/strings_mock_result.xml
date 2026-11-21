@@ -182,7 +182,6 @@
     <string name="mock_result_review">Questions to review</string>
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">You left it blank.</string>
-    <string name="mock_result_written_part">Written part · %1$d of %2$d</string>
     <string name="mock_result_grading">Grading it with the exam\'s rubric. It can take up to 30 seconds.</string>
     <string name="mock_result_grading_slow">Still grading. This is taking longer than usual.</string>
     <string name="mock_result_grading_failed">That didn\'t go through. Try again in a moment.</string>

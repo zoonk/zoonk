@@ -70,6 +70,28 @@ class MockStarterTest {
         }
 
     @Test
+    fun aWrittenStartRefusedForTheDaySaysTheDayGradingReturns() =
+        runTest(dispatcher) {
+            val starter = MockStarter(api, cache())
+            api.starts =
+                listOf {
+                    throw com.zoonk.android.data.ApiException(
+                        com.zoonk.android.data.ApiError.Unavailable,
+                        "USAGE_LIMIT_REACHED",
+                        status = 429,
+                        details =
+                            com.zoonk.api.ApiJson
+                                .parseToJsonElement("""{"returnsOn":"2026-11-24"}"""),
+                    )
+                }
+
+            assertEquals(
+                MutationResult.Done(MockStartOutcome.GradesUsed(java.time.LocalDate.of(2026, 11, 24))),
+                starter.start(GOAL, full, MockStartAsk.First),
+            )
+        }
+
+    @Test
     fun questionsAreAskedForAgainEveryThreeSecondsWhileTheSkillMapIsDrawn() =
         runTest(dispatcher) {
             api.writes =

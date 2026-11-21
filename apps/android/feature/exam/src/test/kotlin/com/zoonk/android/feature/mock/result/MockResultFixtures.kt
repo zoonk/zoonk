@@ -65,8 +65,9 @@ internal fun gradedEssay() =
     "grade":{"kind":"levels","errors":[],"ignoredFrom":null,"progress":null,
      "criteria":[{"comment":"Loose.","id":"c1","level":"partial","name":"Argument","quote":"Cities grow and that is it."},
       {"comment":"Linked.","id":"c2","level":"strong","name":"Cohesion","quote":null}],
-     "nextStep":{"criterionId":"c1","example":"Because cities grow, transport must too.","quote":"Cities grow and that is it.",
-      "text":"Tie each argument to your thesis."}}}"""
+     "nextStep":{"criterionId":"c1","kind":"criterion","title":"Tie your argument to the thesis",
+      "example":"Because cities grow, transport must too.","quote":"Cities grow and that is it.",
+      "text":"Say why each point supports what you claim about cities."}}}"""
 
 internal const val SPEAKING =
     """{"exam":"dele","language":"es","level":"B2","paper":"Prueba 4","source":"https://examenes.cervantes.es/dele-b2","title":"DELE B2",

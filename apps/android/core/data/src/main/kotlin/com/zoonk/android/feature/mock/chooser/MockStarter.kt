@@ -50,7 +50,7 @@ sealed interface MockStartOutcome {
 
     data object PlusRequired : MockStartOutcome
 
-    /** A written test is admitted as it starts, and the day's extra grades are used: it starts on [returnsOn], tomorrow when unsaid. */
+    /** A written test is admitted as it starts, and the day's extra grades are used: it starts on [returnsOn]. */
     data class GradesUsed(
         val returnsOn: LocalDate? = null,
     ) : MockStartOutcome
@@ -179,7 +179,7 @@ class MockStarter(
                         e.code == PLUS_REQUIRED -> MockStartOutcome.PlusRequired
                         e.code == NOT_ENOUGH_QUESTIONS -> MockStartOutcome.NotEnoughQuestions
                         e.code == EXAM_CHOICE_REQUIRED -> MockStartOutcome.NeedsChoice(e.details.choiceGroups())
-                        e.status == TOO_MANY_REQUESTS && e.code == null -> MockStartOutcome.GradesUsed()
+                        e.code == USAGE_LIMIT_REACHED && e.status == TOO_MANY_REQUESTS -> MockStartOutcome.GradesUsed(e.details.returnsOn())
                         else -> throw e
                     }
                 }
@@ -257,7 +257,6 @@ class MockStarter(
         const val USAGE_LIMIT_REACHED = "USAGE_LIMIT_REACHED"
         const val EXAM_CHOICE_REQUIRED = "EXAM_CHOICE_REQUIRED"
 
-        /** Its body is `{status: "limitReached", returnsOn}`, not an error's. */
         const val TOO_MANY_REQUESTS = 429
         const val PREPARING_TRIES = 60
         val PREPARING_RETRY = 3.seconds
