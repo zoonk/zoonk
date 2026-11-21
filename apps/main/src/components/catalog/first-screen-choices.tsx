@@ -1,7 +1,7 @@
 import { FIRST_ANSWER_PARAM } from "@/lib/public/public-hrefs";
 import { AnswerOption, AnswerOptionGroup } from "@zoonk/learn/answer-option";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
-import { LessonRichText } from "@zoonk/player/lesson/rich-text";
 import { FirstAnswerForm } from "./first-answer-form";
 
 export function FirstScreenChoices({
