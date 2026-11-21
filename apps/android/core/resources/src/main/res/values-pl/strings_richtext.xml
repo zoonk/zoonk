@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_code": "ce84f248738d6e262644e45997a0a130e95f0bdf5266c505459face92417435d",
   "richtext_math_bar": "ee68d86b24010bdbda94413354d74a66a4edc639743c6e2ee91c75dd10cbc342",
   "richtext_math_cube_root": "5983c5f2872412259b7f5c9dc101515c6d29789fe9b4525bcfec976daa0ff4a8",
   "richtext_math_cubed": "027189a757a7f2f5c082b839e10084678501d4ad4765be8fed8bae1714cb88d4",
@@ -17,6 +18,8 @@
 }
 -->
 <resources>
+    <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
+    <string name="richtext_code">Kod</string>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">do kwadratu</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->

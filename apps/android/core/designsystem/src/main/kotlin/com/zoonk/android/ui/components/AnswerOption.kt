@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
@@ -40,6 +41,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -87,6 +89,20 @@ fun AnswerOption(
     val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null)
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
+    val shownTag: (@Composable () -> Unit)? =
+        tag ?: when {
+            result != null -> {
+                { AnswerTag(picked, result, guessed = guessed) }
+            }
+
+            picked && role != Role.Button -> {
+                { PickedTag(guessed) }
+            }
+
+            else -> {
+                null
+            }
+        }
 
     TagBesideOrUnder(
         modifier =
@@ -104,13 +120,9 @@ fun AnswerOption(
                     },
                 ).padding(horizontal = 16.dp, vertical = 13.dp),
         content = { ProvideTextStyle(optionStyle, content) },
-        tag =
-            tag ?: {
-                when {
-                    result != null -> AnswerTag(picked, result, guessed = guessed)
-                    picked && role != Role.Button -> PickedTag(guessed)
-                }
-            },
+        // An option the learner can pick holds the room of the tag a pick or a check brings, so nothing moves when it comes.
+        tag = shownTag ?: { if (role != Role.Button) Box(Modifier.alpha(0f).clearAndSetSemantics {}) { PickedTag(guessed) } },
+        tagReserved = shownTag == null,
         leading =
             if (key ==
                 AnswerKey.None
@@ -181,11 +193,17 @@ private fun NumberKey(
     }
 }
 
+/** Content that keeps an option's tag under it whatever its width, as code does, so one list never puts it two ways. */
+internal object TagUnder : ParentDataModifier {
+    override fun Density.modifyParentData(parentData: Any?): Any = this@TagUnder
+}
+
 @Composable
 fun TagBesideOrUnder(
     modifier: Modifier,
     content: @Composable () -> Unit,
     tag: @Composable () -> Unit,
+    tagReserved: Boolean = false,
     leading: (@Composable () -> Unit)? = null,
     leadingAtTop: Boolean = false,
     readingContent: (@Composable () -> Unit)? = null,
@@ -230,8 +248,12 @@ fun TagBesideOrUnder(
         val tagHeight = tagPlaceable?.height ?: 0
         val besideWidth = max(0, contentWidth - gap - tagWidth)
         // Beside whenever the words' longest word fits there, so the options of one list never put it two ways.
-        val beside = tagPlaceable == null || text == null || text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth
-        val wordsWidth = if (beside && tagPlaceable != null) besideWidth else contentWidth
+        val beside =
+            tagPlaceable == null || text == null ||
+                (text.parentData != TagUnder && text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth)
+        // A tag that isn't there yet holds its room only under the words; beside them it would narrow every option for nothing.
+        val reservedBeside = tagReserved && beside
+        val wordsWidth = if (beside && tagPlaceable != null && !reservedBeside) besideWidth else contentWidth
         val wordsPlaceable = text?.measure(loose.copy(maxWidth = wordsWidth))
         val wordsHeight = wordsPlaceable?.height ?: 0
         val wordsBaseline = wordsPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
@@ -252,15 +274,21 @@ fun TagBesideOrUnder(
             } else {
                 max(contentY + wordsHeight, if (tagAcross) keyBottom else 0) + gap / 2
             }
-        val height = max(max(wordsHeight + contentY, keyBottom), tagY + tagHeight)
+        val height = max(max(wordsHeight + contentY, keyBottom), if (reservedBeside) 0 else tagY + tagHeight)
 
         layout(width, max(height, constraints.minHeight)) {
             keyPlaceable?.placeRelative(0, keyY)
             wordsPlaceable?.placeRelative(contentX, contentY)
-            if (beside) {
-                tagPlaceable?.placeRelative(width - tagWidth, tagY)
-            } else {
-                tagPlaceable.placeRelative(if (tagAcross) 0 else contentX, tagY)
+            when {
+                reservedBeside -> {}
+
+                beside -> {
+                    tagPlaceable?.placeRelative(width - tagWidth, tagY)
+                }
+
+                else -> {
+                    tagPlaceable.placeRelative(if (tagAcross) 0 else contentX, tagY)
+                }
             }
         }
     }

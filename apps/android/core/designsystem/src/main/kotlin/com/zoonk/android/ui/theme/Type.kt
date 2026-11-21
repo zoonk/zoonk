@@ -135,6 +135,10 @@ data class ZoonkTypography(
     val tag: TextStyle,
     /** The buddy's words on its page, its hello included, and the learner's bubble; a panel's answers stay `bodyMedium`, as main's. */
     val message: TextStyle,
+    /** Code, at a table's size (`CodeListing`, `CodeSnippet`). */
+    val code: TextStyle,
+    /** Code with a field in it (`CODE_FIELD_TEXT` on a phone). */
+    val codeField: TextStyle,
 )
 
 internal val ZoonkTypeRoles =
@@ -150,6 +154,9 @@ internal val ZoonkTypeRoles =
             verdict = labelLarge.role(15f, 550, 24f),
             tag = labelSmall.role(11.5f, 550, 16f),
             message = bodyLarge.role(15f, 400, 23.25f),
+            // Code wraps as an editor does: each row as full as it gets, never balanced.
+            code = bodyMedium.role(14f, 400, 24f, 0f, family = GeistMono).copy(lineBreak = LineBreak.Simple),
+            codeField = bodyLarge.role(16f, 400, 24f, 0f, family = GeistMono).copy(lineBreak = LineBreak.Simple),
         )
     }
 

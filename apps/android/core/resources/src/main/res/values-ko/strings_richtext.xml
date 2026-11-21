@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_code": "68523074f8d36c525b0e128a7d3972acf671980502ee1d15b33b5752f82a5d79",
   "richtext_math_bar": "59f0599b15c0b469379168709fffd93d2502d6b711ad0cbdcfa68debc31ceb84",
   "richtext_math_cube_root": "5a38b108e0429dd0c659f98d629973175b6f45e39760744069928928aea45462",
   "richtext_math_cubed": "3db2ceed1016d046d3cf0b5b0a7350ec4bee36f7d5010216adb3ee332d67a640",
@@ -17,6 +18,8 @@
 }
 -->
 <resources>
+    <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
+    <string name="richtext_code">코드</string>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">제곱</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->

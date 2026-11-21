@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_code": "08215c2a3285661513b8e517bc19fa0226ddec043f7f3351cbd3defeaedf51c6",
   "richtext_math_bar": "cb889d42cd5aa154526225db3cd3126cc479387af9bfe77be3fe43f952d0be8d",
   "richtext_math_cube_root": "b1a62cf1d48a8b0014ea2a1f4018456b25e58e93098c2ffb2991cdc6e26a3039",
   "richtext_math_cubed": "3504efa72e143bbd4d61ed2845cd64f8a9a62ddb99c0dfba9c33bfffc0535dcc",
@@ -17,6 +18,8 @@
 }
 -->
 <resources>
+    <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
+    <string name="richtext_code">Code</string>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">au carré</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->

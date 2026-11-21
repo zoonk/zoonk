@@ -38,7 +38,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.zoonk.android.ui.code.CodeBlock
+import com.zoonk.android.ui.code.CodeSnippet
+import com.zoonk.android.ui.code.withBreakPoints
+import com.zoonk.android.ui.components.arrowKeyScroll
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.components.focusRing
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.layoutEnd
@@ -94,6 +99,10 @@ fun RichText(
                         },
                     )
                 }
+
+                is RichBlock.Code -> {
+                    CodeBlock(block.code, block.language)
+                }
             }
         }
     }
@@ -102,7 +111,8 @@ fun RichText(
 /**
  * One line of lesson text (a question, an option, a label) with its emphasis and math, and the
  * `mark` sentence highlighted when the line shows it (main's `LessonRichText`). Past [maxLines] it
- * ends in an ellipsis.
+ * ends in an ellipsis. A line that is one code block, such as an option that is a program, shows it
+ * as code; a code block among words reads as inline code.
  */
 @Composable
 fun RichInlineText(
@@ -112,10 +122,16 @@ fun RichInlineText(
     style: TextStyle = LocalTextStyle.current,
     maxLines: Int = Int.MAX_VALUE,
 ) {
+    val code = remember(text) { readWholeCodeFence(text) }
+    if (code != null) {
+        CodeSnippet(code.code, code.language, modifier)
+        return
+    }
+
     val locale = currentLocale()
     val segments =
         remember(text, mark, locale) {
-            val parsed = parseRichInline(toOneLine(text))
+            val parsed = parseRichLine(text) { parseRichInline(toOneLine(it)) }
             typeset(if (mark.isNullOrEmpty()) parsed else markRichInline(parsed, mark), locale)
         }
 
@@ -222,6 +238,10 @@ private fun typesetBlock(
                     },
             )
         }
+
+        is RichBlock.Code -> {
+            block
+        }
     }
 
 /** Main's `bg-warning/15`. */
@@ -264,7 +284,7 @@ fun richText(
                         }
 
                         SegmentKind.Code -> {
-                            withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em)) { append(segment.text) }
+                            withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em)) { append(withBreakPoints(segment.text)) }
                             addStringAnnotation(TextMarkKind.Code.tag, "", start, length)
                         }
 
@@ -417,7 +437,17 @@ private fun DisplayMath(
     modifier: Modifier,
     style: TextStyle,
 ) {
-    Box(modifier.fillMaxWidth().fadingHorizontalScroll(rememberScrollState()), contentAlignment = Alignment.Center) {
+    val scroll = rememberScrollState()
+    var focused by remember { mutableStateOf(false) }
+
+    Box(
+        modifier
+            .fillMaxWidth()
+            .focusRing(focused, MaterialTheme.shapes.small)
+            .fadingHorizontalScroll(scroll)
+            .arrowKeyScroll(scroll) { focused = it },
+        contentAlignment = Alignment.Center,
+    ) {
         Text(
             text = math.text,
             modifier = Modifier.semantics { contentDescription = math.spoken },

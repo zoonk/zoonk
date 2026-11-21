@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "richtext_code": "0166caf5d3552f1bb4a989584b64d2bb57fa7fb2b59687ef2724745e472cda87",
   "richtext_math_bar": "1ac881b956084d7a2124eb7c2ef725eb0dba2c08c7fa6bf70f829bbcbf5594d6",
   "richtext_math_cube_root": "e01e05d51f6421836131c3680a8594312bd8557df9b2e82d6ee2fc999dc2c9f0",
   "richtext_math_cubed": "91d0c38f67946b4bb3fe7f8b58bcd374d4d0d3a5915907146c052b5a801a9a39",
@@ -17,6 +18,8 @@
 }
 -->
 <resources>
+    <!-- Name of a block of program code in a lesson or a question, read by screen readers. -->
+    <string name="richtext_code">Código</string>
     <!-- Screen reader words for a formula, said after its base: "x squared". -->
     <string name="richtext_math_squared">ao quadrado</string>
     <!-- Screen reader words for a formula, said after its base: "x cubed". -->
