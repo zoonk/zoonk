@@ -1,8 +1,7 @@
-import { toTopicKey } from "../../library/exams/topic-key";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { LEARN_KINDS } from "./plan-item-rules";
 import { type PlanGraphSkill } from "./plan-state";
-import { findFrequentSkillIds } from "./topic-weights";
+import { findFrequentSkillIds, listSkillTopicKeys } from "./topic-weights";
 
 function listPlannedSkillIds(items: BuiltPlan["items"]): Set<string> {
   return new Set(
@@ -23,9 +22,7 @@ export function readTopicMembership({
 }): (skillId: string) => boolean {
   const planned = listPlannedSkillIds(items);
 
-  const topicsOf = new Map(
-    skills.map((skill) => [skill.skillId, (skill.topics ?? []).map((topic) => toTopicKey(topic))]),
-  );
+  const topicsOf = new Map(skills.map((skill) => [skill.skillId, listSkillTopicKeys(skill)]));
 
   const plannedTopics = new Set([...planned].flatMap((skillId) => topicsOf.get(skillId) ?? []));
 
