@@ -146,11 +146,7 @@ struct LessonStageView: View {
                 // One container, so the id names the whole turn rather than each of its views.
                 VStack(alignment: .leading, spacing: 20) {
                   LessonStepView(step: step, state: state, store: store, part: .turn)
-                    .environment(
-                      \.wordBankAdded,
-                      isWithBank
-                        ? WordBankAdded(view: AnyView(added), isAbove: bankAtBottom) : nil
-                    )
+                    .wordBankAdded(added, at: place)
 
                   if offersHelp {
                     LessonScreenHelp(store: store)
@@ -294,22 +290,16 @@ struct LessonStageView: View {
 }
 
 struct LessonPage<Content: View>: View {
-  @State private var visibleHeight: CGFloat?
-
   let store: LessonPlayerStore
   var fillsHeight = false
   @ViewBuilder let content: Content
 
   var body: some View {
-    ScrollView {
+    FillingScrollView(fillsHeight: fillsHeight) {
       VStack(alignment: .leading, spacing: 24) {
         content
       }
       .taskColumn(alignment: .leading)
-      .frame(minHeight: fillsHeight ? visibleHeight : nil, alignment: .top)
-    }
-    .onScrollGeometryChange(for: CGFloat.self, of: \.containerSize.height) { _, height in
-      visibleHeight = height
     }
     .onScrollPhaseChange { _, phase in
       if phase != .idle {

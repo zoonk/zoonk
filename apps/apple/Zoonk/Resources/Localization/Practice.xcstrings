@@ -233,6 +233,215 @@
         }
       }
     },
+    "%lld mistakes fixed. They leave your notebook." : {
+      "comment" : "\"Your notebook\" is the learner's Mistakes notebook. Shown only for 2 or more; one mistake shows \"Mistake fixed. It leaves your notebook.\" instead.",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Fehler korrigiert. Er wird aus deinem Fehlerheft entfernt."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Fehler korrigiert. Sie werden aus deinem Fehlerheft entfernt."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mistake fixed. It leaves your notebook."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mistakes fixed. They leave your notebook."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld errores corregidos. Ya no están en tu cuaderno."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld errores corregidos. Ya no están en tu cuaderno."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld errores corregidos. Ya no están en tu cuaderno."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erreur corrigée. Elle disparaît de ton carnet."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erreurs corrigées. Elles disparaissent de ton carnet."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erreurs corrigées. Elles disparaissent de ton carnet."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hai corretto %lld errori. Non sono più nel tuo quaderno."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hai corretto %lld errori. Non sono più nel tuo quaderno."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Hai corretto %lld errori. Non sono più nel tuo quaderno."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld件の間違いを克服しました。間違いノートから削除されます。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "오답 %lld개를 고쳤어요. 오답 노트에서 사라져요."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Poprawiono %lld błędów. Znikają z twojego zeszytu."
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Poprawiono %lld błędy. Znikają z twojego zeszytu."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Poprawiono %lld błędów. Znikają z twojego zeszytu."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Poprawiono %lld błędów. Znikają z twojego zeszytu."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erro corrigido. Ele sai do seu caderno."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erros corrigidos. Eles saem do seu caderno."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erros corrigidos. Eles saem do seu caderno."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld yanlış düzeltildi. Artık defterinde değiller."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld yanlış düzeltildi. Artık defterinde değiller."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld more to win" : {
       "comment" : "Right answers still needed to break the Trickster's shield",
       "localizations" : {

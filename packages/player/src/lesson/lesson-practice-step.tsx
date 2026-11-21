@@ -3,10 +3,11 @@
 import { type LessonPracticeRenderer } from "@zoonk/learn/mistakes/practice";
 import { QuestionMainAction } from "@zoonk/learn/question-actions";
 import { useMemo, useState } from "react";
+import { WordBankCheckContext } from "../components/word-bank";
 import { PlayerAudioProvider } from "../player-audio-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
 import { fromServerCheck, fromSpokenGrade } from "./_utils/lesson-results";
-import { getAnsweredStep } from "./_utils/lesson-steps";
+import { canSelfCorrect, getAnsweredStep } from "./_utils/lesson-steps";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
 import { runPrimary } from "./lesson-action-bar";
 import {
@@ -18,7 +19,12 @@ import {
 import { LessonInteractionProvider } from "./lesson-player-interaction";
 import { getLessonScreen } from "./lesson-player-screen";
 import { type LessonPlayerState, createInitialState } from "./lesson-player-state";
-import { type LessonPlayerAdapters, type LessonPlayerAnswer } from "./lesson-player-types";
+import {
+  type LessonPlayerAdapters,
+  type LessonPlayerAnswer,
+  type LessonStepResult,
+  type PlayableLibraryStep,
+} from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
 
 type Props = Parameters<LessonPracticeRenderer>[0];
@@ -84,9 +90,58 @@ function ChallengePracticeAction() {
   );
 }
 
+/** As in a lesson, a word bank places the feedback itself, so the bank holds still. */
+function PracticeStepScreen({
+  disabled,
+  graded,
+  notes,
+  onAnswer,
+  selected,
+  step,
+}: {
+  disabled: boolean;
+  graded: LessonStepResult | null;
+  notes: React.ReactNode;
+  onAnswer: (answer: LessonPlayerAnswer | null) => void;
+  selected: LessonPlayerAnswer | undefined;
+  step: PlayableLibraryStep;
+}) {
+  const answered = getAnsweredStep({ answer: selected, step });
+  const inBank = canSelfCorrect(answered);
+
+  const resultView = graded &&
+    (!showsOwnResult(step) || step.kind === "matchColumns" || !selected) && (
+      <LessonStepResultView
+        hyperdriveStreak={null}
+        next={{ savePending: false, savedMistake: false, willReturn: false }}
+        notes={notes}
+        result={graded}
+        step={answered}
+      />
+    );
+
+  return (
+    <>
+      <WordBankCheckContext value={inBank ? resultView : null}>
+        <LessonStepView
+          answer={selected}
+          isLocked={disabled || graded !== null}
+          onAnswer={onAnswer}
+          result={graded ?? undefined}
+          step={step}
+        />
+      </WordBankCheckContext>
+      {step.kind === "challenge" && !graded && <ChallengePracticeAction />}
+      {!inBank && resultView}
+      {graded && !resultView && notes}
+    </>
+  );
+}
+
 /** The notebook controls saving and progression; these are the lesson's original answer controls. */
 export function LessonPracticeStep(props: Props) {
-  const { answer, disabled, lesson, onAnswer, onDontKnow, onCheck, onRecord, recordIssue } = props;
+  const { answer, disabled, lesson, notes, onAnswer, onDontKnow, onCheck, onRecord, recordIssue } =
+    props;
 
   const { step } = lesson;
   const [shown, setShown] = useState(0);
@@ -190,22 +245,14 @@ export function LessonPracticeStep(props: Props) {
             steps={[step]}
           >
             <PlayerAudioProvider audioUrl={audioUrl}>
-              <LessonStepView
-                answer={selected}
-                isLocked={disabled || graded !== null}
+              <PracticeStepScreen
+                disabled={disabled}
+                graded={graded}
+                notes={notes}
                 onAnswer={select}
-                result={graded ?? undefined}
+                selected={selected}
                 step={step}
               />
-              {step.kind === "challenge" && !graded && <ChallengePracticeAction />}
-              {graded && (!showsOwnResult(step) || step.kind === "matchColumns" || !selected) && (
-                <LessonStepResultView
-                  hyperdriveStreak={null}
-                  next={{ savePending: false, savedMistake: false, willReturn: false }}
-                  result={graded}
-                  step={getAnsweredStep({ answer: selected, step })}
-                />
-              )}
             </PlayerAudioProvider>
           </LessonPicturesProvider>
         </LessonInteractionProvider>
