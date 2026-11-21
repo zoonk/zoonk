@@ -90,6 +90,14 @@ describe(findBuildOutputs, () => {
     expect(findBuildOutputs({ inWorktree: false, root })).toStrictEqual([join(root, "Build")]);
   });
 
+  it("still finds what's left after an earlier sweep removed the Xcode build's products", () => {
+    const root = makeTree(["dd/info.plist", "dd/ModuleCache.noindex/", "dd/Logs/Build/"]);
+
+    expect(findBuildOutputs({ inWorktree: false, root })).toStrictEqual([
+      join(root, "dd/ModuleCache.noindex"),
+    ]);
+  });
+
   it("finds nothing when the scratch folder is itself a worktree to skip", () => {
     const root = makeTree(["apps/main/node_modules/zod/"]);
 

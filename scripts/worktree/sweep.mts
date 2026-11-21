@@ -58,11 +58,6 @@ function realPath(target: string): string {
   }
 }
 
-/** A folder Xcode builds into, whatever `-derivedDataPath` named it. */
-function isXcodeBuildFolder(names: Set<string>): boolean {
-  return names.has("info.plist") && (names.has("Build") || names.has("SourcePackages"));
-}
-
 // What Xcode remakes in its build folder. Its `Logs` keep test results, which no build brings back.
 const XCODE_OUTPUTS = new Set([
   "Build",
@@ -73,6 +68,11 @@ const XCODE_OUTPUTS = new Set([
   "SDKStatCaches.noindex",
   "SourcePackages",
 ]);
+
+/** A folder Xcode builds into, whatever `-derivedDataPath` named it, even after a partial sweep. */
+function isXcodeBuildFolder(names: Set<string>): boolean {
+  return names.has("info.plist") && [...XCODE_OUTPUTS].some((name) => names.has(name));
+}
 
 function isBuildOutput({
   inWorktree,
