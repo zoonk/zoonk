@@ -7,7 +7,7 @@ import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.ChoiceAnswerAnyOf3
-import com.zoonk.api.models.PlacementAnswer
+import com.zoonk.api.models.TapAnswer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -56,6 +56,6 @@ class PlacementStoreTest {
         }
 
     private companion object {
-        val DONT_KNOW = PlacementAnswer.ChoiceAnswerValue(ChoiceAnswer.ChoiceAnswerAnyOf3Value(ChoiceAnswerAnyOf3(dontKnow = true)))
+        val DONT_KNOW = TapAnswer.ChoiceAnswerValue(ChoiceAnswer.ChoiceAnswerAnyOf3Value(ChoiceAnswerAnyOf3(dontKnow = true)))
     }
 }

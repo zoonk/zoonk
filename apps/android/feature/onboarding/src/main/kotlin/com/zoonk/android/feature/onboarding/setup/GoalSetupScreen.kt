@@ -53,6 +53,8 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
+import com.zoonk.android.feature.placementtest.PlacementSetup
+import com.zoonk.android.feature.placementtest.PlacementSetupEnd
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.session.DayStep
@@ -507,29 +509,12 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLACEMENT -> {
-            val placementAnswer =
-                OnboardingAnswerInputOneOf10Value(OnboardingAnswerInputOneOf10(OnboardingAnswerInputOneOf10.Question.PLACEMENT))
+            fun placementAnswer(attemptId: UUID? = null) =
+                OnboardingAnswerInputOneOf10Value(OnboardingAnswerInputOneOf10(OnboardingAnswerInputOneOf10.Question.PLACEMENT, attemptId))
             val placed: suspend () -> WriteOutcome<*> = {
-                vm.answer(placementAnswer, from = OnboardingStep.PLACEMENT, showFailure = false)?.await() ?: WriteOutcome.Obsolete
+                vm.answer(placementAnswer(), from = OnboardingStep.PLACEMENT, showFailure = false)?.await() ?: WriteOutcome.Obsolete
             }
-            val targetLanguage = view.goal.targetLanguage
-            if (view.goal.kind == Goal.Kind.LANGUAGE && targetLanguage != null) {
-                LanguageLevelTestStep(
-                    goalId = view.goal.id.toString(),
-                    language =
-                        view.goal.details
-                            .text("nativeLanguage")
-                            ?.takeIf(String::isNotBlank) ?: view.goal.language,
-                    targetLanguage = targetLanguage,
-                    testMinutes = view.quickTestMinutes.toInt(),
-                    store = store,
-                    navigator = navigator,
-                    onProgress = { vm.placementProgress = it },
-                    onProgressLabel = { vm.placementProgressLabel = it },
-                    onDone = placed,
-                    onReportSaveFailure = onReportLevelTest,
-                )
-            } else if (view.goal.kind == Goal.Kind.EXAM) {
+            if (view.goal.kind == Goal.Kind.EXAM) {
                 FocusTestFlow(
                     goalId = view.goal.id.toString(),
                     subject = subject,
@@ -543,17 +528,30 @@ private fun ColumnScope.QuestionStep(
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {
-                PlacementStep(
-                    goalId = view.goal.id.toString(),
+                PlacementSetup(
+                    goalId = view.goal.id,
                     subject = subject,
                     areaCount = view.examSubjects.size,
+                    language =
+                        view.goal.details
+                            .text("nativeLanguage")
+                            ?.takeIf(String::isNotBlank) ?: view.goal.language,
+                    targetLanguage = view.goal.targetLanguage.takeIf { view.goal.kind == Goal.Kind.LANGUAGE },
+                    quickMinutes = view.quickTestMinutes.toInt(),
                     run = run,
                     onRetryRun = onRetryRun,
                     store = store,
+                    plans = plans,
+                    navigator = navigator,
+                    end =
+                        PlacementSetupEnd(
+                            saving = pending,
+                            continueWith = { vm.answer(placementAnswer(it), from = OnboardingStep.PLACEMENT) },
+                        ),
                     onProgress = { vm.placementProgress = it },
                     onProgressLabel = { vm.placementProgressLabel = it },
-                    onDone = placed,
-                    onReportSaveFailure = onReportPlacement,
+                    onQuickDone = placed,
+                    onReportSaveFailure = if (view.goal.kind == Goal.Kind.LANGUAGE) onReportLevelTest else onReportPlacement,
                 )
             }
         }

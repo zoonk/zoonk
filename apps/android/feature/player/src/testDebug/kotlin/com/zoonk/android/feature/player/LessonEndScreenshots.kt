@@ -204,6 +204,22 @@ class LessonEndScreenshots {
     @Config(qualifiers = TABLET)
     fun tabletPlanReveal() = capture("lessonend-plan-reveal-tablet", PLAN_REVEAL, LessonEnding(inSession = true))
 
+    @Test
+    @Config(qualifiers = PHONE)
+    fun levelOfferPhone() = capture("level-check-offer-phone", LEVEL_CHECK, LessonEnding())
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun levelOfferPhoneDark() = capture("level-check-offer-phone-dark", LEVEL_CHECK, LessonEnding())
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun levelOfferTablet() = capture("level-check-offer-tablet", LEVEL_CHECK, LessonEnding())
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun levelOfferTabletDark() = capture("level-check-offer-tablet-dark", LEVEL_CHECK, LessonEnding())
+
     private val steps = listOf(checkStep("quiz"), summaryStep("end"))
 
     private fun completed(json: String): LessonPlayerState {
@@ -294,6 +310,12 @@ private val SIGNED_IN =
     COMPLETION.replace(
         """"reached":{"energy":null,"level":null}""",
         """"reached":{"energy":80,"level":{"color":"yellow","level":3}}""",
+    )
+
+private val LEVEL_CHECK =
+    SIGNED_IN.replace(
+        """"studyBlock":null""",
+        """"studyBlock":null,"placementOffer":{"kind":"quick","goalId":"00000000-0000-4000-8000-000000000031"}""",
     )
 
 private val PLAN_REVEAL =

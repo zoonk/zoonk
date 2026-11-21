@@ -74,6 +74,7 @@ import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.feature.tutor.tutorIdentity
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
@@ -200,6 +201,7 @@ internal fun PlayingLesson(
                 hosted = endSlot != null,
             )
         }
+    VisitOf(viewModel.visit)
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = (session as? SessionState.SignedIn)?.session
     val played by viewModel.state.collectAsStateWithLifecycle()

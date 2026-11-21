@@ -28,6 +28,7 @@ import com.zoonk.android.feature.onboarding.course.onboardingCourseEntries
 import com.zoonk.android.feature.onboarding.setup.onboardingSetupEntries
 import com.zoonk.android.feature.onboarding.start.onboardingStartEntries
 import com.zoonk.android.feature.pattern.patternEntries
+import com.zoonk.android.feature.placementtest.placementTestEntries
 import com.zoonk.android.feature.plan.planEntries
 import com.zoonk.android.feature.planlink.planLinkEntries
 import com.zoonk.android.feature.player.playerEntries
@@ -75,6 +76,7 @@ fun appEntries(
         challengeEntries(app, navigator)
         testOutEntries(app, navigator)
         focusTestEntries(app, navigator)
+        placementTestEntries(app, navigator)
         essayEntries(app, navigator)
         patternEntries(app, navigator)
         examEntries(app, navigator)

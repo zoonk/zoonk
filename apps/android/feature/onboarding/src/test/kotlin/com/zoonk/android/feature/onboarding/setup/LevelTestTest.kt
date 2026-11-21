@@ -81,7 +81,7 @@ class LevelTestTest {
         assertEquals("reading-1", question.question.id)
 
         val sentence = phase(LoadState.Loaded(levelTestOf(next = SPEAKING_NEXT)), started = true)
-        assertEquals("Vorrei un caffè, per favore.", (sentence as LevelTestPhase.Speaking).sentence.sentence)
+        assertTrue(sentence is LevelTestPhase.Done)
 
         val reading = skillLevelOf("reading", "B1", 2.0)
         assertEquals(

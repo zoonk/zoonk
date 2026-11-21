@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,8 +24,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -36,7 +32,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
@@ -47,12 +42,18 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
-import com.zoonk.android.data.recode
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
+import com.zoonk.android.feature.placementtest.SetupLengthChoice
+import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.practice.SaveErrorText
+import com.zoonk.android.feature.questions.Answer
+import com.zoonk.android.feature.questions.Question
+import com.zoonk.android.feature.questions.QuestionAnswer
+import com.zoonk.android.feature.questions.QuestionFormat
+import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.VisitOf
@@ -65,26 +66,18 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.zoonkType
-import com.zoonk.api.models.ChoiceAnswer
-import com.zoonk.api.models.ChoiceAnswerAnyOf
-import com.zoonk.api.models.ChoiceAnswerAnyOf2
-import com.zoonk.api.models.ChoiceAnswerAnyOf3
-import com.zoonk.api.models.PlacementAnswer
-import com.zoonk.api.models.PlacementAnswerAnyOf
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
-import com.zoonk.api.models.LessonVisual as ApiLessonVisual
 
 /** A language goal with a target language takes its level test instead, which its caller picks before this. */
 @Composable
@@ -99,9 +92,9 @@ internal fun ColumnScope.PlacementStep(
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
     onProgressLabel: (String?) -> Unit = {},
+    lengthChoice: SetupTestChoice? = null,
 ) {
-    val drafts = LocalSetupDrafts.current
-    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle(), onDone) }
+    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle(), onDone) }
     VisitOf(vm.visit)
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
@@ -142,15 +135,19 @@ internal fun ColumnScope.PlacementStep(
         PlacementPhase.Intro -> {
             com.zoonk.android.data
                 .TrackOnboardingQuestion(goalId, "placement")
-            PlacementIntro(
-                subject = subject,
-                areaCount = areaCount,
-                pending = vm.isSaving,
-                starting = vm.isStarting,
-                failed = vm.finishFailed,
-                onStart = vm::start,
-                onScratch = { finish(true) },
-            )
+            if (lengthChoice != null) {
+                SetupLengthChoice(lengthChoice, vm.isStarting || vm.isSaving, vm.finishFailed, vm::start) { finish(true) }
+            } else {
+                PlacementIntro(
+                    subject = subject,
+                    areaCount = areaCount,
+                    pending = vm.isSaving,
+                    starting = vm.isStarting,
+                    failed = vm.finishFailed,
+                    onStart = vm::start,
+                    onScratch = { finish(true) },
+                )
+            }
         }
 
         PlacementPhase.Waiting -> {
@@ -180,7 +177,6 @@ internal fun ColumnScope.PlacementStep(
                                 stringResource(R.string.onboarding_placement_question_number, shown.number),
                             ),
                         labels = shown.labels,
-                        typedWords = rememberUnsentWords(goalId, typedDraftStep(shown.item.itemId), count = 1),
                         pending = vm.isSaving,
                         saveFailures = vm.saveFailures,
                         onReportSaveFailure = onReportSaveFailure,
@@ -318,25 +314,20 @@ internal fun ColumnScope.PlacementWaiting(
     }
 }
 
-private class Choice(
-    val label: String,
-    val answer: PlacementAnswer,
-    /** Option text can hold emphasis and math; true and false are plain words. */
-    val rich: Boolean,
-)
-
 private enum class PlacementSender { Confirm, DontKnow, Stop }
 
-/** Shared with the language level test; only a typed question needs [typedWords]. */
+/**
+ * Shared with the Focus test, the plan's tests and the language level test. Placement asks by taps alone: a
+ * statement keeps its plain two options under its title, and every other format takes the runners' controls.
+ */
 @Composable
 internal fun ColumnScope.PlacementQuestion(
-    item: PlacementItem,
+    item: Question,
     eyebrow: String?,
     labels: TrueFalseLabels,
-    typedWords: UnsentWords?,
     pending: Boolean,
     saveFailures: Int,
-    onAnswer: (PlacementAnswer, Long) -> Unit,
+    onAnswer: (Answer, Long) -> Unit,
     onStop: () -> Unit,
     onReportSaveFailure: () -> Unit = {},
     dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
@@ -345,25 +336,19 @@ internal fun ColumnScope.PlacementQuestion(
     stopHint: String? = null,
     media: @Composable () -> Unit = {},
 ) {
-    val choices = choices(item.format, labels)
-    var picked by rememberSaveable { mutableStateOf<Int?>(null) }
-    val typed = typedWords?.values?.first().orEmpty()
+    var draftJson by rememberSaveable { mutableStateOf<String?>(null) }
+    val answer = draftJson?.let { Json.decodeFromString(Answer.serializer(), it) }
+    val setAnswer = { picked: Answer? -> draftJson = picked?.let { Json.encodeToString(Answer.serializer(), it) } }
     var sender by rememberSaveable { mutableStateOf<PlacementSender?>(null) }
     val shownAt = remember { SystemClock.elapsedRealtime() }
-    val answer: PlacementAnswer? =
-        if (item.format == PlacementFormat.Typed) {
-            typed.trim().takeIf(String::isNotEmpty)?.let { PlacementAnswer.PlacementAnswerAnyOfValue(PlacementAnswerAnyOf(it)) }
-        } else {
-            picked?.let { choices.getOrNull(it)?.answer }
-        }
-    val send = { chosen: PlacementAnswer, pressed: PlacementSender ->
+    val send = { chosen: Answer, pressed: PlacementSender ->
         if (!pending) {
             sender = pressed
             onAnswer(chosen, SystemClock.elapsedRealtime() - shownAt)
         }
     }
     val confirm = { answer?.let { send(it, PlacementSender.Confirm) } }
-    val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
+    val visual = item.visual
 
     QuestionPages(
         questionId = item.itemId,
@@ -376,20 +361,19 @@ internal fun ColumnScope.PlacementQuestion(
             RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.zoonkType.question)
         },
         answer = {
-            if (item.format == PlacementFormat.Typed) {
-                val typedFocus = remember { FocusRequester() }
-                LaunchedEffect(Unit) { typedFocus.requestFocus() }
-                OutlinedTextField(
-                    value = typed,
-                    onValueChange = { typedWords?.set(0, it.take(MAX_TYPED_ANSWER)) },
-                    modifier = Modifier.fillMaxWidth().focusRequester(typedFocus),
-                    label = stringResource(R.string.onboarding_placement_your_answer),
-                    minLines = 3,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(onSend = { confirm() }),
-                )
+            if (item.format == QuestionFormat.TrueFalse) {
+                StatementAnswers(labels, answer, onPick = setAnswer)
             } else {
-                AnswerList(choices, picked, onPick = { picked = it })
+                QuestionAnswer(
+                    question = item,
+                    words = TrueFalseWords.TrueFalse,
+                    allowBlank = false,
+                    check = null,
+                    draft = answer,
+                    enabled = !pending,
+                    onAnswer = setAnswer,
+                    onSubmit = { send(it, PlacementSender.Confirm) },
+                )
             }
             stopHint?.let {
                 Text(
@@ -424,7 +408,7 @@ internal fun ColumnScope.PlacementQuestion(
         BesideOrAbove(
             start = {
                 OutlinedButton(
-                    onClick = { send(DONT_KNOW, PlacementSender.DontKnow) },
+                    onClick = { send(Answer.DontKnow, PlacementSender.DontKnow) },
                     busy = pending && sender == PlacementSender.DontKnow,
                     enabled = !pending,
                     focusableWhenDisabled = pending,
@@ -485,11 +469,16 @@ private fun BesideOrAbove(
             )
         val beside = besideWidth != null
         val startWidth = besideWidth ?: width
-        val startPlaceable = starts.first().measure(Constraints.fixedWidth(if (beside) startWidth else width))
         val endWidth = if (beside) width - gap - startWidth else width
-        // Beside a label that wraps, Confirm takes its height, so the two share a top and a bottom.
-        val endPlaceable =
-            ends.first().measure(Constraints(endWidth, endWidth, if (beside) startPlaceable.height else 0, Constraints.Infinity))
+        val end = ends.first()
+        val rowHeight =
+            if (beside) {
+                maxOf(48.dp.roundToPx(), start.minIntrinsicHeight(startWidth), end.minIntrinsicHeight(endWidth))
+            } else {
+                0
+            }
+        val startPlaceable = start.measure(Constraints(minWidth = startWidth, maxWidth = startWidth, minHeight = rowHeight))
+        val endPlaceable = end.measure(Constraints(minWidth = endWidth, maxWidth = endWidth, minHeight = rowHeight))
 
         if (beside) {
             val height = max(startPlaceable.height, endPlaceable.height)
@@ -506,59 +495,30 @@ private fun BesideOrAbove(
     }
 }
 
+/** A statement's title is the question itself, so its two options are plain words under it. */
 @Composable
-private fun choices(
-    format: PlacementFormat,
+private fun StatementAnswers(
     labels: TrueFalseLabels,
-): List<Choice> =
-    when (format) {
-        is PlacementFormat.Choice -> {
-            format.options.mapIndexed { index, option ->
-                Choice(
-                    option,
-                    PlacementAnswer.ChoiceAnswerValue(ChoiceAnswer.ChoiceAnswerAnyOfValue(ChoiceAnswerAnyOf(index.toLong()))),
-                    rich = true,
-                )
-            }
-        }
-
-        PlacementFormat.TrueFalse -> {
-            val rightWrong = labels == TrueFalseLabels.RIGHT_WRONG
-            listOf(true, false).map { isTrue ->
-                val label =
-                    when {
-                        rightWrong && isTrue -> R.string.onboarding_placement_right
-                        rightWrong -> R.string.onboarding_placement_wrong
-                        isTrue -> R.string.onboarding_placement_true
-                        else -> R.string.onboarding_placement_false
-                    }
-                Choice(
-                    stringResource(label),
-                    PlacementAnswer.ChoiceAnswerValue(ChoiceAnswer.ChoiceAnswerAnyOf2Value(ChoiceAnswerAnyOf2(isTrue))),
-                    rich = false,
-                )
-            }
-        }
-
-        PlacementFormat.Typed -> {
-            emptyList()
-        }
-    }
-
-@Composable
-private fun AnswerList(
-    choices: List<Choice>,
-    picked: Int?,
-    onPick: (Int) -> Unit,
+    picked: Answer?,
+    onPick: (Answer) -> Unit,
 ) {
+    val rightWrong = labels == TrueFalseLabels.RIGHT_WRONG
     AnswerOptionGroup {
-        choices.forEachIndexed { index, choice ->
-            AnswerOption(marker = index + 1, picked = picked == index, result = null, onClick = { onPick(index) }) {
-                if (choice.rich) {
-                    RichInlineText(choice.label, style = MaterialTheme.typography.bodyLarge)
-                } else {
-                    Text(choice.label, style = MaterialTheme.typography.bodyLarge)
+        listOf(true, false).forEachIndexed { index, isTrue ->
+            val label =
+                when {
+                    rightWrong && isTrue -> R.string.onboarding_placement_right
+                    rightWrong -> R.string.onboarding_placement_wrong
+                    isTrue -> R.string.onboarding_placement_true
+                    else -> R.string.onboarding_placement_false
                 }
+            AnswerOption(
+                marker = index + 1,
+                picked = picked == Answer.TrueFalse(isTrue),
+                result = null,
+                onClick = { onPick(Answer.TrueFalse(isTrue)) },
+            ) {
+                Text(stringResource(label), style = MaterialTheme.typography.bodyLarge)
             }
         }
     }
@@ -566,7 +526,7 @@ private fun AnswerList(
 
 /** Main's `PlacementDone`: a test that's over and not saved yet; the title says it's done. */
 @Composable
-private fun ColumnScope.PlacementDone(
+internal fun ColumnScope.PlacementDone(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
@@ -633,9 +593,7 @@ internal fun FinishFailed(failed: Boolean) {
 
 internal fun String.labelCase() = replaceFirstChar { it.uppercase() }
 
-private val DONT_KNOW = PlacementAnswer.ChoiceAnswerValue(ChoiceAnswer.ChoiceAnswerAnyOf3Value(ChoiceAnswerAnyOf3(dontKnow = true)))
 private val PATIENCE = 20.seconds
-private const val MAX_TYPED_ANSWER = 1000
 private const val READS_MATERIAL_STEP = "readExamNotice"
 
 private val ACTION_GAP = 8.dp

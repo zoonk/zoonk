@@ -156,6 +156,24 @@ class TodayScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
     fun focusTestNoticePanelDark() = captureFocusTestNotice("today-sheet-dark", dark = true)
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun placementChangePhone() = captureFocusTestNotice("today-placement-change-phone", day = "notice-placement-change")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun placementChangePhoneDark() =
+        captureFocusTestNotice("today-placement-change-phone-dark", dark = true, day = "notice-placement-change")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun placementChangeTablet() = captureFocusTestNotice("today-placement-change-tablet", day = "notice-placement-change")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun placementChangeTabletDark() =
+        captureFocusTestNotice("today-placement-change-tablet-dark", dark = true, day = "notice-placement-change")
+
     /** The Focus test's suggestion on Today, or its proposal on [day]. */
     private fun captureFocusTestNotice(
         name: String,
@@ -354,6 +372,23 @@ class TodayScreenshots {
                                 "notice" to "examChoice",
                                 "examChoice" to
                                     examChoice("Módulos disciplinares", listOf("Biología", "Química", "Derecho", "Premedicina"), take = 2),
+                            ),
+                    ),
+                "notice-placement-change" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "notice" to "planChange",
+                                "planChange" to
+                                    fixture(
+                                        "plan-change",
+                                        "status" to "applied",
+                                        "canUndo" to true,
+                                        "kind" to "testedOut",
+                                        "lessonsSkipped" to 6,
+                                    ),
                             ),
                     ),
                 "notice-plan-change-focus-test" to

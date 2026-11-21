@@ -328,8 +328,8 @@ class OnboardingScreenshots {
                 "placement-question" to {
                     Placement(FakeOnboardingApi().apply { placement = placementOf(answered = 2, started = true, spent = 0.35) })
                 },
-                "placement-typed" to {
-                    Placement(FakeOnboardingApi().apply { placement = placementOf(next = typedQuestion(), started = true, spent = 0.6) })
+                "placement-order" to {
+                    Placement(FakeOnboardingApi().apply { placement = placementOf(next = orderQuestion(), started = true, spent = 0.6) })
                 },
                 "placement-done" to {
                     Placement(
@@ -515,9 +515,6 @@ class OnboardingScreenshots {
                 "level-test-reading" to { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3) }) },
                 "level-test-listening" to {
                     LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(next = listeningQuestion(), answered = 6) })
-                },
-                "level-test-speaking" to {
-                    LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(next = SPEAKING_NEXT, answered = 11) })
                 },
                 "level-test-done" to {
                     LevelTest(

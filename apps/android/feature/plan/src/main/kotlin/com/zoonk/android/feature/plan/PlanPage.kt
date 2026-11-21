@@ -73,6 +73,7 @@ import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LanguageProgress
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.Syllabus
 
 class PlanLinks(
@@ -117,6 +118,9 @@ class PlanLinks(
     fun speaking() = open(AppRoute.Speaking())
 
     fun focusTest() = open(AppRoute.FocusTest(page.goal.id.toString()))
+
+    fun placementTest(levelTest: Boolean) =
+        open(if (levelTest) AppRoute.LevelTest(page.goal.id.toString()) else AppRoute.PlacementTest(page.goal.id.toString()))
 
     /** Null where the page shows no far topic's sheet. */
     fun farTopic(topic: FarTopic): (() -> Unit)? =
@@ -257,7 +261,11 @@ internal fun PlanPage(
         countryRebuild = countryRebuild,
         standing = standing,
         alphabet = alphabet?.let { shown -> skip?.let { { AlphabetRow(shown, page.goal.id, it, navigator::open) } } },
-        focusTest = focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } },
+        focusTest =
+            focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } }
+                ?: page.plan.placementTest?.takeIf { it.isShown() }?.let { test ->
+                    { PlanPlacementTestRow(test) { links.placementTest(test.opensLevelTest) } }
+                },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
         resume =
@@ -444,6 +452,20 @@ internal fun PlanContent(
                     countryRebuild?.let { rebuild ->
                         item(key = "country-rebuild", contentType = "notice") {
                             CountryRebuildNotice(rebuild, edits.isPending(PlanPart.CountryRebuild), edits.retryCountryRebuild)
+                        }
+                    }
+                    val testedOut = page.plan.changes.firstOrNull { it.kind == "testedOut" }
+                    if (testedOut != null && (testedOut.canUndo || testedOut.status == PlanChange.Status.UNDONE)) {
+                        item(key = testedOut.id, contentType = "tested-out-change") {
+                            val state = edits.changes[testedOut.id]
+                            TestedOutChangeCard(
+                                change = testedOut,
+                                dateKind = page.dateKind,
+                                undone = state?.undone == true,
+                                saving = state?.undoing == true,
+                                failed = state?.undoFailed == true,
+                                onUndo = { edits.undo(testedOut) },
+                            )
                         }
                     }
                     item(key = "roadmap", contentType = "roadmap") {

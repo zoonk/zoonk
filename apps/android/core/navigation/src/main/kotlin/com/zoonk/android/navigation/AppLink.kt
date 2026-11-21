@@ -233,6 +233,14 @@ object AppLink {
                         AppRoute.FocusTest(goalId = query["goal"])
                     }
 
+                    "placement-test" -> {
+                        AppRoute.PlacementTest(goalId = query["goal"])
+                    }
+
+                    "level-test" -> {
+                        AppRoute.LevelTest(goalId = query["goal"], testOut = query["testOut"] == "1")
+                    }
+
                     "pronunciation" -> {
                         AppRoute.Pronunciation(goalId = query["goal"])
                     }
