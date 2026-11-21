@@ -58,7 +58,9 @@ final class PlanSlotCheckTests: XCTestCase {
     try await across(
       from: from, to: to, tap: "Add to plan", api: api
     ) {
-      PlanFitSlot(context: context, offer: offer, title: Text(verbatim: "Fit"), actions: actions)
+      PlanOfferSlot(
+        context: context, item: .fitLessons, offer: offer, title: Text(verbatim: "Fit"),
+        actions: actions)
     } completed: {
       applied.count == 1
     }
@@ -182,9 +184,9 @@ final class PlanSlotCheckTests: XCTestCase {
       plan: try goalPlanFixture(), adjust: { _ in }, show: { _ in }, slotChecks: checks)
   }
 
-  private func fitOffer() throws -> GoalPlan.FitOffer {
+  private func fitOffer() throws -> GoalPlan.Offer {
     try JSONDecoder().decode(
-      GoalPlan.FitOffer.self,
+      GoalPlan.Offer.self,
       from: Data(
         """
         {"canApply":false,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":true,

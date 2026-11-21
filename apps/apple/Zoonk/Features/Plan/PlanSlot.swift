@@ -6,6 +6,8 @@ enum PlanSlotItem: Hashable {
   case choice(GoalPlan.ExamChoice)
   case courseComplete
   case coverage(String)
+  /// The exam's optional study, such as its strategy, which fits beside everything it tests.
+  case extraLessons
   case finished
   case fitLessons
   case pastDate
@@ -22,6 +24,7 @@ enum PlanSlotItem: Hashable {
     let coverage = planCoverageText(plan)
     let timeItems: [PlanSlotItem] = [
       open && plan.fitOffer != nil ? .fitLessons : nil,
+      open && plan.extraOffer != nil ? .extraLessons : nil,
       open && !(plan.feasibility?.timeCovers ?? false) ? coverage.map { .coverage($0) } : nil,
     ].compactMap(\.self)
 
@@ -441,7 +444,7 @@ struct PlanSuggestionSection: View {
   /// Main's `PlanChangeSuggestion`: a change to the plan, one card at every width.
   private func isPlanChange(_ item: PlanSlotItem) -> Bool {
     switch item {
-    case .coverage: true
+    case .coverage, .extraLessons: true
     case .pastDate: !isStatement(item)
     default: false
     }
@@ -515,7 +518,14 @@ struct PlanSuggestionSection: View {
       }
     case .fitLessons:
       if let offer = context.plan.fitOffer {
-        PlanFitSlot(context: context, offer: offer, title: fitTitle(offer), actions: offers)
+        PlanOfferSlot(
+          context: context, item: item, offer: offer, title: fitTitle(offer), actions: offers)
+      }
+    case .extraLessons:
+      if let offer = context.plan.extraOffer {
+        PlanOfferSlot(
+          context: context, item: item, offer: offer, title: extraTitle,
+          facts: extraFacts(offer), actions: offers)
       }
     case .coverage(let text):
       PlanCoverageSlot(context: context, title: text, actions: offers)
@@ -573,6 +583,8 @@ struct PlanSuggestionSection: View {
       (Text(planPastDateTitle(isExam: context.goal.kind == .exam)), .symbol("calendar.badge.clock"))
     case .fitLessons:
       (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), .sparkle)
+    case .extraLessons:
+      (extraTitle, .sparkle)
     case .coverage(let text):
       (Text(text), .sparkle)
     case .courseComplete:
@@ -600,7 +612,7 @@ struct PlanSuggestionSection: View {
           "Asks which option of an exam's choice, like its foreign language, the learner takes")
   }
 
-  private func fitTitle(_ offer: GoalPlan.FitOffer) -> Text {
+  private func fitTitle(_ offer: GoalPlan.Offer) -> Text {
     guard offer.fits, let covers = planCoversEverythingText(context.plan) else {
       return Text(
         "You have time for \(offer.effect.lessonsAdded) more lessons", tableName: "Plan",
@@ -609,6 +621,18 @@ struct PlanSuggestionSection: View {
     }
 
     return covers
+  }
+
+  private var extraTitle: Text {
+    Text("Study exam strategy too?", tableName: "Plan")
+  }
+
+  /// "15 lessons · Not in the official guide".
+  private func extraFacts(_ offer: GoalPlan.Offer) -> [String] {
+    [
+      String(localized: "\(offer.lessons ?? offer.effect.lessonsAdded) lessons", table: "Plan"),
+      context.plan.extraLabel,
+    ]
   }
 
   private func notNow(_ item: PlanSlotItem) {

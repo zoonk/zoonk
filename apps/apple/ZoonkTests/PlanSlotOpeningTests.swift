@@ -515,7 +515,7 @@ final class PlanSlotOpeningTests: XCTestCase {
       try goalPlanFixture(status: tooTight ? "needsAdjusting" : "onTrack", fitOffer: offer))
     await api.setPreview(
       PlanChangePreview(
-        effect: try JSONDecoder().decode(GoalPlan.FitOffer.self, from: Data(offer.utf8)).effect,
+        effect: try JSONDecoder().decode(GoalPlan.Offer.self, from: Data(offer.utf8)).effect,
         feasibility: nil, finishDate: nil, ready: true, unchanged: false))
     await api.hold(.preview)
     return api
@@ -551,7 +551,7 @@ final class PlanSlotOpeningTests: XCTestCase {
   private static func preview(lessons: Int) throws -> PlanChangePreview {
     PlanChangePreview(
       effect: try JSONDecoder().decode(
-        GoalPlan.FitOffer.self, from: Data(offer(lessons: lessons).utf8)
+        GoalPlan.Offer.self, from: Data(offer(lessons: lessons).utf8)
       ).effect,
       feasibility: nil, finishDate: nil, ready: true, unchanged: false)
   }

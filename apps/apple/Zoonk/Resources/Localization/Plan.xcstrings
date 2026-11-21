@@ -7293,7 +7293,7 @@
       }
     },
     "%lld of %lld" : {
-      "comment" : "Chapters done of the subject's chapters\nLessons done of the chapter's lessons\nThe learner's phase number of the plan's phases, under the roadmap\nThe suggestion shown of the Plan's suggestions",
+      "comment" : "Chapters done of the subject's chapters\nLessons done of the chapter's lessons\nLessons done of the exam's optional study, which the exam doesn't test\nThe learner's phase number of the plan's phases, under the roadmap\nThe suggestion shown of the Plan's suggestions",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7418,6 +7418,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld / %2$lld ünite"
+          }
+        }
+      }
+    },
+    "%lld of %lld lessons" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%1$lld of %arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%1$lld of %arg lessons"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -13683,64 +13715,6 @@
         }
       }
     },
-    "Also in your plan" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auch in deinem Plan"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "También en tu plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aussi dans ton plan"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anche nel tuo piano"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画の追加項目"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 계획에도 포함"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Także w twoim planie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Também no seu plano"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planında da var"
-          }
-        }
-      }
-    },
     "Answer them and we'll plan every day until you reach your goal." : {
       "comment" : "Why the Plan waits for the goal's setup questions",
       "localizations" : {
@@ -19142,6 +19116,8 @@
         }
       }
     },
+    "Exam strategy added to your plan." : {},
+    "Exam strategy isn't in your plan." : {},
     "Examples only" : {
       "comment" : "A tool learned with examples",
       "localizations" : {
@@ -25191,6 +25167,9 @@
         }
       }
     },
+    "Not in the official guide" : {
+      "comment" : "Labels a language certificate's optional study, such as its strategy, which its official guide doesn't list"
+    },
     "Not in your plan" : {
       "comment" : "A phase the plan holds nothing of\nA subject the plan leaves out",
       "localizations" : {
@@ -25722,6 +25701,18 @@
         }
       }
     },
+    "notInNotice" : {
+      "comment" : "Labels an exam's optional study, such as its strategy, which the exam's public notice doesn't list",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Not in the official guide"
+          }
+        }
+      }
+    },
     "One short lesson each" : {
       "comment" : "Prerequisite option: one short lesson",
       "localizations" : {
@@ -25841,7 +25832,7 @@
       }
     },
     "Optional" : {
-      "comment" : "An optional tool",
+      "comment" : "An optional tool\nLabels an exam's optional study, such as its strategy, when the exam has no official guide",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -30854,6 +30845,7 @@
         }
       }
     },
+    "Study exam strategy too?" : {},
     "Study longer each day or pick a later date." : {
       "comment" : "Under the Plan's notice when the plan has more lessons than days left",
       "localizations" : {
@@ -31568,6 +31560,7 @@
         }
       }
     },
+    "Take exam strategy out of your plan?" : {},
     "Take the test and skip the chapter" : {
       "comment" : "What the chapter's test-out does",
       "localizations" : {
