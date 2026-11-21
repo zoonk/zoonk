@@ -1,5 +1,6 @@
 import "server-only";
 import { type LearningEvent, type TransactionClient } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -18,6 +19,7 @@ import { readBlockPayload } from "../../sessions/block-payload";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { upsertDailyProgress } from "../../stats/daily-progress";
 import { finishLearningEvent } from "../../stats/record-learning-event";
+import { lessonPlacementOfferSchema } from "../contract";
 import { type LessonRunTally } from "../lesson-run";
 import { scoreLibraryLesson } from "../lesson-score";
 import { recordSkippedWritingSteps } from "./completion-steps";
@@ -201,6 +203,9 @@ export async function finishLessonRun({
       explanationsFinished,
       languageGoals,
       modelChanged: changed,
+      placementOffer: isJsonObject(currentRun.contentIds)
+        ? lessonPlacementOfferSchema.safeParse(currentRun.contentIds.placementOffer).data
+        : undefined,
       progress: { brainPower, energy: { after: clampedEnergy, before: currentEnergy } },
     };
   });

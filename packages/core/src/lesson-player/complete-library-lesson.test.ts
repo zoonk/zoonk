@@ -88,6 +88,56 @@ async function playLesson({ checkOption = "likely" }: { checkOption?: string } =
 }
 
 describe(completeLibraryLesson, () => {
+  it("remembers the lesson-end placement offer until the learner dismisses it", async () => {
+    const { lesson, steps, user } = await setupPlayableLesson({ steps: ["check", "summary"] });
+
+    const goal = await goalFixture({
+      livingPlanWindow: {
+        closed: { at: "2026-11-19T00:00:00.000Z", missedSkillIds: [], result: "easy", streak: 1 },
+        correct: 19,
+        missedSkillIds: [],
+        total: 19,
+      },
+      userId: user.id,
+    });
+
+    await planFixture({ goalId: goal.id, items: [{ kind: "lesson", lessonId: lesson.id }] });
+    const runId = await startRun(lesson.id);
+
+    await answer({
+      runId,
+      stepId: stepOfKind(steps, "check").id,
+      value: { kind: "check", optionId: "likely" },
+    });
+
+    await expect(prisma.goal.findUnique({ where: { id: goal.id } })).resolves.toMatchObject({
+      livingPlanWindow: { closed: { result: "easy", streak: 2 }, total: 0 },
+    });
+
+    await expect(prisma.learningEvent.findUnique({ where: { id: runId } })).resolves.toMatchObject({
+      contentIds: { placementOffer: { goalId: goal.id, kind: "quick" } },
+    });
+
+    const finish = (dismissPlacementOffer?: true) =>
+      completeLibraryLesson({
+        input: { dismissPlacementOffer, runId, timeZone: TIME_ZONE },
+        lessonId: lesson.id,
+      });
+
+    const offered = await finish();
+    const dismissed = await finish(true);
+    const repeated = await finish();
+
+    expect(offered).toMatchObject({
+      completion: { placementOffer: { goalId: goal.id, kind: "quick" } },
+      status: "completed",
+    });
+
+    expect(dismissed).toMatchObject({ status: "completed" });
+    expect(repeated).toStrictEqual(dismissed);
+    expect(dismissed.status === "completed" && dismissed.completion.placementOffer).toBeUndefined();
+  });
+
   it("finishes a language lesson with writing skipped only in this sitting, without wrong answers", async () => {
     const setup = await setupPlayableLesson({
       steps: ["explanation", "typedAnswer", "typedAnswer", "summary"],
