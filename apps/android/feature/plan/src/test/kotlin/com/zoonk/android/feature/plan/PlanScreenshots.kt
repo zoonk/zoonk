@@ -85,6 +85,30 @@ class PlanScreenshots {
     fun placementPhoneDark() = capture("plan-placement-phone-dark", dark = true, placementTest = LEARN_TEST_RESULT)
 
     @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun testOutUndonePhone() = captureTestOutUndone("plan-testout-undone-phone-light", dark = false)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun testOutUndonePhoneDark() = captureTestOutUndone("plan-testout-undone-phone-dark", dark = true)
+
+    private fun captureTestOutUndone(
+        name: String,
+        dark: Boolean,
+    ) {
+        val change = planChange(status = "undone").copy(kind = "testedOut", lessonsSkipped = 1)
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark) {
+                Surface {
+                    TestedOutChangeCard(change, GoalDateKind.Goal, undone = false, saving = false, failed = false, onUndo = {})
+                }
+            }
+        }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun placementTablet() = capture("plan-placement-tablet", placementTest = LEARN_TEST_CONTINUE)
 

@@ -114,7 +114,6 @@ private fun ColumnScope.LevelTestPlanFlow(
                 goalId = goalId,
                 language = goal.language,
                 targetLanguage = targetLanguage,
-                testMinutes = 0,
                 store = store,
                 navigator = navigator,
                 onProgress = onProgress,
@@ -318,7 +317,7 @@ internal fun ColumnScope.TestOutResult(
         lead =
             when {
                 test.total == 0L -> stringResource(R.string.placementtest_test_out_unavailable, level)
-                lessons > 0 -> pluralStringResource(R.plurals.placementtest_known, lessons)
+                lessons > 0 -> placementKnownLine(lessons)
                 else -> stringResource(R.string.placementtest_keeps_adjusting)
             },
         action = stringResource(R.string.placementtest_done),

@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -19,6 +18,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.focustest.Note
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.restoredLessonsLine
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
@@ -57,7 +57,7 @@ internal fun PlacementUndoButton(
 internal fun PlacementUndoStatus(undo: PlacementUndoViewModel?) {
     val lessons = undo?.restoredLessons ?: return
     Note(
-        pluralStringResource(R.plurals.testout_lessons_back, lessons),
+        restoredLessonsLine(lessons),
         Modifier.semantics { liveRegion = LiveRegionMode.Polite },
     )
 }

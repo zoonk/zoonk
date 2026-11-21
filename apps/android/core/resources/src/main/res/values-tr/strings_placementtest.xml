@@ -11,11 +11,11 @@
   "placementtest_done": "cb1323ed87695e1fb296328cf95696dbf22d81ce56d045089410ce09c44c15e3",
   "placementtest_find_level": "1d29b2f3fcd4031c007a557b45ad47d9c51a4038fe65b5a6293a2a230624f645",
   "placementtest_finish_for_today": "52a87a5cdaa56a1c084b926d2baf1ecd809af091e3744cff899be3edafc462e0",
-  "placementtest_in_parts": "590be03d486e93d6c7a8e2fcb1e14dee4cb5d6140df106c1910f52d6634bb4fb",
   "placementtest_in_progress": "9c8ce250eb86a254686f41b6060806dbb8c0b4b3447c30683ae0394eaf5bb66a",
   "placementtest_keep_going": "ffba700e24be0bd4e19463ba16974298d9fdc49f98775948fa1698193e16473f",
   "placementtest_keeps_adjusting": "a3e620fb3087b0cd8d99bb4362cd7e04d97981c74e40a76502c039bcd2864189",
-  "placementtest_known": "5ba0947ae7463dfddb28592e6fe28ab378450d265668da239971a72df874a280",
+  "placementtest_known_one": "2266ba70420963867bef5e75e8c14f7f66b7807bc33261d537f64e2510df26e1",
+  "placementtest_known_other": "77f01258e7ef152acaa3669739f59754ac5232abb048a20f8d1966f70f0ae9b3",
   "placementtest_left_saved": "61c554682678f01207dff792c3f064caf6a65089820fa4558fe04163d5263ba6",
   "placementtest_lessons_skipped": "e9910e6d564e61e012d073baa8c5bad70ae9596a33b407c770fb871f2f2aca7d",
   "placementtest_level_stays": "d6eda51f18be37751548dcba13d65ae337fdc928ec2eb4416c5df1f76fd5a9a4",
@@ -74,7 +74,6 @@
     <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
     <string name="placementtest_about_in_parts">Yaklaşık %1$s, parçalara bölünmüş</string>
     <!-- A short test of one language level, such as "Test out of B2". -->
-    <string name="placementtest_in_parts">Parçalar halinde</string>
     <string name="placementtest_test_out">%1$s düzeyini atlamak için teste gir</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Zaten biliyorsan %1$s düzeyini atla</string>
@@ -89,10 +88,9 @@
     <string name="placementtest_finish_for_today">Bugünlük bitir</string>
     <string name="placementtest_keep_going">Devam et</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
-    <plurals name="placementtest_known">
-        <item quantity="one">Bunu zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder.</item>
-        <item quantity="other">Bunları zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder.</item>
-    </plurals>
+    <string name="placementtest_known_one">Bunu zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder.</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_other">Bunları zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder.</string>
     <string name="placementtest_plan_stays">Planın olduğu gibi kalıyor.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">Sıradaki</string>

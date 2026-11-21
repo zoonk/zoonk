@@ -17,6 +17,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.onboarding.GOAL_ID
+import com.zoonk.android.feature.onboarding.setup.LevelTestLanguageNotes
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.plan.FakePlanApi
@@ -77,6 +78,25 @@ class PlacementTestScreenshots(
     fun chooseOnboarding() =
         shoot("choose-onboarding") {
             LengthChoice(wholeCourseMinutes = 40, pressed = null, failed = false, onStart = {}, onSkip = {})
+        }
+
+    @Test
+    fun chooseOnboardingWithoutWholeCourse() =
+        shoot("choose-onboarding-no-whole-course") {
+            LengthChoice(wholeCourseMinutes = 0, pressed = null, failed = false, onStart = {}, onSkip = {})
+        }
+
+    @Test
+    fun chooseOnboardingLanguage() =
+        shoot("choose-onboarding-language") {
+            LengthChoice(
+                wholeCourseMinutes = 60,
+                pressed = null,
+                failed = false,
+                onStart = {},
+                onSkip = {},
+                notes = { LevelTestLanguageNotes("en", showAlphabetNote = true) },
+            )
         }
 
     @Test

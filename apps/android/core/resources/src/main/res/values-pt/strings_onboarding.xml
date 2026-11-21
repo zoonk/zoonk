@@ -112,14 +112,13 @@
   "onboarding_join_waitlist": "362b7b93649a67f4b5ed41a2b425da61781cc80922f5eff90cd8d8e85c35c6cb",
   "onboarding_language_test_audio_on_its_way": "632c7cb8a2539eb855ff8a7bc866f5587de31ce212643660c655df678e91b2af",
   "onboarding_language_test_build_plan": "f1b491508374827b1a404a1836afae0a5e16df01bcef39291b9464993de56aa3",
-  "onboarding_language_test_description": "5b63a9e91e8362cf3937cb026b625c86485ee54e0a87aff25db359b1378059c8",
   "onboarding_language_test_did_not_understand": "85982f82eb8a6e000dd41051da82da5626c94212ee062676fcee19898a6cf310",
   "onboarding_language_test_done_description": "3dc7b86e2323a058903e513670f5adc94ebabfef495a60f99851c2e9586e4c00",
   "onboarding_language_test_done_title": "ab4283a4d6c917ad03936c1c252a4eb8676c0dadf50b087c541824d1cf7f9c6f",
   "onboarding_language_test_listening": "f9c0fcc1aa03c44e60442e90bb35512daba2d9e13d78972643a5700b2da34d60",
   "onboarding_language_test_message": "2fd3fbde6a5acb9c08554f82b9a59c5b79e7e42dfb35dd1b7bcca455a20d9ae0",
   "onboarding_language_test_message_loading": "2e3a9c6dd0b3b17a12f3cb7f4015aafc0a8796b01d0a256b9476407fb009858f",
-  "onboarding_language_test_new_alphabet": "ce6ed73da1b54957efeaccc81145e2f1f459d87ad591f2c113ee1bbb7ee8d165",
+  "onboarding_language_test_new_alphabet": "4ec23e3ae919d895db168a22a0652aa032062de2c9a7ba71a44c3b7d2de09b4a",
   "onboarding_language_test_play": "3562f3b1b22cca205864c2c14ddac6a3fdc612f556c82220f9dc5bb73ebe688d",
   "onboarding_language_test_play_again": "6474a097889d9b158feeb4a88d4a96d04674c0d2c255b38f74a86bfca80f8452",
   "onboarding_language_test_preparing_description": "80b7f5532e84a78fb3fd9e10a452bad97d2138d83db9056db90e8e177073a293",
@@ -129,7 +128,6 @@
   "onboarding_language_test_skip_note": "0aeb15fe4b08714f3575ce2f973d0d440704e108ff0c41355a018a11f1221420",
   "onboarding_language_test_skip_question": "87cd88044879a5a85621e5d0a3c3921209009cb049d274d1823a6b54797f8555",
   "onboarding_language_test_speaking": "b8829fc734762b643b874c78c1cb0d40077fa949e6cbc1fc09c7554328900df4",
-  "onboarding_language_test_title": "6e1681d9e2596e66d8866842af499f00f5458c27ac11f81daf70646cb025ab85",
   "onboarding_language_test_use_app_in": "4c78e48f9b8419298b26207e6a9680b16cbbfb5077e28e66e569826f3dfa9514",
   "onboarding_language_test_writing": "3fdc0c89b84e32189b94de1a239eada37c5d9fd36d6c33d3e896c4a45b5434eb",
   "onboarding_level_advanced": "1229413e6e4992064fe21876e30bbe7a17308e16ba92a1130cc95ec92be2d3dd",
@@ -588,11 +586,7 @@
     <string name="onboarding_placement_see_plan">Ver plano</string>
     <string name="onboarding_placement_unavailable_title">A gente vê o que você já sabe nos seus primeiros dias</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
-    <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
-    <string name="onboarding_language_test_title">Vamos descobrir seu nível em %1$s</string>
-    <!-- %1$s is how long the test takes, such as "3 min". -->
-    <string name="onboarding_language_test_description">Cerca de %1$s de leitura e escuta, para seu plano começar no seu nível.</string>
-    <string name="onboarding_language_test_new_alphabet">Não conhece o alfabeto desse idioma? Pule o teste. Sua primeira sessão começa com uma aula rápida sobre como ler nesse alfabeto.</string>
+    <string name="onboarding_language_test_new_alphabet">Ainda não conhece esse alfabeto? Pule o teste. Você aprende a ler na primeira aula.</string>
     <string name="onboarding_language_test_skip">Pular o teste</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
     <string name="onboarding_language_test_use_app_in">Usar o app em %1$s</string>

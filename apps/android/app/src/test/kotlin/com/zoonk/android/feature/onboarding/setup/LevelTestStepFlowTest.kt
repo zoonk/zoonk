@@ -100,7 +100,6 @@ class LevelTestStepFlowTest {
                                 goalId = GOAL_ID,
                                 language = "en",
                                 targetLanguage = "it",
-                                testMinutes = 3,
                                 store = store,
                                 navigator = rememberAppNavigator(),
                                 onProgress = { progress = it },
@@ -126,7 +125,7 @@ class LevelTestStepFlowTest {
     fun openingItOnlyReads() {
         show()
 
-        rule.onNodeWithText("Let's see your level in Italian").assertIsDisplayed()
+        rule.onNodeWithText("How much do you want to check?").assertIsDisplayed()
         rule.onNodeWithText("New to its alphabet?", substring = true).assertDoesNotExist()
         assertEquals(1, api.levelTestReads)
         assertEquals(0, api.prepared)
@@ -139,7 +138,7 @@ class LevelTestStepFlowTest {
     fun skippingBeforeAnyQuestionsWereWrittenStillMovesOn() {
         api.writeFailure = ApiException(ApiError.Unavailable, "LEVEL_TEST_PREPARING", status = 409)
         show()
-        tap("Skip the test")
+        tap("Skip")
 
         assertEquals(1, done)
     }
@@ -148,7 +147,7 @@ class LevelTestStepFlowTest {
     fun aFinishThatFailedKeepsTheLearnerHere() {
         api.writeFailure = ApiException(ApiError.Network)
         show()
-        tap("Skip the test")
+        tap("Skip")
 
         rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
         assertEquals(0, done)
@@ -182,7 +181,7 @@ class LevelTestStepFlowTest {
         tap("Start")
 
         rule.onNodeWithText("Preparing your level test").assertDoesNotExist()
-        rule.onNodeWithText("Let's see your level in Italian").assertIsDisplayed()
+        rule.onNodeWithText("How much do you want to check?").assertIsDisplayed()
         rule.onNodeWithText("Start").assertIsNotEnabled()
         rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
 
@@ -347,7 +346,7 @@ class LevelTestStepFlowTest {
     fun aFailedIntroSkipDoesNotCountAsAQuestionFailure() {
         api.writeFailure = ApiException(ApiError.Network)
         show()
-        tap("Skip the test")
+        tap("Skip")
         rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
         api.writeFailure = null
         tap("Start")

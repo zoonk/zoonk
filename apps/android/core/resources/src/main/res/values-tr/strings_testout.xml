@@ -6,7 +6,8 @@
   "testout_continue": "442e7f0243316ee148c7945767569e1e4c456911d8fc623f699aa94d8f29a1f9",
   "testout_intro_detail": "97e168893e650a13a0dc77c103a5c8362ff28201a75c5ee1a731831daeae6e14",
   "testout_intro_title": "70ad76e57738e45ae67b9be85ff890bb5cef1c7cd516927859d519c3b2a41cf7",
-  "testout_lessons_back": "6e765b5157b0499f08fa5170c960d2314ebc16e52c477a5d9d2a332bfb4b5f83",
+  "testout_lessons_back_one": "f8ab161ed697002ff71176bf897d4a818a3a9530be753ebc6acce623ca59853a",
+  "testout_lessons_back_other": "fe8cfb234c939bce33ade33b5ea1431d88ea2944e679fde721c7f3bdb784ddbd",
   "testout_lessons_left": "153a3e035fd830fea9e767036d77aa004cb7adb19afe2657ab70e113ab744aa2",
   "testout_lessons_off": "5000c4131bc4d4b4b19ee0fc41dddaf029e8b650809732bb7b4db9660b011e6a",
   "testout_not_passed": "b67016e380c803a3fc11faea2120edcb0568996c51d868f195ef918269d604ca",
@@ -50,9 +51,7 @@
         <item quantity="one">Planın zaten bildiğin %d dersi atlıyor.</item>
         <item quantity="other">Planın zaten bildiğin %d dersi atlıyor.</item>
     </plurals>
-    <plurals name="testout_lessons_back">
-        <item quantity="one">Ders planına geri döndü.</item>
-        <item quantity="other">Dersler planına geri döndü.</item>
-    </plurals>
+    <string name="testout_lessons_back_one">Ders planına geri döndü.</string>
+    <string name="testout_lessons_back_other">Dersler planına geri döndü.</string>
     <string name="testout_continue">Devam et</string>
 </resources>

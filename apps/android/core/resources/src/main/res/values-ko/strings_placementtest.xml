@@ -11,11 +11,11 @@
   "placementtest_done": "b8c7e209251b4d4d15676213ebe0143a4e86ebf78d78bd6f43c2fe88e279ca97",
   "placementtest_find_level": "00a6d14e43cd380b3125a8ef9cc478c85be8b4fb4bb81944a43a56c50ebdb7ef",
   "placementtest_finish_for_today": "222bbdc4d240f14975dcb7227ff49cd0e3a21e87f1596f76a4867b8cb4bcc3d8",
-  "placementtest_in_parts": "30a02167ddfa00e1924d8b206d8b65b3d76c7103296ee11b6451989a334ae9ee",
   "placementtest_in_progress": "705e21ca36788ca400c7c849d0bc270c4388184381d2d9f18f161f3ce25eee8e",
   "placementtest_keep_going": "b563e21656c4eabad2e1331f9209af0013341237a87bcdbbae1473a253a98c4c",
   "placementtest_keeps_adjusting": "fa2edc50a21e7290f2f1019292f73c8a0f1e775fc171a62316c4f02ed795963c",
-  "placementtest_known": "2d4cbc892ebcdb866faa30ea59548fcc44197673fe9f0817c66701474bc77d6b",
+  "placementtest_known_one": "3d421501c2ff31a8f782fe27952ffe0484c272dbf7f0be61980181aa02b2bdcc",
+  "placementtest_known_other": "a776ce044be84d9e85c247df574b8184c8ad839c6f1dbd4d36b649b98a892165",
   "placementtest_left_saved": "c3a3a7708afb68e6c24dc38021803481ff43455fea28237dda1c774b8dc59f6c",
   "placementtest_lessons_skipped": "37faf6fd5ef2a4052aa1045567a6136c8565e249b5a67064ca6ba4a1fcda04de",
   "placementtest_level_stays": "1b7f731c944e205bd2d38f4b7ac63e26afee8d321656091f238b39afa298b615",
@@ -73,7 +73,6 @@
     <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
     <string name="placementtest_about_in_parts">약 %1$s, 여러 파트로 진행</string>
     <!-- A short test of one language level, such as "Test out of B2". -->
-    <string name="placementtest_in_parts">나눠서 진행</string>
     <string name="placementtest_test_out">%1$s 건너뛰기 테스트</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">이미 아는 %1$s 건너뛰기</string>
@@ -88,9 +87,9 @@
     <string name="placementtest_finish_for_today">오늘은 여기까지</string>
     <string name="placementtest_keep_going">계속하기</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
-    <plurals name="placementtest_known">
-        <item quantity="other">이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요.</item>
-    </plurals>
+    <string name="placementtest_known_one">이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요.</string>
+    <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
+    <string name="placementtest_known_other">이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요.</string>
     <string name="placementtest_plan_stays">계획은 그대로 유지돼요.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">다음</string>

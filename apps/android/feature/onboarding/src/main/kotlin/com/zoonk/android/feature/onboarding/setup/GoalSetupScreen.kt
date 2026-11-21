@@ -537,7 +537,6 @@ private fun ColumnScope.QuestionStep(
                             .text("nativeLanguage")
                             ?.takeIf(String::isNotBlank) ?: view.goal.language,
                     targetLanguage = view.goal.targetLanguage.takeIf { view.goal.kind == Goal.Kind.LANGUAGE },
-                    quickMinutes = view.quickTestMinutes.toInt(),
                     run = run,
                     onRetryRun = onRetryRun,
                     store = store,

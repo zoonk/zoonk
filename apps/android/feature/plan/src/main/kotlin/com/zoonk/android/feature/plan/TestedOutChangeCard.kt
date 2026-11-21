@@ -2,7 +2,6 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonIcon
@@ -14,6 +13,10 @@ import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.api.models.PlanChange
+
+@Composable
+fun restoredLessonsLine(lessons: Int): String =
+    stringResource(if (lessons == 1) R.string.testout_lessons_back_one else R.string.testout_lessons_back_other)
 
 @Composable
 fun TestedOutChangeCard(
@@ -34,7 +37,7 @@ fun TestedOutChangeCard(
         answered = restored,
         card = {
             if (restored) {
-                SuggestionResult(pluralStringResource(R.plurals.testout_lessons_back, change.lessonsSkipped.toInt()))
+                SuggestionResult(restoredLessonsLine(change.lessonsSkipped.toInt()))
             } else {
                 SuggestionHeader(title)
                 PlanEffectDiff(change.effect, dateKind = dateKind, summary = false)

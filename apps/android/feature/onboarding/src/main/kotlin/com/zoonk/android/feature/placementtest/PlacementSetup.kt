@@ -34,18 +34,20 @@ internal class PlacementSetupEnd(
 
 @Composable
 internal fun ColumnScope.SetupLengthChoice(
-    choice: SetupTestChoice,
-    busy: Boolean,
+    choice: SetupTestChoice?,
+    pressed: Pressed?,
     failed: Boolean,
     onQuick: () -> Unit,
+    notes: @Composable () -> Unit = {},
     onSkip: () -> Unit,
 ) {
     LengthChoice(
-        wholeCourseMinutes = choice.minutes,
-        pressed = if (busy) Pressed.Main else choice.pressed,
-        failed = failed || choice.failed,
-        onStart = { length -> if (length == PlacementLength.QUICK) onQuick() else choice.startWhole() },
+        wholeCourseMinutes = choice?.minutes ?: 0,
+        pressed = pressed ?: choice?.pressed,
+        failed = failed || choice?.failed == true,
+        onStart = { length -> if (length == PlacementLength.QUICK) onQuick() else choice?.startWhole?.invoke() },
         onSkip = onSkip,
+        notes = notes,
     )
 }
 
@@ -56,7 +58,6 @@ internal fun ColumnScope.PlacementSetup(
     areaCount: Int,
     language: String,
     targetLanguage: String?,
-    quickMinutes: Int,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     store: OnboardingStore,
@@ -108,7 +109,6 @@ internal fun ColumnScope.PlacementSetup(
         goalId = id,
         language = language,
         targetLanguage = targetLanguage,
-        testMinutes = quickMinutes,
         store = store,
         navigator = navigator,
         onProgress = onProgress,

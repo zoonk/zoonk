@@ -34,6 +34,7 @@ import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.plan
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -58,6 +59,7 @@ class PlacementStepFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private val api = FakeOnboardingApi()
+    private val planApi = FakePlanApi()
     private var done = 0
 
     private fun show(inSetup: Boolean = false) {
@@ -70,7 +72,7 @@ class PlacementStepFlowTest {
                     GoalSetupScreen(
                         AppRoute.GoalSetup(GOAL_ID),
                         store,
-                        PlanStore(FakePlanApi(), cache),
+                        PlanStore(planApi, cache),
                         false,
                         rememberAppNavigator(),
                     )
@@ -195,6 +197,8 @@ class PlacementStepFlowTest {
         api.sitting = { placementOf(next = orderQuestion()).copy(attempt = part) }
         api.answered = { placementOf(status = "done", next = null, answered = 1).copy(attempt = part) }
         api.completion = completionOf().copy(attempt = part.copy(partComplete = true), lessonsSkipped = 3)
+        planApi.shownPlan =
+            plan(""" "placementTest":{"kind":"learn","state":"start","estimatedMinutes":20,"attempt":null,"result":null} """)
 
         show(inSetup = true)
         tap("Whole course")

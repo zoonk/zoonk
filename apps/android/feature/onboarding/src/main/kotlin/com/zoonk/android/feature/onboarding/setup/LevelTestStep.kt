@@ -59,6 +59,8 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.withoutFailure
+import com.zoonk.android.feature.focustest.Note
+import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
@@ -80,7 +82,6 @@ import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.layoutEnd
@@ -109,7 +110,6 @@ fun ColumnScope.LanguageLevelTestStep(
     goalId: String,
     language: String,
     targetLanguage: String,
-    testMinutes: Int,
     store: OnboardingStore,
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
@@ -120,7 +120,6 @@ fun ColumnScope.LanguageLevelTestStep(
     goalId,
     language,
     targetLanguage,
-    testMinutes,
     store,
     navigator,
     onProgress,
@@ -134,7 +133,6 @@ internal fun ColumnScope.LevelTestSteps(
     goalId: String,
     language: String,
     targetLanguage: String,
-    testMinutes: Int,
     store: OnboardingStore,
     navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
@@ -189,21 +187,26 @@ internal fun ColumnScope.LevelTestSteps(
         LevelTestPhase.Intro -> {
             com.zoonk.android.data
                 .TrackOnboardingQuestion(goalId, "placement")
-            if (lengthChoice != null) {
-                SetupLengthChoice(lengthChoice, vm.isStarting || vm.isSaving, vm.finishFailed, vm::begin, finish)
-            } else {
-                LevelTestIntro(
-                    language,
-                    targetLanguage,
-                    testMinutes,
-                    showAlphabetNote = (test as? LoadState.Loaded)?.value?.showAlphabetNote == true,
-                    pending = vm.isSaving,
-                    starting = vm.isStarting,
-                    failed = vm.finishFailed,
-                    onStart = vm::begin,
-                    onSkip = finish,
-                )
-            }
+            SetupLengthChoice(
+                choice = lengthChoice,
+                pressed =
+                    when {
+                        vm.isStarting -> Pressed.Main
+                        vm.isSaving -> Pressed.Other
+                        else -> null
+                    },
+                failed = vm.finishFailed,
+                onQuick = vm::begin,
+                notes = {
+                    if (plan == null) {
+                        LevelTestLanguageNotes(
+                            language,
+                            showAlphabetNote = (test as? LoadState.Loaded)?.value?.showAlphabetNote == true,
+                        )
+                    }
+                },
+                onSkip = finish,
+            )
         }
 
         LevelTestPhase.Waiting -> {
@@ -262,51 +265,12 @@ internal fun ColumnScope.LevelTestSteps(
 }
 
 @Composable
-private fun ColumnScope.LevelTestIntro(
+internal fun LevelTestLanguageNotes(
     language: String,
-    targetLanguage: String,
-    testMinutes: Int,
     showAlphabetNote: Boolean,
-    pending: Boolean,
-    starting: Boolean,
-    failed: Boolean,
-    onStart: () -> Unit,
-    onSkip: () -> Unit,
 ) {
-    SetupContent {
-        OnboardingHeading(
-            stringResource(R.string.onboarding_language_test_title, languageName(targetLanguage, currentLocale())),
-            stringResource(R.string.onboarding_language_test_description, formatMinutes(testMinutes, currentLocale())),
-        )
-        if (showAlphabetNote) {
-            Text(
-                stringResource(R.string.onboarding_language_test_new_alphabet),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        OnboardingActions {
-            FinishFailed(failed)
-            Button(
-                busy = starting,
-                onClick = onStart,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !pending,
-            ) {
-                Text(stringResource(R.string.onboarding_placement_start))
-            }
-            TextButton(
-                busy = pending,
-                onClick = onSkip,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !starting,
-                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-            ) {
-                Text(stringResource(R.string.onboarding_language_test_skip))
-            }
-            InterfaceOffer(language)
-        }
-    }
+    if (showAlphabetNote) Note(stringResource(R.string.onboarding_language_test_new_alphabet))
+    InterfaceOffer(language)
 }
 
 /** Main switches the app to the learner's own language when it isn't showing in it; Android keeps an app's language from API 33. */

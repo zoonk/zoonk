@@ -42,6 +42,7 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
@@ -136,7 +137,16 @@ internal fun ColumnScope.PlacementStep(
             com.zoonk.android.data
                 .TrackOnboardingQuestion(goalId, "placement")
             if (lengthChoice != null) {
-                SetupLengthChoice(lengthChoice, vm.isStarting || vm.isSaving, vm.finishFailed, vm::start) { finish(true) }
+                SetupLengthChoice(
+                    lengthChoice,
+                    when {
+                        vm.isStarting -> Pressed.Main
+                        vm.isSaving -> Pressed.Other
+                        else -> null
+                    },
+                    vm.finishFailed,
+                    vm::start,
+                ) { finish(true) }
             } else {
                 PlacementIntro(
                     subject = subject,
