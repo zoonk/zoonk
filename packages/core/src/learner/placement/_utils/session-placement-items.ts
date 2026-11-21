@@ -6,6 +6,7 @@ import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
 import { getTestQuestionStatuses, listUnaskedAreas } from "../focus-test-progress";
 import { type TestSubject } from "../focus-test-subjects";
+import { type PlacementEvidence } from "../placement-beliefs";
 import { getKnownSubjects, getOwnLevel } from "../placement-contract";
 import { pickPlacementItem } from "../placement-item-choice";
 import { readSkillStatuses } from "../placement-known";
@@ -102,10 +103,19 @@ function orderForTest<TSkill extends StartSkill>({
     : skills.toSorted((a, b) => Number(isUnasked(b)) - Number(isUnasked(a)));
 }
 
+function hasRecentQuickChoice(answers: readonly Pick<PlacementEvidence, "format" | "outcome">[]) {
+  const lastMiss = answers.findLastIndex((answer) => answer.outcome !== "correct");
+
+  return answers
+    .slice(Math.max(lastMiss + 1, answers.length - 3))
+    .some((answer) => isQuickChoice(answer));
+}
+
 /** At most limit unseen quick questions, one per unsettled skill; never selects listening-only skills. */
-export async function pickSessionPlacementItems({
+export async function pickSessionChecks({
   areaShares,
   blueprint: knownBlueprint,
+  easySkillIds = [],
   excludeItemIds,
   focusAreas,
   followUpSkillIds = new Set(),
@@ -121,6 +131,7 @@ export async function pickSessionPlacementItems({
 }: AreaPriority & {
   /** The goal's exam blueprint when the day's build already read it; without it, it's read fresh. */
   blueprint?: Pick<ExamBlueprint, "ownerId"> | null;
+  easySkillIds?: readonly string[];
   excludeItemIds: ReadonlySet<string>;
   followUpSkillIds?: ReadonlySet<string>;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
@@ -133,13 +144,19 @@ export async function pickSessionPlacementItems({
   skills: GoalPlan["skills"];
   test?: SessionTest;
   userId: string;
-}): Promise<string[]> {
+}): Promise<{ placementItemIds: string[]; placementRecheckItemIds: string[] }> {
   const listening = listeningSkillIds ?? (await loadListeningSkillIds(goal.id));
   const skills = planSkills.filter((skill) => !listening.has(skill.id));
 
+  const easy = new Set(easySkillIds);
+
   const skillIds = skills
     .filter(
-      (skill) => !recheckOnly || recheckSkillIds.has(skill.id) || followUpSkillIds.has(skill.id),
+      (skill) =>
+        !recheckOnly ||
+        recheckSkillIds.has(skill.id) ||
+        followUpSkillIds.has(skill.id) ||
+        easy.has(skill.id),
     )
     .map((skill) => skill.id);
 
@@ -192,31 +209,37 @@ export async function pickSessionPlacementItems({
     seen: seenItemIds.has(item.id) || answeredItems.has(item.id) || excludeItemIds.has(item.id),
   }));
 
+  const taps = candidates.filter((item) => isQuickChoice(item) || isLowGuessTap(item));
+  const lowGuess = taps.filter((item) => isLowGuessTap(item));
+
   const rechecks = [...recheckSkillIds].flatMap(
-    (skillId) =>
-      pickPlacementItem({
-        confirming: true,
-        items: candidates.filter((item) => isQuickChoice(item) || isLowGuessTap(item)),
-        quickFormat,
-        skillId,
-      }) ?? [],
+    (skillId) => pickPlacementItem({ confirming: true, items: taps, quickFormat, skillId }) ?? [],
   );
 
   const followUps = [...followUpSkillIds].flatMap((skillId) =>
     recheckSkillIds.has(skillId) || ["known", "unknown"].includes(statuses.get(skillId) ?? "")
       ? []
+      : (pickPlacementItem({ confirming: true, items: lowGuess, quickFormat, skillId }) ?? []),
+  );
+
+  const bySkill = Map.groupBy(confirmationAnswers, (answer) => answer.skillId);
+
+  const easyChecks = easySkillIds.flatMap((skillId) =>
+    recheckSkillIds.has(skillId) || followUpSkillIds.has(skillId)
+      ? []
       : (pickPlacementItem({
-          confirming: true,
-          items: candidates.filter((item) => isLowGuessTap(item)),
+          confirming: hasRecentQuickChoice(bySkill.get(skillId) ?? []),
+          items: taps,
           quickFormat,
           skillId,
         }) ?? []),
   );
 
-  const priority = [...rechecks, ...followUps];
+  const priority = [...rechecks, ...followUps, ...easyChecks].map((item) => item.id);
+  const placementRecheckItemIds = rechecks.slice(0, limit).map((item) => item.id);
 
   if (recheckOnly || priority.length >= limit) {
-    return priority.slice(0, limit).map((item) => item.id);
+    return { placementItemIds: priority.slice(0, limit), placementRecheckItemIds };
   }
 
   const walk = interleaveByStart({
@@ -238,5 +261,18 @@ export async function pickSessionPlacementItems({
       }) ?? [],
   );
 
-  return [...priority, ...regular].slice(0, limit).map((item) => item.id);
+  return {
+    placementItemIds: [...new Set([...priority, ...regular.map((item) => item.id)])].slice(
+      0,
+      limit,
+    ),
+    placementRecheckItemIds,
+  };
+}
+
+export async function pickSessionPlacementItems(
+  input: Parameters<typeof pickSessionChecks>[0],
+): Promise<string[]> {
+  const picked = await pickSessionChecks(input);
+  return picked.placementItemIds;
 }

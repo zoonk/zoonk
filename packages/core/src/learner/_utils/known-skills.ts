@@ -68,6 +68,7 @@ export async function markPlanItemsTestedOut({
   finishesChapters = false,
   followToday = false,
   goalId,
+  livingPlanDay,
   items,
   knownSkillIds,
   now,
@@ -88,6 +89,7 @@ export async function markPlanItemsTestedOut({
   /** Today's blocks not started follow the re-plan (see `announceTestedOutItems`). */
   followToday?: boolean;
   goalId: string;
+  livingPlanDay?: string;
   items: readonly GoalPlanItem[];
   knownSkillIds: ReadonlySet<string>;
   /** When the plan is planned again from: `testedOutAt`, unless a retry kept an earlier one. */
@@ -199,6 +201,7 @@ export async function markPlanItemsTestedOut({
       extraWrites,
       followToday,
       goalId,
+      livingPlanDay,
       now: now ?? testedOutAt,
       pastBasicsAdded: addedBasics,
       pastBasicsAreas: extraWrites ? pastBasicsAreas : [],
