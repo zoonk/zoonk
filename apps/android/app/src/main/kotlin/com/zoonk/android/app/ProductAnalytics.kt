@@ -66,6 +66,7 @@ private class PostHogAnalytics(
             sessionReplayConfig.captureLogcat = false
             capturePushNotificationSubscriptions = false
             capturePushNotificationOpened = false
+            surveys = false
             preloadFeatureFlags = false
             sendFeatureFlagEvent = false
         }
