@@ -8,6 +8,7 @@ const caseRun = z.object({ caseId: z.string(), run: z.int().positive() });
 const qualitySchema = z.object({
   affected: z.array(caseRun),
   both: z.array(caseRun),
+  check: z.literal(true).optional(),
   criterion: z.string(),
   language: z.string(),
   ownerAffected: z.array(caseRun).optional(),

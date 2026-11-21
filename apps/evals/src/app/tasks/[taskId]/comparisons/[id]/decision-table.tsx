@@ -89,13 +89,17 @@ function CaseLinks({
 function qualityCell({
   row,
   criterion,
+  check,
   showRun,
 }: {
   row: Row;
   criterion: string;
+  check?: true;
   showRun: boolean;
 }) {
-  const metrics = row.quality.filter((metric) => metric.criterion === criterion);
+  const metrics = row.quality.filter(
+    (metric) => metric.criterion === criterion && metric.check === check,
+  );
 
   return (
     <CaseLinks
@@ -230,6 +234,13 @@ export function DecisionTable({
 
   const [first] = rows;
   const counts = first ? Object.entries(first.casesByLanguage) : [];
+
+  const failedChecks = new Set(
+    rows.flatMap((row) =>
+      row.quality.filter((metric) => metric.check).map((metric) => metric.criterion),
+    ),
+  );
+
   const showRun = manifest.runs > 1;
 
   return (
@@ -268,6 +279,14 @@ export function DecisionTable({
               cell={(row) => qualityCell({ criterion: criterion.id, row, showRun })}
               key={criterion.id}
               label={criterion.label}
+              rows={rows}
+            />
+          ))}
+          {[...failedChecks].map((check) => (
+            <FactRow
+              cell={(row) => qualityCell({ check: true, criterion: check, row, showRun })}
+              key={check}
+              label={`Failed ${check}`}
               rows={rows}
             />
           ))}

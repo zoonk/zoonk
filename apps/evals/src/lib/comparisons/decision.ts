@@ -60,7 +60,9 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
           metric.affected.length <=
           (row.quality.find(
             (candidate) =>
-              candidate.language === metric.language && candidate.criterion === metric.criterion,
+              candidate.language === metric.language &&
+              candidate.criterion === metric.criterion &&
+              candidate.check === metric.check,
           )?.affected.length ?? 0),
       ) &&
       (rival.wins > row.wins || rival.costPer1000 < row.costPer1000 || rival.p95 < row.p95);
@@ -105,7 +107,7 @@ export function decisiveClaims(comparison: Comparison) {
       .find((row) => row.side === subject)
       ?.quality.some(
         (metric) =>
-          rules.criteria[metric.criterion] === "counts" &&
+          countsTowardTrade(metric, rules) &&
           metric.affected.some((run) => caseRunKey(run) === key),
       );
 
@@ -448,6 +450,15 @@ function result(outcome: Decision["outcome"], reason: string) {
 
 type TableRow = Decision["rows"][number];
 
+function countsTowardTrade(
+  metric: TableRow["quality"][number],
+  rules: NonNullable<Facts["rules"]>,
+) {
+  return metric.check
+    ? metric.criterion !== "answer keys"
+    : rules.criteria[metric.criterion] === "counts";
+}
+
 function evaluateTrades({
   languages,
   cases,
@@ -491,7 +502,7 @@ function evaluateTrades({
         row.quality
           .filter(
             (qualityRow) =>
-              qualityRow.language === language && rules.criteria[qualityRow.criterion] === "counts",
+              qualityRow.language === language && countsTowardTrade(qualityRow, rules),
           )
           .flatMap((qualityRow) => qualityRow.affected.map((run) => caseRunKey(run))),
       );

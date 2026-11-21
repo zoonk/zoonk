@@ -1,10 +1,13 @@
 import { meetsLatencyBudget, summarizeLatency } from "../latency";
+import { type Decision } from "./decision-schema";
 import { type caseVotes, opposite, sides, type verifiedClaims } from "./evidence";
 import { caseRunKey } from "./identity";
 import { type Comparison } from "./schemas";
 
-function affectedRuns(claims: ReturnType<typeof verifiedClaims>) {
-  return new Map(claims.map(({ caseId, run }) => [caseRunKey({ caseId, run }), { caseId, run }]));
+type Quality = Decision["rows"][number]["quality"];
+
+function affectedRuns(runs: Quality[number]["affected"]) {
+  return new Map(runs.map(({ caseId, run }) => [caseRunKey({ caseId, run }), { caseId, run }]));
 }
 
 export function deliveryTable(
@@ -15,6 +18,7 @@ export function deliveryTable(
   const { manifest } = comparison;
   const rules = manifest.priorities.comparison;
   const languages = [...new Set(cases.map((item) => item.language))];
+  const failedChecks = comparison.checks.filter((check) => check.passed < check.total);
 
   const missing = manifest.runsCompared.filter(
     (record) => (Boolean(manifest.variants.incumbent) && !record.incumbent) || !record.challenger,
@@ -52,8 +56,8 @@ export function deliveryTable(
         }),
       );
 
-      const quality = languages.flatMap((language) =>
-        manifest.criteria.map(({ id: criterion }) => {
+      const quality: Quality = languages.flatMap((language) => [
+        ...manifest.criteria.map(({ id: criterion }) => {
           const relevant = claims.filter(
             (claim) =>
               cases.some((item) => item.caseId === claim.caseId && item.language === language) &&
@@ -86,17 +90,21 @@ export function deliveryTable(
             ...(ownerAffected.length > 0 && { ownerAffected }),
           };
         }),
-      );
+        ...checkFailures({
+          checks: failedChecks.filter((check) => languagesByCase.get(check.caseId) === language),
+          language,
+          subject,
+        }),
+      ]);
 
       const disqualified =
         quality.some(
           (qualityRow) =>
             qualityRow.affected.length > 0 &&
+            !qualityRow.check &&
             rules?.criteria[qualityRow.criterion] === "disqualifies",
         ) ||
-        comparison.checks.some(
-          (ch) => ch.side === subject && ch.name === "answer keys" && ch.passed < ch.total,
-        ) ||
+        failedChecks.some((check) => check.side === subject && check.name === "answer keys") ||
         failures.some((failure) => failure.reason === "schema") ||
         (slots.length > 0 &&
           meetsLatencyBudget({ budget: manifest.latencyBudget ?? undefined, latency: delivery }) ===
@@ -126,6 +134,32 @@ export function deliveryTable(
         wins: cases.filter((item) => item.result === subject).length,
       };
     });
+}
+
+function checkFailures({
+  checks,
+  language,
+  subject,
+}: {
+  checks: Comparison["checks"];
+  language: string;
+  subject: (typeof sides)[number];
+}) {
+  return [...new Set(checks.map((check) => check.name))].map((name) => {
+    const onSide = (side: typeof subject) =>
+      affectedRuns(checks.filter((check) => check.name === name && check.side === side));
+
+    const affected = [...onSide(subject).values()];
+    const other = onSide(opposite(subject));
+
+    return {
+      affected,
+      both: affected.filter((run) => other.has(caseRunKey(run))),
+      check: true as const,
+      criterion: name,
+      language,
+    };
+  });
 }
 
 function measureDelivery(

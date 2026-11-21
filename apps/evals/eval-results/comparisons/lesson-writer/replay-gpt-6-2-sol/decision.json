@@ -201,6 +201,35 @@
         {
           "affected": [
             {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 1
+            },
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            },
+            {
+              "caseId": "en-python-range-beginner",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            },
+            {
+              "caseId": "en-python-range-beginner",
+              "run": 2
+            }
+          ],
+          "check": true,
+          "criterion": "code checks",
+          "language": "en"
+        },
+        {
+          "affected": [
+            {
               "caseId": "pt-estabilidade-sourced",
               "run": 1
             }
@@ -272,6 +301,22 @@
             }
           ],
           "criterion": "fitAndApplication",
+          "language": "pt"
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-patrimonio-liquido-dense-brief",
+              "run": 1
+            },
+            {
+              "caseId": "pt-glicolise-from-slides",
+              "run": 2
+            }
+          ],
+          "both": [],
+          "check": true,
+          "criterion": "code checks",
           "language": "pt"
         }
       ],
@@ -362,6 +407,31 @@
         {
           "affected": [
             {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            },
+            {
+              "caseId": "en-python-range-beginner",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            },
+            {
+              "caseId": "en-python-range-beginner",
+              "run": 2
+            }
+          ],
+          "check": true,
+          "criterion": "code checks",
+          "language": "en"
+        },
+        {
+          "affected": [
+            {
               "caseId": "pt-glicolise-from-slides",
               "run": 1
             }
@@ -425,6 +495,13 @@
             }
           ],
           "criterion": "fitAndApplication",
+          "language": "pt"
+        },
+        {
+          "affected": [],
+          "both": [],
+          "check": true,
+          "criterion": "code checks",
           "language": "pt"
         }
       ],
