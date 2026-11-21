@@ -1,5 +1,13 @@
 import { execFileSync } from "node:child_process";
-import { closeSync, openSync, readFileSync, readSync, statSync, writeFileSync } from "node:fs";
+import {
+  closeSync,
+  fstatSync,
+  openSync,
+  readFileSync,
+  readSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
@@ -73,22 +81,29 @@ const PROXY_LOG_KEPT = 1024 * 1024;
  * keeps a running proxy's append-mode handle writing at the new end, so this is safe while it runs.
  */
 export function trimProxyLog(logPath: string): void {
-  const size = statSync(logPath, { throwIfNoEntry: false })?.size ?? 0;
-
-  if (size <= PROXY_LOG_LIMIT) {
+  if ((statSync(logPath, { throwIfNoEntry: false })?.size ?? 0) <= PROXY_LOG_LIMIT) {
     return;
   }
 
-  const tail = Buffer.alloc(PROXY_LOG_KEPT);
   const file = openSync(logPath, "r");
+  const tail = Buffer.alloc(PROXY_LOG_KEPT);
+  let bytesRead = 0;
 
   try {
-    readSync(file, tail, 0, PROXY_LOG_KEPT, size - PROXY_LOG_KEPT);
+    // Sized from the open file, so a checkout that trimmed it a moment ago isn't read past its end.
+    const { size } = fstatSync(file);
+
+    if (size <= PROXY_LOG_LIMIT) {
+      return;
+    }
+
+    bytesRead = readSync(file, tail, 0, PROXY_LOG_KEPT, size - PROXY_LOG_KEPT);
   } finally {
     closeSync(file);
   }
 
-  writeFileSync(logPath, tail.subarray(tail.indexOf("\n") + 1));
+  const kept = tail.subarray(0, bytesRead);
+  writeFileSync(logPath, kept.subarray(kept.indexOf("\n") + 1));
 }
 
 /** Starts the checkout's shared proxy, replacing one an older Portless left running. */
@@ -102,7 +117,12 @@ export function startProxy({
   const pnpmCommand = getPnpmCommand(environment);
   const stateDirectory = String(environment.PORTLESS_STATE_DIR);
 
-  trimProxyLog(join(stateDirectory, "proxy.log"));
+  try {
+    trimProxyLog(join(stateDirectory, "proxy.log"));
+  } catch (error) {
+    // A log this checkout can't rewrite, such as one a sudo start left, is no reason to stop `pnpm dev`.
+    process.stderr.write(`Couldn't trim the proxy log: ${String(error)}\n`);
+  }
 
   const portless = (command: string) =>
     execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "proxy", command], {
