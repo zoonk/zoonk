@@ -2,7 +2,10 @@ package com.zoonk.android.feature.mindmaps
 
 import android.content.Context
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -46,6 +49,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,6 +64,8 @@ import java.util.UUID
 class MindMapsOfferTest {
     @get:Rule
     val compose: ComposeContentTestRule = createComposeRule()
+
+    private lateinit var inputMode: InputModeManager
 
     private val api = FakeMindMapApi()
     private val session = AuthenticatedSession("ana", "token", "local")
@@ -92,6 +98,7 @@ class MindMapsOfferTest {
             PrivateImages("https://example.test/v1/".toHttpUrl(), ImageLoader(ApplicationProvider.getApplicationContext<Context>()))
         val host = MindMapsHost(store, session, PrivatePictures(images, session), { null }, { LimitTier.Free }, { session })
         compose.setContent {
+            inputMode = LocalInputModeManager.current
             CompositionLocalProvider(LocalClock provides clock) {
                 ZoonkTheme { MindMapsContent(UUID.fromString(GOAL), host, rememberAppNavigator()) }
             }
@@ -498,7 +505,8 @@ class MindMapsOfferTest {
         show()
 
         waitFor("3 more chapters")
-        compose.onNodeWithText("3 more chapters").requestFocus().performKeyInput { pressKey(Key.Enter) }
+        compose.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
+        compose.onNodeWithText("3 more chapters").requestFocus().assertIsFocused().performKeyInput { pressKey(Key.Enter) }
         waitFor("Chapter 6")
         compose.onNodeWithText("Show fewer chapters").performKeyInput { pressKey(Key.Tab) }
 
