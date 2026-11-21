@@ -19,7 +19,7 @@ const DRAFT_SAVE_MS = 1500;
 
 /** The writing clock, paused while the page is out of view. */
 function useWritingClock() {
-  const clock = useMemo(createWritingClock, []);
+  const clock = useMemo(() => createWritingClock(), []);
 
   useEffect(() => {
     const onVisibility = () =>
