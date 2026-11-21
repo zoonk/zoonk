@@ -3,6 +3,9 @@ import { isJsonObject } from "@zoonk/utils/json";
 
 const MAX_LOW_GUESS_RATE = 0.05;
 
+/** Right low-guess answers a topic needs, beside a right quick one, before its lessons are skipped. */
+export const LOW_GUESS_ANSWERS_TO_SKIP = 3;
+
 const DEFAULT_GUESS_RATES: Readonly<Record<ItemFormat, number>> = {
   essay: 0.05,
   matchPairs: 1,
