@@ -13,7 +13,6 @@ type BlockCopyInput = Pick<
   | "capsules"
   | "checkpoint"
   | "estimatedMinutes"
-  | "extra"
   | "fullReview"
   | "hasWritingDraft"
   | "kind"
@@ -106,40 +105,24 @@ export function useBlockTitle() {
     const focus = getPracticeFocus(block);
 
     if (focus?.kind === "topic") {
-      return block.extra
-        ? t({
-            description:
-              'Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".',
-            message: "Bonus practice: {topic}",
-            values: { topic: focus.name },
-          })
-        : t({
-            description:
-              'A block of the day\'s practice. {topic} names the topic most of its questions are on, like "Calculating discounts".',
-            message: "Practice: {topic}",
-            values: { topic: focus.name },
-          });
+      return t({
+        description:
+          'A block of the day\'s practice. {topic} names the topic most of its questions are on, like "Calculating discounts".',
+        message: "Practice: {topic}",
+        values: { topic: focus.name },
+      });
     }
 
     if (focus?.kind === "areas") {
-      const areas = format.list(focus.names, { type: "conjunction" });
-
-      return block.extra
-        ? t({
-            description:
-              'Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".',
-            message: "Bonus practice: {areas}",
-            values: { areas },
-          })
-        : t({
-            description:
-              'A block of the day\'s practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".',
-            message: "Practice: {areas}",
-            values: { areas },
-          });
+      return t({
+        description:
+          'A block of the day\'s practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".',
+        message: "Practice: {areas}",
+        values: { areas: format.list(focus.names, { type: "conjunction" }) },
+      });
     }
 
-    return block.extra ? t("Bonus practice") : t("Mixed practice");
+    return t("Mixed practice");
   };
 }
 

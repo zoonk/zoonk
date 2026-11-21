@@ -30,12 +30,6 @@ export async function appendLandedLessons({
   const droppedIds = new Set(dropped.map(({ id }) => id));
   const kept = session.blocks.filter(({ id }) => !droppedIds.has(id));
 
-  const previousMinutes = getVisibleSessionTotal({
-    blocks: session.blocks,
-    planned: session.plannedMinutes,
-    visibleIds: new Set(kept.map(({ id }) => id)),
-  });
-
   const { blocks: lessons, plannedMinutes } = await planRestOfDayWithPlan({
     day: { goal, session, timeZone },
     kept,
@@ -67,6 +61,12 @@ export async function appendLandedLessons({
         return;
       }
 
+      const previousMinutes = getVisibleSessionTotal({
+        blocks: locked.blocks,
+        planned: locked.plannedMinutes,
+        visibleIds: new Set(kept.map(({ id }) => id)),
+      });
+
       await saveSelectedPlan({ context: selection.context, prepared, tx: transaction });
 
       if (dropped.length > 0) {
@@ -88,6 +88,7 @@ export async function appendLandedLessons({
           ...block,
           payload: {
             ...block.payload,
+            ...(locked.endedAt && { extra: true }),
             planItemId: block.payload.planItemKey
               ? (ids.get(block.payload.planItemKey) ?? block.payload.planItemId)
               : block.payload.planItemId,
@@ -100,7 +101,9 @@ export async function appendLandedLessons({
       await transaction.studySession.update({
         data: {
           planVersion: savedVersion,
-          plannedMinutes: Math.max(previousMinutes, plannedMinutes),
+          plannedMinutes: locked.endedAt
+            ? locked.plannedMinutes
+            : Math.max(previousMinutes, plannedMinutes),
         },
         where: { id: session.id },
       });

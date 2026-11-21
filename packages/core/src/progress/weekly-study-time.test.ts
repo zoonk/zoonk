@@ -38,6 +38,65 @@ describe("weekly study time", () => {
     vi.useRealTimers();
   });
 
+  it("keeps unstudied past study days missed when their items have moved forward", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-16T14:00:00Z"));
+    const user = await userFixture();
+    const { goal } = await learnerGoalFixture({ phases: [1], userId: user.id });
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { createdAt: MONDAY, dailyMinutes: 25, timezone: "UTC" },
+        where: { id: goal.id },
+      }),
+      prisma.plan.update({
+        data: { settings: { weekdayMinutes: [0, 25, 25, 25, 25, 25, 0] } },
+        where: { goalId: goal.id },
+      }),
+      prisma.planItem.updateMany({
+        data: { scheduledFor: FRIDAY },
+        where: { plan: { goalId: goal.id } },
+      }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    mockSession(user.id);
+    const plan = await getPlanTabView();
+
+    expect(plan).toMatchObject({
+      status: "ready",
+      view: {
+        plan: {
+          week: {
+            days: expect.arrayContaining([
+              expect.objectContaining({
+                date: "2026-10-12",
+                state: "missed",
+                study: expect.objectContaining({
+                  goalMinutes: 25,
+                  hitGoal: false,
+                  kind: "study",
+                  studied: false,
+                }),
+              }),
+              expect.objectContaining({
+                date: "2026-10-15",
+                state: "missed",
+                study: expect.objectContaining({
+                  goalMinutes: 25,
+                  hitGoal: false,
+                  kind: "study",
+                  studied: false,
+                }),
+              }),
+            ]),
+          },
+          weekTime: { targetMinutes: 125 },
+        },
+      },
+    });
+  });
+
   it("counts only the goal's own time, budget and dates on Plan and Today, without daily rounding loss", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-13T14:00:00Z"));

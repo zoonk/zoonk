@@ -2,6 +2,7 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { type z } from "zod";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type studyBlockSchema } from "../block-view-contract";
+import { getPlayOrder, getSessionBlockOrder, isDayBlock } from "../day-blocks";
 import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
@@ -76,22 +77,21 @@ export type SessionWeek = Pick<StudyWeek, "days" | "nextStudyDate">;
 /** For a session whose goal was deleted, and for summaries, which show no week. */
 export const EMPTY_WEEK: SessionWeek = { days: [], nextStudyDate: null };
 
-export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status">[]) {
+export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status" | "payload">[]) {
   return {
-    completed: blocks.filter((block) => block.status === "completed").length,
-    total: blocks.filter((block) => block.status !== "skipped").length,
+    completed: blocks.filter((block) => isDayBlock(block) && block.status === "completed").length,
+    total: blocks.filter((block) => isDayBlock(block) && block.status !== "skipped").length,
   };
 }
 
-export function getNextBlock<Block extends Pick<StudyBlockView, "status" | "writingAvailability">>(
-  blocks: readonly Block[],
-): Block | undefined {
-  return (
-    blocks.find((block) => block.status === "active") ??
-    blocks.find(
-      (block) => block.status === "pending" && block.writingAvailability?.status !== "tomorrow",
-    )
-  );
+export function getNextBlock<
+  Block extends Pick<StudyBlockView, "extra" | "position" | "status" | "writingAvailability">,
+>(blocks: readonly Block[]): Block | undefined {
+  return getPlayOrder(
+    blocks.filter(
+      (block) => block.status === "active" || block.writingAvailability?.status !== "tomorrow",
+    ),
+  )[0];
 }
 
 /** Adds only persisted session and block ids to the shared display projection. */
@@ -129,16 +129,19 @@ export function toStudySessionView(
     );
   }
 
-  const blocks = input.blockViews ?? buildBlockViews();
+  const blocks = getSessionBlockOrder(input.blockViews ?? buildBlockViews());
   const next = getNextBlock(blocks);
 
-  return withDayState({
-    ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
-    blocks,
-    id: session.id,
-    missions: input.missions,
-    nextBlockId: next?.id ?? null,
-    nextPosition: next?.position ?? null,
-    status: session.status,
-  });
+  return withDayState(
+    {
+      ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
+      blocks,
+      id: session.id,
+      missions: input.missions,
+      nextBlockId: next?.id ?? null,
+      nextPosition: next?.position ?? null,
+      status: session.status,
+    },
+    session.endedAt,
+  );
 }

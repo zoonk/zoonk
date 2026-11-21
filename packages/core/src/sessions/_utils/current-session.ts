@@ -50,7 +50,12 @@ function isCarriedOver({
   const nextDay = new Date(session.localDate.getTime() + MS_PER_DAY);
   const midnight = getStartOfLocalDay({ localDate: nextDay, timeZone });
 
-  return (session.endedAt?.getTime() ?? 0) >= midnight.getTime();
+  return (
+    Math.max(
+      session.endedAt?.getTime() ?? 0,
+      ...session.blocks.map((block) => block.completedAt?.getTime() ?? 0),
+    ) >= midnight.getTime()
+  );
 }
 
 function hasContinuingAnswer(session: SessionTimes): boolean {

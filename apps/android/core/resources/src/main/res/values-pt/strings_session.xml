@@ -2,9 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_belt_step": "96b8fadb8687abb0d2ef4653886f661bdd9feec5df680e8ede538caab327293a",
-  "session_block_bonus_practice": "bbae26ab084161b18d5097804f8e643aedcafd527b12809fc3ac48bc5945fca4",
-  "session_block_bonus_practice_areas": "c641150aa46b9197fdb5c7b8ae18f09b6dc67a63998ed81849f836f0fab6c5b2",
-  "session_block_bonus_practice_topic": "16a3ba2779915b27efb3407a34f84eae460e7052190a32003a67897f6ece0c93",
   "session_block_call": "03da71490899b49127ae04a59428044d1eed1c68620098d49dbb3d6503411f55",
   "session_block_full_review_questions": "473bb0035c1b0bec8875f317b8fc45d94e9b59020aada36480e2b883854403c7",
   "session_block_mixed_practice": "e0def18279b00e5568b66ff0c4390c7721793b956bc5c32797db6ff9cb3659cb",
@@ -102,16 +99,11 @@
     <string name="session_block_new_lesson">Nova aula</string>
     <string name="session_block_writing_draft_saved">Seu rascunho está salvo</string>
     <string name="session_block_practice_mistakes">Corrigir erros</string>
-    <string name="session_block_bonus_practice">Prática extra</string>
     <string name="session_block_mixed_practice">Prática variada</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_practice_areas">Prática: %1$s</string>
-    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_bonus_practice_areas">Prática extra: %1$s</string>
     <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
     <string name="session_block_practice_topic">Prática: %1$s</string>
-    <!-- Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_bonus_practice_topic">Prática extra: %1$s</string>
     <string name="session_block_rematch_lesson">Aula rápida antes da revanche</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d pergunta</item>

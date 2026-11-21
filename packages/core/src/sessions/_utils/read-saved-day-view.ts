@@ -1,5 +1,5 @@
-import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
+import "server-only";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
 import { readDayMissionProgress } from "../../learner/facts/day-mission-progress";
 import { readLessonStates } from "../../learner/facts/lesson-states";
@@ -8,6 +8,7 @@ import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
+import { getSessionBlockOrder } from "../day-blocks";
 import { withDayState } from "../day-state";
 import { type DayView, type UnstartedDayView } from "../day-view";
 import { getExtraTime } from "../extra-time";
@@ -17,7 +18,7 @@ import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
 import { planEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { loadStudySessionView } from "./load-session-view";
-import { getSessionBar } from "./session-view";
+import { getNextBlock, getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 import { getBlueprintWritingTasks } from "./writing-block-tasks";
 
@@ -89,7 +90,7 @@ export async function readSavedDayView({
 
   const writingTasks = getBlueprintWritingTasks(blueprint);
 
-  const blocks = refill.blocks.map((block) => {
+  const blocks = getSessionBlockOrder(refill.blocks).map((block) => {
     const saved = block.id ? savedViews.get(block.id) : undefined;
 
     if (saved) {
@@ -107,42 +108,44 @@ export async function readSavedDayView({
     });
   });
 
-  const next =
-    blocks.find((block) => block.status === "active") ??
-    blocks.find((block) => block.status === "pending");
+  const next = getNextBlock(blocks);
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 
-  return withDayState<Omit<UnstartedDayView, "state">>({
-    ...fields,
-    blocks,
-    catchUp: catchUp
-      ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
-      : null,
-    emptyDay: null,
-    extraTime: getExtraTime({ blocks: refill.blocks, current: view.current }),
-    minutes: getSessionMinutes({
-      blocks: refill.blocks,
-      dailyGoal: view.minutes.dailyGoal,
-      planned: getVisibleSessionTotal({
-        blocks: session.blocks,
-        planned: refill.plannedMinutes,
-        visibleIds: new Set(refill.blocks.flatMap((block) => block.id ?? [])),
+  return withDayState<Omit<UnstartedDayView, "state">>(
+    {
+      ...fields,
+      blocks,
+      catchUp: catchUp
+        ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
+        : null,
+      emptyDay: null,
+      extraTime: getExtraTime({ blocks: refill.blocks, current: view.current }),
+      minutes: getSessionMinutes({
+        blocks: refill.blocks,
+        dailyGoal: view.minutes.dailyGoal,
+        endedAt: session.endedAt,
+        planned: getVisibleSessionTotal({
+          blocks: session.blocks,
+          planned: refill.plannedMinutes,
+          visibleIds: new Set(refill.blocks.flatMap((block) => block.id ?? [])),
+        }),
+        reserved: view.lessonsComing || view.lessonsToPrepare,
       }),
-      reserved: view.lessonsComing || view.lessonsToPrepare,
-    }),
-    missions: missions.map((mission): UnstartedDayView["missions"][number] => {
-      const { opens, ...rest } = mission;
+      missions: missions.map((mission): UnstartedDayView["missions"][number] => {
+        const { opens, ...rest } = mission;
 
-      if (opens?.kind !== "block") {
-        return { ...rest, ...(opens && { opens }) };
-      }
+        if (opens?.kind !== "block") {
+          return { ...rest, ...(opens && { opens }) };
+        }
 
-      const target = view.blocks.find((block) => block.id === opens.blockId);
-      return target ? { ...rest, opens: { kind: "block", ref: toDayBlockRef(target) } } : rest;
-    }),
-    nextPosition: next?.position ?? null,
-    sessionBar: getSessionBar(blocks),
-    status: "unstarted",
-  });
+        const target = view.blocks.find((block) => block.id === opens.blockId);
+        return target ? { ...rest, opens: { kind: "block", ref: toDayBlockRef(target) } } : rest;
+      }),
+      nextPosition: next?.position ?? null,
+      sessionBar: getSessionBar(refill.blocks),
+      status: "unstarted",
+    },
+    session.endedAt,
+  );
 }

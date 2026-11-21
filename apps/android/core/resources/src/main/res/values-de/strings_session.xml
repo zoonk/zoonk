@@ -2,9 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_belt_step": "a4e1b674be5e4a7ed1465e7dba6438afa34e0ad7ec724ba5b6c959fdc4e77be0",
-  "session_block_bonus_practice": "15d42c743d0677526d53669a5d438cf9178aad69550e5a254d176f39eca920fb",
-  "session_block_bonus_practice_areas": "1489adc11a0d70e56d14cd505fd45de690d97fc7bbf0e3592421c17ba30f463e",
-  "session_block_bonus_practice_topic": "ed65508f479288f5c92cab030e8cc8745fbdc9dde5c42a9d59c0e6e5142d3ac2",
   "session_block_call": "a91a102bc1eb670098fb8b94c867683d25e814f8e6bd99adb5eb214657265298",
   "session_block_full_review_questions": "6211cc9ad8eca7337ef5dd10149fdcbec1ca2b8b24a903206d256ebf23dbd542",
   "session_block_mixed_practice": "9db284b4c4d6d00b80b6b34f41e4b037ad1e8c1826c132787f3149aadab0fb2b",
@@ -102,16 +99,11 @@
     <string name="session_block_new_lesson">Neue Lektion</string>
     <string name="session_block_writing_draft_saved">Dein Entwurf ist gespeichert</string>
     <string name="session_block_practice_mistakes">Fehler üben</string>
-    <string name="session_block_bonus_practice">Zusätzliche Übung</string>
     <string name="session_block_mixed_practice">Gemischte Übung</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_practice_areas">Übungen: %1$s</string>
-    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_bonus_practice_areas">Bonusübungen: %1$s</string>
     <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
     <string name="session_block_practice_topic">Übung: %1$s</string>
-    <!-- Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_bonus_practice_topic">Extraübung: %1$s</string>
     <string name="session_block_rematch_lesson">Kurze Lektion vor dem zweiten Versuch</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d Frage</item>

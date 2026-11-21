@@ -2,9 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "session_belt_step": "f7061e056d62bc43e52b27b8e5fc0fe94bfa9cab37fbce7c206a127fc7833b8f",
-  "session_block_bonus_practice": "06916cc5bcde1dbef1b34b5340b3ec248bb83955fd11b4a9ded5a4ea7d4c5066",
-  "session_block_bonus_practice_areas": "6a51967c50c26d52deeaf8d0cad38c7f5a55dbc74aa70139f1c5d8bccab2f045",
-  "session_block_bonus_practice_topic": "3ef744b8a0925d017709b2b40cbafc6952c500d69cc7edaa0cd666692ddfd0d9",
   "session_block_call": "4b42cc87234c734491ce5db302371c242c03e70156efe6dee734701b0238df9d",
   "session_block_full_review_questions": "1bd0397878fa4b173b9bdf1c51410b6119373931861041f8b4b72a6d121c39b5",
   "session_block_mixed_practice": "5c827997dc2b82b6f9396abb4e5ac9e0edbcad345eff42233a991e79b8d43a4a",
@@ -102,16 +99,11 @@
     <string name="session_block_new_lesson">Yeni ders</string>
     <string name="session_block_writing_draft_saved">Taslağın kaydedildi</string>
     <string name="session_block_practice_mistakes">Yanlışlarına çalış</string>
-    <string name="session_block_bonus_practice">Ek alıştırma</string>
     <string name="session_block_mixed_practice">Karma alıştırma</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
     <string name="session_block_practice_areas">Alıştırma: %1$s</string>
-    <!-- Extra practice the learner added after the day's session. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_bonus_practice_areas">Ek alıştırma: %1$s</string>
     <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
     <string name="session_block_practice_topic">Alıştırma: %1$s</string>
-    <!-- Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_bonus_practice_topic">Ek alıştırma: %1$s</string>
     <string name="session_block_rematch_lesson">Tekrar denemeden önce kısa bir ders</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d soru</item>

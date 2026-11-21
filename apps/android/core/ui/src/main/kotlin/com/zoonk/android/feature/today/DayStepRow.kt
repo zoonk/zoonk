@@ -24,6 +24,7 @@ import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.format.currentLocale
@@ -56,7 +57,6 @@ fun DayStepRow(
     busy: Boolean = false,
     openFailed: Boolean = false,
     testOut: (@Composable () -> Unit)? = null,
-    tag: (@Composable () -> Unit)? = null,
     divider: Boolean = true,
 ) {
     val finished = step.isFinished
@@ -83,26 +83,28 @@ fun DayStepRow(
                 {
                     if (openFailed) StepOpenFailed()
                     if (!finished) {
-                        tag?.invoke()
                         StepLines(lessonStatus, writingStalled, step)
                         testOut?.invoke()
                     }
                 }
             },
         meta =
-            if (finished) {
+            if (finished && !step.extra) {
                 null
             } else {
                 {
-                    if (mission) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_checklist),
-                            contentDescription = stringResource(R.string.today_step_counts_toward_mission),
-                            modifier = Modifier.size(14.dp),
-                            tint = MaterialTheme.zoonk.brain,
-                        )
+                    if (step.extra) Eyebrow(stringResource(R.string.today_step_extra))
+                    if (!finished) {
+                        if (mission) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_checklist),
+                                contentDescription = stringResource(R.string.today_step_counts_toward_mission),
+                                modifier = Modifier.size(14.dp),
+                                tint = MaterialTheme.zoonk.brain,
+                            )
+                        }
+                        DayMinutes(step.estimatedMinutes)
                     }
-                    DayMinutes(step.estimatedMinutes)
                 }
             },
     ) {

@@ -75,6 +75,7 @@ export async function loadSessionTime({
           planSettings: plan?.settings,
         })
       : 0,
+    endedAt: session.endedAt,
     planned: getVisibleSessionTotal({
       blocks: stored.blocks,
       planned: stored.plannedMinutes,
@@ -153,7 +154,7 @@ export async function loadCompletionQueue({
         freshStart: session.freshStart,
         items: plan?.items ?? [],
       }),
-      complete: sessionCompleted,
+      complete: session.endedAt !== null,
       lessonsComing,
       reserved,
       sessionBar,

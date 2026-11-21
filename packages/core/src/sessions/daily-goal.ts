@@ -13,7 +13,8 @@ export type PlanDay = { goalMinutes: number; kind: WeekDayKind };
 
 export type WeekDay = PlanDay & {
   date: Date;
-  /** Reached the planned time or finished the session; any study completes a day with no planned time. */
+  completed: number;
+  total: number;
   hitGoal: boolean;
   isToday: boolean;
   minutes: number;
@@ -57,11 +58,13 @@ function includesDate(dates: readonly Date[], date: Date): boolean {
 /** Monday through Sunday, with the same completion rule for planned and unplanned study. */
 export function getWeekDays({
   days,
+  counts = [],
   finishedDates = [],
   getPlanDay,
   today,
   weekStart = getStartOfWeek(today),
 }: {
+  counts?: readonly { date: Date; completed: number; total: number }[];
   days: readonly { date: Date; seconds: number }[];
   /** Days whose study session finished, as UTC-midnight labels. */
   finishedDates?: readonly Date[];
@@ -75,19 +78,24 @@ export function getWeekDays({
     const date = new Date(start + index * MS_PER_DAY);
     const seconds = days.find((day) => day.date.getTime() === date.getTime())?.seconds ?? 0;
     const minutes = toStudiedMinutes(seconds);
+
+    const { completed = 0, total = 0 } =
+      counts.find((day) => day.date.getTime() === date.getTime()) ?? {};
+
     const { goalMinutes, kind } = getPlanDay(date);
     const finished = includesDate(finishedDates, date);
     const studied = finished || seconds > 0;
 
     return {
+      completed,
       date,
       goalMinutes,
-      hitGoal:
-        studied && (goalMinutes === 0 || finished || seconds >= goalMinutes * SECONDS_PER_MINUTE),
+      hitGoal: finished || (total === 0 && studied),
       isToday: date.getTime() === today.getTime(),
       kind,
       minutes,
       studied,
+      total,
     };
   });
 }

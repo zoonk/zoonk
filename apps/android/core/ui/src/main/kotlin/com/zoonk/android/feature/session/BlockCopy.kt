@@ -104,21 +104,15 @@ fun blockTitle(step: DayStep): String {
         }
 
         step.topics.isNotEmpty() -> {
-            stringResource(
-                if (step.extra) R.string.session_block_bonus_practice_topic else R.string.session_block_practice_topic,
-                step.topics.first(),
-            )
+            stringResource(R.string.session_block_practice_topic, step.topics.first())
         }
 
         step.areas.isNotEmpty() -> {
-            stringResource(
-                if (step.extra) R.string.session_block_bonus_practice_areas else R.string.session_block_practice_areas,
-                formatList(step.areas, currentLocale()),
-            )
+            stringResource(R.string.session_block_practice_areas, formatList(step.areas, currentLocale()))
         }
 
         else -> {
-            stringResource(if (step.extra) R.string.session_block_bonus_practice else R.string.session_block_mixed_practice)
+            stringResource(R.string.session_block_mixed_practice)
         }
     }
 }
