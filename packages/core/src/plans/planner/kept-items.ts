@@ -80,6 +80,7 @@ export function splitExistingItems({
   const thisWeek = listThisWeekItems({ input, keepsRest }).filter(
     (item) => !input.extras?.activeItemIds.has(item.id),
   );
+
   const queued = new Set(queue.map((unit) => unit.key));
 
   const landed = thisWeek.filter(

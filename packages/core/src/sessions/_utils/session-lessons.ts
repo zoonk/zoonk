@@ -3,10 +3,6 @@ import { toBlockPayload } from "../block-payload";
 import { isFullReviewDay } from "../full-review";
 import { type PlannedBlock, type PlannedLesson, type SessionBuildInput } from "../session-builder";
 
-export function canAddSessionLessons({ reviewDay }: { reviewDay: boolean }): boolean {
-  return !reviewDay;
-}
-
 export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBlock {
   return {
     canDo: lesson.canDo,
@@ -55,5 +51,17 @@ export function isSessionReviewDay(input: SessionBuildInput): boolean {
 }
 
 export function getNewLessons(input: SessionBuildInput): readonly PlannedLesson[] {
-  return canAddSessionLessons({ reviewDay: isSessionReviewDay(input) }) ? input.lessons : [];
+  return canAddSessionLessons(input) ? input.lessons : [];
+}
+
+export function canAddSessionLessons(input: SessionBuildInput): boolean {
+  return (
+    !isSessionReviewDay(input) || (input.allowsReviewLessons === true && !isFullReviewDay(input))
+  );
+}
+
+export function getReviewLessonMinutes(input: SessionBuildInput): number {
+  return input.allowsReviewLessons && canAddSessionLessons(input)
+    ? getLessonMinutes(input.lessons) + (input.writingMinutes ?? 0)
+    : 0;
 }

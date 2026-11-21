@@ -13,8 +13,8 @@ import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import { computePlan } from "./_utils/replan";
 import { NOTICE_SOURCE } from "./plan-change-contract";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
+import { followNoticeGraph } from "./planner/follow-notice-graph";
 import { joinOptionSkills } from "./planner/option-skills";
-import { followNoticeGraph } from "./planner/plan-operations";
 import { type PlanGraph } from "./planner/plan-state";
 
 async function loadPlanAdditions(context: PlanContext): Promise<Set<string>> {
@@ -51,7 +51,7 @@ function describeDropped({
   return [
     ...new Set(
       joinOptionSkills(current).skills.flatMap((skill) =>
-        dropped.has(skill.skillId)
+        !skill.extra && dropped.has(skill.skillId)
           ? [skill.area && !remaining.has(skill.area) ? skill.area : skill.name]
           : [],
       ),

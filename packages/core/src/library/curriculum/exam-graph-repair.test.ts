@@ -1,7 +1,7 @@
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   ENGLISH,
@@ -36,12 +36,25 @@ async function writtenGraph(country?: string) {
     await prisma.examBlueprint.update({ data: { country }, where: { id: blueprint.id } });
   }
 
-  const [reading, math] = await Promise.all([
+  const [reading, math, extra] = await Promise.all([
     skillFixture({ language: "pt", name: `Ler textos ${uniqueWord()}` }),
     skillFixture({ language: "pt", name: `Resolver problemas ${uniqueWord()}` }),
+    skillFixture({ language: "pt", name: `Administrar o tempo de prova ${uniqueWord()}` }),
   ]);
 
+  const strategy = {
+    area: "Estratégia de prova",
+    courseIds: [course.id],
+    lessons: 3,
+    name: extra.name,
+    phase: 0,
+    skillId: extra.id,
+    topics: [],
+    weight: null,
+  };
+
   const graph = {
+    extraSkills: [strategy],
     phases: [{ milestone: "Ler e calcular", name: "Base" }],
     skills: [
       { area: LANGUAGES, skill: reading, weight: 4 },
@@ -69,7 +82,7 @@ async function writtenGraph(country?: string) {
     },
   });
 
-  return { blueprint, graph, reading };
+  return { blueprint, graph, reading, strategy };
 }
 
 function mockMissingOptions({ readingId, word }: { readingId: string; word: string }) {
@@ -123,6 +136,7 @@ describe(addMissingExamGraphSkills, () => {
     expect(repaired.skills[0]).toStrictEqual(stored);
     expect(repaired.skills[3]).toStrictEqual(storedMath);
     expect(repaired.phases).toStrictEqual(graph.phases);
+    expect(repaired.extraSkills).toStrictEqual(graph.extraSkills);
 
     const added = repaired.skills.slice(1, 3);
 
@@ -209,13 +223,9 @@ describe(addMissingExamGraphSkills, () => {
 });
 
 describe(pruneSharedExamGraph, () => {
-  it("prunes a shared graph once and keeps an independently stored extra", async () => {
-    const { blueprint, graph } = await writtenGraph();
-
-    const [outside, extra] = await Promise.all([
-      skillFixture({ language: "pt", name: "Lógica do concurso anterior" }),
-      skillFixture({ language: "pt", name: "Administrar o tempo de prova" }),
-    ]);
+  it("keeps the extra when repairing the graph and prunes its out-of-notice prerequisite", async () => {
+    const { blueprint, graph, strategy } = await writtenGraph();
+    const outside = await skillFixture({ language: "pt", name: "Lógica do concurso anterior" });
 
     const [first] = graph.skills;
 
@@ -223,28 +233,21 @@ describe(pruneSharedExamGraph, () => {
       throw new Error("Expected a notice skill");
     }
 
-    const strategy = {
-      ...first,
-      area: "Estratégia de prova",
-      name: extra.name,
-      skillId: extra.id,
-      topics: [],
-      weight: null,
-    };
-
-    await prisma.examSkillGraph.update({
-      data: {
-        graph: {
-          ...graph,
-          extraSkills: [strategy],
-          skills: [
-            ...graph.skills,
-            { ...first, area: "Lógica", name: outside.name, skillId: outside.id, topics: [] },
-          ],
+    await Promise.all([
+      skillPrerequisiteFixture({ prerequisiteId: outside.id, skillId: strategy.skillId }),
+      prisma.examSkillGraph.update({
+        data: {
+          graph: {
+            ...graph,
+            skills: [
+              ...graph.skills,
+              { ...first, area: "Lógica", name: outside.name, skillId: outside.id, topics: [] },
+            ],
+          },
         },
-      },
-      where: { examBlueprintId: blueprint.id },
-    });
+        where: { examBlueprintId: blueprint.id },
+      }),
+    ]);
 
     await expect(pruneSharedExamGraph(blueprint.id)).resolves.toBe(true);
     await expect(pruneSharedExamGraph(blueprint.id)).resolves.toBe(false);
@@ -253,6 +256,6 @@ describe(pruneSharedExamGraph, () => {
       where: { examBlueprintId: blueprint.id },
     });
 
-    expect(parsePlanGraph(saved.graph)).toStrictEqual({ ...graph, extraSkills: [strategy] });
+    expect(parsePlanGraph(saved.graph)).toStrictEqual(graph);
   });
 });

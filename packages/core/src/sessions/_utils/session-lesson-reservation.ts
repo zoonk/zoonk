@@ -7,9 +7,8 @@ import { getSessionDayMinutes } from "../fresh-start";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { getUnwrittenMinutesOn, pickDayLessons } from "./day-lessons";
 import { isMockOnlyDay } from "./day-mock";
-import { isSavedReviewDay } from "./day-review";
+import { findPlannedReview, isSavedFullReviewDay, listReviewExtraItems } from "./day-review";
 import { type ExamPrepAccess } from "./exam-access";
-import { canAddSessionLessons } from "./session-lessons";
 import { type SessionPlanItem } from "./session-plan-item";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -35,14 +34,15 @@ export function getSessionLessonCandidates({
   blocks: readonly ReservationBlock[];
   prerequisites?: ReadonlyMap<string, readonly string[]>;
 }) {
+  const reviewDay = findPlannedReview({ items: plan.items, today: localDate }) !== null;
+
   if (
-    !canAddSessionLessons({
-      reviewDay: isSavedReviewDay({
-        blocks,
-        includesMockExams: access.includesMockExams,
-        items: plan.items,
-        today: localDate,
-      }),
+    (reviewDay && goal.kind !== "exam") ||
+    isSavedFullReviewDay({
+      blocks,
+      includesMockExams: access.includesMockExams,
+      items: plan.items,
+      today: localDate,
     }) ||
     isMockOnlyDay({
       goal,
@@ -55,11 +55,14 @@ export function getSessionLessonCandidates({
     return [];
   }
 
+  const graph = parsePlanGraph(plan.graph);
+  const items = reviewDay ? listReviewExtraItems({ ...plan, graph, today: localDate }) : plan.items;
+
   const { fillItems, reservedItems } = pickDayLessons({
     awaitingOutlines: false,
     goal,
     localDate,
-    plan: { ...plan, graph: parsePlanGraph(plan.graph), prerequisites },
+    plan: { graph, items, prerequisites },
   });
 
   const held = new Set(blocks.flatMap((block) => block.lessonId ?? []));

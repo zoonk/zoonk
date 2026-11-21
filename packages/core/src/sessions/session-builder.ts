@@ -15,6 +15,7 @@ import { type PracticeTopic, buildPracticeBlocks } from "./_utils/practice-block
 import {
   getLessonMinutes,
   getNewLessons,
+  getReviewLessonMinutes,
   isSessionReviewDay,
   takeLessons,
   toLessonBlock,
@@ -61,6 +62,8 @@ export type PlannedCheckpoint = BlockCheckpoint & {
 export type PracticeItem = { itemId: string; setId?: string; skillId: string };
 
 export type SessionBuildInput = {
+  /** On a shortened review day the lesson inputs contain only the optional study allocated to that day. */
+  allowsReviewLessons?: boolean;
   /** Today's due capsules, most urgent first, with their questions picked. */
   capsules: BlockCapsule[];
   /** Earlier phases first; a day may carry more than one challenge. */
@@ -84,7 +87,7 @@ export type SessionBuildInput = {
   practiceShare: number;
   /** Replaces an unavailable mock with practice across every goal skill; null on other days. */
   fullReviewSkillIds?: readonly string[] | null;
-  /** A scheduled review day permits no new lessons. */
+  /** The scheduled practice that uses the rest of a review day. */
   reviewPlanItemId: string | null;
   /** A selected review is identified before Open assigns its persisted row ID. */
   reviewPlanItemKey?: string | null;
@@ -191,7 +194,9 @@ function getPracticeMinutes({
     ? (opened.minutes * (budget + (input.usedMinutes ?? 0))) / opened.dayMinutes
     : remaining * share;
 
-  return Math.min(target, practice.length * PRACTICE_MINUTES_PER_QUESTION);
+  const study = getReviewLessonMinutes(input);
+  const room = study > 0 ? Math.max(0, remaining - study) : target;
+  return Math.min(target, practice.length * PRACTICE_MINUTES_PER_QUESTION, room);
 }
 
 function fundSessionChallenges(input: SessionBuildInput, budget: number) {

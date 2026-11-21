@@ -23,8 +23,8 @@ import { trackPlanCreated } from "./_utils/track-plan-created";
 import { checkNoticeLanding, getNoticeWaitEnd } from "./notice-wait";
 import { withPlanRetry } from "./plan-conflict";
 import { listPlanSetupTasks } from "./plan-setup";
+import { followNoticeGraph } from "./planner/follow-notice-graph";
 import { toIsoDate } from "./planner/plan-calendar";
-import { followNoticeGraph } from "./planner/plan-operations";
 import { type PlanGraph, parsePlanSettings, planGraphSchema } from "./planner/plan-state";
 import { getTargetDateBounds } from "./target-date-range";
 
