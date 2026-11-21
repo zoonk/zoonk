@@ -1,20 +1,15 @@
 "use client";
 
 import { type PlotVisual } from "@zoonk/core/library/steps/contract";
-import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { SURFACE_CLASS } from "../_components/surface";
 import { useFormatNumber } from "../_utils/use-format-number";
-import { clampLabelCenter } from "./_utils/category-labels";
-import { HEIGHT, LABEL_GAP, LABEL_LINE_HEIGHT, PADDING } from "./_utils/chart-layout";
+import { HEIGHT, LABEL_LINE_HEIGHT } from "./_utils/chart-layout";
 import { type PlotLayout, drawsDot, getPlotLayout } from "./_utils/plot-layout";
 import { getSeriesMark } from "./_utils/series-marks";
-import { LABEL_FONT_SIZE, useTextScale } from "./_utils/use-text-scale";
+import { useChartSize } from "./_utils/use-text-scale";
+import { ChartDrawing, ChartFigure, ScreenReaderData, ValueGrid } from "./chart-frame";
 import { SeriesLegend, SeriesLine, SeriesPoint } from "./series-marks";
 
-const FALLBACK_WIDTH = 318;
-const TICK_OFFSET = 16;
 const REFERENCE_DASH = "4 4";
 const COMPACT_FROM = 10_000;
 
@@ -26,35 +21,14 @@ function isLarge(values: number[]): boolean {
   return Math.max(...values.map((value) => Math.abs(value))) >= COMPACT_FROM;
 }
 
-function Grid({ layout }: { layout: PlotLayout }) {
-  return layout.yTicks.map((tick) => {
-    const y = layout.y.toPixel(tick.value);
-
-    return (
-      <g key={tick.value}>
-        <line className="stroke-viz-grid" x1={layout.left} x2={layout.plotRight} y1={y} y2={y} />
-        <text
-          className="fill-muted-foreground"
-          dominantBaseline="middle"
-          textAnchor="end"
-          x={layout.left - LABEL_GAP}
-          y={y}
-        >
-          {tick.label}
-        </text>
-      </g>
-    );
-  });
-}
-
-function XTicks({ layout, width }: { layout: PlotLayout; width: number }) {
+function XTicks({ layout }: { layout: PlotLayout }) {
   return layout.xTicks.map((tick) => (
     <text
       className="fill-muted-foreground"
       key={tick.value}
       textAnchor="middle"
-      x={clampLabelCenter({ lines: [tick.label], width, x: layout.x.toPixel(tick.value) })}
-      y={HEIGHT - PADDING.bottom + TICK_OFFSET}
+      x={tick.center}
+      y={layout.xTickY}
     >
       {tick.label}
     </text>
@@ -76,7 +50,7 @@ function References({ layout }: { layout: PlotLayout }) {
         {reference.lines.map((line, index) => (
           <tspan
             key={`${line}-${String(index)}`}
-            x={layout.plotRight + LABEL_GAP}
+            x={layout.referenceLabelX}
             y={reference.top + LABEL_LINE_HEIGHT * index + LABEL_LINE_HEIGHT / 2}
           >
             {line}
@@ -164,7 +138,7 @@ function PlotData({
   const yUnit = visual.yUnit ?? undefined;
 
   return (
-    <div className="sr-only">
+    <ScreenReaderData>
       <p>
         {t("Horizontal axis: {label}, from {min} to {max}", {
           label: visual.xLabel,
@@ -218,16 +192,13 @@ function PlotData({
           ))}
         </ul>
       )}
-    </div>
+    </ScreenReaderData>
   );
 }
 
 export function PlotVisualView({ className, visual }: { className?: string; visual: PlotVisual }) {
-  const t = useExtracted();
   const format = useFormatNumber();
-  const { ref, width: boxWidth } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
-  const scale = useTextScale(ref);
-  const width = boxWidth / scale;
+  const { boxWidth, ref, scale, width } = useChartSize();
 
   const points = visual.series.flatMap((series) => series.points);
   const compactX = isLarge(points.map((point) => point.x));
@@ -245,14 +216,12 @@ export function PlotVisualView({ className, visual }: { className?: string; visu
   });
 
   return (
-    <figure
-      className={cn(SURFACE_CLASS, "flex w-full flex-col gap-3 p-4", className)}
-      data-slot="plot-visual"
+    <ChartFigure
+      className={className}
+      slot="plot-visual"
+      source={visual.source}
+      title={visual.title}
     >
-      <figcaption className="text-foreground text-sm font-semibold text-balance">
-        {visual.title}
-      </figcaption>
-
       <PlotData groupX={compactX} layout={layout} visual={visual} />
 
       <SeriesLegend
@@ -265,32 +234,23 @@ export function PlotVisualView({ className, visual }: { className?: string; visu
       <div aria-hidden="true" className="flex flex-col gap-1">
         <p className="text-muted-foreground text-xs">{axisTitle(visual.yLabel, visual.yUnit)}</p>
 
-        <div className="w-full text-xs" ref={ref}>
-          <svg
-            className="block overflow-visible tabular-nums select-none"
-            fontSize={LABEL_FONT_SIZE}
-            height={HEIGHT * scale}
-            viewBox={`0 0 ${width} ${HEIGHT}`}
-            width={boxWidth}
-          >
-            <Grid layout={layout} />
-            <References layout={layout} />
-            <Series layout={layout} visual={visual} />
-            <PointLabels layout={layout} />
-            <XTicks layout={layout} width={width} />
-          </svg>
-        </div>
+        <ChartDrawing boxWidth={boxWidth} height={HEIGHT} ref={ref} scale={scale} width={width}>
+          <ValueGrid
+            left={layout.left}
+            right={layout.plotRight}
+            ticks={layout.yTicks}
+            y={layout.y}
+          />
+          <References layout={layout} />
+          <Series layout={layout} visual={visual} />
+          <PointLabels layout={layout} />
+          <XTicks layout={layout} />
+        </ChartDrawing>
 
         <p className="text-muted-foreground text-xs">{axisTitle(visual.xLabel, visual.xUnit)}</p>
       </div>
 
       <PointKey layout={layout} />
-
-      {visual.source && (
-        <p className="text-muted-foreground text-xs">
-          {t("Source: {source}", { source: visual.source })}
-        </p>
-      )}
-    </figure>
+    </ChartFigure>
   );
 }

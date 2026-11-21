@@ -22,7 +22,6 @@ function drawnTexts(chart: Locator) {
   }));
 }
 
-/** Every pair of drawn words that cover each other, and any word past the card's edge. */
 function crowdedTexts(chart: Locator): string[] {
   const card = chart.element().getBoundingClientRect();
   const texts = drawnTexts(chart);
@@ -59,6 +58,11 @@ describe("lesson plots", () => {
       expect(labels).toStrictEqual(expect.arrayContaining(["A", "B", "C", "D", "E"]));
       await expect.poll(() => crowdedTexts(chart)).toStrictEqual([]);
 
+      const texts = drawnTexts(chart);
+      const lowestY = texts.find(({ label }) => label === "800");
+      const firstX = texts.find(({ label }) => label === "0");
+      expect((firstX?.box.left ?? 0) - (lowestY?.box.right ?? 0)).toBeGreaterThanOrEqual(6);
+
       await expect
         .element(chart.getByText("Horizontal axis: Detector position, from 0 mm to 6 mm"))
         .toBeInTheDocument();
@@ -80,11 +84,16 @@ describe("lesson plots", () => {
       await expect.element(chart).toBeVisible();
       await expect.poll(() => crowdedTexts(chart)).toStrictEqual([]);
 
-      const line = chart.element().querySelector("polyline")?.getBoundingClientRect();
+      const points = [...chart.element().querySelectorAll("svg path")];
+
+      const lastPointRight = Math.max(
+        ...points.map((point) => point.getBoundingClientRect().right),
+      );
+
       const names = drawnTexts(chart).filter(({ label }) => label?.endsWith("limit"));
 
       expect(names).toHaveLength(2);
-      expect(names.every(({ box }) => box.left > (line?.right ?? 0))).toBe(true);
+      expect(names.every(({ box }) => box.left - lastPointRight >= 6)).toBe(true);
 
       const references = chart.getByRole("list", { name: "Reference lines" });
       await expect.element(references.getByText("Upper limit: 503 ml")).toBeInTheDocument();
@@ -104,6 +113,12 @@ describe("lesson plots", () => {
       const chart = page.getByRole("figure", { name: FILL_WEIGHT_PLOT.title });
       await expect.element(chart).toBeVisible();
       await expect.poll(() => crowdedTexts(chart)).toStrictEqual([]);
+
+      const referenceLines = [...chart.element().querySelectorAll("svg tspan")].map(
+        (line) => line.textContent,
+      );
+
+      expect(referenceLines).toStrictEqual(["Upper", "limit", "Target", "Lower", "limit"]);
     });
   });
 

@@ -1,8 +1,17 @@
 import { type PlotVisual } from "@zoonk/core/library/steps/contract";
 import { type LinearScale, createLinearScale, getPlotAxes } from "@zoonk/utils/plot-scale";
-import { getLabelWidth, wrapLabel } from "./category-labels";
-import { HEIGHT, LABEL_GAP, LABEL_LINE_HEIGHT, PADDING, thinTicks } from "./chart-layout";
+import { getLabelWidth, getWidestWord, wrapLabel } from "./category-labels";
 import {
+  AXIS_LABEL_OFFSET,
+  HEIGHT,
+  LABEL_GAP,
+  LABEL_LINE_HEIGHT,
+  PADDING,
+  type PlacedTick,
+  thinTicks,
+} from "./chart-layout";
+import {
+  DOT_RADIUS,
   type KeyEntry,
   type Pixel,
   type PointLabel,
@@ -12,6 +21,7 @@ import {
 
 const MAX_GUTTER_SHARE = 0.3;
 const REFERENCE_SPACING = 2;
+const REFERENCE_INSET = DOT_RADIUS + LABEL_GAP;
 
 type Tick = { label: string; value: number };
 
@@ -25,10 +35,12 @@ export type PlotLayout = {
   left: number;
   plotBottom: number;
   plotRight: number;
+  referenceLabelX: number;
   references: ReferenceMark[];
   series: Pixel[][];
   x: LinearScale;
-  xTicks: Tick[];
+  xTickY: number;
+  xTicks: PlacedTick[];
   y: LinearScale;
   yTicks: Tick[];
 };
@@ -37,10 +49,6 @@ function blockHeight(mark: ReferenceMark): number {
   return mark.lines.length * LABEL_LINE_HEIGHT;
 }
 
-/**
- * Stacks names top to bottom so close lines don't overlap, then lifts them back above the x axis's
- * numbers.
- */
 function stackReferences({
   bottom,
   marks,
@@ -62,7 +70,6 @@ function stackReferences({
   return overflow > 0 ? stacked.map((mark) => ({ ...mark, top: mark.top - overflow })) : stacked;
 }
 
-/** Reference names sit past the plot's right edge, so they never cover the data. */
 function getReferences({
   references,
   room,
@@ -83,18 +90,23 @@ function getReferences({
   return stackReferences({ bottom: y.range[0], marks });
 }
 
+/**
+ * Reference names sit past the plot's right edge, clear of a point drawn on that edge, so they never
+ * cover the data. The gutter takes up to a share of the width, but never breaks a word.
+ */
 function getGutter({ references, width }: { references: PlotVisual["references"]; width: number }) {
   if (references.length === 0) {
     return { room: 0, width: PADDING.right };
   }
 
-  const widest = Math.max(...references.map(({ label }) => getLabelWidth(label)));
-  const room = Math.min(widest, width * MAX_GUTTER_SHARE);
+  const labels = references.map(({ label }) => label);
+  const widest = Math.max(...labels.map((label) => getLabelWidth(label)));
+  const room = Math.max(Math.min(widest, width * MAX_GUTTER_SHARE), getWidestWord(labels));
 
-  return { room, width: room + LABEL_GAP };
+  return { room, width: room + REFERENCE_INSET };
 }
 
-/** A dotted series draws every point; a bare line draws its shape once, at its end, beside others. */
+/** A bare line beside other series marks its end with its shape, so shape tells series apart too. */
 export function drawsDot({
   index,
   mark,
@@ -203,10 +215,12 @@ export function getPlotLayout({
     left,
     plotBottom,
     plotRight,
+    referenceLabelX: plotRight + REFERENCE_INSET,
     references,
     series,
     x,
-    xTicks: thinTicks({ ticks: xTicks, width, x }),
+    xTickY: plotBottom + AXIS_LABEL_OFFSET,
+    xTicks: thinTicks({ start: left, ticks: xTicks, width, x }),
     y,
     yTicks,
   };

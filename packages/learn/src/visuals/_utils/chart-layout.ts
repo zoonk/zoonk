@@ -19,6 +19,7 @@ export const HEIGHT = 208;
 export const PADDING = { bottom: 26, left: 48, right: 8, top: 22 } as const;
 export const LABEL_GAP = 6;
 export const LABEL_LINE_HEIGHT = 14;
+export const AXIS_LABEL_OFFSET = 16;
 export const BAR_THICKNESS = 14;
 export const VALUE_GAP = 4;
 export const GROUP_SHARE = 0.68;
@@ -31,6 +32,8 @@ const ROWS_TOP = 2;
 const MAX_VALUE_SHARE = 1 / 3;
 
 type Tick = { label: string; value: number };
+
+export type PlacedTick = Tick & { center: number };
 
 type ValueAxis = { domain: NumericDomain; ticks: Tick[]; values: number[] };
 
@@ -57,7 +60,7 @@ export type RowLayout = {
   showValues: boolean;
   tickY: number;
   x: LinearScale;
-  xTicks: Tick[];
+  xTicks: PlacedTick[];
 };
 
 export function fitsLabel(label: string, room: number): boolean {
@@ -146,22 +149,28 @@ function placeRows({
 
 /** Keeps every Nth tick label, the fewest skipped that leaves none touching where they're drawn. */
 export function thinTicks({
+  start,
   ticks,
   width,
   x,
 }: {
+  start?: number;
   ticks: Tick[];
   width: number;
   x: LinearScale;
-}): Tick[] {
-  const bounds = ticks.map((tick) => {
-    const center = clampLabelCenter({ lines: [tick.label], width, x: x.toPixel(tick.value) });
-    const half = getLabelWidth(tick.label) / 2;
+}): PlacedTick[] {
+  const placed = ticks.map((tick) => ({
+    ...tick,
+    center: clampLabelCenter({ lines: [tick.label], start, width, x: x.toPixel(tick.value) }),
+  }));
+
+  const bounds = placed.map(({ center, label }) => {
+    const half = getLabelWidth(label) / 2;
     return { left: center - half, right: center + half };
   });
 
   const indices = fittingTickIndices(bounds, 0);
-  return ticks.filter((_, index) => indices.includes(index));
+  return placed.filter((_, index) => indices.includes(index));
 }
 
 function getRowLayout({

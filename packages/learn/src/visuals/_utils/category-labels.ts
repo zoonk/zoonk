@@ -29,6 +29,13 @@ function breakWord({ room, word }: { room: number; word: string }): string[] {
   return pieces;
 }
 
+export function getWidestWord(labels: readonly string[]): number {
+  return Math.max(
+    0,
+    ...labels.flatMap((label) => splitWords(label).map((word) => getLabelWidth(word.trim()))),
+  );
+}
+
 /** Wraps at spaces and hyphens; only a word wider than the whole room breaks between letters. */
 export function wrapLabel({ label, room }: { label: string; room: number }): string[] {
   const lines = [""];
@@ -59,12 +66,7 @@ export function getCategoryLabels({
   band: number;
   categories: readonly string[];
 }): CategoryLabelLayout {
-  const widestWord = Math.max(
-    ...categories.flatMap((category) =>
-      splitWords(category).map((word) => getLabelWidth(word.trim())),
-    ),
-  );
-
+  const widestWord = getWidestWord(categories);
   const step = Math.min(Math.max(Math.ceil(widestWord / band), 1), categories.length);
 
   return { lines: categories.map((label) => wrapLabel({ label, room: band * step })), step };
@@ -76,13 +78,15 @@ export function fitsUnderBars({ lines, step }: CategoryLabelLayout): boolean {
 
 export function clampLabelCenter({
   lines,
+  start = 0,
   width,
   x,
 }: {
   lines: string[];
+  start?: number;
   width: number;
   x: number;
 }): number {
   const half = Math.max(...lines.map((line) => getLabelWidth(line))) / 2;
-  return Math.min(Math.max(x, half), width - half);
+  return Math.min(Math.max(x, start + half), width - half);
 }

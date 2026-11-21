@@ -3,10 +3,10 @@ import { describe, expect, it } from "vitest";
 import { getLabelWidth } from "./category-labels";
 import { LABEL_GAP, PADDING } from "./chart-layout";
 import { type PlotLayout, drawsDot, getPlotLayout } from "./plot-layout";
-import { type PointLabel } from "./point-labels";
+import { DOT_RADIUS, type PointLabel } from "./point-labels";
 
-/** How wide the plot draws inside its card on a 390 px phone. */
 const PHONE = 324;
+const LARGEST_TEXT_ON_SMALL_PHONE = 128;
 
 const scan: PlotVisual = {
   kind: "plot",
@@ -206,7 +206,7 @@ describe(getPlotLayout, () => {
   });
 
   it("keeps wrapped names clear of the x axis's numbers on a narrow chart", () => {
-    const layout = layoutFor(control, 127);
+    const layout = layoutFor(control, LARGEST_TEXT_ON_SMALL_PHONE);
     const last = layout.references.at(-1);
 
     expect(last?.lines.length).toBeGreaterThan(1);
@@ -214,6 +214,41 @@ describe(getPlotLayout, () => {
     expect((last?.top ?? 0) + (last?.lines.length ?? 0) * 14).toBeLessThanOrEqual(
       layout.plotBottom,
     );
+  });
+
+  it("never breaks a reference name inside a word, even at the largest text size", () => {
+    const layout = layoutFor(control, LARGEST_TEXT_ON_SMALL_PHONE);
+
+    expect(layout.references.map((reference) => reference.lines)).toStrictEqual([
+      ["Upper", "limit"],
+      ["Target"],
+      ["Lower", "limit"],
+    ]);
+  });
+
+  it.each([PHONE, LARGEST_TEXT_ON_SMALL_PHONE])(
+    "keeps a point on the plot's right edge clear of the reference names (%d px)",
+    (width) => {
+      const layout = layoutFor(control, width);
+      const last = layout.series[0]?.at(-1);
+
+      expect(last?.x).toBe(layout.plotRight);
+      expect(layout.referenceLabelX - layout.plotRight).toBeGreaterThan(DOT_RADIUS + LABEL_GAP / 2);
+    },
+  );
+
+  it("keeps the x axis's first number right of the y axis's numbers, so the corner never crowds", () => {
+    const layout = layoutFor(scan);
+    const [first] = layout.xTicks;
+    const lowest = layout.yTicks[0];
+
+    expect(first?.value).toBe(layout.x.domain[0]);
+    expect(layout.y.toPixel(lowest?.value ?? 0)).toBe(layout.plotBottom);
+
+    const firstLeft = (first?.center ?? 0) - (getLabelWidth(first?.label ?? "") - LABEL_GAP) / 2;
+    const lowestRight = layout.left - LABEL_GAP;
+
+    expect(firstLeft - lowestRight).toBeGreaterThanOrEqual(LABEL_GAP);
   });
 
   it("fits the y axis to the data and references, with no forced zero", () => {

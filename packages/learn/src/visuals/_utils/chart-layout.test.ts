@@ -1,7 +1,7 @@
 import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import { assert, integer, property, stringMatching, uniqueArray } from "fast-check";
 import { describe, expect, it } from "vitest";
-import { clampLabelCenter, getLabelWidth } from "./category-labels";
+import { getLabelWidth } from "./category-labels";
 import { type ColumnLayout, PADDING, type RowLayout, fitsLabel, getLayout } from "./chart-layout";
 
 const visual: ChartVisual = {
@@ -239,14 +239,8 @@ describe(getLayout, () => {
         }),
       );
 
-      const bounds = layout.xTicks.map((tick) => {
-        const center = clampLabelCenter({
-          lines: [tick.label],
-          width,
-          x: layout.x.toPixel(tick.value),
-        });
-
-        const half = getLabelWidth(tick.label) / 2;
+      const bounds = layout.xTicks.map(({ center, label }) => {
+        const half = getLabelWidth(label) / 2;
         return { left: center - half, right: center + half };
       });
 

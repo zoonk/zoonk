@@ -1,7 +1,7 @@
 import { getLabelWidth } from "./category-labels";
 import { LABEL_GAP } from "./chart-layout";
 
-const DOT_RADIUS = 4.5;
+export const DOT_RADIUS = 4.5;
 const LABEL_OFFSET = DOT_RADIUS + 3;
 const LABEL_HEIGHT = 14;
 const LABEL_CLEARANCE = 1;
@@ -50,8 +50,7 @@ function dotBox({ x, y }: Pixel): Box {
   };
 }
 
-/** Clips the segment to the box's x range, then checks the clipped part's y span against it. */
-export function crosses([from, to]: Segment, box: Box): boolean {
+function crosses([from, to]: Segment, box: Box): boolean {
   const low = Math.max(Math.min(from.x, to.x), box.left);
   const high = Math.min(Math.max(from.x, to.x), box.right);
 
@@ -77,7 +76,6 @@ function boxOf(label: PointLabel): Box {
   };
 }
 
-/** Beside the dot first, then above and below it, so a label reads as its dot's name. */
 function candidates({ dot, text }: Named): Candidate[] {
   const above = dot.y - LABEL_OFFSET - LABEL_HEIGHT / 2;
   const below = dot.y + LABEL_OFFSET + LABEL_HEIGHT / 2;
@@ -96,10 +94,6 @@ function candidates({ dot, text }: Named): Candidate[] {
   return sides.map((label) => ({ box: boxOf(label), label }));
 }
 
-/**
- * Takes the first side that stays inside the plot and covers no dot or earlier label, preferring
- * one that crosses the fewest lines.
- */
 function placeLabels({
   named,
   scene,
@@ -137,9 +131,8 @@ function placeLabels({
 }
 
 /**
- * Every labeled point keeps its label. Names go beside their dots where there's room; when one
- * can't fit without covering another dot or label, every name moves to a numbered key and the dots
- * carry the numbers. Names as short as a number gain nothing from a key, so they stay put.
+ * Every labeled point keeps its name. When one can't sit beside its dot without covering another,
+ * every name moves to a numbered key, except names as short as a number, which gain nothing from it.
  */
 export function getPointLabels({ named, scene }: { named: Named[]; scene: Scene }): {
   key: KeyEntry[];
