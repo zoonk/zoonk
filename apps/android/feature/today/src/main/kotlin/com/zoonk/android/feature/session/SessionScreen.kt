@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -81,6 +80,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
@@ -492,7 +492,7 @@ internal fun NextStop(
                                             reviewStarts.note(step, goal)
                                             viewModel.start(day, step, goal)
                                         },
-                                        modifier = main.focusRequester(startFocus),
+                                        modifier = if (written) main.focusMoveTarget(startFocus) else main,
                                         enabled = !busy,
                                     ) {
                                         Text(
