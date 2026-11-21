@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
 import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -92,6 +93,20 @@ describe(listExampleLineLessons, () => {
     ).resolves.toStrictEqual([]);
 
     await expect(pickExampleLineFactsFor({ userId: learner.id })).resolves.toBeNull();
+  });
+
+  it("lets a failed relevance check fail the pick, so the step retries instead of using the newest facts", async () => {
+    const learner = await userFixture();
+
+    await Promise.all(
+      Array.from({ length: 11 }, (_, index) =>
+        memoryFactFixture({ category: "routine", statement: `Hobby ${index}`, userId: learner.id }),
+      ),
+    );
+
+    vi.mocked(selectRelevantMemoryFacts).mockRejectedValueOnce(new Error("relevance down"));
+
+    await expect(pickExampleLineFactsFor({ userId: learner.id })).rejects.toThrow("relevance down");
   });
 });
 

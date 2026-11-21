@@ -102,7 +102,10 @@ export async function pickExampleLineFactsFor({
     return null;
   }
 
-  return { contextKey: context.key, facts: await pickExampleLineFacts({ context, userId }) };
+  return {
+    contextKey: context.key,
+    facts: await pickExampleLineFacts({ context, inStep: true, userId }),
+  };
 }
 
 /**

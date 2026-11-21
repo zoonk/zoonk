@@ -5,7 +5,7 @@ import { MemoryCategory, type StepExampleLine, prisma } from "@zoonk/db";
 import { type RefusedUsage, type UsageDecision } from "../../../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { markMemoryFactsUsed } from "../../../memory/_utils/mark-facts-used";
-import { findMemoryForTask } from "../../../memory/get-memory-for-task";
+import { findMemoryForStep, findMemoryForTask } from "../../../memory/get-memory-for-task";
 import { toProvenanceData } from "../../_utils/library-rows";
 import { getLessonCountry } from "../../content-country";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
@@ -131,12 +131,17 @@ async function loadEarlierLines({
 
 export async function pickExampleLineFacts({
   context,
+  inStep = false,
   userId,
 }: {
   context: ExampleLineContext;
+  /** A workflow step lets a failed relevance check throw so it retries; a waiting learner gets the newest facts. */
+  inStep?: boolean;
   userId: string;
 }): Promise<ExampleLineFact[]> {
-  const picked = await findMemoryForTask({
+  const find = inStep ? findMemoryForStep : findMemoryForTask;
+
+  const picked = await find({
     analytics: { contentScope: "personal", distinctId: userId },
     candidateIds: context.facts.map((fact) => fact.id),
     categories: Object.values(MemoryCategory),
