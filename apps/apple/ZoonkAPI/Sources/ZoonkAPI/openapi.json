@@ -44654,13 +44654,19 @@
                 },
                 "sentence": {
                   "type": "string"
+                },
+                "translation": {
+                  "default": "",
+                  "description": "The sentence, answered, in the learner's language, shown under it so they know what it says. Empty when they learn the language they read the app in, and for drills written before it.",
+                  "type": "string"
                 }
               },
               "required": [
                 "answer",
                 "feedback",
                 "options",
-                "sentence"
+                "sentence",
+                "translation"
               ],
               "additionalProperties": false
             }

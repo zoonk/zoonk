@@ -6,6 +6,7 @@ const question = {
   feedback: "Ir in the past: fui.",
   options: ["fue", "fui", "iba"],
   sentence: "Ayer yo ___ al cine.",
+  translation: "I went to the movies yesterday.",
 };
 
 describe(toDrillFeedback, () => {
