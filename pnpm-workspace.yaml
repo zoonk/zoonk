@@ -2,6 +2,10 @@ packages:
   - apps/*
   - packages/*
 
+# The reviewed skills in .agents/skills are the repository's source of truth.
+skills:
+  dirs: []
+
 allowBuilds:
   "@nestjs/core": false
   "@parcel/watcher": false
