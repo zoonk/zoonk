@@ -172,6 +172,7 @@ export async function computePlan({
 
   const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
     bands: loaded.bands,
+    currentLevel: loaded.currentLanguageLevel,
     goal: context.goal,
     graph: resolved,
     settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
