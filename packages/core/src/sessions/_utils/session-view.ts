@@ -112,12 +112,13 @@ export function toStudySessionView(
     session,
   } = input;
 
-  const answeredItemIds = new Set(input.answers.flatMap((answer) => answer.itemId ?? []));
+  function buildBlockViews() {
+    const answeredAttemptIds = new Set(input.answers.map((answer) => answer.id));
+    const answeredItemIds = new Set(input.answers.flatMap((answer) => answer.itemId ?? []));
 
-  const blocks =
-    input.blockViews ??
-    session.blocks.map((block) =>
+    return session.blocks.map((block) =>
       toStudyBlockView({
+        answeredAttemptIds,
         answeredItemIds,
         block,
         blockedTestOutChapters,
@@ -126,7 +127,9 @@ export function toStudySessionView(
         subject: blockSubjects.get(block.position) ?? null,
       }),
     );
+  }
 
+  const blocks = input.blockViews ?? buildBlockViews();
   const next = getNextBlock(blocks);
 
   return withDayState({

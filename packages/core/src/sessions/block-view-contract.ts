@@ -64,6 +64,12 @@ export const studyBlockSchema = z
       .meta({
         description: "A full review: every topic, in place of a mock the plan doesn't have",
       }),
+    hasWritingDraft: z
+      .boolean()
+      .optional()
+      .describe(
+        "The writing block has nonblank saved text for an admission that has not been graded",
+      ),
     id: idSchema,
     kind: z.enum(StudyBlockKind),
     lessonId: idSchema.nullable(),

@@ -78964,6 +78964,10 @@
             "type": "boolean",
             "description": "A full review: every topic, in place of a mock the plan doesn't have"
           },
+          "hasWritingDraft": {
+            "description": "The writing block has nonblank saved text for an admission that has not been graded",
+            "type": "boolean"
+          },
           "id": {
             "type": "string",
             "format": "uuid",
@@ -96104,6 +96108,10 @@
                 "fullReview": {
                   "type": "boolean",
                   "description": "A full review: every topic, in place of a mock the plan doesn't have"
+                },
+                "hasWritingDraft": {
+                  "description": "The writing block has nonblank saved text for an admission that has not been graded",
+                  "type": "boolean"
                 },
                 "kind": {
                   "type": "string",

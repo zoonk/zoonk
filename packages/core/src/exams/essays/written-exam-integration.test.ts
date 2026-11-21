@@ -376,22 +376,59 @@ describe("CGU written exam preparation", () => {
 
     const shortTask = { distinctLines: true, lines: 30, number: 1, points: 30, total: 2 };
 
+    function draftBlock(hasWritingDraft: boolean) {
+      return {
+        blocks: expect.arrayContaining([
+          expect.objectContaining({ hasWritingDraft, id: block.id }),
+        ]),
+      };
+    }
+
+    async function expectSessionDraftFlag(hasWritingDraft: boolean) {
+      await expect(getStudySession({ input: {}, sessionId })).resolves.toMatchObject({
+        session: draftBlock(hasWritingDraft),
+        status: "ready",
+      });
+    }
+
+    async function expectDraftFlag(hasWritingDraft: boolean) {
+      await expectSessionDraftFlag(hasWritingDraft);
+
+      await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+        status: "ready",
+        today: { session: draftBlock(hasWritingDraft) },
+      });
+    }
+
     await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
       essay: { admissionId: started.admissionId, draft: null, writingTask: shortTask },
       status: "ready",
     });
 
+    await expectDraftFlag(false);
+
     await expect(
       saveWritingDraft({
         blockId: block.id,
-        input: { admissionId: started.admissionId, revision: 0, text: TEXT },
+        input: { admissionId: started.admissionId, revision: 0, text: "" },
       }),
-    ).resolves.toMatchObject({ draft: { revision: 1, text: TEXT }, status: "ready" });
+    ).resolves.toMatchObject({ draft: { revision: 1, text: "" }, status: "ready" });
+
+    await expectDraftFlag(false);
+
+    await expect(
+      saveWritingDraft({
+        blockId: block.id,
+        input: { admissionId: started.admissionId, revision: 1, text: TEXT },
+      }),
+    ).resolves.toMatchObject({ draft: { revision: 2, text: TEXT }, status: "ready" });
+
+    await expectDraftFlag(true);
 
     await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
       essay: {
         admissionId: started.admissionId,
-        draft: { admissionId: started.admissionId, revision: 1, text: TEXT },
+        draft: { admissionId: started.admissionId, revision: 2, text: TEXT },
         writing: {
           lines: 30,
           partMinimum: { max: 100, minimum: { unit: "points", value: 50 } },
@@ -440,7 +477,7 @@ describe("CGU written exam preparation", () => {
     const continuedEssay = await getEssay({ blockId: block.id });
 
     expect(continuedEssay).toMatchObject({
-      essay: { draft: { revision: 1, text: TEXT }, writing: { lines: 30, points: 30 } },
+      essay: { draft: { revision: 2, text: TEXT }, writing: { lines: 30, points: 30 } },
       status: "ready",
     });
 
@@ -483,6 +520,7 @@ describe("CGU written exam preparation", () => {
     const first = await prisma.attempt.findFirstOrThrow({ where: { itemId, userId: user.id } });
     expect(first.score).toBeNull();
     expect(first.answer).toMatchObject({ conditions: { estimatedLines: 23 } });
+    await expectDraftFlag(false);
 
     const currentTask = { ...shortTask, lines: 1, points: 12 };
 
@@ -550,6 +588,15 @@ describe("CGU written exam preparation", () => {
       text: `${TEXT} The recommendation assigns ownership.`,
     };
 
+    await expect(
+      saveWritingDraft({
+        blockId: block.id,
+        input: { admissionId: rewrite.admissionId, revision: 0, text: rewritten.text },
+      }),
+    ).resolves.toMatchObject({ draft: { revision: 1 }, status: "ready" });
+
+    await expectSessionDraftFlag(true);
+
     vi.mocked(gradeWritingEvidence).mockRejectedValueOnce(
       new Error("Grading is temporarily unavailable"),
     );
@@ -565,6 +612,7 @@ describe("CGU written exam preparation", () => {
 
     expect(result).toMatchObject({ grade: { kind: "levels" }, status: "writingGraded" });
     expect(concurrent).toStrictEqual(result);
+    await expectSessionDraftFlag(false);
 
     await expect(
       submitEssay({ blockId: block.id, input: { ...rewritten, text: "A stale duplicate." } }),

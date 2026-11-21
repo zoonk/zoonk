@@ -1,5 +1,6 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { getPlannedQuestions } from "../../checkpoints/checkpoint-rules";
+import { getWritingAttemptId } from "../../exams/essays/_utils/writing-attempt-id";
 import { type indexWritingTasks } from "../../exams/essays/_utils/writing-task-positions";
 import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../block-payload";
 import { studyCheckpointSchema } from "../block-view-contract";
@@ -50,14 +51,16 @@ function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["che
 }
 
 function getWritingFields({
+  answeredAttemptIds,
   block,
   payload,
   writingTasks,
 }: {
+  answeredAttemptIds?: ReadonlySet<string>;
   block: DayBlockInput;
   payload: ReturnType<typeof readBlockPayload>;
   writingTasks?: ReturnType<typeof indexWritingTasks>;
-}): Pick<DayBlockView, "writingAvailability" | "writingTask" | "writingUnit"> {
+}): Pick<DayBlockView, "hasWritingDraft" | "writingAvailability" | "writingTask" | "writingUnit"> {
   const { writing } = payload;
 
   if (!writing) {
@@ -68,8 +71,17 @@ function getWritingFields({
     writing.admissionId && (block.status === "active" || block.status === "pending");
 
   const writingTask = writingTasks?.get(writing.taskKey);
+  const [itemId] = payload.itemIds;
+  const hasDraftText = block.status !== "skipped" && Boolean(writing.draft?.text.trim());
+
+  const hasWritingDraft =
+    hasDraftText && writing.admissionId && itemId
+      ? answeredAttemptIds &&
+        !answeredAttemptIds.has(getWritingAttemptId({ admissionId: writing.admissionId, itemId }))
+      : false;
 
   return {
+    hasWritingDraft,
     ...(writingTask && { writingTask }),
     writingAvailability: { status: continuing ? "continue" : "available" },
     writingUnit: writing.unit,
@@ -77,6 +89,7 @@ function getWritingFields({
 }
 
 export function toDayBlockView({
+  answeredAttemptIds,
   answeredItemIds,
   block,
   blocks = [block],
@@ -85,6 +98,7 @@ export function toDayBlockView({
   subject = null,
   writingTasks,
 }: {
+  answeredAttemptIds?: ReadonlySet<string>;
   answeredItemIds: ReadonlySet<string>;
   block: DayBlockInput;
   blocks?: readonly DayBlockInput[];
@@ -150,6 +164,6 @@ export function toDayBlockView({
     topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),
     weakest: payload.weakest,
-    ...getWritingFields({ block, payload, writingTasks }),
+    ...getWritingFields({ answeredAttemptIds, block, payload, writingTasks }),
   };
 }

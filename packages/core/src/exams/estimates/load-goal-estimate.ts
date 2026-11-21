@@ -111,6 +111,7 @@ function loadRecentMocks(goalId: string, completeObjective: boolean) {
     take: RECENT_MOCKS,
     where: {
       goalId,
+      result: { gt: 0, path: ["total"] },
       status: "finished",
       ...(completeObjective && { conditions: { equals: true, path: ["fullLength"] } }),
     },
@@ -196,7 +197,6 @@ export async function loadGoalScoreEstimate({
           conditions.purpose !== "placement" &&
           conditions.examQuestions === null &&
           !conditions.unpicked?.length &&
-          countMockQuestions(mock.result) > 0 &&
           (!points?.max || points.asked === points.max)
         );
       })

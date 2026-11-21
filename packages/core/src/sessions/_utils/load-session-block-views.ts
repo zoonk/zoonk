@@ -70,6 +70,7 @@ export async function loadSessionBlockViews({
       }),
     ]);
 
+  const answeredAttemptIds = new Set(answers.map((answer) => answer.id));
   const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
   const current = isCurrentSession({ now, session, timeZone });
 
@@ -77,6 +78,7 @@ export async function loadSessionBlockViews({
     {
       blocks: session.blocks.map((block) =>
         toStudyBlockView({
+          answeredAttemptIds,
           answeredItemIds,
           block,
           blockedTestOutChapters: blockedChapters,

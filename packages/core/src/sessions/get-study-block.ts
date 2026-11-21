@@ -213,6 +213,7 @@ export async function loadStudyBlock(
     }),
     block: toAskableBlock({
       block: toStudyBlockView({
+        answeredAttemptIds: new Set(storedAnswers.map((answer) => answer.id)),
         answeredItemIds: new Set(answered.keys()),
         block,
         blockedTestOutChapters,
