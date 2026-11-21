@@ -469,11 +469,16 @@ private fun BesideOrAbove(
             )
         val beside = besideWidth != null
         val startWidth = besideWidth ?: width
-        val startPlaceable = starts.first().measure(Constraints.fixedWidth(if (beside) startWidth else width))
         val endWidth = if (beside) width - gap - startWidth else width
-        // Beside a label that wraps, Confirm takes its height, so the two share a top and a bottom.
-        val endPlaceable =
-            ends.first().measure(Constraints(endWidth, endWidth, if (beside) startPlaceable.height else 0, Constraints.Infinity))
+        val end = ends.first()
+        val rowHeight =
+            if (beside) {
+                maxOf(48.dp.roundToPx(), start.minIntrinsicHeight(startWidth), end.minIntrinsicHeight(endWidth))
+            } else {
+                0
+            }
+        val startPlaceable = start.measure(Constraints(minWidth = startWidth, maxWidth = startWidth, minHeight = rowHeight))
+        val endPlaceable = end.measure(Constraints(minWidth = endWidth, maxWidth = endWidth, minHeight = rowHeight))
 
         if (beside) {
             val height = max(startPlaceable.height, endPlaceable.height)
