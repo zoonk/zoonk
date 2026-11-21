@@ -57,6 +57,27 @@ describe(groupSubjects, () => {
     ]);
   });
 
+  it("lists subjects with no heading before the notice's named groups", () => {
+    const groups = groupSubjects(
+      [
+        subject("portuguese", { group: "Day 1" }),
+        subject("law", { group: "Day 2" }),
+        subject("study-skills", { source: "plan" }),
+        subject("strategy", { extra: true, source: "plan" }),
+        subject("ethics"),
+        subject("english", { group: "Day 1" }),
+      ],
+      { modules: false },
+    );
+
+    expect(keysOf(groups)).toStrictEqual([
+      [null, false, ["study-skills", "ethics"]],
+      ["Day 1", false, ["portuguese", "english"]],
+      ["Day 2", false, ["law"]],
+      [null, true, ["strategy"]],
+    ]);
+  });
+
   it("gives an area the notice doesn't name no heading of its own", () => {
     const groups = groupSubjects(
       [subject("math"), subject("essay", { source: "plan" }), subject("logic")],
