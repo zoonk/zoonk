@@ -98198,6 +98198,13 @@
               "displayName": {
                 "type": "string"
               },
+              "examDocument": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExamDocument"
+                  }
+                ]
+              },
               "id": {
                 "type": "string",
                 "format": "uuid",
