@@ -50,15 +50,20 @@ export function readLevelTestSummary(goal: Pick<Goal, "details">) {
   const { lastResult } = progress;
   const details = isJsonObject(goal.details) ? goal.details : {};
   const score = parseCefrScore(details.level === "advanced" ? "B2" : details.level);
-  const firstTestOut = score === null ? null : (CEFR_LEVELS[Math.floor(score)] ?? null);
+  const skipped = lastResult?.levelsSkipped ?? [];
+  const current = score === null ? null : Math.floor(score);
+  const highestKnown = Math.max(
+    current ?? -1,
+    ...skipped.map((level) => CEFR_LEVELS.indexOf(level)),
+  );
 
   const nextTestOutLevel =
-    firstTestOut &&
-    levelTestOutLevelSchema.options.find(
-      (level) =>
-        CEFR_LEVELS.indexOf(level) >= CEFR_LEVELS.indexOf(firstTestOut) &&
-        !lastResult?.levelsSkipped.includes(level),
-    );
+    current === null
+      ? null
+      : levelTestOutLevelSchema.options.find((level) => {
+          const index = CEFR_LEVELS.indexOf(level);
+          return index >= current && index <= highestKnown + 1 && !skipped.includes(level);
+        });
 
   return {
     attempt: readOpenAttempt(progress),
