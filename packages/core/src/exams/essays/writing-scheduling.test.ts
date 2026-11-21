@@ -140,6 +140,19 @@ describe("writing with an empty prompt bank", () => {
           runId: "fixture",
           usage: {},
         },
+        systemPrompt: "",
+        usage: {
+          inputTokenDetails: {
+            cacheReadTokens: undefined,
+            cacheWriteTokens: undefined,
+            noCacheTokens: 0,
+          },
+          inputTokens: 0,
+          outputTokenDetails: { reasoningTokens: undefined, textTokens: 0 },
+          outputTokens: 0,
+          totalTokens: 0,
+        },
+        userPrompt: "",
       }));
 
       const itemId = getWritingPromptId(crypto.randomUUID(), 0);
