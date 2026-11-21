@@ -219,7 +219,6 @@
     "./learner/placement/focus-test-contract": "./src/learner/placement/focus-test-contract.ts",
     "./learner/placement/request": "./src/learner/placement/request-goal-placement.ts",
     "./learner/placement/get": "./src/learner/placement/get-goal-placement.ts",
-    "./learner/placement/placement-limits": "./src/learner/placement/placement-limits.ts",
     "./learner/placement/sitting": "./src/learner/placement/start-placement-sitting.ts",
     "./learner/review-schedule": "./src/learner/get-current-user-review-schedule.ts",
     "./learner/summary": "./src/learner/summary/get-learner-summary.ts",

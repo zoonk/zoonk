@@ -43,8 +43,6 @@ export const itemAnswerInputSchema = z
   .strict()
   .meta({ id: "ItemAnswerInput" });
 
-export type ItemAnswerInput = z.infer<typeof itemAnswerInputSchema>;
-
 /** The request zone is used only when the goal has no stored zone. */
 export const answerTimeZoneSchema = z
   .string()

@@ -92,7 +92,7 @@ const questionBaseShape = {
   visual: questionVisualSchema,
 };
 
-export const bankQuestionSchema = z
+const bankQuestionSchema = z
   .discriminatedUnion("format", [
     z.object({
       ...questionBaseShape,
