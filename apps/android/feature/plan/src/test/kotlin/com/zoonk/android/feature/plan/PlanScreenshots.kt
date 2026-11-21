@@ -570,7 +570,7 @@ class PlanScreenshots {
                 "plan-slot-paged" to Shot(pagedPlan, state = { SlotState(position = 1) }),
                 "plan-slot-paged-applied" to
                     Shot(pagedPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
-                        SlotState(position = 1).apply { result = SlotResult(SlotItem.FitLessons, change) }
+                        SlotState(position = 1).apply { result = SlotResult(SlotItem.FitLessons(pagedPlan.fitOffer!!), change) }
                     }),
                 "plan-slot-past-date" to Shot(pastDate),
                 "plan-slot-past-date-exam" to Shot(pastDate, summary = exam),

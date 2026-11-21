@@ -587,12 +587,12 @@ class PlanViewModel(
     fun addFitOffer(
         plan: Plan,
         offer: PlanFitOffer,
-    ) = addOffer(plan, SlotItem.FitLessons, offer.operations.map { it.op }, offer.effect, offer.canApply)
+    ) = addOffer(plan, SlotItem.FitLessons(offer), offer.operations.map { it.op }, offer.effect, offer.canApply)
 
     fun addExtraOffer(
         plan: Plan,
         offer: PlanExtraOffer,
-    ) = addOffer(plan, SlotItem.ExtraOffer, offer.operations.map { it.op }, offer.effect, offer.canApply)
+    ) = addOffer(plan, SlotItem.ExtraOffer(offer), offer.operations.map { it.op }, offer.effect, offer.canApply)
 
     /**
      * Main's fit offer, which the exam strategy offer shares: adds its lessons when its numbers are

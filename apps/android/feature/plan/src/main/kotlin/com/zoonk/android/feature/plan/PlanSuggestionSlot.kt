@@ -81,12 +81,17 @@ internal sealed interface SlotItem {
         override val key get() = "pastDate"
     }
 
-    data object FitLessons : SlotItem {
-        override val key = "fitLessons"
+    /** The offer it was shown with, so its answer still shows once the plan it adds to no longer offers it. */
+    data class FitLessons(
+        val offer: PlanFitOffer,
+    ) : SlotItem {
+        override val key get() = "fitLessons"
     }
 
-    data object ExtraOffer : SlotItem {
-        override val key = "extraOffer"
+    data class ExtraOffer(
+        val offer: PlanExtraOffer,
+    ) : SlotItem {
+        override val key get() = "extraOffer"
     }
 
     data object Coverage : SlotItem {
@@ -118,8 +123,8 @@ internal fun slotItems(
     val open = pastDate == null
     val time =
         listOfNotNull(
-            SlotItem.FitLessons.takeIf { open && plan.fitOffer != null },
-            SlotItem.ExtraOffer.takeIf { open && plan.extraOffer != null },
+            plan.fitOffer?.takeIf { open }?.let(SlotItem::FitLessons),
+            plan.extraOffer?.takeIf { open }?.let(SlotItem::ExtraOffer),
             SlotItem.Coverage.takeIf { open && planCoverage(plan) != null && !timeEnough(plan) },
         )
 
@@ -395,12 +400,12 @@ private fun SlotSuggestion(
             PastDateSuggestion(item, slot, onAdjust)
         }
 
-        SlotItem.FitLessons -> {
-            FitLessonsSuggestion(slot)
+        is SlotItem.FitLessons -> {
+            FitLessonsSuggestion(item, slot)
         }
 
-        SlotItem.ExtraOffer -> {
-            ExtraOfferSuggestion(slot)
+        is SlotItem.ExtraOffer -> {
+            ExtraOfferSuggestion(item, slot)
         }
 
         SlotItem.Coverage -> {

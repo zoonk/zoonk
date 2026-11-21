@@ -301,7 +301,7 @@ class PlanViewModelTest {
             viewModel.addExtraOffer(plan, plan.extraOffer!!)
 
             assertEquals(listOf(listOf(PlanOp.Extras(listOf("strategy-time")))), api.changes)
-            assertEquals(SlotItem.ExtraOffer, viewModel.slotState.result?.item)
+            assertEquals(SlotItem.ExtraOffer(plan.extraOffer!!), viewModel.slotState.result?.item)
         }
 
     @Test
