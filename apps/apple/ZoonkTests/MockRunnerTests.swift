@@ -67,6 +67,26 @@ final class MockSectionMovesTests: XCTestCase {
     XCTAssertTrue(moves.canOpenAfterTimeout(1))
     XCTAssertFalse(moves.canOpenAfterTimeout(2))
   }
+
+  func testAnAnswerIsRecheckedOnlyWhereItCanStillChange() {
+    func canRecheck(_ navigation: MockSection.Navigation?) -> Bool {
+      MockSectionMoves(
+        answered: true, changed: [], changesLeft: nil, navigation: navigation, position: 0,
+        reached: 0, total: 3
+      ).canRecheck
+    }
+
+    XCTAssertTrue(canRecheck(nil))
+    XCTAssertTrue(canRecheck(forwardOnly), "Its review changes answers")
+    XCTAssertFalse(
+      canRecheck(
+        MockSection.Navigation(
+          answerChanges: nil, forwardOnly: true, itemSeconds: nil, mustAnswer: false)))
+    XCTAssertFalse(
+      canRecheck(
+        MockSection.Navigation(
+          answerChanges: 0, forwardOnly: true, itemSeconds: nil, mustAnswer: false)))
+  }
 }
 
 @MainActor

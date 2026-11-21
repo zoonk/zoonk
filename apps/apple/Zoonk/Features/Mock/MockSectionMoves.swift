@@ -4,6 +4,8 @@ import Foundation
 /// its end, which changes only so many answers.
 struct MockSectionMoves: Equatable {
   var canAdvance: Bool
+  /// An answer can still change after moving past it, before the section is handed in.
+  var canRecheck: Bool
   /// The answers the review may still change; nil outside a review or without a limit.
   var changesLeft: Int?
   var forwardOnly: Bool
@@ -24,6 +26,7 @@ struct MockSectionMoves: Equatable {
     position: Int, reached: Int, total: Int
   ) {
     forwardOnly = navigation?.forwardOnly ?? false
+    canRecheck = !forwardOnly || (navigation?.answerChanges ?? 0) > 0
     mustAnswer = navigation?.mustAnswer ?? false
     reviewing = forwardOnly && navigation?.answerChanges != nil && reached >= total - 1
     self.changesLeft = reviewing ? changesLeft.map { max(0, $0 - changed.count) } : nil

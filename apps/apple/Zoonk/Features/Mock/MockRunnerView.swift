@@ -379,8 +379,8 @@ private struct MockEssayBox: View {
   }
 }
 
-/// Marks the question as one the learner isn't sure of, to check before handing in; the result
-/// shows how those answers went. The first mark on a device says so once.
+/// Marks the question as one the learner isn't sure of, to check before handing in where it can
+/// still change; the result shows how those answers went. The first mark on a device says so once.
 private struct UnsureButton: View {
   @Environment(\.dynamicTypeSize) private var typeSize
   @AppStorage("mockUnsureTipShown") private var tipShown = false
@@ -420,10 +420,15 @@ private struct UnsureButton: View {
     .buttonTone(unsure ? .warning : .neutral)
     .disabled(run.timeUp || run.pending)
     .popover(isPresented: $showsTip, attachmentAnchor: .point(.top), arrowEdge: .bottom) {
-      Text(
-        "Check it again before you hand in. Your result shows how these answers went.",
-        tableName: "Mock"
-      )
+      Group {
+        if run.moves.canRecheck {
+          Text(
+            "Check it again before you hand in. Your result shows how these answers went.",
+            tableName: "Mock")
+        } else {
+          Text("Your result shows how these answers went.", tableName: "Mock")
+        }
+      }
       .typeStyle(.body)
       .padding()
       .frame(idealWidth: 280)
