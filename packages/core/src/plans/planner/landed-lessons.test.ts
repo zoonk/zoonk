@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { getPlanInputsKey, shouldSkipPlanBuild } from "../_utils/plan-inputs-key";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
-import { placeLandedLessons } from "./landed-placement";
+import { placeLandedLessons, reservePlaced } from "./landed-placement";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson, type QueueUnit } from "./plan-units";
-import { type PlanDay } from "./schedule-units";
+import { type PlanDay, scheduleUnits } from "./schedule-units";
 import { listSelectedItemFacts } from "./selected-item-facts";
 
 const TODAY = fromIsoDate("2026-10-12");
@@ -178,6 +178,22 @@ describe(placeLandedLessons, () => {
       ["lesson:law-0", "2026-10-12"],
       ["lesson:law-1", "2026-10-13"],
     ]);
+  });
+
+  it("holds the full time of a landed writing lesson and its drill before filling the day", () => {
+    const [writing] = lessonUnits("essays", 1);
+    const [other] = lessonUnits("politics", 1);
+    const { units: placed } = scheduleUnits({
+      days,
+      units: [{ ...writing!, minutes: 10, teachingShare: 0.2 }],
+    });
+
+    expect(placed[0]?.studyPortions).toStrictEqual([
+      { date: "2026-10-12", lessonMinutes: 2, minutes: 20 },
+    ]);
+
+    const remaining = scheduleUnits({ days: reservePlaced({ days, placed }), units: [other] });
+    expect(remaining.units[0]?.date).toEqual(addDays(TODAY, 1));
   });
 
   it("keeps the stand-in's own time for its lessons on a day kept work fills past its time", () => {

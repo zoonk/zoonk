@@ -62,12 +62,12 @@ function addTime(total: DayMinutes, time: readonly [string, number][], sign = 1)
 }
 
 function listPlacedTime(
-  placed: readonly Pick<ScheduledUnit, "studyPortions">[],
+  placed: readonly Pick<ScheduledUnit, "studyPortions" | "teachingShare">[],
 ): [string, number][] {
-  return placed.flatMap((unit) =>
-    (unit.studyPortions ?? []).map((portion): [string, number] => [
-      portion.date,
-      portion.lessonMinutes,
+  return placed.flatMap(({ studyPortions, teachingShare = 1 }) =>
+    (studyPortions ?? []).map(({ date, lessonMinutes }): [string, number] => [
+      date,
+      lessonMinutes / teachingShare,
     ]),
   );
 }
@@ -335,7 +335,7 @@ export function reservePlaced({
   placed,
 }: {
   days: readonly PlanDay[];
-  placed: readonly Pick<ScheduledUnit, "studyPortions">[];
+  placed: Parameters<typeof listPlacedTime>[0];
 }): readonly PlanDay[] {
   if (placed.length === 0) {
     return days;
