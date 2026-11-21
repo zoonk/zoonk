@@ -24,8 +24,20 @@ import { plural } from "../_utils/words";
 type Row = Decision["rows"][number];
 type CaseRuns = Row["quality"][number]["affected"];
 
-function caseNote({ both, owner }: { both: boolean; owner: boolean }): string | null {
-  const notes = [both && "both sides", owner && "you found it"].filter(Boolean);
+/** Non-breaking spaces keep each note whole, so a narrow column breaks only between notes. */
+function caseNote({
+  both,
+  owner,
+  run,
+}: {
+  both: boolean;
+  owner: boolean;
+  run?: number;
+}): string | null {
+  const notes = [run !== undefined && `run ${run}`, both && "both sides", owner && "you found it"]
+    .filter((note) => typeof note === "string")
+    .map((note) => note.replaceAll(" ", "\u00A0"));
+
   return notes.length > 0 ? ` (${notes.join(", ")})` : null;
 }
 
@@ -58,9 +70,13 @@ function CaseLinks({
             href={`#case-${encodeURIComponent(caseId)}`}
             key={key}
           >
-            {showRun ? `${caseId} · Run ${run}` : caseId}
+            {caseId}
             <span className="text-muted-foreground">
-              {caseNote({ both: bothKeys.has(key), owner: ownerKeys.has(key) })}
+              {caseNote({
+                both: bothKeys.has(key),
+                owner: ownerKeys.has(key),
+                run: showRun ? run : undefined,
+              })}
             </span>
           </a>
         );
