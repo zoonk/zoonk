@@ -24,9 +24,14 @@ struct MockPreparingNote: View {
         generationID: nil, kind: .mockPaper, namespace: namespace,
         readGenerationID: {
           let writing = await read()
-          namespace = writing?.namespace
           isIdle = writing?.status == MockWriting.Status.none
-          return writing?.generationId
+
+          guard let id = writing?.generationId, let stream = writing?.namespace else {
+            return nil
+          }
+
+          namespace = stream
+          return id
         },
         restart: { nil },
         readResult: written,

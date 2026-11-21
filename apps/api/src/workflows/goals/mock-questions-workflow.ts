@@ -41,10 +41,6 @@ async function prepareSets({
   workflowRunId: string;
   supply: MockQuestionWrites;
 }) {
-  if (!supply.allowStimulusSets) {
-    return false;
-  }
-
   const sets = await pickMockSetTargetsStep({
     goalId,
     quickFormat: supply.quickFormat,

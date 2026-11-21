@@ -146,7 +146,7 @@ export function MockPreparingNote({
 
     return writing.generationId && writing.namespace
       ? { id: writing.generationId, namespace: writing.namespace }
-      : writing.generationId;
+      : null;
   };
 
   return (

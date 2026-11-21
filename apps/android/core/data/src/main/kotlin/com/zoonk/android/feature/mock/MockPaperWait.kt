@@ -49,8 +49,12 @@ class MockPaperWait(
         if (writing?.status == MockWriting.Status.NONE) {
             mutableIdle.value = true
             follower.stop()
+            return null
         }
-        namespace = writing?.namespace
-        return writing?.generationId
+
+        val stream = writing?.namespace ?: return null
+        val id = writing.generationId ?: return null
+        namespace = stream
+        return id
     }
 }
