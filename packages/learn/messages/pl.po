@@ -9996,8 +9996,7 @@ msgid "You can change all of this later."
 msgstr "Wszystko możesz później zmienić."
 
 #: src/onboarding/understood/understood-source-link.tsx
-#: src/visuals/chart-visual.tsx
-#: src/visuals/plot-visual.tsx
+#: src/visuals/chart-frame.tsx
 msgctxt "_gUYR-"
 msgid "Source: {source}"
 msgstr "Źródło: {source}"
