@@ -21,7 +21,7 @@ import { FactSegments } from "../_components/task-meta";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useAlsoIn } from "./shared-exams";
-import { SubjectAside, SubjectCoverage, hasSubjectDetails } from "./subject-aside";
+import { SubjectAside, SubjectCoverage } from "./subject-aside";
 import { SubjectChapters } from "./subject-chapters";
 import { SubjectMatrix } from "./subject-matrix";
 import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
@@ -254,13 +254,11 @@ export function SubjectScreen({
   return (
     <DetailLayout
       aside={
-        written && !hasSubjectDetails(subject) ? undefined : (
-          <SubjectAside
-            questionsSource={syllabus.questionsSource}
-            subject={subject}
-            written={written !== null}
-          />
-        )
+        <SubjectAside
+          questionsSource={syllabus.questionsSource}
+          subject={subject}
+          written={written}
+        />
       }
       asideLabel={t("About this subject")}
       bar={

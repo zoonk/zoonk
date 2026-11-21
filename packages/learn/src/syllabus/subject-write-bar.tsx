@@ -7,6 +7,8 @@ import { useState } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { EnterButton, EnterLink } from "../_components/enter-button";
 import { useFormatDuration } from "../_utils/time-format";
+import { ChooseOnToday } from "../writing/writing-choice";
+import { useGradingReturnsLine } from "../writing/writing-labels";
 import { type WrittenSubject } from "./subject-written-score";
 
 /** A written test's own facts, as its notice states them: "2 questions · 3 h 30 min · 50% of the score". */
@@ -29,6 +31,38 @@ export function useWrittenFacts({
   ].filter((fact) => typeof fact === "string");
 }
 
+type WriteAction = NonNullable<WrittenSubject["writeActions"]>[number];
+
+/** Every task waits for the same exam choice, so there's nothing to write until it's made. */
+function getPendingChoice(written: WrittenSubject): string[] | null {
+  if (written.availability?.status === "needsChoice") {
+    return written.availability.choiceGroups;
+  }
+
+  const actions = written.writeActions ?? [];
+
+  const groups = actions.flatMap(({ availability }) =>
+    availability.status === "needsChoice" ? availability.choiceGroups : [],
+  );
+
+  const allWait = actions.every(({ availability }) => availability.status === "needsChoice");
+
+  return actions.length > 0 && allWait ? [...new Set(groups)] : null;
+}
+
+/** When every task's grading is used up for today, the first day one returns. */
+function getReturnsOn(actions: readonly WriteAction[]): string | null {
+  const days = actions.map(({ availability }) =>
+    availability.status === "tomorrow" ? availability.returnsOn : null,
+  );
+
+  if (days.length === 0 || days.some((day) => day === null)) {
+    return null;
+  }
+
+  return days.filter((day) => day !== null).toSorted()[0] ?? null;
+}
+
 /**
  * A written part's main action is writing: its lessons are a small part of its time. An unfinished
  * task opens where it was left, and once the day's grading is used the bar says when it returns
@@ -44,6 +78,7 @@ export function WriteBottomBar({
   written: WrittenSubject;
 }) {
   const t = useExtracted();
+  const gradingReturns = useGradingReturnsLine();
   const [busy, setBusy] = useState(false);
   const actions = written.writeActions ?? [];
   const unfinished = actions.find((action) => action.availability.status === "continue");
@@ -64,12 +99,26 @@ export function WriteBottomBar({
     );
   }
 
-  if (actions.length > 0 && actions.every((action) => action.availability.status === "tomorrow")) {
+  const choiceGroups = getPendingChoice(written);
+
+  if (choiceGroups) {
+    return (
+      <BottomBar>
+        <div className="flex min-h-11 items-center lg:justify-end">
+          <ChooseOnToday choiceGroups={choiceGroups} />
+        </div>
+      </BottomBar>
+    );
+  }
+
+  const returnsOn = getReturnsOn(actions);
+
+  if (returnsOn) {
     return (
       <BottomBar>
         <p className="text-muted-foreground flex min-h-11 items-center justify-center gap-2 text-sm lg:justify-end">
           <ClockIcon aria-hidden="true" className="size-4" />
-          {t("Back tomorrow: no more grading today")}
+          {gradingReturns(returnsOn)}
         </p>
       </BottomBar>
     );

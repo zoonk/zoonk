@@ -2,7 +2,7 @@
 
 import { useExtracted, useFormatter } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
-import { useWritingTaskTitle } from "../writing/writing-header";
+import { useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
 import { getPracticeFocus } from "./practice-focus";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
@@ -144,28 +144,17 @@ export function useBlockTitle() {
 export function useBlockDetail() {
   const t = useExtracted();
   const shortList = useShortList();
+  const writingLine = useWritingLine();
 
   /**
    * A written task's row says when it waits for tomorrow, or that its draft is kept. A drill says
    * what it's for, since its name is the same after every lesson.
    */
-  function writingDetail({
-    canDo,
-    writingAvailability,
-    writingUnit,
-  }: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null {
-    if (writingAvailability?.status === "tomorrow") {
-      return t("Back tomorrow: no more grading today");
-    }
-
-    if (writingAvailability?.status === "continue") {
-      return t("Your draft is saved");
-    }
-
-    return writingUnit === "drill" ? t("Use what you just learned") : canDo;
+  function writingDetail(block: BlockCopyInput & Pick<StudyBlock, "canDo" | "subject">) {
+    return writingLine(block) ?? block.subject ?? block.canDo;
   }
 
-  function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null {
+  function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo" | "subject">): string | null {
     if (hasCapsules(block) && block.weakest) {
       return t(
         "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}",

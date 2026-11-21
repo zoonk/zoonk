@@ -3,7 +3,7 @@
 import { type WrittenProjection } from "@zoonk/core/exams/scoring/written-points-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, XIcon } from "lucide-react";
+import { CheckIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
 import { useFormatScore } from "../../essay/essay-labels";
@@ -13,18 +13,31 @@ import { useFormatPointsRange } from "../../writing/writing-labels";
 
 type Range = { high: number; low: number };
 
-type Part = WrittenProjection["parts"][number];
+/** What the projection contract will carry: whether a part can be estimated in points. */
+type Part = WrittenProjection["parts"][number] & { scale?: "levels" | "points" };
 
 const PERCENT = 100;
+const HALF = 0.5;
+
+/**
+ * Until the server says (`scale`), a part measured in points can be; anything else is graded by
+ * level, as every rubric is until its evaluation passes.
+ */
+function getPartScale(part: Part): "levels" | "points" {
+  return part.scale ?? (part.range ? "points" : "levels");
+}
 
 function ScoreRow({
   children,
+  levels = false,
   max,
   minimumShare = null,
   name,
   range,
 }: {
   children?: React.ReactNode;
+  /** Graded by level: no points to wait for, so no meter holds their place. */
+  levels?: boolean;
   max: number | null;
   minimumShare?: number | null;
   name: string;
@@ -33,6 +46,14 @@ function ScoreRow({
   const t = useExtracted();
   const formatRange = useFormatPointsRange();
   const formatScore = useFormatScore();
+
+  const value = () => {
+    if (range && max !== null) {
+      return t("{range} of {max}", { max: formatScore(max), range: formatRange(range) });
+    }
+
+    return levels ? t("Graded by level") : t("Not measured yet");
+  };
 
   return (
     <div className="flex flex-col gap-2 py-3" data-slot="score-row">
@@ -44,12 +65,12 @@ function ScoreRow({
             !range && "text-muted-foreground font-sans",
           )}
         >
-          {range && max !== null
-            ? t("{range} of {max}", { max: formatScore(max), range: formatRange(range) })
-            : t("Not measured yet")}
+          {value()}
         </span>
       </p>
-      {max !== null && <PointsMeter max={max} minimumShare={minimumShare} range={range} />}
+      {max !== null && !(levels && !range) && (
+        <PointsMeter max={max} minimumShare={minimumShare} range={range} />
+      )}
       {children}
     </div>
   );
@@ -70,7 +91,7 @@ function Standing({ part }: { part: Part }) {
     return (
       <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
         <CheckIcon aria-hidden="true" className="text-success-text size-3.5" />
-        {t("Above the {minimum} points it asks for", { minimum: formatScore(minimum) })}
+        {t("Above the {minimum} points needed", { minimum: formatScore(minimum) })}
       </p>
     );
   }
@@ -81,7 +102,7 @@ function Standing({ part }: { part: Part }) {
     return (
       <p className="text-destructive-text flex items-center gap-1.5 text-xs">
         <XIcon aria-hidden="true" className="size-3.5" />
-        {t("{points} points below the {minimum} it asks for", {
+        {t("{points} points short of the {minimum} needed", {
           minimum: formatScore(minimum),
           points: formatRange(short),
         })}
@@ -90,8 +111,9 @@ function Standing({ part }: { part: Part }) {
   }
 
   return (
-    <p className="text-warning-text text-xs">
-      {t("Close to the {minimum} points it asks for", { minimum: formatScore(minimum) })}
+    <p className="text-warning-text flex items-center gap-1.5 text-xs">
+      <TriangleAlertIcon aria-hidden="true" className="size-3.5" />
+      {t("Close to the {minimum} points needed", { minimum: formatScore(minimum) })}
     </p>
   );
 }
@@ -123,8 +145,9 @@ function useHeadline(projection: WrittenProjection) {
 
   const below = projection.parts.find(({ standing }) => standing === "below");
 
+  // A part graded by level has no points to wait for, so the headline doesn't say it's waiting.
   const unmeasured = projection.parts.find(
-    ({ standing, range }) => standing === "unmeasured" || !range,
+    (part) => getPartScale(part) === "points" && (part.standing === "unmeasured" || !part.range),
   );
 
   // A part's name comes from the notice, so it opens a sentence rather than sitting inside one.
@@ -135,11 +158,28 @@ function useHeadline(projection: WrittenProjection) {
     };
   }
 
-  if (unmeasured) {
-    return { detail: t("{part} isn't measured yet.", { part: unmeasured.name }), title: null };
+  if (!unmeasured) {
+    return null;
   }
 
-  return null;
+  const share = unmeasured.max && projection.max ? unmeasured.max / projection.max : null;
+
+  if (share === HALF) {
+    return {
+      detail: t("{part}, half your final score, isn't measured yet.", { part: unmeasured.name }),
+      title: null,
+    };
+  }
+
+  return {
+    detail: share
+      ? t("{part}, {share} of your final score, isn't measured yet.", {
+          part: unmeasured.name,
+          share: format.number(share, { maximumFractionDigits: 0, style: "percent" }),
+        })
+      : t("{part} isn't measured yet.", { part: unmeasured.name }),
+    title: null,
+  };
 }
 
 function WriteAction({ goalId }: { goalId: string }) {
@@ -185,14 +225,14 @@ export function WrittenProjectionScore({
 }) {
   const t = useExtracted();
   const headline = useHeadline(projection);
-  const needsWriting = headline !== null;
+  const needsWriting = projection.parts.some((part) => !part.range || part.standing === "below");
 
   return (
     <section className="flex flex-col gap-3" data-slot="written-projection">
       <div className="flex flex-col gap-1">
         <span className="text-label">{t("Estimated score")}</span>
         {projection.combined && projection.max !== null && !headline?.title && (
-          <PointsReadout max={projection.max} range={projection.combined} />
+          <PointsReadout decimals={0} max={projection.max} range={projection.combined} />
         )}
         {headline?.title && <p className="text-lg font-semibold text-balance">{headline.title}</p>}
         {headline?.detail && (
@@ -213,6 +253,7 @@ export function WrittenProjectionScore({
         {projection.parts.map((part) => (
           <ScoreRow
             key={part.name}
+            levels={getPartScale(part) === "levels"}
             max={part.max}
             minimumShare={part.minimum && getMinimumShare({ max: part.max, minimum: part.minimum })}
             name={part.name}

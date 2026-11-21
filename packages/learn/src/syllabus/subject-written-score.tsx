@@ -22,14 +22,9 @@ import {
 import { StepRow, StepRows } from "../_components/step-card";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatScore } from "../essay/essay-labels";
-import {
-  MinimumLegend,
-  PointsMeter,
-  PointsReadout,
-  getMinimumShare,
-} from "../writing/points-readout";
+import { useWritingTaskTitle } from "../writing/writing-header";
 import { useFormatPointsRange } from "../writing/writing-labels";
+import { type ScaledSubject, WrittenStanding } from "./subject-written-standing";
 
 export type WrittenSubject = NonNullable<WrittenPractice["subjects"]>[number];
 
@@ -48,62 +43,6 @@ export function findWrittenSubject({
   return (
     practice?.subjects?.find(({ points }) => subject.areas.some((area) => area === points.name)) ??
     null
-  );
-}
-
-/** The part's estimated points, its own minimum, and each question's share of them. */
-function WrittenPoints({ written }: { written: WrittenSubject }) {
-  const t = useExtracted();
-  const formatScore = useFormatScore();
-  const formatRange = useFormatPointsRange();
-  const format = useFormatter();
-  const { max, minimum, range, tasks } = written.points;
-
-  const formatShare = (share: number) =>
-    format.number(share, { maximumFractionDigits: 0, style: "percent" });
-
-  return (
-    <PageSection aria-label={t("Estimated score")}>
-      <div className="flex flex-col gap-3">
-        <span className="text-muted-foreground text-sm">{t("Estimated score")}</span>
-        {range && max !== null ? (
-          <PointsReadout max={max} range={range} />
-        ) : (
-          <p className="text-lg font-semibold">{t("Not measured yet")}</p>
-        )}
-        {max !== null && (
-          <PointsMeter
-            max={max}
-            minimumShare={minimum && getMinimumShare({ max, minimum })}
-            range={range}
-          />
-        )}
-        {minimum && (
-          <MinimumLegend>
-            {minimum.unit === "percent"
-              ? t("Minimum to pass: {share} of the points", {
-                  share: formatShare(minimum.value / PERCENT),
-                })
-              : t("Minimum to pass: {minimum}", { minimum: formatScore(minimum.value) })}
-          </MinimumLegend>
-        )}
-      </div>
-      <StepRows>
-        {tasks.map((task) => (
-          <StepRow key={task.key}>
-            <span className="min-w-0 flex-1">{task.name}</span>
-            <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-              {task.range && task.max !== null
-                ? t("{range} of {max}", {
-                    max: formatScore(task.max),
-                    range: formatRange(task.range),
-                  })
-                : t("Not measured yet")}
-            </span>
-          </StepRow>
-        ))}
-      </StepRows>
-    </PageSection>
   );
 }
 
@@ -214,11 +153,45 @@ function useLineFact() {
   };
 }
 
-function AnswerRow({ answer, href }: { answer: WrittenAnswer; href: string }) {
+/** A past answer's result on its row: its range with points, else how many criteria are complete. */
+function useAnswerResult() {
+  const t = useExtracted();
+  const formatRange = useFormatPointsRange();
+
+  return function answerResult(answer: WrittenAnswer, decimals?: number): string | null {
+    if (answer.range) {
+      return formatRange(answer.range, { decimals });
+    }
+
+    const { criteria } = answer as WrittenAnswer & {
+      criteria?: { complete: number; total: number };
+    };
+
+    return criteria
+      ? t({
+          description:
+            "A past written answer graded by level: how many of its criteria were fully met, out of all of them.",
+          message: "{complete} of {total} criteria complete",
+          values: { complete: String(criteria.complete), total: String(criteria.total) },
+        })
+      : null;
+  };
+}
+
+function AnswerRow({
+  answer,
+  decimals,
+  href,
+}: {
+  answer: WrittenAnswer;
+  decimals?: number;
+  href: string;
+}) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const formatRange = useFormatPointsRange();
   const lineFact = useLineFact();
+  const writingTitle = useWritingTaskTitle();
+  const result = useAnswerResult()(answer, decimals);
 
   return (
     <ListRowLink href={href}>
@@ -228,6 +201,7 @@ function AnswerRow({ answer, href }: { answer: WrittenAnswer; href: string }) {
           <ListRowDescription>
             <FactSegments
               facts={[
+                answer.unit === "drill" && writingTitle({ title: null, unit: "drill" }),
                 lineFact(answer),
                 answer.versions > 1 &&
                   t("{count, plural, one {# version} other {# versions}}", {
@@ -238,11 +212,7 @@ function AnswerRow({ answer, href }: { answer: WrittenAnswer; href: string }) {
             />
           </ListRowDescription>
         </ListRowContent>
-        {answer.range && (
-          <ListRowTrailing className="font-mono text-xs">
-            {formatRange(answer.range)}
-          </ListRowTrailing>
-        )}
+        {result && <ListRowTrailing className="font-mono text-xs">{result}</ListRowTrailing>}
       </ListRowBody>
     </ListRowLink>
   );
@@ -269,14 +239,22 @@ function WrittenAnswers({
       </PageSectionHeader>
       <ListGroup>
         {written.answers.map((answer) => (
-          <AnswerRow answer={answer} href={answerHref(answer.attemptId)} key={answer.attemptId} />
+          <AnswerRow
+            answer={answer}
+            decimals={(written as ScaledSubject).decimals}
+            href={answerHref(answer.attemptId)}
+            key={answer.attemptId}
+          />
         ))}
       </ListGroup>
     </PageSection>
   );
 }
 
-/** A written part's page: where the learner stands in points, how the answers move, and each answer. */
+/**
+ * A written part's page: where the learner stands (in the aside on a computer), how the answers
+ * move, and each answer.
+ */
 export function SubjectWrittenScore({
   answerHref,
   written,
@@ -286,7 +264,9 @@ export function SubjectWrittenScore({
 }) {
   return (
     <>
-      <WrittenPoints written={written} />
+      <div className="min-[72rem]:hidden">
+        <WrittenStanding titled written={written} />
+      </div>
       <WrittenTrend written={written} />
       <WrittenAnswers answerHref={answerHref} written={written} />
     </>
