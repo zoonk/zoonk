@@ -12,11 +12,9 @@ import { listLessonDays } from "./interval-study-minutes";
 import {
   keepThisWeek,
   listKeptStandInCuts,
-  listThisWeekWork,
   setAsideLeftWork,
   splitExistingItems,
   toKeptItem,
-  withoutLandedDays,
 } from "./kept-items";
 import { listStrainedEnds } from "./kept-phase-ends";
 import {
@@ -51,6 +49,7 @@ import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
 import { listDroppedSkills, summarizePlan } from "./summarize-plan";
 import { getLastKeptDay, getPendingOrder, listStillSetAside } from "./this-week-items";
+import { listThisWeekWork, withoutLandedDays } from "./this-week-work";
 import { markKeptLessons } from "./whole-boss";
 
 /**

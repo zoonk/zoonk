@@ -1,12 +1,12 @@
 import { reserveCarriedTime } from "./carry-over";
 import { findDayIndex } from "./day-index";
 import { type StudyPortion, listIntervalPortions } from "./interval-study-minutes";
-import { type KeptPiece } from "./kept-items";
 import { toIsoDate } from "./plan-calendar";
 import { isStandInUnit } from "./plan-item-rules";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, getCumulativeCapacity } from "./schedule-units";
+import { type KeptPiece } from "./this-week-work";
 
 type LaidOut = {
   carriedSchedule: { units: readonly ScheduledUnit[] };

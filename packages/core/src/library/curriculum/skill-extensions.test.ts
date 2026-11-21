@@ -331,9 +331,9 @@ describe("skill extensions", () => {
     expect(
       items
         .filter((item) => item.kind === "lesson" && !item.lessonId)
-        .map((item) => item.skillId)
-        .toSorted(),
-    ).toStrictEqual(skills.map((skill) => skill.id).toSorted());
+        .map((item) => item.skillId ?? "")
+        .toSorted((a, b) => a.localeCompare(b)),
+    ).toStrictEqual(skills.map((skill) => skill.id).toSorted((a, b) => a.localeCompare(b)));
 
     const requests = await listSkillExtensions({ days: OUTLINE_AHEAD_DAYS, goalId: goal.id });
 
