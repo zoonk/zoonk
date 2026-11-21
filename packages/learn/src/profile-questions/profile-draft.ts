@@ -196,7 +196,7 @@ function isComplete({ draft, question }: { draft: ProfileDraft; question: Profil
 /** Where a question is asked: in onboarding, or again from Settings › About you. */
 export type ProfileQuestionPlace = "onboarding" | "settings";
 
-export function canSendProfileDraft({
+function canSendProfileDraft({
   draft,
   from,
   question,
@@ -270,7 +270,7 @@ export function declineProfileQuestion(question: ProfileQuestion): ProfileAnswer
 }
 
 /** An empty or exclusive screen declines. */
-export function toProfileAnswer({
+function toProfileAnswer({
   draft,
   memoryEnabled,
   question,

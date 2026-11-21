@@ -80,8 +80,8 @@ test("every chip stays tappable, so more than three are saved", async ({
 }) => {
   await page.goto("/settings/about-you/watch");
 
-  const picks = ["Anime", "Comedy", "Drama", "Sports"];
-  await expectHydrated(page.getByRole("button", { exact: true, name: "Anime" }));
+  const picks = ["Sports", "Comedy", "Drama", "Anime"];
+  await expectHydrated(page.getByRole("button", { exact: true, name: "Sports" }));
 
   for (const name of picks) {
     // oxlint-disable-next-line no-await-in-loop -- One tap after another, as a learner taps.
@@ -91,7 +91,7 @@ test("every chip stays tappable, so more than three are saved", async ({
   await page.getByRole("button", { exact: true, name: "Save" }).click();
 
   const row = page.getByRole("link", { name: /^What you watch/u });
-  await expect(row).toContainText("Anime, Comedy, Drama, Sports");
+  await expect(row).toContainText(picks.join(", "));
 });
 
 test("typed tools come back as chips, and a removed one is gone once saved", async ({
