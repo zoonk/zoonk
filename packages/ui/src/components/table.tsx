@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { SIDEWAYS_SCROLL_FOCUS_CLASS, SidewaysScroll } from "./sideways-scroll";
+import { SidewaysScroll } from "./sideways-scroll";
 import type * as React from "react";
 
 /** Wider than its room, it scrolls sideways; `scrollLabel` names it for the keyboard. */
@@ -11,15 +11,13 @@ function Table({
   ...props
 }: React.ComponentProps<"table"> & { scrollLabel: string }) {
   return (
-    <div className={cn("w-full min-w-0 rounded-lg", SIDEWAYS_SCROLL_FOCUS_CLASS)}>
-      <SidewaysScroll label={scrollLabel}>
+    <SidewaysScroll className="w-full" label={scrollLabel}>
         <table
           className={cn("w-full caption-bottom text-sm tabular-nums", className)}
           data-slot="table"
           {...props}
         />
       </SidewaysScroll>
-    </div>
   );
 }
 

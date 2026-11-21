@@ -219,10 +219,9 @@ export function GuitarFretboard(props: FretboardProps) {
     </div>
   );
 
-  // The shape alone always fits; the strings to pick from can be wider than a narrow card.
   return (
     <div className="flex flex-col gap-2">
-      {onChange ? <SidewaysScroll label={label}>{board}</SidewaysScroll> : board}
+      <SidewaysScroll label={label}>{board}</SidewaysScroll>
       <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
         <span className="flex items-center gap-1.5">
           <OpenOrMuted fret={0} />

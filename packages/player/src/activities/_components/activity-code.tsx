@@ -1,6 +1,6 @@
 "use client";
 
-import { SIDEWAYS_SCROLL_FOCUS_CLASS, SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
@@ -47,8 +47,7 @@ export function ActivityCodeBlock({
   label: string;
 }) {
   return (
-    <div className={cn("-mx-2 rounded-lg", SIDEWAYS_SCROLL_FOCUS_CLASS, className)}>
-      <SidewaysScroll label={label}>
+    <SidewaysScroll className={cn("-mx-2", className)} label={label}>
         <div
           className={cn(
             "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1 sm:w-max",
@@ -58,7 +57,6 @@ export function ActivityCodeBlock({
           {children}
         </div>
       </SidewaysScroll>
-    </div>
   );
 }
 

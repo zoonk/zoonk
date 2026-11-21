@@ -80,7 +80,7 @@ export function SqlRowsTable({
     <div
       className={cn(
         ACTIVITY_BOX_CLASS,
-        "has-focus-visible:ring-ring/50 overflow-hidden has-focus-visible:ring-[3px]",
+        "overflow-hidden",
         className,
       )}
     >

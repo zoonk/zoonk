@@ -104,8 +104,21 @@ function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
   );
 }
 
-// `scroll-fade-x`'s widest fade.
-const SCROLL_FADE_PX = 40;
+/** How wide the scroller's edge fades, from its scroll padding: `scroll-fade-x` sets it to the fade, such as `min(12%, 80px)`. */
+function fadeWidth(scroll: HTMLElement): number {
+  const padding = getComputedStyle(scroll).scrollPaddingInlineEnd;
+  const lengths = padding.replaceAll(/min\(|\)/gu, "").split(",");
+
+  return Math.min(
+    ...lengths.map((length) => {
+      const share = length.trim();
+
+      return share.endsWith("%")
+        ? (scroll.clientWidth * Number(share.slice(0, -1))) / 100
+        : Number(share.replace("px", ""));
+    }),
+  );
+}
 
 export function MockQuestionMap({ className }: { className?: string }) {
   const t = useExtracted();
@@ -128,7 +141,7 @@ export function MockQuestionMap({ className }: { className?: string }) {
 
       const viewport = scroll.getBoundingClientRect();
       const cell = current.getBoundingClientRect();
-      const inset = Math.min(SCROLL_FADE_PX, cell.width);
+      const inset = Math.min(fadeWidth(scroll), cell.width);
       const left = cell.left - viewport.left - inset;
       const right = cell.right - viewport.right + inset;
 

@@ -70,7 +70,7 @@ export function PianoKeyboard({
 
   // The octave fits the card on every phone at the usual text size; only larger text makes it scroll, the same in every state, so Check moves no key.
   return (
-    <SidewaysScroll className={className} label={isInteractive ? label : undefined}>
+    <SidewaysScroll className={className} label={label}>
       <div
         aria-hidden={isInteractive ? undefined : true}
         className="relative flex h-36 w-full touch-manipulation select-none"

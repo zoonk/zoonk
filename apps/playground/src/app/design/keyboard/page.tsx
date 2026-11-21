@@ -1,6 +1,5 @@
-import { SIDEWAYS_SCROLL_FOCUS_CLASS, SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { SHORTCUTS, type ShortcutName, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
-import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { DocHeader, DocRules, DocSection } from "../_components/doc";
 import { KeyCap } from "./key-cap";
@@ -64,11 +63,9 @@ export default function KeyboardPage() {
       </DocSection>
 
       <DocSection title="Keys">
-        <div className={cn("max-w-column rounded-lg", SIDEWAYS_SCROLL_FOCUS_CLASS)}>
-          <SidewaysScroll label="Keys">
-            <KeysTable />
-          </SidewaysScroll>
-        </div>
+        <SidewaysScroll className="max-w-column" label="Keys">
+          <KeysTable />
+        </SidewaysScroll>
       </DocSection>
     </>
   );

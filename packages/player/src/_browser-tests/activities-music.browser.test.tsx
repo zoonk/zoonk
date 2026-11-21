@@ -162,6 +162,7 @@ function pointsOffTheKeys() {
   const keys = page.getByRole("group", { name: "Piano keys" }).element();
   keys.scrollIntoView({ block: "start" });
   const shown = keys.getBoundingClientRect();
+
   const xs = Array.from(
     { length: Math.floor((shown.width - 2) / SCAN_STEP_PX) },
     (_, step) => shown.left + 1 + step * SCAN_STEP_PX,
@@ -471,6 +472,10 @@ describe("music activities with a keyboard only", () => {
       await expectVerdict("Correct!");
       expect(marksOutsideTheirKey()).toStrictEqual([]);
       expect(keySpans()).toStrictEqual(answering);
+
+      await expect
+        .element(page.getByRole("group", { name: "Piano keys" }))
+        .toHaveAttribute("tabindex", "0");
     });
   });
 

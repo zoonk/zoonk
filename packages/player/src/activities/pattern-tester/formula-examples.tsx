@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
-import { SIDEWAYS_SCROLL_FOCUS_CLASS, SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -57,7 +57,7 @@ export function FormulaExamples({
   const names = examples[0]?.inputs.map((input) => input.name) ?? [];
 
   return (
-    <div className={cn(ACTIVITY_BOX_CLASS, SIDEWAYS_SCROLL_FOCUS_CLASS, "overflow-hidden")}>
+    <div className={cn(ACTIVITY_BOX_CLASS, "overflow-hidden")}>
       <SidewaysScroll label={t("Examples for your formula")}>
         <table className="w-full text-sm tabular-nums">
           <caption className="sr-only">{t("Examples for your formula")}</caption>
