@@ -1,11 +1,14 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { PlanConflictError } from "../plan-conflict";
 import { type PlanEffect } from "../planner/plan-effect";
 import { commitPlan } from "./commit-plan";
-import { type LivingPlanBatch, mergeChangeTopics } from "./living-plan-change";
-import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
+import {
+  type LivingPlanBatch,
+  appendLivingPlanBatch,
+  mergeChangeTopics,
+} from "./living-plan-change";
+import { parsePlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { parsePlanSnapshot } from "./plan-snapshot";
 import { type ComputedPlan } from "./replan";
@@ -114,9 +117,10 @@ export async function findUnseenSkip({
     return null;
   }
 
-  const { seenAt, versionAfter } = parsePlanChangePayload(latest.payload);
+  const payload = parsePlanChangePayload(latest.payload);
+  const { livingPlanDay, seenAt, versionAfter } = payload;
 
-  if (seenAt !== null || versionAfter !== context.plan.version) {
+  if (livingPlanDay || seenAt !== null || versionAfter !== context.plan.version) {
     return null;
   }
 
@@ -129,13 +133,7 @@ export async function findUnseenSkip({
   const items = parsePlanSnapshot(snapshot)?.items;
 
   return isJsonObject(snapshot) && items
-    ? {
-        change: latest,
-        items,
-        payload: parsePlanChangePayload(latest.payload),
-        snapshot,
-        storedPayload: latest.payload,
-      }
+    ? { change: latest, items, payload, snapshot, storedPayload: latest.payload }
     : null;
 }
 
@@ -170,46 +168,34 @@ export async function commitTestedOutBatch({
     extraWrites: async (tx) => {
       await save(tx);
 
-      // Only the skip as it was read: a "Got it" since makes this one news of its own.
-      const { count } = await tx.planChange.updateMany({
-        data: {
-          payload: toPlanChangePayload({
-            ...added,
-            effect: joinSkipEffects({
-              newer: effect,
-              older: added.effect,
-              seen: {
-                ...getSeenEffect({
-                  computed,
-                  shown: unseen.items.map((item) =>
-                    skipped.has(item.id) || counted.has(item.id)
-                      ? { ...item, status: "testedOut" as const }
-                      : item,
-                  ),
-                }),
-                ...(livingPlanDay && {
-                  topicsAdded: mergeChangeTopics(added.effect?.topicsAdded, effect.topicsAdded),
-                  topicsLeftOut: mergeChangeTopics(
-                    added.effect?.topicsLeftOut,
-                    effect.topicsLeftOut,
-                  ),
-                }),
-              },
-            }),
-            lessonsSkipped: (added.lessonsSkipped ?? 0) + newlySkipped,
-            planItemIds: [...new Set([...added.planItemIds, ...skipped])],
-            versionAfter: context.plan.version + 1,
-          }),
-        },
-        where: { id: unseen.change.id, payload: { equals: unseen.storedPayload } },
+      const seen = getSeenEffect({
+        computed,
+        shown: unseen.items.map((item) =>
+          skipped.has(item.id) || counted.has(item.id)
+            ? { ...item, status: "testedOut" as const }
+            : item,
+        ),
       });
 
-      if (count === 0) {
-        throw new PlanConflictError();
-      }
-
-      await tx.planChangeSnapshot.create({
-        data: { changeId: unseen.change.id, plan: unseen.snapshot },
+      await appendLivingPlanBatch({
+        batch: unseen,
+        payload: {
+          effect: joinSkipEffects({
+            newer: effect,
+            older: added.effect,
+            seen: {
+              ...seen,
+              ...(livingPlanDay && {
+                topicsAdded: mergeChangeTopics(added.effect?.topicsAdded, effect.topicsAdded),
+                topicsLeftOut: mergeChangeTopics(added.effect?.topicsLeftOut, effect.topicsLeftOut),
+              }),
+            },
+          }),
+          lessonsSkipped: (added.lessonsSkipped ?? 0) + newlySkipped,
+          planItemIds: [...new Set([...added.planItemIds, ...skipped])],
+          versionAfter: context.plan.version + 1,
+        },
+        tx,
       });
     },
   });

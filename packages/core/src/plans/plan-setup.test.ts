@@ -4,12 +4,12 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
-import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { loadNoticeDay } from "../exams/_utils/notice-day";
+import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { announceTestedOutItems } from "./announce-tested-out-items";
@@ -106,10 +106,22 @@ async function placedGoal() {
   );
 
   const skillId = library.skills[0]?.id ?? "";
-  const item = await itemFixture({ content: choiceItemContent(), skillId });
-  await attemptFixture({ isCorrect: true, itemId: item.id, skillId, userId: user.id });
-  const confirmation = await itemFixture({ content: choiceItemContent(), skillId });
-  await attemptFixture({ isCorrect: true, itemId: confirmation.id, skillId, userId: user.id });
+  const bank = await placementItemBank([skillId]);
+
+  await Promise.all(
+    bank
+      .flat()
+      .map(({ answer, item }) =>
+        attemptFixture({
+          answer,
+          isCorrect: true,
+          isPlacement: true,
+          itemId: item.id,
+          skillId,
+          userId: user.id,
+        }),
+      ),
+  );
 
   mockSession(user.id);
   return { ...unplanned, library };

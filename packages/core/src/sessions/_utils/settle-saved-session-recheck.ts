@@ -5,7 +5,7 @@ import { bringBackMissedLessons } from "../../plans/bring-back-missed-lessons";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type StudySessionRow } from "./study-session-access";
 
-export async function retrySessionRecheck({
+export async function settleSavedSessionRecheck({
   attempt,
   session,
   timeZone: answerZone,

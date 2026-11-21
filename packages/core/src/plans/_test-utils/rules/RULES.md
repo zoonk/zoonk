@@ -176,7 +176,7 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 
 - **Check:** a first independent practice miss on a skipped topic leaves its lessons skipped and makes a tap re-check due from the next local day. A right re-check keeps the skip. A wrong answer or “I don’t know” returns the checked topic alone, names it in `effect.topicsAdded`, and offers Undo. Undo restores the skip and its original date. The shown session's active and pending blocks stay in place, including across midnight. A learner-removed topic is never returned by a re-check.
 
-### The living plan
+### R47. The living plan responds to lesson answers
 
 - **Check:** each learn goal and each language skill closes a separate window after 20 first-try lesson answers. At least 17 right is easy, fewer than 10 is hard, and other results break a streak. A new session has up to three tap checks. An easy window targets the next topics in plan order, and two consecutive easy windows offer a Quick test at lesson end. Dismissing an offer suppresses it until a later qualifying window. A hard window re-checks skipped direct prerequisites and moves studied direct prerequisites into earlier review. Only a failed re-check brings back its topic. Each local session day has at most one living-plan change card naming its topics with Undo.
 
