@@ -391,43 +391,45 @@ struct TodayPlanChangeSection: View {
   /// Main's card: what happened and why, with what changes and the choices in its sheet.
   @ViewBuilder
   private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      VStack(alignment: .leading, spacing: 4) {
-        Label {
+    HStack(alignment: .firstTextBaseline, spacing: 10) {
+      SuggestionMark(kind: .symbol("calendar.badge.clock"))
+        .accessibilityHidden(true)
+
+      VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 4) {
           missedDaysTitle
             .typeStyle(.body.weight(.semibold))
-        } icon: {
-          SuggestionMark(kind: .symbol("calendar.badge.clock"))
-        }
-        .accessibilityRepresentation {
-          missedDaysTitle
             .accessibilityAddTraits(.isHeader)
+
+          Text(behindSentence(behind))
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
 
-        Text(behindSentence(behind))
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-      }
-
-      SuggestionOpen(
-        isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil,
-        label: Text("See what changes", tableName: "Today"), onDismiss: openChosen
-      ) {
-        missedDaysTitle
-          .typeStyle(.body.weight(.semibold))
-          .foregroundStyle(Color(.foreground))
-
-        PlanEffectDiff(
-          effect: change.effect, today: view.session.localDate,
-          options: PlanChangeOptions(dateKind: GoalDateKind(isExam: isExam)))
-      } actions: {
-        missedDaysChoices(behind)
+        missedDaysOpen(behind)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(14)
     .panel()
     .listRowSeparator(.hidden)
+  }
+
+  private func missedDaysOpen(_ behind: TodayView.PlanChange.Behind) -> some View {
+    SuggestionOpen(
+      isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil,
+      label: Text("See what changes", tableName: "Today"), onDismiss: openChosen
+    ) {
+      missedDaysTitle
+        .typeStyle(.body.weight(.semibold))
+        .foregroundStyle(Color(.foreground))
+
+      PlanEffectDiff(
+        effect: change.effect, today: view.session.localDate,
+        options: PlanChangeOptions(dateKind: GoalDateKind(isExam: isExam)))
+    } actions: {
+      missedDaysChoices(behind)
+    }
   }
 
   @ViewBuilder
