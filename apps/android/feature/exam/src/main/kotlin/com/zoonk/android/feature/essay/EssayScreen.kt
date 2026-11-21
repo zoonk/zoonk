@@ -61,6 +61,7 @@ import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.writing.WritingTaskName
 import com.zoonk.android.feature.writing.writingTaskTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -87,7 +88,7 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
-import com.zoonk.android.ui.components.taskOption
+import com.zoonk.android.ui.components.taskSideAction
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -136,7 +137,13 @@ fun EssayScreen(
                 // A written question appears once its start admits it; until then the start's answer shows.
                 read.error == ApiError.NotFound && before != null -> {
                     val refused =
-                        route.taskDescription?.let { RefusedTask(it, route.taskMinutes ?: 0, route.taskLines, route.drill) }
+                        route.taskDescription?.let { description ->
+                            val name =
+                                route.taskNumber?.let { number ->
+                                    route.taskTotal?.let { WritingTaskName(route.taskLines, number, it, route.taskDistinctLines) }
+                                }
+                            RefusedTask(description, route.taskMinutes ?: 0, route.taskLines, route.drill, name)
+                        }
                     WritingStart(blockId, before, route.drill, refused, signedIn, app, navigator)
                 }
 
@@ -181,7 +188,7 @@ private fun WritingStart(
             WritingRefused(
                 task =
                     task?.let {
-                        writingTaskTitle(drill = it.drill, task = null, fallback = it.description, lines = it.lines) to it.minutes
+                        writingTaskTitle(drill = it.drill, task = it.name, fallback = it.description, lines = it.lines) to it.minutes
                     },
                 busy = false,
                 onContinue = navigator::closeTask,
@@ -592,7 +599,7 @@ internal fun WritingResultScreen(
                         OutlinedButton(
                             busy = finishing,
                             onClick = viewModel::finish,
-                            modifier = Modifier.taskOption(),
+                            modifier = Modifier.taskSideAction(),
                             leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
                         ) {
                             Text(stringResource(R.string.essay_skip_rewrite))

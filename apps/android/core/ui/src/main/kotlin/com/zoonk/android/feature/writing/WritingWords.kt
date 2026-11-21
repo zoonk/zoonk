@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,17 +18,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatList
 import java.time.LocalDate
-
-/** A written task as it's named before its question is assigned: its place in the written test and its line limit. */
-@Immutable
-data class WritingTaskName(
-    val lines: Int?,
-    /** Its 1-based place in the written test. */
-    val number: Int,
-    val total: Int,
-    /** No other task of the test has its line limit, so the limit names it. */
-    val distinctLines: Boolean,
-)
 
 /**
  * A writing task by the name a learner knows it: a drill as its own short exercise, a whole answer

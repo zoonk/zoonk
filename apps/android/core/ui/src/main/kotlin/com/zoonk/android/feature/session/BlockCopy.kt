@@ -92,7 +92,7 @@ fun blockTitle(step: DayStep): String {
         }
 
         step.kind == StudyBlock.Kind.PRODUCE -> {
-            writingTaskTitle(drill = step.drill, task = null, fallback = step.title)
+            writingTaskTitle(drill = step.drill, task = step.writingTask, fallback = step.title)
         }
 
         step.fullReview -> {

@@ -59,7 +59,7 @@ fun TaskActions(
         val roomy = maxWidth >= ROOMY_BAR_WIDTH
         val singleAction = maxWidth < MAIN_ACTION_WIDTH * 2 * LocalDensity.current.fontScale
 
-        CompositionLocalProvider(LocalRoomyBar provides roomy) {
+        CompositionLocalProvider(LocalRoomyBar provides roomy, LocalStackedBar provides singleAction) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(BAR_GAP, if (roomy) Alignment.End else Alignment.Start),
@@ -78,6 +78,17 @@ fun TaskActions(
 
 /** Whether the [TaskActions] around this has room for its buttons side by side; null outside one. */
 private val LocalRoomyBar = compositionLocalOf<Boolean?> { null }
+
+/** Whether the [TaskActions] around this puts one button a line, as large text does on a phone. */
+private val LocalStackedBar = compositionLocalOf { false }
+
+/**
+ * A short action beside the main one (Skip beside Rewrite): at its own width while the bar keeps them
+ * on one line, as wide as the main action once the bar stacks them, so a stacked bar's buttons never
+ * have two widths.
+ */
+@Composable
+fun Modifier.taskSideAction(): Modifier = if (LocalStackedBar.current) fillMaxWidth() else this
 
 /**
  * Main's `TASK_OPTION_CLASS`: an action beside the main one. In [TaskActions] it follows the main action: at its own

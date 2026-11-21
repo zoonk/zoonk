@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.session
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.android.feature.writing.WritingTaskName
+import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCapsulesInner
@@ -129,6 +131,8 @@ data class DayStep(
     val writing: WritingRow? = null,
     /** When a [WritingRow.Tomorrow] task returns: tomorrow, or a later day. */
     val writingReturnsOn: java.time.LocalDate? = null,
+    /** Which question of the written test a whole answer is, so its row names it rather than the notice's sentence. */
+    val writingTask: WritingTaskName? = null,
     /** A short writing task on what a lesson just taught, rather than a whole answer. */
     val drill: Boolean = false,
 ) {
@@ -339,6 +343,7 @@ fun StudyBlock.toDayStep(): DayStep =
         waitReason = waitReason,
         writing = writingAvailability?.toWritingRow(),
         writingReturnsOn = writingAvailability?.returnsOn(),
+        writingTask = writingTask?.toName(),
         drill = writingUnit == StudyBlock.WritingUnit.DRILL,
     )
 
@@ -376,6 +381,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
         writing = writingAvailability?.toWritingRow(),
         writingReturnsOn = writingAvailability?.returnsOn(),
+        writingTask = writingTask?.toName(),
         drill = writingUnit == UnstartedStudyDayBlocksInner.WritingUnit.DRILL,
     )
 

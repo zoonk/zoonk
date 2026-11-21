@@ -265,6 +265,9 @@ sealed interface AppRoute : NavKey {
         val taskDescription: String? = null,
         val taskMinutes: Int? = null,
         val taskLines: Int? = null,
+        val taskNumber: Int? = null,
+        val taskTotal: Int? = null,
+        val taskDistinctLines: Boolean = false,
         val drill: Boolean = false,
     ) : AppRoute
 
