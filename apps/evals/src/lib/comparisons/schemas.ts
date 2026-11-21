@@ -122,7 +122,13 @@ const slotSchema = z.object({
   userPromptHash: digest,
 });
 
-const selectionCase = z.object({ expectations: text, id: text, input, language: text });
+const selectionCase = z.object({
+  expectations: text,
+  expected: z.unknown().optional(),
+  id: text,
+  input,
+  language: text,
+});
 export const selectionSchema = z.object({
   cases: z.array(selectionCase).min(1),
   controls: controlsSchema,

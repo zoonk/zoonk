@@ -5,7 +5,11 @@ function blobFormat(key: string, value: unknown) {
     return "text";
   }
 
-  if (key === "input" || (key === "criteria" && Array.isArray(value))) {
+  if (
+    key === "input" ||
+    (key === "expected" && value !== undefined) ||
+    (key === "criteria" && Array.isArray(value))
+  ) {
     return "json";
   }
 

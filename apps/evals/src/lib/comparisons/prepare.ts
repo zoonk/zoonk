@@ -140,6 +140,7 @@ async function freeze(options: PrepareOptions) {
     .filter((item) => options.caseIds.length === 0 || options.caseIds.includes(item.id))
     .map((tc) => ({
       expectations: tc.expectations ?? "",
+      expected: tc.expected,
       id: tc.id,
       input: tc.userInput,
       language: getTestCaseLanguage(tc) ?? "unknown",

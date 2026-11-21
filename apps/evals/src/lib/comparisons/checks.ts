@@ -74,7 +74,10 @@ export async function checkRuns(task: RegisteredTask, comparison: Comparison) {
         return;
       }
 
-      const checks = await check({ output, testCase } as never);
+      const checks = await check({
+        output,
+        testCase: { ...testCase, expected: frozen.expected },
+      } as never);
 
       await writeRecord(`${prefix}.json`, checkSchema, {
         ...base,
