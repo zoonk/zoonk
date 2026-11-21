@@ -48,15 +48,15 @@ export function ActivityCodeBlock({
 }) {
   return (
     <SidewaysScroll className={cn("-mx-2", className)} label={label}>
-        <div
-          className={cn(
-            "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1 sm:w-max",
-            CODE_TEXT,
-          )}
-        >
-          {children}
-        </div>
-      </SidewaysScroll>
+      <div
+        className={cn(
+          "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] px-2 pb-1 sm:w-max",
+          CODE_TEXT,
+        )}
+      >
+        {children}
+      </div>
+    </SidewaysScroll>
   );
 }
 

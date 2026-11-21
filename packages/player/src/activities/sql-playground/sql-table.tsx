@@ -77,13 +77,7 @@ export function SqlRowsTable({
   rows: readonly (readonly ActivityCell[])[];
 }) {
   return (
-    <div
-      className={cn(
-        ACTIVITY_BOX_CLASS,
-        "overflow-hidden",
-        className,
-      )}
-    >
+    <div className={cn(ACTIVITY_BOX_CLASS, "overflow-hidden", className)}>
       <SidewaysScroll label={caption}>
         <table className="w-full text-sm">
           <caption className="sr-only">{caption}</caption>

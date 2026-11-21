@@ -153,10 +153,10 @@ export function CodeRunnerOutput({
 
       {run?.errorOutput && !isStale && (
         <SidewaysScroll label={t("Error")}>
-            <pre className="text-muted-foreground min-w-max font-mono text-xs whitespace-pre">
-              {run.errorOutput}
-            </pre>
-          </SidewaysScroll>
+          <pre className="text-muted-foreground min-w-max font-mono text-xs whitespace-pre">
+            {run.errorOutput}
+          </pre>
+        </SidewaysScroll>
       )}
 
       {mistake && !isStale && (

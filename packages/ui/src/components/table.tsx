@@ -12,12 +12,12 @@ function Table({
 }: React.ComponentProps<"table"> & { scrollLabel: string }) {
   return (
     <SidewaysScroll className="w-full" label={scrollLabel}>
-        <table
-          className={cn("w-full caption-bottom text-sm tabular-nums", className)}
-          data-slot="table"
-          {...props}
-        />
-      </SidewaysScroll>
+      <table
+        className={cn("w-full caption-bottom text-sm tabular-nums", className)}
+        data-slot="table"
+        {...props}
+      />
+    </SidewaysScroll>
   );
 }
 
