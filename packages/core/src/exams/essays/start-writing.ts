@@ -48,7 +48,7 @@ function findCurrentTask({
 
   const task = tasks.find(({ key }) => key === taskKey);
 
-  return task && { ...task, ...indexWritingTasks(tasks).get(taskKey) };
+  return task && { ...task, writingTask: indexWritingTasks(tasks).get(taskKey) };
 }
 
 function summarizeTask({
@@ -65,10 +65,11 @@ function summarizeTask({
         description: task.description,
         lines: task.lines,
         minutes: estimatedMinutes,
-        ...(task.number && {
-          distinctLines: task.distinctLines,
-          number: task.number,
-          total: task.total,
+        ...(task.writingTask && {
+          distinctLines: task.writingTask.distinctLines,
+          number: task.writingTask.number,
+          total: task.writingTask.total,
+          writingTask: task.writingTask,
         }),
         points: task.points,
         taskKey: task.key,
@@ -229,7 +230,9 @@ export async function startWriting({
       if (admission.status === "limitReached") {
         const summary = summarizeTask({
           estimatedMinutes: block.estimatedMinutes,
-          task,
+          task:
+            task ??
+            findCurrentTask({ blueprint: goal.examBlueprint, taskKey: writing.taskKey, userId }),
           unit: writing.unit,
         });
 

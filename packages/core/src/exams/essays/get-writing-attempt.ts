@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { loadWritingTask } from "../../sessions/_utils/writing-block-tasks";
 import { getSession } from "../../users/get-session";
 import { writingAttemptSchema } from "./essay-contract";
 import { writtenAnswerSchema } from "./writing-contract";
@@ -14,7 +15,11 @@ export async function getWritingAttempt(attemptId: string) {
 
   const attempt = isUuid(attemptId)
     ? await prisma.attempt.findFirst({
-        select: { answer: true, answeredAt: true, item: { select: { content: true } } },
+        select: {
+          answer: true,
+          answeredAt: true,
+          item: { select: { content: true, examBlueprintId: true } },
+        },
         where: { id: attemptId, userId: session.user.id },
       })
     : null;
@@ -39,7 +44,14 @@ export async function getWritingAttempt(attemptId: string) {
       writing,
     }).data;
 
-  return result
-    ? ({ attempt: result, status: "ready" } as const)
-    : ({ status: "notFound" } as const);
+  if (!result) {
+    return { status: "notFound" } as const;
+  }
+
+  const writingTask = await loadWritingTask({
+    blueprintId: attempt.item?.examBlueprintId,
+    taskKey: result.writing.taskKey,
+  });
+
+  return { attempt: { ...result, ...(writingTask && { writingTask }) }, status: "ready" } as const;
 }

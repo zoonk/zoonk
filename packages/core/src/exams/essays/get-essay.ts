@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
+import { loadWritingTask } from "../../sessions/_utils/writing-block-tasks";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { findOwnedEssay } from "./_utils/owned-essay";
@@ -37,7 +38,7 @@ export async function getEssay({
   const admissionId = writing?.admissionId;
   const localDate = getDateInTimeZone({ date: currentInstant, timeZone: zone });
 
-  const [drafts, gradesLeft, submitted] = await Promise.all([
+  const [drafts, gradesLeft, submitted, writingTask] = await Promise.all([
     loadEssayDrafts({ itemId: item.id, sessionId, userId }),
     countWritingExtrasLeft({ localDate, tx: prisma, userId }),
     admissionId
@@ -46,14 +47,16 @@ export async function getEssay({
           where: { id: getWritingAttemptId({ admissionId, itemId: item.id }), userId },
         })
       : null,
+    writing && loadWritingTask({ blueprintId: goal?.examBlueprintId, taskKey: writing.taskKey }),
   ]);
 
   return {
     essay: {
+      ...(admissionId && { admissionId }),
       blockId,
       context: content.context,
       draft: admissionId && writing?.draft && !submitted ? { ...writing.draft, admissionId } : null,
-      drafts,
+      drafts: writingTask ? drafts.map((draft) => ({ ...draft, writingTask })) : drafts,
       gradesLeft,
       pacing: { minutes: block.estimatedMinutes ?? 1, source: writingPacing ?? "practice" },
       question: content.question,
@@ -61,6 +64,7 @@ export async function getEssay({
       sessionId,
       status: block.status,
       writing: writingPromptSchema.parse(content.writing),
+      ...(writingTask && { writingTask }),
     },
     status: "ready",
   };

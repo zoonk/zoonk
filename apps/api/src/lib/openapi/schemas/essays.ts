@@ -4,6 +4,7 @@ import {
   writingPacingSchema,
   writingPromptSchema,
   writingResultSchema,
+  writingTaskSchema,
 } from "@zoonk/core/exams/essays/writing-contract";
 import { StudyBlockStatus } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -11,6 +12,7 @@ import { z } from "zod";
 
 export const essayViewResponseSchema = z
   .object({
+    admissionId: uuidSchema().optional().describe("The current admission issued for this block"),
     blockId: uuidSchema(),
     context: z.string().nullable(),
     draft: writingDraftSchema.nullable(),
@@ -20,6 +22,7 @@ export const essayViewResponseSchema = z
         grade: writingResultSchema,
         submittedAt: z.iso.datetime(),
         text: z.string(),
+        writingTask: writingTaskSchema.optional(),
       }),
     ),
     gradesLeft: z
@@ -37,6 +40,7 @@ export const essayViewResponseSchema = z
     sessionId: uuidSchema(),
     status: z.enum(StudyBlockStatus),
     writing: writingPromptSchema,
+    writingTask: writingTaskSchema.optional(),
   })
   .meta({ id: "Essay" }) satisfies z.ZodType<EssayView>;
 

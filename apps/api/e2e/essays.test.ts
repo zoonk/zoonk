@@ -22,6 +22,7 @@ import { readBody } from "./helpers/response";
 const DAILY_EXTRA_WRITES = 6;
 const MINUTES = 20;
 const TASK = { count: 1, description: "Argumentative essay", key: "essay", lines: 30 };
+const WRITING_TASK = { distinctLines: true, lines: TASK.lines, number: 1, points: null, total: 1 };
 const CRITERION = { id: "argument", name: "Argument", points: null };
 
 const SHORT_DRAFT = {
@@ -209,6 +210,7 @@ test.describe("Essays API", () => {
           .then((response) => readBody({ response, schema: essayViewResponseSchema }));
 
       expect(await readEssay()).toStrictEqual({
+        admissionId,
         blockId,
         context: essay.context,
         draft: null,
@@ -220,6 +222,7 @@ test.describe("Essays API", () => {
         sessionId,
         status: "active",
         writing: prompt,
+        writingTask: WRITING_TASK,
       });
 
       const submission = { ...SHORT_DRAFT, admissionId };
@@ -280,9 +283,25 @@ test.describe("Essays API", () => {
       });
 
       expect(await readEssay()).toMatchObject({
+        admissionId,
         draft: null,
-        drafts: [{ attemptId: attempts[0]?.id, grade, text: SHORT_DRAFT.text }],
+        drafts: [
+          { attemptId: attempts[0]?.id, grade, text: SHORT_DRAFT.text, writingTask: WRITING_TASK },
+        ],
         gradesLeft: 0,
+      });
+
+      const rewriteRefusal = await readBody({
+        response: await learner.api.post(`${path}/starts`, {
+          data: { previousAttemptId: attempts[0]?.id },
+        }),
+        schema: writingStartSchema,
+        status: 429,
+      });
+
+      expect(rewriteRefusal).toMatchObject({
+        status: "limitReached",
+        task: { distinctLines: true, number: 1, total: 1, writingTask: WRITING_TASK },
       });
 
       await expect(
@@ -332,6 +351,7 @@ test.describe("Essays API", () => {
           taskKey: TASK.key,
           total: 1,
           unit: "answer",
+          writingTask: WRITING_TASK,
         },
         unit: "answer",
       });
