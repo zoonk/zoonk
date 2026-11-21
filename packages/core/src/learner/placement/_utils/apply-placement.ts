@@ -12,7 +12,7 @@ import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { isFocusTestStarted } from "../focus-test-state";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
 
-export async function loadPlacement({
+async function loadPlacement({
   goalId,
   plan,
   timeZone = "UTC",

@@ -10,7 +10,7 @@ import { LANGUAGE_SKILLS } from "../levels/skill-level-rules";
 const OPTIONS = 4;
 const CONFIRMATION_OPTIONS = 5;
 
-export const levelTestLengthSchema = z.enum(["quick", "wholeCourse"]);
+const levelTestLengthSchema = z.enum(["quick", "wholeCourse"]);
 export type LevelTestLength = z.infer<typeof levelTestLengthSchema>;
 
 export const levelTestOutLevelSchema = z.enum(["B2", "C1", "C2"]);
@@ -112,12 +112,9 @@ export const levelTestAnswerSchema = z.object({
   skipped: z.boolean().optional(),
 });
 
-export const levelTestRangeSchema = z.object({
-  high: z.enum(CEFR_LEVELS),
-  low: z.enum(CEFR_LEVELS),
-});
+const levelTestRangeSchema = z.object({ high: z.enum(CEFR_LEVELS), low: z.enum(CEFR_LEVELS) });
 
-export const levelTestRangesSchema = z.partialRecord(questionSkillSchema, levelTestRangeSchema);
+const levelTestRangesSchema = z.partialRecord(questionSkillSchema, levelTestRangeSchema);
 export type LevelTestRanges = z.infer<typeof levelTestRangesSchema>;
 
 export const levelTestResultSchema = z.object({
