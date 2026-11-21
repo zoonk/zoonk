@@ -1,24 +1,21 @@
 import Foundation
 
-/// A bar chart's value axis, the same whichever way its bars run: round ends from zero, cut at
-/// `axisStart` when the chart sets one, as main's `getLayout`.
+/// A category chart's value axis, the same whichever way its bars run, as main's
+/// `getChartValueAxis`: round ends, from zero for bars, cut at `axisStart` when the chart sets one.
 struct LessonChartScale {
   let domain: ClosedRange<Double>
   let ticks: [Double]
 
   init(_ chart: LessonChart) {
     let values = chart.series.flatMap(\.values)
-    let nice = ChartsMath.niceDomain(values + [chart.axisStart].compactMap(\.self))
+    let nice = ChartsMath.niceDomain(
+      values + [chart.axisStart].compactMap(\.self), includesZero: chart.chart == .bar)
     let domain =
       chart.axisStart.flatMap { $0 < nice.upperBound ? $0...nice.upperBound : nil } ?? nice
-    let step = ChartsMath.niceStep(domain.upperBound - domain.lowerBound)
     let wholeNumbers = values.allSatisfy { $0 == $0.rounded() }
-    let first = (ChartsMath.clean(domain.lowerBound / step)).rounded(.up) * step
 
     self.domain = domain
-    self.ticks = stride(from: first, through: domain.upperBound + step / 1e9, by: step)
-      .map(ChartsMath.clean)
-      .filter { !wholeNumbers || $0 == $0.rounded() }
+    self.ticks = ChartsAxis.ticks(domain).filter { !wholeNumbers || $0 == $0.rounded() }
   }
 
   /// Where bars start: zero, or the axis's start when the axis is cut above zero.
@@ -27,12 +24,37 @@ struct LessonChartScale {
   }
 }
 
+/// A plot's axes, as main's `getPlotAxes`: each fits its values with round ends and no forced zero,
+/// and y also fits the references, so every level drawn across the plot is in view. Whole-number
+/// data keeps whole ticks.
+struct LessonPlotScale {
+  struct Axis {
+    let domain: ClosedRange<Double>
+    let ticks: [Double]
+
+    init(_ values: [Double]) {
+      let wholeNumbers = values.allSatisfy { $0 == $0.rounded() }
+
+      domain = ChartsMath.niceDomain(values, includesZero: false)
+      ticks = ChartsAxis.ticks(domain).filter { !wholeNumbers || $0 == $0.rounded() }
+    }
+  }
+
+  let x: Axis
+  let y: Axis
+
+  init(_ plot: LessonPlot) {
+    let points = plot.series.flatMap(\.points)
+
+    x = Axis(points.map(\.x))
+    y = Axis(points.map(\.y) + plot.references.map(\.y))
+  }
+}
+
 /// Which of a value axis's numbers to print: all when none touch, else every second, third and so
 /// on from the first, as on web and Android. `frames` are each number's edges where it's drawn.
 enum LessonChartTicks {
-  static let gap = 4.0
-
-  static func labeled(_ frames: [(left: Double, right: Double)]) -> [Int] {
+  static func labeled(_ frames: [(left: Double, right: Double)], gap: Double = 4) -> [Int] {
     for step in 1..<max(frames.count, 1) {
       let kept = Array(stride(from: 0, to: frames.count, by: step))
 

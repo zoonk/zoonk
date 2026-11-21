@@ -10,6 +10,8 @@ typeOverrides:
     LessonMap: LessonSummary
     LessonStepAnswer: LessonAnswer
     LessonStepAnswerOutput: LessonAnswer
+    # A visual of a kind this build doesn't know draws nothing instead of failing the response.
+    LessonVisual: ZoonkAPI.LessonVisual
     PlayableLibraryStep: LessonStep
     # A new reason keeps the row outside the plan, with the plain label.
     NotPlannedReason: Swift.String

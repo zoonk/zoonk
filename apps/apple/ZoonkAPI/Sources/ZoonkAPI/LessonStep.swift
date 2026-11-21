@@ -310,9 +310,13 @@ public struct LessonBasis: Codable, Hashable, Sendable {
   public let quote: String
 }
 
+/// What a lesson, a question or a challenge's decision draws from its data. A kind this build doesn't
+/// know yet is `unknown` and draws nothing, so the rest of the response still plays.
 public enum LessonVisual: Codable, Hashable, Sendable {
   case chart(LessonChart)
+  case plot(LessonPlot)
   case timeline(LessonTimeline)
+  case unknown
 
   private enum CodingKeys: String, CodingKey {
     case kind
@@ -320,9 +324,13 @@ public enum LessonVisual: Codable, Hashable, Sendable {
 
   public init(from decoder: any Decoder) throws {
     let kind = try decoder.container(keyedBy: CodingKeys.self).decode(String.self, forKey: .kind)
-    self =
-      kind == "timeline"
-      ? .timeline(try LessonTimeline(from: decoder)) : .chart(try LessonChart(from: decoder))
+
+    switch kind {
+    case "chart": self = .chart(try LessonChart(from: decoder))
+    case "plot": self = .plot(try LessonPlot(from: decoder))
+    case "timeline": self = .timeline(try LessonTimeline(from: decoder))
+    default: self = .unknown
+    }
   }
 
   public func encode(to encoder: any Encoder) throws {
@@ -332,9 +340,14 @@ public enum LessonVisual: Codable, Hashable, Sendable {
     case .chart(let chart):
       try container.encode("chart", forKey: .kind)
       try chart.encode(to: encoder)
+    case .plot(let plot):
+      try container.encode("plot", forKey: .kind)
+      try plot.encode(to: encoder)
     case .timeline(let timeline):
       try container.encode("timeline", forKey: .kind)
       try timeline.encode(to: encoder)
+    case .unknown:
+      try container.encode("unknown", forKey: .kind)
     }
   }
 }
@@ -357,6 +370,41 @@ public struct LessonChart: Codable, Hashable, Sendable {
   public let axisStart: Double?
   public let categories: [String]
   public let series: [Series]
+  public let source: String?
+}
+
+/// Numbers against numbers, main's `PlotVisual`: x is spaced by value, so a scatter keeps repeated
+/// x and a line joins its points in order.
+public struct LessonPlot: Codable, Hashable, Sendable {
+  public struct Point: Codable, Hashable, Sendable {
+    public let x: Double
+    public let y: Double
+    public let label: String?
+  }
+
+  public enum Mark: String, Codable, Hashable, Sendable {
+    case points, line, lineWithPoints
+  }
+
+  public struct Series: Codable, Hashable, Sendable {
+    public let name: String
+    public let mark: Mark
+    public let points: [Point]
+  }
+
+  /// A level drawn across the plot, such as a limit or a target.
+  public struct Reference: Codable, Hashable, Sendable {
+    public let label: String
+    public let y: Double
+  }
+
+  public let title: String
+  public let xLabel: String
+  public let xUnit: String?
+  public let yLabel: String
+  public let yUnit: String?
+  public let series: [Series]
+  public let references: [Reference]
   public let source: String?
 }
 

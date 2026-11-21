@@ -64,23 +64,23 @@ enum ChartsMath {
     return nice * magnitude
   }
 
-  /// A domain that holds every value with round ends, from zero when every value sits on one side
-  /// of it (main's `niceDomain`).
+  /// A domain that holds every value with round ends, from zero unless `includesZero` is off
+  /// (main's `niceDomain`). One value spans from it to one more.
   static func niceDomain(_ values: [Double], includesZero: Bool = true) -> ClosedRange<Double> {
     let finite = values.filter(\.isFinite) + (includesZero ? [0] : [])
 
-    guard var low = finite.min(), var high = finite.max() else {
+    guard let low = finite.min(), let high = finite.max() else {
       return 0...1
     }
 
     if low == high {
-      let pad = max(abs(low) * 0.1, 1)
-      (low, high) = (low - pad, high + pad)
+      return low...(low + 1)
     }
 
     let step = niceStep(high - low)
     let (roundedLow, roundedHigh) = (
-      clean((low / step).rounded(.down) * step), clean((high / step).rounded(.up) * step)
+      clean(clean(low / step).rounded(.down) * step),
+      clean(clean(high / step).rounded(.up) * step)
     )
 
     // Rounding out to a whole step can pass the largest number a double holds.

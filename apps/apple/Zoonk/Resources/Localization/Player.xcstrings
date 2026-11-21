@@ -4829,6 +4829,9 @@
         }
       }
     },
+    "Horizontal axis: %@, from %@ to %@" : {
+
+    },
     "How to say %@" : {
       "comment" : "A word to practice saying",
       "localizations" : {
@@ -7915,6 +7918,9 @@
         }
       }
     },
+    "Reference lines" : {
+
+    },
     "Result" : {
       "comment" : "Above a worked example's result in a recap",
       "localizations" : {
@@ -9209,7 +9215,7 @@
       }
     },
     "Source: %@" : {
-      "comment" : "Where a model's numbers come from",
+      "comment" : "Where a model's or a chart's numbers come from",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11446,6 +11452,9 @@
           }
         }
       }
+    },
+    "Vertical axis: %@, from %@ to %@" : {
+
     },
     "Vocabulary" : {
       "comment" : "Label above a word to learn",

@@ -110,7 +110,7 @@ private struct SetTextView: View {
       }
 
       if let visual = set.visual {
-        PracticeVisualView(visual: visual)
+        LessonVisualView(visual: visual)
       }
 
       if let source = set.source {
@@ -128,7 +128,7 @@ private struct SetTextView: View {
 struct ItemSupportView: View {
   let context: String?
   let image: PracticeImage?
-  let visual: PracticeVisual?
+  let visual: LessonVisual?
 
   var body: some View {
     if let context {
@@ -150,35 +150,7 @@ struct ItemSupportView: View {
     }
 
     if let visual {
-      PracticeVisualView(visual: visual)
-    }
-  }
-}
-
-struct PracticeVisualView: View {
-  let visual: PracticeVisual
-
-  var body: some View {
-    switch visual {
-    case .chart(let chart):
-      LessonChartView(chart: chart)
-    case .timeline(let timeline):
-      VStack(alignment: .leading, spacing: 8) {
-        Text(timeline.title).typeStyle(.body.weight(.semibold))
-
-        ForEach(Array(timeline.events.enumerated()), id: \.offset) { _, event in
-          HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(event.date).typeStyle(.data).foregroundStyle(.mutedForeground)
-            VStack(alignment: .leading, spacing: 2) {
-              Text(event.label).typeStyle(.reading.weight(.medium))
-              if let detail = event.detail {
-                Text(detail).typeStyle(.note).foregroundStyle(.mutedForeground)
-              }
-            }
-          }
-          .accessibilityElement(children: .combine)
-        }
-      }
+      LessonVisualView(visual: visual)
     }
   }
 }

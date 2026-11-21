@@ -24,9 +24,7 @@ struct LessonChartView: View {
       plot
 
       if let source = chart.source {
-        Text(source)
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
+        LessonChartSource(source: source)
       }
     }
     .onGeometryChange(for: Double.self) {
@@ -42,14 +40,14 @@ struct LessonChartView: View {
     }
 
     let nameRoom = width.map(format.nameRoom)
+    let scale = LessonChartScale(chart)
 
     if chart.chart == .line {
-      UprightChart(chart: chart, format: format, scale: nil, nameRoom: nil)
+      UprightChart(chart: chart, format: format, scale: scale, nameRoom: nil)
     } else if let width, let nameRoom, !format.barsFitUpright(nameRoom) {
-      SidewaysBars(chart: chart, format: format, scale: LessonChartScale(chart), width: width)
+      SidewaysBars(chart: chart, format: format, scale: scale, width: width)
     } else {
-      UprightChart(
-        chart: chart, format: format, scale: LessonChartScale(chart), nameRoom: nameRoom)
+      UprightChart(chart: chart, format: format, scale: scale, nameRoom: nameRoom)
     }
   }
 
@@ -71,7 +69,7 @@ struct LessonChartView: View {
 
 /// An open bar's outline as a ring to fill or clip with `FillStyle.outline`, since Swift Charts'
 /// bars take no stroke.
-private struct BarOutline: Shape {
+struct BarOutline: Shape {
   let radius: Double
   let lineWidth: Double
 
@@ -90,10 +88,10 @@ extension FillStyle {
   fileprivate static let outline = FillStyle(eoFill: true)
 }
 
-/// How a chart draws one series so it stays apart from the others without relying on color, as
-/// main's `getSeriesMark`: a line's points take a shape, and once the six colors are used they come
+/// How a chart or a plot draws one series so it stays apart from the others without relying on
+/// color, as main's `getSeriesMark`: points take a shape, and once the six colors are used they come
 /// back drawn open (outlined bars, dashed lines with hollow points).
-private struct LessonSeriesMark {
+struct LessonSeriesMark {
   static let openStroke = 1.5
   static let openFill = 0.2
   static let pointSize = 8.0
@@ -207,12 +205,11 @@ private struct LessonChartFormat {
   }
 }
 
-/// Swift Charts' bars or lines, with the names under them. A line chart keeps Swift Charts' own
-/// value axis; a bar chart takes `scale`, so it reads the same whichever way its bars run.
+/// Swift Charts' bars or lines, with the names under them, on the value axis main draws.
 private struct UprightChart: View {
   let chart: LessonChart
   let format: LessonChartFormat
-  let scale: LessonChartScale?
+  let scale: LessonChartScale
   /// Swift Charts lets a name run past its bar's band, so upright bars wrap each name to it.
   let nameRoom: Double?
 
@@ -238,14 +235,14 @@ private struct UprightChart: View {
   /// An open bar's fill is a wash of its color, under its outline.
   private var tones: [Color] {
     chart.series.indices.map(LessonSeriesMark.init).map {
-      scale != nil && $0.isOpen ? $0.tone.opacity(LessonSeriesMark.openFill) : $0.tone
+      chart.chart == .bar && $0.isOpen ? $0.tone.opacity(LessonSeriesMark.openFill) : $0.tone
     }
   }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       // The top tick's label is centered on the plot's top edge, so half of it rises above it.
-      Caption(text: format.valueCaption)
+      LessonChartCaption(text: format.valueCaption)
         .padding(
           .bottom, LessonChartFormat.label.uiFont(textSize, legibility: legibility).lineHeight / 2)
 
@@ -267,23 +264,20 @@ private struct UprightChart: View {
           }
         }
         .chartYAxis {
-          if let scale {
-            AxisMarks(position: .leading, values: scale.ticks) { valueMark($0) }
-          } else {
-            AxisMarks(position: .leading) { valueMark($0) }
-          }
+          AxisMarks(position: .leading, values: scale.ticks) { valueMark($0) }
         }
+        .chartYScale(domain: scale.domain)
         .frame(minHeight: 200)
 
-      Caption(text: chart.categoryLabel)
+      LessonChartCaption(text: chart.categoryLabel)
         .frame(maxWidth: .infinity)
     }
   }
 
   @ViewBuilder private var plot: some View {
-    if let scale {
+    if chart.chart == .bar {
       Chart(points) { point in
-        bar(point, scale: scale)
+        bar(point)
           .foregroundStyle(by: .value(verbatim: "Series", point.series))
           .accessibilityLabel(
             chart.series.count > 1 ? "\(point.category), \(point.series)" : point.category
@@ -291,13 +285,12 @@ private struct UprightChart: View {
           .accessibilityValue(format.spoken(point.value))
 
         if point.mark.isOpen {
-          bar(point, scale: scale)
+          bar(point)
             .foregroundStyle(point.mark.tone)
             .clipShape(point.mark.outline(radius: LessonChartFormat.barRadius), style: .outline)
             .accessibilityHidden(true)
         }
       }
-      .chartYScale(domain: scale.domain)
     } else {
       Chart(points) { point in
         let line = LineMark(
@@ -312,12 +305,10 @@ private struct UprightChart: View {
           line.symbol { point.mark.point }
         }
       }
-      .chartYScale(
-        domain: .automatic(includesZero: chart.axisStart == nil || chart.axisStart == 0))
     }
   }
 
-  private func bar(_ point: Point, scale: LessonChartScale) -> some ChartContent {
+  private func bar(_ point: Point) -> some ChartContent {
     BarMark(
       x: .value(chart.categoryLabel, point.category),
       yStart: .value(chart.valueLabel, scale.origin),
@@ -378,7 +369,7 @@ private struct SidewaysBars: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Caption(text: chart.categoryLabel)
+      LessonChartCaption(text: chart.categoryLabel)
 
       VStack(alignment: .leading, spacing: 12) {
         ForEach(Array(chart.categories.enumerated()), id: \.offset) { index, name in
@@ -391,7 +382,7 @@ private struct SidewaysBars: View {
 
       ticks
 
-      Caption(text: format.valueCaption)
+      LessonChartCaption(text: format.valueCaption)
     }
   }
 
@@ -472,7 +463,8 @@ private struct SidewaysBars: View {
   }
 }
 
-private struct Caption: View {
+/// An axis's name beside a chart's or a plot's axis; VoiceOver reads it with the axis instead.
+struct LessonChartCaption: View {
   let text: String
 
   var body: some View {
@@ -480,6 +472,17 @@ private struct Caption: View {
       .typeStyle(LessonChartFormat.label)
       .foregroundStyle(.mutedForeground)
       .accessibilityHidden(true)
+  }
+}
+
+/// Where a chart's numbers come from; a made-up example has none.
+struct LessonChartSource: View {
+  let source: String
+
+  var body: some View {
+    Text("Source: \(source)", tableName: "Player", comment: "Where a chart's numbers come from")
+      .typeStyle(.meta)
+      .foregroundStyle(.mutedForeground)
   }
 }
 

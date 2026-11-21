@@ -61,9 +61,58 @@ final class LessonChartGeometryTests: XCTestCase {
     XCTAssertEqual(negative.origin, 0)
   }
 
-  private func chart(values: [Double], axisStart: Double? = nil) throws -> LessonChart {
+  func testALineChartStartsWhereItsAxisIsCutAndNeverForcesZero() throws {
+    let cut = LessonChartScale(try chart(values: [9, 10, 11], axisStart: 9, style: "line"))
+    XCTAssertEqual(cut.domain, 9...11)
+    XCTAssertEqual(cut.ticks, [9, 10, 11])
+
+    let far = LessonChartScale(try chart(values: [317, 414], style: "line"))
+    XCTAssertEqual(far.domain, 300...425, "a line far from zero fits its values, as main's")
+  }
+
+  func testPlotAxesSpaceXByValueAndFitTheReferences() throws {
+    let scale = LessonPlotScale(
+      try plot(points: [(10, 27), (11, 25), (20, 30)], references: [40]))
+
+    XCTAssertEqual(scale.x.domain, 10...20)
+    XCTAssertEqual(scale.x.ticks, [10, 15, 20], "whole data keeps whole ticks")
+    XCTAssertEqual(scale.y.domain, 25...40)
+    XCTAssertEqual(scale.y.ticks, [25, 30, 35, 40])
+  }
+
+  func testPlotAxesKeepFractionalTicksOnlyForFractionalData() throws {
+    let scale = LessonPlotScale(try plot(points: [(1, 0.5), (10, 1.5)]))
+
+    XCTAssertEqual(scale.x.ticks, [0, 5, 10])
+    XCTAssertEqual(scale.y.ticks, [0.5, 0.75, 1, 1.25, 1.5])
+  }
+
+  func testOneValueSpansFromItToOneMore() {
+    XCTAssertEqual(ChartsMath.niceDomain([3], includesZero: false), 3...4)
+    XCTAssertEqual(ChartsMath.niceDomain([]), 0...1)
+  }
+
+  private func plot(points: [(Double, Double)], references: [Double] = []) throws -> LessonPlot {
+    let json: [String: Any] = [
+      "title": "Title", "xLabel": "X", "xUnit": NSNull(), "yLabel": "Y", "yUnit": NSNull(),
+      "source": NSNull(), "references": references.map { ["label": "Limit", "y": $0] },
+      "series": [
+        [
+          "name": "Series", "mark": "points",
+          "points": points.map { ["x": $0.0, "y": $0.1, "label": NSNull()] },
+        ]
+      ],
+    ]
+
+    return try JSONDecoder().decode(
+      LessonPlot.self, from: JSONSerialization.data(withJSONObject: json))
+  }
+
+  private func chart(values: [Double], axisStart: Double? = nil, style: String = "bar") throws
+    -> LessonChart
+  {
     let json: [String: Any?] = [
-      "chart": "bar", "title": "Title", "categoryLabel": "Group", "valueLabel": "Value",
+      "chart": style, "title": "Title", "categoryLabel": "Group", "valueLabel": "Value",
       "unit": nil, "axisStart": axisStart, "source": nil,
       "categories": values.indices.map { "Category \($0)" },
       "series": [["name": "Series", "values": values]],

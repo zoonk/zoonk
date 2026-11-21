@@ -335,15 +335,40 @@ private struct LessonPrivatePicture: View {
   }
 }
 
+/// A chart, a plot or a timeline on a card, as main's `LessonVisual`. A kind this build doesn't know
+/// draws nothing.
 struct LessonVisualView: View {
   let visual: LessonVisual
 
   var body: some View {
     switch visual {
     case .chart(let chart):
-      LessonChartView(chart: chart)
+      card { LessonChartView(chart: chart) }
+    case .plot(let plot):
+      card { LessonPlotView(plot: plot) }
     case .timeline(let timeline):
-      LessonTimelineView(timeline: timeline)
+      card { LessonTimelineView(timeline: timeline) }
+    case .unknown:
+      EmptyView()
+    }
+  }
+
+  private func card(@ViewBuilder _ content: () -> some View) -> some View {
+    content()
+      .padding(16)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .panel()
+  }
+}
+
+extension LessonVisual {
+  /// What VoiceOver names a visual by as it appears.
+  var title: String? {
+    switch self {
+    case .chart(let chart): chart.title
+    case .plot(let plot): plot.title
+    case .timeline(let timeline): timeline.title
+    case .unknown: nil
     }
   }
 }
