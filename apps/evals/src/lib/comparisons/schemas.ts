@@ -119,6 +119,7 @@ const slotSchema = z.object({
   durationMs: z.number().nonnegative(),
   hash: digest,
   mediaType: z.literal("image/webp").optional(),
+  systemPromptHash: digest.optional(),
   userPromptHash: digest,
 });
 

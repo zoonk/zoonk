@@ -7,6 +7,7 @@ import { getRunCost } from "../cost";
 import { generateComparisonRun } from "../output-generator";
 import { type RegisteredTask } from "../types";
 import { confirmForecast, forecastReads } from "./forecast";
+import { generationSourceHash } from "./generation-source";
 import { hash, hashJson, promptHash } from "./identity";
 import { buildPackets } from "./packets";
 import readerProtocol from "./protocols/reader.md";
@@ -14,6 +15,7 @@ import verifierProtocol from "./protocols/verifier.md";
 import {
   type Reader,
   controlsSchema,
+  digest,
   identifier,
   manifestSchema,
   runSchema,
@@ -28,7 +30,11 @@ const plannedSelection = selectionSchema.extend({
   variants: z.object({ challenger: variantSchema.nullable(), incumbent: variantSchema.nullable() }),
 });
 
-const frozenSchema = plannedSelection.extend({ generate: z.boolean(), slots: z.array(runSchema) });
+const frozenSchema = plannedSelection.extend({
+  generate: z.boolean(),
+  generationSource: digest.optional(),
+  slots: z.array(runSchema),
+});
 export type PrepareOptions = {
   task: RegisteredTask;
   id: string;
@@ -68,13 +74,22 @@ export async function prepare(options: PrepareOptions) {
     );
   }
 
-  const runsCompared = await frozen.slots.reduce(
-    async (previous, planned) => [
-      ...(await previous),
-      await sealRun({ dir, frozen, planned, task: options.task }),
-    ],
-    Promise.resolve<Run[]>([]),
-  );
+  const currentGenerationSource = frozen.generationSource && generationSourceHash();
+
+  const runsCompared = await frozen.slots.reduce(async (previous, planned) => {
+    const sealed = await previous;
+
+    const run = await sealRun({
+      currentGenerationSource,
+      dir,
+      frozen,
+      planned,
+      previous: sealed,
+      task: options.task,
+    });
+
+    return [...sealed, run];
+  }, Promise.resolve<Run[]>([]));
 
   const outputs = await readOutputs(dir, { controls: frozen.controls, runsCompared });
 
@@ -86,7 +101,22 @@ export async function prepare(options: PrepareOptions) {
     throw new Error("No successful generation identified the requested challenger.");
   }
 
-  const variants = { ...frozen.variants, challenger: variant };
+  const systemPrompts = [
+    ...new Set(
+      runsCompared.flatMap(({ challenger }) =>
+        challenger?.systemPromptHash ? [challenger.systemPromptHash] : [],
+      ),
+    ),
+  ].toSorted();
+
+  const variants = {
+    ...frozen.variants,
+    challenger:
+      frozen.generationSource && systemPrompts.length > 1
+        ? { ...variant, systemPromptHash: hashJson(systemPrompts) }
+        : variant,
+  };
+
   const packets = buildPackets({ ...frozen, runsCompared, variants }, outputs);
 
   return writeRecord(path.join(dir, "manifest.json"), manifestSchema, {
@@ -96,6 +126,7 @@ export async function prepare(options: PrepareOptions) {
     variants,
   });
 }
+
 async function controlBlobs(controls: z.infer<typeof controlsSchema>, image: boolean) {
   const blobs = new Map<string, string | Buffer>();
 
@@ -269,6 +300,8 @@ async function freeze(options: PrepareOptions) {
   return writeRecord(path.join(dir, "selection.json"), frozenSchema, {
     ...selection,
     generate: options.generate,
+    generationSource:
+      options.generate && !selection.variants.challenger ? generationSourceHash() : undefined,
     slots,
   });
 }
@@ -277,14 +310,18 @@ type Frozen = z.infer<typeof frozenSchema>;
 type Run = z.infer<typeof runSchema>;
 
 async function sealRun({
+  currentGenerationSource,
   planned,
   dir,
   frozen,
+  previous,
   task,
 }: {
+  currentGenerationSource?: string;
   planned: Run;
   dir: string;
   frozen: Frozen;
+  previous: Run[];
   task: RegisteredTask;
 }) {
   const saved = path.join(
@@ -302,7 +339,16 @@ async function sealRun({
   const run = structuredClone(planned);
 
   if (!run.challenger && frozen.generate) {
-    await generateSlot({ dir, frozen, run, task });
+    if (currentGenerationSource !== frozen.generationSource) {
+      throw new Error(
+        "Generation source changed since selection was frozen. Restore it or use a new comparison ID.",
+      );
+    }
+
+    const casePrompt = previous.find((prior) => prior.caseId === run.caseId && prior.challenger)
+      ?.challenger?.systemPromptHash;
+
+    await generateSlot({ casePrompt, dir, frozen, run, task });
   }
 
   if (
@@ -317,11 +363,13 @@ async function sealRun({
 }
 
 async function generateSlot({
+  casePrompt,
   dir,
   frozen,
   task,
   run,
 }: {
+  casePrompt?: string;
   dir: string;
   frozen: Frozen;
   task: RegisteredTask;
@@ -360,7 +408,15 @@ async function generateSlot({
       frozen.variants.challenger ??
       (await readOptional(path.join(dir, "challenger.json"), variantSchema));
 
-    if (!expected || isDeepStrictEqual(produced, expected)) {
+    const expectedPrompt = frozen.generationSource ? casePrompt : expected?.systemPromptHash;
+
+    if (
+      !expected ||
+      isDeepStrictEqual(produced, {
+        ...expected,
+        systemPromptHash: expectedPrompt ?? produced.systemPromptHash,
+      })
+    ) {
       if (!expected) {
         await writeRecord(path.join(dir, "challenger.json"), variantSchema, produced);
       }
@@ -372,6 +428,7 @@ async function generateSlot({
         durationMs: entry.duration,
         hash: hash(output),
         ...(task.output === "image" ? { mediaType: "image/webp" as const } : {}),
+        systemPromptHash: produced.systemPromptHash,
         userPromptHash: promptHash(entry.userPrompt),
       };
 
