@@ -92,10 +92,9 @@ export function TestIntro({
           {t("Find your level in {language}", { language: target })}
         </OnboardingTitle>
         <OnboardingDescription>
-          {t(
-            "About {time} of reading, listening and one sentence out loud, so your plan starts at your level.",
-            { time: formatDuration(LEVEL_TEST_MINUTES) },
-          )}
+          {t("About {time} of reading and listening, so your plan starts at your level.", {
+            time: formatDuration(LEVEL_TEST_MINUTES),
+          })}
         </OnboardingDescription>
       </OnboardingHeading>
 

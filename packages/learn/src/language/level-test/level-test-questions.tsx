@@ -32,6 +32,7 @@ export function LevelTestQuestion({
   onView,
   progress,
   question,
+  selectAll = false,
   targetLanguage,
 }: {
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
@@ -41,6 +42,8 @@ export function LevelTestQuestion({
   /** 0 to 1. */
   progress: number;
   question: Extract<NextStep, { kind: "question" }>["question"];
+  /** A level's confirmation: every right option is picked, so a guess rarely passes. */
+  selectAll?: boolean;
   targetLanguage: string;
 }) {
   const t = useExtracted();
@@ -69,12 +72,14 @@ export function LevelTestQuestion({
       onAnswer={(choice, durationMs) =>
         startTransition(async () => {
           const answerIndex = "selectedIndex" in choice ? choice.selectedIndex : null;
+          const answerIndices = "selectedIndexes" in choice ? choice.selectedIndexes : undefined;
           const skipped = noAudio && "dontKnow" in choice;
 
           const view = await answer({
             answerIndex,
             durationMs,
             questionId: question.id,
+            ...(answerIndices && { answerIndices }),
             ...(skipped && { skipped }),
           }).catch(() => null);
 
@@ -96,6 +101,7 @@ export function LevelTestQuestion({
         itemId: question.id,
         options: question.options,
         question: question.question,
+        select: selectAll ? "all" : 1,
         skillId: question.skill,
         visual: null,
       }}

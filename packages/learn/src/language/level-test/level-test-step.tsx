@@ -62,8 +62,14 @@ function toResumedPhase({
     : { kind: "intro", showAlphabetNote: view?.showAlphabetNote ?? false };
 }
 
+function hasQuestion(
+  next: ReadyTest["next"],
+): next is Extract<ReadyTest["next"], { kind: "confirmation" | "question" }> {
+  return next.kind === "question" || next.kind === "confirmation";
+}
+
 function getPendingAudioQuestion(phase: Phase): string | null {
-  if (phase.kind !== "test" || phase.test.next.kind !== "question") {
+  if (phase.kind !== "test" || !hasQuestion(phase.test.next)) {
     return null;
   }
 
@@ -74,9 +80,9 @@ function getPendingAudioQuestion(phase: Phase): string | null {
 function withReadAudio({ phase, view }: { phase: Phase; view: LanguageLevelTestView }): Phase {
   if (
     phase.kind !== "test" ||
-    phase.test.next.kind !== "question" ||
+    !hasQuestion(phase.test.next) ||
     view.status !== "ready" ||
-    view.next.kind !== "question" ||
+    !hasQuestion(view.next) ||
     view.next.question.id !== phase.test.next.question.id
   ) {
     return phase;
@@ -262,7 +268,7 @@ export function LanguageLevelTestStep({
   }
 }
 
-function TestStep({
+export function TestStep({
   actions,
   audioPending,
   next,
@@ -291,7 +297,7 @@ function TestStep({
     );
   }
 
-  return next.kind === "question" ? (
+  return hasQuestion(next) ? (
     <LevelTestQuestion
       answer={actions.answer}
       audioPending={audioPending}
@@ -300,6 +306,7 @@ function TestStep({
       onView={onView}
       progress={progress}
       question={next.question}
+      selectAll={next.kind === "confirmation"}
       targetLanguage={targetLanguage}
     />
   ) : null;
