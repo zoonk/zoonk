@@ -119,7 +119,7 @@ struct WritingStartView: View {
       BusyButton(isBusy: asking.isRunning) {
         ask()
       } label: {
-        Text("Write", tableName: "Essay", comment: "Starts writing the answer")
+        Text("Write", tableName: "Essay")
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)
@@ -159,9 +159,7 @@ struct WritingStartView: View {
       Button {
         router.showRoot(of: .today)
       } label: {
-        Text(
-          "Continue", tableName: "Essay",
-          comment: "Goes on after a written task the exam notice removed")
+        Text("Continue", tableName: "Essay")
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)
@@ -186,7 +184,7 @@ struct WritingStartView: View {
       BusyButton(isBusy: asking.isRunning) {
         ask()
       } label: {
-        Text("Try again", tableName: "Essay", comment: "Asks for the question again")
+        Text("Try again", tableName: "Essay")
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)
@@ -249,10 +247,9 @@ struct WritingRefusedView: View {
             .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
           PageHeader(
-            Text("No more grading today", tableName: "Essay", comment: "Extra grades used up"),
+            Text("No more grading today", tableName: "Essay"),
             supporting: Text(
-              "You'll have more tomorrow.", tableName: "Essay",
-              comment: "When grading comes back")
+              "You'll have more tomorrow.", tableName: "Essay")
           ) {
             EmptyView()
           }
@@ -271,7 +268,7 @@ struct WritingRefusedView: View {
           }
         } header: {
           SectionTitle(
-            Text("Left for tomorrow", tableName: "Essay", comment: "The task that waits"))
+            Text("Left for tomorrow", tableName: "Essay"))
         }
       }
     }
@@ -280,7 +277,7 @@ struct WritingRefusedView: View {
       BusyButton(isBusy: isBusy) {
         onContinue()
       } label: {
-        Text("Continue", tableName: "Essay", comment: "Goes on after the refusal")
+        Text("Continue", tableName: "Essay")
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)

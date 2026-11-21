@@ -349,12 +349,12 @@ private struct MockEssayPrompt: View {
 
         if let context = question.context, !context.isEmpty {
           SectionTitle(
-            Text("Support text", tableName: "Essay", comment: "Text to read before writing"))
+            Text("Support text", tableName: "Essay"))
           QuotedPassage(context, isItalic: false)
         }
 
         SectionTitle(
-          Text("What to write", tableName: "Essay", comment: "A written question's task"))
+          Text("What to write", tableName: "Essay"))
         LessonTextBlocks(question.question)
           .typeStyle(.reading)
       } else {

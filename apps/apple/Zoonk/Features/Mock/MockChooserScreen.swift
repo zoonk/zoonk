@@ -212,8 +212,7 @@ private struct MockChooser: View {
         if tests > 1 {
           SectionTitle(
             Text(
-              "Shorter, objective questions only", tableName: "Mock",
-              comment: "Over shorter mock exams without the written test"))
+              "Shorter, objective questions only", tableName: "Mock"))
         } else {
           SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
         }

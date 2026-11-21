@@ -92,7 +92,7 @@ struct WrittenProjectionSections: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Estimated score", tableName: "Plan", comment: "The exam's projected score")
+        Text("Estimated score", tableName: "Plan")
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
@@ -100,8 +100,7 @@ struct WrittenProjectionSections: View {
         case .below(let part):
           // A part's name comes from the notice, so it opens a sentence rather than sitting inside one.
           Text(
-            "Below the minimum to pass", tableName: "Plan",
-            comment: "A written part's projected points are below its own minimum"
+            "Below the minimum to pass", tableName: "Plan"
           )
           .typeStyle(.stepHeading)
           if let minimum = part.minimum {
@@ -130,7 +129,7 @@ struct WrittenProjectionSections: View {
       .padding(.vertical, 4)
 
       ScoreRow(
-        name: Text("Objective test", tableName: "Plan", comment: "The exam's objective test"),
+        name: Text("Objective test", tableName: "Plan"),
         range: projection.objective, max: projection.objectiveMax)
 
       ForEach(projection.parts, id: \.name) { part in
@@ -155,8 +154,7 @@ struct WrittenProjectionSections: View {
   private func unmeasured(_ part: WrittenPartPoints) -> Text {
     guard let partMax = part.max, let max = projection.max, max > 0 else {
       return Text(
-        "\(part.name) isn't measured yet.", tableName: "Plan",
-        comment: "A written part with no graded answer yet")
+        "\(part.name) isn't measured yet.", tableName: "Plan")
     }
 
     let share = partMax / max
@@ -182,8 +180,7 @@ struct PointsReadout: View {
         .typeStyle(.momentReadout)
         .monospacedDigit()
       Text(
-        "of \(WritingLabels.points(max, decimals: decimals))", tableName: "Essay",
-        comment: "After a score: the question's total, like 'of 30'"
+        "of \(WritingLabels.points(max, decimals: decimals))", tableName: "Essay"
       )
       .typeStyle(.body)
       .foregroundStyle(.mutedForeground)
@@ -227,7 +224,7 @@ private struct ScoreRow<Detail: View>: View {
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         } else {
-          Text("Not measured yet", tableName: "Plan", comment: "A part with no graded answer yet")
+          Text("Not measured yet", tableName: "Plan")
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
@@ -323,7 +320,7 @@ struct WriteNowButton: View {
       if continues {
         Text("Continue", tableName: "Plan", comment: "Continues a written answer's saved draft")
       } else {
-        Text("Write", tableName: "Plan", comment: "Starts a written answer")
+        Text("Write", tableName: "Plan")
       }
     }
     .buttonStyle(.mainAction)
@@ -346,8 +343,7 @@ private struct WriteNowAction: View {
       if failed {
         FailureLine(
           message: LocalizedStringResource(
-            "That didn't go through. Try again in a moment.", table: "Plan",
-            comment: "Starting a written answer failed"))
+            "That didn't go through. Try again in a moment.", table: "Plan"))
       }
     }
   }

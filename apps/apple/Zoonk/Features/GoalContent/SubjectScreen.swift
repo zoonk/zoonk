@@ -171,8 +171,7 @@ private struct SubjectContent: View {
     if writeFailed {
       return BarNote(
         LocalizedStringResource(
-          "That didn't go through. Try again in a moment.", table: "Plan",
-          comment: "Starting a written answer failed"))
+          "That didn't go through. Try again in a moment.", table: "Plan"))
     }
 
     guard let choice = written?.pendingChoice else { return nil }
@@ -222,7 +221,7 @@ private struct SubjectContent: View {
       written.share.map {
         String(
           localized: "\(WritingLabels.share($0)) of the score",
-          table: "Plan", comment: "A written part's share of the exam's final score")
+          table: "Plan")
       },
     ].compactMap(\.self)
   }

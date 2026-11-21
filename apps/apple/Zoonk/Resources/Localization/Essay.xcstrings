@@ -8540,67 +8540,67 @@
         }
       }
     },
-    "You wrote “%@” · %@" : {
-      "comment" : "What the learner wrote for a language error, and the kind of error",
+    "You wrote “%@” (%@)" : {
+      "comment" : "Under a correction: what the learner wrote, then the kind of error, like \"grammar\".",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast „%1$@“ · %2$@"
+            "value" : "Du hast „%1$@“ geschrieben (%2$@)"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "You wrote “%1$@” · %2$@"
+            "value" : "You wrote “%1$@” (%2$@)"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escribiste “%1$@” · %2$@"
+            "value" : "Escribiste “%1$@” (%2$@)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as écrit « %1$@ » · %2$@"
+            "value" : "Tu as écrit « %1$@ » (%2$@)"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai scritto “%1$@” · %2$@"
+            "value" : "Hai scritto “%1$@” (%2$@)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "「%1$@」 · %2$@と書いています"
+            "value" : "「%1$@」と書いています（%2$@）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "“%1$@”이라고 썼어요 · %2$@"
+            "value" : "작성한 내용: “%1$@” (%2$@)"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój tekst: „%1$@” · %2$@"
+            "value" : "Wpisano „%1$@” (%2$@)"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você escreveu “%1$@” · %2$@"
+            "value" : "Você escreveu “%1$@” (%2$@)"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "“%1$@” yazdın · %2$@"
+            "value" : "“%1$@” yazdın (%2$@)"
           }
         }
       }

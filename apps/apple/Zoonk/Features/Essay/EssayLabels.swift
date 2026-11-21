@@ -46,8 +46,7 @@ enum WritingLabels {
     return low == high
       ? low
       : String(
-        localized: "\(low)–\(high)", table: "Essay",
-        comment: "A range of points, low to high, like 16–19")
+        localized: "\(low)–\(high)", table: "Essay")
   }
 
   /// What language errors take away, to one decimal: "−0.3 to −0.6", one number when both ends
@@ -179,16 +178,17 @@ enum WritingLabels {
     switch level {
     case .complete:
       String(
-        localized: "Complete", table: "Essay", comment: "A criterion of a written answer fully met")
+        localized: "Complete", table: "Essay", comment: "A criterion of a written answer fully met."
+      )
     case .strong:
       String(
-        localized: "Good", table: "Essay", comment: "A criterion of a written answer mostly met")
+        localized: "Good", table: "Essay", comment: "A criterion of a written answer mostly met.")
     case .partial:
       String(
-        localized: "Partly", table: "Essay", comment: "A criterion of a written answer half met")
+        localized: "Partly", table: "Essay", comment: "A criterion of a written answer half met.")
     case .missing:
       String(
-        localized: "Missing", table: "Essay", comment: "A criterion of a written answer not met")
+        localized: "Missing", table: "Essay", comment: "A criterion of a written answer not met.")
     }
   }
 
@@ -216,8 +216,7 @@ enum WritingLabels {
     if let points = writing.points {
       facts.append(
         String(
-          localized: "\(self.points(points)) points", table: "Essay",
-          comment: "What a written question is worth"))
+          localized: "\(self.points(points)) points", table: "Essay"))
     }
 
     if let pacing {
@@ -226,8 +225,7 @@ enum WritingLabels {
         pacing.source == .official
           ? time
           : String(
-            localized: "about \(time)", table: "Essay",
-            comment: "An estimated time to write an answer"))
+            localized: "about \(time)", table: "Essay"))
     }
 
     return facts
@@ -263,8 +261,7 @@ enum WritingLabels {
       )
       : (
         String(
-          localized: "about \(used) of \(limit) lines", table: "Essay",
-          comment: "An answer's estimated handwritten lines, of the question's limit"),
+          localized: "about \(used) of \(limit) lines", table: "Essay"),
         false
       )
   }

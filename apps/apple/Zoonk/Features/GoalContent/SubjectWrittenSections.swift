@@ -46,14 +46,14 @@ private struct SubjectWrittenPoints: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
-        Text("Estimated score", tableName: "Plan", comment: "A written part's projected points")
+        Text("Estimated score", tableName: "Plan")
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
         if let range = points.range, let max = points.max {
           PointsReadout(range: range, max: max, decimals: decimals)
         } else {
-          Text("Not measured yet", tableName: "Plan", comment: "A part with no graded answer yet")
+          Text("Not measured yet", tableName: "Plan")
             .typeStyle(.stepHeading)
         }
 
@@ -80,7 +80,7 @@ private struct SubjectWrittenPoints: View {
               .typeStyle(.data)
               .foregroundStyle(Color(.foreground))
           } else {
-            Text("Not measured yet", tableName: "Plan", comment: "A part with no graded answer yet")
+            Text("Not measured yet", tableName: "Plan")
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
@@ -102,13 +102,12 @@ private func minimumText(_ minimum: PointsMinimum, max: Double?) -> Text {
   if minimum.unit == .percent {
     return Text(
       "Minimum to pass: \(WritingLabels.share(minimum.value / 100)) of the points",
-      tableName: "Plan", comment: "A written part's own minimum, as a share of its points")
+      tableName: "Plan")
   }
 
   guard let max else {
     return Text(
-      "Minimum to pass: \(WritingLabels.points(minimum.value))", tableName: "Plan",
-      comment: "A written part's own minimum")
+      "Minimum to pass: \(WritingLabels.points(minimum.value))", tableName: "Plan")
   }
 
   return Text(
@@ -124,15 +123,14 @@ private struct SubjectWrittenTrend: View {
     if let latest = samples.last {
       Section {
         row(
-          Text("Content", tableName: "Essay", comment: "A written answer's content points"),
+          Text("Content", tableName: "Essay"),
           values: samples.map(\.contentShare), last: share(latest.contentShare))
         row(
           Text(
-            "Presentation and structure", tableName: "Plan",
-            comment: "How a written answer is laid out"),
+            "Presentation and structure", tableName: "Plan"),
           values: samples.map(\.presentationShare), last: share(latest.presentationShare))
         row(
-          Text("Language errors", tableName: "Essay", comment: "Points taken off for language"),
+          Text("Language errors", tableName: "Essay"),
           values: samples.map { Double($0.errors) },
           last: WritingLabels.errors(latest.errors))
       } header: {
@@ -223,7 +221,7 @@ private struct SubjectWrittenAnswers: View {
           }
         }
       } header: {
-        SectionTitle(Text("Your answers", tableName: "Plan", comment: "Past written answers")) {
+        SectionTitle(Text("Your answers", tableName: "Plan")) {
           Text(verbatim: "\(answers.count)")
             .typeStyle(.data)
         }
@@ -244,8 +242,7 @@ private struct SubjectWrittenAnswers: View {
         comment: "An answer's estimated handwritten lines")
     case (let used?, let limit?):
       String(
-        localized: "about \(used) of \(limit) lines", table: "Essay",
-        comment: "An answer's estimated handwritten lines, of the question's limit")
+        localized: "about \(used) of \(limit) lines", table: "Essay")
     }
   }
 

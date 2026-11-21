@@ -24,8 +24,10 @@ struct WritingMarkedTextSection: View {
         ListRow(
           Text(error.correction),
           description: Text(
-            "You wrote “\(error.quote)” · \(error.kind)", tableName: "Essay",
-            comment: "What the learner wrote for a language error, and the kind of error"),
+            "You wrote “\(error.quote)” (\(error.kind))", tableName: "Essay",
+            comment:
+              "Under a correction: what the learner wrote, then the kind of error, like \"grammar\"."
+          ),
           alignment: .firstTextBaseline
         ) {
           Text(verbatim: "\(index + 1)")
@@ -37,7 +39,7 @@ struct WritingMarkedTextSection: View {
         }
       }
     } header: {
-      SectionTitle(Text("Your text", tableName: "Essay", comment: "The learner's answer as sent")) {
+      SectionTitle(Text("Your text", tableName: "Essay")) {
         if !grade.errors.isEmpty {
           Text(WritingLabels.errors(grade.errors.count))
             .typeStyle(.data)

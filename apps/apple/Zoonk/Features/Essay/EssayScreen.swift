@@ -201,7 +201,7 @@ private struct EssayContent: View {
             Button {
               sheet = .question
             } label: {
-              Text("Question", tableName: "Essay", comment: "Opens the question while writing")
+              Text("Question", tableName: "Essay")
             }
           }
         }
@@ -220,7 +220,7 @@ private struct EssayContent: View {
           .navigationTitle(
             sheet == .question
               ? essay.writing.title
-              : String(localized: "Grading criteria", table: "Essay", comment: "Criteria sheet")
+              : String(localized: "Grading criteria", table: "Essay")
           )
           .navigationBarTitleDisplayMode(.inline)
           .toolbar {
@@ -320,7 +320,7 @@ private struct EssayContent: View {
           sheet = .criteria
         } label: {
           ListRow(
-            Text("Grading criteria", tableName: "Essay", comment: "Opens the criteria sheet"),
+            Text("Grading criteria", tableName: "Essay"),
             description: Text(WritingCriteriaList.summary(essay.writing))
           )
           .disclosureChevron()
@@ -336,8 +336,8 @@ private struct EssayContent: View {
           writer.mode = .write
         } label: {
           writer.hasDraft
-            ? Text("Continue", tableName: "Essay", comment: "Continues a saved draft")
-            : Text("Write", tableName: "Essay", comment: "Starts writing the answer")
+            ? Text("Continue", tableName: "Essay")
+            : Text("Write", tableName: "Essay")
         }
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
@@ -361,8 +361,7 @@ private struct EssayContent: View {
           finish()
         } label: {
           Text(
-            "Continue", tableName: "Essay",
-            comment: "Goes on after a result with nothing left to rewrite")
+            "Continue", tableName: "Essay")
         }
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
@@ -495,7 +494,7 @@ private struct WritingEditorPage: View {
         onSend()
       } label: {
         writer.answers.isEmpty
-          ? Text("Grade answer", tableName: "Essay", comment: "Sends an answer to be graded")
+          ? Text("Grade answer", tableName: "Essay")
           : Text("Grade rewrite", tableName: "Essay", comment: "Sends a rewrite to be graded")
       }
       .buttonStyle(.mainAction)
@@ -564,7 +563,7 @@ struct WritingQuestionBody: View {
         QuotedPassage(context, isItalic: false)
       } header: {
         SectionTitle(
-          Text("Support text", tableName: "Essay", comment: "Text to read before writing"))
+          Text("Support text", tableName: "Essay"))
       }
     }
 
@@ -572,7 +571,7 @@ struct WritingQuestionBody: View {
       LessonTextBlocks(essay.question)
         .typeStyle(.reading)
     } header: {
-      SectionTitle(Text("What to write", tableName: "Essay", comment: "A written question's task"))
+      SectionTitle(Text("What to write", tableName: "Essay"))
     }
   }
 }
@@ -585,13 +584,11 @@ struct WritingCriteriaList: View {
   static func summary(_ writing: WritingPrompt) -> String {
     if writing.criteria.contains(where: { $0.points != nil }), let points = writing.points {
       return String(
-        localized: "How the \(WritingLabels.points(points)) points are split", table: "Essay",
-        comment: "Under the criteria row: how a question's points are split")
+        localized: "How the \(WritingLabels.points(points)) points are split", table: "Essay")
     }
 
     return String(
-      localized: "What the answer is judged on", table: "Essay",
-      comment: "Under the criteria row of a question without points")
+      localized: "What the answer is judged on", table: "Essay")
   }
 
   var body: some View {
@@ -610,15 +607,14 @@ struct WritingCriteriaList: View {
       if detail {
         SectionTitle(Text(Self.summary(writing)))
       } else {
-        SectionTitle(Text("Grading criteria", tableName: "Essay", comment: "Criteria section"))
+        SectionTitle(Text("Grading criteria", tableName: "Essay"))
       }
     } footer: {
       SectionFooter {
         writing.keySource == .notice
-          ? Text("From the exam notice.", tableName: "Essay", comment: "Where criteria come from")
+          ? Text("From the exam notice.", tableName: "Essay")
           : Text(
-            "From the exam notice. The answer key is ours, for practice.", tableName: "Essay",
-            comment: "Where criteria come from, with Zoonk's practice key")
+            "From the exam notice. The answer key is ours, for practice.", tableName: "Essay")
       }
     }
   }

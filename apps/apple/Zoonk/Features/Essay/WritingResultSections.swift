@@ -39,7 +39,7 @@ private struct WritingPointsSection: View {
 
         VStack(alignment: .leading, spacing: 2) {
           PointsReadout(range: points.total, max: points.max, decimals: points.decimals)
-          Text("Estimated score", tableName: "Essay", comment: "Under a written answer's range")
+          Text("Estimated score", tableName: "Essay")
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
@@ -53,9 +53,7 @@ private struct WritingPointsSection: View {
             MinimumLegend(
               Text(
                 "Minimum to pass the written test: \(WritingLabels.share(share)) of the points",
-                tableName: "Essay",
-                comment:
-                  "Under a question's score: the written test's own minimum, on the sum of its questions"
+                tableName: "Essay"
               ))
           }
         } else {
@@ -72,7 +70,7 @@ private struct WritingPointsSection: View {
             .typeStyle(.data)
             .foregroundStyle(Color(.foreground))
         } label: {
-          Text("Content", tableName: "Essay", comment: "A written answer's content points")
+          Text("Content", tableName: "Essay")
         }
 
         LabeledContent {
@@ -81,7 +79,7 @@ private struct WritingPointsSection: View {
             .foregroundStyle(Color(.foreground))
         } label: {
           VStack(alignment: .leading, spacing: 2) {
-            Text("Language errors", tableName: "Essay", comment: "Points taken off for language")
+            Text("Language errors", tableName: "Essay")
             FactSegments([errorCount, lineCount])
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
@@ -108,8 +106,7 @@ private struct WritingPointsSection: View {
     }
 
     return String(
-      localized: "about \(lines) of \(limit) lines", table: "Essay",
-      comment: "An answer's estimated handwritten lines, of the question's limit")
+      localized: "about \(lines) of \(limit) lines", table: "Essay")
   }
 
 }
@@ -164,21 +161,19 @@ private struct WritingProgressSection: View {
       Section {
         if !fixed.isEmpty {
           Text(
-            "Fixed: \(names(fixed))", tableName: "Essay",
-            comment: "Criteria a rewrite fixed since the last version"
+            "Fixed: \(names(fixed))", tableName: "Essay"
           )
           .foregroundStyle(.successText)
         }
         if !persists.isEmpty {
           Text(
-            "Still to work on: \(names(persists))", tableName: "Essay",
-            comment: "Criteria still to fix after a rewrite"
+            "Still to work on: \(names(persists))", tableName: "Essay"
           )
           .foregroundStyle(.mutedForeground)
         }
       } header: {
         SectionTitle(
-          Text("Since your last version", tableName: "Essay", comment: "What a rewrite changed"))
+          Text("Since your last version", tableName: "Essay"))
       }
     }
   }
@@ -214,7 +209,7 @@ private struct WritingNextStepSection: View {
           card(
             title: title
               ?? String(
-                localized: "What to rewrite", table: "Essay", comment: "A next step's title"),
+                localized: "What to rewrite", table: "Essay"),
             text: text, quote: quote, example: example)
         }
       }
@@ -350,7 +345,7 @@ private struct WritingCriteriaSection: View {
       Button {
         showsComments = true
       } label: {
-        Text("See comments", tableName: "Essay", comment: "Opens the comment on each criterion")
+        Text("See comments", tableName: "Essay")
       }
       .buttonStyle(.outline)
       .controlSize(.small)
@@ -380,7 +375,7 @@ private struct WritingCriteriaSection: View {
         .zoonkSheet()
       }
     } header: {
-      SectionTitle(Text("Criteria", tableName: "Essay", comment: "A written answer's criteria"))
+      SectionTitle(Text("Criteria", tableName: "Essay"))
     } footer: {
       if let source {
         SectionFooter { Text(source) }
@@ -443,19 +438,18 @@ private struct WritingCriteriaSection: View {
     if grade.points == nil, prompt.criteria.allSatisfy({ $0.points == nil }) {
       return String(
         localized: "The exam notice doesn't say how many points each criterion is worth.",
-        table: "Essay", comment: "Under criteria graded by level")
+        table: "Essay")
     }
 
     guard grade.points != nil else { return nil }
 
     return prompt.keySource == .notice
       ? String(
-        localized: "Criteria and points from the exam notice.", table: "Essay",
-        comment: "Where a result's criteria come from")
+        localized: "Criteria and points from the exam notice.", table: "Essay")
       : String(
         localized:
           "Criteria and points from the exam notice. The answer key is ours, for practice.",
-        table: "Essay", comment: "Where a result's criteria come from, with Zoonk's practice key")
+        table: "Essay")
   }
 }
 
