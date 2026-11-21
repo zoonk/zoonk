@@ -20,6 +20,7 @@ struct CantListenButton: View {
         }
       }
     }
-    .buttonStyle(.borderless)
+    .buttonStyle(.outline)
+    .controlSize(.large)
   }
 }

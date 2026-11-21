@@ -611,7 +611,7 @@ private struct SpokenAnswerStepView: View {
               "I can't talk now", tableName: "Player",
               comment: "Answers a spoken screen by listening or typing instead")
           } icon: {
-            Image(systemName: listening == nil || cantListen ? "keyboard" : "headphones")
+            Image(systemName: "mic.slash")
           }
         } else {
           Label {
@@ -626,7 +626,8 @@ private struct SpokenAnswerStepView: View {
           }
         }
       }
-      .buttonStyle(.borderless)
+      .buttonStyle(.outline)
+      .controlSize(.large)
     }
   }
 }
