@@ -851,9 +851,9 @@ msgstr "{dateKind, select, month {Cobre as primeiras aulas de cada parte do seu 
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-lines.tsx
-msgctxt "w91BsT"
-msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.}}"
-msgstr "{dateKind, select, month {Cobre as primeiras aulas de cerca de <b>{share}</b> da sua prova até {date}, começando pelos tópicos mais cobrados.} other {Cobre as primeiras aulas de cerca de <b>{share}</b> da sua prova até {date}, começando pelos tópicos mais cobrados.}}"
+msgctxt "CAWAzc"
+msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}.}}"
+msgstr "{dateKind, select, month {Cobre as primeiras aulas de cerca de <b>{share}</b> da sua prova até {date}.} other {Cobre as primeiras aulas de cerca de <b>{share}</b> da sua prova até {date}.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -955,9 +955,9 @@ msgstr "{time} por dia cobre as primeiras aulas de cada parte do seu objetivo"
 
 #. {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-texts.ts
-msgctxt "srT241"
-msgid "{time} a day covers the first lessons of about {share} of your exam, most-asked topics first"
-msgstr "{time} por dia cobre as primeiras aulas de cerca de {share} da sua prova, começando pelos tópicos mais cobrados"
+msgctxt "KGVNZu"
+msgid "{time} a day covers the first lessons of about {share} of your exam"
+msgstr "{time} por dia cobre as primeiras aulas de cerca de {share} da sua prova"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "yQdkoS"

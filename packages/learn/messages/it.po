@@ -851,9 +851,9 @@ msgstr "{dateKind, select, month {Copre le prime lezioni di ogni parte del tuo o
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-lines.tsx
-msgctxt "w91BsT"
-msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.}}"
-msgstr "{dateKind, select, month {Copre le prime lezioni di circa <b>{share}</b> del tuo esame entro {date}, partendo dagli argomenti più richiesti.} other {Copre le prime lezioni di circa <b>{share}</b> del tuo esame entro {date}, partendo dagli argomenti più richiesti.}}"
+msgctxt "CAWAzc"
+msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}.}}"
+msgstr "{dateKind, select, month {Copre le prime lezioni di circa <b>{share}</b> del tuo esame entro {date}.} other {Copre le prime lezioni di circa <b>{share}</b> del tuo esame entro {date}.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -955,9 +955,9 @@ msgstr "Con {time} al giorno, puoi seguire le prime lezioni di ogni parte del tu
 
 #. {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-texts.ts
-msgctxt "srT241"
-msgid "{time} a day covers the first lessons of about {share} of your exam, most-asked topics first"
-msgstr "Con {time} al giorno, puoi seguire le prime lezioni di circa {share} del tuo esame, partendo dagli argomenti più richiesti"
+msgctxt "KGVNZu"
+msgid "{time} a day covers the first lessons of about {share} of your exam"
+msgstr "Con {time} al giorno, puoi seguire le prime lezioni di circa {share} del tuo esame"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "yQdkoS"

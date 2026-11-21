@@ -851,9 +851,9 @@ msgstr "{dateKind, select, month {{date} tarihine kadar hedefinin her bölümün
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-lines.tsx
-msgctxt "w91BsT"
-msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.}}"
-msgstr "{dateKind, select, month {{date} tarihine kadar sınavının yaklaşık <b>{share}</b> kadarının ilk derslerini, en çok soru çıkan konulardan başlayarak kapsar.} other {{date} tarihine kadar sınavının yaklaşık <b>{share}</b> kadarının ilk derslerini, en çok soru çıkan konulardan başlayarak kapsar.}}"
+msgctxt "CAWAzc"
+msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}.}}"
+msgstr "{dateKind, select, month {{date} tarihine kadar sınavının yaklaşık <b>{share}</b> kadarının ilk derslerini kapsar.} other {{date} tarihine kadar sınavının yaklaşık <b>{share}</b> kadarının ilk derslerini kapsar.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -955,9 +955,9 @@ msgstr "Günde {time} çalışmayla hedefinin her bölümündeki ilk dersleri ka
 
 #. {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-texts.ts
-msgctxt "srT241"
-msgid "{time} a day covers the first lessons of about {share} of your exam, most-asked topics first"
-msgstr "Günde {time} çalışmayla sınavının yaklaşık {share} kadarının ilk derslerini, en çok soru çıkan konulardan başlayarak kapsarsın"
+msgctxt "KGVNZu"
+msgid "{time} a day covers the first lessons of about {share} of your exam"
+msgstr "Günde {time} çalışmayla sınavının yaklaşık {share} kadarının ilk derslerini kapsarsın"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "yQdkoS"
