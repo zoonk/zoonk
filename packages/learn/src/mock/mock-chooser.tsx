@@ -15,8 +15,10 @@ import {
   useMockOptionName,
   useMockOptionSizeFacts,
 } from "./mock-option-labels";
+import { type MockWriting } from "./mock-preparing";
 
 export { type MockChooserStatus, getMockOptionKey } from "./mock-chooser-parts";
+export { type MockWriting } from "./mock-preparing";
 
 type MockChooserHrefs = { mock: (id: string) => string };
 
@@ -116,6 +118,8 @@ type MockChooserProps = {
   hrefs: MockChooserHrefs;
   onStart: (option: MockOptionView) => void;
   readAgain: () => void;
+  /** The run writing the mock the learner asked for, while it's being prepared. */
+  readWriting: () => Promise<MockWriting>;
   status: MockChooserStatus;
   view: MockOptionsView;
 };
@@ -126,6 +130,7 @@ export function MockChooserScreen({
   hrefs,
   onStart,
   readAgain,
+  readWriting,
   status,
   view,
 }: MockChooserProps) {
@@ -136,9 +141,9 @@ export function MockChooserScreen({
   const severalDays = view.options.filter((candidate) => candidate.kind === "full").length > 1;
   // A free learner sees the chooser as a subscriber does; Start is where the gate shows.
   const [gated, setGated] = useState(false);
-  const preparing = picked !== null && picked === getPreparingKey({ status, view });
+  const preparing = picked !== null && picked === getPreparingKey({ status, view }) ? picked : null;
 
-  useReadAgainWhile({ readAgain, waiting: preparing });
+  useReadAgainWhile({ readAgain, waiting: preparing !== null });
 
   const start = () => {
     if (!option) {
@@ -164,6 +169,7 @@ export function MockChooserScreen({
           onStart={start}
           preparing={preparing}
           status={status}
+          writing={{ read: readWriting, written: readAgain }}
         />
       }
     >

@@ -12,6 +12,8 @@ type StartProblem = "failed" | "plusRequired" | "preparing" | null;
 
 export type ChallengeStartState = {
   busy: boolean;
+  /** The answer no longer holds, such as a mock's questions now written. */
+  clearProblem: () => void;
   problem: StartProblem;
   slow: boolean;
   start: () => Promise<void>;
@@ -43,5 +45,5 @@ export function useChallengeStart(actions: ChallengeActions): ChallengeStartStat
     }
   }
 
-  return { busy, problem, slow, start };
+  return { busy, clearProblem: () => setProblem(null), problem, slow, start };
 }

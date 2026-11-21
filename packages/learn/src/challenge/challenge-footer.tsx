@@ -12,7 +12,7 @@ import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
 import { ChallengeCallGate } from "../language/conversation/challenge-call-gate";
-import { MockPreparingWords } from "../mock/mock-preparing";
+import { MockPreparingNote } from "../mock/mock-preparing";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { useMoveFailed } from "./challenge-move-failed";
@@ -284,14 +284,18 @@ function isPreparing({ challenge, start }: ScreenState) {
 function usePreparingNote(): React.ReactNode {
   const t = useExtracted();
   const screen = useChallengeScreen();
+  const { mockWriting, start } = screen;
 
   return isPreparing(screen) ? (
-    <MockPreparingWords
-      title={t({
-        description:
-          "Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them.",
-        message: "Your mock exam is being prepared",
-      })}
+    <MockPreparingNote
+      title={t("Getting your mock exam ready")}
+      wait={{
+        read: mockWriting.read,
+        written: () => {
+          start.clearProblem();
+          mockWriting.written();
+        },
+      }}
     />
   ) : null;
 }

@@ -5,6 +5,7 @@ import {
   type GoalContentStepName,
   type GoalUnderstandingStepName,
   type LevelTestBankStepName,
+  type MockPaperStepName,
   type SetupLessonStepName,
   type TestOutQuestionsStepName,
 } from "@zoonk/core/library/generation/steps";
@@ -158,6 +159,27 @@ const challengeQuestions = {
   },
 } as const satisfies GenerationKindDefinition<ChallengeQuestionsStepName, "questions">;
 
+// Measured on model calls: a shared text and its questions take about 35 s; questions are written
+// ten at a time per subject, subjects side by side, about 25 s a batch with its checks; a full ENEM
+// day from an empty bank took about 4 min. A listening part writes its script, then voices its
+// clips one after another, part after part.
+const mockPaper = {
+  phases: [
+    { id: "texts", optional: true, seconds: 40 },
+    { id: "questions", seconds: 200 },
+    { id: "listening", optional: true, seconds: 120 },
+  ],
+  steps: {
+    mockPaperReady: "done",
+    recordMockListening: "listening",
+    writeMockQuestions: "questions",
+    writeMockTexts: "texts",
+  },
+} as const satisfies GenerationKindDefinition<
+  MockPaperStepName,
+  "listening" | "questions" | "texts"
+>;
+
 const explanation = {
   doneOnCompleted: "writeExplanation",
   phases: [
@@ -212,6 +234,7 @@ const GENERATION_KINDS = {
   firstLesson,
   lesson,
   levelTestBank,
+  mockPaper,
   placement,
   setupLesson,
   speakingMock,

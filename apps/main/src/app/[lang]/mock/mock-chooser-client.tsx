@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
+import { readMockWriting } from "@/lib/mocks/read-mock-writing";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
@@ -66,6 +67,7 @@ function MockChooserVisit({
       hrefs={{ mock: MOCK_ENTRY_HREFS.mock }}
       onStart={begin}
       readAgain={() => router.refresh()}
+      readWriting={() => readMockWriting({ goalId })}
       status={status}
       view={view}
     />

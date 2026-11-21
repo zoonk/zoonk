@@ -12,7 +12,7 @@ import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { useLearnRoutes } from "../learn-context";
 import { PageWithAside } from "../shell/learn-shell";
 import { type MockChooserStatus } from "./mock-chooser-parts";
-import { MockPreparingWords } from "./mock-preparing";
+import { MockPreparingNote, type MockWritingWait } from "./mock-preparing";
 
 export function ChooserLayout({
   aside,
@@ -56,7 +56,7 @@ export function ChooserHeader({ detail, title }: { detail: string; title: string
 }
 
 /** Why Start didn't start, read out as it shows: over the bar, where the learner pressed. */
-function useChooserNote({ busy, gated, preparing, status }: ChooserBarProps): ReactNode {
+function useChooserNote({ busy, gated, preparing, status, writing }: ChooserBarProps): ReactNode {
   const t = useExtracted();
 
   if (gated) {
@@ -69,12 +69,14 @@ function useChooserNote({ busy, gated, preparing, status }: ChooserBarProps): Re
 
   if (preparing) {
     return (
-      <MockPreparingWords
+      <MockPreparingNote
+        key={preparing}
         title={t({
           description:
-            "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away.",
-          message: "This mock exam is being prepared",
+            "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away.",
+          message: "Getting this mock exam ready",
         })}
+        wait={writing}
       />
     );
   }
@@ -93,8 +95,10 @@ function useChooserNote({ busy, gated, preparing, status }: ChooserBarProps): Re
 type ChooserBarProps = {
   busy: boolean;
   gated: boolean;
-  preparing: boolean;
+  /** The picked option's key while it's being prepared. */
+  preparing: string | null;
   status: MockChooserStatus;
+  writing: MockWritingWait;
 };
 
 function ChooserMainAction({

@@ -2122,11 +2122,11 @@ msgctxt "X_k-eo"
 msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}"
 msgstr "{lessons, plural, =0 {Rövanş yarın.} other {Rövanş yarın, # kısa dersten sonra.}}"
 
-#. Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them.
 #: src/challenge/challenge-footer.tsx
-msgctxt "jk5nI6"
-msgid "Your mock exam is being prepared"
-msgstr "Deneme sınavın hazırlanıyor"
+#: src/generation/use-generation-copy.ts
+msgctxt "k2oGSw"
+msgid "Getting your mock exam ready"
+msgstr ""
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -4627,6 +4627,22 @@ msgstr "Bu üniteyle ilgili sorular hazırlıyoruz"
 msgctxt "ACtRRt"
 msgid "Writing questions on what you studied"
 msgstr "Çalıştıklarınla ilgili sorular hazırlıyoruz"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "UEvuXg"
+msgid "Recording the listening"
+msgstr ""
+
+#: src/generation/use-generation-copy.ts
+msgctxt "EIEV6g"
+msgid "Writing the questions"
+msgstr ""
+
+#. A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about.
+#: src/generation/use-generation-copy.ts
+msgctxt "kO-7vs"
+msgid "Writing the texts"
+msgstr ""
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -7832,11 +7848,11 @@ msgctxt "fdQ7Q-"
 msgid "Your last mock exam"
 msgstr "Son deneme sınavın"
 
-#. Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're still preparing its questions. Other picks may start right away.
+#. Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away.
 #: src/mock/mock-chooser-page.tsx
-msgctxt "qDtThy"
-msgid "This mock exam is being prepared"
-msgstr "Bu deneme sınavı hazırlanıyor"
+msgctxt "qsDQE3"
+msgid "Getting this mock exam ready"
+msgstr ""
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
@@ -8147,6 +8163,11 @@ msgstr "Boş bırak"
 msgctxt "UaRfLh"
 msgid "Come back to this page to start it."
 msgstr "Başlatmak için bu sayfaya tekrar gel."
+
+#: src/mock/mock-preparing.tsx
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr ""
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
