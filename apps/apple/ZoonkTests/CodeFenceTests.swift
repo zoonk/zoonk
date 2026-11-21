@@ -116,7 +116,7 @@ final class CodeFenceTests: XCTestCase {
     XCTAssertEqual(
       line.text.runs.filter { $0.inlinePresentationIntent == .code }
         .map { String(line.text[$0.range].characters) },
-      ["for i in range(\u{200B}3): print(\u{200B}i)"])
+      ["for i in range(3): print(i)"])
   }
 
   func testDrawsAnOptionThatIsOneCodeBlockAsCode() {

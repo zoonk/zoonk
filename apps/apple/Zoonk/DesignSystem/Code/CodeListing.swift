@@ -7,30 +7,54 @@ enum CodeFrameVariant {
 }
 
 extension EnvironmentValues {
-  /// A phone wraps a program's lines; wider, they keep their shape and the code scrolls sideways.
+  /// A narrow frame wraps a program's lines; a wider one keeps their shape and scrolls sideways.
   @Entry fileprivate var codeWraps = true
+  /// The ground under a scrolling program's line numbers, which the code scrolls under.
+  @Entry fileprivate var codeSurface: Color?
 }
 
-/// Main's `CodeFrame`: lines of code, read left to right in every language. On a phone each line
-/// wraps, its extra rows marked under its number; wider, lines keep their shape and the code scrolls
-/// sideways.
+/// Main's `CodeFrame`: lines of code, read left to right in every language. In a narrow frame each
+/// line wraps, its extra rows marked under its number; in a wider one, lines keep their shape and
+/// the code scrolls sideways under numbers that stay put. The frame's own width decides, so a
+/// program in an iPad's aside or the buddy's panel wraps as one on a phone does.
 struct CodeFrame<Content: View>: View {
   var variant = CodeFrameVariant.inset
   @ViewBuilder let content: Content
 
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  /// Main's `30rem`: from this width a program keeps its lines' shape.
+  private static var keepsShapeFrom: CGFloat { 480 }
+
+  @State private var width: CGFloat = 0
+  @State private var gutter: CGFloat = 0
 
   var body: some View {
-    let wraps = horizontalSizeClass != .regular
+    let wraps = width < Self.keepsShapeFrom
+    // Main's 12 on a panel; at the end, a line's own padding makes up the rest.
+    let start: CGFloat = variant == .panel ? 12 : 0
+    let end: CGFloat = variant == .panel ? 6 : 0
 
     Group {
       if wraps {
         lines
+          .padding(.leading, start)
+          .padding(.trailing, end)
       } else {
-        HorizontalScroll {
-          lines.fixedSize(horizontal: true, vertical: false)
+        // The start padding stays outside what scrolls, so the numbers stay put at its edge.
+        HorizontalScroll(leadingInset: gutter) {
+          lines
+            .padding(.trailing, end)
+            .fixedSize(horizontal: true, vertical: false)
         }
+        .padding(.leading, start)
+        .onPreferenceChange(CodeGutterKey.self) { gutter = $0 }
+        .environment(\.codeSurface, variant == .panel ? .muted : .boxBackground)
       }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .onGeometryChange(for: CGFloat.self) {
+      $0.size.width
+    } action: {
+      width = $0
     }
     .background {
       if variant == .panel {
@@ -46,14 +70,14 @@ struct CodeFrame<Content: View>: View {
     VStack(alignment: .leading, spacing: 0) {
       content
     }
-    // A line's own padding brings the panel's to main's 12.
-    .padding(.horizontal, variant == .panel ? 6 : 0)
     .padding(.vertical, variant == .panel ? 10 : 0)
   }
 }
 
 /// Main's `CodeLine`: a numbered line of a program. Wrapped, an arrow under its number marks each
-/// extra row.
+/// extra row. Its tone starts after its number, which stays put while the code scrolls under it.
+/// VoiceOver says `spoken` for the line (`SpokenCode`), in place of its code; a line of fields
+/// leaves it out and labels its fields.
 struct CodeLine<Content: View>: View {
   enum Tone {
     /// `editable` marks the learner's line around its code, never by moving it: in Python, a moved
@@ -65,9 +89,11 @@ struct CodeLine<Content: View>: View {
   /// How many digits the program's last line number has, so every number takes the same width.
   let digits: Int
   var tone = Tone.plain
+  var spoken: String?
   @ViewBuilder let content: Content
 
   @Environment(\.codeWraps) private var wraps
+  @Environment(\.codeSurface) private var surface
   @Environment(\.colorSchemeContrast) private var contrast
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.legibilityWeight) private var legibilityWeight
@@ -76,35 +102,57 @@ struct CodeLine<Content: View>: View {
     // Wide enough for an arrow under a one-digit number.
     let gutter =
       max(CGFloat(digits), 1.25) * codeColumn(dynamicTypeSize, legibility: legibilityWeight)
+    let rowPadding = TypeStyle.code.rowGap(dynamicTypeSize) / 2
 
-    HStack(alignment: .firstTextBaseline, spacing: 12) {
+    let row = HStack(alignment: .firstTextBaseline, spacing: 0) {
       Text(verbatim: "\(number)")
         .foregroundStyle(.mutedForeground)
         .frame(width: gutter, alignment: .trailing)
+        .padding(.vertical, rowPadding)
+        .padding(.trailing, 6)
+        .background(surface ?? .clear)
+        .background {
+          GeometryReader { place in
+            Color.clear.preference(key: CodeGutterKey.self, value: place.size.width)
+          }
+        }
+        .visualEffect { [pinned = surface != nil] number, place in
+          number.offset(
+            x: pinned ? max(0, -place.frame(in: .scrollView(axis: .horizontal)).minX) : 0)
+        }
+        .zIndex(1)
         .accessibilityHidden(true)
 
       content
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, rowPadding)
+        .padding(.horizontal, 6)
+        .background(background, in: .rect(cornerRadius: Radius.sm))
+        .overlay(alignment: .leading) {
+          if tone == .current {
+            Rectangle().fill(.vizHighlight).frame(width: 3)
+          }
+        }
+        .overlay {
+          if tone == .editable {
+            RoundedRectangle(cornerRadius: Radius.sm)
+              .strokeBorder(Color.vizAccent.opacity(contrast == .increased ? 1 : 0.4))
+          }
+        }
     }
-    .padding(.vertical, TypeStyle.code.rowGap(dynamicTypeSize) / 2)
     .overlay(alignment: .topLeading) {
       if wraps {
         ContinuationMarks(rowHeight: TypeStyle.code.rowHeight(dynamicTypeSize))
           .frame(width: gutter)
       }
     }
-    .padding(.horizontal, 6)
-    .background(background, in: .rect(cornerRadius: Radius.sm))
-    .overlay(alignment: .leading) {
-      if tone == .current {
-        Rectangle().fill(.vizHighlight).frame(width: 3)
-      }
-    }
-    .overlay {
-      if tone == .editable {
-        RoundedRectangle(cornerRadius: Radius.sm)
-          .strokeBorder(Color.vizAccent.opacity(contrast == .increased ? 1 : 0.4))
-      }
+
+    if let spoken {
+      row
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(verbatim: spoken))
+    } else {
+      row
     }
   }
 
@@ -115,6 +163,15 @@ struct CodeLine<Content: View>: View {
     case .editable: .boxBackground
     case .error: Color.destructive.opacity(0.12)
     }
+  }
+}
+
+/// How wide a scrolling program's numbers are, so its start fade begins past them.
+private struct CodeGutterKey: PreferenceKey {
+  static let defaultValue: CGFloat = 0
+
+  static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    value = max(value, nextValue())
   }
 }
 
@@ -313,11 +370,11 @@ struct CodeListing: View {
 
         CodeLine(
           number: number, digits: String(lines.count).count,
-          tone: current == number ? .current : .plain
+          tone: current == number ? .current : .plain,
+          spoken: SpokenCode.line(tokens.map(\.text).joined(), number: number)
         ) {
           CodeText(tokens: tokens)
         }
-        .accessibilityElement(children: .combine)
         .accessibilityAddTraits(current == number ? .isSelected : [])
       }
     }
@@ -378,8 +435,7 @@ struct CodeSnippet: View {
     .typeStyle(.code)
     .environment(\.codeWraps, true)
     .environment(\.layoutDirection, .leftToRight)
-    // Main's option names its code as the browser reads it: the lines on one line, unindented.
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(Text(verbatim: CodeFence.oneLine(code)))
+    .accessibilityLabel(Text(verbatim: SpokenCode.snippet(code)))
   }
 }

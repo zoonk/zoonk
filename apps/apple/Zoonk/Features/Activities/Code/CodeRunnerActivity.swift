@@ -203,7 +203,8 @@ private struct CodeRunnerCanvas: View {
 
         CodeLine(
           number: number, digits: digits,
-          tone: errorLine == number ? .error : isEditable ? .editable : .plain
+          tone: errorLine == number ? .error : isEditable ? .editable : .plain,
+          spoken: isEditable ? nil : SpokenCode.line(line, number: number)
         ) {
           if isEditable {
             TextField(

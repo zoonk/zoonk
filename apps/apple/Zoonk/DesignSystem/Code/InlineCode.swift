@@ -93,13 +93,14 @@ enum InlineCode {
 }
 
 extension CodeBreaks {
-  /// Inline code's break points, in each of its runs.
+  /// Inline code's break points, in each of its runs' long words.
   static func inserted(into text: AttributedString) -> AttributedString {
     text.runs.reduce(into: AttributedString()) { result, run in
       result +=
         InlineCode.isCode(run.inlinePresentationIntent)
         ? AttributedString(
-          inserted(into: String(text[run.range].characters)), attributes: run.attributes)
+          insertedInLongWords(into: String(text[run.range].characters)),
+          attributes: run.attributes)
         : AttributedString(text[run.range])
     }
   }

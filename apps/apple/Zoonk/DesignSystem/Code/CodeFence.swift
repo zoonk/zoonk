@@ -95,7 +95,7 @@ struct CodeFence: Equatable {
 
   /// The code as one run of inline code, for a line that can't show a block.
   var inlineCode: AttributedString {
-    var run = AttributedString(CodeBreaks.inserted(into: Self.oneLine(code)))
+    var run = AttributedString(CodeBreaks.insertedInLongWords(into: Self.oneLine(code)))
     run.inlinePresentationIntent = .code
     return run
   }
@@ -135,6 +135,33 @@ enum CodeBreaks {
 
     return result
   }
+
+  /// Main's `withWordBreakPoints`, for inline code in a sentence: a word this short fits on a line
+  /// of the narrowest column, larger text included, so it moves to the next line whole; only a
+  /// longer one splits at its break points.
+  static func insertedInLongWords(into text: String) -> String {
+    var result = ""
+    var word = ""
+
+    func flush() {
+      result += word.count > wholeWordLength ? inserted(into: word) : word
+      word = ""
+    }
+
+    for character in text {
+      if character.isWhitespace {
+        flush()
+        result.append(character)
+      } else {
+        word.append(character)
+      }
+    }
+
+    flush()
+    return result
+  }
+
+  private static let wholeWordLength = 20
 
   static func breaks(between before: Character, and after: Character) -> Bool {
     after == "." || ("([{,".contains(before) && !")]}".contains(after))

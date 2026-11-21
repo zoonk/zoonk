@@ -128,7 +128,8 @@ struct AnswerOption: View {
 }
 
 /// An answer's words, or its code, and its tag. The tag moves under the words rather than leave them
-/// less than half the row or narrower than their widest line-break unit, and always under code.
+/// less than half the row or narrower than their widest line-break unit. Beside code it sits on its
+/// last line, and only while the code's widest line still fits: code never wraps to make room.
 struct TagBesideOrUnder: View {
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.legibilityWeight) private var legibilityWeight
@@ -141,7 +142,7 @@ struct TagBesideOrUnder: View {
 
   var body: some View {
     AnswerOptionLayout(
-      isStacked: isStacked || text.snippet != nil, hasTag: tag != nil, hasMarker: hasMarker
+      isStacked: isStacked, isCode: text.snippet != nil, hasTag: tag != nil, hasMarker: hasMarker
     ) {
       VStack(alignment: .leading, spacing: 2) {
         if let snippet = text.snippet {
@@ -217,6 +218,7 @@ struct TagBesideOrUnder: View {
 /// Text's minimum width can split a word or its punctuation, so probes measure whole line-break units.
 private struct AnswerOptionLayout: Layout {
   var isStacked: Bool
+  var isCode = false
   var hasTag: Bool
   var hasMarker: Bool
   private let spacing: CGFloat = 12
@@ -247,13 +249,19 @@ private struct AnswerOptionLayout: Layout {
 
     if hasTag, let width = proposal.width, width.isFinite {
       let tagWidth = subviews[1].sizeThatFits(.unspecified).width
-      let readingWidth = max(width / 2, min(widestUnit(in: subviews), width))
+
+      let readingWidth =
+        isCode
+        ? subviews[0].sizeThatFits(.unspecified).width
+        : max(width / 2, min(widestUnit(in: subviews), width))
+
       stacked = stacked || width - tagWidth - spacing < readingWidth
     }
 
     return stacked
       ? AnyLayout(VStackLayout(alignment: .leading, spacing: spacing))
-      : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: spacing))
+      : AnyLayout(
+        HStackLayout(alignment: isCode ? .lastTextBaseline : .firstTextBaseline, spacing: spacing))
   }
 
   private func widestUnit(in subviews: Subviews) -> CGFloat {
