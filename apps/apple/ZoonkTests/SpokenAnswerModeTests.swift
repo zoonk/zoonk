@@ -29,17 +29,21 @@ final class SpokenAnswerModeTests: XCTestCase {
   }
 
   func testAnAnsweredScreenShowsTheWayItWasAnswered() {
-    XCTAssertEqual(SpokenAnswerMode(answered: .spokenAnswer(text: "Hola")), .type)
-    XCTAssertEqual(SpokenAnswerMode(answered: .listening(arrangedWords: ["Hola"])), .listen)
-    XCTAssertEqual(SpokenAnswerMode(answered: nil), .speak, "a recording")
+    XCTAssertEqual(mode(lockedAnswer: .spokenAnswer(text: "Hola")), .type)
+    XCTAssertEqual(
+      mode(canListen: true, lockedAnswer: .listening(arrangedWords: ["Hola"])), .listen)
+    XCTAssertEqual(
+      mode(canListen: true, cantTalk: true, heard: SpokenHeard(words: [], wordsToPractice: [])),
+      .speak)
   }
 
   private func mode(
     canListen: Bool = false, canSpeak: Bool = true, cantTalk: Bool = false,
-    cantListen: Bool = false, micBlocked: Bool = false
+    cantListen: Bool = false, micBlocked: Bool = false,
+    lockedAnswer: LessonAnswer? = nil, heard: SpokenHeard? = nil
   ) -> SpokenAnswerMode {
     SpokenAnswerMode(
       canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalk, cantListen: cantListen,
-      micBlocked: micBlocked)
+      micBlocked: micBlocked, lockedAnswer: lockedAnswer, heard: heard)
   }
 }

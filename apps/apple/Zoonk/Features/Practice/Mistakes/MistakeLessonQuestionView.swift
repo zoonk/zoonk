@@ -78,11 +78,11 @@ struct MistakeLessonQuestionView: View {
 
   private var shownPrompt: URL? {
     guard !showsIdea else { return nil }
-    return replay.step.shownPromptAudio(
-      spokenMode: SpokenAnswerMode(
-        canListen: true, canSpeak: recording.input != nil, cantTalk: cantTalk,
-        cantListen: cantListen, micBlocked: micBlocked),
-      cantListen: cantListen)
+    let mode = replay.step.spokenAnswerMode(
+      canSpeak: recording.input != nil, cantTalk: cantTalk, cantListen: cantListen,
+      micBlocked: micBlocked, lockedAnswer: state.phase == .playing ? nil : state.currentAnswer,
+      heard: state.currentResult?.heard)
+    return replay.step.shownPromptAudio(spokenMode: mode, cantListen: cantListen)
   }
 
   private func press(_ control: PracticeFocus) {
@@ -109,6 +109,8 @@ struct MistakeLessonQuestionView: View {
   }
 
   var body: some View {
+    let promptURL = shownPrompt
+
     PracticeTaskLayout(segments: segments, index: index, note: recordInBar.note) {
       if showsIdea, let lesson = entry.drill.lesson {
         DrillIdeaView(drill: entry.drill, lesson: lesson)
@@ -143,34 +145,39 @@ struct MistakeLessonQuestionView: View {
             showsIdea = false
             shownAt = .now
           }
-        } else if grade != nil {
-          PracticeMainButton(
-            title: LocalizedStringResource(
-              "Continue", table: "Practice", comment: "Moves on after a grade."),
-            icon: .forward, action: next
-          )
-          .practiceFocus(.next)
         } else {
-          PracticeSecondaryButton(
-            title: entry.drill.kind == .noGuessing
-              ? LocalizedStringResource(
-                "I'm not sure", table: "Practice",
-                comment: "Honest way out of a guess in a no-guessing drill.")
-              : LocalizedStringResource(
-                "I don't know yet", table: "Practice",
-                comment: "Answers a question as not known yet."),
-            icon: .notSure, isDisabled: speechChecking || state.phase != .playing
-          ) {
-            press(.notSure)
-            Task { await send(dontKnow: true) }
+          if grade == nil {
+            PracticeSecondaryButton(
+              title: entry.drill.kind == .noGuessing
+                ? LocalizedStringResource(
+                  "I'm not sure", table: "Practice",
+                  comment: "Honest way out of a guess in a no-guessing drill.")
+                : LocalizedStringResource(
+                  "I don't know yet", table: "Practice",
+                  comment: "Answers a question as not known yet."),
+              icon: .notSure, isDisabled: speechChecking || state.phase != .playing
+            ) {
+              press(.notSure)
+              Task { await send(dontKnow: true) }
+            }
+            .practiceFocus(.notSure)
+            if failures > 0 {
+              PracticeSaveError(
+                failures: failures, onReport: { showsSaveReport = true },
+                retry: { Task { await send(retry: true) } })
+            }
           }
-          .practiceFocus(.notSure)
-          if failures > 0 {
-            PracticeSaveError(
-              failures: failures, onReport: { showsSaveReport = true },
-              retry: { Task { await send(retry: true) } })
+          if let promptURL {
+            LessonAudioButton(url: promptURL, style: .bar)
           }
-          if case .challenge(let challenge) = replay.step.content,
+          if grade != nil {
+            PracticeMainButton(
+              title: LocalizedStringResource(
+                "Continue", table: "Practice", comment: "Moves on after a grade."),
+              icon: .forward, action: next
+            )
+            .practiceFocus(.next)
+          } else if case .challenge(let challenge) = replay.step.content,
             !isChallengeEnded(challenge)
           {
             PracticeMainButton(
@@ -227,7 +234,7 @@ struct MistakeLessonQuestionView: View {
     .onChange(of: cantListen) { _, value in
       LessonTodayChoices.standard.setChosenToday(.cantListen, value)
     }
-    .onChange(of: shownPrompt, initial: true) { _, url in
+    .onChange(of: promptURL, initial: true) { _, url in
       prompt.enter(prompt: url, audio: sounds)
     }
     .onDisappear { sounds.stop() }

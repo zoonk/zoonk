@@ -431,8 +431,17 @@ enum SpokenAnswerMode: Equatable {
   case listen
   case type
 
-  init(canListen: Bool, canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool) {
-    if (cantTalk || !canSpeak) && canListen && !cantListen {
+  init(
+    canListen: Bool, canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool,
+    lockedAnswer: LessonAnswer? = nil, heard: SpokenHeard? = nil
+  ) {
+    if heard != nil {
+      self = .speak
+    } else if case .spokenAnswer = lockedAnswer {
+      self = .type
+    } else if canListen, case .listening = lockedAnswer {
+      self = .listen
+    } else if (cantTalk || !canSpeak) && canListen && !cantListen {
       self = .listen
     } else if cantTalk || micBlocked || !canSpeak {
       self = .type
@@ -440,34 +449,30 @@ enum SpokenAnswerMode: Equatable {
       self = .speak
     }
   }
-
-  /// An answered screen shows the way it was answered, whatever the learner picks today. A
-  /// recording keeps no answer.
-  init(answered answer: LessonAnswer?) {
-    switch answer {
-    case .spokenAnswer: self = .type
-    case .listening: self = .listen
-    default: self = .speak
-    }
-  }
-}
-
-extension LessonPlayerStore {
-  func spokenAnswerMode(canListen: Bool, canSpeak: Bool) -> SpokenAnswerMode {
-    SpokenAnswerMode(
-      canListen: canListen, canSpeak: canSpeak, cantTalk: cantTalkToday,
-      cantListen: cantListenToday, micBlocked: isMicBlocked)
-  }
 }
 
 extension LessonStep {
+  func spokenAnswerMode(
+    canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool,
+    lockedAnswer: LessonAnswer?, heard: SpokenHeard?
+  ) -> SpokenAnswerMode? {
+    guard case .spokenAnswer(_, let listening) = content else { return nil }
+
+    return SpokenAnswerMode(
+      canListen: listening != nil, canSpeak: canSpeak, cantTalk: cantTalk, cantListen: cantListen,
+      micBlocked: micBlocked, lockedAnswer: lockedAnswer, heard: heard)
+  }
+
   /// The prompt this screen plays. Main's `ListeningInstead`: a spoken screen answered by listening
   /// is a listening screen.
-  func shownPromptAudio(spokenMode: SpokenAnswerMode, cantListen: Bool) -> URL? {
+  func shownPromptAudio(spokenMode: SpokenAnswerMode?, cantListen: Bool) -> URL? {
     switch content {
-    case .spokenAnswer(_, let listening?): spokenMode == .listen ? listening.promptAudio : nil
-    case .language(let exercise, _): exercise.promptAudio(cantListen: cantListen)
-    default: nil
+    case .spokenAnswer(_, let listening?):
+      spokenMode == .listen ? listening.promptAudio(cantListen: cantListen) : nil
+    case .language(let exercise, _):
+      exercise.promptAudio(cantListen: cantListen)
+    default:
+      nil
     }
   }
 }
@@ -491,21 +496,17 @@ private struct SpokenAnswerStepView: View {
   var onCheckingChanged: (@MainActor (Bool) -> Void)? = nil
 
   private var mode: SpokenAnswerMode {
-    context.isLocked
-      ? SpokenAnswerMode(answered: context.answer)
-      : SpokenAnswerMode(
-        canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
-        cantListen: cantListen, micBlocked: micBlocked)
+    SpokenAnswerMode(
+      canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
+      cantListen: cantListen, micBlocked: micBlocked,
+      lockedAnswer: context.isLocked ? context.answer : nil, heard: context.result?.heard)
   }
 
   var body: some View {
     if mode == .listen, let listening {
-      LanguageStepView(
-        exercise: listening, wordHints: nil, context: context, part: part,
-        cantListen: typingWhenCantListen)
-
-      // Up with "I can't listen now", never under the word bank.
-      if part == .screen {
+      ArrangeWordsView(
+        exercise: listening, context: context, part: part, cantListen: typingWhenCantListen
+      ) {
         modeSwitch
       }
     } else {
@@ -518,15 +519,20 @@ private struct SpokenAnswerStepView: View {
 
   @ViewBuilder
   private var screen: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Text(content.targetText)
-        .typeStyle(.section.weight(.medium))
-        .accessibilityAddTraits(.isHeader)
-      if let romanization = content.romanization {
-        Text(romanization).foregroundStyle(.mutedForeground)
+    ClosingColumn(spacing: 12) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(content.targetText)
+          .typeStyle(.section.weight(.medium))
+          .accessibilityAddTraits(.isHeader)
+        if let romanization = content.romanization {
+          Text(romanization).foregroundStyle(.mutedForeground)
+        }
+        if let translation = content.translation {
+          Text(translation).foregroundStyle(.mutedForeground)
+        }
       }
-      if let translation = content.translation {
-        Text(translation).foregroundStyle(.mutedForeground)
+      if mode == .speak {
+        modeSwitch
       }
     }
   }
@@ -534,23 +540,18 @@ private struct SpokenAnswerStepView: View {
   @ViewBuilder
   private var turn: some View {
     if mode == .speak, let input = recording.input {
-      // A recorder whose line is in the bar usually draws nothing here.
-      ClosingColumn(spacing: 20) {
-        input(
-          SpokenAnswerContext(
-            lessonId: context.lessonId, stepId: step.id, content: content,
-            isLocked: context.isLocked,
-            waitForRun: waitForRun,
-            studySessionId: studySessionId,
-            onGraded: context.resolveSpoken,
-            onBlocked: {
-              micBlocked = true
-              announcePolitely(Self.micBlockedLine)
-            }, mistake: mistake, onPracticeGraded: onPracticeGraded,
-            onCheckingChanged: onCheckingChanged))
-
-        modeSwitch
-      }
+      input(
+        SpokenAnswerContext(
+          lessonId: context.lessonId, stepId: step.id, content: content,
+          isLocked: context.isLocked,
+          waitForRun: waitForRun,
+          studySessionId: studySessionId,
+          onGraded: context.resolveSpoken,
+          onBlocked: {
+            micBlocked = true
+            announcePolitely(Self.micBlockedLine)
+          }, mistake: mistake, onPracticeGraded: onPracticeGraded,
+          onCheckingChanged: onCheckingChanged))
     } else {
       if micBlocked, !context.isLocked {
         VStack(alignment: .leading, spacing: 4) {
@@ -632,7 +633,7 @@ private struct SpokenAnswerStepView: View {
 
 /// A leading column whose views that draw nothing take no room and no spacing, as main's
 /// `empty:hidden` does.
-private struct ClosingColumn: Layout {
+struct ClosingColumn: Layout {
   let spacing: CGFloat
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {

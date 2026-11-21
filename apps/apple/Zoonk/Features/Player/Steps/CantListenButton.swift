@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The way around listening, beside what it asks, as a speaking screen has "I can't talk now". The
-/// choice holds for the rest of the learner's day, as on main.
 struct CantListenButton: View {
   let cantListen: Bool
   let toggle: @MainActor () -> Void

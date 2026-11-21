@@ -70,14 +70,6 @@ struct LessonStageView: View {
     "\(step.id)/\(state.rounds[step.id] ?? 0)"
   }
 
-  private func shownPrompt(_ step: LessonStep) -> ShownPrompt {
-    ShownPrompt(
-      stepId: step.id,
-      url: step.shownPromptAudio(
-        spokenMode: store.spokenAnswerMode(canListen: true, canSpeak: recording.input != nil),
-        cantListen: store.cantListenToday))
-  }
-
   private func recapView(_ recap: LessonRecap, on step: LessonStep) -> some View {
     let visit = visit(step)
 
@@ -92,6 +84,14 @@ struct LessonStageView: View {
 
   var body: some View {
     if let step = state.currentStep {
+      let spokenMode = step.spokenAnswerMode(
+        canSpeak: recording.input != nil, cantTalk: store.cantTalkToday,
+        cantListen: store.cantListenToday, micBlocked: store.isMicBlocked,
+        lockedAnswer: state.phase == .playing ? nil : state.currentAnswer,
+        heard: state.currentResult?.heard)
+      let prompt = ShownPrompt(
+        stepId: step.id,
+        url: step.shownPromptAudio(spokenMode: spokenMode, cantListen: store.cantListenToday))
       // A reader, so a wide screen never shows the one-column version first.
       GeometryReader { proxy in
         let space = PaneSpace(proxy)
@@ -108,7 +108,7 @@ struct LessonStageView: View {
         let teachesKnowledge = store.lesson?.targetLanguage == nil
         let offersDidntGetIt = store.lesson?.offersDidntGetIt(on: step) == true
         let opensWithMap = step.opensLesson && map != nil
-        let place = step.checkAddedPlace(isOneColumn: spread == nil)
+        let place = step.checkAddedPlace(isOneColumn: spread == nil, spokenMode: spokenMode)
         let isWithBank = place != .underScreen
         let bankAtBottom = place == .aboveBank
         let added = LessonCheckAdded(
@@ -240,7 +240,8 @@ struct LessonStageView: View {
           }
           .bottomBar(note: checkNote ?? recordInBar.note) {
             LessonActionBar(
-              store: store, state: state, step: step, showsOwnAsk: offersHelp || offersDidntGetIt)
+              store: store, state: state, step: step, promptAudio: prompt.url,
+              showsOwnAsk: offersHelp || offersDidntGetIt)
           }
           .environment(recordInBar)
           // The hinge is the trailing page's safe area, so its content and the action bar stay
@@ -277,7 +278,7 @@ struct LessonStageView: View {
       // as another screen would be, so its canvas starts over too.
       .id(visit(step))
       .announcesBuddyOffer(.misses, isShown: state.struggleOffer != nil && !step.showsOwnResult)
-      .onChange(of: shownPrompt(step), initial: true) { _, shown in
+      .onChange(of: prompt, initial: true) { _, shown in
         store.promptAudio.enter(prompt: shown.url, audio: audio)
       }
       .task(id: step.id) {
@@ -430,6 +431,7 @@ struct LessonActionBar: View {
   let state: LessonPlayerState
   /// Nil on the lesson map, which is read like a screen.
   let step: LessonStep?
+  var promptAudio: URL? = nil
   var showsOwnAsk = false
 
   @Environment(\.activityRenderers) private var activityRenderers
@@ -448,8 +450,8 @@ struct LessonActionBar: View {
       }
       .disabled(!state.canGoBack || recordInBar?.isChecking == true)
 
-      if let step, step.isRead {
-        LessonAudioButton(url: step.promptAudio, style: .bar)
+      if let promptAudio {
+        LessonAudioButton(url: promptAudio, style: .bar)
       }
 
       if showsDontKnow {
@@ -677,8 +679,10 @@ extension LessonStep {
   /// Where what a check adds goes. One column gives the turn spare height and its word bank waits
   /// at the bottom, so the feedback takes the room above the bank and the bank holds still under the
   /// thumb; a spread puts it under the bank; a screen without a bank has it under the screen.
-  func checkAddedPlace(isOneColumn: Bool) -> CheckAddedPlace {
-    guard hasWordBank else {
+  func checkAddedPlace(
+    isOneColumn: Bool, spokenMode: SpokenAnswerMode? = nil
+  ) -> CheckAddedPlace {
+    guard hasWordBank || spokenMode == .listen else {
       return .underScreen
     }
 
