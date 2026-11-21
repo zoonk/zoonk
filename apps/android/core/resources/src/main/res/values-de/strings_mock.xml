@@ -9,7 +9,7 @@
   "mock_break_detail": "4a2fd50be93cf8682291729de2150f03ad4feeb79a0f68e9bf3ec4d3ea882dda",
   "mock_break_time_left": "d0d583ef1f721ef6afe5cd51cc304dac780c65f961537e6a431ab24fc3e09616",
   "mock_cell_answered": "54c0769e569f82484ed0630821996817e51dea945cb8faa40ac1f4766a843f70",
-  "mock_cell_flagged": "162b2ec4ea77336158b4fffaabd44764665f2271bc97a907f3c5238eb98a76b4",
+  "mock_cell_unsure": "519cc892e500fd82654cbe44eacaf0d28c811639e34f367ee4571d51fb55b6f3",
   "mock_continue": "8070e48e065069e0eea5e6091113ae8af12721bd7b3de437712a0c01fb68c95c",
   "mock_continue_section": "f4c54908fdc13388c7c72283863cdbbcc07d605292dda053a726bb0e1553a721",
   "mock_essay_blank": "4a5f860ee5cb5a10194f32b2a4d495e96ad5f31a098e3b3095f5782ea7bd241c",
@@ -17,7 +17,6 @@
   "mock_every_answered": "e1e118db165191d00883314a79ffda807dc90b8d8a260afbe54d625c3be2b254",
   "mock_expired_detail": "f375b0d65761a801a23d90717b1c73ed5e40e3a87dbf34c81432588f2c4747aa",
   "mock_expired_title": "d48c5403e49f7e90586679c83af168cf899f4ba8bba91350b92eae6f4b6c78c0",
-  "mock_flag": "eb259bbfcdf78c2f27b6b19f7ca2e708d50f21c9e0fe652170f6c2248985af1a",
   "mock_hand_in": "da6099b9171ccf94a927aa63a020b8f9e2906a1d8a6f1d57ffab1bbc82672932",
   "mock_hand_in_final": "936549898c739f7c9d4485f59b7124a631172b7772630f4c28a59e9052289a59",
   "mock_hand_in_mock_title": "0d8f008ec4d3d987bfc5dabdfad121ba97bc93fffa6eb2f7b1bac585544cba3d",
@@ -30,10 +29,10 @@
   "mock_label": "d94ac68eb53a03d409f080e000c8ac4a782ad63a1ef3ee31dbdc3d2514e07f6e",
   "mock_label_shape": "33143e36b2a47fc6b54fecc5c49879cc38fd83917cfca8ddb5d9017f8e4c469c",
   "mock_left_blank": "ce8ffd8b2a3c6e0ce03e9e381be9c08a032a5f0c7a8faa2f931485760b8a8e7c",
-  "mock_left_blank_and_flagged": "7e1b60c99b954904fa52efc4a07d28b4cbe481cd34c1c7a56ea1dacf7cad0be8",
+  "mock_left_blank_and_unsure": "57419d913137ad4bbf39234d5f0c500e94fa1da51db3c5c85a6d0cf8aadc5736",
   "mock_left_blank_only": "0ad26202901e6cf83ae4c407d3b21599a6491ca2dc60710385b5d385dfb587fa",
-  "mock_left_flagged": "9872854a9fa82369200409f5a92db3fc50e654c965f20a87271921b8e673e067",
-  "mock_left_flagged_only": "ca7828fdfdac2c0b622c198cf6a5c5f06069f37a02eced319a87d3473ba96f5e",
+  "mock_left_unsure": "d3c0e5596c8c9851edc0192384bc16f3a6b40cbc5cf8df15e756135405a6d97a",
+  "mock_left_unsure_only": "8331116a9e7b58d454dcb42fc0d2391a07dd458dc9db18364a09c93506748884",
   "mock_moves_forward": "cdc3ee0dd0e95a8c1e555be879946bcb9fee3b0062dab7aff5de72a4c4f3c4ed",
   "mock_moves_forward_must": "6556d0a8534c0513fce04ec7429e886d4d7ec87aec8b30723a573adf9c212592",
   "mock_moves_must": "ef103d1af4ba879750f8c213ea68b4e5b01ef07b9ab9e8622d37cfb23ad45412",
@@ -44,6 +43,9 @@
   "mock_next": "9b5702e63bcd99224087fd05bc1fe318455a8eb7cb4f1a45377d965345b3cdfc",
   "mock_next_named": "779c2b9a5b3a2327ec473c706968a5e07a15f86ab7ced1bc91493b29933bd596",
   "mock_next_section": "43e7009d87a154e642198b4c8390381f4549aca9562cb30c421f1c2ebf85f08e",
+  "mock_not_sure": "a3f177d906ede4771d12ddaf093981d049c32a7c91ebf749d3318228d1821642",
+  "mock_not_sure_tip": "def6288cfda870984bdf493565870297a7f261eedaf9cca88e2e67f1fb7cad59",
+  "mock_not_sure_tip_forward_only": "b61c148a1ffb8fafb765f55b6ec99c44006727d35b7075d54c474f0f4195873d",
   "mock_place": "a3548fd6737b525c95e7c31890377fb6462ec90d34e26b250ed4d2686f5ca1ff",
   "mock_points_of": "51a9eccb09c7cd652a0230c441f1e992e3356ec099f5546d95f4f51036b0c0b8",
   "mock_preparing_chooser_title": "6ee8cde3a326f8a3babc47059e81a7b37b7c4c5ecdc6c9498d131efa2bbe2373",
@@ -93,7 +95,7 @@
   "mock_time_up": "f1ab42d6017d2038843a23a2c07513aeca1c01b83379317f75bd70bb5b6ed288",
   "mock_title": "b402c6c3a77c0c06124a494ca6874f10d9d9307361d36ee12baafc501dba301b",
   "mock_try_again": "98d297e50a37d27896ec382bb0506080459ca438f9db8fd243974c40b862d234",
-  "mock_unflag": "f314c9f505d9f3d26168801dfca335e4eb7f9774cffcfb557aa11f15142c5a2a",
+  "mock_unsure_count": "95dbbc51aa12a516f922d4a0c5c4556c3eb6739b1086df63d46bb6569bce5532",
   "mock_words": "7b17f89d2d812afd31dc837584004d26ab0ea6399ed8de1d63ef364cb71534ac",
   "mock_written_part": "6496121dab5e7ae4edfbab325cf0a3874a934c61b1ec32ab94b94eb071ab6439",
   "mock_written_part_area": "1cca1b0572584c071b81d022d16b3f0d29da31a22a25a485686f4fd3b7566579",
@@ -135,8 +137,11 @@
     <string name="mock_question_place">Frage %1$d von %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Frage %1$d von %2$d · %3$s</string>
-    <string name="mock_flag">Markieren</string>
-    <string name="mock_unflag">Markierung entfernen</string>
+    <!-- A button beside "Next" the learner turns on for a question whose answer they aren't sure of, to check it again before handing in; the result shows how those answers went. -->
+    <string name="mock_not_sure">Unsicher</string>
+    <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
+    <string name="mock_not_sure_tip">Prüf die Antwort noch einmal, bevor du abgibst. Dein Ergebnis zeigt, wie du bei diesen Antworten abgeschnitten hast.</string>
+    <string name="mock_not_sure_tip_forward_only">Dein Ergebnis zeigt, wie diese Antworten ausgefallen sind.</string>
     <string name="mock_next">Weiter</string>
     <string name="mock_hand_in_section">Abschnitt abgeben</string>
     <string name="mock_moves_review_any">Überprüfung: Du kannst zu jeder Frage zurückgehen.</string>
@@ -150,24 +155,26 @@
     <string name="mock_moves_must">Beantworte jede Frage, um weiterzukommen.</string>
     <string name="mock_hand_in_mock_title">Probeprüfung abgeben?</string>
     <string name="mock_hand_in_section_title">Diesen Abschnitt abgeben?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_unsure: "3 questions are blank and you're not sure of 2." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d Frage ist unbeantwortet</item>
         <item quantity="other">%d Fragen sind unbeantwortet</item>
     </plurals>
-    <plurals name="mock_left_flagged">
-        <item quantity="one">%d ist markiert</item>
-        <item quantity="other">%d sind markiert</item>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), read after mock_left_blank: "3 questions are blank and you're not sure of 2." -->
+    <plurals name="mock_left_unsure">
+        <item quantity="one">du bist dir bei %d nicht sicher</item>
+        <item quantity="other">du bist dir bei %d nicht sicher</item>
     </plurals>
-    <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
-    <string name="mock_left_blank_and_flagged">%1$s und %2$s.</string>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_unsure. -->
+    <string name="mock_left_blank_and_unsure">%1$s und %2$s.</string>
     <plurals name="mock_left_blank_only">
         <item quantity="one">%d Frage ist unbeantwortet.</item>
         <item quantity="other">%d Fragen sind unbeantwortet.</item>
     </plurals>
-    <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d Frage ist markiert.</item>
-        <item quantity="other">%d Fragen sind markiert.</item>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), when none is blank. -->
+    <plurals name="mock_left_unsure_only">
+        <item quantity="one">Du bist dir bei %d Antwort nicht sicher.</item>
+        <item quantity="other">Du bist dir bei %d Antworten nicht sicher.</item>
     </plurals>
     <string name="mock_every_answered">Alle Fragen sind beantwortet.</string>
     <string name="mock_essay_blank">Der Aufsatz ist leer.</string>
@@ -186,12 +193,17 @@
         <item quantity="one">%d beantwortet</item>
         <item quantity="other">%d beantwortet</item>
     </plurals>
+    <!-- On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more. -->
+    <plurals name="mock_unsure_count">
+        <item quantity="one">%d Unsicher</item>
+        <item quantity="other">%d Unsicher</item>
+    </plurals>
     <string name="mock_questions">Fragen</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Frage %1$d</string>
     <string name="mock_cell_answered">beantwortet</string>
-    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_flagged">%1$s, markiert</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked "Not sure" (mock_not_sure). %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_unsure">%1$s, unsicher</string>
     <string name="mock_sections">Abschnitte</string>
     <string name="mock_section_number">Abschnitt %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

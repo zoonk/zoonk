@@ -80,12 +80,12 @@ describe("the screen's keyboard controls", () => {
         groups: [{ label: "Answers", moved: true, tabStops: 1 }],
         keycaps: [
           {
-            announced: "F",
-            expected: "F",
+            announced: "U",
+            expected: "U",
             id: "start",
-            label: "Flag",
-            name: "flag",
-            pressed: { ...START, label: "Flag" },
+            label: "Not sure",
+            name: "unsure",
+            pressed: { ...START, label: "Not sure" },
             wasChecked: false,
           },
         ],
@@ -141,10 +141,10 @@ describe("the screen's keyboard controls", () => {
         keycaps: [
           {
             announced: null,
-            expected: "F",
-            id: "flag",
-            label: "Flag",
-            name: "flag",
+            expected: "U",
+            id: "unsure",
+            label: "Not sure",
+            name: "unsure",
             pressed: null,
             wasChecked: false,
           },
@@ -153,8 +153,8 @@ describe("the screen's keyboard controls", () => {
       [
         "warn Behavior: radio arrows: ↓ didn't move to the next option in Answers",
         "warn Behavior: radio arrows: Answers has 3 Tab stops, where a group has one",
-        "warn Behavior: keycaps: the flag key didn't press Flag, which shows it",
-        'warn Behavior: keycaps: Flag announces "" where its key is "F"',
+        "warn Behavior: keycaps: the unsure key didn't press Not sure, which shows it",
+        'warn Behavior: keycaps: Not sure announces "" where its key is "U"',
       ],
     );
   });

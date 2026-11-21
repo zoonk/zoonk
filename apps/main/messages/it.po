@@ -2357,11 +2357,6 @@ msgid "Play or pause the audio"
 msgstr "Riproduci o metti in pausa l’audio"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "PpAjCi"
-msgid "Flag a question in a mock exam"
-msgstr "Contrassegna una domanda in una simulazione"
-
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "uY3Caj"
 msgid "Close or leave"
 msgstr "Chiudi o esci"
@@ -2405,6 +2400,11 @@ msgstr "Mostra o nascondi la barra laterale"
 msgctxt "DOENlK"
 msgid "Tap the rhythm in a music question"
 msgstr "Tocca seguendo il ritmo in una domanda di musica"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "HmGSbZ"
+msgid "Mark an answer as not sure in a mock exam"
+msgstr "Segna una risposta come «In dubbio» in una simulazione"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"

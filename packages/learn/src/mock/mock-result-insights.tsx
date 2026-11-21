@@ -1,7 +1,7 @@
 "use client";
 
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
-import { ScaleIcon, TimerIcon } from "lucide-react";
+import { BookmarkIcon, ScaleIcon, TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useMockScreen } from "./mock-context";
@@ -109,10 +109,10 @@ function CalibrationInsight({ result }: { result: MockResult }) {
   }
 
   return (
-    <Insight icon={ScaleIcon} title={t("Flagged answers")}>
+    <Insight icon={BookmarkIcon} title={t("Answers you weren't sure of")}>
       <p>
         {t(
-          "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
+          "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Not sure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
           {
             sureAnswered: String(calibration.sure.answered),
             sureRight: calibration.sure.right,
@@ -124,13 +124,13 @@ function CalibrationInsight({ result }: { result: MockResult }) {
       {calibration.advice === "blankUnsure" && (
         <p>
           {t(
-            "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}.",
+            "Leaving the ones you weren't sure of blank would have added {points, plural, one {# point} other {# points}}.",
             { points: calibration.blankingGain },
           )}
         </p>
       )}
       {calibration.advice === "keepAnswering" && (
-        <p>{t("Your flagged answers still earned points, so keep answering them.")}</p>
+        <p>{t("The answers you weren't sure of still earned points, so keep answering them.")}</p>
       )}
     </Insight>
   );

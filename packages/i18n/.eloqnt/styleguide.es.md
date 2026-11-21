@@ -67,6 +67,7 @@
 - “Phase challenge”: “Desafío de la fase”, not “reto”, “control”, or “examen”
 - “Weekly challenge”: “Desafío semanal”
 - “Mock exam”, including speaking mocks: “Simulacro”; standalone title: “Simulacro de examen”
+- A mock exam's “Not sure” (the button and the mark it leaves on an answer): “Tengo dudas”
 - “Logbook”: “Bitácora”
 - “Fading” (needs review): “Por repasar”
 - “Overview” (course level): “Panorama general”

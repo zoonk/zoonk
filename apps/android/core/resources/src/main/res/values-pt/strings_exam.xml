@@ -5,9 +5,9 @@
   "exam_add_result": "3965cc85cfe74bbb84e5e3b2db366370edbef16f2e5627e7294ea431cc666af9",
   "exam_add_result_detail": "a0b67c6e91efaf7301d9548441d3719fdb5ad697960b4623867a2d15f3f29374",
   "exam_by_subject": "ace3f31219ae363722d38ee9632738bce2f42b164cdb21390fb71892fd14e5d8",
-  "exam_calibration": "f96b7819587c6b901d23d239a6667a7cff3e76066b82133e9657672013cc6816",
-  "exam_calibration_blank_unsure": "beda30ce0fa87b8ff89c401347e9ecb7ae49eddf4fa94560c450c9df4eda7c0b",
-  "exam_calibration_keep_answering": "5182ae8fc5c2aa1b78ec647527a6b7eeae56bd9a89056fcc2b5c6fafd9bce2eb",
+  "exam_calibration": "54e4189bb102bea42a341f77ac7c9c1bfee749f604fa35e8ef0fa353b7c743f5",
+  "exam_calibration_blank_unsure": "86e9e4d8f85dde05575711f333cbc54aac231bda24f507cfd3d588bfbb780350",
+  "exam_calibration_keep_answering": "76c339c15a2290c168297f40878967a0949d8e2b20e6d7e30ba763a874b84014",
   "exam_calibration_right": "8edcbba5a9605ed600abd5ce5301475268c1791968e7784d572c64bd71c5dc23",
   "exam_checklist_black_pen": "d1689e8ff005bc2a6b65f5216f54d3fc4e9d96930481242d612a8dd1b1903148",
   "exam_checklist_count": "35b2b73fd95db0d1f25b3342734dbe54b2d8e840fe0e0e18644b544fe3fb7d8b",
@@ -230,15 +230,15 @@
     <string name="exam_rule_irt">Errar uma pergunta fácil custa mais do que errar uma difícil, então resolva as fáceis primeiro.</string>
     <string name="exam_rule_raw_title">Cada resposta certa vale um ponto</string>
     <string name="exam_rule_raw">Responda a todas as perguntas.</string>
-    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">Nos seus simulados: %1$s nas respostas não marcadas, %2$s nas marcadas.</string>
+    <!-- How the learner did in mock exams on the answers they were sure of and on those they marked "Not sure". %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">Nos seus simulados: %1$s quando você tinha certeza, %2$s quando estava em dúvida.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">acertou %1$d de %2$d</item>
         <item quantity="many">acertou %1$d de %2$d</item>
         <item quantity="other">acertou %1$d de %2$d</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">Você perde mais pontos do que ganha nas respostas marcadas: deixe essas questões em branco.</string>
-    <string name="exam_calibration_keep_answering">Suas respostas marcadas ainda rendem pontos: continue respondendo essas questões.</string>
+    <string name="exam_calibration_blank_unsure">Quando estiver em dúvida, deixe em branco: essas respostas tiram mais pontos do que dão.</string>
+    <string name="exam_calibration_keep_answering">Quando estiver em dúvida, responda mesmo assim: essas respostas valem pontos.</string>
     <string name="exam_to_pass">Para passar</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">Em %1$s, como aparece nos documentos da prova.</string>

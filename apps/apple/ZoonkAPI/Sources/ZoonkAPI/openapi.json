@@ -90720,9 +90720,10 @@
                   "enum": [
                     "blank",
                     "partial",
+                    "right",
                     "wrong"
                   ],
-                  "description": "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit"
+                  "description": "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit. `right`: answered correctly and marked as unsure"
                 },
                 "question": {
                   "type": "string"
@@ -90746,6 +90747,10 @@
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 9007199254740991
+                },
+                "unsure": {
+                  "type": "boolean",
+                  "description": "Whether the learner marked the question as unsure"
                 }
               },
               "required": [
@@ -90760,7 +90765,8 @@
                 "number",
                 "outcome",
                 "question",
-                "set"
+                "set",
+                "unsure"
               ],
               "additionalProperties": false
             }
@@ -91077,6 +91083,10 @@
           "text": {
             "nullable": true,
             "type": "string"
+          },
+          "unsure": {
+            "type": "boolean",
+            "description": "Whether the learner marked the essay as unsure"
           }
         },
         "required": [
@@ -91086,7 +91096,8 @@
           "itemId",
           "question",
           "status",
-          "text"
+          "text",
+          "unsure"
         ],
         "additionalProperties": false
       },
