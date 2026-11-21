@@ -81,7 +81,14 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     }
     case "preparePlacementItems": {
-      const { goalId, levelTestBank, waitsForNotice, writeTopics = true } = followUp.input;
+      const {
+        goalId,
+        levelTestBank,
+        skillIds,
+        waitsForNotice,
+        writeTopics = true,
+      } = followUp.input;
+
       const ask = `placement-items:${goalId}:${followUp.id}:${followUp.revision}`;
 
       await Promise.all([
@@ -95,7 +102,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
         writeTopics
           ? startOnce(
               placementItemsWorkflow,
-              [{ analytics: { distinctId: userId }, goalId, waitsForNotice }],
+              [{ analytics: { distinctId: userId }, goalId, skillIds, waitsForNotice }],
               ask,
             )
           : null,
