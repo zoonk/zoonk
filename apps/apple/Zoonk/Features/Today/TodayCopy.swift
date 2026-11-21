@@ -167,12 +167,14 @@ extension StudyBlock {
     switch writingAvailability {
     case .tomorrow(let returnsOn):
       return WritingLabels.gradingReturns(returnsOn)
-    case .continue:
-      return String(localized: "Your draft is saved", table: "Today")
     case .needsChoice(let choiceGroups):
       return WritingLabels.choiceLine(choiceGroups)
-    case .available, nil:
+    case .available, .continue, nil:
       break
+    }
+
+    if hasWritingDraft == true {
+      return String(localized: "Your draft is saved", table: "Today")
     }
 
     return writingUnit == .drill

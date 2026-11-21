@@ -329,7 +329,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let topics: [String]
   let waitReason: WaitReason?
   let weakest: Bool
-  /// A written task's: its draft is saved, or the day's extra grades are used until `returnsOn`.
+  let hasWritingDraft: Bool?
   let writingAvailability: WritingAvailability?
   /// A drill or a whole answer, known before any question is assigned.
   let writingUnit: WritingPrompt.Unit?
