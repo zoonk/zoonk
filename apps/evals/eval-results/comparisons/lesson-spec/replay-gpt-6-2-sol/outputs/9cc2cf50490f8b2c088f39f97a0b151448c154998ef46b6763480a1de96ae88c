@@ -1,0 +1,144 @@
+{
+  "lessons": [
+    {
+      "canDo": "Locate the four brain lobes and match each to a key job.",
+      "description": "Find the four lobes on a side view of the brain and see how they help you plan, feel, hear, and see.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Tanya spots her bus number through a rain-streaked window. Where in her brain do the signals from her eyes get turned into something she can see?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of the brain in a faint head outline facing left, with four shaded regions labeled by location: front behind the forehead, upper middle behind the front, lower side near the ear, and back.",
+          "visualKind": "picture",
+          "brief": "The frontal lobe, behind your forehead, helps you make a plan, like deciding when to leave home to catch the bus.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "When a traffic light comes into view, where does the brain first process signals from the eyes in its outer layer? Options: near the forehead, near the ear, near the back of the head; near the back of the head is right, and near the forehead is tempting because it's close to the eyes.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of the brain in a faint head outline facing left, with four shaded regions labeled by location: front behind the forehead, upper middle behind the front, lower side near the ear, and back.",
+          "visualKind": "picture",
+          "brief": "Signals from your eyes travel to the occipital lobe at the back of your brain, where the brain starts making sense of what you see, such as the color of a traffic light.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of the brain in a faint head outline facing left, with four shaded regions labeled by location: front behind the forehead, upper middle behind the front, lower side near the ear, and back.",
+          "visualKind": "picture",
+          "brief": "The temporal lobe, low on the side near your ear, helps your brain process sounds, like the chime that tells you the bus doors are closing.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of the brain in a faint head outline facing left, with four shaded regions labeled by location: front behind the forehead, upper middle behind the front, lower side near the ear, and back.",
+          "visualKind": "picture",
+          "brief": "The parietal lobe, toward the top and behind the frontal lobe, helps your brain process touch, like the ridges you feel on a coin in your pocket.",
+          "skills": [
+            0,
+            1
+          ]
+        },
+        {
+          "activityTemplate": "labeledDiagram",
+          "kind": "activity",
+          "visual": "Unlabeled side view of the brain in a faint head outline facing right, with four clearly bounded regions for the app to number: 1 lower side near the ear, 2 front behind the forehead, 3 far back, and 4 upper middle behind the front.",
+          "visualKind": "template",
+          "brief": "Have the learner label the four numbered regions: 1 temporal, 2 frontal, 3 occipital, and 4 parietal. If they swap the parietal and temporal lobes, point out that the parietal lobe sits above the temporal lobe.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "The frontal lobe also helps control movements you make on purpose, like lifting your hand to wave.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Lobes work together during everyday actions: when you see a doorbell and reach to press it, the occipital lobe helps with seeing it while the frontal lobe helps control the reach.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": "matchPairs",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Pair choosing which errand to do first with frontal, feeling a seam with parietal, hearing a whistle with temporal, and seeing a flash with occipital. Address the tempting frontal match for the flash: noticing it by sight isn't the same as deciding what to do about it.",
+          "skills": [
+            1
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "Side view of the brain in a faint head outline facing right, with four clearly bounded regions marked only by letters: A upper middle behind the front, B front behind the forehead, C lower side near the ear, D far back.",
+          "visualKind": "picture",
+          "brief": "At a museum exhibit, Hector hears a cue, reaches out, and feels a raised arrow without looking. To label the two main regions for hearing the cue and feeling the arrow—not for reaching—which two markers should the learner choose, and what name goes on each (C temporal for sound, A parietal for touch)?",
+          "skills": [
+            0,
+            1
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Find the frontal, parietal, temporal, and occipital lobes on a side view of the brain.",
+          "example": "The temporal lobe sits low on the side of the brain, near the ear.",
+          "hard": false,
+          "name": "Locate the four brain lobes",
+          "topic": "Brain lobe anatomy",
+          "useCase": "Find a region on a brain diagram in a health article or at a clinic."
+        },
+        {
+          "description": "Match each lobe to a job it helps with, such as planning, processing touch, hearing, or seeing.",
+          "example": "When you feel the ridges on a key without looking, the parietal lobe helps process that touch.",
+          "hard": false,
+          "name": "Match each lobe to a key job",
+          "topic": "Brain lobe functions",
+          "useCase": "Connect familiar actions, like hearing a doorbell or reaching to open the door, to the brain regions that help you do them."
+        }
+      ],
+      "title": "The lobes of the brain"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { logError } from "@zoonk/utils/logger";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
+import { recordLessonQualityDecision } from "../quality/lesson-quality-decision";
 import { type LessonGateProblem, runLessonQualityGate } from "../quality/lesson-quality-gate";
 import { repairWrittenLesson } from "../quality/lesson-repairs";
 import {
@@ -33,6 +34,7 @@ export type LessonCheckPlan = {
   review: boolean;
   version: number;
   writerModel: string;
+  writerRunId?: string;
 };
 
 type LessonContentOutcome =
@@ -49,6 +51,7 @@ export type LessonDraftState = {
   remainingFixes: number;
   review: boolean;
   version: WrittenVersion;
+  writerRunId?: string;
 };
 
 export type LessonDraftToFix = { draft: LessonDraftState; first: GateResult; status: "needsFix" };
@@ -120,6 +123,7 @@ export async function writeLessonContent({
         }),
         provenanceByScreen: draft.data.screens.map(() => ({ ...draft.provenance, sources })),
       },
+      writerRunId: draft.provenance.runId,
     },
     status: "drafted",
   };
@@ -155,6 +159,18 @@ export async function checkLessonContent({
   const checked = previous
     ? await checkFixedLesson({ fixed: written.lesson, gate, review: false })
     : await runLessonQualityGate({ ...gate, lesson: written.lesson, review: false });
+
+  const writerRunId = draft.writerRunId ?? written.provenanceByScreen[0]?.runId;
+
+  if (!previous) {
+    await recordLessonQualityDecision({
+      blocking: checked.blocking,
+      lessonId,
+      minor: checked.minor,
+      phase: "codeCheck",
+      writerRunId,
+    });
+  }
 
   if (checked.blocking.length > 0) {
     if (draft.remainingFixes > 0) {
@@ -198,6 +214,7 @@ export async function checkLessonContent({
           review,
           version,
           writerModel: gate.writerModel,
+          writerRunId,
         },
         fixed: previous !== null,
         status: "published",

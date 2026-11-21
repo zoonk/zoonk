@@ -1,0 +1,140 @@
+{
+  "lessons": [
+    {
+      "canDo": "Trace water through the water cycle",
+      "description": "Follow water from the ocean to clouds and back to Earth to see why rain doesn’t always take the same route.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Rain swells a creek high in the mountains. How could some of that rain have come from the ocean?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Side view of the ocean surface with arrows from the liquid water into clear air, labeled “liquid water” below and “invisible water gas” above; no clouds or droplets in the air.",
+          "visualKind": "picture",
+          "brief": "At the ocean’s surface, some liquid water changes into an invisible gas and enters the air. That change is called evaporation.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Air carrying water from the ocean rises and cools until a cloud appears: what happens to some of the water as the cloud forms? Options: “It turns into tiny drops” (right), “It gathers but stays a gas” (tempting), or “It turns into drops big enough to fall.”",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A single cloud forming in rising air, with one magnified area inside it showing tiny separate liquid drops; label them “tiny liquid drops” and show no falling rain.",
+          "visualKind": "picture",
+          "brief": "As moist air cools, some of its invisible water gas turns into tiny liquid drops; this is condensation. The drops make the cloud visible, but they’re much smaller than raindrops.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "When water falls from a cloud as rain or snow, it’s called precipitation. Drops falling from a storm cloud are already precipitation before they reach the ground.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ask which process is happening as snowflakes fall from a cloud, even though they melt before reaching the ground. The answer is precipitation; the tempting choice is condensation, which helps form clouds rather than naming what falls from them.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "One continuous landscape from a rainy mountainside to the coast, with arrows showing runoff over the slope into a creek that joins a river flowing to the ocean; label runoff, creek, river, and ocean.",
+          "visualKind": "picture",
+          "brief": "On a mountainside, rain that flows downhill over the ground is called runoff. That water can feed a creek that joins a river flowing to the ocean.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "processOrder",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Have the learner order one trip starting at sea: ocean water evaporates into the air (`waves`), cooling turns some of it into cloud drops (`cloud`), rain falls on a slope (`cloud-rain`), and runoff feeds a river that carries it to the ocean (`mountain`). After sorting, ask which step could begin again once the water is back at sea: evaporation.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A river is only one way for water to return to the ocean. Rain from a cloud over open water can fall straight into the sea.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ask which step rain that lands beside a boat far offshore skipped on its return to the ocean: forming cloud drops, falling from a cloud, or running downhill over land. The answer is running downhill over land; the tempting choice is falling from a cloud because no rain reached land.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Single cross-section of loose garden soil under rain, with subtle arrows showing water entering spaces in the soil below the surface.",
+          "visualKind": "picture",
+          "brief": "Not all rain that reaches land runs downhill. Some can soak into the ground, like rain landing on loose garden soil.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "One coastal neighborhood landscape showing a rain cloud over a sloped parking lot and a garden with loose soil, a ditch at the low edge of the lot, and a river that meets the ocean; label the lot, garden, ditch, river, and ocean without flow arrows or process labels.",
+          "visualKind": "picture",
+          "brief": "A storm made with water from the ocean rains on a sloped parking lot and a nearby garden. Have the learner explain how the water got into the cloud, then trace the lot’s runoff through a ditch and river to the ocean and explain why some garden rain might not reach the river right away.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Follow water as it changes form, falls from clouds, and takes different routes across or into Earth’s surface.",
+          "example": "Ocean water evaporates, forms cloud drops as the air cools, falls on a hillside, and returns to the ocean through a river.",
+          "hard": false,
+          "name": "Trace water through the water cycle",
+          "topic": "Water cycle",
+          "useCase": "Work out where rain from a neighborhood storm may go after it hits pavement or soil."
+        }
+      ],
+      "title": "The water cycle"
+    }
+  ]
+}

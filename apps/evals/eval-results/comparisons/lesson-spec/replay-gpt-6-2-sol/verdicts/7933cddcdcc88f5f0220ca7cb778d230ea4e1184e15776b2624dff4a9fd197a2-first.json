@@ -1,0 +1,186 @@
+{
+  "attempt": "first",
+  "costUsd": 0.010118489999999999,
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs."
+  ],
+  "packetId": "7933cddcdcc88f5f0220ca7cb778d230ea4e1184e15776b2624dff4a9fd197a2",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach the same single skill, a 4-3-3 lineup, so neither splits or bundles ideas differently.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives each explanation its own picture of a different part of the formation, while B repeats one picture across five screens, so A's plan builds up to the idea more clearly.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "A's pictures each show a new group or movement, while B's repeated picture adds nothing after the first screen.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are overview-level, use everyday words and avoid formulas, so neither slips in level or scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess asks where the three forwards spread, which the learner has to picture, but it has no visual and the options are text only.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must imagine the spread of the forwards to answer, which costs a little effort, though the answer is recoverable from the explanation that follows.",
+            "location": {
+              "detail": "Ask where the front three will usually spread out as the team attacks",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The same overhead 4-3-3 field picture is used for the hook and for explanation screens 2 and 4 to 7, with nothing new added on most of them.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The repeated picture adds no information after the first time, so the learner gets little from most of the explanation screens.",
+            "location": {
+              "detail": "screens 2 and 4 to 7 repeat the same overhead field picture as the hook",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": null,
+        "pairId": "0680c6a2-3970-4a2e-a873-7df2d8fd8efc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither gives the reader anything more.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the screen plan is the same.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the visuals and activities are the same.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the level and scope are the same.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The same overhead 4-3-3 field picture is used for the hook and for explanation screens 2 and 4 to 7, with nothing new added on most of them.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The repeated picture adds no information after the first time, so the learner gets little from most of the explanation screens.",
+            "location": {
+              "detail": "screens 2 and 4 to 7 repeat the same overhead field picture as the hook",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The same overhead 4-3-3 field picture is used for the hook and for explanation screens 2 and 4 to 7, with nothing new added on most of them.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The repeated picture adds no information after the first time, so the learner gets little from most of the explanation screens.",
+            "location": {
+              "detail": "screens 2 and 4 to 7 repeat the same overhead field picture as the hook",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "1ebbcee9-2bf5-484a-bb4f-db3a4b3bd74d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A teaches one idea, percent change, while B's explanation also brings in percentage points and logarithmic returns, which belong to other ideas.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens with a concrete raise the learner can picture, while B opens with a formula and no scene that asks a question.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same explanations, worked example, checks, and table and application screens, so their visuals and activities match.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A keeps the words and math at beginner level, while B uses a formula in the first screen and jargon like logarithmic returns.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The opening screen is a formula definition, not an everyday scene that ends on a question, and it appears before any intuition is built.",
+            "criterion": "screenPlan",
+            "learnerCost": "A beginner meets a formula with symbols first and has no reason to keep reading, so the lesson loses them at the start.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The explanation brief introduces percentage-point change and logarithmic returns, which are other ideas and terms a beginner has not met.",
+            "criterion": "levelAndScope",
+            "learnerCost": "The beginner gets unfamiliar terms and a second idea in one screen, which makes the single lesson idea harder to follow.",
+            "location": {
+              "detail": "Introduce relative change as the ratio of the absolute change to the reference value, and distinguish it from percentage-point change and from logarithmic returns.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The lesson's opening explanation for percent change is built on a formula with symbols, against the beginner expectation of intuition first.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner sees symbols before the everyday meaning, so the explanation is harder to follow.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A opens with a concrete raise the learner can picture and keeps the vocabulary and formulas for beginners, while B opens with a formula and adds jargon a beginner cannot use."
+        },
+        "pairId": "715ea478-7be6-4436-8a5c-9ec246dbd6ed"
+      }
+    ]
+  }
+}

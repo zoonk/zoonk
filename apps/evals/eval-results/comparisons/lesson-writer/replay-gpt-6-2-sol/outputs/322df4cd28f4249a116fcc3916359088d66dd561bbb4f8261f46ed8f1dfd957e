@@ -1,0 +1,103 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Ana passou no concurso, tomou posse e começou a trabalhar. Quanto tempo de trabalho ela precisa cumprir para ganhar proteção contra a perda do cargo?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Tempo e avaliação",
+      "text": "Ana foi nomeada por concurso para um cargo efetivo, que não é temporário. Ela só ganha proteção no cargo após três anos de trabalho efetivo e aprovação na avaliação especial do seu trabalho, feita por uma comissão. Essa proteção se chama **estabilidade**.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Pedro completou três anos de trabalho no cargo efetivo, mas a comissão ainda não fez a avaliação especial.",
+      "question": "Pela regra da Constituição, Pedro já tem estabilidade?",
+      "options": [
+        {
+          "text": "Não. Ele ainda precisa passar na avaliação especial.",
+          "isCorrect": true,
+          "reason": "Pedro cumpriu o prazo, mas a estabilidade também exige aprovação na avaliação feita pela comissão.",
+          "picture": null
+        },
+        {
+          "text": "Sim. Os três anos de trabalho já bastam.",
+          "isCorrect": false,
+          "reason": "Os três anos são só uma das condições. A aprovação na avaliação especial também é necessária.",
+          "picture": null
+        },
+        {
+          "text": "Sim, se a chefia disser que ele trabalha bem.",
+          "isCorrect": false,
+          "reason": "A opinião da chefia não substitui a avaliação especial feita pela comissão.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Ela só ganha proteção no cargo após três anos de trabalho efetivo e aprovação na avaliação especial do seu trabalho, feita por uma comissão."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Proteção não é garantia",
+      "text": "Mesmo estável, Ana pode perder o cargo por falta grave após processo administrativo com ampla defesa: ela pode dar sua versão e apresentar provas. Também pode perder o cargo por decisão judicial sem possibilidade de recurso ou por avaliação periódica do trabalho, conforme lei complementar e com ampla defesa.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Lorena é servidora estável da Prefeitura do Recife. Ela acaba de ser acusada de uma falta grave.",
+      "question": "O chefe pode demiti-la no mesmo dia, sem abrir um processo?",
+      "options": [
+        {
+          "text": "Não. A prefeitura precisa abrir processo e garantir defesa.",
+          "isCorrect": true,
+          "reason": "Antes de decidir pela demissão, a prefeitura precisa apurar a falta em um processo em que Lorena possa se defender.",
+          "picture": null
+        },
+        {
+          "text": "Sim. Se a acusação for grave, o chefe pode decidir sozinho.",
+          "isCorrect": false,
+          "reason": "A gravidade da acusação não dá ao chefe o poder de pular o processo nem de tirar de Lorena o direito de se defender.",
+          "picture": null
+        },
+        {
+          "text": "Sim. A prefeitura pode ouvir a defesa depois da demissão.",
+          "isCorrect": false,
+          "reason": "Lorena tem direito de apresentar sua versão e suas provas antes da decisão, não só depois da demissão.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 4,
+        "quote": "Mesmo estável, Ana pode perder o cargo por falta grave após processo administrativo com ampla defesa: ela pode dar sua versão e apresentar provas."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Tempo e avaliação",
+        "text": "Quem é nomeado por concurso para cargo efetivo ganha estabilidade após três anos de trabalho efetivo e aprovação na avaliação especial feita por uma comissão."
+      },
+      {
+        "label": "Perda do cargo",
+        "text": "Mesmo estável, o servidor pode perder o cargo por decisão judicial sem possibilidade de recurso, por processo administrativo com ampla defesa ou por avaliação periódica do trabalho conforme lei complementar e com ampla defesa."
+      }
+    ],
+    "shape": "hub"
+  }
+}

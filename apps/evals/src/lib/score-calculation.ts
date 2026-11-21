@@ -1,6 +1,13 @@
-import { type CategoryScore, type ScoreStep } from "./types";
+import { type CategoryScore, type EvalResult, type ScoreStep } from "./types";
 
 const STEP_WEIGHTS = { majorErrors: 3, minorErrors: 2, potentialImprovements: 1 } as const;
+
+export function hasValidScore({
+  imageReview,
+  listeningReview,
+}: Pick<EvalResult, "imageReview" | "listeningReview">): boolean {
+  return !imageReview && !listeningReview;
+}
 
 export function calculateScore({
   categoryScores,

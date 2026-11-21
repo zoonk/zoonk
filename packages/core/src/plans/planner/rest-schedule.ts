@@ -14,6 +14,7 @@ import { type PlanGraph, type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 import {
   type PlanDay,
+  type ScheduledUnit,
   getCumulativeCapacity,
   makeOutcomeRoom,
   scheduleUnits,
@@ -21,6 +22,7 @@ import {
 import { splitStandIns } from "./stand-in-parts";
 import { arrangeStudyCycle } from "./study-cycle";
 import { type CadencedArea } from "./study-cycle-lanes";
+import { rotateTopics } from "./topic-rotation";
 import { type ScoredTopic, getAskedScore } from "./topic-weights";
 
 type RestInput = {
@@ -34,6 +36,8 @@ type RestInput = {
   knownSkillIds?: ReadonlySet<string>;
   missedSkillIds: ReadonlySet<string>;
   opening: { knownAreas: ReadonlySet<string>; noticeAreas: ReadonlySet<string> | null };
+  /** The plan's whole queue, finished lessons included, in teaching order. */
+  order: readonly QueueUnit[];
   phaseEnds: ReadonlyMap<number, Date>;
   planStart: Date;
   queue: {
@@ -80,6 +84,17 @@ function scheduleKeepingEnds({
   };
 }
 
+function toQueueUnit({
+  beside: _beside,
+  date: _date,
+  studyMinutes: _studyMinutes,
+  studyPortions: _studyPortions,
+  teachingEnd: _teachingEnd,
+  ...unit
+}: ScheduledUnit): QueueUnit {
+  return unit;
+}
+
 function listAnnouncedTopics({
   announcements = [],
   graph,
@@ -120,7 +135,14 @@ function scheduleWith({
         })
       : scheduleKeepingEnds({ days: input.days, ends: input.phaseEnds, units: list });
 
-  const whole = schedulePending(input.units);
+  const rotates = input.goal.kind === "language";
+
+  const arrange = (list: readonly QueueUnit[]) =>
+    rotates
+      ? rotateTopics({ order: input.order, prerequisites: queue.prerequisites, units: list })
+      : list;
+
+  const whole = schedulePending(arrange(input.units));
 
   const keptEnds = input.phaseEnds.size > 0;
   const plain = keptEnds ? scheduleUnits({ days: input.days, units: input.units }) : whole;
@@ -135,7 +157,7 @@ function scheduleWith({
 
   const missed = new Set([...input.missedSkillIds, ...(input.answeredWrongSkillIds ?? [])]);
 
-  return scheduleCoresFirst({
+  const cut = scheduleCoresFirst({
     carried: input.carried,
     schedulePending,
     units: splitStandIns(
@@ -156,6 +178,14 @@ function scheduleWith({
       values: queue.values,
     },
   });
+
+  if (!rotates) {
+    return cut;
+  }
+
+  // The cut chooses what fits as it always has; only the lessons it keeps take turns.
+  const again = schedulePending(arrange(cut.units.map((unit) => toQueueUnit(unit))));
+  return { ...cut, ...again, dropped: [...cut.dropped, ...again.dropped] };
 }
 
 function putBeyondNoticeUnitsLast(input: RestInput): readonly QueueUnit[] {

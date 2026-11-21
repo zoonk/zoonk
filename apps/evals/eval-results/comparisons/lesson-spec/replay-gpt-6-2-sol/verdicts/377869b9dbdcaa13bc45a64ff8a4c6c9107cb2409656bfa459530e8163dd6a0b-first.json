@@ -1,0 +1,175 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00859319,
+  "failures": [],
+  "packetId": "377869b9dbdcaa13bc45a64ff8a4c6c9107cb2409656bfa459530e8163dd6a0b",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same single skill and the same screen sequence, so they teach the same one idea.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens with a bakery scene that ends on a question, while B opens with a formula-based definition instead of a scene.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Neither output has a visual or activity that a beginner needs; both use the same categorize activity and text-only screens.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses everyday words and concrete costs (aluguel, caixas, tecido), while B brings in a formula and technical terms for a beginner.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook is a formula-based definition of cost classification, not an everyday scene that asks a question.",
+            "criterion": "screenPlan",
+            "learnerCost": "A beginner meets a formula before any situation, so the reader is likely to stop at the first screen.",
+            "location": {
+              "detail": "hook brief",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The plan puts a formula (CT = CF + CVu · q) into a beginner lesson before any intuition.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner cannot follow the notation and will not learn the distinction from it.",
+            "location": {
+              "detail": "com CT = CF + CVu · q",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The variable-cost definition relies on technical jargon (faixa relevante, custo variável unitário, CVu) with no everyday example.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A layperson will not follow the definition and will have to give up on this screen.",
+            "location": {
+              "detail": "mantido constante o custo variável unitário (CVu)",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has a real opening scene and everyday language for a beginner; B's hook and definitions use formulas and jargon the target reader cannot follow."
+        },
+        "pairId": "03ade354-2464-452e-a197-64261e8e3510"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A keeps to one idea, where Roma's reach is located on the map, while B adds a second skill on trade routes that is only loosely tied to the first.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A's hook, explanations and checks build from the map and end with an application, while B's guess comes before any map is shown.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "A",
+            "reason": "A shows a picture for the guess about the ports on each shore, and every map-dependent question has a map; B's coastline guess is text only.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "Both use plain Brazilian Portuguese at beginner level, but A explains each place with a concrete port or route, while B's wording is more abstract.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The guess asks what a traveller would find along the Mediterranean coast, but the screen has no map, so the learner has to imagine the coastline to answer.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot picture the coast and reasons from memory, so the question tests guesswork rather than the map.",
+            "location": {
+              "detail": "guess screen",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The first explanation says the expansion happened over centuries and tells the learner to note that, which is an abstract remark with no concrete place or map.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner gets a statement without anything to see, which adds little to the map lesson.",
+            "location": {
+              "detail": "Destacar que essa expansão não aconteceu de uma vez.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The Britain check shows Inverness and London but not where the frontier ran, so the answer depends on an earlier screen's picture rather than what this screen shows.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "A learner who skipped the earlier picture may guess which team works outside the empire.",
+            "location": {
+              "detail": "sem traçar a fronteira romana",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A shows the map for each question that depends on location and keeps one clear idea, while B asks a coastline question without a map."
+        },
+        "pairId": "2a6d9d1e-0c89-469f-afe4-9a92d46ed963"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they teach the same single skill.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their screen plans are the same.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their visuals and activities are the same.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their level and language fit is the same.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are the same lesson, so neither serves its reader better."
+        },
+        "pairId": "70a2bd54-8bf2-48b9-91a8-32de32e1ffe2"
+      }
+    ]
+  }
+}

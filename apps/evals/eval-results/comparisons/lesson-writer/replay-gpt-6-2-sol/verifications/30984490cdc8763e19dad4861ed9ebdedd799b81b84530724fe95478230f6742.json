@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-patrimonio-liquido-dense-brief",
+        "claimId": "b5eaf44c676810dc",
+        "criterion": "fitAndApplication",
+        "observationId": "2360c88a34d71606f8a2ff6dfb3d5842e05236a5bdd5e2f1e17440228624eb76.first.20688532-1aea-483e-ab38-5a31aee1864f.2",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00336855,
+    "id": "30984490cdc8763e19dad4861ed9ebdedd799b81b84530724fe95478230f6742",
+    "packet": [
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "88e1d5ceb23c1c5eaf3ac9f7fc4afbd3f1e8ecffed24a2616093d40926945083",
+          "format": "text"
+        },
+        "claim": "The worked example on screen 3 concludes that −3 °C plus a 5-degree rise is 8 °C instead of 2 °C.",
+        "claimId": "a15bf7d59d4ef722",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "afdccb58b2381fa637ec2f627924a950623968bb00a557f203fc87c8200db87d",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "ef50992fb8a1fdc59494b196758597b2e3f948ad5da3d3a2ecf7023f3f7d8d98",
+          "format": "text"
+        },
+        "B": {
+          "blob": "842ff38fda3cb7225947513036bb15cd3fc9c2e70880347602a9c3fbd7ffccfe",
+          "format": "text"
+        },
+        "claim": "A primeira explicação tem cinco frases, embora a expectativa peça duas ou três frases curtas.",
+        "claimId": "b5eaf44c676810dc",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "73693e34458f634ad450e0199471d9b63a4254623872008122e9dd7953cc1e67",
+          "format": "text"
+        },
+        "input": {
+          "blob": "b9e35e49083f3c2ed2fdca8591ee71fccd76dc5f9f07fc0af08bdbe09616fa34",
+          "format": "json"
+        },
+        "location": {
+          "detail": "A oficina de Davi tem bens, como ferramentas e dinheiro, e direitos, que são valores a receber de clientes. Ela também tem obrigações, que são o que ela deve. Bens mais direitos, menos obrigações, dá o **patrimônio líquido**. Ele não é o preço de venda da oficina, é só essa conta. Suba as obrigações e o resultado cai.",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "a15bf7d59d4ef722",
+          "finding": "doesn't hold",
+          "reason": "Output A's screen 3 concludes \"It's 2 °C: two degrees above zero\" (−3 + 3 = 0, then 2 more), which is correct. No screen in either output says 8 °C, so the claim misquotes A's conclusion."
+        },
+        {
+          "claimId": "b5eaf44c676810dc",
+          "finding": "holds for both",
+          "reason": "Output B's first explanation has five sentences, against the expectation of two or three short ones. Output A's first explanation also has five sentences, so the problem is shared rather than specific to B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

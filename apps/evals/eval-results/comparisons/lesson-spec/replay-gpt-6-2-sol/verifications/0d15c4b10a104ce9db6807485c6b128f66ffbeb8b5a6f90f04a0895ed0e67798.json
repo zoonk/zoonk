@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-contour-lines",
+        "claimId": "a0c90be3999d9e78",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "8f384184c56f97e625d9fcbc86f34545ca82001891e5619f4c1793f939109334.first.41480657-71b6-4f31-9aeb-aba45bda441d.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0030336499999999997,
+    "id": "0d15c4b10a104ce9db6807485c6b128f66ffbeb8b5a6f90f04a0895ed0e67798",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "98c710fcde00df1c",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "a53872d3805478aa5a1990ee4efd5b9f9a5d03f868c89c5c029970e02d694cb3",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ee5d2bbb20a544cd2a5284f2f51424009b1135c9162d5c529cfe42e845b1ff3b",
+          "format": "text"
+        },
+        "claim": "The opening scene includes a map visual, although the opening scene is required to stay text-only.",
+        "claimId": "a0c90be3999d9e78",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6518313475f590d6010d09d99c3fd02abfb9856b349d005ab75c8cc0e5372443",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3711807c38957f0fd5e7c5a03310250c86acd24ae0a17925a0d4cb558904a3ac",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Top-down trail map of one hill",
+          "kind": "quote"
+        },
+        "output": "B"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "98c710fcde00df1c",
+          "finding": "doesn't hold",
+          "reason": "The worked example in output A divides by the starting wage: $3 ÷ $20 = 0.15, so 15%, not by $23 for 13%. Output B has the same worked example, so the claim is false for both outputs, and the 13% figure appears only in B's check screen, not in its worked example."
+        },
+        {
+          "claimId": "a0c90be3999d9e78",
+          "finding": "doesn't hold",
+          "reason": "Output B's opening hook does include a map visual, but nothing in the expectations requires the opening scene to stay text-only. The hook asks what the bunched brown lines mean, which a learner can only answer by seeing the map, so the visual is appropriate."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

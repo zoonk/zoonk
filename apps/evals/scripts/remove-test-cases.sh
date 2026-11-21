@@ -13,7 +13,6 @@ fi
 ROOT="apps/evals/eval-results"
 OUTPUTS_DIR="$ROOT/outputs/$TASK_ID"
 RESULTS_DIR="$ROOT/results/$TASK_ID"
-BATTLES_DIR="$ROOT/battles/$TASK_ID"
 
 outputs_cond=""
 results_cond=""
@@ -42,11 +41,5 @@ if [[ -d "$RESULTS_DIR" ]]; then
   find "$RESULTS_DIR" -type f -name '*.json' -print0 |
   while IFS= read -r -d '' f; do
     filter_array "$f" "results" "$results_cond"
-  done
-fi
-
-if [[ -d "$BATTLES_DIR" ]]; then
-  for id in "${IDS[@]}"; do
-    rm -f "$BATTLES_DIR/$id.json"
   done
 fi

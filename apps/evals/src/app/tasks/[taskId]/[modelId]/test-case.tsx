@@ -1,8 +1,8 @@
 "use client";
 
 import { FoldRowTitle } from "@/components/fold-row-title";
-import { getScoreClassName } from "@/lib/score";
-import { calculateScore } from "@/lib/score-calculation";
+import { calculateScore, hasValidScore } from "@/lib/score-calculation";
+import { getScoreClassName } from "@/lib/score-class-name";
 import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import {
   type CategoryScore,
@@ -154,14 +154,19 @@ function CategoryScoresSection({ categoryScores }: { categoryScores: CategorySco
 
 export function TestCase({ result, index }: { result: EvalResult; index: number }) {
   const testCaseTitle = result.testCase.id || `Test Case ${index + 1}`;
-  const score = calculateScore({ categoryScores: result.categoryScores, steps: result.steps });
-  const scoreDisplay = score.toFixed(2);
+  const score = hasValidScore(result) ? calculateScore(result) : null;
+  const review = result.imageReview ?? result.listeningReview?.conclusion;
+  const status = result.listeningReview ? "Needs a listen" : "Not scored";
 
   return (
     <AccordionItem id={`case-${result.testCase.id}`} value={`test-case-${index}`}>
       <AccordionTrigger className="hover:no-underline">
         <FoldRowTitle title={testCaseTitle}>
-          <span className={getScoreClassName(score)}>{scoreDisplay}</span>
+          {score === null ? (
+            <span className="text-muted-foreground font-sans">{status}</span>
+          ) : (
+            <span className={getScoreClassName(score)}>{score.toFixed(2)}</span>
+          )}
         </FoldRowTitle>
       </AccordionTrigger>
 
@@ -176,7 +181,11 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
 
         <KeyFlawsSection flaws={result.keyFlaws} />
 
-        <EvaluationStepsSection steps={result.steps} />
+        {review ? (
+          <p className="text-sm">{review}</p>
+        ) : (
+          <EvaluationStepsSection steps={result.steps} />
+        )}
       </AccordionContent>
     </AccordionItem>
   );

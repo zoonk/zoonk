@@ -1,0 +1,198 @@
+{
+  "attempt": "first",
+  "costUsd": 0.004679539999999999,
+  "failures": [],
+  "packetId": "fb924d52187fc372acc12e4222aca7e413fa9097b685e56f9ee81277c71345f2",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both plans teach one clear skill: calculating a percent change using the starting value.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A opens with a real salary question. B opens by defining the formula, which gives away the lesson’s answer instead of setting up an everyday scene.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use text for questions that can be answered from the words alone and tables for the data comparisons.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "B puts formal notation in its opening and adds distinctions involving percentage points and logarithmic returns, which are too advanced and out of scope for this beginner lesson.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The opening is a formal definition with notation rather than an everyday scene, and it gives the learner the formula before the explanation.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner gets neither the expected hook nor a chance to build intuition before meeting the formula.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The opening uses formal notation before intuition, and the next explanation introduces percentage-point change and logarithmic returns beyond the beginner lesson’s scope.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner may be confused by advanced terms and notation before learning the basic idea.",
+            "location": {
+              "detail": "Opening screen and the explanation immediately following it.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A’s everyday opening fits the beginner lesson, while B starts with unexplained notation and introduces out-of-scope technical distinctions."
+        },
+        "pairId": "81553bd7-5a8f-454b-be92-514a26f311b0"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs teach the same single skill about reading the three groups in a 4-3-3.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two plans are identical, including their hook, explanations, checks, and application.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two plans are identical. Both show the 4-3-3 layout, but neither provides the required 4-4-2 comparison.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two plans are identical and use plain US English appropriate for an overview.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The plan never shows or compares a 4-4-2, despite the requirement for a 4-3-3 and 4-4-2 comparison in one picture labeled 1 and 2.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner misses the required visual comparison that would help distinguish the two formations.",
+            "location": {
+              "detail": "Whole lesson: no screen includes a 4-4-2 formation or a comparison labeled 1 and 2.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The plan never shows or compares a 4-4-2, despite the requirement for a 4-3-3 and 4-4-2 comparison in one picture labeled 1 and 2.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner misses the required visual comparison that would help distinguish the two formations.",
+            "location": {
+              "detail": "Whole lesson: no screen includes a 4-4-2 formation or a comparison labeled 1 and 2.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical. Both explain a 4-3-3 layout but omit the required visual comparison with a 4-4-2."
+        },
+        "pairId": "9b76316f-fe9e-487d-872c-e7d7945bea13"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both plans focus on one skill: identifying the lines in a 4-3-3 formation.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B’s opening shows the field and players Leah sees; A’s opening describes players spread across a field but provides no picture. B also keeps player positions visible in its explanations.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B uses field diagrams with player markers from the start. A’s hook has no visual, and its first diagram shows bands rather than player positions; neither plan supplies the required 4-4-2 comparison.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both plans use plain US English and stay at an appropriate overview level.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook describes players spread across a field but provides no field or player picture, although the scene depends on visualizing their arrangement.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner has to imagine the formation layout before the lesson has shown it.",
+            "location": {
+              "detail": "The opening hook screen.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The first explanation’s planned picture shows shaded bands with counts but explicitly has no individual player markers, so it does not show the players’ positions in the formation.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees group sizes but not the required field layout of the players.",
+            "location": {
+              "detail": "A top-down soccer field with the bottom goal labeled “Own goal,” the top goal labeled “Opponent's goal,” an upward attacking arrow, and three shaded horizontal bands labeled 4, 3 and 3 from bottom to top; no individual player markers.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The plan never shows or compares a 4-4-2, despite the requirement for a 4-3-3 and 4-4-2 comparison in one picture labeled 1 and 2.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner misses the required visual comparison that would help distinguish the formations.",
+            "location": {
+              "detail": "Whole lesson: no screen includes a 4-4-2 formation or a comparison labeled 1 and 2.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The plan never shows or compares a 4-4-2, despite the requirement for a 4-3-3 and 4-4-2 comparison in one picture labeled 1 and 2.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner misses the required visual comparison that would help distinguish the formations.",
+            "location": {
+              "detail": "Whole lesson: no screen includes a 4-4-2 formation or a comparison labeled 1 and 2.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B shows the field layout and player positions in its opening and explanations, while A’s hook leaves the learner to imagine the scene and its first diagram only shows abstract bands. Both still omit the required 4-4-2 comparison."
+        },
+        "pairId": "c7bf8d7c-c7d8-44ac-bd1d-3876e264fde1"
+      }
+    ]
+  }
+}

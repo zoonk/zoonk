@@ -1606,10 +1606,6 @@
       }
     },
     {
-      "classification": {
-        "expected": "read right",
-        "predicted": "misread"
-      },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
         "usage": {
@@ -1617,23 +1613,11 @@
           "outputTokens": 1490
         }
       },
-      "steps": [
-        {
-          "conclusion": "Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
-          "kind": "majorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
-          "kind": "minorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/).",
-          "kind": "potentialImprovements",
-          "score": 1
-        }
-      ],
+      "listeningReview": {
+        "audioPath": "language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-charles.mp3",
+        "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-lite-tts/pt-lookalike-charles.mp3. Single-provider flags: charles. Read \"Charles\". gpt-transcribe heard \"Charles.\" (misheard []); the pronunciation check heard \"Charles\" (unclear []). As a look-alike it sounded english (called unclear, /ˈtʃaɾles/)."
+      },
+      "steps": [],
       "testCase": {
         "id": "pt-lookalike-charles-1",
         "userInput": {

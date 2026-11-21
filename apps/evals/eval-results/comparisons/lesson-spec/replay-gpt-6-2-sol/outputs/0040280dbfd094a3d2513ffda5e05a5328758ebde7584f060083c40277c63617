@@ -1,0 +1,140 @@
+{
+  "lessons": [
+    {
+      "canDo": "Representar ligações simples como pares de elétrons compartilhados",
+      "description": "Como o compartilhamento de elétrons une átomos e como representar essas ligações no hidrogênio e na água.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A água ferve na panela, mas os grupos de átomos que formam a água continuam unidos. O que mantém os átomos juntos dentro de cada grupo?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Esquema de um átomo de hidrogênio, com o centro marcado por um sinal positivo e um ponto ao redor identificado como elétron negativo; indicar que o desenho não está em escala.",
+          "visualKind": "picture",
+          "brief": "Elétrons são partículas de carga negativa ao redor do centro positivo do átomo. Um átomo de hidrogênio tem apenas um elétron.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Quando dois átomos de hidrogênio se unem de forma estável, o que acontece com seus dois elétrons: ficam compartilhados pelos dois átomos ou ficam ambos com apenas um deles? A primeira opção é correta; a segunda é a tentadora.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Esquema de dois átomos de hidrogênio unidos, com dois centros positivos identificados como H e dois pontos negativos destacados na região entre eles; uma chave identifica os pontos como par compartilhado, sem desenhar órbitas.",
+          "visualKind": "picture",
+          "brief": "Na ligação covalente, átomos ficam unidos compartilhando elétrons: os dois hidrogênios compartilham um par, em vez de um entregar seu elétron ao outro.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Esquema de dois átomos de hidrogênio unidos, com dois centros positivos identificados como H e dois pontos negativos destacados na região entre eles; uma chave identifica os pontos como par compartilhado, sem desenhar órbitas.",
+          "visualKind": "picture",
+          "brief": "Os dois centros positivos atraem o par negativo compartilhado. Essa atração ajuda a manter os hidrogênios unidos.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Compartilhar um único par de elétrons forma uma ligação simples. Em H—H, cada H representa um hidrogênio e o traço representa o par inteiro, não um só elétron.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Mostrar, passo a passo, como representar a união de dois hidrogênios: escrever H e H; reunir seus dois elétrons em um par compartilhado; substituir esse par por um traço, obtendo H—H. Ressaltar que nenhum elétron foi criado ou perdido.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Pedir que represente dois hidrogênios que compartilham dois elétrons, escolhendo entre um traço e dois traços entre os H. Resposta: um traço; a alternativa tentadora conta um traço para cada elétron.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "moleculeBuilder",
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Na água, o oxigênio faz duas ligações simples, uma com cada hidrogênio; cada hidrogênio faz apenas uma. Explorar o modelo completo de H₂O, com O representando oxigênio e H representando hidrogênio, oferecendo somente esses elementos.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Esquema da água em disposição angular, com um oxigênio identificado como O e dois hidrogênios identificados como H; mostrar um par de pontos entre O e cada H e outros dois pares junto ao O, rotulados como pares não compartilhados.",
+          "visualKind": "picture",
+          "brief": "Nem todo elétron participa de uma ligação: na água, o oxigênio também tem dois pares que não são compartilhados. Esses pares não viram traços entre átomos.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "moleculeBuilder",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Construir H₂O ligando os três átomos até completar suas ligações, oferecendo H e O, e responder quantas ligações simples foram formadas. Resposta calculada: 2; antecipar a tentativa de encadear H—H—O, que exigiria duas ligações do hidrogênio central.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ao preparar um cartaz sobre água, Wagner escreveu H—H—O e disse que os dois traços representam dois elétrons compartilhados; pedir que corrija o desenho e a contagem. Resposta: H—O—H, com quatro elétrons compartilhados; a resposta tentadora corrige apenas a posição do O e mantém a contagem em dois.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Representar um par de elétrons compartilhado entre dois átomos por um traço de ligação simples.",
+          "example": "H, H representa dois hidrogênios unidos por um par de elétrons compartilhado.",
+          "hard": true,
+          "name": "Representar uma ligação covalente simples",
+          "topic": "Ligação covalente simples",
+          "useCase": "Interpretar desenhos de substâncias como a água em materiais de estudo e divulgação científica."
+        }
+      ],
+      "title": "Ligação covalente"
+    }
+  ]
+}

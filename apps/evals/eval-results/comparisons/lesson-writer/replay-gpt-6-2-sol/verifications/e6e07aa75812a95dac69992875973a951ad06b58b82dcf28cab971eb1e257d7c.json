@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-particle-in-a-box-advanced",
+        "claimId": "a3aaf557c2e658f4",
+        "criterion": "fitAndApplication",
+        "observationId": "97b4b7b49fd53e697e5acd7914a46652bbfe8a2a60339a58f9a6c97e381043d0.first.37c5d6fa-efc8-470a-9f82-aaf289d76823.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00402065,
+    "id": "e6e07aa75812a95dac69992875973a951ad06b58b82dcf28cab971eb1e257d7c",
+    "packet": [
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
+          "format": "text"
+        },
+        "claim": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+        "claimId": "50c1040057be64cf",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "143064c4bd0b04d7c58235ecffc4f5eb2f808336d44336c1b29849f7fd91d763",
+          "format": "text"
+        },
+        "B": {
+          "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
+          "format": "text"
+        },
+        "claim": "Introduces the potential and wave-function notation before the pinned guitar string analogy on screen 2, and never uses or explains the term 'quantized', breaking the written expectation.",
+        "claimId": "a3aaf557c2e658f4",
+        "criterion": "fitAndApplication",
+        "expectations": {
+          "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
+          "format": "json"
+        },
+        "location": {
+          "detail": "screen 2 and whole lesson",
+          "kind": "range"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "50c1040057be64cf",
+          "finding": "doesn't hold",
+          "reason": "Screen 5 in output A is a mathCheck, and 'additive inverse' appears nowhere in output A (or in B), so the term is never introduced there at all."
+        },
+        {
+          "claimId": "a3aaf557c2e658f4",
+          "finding": "holds for both",
+          "reason": "In both outputs, screen 2 uses V and ψ notation (V = 0, V = ∞, ψ = 0, ψ(0) = ψ(L) = 0) before the pinned guitar-string analogy, and neither output uses or explains 'quantized'."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

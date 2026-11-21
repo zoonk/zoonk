@@ -1,11 +1,16 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { GatewayError } from "@ai-sdk/gateway";
 import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
+import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { APICallError, NoObjectGeneratedError, RetryError } from "ai";
+import { generationSourceHash } from "./comparisons/generation-source";
+import { hash, hashJson } from "./comparisons/identity";
 import { settleWithConcurrency } from "./concurrency";
-import { DEFAULT_REASONING, type ModelConfig, getModelById } from "./models";
-import { loadModelOutputs, saveModelOutputs } from "./output-loader";
+import { getFailedRunsCost } from "./cost";
+import { getImageRunsToReplace } from "./eval-runner";
+import { type ModelConfig, generationModelSettings, getModelById } from "./models";
+import { loadModelOutputs, saveModelOutputs, withImageGeneration } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
 import {
   type FailedRun,
@@ -37,12 +42,7 @@ function getTaskRunner({ model, task }: { model: ModelConfig; task: RegisteredTa
 }
 
 function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: TestCase }) {
-  return {
-    ...testCase.userInput,
-    model: model.gatewayModelId,
-    reasoning: model.reasoning ?? DEFAULT_REASONING,
-    useFallback: false,
-  };
+  return { ...testCase.userInput, ...generationModelSettings(model), useFallback: false };
 }
 
 type FailedAttempt = {
@@ -81,20 +81,22 @@ async function generateOutputForTestCase({
   failed,
   model,
   runNumber,
+  sourceHash,
   task,
   testCase,
 }: {
   failed: FailedAttempt[];
   model: ModelConfig;
   runNumber: number;
+  sourceHash: string;
   task: RegisteredTask;
   testCase: TestCase;
-}): Promise<OutputEntry> {
+}) {
   logInfo(`Generating output for: ${testCase.id} (run ${runNumber})`);
 
   const testCaseId = getTestCaseRunId({ runNumber, testCaseId: testCase.id });
   const runTask = getTaskRunner({ model, task });
-  const input = getTaskRunInput({ model, testCase });
+  const input = { ...getTaskRunInput({ model, testCase }), runId: testCaseId };
   const billed: BilledCall[] = [];
   const startTime = performance.now();
 
@@ -118,7 +120,15 @@ async function generateOutputForTestCase({
   return {
     ...toTokenUsage(result.usage),
     ...toRunCalls(billed),
+    caseInputHash: hashJson(testCase.userInput),
     duration,
+    generation: { model: input.model, reasoning: input.reasoning, sourceHash },
+    initialPromptHashes: result.initialPrompt
+      ? {
+          system: hash(result.initialPrompt.systemPrompt),
+          user: hash(result.initialPrompt.userPrompt),
+        }
+      : undefined,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
     systemPrompt: result.systemPrompt,
@@ -127,32 +137,29 @@ async function generateOutputForTestCase({
   };
 }
 
-function shouldSkipTestCase(
-  existingOutputs: OutputEntry[],
-  baseTestCaseId: string,
-  runNumber: number,
-): boolean {
-  const runId = getTestCaseRunId({ runNumber, testCaseId: baseTestCaseId });
-  return existingOutputs.some((output) => output.testCaseId === runId);
-}
-
-type TestCaseRun = { testCase: TestCase; runNumber: number };
+type TestCaseRun = { testCase: TestCase; runNumber: number; replacing: boolean };
 
 function collectTestCaseRuns({
   existingEntries,
+  replaceRuns,
   runsPerTestCase,
   testCases,
 }: {
   existingEntries: OutputEntry[];
+  replaceRuns: ReadonlySet<string>;
   runsPerTestCase: number;
   testCases: TestCase[];
 }): TestCaseRun[] {
   const runs: TestCaseRun[] = [];
+  const savedIds = new Set(existingEntries.map((entry) => entry.testCaseId));
 
   for (const testCase of testCases) {
     for (let runNumber = 1; runNumber <= runsPerTestCase; runNumber += 1) {
-      if (!shouldSkipTestCase(existingEntries, testCase.id, runNumber)) {
-        runs.push({ runNumber, testCase });
+      const runId = getTestCaseRunId({ runNumber, testCaseId: testCase.id });
+      const replacing = replaceRuns.has(runId);
+
+      if (!savedIds.has(runId) || replacing) {
+        runs.push({ replacing, runNumber, testCase });
       }
     }
   }
@@ -219,6 +226,23 @@ export async function generateOutputs(
     throw new Error(`Model ${safeModelId} not found`);
   }
 
+  const generate = () => generateModelOutputs({ model, runsPerTestCase, safeModelId, task });
+
+  return task.output === "image" ? withImageGeneration(task.id, modelId, generate) : generate();
+}
+
+async function generateModelOutputs({
+  model,
+  runsPerTestCase,
+  safeModelId,
+  task,
+}: {
+  model: ModelConfig;
+  runsPerTestCase: number;
+  safeModelId: string;
+  task: RegisteredTask;
+}) {
+  const modelId = model.id;
   logInfo(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
 
   logInfo(
@@ -227,13 +251,26 @@ export async function generateOutputs(
 
   const existingOutputs = await loadModelOutputs(task.id, modelId);
   const existingEntries = existingOutputs?.outputs ?? [];
+
+  const replaceRuns =
+    task.output === "image" && existingOutputs
+      ? await getImageRunsToReplace(existingOutputs)
+      : new Set<string>();
+
   logInfo(`Found ${existingEntries.length} existing outputs`);
 
   const runsToExecute = collectTestCaseRuns({
     existingEntries,
+    replaceRuns,
     runsPerTestCase,
     testCases: task.testCases,
   });
+
+  const replacing = runsToExecute.filter((run) => run.replacing).length;
+
+  if (replacing > 0) {
+    logInfo(`Replacing ${replacing} images without a score`);
+  }
 
   logInfo(`Generating ${runsToExecute.length} new outputs`);
 
@@ -243,16 +280,22 @@ export async function generateOutputs(
   }
 
   const failed: FailedAttempt[] = [];
+  const sourceHash = generationSourceHash();
 
   const results = await settleWithConcurrency({
     concurrency: GENERATION_CONCURRENCY,
     items: runsToExecute,
     run: ({ testCase, runNumber }) =>
-      generateOutputForTestCase({ failed, model, runNumber, task, testCase }),
+      generateOutputForTestCase({ failed, model, runNumber, sourceHash, task, testCase }),
   });
 
   const newOutputs = extractSuccessfulOutputs(results);
-  const allOutputs = [...existingEntries, ...newOutputs];
+  const writtenRuns = new Set(newOutputs.map((entry) => entry.testCaseId));
+
+  const allOutputs = [
+    ...existingEntries.filter((entry) => !writtenRuns.has(entry.testCaseId)),
+    ...newOutputs,
+  ];
 
   await saveModelOutputs(
     task.id,
@@ -269,4 +312,33 @@ export async function generateOutputs(
   logInfo(`Saved ${allOutputs.length} total outputs`);
 
   return newOutputs;
+}
+
+export async function generateComparisonRun(args: {
+  model: ModelConfig;
+  runNumber: number;
+  sourceHash: string;
+  task: RegisteredTask;
+  testCase: TestCase;
+}) {
+  const failed: FailedAttempt[] = [];
+
+  try {
+    return { output: await generateOutputForTestCase({ ...args, failed }) } as const;
+  } catch (error) {
+    const attempt = failed[0];
+
+    if (!attempt) {
+      throw error;
+    }
+
+    return {
+      costUsd: getFailedRunsCost({
+        failedRuns: [{ testCaseId: attempt.testCaseId, ...toRunCalls(attempt.billed) }],
+        prices: GATEWAY_PRICES,
+      }),
+      output: null,
+      reason: attempt.reason,
+    } as const;
+  }
 }

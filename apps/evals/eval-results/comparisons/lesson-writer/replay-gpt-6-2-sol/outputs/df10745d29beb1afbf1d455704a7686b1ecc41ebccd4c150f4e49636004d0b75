@@ -1,0 +1,136 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Na aula, Kauã lê que a célula produz 4 moedas de energia ao começar a quebrar uma molécula de açúcar. Quantas sobram depois de descontar o que ela gastou?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "O gasto inicial",
+      "text": "A célula começa a quebrar a glicose no citoplasma, entre o núcleo e a membrana (o primeiro C de CMC). Essa quebra é a **glicólise**. Como num empréstimo, a célula gasta 2 moedas de energia (ATP) para preparar a glicose e ganhar mais depois.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "explanation",
+      "title": "O que a célula ganha",
+      "text": "Por glicose, a célula produz 4 ATP. Para achar o saldo, você desconta o gasto da produção. Ela também produz 2 moléculas de **NADH**, que levam elétrons à etapa que os usa para gerar mais ATP, a cadeia respiratória.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "mathCheck",
+      "context": "Para quebrar uma molécula de glicose na glicólise, a célula gasta {gastos} ATP no começo e produz {produzidos} ATP depois.",
+      "question": "Qual é o saldo de ATP por glicose?",
+      "math": {
+        "variables": [
+          {
+            "name": "gastos",
+            "value": 2,
+            "min": 2,
+            "max": 2,
+            "step": 1,
+            "unit": "ATP"
+          },
+          {
+            "name": "produzidos",
+            "value": 4,
+            "min": 4,
+            "max": 4,
+            "step": 1,
+            "unit": "ATP"
+          }
+        ],
+        "solution": "produzidos - gastos",
+        "answer": 2,
+        "unit": "ATP",
+        "tolerance": {
+          "kind": "absolute",
+          "value": 0
+        },
+        "steps": [
+          {
+            "text": "Você parte dos {produzidos} ATP que a célula produziu.",
+            "expression": null
+          },
+          {
+            "text": "Você tira os {gastos} ATP que ela gastou e fica com {result} ATP.",
+            "expression": "produzidos - gastos"
+          }
+        ],
+        "commonMistakes": [
+          {
+            "expression": "produzidos",
+            "misconception": "Contar só a produção",
+            "reason": "Você contou tudo o que a célula produziu, mas não tirou os {gastos} ATP que ela já tinha gastado."
+          },
+          {
+            "expression": "produzidos + gastos",
+            "misconception": "Somar o gasto à produção",
+            "reason": "Você somou o que saiu ao que entrou. O gasto reduz o saldo, então precisa ser descontado."
+          }
+        ]
+      },
+      "correctReason": "Dos {produzidos} ATP produzidos, você tira os {gastos} ATP usados para preparar a glicose.",
+      "image": null,
+      "basis": {
+        "screen": 3,
+        "quote": "Para achar o saldo, você desconta o gasto da produção."
+      }
+    },
+    {
+      "kind": "check",
+      "context": "Na revisão para a prova de biologia, uma colega diz que a glicólise acontece na mitocôndria, uma estrutura da célula que ajuda a produzir ATP.",
+      "question": "Que local você marcaria para essa etapa?",
+      "options": [
+        {
+          "text": "Eu marcaria o citoplasma.",
+          "isCorrect": true,
+          "reason": "A quebra da glicose começa na região entre o núcleo e a membrana da célula.",
+          "picture": null
+        },
+        {
+          "text": "Eu marcaria a mitocôndria.",
+          "isCorrect": false,
+          "reason": "A mitocôndria ajuda a produzir ATP em outras etapas, mas a glicólise acontece no citoplasma.",
+          "picture": null
+        },
+        {
+          "text": "Eu marcaria o núcleo.",
+          "isCorrect": false,
+          "reason": "A célula começa a quebrar a glicose fora do núcleo, no citoplasma.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "A célula começa a quebrar a glicose no citoplasma, entre o núcleo e a membrana (o primeiro C de CMC)."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Onde começa a quebra",
+        "text": "A glicólise acontece no citoplasma, entre o núcleo e a membrana."
+      },
+      {
+        "label": "O gasto inicial",
+        "text": "A célula gasta 2 ATP para preparar uma molécula de glicose para a quebra."
+      },
+      {
+        "label": "O que sobra",
+        "text": "Para achar o saldo por glicose, você tira os 2 ATP gastos dos 4 ATP produzidos."
+      }
+    ],
+    "shape": "hub"
+  }
+}

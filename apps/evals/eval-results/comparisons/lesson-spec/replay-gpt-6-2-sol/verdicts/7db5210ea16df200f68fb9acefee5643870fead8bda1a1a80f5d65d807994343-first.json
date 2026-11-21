@@ -1,0 +1,253 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00543934,
+  "failures": [],
+  "packetId": "7db5210ea16df200f68fb9acefee5643870fead8bda1a1a80f5d65d807994343",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both plans teach the action of relating a lever’s arm lengths to the force needed, with a relevant example and real-life use. The travel trade-off is closely linked to that same idea, not a separate lesson.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives the writer more explicit lever setups and distances for its guess, checks, and application, and its worked example is followed by a similar check. A leaves distances out of several setups, making those screens less specific to write.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B shows the needed distances on its guess, checks, and application; A omits them on its guess and on the check about moving the exercise weight. Both hooks show the lever but omit its distances.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "B",
+            "reason": "Both stay on the lever topic, but B builds from the lever’s operation to arm ratios and then calculations. A’s formula-model activity is more abstract for beginners, while B’s numerical explanation makes the ratio easier to follow.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook shows a lever setup but gives no distances from the fulcrum to the load or the hand, despite the requirement that the lever be shown with its distances.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the parts but not how their spacing relates to the lesson’s force advantage.",
+            "location": {
+              "detail": "Side view of a straight board beneath a crate at its left end, resting on a triangular support near the crate, with a downward push arrow just to the right of the support.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The hook shows the lever parts but does not mark the load-arm and push-arm distances.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner cannot see the spacing that the lesson says determines how hard to push.",
+            "location": {
+              "detail": "Side view of a nearly horizontal bar with its left tip under the edge of a heavy crate, a small support block just to the right of the crate, and Andre’s hand pressing down on the far right end.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess compares support locations but gives no distances from the support to the crate and hand, as required for lever setups in guesses.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must judge the answer from an unmeasured drawing rather than seeing the distances the question is about.",
+            "location": {
+              "detail": "Side view of a horizontal bar with a crate at the left end and a hand at the right end; three identical dotted support positions beneath the bar are labeled Near the crate, At the midpoint, and Near your hand.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The check shows the weight moving farther from the support but gives no distances for the setup.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is asked to reason from a lever arrangement whose distances are not specified in the visual.",
+            "location": {
+              "detail": "Side view of a level test lever on a fixed support, with a hand at a marked point on the right and an exercise weight on the left; a horizontal arrow points from the weight’s starting spot to a marked spot farther left.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B better meets the requirement to show lever setups with their distances on the questions that depend on those setups. Both omit distances in the opening scene, but A also omits them on its guess and a check."
+        },
+        "pairId": "1b27a131-022f-4ab2-85e8-9f22de4167e1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs center the lesson on calculating percent change from the starting value and keep the other percentage topics out of scope.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "B",
+            "reason": "B gives the correct answer to the $40-to-$46 check and names 13.04% as the tempting error from dividing by the new value. A reverses those, and both versions also give a faulty tie instruction in the wage-table check.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use text-only screens for the word problems and specify a table for the questions that need tabular data.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use everyday price and pay examples and introduce the procedure after an intuitive explanation, at an appropriate beginner level.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The check identifies 13.04% as the correct increase from $40 to $46. The increase is $6 ÷ $40 = 15%; 13.04% comes from dividing by the new value, $46.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner would be taught the wrong answer and the opposite of the intended rule about using the starting value.",
+            "location": {
+              "detail": "Ask the learner to calculate the percent increase when a monthly service fee rises from $40 to $46: 13.04%. Include 15% as the tempting answer from dividing by the old fee.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The wage-table check says A and B are tied because both add $4, but their percent increases differ: A is 25% and B is 16%.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner could leave believing equal dollar increases mean equal percentage increases.",
+            "location": {
+              "detail": "Show hourly wages with columns Job, Before, After: A, $16, $20; B, $25, $29; C, $18, $18. Ask which job has the largest percent increase: A at 25%; include A and B tied because both add $4, and use feedback to note C’s 0% change.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The wage-table check says A and B are tied because both add $4, but their percent increases differ: A is 25% and B is 16%.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner could leave believing equal dollar increases mean equal percentage increases.",
+            "location": {
+              "detail": "Show hourly wages with columns Job, Before, After: A, $16, $20; B, $25, $29; C, $18, $18. Ask which job has the largest percent increase: A at 25%; include A and B tied because both add $4, and use feedback to note C’s 0% change.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B gets the $40-to-$46 answer and the new-value trap right, while A teaches the wrong answer on that check. Both outputs still have a major error in the wage-table check, where they incorrectly say two jobs with different percent increases are tied."
+        },
+        "pairId": "25ef0167-2ef1-40fc-821e-a35a79c0ab53"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and both teach a single action: relating lever-arm lengths to the force needed.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "The screen plans are identical, including the clear worked example and follow-up check, as well as the shared omissions in some visual setups.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both show the same lever visuals and share the same missing distance labels on the hook, guess, and weight-moving check.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and keep the lesson within beginner-level lever instruction.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The hook shows a lever setup but gives no distances from the fulcrum to the load or the hand, despite the requirement that the lever be shown with its distances.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the parts but not how their spacing relates to the lesson’s force advantage.",
+            "location": {
+              "detail": "Side view of a nearly horizontal bar with its left tip under the edge of a heavy crate, a small support block just to the right of the crate, and Andre’s hand pressing down on the far right end.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess compares support locations but gives no distances from the support to the crate and hand, as required for lever setups in guesses.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must judge the answer from an unmeasured drawing rather than seeing the distances the question is about.",
+            "location": {
+              "detail": "Side view of a horizontal bar with a crate at the left end and a hand at the right end; three identical dotted support positions beneath the bar are labeled Near the crate, At the midpoint, and Near your hand.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The check shows the weight moving farther from the support but gives no distances for the setup.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is asked to reason from a lever arrangement whose distances are not specified in the visual.",
+            "location": {
+              "detail": "Side view of a level test lever on a fixed support, with a hand at a marked point on the right and an exercise weight on the left; a horizontal arrow points from the weight’s starting spot to a marked spot farther left.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The hook shows a lever setup but gives no distances from the fulcrum to the load or the hand, despite the requirement that the lever be shown with its distances.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the parts but not how their spacing relates to the lesson’s force advantage.",
+            "location": {
+              "detail": "Side view of a nearly horizontal bar with its left tip under the edge of a heavy crate, a small support block just to the right of the crate, and Andre’s hand pressing down on the far right end.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The guess compares support locations but gives no distances from the support to the crate and hand, as required for lever setups in guesses.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner must judge the answer from an unmeasured drawing rather than seeing the distances the question is about.",
+            "location": {
+              "detail": "Side view of a horizontal bar with a crate at the left end and a hand at the right end; three identical dotted support positions beneath the bar are labeled Near the crate, At the midpoint, and Near your hand.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The check shows the weight moving farther from the support but gives no distances for the setup.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner is asked to reason from a lever arrangement whose distances are not specified in the visual.",
+            "location": {
+              "detail": "Side view of a level test lever on a fixed support, with a hand at a marked point on the right and an exercise weight on the left; a horizontal arrow points from the weight’s starting spot to a marked spot farther left.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, with the same strengths and the same missing distances on several lever visuals."
+        },
+        "pairId": "e8a8f10e-2cfe-4587-89a5-682e8b4ea894"
+      }
+    ]
+  }
+}

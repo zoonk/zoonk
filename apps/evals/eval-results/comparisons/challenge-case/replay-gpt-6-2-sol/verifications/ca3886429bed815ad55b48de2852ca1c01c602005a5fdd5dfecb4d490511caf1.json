@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-plot-reading-field-research",
+        "claimId": "3bf4e545b8890557",
+        "criterion": "depth",
+        "observationId": "1ec39046e708b6b181239b8e9293e905af348261c9735a98fa11c12f532aafda.first.0c3e9ba6-012a-4165-bace-f481fb4892fa.2",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0035556499999999996,
+    "id": "ca3886429bed815ad55b48de2852ca1c01c602005a5fdd5dfecb4d490511caf1",
+    "packet": [
+      {
+        "A": {
+          "blob": "a507482235d47b2565e39e045a53923c052d561ad06eeee0ac02623a7bba6ef7",
+          "format": "text"
+        },
+        "B": {
+          "blob": "88a1b88eae1f264bb97386ff633ab850a6ac88c086fbb6022115cb927cdf4279",
+          "format": "text"
+        },
+        "claim": "The output uses ns in its readings but never explains that it means nanoseconds.",
+        "claimId": "3bf4e545b8890557",
+        "criterion": "depth",
+        "expectations": {
+          "blob": "b21061ca0ddbb398e7a1acd556b4c6fb4d10a0027957645651008bedc309e36e",
+          "format": "text"
+        },
+        "input": {
+          "blob": "9c554e0f09384a6bc17c0fcf5164ba8c7ed1c4f2938c97602cd101a8e49396fd",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The output uses ns throughout without defining it.",
+          "kind": "whole"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "8e77527c8f0f645f6c1ed8fa69d620a588de7f19ef45f86e8ae686f2908a8298",
+          "format": "text"
+        },
+        "B": {
+          "blob": "16fbdbff2a3daf134ae6f25c7e01125c043b5d30f1fee301115909783c42611d",
+          "format": "text"
+        },
+        "claim": "The product manager's first message uses the term 'statistical power' without explaining it.",
+        "claimId": "e0f1449ffbb31dd0",
+        "criterion": "plainLanguage",
+        "expectations": {
+          "blob": "237f1ce63ded7717cd04c064d0132e615615f8f23e1cc495aab766aa10c2b396",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e47cde8949637c4bbfc253e463e7b79401b51dc3ced719b00e7b9133239e770f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "3bf4e545b8890557",
+          "finding": "holds",
+          "reason": "Output B uses ns in its readings (10 ns, 12 ns, 14 ns, 13 ns) and nowhere spells out that it means nanoseconds. Output A does define it in a panel note (\"short for nanoseconds\"), so the problem is specific to B."
+        },
+        {
+          "claimId": "e0f1449ffbb31dd0",
+          "finding": "doesn't hold",
+          "reason": "The product manager's first message in output A reads \"B got 10 more purchases with the same number of visitors...\" and never uses the term 'statistical power'. The phrase doesn't appear in output A at all, and output B's first product message doesn't use it either."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

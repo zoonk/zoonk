@@ -48,18 +48,6 @@ export function formatScoreCategories(categories: ScoreCategory[]): string {
     .join("\n\n");
 }
 
-export function formatExpectationsWithCategories({
-  categories,
-  expectations,
-}: {
-  categories?: ScoreCategory[];
-  expectations: string;
-}): string {
-  return categories
-    ? `${expectations}\n\nSCORE CATEGORIES:\n\n${formatScoreCategories(categories)}`
-    : expectations;
-}
-
 export function resolveCategoryScores({
   categories,
   judgeScores,

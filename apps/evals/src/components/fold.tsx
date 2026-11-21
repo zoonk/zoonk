@@ -5,7 +5,7 @@ export function Fold({
   className,
   isOpen,
   title,
-}: React.PropsWithChildren<{ className?: string; isOpen?: boolean; title: string }>) {
+}: React.PropsWithChildren<{ className?: string; isOpen?: boolean; title: React.ReactNode }>) {
   return (
     <details className={className} open={isOpen}>
       <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1.5 text-sm font-medium [&::-webkit-details-marker]:hidden">

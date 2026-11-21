@@ -1,4 +1,5 @@
 import { aggregateEvalResults } from "@/lib/eval-summary";
+import { hasValidScore } from "@/lib/score-calculation";
 import { getStatsFromResults } from "@/lib/stats";
 import { type TaskEvalResults, type TaskModelOutputResults } from "@/lib/types";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
@@ -17,6 +18,7 @@ export async function EvalResults({
 }) {
   const prices = GATEWAY_PRICES;
   const stats = getStatsFromResults({ evalResults: results, prices });
+  const scored = results.results.filter((result) => hasValidScore(result));
 
   return (
     <div className="flex flex-col gap-8">
@@ -24,7 +26,7 @@ export async function EvalResults({
 
       {stats.classification && <ClassificationSummaryCard summary={stats.classification} />}
 
-      <IssuesSummary results={results.results} />
+      {scored.length > 0 && <IssuesSummary results={scored} />}
 
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold tracking-tight">Test cases</h2>

@@ -1,0 +1,123 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Ana passou num concurso e começou a trabalhar na prefeitura. Disseram a ela que, com o tempo, ela não poderá mais ser mandada embora à toa. Depois de quanto tempo isso passa a valer?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Três anos e uma aprovação",
+      "text": "Ana começou no cargo em 2023. Em 2026, com três anos de trabalho, uma comissão avalia o desempenho dela. Só se for aprovada, Ana passa a ter proteção contra perder o cargo sem motivo previsto em lei. Isso se chama **estabilidade**.",
+      "exampleLineIdea": "um amigo ou parente que passou num concurso e está nos primeiros anos do cargo",
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Pedro passou num concurso e completou três anos no cargo. A comissão ainda não fez a avaliação do desempenho dele.",
+      "question": "Pedro já é estável?",
+      "options": [
+        {
+          "text": "Não, ainda falta ser aprovado na avaliação",
+          "isCorrect": true,
+          "reason": "A estabilidade exige as duas coisas: três anos no cargo e aprovação na avaliação da comissão. Pedro só cumpriu a primeira.",
+          "picture": null
+        },
+        {
+          "text": "Sim, porque já completou três anos",
+          "isCorrect": false,
+          "reason": "O tempo sozinho não basta. Parece suficiente porque os três anos são a parte mais lembrada, mas sem a aprovação da comissão não há estabilidade.",
+          "picture": null
+        },
+        {
+          "text": "Sim, ele é estável desde que passou no concurso",
+          "isCorrect": false,
+          "reason": "Passar no concurso dá o cargo, não a estabilidade. Ela só chega depois dos três anos e da aprovação na avaliação.",
+          "picture": null
+        },
+        {
+          "text": "Não, ele precisa de cinco anos no cargo",
+          "isCorrect": false,
+          "reason": "O prazo é de três anos, não cinco. O que falta para Pedro é a aprovação na avaliação, não mais tempo.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Só se for aprovada, Ana passa a ter proteção contra perder o cargo sem motivo previsto em lei."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Estável também pode perder o cargo",
+      "text": "A estabilidade não é para sempre. O servidor estável pode perder o cargo por:\n\n- uma decisão da Justiça que não cabe mais recurso;\n- um processo administrativo, se cometer uma falta;\n- uma avaliação periódica, se trabalhar mal.\n\nAntes de perder o cargo, ele sempre pode se explicar e apresentar provas. Isso se chama **ampla defesa**.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Lorena é servidora estável da Prefeitura do Recife. Ela é acusada de uma falta grave, e o chefe dela quer demiti-la hoje mesmo, sem abrir nenhum processo.",
+      "question": "O chefe pode fazer isso?",
+      "options": [
+        {
+          "text": "Não, ela tem direito a um processo com defesa",
+          "isCorrect": true,
+          "reason": "Por uma falta, a servidora estável só perde o cargo por meio de um processo administrativo em que pode se explicar e apresentar provas.",
+          "picture": null
+        },
+        {
+          "text": "Sim, porque a falta é grave",
+          "isCorrect": false,
+          "reason": "A gravidade da falta não dispensa o processo. Parece lógico punir na hora, mas mesmo a falta grave precisa ser apurada com direito de defesa.",
+          "picture": null
+        },
+        {
+          "text": "Sim, desde que o chefe tenha provas",
+          "isCorrect": false,
+          "reason": "Ter provas não basta. Lorena precisa ter a chance de responder a elas num processo antes de qualquer demissão.",
+          "picture": null
+        },
+        {
+          "text": "Não, servidor estável nunca perde o cargo",
+          "isCorrect": false,
+          "reason": "A estabilidade protege, mas não é para sempre. Lorena pode, sim, perder o cargo, só que depois de um processo com defesa.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 4,
+        "quote": "Antes de perder o cargo, ele sempre pode se explicar e apresentar provas."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Estabilidade",
+        "text": "A estabilidade é a proteção do servidor concursado contra perder o cargo sem motivo previsto em lei."
+      },
+      {
+        "label": "Três anos e avaliação",
+        "text": "O servidor só fica estável depois de três anos no cargo e da aprovação na avaliação de desempenho feita por uma comissão."
+      },
+      {
+        "label": "Três jeitos de perder o cargo",
+        "text": "O servidor estável pode perder o cargo por decisão da Justiça sem mais recurso, por processo administrativo ou por avaliação periódica de desempenho."
+      },
+      {
+        "label": "Ampla defesa",
+        "text": "Antes de perder o cargo, o servidor estável sempre pode se explicar e apresentar provas, o que se chama ampla defesa."
+      }
+    ],
+    "shape": "hub"
+  }
+}

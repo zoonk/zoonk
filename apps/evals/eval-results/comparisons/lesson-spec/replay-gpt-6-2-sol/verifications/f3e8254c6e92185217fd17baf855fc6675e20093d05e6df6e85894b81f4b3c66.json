@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "05fafc4b16c0b9be",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "48f11ea37aa840764709abc0ee74009f727c27b640af3dd8abd27a5dfd6afa9c.first.bf376485-f1ce-460a-bed4-acfbd6a5999c.4",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00283265,
+    "id": "f3e8254c6e92185217fd17baf855fc6675e20093d05e6df6e85894b81f4b3c66",
+    "packet": [
+      {
+        "A": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "claim": "The check asks whether a brain region is near the forehead or the back of the head but has no brain diagram or marked spot.",
+        "claimId": "05fafc4b16c0b9be",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "the researcher check about the brain region for processing screen colors",
+          "kind": "range"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "5fb3824db3109c84",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "05fafc4b16c0b9be",
+          "finding": "holds",
+          "reason": "In output B, the check asks whether the researcher's target should be near the forehead or the back of the head, and its visual is null, so no brain diagram or marked spot is shown. Output A has no such check, so the problem is only in B."
+        },
+        {
+          "claimId": "5fb3824db3109c84",
+          "finding": "doesn't hold",
+          "reason": "Output A's application says the month's reserve must cover the R$ 900,00 rent, since the answer is 'aluguel e internet' and the contracts are kept. The explanation also states the rent is due even with no production, so the claim that the rent stops being paid is false."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

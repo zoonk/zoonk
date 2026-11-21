@@ -1,0 +1,17 @@
+{
+  "caseId": "en-tax-deadlines-sourced",
+  "challenger": {
+    "costUsd": 0.0361758,
+    "durationMs": 40349.67712499999,
+    "hash": "2f48d411fa40f2979feda9c7b7f6141c6ac3ff26ed49d8bdd9f807b14de1dc39",
+    "userPromptHash": "fb1f773ea85665b5e9ddce4e3a66306d05a17b1669c70d1ba0630cf35f1de22d"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.054965,
+    "durationMs": 69614.28833299999,
+    "hash": "979806e2836399d34a701f04382101d3bd2265f5e9fc23580dfbad4f998517ee",
+    "userPromptHash": "fb1f773ea85665b5e9ddce4e3a66306d05a17b1669c70d1ba0630cf35f1de22d"
+  },
+  "run": 1
+}

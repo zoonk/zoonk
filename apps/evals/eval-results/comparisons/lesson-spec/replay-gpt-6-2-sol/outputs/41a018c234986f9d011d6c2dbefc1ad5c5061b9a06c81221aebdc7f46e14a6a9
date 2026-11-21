@@ -1,0 +1,290 @@
+{
+  "lessons": [
+    {
+      "canDo": "Identificar causas e sentidos dos deslocamentos da curva de demanda",
+      "description": "Distinguir mudanças causadas pelo preço do próprio produto de fatores que deslocam sua demanda.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma sala de cinema passa a receber mais público depois que um filme vira assunto nas redes, mesmo sem baixar o ingresso. Por que as pessoas passaram a comprar mais?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "A curva de demanda reúne quanto as pessoas desejam comprar em diferentes preços, mantendo os demais fatores iguais. Mostrar ingressos por sessão: R$ 10,00 → 100; R$ 20,00 → 80; R$ 30,00 → 60.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Se apenas o ingresso baixar de R$ 30,00 para R$ 20,00, onde ficará o ponto que representa as compras desejadas: na curva atual, numa curva à direita ou numa curva à esquerda? Resposta: na curva atual; a tentadora é à direita, confundindo comprar mais com mudar toda a relação.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "A mudança no preço do próprio produto provoca um movimento ao longo da curva, não muda a curva inteira. No gráfico dos ingressos, marcar a passagem de 60 compras a R$ 30,00 para 80 a R$ 20,00.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Um deslocamento muda as compras desejadas em cada preço: maior preferência pelo filme leva a curva à direita; menor preferência, à esquerda. Comparar a curva inicial com 20 ingressos a mais e 20 a menos em cada preço, sem mudar o preço para fazer a comparação.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um bem normal tem sua demanda aumentada quando a renda cresce, mantendo os outros fatores iguais. Se famílias com mais renda desejam mais refeições em restaurantes em cada preço, esse serviço é normal para elas.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um bem inferior tem sua demanda reduzida quando a renda cresce: certas famílias passam a desejar menos macarrão instantâneo em cada preço. “Inferior” descreve essa reação à renda, não a qualidade do produto.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A renda de um grupo cai, sem mudança de preços; refeições em restaurantes são normais e macarrão instantâneo é inferior para ele. Pedir os sentidos dos deslocamentos: restaurantes à esquerda e macarrão à direita; incluir a tentadora “ambos à esquerda”.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Bens substitutos atendem à mesma necessidade: quando o café encarece, pode aumentar a demanda por chá, mesmo sem mudar o preço do chá. A alta do preço de uma alternativa desloca a demanda da outra para a direita.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Bens complementares são usados juntos: quando cápsulas encarecem, pode cair a demanda por máquinas compatíveis, mesmo com o preço das máquinas igual. A alta do preço de um complemento desloca a demanda do outro para a esquerda.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Resolver em três passos: a manteiga encareceu; o preço da margarina não mudou; elas são substitutas neste mercado. Identificar o produto analisado, reconhecer a troca entre alternativas e concluir que a demanda por margarina se desloca à direita.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A tinta para impressoras fica mais barata, enquanto o preço das impressoras permanece igual; os dois produtos são complementares. Pedir o efeito na demanda por impressoras: deslocamento à direita; incluir “à esquerda”, por aplicar aos complementares a lógica dos substitutos.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Mais compradores no mercado aumentam sua demanda, mesmo sem mudar a vontade de cada pessoa. A abertura de um campus traz novos moradores que procuram aluguel em cada faixa de preço.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Expectativas sobre preços futuros podem mudar a demanda de hoje por algo que se pode comprar antes. Se famílias esperam geladeiras mais baratas no próximo mês e podem esperar, adiam compras e deslocam a demanda atual à esquerda.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Raimundo analisa duas semanas: na primeira, só reduziu o preço dos cadernos; na segunda, mantendo esse preço, recebeu novos compradores após a abertura de uma escola. Pedir que separe movimento na curva de deslocamento à direita e explique por que vender mais, sozinho, não distingue os casos.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Identificar se uma mudança altera apenas a quantidade demandada ou desloca a demanda, reconhecendo o sentido do deslocamento.",
+          "example": "A manteiga encarece e, mantendo o preço da margarina, sua demanda se desloca para a direita.",
+          "hard": true,
+          "name": "Identificar deslocamentos da curva de demanda",
+          "topic": "Deslocamentos da demanda",
+          "useCase": "Interpretar mudanças nas compras causadas por renda, preferências, preços relacionados, expectativas ou número de compradores."
+        }
+      ],
+      "title": "Causas dos deslocamentos da demanda"
+    },
+    {
+      "canDo": "Prever preço e quantidade após um deslocamento da demanda",
+      "description": "Prever como aumentos e reduções da demanda alteram o equilíbrio quando a curva de oferta permanece igual.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Depois da abertura de uma ciclovia, oficinas passam a fazer mais revisões de bicicletas e cobrar mais por elas. Como o preço pode subir junto com as vendas?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "A curva de oferta mostra quanto os vendedores desejam oferecer em cada preço: neste mercado, preços maiores tornam viável realizar mais revisões. Mostrar quantidade semanal no eixo horizontal e preço no vertical, com oferta P = 20 + Q, usando os pontos (0; 20), (40; 60) e (80; 100).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Mais ciclistas passam a procurar revisões em cada preço, sem mudar a curva de oferta crescente: após o ajuste, qual combinação você prevê? Opções: preço e quantidade maiores; preço maior e quantidade menor; preço menor e quantidade maior; correta: ambos maiores; tentadora: preço maior e quantidade menor, por aplicar a queda das compras com o preço a uma curva que mudou.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "O equilíbrio ocorre no preço em que compradores e vendedores desejam negociar a mesma quantidade. Cruzar oferta P = 20 + Q e demanda P = 100 − Q: o encontro indica 40 revisões por semana a R$ 60,00.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Resolver em etapas a alta da demanda de P = 100 − Q para P = 140 − Q, com oferta P = 20 + Q fixa: a R$ 60,00, desejam-se 80 revisões, mas oferecem-se 40; esse excesso de demanda pressiona o preço para cima. Mostrar o novo cruzamento: 140 − Q = 20 + Q, Q = 60 e P = 80; o preço maior não impede o aumento das vendas porque a demanda mudou.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "lineCrossing",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Retomar o modelo inicial com x = revisões por semana e y = preço em reais: oferta, intercepto 20 e inclinação 1; demanda, intercepto 100 e inclinação −1. Em uma simulação menor, as compras desejadas aumentam 20 em cada preço: pedir que mova só a demanda 20 unidades à direita e informe o novo preço, R$ 70,00, com 50 revisões; corrigir a tentação de mover a oferta.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Quando apenas a demanda muda, o novo preço leva as oficinas a outro ponto da mesma curva de oferta; oferecer mais não significa deslocar a oferta. Destacar, no exemplo de aumento maior, a passagem de (40; 60) para (60; 80) sobre P = 20 + Q.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Uma queda da demanda faz o ajuste no sentido contrário: ao preço antigo sobram serviços oferecidos, pressionando o preço para baixo. Partindo novamente de demanda P = 100 − Q e oferta P = 20 + Q, mostrar a demanda caindo para P = 60 − Q e o equilíbrio passando de (40; 60) para (20; 40).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Julgar duas análises com oferta crescente e inalterada: “Se a demanda aumentar, o preço pode subir junto com a quantidade vendida” — certa; “Se a demanda diminuir, a quantidade vendida aumentará porque o preço caiu” — errada. As tentações são rejeitar a primeira pela relação inversa entre preço e compras e aceitar a segunda pelo mesmo motivo.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Thaís administra uma oficina e prevê maior procura em cada preço após uma campanha de incentivo ao ciclismo; custos e curva de oferta continuam iguais e crescentes. Pedir que escolha entre planejar mais revisões com preço maior ou menos revisões com preço maior, justificando o plano pelo que aconteceria se mantivesse o preço antigo.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Prever as mudanças no preço e na quantidade de equilíbrio após um deslocamento da demanda, mantendo fixa uma curva de oferta crescente.",
+          "example": "Com oferta P = 20 + Q, a demanda passa de P = 100 − Q para P = 140 − Q: o equilíbrio muda de Q = 40 e P = 60 para Q = 60 e P = 80.",
+          "hard": true,
+          "name": "Prever o equilíbrio após deslocamentos da demanda",
+          "topic": "Equilíbrio de mercado",
+          "useCase": "Planejar preços e volume de atendimento quando a procura de um mercado aumenta ou diminui."
+        }
+      ],
+      "title": "Deslocamentos da demanda e novo equilíbrio"
+    }
+  ]
+}

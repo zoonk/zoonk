@@ -1,0 +1,390 @@
+{
+  "attempt": "first",
+  "costUsd": 0.49296000000000006,
+  "failures": [],
+  "packetId": "6a848a3c357d62acdf81e6b42a8e9a17ebfd4a76155d0a0aea2d23e64987106a",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-neon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A and B are identical, and all calculations, formulas, tables, and option reasons are accurate.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical, with the same clear workshop scenario, concise tone, and minor slip on screen 5.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical, reading clearly for beginners apart from screen 5 referencing R$ 1.000,00 before the table shows the values.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical, with well-designed checks, realistic misconceptions, and a valid basis quote on screen 4.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical, matching the beginner level, Brazilian Portuguese, consistent currency format, and screen 2 constraints.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 5 states the general rule and mentions R$ 1.000,00 before the table introduces the R$ 4.000,00 and R$ 5.000,00 values, reversing example-before-rule flow.",
+            "criterion": "teacher",
+            "learnerCost": "The learner encounters an abstract rule and an unexplained R$ 1.000,00 figure before seeing the numbers that produce it.",
+            "location": {
+              "detail": "Agora imagine a oficina em outra situação. Se as obrigações passam da soma dos bens e direitos, o patrimônio líquido fica negativo. Nesse caso, a oficina deve R$ 1.000,00 a mais do que tem e vai receber.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 5 states the general rule and mentions R$ 1.000,00 before the table introduces the R$ 4.000,00 and R$ 5.000,00 values, reversing example-before-rule flow.",
+            "criterion": "teacher",
+            "learnerCost": "The learner encounters an abstract rule and an unexplained R$ 1.000,00 figure before seeing the numbers that produce it.",
+            "location": {
+              "detail": "Agora imagine a oficina em outra situação. Se as obrigações passam da soma dos bens e direitos, o patrimônio líquido fica negativo. Nesse caso, a oficina deve R$ 1.000,00 a mais do que tem e vai receber.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The first summary idea under the label 'Bens e direitos' gives an instruction without naming its subject ('bens e direitos') inside the sentence, so it relies on the label to make clear what the sum represents.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Reading the takeaway sentence on its own does not tell the learner what that sum is called.",
+            "location": {
+              "detail": "Some o que a empresa tem ao que ela ainda tem a receber.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The first summary idea under the label 'Bens e direitos' gives an instruction without naming its subject ('bens e direitos') inside the sentence, so it relies on the label to make clear what the sum represents.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Reading the takeaway sentence on its own does not tell the learner what that sum is called.",
+            "location": {
+              "detail": "Some o que a empresa tem ao que ela ainda tem a receber.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "A and B are identical outputs, so neither serves the learner better."
+        },
+        "pairId": "364d0aaa-9f93-4859-aa17-180e316b4925"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B accurately states three years of effective exercise in a permanent post per Article 41 of the Constitution, whereas A wrongly teaches two years (24 months) on screen 2 and contradicts its own later screens.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B share the exact same hook, structure, and voice, differing only on screen 2 where neither is noticeably more engaging.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "B",
+            "reason": "Although B leaves two legal terms unexplained on screen 2, A creates severe confusion by teaching two years on screen 2 and then asking about three years of 'efetivo exercício em cargo efetivo' on screen 5.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "B",
+            "reason": "Both leave basis null on screens 5 and 6, but B's screen 5 check aligns with what screen 2 taught, whereas A's screen 5 contradicts its own screen 2 and uses terms A never introduced.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "B",
+            "reason": "B follows the plan's screen 2 brief and matches the official constitutional source, while A breaks both by changing three years to two and omitting cargo efetivo and efetivo exercício.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 2 falsely teaches that civil service stability is acquired after two years (24 months) instead of three years of effective exercise in a permanent post, breaking the written expectation and contradicting Article 41 in the source as well as A's own screen 5 and summary.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner memorizes a wrong, outdated legal timeframe and gets confused when the quiz and summary say three years.",
+            "location": {
+              "detail": "Quem entra por concurso ganha essa garantia depois de **dois anos** (24 meses) trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 5 tests three years, 'efetivo exercício', and 'cargo efetivo' even though A's screen 2 taught two years and never mentioned those terms; it also leaves basis as null.",
+            "criterion": "checks",
+            "learnerCost": "The learner is tested on a timeframe that contradicts what they just learned and on legal terms never introduced.",
+            "location": {
+              "detail": "Pedro completou três anos de efetivo exercício em cargo efetivo, mas a comissão ainda não avaliou o trabalho dele. Ele já é estável?",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 2 opens with an abstract definition instead of connecting directly to Ana's situation from the hook.",
+            "criterion": "teacher",
+            "learnerCost": "The shift from Ana's story to an encyclopedia-style definition reduces engagement.",
+            "location": {
+              "detail": "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 opens with an abstract definition instead of connecting directly to Ana's situation from the hook.",
+            "criterion": "teacher",
+            "learnerCost": "The shift from Ana's story to an encyclopedia-style definition reduces engagement.",
+            "location": {
+              "detail": "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 uses the legal terms 'cargo efetivo' and 'efetivo exercício' without explaining them in everyday words for a beginner.",
+            "criterion": "clarity",
+            "learnerCost": "A learner with no legal background may not grasp what makes a post 'efetivo' or what counts as 'efetivo exercício'.",
+            "location": {
+              "detail": "Quem é nomeado por concurso para cargo efetivo ganha essa garantia depois de **três anos** de efetivo exercício, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 3's reveal refers to the app interface ('A próxima tela mostra quais são.') instead of keeping natural flow.",
+            "criterion": "clarity",
+            "learnerCost": "Meta-references to the next screen feel mechanical rather than conversational.",
+            "location": {
+              "detail": "Sim, nos casos que a Constituição prevê. A próxima tela mostra quais são.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 3's reveal refers to the app interface ('A próxima tela mostra quais são.') instead of keeping natural flow.",
+            "criterion": "clarity",
+            "learnerCost": "Meta-references to the next screen feel mechanical rather than conversational.",
+            "location": {
+              "detail": "Sim, nos casos que a Constituição prevê. A próxima tela mostra quais são.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 4 squeezes all three legal grounds for dismissal and a parenthetical definition of 'processo administrativo' into one long sentence.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner reading once may have to reread the sentence to separate the three ways a tenured servant can lose their post.",
+            "location": {
+              "detail": "Por falta ou mau desempenho, o servidor estável pode perder o cargo por uma decisão da Justiça da qual não cabe mais recurso, por um **processo administrativo** (uma apuração feita pelo próprio órgão, em que ele pode se defender) ou por avaliações periódicas do seu trabalho, também com direito a defesa.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 4 squeezes all three legal grounds for dismissal and a parenthetical definition of 'processo administrativo' into one long sentence.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner reading once may have to reread the sentence to separate the three ways a tenured servant can lose their post.",
+            "location": {
+              "detail": "Por falta ou mau desempenho, o servidor estável pode perder o cargo por uma decisão da Justiça da qual não cabe mais recurso, por um **processo administrativo** (uma apuração feita pelo próprio órgão, em que ele pode se defender) ou por avaliações periódicas do seu trabalho, também com direito a defesa.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Option 3's feedback on screen 5 introduces the distinction between 'posse' and 'início do exercício', which was never taught earlier in the lesson.",
+            "criterion": "checks",
+            "learnerCost": "A learner who picks this distractor gets feedback relying on an unexplained legal distinction.",
+            "location": {
+              "detail": "A posse não dá estabilidade. Os três anos são de efetivo exercício, contados a partir do início do exercício.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 5 leaves basis as null even though screen 2's second sentence clearly decides the answer, and option 3's feedback introduces the unexplained distinction between 'posse' and 'início do exercício'.",
+            "criterion": "checks",
+            "learnerCost": "After a wrong answer, the app cannot highlight the deciding rule on screen 2, and option 3's reason cites an untaught distinction.",
+            "location": {
+              "detail": "basis field and option 3 reason of screen 5",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 6 leaves basis as null even though the second sentence of screen 4 clearly decides the right answer.",
+            "criterion": "checks",
+            "learnerCost": "If the learner misses screen 6, the app cannot highlight the exact sentence on screen 4 that explains why a process with defense is required.",
+            "location": {
+              "detail": "basis field of screen 6",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 6 leaves basis as null even though the second sentence of screen 4 clearly decides the right answer.",
+            "criterion": "checks",
+            "learnerCost": "If the learner misses screen 6, the app cannot highlight the exact sentence on screen 4 that explains why a process with defense is required.",
+            "location": {
+              "detail": "basis field of screen 6",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B teaches the constitutional rule accurately throughout, whereas A has a major factual error on screen 2 (two years instead of three) that violates the expectation and contradicts A's own check and summary."
+        },
+        "pairId": "a348b75b-4056-4f47-a7f2-52bd944db9e5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A is accurate throughout, whereas B narrows 'direitos' to only client receivables in its summary, slightly blurs the book-value caveat on screen 3, and allows two distractors to collide in screen 7's mathCheck.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B has a more concrete hook, warmer spoken steps in the worked example, a named business on screen 4, and a much stronger example-first comparison table on screen 5.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "A is tighter on screen 2 and cleaner on screen 7, while B is easier to follow on screen 5 and in screen 6's R$ 10.000 distractor feedback.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "A",
+            "reason": "A avoids B's variable-range distractor collision and inconsistent currency placeholders in screen 7's mathCheck, and prompts learners to predict before dragging on screen 6.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "A",
+            "reason": "A follows the explicit screen 2 expectation (three short sentences recalling bens, direitos, and obrigações without redefining them), while B breaks it with six sentences that redefine all three terms and adds a new term ('balanço') in the application.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 5 states the general rule and mentions R$ 1.000,00 before the table introduces the R$ 4.000,00 and R$ 5.000,00 values, reversing example-before-rule flow.",
+            "criterion": "teacher",
+            "learnerCost": "The learner encounters an abstract rule and an unexplained R$ 1.000,00 figure before seeing the numbers that produce it.",
+            "location": {
+              "detail": "Agora imagine a oficina em outra situação. Se as obrigações passam da soma dos bens e direitos, o patrimônio líquido fica negativo. Nesse caso, a oficina deve R$ 1.000,00 a mais do que tem e vai receber.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The first summary idea under the label 'Bens e direitos' gives an instruction without naming its subject ('bens e direitos') inside the sentence, so it relies on the label to make clear what the sum represents.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "Reading the takeaway sentence on its own does not tell the learner what that sum is called.",
+            "location": {
+              "detail": "Some o que a empresa tem ao que ela ainda tem a receber.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 2 breaks the written expectation that the first explanation be two or three short sentences recalling bens, direitos, and obrigações in plain words without defining them again: it uses six sentences and explicitly redefines all three terms in separate sentences.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "The learner has to read twice as much text to re-learn concepts from an earlier lesson before reaching the new idea.",
+            "location": {
+              "detail": "As ferramentas e o dinheiro de Davi são os bens da oficina. O que clientes ainda vão pagar a ele são os direitos. As dívidas são as obrigações. Somando bens e direitos e tirando as obrigações, você chega ao **patrimônio líquido**. Ele é um valor dos registros, não o preço de venda da oficina. Suba as obrigações e veja o resultado cair.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The summary defines 'direitos' generally as only what clients will still pay, which is overly narrow in accounting since rights also include non-client receivables, bank deposits, and other recoverable amounts.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner may later fail to count other amounts receivable as direitos.",
+            "location": {
+              "detail": "Bens são o que a empresa tem, direitos são o que clientes ainda vão pagar a ela e obrigações são as dívidas.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 3's result says net equity is what would be left over if the workshop paid all debts, which slightly undermines the screen 2 caveat that patrimônio líquido is a recorded book value rather than a sale or liquidation amount.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner may walk away thinking net equity equals actual cash left over after selling off the workshop.",
+            "location": {
+              "detail": "O patrimônio líquido é R$ 5.000. É o que sobraria para Davi se a oficina pagasse todas as dívidas.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "In screen 7's mathCheck, 'banco' (min 2000) and 'fornecedor' (max 2000) overlap at 2000, so two commonMistakes ('dinheiro + ferramentas + receber - fornecedor' and 'dinheiro + ferramentas + receber - banco') can produce identical wrong options; step 2 also omits the addition expression and variables mix unit 'R$' with 'R$ {var}' in the table and bare '{var}' in steps and reasons.",
+            "criterion": "checks",
+            "learnerCost": "A randomized attempt could show duplicate answer choices or awkward currency formatting in feedback.",
+            "location": {
+              "detail": "math.variables, math.steps, and math.commonMistakes of screen 7",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 7 introduces a new accounting term ('balanço') inside the application check with its explanation squeezed into a comma-separated appositive clause.",
+            "criterion": "clarity",
+            "learnerCost": "The learner runs into an unexpected technical term mid-question and has to parse an extra clause before working the problem.",
+            "location": {
+              "detail": "Um ano depois, o contador monta o balanço da oficina de Davi, a lista do que ela tem, vai receber e deve:",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A is accurate, clean, and meets the explicit screen 2 expectation, whereas B breaks that expectation with a six-sentence re-definition, narrows 'direitos' in the summary, and has a distractor-collision edge case in screen 7's mathCheck."
+        },
+        "pairId": "ac2a3336-d93d-4d38-ae51-0aadc5e939e2"
+      }
+    ]
+  }
+}

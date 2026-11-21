@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { findCurrentPhase, getPhaseStates, isPhaseFinished } from "../_utils/phase-states";
 import { isPlanFinished } from "../_utils/plan-end";
+import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import { withPlannedLessons } from "./core-first";
@@ -10,6 +11,7 @@ import { getPlanFeasibility } from "./plan-feasibility";
 import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES, type PlannerLesson } from "./plan-units";
+import { listSelectedItemFacts } from "./selected-item-facts";
 
 const TODAY = fromIsoDate("2026-09-28");
 
@@ -1036,6 +1038,43 @@ describe("exam plans", () => {
       fromIsoDate("2026-10-02").getTime(),
     );
   });
+
+  it("keeps alternating subjects after this week when an automatic run can't keep the week as it was", () => {
+    const input = planInput({
+      goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2027-03-01") },
+      graph: {
+        phases: [{ milestone: null, name: "Everything" }],
+        skills: ["math", "law", "reading"].map((skillId, index) =>
+          skill(skillId, { area: skillId, lessons: 30, weight: 3 - index }),
+        ),
+      },
+      lessons: [],
+      settings: parsePlanSettings({
+        startDate: toIsoDate(TODAY),
+        weekdayMinutes: [0, 30, 30, 30, 30, 30, 0],
+      }),
+    });
+
+    const behind = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      mode: "automatic",
+      today: fromIsoDate("2026-10-02"),
+    });
+
+    const weeks = Map.groupBy(
+      [...situationMinutesByDay(behind)].filter(
+        ([date]) => date >= "2026-10-12" && date < "2026-10-26",
+      ),
+      ([date]) => (date < "2026-10-19" ? "first" : "second"),
+    );
+
+    expect(
+      [...weeks.values()].map(
+        (days) => new Set(days.flatMap(([, minutes]) => [...minutes.keys()])),
+      ),
+    ).toStrictEqual([new Set(["math", "law", "reading"]), new Set(["math", "law", "reading"])]);
+  });
 });
 
 type DatedPhase = { endDate: string | null; startDate: string | null };
@@ -1198,6 +1237,58 @@ function lessonMinutes(input: BuildPlanInput): number {
     .reduce((total, item) => total + item.minutes, 0);
 }
 
+function situationMinutesByDay(built: BuiltPlan): Map<string, Map<string, number>> {
+  return [...built.lessonDayMinutes].reduce((days, [key, minutes]) => {
+    const skillId = built.items.find((item) => item.key === key)?.skillId ?? key;
+
+    [...minutes].forEach(([date, spent]) => {
+      const day = days.get(date) ?? new Map<string, number>();
+      days.set(date, day.set(skillId, (day.get(skillId) ?? 0) + spent));
+    });
+
+    return days;
+  }, new Map<string, Map<string, number>>());
+}
+
+function daysOverTime(built: BuiltPlan, dailyMinutes: number) {
+  return [...situationMinutesByDay(built)].flatMap(([date, minutes]) => {
+    const total = [...minutes.values()].reduce((sum, spent) => sum + spent, 0);
+    return total > dailyMinutes + 0.01 ? [[date, total]] : [];
+  });
+}
+
+/** The phase's last situation ends alone, so the turns are measured before its last weeks. */
+function longestTurn(built: BuiltPlan): number {
+  const leaders = [...situationMinutesByDay(built)]
+    .toSorted(([a], [b]) => a.localeCompare(b))
+    .filter(([date]) => date < "2027-02-01")
+    .map(
+      ([, minutes]) => [...minutes].reduce((most, entry) => (entry[1] > most[1] ? entry : most))[0],
+    );
+
+  return leaders.reduce(
+    (run, leader, index) => {
+      const length = leader === leaders[index - 1] ? run.length + 1 : 1;
+      return { length, most: Math.max(run.most, length) };
+    },
+    { length: 0, most: 0 },
+  ).most;
+}
+
+/** A lesson that runs over into later days starts on the first day it takes time. */
+function lessonStarts(built: BuiltPlan) {
+  return built.items.flatMap((item) => {
+    const first = [...(built.lessonRawMinutes.get(item.key)?.keys() ?? [])].toSorted()[0];
+    const date = first ? fromIsoDate(first) : item.scheduledFor;
+
+    return item.lessonId && date ? [[item.lessonId, date] as const] : [];
+  });
+}
+
+function todoLessonItems(built: BuiltPlan) {
+  return built.items.filter((item) => item.kind === "lesson" && item.status === "todo");
+}
+
 describe("language plans", () => {
   it("plans each situation at the graph's size, the part not outlined yet as a stand-in", () => {
     const input = languageInput({
@@ -1227,8 +1318,8 @@ describe("language plans", () => {
     });
 
     const built = buildPlan(input);
-    const lessons = built.items.filter((item) => item.kind === "lesson");
-    const lastLesson = lessons.at(-1)?.scheduledFor ?? TODAY;
+    const teachingDays = [...built.lessonDayMinutes.values()].flatMap((days) => [...days.keys()]);
+    const lastLesson = fromIsoDate(teachingDays.toSorted().at(-1) ?? toIsoDate(TODAY));
     const end = built.estimate.endDate ?? TODAY;
 
     expect(lastLesson.getTime()).toBeLessThan(fromIsoDate("2026-11-30").getTime());
@@ -1236,7 +1327,10 @@ describe("language plans", () => {
     expect(end.getTime()).toBeLessThan(interview.getTime());
     expect(getPlanFeasibility({ input }).endDate?.getTime()).toBe(end.getTime());
 
-    const busy = new Set(built.items.map((item) => toIsoDate(item.scheduledFor ?? TODAY)));
+    const busy = new Set([
+      ...built.items.map((item) => toIsoDate(item.scheduledFor ?? TODAY)),
+      ...teachingDays,
+    ]);
 
     const spare = Array.from({ length: daysBetween(lastLesson, interview) - 1 }, (_, index) =>
       toIsoDate(addDays(lastLesson, index + 1)),
@@ -1249,6 +1343,253 @@ describe("language plans", () => {
         (item) => item.kind === "review" && (item.scheduledFor ?? TODAY) > lastLesson,
       ).length,
     ).toBeGreaterThan(20);
+  });
+
+  const weekdays = parsePlanSettings({
+    startDate: toIsoDate(TODAY),
+    weekdayMinutes: [0, 15, 15, 15, 15, 15, 0],
+  });
+
+  function situations(lessons: number): BuildPlanInput {
+    return languageInput({
+      goal: { dailyMinutes: 15, kind: "language", targetDate: null },
+      graph: {
+        phases: [{ milestone: null, name: "Getting by" }],
+        skills: ["order", "work", "plans", "directions"].map((skillId) =>
+          skill(skillId, { area: "English", lessons }),
+        ),
+      },
+      lessons: [],
+      settings: weekdays,
+    });
+  }
+
+  function writtenSituations(): BuildPlanInput {
+    return languageInput({
+      goal: { dailyMinutes: 15, kind: "language", targetDate: null },
+      graph: {
+        phases: [{ milestone: null, name: "Getting by" }],
+        skills: ["order", "work", "plans", "directions"].map((skillId) =>
+          skill(skillId, { area: "English", lessons: 10 }),
+        ),
+      },
+      lessons: ["order", "work", "plans", "directions"].flatMap((skillId) =>
+        writtenLessons(skillId, 1, 10),
+      ),
+      settings: weekdays,
+    });
+  }
+
+  it("takes turns between three situations instead of teaching one for weeks", () => {
+    const built = buildPlan(situations(40));
+
+    const firstWeek = [...situationMinutesByDay(built)].filter(([date]) => date < "2026-10-05");
+
+    expect(new Set(firstWeek.flatMap(([, minutes]) => [...minutes.keys()]))).toStrictEqual(
+      new Set(["order", "work", "plans"]),
+    );
+
+    expect(longestTurn(built)).toBeLessThanOrEqual(2);
+  });
+
+  it("keeps its turns when the learner opens another situation's lesson first", () => {
+    const input = writtenSituations();
+
+    const items = store(buildPlan(input), new Set(["lesson:work-1"])).map((item) =>
+      item.status === "done" ? { ...item, completedAt: TODAY } : item,
+    );
+
+    const todo = buildPlan({ ...input, items, mode: "forced" }).items.filter(
+      (item) => item.kind === "lesson" && item.status === "todo",
+    );
+
+    expect(todo.slice(0, 5).map((item) => item.lessonId)).toStrictEqual([
+      "order-1",
+      "order-2",
+      "work-2",
+      "plans-1",
+      "plans-2",
+    ]);
+  });
+
+  it("keeps a finished situation's place in the turns after a re-plan", () => {
+    const input = {
+      ...writtenSituations(),
+      lessons: ["order", "work", "plans", "directions"].flatMap((skillId) =>
+        writtenLessons(skillId, 1, 4),
+      ),
+    };
+
+    const first = buildPlan(input);
+    const firstEight = todoLessonItems(first).slice(0, 8);
+    const done = new Set(firstEight.map((item) => item.key));
+
+    const items = store(first, done).map((item) =>
+      item.status === "done" ? { ...item, completedAt: item.scheduledFor } : item,
+    );
+
+    const next = todoLessonItems(buildPlan({ ...input, items, mode: "forced" })).slice(0, 6);
+
+    expect(next.map((item) => item.lessonId)).toStrictEqual([
+      "work-3",
+      "work-4",
+      "plans-3",
+      "plans-4",
+      "directions-1",
+      "directions-2",
+    ]);
+  });
+
+  it("keeps the same turns when the plan is made again after each lesson", () => {
+    const input = writtenSituations();
+
+    const planned = todoLessonItems(buildPlan(input)).map((item) => item.key);
+
+    const studied = Array.from({ length: 40 }).reduce<{
+      items: ExistingPlanItem[];
+      keys: string[];
+    }>(
+      ({ items, keys }, _, step) => {
+        const built = buildPlan({ ...input, items, mode: "forced" });
+        const next = todoLessonItems(built)[0];
+        const completedAt = new Date(TODAY.getTime() + step * 60_000);
+
+        const saved = store(built).map((item) =>
+          item.key === next?.key ? { ...item, completedAt, status: "done" as const } : item,
+        );
+
+        return { items: saved, keys: next ? [...keys, next.key] : keys };
+      },
+      { items: [], keys: [] },
+    );
+
+    expect(studied.keys).toStrictEqual(planned.slice(0, 40));
+  });
+
+  it("keeps taking turns after this week when an automatic run can't keep the week as it was", () => {
+    const input = situations(40);
+
+    const behind = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      mode: "automatic",
+      today: fromIsoDate("2026-10-01"),
+    });
+
+    expect(longestTurn(behind)).toBeLessThanOrEqual(2);
+  });
+
+  it("practices only after the last lessons of situations an automatic run kept this week", () => {
+    const base = situations(20);
+
+    const input = {
+      ...base,
+      goal: { ...base.goal, targetDate: fromIsoDate("2027-04-01") },
+      graph: { ...base.graph, skills: base.graph.skills.slice(0, 3) },
+    };
+
+    const behind = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      mode: "automatic",
+      today: fromIsoDate("2026-10-01"),
+    });
+
+    const lastLesson = [...behind.lessonDayMinutes.values()]
+      .flatMap((days) => [...days.keys()])
+      .toSorted()
+      .at(-1);
+
+    expect(
+      behind.items.filter(
+        (item) =>
+          item.kind === "review" && toIsoDate(item.scheduledFor ?? TODAY) <= (lastLesson ?? ""),
+      ),
+    ).toStrictEqual([]);
+  });
+
+  it("gives a situation's unwritten lessons no time this week once its first chapter is written", () => {
+    const input = situations(40);
+
+    const written = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      lessons: ["order", "work", "plans"].flatMap((skillId) => writtenLessons(skillId, 1, 10)),
+      mode: "automatic",
+    });
+
+    expect([...situationMinutesByDay(written)].some(([date]) => date < "2026-10-05")).toBeTruthy();
+
+    expect(
+      ["skill:order", "skill:work", "skill:plans"].flatMap((key) =>
+        [...(written.lessonDayMinutes.get(key)?.keys() ?? [])].filter(
+          (date) => date < "2026-10-05",
+        ),
+      ),
+    ).toStrictEqual([]);
+  });
+
+  it("puts a situation's newly written lessons within a week of where a full re-plan would", () => {
+    const input = situations(40);
+
+    const written = {
+      ...input,
+      items: saveWithFacts(input),
+      lessons: writtenLessons("order", 1, 10),
+      mode: "automatic" as const,
+    };
+
+    const kept = new Map(lessonStarts(buildPlan(written)));
+    const replanned = lessonStarts(buildPlan({ ...written, mode: "forced" }));
+
+    expect([...kept.keys()].toSorted()).toStrictEqual(replanned.map(([id]) => id).toSorted());
+
+    expect(
+      replanned.filter(
+        ([lessonId, date]) => Math.abs(daysBetween(date, kept.get(lessonId) ?? date)) > 7,
+      ),
+    ).toStrictEqual([]);
+  });
+
+  it("keeps every other situation's saved days when the only news is newly written lessons", () => {
+    const input = situations(40);
+    const items = saveWithFacts(input);
+
+    const landed = buildPlan({
+      ...input,
+      items,
+      landedOnly: true,
+      lessons: writtenLessons("order", 1, 10).map((written) => ({ ...written, minutes: 4 })),
+      mode: "automatic",
+    });
+
+    const savedDays = (key: string) =>
+      readSelectedItemFacts(items.find((item) => item.id === key)?.facts)?.days?.map(
+        ([date, minutes]) => [date, minutes],
+      );
+
+    const keptDays = (key: string) =>
+      [...(landed.lessonDayMinutes.get(key) ?? [])].toSorted(([a], [b]) => a.localeCompare(b));
+
+    expect(
+      ["skill:work", "skill:plans", "skill:directions"].map((key) => keptDays(key)),
+    ).toStrictEqual(["skill:work", "skill:plans", "skill:directions"].map((key) => savedDays(key)));
+
+    expect(longestTurn(landed)).toBeLessThanOrEqual(2);
+    expect(daysOverTime(landed, 15)).toStrictEqual([]);
+  });
+
+  it("keeps each day to its time when newly written lessons run longer than their estimate", () => {
+    const input = situations(40);
+
+    const landed = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      lessons: writtenLessons("order", 1, 10),
+      mode: "automatic",
+    });
+
+    expect(daysOverTime(landed, 15)).toStrictEqual([]);
   });
 });
 
@@ -1915,6 +2256,16 @@ function store(
     id: item.id ?? item.key,
     position,
     status: done.has(item.key) ? "done" : item.status,
+  }));
+}
+
+function saveWithFacts(input: BuildPlanInput): ExistingPlanItem[] {
+  const built = buildPlan(input);
+  const facts = listSelectedItemFacts({ built, input });
+
+  return store(built).map((item) => ({
+    ...item,
+    facts: { ...facts.get(item.key), schemaVersion: 1 },
   }));
 }
 

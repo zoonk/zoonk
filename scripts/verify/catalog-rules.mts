@@ -42,7 +42,13 @@ export function catalogFailures(offenders: Offender[]): Offender[] {
 }
 
 export function treeCatalogs(repository = resolve(import.meta.dirname, "../..")) {
-  return execFileSync("git", ["ls-files", "--", "apps", "packages"], {
+  const pathspecs = ["apps", "packages"].flatMap((directory) => [
+    `${directory}/*.po`,
+    `${directory}/*.xcstrings`,
+    `${directory}/*strings*.xml`,
+  ]);
+
+  return execFileSync("git", ["ls-files", "--", ...pathspecs], {
     cwd: repository,
     encoding: "utf8",
   })
