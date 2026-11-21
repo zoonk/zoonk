@@ -218,15 +218,20 @@ export function listDayOptions({
       (section) => section.session,
     );
 
+    const hasOtherPapers = structure?.mock?.sections.some(
+      (section) =>
+        section.day === day && section.kind !== "written" && !isObjectiveSection(section),
+    );
+
     const separate =
       both.questions > 0 &&
       objectiveSessions.length > 0 &&
-      objectiveSessions.every((session) => session !== undefined) &&
+      (!hasOtherPapers || objectiveSessions.every((session) => session !== undefined)) &&
       parts.every(
         (part) =>
           part.minutes !== null &&
-          part.tasks.every(
-            (task) => task.session !== null && !objectiveSessions.includes(task.session),
+          part.tasks.every((task) =>
+            task.session === null ? !hasOtherPapers : !objectiveSessions.includes(task.session),
           ),
       );
 

@@ -1,12 +1,13 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { loadWrittenSamples } from "../../../learner/facts/written-samples";
+import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 import { daysBetween, fromIsoDate } from "../../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../../plans/planner/plan-state";
 import { getDaysBetweenEssays, isWrittenDay } from "../../../plans/planner/written-cadence";
-import { readExamPicks } from "../../choices/exam-choices";
+import { type ExamPicks, readExamPicks } from "../../choices/exam-choices";
 import { type PlannedProduce } from "../produce-block";
 import { listPracticeWritingTasks } from "./practice-writing-tasks";
 import { getWritingScope } from "./writing-scope";
@@ -40,16 +41,21 @@ export function getEstimatedMinutes({
 
 export async function loadWritingPace({
   examBlueprintId,
+  picks,
   privateExam,
-  tasks,
+  structure,
   userId,
 }: {
   examBlueprintId: string;
+  picks: ExamPicks;
   privateExam: boolean;
-  tasks: readonly Task[];
+  structure: ExamStructure;
   userId: string;
 }) {
-  if (tasks.length === 0) {
+  const tasks = listPracticeWritingTasks({ classTest: privateExam, structure });
+  const available = tasks.filter((task) => getWritingScope({ picks, structure, task }).available);
+
+  if (available.length === 0) {
     return [];
   }
 
@@ -60,7 +66,7 @@ export async function loadWritingPace({
 
   const byTask = Map.groupBy(independent, ({ prompt }) => prompt.taskKey);
 
-  const ranked = tasks.map((task) => {
+  const ranked = available.map((task) => {
     const history = byTask.get(task.key) ?? [];
 
     const durations = history
@@ -127,17 +133,12 @@ export async function loadSessionProduce({
   }
 
   const { structure } = readBlueprintContent(blueprint);
-  const picks = readExamPicks(planSettings);
-
-  const tasks = listPracticeWritingTasks({
-    classTest: Boolean(blueprint.ownerId),
-    structure,
-  }).filter((task) => getWritingScope({ picks, structure, task }).available);
 
   const ordered = await loadWritingPace({
     examBlueprintId: blueprint.id,
+    picks: readExamPicks(planSettings),
     privateExam: Boolean(blueprint.ownerId),
-    tasks,
+    structure,
     userId,
   });
 

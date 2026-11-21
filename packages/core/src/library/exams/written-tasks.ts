@@ -61,14 +61,20 @@ function match(entry: Entry, candidates: Entry[]) {
     ({ section }) => label(section.name) === label(entry.section.name),
   );
 
-  const comparable = inSection.filter(
-    ({ task }) =>
-      (!official || !task.officialIdentifier || byOfficial.length > 0) &&
-      sameDimensions(task, entry.task),
+  const candidatesByIdentifier = inSection.filter(
+    ({ task }) => !official || !task.officialIdentifier || byOfficial.length > 0,
   );
 
-  const labeled = comparable.filter(
-    ({ task }) => label(task.description) === label(entry.task.description),
+  const labeled = candidatesByIdentifier.filter(
+    ({ task }) =>
+      label(task.description) === label(entry.task.description) &&
+      task.count === entry.task.count &&
+      (task.lines === undefined ||
+        entry.task.lines === undefined ||
+        task.lines === entry.task.lines) &&
+      (task.points === undefined ||
+        entry.task.points === undefined ||
+        task.points === entry.task.points),
   );
 
   if (labeled.length > 0) {
@@ -76,7 +82,9 @@ function match(entry: Entry, candidates: Entry[]) {
   }
 
   return !official && inSection.length === entry.section.tasks?.length
-    ? comparable.filter(({ task }) => !task.officialIdentifier)
+    ? candidatesByIdentifier.filter(
+        ({ task }) => !task.officialIdentifier && sameDimensions(task, entry.task),
+      )
     : [];
 }
 

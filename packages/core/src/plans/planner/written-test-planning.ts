@@ -1,3 +1,5 @@
+import { type ExamPicks } from "../../exams/choices/exam-choices";
+import { getWritingScope } from "../../exams/essays/_utils/writing-scope";
 import { pickWrittenTestDays } from "../../exams/mocks/written-test-schedule";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
@@ -9,7 +11,13 @@ import {
   toIsoDate,
 } from "./plan-calendar";
 
-export function listWrittenPapers(structure: ExamStructure) {
+export function listWrittenPapers({
+  picks,
+  structure,
+}: {
+  picks: ExamPicks;
+  structure: ExamStructure;
+}) {
   const sections = structure.mock?.sections.filter(({ kind }) => kind === "written") ?? [];
 
   return [...Map.groupBy(sections, (section) => section.day)].flatMap(([day, written]) => {
@@ -17,7 +25,11 @@ export function listWrittenPapers(structure: ExamStructure) {
     const minutes = written.reduce((sum, section) => sum + (section.minutes ?? 0), 0);
 
     const official =
-      tasks.length > 0 && tasks.every((task) => task.minutes !== null) && minutes > 0;
+      tasks.length > 0 &&
+      minutes > 0 &&
+      tasks.every(
+        (task) => task.minutes !== null && getWritingScope({ picks, structure, task }).available,
+      );
 
     return official
       ? [{ day, minutes, tasks, title: written.map(({ name }) => name).join(" / ") }]
@@ -54,6 +66,7 @@ export function scheduleWrittenPapers<Paper extends { minutes: number }>({
 export function getScheduledWrittenTest({
   calendar,
   excludes,
+  picks,
   planStart,
   structure,
   targetDate,
@@ -61,6 +74,7 @@ export function getScheduledWrittenTest({
 }: {
   calendar: StudyCalendar;
   excludes: ReadonlySet<string>;
+  picks: ExamPicks;
   planStart: Date;
   structure: ExamStructure | null;
   targetDate: Date | null;
@@ -70,7 +84,7 @@ export function getScheduledWrittenTest({
     return null;
   }
 
-  const papers = listWrittenPapers(structure);
+  const papers = listWrittenPapers({ picks, structure });
 
   if (papers.length === 0) {
     return null;

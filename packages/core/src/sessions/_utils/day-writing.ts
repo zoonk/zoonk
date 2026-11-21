@@ -1,5 +1,6 @@
 import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { getWritingSkillIds } from "../../learner/writing-skills";
+import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getPlanCalendar, toIsoDate } from "../../plans/planner/plan-calendar";
 import { getScheduledWrittenTest } from "../../plans/planner/plan-days";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
@@ -31,8 +32,9 @@ export function getDayWriting({
             kind === "mock" && scheduledFor ? [toIsoDate(scheduledFor)] : [],
           ),
         ),
+        picks: settings,
         planStart: plan.planStart,
-        structure: plan.structure,
+        structure: blueprint ? readBlueprintContent(blueprint).structure : null,
         targetDate: goal.targetDate,
         today: localDate,
       });

@@ -1,6 +1,7 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type MockPlan, type MockSectionPlan } from "./mock-plan";
 import { type MockEssayCandidate, getDayWrittenParts, withWrittenParts } from "./written-parts";
+import { isObjectiveSection } from "./written-subject";
 
 export function planWrittenTest({
   day,
@@ -50,7 +51,7 @@ export function onlyObjectiveStructure(structure: ExamStructure | null): ExamStr
     formats: structure.formats.filter((format) => format.kind !== "essay"),
     mock: {
       ...structure.mock,
-      sections: structure.mock.sections.filter((section) => section.kind === "objective"),
+      sections: structure.mock.sections.filter((section) => isObjectiveSection(section)),
     },
   };
 }
