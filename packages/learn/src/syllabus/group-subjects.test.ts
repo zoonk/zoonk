@@ -4,7 +4,7 @@ import { type SubjectGroup, groupSubjects } from "./group-subjects";
 
 function subject(
   key: string,
-  attrs: Partial<Pick<SyllabusSubject, "group" | "source">> = {},
+  attrs: Partial<Pick<SyllabusSubject, "extra" | "group" | "source">> = {},
 ): SyllabusSubject {
   return {
     areas: [key],
@@ -39,12 +39,12 @@ const keysOf = (groups: SubjectGroup[]) =>
   groups.map((group) => [group.name, group.extra, group.subjects.map((item) => item.key)]);
 
 describe(groupSubjects, () => {
-  it("keeps the notice's groups in the order it lists them, and the plan's own areas last", () => {
+  it("keeps the notice's groups in the order it lists them, and what the exam doesn't test last", () => {
     const groups = groupSubjects(
       [
         subject("portuguese", { group: "P1" }),
         subject("law", { group: "P2" }),
-        subject("strategy", { source: "plan" }),
+        subject("strategy", { extra: true, source: "plan" }),
         subject("english", { group: "P1" }),
       ],
       { modules: false },
@@ -55,6 +55,15 @@ describe(groupSubjects, () => {
       ["P2", false, ["law"]],
       [null, true, ["strategy"]],
     ]);
+  });
+
+  it("gives an area the notice doesn't name no heading of its own", () => {
+    const groups = groupSubjects(
+      [subject("math"), subject("essay", { source: "plan" }), subject("logic")],
+      { modules: false },
+    );
+
+    expect(keysOf(groups)).toStrictEqual([[null, false, ["math", "essay", "logic"]]]);
   });
 
   it("lists a notice without groups, and a plan's modules, as one run", () => {
@@ -70,5 +79,20 @@ describe(groupSubjects, () => {
         ),
       ),
     ).toStrictEqual([[null, false, ["research", "figma"]]]);
+  });
+
+  it("keeps what the exam doesn't test last when the exam has no notice", () => {
+    const groups = groupSubjects(
+      [
+        subject("strategy", { extra: true, source: "plan" }),
+        subject("math", { group: "Part 1", source: "plan" }),
+      ],
+      { modules: true },
+    );
+
+    expect(keysOf(groups)).toStrictEqual([
+      [null, false, ["math"]],
+      [null, true, ["strategy"]],
+    ]);
   });
 });

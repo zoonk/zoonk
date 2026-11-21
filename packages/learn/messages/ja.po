@@ -2342,6 +2342,7 @@ msgstr "第{number, number}章"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -10387,11 +10388,6 @@ msgid "Adjust your plan"
 msgstr "学習計画の調整"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, other {あと#レッスン分の時間があります}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10401,6 +10397,17 @@ msgstr "学習計画を更新しました。"
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "学習計画に追加"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, other {あと#レッスン分の時間があります}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr ""
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10747,6 +10754,7 @@ msgid "Needed to practice"
 msgstr "練習に必要"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "省略可能"
@@ -11015,6 +11023,11 @@ msgid "Study up to {level}?"
 msgstr "{level}まで学びますか？"
 
 #: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr ""
+
+#: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
 msgid "Add the lessons that fit your time?"
 msgstr "時間内にできるレッスンを追加しますか？"
@@ -11186,6 +11199,16 @@ msgstr "学習計画にレッスンを追加しました。"
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "各フェーズの日程を変更しました。"
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr ""
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr ""
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12891,12 +12914,6 @@ msgid "From your material"
 msgstr "資料から"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "学習計画の追加項目"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "資料に含まれるトピック"
@@ -13025,6 +13042,12 @@ msgstr "学習計画に含まれていません・学習時間が足りません
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "まだ準備できていません"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr ""
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"

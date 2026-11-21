@@ -2342,6 +2342,7 @@ msgstr "Kapitel {number, number}"
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 #: src/topic-outline/use-far-topic-line.ts
@@ -10387,11 +10388,6 @@ msgid "Adjust your plan"
 msgstr "Deinen Plan anpassen"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "ylM0GM"
-msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr "{count, plural, one {Du hast Zeit für # weitere Lektion} other {Du hast Zeit für # weitere Lektionen}}"
-
-#: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "tV4o-5"
 msgid "Your plan is updated."
@@ -10401,6 +10397,17 @@ msgstr "Dein Plan wurde aktualisiert."
 msgctxt "oRzrGu"
 msgid "Add to plan"
 msgstr "Zum Plan hinzufügen"
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, one {Du hast Zeit für # weitere Lektion} other {Du hast Zeit für # weitere Lektionen}}"
+
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/use-operation-question.ts
+msgctxt "pt_Ckx"
+msgid "Study exam strategy too?"
+msgstr ""
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -10747,6 +10754,7 @@ msgid "Needed to practice"
 msgstr "Zum Üben nötig"
 
 #: src/plan/plan-tools.tsx
+#: src/syllabus/use-extra-label.ts
 msgctxt "InWqys"
 msgid "Optional"
 msgstr "Optional"
@@ -11015,6 +11023,11 @@ msgid "Study up to {level}?"
 msgstr "Bis {level} lernen?"
 
 #: src/plan/use-operation-question.ts
+msgctxt "1zOEec"
+msgid "Take exam strategy out of your plan?"
+msgstr ""
+
+#: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
 msgid "Add the lessons that fit your time?"
 msgstr "Die Lektionen hinzufügen, die in deine Lernzeit passen?"
@@ -11186,6 +11199,16 @@ msgstr "Deinem Plan wurden Lektionen hinzugefügt."
 msgctxt "zC0937"
 msgid "Your phase dates moved."
 msgstr "Die Termine deiner Phasen wurden verschoben."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ydxIUz"
+msgid "Exam strategy added to your plan."
+msgstr ""
+
+#: src/plan/use-operation-statement.ts
+msgctxt "OWcZlN"
+msgid "Exam strategy isn't in your plan."
+msgstr ""
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12891,12 +12914,6 @@ msgid "From your material"
 msgstr "Aus deinem Material"
 
 #: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "viO9ZX"
-msgid "Also in your plan"
-msgstr "Auch in deinem Plan"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Themen in deinem Material"
@@ -13025,6 +13042,12 @@ msgstr "Nicht in deinem Plan · deine Lernzeit reicht dafür nicht"
 msgctxt "topicNotReady"
 msgid "Not ready yet"
 msgstr "Noch nicht bereit"
+
+#. Marks study the exam doesn't test, such as how to manage its time. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/syllabus/use-extra-label.ts
+msgctxt "s2GuyF"
+msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
+msgstr ""
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
