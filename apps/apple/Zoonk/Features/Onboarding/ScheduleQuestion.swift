@@ -155,14 +155,10 @@ struct ScheduleQuestion: View {
           "How much time can you study each day?", tableName: "Onboarding",
           comment: "Onboarding question"))
 
-      // The answer leads: the time, then the one line on what it gets the learner.
       Section {
-        VStack(alignment: .leading, spacing: 12) {
-          timeMenu(shown)
-          timeAnswer(shown)
-        }
-        .keepsBeforeHinge()
-        .listRowBackground(Color.clear)
+        timeMenu(shown)
+          .keepsBeforeHinge()
+          .listRowBackground(Color.clear)
       }
       .locksWhileSaving()
 
@@ -180,6 +176,14 @@ struct ScheduleQuestion: View {
         dateLink(shown)
           .listRowBackground(Color.clear)
       }
+
+      // What the time covers comes last, after the days and the date that change it as much as the
+      // time does, so its length moves nothing the learner taps.
+      Section {
+        timeAnswer(shown)
+          .listRowBackground(Color.clear)
+      }
+      .locksWhileSaving()
     } buttons: {
       StepButtons(
         canContinue: ScheduleTime.canContinue(
