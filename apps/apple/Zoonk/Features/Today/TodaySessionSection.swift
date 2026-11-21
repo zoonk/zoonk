@@ -177,7 +177,7 @@ struct TodaySessionAction: View {
   let writingStalled: Bool
   let open: (StudyBlock, Bool) -> Void
   let prepare: () -> Void
-  /// Adds the plan's next lessons once the day is done or resting.
+  /// Adds the plan's next lessons once the day has nothing of its own left to start.
   let keepLearning: () -> Void
   /// After an exam's date: studies the lessons left after the exam.
   let keepStudying: () -> Void
@@ -345,7 +345,7 @@ struct TodayMainAction: View {
     case .continueSession:
       Text("Continue", tableName: "Today", comment: "Continues today's session")
     case .keepLearning:
-      Text("Keep learning", tableName: "Today", comment: "Adds the plan's next lessons")
+      Text("Keep learning", tableName: "Today")
     case .practice(let minutes):
       Text(
         "Practice \(minutes) min", tableName: "Today",

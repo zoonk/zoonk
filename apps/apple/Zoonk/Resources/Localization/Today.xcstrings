@@ -6383,7 +6383,6 @@
       }
     },
     "Keep learning" : {
-      "comment" : "Adds the plan's next lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6418,7 +6417,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계속 학습하기"
+            "value" : "계속 배우기"
           }
         },
         "pl" : {
@@ -6430,7 +6429,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar estudando"
+            "value" : "Continuar aprendendo"
           }
         },
         "tr" : {
