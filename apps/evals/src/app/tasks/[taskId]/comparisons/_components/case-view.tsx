@@ -176,14 +176,14 @@ function ProblemItem({
   );
 }
 
-/** Named as the decision table's row names it, so a row's link lands on what it counted. */
+/** Named with the check's name, as the decision table's row is, so a row's link lands on what it counted. */
 function FailedChecks({ checks }: { checks: FailedCheck[] }) {
   return checks.map((check) => (
     <Fold
       key={check.name}
       title={
         <span className="text-destructive-text">
-          Failed {check.name} ({check.total - check.passed} of {check.total})
+          Failed {check.total - check.passed} of {check.total} {check.name}
         </span>
       }
     >
