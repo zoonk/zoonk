@@ -1,5 +1,15 @@
-import { normalizeProfileFavorites } from "./profile-favorites";
-import { type ProfileAnswerInput, profileAnswerInputSchema } from "./profile-question-contract";
+import { type SupportedLocale } from "@zoonk/utils/locale";
+import { normalizeProfileFavorites, splitProfileFavorites } from "./profile-favorites";
+import { GENERAL_TOOL_IDS } from "./profile-option-ids";
+import { PROFILE_CONTENT } from "./profile-options";
+import {
+  MAX_PROFILE_TOOL_PICKS,
+  type ProfileAnswerInput,
+  type ProfileQuestionView,
+  profileAnswerInputSchema,
+} from "./profile-question-contract";
+
+type ToolAnswer = Extract<ProfileAnswerInput, { question: "tools" }>;
 
 function uniqueIds<T extends string>(ids: T[]): T[] {
   return [...new Set(ids)].toSorted();
@@ -76,6 +86,64 @@ export function normalizeProfileAnswer(input: ProfileAnswerInput): ProfileAnswer
   }
 }
 
+export function reconcileToolAnswer({
+  input,
+  locale,
+  options,
+}: {
+  input: ToolAnswer;
+  locale: SupportedLocale;
+  options: ProfileQuestionView["options"];
+}): ToolAnswer {
+  const offered = new Map<string, string>();
+
+  for (const { id, label } of options) {
+    const key = label.toLowerCase();
+
+    if (!offered.has(key) || GENERAL_TOOL_IDS.has(id)) {
+      offered.set(key, id);
+    }
+  }
+
+  const picked = new Map<string, string>();
+  const general = PROFILE_CONTENT[locale].options.tools;
+
+  for (const id of input.answer.picks) {
+    const generalId = GENERAL_TOOL_IDS.has(id);
+    const name = (generalId ? (general[id]?.label ?? id) : id).toLowerCase();
+
+    if (!picked.has(name) || generalId) {
+      picked.set(name, generalId ? id : (offered.get(name) ?? id));
+    }
+  }
+
+  const favorites = splitProfileFavorites(input.answer.favorites).filter((name) => {
+    const key = name.toLowerCase();
+
+    if (picked.has(key)) {
+      return false;
+    }
+
+    const id = offered.get(key);
+
+    if (id === undefined || picked.size >= MAX_PROFILE_TOOL_PICKS) {
+      return true;
+    }
+
+    picked.set(key, id);
+    return false;
+  });
+
+  return {
+    ...input,
+    answer: {
+      ...input.answer,
+      favorites: favorites.join(", "),
+      picks: [...picked.values()].toSorted(),
+    },
+  };
+}
+
 function hasProfileAnswerContent(input: ProfileAnswerInput): boolean {
   switch (input.question) {
     case "work":
@@ -129,8 +197,7 @@ function validContent(normalized: ProfileAnswerInput): ProfileAnswerInput | null
         ? null
         : normalized;
     case "studies":
-      return normalized.answer.studies.length > 3 ||
-        normalized.answer.studies.some((study) => study.field === "other" && !study.subject)
+      return normalized.answer.studies.some((study) => study.field === "other" && !study.subject)
         ? null
         : normalized;
     case "conditions":
@@ -141,14 +208,13 @@ function validContent(normalized: ProfileAnswerInput): ProfileAnswerInput | null
         : normalized;
     case "learningSupport":
     case "addressForm":
-      return normalized;
     case "activities":
     case "listen":
     case "play":
     case "read":
     case "tools":
     case "watch":
-      return normalized.answer.picks.length > 3 ? null : normalized;
+      return normalized;
     default:
       return null;
   }

@@ -276,7 +276,7 @@ export function PlacementQuestionScreen({
         )}
 
         {stopHint && (
-          <p className="text-muted-foreground text-sm text-pretty" role="status">
+          <p className="text-muted-foreground text-sm" role="status">
             {stopHint}
           </p>
         )}

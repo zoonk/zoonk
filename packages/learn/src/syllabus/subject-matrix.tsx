@@ -78,7 +78,7 @@ function MatrixGroupRow({ group }: { group: MatrixGroup }) {
       <CollapsibleContent>
         <ul className="text-muted-foreground flex flex-col gap-2 px-4 pt-1 pb-3.5 text-sm">
           {group.children.map((child) => (
-            <li className={cn("text-pretty", child.depth > 1 && "pl-5")} key={child.topic.name}>
+            <li className={cn(child.depth > 1 && "pl-5")} key={child.topic.name}>
               <TopicNumber number={child.number} />
               {child.text}
             </li>

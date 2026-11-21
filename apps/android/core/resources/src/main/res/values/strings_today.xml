@@ -57,8 +57,6 @@
     <string name="today_rest_next_lessons">Your next lessons are below if you want to study.</string>
     <string name="today_rest_enjoy">Enjoy your day off!</string>
     <string name="today_waiting">Getting today\'s lessons ready…</string>
-    <string name="today_waiting_stalled">Today\'s lessons are taking longer than usual.</string>
-    <string name="today_waiting_stalled_detail">Come back in a few minutes.</string>
     <string name="today_nothing_new">You\'re all caught up.</string>
 
     <string name="today_up_next">Up next in your plan</string>
@@ -201,8 +199,6 @@
     <string name="today_coming_title">Your next lessons</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">Getting ready…</string>
-    <!-- Under "Your next lessons" when their writing has taken a while. -->
-    <string name="today_coming_stalled">Taking longer than usual</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">Not ready yet</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
@@ -223,7 +219,6 @@
     <string name="today_week_day_planned">%1$s planned</string>
     <string name="today_plan_finished">You finished your plan.</string>
     <string name="today_week_after_exam">after your exam</string>
-    <string name="today_get_them_now">Get them now</string>
     <string name="today_resume">Resume</string>
     <!-- Lessons planned for earlier days that didn't fit in today's list; the learner can add them to today. -->
     <plurals name="today_earlier_lessons">

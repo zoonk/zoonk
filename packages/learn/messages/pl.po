@@ -604,13 +604,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "To trwa dłużej niż zwykle. Kolejny krok otworzy się sam, nie musisz klikać ponownie."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Przewiń w lewo"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Przewiń w prawo"
@@ -1358,7 +1356,6 @@ msgstr "Cześć! Mam na imię {name} i jestem twoim kumplem do nauki z AI. Powie
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Wcześniejsze pytania"
@@ -7811,11 +7808,6 @@ msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# udzielonych odpowiedzi} one {# udzielona odpowiedź} few {# udzielone odpowiedzi} other {# udzielonych odpowiedzi}}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "Pokaż dalsze pytania"
-
-#: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -8020,6 +8012,21 @@ msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Odpowiadaj dalej"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Część {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Pytanie {number} z {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Pytanie {number} z {total}"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8206,16 +8213,6 @@ msgstr "Część pisemna · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Część pisemna"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Pytanie {number} z {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Pytanie {number} z {total}"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8579,12 +8576,6 @@ msgid "After this mock exam"
 msgstr "Po tym egzaminie próbnym"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Pytanie {number}"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "Pytania do przejrzenia"
@@ -8647,11 +8638,6 @@ msgstr "Twoje odpowiedzi są zapisane."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Oddana"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Część {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8751,6 +8737,11 @@ msgstr "Najmocniejsza strona: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Popracuj nad: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Pytanie {number}"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
@@ -11665,6 +11656,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Np. pieczenie chleba, samochody, astronomia"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Dodaj"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11694,6 +11691,12 @@ msgstr "{field}: kurs lub przedmiot (opcjonalnie)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Np. dziennikarstwo"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "Usuń {tool}"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11763,9 +11766,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "Dzięki temu dobieramy przykłady, które cię zainteresują."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "Wcześniejsze lub obecne, ukończone lub nie. Wybierz maksymalnie 3."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "Dawniej lub obecnie, ukończone lub nie."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11781,11 +11784,6 @@ msgstr "To opcjonalne. Na podstawie twoich wyborów dostosowujemy treści do two
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Wybierz wszystko, co ci pomaga."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Wybierz do 3 opcji."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
@@ -13081,6 +13079,7 @@ msgstr "Ćwicz {minutes} min"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "Przygotuj lekcje"
@@ -13113,12 +13112,6 @@ msgid "What changed"
 msgstr "Co się zmieniło"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "Przygotuj je teraz"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Twoje kolejne lekcje"
@@ -13129,12 +13122,6 @@ msgstr "Twoje kolejne lekcje"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "Jeszcze niegotowe"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "Potrzebujemy więcej czasu niż zwykle"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13175,16 +13162,6 @@ msgstr "Jeśli chcesz się uczyć, kolejne lekcje znajdziesz poniżej."
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "Korzystaj z wolnego!"
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "Przygotowanie dzisiejszych lekcji trwa dłużej niż zwykle."
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "Wróć za kilka minut."
 
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"

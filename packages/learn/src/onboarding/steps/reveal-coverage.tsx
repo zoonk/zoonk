@@ -18,7 +18,7 @@ export function RevealCoverage() {
   }
 
   return (
-    <p className="text-muted-foreground text-sm text-pretty" data-slot="reveal-coverage">
+    <p className="text-muted-foreground text-sm" data-slot="reveal-coverage">
       {coveredText(coverage)}
     </p>
   );

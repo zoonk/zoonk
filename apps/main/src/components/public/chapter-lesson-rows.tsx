@@ -60,9 +60,7 @@ export async function ChapterLessonRows({
                 {index + 1}
               </span>
 
-              <span className="min-w-0 flex-1 text-sm leading-5 font-medium text-pretty">
-                {lesson.title}
-              </span>
+              <span className="min-w-0 flex-1 text-sm leading-5 font-medium">{lesson.title}</span>
 
               <span className="text-muted-foreground shrink-0 font-mono text-xs leading-5 whitespace-nowrap tabular-nums">
                 {formatMinutes(lesson.estimatedMinutes)}

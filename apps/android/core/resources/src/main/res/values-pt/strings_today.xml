@@ -11,7 +11,6 @@
   "today_building_plan_goal": "28a3375e0c9a264c0b47f7ce18be531223a27f537acf8984520acc7116a17d32",
   "today_choose_focus": "ffb974422187ff7351605be44462fed2de4f05ea9fd1b471a98bf8936cff3e55",
   "today_coming_not_written": "236d47f4184e7b77214d2620007e729d629d360b69d231a594c6a1c5c19dc499",
-  "today_coming_stalled": "ba66ac667319ed42cbe32b34d152a09c279dffaeaf0e09269454bb1ce7973b8e",
   "today_coming_title": "6b1b44d52bcf8d2f00190147263f74adc5b125b56183b72d9d148dfd9bb168cd",
   "today_coming_writing": "8337a3bd007730f29a239e51c1a0311b29bda8a90e406bbd910263e4b7db563a",
   "today_completed_lessons_line": "9f4f638d6e3e3cddb95d05f76bf44625373174e70e7946b3c9032a23dba1a6c2",
@@ -29,7 +28,6 @@
   "today_exam_speaking_detail": "ba143d3e536a58109bc246467c81a3b3b66e6bea42dc591a435ded1cde75205e",
   "today_finished_goal": "41298a94ec8b4493addb1d7752e6d77505ddbec6b62a3a8ab3a82ea05459cc65",
   "today_get_lessons": "df59bf8d2a5b71ea318789166fc2565ad94920d50e99e89f7181cf37aaf386d6",
-  "today_get_them_now": "a02bb6a651f28248fa7fccd3965bd6938e03f6ba9814d66bf983f44043604a41",
   "today_insight_add_it": "2cfce9928a0be221a462eea611d6906c531e8383f76b3b1ea5ba43d9e45d76ae",
   "today_insight_got_it": "64cf662ce7eae98cddfd248dab7a2dab433c284452cbe9015d313184852c56dd",
   "today_insight_keep_it": "88373581bbbcfb6a548d8f73d2584b77dd2102e3d01f5e46a004f4b14a3c1590",
@@ -131,8 +129,6 @@
   "today_unfinished_setup": "0bfca4d621888470bcac60e4fe4f222267f8fd51b37eebaae4114966cca54d56",
   "today_up_next": "42802616f4af2fa9344817cf362cf24303e8bf7d5e066417f573bd006a64f861",
   "today_waiting": "99299bb070b96e85ecaa8cca24e8478745233902adcb3b5c293594d2854f1586",
-  "today_waiting_stalled": "f86f685f7359339c5ebd40532f50edf273a0ef8a1e09a3ca27e1c9c58912041c",
-  "today_waiting_stalled_detail": "76a1dac9048efcfda4a0dc0bcf2aa68f4daca700edf515b517f0679f24c3ca52",
   "today_week_after_date": "7c8c5de7c450bc346543a5205762fd7bca7ce2bb965e4709d985b17d6d9fe48f",
   "today_week_after_exam": "10f24b24c5252a5c7fa888a127fcd8a378594618f3897f99cbe9b2134ea0ac74",
   "today_week_before_plan": "79c54da681d73c19bd6c3449c454ddd1cf5b267661a91e05192521240b542dac",
@@ -219,8 +215,6 @@
     <string name="today_rest_next_lessons">Se quiser estudar, suas próximas aulas estão logo abaixo.</string>
     <string name="today_rest_enjoy">Aproveite seu dia de descanso!</string>
     <string name="today_waiting">Preparando as aulas de hoje…</string>
-    <string name="today_waiting_stalled">As aulas de hoje estão demorando mais que o normal.</string>
-    <string name="today_waiting_stalled_detail">Volte daqui a alguns minutos.</string>
     <string name="today_nothing_new">Você está em dia.</string>
     <string name="today_up_next">A seguir no seu plano</string>
     <string name="today_start_session">Começar</string>
@@ -364,8 +358,6 @@
     <string name="today_coming_title">Suas próximas aulas</string>
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">Preparando…</string>
-    <!-- Under "Your next lessons" when their writing has taken a while. -->
-    <string name="today_coming_stalled">Demorando mais que o normal</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get lessons" link. -->
     <string name="today_coming_not_written">Ainda não estão prontas</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
@@ -387,7 +379,6 @@
     <string name="today_week_day_planned">Planejado: %1$s</string>
     <string name="today_plan_finished">Você concluiu seu plano.</string>
     <string name="today_week_after_exam">depois da sua prova</string>
-    <string name="today_get_them_now">Preparar agora</string>
     <string name="today_resume">Retomar</string>
     <!-- Lessons planned for earlier days that didn't fit in today's list; the learner can add them to today. -->
     <plurals name="today_earlier_lessons">

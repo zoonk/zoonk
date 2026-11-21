@@ -92,7 +92,7 @@ export function AttentionTiles({ items }: { items: AttentionItem[] }) {
 
 function AttentionDetail({ item }: { item: AttentionItem }) {
   return (
-    <span className="text-muted-foreground text-compact text-pretty">
+    <span className="text-muted-foreground text-compact">
       {item.detail}
       {item.oldest && (
         <>

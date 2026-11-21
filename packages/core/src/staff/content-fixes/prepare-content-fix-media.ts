@@ -27,7 +27,11 @@ export async function listPendingFixMedia(fixId: string): Promise<ContentFixMedi
     where: { id: fixId, mediaOwedAt: { not: null }, status: "proposed" },
   });
 
-  return readContentFixMedia(fix?.media).flatMap(({ need, result }) =>
+  if (!fix) {
+    return [];
+  }
+
+  return readContentFixMedia(fix.media).flatMap(({ need, result }) =>
     result === null ? [need] : [],
   );
 }
@@ -46,7 +50,11 @@ export async function recordFixMedia({
       SELECT media FROM content_fixes WHERE id = ${fixId}::uuid
         AND status = 'proposed' AND voice_owed_at IS NOT NULL FOR UPDATE`);
 
-    const media = readContentFixMedia(fix?.media);
+    if (!fix) {
+      return;
+    }
+
+    const media = readContentFixMedia(fix.media);
     const item = media.find(({ need }) => need.key === key);
 
     if (!item || item.result !== null) {

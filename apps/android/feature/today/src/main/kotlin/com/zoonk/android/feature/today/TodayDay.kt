@@ -74,7 +74,15 @@ internal class TodayDayModel(
 ) {
     val day = read.day
     val today = read.today
-    val state = day.state
+
+    /** Main's `useDayState`: a wait for the day's lessons that ran out asks for them, as a day nobody is preparing does. */
+    val state = if (day.state == StudySession.State.WAITING && writingStalled) StudySession.State.PREPARE else day.state
+
+    /** Only a day with no blocks asks for its lessons with its line and action; a started one asks from its list's row. */
+    val asksForDay = state == StudySession.State.PREPARE && day.steps.isEmpty()
+
+    /** Main's `useComingLessons`: the held time's lessons are asked for once nobody is writing them or the wait ran out. */
+    val comingAsks = day.lessonsToPrepare || writingStalled
     val pastDate = today.pastDateLessons()?.takeIf { state == StudySession.State.REST || state == StudySession.State.AHEAD }
     val upNext = day.upNextLessons(pastDate != null)
     val keepLearning = upNext.isNotEmpty()
@@ -278,7 +286,7 @@ private val TodayDayModel.hasAction: Boolean
             keepLearning ||
             state == StudySession.State.UNDERWAY ||
             state == StudySession.State.DONE ||
-            state == StudySession.State.PREPARE ||
+            asksForDay ||
             (state == StudySession.State.AHEAD && day.extraTime.available)
 
 @Composable
@@ -304,7 +312,7 @@ private fun TodayAction(
                 }
             }
 
-            model.state == StudySession.State.PREPARE -> {
+            model.asksForDay -> {
                 ActionButton(
                     stringResource(R.string.today_get_lessons),
                     busy,
@@ -365,7 +373,7 @@ internal fun rememberActionStatus(
     val tap =
         when {
             model.pastDate != null -> null
-            model.state == StudySession.State.PREPARE -> TodayTap.Prepare
+            model.asksForDay -> TodayTap.Prepare
             model.keepLearning || model.state == StudySession.State.AHEAD -> TodayTap.KeepLearning
             model.state == StudySession.State.UNDERWAY -> TodayTap.Continue
             else -> null

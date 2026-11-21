@@ -40,7 +40,7 @@ function GenerationTimelineTitle({ className, render, ...props }: useRender.Comp
 function GenerationTimelineDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-muted-foreground text-sm text-pretty", className)}
+      className={cn("text-muted-foreground text-sm", className)}
       data-slot="generation-timeline-description"
       {...props}
     />

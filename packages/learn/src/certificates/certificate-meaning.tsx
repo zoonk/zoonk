@@ -40,10 +40,7 @@ export function CertificateMeaning({ facts }: { facts: CertificateFacts }) {
         {t("What this certificate means")}
       </h2>
       {paragraphs.map((paragraph) => (
-        <p
-          className="text-muted-foreground text-reading mt-2.5 leading-relaxed text-pretty"
-          key={paragraph}
-        >
+        <p className="text-muted-foreground text-reading mt-2.5 leading-relaxed" key={paragraph}>
           {paragraph}
         </p>
       ))}
@@ -72,7 +69,7 @@ export function CertificateCovered({ facts }: { facts: CertificateFacts }) {
       </h2>
       <ul className="mt-3 grid max-w-4xl gap-x-8 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
-          <li className="text-reading flex gap-2.5 text-pretty" key={item}>
+          <li className="text-reading flex gap-2.5" key={item}>
             <DoneMark className="mt-1" />
             <span>{item}</span>
           </li>

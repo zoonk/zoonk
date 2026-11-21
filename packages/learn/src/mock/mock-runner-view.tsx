@@ -20,23 +20,17 @@ import { MockFrame } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
 import { useMockTitle } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
-import { getSectionPlace } from "./mock-place";
 import { MockQuestionCard, MockRecording, useQuestionPlace } from "./mock-question";
 import { useSectionCounts } from "./mock-section-counts";
 
 const PERCENT = 100;
 
-function RunnerProgress({ question }: { question: MockQuestion }) {
+function RunnerProgress({ question, total }: { question: MockQuestion; total: number }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const counts = useSectionCounts();
   const title = useMockTitle();
-  const place = useQuestionPlace(question);
-
-  const inSection = getSectionPlace({
-    position: runner.position,
-    questions: runner.view.current?.questions ?? [],
-  });
+  const place = useQuestionPlace({ question, total });
 
   return (
     <>
@@ -61,12 +55,9 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
         <span className="flex shrink-0 items-center gap-3 font-mono text-xs tabular-nums">
           <ItemClock />
           <span aria-hidden="true">
-            {inSection
-              ? t("{number} of {total}", {
-                  number: String(inSection.number),
-                  total: String(inSection.total),
-                })
-              : t("Written part")}
+            {question.format === "essay"
+              ? t("Written part")
+              : t("{number} of {total}", { number: String(question.number), total: String(total) })}
           </span>
         </span>
         <span className="sr-only">{place}</span>
@@ -163,7 +154,15 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
 }
 
 /** What the flag is for, said once: where the learner first meets the button. */
-function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
+function RunnerScreen({
+  deadline,
+  question,
+  total,
+}: {
+  deadline: string;
+  question: MockQuestion;
+  total: number;
+}) {
   const t = useExtracted();
   const [confirming, setConfirming] = useState(false);
   const handIn = () => setConfirming(true);
@@ -181,7 +180,7 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
       footer={<RunnerFooter onHandIn={handIn} />}
       headerEnd={<MockAnswerSheet onHandIn={handIn} />}
       headerTitle={<ClockTitle clockBeside deadline={deadline} />}
-      progress={{ bar: <RunnerProgress question={question} /> }}
+      progress={{ bar: <RunnerProgress question={question} total={total} /> }}
     >
       <MockRecording key={question.set?.id ?? "none"} question={question} />
       <MockQuestionCard key={question.itemId} question={question} />
@@ -202,5 +201,7 @@ export function MockRunnerView() {
     return null;
   }
 
-  return <RunnerScreen deadline={current.deadline} question={question} />;
+  return (
+    <RunnerScreen deadline={current.deadline} question={question} total={current.questionTotal} />
+  );
 }

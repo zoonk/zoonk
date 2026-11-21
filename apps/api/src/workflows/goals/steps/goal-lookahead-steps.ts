@@ -75,19 +75,17 @@ export async function createGoalGenerationManifestStep(input: {
   return catchPlanConflict(() => createPlanGenerationManifest(input));
 }
 
-export async function listPlanOutlineNeedsStep(input: {
-  days: number;
-  goalId: string;
-}): Promise<CourseOutlineNeed[]> {
+export async function listPlanOutlineNeedsStep(
+  input: Parameters<typeof listPlanOutlineNeeds>[0],
+): Promise<CourseOutlineNeed[]> {
   "use step";
 
   return listPlanOutlineNeeds(input);
 }
 
-export async function listSkillExtensionsStep(input: {
-  days: number;
-  goalId: string;
-}): Promise<CourseOutlineNeed[]> {
+export async function listSkillExtensionsStep(
+  input: Parameters<typeof listSkillExtensions>[0],
+): Promise<CourseOutlineNeed[]> {
   "use step";
 
   return listSkillExtensions(input);

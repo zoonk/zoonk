@@ -38,3 +38,14 @@ export function getSettledSkillIds({
     }),
   );
 }
+
+/** Situations the learner finished a lesson in. */
+export function getStartedSkillIds(
+  items: readonly Pick<ExistingPlanItem, "kind" | "skillId" | "status">[],
+): Set<string> {
+  return new Set(
+    items.flatMap((item) =>
+      item.kind === "lesson" && item.skillId && item.status === "done" ? [item.skillId] : [],
+    ),
+  );
+}

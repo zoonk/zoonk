@@ -133,7 +133,7 @@ function ZoneLabel({
 }) {
   return (
     <span className="grid min-w-0 flex-1 gap-x-4 gap-y-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline">
-      <span className="text-pretty">{summary}</span>
+      <span>{summary}</span>
 
       {aside && (
         <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">

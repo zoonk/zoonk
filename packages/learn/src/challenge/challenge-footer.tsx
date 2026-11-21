@@ -20,7 +20,7 @@ function StatusLine({ children, icon }: { children: React.ReactNode; icon: React
   return (
     <p className="text-muted-foreground flex min-h-11 items-start gap-3 py-3 text-sm">
       <LineMarker aria-hidden="true">{icon}</LineMarker>
-      <span className="text-pretty">{children}</span>
+      <span>{children}</span>
     </p>
   );
 }

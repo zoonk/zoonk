@@ -73,7 +73,7 @@ export function TimeAnswer({
       aria-busy={updating || isBusyLine(line)}
       aria-live="polite"
       className={cn(
-        "text-muted-foreground flex flex-col gap-2 text-sm text-pretty transition-opacity",
+        "text-muted-foreground flex flex-col gap-2 text-sm transition-opacity",
         updating && "opacity-50",
       )}
     >

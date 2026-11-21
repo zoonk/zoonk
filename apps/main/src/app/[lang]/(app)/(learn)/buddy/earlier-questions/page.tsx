@@ -38,7 +38,7 @@ async function EarlierQuestionEntry({ question }: { question: EarlierQuestion })
         {question.lessonTitle && ` · ${question.lessonTitle}`}
       </Eyebrow>
 
-      <p className="font-medium text-pretty">{question.question}</p>
+      <p className="font-medium">{question.question}</p>
 
       {question.answer ? (
         <div className="text-reading leading-relaxed">

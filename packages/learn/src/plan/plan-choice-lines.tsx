@@ -25,10 +25,7 @@ function PlanChoiceLine({
   }
 
   return (
-    <p
-      className={cn("text-muted-foreground text-sm text-pretty", className)}
-      data-slot="plan-choice-line"
-    >
+    <p className={cn("text-muted-foreground text-sm", className)} data-slot="plan-choice-line">
       <span id={id}>{t("{group}: {option}", { group: choice.group, option: picked })}</span>
       <span aria-hidden="true">{"\u00A0·\u00A0"}</span>
       <Button aria-describedby={id} onClick={onChange} variant="link">

@@ -6,6 +6,7 @@ import { type PlannedItem } from "./plan-items";
 import { getExamWindows } from "./plan-phases";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
+import { getShortExamFocus } from "./short-exam-plan";
 import { type SkillReadiness } from "./skill-order";
 
 const TODAY = fromIsoDate("2026-09-30");
@@ -86,6 +87,14 @@ function windowsFor(days: number) {
     days: Math.round((window.endDate.getTime() - window.startDate.getTime()) / 86_400_000) + 1,
     kind: window.kind,
   }));
+}
+
+function publicExamPracticeFocus(days: number) {
+  return windowsFor(days).flatMap((window) =>
+    window.kind === "practice"
+      ? [getShortExamFocus({ days: window.days, kind: window.kind, shortMockMinutes: null })]
+      : [],
+  );
 }
 
 describe("the phases of a test days away", () => {
@@ -222,6 +231,13 @@ describe("a public exam days away", () => {
     const plan = buildPlan(classTest({ days: 1, shortMockMinutes: null }));
 
     expect(datesOf({ items: plan.items, kind: "mock" })).toStrictEqual([]);
+  });
+
+  it("names a one-day practice phase after the mock it holds, and a longer one mock and practice", () => {
+    expect(publicExamPracticeFocus(3)).toStrictEqual(["mockAndReview"]);
+    expect(publicExamPracticeFocus(4)).toStrictEqual(["mockAndReview"]);
+    expect(publicExamPracticeFocus(5)).toStrictEqual(["mockAndPractice"]);
+    expect(publicExamPracticeFocus(7)).toStrictEqual(["mockAndPractice"]);
   });
 });
 
