@@ -218,12 +218,12 @@ class ChallengeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneMockPreparing() = show("phone-mock-preparing", *mock, "access" to "preparing", mocks = writingPaperApi(null))
+    fun phoneMockPreparing() = show("phone-mock-preparing", *mockToday, mocks = writingPaperApi(null))
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneMockPreparingDark() =
-        show("phone-mock-preparing-dark-more-contrast", *mock, "access" to "preparing", mocks = writingPaperApi(null), dark = true)
+        show("phone-mock-preparing-dark-more-contrast", *mockToday, mocks = writingPaperApi(null), dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
@@ -286,6 +286,9 @@ class ChallengeScreenshots {
             "status" to "upcoming",
             "canMove" to true,
         )
+
+    /** Today's mock, still being prepared. */
+    private val mockToday = mock + arrayOf("access" to "preparing", "date" to "2026-10-29", "status" to "ready")
 
     @Test
     @Config(qualifiers = BOOK)
