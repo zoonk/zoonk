@@ -95,5 +95,5 @@ overrides:
   minimatch@>=7.0.0 <11.0.1: ^11.0.1
   # Audit remediation (@tailwindcss/typography pins 6.0.10): 6.1.5 parses flat selectors in linear time.
   postcss-selector-parser@<6.1.5: ^6.1.5
-  # Audit remediation (Vercel Blob's OIDC client 3.8 pulls @vercel/cli-config 0.3.1, which pins 4.1.11): 4.6.6 stops oversized constrained collections from exhausting memory.
+  # Audit remediation (Workflow's CLI pulls @vercel/cli-auth 0.0.1, and Vercel Blob's OIDC client 3.8 pulls @vercel/cli-config 0.3.1; both pin 4.1.11): 4.6.6 stops oversized constrained collections from exhausting memory.
   zod@<4.6.6: ^4.6.6
