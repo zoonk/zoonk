@@ -125,7 +125,7 @@ describe(mockSupplyWorkflow, () => {
     );
   });
 
-  it("writes every paper's questions when one paper's shared texts fail", async () => {
+  it("says a recount-complete paper is ready even when its shared texts fail", async () => {
     const waited = paper(DAY_1, { allowStimulusSets: true, later: false });
     const scheduled = paper(DAY_2, { allowStimulusSets: true });
     const written: string[] = [];
@@ -155,7 +155,7 @@ describe(mockSupplyWorkflow, () => {
       tags: { "workflow.name": "mockSupplyWorkflow", "workflow.run_id": "test-run-id" },
     });
 
-    expect(streamedSteps(DAY_1).at(-1)).toBe("workflowError:error");
+    expect(streamedSteps(DAY_1).at(-1)).toBe("mockPaperReady:completed");
     expect(streamedSteps(DAY_2).at(-1)).toBe("mockPaperReady:completed");
   });
 
@@ -209,7 +209,8 @@ describe(mockSupplyWorkflow, () => {
     });
 
     it("ends the wait when question writing fails", async () => {
-      plan([paper(DAY_1, { later: false })]);
+      const waited = paper(DAY_1, { later: false });
+      plan([waited], [waited]);
       const error = new Error("Provider unavailable");
       vi.mocked(writeMockQuestions).mockRejectedValueOnce(error);
 

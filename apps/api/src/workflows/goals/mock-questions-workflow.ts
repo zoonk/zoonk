@@ -1,4 +1,5 @@
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
+import { safeAsync } from "@zoonk/utils/error";
 import { getWorkflowMetadata } from "workflow";
 import { startOnce, waitForRunToken } from "../_shared/run-token";
 import { endFollowUpStep } from "../follow-ups/steps/follow-up-steps";
@@ -41,7 +42,7 @@ async function prepareSets({
   supply: MockQuestionWrites;
 }) {
   if (!supply.allowStimulusSets) {
-    return { addedSets: false, failed: false };
+    return false;
   }
 
   const sets = await pickMockSetTargetsStep({
@@ -64,10 +65,7 @@ async function prepareSets({
     ),
   );
 
-  return {
-    addedSets: stored.some((result) => result.status === "fulfilled" && result.value),
-    failed: stored.some((result) => result.status === "rejected"),
-  };
+  return stored.some((result) => result.status === "fulfilled" && result.value);
 }
 
 type PaperProgress = Awaited<ReturnType<typeof openMockPaperProgress>>;
@@ -85,7 +83,7 @@ async function preparePaperSets({
   workflowRunId: string;
 }) {
   if (!supply.allowStimulusSets) {
-    return { addedSets: false, failed: false };
+    return false;
   }
 
   try {
@@ -94,7 +92,7 @@ async function preparePaperSets({
     );
   } catch (error) {
     await reportMockSupplyFailureStep({ error, workflowRunId });
-    return { addedSets: false, failed: true };
+    return false;
   }
 }
 
@@ -103,16 +101,13 @@ async function writePaper({
   progress,
   supply,
   workflowRunId,
-  setsFailed,
 }: {
   input: SupplyPlan;
   progress: PaperProgress;
   supply: MockQuestionWrites;
   workflowRunId: string;
-  setsFailed: boolean;
 }) {
   const { goalId } = input;
-  let written = false;
 
   try {
     await progress.step("writeMockQuestions", () =>
@@ -126,14 +121,19 @@ async function writePaper({
         prepareMockRecordings({ goalId, later: supply.later, recordings, workflowRunId }),
       );
     }
-
-    const { papers } = await listMockPrepWritesStep({ ...input, only: supply.key });
-    written = !setsFailed && papers.length === 0;
   } catch (error) {
     await reportMockSupplyFailureStep({ error, workflowRunId });
   }
 
-  await progress.end(written ? "written" : "short");
+  const { data, error } = await safeAsync(() =>
+    listMockPrepWritesStep({ ...input, only: supply.key }),
+  );
+
+  if (error) {
+    await reportMockSupplyFailureStep({ error, workflowRunId });
+  }
+
+  await progress.end(data?.papers.length === 0 ? "written" : "short");
 }
 
 function reservedPapers(papers: MockQuestionWrites[]) {
@@ -161,7 +161,7 @@ async function prepareAlternative({
 
   const progress = await open(key);
 
-  const { addedSets, failed } = await preparePaperSets({
+  const addedSets = await preparePaperSets({
     goalId: input.goalId,
     progress,
     supply,
@@ -172,9 +172,9 @@ async function prepareAlternative({
   const [remaining] = recounted.papers;
 
   if (remaining) {
-    await writePaper({ input, progress, setsFailed: failed, supply: remaining, workflowRunId });
+    await writePaper({ input, progress, supply: remaining, workflowRunId });
   } else {
-    await progress.end(failed ? "short" : "written");
+    await progress.end("written");
   }
 }
 
@@ -204,39 +204,25 @@ async function preparePapers({
     }
 
     const sets = await Promise.all(
-      first.map(async (supply) => ({
-        key: supply.key,
-        ...(await preparePaperSets({
-          goalId,
-          progress: await open(supply.key),
-          supply,
-          workflowRunId,
-        })),
-      })),
+      first.map(async (supply) =>
+        preparePaperSets({ goalId, progress: await open(supply.key), supply, workflowRunId }),
+      ),
     );
 
-    const { papers } = sets.some(({ addedSets }) => addedSets)
-      ? await listMockPrepWritesStep(input)
-      : planned;
+    const { papers } = sets.some(Boolean) ? await listMockPrepWritesStep(input) : planned;
 
     const reserved = reservedPapers(papers).toSorted((a, b) => Number(a.later) - Number(b.later));
 
     /* oxlint-disable no-await-in-loop -- Each chooser alternative can use the last paper's writes. */
-    for (const { key, failed } of sets) {
+    for (const { key } of first) {
       if (!reserved.some((supply) => supply.key === key)) {
         const progress = await open(key);
-        await progress.end(failed ? "short" : "written");
+        await progress.end("written");
       }
     }
 
     for (const supply of reserved) {
-      await writePaper({
-        input,
-        progress: await open(supply.key),
-        setsFailed: sets.some(({ key, failed }) => key === supply.key && failed),
-        supply,
-        workflowRunId,
-      });
+      await writePaper({ input, progress: await open(supply.key), supply, workflowRunId });
     }
 
     if (priority) {
