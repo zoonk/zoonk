@@ -176,5 +176,3 @@ export function challengeChartCaseFixture() {
     variant: "work" as const,
   };
 }
-
-export const CHALLENGE_CHART_STRONG_PATH = ["fine-scan", "park-peak"];

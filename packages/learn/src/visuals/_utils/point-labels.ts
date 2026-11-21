@@ -7,7 +7,7 @@ const LABEL_HEIGHT = 14;
 const LABEL_CLEARANCE = 1;
 const MAX_KEY_MARKER_LENGTH = 2;
 
-export type Box = { bottom: number; left: number; right: number; top: number };
+type Box = { bottom: number; left: number; right: number; top: number };
 
 export type Pixel = { x: number; y: number };
 

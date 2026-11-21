@@ -27,7 +27,7 @@ type Tick = { label: string; value: number };
 
 type Mark = PlotVisual["series"][number]["mark"];
 
-export type ReferenceMark = { label: string; lines: string[]; top: number; y: number };
+type ReferenceMark = { label: string; lines: string[]; top: number; y: number };
 
 export type PlotLayout = {
   key: KeyEntry[];
