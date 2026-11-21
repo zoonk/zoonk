@@ -570,7 +570,11 @@ private struct MistakeMovedNote: View {
 
   var body: some View {
     if feedback.mistakeFixed {
-      FixedMistakesNote(count: 1)
+      QuestionNote(systemImage: "checkmark.circle") {
+        Text(
+          "Mistake fixed. It leaves your notebook.", tableName: "Practice",
+          comment: "After answering a saved mistake right.")
+      }
     } else if feedback.savedToNotebook {
       QuestionNote(systemImage: "square.and.pencil") {
         Text(
