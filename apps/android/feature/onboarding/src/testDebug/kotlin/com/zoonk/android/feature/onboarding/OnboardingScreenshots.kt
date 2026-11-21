@@ -69,6 +69,8 @@ import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.OnboardingDraft
+import com.zoonk.api.models.OnboardingDraftSource
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -156,6 +158,29 @@ class OnboardingScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun levelTestWaiting() = captureLevelTestWaiting("phone-screen")
+
+    /** The card names the draft's material; back on the entry, five sources leave the paperclip off. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialFull() {
+        val sources =
+            listOf("Cell cycle.pdf", "Mitosis slides.pptx", "", "Chapter 12: Meiosis", "Lab notes")
+                .map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) }
+        val api =
+            FakeOnboardingApi().apply {
+                draft =
+                    understoodDraft(prompt = "test on Friday").copy(
+                        materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                        sources = sources,
+                    )
+            }
+        compose.setContent { ZoonkTheme { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } } }
+        compose.waitForIdle()
+        write("understood-material-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+        write("start-material-full-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

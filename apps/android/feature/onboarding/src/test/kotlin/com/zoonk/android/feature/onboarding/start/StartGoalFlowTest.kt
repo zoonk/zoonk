@@ -169,6 +169,18 @@ class StartGoalFlowTest {
     }
 
     @Test
+    fun fiveSourcesLeaveNoRoomForMoreMaterial() {
+        val sources = (1..5).map { OnboardingDraftSource(id = UUID.randomUUID(), title = "Chapter $it") }
+        api.draft = understoodDraft(prompt = "test on Friday").copy(sources = sources)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithContentDescription("Study your own material").assertIsNotEnabled()
+        rule.onNodeWithContentDescription("Remove Chapter 5").performClick()
+        rule.onNodeWithContentDescription("Study your own material").assertIsEnabled()
+    }
+
+    @Test
     fun anotherLearnerSeesNoneOfThePreviousOnesWork() {
         show()
         sendGoal("pass the bar exam")

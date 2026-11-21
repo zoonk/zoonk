@@ -231,6 +231,8 @@ class StartGoalViewModel(
 
     val canAttach: Boolean get() = !isAttaching && attachFailure.canAttachMaterial(java.time.Instant.now())
 
+    val hasRoomForMaterial: Boolean get() = flow.attached.size < MAX_GOAL_SOURCES
+
     private fun attach(add: suspend () -> WriteOutcome<AttachedSource>) {
         if (!canAttach) return
         isAttaching = true
@@ -599,3 +601,6 @@ class StartGoalViewModel(
         saved = flow
     }
 }
+
+/** Core's `MAX_GOAL_SOURCES`: a goal is sent with this many at most. */
+private const val MAX_GOAL_SOURCES = 5

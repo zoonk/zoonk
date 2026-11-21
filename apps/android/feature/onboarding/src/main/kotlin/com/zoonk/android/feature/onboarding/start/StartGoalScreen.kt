@@ -252,7 +252,7 @@ private fun ColumnScope.Entry(
         onSubmit = submit,
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
         leading = {
-            IconButton(onClick = vm::toggleAttach) {
+            IconButton(onClick = vm::toggleAttach, enabled = vm.hasRoomForMaterial) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
                     Icon(
                         painterResource(R.drawable.ic_attach_file),
