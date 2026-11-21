@@ -2,6 +2,7 @@ package com.zoonk.android.feature.onboarding.setup
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -100,7 +101,7 @@ class QuestionSpreadTest {
 
         for (change in listOf(::open, ::close, ::open, ::recreate, ::open)) {
             change()
-            rule.onNodeWithText("Trial").assertIsSelected()
+            rule.onNodeWithText("Trial").assertIsOn()
             rule.onNodeWithText("Confirm").assertIsEnabled()
         }
     }
