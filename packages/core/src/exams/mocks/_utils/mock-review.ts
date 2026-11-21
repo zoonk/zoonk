@@ -7,6 +7,7 @@ import { type MockReviewEntry } from "../mock-view-contract";
 import { gradeMockItem, readRecordedMockAnswer } from "./mock-item-grading";
 import { type MockItem, loadMockItems, toMockQuestionView } from "./mock-items";
 import { getAskedItemIds, numberMockQuestions } from "./mock-sections";
+import { type MockSitting } from "./owned-mock";
 
 function toEntry({
   area,
@@ -17,6 +18,7 @@ function toEntry({
   number,
   section,
   total,
+  unsure,
 }: {
   area: string | null;
   attempt: { answer: unknown; isCorrect: boolean };
@@ -26,8 +28,9 @@ function toEntry({
   number: number;
   section: number;
   total: number;
+  unsure: boolean;
 }): MockReviewEntry | null {
-  if (attempt.isCorrect) {
+  if (attempt.isCorrect && !unsure) {
     return null;
   }
 
@@ -39,6 +42,7 @@ function toEntry({
   });
 
   const outcome = getPickOutcome({ answered: grade.answered, credit: grade.credit });
+  const missedOutcome = outcome === "right" ? "wrong" : outcome;
   const shown = toMockQuestionView({ item, mockId: mockExamId });
 
   return {
@@ -51,11 +55,12 @@ function toEntry({
     itemId: item.id,
     learnerAnswer: grade.snapshot.answer,
     number,
-    outcome: outcome === "blank" || outcome === "partial" ? outcome : "wrong",
+    outcome: attempt.isCorrect ? "right" : missedOutcome,
     question: shown.question,
     section,
     set: shown.set,
     total,
+    unsure,
   };
 }
 
@@ -86,19 +91,19 @@ async function loadFinishedAnswers({
 
 export async function loadMockReview({
   areas,
-  conditions,
-  mockExamId,
+  mock,
   userId,
 }: {
   areas: Map<string, string>;
-  conditions: MockConditions;
-  mockExamId: string;
+  mock: MockSitting;
   userId: string;
 }): Promise<{
   mistakes: { cause: MistakeCause | null; count: number }[];
   review: MockReviewEntry[];
 }> {
+  const { answers, conditions, id: mockExamId } = mock;
   const asked = getAskedItemIds(conditions);
+  const draftsByItem = new Map(answers.map((answer) => [answer.itemId, answer]));
 
   const { attempts, items } = await loadFinishedAnswers({
     itemIds: asked.map((entry) => entry.itemId),
@@ -137,6 +142,7 @@ export async function loadMockReview({
         number,
         section,
         total,
+        unsure: draftsByItem.get(question.itemId)?.flagged ?? false,
       });
 
       return reviewed ? [reviewed] : [];

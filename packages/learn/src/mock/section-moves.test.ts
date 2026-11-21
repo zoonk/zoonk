@@ -1,5 +1,5 @@
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
-import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
+import { type MockDraft, type MockSectionView } from "@zoonk/core/exams/mocks/view-contract";
 import { describe, expect, it } from "vitest";
 import { getCurrentSectionMoves, getSectionMoves, replayKeptAnswers } from "./section-moves";
 
@@ -91,6 +91,31 @@ describe("reviewing timed-out mandatory questions", () => {
 
     expect(result.canAdvance).toBe(false);
     expect(result.canOpen(3)).toBe(false);
+  });
+});
+
+function recheck(sectionNavigation: MockSectionView["navigation"]) {
+  return getSectionMoves({
+    answered: true,
+    changed: [],
+    changesLeft: null,
+    navigation: sectionNavigation,
+    position: 0,
+    reached: 0,
+    total: 3,
+  }).canRecheck;
+}
+
+describe("rechecking an answer before handing in", () => {
+  it("is possible where the learner moves freely or reviews with changes left", () => {
+    expect(recheck(null)).toBe(true);
+    expect(recheck({ ...navigation, forwardOnly: false })).toBe(true);
+    expect(recheck({ ...navigation, answerChanges: 2 })).toBe(true);
+  });
+
+  it("isn't possible where questions only go forward and no answer can change", () => {
+    expect(recheck(navigation)).toBe(false);
+    expect(recheck({ ...navigation, answerChanges: 0 })).toBe(false);
   });
 });
 

@@ -399,7 +399,7 @@ private struct MockAnswerRequest: Encodable {
     // A blank is an explicit null: the API asks for the key.
     try container.encode(draft.isAnswered ? draft.answer : nil, forKey: .answer)
     try container.encode(min(max(draft.durationMs, 0), 3_600_000), forKey: .durationMs)
-    try container.encode(draft.flagged, forKey: .flagged)
+    try container.encode(draft.unsure, forKey: .flagged)
     try container.encode(draft.itemId, forKey: .itemId)
   }
 }

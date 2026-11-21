@@ -12,12 +12,12 @@
   "mock_result_below_minimum_points_decimal": "df5ebe4339d79bbc44514f36b803680554b69044a097975d92892da105567c86",
   "mock_result_below_percent": "d25e730fbac9e6fab951fcca23da73e3a0478ce606c47ebfa01a2c1e5ca4b240",
   "mock_result_blank": "6ff8984570d4864d0ff9eb210503d86638c1861a6b38899b1b06971368c6cb00",
-  "mock_result_blank_gain": "1720ce9b20fb02124238da71a411ba8a2a5847bc2205e2426b86f48ec0d71466",
+  "mock_result_blank_gain": "a81f0fece586b47601e0af7e56d5295441184d6b1ef9583d8f459fab9183031b",
   "mock_result_blank_wrong": "016c40d3f1cec2484f971b275d4a97816d5e7857139225bcf03a0286a5ea5caf",
   "mock_result_by_area": "2df76a3afc81adcb69364f78cc14d8a3f25e43a163ff3171a06138ccd8e7e09a",
   "mock_result_by_test": "0fe03bb8f19e5f494e46aff5b5cd8ec7fa9890b3b07a165486ad353ecdd4ea53",
   "mock_result_by_topic": "e4d63c30195ecc313ed89101c34403459a601cc1893456e2ff6a0b1181ba48f1",
-  "mock_result_calibration_detail": "5c96fb617bead5eb96785f4806043151f2cdfb7456d7acd6592c2f17badc440f",
+  "mock_result_calibration_detail": "e351d5035ba271d1e4be7100b0239369d575adcecace283f21aaca6edc923567",
   "mock_result_change_plan": "75ec196cf8c59e67568f199f14d8d38a212d7e2ee69fad49c9cda3acdcd69259",
   "mock_result_continue": "d0039fa24e55ead92de0c4ddbb2a8fe22cf09046698fbbb3772a7aa031af41a1",
   "mock_result_details": "0377e5699825184855bac29a1958431eedd37aff7c95a10c8501d80467497589",
@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "b5561c312ed023e60eb9972b6edbeae747e535fc2666c08c690a6777b9e82ca8",
   "mock_result_estimated_score": "9797dff2deb20c41f6dde7c782e5415de61adfe40efbb2db45ae57b2ca585843",
   "mock_result_every_minimum": "fbe92e0e2d3c51f61cb0f95ea8cc7ed884c3988f6dcee3308f8079ce4265ab03",
-  "mock_result_flagged_answers": "541d7836c4332524ed75c1e61cf62d4edf918804f00c51402d4c02077e3d3e5c",
   "mock_result_focus_done": "5dc7cf584f753fa2d193b0fc80ccf9bca4470dfcf2a6ea746044cfa32c0c767a",
   "mock_result_focus_line": "44adca3291853a832ad3326af3346017432bc9d5e30b4a74f2f1eae8c99c4729",
   "mock_result_focus_title": "1f088c6b1de99f8eb208ff4d592277d762e1b6804d9464483eeb98c32f15b566",
@@ -40,7 +39,7 @@
   "mock_result_grading_slow": "e9dc6904e7b555a6d0886a93df731bd2319d0d46b275ecb188dd4ab9ad5f2f0a",
   "mock_result_had_of": "8cdcabb7d7fceed65ed5e2ccbd5ee1cb8fa09f908cb8ad90e27ec82b6b58d0a1",
   "mock_result_insights": "7a9ebe91eba4c3fdfb3e892970a0f3760b9538b2b575e3bcd6c4217fa40160dc",
-  "mock_result_keep_answering": "aaccb6fde7b4e783845b3c5c912aca3351756c8f7f69acaa56815cb99b5753ae",
+  "mock_result_keep_answering": "b5da0df0b039842337c47920fc8e173d133f2d7d9caa28e0076f1c2e216ac2e6",
   "mock_result_keep_them": "c99069087de62b0086e60d2cdf9fcb2c9156eddd4f9ecf08bb2bbc23e132d281",
   "mock_result_left_at_timeout": "6d1d1329f9f9c56745dda2cdf09d064176ea5c63e7c250ac14c00edd8686d573",
   "mock_result_left_blank": "8e4c47c57d52f06c0d58f6a354cfff5d18da2484707f7d6919846245d630772a",
@@ -117,6 +116,7 @@
   "mock_result_unjudged_together_percent": "373c432339f7101f37c51ecbb8a462a5b714ce687cad26aecfd5cc6eb9c9fa8d",
   "mock_result_unjudged_together_points": "fb9c0ddbca44d9386ff362c0af65d0013736728b2029b388cbf1841145294613",
   "mock_result_unjudged_together_points_decimal": "20767be179fcc1dcff9108889a1c1501e6be21d5bce5d55700ce93eca20df04f",
+  "mock_result_unsure_answers": "075d2931a76dfbda5bb07e36b99d55320634a557629194365025ad8102d850b8",
   "mock_result_up": "a225152442f7fbec8ae038a2e1af4473046d79de799fd2058280433f508c73be",
   "mock_result_up_from": "95123abb046e19bc596d7527fb64b08f431d20b6dbe04a6014f74930b28d73a5",
   "mock_result_work_on": "e347bdf249fa53f1b4046973169ea423dc2ce4a1e00288326a4b1032a82199ab",
@@ -291,21 +291,21 @@
         <item quantity="one">Du hast %d leichte Frage nicht richtig beantwortet. Schau sie dir zuerst noch einmal an.</item>
         <item quantity="other">Du hast %d leichte Fragen nicht richtig beantwortet. Schau sie dir zuerst noch einmal an.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">Markierte Antworten</string>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure) while taking the mock exam. -->
+    <string name="mock_result_unsure_answers">Antworten, bei denen du dir unsicher warst</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d von %2$d richtig</item>
         <item quantity="other">%1$d von %2$d richtig</item>
     </plurals>
-    <!-- %1$s is how the answers the learner didn't flag went, %2$s how the flagged ones went, each a mock_result_right_of. -->
-    <string name="mock_result_calibration_detail">Nicht markiert: %1$s. Markiert: %2$s.</string>
+    <!-- %1$s is how the answers the learner was sure of went, %2$s how the ones they marked "Not sure" went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">Sicher: %1$s. Unsicher: %2$s.</string>
     <!-- %1$s can be a decimal, such as "1.5". -->
     <plurals name="mock_result_blank_gain">
-        <item quantity="one">Hättest du die markierten Fragen unbeantwortet gelassen, hättest du %1$s Punkt mehr bekommen.</item>
-        <item quantity="other">Hättest du die markierten Fragen unbeantwortet gelassen, hättest du %1$s Punkte mehr bekommen.</item>
+        <item quantity="one">Wenn du die Antworten, bei denen du dir unsicher warst, leer gelassen hättest, hättest du %1$s Punkt mehr bekommen.</item>
+        <item quantity="other">Wenn du die Antworten, bei denen du dir unsicher warst, leer gelassen hättest, hättest du %1$s Punkte mehr bekommen.</item>
     </plurals>
-    <string name="mock_result_keep_answering">Deine markierten Antworten haben dir trotzdem Punkte gebracht. Antworte also auch dann, wenn du unsicher bist.</string>
+    <string name="mock_result_keep_answering">Mit den Antworten, bei denen du dir unsicher warst, hast du trotzdem Punkte bekommen. Beantworte sie also weiterhin.</string>
     <string name="mock_result_review">Fragen zum Wiederholen</string>
     <string name="mock_result_question">Frage %1$d</string>
     <string name="mock_result_left_blank">Du hast die Frage unbeantwortet gelassen.</string>
