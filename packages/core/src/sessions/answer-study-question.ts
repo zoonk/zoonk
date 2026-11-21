@@ -9,7 +9,6 @@ import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
 import { applyDrillRules } from "../mistakes/drill-answer";
 import { isLeftBlank } from "./_utils/net-score";
 import { recordStudyAnswer } from "./_utils/record-study-answer";
-import { retrySessionRecheck } from "./_utils/retry-session-recheck";
 import { getBlockAnswers } from "./_utils/session-answers";
 import { loadAnsweredSession } from "./_utils/session-events";
 import {
@@ -20,6 +19,7 @@ import {
   readRecordedAnswer,
 } from "./_utils/session-items";
 import { loadAnsweredTranscript } from "./_utils/set-transcript";
+import { settleSavedSessionRecheck } from "./_utils/settle-saved-session-recheck";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { getBlockItemIds, readBlockPayload } from "./block-payload";
 import { getHyperdriveLevel, scoreAnswers } from "./brain-power";
@@ -170,7 +170,7 @@ export async function answerStudyQuestion({
   }
 
   if (previous && block.kind !== "checkpoint") {
-    return retrySessionRecheck({ attempt: previous, session, timeZone: input.timeZone }).then(
+    return settleSavedSessionRecheck({ attempt: previous, session, timeZone: input.timeZone }).then(
       () => ({ status: "alreadyAnswered" as const }),
     );
   }

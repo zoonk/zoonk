@@ -12,7 +12,7 @@ const closedWindowSchema = z.object({
   streak: z.int().min(1),
 });
 
-export const livingPlanWindowSchema = z.object({
+const livingPlanWindowSchema = z.object({
   closed: closedWindowSchema.nullable(),
   correct: z.int().min(0),
   missedSkillIds: z.array(z.string()),
@@ -22,7 +22,7 @@ export const livingPlanWindowSchema = z.object({
     .max(LEVEL_WINDOW_ANSWERS - 1),
 });
 
-export type LivingPlanWindow = z.infer<typeof livingPlanWindowSchema>;
+type LivingPlanWindow = z.infer<typeof livingPlanWindowSchema>;
 
 export type ClosedLivingPlanWindow = z.infer<typeof closedWindowSchema>;
 
