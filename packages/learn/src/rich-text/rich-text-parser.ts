@@ -8,7 +8,7 @@ import { type RichInlineSegment } from "./rich-inline-segments";
  * Emphasis, short lists, GFM tables, fenced code blocks, inline code and `$...$` math only, so
  * generated headings or links can never change the player's layout. A code block keeps its code
  * exactly as written. A numbered list starts at its first item's number, as in CommonMark, so
- * steps split by a code block number on; `start` is null for bullets.
+ * steps split by a code block or an example's frame number on; `start` is null for bullets.
  */
 export type RichBlock =
   | { code: string; kind: "code"; language: string | null }
