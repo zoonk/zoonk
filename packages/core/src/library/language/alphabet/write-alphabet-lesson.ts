@@ -263,22 +263,25 @@ async function writeClaimedLesson({
   });
 
   const steps = buildAlphabetLessonSteps({ audioUrls: new Map(), content: data });
+  const hasAlphabet = steps.some((step) => step.kind === "alphabet");
 
-  if (!steps.some((step) => step.kind === "alphabet")) {
-    await recordLessonQualityDecision({
-      blocking: [
-        {
-          code: "emptyAlphabet",
-          problem: "The lesson did not contain any usable alphabet symbols.",
-          screen: null,
-          source: "code",
-        },
-      ],
-      lessonId,
-      phase: "codeCheck",
-      writerRunId: provenance.runId,
-    });
+  await recordLessonQualityDecision({
+    blocking: hasAlphabet
+      ? []
+      : [
+          {
+            code: "emptyAlphabet",
+            problem: "The lesson did not contain any usable alphabet symbols.",
+            screen: null,
+            source: "code",
+          },
+        ],
+    lessonId,
+    phase: "codeCheck",
+    writerRunId: provenance.runId,
+  });
 
+  if (!hasAlphabet) {
     await failAlphabetLesson({ lessonId, workflowRunId });
     return { lessonId, status: "heldBack" };
   }

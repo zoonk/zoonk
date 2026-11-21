@@ -114,6 +114,17 @@ describe(writeAlphabetLesson, () => {
     expect(written.clips).toStrictEqual(["아", "어", "가", "나"]);
 
     await expect(
+      prisma.lessonQualityDecision.findMany({ where: { lessonId: written.lessonId } }),
+    ).resolves.toMatchObject([
+      {
+        blocking: [],
+        outcome: "passed",
+        phase: "codeCheck",
+        writerRunId: written.provenance.runId,
+      },
+    ]);
+
+    await expect(
       prisma.lesson.findUniqueOrThrow({ where: { id: written.lessonId } }),
     ).resolves.toMatchObject({ contentRunId: workflowRunId, contentStatus: "running" });
 

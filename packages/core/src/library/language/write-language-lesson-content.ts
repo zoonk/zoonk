@@ -188,21 +188,23 @@ export async function writeLanguageLessonDraft({
 
   const lesson = cleanWrittenLanguageLesson({ content: written.data, inputs });
 
-  if (!lesson) {
-    await recordLessonQualityDecision({
-      blocking: [
-        {
-          code: "insufficientLanguageContent",
-          problem: "The lesson could not supply enough usable language exercises.",
-          screen: null,
-          source: "code",
-        },
-      ],
-      lessonId,
-      phase: "codeCheck",
-      writerRunId: written.provenance.runId,
-    });
+  await recordLessonQualityDecision({
+    blocking: lesson
+      ? []
+      : [
+          {
+            code: "insufficientLanguageContent",
+            problem: "The lesson could not supply enough usable language exercises.",
+            screen: null,
+            source: "code",
+          },
+        ],
+    lessonId,
+    phase: "codeCheck",
+    writerRunId: written.provenance.runId,
+  });
 
+  if (!lesson) {
     await finishLibraryGeneration({
       id: lessonId,
       status: "failed",
