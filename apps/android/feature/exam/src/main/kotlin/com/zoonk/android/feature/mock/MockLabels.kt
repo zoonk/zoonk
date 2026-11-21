@@ -31,7 +31,9 @@ fun mockDate(finishedAt: Instant): String = formatMomentDay(finishedAt, currentL
 fun mockMeasure(
     mock: ExamMockSummary,
     points: Boolean = mock.hasPartMarks,
-): String {
+): String? {
+    if (mock.shape?.kind == MockShape.Kind.WRITTEN) return null
+
     val locale = currentLocale()
     if (mock.scoring == ExamMockSummary.Scoring.NET) {
         return stringResource(R.string.mock_net_score, formatNumber(mock.measure, locale), mock.total)
