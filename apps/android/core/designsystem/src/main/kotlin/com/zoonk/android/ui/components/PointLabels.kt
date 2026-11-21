@@ -62,11 +62,13 @@ private fun placeLabels(
 
     return named.map { (point, text) ->
         val measured = width(text)
+        val dot = Rect(point, PLOT_DOT_ROOM)
         val options = candidates(point, text).map { it to boxOf(it, measured) }
         val free =
             options
                 .filter { (_, box) -> box.inside(scene.bounds) && taken.none { box.overlaps(it, CLEARANCE) } }
-                .sortedBy { (_, box) -> scene.segments.count { crosses(it, box) } }
+                // The label with the gap to its dot: a line through it, such as a reference, would part them.
+                .sortedBy { (_, box) -> scene.segments.count { crosses(it, box.union(dot)) } }
         val best = free.firstOrNull() ?: options.first()
         taken += best.second
         best.first to free.isNotEmpty()
@@ -104,6 +106,8 @@ private fun boxOf(
         }
     return Rect(left, label.y - LABEL_HEIGHT / 2, left + width, label.y + LABEL_HEIGHT / 2)
 }
+
+private fun Rect.union(other: Rect) = Rect(min(left, other.left), min(top, other.top), max(right, other.right), max(bottom, other.bottom))
 
 private fun Rect.inside(bounds: Rect) = left >= bounds.left && right <= bounds.right && top >= bounds.top && bottom <= bounds.bottom
 

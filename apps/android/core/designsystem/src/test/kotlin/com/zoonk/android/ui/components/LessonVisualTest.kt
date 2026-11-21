@@ -92,6 +92,15 @@ class LessonVisualTest {
     }
 
     @Test
+    fun aNameStaysOnItsDotsSideOfAReferenceLine() {
+        val line = 74f
+        val scene = LabelScene(Rect(0f, 0f, 300f, 160f), emptyList(), listOf(Offset(0f, line) to Offset(300f, line)))
+        val label = pointLabels(listOf(Offset(150f, 80f) to "C"), scene, ::nameWidth).labels.single()
+
+        assertTrue("$label", label.y - 7f >= line)
+    }
+
+    @Test
     fun crowdedNamesMoveToANumberedKeyAndNoneIsDropped() {
         val crowded = (0 until 10).map { Offset(150f + it * 0.5f, 80f) to "Country ${it + 1}" }
 
