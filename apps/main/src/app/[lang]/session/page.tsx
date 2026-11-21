@@ -213,6 +213,10 @@ async function SavedDayView({
     return <SessionSummaryView facts={facts} requested={false} session={session} stopped />;
   }
 
+  if (requested && session.state === "done") {
+    return <SessionSummaryView facts={facts} requested session={session} stopped={false} />;
+  }
+
   const opened = findOpenedBlock({ blockId, session });
   const active = findActiveQuestionBlock({ opened, session });
 

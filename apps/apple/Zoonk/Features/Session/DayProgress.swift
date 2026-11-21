@@ -172,8 +172,7 @@ extension BlockMoment {
     countedBlocks.firstIndex { $0.id == blockId }
   }
 
-  /// Core's `getSessionBar`: a skipped block is neither done nor counted.
   private var countedBlocks: [StudyBlock] {
-    blocks.filter { $0.status != .skipped }
+    blocks.filter(\.countsTowardDay)
   }
 }

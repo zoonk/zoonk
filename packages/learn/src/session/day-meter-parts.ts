@@ -13,9 +13,10 @@ const SEGMENT_BY_STATE: Record<SessionQueueRow["state"], DaySegmentState> = {
 export type DayStepPart = DayMeterPart & { block: DayStep; kind: LearnKind };
 
 /**
- * One part per row of `getSessionQueue`, which leaves skipped blocks out, so the parts match core's
- * `sessionBar` count. `nextShare` (0 to 1) fills the next part as far as it's answered. Today and
- * every block's end draw these parts.
+ * One part per day block of `getSessionQueue`, which leaves skipped blocks out, so the parts match
+ * core's `sessionBar` count; extra work never draws a part, so it can't lower the day. `nextShare`
+ * (0 to 1) fills the next part as far as it's answered. Today and every block's end draw these
+ * parts.
  */
 export function getDayMeterParts({
   nextShare = 0,
@@ -24,11 +25,13 @@ export function getDayMeterParts({
   nextShare?: number;
   rows: readonly SessionQueueRow[];
 }): DayStepPart[] {
-  return rows.map((row) => ({
-    block: row.block,
-    id: "id" in row.block ? row.block.id : row.block.position,
-    kind: getBlockKind(row.block),
-    share: row.state === "next" ? nextShare : 0,
-    state: SEGMENT_BY_STATE[row.state],
-  }));
+  return rows
+    .filter((row) => !row.block.extra)
+    .map((row) => ({
+      block: row.block,
+      id: "id" in row.block ? row.block.id : row.block.position,
+      kind: getBlockKind(row.block),
+      share: row.state === "next" ? nextShare : 0,
+      state: SEGMENT_BY_STATE[row.state],
+    }));
 }

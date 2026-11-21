@@ -109,6 +109,7 @@
   "today_step_counts_toward_mission": "3beb7fb4a12891722b345290ebe86bb83b2d0280869b7fbd44e2b9ef85ac7742",
   "today_step_done": "4ed8a68cbf5bf611ad4dbf7bbd4891cbdfe6d42b35336971e27c7db2e66a6bfd",
   "today_step_every_topic": "bcda124079fa2fa9cb85d80f2ed6707b8d81d2a19e87ba1e9469b2624d86651d",
+  "today_step_extra": "7f24c4124aead8ad69bda1d116de2639a0e316fc8a4475c436299ad57c8794c8",
   "today_step_next": "a864cce1dbd79f1349f7620c06dc9dfc3185abe8ba5ea95d3225acb806045d88",
   "today_step_often_tested": "41babfbc2beaaa29db3434ac4f41c250794a733201a60a6bb1383c377b2e07ed",
   "today_step_open_failed": "6e24ae7c8e26eb89bd664748d490fe4e723c0ce6a42c8796971c63a942cddab3",
@@ -197,6 +198,8 @@
     <string name="today_step_done">Tamamlandı</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Sıradaki adım</string>
+    <!-- Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress. -->
+    <string name="today_step_extra">Ekstra</string>
     <string name="today_step_skipped">Atlandı</string>
     <string name="today_step_counts_toward_mission">Bir görevde ilerleme sağlar</string>
     <string name="today_step_often_tested">Sınavlarda sık çıkar</string>

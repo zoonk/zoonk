@@ -1012,6 +1012,63 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "今回は答え合わせをしていません"
 
+#: src/_components/week-row.tsx
+#: src/generation/generation-wait.tsx
+msgctxt "B7ijKz"
+msgid "done"
+msgstr "完了"
+
+#: src/_components/week-row.tsx
+msgctxt "F8phHs"
+msgid "studied"
+msgstr "学習済み"
+
+#: src/_components/week-row.tsx
+msgctxt "uMBOLl"
+msgid "exam day"
+msgstr "試験日"
+
+#: src/_components/week-row.tsx
+msgctxt "WcEyrI"
+msgid "end date"
+msgstr "終了日"
+
+#: src/_components/week-row.tsx
+msgctxt "KQR6jo"
+msgid "before your plan"
+msgstr "学習計画の開始前"
+
+#: src/_components/week-row.tsx
+msgctxt "1RBuve"
+msgid "after your exam"
+msgstr "試験後"
+
+#: src/_components/week-row.tsx
+msgctxt "coog-B"
+msgid "after your end date"
+msgstr "終了日後"
+
+#: src/_components/week-row.tsx
+msgctxt "1sq74z"
+msgid "rest day"
+msgstr "休みの日"
+
+#: src/_components/week-row.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "今日"
+
+#: src/_components/week-row.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "sl8z6d"
+msgid "planned"
+msgstr "学習予定"
+
+#: src/_components/week-row.tsx
+msgctxt "LeNKyW"
+msgid "not studied"
+msgstr "未学習"
+
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
 msgid "Weekend time"
@@ -4268,13 +4325,6 @@ msgid "in progress"
 msgstr "進行中"
 
 #: src/generation/generation-wait.tsx
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "B7ijKz"
-msgid "done"
-msgstr "完了"
-
-#: src/generation/generation-wait.tsx
 msgctxt "tc4dTE"
 msgid "stopped here"
 msgstr "ここで止まりました"
@@ -5296,31 +5346,6 @@ msgstr "完了予定日"
 msgctxt "pwcc1H"
 msgid "exam"
 msgstr "試験"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "LeNKyW"
-msgid "not studied"
-msgstr "未学習"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "1sq74z"
-msgid "rest day"
-msgstr "休みの日"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "kkpP2k"
-msgid "today"
-msgstr "今日"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-segment-popover.tsx
-#: src/today/today-week-day.tsx
-msgctxt "sl8z6d"
-msgid "planned"
-msgstr "学習予定"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -12639,34 +12664,17 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "新しいレッスン"
 
-#. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
-#: src/session/use-block-copy.ts
-msgctxt "60PbK5"
-msgid "Bonus practice: {topic}"
-msgstr "追加練習：{topic}"
-
 #. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
 #: src/session/use-block-copy.ts
 msgctxt "YGPuF7"
 msgid "Practice: {topic}"
 msgstr "練習：{topic}"
 
-#. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
-#: src/session/use-block-copy.ts
-msgctxt "7zIxxl"
-msgid "Bonus practice: {areas}"
-msgstr "追加練習：{areas}"
-
 #. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
 #: src/session/use-block-copy.ts
 msgctxt "I85zr9"
 msgid "Practice: {areas}"
 msgstr "練習：{areas}"
-
-#: src/session/use-block-copy.ts
-msgctxt "JfeRyY"
-msgid "Bonus practice"
-msgstr "追加の練習"
 
 #: src/session/use-block-copy.ts
 msgctxt "MbAJ4_"
@@ -13160,6 +13168,12 @@ msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "準備しています…"
 
+#. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
+#: src/today/today-block-row.tsx
+msgctxt "pE58D7"
+msgid "Extra"
+msgstr "追加分"
+
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
 msgid "What changed"
@@ -13513,36 +13527,6 @@ msgstr "週間チャレンジ"
 msgctxt "J3eMtx"
 msgid "every topic"
 msgstr "すべてのトピック"
-
-#: src/today/today-week-day.tsx
-msgctxt "F8phHs"
-msgid "studied"
-msgstr "学習済み"
-
-#: src/today/today-week-day.tsx
-msgctxt "uMBOLl"
-msgid "exam day"
-msgstr "試験日"
-
-#: src/today/today-week-day.tsx
-msgctxt "WcEyrI"
-msgid "end date"
-msgstr "終了日"
-
-#: src/today/today-week-day.tsx
-msgctxt "KQR6jo"
-msgid "before your plan"
-msgstr "学習計画の開始前"
-
-#: src/today/today-week-day.tsx
-msgctxt "1RBuve"
-msgid "after your exam"
-msgstr "試験後"
-
-#: src/today/today-week-day.tsx
-msgctxt "coog-B"
-msgid "after your end date"
-msgstr "終了日後"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"

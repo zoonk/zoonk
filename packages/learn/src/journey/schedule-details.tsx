@@ -1,15 +1,18 @@
 "use client";
 
-import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isoDateToUtc } from "@zoonk/utils/date-format";
 import { useExtracted } from "next-intl";
-import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { SectionLabel } from "../_components/section-label";
-import { DoneMark } from "../_components/status-mark";
-import { WEEK_DAY_CLASS, WEEK_ROW_CLASS, WeekDayLetter } from "../_components/week-row";
+import {
+  WEEK_DAY_CLASS,
+  WEEK_ROW_CLASS,
+  WeekDayLetter,
+  WeekDayRing,
+  useWeekDayStatus,
+} from "../_components/week-row";
 import { useFormatWeekday } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLearnRoutes } from "../learn-context";
@@ -21,52 +24,7 @@ import { type PlanStatus, usePlanStatusText } from "../plan/plan-status-label";
 import { useStudyDaysText } from "../plan/use-study-days-text";
 import { showsResumeSchedule } from "./schedule-state";
 
-type PlanDay = PlanView["week"]["days"][number];
-
 const WEEK_TITLE_ID = "schedule-week-title";
-
-function isDone(item: PlanDay["items"][number]): boolean {
-  return item.status === "done" || item.status === "testedOut";
-}
-
-function getDayShare(day: PlanDay): number {
-  if (day.state === "done") {
-    return 1;
-  }
-
-  return day.items.length > 0
-    ? day.items.filter((item) => isDone(item)).length / day.items.length
-    : 0;
-}
-
-const DAY_TRACK: Record<PlanDay["state"], GoalRingTrack> = {
-  done: "default",
-  missed: "missed",
-  rest: "rest",
-  today: "today",
-  upcoming: "default",
-};
-
-function useDayStatus() {
-  const t = useExtracted();
-
-  return (day: PlanDay): string => {
-    switch (day.state) {
-      case "done":
-        return t("done");
-      case "missed":
-        return t("not studied");
-      case "rest":
-        return t("rest day");
-      case "today":
-        return t("today");
-      case "upcoming":
-        return t("planned");
-      default:
-        return day.state satisfies never;
-    }
-  };
-}
 
 function useWeekTime(): string | null {
   const t = useExtracted();
@@ -83,13 +41,15 @@ function useWeekTime(): string | null {
   });
 }
 
+/** Drawn with Today's rings, so a day reads the same on both screens. */
 function PlanWeek() {
   const t = useExtracted();
   const formatWeekday = useFormatWeekday();
-  const dayStatus = useDayStatus();
-  const { plan } = usePlanScreen();
-  const { days } = plan.week;
+  const { goal, plan } = usePlanScreen();
   const time = useWeekTime();
+  const days = plan.week.days.map((day) => ({ ...day.study, date: isoDateToUtc(day.study.date) }));
+  const localDate = days.find((day) => day.isToday)?.date ?? isoDateToUtc(plan.week.startDate);
+  const dayStatus = useWeekDayStatus({ examGoal: goal.kind === "exam", localDate });
 
   return (
     <section aria-labelledby={WEEK_TITLE_ID} className="flex flex-col gap-2">
@@ -101,21 +61,15 @@ function PlanWeek() {
       </div>
 
       <ol className={WEEK_ROW_CLASS}>
-        {days.map((day) => {
-          const date = isoDateToUtc(day.date);
-
-          return (
-            <li className={cn(WEEK_DAY_CLASS, "py-1")} key={day.date}>
-              <GoalRing share={getDayShare(day)} track={DAY_TRACK[day.state]}>
-                {day.state === "done" && <DoneMark />}
-              </GoalRing>
-              <WeekDayLetter date={date} isToday={day.state === "today"} />
-              <span className="sr-only">
-                {t("{day}: {status}", { day: formatWeekday(date), status: dayStatus(day) })}
-              </span>
-            </li>
-          );
-        })}
+        {days.map((day) => (
+          <li className={cn(WEEK_DAY_CLASS, "py-1")} key={day.date.toISOString()}>
+            <WeekDayRing day={day} localDate={localDate} />
+            <WeekDayLetter date={day.date} isToday={day.isToday} />
+            <span className="sr-only">
+              {t("{day}: {status}", { day: formatWeekday(day.date), status: dayStatus(day) })}
+            </span>
+          </li>
+        ))}
       </ol>
     </section>
   );

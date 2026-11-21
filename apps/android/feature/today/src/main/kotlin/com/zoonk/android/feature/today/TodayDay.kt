@@ -87,7 +87,28 @@ internal class TodayDayModel(
     val upNext = day.upNextLessons(pastDate != null)
     val keepLearning = upNext.isNotEmpty()
     val summaryRoute = AppRoute.Session(goalId = (day.goalId ?: today.goal.id).toString(), summaryRequested = true)
+
+    /** The day's one main action, which its button, its wait and its failure all follow; null for none. */
+    val action: TodayMainAction? =
+        when {
+            pastDate != null -> if (today.goal.kind == TodayGoal.Kind.EXAM) TodayMainAction.ExamOver else TodayMainAction.SeePlan
+
+            asksForDay -> TodayMainAction.Prepare
+
+            // A finished day stays done while the extra work after it goes on.
+            state == StudySession.State.UNDERWAY || (state == StudySession.State.DONE && day.nextStep != null) -> TodayMainAction.Continue
+
+            keepLearning -> TodayMainAction.KeepLearning
+
+            state == StudySession.State.DONE -> TodayMainAction.Summary
+
+            state == StudySession.State.AHEAD && day.extraTime.available -> TodayMainAction.Practice
+
+            else -> null
+        }
 }
+
+internal enum class TodayMainAction { ExamOver, SeePlan, Prepare, Continue, KeepLearning, Summary, Practice }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -265,7 +286,7 @@ private fun TodayActionBar(
     beside: Boolean,
     noteRoom: BarNoteRoom,
 ) {
-    if (!model.hasAction) return
+    if (model.action == null) return
 
     val status = rememberActionStatus(model, viewModel)
     // The day's column: at the pane's start beside its aside, its rows' inset at its sides.
@@ -280,15 +301,6 @@ private fun TodayActionBar(
     }
 }
 
-private val TodayDayModel.hasAction: Boolean
-    get() =
-        pastDate != null ||
-            keepLearning ||
-            state == StudySession.State.UNDERWAY ||
-            state == StudySession.State.DONE ||
-            asksForDay ||
-            (state == StudySession.State.AHEAD && day.extraTime.available)
-
 @Composable
 private fun TodayAction(
     model: TodayDayModel,
@@ -301,18 +313,18 @@ private fun TodayAction(
         val busy = status.tap != null && viewModel.pending == status.tap
         val waiting = viewModel.pending != null && !busy
 
-        when {
-            model.pastDate != null && model.today.goal.kind == TodayGoal.Kind.EXAM -> {
+        when (model.action) {
+            TodayMainAction.ExamOver -> {
                 TodayExamOver(model, viewModel)
             }
 
-            model.pastDate != null -> {
+            TodayMainAction.SeePlan -> {
                 ActionButton(stringResource(R.string.today_see_your_plan), busy = false, buttonModifier) {
                     actions.navigate(AppRoute.Plan(focus = "time"))
                 }
             }
 
-            model.asksForDay -> {
+            TodayMainAction.Prepare -> {
                 ActionButton(
                     stringResource(R.string.today_get_lessons),
                     busy,
@@ -322,22 +334,22 @@ private fun TodayAction(
                 )
             }
 
-            model.keepLearning -> {
+            TodayMainAction.KeepLearning -> {
                 ActionButton(stringResource(R.string.today_keep_learning), busy, buttonModifier, waiting, onClick = actions.keepLearning)
             }
 
-            model.state == StudySession.State.UNDERWAY -> {
+            TodayMainAction.Continue -> {
                 val label = if (model.day.started) R.string.today_continue_session else R.string.today_start_session
                 ActionButton(stringResource(label), busy, buttonModifier, waiting, onClick = actions.next)
             }
 
-            model.state == StudySession.State.DONE -> {
+            TodayMainAction.Summary -> {
                 ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier) {
                     actions.navigate(model.summaryRoute)
                 }
             }
 
-            else -> {
+            TodayMainAction.Practice -> {
                 val minutes =
                     formatNumber(
                         model.day.extraTime.minutes
@@ -352,6 +364,8 @@ private fun TodayAction(
                     onClick = actions.keepLearning,
                 )
             }
+
+            null -> {}
         }
     }
 }
@@ -371,11 +385,10 @@ internal fun rememberActionStatus(
     viewModel: TodayViewModel,
 ): ActionStatus {
     val tap =
-        when {
-            model.pastDate != null -> null
-            model.asksForDay -> TodayTap.Prepare
-            model.keepLearning || model.state == StudySession.State.AHEAD -> TodayTap.KeepLearning
-            model.state == StudySession.State.UNDERWAY -> TodayTap.Continue
+        when (model.action) {
+            TodayMainAction.Prepare -> TodayTap.Prepare
+            TodayMainAction.KeepLearning, TodayMainAction.Practice -> TodayTap.KeepLearning
+            TodayMainAction.Continue -> TodayTap.Continue
             else -> null
         }
     val wait = rememberWaitState(tap != null && viewModel.pending == tap)
@@ -383,7 +396,7 @@ internal fun rememberActionStatus(
         when {
             tap == null || viewModel.failed != tap -> null
             tap == TodayTap.Continue -> R.string.today_open_failed
-            tap == TodayTap.KeepLearning && model.keepLearning -> R.string.today_keep_learning_failed
+            model.action == TodayMainAction.KeepLearning -> R.string.today_keep_learning_failed
             else -> R.string.today_save_failed
         }
     return ActionStatus(tap, wait, failure)

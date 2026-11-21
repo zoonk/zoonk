@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { getDayTime, getHeldMinutes } from "./today-time";
 
-function step(estimatedMinutes: number, status: "active" | "completed" | "pending" | "skipped") {
-  return { estimatedMinutes, status };
+function step(
+  estimatedMinutes: number,
+  status: "active" | "completed" | "pending" | "skipped",
+  extra = false,
+) {
+  return { estimatedMinutes, extra, status };
 }
 
 const SIXTEEN_LESSONS = [4, 4, 5, 4, 4, 4, 4, 3, 4, 4, 3, 4, 4, 3, 3, 4].map((minutes) =>
@@ -78,5 +82,16 @@ describe(getHeldMinutes, () => {
         minutes: { left: 24 },
       }),
     ).toBe(0);
+  });
+
+  it("still holds the day's time while extra practice waits on the list", () => {
+    expect(
+      getHeldMinutes({
+        blocks: [step(10, "pending"), step(5, "pending", true)],
+        lessonsComing: true,
+        lessonsToPrepare: false,
+        minutes: { left: 25 },
+      }),
+    ).toBe(15);
   });
 });

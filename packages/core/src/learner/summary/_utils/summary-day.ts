@@ -7,6 +7,7 @@ import { type DayBlockInput } from "../../../sessions/_utils/day-block-view";
 import { planEntitlementLapseRefill } from "../../../sessions/_utils/entitlement-lapse-refill";
 import { getSessionBar } from "../../../sessions/_utils/session-view";
 import { readBlockPayload } from "../../../sessions/block-payload";
+import { getPlayOrder } from "../../../sessions/day-blocks";
 import { countMissions } from "../../../sessions/missions";
 import { getDayMissions } from "../../../sessions/missions/get-day-missions";
 import { readDayMissionProgress } from "../../facts/day-mission-progress";
@@ -61,9 +62,7 @@ function getSummaryToday({
 
   const bar = getSessionBar(blocks);
 
-  const next =
-    blocks.find((block) => block.status === "active") ??
-    blocks.find((block) => block.status === "pending");
+  const next = getPlayOrder(blocks)[0];
 
   const payload = next ? readBlockPayload(next) : null;
 

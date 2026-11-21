@@ -44,6 +44,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -143,6 +146,28 @@ class LessonEndScreenshots {
     @Test
     @Config(qualifiers = PHONE)
     fun phoneDayComplete() = capture("complete", inSession(DAY_COMPLETE, completed = 8, total = 8, sessionCompleted = true), IN_SESSION_END)
+
+    /** An extra lesson finished after the day was done, with an extra practice still next: the day stays 3 of 3. */
+    @Test
+    @Config(qualifiers = PHONE)
+    fun phoneExtraAfterDone() =
+        capture(
+            "complete-extra",
+            inSession(
+                DAY_COMPLETE,
+                completed = 3,
+                total = 3,
+                sessionCompleted = true,
+                blocks =
+                    extras(
+                        studyBlocks(LEARN to COMPLETED, LEARN to COMPLETED, LEARN to COMPLETED, LEARN to COMPLETED, PRACTICE to PENDING),
+                        from = 3,
+                    ),
+                finished = 3,
+                next = 4,
+            ),
+            IN_SESSION_END,
+        )
 
     @Test
     @Config(qualifiers = PHONE)
@@ -347,6 +372,22 @@ private fun inSession(
     .replace(""""blocks":[]""", """"blocks":$blocks""")
     .replace(""""blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"""", """"blockId":"${blockId(finished)}"""")
     .replace(""""nextBlockId":null""", """"nextBlockId":${next?.let { "\"${blockId(it)}\"" }}""")
+
+/** [blocks] with every block from [from] on marked extra, as core marks work added after the day. */
+private fun extras(
+    blocks: JsonArray,
+    from: Int,
+) = JsonArray(
+    blocks.mapIndexed { index, block ->
+        if (index <
+            from
+        ) {
+            block
+        } else {
+            JsonObject(block.jsonObject + ("extra" to JsonPrimitive(true)))
+        }
+    },
+)
 
 private val FIT: LessonFit =
     ApiJson.decodeFromString(
