@@ -132,6 +132,7 @@ const selectionCase = z.object({
 });
 export const selectionSchema = z.object({
   cases: z.array(selectionCase).min(1),
+  codeCheck: z.enum(["code checks", "background and frame"]).optional(),
   controls: controlsSchema,
   criteria: z.array(criterionSchema),
   date: z.iso.datetime(),

@@ -150,7 +150,11 @@ export function caseVotes(comparison: Comparison, reads: ReturnType<typeof accep
         isControlFreeOwnerRead(record),
     );
 
-    const modelResult = settle(Object.values(families));
+    const modelResult =
+      missingReaderFamilies(manifest, families).length > 0
+        ? "unresolved"
+        : settle(Object.values(families));
+
     const canSettle = canAdjudicate(manifest, { votes: families });
 
     const adjudication = canSettle
@@ -186,18 +190,31 @@ function latestRuling(
     : undefined;
 }
 
+function requiredReaderFamilies(manifest: Comparison["manifest"]) {
+  return [
+    ...new Set(
+      manifest.readers
+        .filter((reader) => reader.channel !== "owner" && !reader.reserve)
+        .map((reader) => reader.family),
+    ),
+  ];
+}
+
+export function missingReaderFamilies(
+  manifest: Comparison["manifest"],
+  votes: Record<string, Direction>,
+) {
+  return requiredReaderFamilies(manifest).filter((family) => !Object.hasOwn(votes, family));
+}
+
 export function canAdjudicate(
   manifest: Comparison["manifest"],
   item: Pick<Decision["cases"][number], "votes">,
 ) {
-  const readers = manifest.readers.filter(
-    (reader) => reader.channel !== "owner" && !reader.reserve,
-  );
-
   return (
     settle(Object.values(item.votes)) === "unresolved" &&
-    readers.length >= 2 &&
-    readers.every((reader) => Object.hasOwn(item.votes, reader.family))
+    requiredReaderFamilies(manifest).length >= 2 &&
+    missingReaderFamilies(manifest, item.votes).length === 0
   );
 }
 export function readerRecords(comparison: Comparison, reads: ReturnType<typeof acceptedReads>) {

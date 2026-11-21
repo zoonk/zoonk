@@ -208,6 +208,7 @@ async function freeze(options: PrepareOptions) {
   const selection = plannedSelection.parse({
     cases,
     challengerModel: challenger.model.id,
+    codeCheck: image ? "background and frame" : task.codeChecks && "code checks",
     controls,
     criteria: task.criteria ?? (image ? task.scoreCategories : []) ?? [],
     date: new Date().toISOString(),

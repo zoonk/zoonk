@@ -1,16 +1,17 @@
-import { type Decision, decisionSchema } from "./decision-schema";
+import { type Decision, type Direction, decisionSchema } from "./decision-schema";
 import { deliveryTable } from "./delivery-table";
 import {
   acceptedReads,
   canAdjudicate,
   caseVotes,
+  missingReaderFamilies,
   readerRecords,
   settle,
   sides,
   verifiedClaims,
 } from "./evidence";
-import { caseRunKey } from "./identity";
 import { type Comparison } from "./schemas";
+import { tradeBounds } from "./trade-bounds";
 
 export { decisionSchema, type Decision } from "./decision-schema";
 export function decide(comparison: Comparison): Decision {
@@ -25,23 +26,9 @@ type Claims = ReturnType<typeof verifiedClaims>;
 type Cases = ReturnType<typeof caseVotes>;
 
 function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Decision {
-  const { manifest } = comparison;
-  const rules = manifest.priorities.comparison;
   const readers = readerRecords(comparison, acceptedReads(comparison));
   const rows = deliveryTable(comparison, cases, claims);
-  const missing = rows.some((row) => row.missingMatches > 0);
-  const languages = [...new Set(cases.map((item) => item.language))];
-
-  const choice = choose({
-    cases,
-    claims,
-    languages,
-    manifest,
-    missing,
-    rows,
-    rules,
-    uncheckedKeys: uncheckedAnswerKeys(comparison).length > 0,
-  });
+  const { choice } = assess(comparison, cases, claims, rows);
 
   const classified = rows.map((row) => {
     if (row.status === "disqualified" || choice.outcome === "insufficient evidence") {
@@ -85,106 +72,21 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
   return decisionSchema.parse({ cases, readers, rows: classified, ...choice });
 }
 export function decisiveClaims(comparison: Comparison) {
-  const { manifest } = comparison;
   const cases = caseVotes(comparison, acceptedReads(comparison));
   const claims = verifiedClaims(comparison);
-  const rules = manifest.priorities.comparison;
+  const rows = deliveryTable(comparison, cases, claims);
 
-  const pending = claims.filter(
-    (claim) => claim.finding === "unsure" && rules?.criteria[claim.observation.criterion],
-  );
-
-  if (!manifest.variants.incumbent || !rules || pending.length === 0) {
-    return [];
-  }
-
-  const table = deliveryTable(comparison, cases, claims);
-
-  const hard = pending.filter(
-    (claim) =>
-      rules.criteria[claim.observation.criterion] === "disqualifies" &&
-      table.some((row) => row.status !== "disqualified"),
-  );
-
-  if (hard.length > 0) {
-    return hard;
-  }
-
-  const affected = (subject: "incumbent" | "challenger", key: string) =>
-    table
-      .find((row) => row.side === subject)
-      ?.quality.some(
-        (metric) =>
-          countsTowardTrade(metric, rules) &&
-          metric.affected.some((run) => caseRunKey(run) === key),
-      );
-
-  const potential = (favored: "incumbent" | "challenger") =>
-    claims.map((claim) => {
-      if (claim.finding !== "unsure") {
-        return claim;
-      }
-
-      if (claim.side !== favored) {
-        return { ...claim, finding: "holds" as const };
-      }
-
-      return {
-        ...claim,
-        finding: affected(favored, caseRunKey(claim))
-          ? ("holds for both" as const)
-          : ("doesn't hold" as const),
-      };
-    });
-
-  const best = potential("challenger");
-  const worst = potential("incumbent");
-
-  const outcomes = [best, worst, claims].map(
-    (scenario) => decisionWith(comparison, cases, scenario).outcome,
-  );
-
-  if (new Set(outcomes).size === 1) {
-    return [];
-  }
-
-  const scenarios = [best, worst].map((scenario) => deliveryTable(comparison, cases, scenario));
-  const languages = new Set(cases.map((item) => item.language));
-
-  const decisive = new Set(
-    [...languages].filter((language) => {
-      const bounds = scenarios.map(
-        ([incumbent, challenger]) =>
-          incumbent &&
-          challenger &&
-          evaluateTrades({
-            cases,
-            challenger,
-            incumbent,
-            languages: [language],
-            pending: [],
-            rules,
-            runs: manifest.runs,
-          })?.outcome,
-      );
-
-      return bounds[0] !== bounds[1];
-    }),
-  );
-
-  return pending.filter((claim) => {
-    const key = caseRunKey(claim);
-
-    return (
-      cases.some((item) => item.caseId === claim.caseId && decisive.has(item.language)) &&
-      !(affected("incumbent", key) && affected("challenger", key))
-    );
-  });
+  return assess(comparison, cases, claims, rows).decisive;
 }
 
 export function decisiveUnresolved(comparison: Comparison) {
   const cases = caseVotes(comparison, acceptedReads(comparison));
-  const unresolved = cases.filter((item) => item.result === "unresolved");
+
+  const unresolved = cases.filter(
+    (item) =>
+      item.result === "unresolved" &&
+      missingReaderFamilies(comparison.manifest, item.votes).length === 0,
+  );
 
   if (unresolved.length === 0) {
     return [];
@@ -236,16 +138,9 @@ export function decisiveUnresolved(comparison: Comparison) {
     : [];
 }
 
-type Facts = {
-  manifest: Comparison["manifest"];
-  rows: Decision["rows"];
-  cases: ReturnType<typeof caseVotes>;
-  claims: ReturnType<typeof verifiedClaims>;
-  missing: boolean;
-  languages: string[];
-  rules: Comparison["manifest"]["priorities"]["comparison"];
-  uncheckedKeys: boolean;
-};
+type Choice = Pick<Decision, "outcome" | "reason" | "reasonCode">;
+type TableRow = Decision["rows"][number];
+type Side = TableRow["side"];
 
 export function uncheckedAnswerKeys({ manifest, checks }: Comparison) {
   if (!manifest.requiresAnswerKeyCheck) {
@@ -270,31 +165,40 @@ export function uncheckedAnswerKeys({ manifest, checks }: Comparison) {
   );
 }
 
-function preferenceSettlesOpenEvidence({
-  challenger,
-  claims,
-  incumbent,
-  rules,
-  savings,
-}: {
-  challenger: TableRow;
-  claims: Claims;
-  incumbent: TableRow;
-  rules: NonNullable<Facts["rules"]>;
-  savings: number;
-}) {
-  const pending = claims.filter((claim) => claim.finding === "unsure");
+function availableCaseResults(manifest: Comparison["manifest"], item: Cases[number]): Direction[] {
+  if (item.result !== "unresolved") {
+    return [item.result];
+  }
 
-  return (
-    (incumbent.unresolved > 0 || pending.length > 0) &&
-    (rules.preference === "canBlock" || savings === 0) &&
-    incumbent.status !== "disqualified" &&
-    incumbent.wins > challenger.wins + incumbent.unresolved &&
-    !pending.some((claim) => rules.criteria[claim.observation.criterion] === "disqualifies")
-  );
+  const missing = missingReaderFamilies(manifest, item.votes).length;
+  const owner = item.owner && item.owner !== "split" ? [item.owner] : directions;
+
+  if (missing === 0) {
+    return owner;
+  }
+
+  return [...directions, "split" as const].flatMap((vote) => {
+    const model = settle([
+      ...Object.values(item.votes),
+      ...Array.from({ length: missing }, () => vote),
+    ]);
+
+    return model === "unresolved" ? owner : [model];
+  });
 }
 
-function unresolvedChoice({ cases, manifest }: Pick<Facts, "cases" | "manifest">) {
+const directions: Direction[] = ["incumbent", "tie", "challenger"];
+
+function preferenceBounds(manifest: Comparison["manifest"], cases: Cases) {
+  const possibilities = cases.map((item) => availableCaseResults(manifest, item));
+
+  return {
+    best: possibilities.map((votes) => directions.findLast((vote) => votes.includes(vote))),
+    worst: possibilities.map((votes) => directions.find((vote) => votes.includes(vote))),
+  };
+}
+
+function readingChoice({ cases, manifest }: { cases: Cases; manifest: Comparison["manifest"] }) {
   const unresolved = cases.filter((item) => item.result === "unresolved");
 
   if (unresolved.some((item) => !canAdjudicate(manifest, item))) {
@@ -304,141 +208,258 @@ function unresolvedChoice({ cases, manifest }: Pick<Facts, "cases" | "manifest">
     );
   }
 
-  return unresolved.some(
-    (item) =>
-      !item.legacyOwner || item.legacyOwner === "split" || Object.keys(item.votes).length < 2,
-  )
-    ? {
-        ...result("insufficient evidence", "Your blind read can settle the unresolved cases."),
-        reasonCode: "owner_blind_read_required" as const,
-      }
-    : null;
+  return {
+    ...result("insufficient evidence", "Your blind read can settle the unresolved cases."),
+    reasonCode: "owner_blind_read_required" as const,
+  };
 }
 
-function choose({
-  manifest,
-  rows,
-  cases,
-  claims,
-  missing,
-  languages,
-  rules,
-  uncheckedKeys,
-}: Facts) {
-  const incumbent = rows.find((record) => record.side === "incumbent");
-  const challenger = rows.find((record) => record.side === "challenger");
+const keyChoice = result("insufficient evidence", "Some answer keys are unchecked.");
 
-  if (!incumbent || !challenger) {
-    return result("insufficient evidence", "Single-output audit.");
+const hardChoice = result(
+  "insufficient evidence",
+  "A pending major claim could rule out a variant.",
+);
+
+function assess(comparison: Comparison, cases: Cases, claims: Claims, rows: Decision["rows"]) {
+  const { manifest } = comparison;
+  const [incumbent, challenger] = rows;
+  const rules = manifest.priorities.comparison;
+
+  if (!manifest.variants.incumbent || !incumbent || !challenger) {
+    return assessment(result("insufficient evidence", "Single-output audit."));
   }
 
-  if (challenger.status === "disqualified") {
-    if (
-      incumbent.status !== "disqualified" &&
-      manifest.runsCompared.some((run) => !run.incumbent)
-    ) {
-      return result(
-        "insufficient evidence",
-        "The challenger failed, but the incumbent has missing outputs.",
-      );
-    }
+  const challengerFailed = challenger.status === "disqualified";
 
-    return incumbent.status === "disqualified"
-      ? result("neither qualifies", "Both variants failed a hard requirement.")
-      : result("retain", "The challenger failed a hard requirement.");
+  if (incumbent.status === "disqualified" && challengerFailed) {
+    return assessment(result("neither qualifies", "Both variants failed a hard requirement."));
   }
 
-  if (uncheckedKeys) {
-    return result("insufficient evidence", "Some answer keys are unchecked.");
-  }
+  const pending = claims.filter((claim) => claim.finding === "unsure");
 
-  if (missing || !rules || manifest.criteria.some((item) => !rules.criteria[item.id])) {
-    return result("insufficient evidence", "Missing matched runs or criterion priorities.");
-  }
+  const hard = pending.filter(
+    (claim) => rules?.criteria[claim.observation.criterion] === "disqualifies",
+  );
 
-  const savings = (incumbent.costPer1000 ?? 0) - (challenger.costPer1000 ?? 0);
-
-  if (preferenceSettlesOpenEvidence({ challenger, claims, incumbent, rules, savings })) {
-    return result(
-      "retain",
-      "More cases prefer the incumbent. The open cases and claims can’t change the decision.",
+  if (incumbent.missingMatches > 0 && missingMatchMatters({ challengerFailed, manifest })) {
+    return assessment(
+      result("insufficient evidence", "Some runs are missing a matched output."),
+      hard,
     );
   }
 
-  const reading = unresolvedChoice({ cases, manifest });
+  const unchecked = new Set(uncheckedAnswerKeys(comparison).map(({ side }) => side));
 
-  if (reading) {
-    return reading;
+  if (challengerFailed) {
+    const open = hardRequirementChoice(unchecked.has("incumbent"), hard);
+
+    return assessment(open ?? result("retain", "The challenger failed a hard requirement."), hard);
   }
 
-  const pending = claims.filter(
-    (mapping) => mapping.finding === "unsure" && mapping.side === "challenger",
-  );
-
-  if (pending.some((mapping) => rules.criteria[mapping.observation.criterion] === "disqualifies")) {
-    return result("insufficient evidence", "A pending claim could disqualify the challenger.");
+  if (!rules || manifest.criteria.some((item) => !rules.criteria[item.id])) {
+    return assessment(
+      result("insufficient evidence", "Some criterion priorities are missing."),
+      hard,
+    );
   }
 
-  const seconds = (incumbent.p95 ?? 0) - (challenger.p95 ?? 0);
-
-  if (incumbent.status === "disqualified") {
-    return eligibleChoice({ cases, incumbent, manifest, savings, seconds });
-  }
-
-  const limits = evaluateTrades({
+  return assessEligibleChallenger({
     cases,
     challenger,
+    comparison,
+    hard,
     incumbent,
-    languages,
     pending,
     rules,
-    runs: manifest.runs,
+    unchecked,
   });
-
-  if (limits) {
-    return result(limits.outcome, limits.reason);
-  }
-
-  return eligibleChoice({ cases, incumbent, manifest, savings, seconds });
 }
 
-function eligibleChoice({
-  cases,
-  incumbent,
-  savings,
-  seconds,
+function missingMatchMatters({
+  challengerFailed,
   manifest,
 }: {
-  cases: ReturnType<typeof caseVotes>;
-  incumbent: TableRow;
-  savings: number;
-  seconds: number;
+  challengerFailed: boolean;
   manifest: Comparison["manifest"];
 }) {
-  const { priorities } = manifest;
+  const rules = manifest.priorities.comparison;
 
-  const votes = cases.map((item) =>
-    item.result === "unresolved" ? item.legacyOwner : item.result,
+  return (
+    !challengerFailed ||
+    manifest.runsCompared.some((run) => !run.incumbent) ||
+    Boolean(manifest.latencyBudget) ||
+    manifest.criteria.some((criterion) => rules?.criteria[criterion.id] !== "counts")
   );
+}
+
+function assessEligibleChallenger({
+  cases,
+  challenger,
+  comparison,
+  hard,
+  incumbent,
+  pending,
+  rules,
+  unchecked,
+}: {
+  cases: Cases;
+  challenger: TableRow;
+  comparison: Comparison;
+  hard: Claims;
+  incumbent: TableRow;
+  pending: Claims;
+  rules: NonNullable<Comparison["manifest"]["priorities"]["comparison"]>;
+  unchecked: Set<Side>;
+}) {
+  const { manifest } = comparison;
+  const preferences = preferenceBounds(manifest, cases);
+  const trade = tradeBounds({ cases, challenger, comparison, incumbent, pending, rules });
+
+  const decideWithinBounds = (votes: typeof preferences.best, deficit: string | undefined) =>
+    eligibleChoice({ challenger, deficit, incumbent, manifest, votes });
+
+  const best = decideWithinBounds(preferences.best, trade.best);
+  const worst = decideWithinBounds(preferences.worst, trade.worst);
+  const incumbentFailed = incumbent.status === "disqualified";
+
+  const keyMatters =
+    (unchecked.has("challenger") && (incumbentFailed || best.outcome === "switch")) ||
+    (unchecked.has("incumbent") && !incumbentFailed && worst.outcome === "retain");
+
+  const open = hardRequirementChoice(keyMatters, hard);
+
+  if (open) {
+    return assessment(open, hard);
+  }
+
+  if (best.outcome !== worst.outcome) {
+    return assessOpenTradeOrReads({
+      best,
+      cases,
+      decideWithinBounds,
+      manifest,
+      preferences,
+      trade,
+    });
+  }
+
+  if (best.outcome === "switch") {
+    return assessment(switchCoverage({ cases, manifest }) ?? best);
+  }
+
+  if (
+    best.reason === preferenceReason &&
+    (pending.length > 0 || cases.some((item) => item.result === "unresolved"))
+  ) {
+    return assessment(
+      result(
+        "retain",
+        "More cases prefer the incumbent. The open cases and claims can’t change the decision.",
+      ),
+    );
+  }
+
+  const current = decideWithinBounds(
+    cases.map((item) =>
+      item.result === "unresolved" ? (item.legacyOwner ?? undefined) : item.result,
+    ),
+    trade.current,
+  );
+
+  return assessment(current.outcome === best.outcome ? current : best);
+}
+
+function assessment(choice: Choice, decisive: Claims = []) {
+  return { choice, decisive };
+}
+
+function hardRequirementChoice(keyMatters: boolean, hard: Claims) {
+  if (keyMatters) {
+    return keyChoice;
+  }
+
+  // One verifier can confirm a hard failure on both outputs, regardless of whom the reader named.
+  return hard.length > 0 ? hardChoice : null;
+}
+
+function switchCoverage({ cases, manifest }: { cases: Cases; manifest: Comparison["manifest"] }) {
+  if (cases.some((item) => missingReaderFamilies(manifest, item.votes).length > 0)) {
+    return readingChoice({ cases, manifest });
+  }
+
+  return manifest.priorities.distribution === "shared" &&
+    cases.some((item) => !item.owner && !item.adjudication)
+    ? result("insufficient evidence", "Shared content awaits the owner’s blind read.")
+    : null;
+}
+
+function assessOpenTradeOrReads({
+  best,
+  cases,
+  decideWithinBounds,
+  manifest,
+  preferences,
+  trade,
+}: {
+  best: Choice;
+  cases: Cases;
+  decideWithinBounds: (votes: (Direction | undefined)[], deficit: string | undefined) => Choice;
+  manifest: Comparison["manifest"];
+  preferences: ReturnType<typeof preferenceBounds>;
+  trade: ReturnType<typeof tradeBounds>;
+}) {
+  const tradeMatters = decideWithinBounds(preferences.best, trade.worst).outcome !== best.outcome;
+  const decisive = tradeMatters ? trade.decisive : [];
+
+  if (decideWithinBounds(preferences.worst, trade.best).outcome !== best.outcome) {
+    return assessment(readingChoice({ cases, manifest }), decisive);
+  }
+
+  return assessment(
+    result(
+      "insufficient evidence",
+      trade.unchecked
+        ? "Unfinished code checks could change the quality trade."
+        : "Outstanding major claims could change the quality trade.",
+    ),
+    decisive,
+  );
+}
+
+const preferenceReason = "More cases prefer the incumbent.";
+
+function eligibleChoice({
+  challenger,
+  deficit,
+  incumbent,
+  manifest,
+  votes,
+}: {
+  challenger: TableRow;
+  deficit: string | undefined;
+  incumbent: TableRow;
+  manifest: Comparison["manifest"];
+  votes: (Direction | undefined)[];
+}): Choice {
+  if (incumbent.status === "disqualified") {
+    return result("switch", "Only the challenger qualifies.");
+  }
+
+  const { priorities } = manifest;
+  const savings = (incumbent.costPer1000 ?? 0) - (challenger.costPer1000 ?? 0);
+  const seconds = (incumbent.p95 ?? 0) - (challenger.p95 ?? 0);
 
   if (
     (priorities.comparison?.preference === "canBlock" || savings === 0) &&
-    incumbent.status !== "disqualified" &&
     votes.filter((vote) => vote === "incumbent").length >
       votes.filter((vote) => vote === "challenger").length
   ) {
-    return result("retain", "More cases prefer the incumbent.");
+    return result("retain", preferenceReason);
   }
 
-  if (
-    priorities.distribution === "shared" &&
-    cases.some((item) => !item.owner && !item.adjudication)
-  ) {
-    return result("insufficient evidence", "Shared content awaits the owner’s blind read.");
-  }
-
-  if (incumbent.status === "disqualified") {
-    return result("switch", "Only the challenger qualifies.");
+  if (deficit) {
+    return result("retain", deficit);
   }
 
   if (savings < 0) {
@@ -453,115 +474,20 @@ function eligibleChoice({
     return result("retain", "No demonstrated improvement.");
   }
 
-  if (priorities.comparison?.trade) {
-    return result("switch", "The challenger meets the accepted trade in every language.");
+  return result("switch", switchReason(manifest, savings));
+}
+
+function switchReason(manifest: Comparison["manifest"], savings: number) {
+  if (manifest.priorities.comparison?.trade) {
+    return "The challenger meets the accepted trade in every language.";
   }
 
   const cost = savings > 0 ? " It costs less per successful delivery." : "";
   const unit = manifest.runs > 1 ? "runs" : "cases";
 
-  return result(
-    "switch",
-    `The challenger has no more ${unit} with a confirmed major problem in any language.${cost}`,
-  );
+  return `The challenger has no more ${unit} with a confirmed major problem in any language.${cost}`;
 }
 
-function result(outcome: Decision["outcome"], reason: string) {
+function result(outcome: Decision["outcome"], reason: string): Choice {
   return { outcome, reason };
-}
-
-type TableRow = Decision["rows"][number];
-
-function countsTowardTrade(
-  metric: TableRow["quality"][number],
-  rules: NonNullable<Facts["rules"]>,
-) {
-  return metric.check
-    ? metric.criterion !== "answer keys"
-    : rules.criteria[metric.criterion] === "counts";
-}
-
-function evaluateTrades({
-  languages,
-  cases,
-  rules,
-  pending,
-  incumbent,
-  challenger,
-  runs,
-}: {
-  languages: string[];
-  cases: Decision["cases"];
-  rules: NonNullable<Comparison["manifest"]["priorities"]["comparison"]>;
-  pending: ReturnType<typeof verifiedClaims>;
-  incumbent: TableRow;
-  challenger: TableRow;
-  runs: number;
-}) {
-  const trade = rules.trade;
-  const unit = runs > 1 ? "runs" : "cases";
-
-  for (const language of languages) {
-    const before = incumbent.deliveryByLanguage[language];
-    const after = challenger.deliveryByLanguage[language];
-
-    const costShare =
-      before?.costPer1000 && typeof after?.costPer1000 === "number"
-        ? (before.costPer1000 - after.costPer1000) / before.costPer1000
-        : null;
-
-    const seconds =
-      typeof before?.p95 === "number" && typeof after?.p95 === "number"
-        ? before.p95 - after.p95
-        : null;
-
-    const ids = new Set(
-      cases.filter((item) => item.language === language).map((item) => item.caseId),
-    );
-
-    const count = (row: typeof incumbent) =>
-      new Set(
-        row.quality
-          .filter(
-            (qualityRow) =>
-              qualityRow.language === language && countsTowardTrade(qualityRow, rules),
-          )
-          .flatMap((qualityRow) => qualityRow.affected.map((run) => caseRunKey(run))),
-      );
-
-    const baseline = count(incumbent).size;
-    const known = count(challenger);
-
-    const possible = new Set([
-      ...known,
-      ...pending.filter((mapping) => ids.has(mapping.caseId)).map((claim) => caseRunKey(claim)),
-    ]);
-
-    const allowed = (affectedCount: number) =>
-      affectedCount <= baseline ||
-      Boolean(
-        trade &&
-        (affectedCount - baseline) * 100 <= trade.majorIncreasePer100 * (before?.successful ?? 0) &&
-        ((trade.saveCostShare !== null && costShare !== null && costShare >= trade.saveCostShare) ||
-          (trade.saveSeconds !== null && seconds !== null && seconds >= trade.saveSeconds)),
-      );
-
-    if (!allowed(possible.size)) {
-      return allowed(known.size)
-        ? result(
-            "insufficient evidence",
-            trade
-              ? "Outstanding major claims together could exceed the accepted trade."
-              : `Outstanding major claims could give the challenger more affected ${unit} in ${language}.`,
-          )
-        : result(
-            "retain",
-            trade
-              ? `The confirmed quality deficit exceeds the accepted trade in ${language}.`
-              : `The challenger has more ${unit} with a confirmed major problem in ${language}.`,
-          );
-    }
-  }
-
-  return null;
 }

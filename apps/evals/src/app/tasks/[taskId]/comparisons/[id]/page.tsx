@@ -6,7 +6,7 @@ import { ContainerBody, ContainerDescription } from "@zoonk/ui/components/contai
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { MainActionBar } from "../_components/main-action-link";
-import { awaitedReaders, nextOwnerPacket, ownerReads } from "../_utils/case-evidence";
+import { awaitedReaderLabels, nextOwnerPacket, ownerReads } from "../_utils/case-evidence";
 import { type ComparisonRoute, getComparisonRoute } from "../_utils/comparison-route";
 import { readPath } from "../_utils/paths";
 import { comparisonTitle, outcomeText } from "../_utils/titles";
@@ -56,7 +56,7 @@ function OwnerStatus({ route }: { route: ComparisonRoute }) {
   const { manifest } = route.comparison;
 
   const waiting = route.decision.cases.flatMap((item) => {
-    const awaited = awaitedReaders(manifest, item);
+    const awaited = awaitedReaderLabels(manifest, item.votes);
     return awaited.length > 0 ? [{ awaited, caseId: item.caseId }] : [];
   });
 

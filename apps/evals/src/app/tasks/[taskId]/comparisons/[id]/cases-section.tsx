@@ -5,14 +5,14 @@ import { canAdjudicate } from "@/lib/comparisons/evidence";
 import { type Comparison } from "@/lib/comparisons/schemas";
 import { CaseInput } from "../_components/case-input";
 import { CaseRuns } from "../_components/case-view";
-import { awaitedReaders, caseRuns, orderCases } from "../_utils/case-evidence";
+import { awaitedReaderLabels, caseRuns, orderCases } from "../_utils/case-evidence";
 import { DIRECTION_LABELS, familyLabel } from "../_utils/labels";
 import { RulingForm } from "./ruling-form";
 
 type Case = Decision["cases"][number];
 
 function resultText(item: Case, manifest: Comparison["manifest"]): string {
-  const awaited = awaitedReaders(manifest, item);
+  const awaited = awaitedReaderLabels(manifest, item.votes);
 
   const result =
     awaited.length > 0 ? `Waiting for ${awaited.join(" and ")}` : DIRECTION_LABELS[item.result];

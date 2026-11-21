@@ -106,7 +106,8 @@ export function deliveryTable(
         ) ||
         failedChecks.some((check) => check.side === subject && check.name === "answer keys") ||
         failures.some((failure) => failure.reason === "schema") ||
-        (slots.length > 0 &&
+        (missing === 0 &&
+          slots.length > 0 &&
           meetsLatencyBudget({ budget: manifest.latencyBudget ?? undefined, latency: delivery }) ===
             false);
 

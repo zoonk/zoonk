@@ -1,5 +1,10 @@
 import { type Decision, type Direction } from "@/lib/comparisons/decision-schema";
-import { acceptedReads, opposite, verifiedClaims } from "@/lib/comparisons/evidence";
+import {
+  acceptedReads,
+  missingReaderFamilies,
+  opposite,
+  verifiedClaims,
+} from "@/lib/comparisons/evidence";
 import { ownerPackets } from "@/lib/comparisons/packets";
 import {
   type Comparison,
@@ -173,21 +178,11 @@ const RESULT_ORDER: Record<Direction, number> = {
   unresolved: 0,
 };
 
-/** The required model readers an unresolved case has no qualified vote from yet; until they read it, nothing can settle it. */
-export function awaitedReaders(
+export function awaitedReaderLabels(
   manifest: Comparison["manifest"],
-  item: Pick<Decision["cases"][number], "result" | "votes">,
-): string[] {
-  if (item.result !== "unresolved") {
-    return [];
-  }
-
-  return manifest.readers
-    .filter((reader) => reader.channel !== "owner" && !reader.reserve)
-    .map((reader) => reader.family)
-    .filter((family, index, families) => families.indexOf(family) === index)
-    .filter((family) => !Object.hasOwn(item.votes, family))
-    .map((family) => familyLabel(family));
+  votes: Decision["cases"][number]["votes"],
+) {
+  return missingReaderFamilies(manifest, votes).map((family) => familyLabel(family));
 }
 
 /** Cases that still need a call first, then the ones that went one way, then ties. */
