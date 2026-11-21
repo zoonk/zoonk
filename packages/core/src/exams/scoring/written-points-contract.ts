@@ -1,13 +1,19 @@
 import { z } from "zod";
 import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
-import { writingRangeSchema } from "../essays/writing-contract";
+import {
+  writingDecimalsSchema,
+  writingRangeSchema,
+  writingScaleSchema,
+} from "../essays/writing-contract";
 
 export const writtenPartPointsSchema = z
   .object({
+    decimals: writingDecimalsSchema.optional(),
     max: z.number().positive().nullable(),
     minimum: pointsMinimumSchema.nullable(),
     name: z.string(),
     range: writingRangeSchema.nullable(),
+    scale: writingScaleSchema.optional(),
     standing: z.enum(["unmeasured", "below", "overlaps", "met"]).nullable(),
     tasks: z.array(
       z.object({

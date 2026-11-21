@@ -1,12 +1,16 @@
 import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
 import { type WritingResult, type writtenItemSchema } from "../writing-contract";
-import { type WritingArithmetic } from "../writing-rubric-policy";
+import { type WritingArithmetic, supportsWritingArithmetic } from "../writing-rubric-policy";
 import { ENEM_WRITING_MAX, scoreEnemWriting } from "./enem-writing";
+import { getWritingDecimals } from "./writing-decimals";
+import { verifyWritingErrors } from "./writing-errors";
+import { selectNextStep, writingRuleNextStep } from "./writing-next-step";
 import { verifiedWritingZero } from "./writing-zero";
 
 type Basis = z.infer<typeof writtenItemSchema>;
 type Feedback = Omit<Extract<WritingResult, { kind: "levels" }>, "kind">;
+type PointRow = Extract<WritingResult, { kind: "points" }>["rows"][number];
 
 const QUOTE_PUNCTUATION = new Map(
   ["'‘’‚‛", '"“”„‟', "-‐‑‒–—―﹘﹣－"].flatMap((group) =>
@@ -67,42 +71,6 @@ export function createWritingQuoteLookup(text: string) {
   };
 }
 
-function exactStart(text: string, quote: string | null): number | null {
-  if (!quote?.trim()) {
-    return null;
-  }
-
-  const start = text.indexOf(quote);
-  return start !== -1 && !text.includes(quote, start + 1) ? start : null;
-}
-
-function verifyErrors(eligible: string, errors: WritingEvidence["errors"]): Feedback["errors"] {
-  const candidates = errors.flatMap((error) => {
-    const start = exactStart(eligible, error.quote);
-
-    return start !== null &&
-      error.correction.trim() &&
-      error.kind.trim() &&
-      error.correction !== error.quote
-      ? [{ ...error, start }]
-      : [];
-  });
-
-  const unique = [...new Map(candidates.map((error) => [JSON.stringify(error), error])).values()];
-
-  return unique
-    .filter(
-      (error) =>
-        !unique.some(
-          (other) =>
-            other !== error &&
-            other.start < error.start + error.quote.length &&
-            error.start < other.start + other.quote.length,
-        ),
-    )
-    .toSorted((first, second) => first.start - second.start);
-}
-
 export function buildWritingFeedback({
   basis,
   eligible,
@@ -137,11 +105,15 @@ export function buildWritingFeedback({
   });
 
   const next = evidence.nextStep;
-  const target = criteria.find((criterion) => criterion.id === next?.criterionId);
 
   const nextStep =
-    next && target && target.level !== "complete" && next.text.trim()
-      ? { ...next, quote: passage(next.quote) }
+    next && next.text.trim()
+      ? {
+          ...next,
+          kind: "criterion" as const,
+          quote: passage(next.quote),
+          title: next.title?.trim() || null,
+        }
       : null;
 
   const prior = new Set(previousNextSteps);
@@ -152,7 +124,7 @@ export function buildWritingFeedback({
 
   return {
     criteria,
-    errors: verifyErrors(eligible, evidence.errors),
+    errors: verifyWritingErrors(eligible, evidence.errors),
     ignoredFrom,
     nextStep,
     progress:
@@ -227,7 +199,7 @@ function scoreRows({
         : sum;
     }, 0);
 
-    return [{ earned, id, max: points }];
+    return [{ decimals: getWritingDecimals(points), earned, id, max: points }];
   });
 }
 
@@ -261,30 +233,35 @@ export function applyWritingArithmetic({
   estimatedLines,
   evidence,
   feedback,
+  belowWordFloor = false,
 }: {
   arithmetic: WritingArithmetic | null;
   basis: Basis;
+  belowWordFloor?: boolean;
   context: string | null;
   eligible: string;
   estimatedLines: number;
   evidence: WritingEvidence;
   feedback: Feedback;
 }): WritingResult {
-  const levels = { ...feedback, kind: "levels" as const };
+  const levels = (): WritingResult => ({
+    ...feedback,
+    kind: "levels",
+    nextStep: selectNextStep(feedback, evidence),
+  });
+
   const { grading, points } = basis;
-  const { language, rounding } = grading;
 
   if (
     !arithmetic ||
     points === null ||
     grading.kind === "levels" ||
-    Boolean(rounding) !== Boolean(arithmetic.rounding) ||
-    (language && (language.method === "other" || language.factor === null || !language.formula))
+    !supportsWritingArithmetic(grading, arithmetic)
   ) {
-    return levels;
+    return levels();
   }
 
-  const zeroReason = verifiedWritingZero({
+  const zero = verifiedWritingZero({
     basis,
     context,
     eligible,
@@ -292,20 +269,34 @@ export function applyWritingArithmetic({
     ruleIndexes: arithmetic.zeroRules,
   });
 
+  if (belowWordFloor && !zero) {
+    return levels();
+  }
+
+  const decimals = getWritingDecimals(points, [grading]);
+
+  const nextStep = (rows: readonly PointRow[]) =>
+    zero ? writingRuleNextStep("zero") : selectNextStep(feedback, evidence, rows);
+
+  const zeroFields = { ...(zero && { zeroKind: zero.kind }), zeroReason: zero?.reason ?? null };
+
   if (grading.kind === "enem") {
-    const score = points === ENEM_WRITING_MAX ? scoreEnemWriting(evidence, zeroReason) : null;
+    const score = points === ENEM_WRITING_MAX ? scoreEnemWriting(evidence, zero !== null) : null;
 
     return score
       ? {
           ...feedback,
-          ...score,
+          ...zeroFields,
+          content: score.content,
+          decimals,
           deduction: { high: 0, low: 0 },
           kind: "points",
           max: points,
+          nextStep: nextStep(score.rows),
+          rows: score.rows.map((row) => ({ ...row, decimals: getWritingDecimals(row.max) })),
           total: score.content,
-          zeroReason,
         }
-      : levels;
+      : levels();
   }
 
   const rows = scoreRows({ basis, eligible, evidence });
@@ -315,7 +306,7 @@ export function applyWritingArithmetic({
     new Set(rows.map(({ id }) => id)).size !== rows.length ||
     rows.reduce((sum, row) => addPoints(sum, row.max), 0) !== points
   ) {
-    return levels;
+    return levels();
   }
 
   const content = rows.reduce((sum, row) => addPoints(sum, row.earned), 0);
@@ -328,16 +319,18 @@ export function applyWritingArithmetic({
   });
 
   const total = (deducted: number) =>
-    zeroReason ? 0 : Math.min(points, Math.max(0, round(content - deducted, arithmetic.rounding)));
+    zero ? 0 : Math.min(points, Math.max(0, round(content - deducted, arithmetic.rounding)));
 
   return {
     ...feedback,
+    ...zeroFields,
     content: { high: content, low: content },
+    decimals,
     deduction,
     kind: "points",
     max: points,
+    nextStep: nextStep(rows),
     rows,
     total: { high: total(deduction.low), low: total(deduction.high) },
-    zeroReason,
   };
 }

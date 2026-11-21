@@ -12,7 +12,9 @@ import { type GradeWritingExpected, type GradeWritingInput, TEST_CASES } from ".
 
 export type GradeWritingOutput = {
   estimatedLines: number;
-  evidence: WritingEvidence;
+  evidence: Omit<WritingEvidence, "nextStep"> & {
+    nextStep: (Omit<NonNullable<WritingEvidence["nextStep"]>, "title"> & { title?: string }) | null;
+  };
   result: WritingResult;
 };
 

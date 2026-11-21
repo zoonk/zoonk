@@ -1,5 +1,6 @@
 import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
+import { type writingZeroKindSchema } from "../../../library/exams/written-grading";
 import { type writtenItemSchema } from "../writing-contract";
 import { WRITING_LINE_BREAK, countWritingLines } from "../writing-lines";
 
@@ -98,15 +99,15 @@ function matchesRule({
   index: number;
   rule: Rule;
   text: string;
-}) {
+}): z.infer<typeof writingZeroKindSchema> | null {
   const { kinds, maxLines } = rule;
 
   if (kinds?.includes("blank") && text.trim() === "") {
-    return true;
+    return "blank";
   }
 
   if (kinds?.includes("tooFewLines") && shortEnough(text, maxLines, basis)) {
-    return true;
+    return "tooFewLines";
   }
 
   const { onTopicQuote, zeroKind, zeroQuote, zeroRuleIndex } = evidence;
@@ -118,10 +119,10 @@ function matchesRule({
     !zeroQuote?.trim() ||
     !text.includes(zeroQuote)
   ) {
-    return false;
+    return null;
   }
 
-  return matchesNominatedRule({
+  const matches = matchesNominatedRule({
     basis,
     context,
     maxLines,
@@ -130,6 +131,8 @@ function matchesRule({
     zeroKind,
     zeroQuote,
   });
+
+  return matches ? zeroKind : null;
 }
 
 export function verifiedWritingZero({
@@ -144,12 +147,16 @@ export function verifiedWritingZero({
   eligible: string;
   evidence: WritingEvidence;
   ruleIndexes: readonly number[];
-}): string | null {
-  return (
-    basis.grading.zeroing.find(
-      (rule, index) =>
-        ruleIndexes.includes(index) &&
-        matchesRule({ basis, context, evidence, index, rule, text: eligible }),
-    )?.text ?? null
-  );
+}) {
+  for (const [index, rule] of basis.grading.zeroing.entries()) {
+    if (ruleIndexes.includes(index)) {
+      const kind = matchesRule({ basis, context, evidence, index, rule, text: eligible });
+
+      if (kind) {
+        return { kind, reason: rule.text };
+      }
+    }
+  }
+
+  return null;
 }

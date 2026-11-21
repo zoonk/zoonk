@@ -384,7 +384,12 @@ describe("written mock sittings", () => {
     await expect(view(id)).resolves.toMatchObject({
       essays: [
         {
-          grade: { estimatedLines: 263, ignoredFrom: 30 * 55, kind: "levels" },
+          grade: {
+            estimatedLines: 263,
+            ignoredFrom: 30 * 55,
+            kind: "levels",
+            nextStep: { kind: "limit", title: null },
+          },
           status: "graded",
           writing: { partMinimum: PART_MINIMUM },
         },
@@ -406,6 +411,7 @@ describe("written mock sittings", () => {
         {
           minimum: { unit: "points", value: 50 },
           range: null,
+          scale: "levels",
           standing: "unmeasured",
           tasks: [
             { key: "short", range: null },

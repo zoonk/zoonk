@@ -35,9 +35,9 @@ function proposalPoints(evidence: WritingEvidence) {
   return proposalLimit ? Math.min(points, PROPOSAL_CAP[proposalLimit]) : points;
 }
 
-export function scoreEnemWriting(evidence: WritingEvidence, zeroReason: string | null) {
+export function scoreEnemWriting(evidence: WritingEvidence, zero: boolean) {
   if (
-    !zeroReason &&
+    !zero &&
     (!hasEnemCompetences(evidence.criteria) || evidence.interventionElements === undefined)
   ) {
     return null;
@@ -51,7 +51,7 @@ export function scoreEnemWriting(evidence: WritingEvidence, zeroReason: string |
     const assessed =
       id === "c5" ? { high: proposal, low: proposal } : LEVEL_RANGE[criteria.get(id) ?? "missing"];
 
-    const range = zeroReason ? { high: 0, low: 0 } : assessed;
+    const range = zero ? { high: 0, low: 0 } : assessed;
 
     return { earned: range.low, id, max: COMPETENCE_MAX, range };
   });

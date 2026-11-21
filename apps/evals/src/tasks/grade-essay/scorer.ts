@@ -316,7 +316,8 @@ function zeroCheck({
   const rule = input.basis.grading.zeroing.find(({ text }) => text === reason);
   const blank = rule?.kinds?.includes("blank") && input.text.trim() === "";
   const detected = rule?.kinds?.includes("tooFewLines") ? "tooFewLines" : output.evidence.zeroKind;
-  const matchesKind = !expected.zeroKind || expected.zeroKind === (blank ? "blank" : detected);
+  const kind = output.result.zeroKind ?? (blank ? "blank" : detected);
+  const matchesKind = !expected.zeroKind || expected.zeroKind === kind;
   const quote = output.evidence.zeroQuote;
 
   return [
@@ -338,12 +339,31 @@ function feedbackChecks({
   const { criteria, nextStep } = output.result;
   const open = criteria.filter((criterion) => criterion.level !== "complete");
 
-  const comments = [...criteria.map((criterion) => criterion.comment), nextStep?.text ?? ""].join(
-    " ",
-  );
+  const comments = [
+    ...criteria.map((criterion) => criterion.comment),
+    nextStep?.title ?? "",
+    nextStep?.text ?? "",
+  ].join(" ");
 
   const language = detectLanguage(comments);
   const quoted = criteria.filter((criterion) => criterion.level !== "missing");
+
+  const stepCheck = {
+    detail: nextStep
+      ? `Next step on ${nextStep.criterionId}${expected.nextStepCriteria ? `, expected one of ${expected.nextStepCriteria.join(", ")}` : ""}.`
+      : `No next step, ${open.length} criteria open.`,
+    name: "next-step",
+    passed: nextStep
+      ? !expected.nextStepCriteria || expected.nextStepCriteria.includes(nextStep.criterionId)
+      : open.length === 0 || expected.zero,
+  };
+
+  if (nextStep?.kind === "zero" || nextStep?.kind === "limit") {
+    stepCheck.detail = `Next step addresses ${nextStep.kind === "zero" ? "a zeroing rule" : "the line limit"}.`;
+
+    stepCheck.passed =
+      nextStep.kind === "zero" ? expected.zero : output.result.ignoredFrom !== null;
+  }
 
   const levels: Check[] = expected.minimumLevel
     ? [
@@ -360,15 +380,7 @@ function feedbackChecks({
 
   return [
     ...levels,
-    {
-      detail: nextStep
-        ? `Next step on ${nextStep.criterionId}${expected.nextStepCriteria ? `, expected one of ${expected.nextStepCriteria.join(", ")}` : ""}.`
-        : `No next step, ${open.length} criteria open.`,
-      name: "next-step",
-      passed: nextStep
-        ? !expected.nextStepCriteria || expected.nextStepCriteria.includes(nextStep.criterionId)
-        : open.length === 0 || expected.zero,
-    },
+    stepCheck,
     {
       detail: `Feedback language: expected ${expected.feedbackLanguage}, detected ${language ?? "unknown"}.`,
       name: "language",

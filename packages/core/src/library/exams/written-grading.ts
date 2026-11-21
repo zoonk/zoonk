@@ -5,6 +5,15 @@ export const citationSchema = z.object({ passage: z.string(), sourceId: z.string
 
 const citedRuleSchema = z.object({ citation: citationSchema, text: z.string().min(1) });
 
+export const writingZeroKindSchema = z.enum([
+  "blank",
+  "offTopic",
+  "wrongForm",
+  "tooFewLines",
+  "copiedSupport",
+  "identification",
+]);
+
 export const writtenGradingSchema = z.object({
   criteria: z.array(
     citedRuleSchema.extend({ id: z.string().min(1), points: z.number().positive().nullable() }),
@@ -20,18 +29,7 @@ export const writtenGradingSchema = z.object({
   rounding: citedRuleSchema.nullable(),
   zeroing: z.array(
     citedRuleSchema.extend({
-      kinds: z
-        .array(
-          z.enum([
-            "blank",
-            "offTopic",
-            "wrongForm",
-            "tooFewLines",
-            "copiedSupport",
-            "identification",
-          ]),
-        )
-        .optional(),
+      kinds: z.array(writingZeroKindSchema).optional(),
       maxLines: z.int().positive().nullable().optional(),
     }),
   ),

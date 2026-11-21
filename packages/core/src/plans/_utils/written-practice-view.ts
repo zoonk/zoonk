@@ -4,6 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { namesMatch } from "../../exams/_utils/name-match";
 import { toChosenStructure } from "../../exams/choices/exam-choices";
 import { unfinishedExtraWritingWhere } from "../../exams/essays/_utils/extra-writing-blocks";
+import { getWritingDecimals } from "../../exams/essays/_utils/writing-decimals";
 import { getWritingScope, writingNeedsChoice } from "../../exams/essays/_utils/writing-scope";
 import { projectWrittenParts } from "../../exams/estimates/written-projection";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -77,22 +78,30 @@ function toHistory(samples: readonly WrittenSample[]) {
     }
   }
 
-  return history
-    .toReversed()
-    .map(({ first, versions }) => ({
+  return history.toReversed().map(({ first, versions }) => {
+    const { grade, conditions } = first.answer;
+    const { grading, lines, taskKey, title, unit } = first.prompt;
+    const points = first.numericEligible && grade.kind === "points" ? grade : null;
+
+    return {
       attemptId: first.id,
+      ...(!points && {
+        criteria: {
+          complete: grade.criteria.filter(({ level }) => level === "complete").length,
+          total: grade.criteria.length,
+        },
+      }),
       date: toIsoDate(first.localDate),
-      estimatedLines: first.answer.conditions.estimatedLines,
-      lines: first.prompt.lines,
-      range:
-        first.numericEligible && first.answer.grade.kind === "points"
-          ? first.answer.grade.total
-          : null,
-      taskKey: first.prompt.taskKey,
-      title: first.prompt.title,
-      unit: first.prompt.unit,
+      ...(points && { decimals: getWritingDecimals(points.max, [grading]) }),
+      estimatedLines: conditions.estimatedLines,
+      lines,
+      range: points?.total ?? null,
+      taskKey,
+      title,
+      unit,
       versions: versions.size,
-    }));
+    };
+  });
 }
 
 async function loadWriteActions({
@@ -233,9 +242,11 @@ export async function loadWrittenPracticeView({
         availability: writingNeedsChoice(
           ownTasks.flatMap(({ key }) => scopes.get(key)?.missingChoices ?? []),
         ),
+        decimals: part.decimals,
         minutes: ownTasks[0]?.minutes ?? null,
         points: part,
         questions: ownTasks.reduce((sum, task) => sum + task.count, 0),
+        scale: part.scale,
         share,
         trend: own
           .filter(

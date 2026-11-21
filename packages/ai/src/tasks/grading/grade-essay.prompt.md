@@ -46,6 +46,7 @@ List in `errors` each passage that breaks the formal written standard of the ans
 ## Next step
 
 `nextStep` is the one change that would help this answer most, on a criterion that isn't `complete`: its `criterionId`; `text`, one concrete action for the next draft in `LANGUAGE`, at most 25 words; `quote`, the passage to rewrite, copied exactly and appearing only once, or null when the change is to add something missing; and `example`, how that passage or addition could read, in the answer's language. Null when every criterion is `complete`.
+`title` is that same change as a heading of a few words in `LANGUAGE`: an instruction that names the thing to change or add, such as the aspect that is missing, the fact to correct or the passage to finish. A heading that could sit over any answer isn't one.
 
 Describe the answer, not the person. Never promise a score, a pass, an approval or a place. No emojis.
 
