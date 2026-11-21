@@ -35,6 +35,7 @@ export function assembleChallengeCase({
 }): { missing: string[]; written: WrittenChallengeCase } {
   const missing: string[] = [];
   const meters = new Set(plan.meters.map((meter) => meter.id));
+  const visuals = new Map(plan.visuals.map((entry) => [entry.id, entry.visual]));
 
   const nodes = plan.decisions.flatMap((decision) => {
     const scripted = script.decisions.find((item) => item.id === decision.id);
@@ -55,7 +56,15 @@ export function assembleChallengeCase({
       return [assembleChoice({ meters, planned, written })];
     });
 
-    return [{ choices, id: decision.id, messages: scripted.messages, prompt: scripted.prompt }];
+    return [
+      {
+        choices,
+        id: decision.id,
+        messages: scripted.messages,
+        prompt: scripted.prompt,
+        visual: decision.visual === null ? null : (visuals.get(decision.visual) ?? null),
+      },
+    ];
   });
 
   const endings = plan.endings.flatMap((ending) => {

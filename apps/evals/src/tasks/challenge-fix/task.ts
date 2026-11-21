@@ -1,12 +1,12 @@
 import { type Task } from "@/lib/types";
 import { type ChallengeEdit, fixChallengeCase } from "@zoonk/ai/tasks/challenge/fix";
-import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/schema";
+import { type WrittenChallengeCase, challengeCaseSchema } from "@zoonk/ai/tasks/challenge/schema";
 import { type ChallengeFinding } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-content";
 import { applyChallengeEdits } from "@zoonk/core/library/challenges/edits";
 import cases from "./cases.json";
 
-type FixInput = { findings: ChallengeFinding[]; written: WrittenChallengeCase };
+type FixInput = { findings: ChallengeFinding[]; language: string; written: WrittenChallengeCase };
 
 type Label = { evidence: string; label: string };
 
@@ -23,7 +23,7 @@ function describeLabels(labels: Label[]): string {
 export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
   description:
     "Fix what a reviewer found in a held challenge with find/replace edits: the 15 drafts the trade-off lane fixed, with hand labels for each finding",
-  generate: async ({ findings, written, ...options }) => {
+  generate: async ({ findings, language, written, ...options }) => {
     const result = await fixChallengeCase({ ...options, findings, written });
     const fixed = applyChallengeEdits({ edits: result.data.edits, written });
 
@@ -32,6 +32,7 @@ export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
     }
 
     const checked = checkWrittenChallenge({
+      language,
       variant: written.deadline === null ? "whatIf" : "work",
       written: fixed,
     });
@@ -49,6 +50,13 @@ export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
 Every other word of the case stays as it was: ids, structure, meters, correct numbers, tone and language. Any new error an edit introduces on any route fails the case.`,
     id: saved.id,
     language: saved.language,
-    userInput: { findings: saved.findings, written: saved.written as WrittenChallengeCase },
+    userInput: {
+      findings: saved.findings,
+      language: saved.language,
+      written: challengeCaseSchema.parse({
+        ...saved.written,
+        nodes: saved.written.nodes.map((node) => ({ ...node, visual: null })),
+      }),
+    },
   })),
 };

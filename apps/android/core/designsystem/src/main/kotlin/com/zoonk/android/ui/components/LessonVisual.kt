@@ -49,13 +49,11 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.isAttachedUnit
 import com.zoonk.android.ui.format.moneyUnit
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonClassDiscriminator
+import com.zoonk.android.ui.theme.zoonkType
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -70,6 +68,8 @@ fun LessonVisual(
     when (visual) {
         is LessonVisual.Chart -> ChartVisual(visual, modifier)
         is LessonVisual.Timeline -> TimelineVisual(visual, modifier)
+        is LessonVisual.Plot -> PlotVisual(visual, modifier)
+        LessonVisual.Unknown -> Unit
     }
 }
 
@@ -78,12 +78,25 @@ private fun ChartVisual(
     visual: LessonVisual.Chart,
     modifier: Modifier,
 ) {
+    ChartCard(visual.title, visual.source, modifier) {
+        if (visual.series.size > 1) Legend(visual)
+        Plot(visual)
+    }
+}
+
+/** A chart's card: its title, the drawing and the data's source. */
+@Composable
+internal fun ChartCard(
+    title: String,
+    source: String?,
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
     OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(text = visual.title, style = MaterialTheme.typography.titleSmall)
-            if (visual.series.size > 1) Legend(visual)
-            Plot(visual)
-            visual.source?.let {
+            Text(text = title, style = MaterialTheme.zoonkType.sectionTitle)
+            content()
+            source?.let {
                 Text(
                     text = stringResource(R.string.visual_source, it),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -94,15 +107,31 @@ private fun ChartVisual(
     }
 }
 
+internal data class ChartUnit(
+    val numberUnit: String?,
+    val label: String,
+)
+
 /**
- * Core's `placeChartUnit`: a unit past its target is shown once beside the value label, not after every number,
- * except that money keeps its currency on each number.
+ * Core's `placeChartUnit`: a unit that is part of how the number is written stays on each tick and value label, a
+ * currency since only its own format shows cents ("$3.50") and a sign written against the digits ("45%"). Any other
+ * unit, and the rest of a money unit ("per hour"), is shown once beside the axis label. Charts and plots share it.
  */
+internal fun placeChartUnit(
+    unit: String?,
+    label: String,
+): ChartUnit {
+    val money = moneyUnit(unit)
+    val attached = unit.takeIf(::isAttachedUnit)
+    val labelUnit = money?.rest ?: unit.takeIf { attached == null }
+    return ChartUnit(money?.currency ?: attached, if (labelUnit.isNullOrEmpty()) label else "$label ($labelUnit)")
+}
+
 private val LessonVisual.Chart.numberUnit: String?
-    get() = unit?.let { if (it.length <= UNIT_TARGET) it else moneyUnit(it)?.currency }
+    get() = placeChartUnit(unit, valueLabel).numberUnit
 
 private val LessonVisual.Chart.unitLabel: String
-    get() = unit?.takeIf { it.length > UNIT_TARGET }?.let { "$valueLabel (${moneyUnit(it)?.rest ?: it})" } ?: valueLabel
+    get() = placeChartUnit(unit, valueLabel).label
 
 @Composable
 private fun Legend(visual: LessonVisual.Chart) {
@@ -153,7 +182,7 @@ private fun Plot(visual: LessonVisual.Chart) {
         val sideways = layout is SidewaysLayout
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            AxisCaption(if (sideways) visual.categoryLabel else visual.unitLabel, TextAlign.Start)
+            AxisCaption(if (sideways) visual.categoryLabel else visual.unitLabel)
             if (layout != null) {
                 Canvas(
                     Modifier
@@ -174,22 +203,21 @@ private fun Plot(visual: LessonVisual.Chart) {
                     }
                 }
             }
-            AxisCaption(if (sideways) visual.unitLabel else visual.categoryLabel, TextAlign.Center)
+            AxisCaption(if (sideways) visual.unitLabel else visual.categoryLabel)
         }
     }
 }
 
 @Composable
-private fun AxisCaption(
+internal fun AxisCaption(
     text: String,
-    align: TextAlign,
+    description: String? = null,
 ) {
     Text(
         text = text,
-        modifier = Modifier.fillMaxWidth().clearAndSetSemantics {},
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics { description?.let { contentDescription = it } },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall,
-        textAlign = align,
     )
 }
 
@@ -215,7 +243,7 @@ private fun chartSummary(
     }
 }
 
-private class ChartText(
+internal class ChartText(
     private val measurer: TextMeasurer,
     private val label: TextStyle,
     private val value: TextStyle,
@@ -257,9 +285,9 @@ private fun plotLayout(
     if (visual.categories.isEmpty() || visual.series.isEmpty()) return null
 
     val axis = ValueAxis(visual, text)
-    val gap = with(text.density) { LABEL_GAP.toPx() }
+    val gap = with(text.density) { CHART_LABEL_GAP.toPx() }
     val left = (axis.ticks.maxOfOrNull { it.second.size.width } ?: 0) + gap
-    val right = width - with(text.density) { PLOT_END.toPx() }
+    val right = width - with(text.density) { CHART_PLOT_END.toPx() }
     val band = max(right - left, 1f) / visual.categories.size
     val labelWidth = { line: String -> text.label(line).size.width + gap }
 
@@ -291,8 +319,8 @@ private class ValueAxis(
     val origin = max(domain.start, 0.0)
 
     val ticks =
-        niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) }.map {
-            it to text.label(formatAmount(it, text.locale, visual.numberUnit, compact = true))
+        niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) }.let { ticks ->
+            ticks.zip(formatTicks(ticks, text.locale, unit = visual.numberUnit).map(text::label))
         }
 
     val valueLabels = visual.series.map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.numberUnit)) } }
@@ -306,7 +334,7 @@ private class UprightLayout(
     val right: Float,
     val categoryLines: CategoryLabels,
 ) : PlotLayout {
-    private val gap = with(text.density) { LABEL_GAP.toPx() }
+    private val gap = with(text.density) { CHART_LABEL_GAP.toPx() }
     val ticks = axis.ticks
     val band = max(right - left, 1f) / visual.categories.size
 
@@ -318,7 +346,7 @@ private class UprightLayout(
     val top = lineHeight + gap
 
     // Grows with the font, so a large font's axis labels don't crowd each other.
-    private val plotHeight = max(with(text.density) { PLOT_HEIGHT.toPx() }, lineHeight * PLOT_LINES)
+    private val plotHeight = max(with(text.density) { CHART_PLOT_HEIGHT.toPx() }, lineHeight * CHART_PLOT_LINES)
     val bottom = top + plotHeight
 
     val categoryLayouts = categoryLines.lines.map { lines -> lines.map(text::label) }
@@ -338,8 +366,14 @@ private class UprightLayout(
     val valueLabels: List<List<TextLayoutResult>>? =
         axis.valueLabels.takeIf { labels ->
             val bars = visual.chart == LessonVisual.Chart.Kind.Bar
-            val room = if (bars) barWidth + gap else band
-            val wideEnough = if (bars) barWidth >= with(text.density) { MIN_LABEL_WIDTH.toPx() } else visual.series.size == 1
+            val room = if (bars) barWidth else band
+            val wideEnough =
+                if (bars) {
+                    barWidth >= with(text.density) { MIN_LABEL_WIDTH.toPx() }
+                } else {
+                    visual.series.size == 1 &&
+                        band >= with(text.density) { MIN_POINT_LABEL_BAND.toPx() }
+                }
             wideEnough && labels.flatten().all { it.size.width <= room }
         }
 
@@ -353,7 +387,7 @@ private class SidewaysLayout(
     text: ChartText,
     axis: ValueAxis,
 ) : PlotLayout {
-    private val gap = with(text.density) { LABEL_GAP.toPx() }
+    private val gap = with(text.density) { CHART_LABEL_GAP.toPx() }
     private val barGap = with(text.density) { SIDEWAYS_BAR_GAP.toPx() }
     val names = visual.categories.map { text.wrappedLabel(it, width) }
 
@@ -377,16 +411,20 @@ private class SidewaysLayout(
 
     val plotBottom = barTops.last() + barsHeight
 
+    // Each label keeps half a gap inside the chart's edges, as main's `clampLabelCenter`.
     val ticks =
         axis.ticks.map { (tick, label) ->
             val at = x.toPixel(tick)
-            SidewaysTick(at, (at - label.size.width / 2f).coerceIn(0f, max(width - label.size.width, 0f)), label)
+            val half = (label.size.width + gap) / 2
+            SidewaysTick(at, at.coerceIn(half, max(width - half, half)) - label.size.width / 2f, label)
         }
 
     /** Every tick keeps its gridline, but only every [tickStep]th is labeled, so a large font's labels don't touch. */
     val tickStep =
-        fittingTickIndices(ticks.map { it.labelLeft to it.labelLeft + it.label.size.width }, gap)
-            .getOrNull(1) ?: max(ticks.size, 1)
+        fittingTickIndices(
+            ticks.map { it.labelLeft - gap / 2 to it.labelLeft + it.label.size.width + gap / 2 },
+            with(text.density) { TICK_LABEL_GAP.toPx() },
+        ).getOrNull(1) ?: max(ticks.size, 1)
 
     val ticksTop = plotBottom + gap
 
@@ -433,7 +471,7 @@ private fun DrawScope.drawGrid(
     layout: UprightLayout,
     color: Color,
 ) {
-    val gap = LABEL_GAP.toPx()
+    val gap = CHART_LABEL_GAP.toPx()
     layout.ticks.forEach { (tick, label) ->
         val y = layout.y.toPixel(tick)
         drawLine(color, Offset(layout.left, y), Offset(layout.right, y), strokeWidth = 1.dp.toPx())
@@ -445,7 +483,7 @@ private fun DrawScope.drawBars(
     layout: UprightLayout,
     marks: List<SeriesMark>,
 ) {
-    val gap = LABEL_GAP.toPx()
+    val gap = CHART_LABEL_GAP.toPx()
     val zero = layout.y.toPixel(layout.origin)
 
     layout.visual.series.forEachIndexed { seriesIndex, series ->
@@ -471,7 +509,7 @@ private fun DrawScope.drawLines(
     marks: List<SeriesMark>,
     surface: Color,
 ) {
-    val gap = LABEL_GAP.toPx()
+    val gap = CHART_LABEL_GAP.toPx()
     val dot = DOT_RADIUS.toPx()
 
     layout.visual.series.forEachIndexed { seriesIndex, series ->
@@ -501,11 +539,12 @@ private fun DrawScope.drawLines(
 }
 
 private fun DrawScope.drawCategories(layout: UprightLayout) {
+    val inset = CHART_LABEL_GAP.toPx() / 2
     layout.categoryLayouts.forEachIndexed { index, lines ->
         if (index % layout.categoryLines.step != 0) return@forEachIndexed
         var y = layout.categoriesTop
         lines.forEach { line ->
-            val x = (layout.center(index) - line.size.width / 2f).coerceIn(0f, max(size.width - line.size.width, 0f))
+            val x = axisLabelStart(layout.center(index), line.size.width.toFloat(), layout.left, size.width, inset)
             drawText(line, topLeft = Offset(x, y))
             y += line.size.height
         }
@@ -517,7 +556,7 @@ private fun DrawScope.drawSideways(
     grid: Color,
     marks: List<SeriesMark>,
 ) {
-    val gap = LABEL_GAP.toPx()
+    val gap = CHART_LABEL_GAP.toPx()
     val zero = layout.x.toPixel(layout.origin)
 
     layout.ticks.forEachIndexed { index, tick ->
@@ -594,10 +633,10 @@ fun uprightBarLabels(
 
 private val LABEL_BREAK = Regex("(?<=[\\s-])")
 
-private fun labelWords(label: String): List<String> = label.split(LABEL_BREAK).filter(String::isNotEmpty)
+internal fun labelWords(label: String): List<String> = label.split(LABEL_BREAK).filter(String::isNotEmpty)
 
 /** Wraps at spaces and hyphens; only a word wider than the whole room breaks between letters. */
-private fun wrapLabel(
+internal fun wrapLabel(
     label: String,
     room: Float,
     width: (String) -> Float,
@@ -641,7 +680,7 @@ private fun TimelineVisual(
 
     OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(text = visual.title, style = MaterialTheme.typography.titleSmall)
+            Text(text = visual.title, style = MaterialTheme.zoonkType.sectionTitle)
 
             Column {
                 visual.events.forEachIndexed { index, event ->
@@ -673,11 +712,10 @@ private fun TimelineVisual(
     }
 }
 
-private val LABEL_GAP = 6.dp
-private val PLOT_END = 8.dp
-private val PLOT_HEIGHT = 160.dp
-private const val PLOT_LINES = 6
-private const val UNIT_TARGET = 12
+internal val CHART_LABEL_GAP = 6.dp
+internal val CHART_PLOT_END = 8.dp
+internal val CHART_PLOT_HEIGHT = 160.dp
+internal const val CHART_PLOT_LINES = 6
 private val BAR_RADIUS = 3.dp
 private val SWATCH_RADIUS = 2.dp
 private val DOT_RADIUS = 3.5.dp
@@ -687,6 +725,7 @@ private const val GROUP_SHARE = 0.68f
 private val BAR_INSET = 1.dp
 private val MIN_BAR_WIDTH = 4.dp
 private val MIN_LABEL_WIDTH = 30.dp
+private val MIN_POINT_LABEL_BAND = 45.dp
 
 private const val UPRIGHT_NAME_LINES = 2
 private val SIDEWAYS_BAR = 14.dp

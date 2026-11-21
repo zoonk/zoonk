@@ -113,7 +113,7 @@ enum ActivityNumberFormat {
 
   /// The money part of a unit and what follows it: "R$ por metro" is money per meter, so it reads
   /// "R$ 7 por metro".
-  private static func money(_ unit: String?) -> (currency: String, rest: String)? {
+  static func money(_ unit: String?) -> (currency: String, rest: String)? {
     guard let unit, !unit.isEmpty else {
       return nil
     }

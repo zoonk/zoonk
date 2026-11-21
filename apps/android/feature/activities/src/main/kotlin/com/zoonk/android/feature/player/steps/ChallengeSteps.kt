@@ -27,9 +27,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.recode
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.player.engine.ChallengeDebrief
 import com.zoonk.android.feature.player.engine.ChallengeMeterState
@@ -63,7 +68,9 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -71,6 +78,7 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1Content.Variant
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1ContentMetersInner.GoodWhen
 import kotlin.math.abs
+import kotlin.math.max
 
 /** The learner's colleagues' names for a challenge's `{{slot}}`s, read once for the lesson. */
 val LocalChallengeTeam = staticCompositionLocalOf<List<String>?> { null }
@@ -215,6 +223,8 @@ private fun ChallengeConversation(
     showsOutcome: Boolean = true,
 ) {
     val newest = remember { BringIntoViewRequester() }
+    val chart = remember { BringIntoViewRequester() }
+    val placed = remember { DecisionPlace() }
     val resources = LocalResources.current
     val latest = moves.lastOrNull()
     val jump = latest?.choice?.timeJump
@@ -223,11 +233,24 @@ private fun ChallengeConversation(
             listOfNotNull(shown.title) + shown.metrics.flatMap { listOfNotNull(it.label, it.value, it.note) } + listOfNotNull(shown.note)
         }
     val upcoming = (progress as? ChallengeProgress.Deciding)?.walk?.node
+    val upcomingVisual = remember(upcoming?.visual) { upcoming?.visual?.recode<StepVisual, LessonVisual>() }
 
     fun said(message: ChallengeMessage): String =
         resources.getString(R.string.player_challenge_said, names.names[message.from] ?: message.from, plainText(names.fill(message.text)))
 
-    LaunchedEffect(moves.size) { if (moves.isNotEmpty()) newest.bringIntoView() }
+    // A new decision comes into view with its chart when both fit, and from the chart's top when they don't.
+    LaunchedEffect(moves.size) {
+        if (moves.isEmpty()) return@LaunchedEffect
+        withFrameNanos {}
+        val shown = placed.chart?.takeIf { it.isAttached && upcoming?.visual != null }
+        val decision = placed.decision?.takeIf { it.isAttached }
+        if (shown != null && decision != null) {
+            val bottom = max(shown.size.height.toFloat(), shown.localBoundingBoxOf(decision, clipBounds = false).bottom)
+            chart.bringIntoView(Rect(0f, 0f, shown.size.width.toFloat(), bottom))
+        } else {
+            newest.bringIntoView()
+        }
+    }
     // Main's conversation log reads out what a decision brings, in the order it shows.
     Box {
         if (part.showsScreen) {
@@ -236,15 +259,25 @@ private fun ChallengeConversation(
                     ""
                 } else {
                     val shown = (listOfNotNull(jump?.label) + panel.orEmpty()).map(names::fill)
-                    (latest.choice.replies.map(::said) + shown + upcoming?.messages.orEmpty().map(::said)).joinToString(" ")
+                    val messages = upcoming?.messages.orEmpty().map(::said)
+                    (latest.choice.replies.map(::said) + shown + messages + listOfNotNull(upcomingVisual?.title)).joinToString(" ")
                 },
             )
         }
 
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            if (part.showsScreen) ChallengeMoves(content, names, moves, progress)
+            if (part.showsScreen) {
+                ChallengeMoves(
+                    content,
+                    names,
+                    moves,
+                    progress,
+                    chart,
+                    placed,
+                )
+            }
 
-            Box(Modifier.bringIntoViewRequester(newest)) {
+            Box(Modifier.bringIntoViewRequester(newest).onGloballyPositioned { placed.decision = it }) {
                 if (progress is ChallengeProgress.Deciding) {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         if (part.showsScreen) {
@@ -287,12 +320,15 @@ private fun ChallengeMoves(
     names: ChallengeNames,
     moves: List<ChallengeMove>,
     progress: ChallengeProgress,
+    chart: BringIntoViewRequester,
+    placed: DecisionPlace,
 ) {
     ChallengeMeters(challengeMeters(content, moves), names, moved = moves.isNotEmpty())
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         moves.forEach { move ->
             move.node.messages.forEach { ChallengeMessageView(it, content.team, names) }
+            move.node.visual?.let { ChallengeVisual(it) }
             ChallengePick(names.fill(move.choice.text))
             ChallengeEffects(move, content, names)
             move.choice.replies.forEach { ChallengeMessageView(it, content.team, names) }
@@ -323,8 +359,26 @@ private fun ChallengeMoves(
                     names,
                 )
             }
+            progress.walk.node.visual
+                ?.let { visual ->
+                    ChallengeVisual(visual, Modifier.bringIntoViewRequester(chart).onGloballyPositioned { placed.chart = it })
+                }
         }
     }
+}
+
+private class DecisionPlace {
+    var chart: LayoutCoordinates? = null
+    var decision: LayoutCoordinates? = null
+}
+
+@Composable
+private fun ChallengeVisual(
+    visual: StepVisual,
+    modifier: Modifier = Modifier,
+) {
+    val shown = remember(visual) { visual.recode<StepVisual, LessonVisual>() }
+    LessonVisual(shown, modifier)
 }
 
 @Composable

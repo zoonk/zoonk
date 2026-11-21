@@ -1,24 +1,24 @@
-import { CHART_UNIT_TARGET, type ChartVisual } from "@zoonk/ai/tasks/visuals/schema";
-import { splitMoneyUnit } from "@zoonk/utils/math-answer";
+import { isAttachedUnit, splitMoneyUnit } from "@zoonk/utils/math-answer";
 
 /**
- * A unit within its target follows each number on the chart ("35 km"). A longer one, such as
- * "hours per 1,000 letters", would crowd every tick and bar, so it's shown once beside the value
- * label, the way the Apple app shows every unit. Money keeps its currency on each number, since
- * only the currency's own format shows cents.
+ * A unit that is part of how the number is written stays on each tick and value label: a currency,
+ * since only its own format shows cents ("$3.50"), and a sign written against the digits ("45%").
+ * Any other unit, and the rest of a money unit ("per hour"), is shown once beside the axis label,
+ * as "Distance (km)". Category charts and plots follow the same rule.
  */
-export function placeChartUnit({ unit, valueLabel }: Pick<ChartVisual, "unit" | "valueLabel">): {
+export function placeChartUnit({ label, unit }: { label: string; unit: string | null }): {
+  label: string;
   numberUnit: string | null;
-  valueLabel: string;
 } {
-  if (!unit || unit.length <= CHART_UNIT_TARGET) {
-    return { numberUnit: unit, valueLabel };
-  }
-
   const money = splitMoneyUnit(unit);
 
-  return {
-    numberUnit: money?.currency ?? null,
-    valueLabel: `${valueLabel} (${money?.rest ?? unit})`,
-  };
+  if (money) {
+    return { label: money.rest ? `${label} (${money.rest})` : label, numberUnit: money.currency };
+  }
+
+  if (!unit || isAttachedUnit(unit)) {
+    return { label, numberUnit: unit };
+  }
+
+  return { label: `${label} (${unit})`, numberUnit: null };
 }

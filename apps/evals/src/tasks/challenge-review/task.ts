@@ -22,6 +22,7 @@ export const challengeReviewTask: Task<
     "Errors-only review of saved challenges: 19 confirmed errors and 12 clean controls from the review lane, including six route errors missed by its original labels",
   generate: async ({ written, language, level, field, writerModel, ...options }) => {
     const checked = checkWrittenChallenge({
+      language,
       variant: written.deadline === null ? "whatIf" : "work",
       written,
     });

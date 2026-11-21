@@ -4,6 +4,10 @@
   "visual_chart_point": "c3902376d2f7ff1e13ef6d08395165be6dc0ca9790435a497c617db52ac928bd",
   "visual_chart_series_value": "75a74231ef712715a61375dbd1f9905d0ee445aa94ffb7a7dbdf9c13fa65e0f3",
   "visual_chart_summary": "a31f1c8eee7abcbe41933c69748a4893be3074b88ae67e3dbbf31f71e1ef22fd",
+  "visual_plot_horizontal_axis": "79b3054f9dc1376ccb9ac7944e8b2cd0b77831d0e9835f1025b0c9763f0006c6",
+  "visual_plot_point": "86a9c32de32478da7acfb032204b7d5b445c70dc46897ac0bb20c627171f9fd7",
+  "visual_plot_references": "34e78daeb02afc4fefce871d62ff706961d8a4b6f99dd9def4b91604ae887ea4",
+  "visual_plot_vertical_axis": "533e69ea667e33951abe5e52dbdf051531c6d49e54dff4e382db5bce61999be9",
   "visual_source": "9869ec29cb3112ff52ef03951197ffc0f77067f5c9d618528b90ef9a36ec024c"
 }
 -->
@@ -15,4 +19,12 @@
     <string name="visual_chart_point">%1$s: %2$s</string>
     <!-- One series' value in a category of a chart read aloud: the series' name (%1$s) and its value (%2$s). -->
     <string name="visual_chart_series_value">%1$s %2$s</string>
+    <!-- A plot read aloud: the horizontal axis's name (%1$s) and the lowest (%2$s) and highest (%3$s) values it shows. -->
+    <string name="visual_plot_horizontal_axis">가로축: %1$s, %2$s부터 %3$s까지</string>
+    <!-- A plot read aloud: the vertical axis's name (%1$s) and the lowest (%2$s) and highest (%3$s) values it shows. -->
+    <string name="visual_plot_vertical_axis">세로축: %1$s, %2$s부터 %3$s까지</string>
+    <!-- One point of a plot read aloud: the horizontal axis's name (%1$s) and the point's value on it (%2$s), then the vertical axis's name (%3$s) and its value there (%4$s). -->
+    <string name="visual_plot_point">%1$s %2$s, %3$s %4$s</string>
+    <!-- A plot's dashed reference lines read aloud, such as a target or a limit: each line's name with its value (%1$s). -->
+    <string name="visual_plot_references">기준선: %1$s</string>
 </resources>

@@ -7,9 +7,12 @@ import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import { challengeVisualSchema } from "../visuals/visual-schema";
 import { CHALLENGE_MODELS } from "./challenge-models";
 import promptTemplate from "./challenge-plan.prompt.md";
 import { type ChallengeCaseParams, challengeCaseSchema } from "./challenge-schema";
+
+const knownSchema = z.enum(["start", "later"]);
 
 const { meters, mission, panels, setting, skills, team, title } = challengeCaseSchema.shape;
 
@@ -34,13 +37,9 @@ const jobPlanSchema = z.object({
   skills,
   meters,
   facts: z.array(
-    z.object({
-      id: z.string(),
-      fact: z.string(),
-      derivation: z.string(),
-      known: z.enum(["start", "later"]),
-    }),
+    z.object({ id: z.string(), fact: z.string(), derivation: z.string(), known: knownSchema }),
   ),
+  visuals: z.array(z.object({ id: z.string(), known: knownSchema, visual: challengeVisualSchema })),
   panels,
   startDecisionId: z.string(),
   decisions: z.array(
@@ -50,6 +49,7 @@ const jobPlanSchema = z.object({
       pull: z.string(),
       insight: z.string(),
       skills: z.array(z.string()),
+      visual: z.string().nullable(),
       choices: z.array(planChoiceSchema),
     }),
   ),

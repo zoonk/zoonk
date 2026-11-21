@@ -1,5 +1,6 @@
+import { challengePlotFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { describe, expect, it } from "vitest";
-import { getVisualProblems, pointsAtFigure } from "./visual-references";
+import { getChartProblems, getVisualProblems, pointsAtFigure } from "./visual-references";
 
 const CHART = {
   axisStart: null,
@@ -50,6 +51,42 @@ describe("what a screen's words point at", () => {
     expect(
       pointedAt("en", "Look at the picture. The timeline below shows when each law passed."),
     ).toStrictEqual(["image", "timeline"]);
+  });
+
+  it.each([
+    ["de", "Welche Kurve steigt in diesem Diagramm am stärksten?"],
+    ["en", "Which label marks the steepest rise on this plot?"],
+    ["en", "Where does the graph reach its peak?"],
+    ["en", "What does this chart tell you about pressure?"],
+    ["es", "¿Qué valor señala el punto A en esta gráfica?"],
+    ["es", "¿Qué valor alcanza la curva en este gráfico?"],
+    ["fr", "Quel point est le plus haut sur ce graphique ?"],
+    ["it", "Qual è il punto più alto di questo grafico?"],
+    ["ja", "このグラフで最も高い点はどれですか？"],
+    ["ko", "이 그래프의 최고점은 어디인가요?"],
+    ["pl", "Gdzie na tym wykresie jest najwyższy punkt?"],
+    ["pt", "Qual é o ponto mais alto deste gráfico?"],
+    ["tr", "Bu grafiğin en yüksek noktası nerede?"],
+  ])("finds direct %s references to a chart or plot (%s)", (language, text) => {
+    expect(pointedAt(language, text)).toStrictEqual(["chart"]);
+  });
+
+  it.each([
+    ["de", "Tragen Sie das Medikament in die Patientenakte ein."],
+    ["en", "Record the medication in the chart."],
+    ["en", "Put the guests from the seating chart on the list."],
+    ["en", "Enter the new seat assignments on the chart."],
+    ["en", "Plant the seedlings in this plot of land."],
+    ["es", "Anota el medicamento en la ficha clínica."],
+    ["fr", "Notez le médicament dans le dossier médical."],
+    ["it", "Annota il farmaco nella cartella clinica."],
+    ["ja", "このカルテに薬の名前を記録してください。"],
+    ["ko", "이 차트에 투약 내용을 기록하세요."],
+    ["pl", "Zapisz lek w karcie pacjenta."],
+    ["pt", "Registre o medicamento no prontuário."],
+    ["tr", "İlacı hasta dosyasına kaydedin."],
+  ])("allows ordinary %s prose without a chart (%s)", (language, text) => {
+    expect(pointedAt(language, text)).toStrictEqual([]);
   });
 
   it.each([
@@ -148,7 +185,91 @@ describe("what a screen's words point at", () => {
   });
 });
 
+describe(getChartProblems, () => {
+  it("accepts a position-time line sampled at irregular intervals", () => {
+    const plot = {
+      ...challengePlotFixture(),
+      references: [],
+      series: [
+        {
+          mark: "line" as const,
+          name: "Cart",
+          points: [
+            { label: null, x: 1, y: 2 },
+            { label: "Stop", x: 2, y: 5 },
+            { label: null, x: 9, y: 5 },
+          ],
+        },
+      ],
+      title: "Position over time",
+      yLabel: "Position",
+      yUnit: "m",
+    };
+
+    expect(getChartProblems(plot)).toStrictEqual([]);
+  });
+
+  it("permits repeated x coordinates for scatter, while a line follows increasing x", () => {
+    const plot = challengePlotFixture();
+
+    const points = [
+      { label: null, x: 2, y: 5 },
+      { label: "Peak", x: 2, y: 9 },
+    ];
+
+    const series = { name: "Position", points };
+
+    expect(getChartProblems({ ...plot, series: [{ ...series, mark: "points" }] })).toStrictEqual(
+      [],
+    );
+
+    expect(getChartProblems({ ...plot, series: [{ ...series, mark: "line" }] })).toStrictEqual([
+      expect.stringContaining("strictly increasing x"),
+    ]);
+  });
+
+  it("checks every series, point and reference even before a chart is stored", () => {
+    const plot = challengePlotFixture();
+
+    expect(getChartProblems({ ...plot, series: [] })).toStrictEqual([
+      "The chart needs at least one series.",
+    ]);
+
+    const flaws = getChartProblems({
+      ...plot,
+      references: [{ label: "Control", y: Number.NaN }],
+      series: [
+        { mark: "line", name: "Assembly A", points: [{ label: "Peak", x: 1, y: Infinity }] },
+        { mark: "points", name: "assembly A", points: [{ label: "peak", x: 3, y: 4 }] },
+        { mark: "points", name: "Assembly B", points: [] },
+      ],
+    });
+
+    expect(flaws).toStrictEqual([
+      "Chart series names must be unique.",
+      expect.stringContaining("without finite x and y"),
+      expect.stringContaining("at least two points"),
+      expect.stringContaining("has no points"),
+      expect.stringContaining("without a finite y"),
+      "Plot point labels must be unique.",
+    ]);
+  });
+});
+
 describe(getVisualProblems, () => {
+  it("satisfies a chart reference with a numeric plot", () => {
+    const problems = getVisualProblems({
+      language: "en",
+      shown: {
+        hasImage: false,
+        texts: ["Read the chart to see when the pressure falls."],
+        visual: challengePlotFixture(),
+      },
+    });
+
+    expect(problems).toStrictEqual([]);
+  });
+
   it("asks for the visual a screen points at but doesn't show", () => {
     const problems = getVisualProblems({
       language: "pt",

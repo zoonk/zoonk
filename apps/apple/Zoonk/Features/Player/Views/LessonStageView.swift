@@ -34,6 +34,24 @@ struct LessonStageView: View {
     }
   }
 
+  /// The open decision's chart scrolls into view ahead of the turn, so the learner reads the data
+  /// before the choices.
+  private func decisionVisual(_ step: LessonStep) -> String? {
+    guard case .challenge(let content) = step.content else {
+      return nil
+    }
+
+    return ChallengeProgress(
+      content: content, picks: state.challengePicks(step.id), shown: state.revealed[step.id] ?? 0
+    ).decisionVisual
+  }
+
+  private func showDecisionVisual(_ scroll: ScrollViewProxy) {
+    withAnimation(reduceMotion ? nil : .default) {
+      scroll.scrollTo(ChallengeStepView.decisionVisualId)
+    }
+  }
+
   /// Main's verdict is a live status region: VoiceOver says it as it arrives, wherever focus is.
   private func announceVerdict() {
     guard let step = state.currentStep, let result = state.currentResult, !step.showsOwnResult
@@ -121,9 +139,13 @@ struct LessonStageView: View {
               }
               // A worked example adds its steps beside this page; a challenge adds to its end.
               .onChange(of: step.kind == .challenge ? addedBelow(step) : nil) {
+                guard decisionVisual(step) == nil else { return }
                 withAnimation(reduceMotion ? nil : .default) {
                   scroll.scrollTo(Self.screenId, anchor: .bottom)
                 }
+              }
+              .onChange(of: decisionVisual(step)) { _, visual in
+                if visual != nil { showDecisionVisual(scroll) }
               }
             }
             .frame(width: pages.primary)
@@ -205,9 +227,14 @@ struct LessonStageView: View {
             // A worked example's newest step is its last. A challenge's turn is its newest
             // decision, which main scrolls into view as little as it can.
             .onChange(of: addedBelow(step)) {
+              // A spread shows the chart on the other page; this one still shows the turn.
+              guard spread != nil || decisionVisual(step) == nil else { return }
               withAnimation(reduceMotion ? nil : .default) {
                 scroll.scrollTo(Self.turnId, anchor: step.kind == .challenge ? nil : .bottom)
               }
+            }
+            .onChange(of: decisionVisual(step)) { _, visual in
+              if spread == nil, visual != nil { showDecisionVisual(scroll) }
             }
             // Raising the keyboard reveals only a field's text; the learner's turn shows whole above
             // the action bar instead. Typing to Ask leaves the lesson where it is.

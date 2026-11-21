@@ -946,125 +946,6 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional research workplace has a credible detector-scan handoff, a concrete deadline, competing demands for bench time, and realistic settings. However, its workflow repeatedly assumes an attached visual crop that the text-only app cannot provide or annotate, materially weakening its practical fit.",
-          "score": 7,
-          "label": "Real work (or a fun What if)",
-          "weight": 20
-        },
-        {
-          "categoryId": "decisions",
-          "reasoning": "Choices change replies and job-specific meters, and the final decision produces three different run schedules. Strong choices occupy different positions, and bracketing the crossing is a credible alternative with an explicit capacity cost. The earlier decisions are less substantive: their correctness is heavily signposted, and they merge without affecting the final handoff or available choices.",
-          "score": 8,
-          "label": "Decisions that matter",
-          "weight": 20
-        },
-        {
-          "categoryId": "team",
-          "reasoning": "The physicist and coordinator have distinct expertise and competing priorities, while the AI supplies useful, correct arithmetic without authorizing the experiment. Asking for assistance is an explicit, valued choice. Colleagues are referenced through roles or placeholders, and the learner is unnamed.",
-          "score": 9,
-          "label": "Team and asking for help",
-          "weight": 15
-        },
-        {
-          "categoryId": "debrief",
-          "reasoning": "Feedback is kind, decision-specific, and praises strategies rather than ability. Practice tasks are short, and each summary sentence expresses one practiced idea. However, communication-improvement feedback sometimes omits example wording, and the axis-label example does not include the requested delay.",
-          "score": 8,
-          "label": "Debrief: specific and kind",
-          "weight": 20
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The calculations are consistent: delay ticks differ by 20 ns, the right dot is at 140 ns, the measured rates are 940 and 980 counts/s, their difference is 40 counts/s, and the halfway crossing is approximately 150 ns. The truncated-axis explanation correctly distinguishes doubled height above 900 from doubled rate. Endings consistently treat the guide as an estimate rather than a measurement.",
-          "score": 9,
-          "label": "Accuracy",
-          "weight": 15
-        },
-        {
-          "categoryId": "depth",
-          "reasoning": "The language is appropriate for a beginner research case: counts, nanoseconds, and the smooth guide are explained plainly, with no unnecessary quantum formalism. Learner-facing content is in English with appropriate number formatting, and the case makes no promises about experimental outcomes, employment, or grades.",
-          "score": 9,
-          "label": "Depth, language and honesty",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 6028,
-          "outputTokens": 1174,
-          "reasoningTokens": 362
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The case does not fully support the required text-only panel format. The curve's crossing is supplied in chat rather than as a metric, and neither axis has a complete range in the metrics. Several choices also depend on a viewable, editable crop: circling a dot, writing beneath it, and checking numbers against it. Those actions are not supported by the described app. The information needed for the arithmetic is otherwise available; the problem is its presentation and the assumed interaction.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Some communication feedback lacks the required example wording. In particular, the threshold-only choice asks the learner to add both rates and their difference without demonstrating the improved sentence. The example for identifying the right-hand dot names the axes but omits the dot's delay, despite explicitly requesting it.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the short practice activities self-contained by supplying small sets of text metrics instead of requiring learners to find plots. Earlier choices could also carry through into the final handoff wording, making their consequences more visible beyond meter changes.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The app shows a panel's metrics as short lines of text, never a drawn plot, so every value a decision asks the learner to read comes as metrics: the plotted points, the curve's readings and the axis ranges and intervals, each a short label and value. No metric value or label is a chart, table or picture drawn in text, no note tells anyone how to draw or display something, and no decision asks for a value the panels, messages and replies never give. General to the field, with no real lab.",
-        "id": "en-plot-reading-field-research-1",
-        "userInput": {
-          "chapterDescription": "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",
-          "chapterTitle": "Reading quantum experiment plots",
-          "courseTitle": "Quantum physics from scratch",
-          "field": "research",
-          "language": "en",
-          "level": "beginner",
-          "skills": [
-            {
-              "description": null,
-              "name": "Read values from an experimental plot"
-            },
-            {
-              "description": null,
-              "name": "Estimate values between axis ticks"
-            },
-            {
-              "description": null,
-              "name": "Read values from plotted data points"
-            },
-            {
-              "description": null,
-              "name": "Estimate values from a plotted curve"
-            },
-            {
-              "description": null,
-              "name": "Read values on a truncated axis"
-            },
-            {
-              "description": null,
-              "name": "Interpret axis intervals"
-            }
-          ],
-          "variant": "work"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "realism",
           "reasoning": "The fictional hospital, pediatric weight-based prescription, missing route, scheduled administration and physician availability create a credible nursing task. Colleagues exert workflow pressure. However, repeatedly using the recorded dose to 'organize the queue' is operationally vague, making some pressure feel constructed rather than grounded in ward work.",
           "score": 8,
           "label": "Real work (or a fun What if)",
@@ -1384,43 +1265,43 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional research setting presents a credible operational problem: select a detector setting before a booking deadline while another bench waits for the slot. The technician's scheduling pressure and physicist's concern about measured evidence make this more than a detached reading quiz.",
-          "score": 9,
+          "reasoning": "A shift handoff and a 3:30 queue lock give the fictional photon lab a credible reason to choose between a repeat, a target trial and two bracketing readings. Researchers would use these skills here. Replacing the scan with a list of tick-gap clues makes the work less authentic than the booking problem itself.",
+          "score": 8,
           "label": "Real work (or a fun What if)",
           "weight": 20
         },
         {
           "categoryId": "decisions",
-          "reasoning": "Choices produce different replies and sensible reliability/capacity changes, and the final decision produces three genuinely different bookings. Strong choices move between positions, while incomplete notes, curve-based comparisons, and baseline repeats offer plausible alternatives under pressure. Earlier choices mostly affect feedback and meters rather than subsequent opportunities, but they are not consequence-free.",
-          "score": 9,
+          "reasoning": "Choices produce distinct replies and meter changes, and the final choice determines what gets measured. The strong option changes position, and bracketing the crossing is a defensible alternative. However, the chat locates the crossing for the learner, and the opposite capacity effects for two one-slot bookings lack a stated operational reason.",
+          "score": 7,
           "label": "Decisions that matter",
           "weight": 20
         },
         {
           "categoryId": "team",
-          "reasoning": "The physicist and technician have distinct expertise and competing priorities. The AI is explicitly available for a useful spacing calculation, and its answer is correct. Colleagues are referenced by roles or placeholders rather than personal names, and the learner is unnamed.",
+          "reasoning": "The physicist wants readings on both sides of the crossing; the coordinator wants to preserve slots. Those priorities produce a useful disagreement. Asking the unnamed AI assistant for the rates is a valued option, and its reply explains the subtraction while leaving verification and booking to the learner. No colleague or learner is given a personal name.",
           "score": 10,
           "label": "Team and asking for help",
           "weight": 15
         },
         {
           "categoryId": "debrief",
-          "reasoning": "Feedback identifies specific strategies, such as distinguishing the measured dot from the curve and comparing rates rather than truncated-axis heights. Improvement notes are kind and actionable, including a concrete booking-note example. The summaries state focused lessons, and practice tasks are short, though providing the practice plots would make five-minute completion more dependable.",
-          "score": 9,
+          "reasoning": "Feedback is kind and strategy-specific, especially where it distinguishes checking an earlier measurement from testing the estimated crossing. The practice tasks are brief and the summary sentences each teach one idea. The communication examples are incomplete: the axis-description example omits the requested delay, and the threshold note lacks an example sentence reporting the change.",
+          "score": 8,
           "label": "Debrief: specific and kind",
           "weight": 20
         },
         {
           "categoryId": "accuracy",
-          "reasoning": "The numerical relationships are correct: labeled dial ticks are 4° apart, the halfway guide is 22°, the baseline dot is 100 clicks/s, and the curve readings are 90 and 110 clicks/s. Heights above the 80-clicks/s floor are 20 and 30, explaining the misleading 50% visual comparison. The result consistently distinguishes estimates from measurements. Required decision inputs are available through short textual metrics, with no text-drawn charts or rendering instructions.",
-          "score": 10,
+          "reasoning": "The textual arithmetic is consistent: two 20 ns gaps after 100 ns give 140 ns; the rates are 940 and 980 counts/s, a rise of 40 counts/s. The 150 ns estimate is correctly distinguished from a measurement. With no plotted data, however, there is no way to verify that the displayed measurements and guide actually support those readings. That is a grounding failure, not evidence of a false calculation.",
+          "score": 7,
           "label": "Accuracy",
           "weight": 15
         },
         {
           "categoryId": "depth",
-          "reasoning": "The English and number formats are appropriate, and the reasoning remains accessible without advanced quantum formalism or promises of outcomes. However, the beginner requirement to explain terminology in chat is not fully met: baseline, ticks, and detector clicks per second should receive brief introductions.",
-          "score": 8,
+          "reasoning": "The English and number formatting fit the request, and the distinction between a guide and a measurement is accessible and honest. Counts and nanoseconds receive some explanation, but counts/s is not explicitly unpacked as a rate for a beginner. More importantly, the learner practices arithmetic from verbal clues rather than the requested visual estimation.",
+          "score": 7,
           "label": "Depth, language and honesty",
           "weight": 10
         },
@@ -1433,34 +1314,153 @@
         }
       ],
       "judge": {
-        "modelId": "openai/gpt-6-astra",
+        "modelId": "openai/gpt-6.2-astra",
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 6434,
-          "outputTokens": 1516,
-          "reasoningTokens": 814
+          "inputTokens": 6062,
+          "outputTokens": 913,
+          "reasoningTokens": 0
         }
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No decision shows an app-drawn visual: the result supplies neither a numeric-axis `plot` nor a cropped-axis `chart` with `axisStart`. Both panels reconstruct the missing scan in text by listing ticks and dot positions. The queue chat gives away the guide's crossing before the learner chooses a delay. Every path can therefore be completed without reading a plot. The case also identifies measurements as the “left dot” and “right dot,” not by point labels, and supplies no named visual series against which to check its claims.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Some beginner-facing terminology is left implicit. The chat does not clearly introduce “baseline,” axis ticks, or “clicks/s,” although these terms underpin the decisions.",
+          "conclusion": "The circle-dot feedback asks for a stand-alone note that includes the delay, but its example gives only axis descriptions. The threshold feedback likewise recommends reporting both rates and their difference without modeling that wording. The capacity meter also rises for a repeat at 140 ns but falls for a trial at 150 ns, although each books one fresh reading and no difference in setup cost is established.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Provide ready-to-use examples for the short practice activities rather than requiring learners to find suitable plots. Explicit axis-range metrics would also remove any ambiguity about whether the outermost listed ticks are the display boundaries.",
+          "conclusion": "Show labeled measurements on a numeric delay-versus-rate plot, use a chart starting at 900 counts/s for the cropped comparison, and show the named guide crossing the target on the queue plot. Keep the worksheet's planned delay and the booking constraints in text, but leave the observed positions for the learner to read. Give the worked interpretation after the choice.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 6
         }
       ],
       "testCase": {
-        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The app shows a panel's metrics as short lines of text, never a drawn plot, so every value a decision asks the learner to read comes as metrics: the plotted points, the curve's readings and the axis ranges and intervals, each a short label and value. No metric value or label is a chart, table or picture drawn in text, no note tells anyone how to draw or display something, and no decision asks for a value the panels, messages and replies never give. General to the field, with no real lab.",
+        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The decisions that need a plot show one from the plan's `visuals`, drawn by the app: a `plot` for numbers on both axes (counts against voltage or time), a `chart` with `axisStart` for a cropped axis. Every path reaches a decision that shows a plot. A value the text states from a plot matches its data, the text names points by label and series by name (never \"the third point\"), and every value the learner must read sits on a round value or a label, never finer than the ticks. No panel repeats a plot's data, and no metric or message draws a chart in text. General to the field, with no real lab.",
+        "id": "en-plot-reading-field-research-1",
+        "userInput": {
+          "chapterDescription": "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",
+          "chapterTitle": "Reading quantum experiment plots",
+          "courseTitle": "Quantum physics from scratch",
+          "field": "research",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": null,
+              "name": "Read values from an experimental plot"
+            },
+            {
+              "description": null,
+              "name": "Estimate values between axis ticks"
+            },
+            {
+              "description": null,
+              "name": "Read values from plotted data points"
+            },
+            {
+              "description": null,
+              "name": "Estimate values from a plotted curve"
+            },
+            {
+              "description": null,
+              "name": "Read values on a truncated axis"
+            },
+            {
+              "description": null,
+              "name": "Interpret axis intervals"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "A fictional research bench, a 3:30 booking cutoff, and a competing request make the final choice credible. The missing display weakens the work simulation: the physicist says the plot is open, but the learner preparing the same booking note sees only transcribed readings.",
+          "score": 7,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies and job-specific meters, and the three endings spend the slot differently. However, the crucial reading decisions mostly ask which method to use after a panel has supplied the observation. The baseline-reference choice also does not change which baseline is used in the later comparison.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The technician wants a usable setting before the deadline, while the physicist wants the log to distinguish measurements from estimates. Both offer practical arguments, and asking the AI yields a correct spacing calculation while leaving verification to the learner. No personal names are used.",
+          "score": 10,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback praises specific strategies, such as subtracting the labeled rates rather than comparing heights. The practice tasks are short and the summaries reinforce distinct ideas. The slot-release note models better booking language, but the note about an incomplete baseline draft could likewise show what to write instead.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The stated arithmetic is consistent: the halfway guide is 22°, and 110 versus 100 clicks/s gives a 10 clicks/s difference. On an axis starting at 80, the displayed heights would be 30 versus 20, explaining the apparent 50% increase. No wrong calculation is taught as right, but there is no plotted dataset against which to verify the claimed readings.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English and numerical reasoning suit a beginner, particularly the explanation of tick spacing and the distinction between a recorded dot and a curve estimate. The learner gets less practice than the chapter requires because the positions are described in words rather than left to inspect on labeled axes.",
+          "score": 7,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6468,
+          "outputTokens": 842,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "No decision shows an app-drawn plot. There is no `visuals` entry, numeric `plot`, or cropped-axis `chart` with `axisStart`. Instead, the panels transcribe the ticks, state that the baseline dot is on 100 clicks/s, and describe exactly where the curve falls between labels. Every path therefore lets the learner finish by reading prose rather than a detector plot. References to “the curve” also lack a named series on a visible figure.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The scan uses rate against dial angle rather than the requested counts against voltage or time. Some feedback about what to write in the booking note gives a method but no example wording. Earlier entries also have little effect on the final handoff: the learner can select the curve as the baseline reference and later book the candidate without explicitly correcting that entry.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Put a numeric detector plot beside the baseline and curve decisions, and show a chart starting at 80 for the cropped-axis comparison. Label the baseline point and name the series consistently in the figure and chat. Remove the panel transcriptions so the learner must inspect the marks; then use the existing arithmetic in feedback. Carry the learner’s draft reference into the booking decision so correcting a misread has a visible payoff.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The decisions that need a plot show one from the plan's `visuals`, drawn by the app: a `plot` for numbers on both axes (counts against voltage or time), a `chart` with `axisStart` for a cropped axis. Every path reaches a decision that shows a plot. A value the text states from a plot matches its data, the text names points by label and series by name (never \"the third point\"), and every value the learner must read sits on a round value or a label, never finer than the ticks. No panel repeats a plot's data, and no metric or message draws a chart in text. General to the field, with no real lab.",
         "id": "en-plot-reading-field-research-2",
         "userInput": {
           "chapterDescription": "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",

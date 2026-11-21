@@ -1,5 +1,6 @@
 import { assembleChallengeCase, draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
 import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
+import { challengePlotFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { describe, expect, it } from "vitest";
 import { applyChallengeEdits } from "./challenge-edits";
 
@@ -21,6 +22,33 @@ describe(applyChallengeEdits, () => {
     });
 
     expect(fixed).toStrictEqual({ ...original, setting: "$& the new Aurora Shop" });
+  });
+
+  it("edits words shared with a chart label while leaving the chart data intact", () => {
+    const original = written();
+    const visual = challengePlotFixture();
+
+    const withChart = {
+      ...original,
+      mission: "Look for Valley.",
+      nodes: original.nodes.map((node) =>
+        node.id === original.startNodeId ? { ...node, visual } : node,
+      ),
+    };
+
+    expect(
+      applyChallengeEdits({
+        edits: [{ find: "Valley", replace: "the lowest point" }],
+        written: withChart,
+      }),
+    ).toStrictEqual({ ...withChart, mission: "Look for the lowest point." });
+
+    expect(
+      applyChallengeEdits({
+        edits: [{ find: "Control limit", replace: "Threshold" }],
+        written: withChart,
+      }),
+    ).toBeNull();
   });
 
   it("fails the whole fix when an edit's text isn't in the case", () => {

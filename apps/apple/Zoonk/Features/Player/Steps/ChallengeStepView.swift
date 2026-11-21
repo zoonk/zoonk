@@ -2,6 +2,8 @@ import SwiftUI
 
 /// The team's names fill `{{slotId}}`.
 struct ChallengeStepView: View {
+  static let decisionVisualId = "challenge-decision-visual"
+
   let step: LessonStep
   let content: ChallengeContent
   let state: LessonPlayerState
@@ -116,6 +118,11 @@ struct ChallengeStepView: View {
         ForEach(Array(upcoming.messages.enumerated()), id: \.offset) { _, message in
           self.message(message)
         }
+
+        if let visual = upcoming.visual {
+          LessonVisualView(visual: visual)
+            .id(Self.decisionVisualId)
+        }
       }
     }
     .onChange(of: decisions.count) { previous, count in
@@ -149,7 +156,9 @@ struct ChallengeStepView: View {
       latest.choice.timeJump.map {
         [([named($0.label)] + ($0.panel.map(panelLines) ?? [])).joined(separator: "\n")]
       } ?? []
-    let lines = latest.choice.replies.map(said) + jump + (upcoming?.messages ?? []).map(said)
+    let lines =
+      latest.choice.replies.map(said) + jump + (upcoming?.messages ?? []).map(said)
+      + [upcoming?.visual?.title].compactMap(\.self)
 
     let parts = [
       moved.isEmpty ? nil : moved.formatted(.list(type: .and)),
@@ -248,6 +257,10 @@ struct ChallengeStepView: View {
     ForEach(Array(decisions.enumerated()), id: \.offset) { _, decision in
       ForEach(Array(decision.node.messages.enumerated()), id: \.offset) { _, message in
         self.message(message)
+      }
+      // Stays where it was while deciding, so the pick moves nothing.
+      if let visual = decision.node.visual {
+        LessonVisualView(visual: visual)
       }
       VStack(alignment: .trailing, spacing: 8) {
         pick(decision.choice.text)

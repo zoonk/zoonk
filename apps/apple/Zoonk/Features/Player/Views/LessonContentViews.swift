@@ -362,9 +362,31 @@ struct LessonVisualView: View {
   var body: some View {
     switch visual {
     case .chart(let chart):
-      LessonChartView(chart: chart)
+      card { LessonChartView(chart: chart) }
+    case .plot(let plot):
+      card { LessonPlotView(plot: plot) }
     case .timeline(let timeline):
-      LessonTimelineView(timeline: timeline)
+      card { LessonTimelineView(timeline: timeline) }
+    case .unknown:
+      EmptyView()
+    }
+  }
+
+  private func card(@ViewBuilder _ content: () -> some View) -> some View {
+    content()
+      .padding(16)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .panel()
+  }
+}
+
+extension LessonVisual {
+  var title: String? {
+    switch self {
+    case .chart(let chart): chart.title
+    case .plot(let plot): plot.title
+    case .timeline(let timeline): timeline.title
+    case .unknown: nil
     }
   }
 }
