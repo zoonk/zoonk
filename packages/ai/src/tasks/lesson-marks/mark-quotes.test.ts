@@ -68,6 +68,15 @@ describe(isExampleQuote, () => {
     expect(isExampleQuote({ quote: "Ana ganha R$ 3.000 por mês.", text })).toBe(false);
   });
 
+  it("takes a numbered item with its number, so the frame never leaves the number behind", () => {
+    const steps =
+      "Para fazer chá:\n\n1. Ferva a água.\n2. Coloque o saquinho.\n3. Espere 3 minutos.";
+
+    expect(isExampleQuote({ quote: "2. Coloque o saquinho.", text: steps })).toBe(true);
+    expect(isExampleQuote({ quote: "Coloque o saquinho.", text: steps })).toBe(false);
+    expect(isExampleQuote({ quote: "Ferva a água.", text: steps })).toBe(false);
+  });
+
   it("doesn't take a sentence that goes on after a quotation for two", () => {
     const japanese = "店員は「ありがとう。」と言った。次の人が来た。";
     const english = "She said “Hello.” and left. Next came Ana.";

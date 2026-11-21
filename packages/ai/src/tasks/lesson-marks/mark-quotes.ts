@@ -10,6 +10,8 @@ const SENTENCE_BREAK = /[.!?…:;]["'”’»)\]」』]*\s+$/u;
 const LINE_BREAK = /\n\s*$/u;
 /** In cased scripts a sentence never starts lowercase: "She said “Hello.” and left." */
 const LOWERCASE_START = /^\p{Ll}/u;
+/** A numbered item's marker ("2. ") ends in a period, but the item's sentence starts after it. */
+const LIST_MARKER = /(?:^|\n)[^\S\n]*\d{1,3}[.)][^\S\n]+$/u;
 const BOLD = "**";
 
 /**
@@ -36,6 +38,7 @@ function startsSentence({ before, quote }: { before: string; quote: string }): b
 
   return (
     !LOWERCASE_START.test(quote) &&
+    !LIST_MARKER.test(before) &&
     (SENTENCE_BREAK.test(before) || CJK_SENTENCE_BREAK.test(before) || LINE_BREAK.test(before))
   );
 }
@@ -91,6 +94,13 @@ function keepsCodeWhole({
   return findCodeSpans(text).every(
     (code) => end <= code.start || start >= code.end || (start <= code.start && end >= code.end),
   );
+}
+
+/** A quote of a numbered item's words, widened to its marker ("2. ") so the item keeps its number. */
+export function withListMarker({ quote, text }: { quote: string; text: string }): string {
+  const start = text.indexOf(quote);
+  const marker = start === -1 ? null : LIST_MARKER.exec(text.slice(0, start));
+  return marker ? `${marker[0].trimStart()}${quote}` : quote;
 }
 
 /**
