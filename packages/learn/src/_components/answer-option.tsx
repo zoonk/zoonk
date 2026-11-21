@@ -92,86 +92,48 @@ export function AnswerOptionGroup({
   );
 }
 
-function useResultLabels() {
-  const t = useExtracted();
-
-  return {
-    correct: t("Correct"),
-    yourAnswer: t("Your answer"),
-    yourGuess: t({
-      description: "Tags the learner's pick when it counts as neither right nor wrong.",
-      message: "Your guess",
-    }),
-  };
-}
-
-/** A right pick says whose it is, so it isn't called correct twice under its verdict. */
-export function ResultTag({
+/**
+ * The word an option shows. The right option says "Correct" when the learner missed it. A pick
+ * needs no word of its own: its color and the verdict say it. Only a guess, which counts as
+ * neither right nor wrong, says so, from the pick on, in the words its verdict keeps.
+ */
+export function useAnswerTag({
   guessed,
   picked,
   result,
 }: {
   guessed: boolean;
   picked: boolean;
-  result: AnswerOptionResult;
-}) {
-  const { correct, yourAnswer, yourGuess } = useResultLabels();
-  const yourPick = guessed ? yourGuess : yourAnswer;
+  result: AnswerOptionResult | null;
+}): React.ReactNode {
+  const t = useExtracted();
 
-  const labels: Record<AnswerOptionResult, string> = {
-    guess: yourGuess,
-    right: picked ? yourPick : correct,
-    wrong: yourAnswer,
-  };
+  if (result === "guess" || (picked && guessed)) {
+    const yourGuess = t({
+      description: "Tags the learner's pick when it counts as neither right nor wrong.",
+      message: "Your guess",
+    });
 
-  return (
-    <span className={cn(ANSWER_TAG_CLASS, ANSWER_TAG_TONE[result])} data-slot="answer-option-tag">
-      {labels[result]}
-    </span>
-  );
+    return result ? (
+      <AnswerTag className={ANSWER_TAG_TONE[result]}>{yourGuess}</AnswerTag>
+    ) : (
+      // Unspoken: the radio is checked.
+      <AnswerTag aria-hidden="true" className="text-foreground">
+        {yourGuess}
+      </AnswerTag>
+    );
+  }
+
+  if (result === "right" && !picked) {
+    return <AnswerTag className={ANSWER_TAG_TONE.right}>{t("Correct")}</AnswerTag>;
+  }
+
+  return null;
 }
 
-/** Before Check, a pick says it's the learner's in the words its verdict keeps. Unspoken: the radio is checked. */
-function PickedTag({ guessed }: { guessed: boolean }) {
-  const { yourAnswer, yourGuess } = useResultLabels();
-
+function AnswerTag({ className, ...props }: React.ComponentProps<"span">) {
   return (
-    <span
-      aria-hidden="true"
-      className={cn(ANSWER_TAG_CLASS, "text-foreground")}
-      data-slot="answer-option-tag"
-    >
-      {guessed ? yourGuess : yourAnswer}
-    </span>
-  );
-}
-
-/**
- * Before Check, the room of the widest tag a verdict can bring, unseen and the same on every
- * option, so the tag fills it later and the answer's words never move. The labels are CSS content,
- * not text, so nothing reads or finds the unseen ones.
- */
-function ReservedTag({ children }: { children: React.ReactNode }) {
-  const labels = Object.entries(useResultLabels());
-
-  return (
-    <span className="grid min-w-0">
-      {labels.map(([key, label]) => (
-        <span
-          aria-hidden="true"
-          className={cn(
-            ANSWER_TAG_CLASS,
-            "invisible col-start-1 row-start-1 before:content-[attr(data-label)]",
-          )}
-          data-label={label}
-          key={key}
-        />
-      ))}
-
-      {children && (
-        <span className={cn(ANSWER_TAG_CLASS, "col-start-1 row-start-1")}>{children}</span>
-      )}
-    </span>
+    <span className={cn(ANSWER_TAG_CLASS, className)} data-slot="answer-option-tag" {...props} />
   );
 }
 
@@ -211,24 +173,6 @@ export function OptionMarker({
   );
 }
 
-function defaultTag({
-  guessed,
-  picked,
-  picks,
-  result,
-}: {
-  guessed: boolean;
-  picked: boolean;
-  picks: boolean;
-  result: AnswerOptionResult | null;
-}): React.ReactNode {
-  if (result) {
-    return <ResultTag guessed={guessed} picked={picked} result={result} />;
-  }
-
-  return picked && picks ? <PickedTag guessed={guessed} /> : undefined;
-}
-
 export function AnswerOption({
   children,
   className,
@@ -253,7 +197,8 @@ export function AnswerOption({
   // A submit option sends its form on the tap, so it's a plain button: nothing stays picked.
   const picks = type !== "submit";
 
-  const shownTag = tag === undefined ? defaultTag({ guessed, picked, picks, result }) : tag;
+  const answerTag = useAnswerTag({ guessed, picked, result });
+  const shownTag = tag === undefined ? answerTag : tag;
 
   return (
     <button
@@ -287,7 +232,7 @@ export function AnswerOption({
         picked={picked && !result}
       />
 
-      <TagBesideOrUnder layout={layout} reservesTag={picks && tag === undefined} tag={shownTag}>
+      <TagBesideOrUnder layout={layout} tag={shownTag}>
         <SpokenMath>{children}</SpokenMath>
       </TagBesideOrUnder>
     </button>
@@ -310,21 +255,20 @@ const ROW_CODE_CLASS =
   "has-data-[slot=code-snippet]:flex has-data-[slot=code-snippet]:flex-wrap has-data-[slot=code-snippet]:items-baseline-last has-data-[slot=code-snippet]:gap-x-3 [&_:has([data-slot=code-snippet-line])]:contents [&_[data-slot=code-snippet-line]]:basis-full [&_[data-slot=code-snippet-line]:last-child]:basis-auto";
 
 const TAG_AFTER_CODE_CLASS =
-  "[:has([data-slot=code-snippet])>&]:ms-auto [:has([data-slot=code-snippet])>&]:text-end";
+  "[:has([data-slot=code-snippet])>&]:ms-auto [:has([data-slot=code-snippet])>&]:min-h-0 [:has([data-slot=code-snippet])>&]:text-end";
 
 /**
- * `reservesTag` holds room for the verdict from the start. The space before the inline tag
- * disappears at a line break, so the tag starts at the text edge if it needs its own line.
+ * The tag follows the words inline, and a tag on its own line starts at the text edge because the
+ * space before it disappears at the break. The words wrap line by line, so a tag arriving after
+ * them never moves a word, as the page's pretty wrapping would.
  */
 export function TagBesideOrUnder({
   children,
   layout = "row",
-  reservesTag = false,
   tag,
 }: {
   children: React.ReactNode;
   layout?: "row" | "stacked";
-  reservesTag?: boolean;
   tag: React.ReactNode;
 }) {
   if (layout === "stacked") {
@@ -343,17 +287,23 @@ export function TagBesideOrUnder({
   }
 
   return (
-    <span className={cn("block w-full grow basis-1/2", ROW_FORMULA_CLASS, ROW_CODE_CLASS)}>
+    <span
+      className={cn(
+        "block w-full grow basis-1/2 [text-wrap-style:stable]",
+        ROW_FORMULA_CLASS,
+        ROW_CODE_CLASS,
+      )}
+    >
       {children}
 
-      {(tag || reservesTag) && (
+      {tag && (
         <span className="[word-spacing:0.5rem] [:has([data-slot=code-snippet])>&]:hidden"> </span>
       )}
-      {(tag || reservesTag) && (
+      {tag && (
         <LineMarker
           className={cn("inline-flex h-auto min-h-lh max-w-full align-top", TAG_AFTER_CODE_CLASS)}
         >
-          {reservesTag ? <ReservedTag>{tag}</ReservedTag> : tag}
+          {tag}
         </LineMarker>
       )}
     </span>
