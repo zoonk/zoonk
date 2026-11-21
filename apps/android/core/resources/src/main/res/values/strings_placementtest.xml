@@ -45,12 +45,14 @@
     <string name="placementtest_continue_from_plan">You can finish the test from Plan.</string>
     <string name="placementtest_finish_for_today">Finish for today</string>
     <string name="placementtest_keep_going">Keep going</string>
-    <string name="placementtest_known">You already know them. They stay in your practice.</string>
+    <plurals name="placementtest_known">
+        <item quantity="one">You already know it. It stays in your practice.</item>
+        <item quantity="other">You already know them. They stay in your practice.</item>
+    </plurals>
     <string name="placementtest_plan_stays">Your plan stays as it is.</string>
     <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">Up next</string>
     <string name="placementtest_whole_course_skips_more">The whole-course test can skip more.</string>
-    <string name="placementtest_undo_restored">The lessons are back in your plan.</string>
     <string name="placementtest_done">Done</string>
     <string name="placementtest_not_now">Not now</string>
     <!-- %1$s is a language's name, such as "Italian". -->

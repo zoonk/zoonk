@@ -381,7 +381,7 @@ internal fun TestOutResult(
     val detail =
         when {
             !outcome.passed -> stringResource(R.string.testout_not_passed_detail)
-            undone -> stringResource(R.string.testout_lessons_back)
+            undone -> pluralStringResource(R.plurals.testout_lessons_back, outcome.skippedLessons)
             outcome.skippedLessons == 0 -> stringResource(R.string.testout_already_skipped)
             else -> pluralStringResource(R.plurals.testout_lessons_off, outcome.skippedLessons, outcome.skippedLessons)
         }

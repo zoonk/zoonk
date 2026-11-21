@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -167,7 +168,12 @@ internal fun ColumnScope.PlacementResult(
 ) {
     TestOutcome(
         title = lessonsSkippedLine(lessonsSkipped),
-        lead = stringResource(if (lessonsSkipped > 0) R.string.placementtest_known else R.string.placementtest_plan_stays),
+        lead =
+            if (lessonsSkipped > 0) {
+                pluralStringResource(R.plurals.placementtest_known, lessonsSkipped)
+            } else {
+                stringResource(R.string.placementtest_plan_stays)
+            },
         action = stringResource(if (inSetup) R.string.onboarding_continue else R.string.placementtest_done),
         onAction = onDone,
         busy = saving,
