@@ -23,7 +23,7 @@ msgstr "Correto"
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
 #: src/questions/typed-answer-field.tsx
-#: src/writing/writing-result.tsx
+#: src/writing/writing-points-header.tsx
 #: src/writing/writing-write-screen.tsx
 msgctxt "1nJY2_"
 msgid "Your answer"
@@ -271,6 +271,7 @@ msgstr "{days, plural, one {Falta cerca de # dia} other {Faltam cerca de # dias}
 #: src/session/question-block/block-body.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
+#: src/syllabus/subject-write-bar.tsx
 #: src/today/today-action.tsx
 #: src/writing/writing-refused.tsx
 #: src/writing/writing-screen.tsx
@@ -2130,6 +2131,7 @@ msgstr "{lessons, plural, =0 {Revanche amanhã.} one {Revanche amanhã, depois d
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
+#: src/syllabus/subject-write-bar.tsx
 #: src/today/today-week-challenge.tsx
 #: src/today/use-row-label.ts
 msgctxt "UIUcbm"
@@ -4881,6 +4883,7 @@ msgstr "{count, plural, =1 {Com base no seu último simulado} other {Com base no
 #: src/journey/preparation/written-projection.tsx
 #: src/mock/mock-result-view.tsx
 #: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-points-header.tsx
 msgctxt "Psgvhk"
 msgid "Estimated score"
 msgstr "Pontuação estimada"
@@ -5023,13 +5026,18 @@ msgid "Close to the {minimum} points it asks for"
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "WcpbzU"
-msgid "It asks for {minimum} points, whatever your other scores."
+msgctxt "-xVO08"
+msgid "{part} asks for {share} of its points, whatever your other scores."
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "i5xuVH"
-msgid "Below the minimum: {part}"
+msgctxt "sA_m_k"
+msgid "{part} asks for {minimum} points, whatever your other scores."
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "doYQpO"
+msgid "Below the minimum to pass"
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
@@ -5038,7 +5046,7 @@ msgid "{part} isn't measured yet."
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
-#: src/syllabus/subject-screen.tsx
+#: src/syllabus/subject-write-bar.tsx
 #: src/writing/writing-screen.tsx
 msgctxt "k2veDA"
 msgid "Write"
@@ -8353,7 +8361,6 @@ msgid "No estimate"
 msgstr "Sem estimativa"
 
 #: src/mock/mock-result-speaking.tsx
-#: src/writing/writing-result.tsx
 msgctxt "T735yK"
 msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
 msgstr "Pontuação estimada, de <mono>0</mono> a <mono>{max}</mono>"
@@ -11310,9 +11317,9 @@ msgid "Writing practice every week from now on."
 msgstr "Prática de escrita toda semana a partir de agora."
 
 #: src/plan/written-cadence.tsx
-msgctxt "9HOF1s"
-msgid "When to practice {parts}"
-msgstr "Quando praticar {parts}"
+msgctxt "u6mbz4"
+msgid "When to practice writing"
+msgstr ""
 
 #: src/plan/written-cadence.tsx
 msgctxt "1Jh2wI"
@@ -12455,8 +12462,8 @@ msgid "Mixed practice"
 msgstr "Prática variada"
 
 #: src/session/use-block-copy.ts
-msgctxt "HZs6ar"
-msgid "Back tomorrow: today's extra grades are used"
+msgctxt "bL2guL"
+msgid "Back tomorrow: no more grading today"
 msgstr ""
 
 #: src/session/use-block-copy.ts
@@ -12821,6 +12828,21 @@ msgctxt "sUFAfD"
 msgid "{total, plural, one {{done, number} of # topic studied} other {{done, number} of # topics studied}}"
 msgstr "{total, plural, one {{done, number} de # tópico estudado} other {{done, number} de # tópicos estudados}}"
 
+#: src/syllabus/subject-write-bar.tsx
+msgctxt "dCMmZj"
+msgid "{share} of the score"
+msgstr ""
+
+#: src/syllabus/subject-write-bar.tsx
+msgctxt "uWjDGe"
+msgid "More grading tomorrow"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "QRfeh-"
+msgid "Minimum to pass: {share} of the points"
+msgstr ""
+
 #: src/syllabus/subject-written-score.tsx
 msgctxt "B96Fmq"
 msgid "Minimum to pass: {minimum}"
@@ -12832,7 +12854,7 @@ msgid "{count, plural, one {last answer} other {last # answers}}"
 msgstr ""
 
 #: src/syllabus/subject-written-score.tsx
-#: src/writing/writing-result.tsx
+#: src/writing/writing-points-header.tsx
 msgctxt "Jq3FDz"
 msgid "Content"
 msgstr ""
@@ -12843,22 +12865,17 @@ msgid "Presentation and structure"
 msgstr ""
 
 #: src/syllabus/subject-written-score.tsx
-#: src/writing/writing-result.tsx
+#: src/writing/writing-points-header.tsx
 #: src/writing/writing-text.tsx
 msgctxt "a7of83"
 msgid "Language errors"
 msgstr ""
 
 #: src/syllabus/subject-written-score.tsx
-#: src/writing/writing-result.tsx
+#: src/writing/writing-points-header.tsx
 #: src/writing/writing-text.tsx
 msgctxt "VXgrSB"
 msgid "{count, plural, one {# error} other {# errors}}"
-msgstr ""
-
-#: src/syllabus/subject-written-score.tsx
-msgctxt "5m07cc"
-msgid "Your answers"
 msgstr ""
 
 #: src/syllabus/subject-written-score.tsx
@@ -12867,8 +12884,26 @@ msgid "{count, plural, one {# line} other {# lines}}"
 msgstr ""
 
 #: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-points-header.tsx
+msgctxt "gPyDLV"
+msgid "{count, plural, one {about # line} other {about # lines}}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+#: src/writing/writing-editor.tsx
+#: src/writing/writing-points-header.tsx
+msgctxt "sKcJTn"
+msgid "about {used} of {lines} lines"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
 msgctxt "a0Vmlb"
 msgid "{count, plural, one {# version} other {# versions}}"
+msgstr ""
+
+#: src/syllabus/subject-written-score.tsx
+msgctxt "5m07cc"
+msgid "Your answers"
 msgstr ""
 
 #: src/syllabus/syllabus-chapter-row.tsx
@@ -13628,14 +13663,10 @@ msgctxt "j8q20J"
 msgid "of {max}"
 msgstr ""
 
+#. The approximate line count of a written answer past its limit; the lines past it are ones the exam board won't read.
 #: src/writing/writing-editor.tsx
-msgctxt "nqmPlF"
-msgid "about {used} of {lines} lines · the board won't read past line {lines}"
-msgstr ""
-
-#: src/writing/writing-editor.tsx
-msgctxt "sKcJTn"
-msgid "about {used} of {lines} lines"
+msgctxt "6omgAR"
+msgid "about {used} of {lines} lines · {over} won't be read"
 msgstr ""
 
 #: src/writing/writing-header.ts
@@ -13687,6 +13718,11 @@ msgstr "Todos os critérios receberam a pontuação máxima nesta estimativa."
 msgctxt "HiVJjN"
 msgid "For example: {example}"
 msgstr "Por exemplo: {example}"
+
+#: src/writing/writing-points-header.tsx
+msgctxt "frKEhM"
+msgid "Minimum to pass the written test: {share} of the points"
+msgstr ""
 
 #: src/writing/writing-question.tsx
 msgctxt "U413N1"
@@ -13754,11 +13790,6 @@ msgid "You'll have more tomorrow."
 msgstr ""
 
 #: src/writing/writing-result.tsx
-msgctxt "gPyDLV"
-msgid "{count, plural, one {about # line} other {about # lines}}"
-msgstr ""
-
-#: src/writing/writing-result.tsx
 msgctxt "TvkYzM"
 msgid "What to rewrite"
 msgstr "O que reescrever"
@@ -13794,6 +13825,11 @@ msgid "Criteria and points from the exam notice. The answer key is ours, for pra
 msgstr ""
 
 #: src/writing/writing-result.tsx
+msgctxt "LLXwbj"
+msgid "{score} of {max}"
+msgstr "{score} de {max}"
+
+#: src/writing/writing-result.tsx
 msgctxt "xZdNA0"
 msgid "Criteria"
 msgstr ""
@@ -13802,11 +13838,6 @@ msgstr ""
 msgctxt "H9233U"
 msgid "Score by criterion"
 msgstr "Pontuação por critério"
-
-#: src/writing/writing-result.tsx
-msgctxt "LLXwbj"
-msgid "{score} of {max}"
-msgstr "{score} de {max}"
 
 #: src/writing/writing-result.tsx
 msgctxt "vtwv7b"
