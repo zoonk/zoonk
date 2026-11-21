@@ -224,7 +224,9 @@ private struct MockQuestionMeta: View {
           "\(String(place.number)) of \(String(place.total))", tableName: "Mock",
           comment: "A written test question's place, like '1 of 2'")
       } else if question.format == .essay {
-        Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
+        if view.shape?.kind != .written {
+          Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
+        }
       } else {
         let place = sectionPlace
         Text("\(place.number) of \(place.total)", tableName: "Mock", comment: "Question place")
