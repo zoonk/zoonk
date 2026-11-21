@@ -4,600 +4,6 @@
     {
       "steps": [
         {
-          "conclusion": "Kept wrong: \"O ônibus, quando chovia, chegou\", \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "majorErrors",
-          "score": 9.73913043478261
-        },
-        {
-          "conclusion": "Kept wrong: \"O ônibus, quando chovia, chegou\", \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "minorErrors",
-          "score": 9.73913043478261
-        },
-        {
-          "conclusion": "Kept wrong: \"O ônibus, quando chovia, chegou\", \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "potentialImprovements",
-          "score": 9.73913043478261
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "Pioveva quando è arrivato l'autobus",
-                  "Pioveva quando l'autobus è arrivato",
-                  "Quando è arrivato l'autobus pioveva",
-                  "Quando l'autobus è arrivato pioveva",
-                  "Quando l'autobus pioveva è arrivato"
-                ],
-                "unscored": [
-                  "L'autobus quando pioveva è arrivato"
-                ],
-                "valid": [
-                  "È arrivato l'autobus quando pioveva",
-                  "L'autobus è arrivato quando pioveva",
-                  "Quando pioveva è arrivato l'autobus"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Chovia quando chegou o ônibus",
-                  "Chovia quando o ônibus chegou",
-                  "O ônibus, quando chovia, chegou",
-                  "Quando chegou o ônibus, chovia",
-                  "Quando o ônibus chegou, chovia"
-                ],
-                "valid": [
-                  "Chegou o ônibus quando chovia",
-                  "O ônibus chegou quando chovia",
-                  "Quando chovia, chegou o ônibus"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "L'ombrello non ho preso oggi",
-                  "L'ombrello oggi non ho preso",
-                  "Oggi ho non preso l'ombrello",
-                  "Oggi l'ombrello non ho preso",
-                  "Oggi non l'ombrello ho preso"
-                ],
-                "valid": [
-                  "Non ho preso l'ombrello oggi",
-                  "Non ho preso oggi l'ombrello"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Eu hoje o guarda-chuva não peguei",
-                  "Eu o guarda-chuva não peguei hoje",
-                  "Hoje eu peguei não o guarda-chuva",
-                  "Não peguei o guarda-chuva hoje, eu",
-                  "O guarda-chuva eu hoje não peguei"
-                ],
-                "unscored": [
-                  "Hoje o guarda-chuva eu não peguei",
-                  "O guarda-chuva eu não peguei hoje",
-                  "O guarda-chuva hoje eu não peguei"
-                ],
-                "valid": [
-                  "Eu hoje não peguei o guarda-chuva",
-                  "Eu não peguei hoje o guarda-chuva",
-                  "Eu não peguei o guarda-chuva hoje"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "In ritardo l'autobus è arrivato",
-                  "L'autobus in ritardo è arrivato"
-                ],
-                "unscored": [
-                  "In ritardo è arrivato l'autobus"
-                ],
-                "valid": [
-                  "È arrivato in ritardo l'autobus",
-                  "È arrivato l'autobus in ritardo"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Atrasado chegou o ônibus",
-                  "Atrasado, o ônibus chegou",
-                  "O ônibus atrasado chegou",
-                  "O ônibus, atrasado, chegou"
-                ],
-                "unscored": [
-                  "Chegou o ônibus atrasado"
-                ],
-                "valid": [
-                  "Chegou atrasado o ônibus"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "pt-it-rain-and-bus-1",
-        "userInput": {
-          "learnerLanguage": "pt",
-          "sentences": [
-            {
-              "sentence": "Quando pioveva l'autobus è arrivato",
-              "sentenceCandidates": [
-                "È arrivato l'autobus quando pioveva",
-                "L'autobus è arrivato quando pioveva",
-                "L'autobus quando pioveva è arrivato",
-                "Pioveva quando è arrivato l'autobus",
-                "Pioveva quando l'autobus è arrivato",
-                "Quando è arrivato l'autobus pioveva",
-                "Quando l'autobus è arrivato pioveva",
-                "Quando l'autobus pioveva è arrivato",
-                "Quando pioveva è arrivato l'autobus"
-              ],
-              "translation": "Quando chovia, o ônibus chegou",
-              "translationCandidates": [
-                "Chegou o ônibus quando chovia",
-                "Chovia quando chegou o ônibus",
-                "Chovia quando o ônibus chegou",
-                "O ônibus chegou quando chovia",
-                "O ônibus, quando chovia, chegou",
-                "Quando chegou o ônibus, chovia",
-                "Quando chovia, chegou o ônibus",
-                "Quando o ônibus chegou, chovia"
-              ]
-            },
-            {
-              "sentence": "Oggi non ho preso l'ombrello",
-              "sentenceCandidates": [
-                "L'ombrello non ho preso oggi",
-                "L'ombrello oggi non ho preso",
-                "Non ho preso l'ombrello oggi",
-                "Non ho preso oggi l'ombrello",
-                "Oggi ho non preso l'ombrello",
-                "Oggi l'ombrello non ho preso",
-                "Oggi non l'ombrello ho preso"
-              ],
-              "translation": "Hoje eu não peguei o guarda-chuva",
-              "translationCandidates": [
-                "Eu hoje não peguei o guarda-chuva",
-                "Eu hoje o guarda-chuva não peguei",
-                "Eu não peguei hoje o guarda-chuva",
-                "Eu não peguei o guarda-chuva hoje",
-                "Eu o guarda-chuva não peguei hoje",
-                "Hoje eu peguei não o guarda-chuva",
-                "Hoje o guarda-chuva eu não peguei",
-                "Não peguei o guarda-chuva hoje, eu",
-                "O guarda-chuva eu hoje não peguei",
-                "O guarda-chuva eu não peguei hoje",
-                "O guarda-chuva hoje eu não peguei"
-              ]
-            },
-            {
-              "sentence": "L'autobus è arrivato in ritardo",
-              "sentenceCandidates": [
-                "È arrivato in ritardo l'autobus",
-                "È arrivato l'autobus in ritardo",
-                "In ritardo è arrivato l'autobus",
-                "In ritardo l'autobus è arrivato",
-                "L'autobus in ritardo è arrivato"
-              ],
-              "translation": "O ônibus chegou atrasado",
-              "translationCandidates": [
-                "Atrasado chegou o ônibus",
-                "Atrasado, o ônibus chegou",
-                "Chegou atrasado o ônibus",
-                "Chegou o ônibus atrasado",
-                "O ônibus atrasado chegou",
-                "O ônibus, atrasado, chegou"
-              ]
-            }
-          ],
-          "targetLanguage": "it"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Kept wrong: \"Pioveva quando è arrivato l'autobus\", \"Pioveva quando l'autobus è arrivato\", \"Quando è arrivato l'autobus pioveva\", \"Quando l'autobus è arrivato pioveva\", \"Chovia quando chegou o ônibus\", \"Chovia quando o ônibus chegou\", \"Quando chegou o ônibus, chovia\", \"Quando o ônibus chegou, chovia\", \"Eu hoje o guarda-chuva não peguei\", \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "majorErrors",
-          "score": 8.695652173913043
-        },
-        {
-          "conclusion": "Kept wrong: \"Pioveva quando è arrivato l'autobus\", \"Pioveva quando l'autobus è arrivato\", \"Quando è arrivato l'autobus pioveva\", \"Quando l'autobus è arrivato pioveva\", \"Chovia quando chegou o ônibus\", \"Chovia quando o ônibus chegou\", \"Quando chegou o ônibus, chovia\", \"Quando o ônibus chegou, chovia\", \"Eu hoje o guarda-chuva não peguei\", \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "minorErrors",
-          "score": 8.695652173913043
-        },
-        {
-          "conclusion": "Kept wrong: \"Pioveva quando è arrivato l'autobus\", \"Pioveva quando l'autobus è arrivato\", \"Quando è arrivato l'autobus pioveva\", \"Quando l'autobus è arrivato pioveva\", \"Chovia quando chegou o ônibus\", \"Chovia quando o ônibus chegou\", \"Quando chegou o ônibus, chovia\", \"Quando o ônibus chegou, chovia\", \"Eu hoje o guarda-chuva não peguei\", \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "potentialImprovements",
-          "score": 8.695652173913043
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "Pioveva quando è arrivato l'autobus",
-                  "Pioveva quando l'autobus è arrivato",
-                  "Quando è arrivato l'autobus pioveva",
-                  "Quando l'autobus è arrivato pioveva",
-                  "Quando l'autobus pioveva è arrivato"
-                ],
-                "unscored": [
-                  "L'autobus quando pioveva è arrivato"
-                ],
-                "valid": [
-                  "È arrivato l'autobus quando pioveva",
-                  "L'autobus è arrivato quando pioveva",
-                  "Quando pioveva è arrivato l'autobus"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Chovia quando chegou o ônibus",
-                  "Chovia quando o ônibus chegou",
-                  "O ônibus, quando chovia, chegou",
-                  "Quando chegou o ônibus, chovia",
-                  "Quando o ônibus chegou, chovia"
-                ],
-                "valid": [
-                  "Chegou o ônibus quando chovia",
-                  "O ônibus chegou quando chovia",
-                  "Quando chovia, chegou o ônibus"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "L'ombrello non ho preso oggi",
-                  "L'ombrello oggi non ho preso",
-                  "Oggi ho non preso l'ombrello",
-                  "Oggi l'ombrello non ho preso",
-                  "Oggi non l'ombrello ho preso"
-                ],
-                "valid": [
-                  "Non ho preso l'ombrello oggi",
-                  "Non ho preso oggi l'ombrello"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Eu hoje o guarda-chuva não peguei",
-                  "Eu o guarda-chuva não peguei hoje",
-                  "Hoje eu peguei não o guarda-chuva",
-                  "Não peguei o guarda-chuva hoje, eu",
-                  "O guarda-chuva eu hoje não peguei"
-                ],
-                "unscored": [
-                  "Hoje o guarda-chuva eu não peguei",
-                  "O guarda-chuva eu não peguei hoje",
-                  "O guarda-chuva hoje eu não peguei"
-                ],
-                "valid": [
-                  "Eu hoje não peguei o guarda-chuva",
-                  "Eu não peguei hoje o guarda-chuva",
-                  "Eu não peguei o guarda-chuva hoje"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "In ritardo l'autobus è arrivato",
-                  "L'autobus in ritardo è arrivato"
-                ],
-                "unscored": [
-                  "In ritardo è arrivato l'autobus"
-                ],
-                "valid": [
-                  "È arrivato in ritardo l'autobus",
-                  "È arrivato l'autobus in ritardo"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Atrasado chegou o ônibus",
-                  "Atrasado, o ônibus chegou",
-                  "O ônibus atrasado chegou",
-                  "O ônibus, atrasado, chegou"
-                ],
-                "unscored": [
-                  "Chegou o ônibus atrasado"
-                ],
-                "valid": [
-                  "Chegou atrasado o ônibus"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "pt-it-rain-and-bus-2",
-        "userInput": {
-          "learnerLanguage": "pt",
-          "sentences": [
-            {
-              "sentence": "Quando pioveva l'autobus è arrivato",
-              "sentenceCandidates": [
-                "È arrivato l'autobus quando pioveva",
-                "L'autobus è arrivato quando pioveva",
-                "L'autobus quando pioveva è arrivato",
-                "Pioveva quando è arrivato l'autobus",
-                "Pioveva quando l'autobus è arrivato",
-                "Quando è arrivato l'autobus pioveva",
-                "Quando l'autobus è arrivato pioveva",
-                "Quando l'autobus pioveva è arrivato",
-                "Quando pioveva è arrivato l'autobus"
-              ],
-              "translation": "Quando chovia, o ônibus chegou",
-              "translationCandidates": [
-                "Chegou o ônibus quando chovia",
-                "Chovia quando chegou o ônibus",
-                "Chovia quando o ônibus chegou",
-                "O ônibus chegou quando chovia",
-                "O ônibus, quando chovia, chegou",
-                "Quando chegou o ônibus, chovia",
-                "Quando chovia, chegou o ônibus",
-                "Quando o ônibus chegou, chovia"
-              ]
-            },
-            {
-              "sentence": "Oggi non ho preso l'ombrello",
-              "sentenceCandidates": [
-                "L'ombrello non ho preso oggi",
-                "L'ombrello oggi non ho preso",
-                "Non ho preso l'ombrello oggi",
-                "Non ho preso oggi l'ombrello",
-                "Oggi ho non preso l'ombrello",
-                "Oggi l'ombrello non ho preso",
-                "Oggi non l'ombrello ho preso"
-              ],
-              "translation": "Hoje eu não peguei o guarda-chuva",
-              "translationCandidates": [
-                "Eu hoje não peguei o guarda-chuva",
-                "Eu hoje o guarda-chuva não peguei",
-                "Eu não peguei hoje o guarda-chuva",
-                "Eu não peguei o guarda-chuva hoje",
-                "Eu o guarda-chuva não peguei hoje",
-                "Hoje eu peguei não o guarda-chuva",
-                "Hoje o guarda-chuva eu não peguei",
-                "Não peguei o guarda-chuva hoje, eu",
-                "O guarda-chuva eu hoje não peguei",
-                "O guarda-chuva eu não peguei hoje",
-                "O guarda-chuva hoje eu não peguei"
-              ]
-            },
-            {
-              "sentence": "L'autobus è arrivato in ritardo",
-              "sentenceCandidates": [
-                "È arrivato in ritardo l'autobus",
-                "È arrivato l'autobus in ritardo",
-                "In ritardo è arrivato l'autobus",
-                "In ritardo l'autobus è arrivato",
-                "L'autobus in ritardo è arrivato"
-              ],
-              "translation": "O ônibus chegou atrasado",
-              "translationCandidates": [
-                "Atrasado chegou o ônibus",
-                "Atrasado, o ônibus chegou",
-                "Chegou atrasado o ônibus",
-                "Chegou o ônibus atrasado",
-                "O ônibus atrasado chegou",
-                "O ônibus, atrasado, chegou"
-              ]
-            }
-          ],
-          "targetLanguage": "it"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Kept wrong: \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "majorErrors",
-          "score": 9.869565217391305
-        },
-        {
-          "conclusion": "Kept wrong: \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "minorErrors",
-          "score": 9.869565217391305
-        },
-        {
-          "conclusion": "Kept wrong: \"O guarda-chuva eu hoje não peguei\".",
-          "kind": "potentialImprovements",
-          "score": 9.869565217391305
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "Pioveva quando è arrivato l'autobus",
-                  "Pioveva quando l'autobus è arrivato",
-                  "Quando è arrivato l'autobus pioveva",
-                  "Quando l'autobus è arrivato pioveva",
-                  "Quando l'autobus pioveva è arrivato"
-                ],
-                "unscored": [
-                  "L'autobus quando pioveva è arrivato"
-                ],
-                "valid": [
-                  "È arrivato l'autobus quando pioveva",
-                  "L'autobus è arrivato quando pioveva",
-                  "Quando pioveva è arrivato l'autobus"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Chovia quando chegou o ônibus",
-                  "Chovia quando o ônibus chegou",
-                  "O ônibus, quando chovia, chegou",
-                  "Quando chegou o ônibus, chovia",
-                  "Quando o ônibus chegou, chovia"
-                ],
-                "valid": [
-                  "Chegou o ônibus quando chovia",
-                  "O ônibus chegou quando chovia",
-                  "Quando chovia, chegou o ônibus"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "L'ombrello non ho preso oggi",
-                  "L'ombrello oggi non ho preso",
-                  "Oggi ho non preso l'ombrello",
-                  "Oggi l'ombrello non ho preso",
-                  "Oggi non l'ombrello ho preso"
-                ],
-                "valid": [
-                  "Non ho preso l'ombrello oggi",
-                  "Non ho preso oggi l'ombrello"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Eu hoje o guarda-chuva não peguei",
-                  "Eu o guarda-chuva não peguei hoje",
-                  "Hoje eu peguei não o guarda-chuva",
-                  "Não peguei o guarda-chuva hoje, eu",
-                  "O guarda-chuva eu hoje não peguei"
-                ],
-                "unscored": [
-                  "Hoje o guarda-chuva eu não peguei",
-                  "O guarda-chuva eu não peguei hoje",
-                  "O guarda-chuva hoje eu não peguei"
-                ],
-                "valid": [
-                  "Eu hoje não peguei o guarda-chuva",
-                  "Eu não peguei hoje o guarda-chuva",
-                  "Eu não peguei o guarda-chuva hoje"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "In ritardo l'autobus è arrivato",
-                  "L'autobus in ritardo è arrivato"
-                ],
-                "unscored": [
-                  "In ritardo è arrivato l'autobus"
-                ],
-                "valid": [
-                  "È arrivato in ritardo l'autobus",
-                  "È arrivato l'autobus in ritardo"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Atrasado chegou o ônibus",
-                  "Atrasado, o ônibus chegou",
-                  "O ônibus atrasado chegou",
-                  "O ônibus, atrasado, chegou"
-                ],
-                "unscored": [
-                  "Chegou o ônibus atrasado"
-                ],
-                "valid": [
-                  "Chegou atrasado o ônibus"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "pt-it-rain-and-bus-3",
-        "userInput": {
-          "learnerLanguage": "pt",
-          "sentences": [
-            {
-              "sentence": "Quando pioveva l'autobus è arrivato",
-              "sentenceCandidates": [
-                "È arrivato l'autobus quando pioveva",
-                "L'autobus è arrivato quando pioveva",
-                "L'autobus quando pioveva è arrivato",
-                "Pioveva quando è arrivato l'autobus",
-                "Pioveva quando l'autobus è arrivato",
-                "Quando è arrivato l'autobus pioveva",
-                "Quando l'autobus è arrivato pioveva",
-                "Quando l'autobus pioveva è arrivato",
-                "Quando pioveva è arrivato l'autobus"
-              ],
-              "translation": "Quando chovia, o ônibus chegou",
-              "translationCandidates": [
-                "Chegou o ônibus quando chovia",
-                "Chovia quando chegou o ônibus",
-                "Chovia quando o ônibus chegou",
-                "O ônibus chegou quando chovia",
-                "O ônibus, quando chovia, chegou",
-                "Quando chegou o ônibus, chovia",
-                "Quando chovia, chegou o ônibus",
-                "Quando o ônibus chegou, chovia"
-              ]
-            },
-            {
-              "sentence": "Oggi non ho preso l'ombrello",
-              "sentenceCandidates": [
-                "L'ombrello non ho preso oggi",
-                "L'ombrello oggi non ho preso",
-                "Non ho preso l'ombrello oggi",
-                "Non ho preso oggi l'ombrello",
-                "Oggi ho non preso l'ombrello",
-                "Oggi l'ombrello non ho preso",
-                "Oggi non l'ombrello ho preso"
-              ],
-              "translation": "Hoje eu não peguei o guarda-chuva",
-              "translationCandidates": [
-                "Eu hoje não peguei o guarda-chuva",
-                "Eu hoje o guarda-chuva não peguei",
-                "Eu não peguei hoje o guarda-chuva",
-                "Eu não peguei o guarda-chuva hoje",
-                "Eu o guarda-chuva não peguei hoje",
-                "Hoje eu peguei não o guarda-chuva",
-                "Hoje o guarda-chuva eu não peguei",
-                "Não peguei o guarda-chuva hoje, eu",
-                "O guarda-chuva eu hoje não peguei",
-                "O guarda-chuva eu não peguei hoje",
-                "O guarda-chuva hoje eu não peguei"
-              ]
-            },
-            {
-              "sentence": "L'autobus è arrivato in ritardo",
-              "sentenceCandidates": [
-                "È arrivato in ritardo l'autobus",
-                "È arrivato l'autobus in ritardo",
-                "In ritardo è arrivato l'autobus",
-                "In ritardo l'autobus è arrivato",
-                "L'autobus in ritardo è arrivato"
-              ],
-              "translation": "O ônibus chegou atrasado",
-              "translationCandidates": [
-                "Atrasado chegou o ônibus",
-                "Atrasado, o ônibus chegou",
-                "Chegou atrasado o ônibus",
-                "Chegou o ônibus atrasado",
-                "O ônibus atrasado chegou",
-                "O ônibus, atrasado, chegou"
-              ]
-            }
-          ],
-          "targetLanguage": "it"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
@@ -1708,660 +1114,6 @@
             }
           ],
           "targetLanguage": "ja"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
-          "kind": "majorErrors",
-          "score": 9.052631578947368
-        },
-        {
-          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
-          "kind": "minorErrors",
-          "score": 9.052631578947368
-        },
-        {
-          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
-          "kind": "potentialImprovements",
-          "score": 9.052631578947368
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "I on Saturdays study English at the library",
-                  "I study at the library English on Saturdays"
-                ],
-                "unscored": [
-                  "At the library on Saturdays I study English",
-                  "On Saturdays at the library I study English"
-                ],
-                "valid": [
-                  "At the library I study English on Saturdays",
-                  "I study English on Saturdays at the library",
-                  "On Saturdays I study English at the library"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "図書館で勉強します、土曜日に英語を",
-                  "図書館で土曜日に勉強します、英語を",
-                  "図書館で英語を勉強します、土曜日に",
-                  "土曜日に勉強します、図書館で英語を",
-                  "土曜日に図書館で勉強します、英語を",
-                  "土曜日に英語を勉強します、図書館で",
-                  "英語を勉強します、図書館で土曜日に",
-                  "英語を勉強します、土曜日に図書館で",
-                  "英語を勉強します土曜日に図書館で"
-                ],
-                "unscored": [
-                  "図書館で英語を土曜日に勉強します",
-                  "英語を図書館で土曜日に勉強します",
-                  "英語を土曜日に図書館で勉強します"
-                ],
-                "valid": [
-                  "図書館で土曜日に英語を勉強します",
-                  "土曜日に英語を図書館で勉強します"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "ja-en-phrase-tiles-1",
-        "userInput": {
-          "learnerLanguage": "ja",
-          "sentences": [
-            {
-              "sentence": "I study English at the library on Saturdays",
-              "sentenceCandidates": [
-                "At the library I study English on Saturdays",
-                "At the library on Saturdays I study English",
-                "I on Saturdays study English at the library",
-                "I study at the library English on Saturdays",
-                "I study English on Saturdays at the library",
-                "On Saturdays at the library I study English",
-                "On Saturdays I study English at the library"
-              ],
-              "translation": "土曜日に図書館で英語を勉強します",
-              "translationCandidates": [
-                "図書館で勉強します、土曜日に英語を",
-                "図書館で土曜日に勉強します、英語を",
-                "図書館で土曜日に英語を勉強します",
-                "図書館で英語を勉強します、土曜日に",
-                "図書館で英語を土曜日に勉強します",
-                "土曜日に勉強します、図書館で英語を",
-                "土曜日に図書館で勉強します、英語を",
-                "土曜日に英語を勉強します、図書館で",
-                "土曜日に英語を図書館で勉強します",
-                "英語を勉強します、図書館で土曜日に",
-                "英語を勉強します、土曜日に図書館で",
-                "英語を勉強します土曜日に図書館で",
-                "英語を図書館で土曜日に勉強します",
-                "英語を土曜日に図書館で勉強します"
-              ]
-            }
-          ],
-          "targetLanguage": "en"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "I on Saturdays study English at the library",
-                  "I study at the library English on Saturdays"
-                ],
-                "unscored": [
-                  "At the library on Saturdays I study English",
-                  "On Saturdays at the library I study English"
-                ],
-                "valid": [
-                  "At the library I study English on Saturdays",
-                  "I study English on Saturdays at the library",
-                  "On Saturdays I study English at the library"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "図書館で勉強します、土曜日に英語を",
-                  "図書館で土曜日に勉強します、英語を",
-                  "図書館で英語を勉強します、土曜日に",
-                  "土曜日に勉強します、図書館で英語を",
-                  "土曜日に図書館で勉強します、英語を",
-                  "土曜日に英語を勉強します、図書館で",
-                  "英語を勉強します、図書館で土曜日に",
-                  "英語を勉強します、土曜日に図書館で",
-                  "英語を勉強します土曜日に図書館で"
-                ],
-                "unscored": [
-                  "図書館で英語を土曜日に勉強します",
-                  "英語を図書館で土曜日に勉強します",
-                  "英語を土曜日に図書館で勉強します"
-                ],
-                "valid": [
-                  "図書館で土曜日に英語を勉強します",
-                  "土曜日に英語を図書館で勉強します"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "ja-en-phrase-tiles-2",
-        "userInput": {
-          "learnerLanguage": "ja",
-          "sentences": [
-            {
-              "sentence": "I study English at the library on Saturdays",
-              "sentenceCandidates": [
-                "At the library I study English on Saturdays",
-                "At the library on Saturdays I study English",
-                "I on Saturdays study English at the library",
-                "I study at the library English on Saturdays",
-                "I study English on Saturdays at the library",
-                "On Saturdays at the library I study English",
-                "On Saturdays I study English at the library"
-              ],
-              "translation": "土曜日に図書館で英語を勉強します",
-              "translationCandidates": [
-                "図書館で勉強します、土曜日に英語を",
-                "図書館で土曜日に勉強します、英語を",
-                "図書館で土曜日に英語を勉強します",
-                "図書館で英語を勉強します、土曜日に",
-                "図書館で英語を土曜日に勉強します",
-                "土曜日に勉強します、図書館で英語を",
-                "土曜日に図書館で勉強します、英語を",
-                "土曜日に英語を勉強します、図書館で",
-                "土曜日に英語を図書館で勉強します",
-                "英語を勉強します、図書館で土曜日に",
-                "英語を勉強します、土曜日に図書館で",
-                "英語を勉強します土曜日に図書館で",
-                "英語を図書館で土曜日に勉強します",
-                "英語を土曜日に図書館で勉強します"
-              ]
-            }
-          ],
-          "targetLanguage": "en"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\".",
-          "kind": "majorErrors",
-          "score": 9.368421052631579
-        },
-        {
-          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\".",
-          "kind": "minorErrors",
-          "score": 9.368421052631579
-        },
-        {
-          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\".",
-          "kind": "potentialImprovements",
-          "score": 9.368421052631579
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "I on Saturdays study English at the library",
-                  "I study at the library English on Saturdays"
-                ],
-                "unscored": [
-                  "At the library on Saturdays I study English",
-                  "On Saturdays at the library I study English"
-                ],
-                "valid": [
-                  "At the library I study English on Saturdays",
-                  "I study English on Saturdays at the library",
-                  "On Saturdays I study English at the library"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "図書館で勉強します、土曜日に英語を",
-                  "図書館で土曜日に勉強します、英語を",
-                  "図書館で英語を勉強します、土曜日に",
-                  "土曜日に勉強します、図書館で英語を",
-                  "土曜日に図書館で勉強します、英語を",
-                  "土曜日に英語を勉強します、図書館で",
-                  "英語を勉強します、図書館で土曜日に",
-                  "英語を勉強します、土曜日に図書館で",
-                  "英語を勉強します土曜日に図書館で"
-                ],
-                "unscored": [
-                  "図書館で英語を土曜日に勉強します",
-                  "英語を図書館で土曜日に勉強します",
-                  "英語を土曜日に図書館で勉強します"
-                ],
-                "valid": [
-                  "図書館で土曜日に英語を勉強します",
-                  "土曜日に英語を図書館で勉強します"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "ja-en-phrase-tiles-3",
-        "userInput": {
-          "learnerLanguage": "ja",
-          "sentences": [
-            {
-              "sentence": "I study English at the library on Saturdays",
-              "sentenceCandidates": [
-                "At the library I study English on Saturdays",
-                "At the library on Saturdays I study English",
-                "I on Saturdays study English at the library",
-                "I study at the library English on Saturdays",
-                "I study English on Saturdays at the library",
-                "On Saturdays at the library I study English",
-                "On Saturdays I study English at the library"
-              ],
-              "translation": "土曜日に図書館で英語を勉強します",
-              "translationCandidates": [
-                "図書館で勉強します、土曜日に英語を",
-                "図書館で土曜日に勉強します、英語を",
-                "図書館で土曜日に英語を勉強します",
-                "図書館で英語を勉強します、土曜日に",
-                "図書館で英語を土曜日に勉強します",
-                "土曜日に勉強します、図書館で英語を",
-                "土曜日に図書館で勉強します、英語を",
-                "土曜日に英語を勉強します、図書館で",
-                "土曜日に英語を図書館で勉強します",
-                "英語を勉強します、図書館で土曜日に",
-                "英語を勉強します、土曜日に図書館で",
-                "英語を勉強します土曜日に図書館で",
-                "英語を図書館で土曜日に勉強します",
-                "英語を土曜日に図書館で勉強します"
-              ]
-            }
-          ],
-          "targetLanguage": "en"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
-          "kind": "majorErrors",
-          "score": 9.781818181818181
-        },
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
-          "kind": "minorErrors",
-          "score": 9.781818181818181
-        },
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
-          "kind": "potentialImprovements",
-          "score": 9.781818181818181
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "The boy bit the dog",
-                  "The boy, the dog bit"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "O menino mordeu o cachorro",
-                  "O menino, o cachorro mordeu"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "Every Sunday, my mother, my sister calls",
-                  "My mother calls my sister every Sunday",
-                  "My mother, every Sunday, my sister calls",
-                  "My mother, my sister calls every Sunday",
-                  "My sister calls every Sunday my mother",
-                  "My sister calls, every Sunday, my mother"
-                ],
-                "unscored": [
-                  "My sister, every Sunday, calls my mother"
-                ],
-                "valid": [
-                  "Every Sunday my sister calls my mother"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Liga para minha mãe todo domingo, minha irmã",
-                  "Liga todo domingo para minha mãe, minha irmã",
-                  "Minha mãe liga para minha irmã todo domingo",
-                  "Para minha mãe minha irmã liga todo domingo",
-                  "Para minha mãe, todo domingo, minha irmã liga",
-                  "Todo domingo liga para minha mãe, minha irmã",
-                  "Todo domingo, para minha mãe, minha irmã liga"
-                ],
-                "valid": [
-                  "Minha irmã liga todo domingo para minha mãe",
-                  "Minha irmã todo domingo liga para minha mãe",
-                  "Todo domingo minha irmã liga para minha mãe"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "pt-en-rigid-roles-1",
-        "userInput": {
-          "learnerLanguage": "pt",
-          "sentences": [
-            {
-              "sentence": "The dog bit the boy",
-              "sentenceCandidates": [
-                "The boy bit the dog",
-                "The boy, the dog bit"
-              ],
-              "translation": "O cachorro mordeu o menino",
-              "translationCandidates": [
-                "O menino mordeu o cachorro",
-                "O menino, o cachorro mordeu"
-              ]
-            },
-            {
-              "sentence": "My sister calls my mother every Sunday",
-              "sentenceCandidates": [
-                "Every Sunday my sister calls my mother",
-                "Every Sunday, my mother, my sister calls",
-                "My mother calls my sister every Sunday",
-                "My mother, every Sunday, my sister calls",
-                "My mother, my sister calls every Sunday",
-                "My sister calls every Sunday my mother",
-                "My sister calls, every Sunday, my mother",
-                "My sister, every Sunday, calls my mother"
-              ],
-              "translation": "Minha irmã liga para minha mãe todo domingo",
-              "translationCandidates": [
-                "Liga para minha mãe todo domingo, minha irmã",
-                "Liga todo domingo para minha mãe, minha irmã",
-                "Minha irmã liga todo domingo para minha mãe",
-                "Minha irmã todo domingo liga para minha mãe",
-                "Minha mãe liga para minha irmã todo domingo",
-                "Para minha mãe minha irmã liga todo domingo",
-                "Para minha mãe, todo domingo, minha irmã liga",
-                "Todo domingo liga para minha mãe, minha irmã",
-                "Todo domingo minha irmã liga para minha mãe",
-                "Todo domingo, para minha mãe, minha irmã liga"
-              ]
-            }
-          ],
-          "targetLanguage": "en"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Todo domingo liga para minha mãe, minha irmã\".",
-          "kind": "majorErrors",
-          "score": 9.127272727272727
-        },
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Todo domingo liga para minha mãe, minha irmã\".",
-          "kind": "minorErrors",
-          "score": 9.127272727272727
-        },
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Todo domingo liga para minha mãe, minha irmã\".",
-          "kind": "potentialImprovements",
-          "score": 9.127272727272727
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "The boy bit the dog",
-                  "The boy, the dog bit"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "O menino mordeu o cachorro",
-                  "O menino, o cachorro mordeu"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "Every Sunday, my mother, my sister calls",
-                  "My mother calls my sister every Sunday",
-                  "My mother, every Sunday, my sister calls",
-                  "My mother, my sister calls every Sunday",
-                  "My sister calls every Sunday my mother",
-                  "My sister calls, every Sunday, my mother"
-                ],
-                "unscored": [
-                  "My sister, every Sunday, calls my mother"
-                ],
-                "valid": [
-                  "Every Sunday my sister calls my mother"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Liga para minha mãe todo domingo, minha irmã",
-                  "Liga todo domingo para minha mãe, minha irmã",
-                  "Minha mãe liga para minha irmã todo domingo",
-                  "Para minha mãe minha irmã liga todo domingo",
-                  "Para minha mãe, todo domingo, minha irmã liga",
-                  "Todo domingo liga para minha mãe, minha irmã",
-                  "Todo domingo, para minha mãe, minha irmã liga"
-                ],
-                "valid": [
-                  "Minha irmã liga todo domingo para minha mãe",
-                  "Minha irmã todo domingo liga para minha mãe",
-                  "Todo domingo minha irmã liga para minha mãe"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "pt-en-rigid-roles-2",
-        "userInput": {
-          "learnerLanguage": "pt",
-          "sentences": [
-            {
-              "sentence": "The dog bit the boy",
-              "sentenceCandidates": [
-                "The boy bit the dog",
-                "The boy, the dog bit"
-              ],
-              "translation": "O cachorro mordeu o menino",
-              "translationCandidates": [
-                "O menino mordeu o cachorro",
-                "O menino, o cachorro mordeu"
-              ]
-            },
-            {
-              "sentence": "My sister calls my mother every Sunday",
-              "sentenceCandidates": [
-                "Every Sunday my sister calls my mother",
-                "Every Sunday, my mother, my sister calls",
-                "My mother calls my sister every Sunday",
-                "My mother, every Sunday, my sister calls",
-                "My mother, my sister calls every Sunday",
-                "My sister calls every Sunday my mother",
-                "My sister calls, every Sunday, my mother",
-                "My sister, every Sunday, calls my mother"
-              ],
-              "translation": "Minha irmã liga para minha mãe todo domingo",
-              "translationCandidates": [
-                "Liga para minha mãe todo domingo, minha irmã",
-                "Liga todo domingo para minha mãe, minha irmã",
-                "Minha irmã liga todo domingo para minha mãe",
-                "Minha irmã todo domingo liga para minha mãe",
-                "Minha mãe liga para minha irmã todo domingo",
-                "Para minha mãe minha irmã liga todo domingo",
-                "Para minha mãe, todo domingo, minha irmã liga",
-                "Todo domingo liga para minha mãe, minha irmã",
-                "Todo domingo minha irmã liga para minha mãe",
-                "Todo domingo, para minha mãe, minha irmã liga"
-              ]
-            }
-          ],
-          "targetLanguage": "en"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
-          "kind": "majorErrors",
-          "score": 9.781818181818181
-        },
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
-          "kind": "minorErrors",
-          "score": 9.781818181818181
-        },
-        {
-          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
-          "kind": "potentialImprovements",
-          "score": 9.781818181818181
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "sentences": [
-            {
-              "orders": {
-                "invalid": [
-                  "The boy bit the dog",
-                  "The boy, the dog bit"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "O menino mordeu o cachorro",
-                  "O menino, o cachorro mordeu"
-                ]
-              }
-            },
-            {
-              "orders": {
-                "invalid": [
-                  "Every Sunday, my mother, my sister calls",
-                  "My mother calls my sister every Sunday",
-                  "My mother, every Sunday, my sister calls",
-                  "My mother, my sister calls every Sunday",
-                  "My sister calls every Sunday my mother",
-                  "My sister calls, every Sunday, my mother"
-                ],
-                "unscored": [
-                  "My sister, every Sunday, calls my mother"
-                ],
-                "valid": [
-                  "Every Sunday my sister calls my mother"
-                ]
-              },
-              "translationOrders": {
-                "invalid": [
-                  "Liga para minha mãe todo domingo, minha irmã",
-                  "Liga todo domingo para minha mãe, minha irmã",
-                  "Minha mãe liga para minha irmã todo domingo",
-                  "Para minha mãe minha irmã liga todo domingo",
-                  "Para minha mãe, todo domingo, minha irmã liga",
-                  "Todo domingo liga para minha mãe, minha irmã",
-                  "Todo domingo, para minha mãe, minha irmã liga"
-                ],
-                "valid": [
-                  "Minha irmã liga todo domingo para minha mãe",
-                  "Minha irmã todo domingo liga para minha mãe",
-                  "Todo domingo minha irmã liga para minha mãe"
-                ]
-              }
-            }
-          ]
-        },
-        "id": "pt-en-rigid-roles-3",
-        "userInput": {
-          "learnerLanguage": "pt",
-          "sentences": [
-            {
-              "sentence": "The dog bit the boy",
-              "sentenceCandidates": [
-                "The boy bit the dog",
-                "The boy, the dog bit"
-              ],
-              "translation": "O cachorro mordeu o menino",
-              "translationCandidates": [
-                "O menino mordeu o cachorro",
-                "O menino, o cachorro mordeu"
-              ]
-            },
-            {
-              "sentence": "My sister calls my mother every Sunday",
-              "sentenceCandidates": [
-                "Every Sunday my sister calls my mother",
-                "Every Sunday, my mother, my sister calls",
-                "My mother calls my sister every Sunday",
-                "My mother, every Sunday, my sister calls",
-                "My mother, my sister calls every Sunday",
-                "My sister calls every Sunday my mother",
-                "My sister calls, every Sunday, my mother",
-                "My sister, every Sunday, calls my mother"
-              ],
-              "translation": "Minha irmã liga para minha mãe todo domingo",
-              "translationCandidates": [
-                "Liga para minha mãe todo domingo, minha irmã",
-                "Liga todo domingo para minha mãe, minha irmã",
-                "Minha irmã liga todo domingo para minha mãe",
-                "Minha irmã todo domingo liga para minha mãe",
-                "Minha mãe liga para minha irmã todo domingo",
-                "Para minha mãe minha irmã liga todo domingo",
-                "Para minha mãe, todo domingo, minha irmã liga",
-                "Todo domingo liga para minha mãe, minha irmã",
-                "Todo domingo minha irmã liga para minha mãe",
-                "Todo domingo, para minha mãe, minha irmã liga"
-              ]
-            }
-          ],
-          "targetLanguage": "en"
         }
       }
     },
@@ -6109,6 +4861,1236 @@
             }
           ],
           "targetLanguage": "de"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "majorErrors",
+          "score": 9.595505617977528
+        },
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "minorErrors",
+          "score": 9.595505617977528
+        },
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "potentialImprovements",
+          "score": 9.595505617977528
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "Pioveva quando è arrivato l'autobus",
+                  "Pioveva quando l'autobus è arrivato",
+                  "Quando è arrivato l'autobus pioveva",
+                  "Quando l'autobus è arrivato pioveva",
+                  "Quando l'autobus pioveva è arrivato"
+                ],
+                "unscored": [
+                  "L'autobus quando pioveva è arrivato"
+                ],
+                "valid": [
+                  "È arrivato l'autobus quando pioveva",
+                  "L'autobus è arrivato quando pioveva",
+                  "Quando pioveva è arrivato l'autobus"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Chovia quando chegou o ônibus",
+                  "Chovia quando o ônibus chegou",
+                  "O ônibus, quando chovia, chegou",
+                  "Quando chegou o ônibus, chovia",
+                  "Quando o ônibus chegou, chovia"
+                ],
+                "valid": [
+                  "Chegou o ônibus quando chovia",
+                  "O ônibus chegou quando chovia",
+                  "Quando chovia, chegou o ônibus"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "L'ombrello non ho preso oggi",
+                  "L'ombrello oggi non ho preso",
+                  "Oggi ho non preso l'ombrello",
+                  "Oggi l'ombrello non ho preso",
+                  "Oggi non l'ombrello ho preso"
+                ],
+                "valid": [
+                  "Non ho preso l'ombrello oggi",
+                  "Non ho preso oggi l'ombrello"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Eu hoje o guarda-chuva não peguei",
+                  "Eu o guarda-chuva não peguei hoje",
+                  "Hoje eu peguei não o guarda-chuva",
+                  "Não peguei o guarda-chuva hoje, eu",
+                  "O guarda-chuva eu hoje não peguei"
+                ],
+                "unscored": [
+                  "Hoje o guarda-chuva eu não peguei",
+                  "O guarda-chuva eu não peguei hoje",
+                  "O guarda-chuva hoje eu não peguei"
+                ],
+                "valid": [
+                  "Eu hoje não peguei o guarda-chuva",
+                  "Eu não peguei hoje o guarda-chuva",
+                  "Eu não peguei o guarda-chuva hoje"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "In ritardo l'autobus è arrivato",
+                  "L'autobus in ritardo è arrivato"
+                ],
+                "unscored": [
+                  "In ritardo è arrivato l'autobus"
+                ],
+                "valid": [
+                  "È arrivato in ritardo l'autobus",
+                  "È arrivato l'autobus in ritardo"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Atrasado chegou o ônibus",
+                  "Atrasado, o ônibus chegou",
+                  "O ônibus atrasado chegou"
+                ],
+                "unscored": [
+                  "Chegou o ônibus atrasado"
+                ],
+                "valid": [
+                  "Chegou atrasado o ônibus"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-it-rain-and-bus-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "Quando pioveva l'autobus è arrivato",
+              "sentenceCandidates": [
+                "È arrivato l'autobus quando pioveva",
+                "L'autobus è arrivato quando pioveva",
+                "L'autobus quando pioveva è arrivato",
+                "Pioveva quando è arrivato l'autobus",
+                "Pioveva quando l'autobus è arrivato",
+                "Quando è arrivato l'autobus pioveva",
+                "Quando l'autobus è arrivato pioveva",
+                "Quando l'autobus pioveva è arrivato",
+                "Quando pioveva è arrivato l'autobus"
+              ],
+              "translation": "Quando chovia, o ônibus chegou",
+              "translationCandidates": [
+                "Chegou o ônibus quando chovia",
+                "Chovia quando chegou o ônibus",
+                "Chovia quando o ônibus chegou",
+                "O ônibus chegou quando chovia",
+                "O ônibus, quando chovia, chegou",
+                "Quando chegou o ônibus, chovia",
+                "Quando chovia, chegou o ônibus",
+                "Quando o ônibus chegou, chovia"
+              ]
+            },
+            {
+              "sentence": "Oggi non ho preso l'ombrello",
+              "sentenceCandidates": [
+                "L'ombrello non ho preso oggi",
+                "L'ombrello oggi non ho preso",
+                "Non ho preso l'ombrello oggi",
+                "Non ho preso oggi l'ombrello",
+                "Oggi ho non preso l'ombrello",
+                "Oggi l'ombrello non ho preso",
+                "Oggi non l'ombrello ho preso"
+              ],
+              "translation": "Hoje eu não peguei o guarda-chuva",
+              "translationCandidates": [
+                "Eu hoje não peguei o guarda-chuva",
+                "Eu hoje o guarda-chuva não peguei",
+                "Eu não peguei hoje o guarda-chuva",
+                "Eu não peguei o guarda-chuva hoje",
+                "Eu o guarda-chuva não peguei hoje",
+                "Hoje eu peguei não o guarda-chuva",
+                "Hoje o guarda-chuva eu não peguei",
+                "Não peguei o guarda-chuva hoje, eu",
+                "O guarda-chuva eu hoje não peguei",
+                "O guarda-chuva eu não peguei hoje",
+                "O guarda-chuva hoje eu não peguei"
+              ]
+            },
+            {
+              "sentence": "L'autobus è arrivato in ritardo",
+              "sentenceCandidates": [
+                "È arrivato in ritardo l'autobus",
+                "È arrivato l'autobus in ritardo",
+                "In ritardo è arrivato l'autobus",
+                "In ritardo l'autobus è arrivato",
+                "L'autobus in ritardo è arrivato"
+              ],
+              "translation": "O ônibus chegou atrasado",
+              "translationCandidates": [
+                "Atrasado chegou o ônibus",
+                "Atrasado, o ônibus chegou",
+                "Chegou atrasado o ônibus",
+                "Chegou o ônibus atrasado",
+                "O ônibus atrasado chegou"
+              ]
+            }
+          ],
+          "targetLanguage": "it"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "majorErrors",
+          "score": 9.595505617977528
+        },
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "minorErrors",
+          "score": 9.595505617977528
+        },
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "potentialImprovements",
+          "score": 9.595505617977528
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "Pioveva quando è arrivato l'autobus",
+                  "Pioveva quando l'autobus è arrivato",
+                  "Quando è arrivato l'autobus pioveva",
+                  "Quando l'autobus è arrivato pioveva",
+                  "Quando l'autobus pioveva è arrivato"
+                ],
+                "unscored": [
+                  "L'autobus quando pioveva è arrivato"
+                ],
+                "valid": [
+                  "È arrivato l'autobus quando pioveva",
+                  "L'autobus è arrivato quando pioveva",
+                  "Quando pioveva è arrivato l'autobus"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Chovia quando chegou o ônibus",
+                  "Chovia quando o ônibus chegou",
+                  "O ônibus, quando chovia, chegou",
+                  "Quando chegou o ônibus, chovia",
+                  "Quando o ônibus chegou, chovia"
+                ],
+                "valid": [
+                  "Chegou o ônibus quando chovia",
+                  "O ônibus chegou quando chovia",
+                  "Quando chovia, chegou o ônibus"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "L'ombrello non ho preso oggi",
+                  "L'ombrello oggi non ho preso",
+                  "Oggi ho non preso l'ombrello",
+                  "Oggi l'ombrello non ho preso",
+                  "Oggi non l'ombrello ho preso"
+                ],
+                "valid": [
+                  "Non ho preso l'ombrello oggi",
+                  "Non ho preso oggi l'ombrello"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Eu hoje o guarda-chuva não peguei",
+                  "Eu o guarda-chuva não peguei hoje",
+                  "Hoje eu peguei não o guarda-chuva",
+                  "Não peguei o guarda-chuva hoje, eu",
+                  "O guarda-chuva eu hoje não peguei"
+                ],
+                "unscored": [
+                  "Hoje o guarda-chuva eu não peguei",
+                  "O guarda-chuva eu não peguei hoje",
+                  "O guarda-chuva hoje eu não peguei"
+                ],
+                "valid": [
+                  "Eu hoje não peguei o guarda-chuva",
+                  "Eu não peguei hoje o guarda-chuva",
+                  "Eu não peguei o guarda-chuva hoje"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "In ritardo l'autobus è arrivato",
+                  "L'autobus in ritardo è arrivato"
+                ],
+                "unscored": [
+                  "In ritardo è arrivato l'autobus"
+                ],
+                "valid": [
+                  "È arrivato in ritardo l'autobus",
+                  "È arrivato l'autobus in ritardo"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Atrasado chegou o ônibus",
+                  "Atrasado, o ônibus chegou",
+                  "O ônibus atrasado chegou"
+                ],
+                "unscored": [
+                  "Chegou o ônibus atrasado"
+                ],
+                "valid": [
+                  "Chegou atrasado o ônibus"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-it-rain-and-bus-2",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "Quando pioveva l'autobus è arrivato",
+              "sentenceCandidates": [
+                "È arrivato l'autobus quando pioveva",
+                "L'autobus è arrivato quando pioveva",
+                "L'autobus quando pioveva è arrivato",
+                "Pioveva quando è arrivato l'autobus",
+                "Pioveva quando l'autobus è arrivato",
+                "Quando è arrivato l'autobus pioveva",
+                "Quando l'autobus è arrivato pioveva",
+                "Quando l'autobus pioveva è arrivato",
+                "Quando pioveva è arrivato l'autobus"
+              ],
+              "translation": "Quando chovia, o ônibus chegou",
+              "translationCandidates": [
+                "Chegou o ônibus quando chovia",
+                "Chovia quando chegou o ônibus",
+                "Chovia quando o ônibus chegou",
+                "O ônibus chegou quando chovia",
+                "O ônibus, quando chovia, chegou",
+                "Quando chegou o ônibus, chovia",
+                "Quando chovia, chegou o ônibus",
+                "Quando o ônibus chegou, chovia"
+              ]
+            },
+            {
+              "sentence": "Oggi non ho preso l'ombrello",
+              "sentenceCandidates": [
+                "L'ombrello non ho preso oggi",
+                "L'ombrello oggi non ho preso",
+                "Non ho preso l'ombrello oggi",
+                "Non ho preso oggi l'ombrello",
+                "Oggi ho non preso l'ombrello",
+                "Oggi l'ombrello non ho preso",
+                "Oggi non l'ombrello ho preso"
+              ],
+              "translation": "Hoje eu não peguei o guarda-chuva",
+              "translationCandidates": [
+                "Eu hoje não peguei o guarda-chuva",
+                "Eu hoje o guarda-chuva não peguei",
+                "Eu não peguei hoje o guarda-chuva",
+                "Eu não peguei o guarda-chuva hoje",
+                "Eu o guarda-chuva não peguei hoje",
+                "Hoje eu peguei não o guarda-chuva",
+                "Hoje o guarda-chuva eu não peguei",
+                "Não peguei o guarda-chuva hoje, eu",
+                "O guarda-chuva eu hoje não peguei",
+                "O guarda-chuva eu não peguei hoje",
+                "O guarda-chuva hoje eu não peguei"
+              ]
+            },
+            {
+              "sentence": "L'autobus è arrivato in ritardo",
+              "sentenceCandidates": [
+                "È arrivato in ritardo l'autobus",
+                "È arrivato l'autobus in ritardo",
+                "In ritardo è arrivato l'autobus",
+                "In ritardo l'autobus è arrivato",
+                "L'autobus in ritardo è arrivato"
+              ],
+              "translation": "O ônibus chegou atrasado",
+              "translationCandidates": [
+                "Atrasado chegou o ônibus",
+                "Atrasado, o ônibus chegou",
+                "Chegou atrasado o ônibus",
+                "Chegou o ônibus atrasado",
+                "O ônibus atrasado chegou"
+              ]
+            }
+          ],
+          "targetLanguage": "it"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "majorErrors",
+          "score": 9.595505617977528
+        },
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "minorErrors",
+          "score": 9.595505617977528
+        },
+        {
+          "conclusion": "Kept wrong: \"Eu hoje o guarda-chuva não peguei\", \"Eu o guarda-chuva não peguei hoje\", \"O guarda-chuva eu hoje não peguei\".",
+          "kind": "potentialImprovements",
+          "score": 9.595505617977528
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "Pioveva quando è arrivato l'autobus",
+                  "Pioveva quando l'autobus è arrivato",
+                  "Quando è arrivato l'autobus pioveva",
+                  "Quando l'autobus è arrivato pioveva",
+                  "Quando l'autobus pioveva è arrivato"
+                ],
+                "unscored": [
+                  "L'autobus quando pioveva è arrivato"
+                ],
+                "valid": [
+                  "È arrivato l'autobus quando pioveva",
+                  "L'autobus è arrivato quando pioveva",
+                  "Quando pioveva è arrivato l'autobus"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Chovia quando chegou o ônibus",
+                  "Chovia quando o ônibus chegou",
+                  "O ônibus, quando chovia, chegou",
+                  "Quando chegou o ônibus, chovia",
+                  "Quando o ônibus chegou, chovia"
+                ],
+                "valid": [
+                  "Chegou o ônibus quando chovia",
+                  "O ônibus chegou quando chovia",
+                  "Quando chovia, chegou o ônibus"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "L'ombrello non ho preso oggi",
+                  "L'ombrello oggi non ho preso",
+                  "Oggi ho non preso l'ombrello",
+                  "Oggi l'ombrello non ho preso",
+                  "Oggi non l'ombrello ho preso"
+                ],
+                "valid": [
+                  "Non ho preso l'ombrello oggi",
+                  "Non ho preso oggi l'ombrello"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Eu hoje o guarda-chuva não peguei",
+                  "Eu o guarda-chuva não peguei hoje",
+                  "Hoje eu peguei não o guarda-chuva",
+                  "Não peguei o guarda-chuva hoje, eu",
+                  "O guarda-chuva eu hoje não peguei"
+                ],
+                "unscored": [
+                  "Hoje o guarda-chuva eu não peguei",
+                  "O guarda-chuva eu não peguei hoje",
+                  "O guarda-chuva hoje eu não peguei"
+                ],
+                "valid": [
+                  "Eu hoje não peguei o guarda-chuva",
+                  "Eu não peguei hoje o guarda-chuva",
+                  "Eu não peguei o guarda-chuva hoje"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "In ritardo l'autobus è arrivato",
+                  "L'autobus in ritardo è arrivato"
+                ],
+                "unscored": [
+                  "In ritardo è arrivato l'autobus"
+                ],
+                "valid": [
+                  "È arrivato in ritardo l'autobus",
+                  "È arrivato l'autobus in ritardo"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Atrasado chegou o ônibus",
+                  "Atrasado, o ônibus chegou",
+                  "O ônibus atrasado chegou"
+                ],
+                "unscored": [
+                  "Chegou o ônibus atrasado"
+                ],
+                "valid": [
+                  "Chegou atrasado o ônibus"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-it-rain-and-bus-3",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "Quando pioveva l'autobus è arrivato",
+              "sentenceCandidates": [
+                "È arrivato l'autobus quando pioveva",
+                "L'autobus è arrivato quando pioveva",
+                "L'autobus quando pioveva è arrivato",
+                "Pioveva quando è arrivato l'autobus",
+                "Pioveva quando l'autobus è arrivato",
+                "Quando è arrivato l'autobus pioveva",
+                "Quando l'autobus è arrivato pioveva",
+                "Quando l'autobus pioveva è arrivato",
+                "Quando pioveva è arrivato l'autobus"
+              ],
+              "translation": "Quando chovia, o ônibus chegou",
+              "translationCandidates": [
+                "Chegou o ônibus quando chovia",
+                "Chovia quando chegou o ônibus",
+                "Chovia quando o ônibus chegou",
+                "O ônibus chegou quando chovia",
+                "O ônibus, quando chovia, chegou",
+                "Quando chegou o ônibus, chovia",
+                "Quando chovia, chegou o ônibus",
+                "Quando o ônibus chegou, chovia"
+              ]
+            },
+            {
+              "sentence": "Oggi non ho preso l'ombrello",
+              "sentenceCandidates": [
+                "L'ombrello non ho preso oggi",
+                "L'ombrello oggi non ho preso",
+                "Non ho preso l'ombrello oggi",
+                "Non ho preso oggi l'ombrello",
+                "Oggi ho non preso l'ombrello",
+                "Oggi l'ombrello non ho preso",
+                "Oggi non l'ombrello ho preso"
+              ],
+              "translation": "Hoje eu não peguei o guarda-chuva",
+              "translationCandidates": [
+                "Eu hoje não peguei o guarda-chuva",
+                "Eu hoje o guarda-chuva não peguei",
+                "Eu não peguei hoje o guarda-chuva",
+                "Eu não peguei o guarda-chuva hoje",
+                "Eu o guarda-chuva não peguei hoje",
+                "Hoje eu peguei não o guarda-chuva",
+                "Hoje o guarda-chuva eu não peguei",
+                "Não peguei o guarda-chuva hoje, eu",
+                "O guarda-chuva eu hoje não peguei",
+                "O guarda-chuva eu não peguei hoje",
+                "O guarda-chuva hoje eu não peguei"
+              ]
+            },
+            {
+              "sentence": "L'autobus è arrivato in ritardo",
+              "sentenceCandidates": [
+                "È arrivato in ritardo l'autobus",
+                "È arrivato l'autobus in ritardo",
+                "In ritardo è arrivato l'autobus",
+                "In ritardo l'autobus è arrivato",
+                "L'autobus in ritardo è arrivato"
+              ],
+              "translation": "O ônibus chegou atrasado",
+              "translationCandidates": [
+                "Atrasado chegou o ônibus",
+                "Atrasado, o ônibus chegou",
+                "Chegou atrasado o ônibus",
+                "Chegou o ônibus atrasado",
+                "O ônibus atrasado chegou"
+              ]
+            }
+          ],
+          "targetLanguage": "it"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"図書館で土曜日に勉強します、英語を\", \"図書館で英語を勉強します、土曜日に\", \"土曜日に図書館で勉強します、英語を\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
+          "kind": "majorErrors",
+          "score": 8.285714285714285
+        },
+        {
+          "conclusion": "Kept wrong: \"図書館で土曜日に勉強します、英語を\", \"図書館で英語を勉強します、土曜日に\", \"土曜日に図書館で勉強します、英語を\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
+          "kind": "minorErrors",
+          "score": 8.285714285714285
+        },
+        {
+          "conclusion": "Kept wrong: \"図書館で土曜日に勉強します、英語を\", \"図書館で英語を勉強します、土曜日に\", \"土曜日に図書館で勉強します、英語を\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
+          "kind": "potentialImprovements",
+          "score": 8.285714285714285
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "I on Saturdays study English at the library",
+                  "I study at the library English on Saturdays"
+                ],
+                "unscored": [
+                  "At the library on Saturdays I study English",
+                  "On Saturdays at the library I study English"
+                ],
+                "valid": [
+                  "At the library I study English on Saturdays",
+                  "I study English on Saturdays at the library",
+                  "On Saturdays I study English at the library"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "図書館で勉強します、土曜日に英語を",
+                  "図書館で土曜日に勉強します、英語を",
+                  "図書館で英語を勉強します、土曜日に",
+                  "土曜日に勉強します、図書館で英語を",
+                  "土曜日に図書館で勉強します、英語を",
+                  "土曜日に英語を勉強します、図書館で",
+                  "英語を勉強します、図書館で土曜日に",
+                  "英語を勉強します、土曜日に図書館で"
+                ],
+                "unscored": [
+                  "図書館で英語を土曜日に勉強します",
+                  "英語を図書館で土曜日に勉強します",
+                  "英語を土曜日に図書館で勉強します"
+                ],
+                "valid": [
+                  "図書館で土曜日に英語を勉強します",
+                  "土曜日に英語を図書館で勉強します"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "ja-en-phrase-tiles-1",
+        "userInput": {
+          "learnerLanguage": "ja",
+          "sentences": [
+            {
+              "sentence": "I study English at the library on Saturdays",
+              "sentenceCandidates": [
+                "At the library I study English on Saturdays",
+                "At the library on Saturdays I study English",
+                "I on Saturdays study English at the library",
+                "I study at the library English on Saturdays",
+                "I study English on Saturdays at the library",
+                "On Saturdays at the library I study English",
+                "On Saturdays I study English at the library"
+              ],
+              "translation": "土曜日に図書館で英語を勉強します",
+              "translationCandidates": [
+                "図書館で勉強します、土曜日に英語を",
+                "図書館で土曜日に勉強します、英語を",
+                "図書館で土曜日に英語を勉強します",
+                "図書館で英語を勉強します、土曜日に",
+                "図書館で英語を土曜日に勉強します",
+                "土曜日に勉強します、図書館で英語を",
+                "土曜日に図書館で勉強します、英語を",
+                "土曜日に英語を勉強します、図書館で",
+                "土曜日に英語を図書館で勉強します",
+                "英語を勉強します、図書館で土曜日に",
+                "英語を勉強します、土曜日に図書館で",
+                "英語を図書館で土曜日に勉強します",
+                "英語を土曜日に図書館で勉強します"
+              ]
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"図書館で土曜日に勉強します、英語を\", \"図書館で英語を勉強します、土曜日に\", \"土曜日に図書館で勉強します、英語を\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
+          "kind": "majorErrors",
+          "score": 8.285714285714285
+        },
+        {
+          "conclusion": "Kept wrong: \"図書館で土曜日に勉強します、英語を\", \"図書館で英語を勉強します、土曜日に\", \"土曜日に図書館で勉強します、英語を\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
+          "kind": "minorErrors",
+          "score": 8.285714285714285
+        },
+        {
+          "conclusion": "Kept wrong: \"図書館で土曜日に勉強します、英語を\", \"図書館で英語を勉強します、土曜日に\", \"土曜日に図書館で勉強します、英語を\", \"土曜日に英語を勉強します、図書館で\", \"英語を勉強します、土曜日に図書館で\".",
+          "kind": "potentialImprovements",
+          "score": 8.285714285714285
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "I on Saturdays study English at the library",
+                  "I study at the library English on Saturdays"
+                ],
+                "unscored": [
+                  "At the library on Saturdays I study English",
+                  "On Saturdays at the library I study English"
+                ],
+                "valid": [
+                  "At the library I study English on Saturdays",
+                  "I study English on Saturdays at the library",
+                  "On Saturdays I study English at the library"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "図書館で勉強します、土曜日に英語を",
+                  "図書館で土曜日に勉強します、英語を",
+                  "図書館で英語を勉強します、土曜日に",
+                  "土曜日に勉強します、図書館で英語を",
+                  "土曜日に図書館で勉強します、英語を",
+                  "土曜日に英語を勉強します、図書館で",
+                  "英語を勉強します、図書館で土曜日に",
+                  "英語を勉強します、土曜日に図書館で"
+                ],
+                "unscored": [
+                  "図書館で英語を土曜日に勉強します",
+                  "英語を図書館で土曜日に勉強します",
+                  "英語を土曜日に図書館で勉強します"
+                ],
+                "valid": [
+                  "図書館で土曜日に英語を勉強します",
+                  "土曜日に英語を図書館で勉強します"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "ja-en-phrase-tiles-2",
+        "userInput": {
+          "learnerLanguage": "ja",
+          "sentences": [
+            {
+              "sentence": "I study English at the library on Saturdays",
+              "sentenceCandidates": [
+                "At the library I study English on Saturdays",
+                "At the library on Saturdays I study English",
+                "I on Saturdays study English at the library",
+                "I study at the library English on Saturdays",
+                "I study English on Saturdays at the library",
+                "On Saturdays at the library I study English",
+                "On Saturdays I study English at the library"
+              ],
+              "translation": "土曜日に図書館で英語を勉強します",
+              "translationCandidates": [
+                "図書館で勉強します、土曜日に英語を",
+                "図書館で土曜日に勉強します、英語を",
+                "図書館で土曜日に英語を勉強します",
+                "図書館で英語を勉強します、土曜日に",
+                "図書館で英語を土曜日に勉強します",
+                "土曜日に勉強します、図書館で英語を",
+                "土曜日に図書館で勉強します、英語を",
+                "土曜日に英語を勉強します、図書館で",
+                "土曜日に英語を図書館で勉強します",
+                "英語を勉強します、図書館で土曜日に",
+                "英語を勉強します、土曜日に図書館で",
+                "英語を図書館で土曜日に勉強します",
+                "英語を土曜日に図書館で勉強します"
+              ]
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\".",
+          "kind": "majorErrors",
+          "score": 9.314285714285713
+        },
+        {
+          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\".",
+          "kind": "minorErrors",
+          "score": 9.314285714285713
+        },
+        {
+          "conclusion": "Kept wrong: \"図書館で英語を勉強します、土曜日に\", \"土曜日に英語を勉強します、図書館で\".",
+          "kind": "potentialImprovements",
+          "score": 9.314285714285713
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "I on Saturdays study English at the library",
+                  "I study at the library English on Saturdays"
+                ],
+                "unscored": [
+                  "At the library on Saturdays I study English",
+                  "On Saturdays at the library I study English"
+                ],
+                "valid": [
+                  "At the library I study English on Saturdays",
+                  "I study English on Saturdays at the library",
+                  "On Saturdays I study English at the library"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "図書館で勉強します、土曜日に英語を",
+                  "図書館で土曜日に勉強します、英語を",
+                  "図書館で英語を勉強します、土曜日に",
+                  "土曜日に勉強します、図書館で英語を",
+                  "土曜日に図書館で勉強します、英語を",
+                  "土曜日に英語を勉強します、図書館で",
+                  "英語を勉強します、図書館で土曜日に",
+                  "英語を勉強します、土曜日に図書館で"
+                ],
+                "unscored": [
+                  "図書館で英語を土曜日に勉強します",
+                  "英語を図書館で土曜日に勉強します",
+                  "英語を土曜日に図書館で勉強します"
+                ],
+                "valid": [
+                  "図書館で土曜日に英語を勉強します",
+                  "土曜日に英語を図書館で勉強します"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "ja-en-phrase-tiles-3",
+        "userInput": {
+          "learnerLanguage": "ja",
+          "sentences": [
+            {
+              "sentence": "I study English at the library on Saturdays",
+              "sentenceCandidates": [
+                "At the library I study English on Saturdays",
+                "At the library on Saturdays I study English",
+                "I on Saturdays study English at the library",
+                "I study at the library English on Saturdays",
+                "I study English on Saturdays at the library",
+                "On Saturdays at the library I study English",
+                "On Saturdays I study English at the library"
+              ],
+              "translation": "土曜日に図書館で英語を勉強します",
+              "translationCandidates": [
+                "図書館で勉強します、土曜日に英語を",
+                "図書館で土曜日に勉強します、英語を",
+                "図書館で土曜日に英語を勉強します",
+                "図書館で英語を勉強します、土曜日に",
+                "図書館で英語を土曜日に勉強します",
+                "土曜日に勉強します、図書館で英語を",
+                "土曜日に図書館で勉強します、英語を",
+                "土曜日に英語を勉強します、図書館で",
+                "土曜日に英語を図書館で勉強します",
+                "英語を勉強します、図書館で土曜日に",
+                "英語を勉強します、土曜日に図書館で",
+                "英語を図書館で土曜日に勉強します",
+                "英語を土曜日に図書館で勉強します"
+              ]
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
+          "kind": "majorErrors",
+          "score": 9.76923076923077
+        },
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
+          "kind": "minorErrors",
+          "score": 9.76923076923077
+        },
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\".",
+          "kind": "potentialImprovements",
+          "score": 9.76923076923077
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "The boy bit the dog",
+                  "The boy, the dog bit"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "O menino mordeu o cachorro",
+                  "O menino, o cachorro mordeu"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Every Sunday, my mother, my sister calls",
+                  "My mother calls my sister every Sunday",
+                  "My mother, every Sunday, my sister calls",
+                  "My mother, my sister calls every Sunday",
+                  "My sister calls every Sunday my mother"
+                ],
+                "unscored": [
+                  "My sister, every Sunday, calls my mother"
+                ],
+                "valid": [
+                  "Every Sunday my sister calls my mother"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Liga para minha mãe todo domingo, minha irmã",
+                  "Liga todo domingo para minha mãe, minha irmã",
+                  "Minha mãe liga para minha irmã todo domingo",
+                  "Para minha mãe minha irmã liga todo domingo",
+                  "Para minha mãe, todo domingo, minha irmã liga",
+                  "Todo domingo liga para minha mãe, minha irmã",
+                  "Todo domingo, para minha mãe, minha irmã liga"
+                ],
+                "valid": [
+                  "Minha irmã liga todo domingo para minha mãe",
+                  "Minha irmã todo domingo liga para minha mãe",
+                  "Todo domingo minha irmã liga para minha mãe"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-en-rigid-roles-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "The dog bit the boy",
+              "sentenceCandidates": [
+                "The boy bit the dog",
+                "The boy, the dog bit"
+              ],
+              "translation": "O cachorro mordeu o menino",
+              "translationCandidates": [
+                "O menino mordeu o cachorro",
+                "O menino, o cachorro mordeu"
+              ]
+            },
+            {
+              "sentence": "My sister calls my mother every Sunday",
+              "sentenceCandidates": [
+                "Every Sunday my sister calls my mother",
+                "Every Sunday, my mother, my sister calls",
+                "My mother calls my sister every Sunday",
+                "My mother, every Sunday, my sister calls",
+                "My mother, my sister calls every Sunday",
+                "My sister calls every Sunday my mother",
+                "My sister, every Sunday, calls my mother"
+              ],
+              "translation": "Minha irmã liga para minha mãe todo domingo",
+              "translationCandidates": [
+                "Liga para minha mãe todo domingo, minha irmã",
+                "Liga todo domingo para minha mãe, minha irmã",
+                "Minha irmã liga todo domingo para minha mãe",
+                "Minha irmã todo domingo liga para minha mãe",
+                "Minha mãe liga para minha irmã todo domingo",
+                "Para minha mãe minha irmã liga todo domingo",
+                "Para minha mãe, todo domingo, minha irmã liga",
+                "Todo domingo liga para minha mãe, minha irmã",
+                "Todo domingo minha irmã liga para minha mãe",
+                "Todo domingo, para minha mãe, minha irmã liga"
+              ]
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Todo domingo liga para minha mãe, minha irmã\".",
+          "kind": "majorErrors",
+          "score": 9.076923076923077
+        },
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Todo domingo liga para minha mãe, minha irmã\".",
+          "kind": "minorErrors",
+          "score": 9.076923076923077
+        },
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Todo domingo liga para minha mãe, minha irmã\".",
+          "kind": "potentialImprovements",
+          "score": 9.076923076923077
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "The boy bit the dog",
+                  "The boy, the dog bit"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "O menino mordeu o cachorro",
+                  "O menino, o cachorro mordeu"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Every Sunday, my mother, my sister calls",
+                  "My mother calls my sister every Sunday",
+                  "My mother, every Sunday, my sister calls",
+                  "My mother, my sister calls every Sunday",
+                  "My sister calls every Sunday my mother"
+                ],
+                "unscored": [
+                  "My sister, every Sunday, calls my mother"
+                ],
+                "valid": [
+                  "Every Sunday my sister calls my mother"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Liga para minha mãe todo domingo, minha irmã",
+                  "Liga todo domingo para minha mãe, minha irmã",
+                  "Minha mãe liga para minha irmã todo domingo",
+                  "Para minha mãe minha irmã liga todo domingo",
+                  "Para minha mãe, todo domingo, minha irmã liga",
+                  "Todo domingo liga para minha mãe, minha irmã",
+                  "Todo domingo, para minha mãe, minha irmã liga"
+                ],
+                "valid": [
+                  "Minha irmã liga todo domingo para minha mãe",
+                  "Minha irmã todo domingo liga para minha mãe",
+                  "Todo domingo minha irmã liga para minha mãe"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-en-rigid-roles-2",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "The dog bit the boy",
+              "sentenceCandidates": [
+                "The boy bit the dog",
+                "The boy, the dog bit"
+              ],
+              "translation": "O cachorro mordeu o menino",
+              "translationCandidates": [
+                "O menino mordeu o cachorro",
+                "O menino, o cachorro mordeu"
+              ]
+            },
+            {
+              "sentence": "My sister calls my mother every Sunday",
+              "sentenceCandidates": [
+                "Every Sunday my sister calls my mother",
+                "Every Sunday, my mother, my sister calls",
+                "My mother calls my sister every Sunday",
+                "My mother, every Sunday, my sister calls",
+                "My mother, my sister calls every Sunday",
+                "My sister calls every Sunday my mother",
+                "My sister, every Sunday, calls my mother"
+              ],
+              "translation": "Minha irmã liga para minha mãe todo domingo",
+              "translationCandidates": [
+                "Liga para minha mãe todo domingo, minha irmã",
+                "Liga todo domingo para minha mãe, minha irmã",
+                "Minha irmã liga todo domingo para minha mãe",
+                "Minha irmã todo domingo liga para minha mãe",
+                "Minha mãe liga para minha irmã todo domingo",
+                "Para minha mãe minha irmã liga todo domingo",
+                "Para minha mãe, todo domingo, minha irmã liga",
+                "Todo domingo liga para minha mãe, minha irmã",
+                "Todo domingo minha irmã liga para minha mãe",
+                "Todo domingo, para minha mãe, minha irmã liga"
+              ]
+            }
+          ],
+          "targetLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Para minha mãe minha irmã liga todo domingo\", \"Todo domingo liga para minha mãe, minha irmã\".",
+          "kind": "majorErrors",
+          "score": 8.846153846153847
+        },
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Para minha mãe minha irmã liga todo domingo\", \"Todo domingo liga para minha mãe, minha irmã\".",
+          "kind": "minorErrors",
+          "score": 8.846153846153847
+        },
+        {
+          "conclusion": "Kept wrong: \"O menino, o cachorro mordeu\", \"Liga para minha mãe todo domingo, minha irmã\", \"Liga todo domingo para minha mãe, minha irmã\", \"Para minha mãe minha irmã liga todo domingo\", \"Todo domingo liga para minha mãe, minha irmã\".",
+          "kind": "potentialImprovements",
+          "score": 8.846153846153847
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "sentences": [
+            {
+              "orders": {
+                "invalid": [
+                  "The boy bit the dog",
+                  "The boy, the dog bit"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "O menino mordeu o cachorro",
+                  "O menino, o cachorro mordeu"
+                ]
+              }
+            },
+            {
+              "orders": {
+                "invalid": [
+                  "Every Sunday, my mother, my sister calls",
+                  "My mother calls my sister every Sunday",
+                  "My mother, every Sunday, my sister calls",
+                  "My mother, my sister calls every Sunday",
+                  "My sister calls every Sunday my mother"
+                ],
+                "unscored": [
+                  "My sister, every Sunday, calls my mother"
+                ],
+                "valid": [
+                  "Every Sunday my sister calls my mother"
+                ]
+              },
+              "translationOrders": {
+                "invalid": [
+                  "Liga para minha mãe todo domingo, minha irmã",
+                  "Liga todo domingo para minha mãe, minha irmã",
+                  "Minha mãe liga para minha irmã todo domingo",
+                  "Para minha mãe minha irmã liga todo domingo",
+                  "Para minha mãe, todo domingo, minha irmã liga",
+                  "Todo domingo liga para minha mãe, minha irmã",
+                  "Todo domingo, para minha mãe, minha irmã liga"
+                ],
+                "valid": [
+                  "Minha irmã liga todo domingo para minha mãe",
+                  "Minha irmã todo domingo liga para minha mãe",
+                  "Todo domingo minha irmã liga para minha mãe"
+                ]
+              }
+            }
+          ]
+        },
+        "id": "pt-en-rigid-roles-3",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "sentences": [
+            {
+              "sentence": "The dog bit the boy",
+              "sentenceCandidates": [
+                "The boy bit the dog",
+                "The boy, the dog bit"
+              ],
+              "translation": "O cachorro mordeu o menino",
+              "translationCandidates": [
+                "O menino mordeu o cachorro",
+                "O menino, o cachorro mordeu"
+              ]
+            },
+            {
+              "sentence": "My sister calls my mother every Sunday",
+              "sentenceCandidates": [
+                "Every Sunday my sister calls my mother",
+                "Every Sunday, my mother, my sister calls",
+                "My mother calls my sister every Sunday",
+                "My mother, every Sunday, my sister calls",
+                "My mother, my sister calls every Sunday",
+                "My sister calls every Sunday my mother",
+                "My sister, every Sunday, calls my mother"
+              ],
+              "translation": "Minha irmã liga para minha mãe todo domingo",
+              "translationCandidates": [
+                "Liga para minha mãe todo domingo, minha irmã",
+                "Liga todo domingo para minha mãe, minha irmã",
+                "Minha irmã liga todo domingo para minha mãe",
+                "Minha irmã todo domingo liga para minha mãe",
+                "Minha mãe liga para minha irmã todo domingo",
+                "Para minha mãe minha irmã liga todo domingo",
+                "Para minha mãe, todo domingo, minha irmã liga",
+                "Todo domingo liga para minha mãe, minha irmã",
+                "Todo domingo minha irmã liga para minha mãe",
+                "Todo domingo, para minha mãe, minha irmã liga"
+              ]
+            }
+          ],
+          "targetLanguage": "en"
         }
       }
     }

@@ -2,13 +2,17 @@ import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
 import { checkSentenceOrders } from "@zoonk/ai/tasks/language/check-sentence-orders";
 import {
+  type SentenceOrders,
+  keepReviewedCandidates,
+} from "@zoonk/core/library/language/sentence-orders";
+import {
   type CheckSentenceOrdersExpected,
   type CheckSentenceOrdersInput,
   type LabeledOrders,
   TEST_CASES,
 } from "./test-cases";
 
-type Verdicts = { sentences: { sentenceKeep: boolean[]; translationKeep?: boolean[] }[] };
+type Verdicts = Parameters<typeof keepReviewedCandidates>[0]["verdicts"];
 
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
@@ -21,31 +25,35 @@ const KEPT_WRONG_COST = 3;
 
 type SideCheck = { droppedValid: string[]; keptInvalid: string[]; maxCost: number };
 
-function parseVerdicts(output: string): Verdicts | null {
+/** The orders the review kept, or null when production would reject the review. */
+function readKept({
+  input,
+  output,
+}: {
+  input: CheckSentenceOrdersInput;
+  output: string;
+}): SentenceOrders[] | null {
   try {
-    return JSON.parse(output) as Verdicts;
+    return keepReviewedCandidates({
+      candidates: input.sentences.map((sentence) => ({
+        otherOrders: [...sentence.sentenceCandidates],
+        otherTranslationOrders: [...sentence.translationCandidates],
+      })),
+      verdicts: JSON.parse(output) as Verdicts,
+    });
   } catch {
     return null;
   }
 }
 
-function checkSide({
-  candidates,
-  keep = [],
-  labels,
-}: {
-  candidates: readonly string[];
-  keep?: readonly boolean[];
-  labels: LabeledOrders;
-}): SideCheck {
-  const invalid = new Set(labels.invalid);
-  const valid = new Set(labels.valid);
-  const kept = (index: number) => keep[index] === true;
+function checkSide({ kept, labels }: { kept: string[]; labels: LabeledOrders }): SideCheck {
+  const invalid = labels.invalid ?? [];
+  const valid = labels.valid ?? [];
 
   return {
-    droppedValid: candidates.filter((order, index) => valid.has(order) && !kept(index)),
-    keptInvalid: candidates.filter((order, index) => invalid.has(order) && kept(index)),
-    maxCost: invalid.size * KEPT_WRONG_COST + valid.size,
+    droppedValid: valid.filter((order) => !kept.includes(order)),
+    keptInvalid: invalid.filter((order) => kept.includes(order)),
+    maxCost: invalid.length * KEPT_WRONG_COST + valid.length,
   };
 }
 
@@ -55,28 +63,18 @@ function quote(orders: string[]): string {
 
 /** Every kept wrong order costs three times a dropped right one; unscored orders cost nothing. */
 const scoreVerdicts: TaskScorer<CheckSentenceOrdersExpected> = ({ output, testCase }) => {
-  const verdicts = parseVerdicts(output);
-  const input = testCase.userInput as CheckSentenceOrdersInput;
+  const kept = readKept({ input: testCase.userInput as CheckSentenceOrdersInput, output });
 
-  if (!verdicts) {
+  if (!kept) {
     return createFixedScore({ conclusion: "Invalid output", score: MIN_SCORE });
   }
 
-  const checks = input.sentences.flatMap((sentence, index) => {
+  const checks = kept.flatMap((orders, index) => {
     const labels = testCase.expected?.sentences[index];
-    const judged = verdicts.sentences[index];
 
     return [
-      checkSide({
-        candidates: sentence.sentenceCandidates,
-        keep: judged?.sentenceKeep,
-        labels: labels?.orders ?? {},
-      }),
-      checkSide({
-        candidates: sentence.translationCandidates,
-        keep: judged?.translationKeep,
-        labels: labels?.translationOrders ?? {},
-      }),
+      checkSide({ kept: orders.otherOrders, labels: labels?.orders ?? {} }),
+      checkSide({ kept: orders.otherTranslationOrders, labels: labels?.translationOrders ?? {} }),
     ];
   });
 

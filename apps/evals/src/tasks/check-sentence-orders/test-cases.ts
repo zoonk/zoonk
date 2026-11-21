@@ -26,7 +26,7 @@ export type CheckSentenceOrdersExpected = {
 /** The reviewer reads the labeled orders mixed together, in a fixed order that doesn't group them by label. */
 function toCandidates({ invalid = [], unscored = [], valid = [] }: LabeledOrders): string[] {
   return [...valid, ...invalid, ...unscored].toSorted((first, second) =>
-    first.localeCompare(second),
+    first.localeCompare(second, "en"),
   );
 }
 
@@ -150,7 +150,6 @@ export const TEST_CASES: TestCase<CheckSentenceOrdersExpected, CheckSentenceOrde
             "Atrasado chegou o ônibus",
             "Atrasado, o ônibus chegou",
             "O ônibus atrasado chegou",
-            "O ônibus, atrasado, chegou",
           ],
           unscored: ["Chegou o ônibus atrasado"],
           valid: ["Chegou atrasado o ônibus"],
@@ -355,7 +354,6 @@ export const TEST_CASES: TestCase<CheckSentenceOrdersExpected, CheckSentenceOrde
             "土曜日に英語を勉強します、図書館で",
             "英語を勉強します、図書館で土曜日に",
             "英語を勉強します、土曜日に図書館で",
-            "英語を勉強します土曜日に図書館で",
           ],
           unscored: [
             "図書館で英語を土曜日に勉強します",
@@ -388,7 +386,6 @@ export const TEST_CASES: TestCase<CheckSentenceOrdersExpected, CheckSentenceOrde
             "My mother, every Sunday, my sister calls",
             "My mother, my sister calls every Sunday",
             "My sister calls every Sunday my mother",
-            "My sister calls, every Sunday, my mother",
           ],
           unscored: ["My sister, every Sunday, calls my mother"],
           valid: ["Every Sunday my sister calls my mother"],
