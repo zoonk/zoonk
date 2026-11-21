@@ -62,11 +62,17 @@ export async function startScheduledSitting({
     ? await tx.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
     : null;
 
-  const plan = await tx.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } });
+  const plan = await tx.plan.findUnique({
+    select: { graph: true, settings: true },
+    where: { goalId: goal.id },
+  });
+
   const picks = readExamPicks(plan?.settings);
 
-  const { conditions, complete } = await buildMockConditions(
-    {
+  const { conditions, complete } = await buildMockConditions({
+    client: tx,
+    graph: plan?.graph,
+    owned: {
       blueprint,
       goal,
       payload,
@@ -80,8 +86,7 @@ export async function startScheduledSitting({
       unpicked: readUnpickedChoices({ blueprint, picks }),
       userId,
     },
-    tx,
-  );
+  });
 
   const scheduledDate = sessionDate.toISOString();
 

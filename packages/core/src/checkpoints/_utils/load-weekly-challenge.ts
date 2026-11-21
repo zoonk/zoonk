@@ -72,8 +72,6 @@ export function isPlusOnlyMockDay({
 async function loadMockItems({
   goal,
   identity: selectedIdentity,
-  skillIds,
-  paperPlan,
   planItemId,
   structure,
   today,
@@ -81,8 +79,6 @@ async function loadMockItems({
 }: {
   goal: Pick<Goal, "examBlueprintId" | "id" | "targetDate">;
   identity?: MockIdentity | null;
-  skillIds: readonly string[];
-  paperPlan?: { graph: unknown; settings: unknown };
   planItemId: string | null;
   structure: ExamStructure | null;
   today: Date;
@@ -93,15 +89,7 @@ async function loadMockItems({
       ? await loadScheduledMock({ date: today, goalId: goal.id, planItemId })
       : selectedIdentity;
 
-  const { outline } = await loadWeeklyOutline({
-    goal,
-    identity,
-    paperPlan,
-    skillIds,
-    structure,
-    today,
-    userId,
-  });
+  const { outline } = await loadWeeklyOutline({ goal, identity, structure, today, userId });
 
   return {
     itemIds: [],
@@ -174,7 +162,6 @@ export async function loadSessionWeeklyChallenge({
   includesMockExams,
   items,
   mockFunding,
-  paperPlan,
   mockSkillIds,
   now,
   skillIds,
@@ -185,7 +172,6 @@ export async function loadSessionWeeklyChallenge({
   goal: Pick<Goal, "examBlueprintId" | "id" | "targetDate">;
   includesMockExams: boolean;
   items: readonly SessionPlanItem[];
-  paperPlan?: { graph: unknown; settings: unknown };
   mockFunding?: PlanSettings["mockFunding"];
   /** Include every exam topic, even those omitted from the plan's teaching days. */
   mockSkillIds: readonly string[];
@@ -216,9 +202,7 @@ export async function loadSessionWeeklyChallenge({
           identity: mockFunding
             ? findScheduledMock({ date: toIsoDate(item.scheduledFor), funding: mockFunding })
             : undefined,
-          paperPlan,
           planItemId: item.id,
-          skillIds: asked,
           structure,
           today,
           userId,

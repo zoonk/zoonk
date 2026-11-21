@@ -56,8 +56,8 @@ export async function loadPreparingMockPositions({
     mocks.map(async ({ position, identity, skillIds }) => {
       const plan = await planWeeklyMock({
         goal,
+        graph: savedPlan?.graph,
         identity,
-        paperPlan: savedPlan ?? undefined,
         skillIds,
         structure,
         today: localDate,

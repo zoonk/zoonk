@@ -3,18 +3,12 @@ import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { type MockIdentity } from "../../../plans/planner/mock-identity";
-import {
-  parsePlanGraph,
-  parsePlanPhases,
-  parsePlanSettings,
-} from "../../../plans/planner/plan-state";
-import { getTestSkillIds } from "../../../sessions/_utils/review-skills";
-import { keepExamSubjects } from "../../choices/exam-scope";
+import { parsePlanGraph, parsePlanPhases } from "../../../plans/planner/plan-state";
 import { getFinalStretchStart, isInFinalStretch } from "../../final-stretch/final-stretch-rules";
 import { loadFinalStretchStart } from "../../final-stretch/load-final-stretch-start";
 import { getMockFormatMix } from "../mock-format-mix";
 import { toSubjectCandidates } from "../mock-option-plan";
-import { findAreaSubject, getSubjectShares } from "../mock-options";
+import { getSubjectShares } from "../mock-options";
 import {
   type MockCandidate,
   type MockPlan,
@@ -90,74 +84,45 @@ async function loadWeeklyMockListening({
   };
 }
 
-type WeeklyPaper = {
-  skillIds: readonly string[];
-  paperPlan?: { graph: unknown; settings: unknown };
-  exclude?: ReadonlySet<string>;
-  now?: Date;
-  client?: TransactionClient;
+type WeeklyOutline = {
   essays?: readonly MockEssayCandidate[];
   /** A GET's finished-mock count; without it, it's counted fresh. */
   finishedMocks?: Promise<number>;
   goal: Pick<Goal, "examBlueprintId" | "targetDate"> & { id: string | null };
   identity?: MockIdentity | null;
-  itemIds?: readonly string[] | null;
   savedPlan?: SavedPlan;
   structure: ExamStructure | null;
   today: Date;
   userId: string;
 };
 
-async function scheduledPaper(input: WeeklyPaper) {
+type WeeklyPaper = WeeklyOutline & {
+  skillIds: readonly string[];
+  graph?: unknown;
+  exclude?: ReadonlySet<string>;
+  now?: Date;
+  client?: TransactionClient;
+  itemIds?: readonly string[] | null;
+};
+
+async function loadPaperSkillIds({
+  client = prisma,
+  goal,
+  graph,
+  savedPlan,
+  skillIds,
+}: WeeklyPaper) {
   const plan =
-    input.paperPlan ??
-    input.savedPlan ??
-    (input.goal.id &&
-      (await (input.client ?? prisma).plan.findUnique({
-        select: { graph: true, settings: true },
-        where: { goalId: input.goal.id },
-      })));
+    graph === undefined && !savedPlan && goal.id
+      ? await client.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
+      : savedPlan;
 
-  const { structure } = input;
-  const settings = plan ? plan.settings : null;
+  const paperGraph = parsePlanGraph(graph ?? plan?.graph);
 
-  const skipped = new Set(
-    parsePlanSettings(settings).skippedAreas.flatMap(
-      (area) => findAreaSubject({ area, structure })?.name ?? [],
-    ),
-  );
-
-  const scoped =
-    structure && skipped.size > 0
-      ? keepExamSubjects(
-          structure,
-          new Set(
-            structure.subjects
-              .filter(
-                (subject) =>
-                  !skipped.has(subject.name) && !(subject.partOf && skipped.has(subject.partOf)),
-              )
-              .map((subject) => subject.name),
-          ),
-        )
-      : structure;
-
-  return {
-    skillIds: getTestSkillIds({
-      graph: parsePlanGraph(plan ? plan.graph : null),
-      planSkillIds: input.skillIds,
-      settings,
-    }),
-    structure: scoped,
-  };
+  return [...new Set([...skillIds, ...paperGraph.skills.map((skill) => skill.skillId)])];
 }
 
-export async function loadWeeklyOutline(input: WeeklyPaper) {
-  const paper = await scheduledPaper(input);
-  return { ...paper, ...(await outlinePaper({ ...input, ...paper })) };
-}
-
-async function outlinePaper({
+export async function loadWeeklyOutline({
   essays,
   finishedMocks,
   goal,
@@ -166,7 +131,7 @@ async function outlinePaper({
   structure,
   today,
   userId,
-}: WeeklyPaper) {
+}: WeeklyOutline) {
   const days = getMockDays(structure);
 
   const resolveIdentity = async () => {
@@ -216,30 +181,23 @@ async function outlinePaper({
 
 export async function planWeeklyMock(
   input: WeeklyPaper,
-): Promise<
-  MockPlan & {
-    outline: MockPlan;
-    candidates: MockCandidate[];
-    audio: MockListening;
-    structure: ExamStructure | null;
-    skillIds: string[];
-  }
-> {
-  const { client, goal, itemIds = null, savedPlan, userId } = input;
-  const { structure, skillIds } = await scheduledPaper(input);
+): Promise<MockPlan & { outline: MockPlan; candidates: MockCandidate[]; audio: MockListening }> {
+  const { client, goal, itemIds = null, savedPlan, structure, userId } = input;
 
   const [{ outline, written }, candidates, audio] = await Promise.all([
-    outlinePaper({ ...input, structure }),
-    loadMockCandidates({
-      client,
-      goal,
-      itemIds,
-      now: input.now,
-      plan: savedPlan,
-      skillIds,
-      structure,
-      userId,
-    }),
+    loadWeeklyOutline(input),
+    loadPaperSkillIds(input).then((skillIds) =>
+      loadMockCandidates({
+        client,
+        goal,
+        itemIds,
+        now: input.now,
+        plan: savedPlan,
+        skillIds,
+        structure,
+        userId,
+      }),
+    ),
     loadWeeklyMockListening({
       client,
       exclude: input.exclude,
@@ -276,5 +234,5 @@ export async function planWeeklyMock(
     subjectShares: getSubjectShares(structure),
   });
 
-  return { ...plan, audio, candidates: asked, outline, skillIds, structure };
+  return { ...plan, audio, candidates: asked, outline };
 }

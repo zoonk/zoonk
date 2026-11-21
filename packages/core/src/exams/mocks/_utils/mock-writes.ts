@@ -83,12 +83,10 @@ function listWrites({
 
 export async function planMockWrites({
   planned,
-  skillIds,
   goal,
   option,
   setup,
 }: {
-  skillIds?: readonly string[];
   planned: Awaited<ReturnType<typeof planFromBank>>;
   goal: Goal;
   option: Pick<MockOption, "questions" | "kind" | "area" | "areas">;
@@ -107,9 +105,7 @@ export async function planMockWrites({
   return listWrites({
     mix: getMockFormatMix(setup.structure),
     option,
-    optionSkills: skillIds
-      ? optionSkills.filter((skill) => skillIds.includes(skill.id))
-      : optionSkills,
+    optionSkills,
     planned,
     structure: setup.structure,
   });

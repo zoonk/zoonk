@@ -106,13 +106,13 @@ describe("a scheduled mock for a learner who took a subject out of the plan", ()
 
   afterEach(() => vi.useRealTimers());
 
-  it("asks for the retained subject when the scheduled start is short", async () => {
+  it("prepares the removed subject when its questions are missing", async () => {
     const { block, goal, skills } = await setup({ skippedAreas: ["Languages"] });
-    const retained = skills.slice(0, 2).map((skill) => skill.id);
+    const removed = skills.slice(2).map((skill) => skill.id);
 
     await prisma.item.updateMany({
       data: { retiredAt: SESSION_NOW },
-      where: { skillId: { in: retained } },
+      where: { skillId: { in: removed } },
     });
 
     await expect(startMock({ blockId: block.id, input: {} })).resolves.toMatchObject({
@@ -125,20 +125,30 @@ describe("a scheduled mock for a learner who took a subject out of the plan", ()
 
     expect(
       supply.papers.flatMap((paper) => paper.writes).flatMap((write) => write.skillIds),
-    ).toStrictEqual(expect.arrayContaining(retained));
+    ).toStrictEqual(expect.arrayContaining(removed));
   });
 
-  it("starts the scheduled paper with only retained subjects", async () => {
-    const { block, goal } = await setup({ skippedAreas: ["Languages"] });
+  it("starts the scheduled paper with both exam subjects", async () => {
+    const { block, goal, skills } = await setup({ skippedAreas: ["Languages"] });
 
     await expect(listMockPrepWrites({ goalId: goal.id })).resolves.toMatchObject({
       urgentShort: false,
     });
 
-    expect(block).toMatchObject({ preparing: false, questions: 4 });
+    expect(block).toMatchObject({ preparing: false, questions: 8 });
 
     await expect(startMock({ blockId: block.id, input: {} })).resolves.toMatchObject({
       status: "ready",
     });
+
+    const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { blockId: block.id } });
+
+    const asked = await prisma.mockItemUse.findMany({
+      select: { item: { select: { skillId: true } } },
+      where: { mockExamId: sitting.id },
+    });
+
+    const removed = new Set(skills.slice(2).map((skill) => skill.id));
+    expect(asked.filter(({ item }) => item && removed.has(item.skillId))).toHaveLength(4);
   });
 });

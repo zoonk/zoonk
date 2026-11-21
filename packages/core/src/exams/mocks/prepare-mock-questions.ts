@@ -214,7 +214,6 @@ export async function listMockPrepWrites({
                 setup: bank.available,
               }),
               option: target.option,
-              skillIds: undefined,
             }),
           );
 
@@ -229,13 +228,7 @@ export async function listMockPrepWrites({
 
       urgentShort ||= target.urgent;
 
-      const batch = await planMockWrites({
-        goal,
-        option,
-        planned,
-        setup: planned.available,
-        skillIds: planned.skillIds,
-      });
+      const batch = await planMockWrites({ goal, option, planned, setup: planned.available });
 
       papers.push({
         key: target.key,

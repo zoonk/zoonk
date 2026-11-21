@@ -58,20 +58,20 @@ export async function loadMockCard({
     essays,
     finishedMocks: identity ? undefined : readFinishedMockCount(goal.userId, goal.id),
     goal,
+    graph: goalPlan?.graph,
     identity,
-    paperPlan: goalPlan ?? undefined,
     savedPlan: saved ?? undefined,
-    skillIds: skills.filter((skill) => !skill.removed).map((skill) => skill.id),
+    skillIds: skills.map((skill) => skill.id),
     structure,
     today: date,
     userId: goal.userId,
   };
 
   const planned = date <= today ? await planWeeklyMock(input) : null;
-  const { outline: plan, structure: scoped } = planned ?? (await loadWeeklyOutline(input));
+  const { outline: plan } = planned ?? (await loadWeeklyOutline(input));
 
   return {
-    conditions: toMockConditions({ plan, structure: scoped, typed }),
+    conditions: toMockConditions({ plan, structure, typed }),
     preparing: planned !== null && !isScheduledPaperComplete(planned),
     startTime: getExamStartTime({ day: plan.day, edition: content?.edition ?? null }),
     timeZone: content?.edition.timeZone ?? null,

@@ -12,7 +12,6 @@ export const SCHEDULED_SUPPLY_PLAN_SELECT = {
     take: 2,
     where: { kind: "mock", status: "todo" },
   },
-  phases: true,
   settings: true,
 } as const;
 
@@ -23,9 +22,7 @@ export async function listScheduledSupplyOptions({
 }: {
   client?: TransactionClient;
   goal: Pick<Goal, "id" | "targetDate">;
-  plan:
-    | (Pick<Plan, "graph" | "settings" | "phases"> & { items: Pick<PlanItem, "scheduledFor">[] })
-    | null;
+  plan: (Pick<Plan, "settings"> & { items: Pick<PlanItem, "scheduledFor">[] }) | null;
 }) {
   const funding = parsePlanSettings(plan?.settings).mockFunding;
   const dates = (plan?.items ?? []).flatMap((item) => item.scheduledFor ?? []);

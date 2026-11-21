@@ -47,22 +47,25 @@ function paperInputs({ goal, payload, sessionDate, structure, userId }: Schedule
 }
 
 export async function previewMockConditions(owned: ScheduledMock): Promise<MockConditions> {
-  const { outline, structure } = await loadWeeklyOutline(paperInputs(owned));
+  const { outline } = await loadWeeklyOutline(paperInputs(owned));
 
-  return toPlannedConditions({
-    ...owned,
-    bank: { candidates: [], outline },
-    plan: outline,
-    structure,
-  });
+  return toPlannedConditions({ ...owned, bank: { candidates: [], outline }, plan: outline });
 }
 
-export async function buildMockConditions(owned: ScheduledMock, client: TransactionClient) {
-  const bank = await planWeeklyMock({ ...paperInputs(owned), client });
+export async function buildMockConditions({
+  owned,
+  client,
+  graph,
+}: {
+  owned: ScheduledMock;
+  client: TransactionClient;
+  graph: unknown;
+}) {
+  const bank = await planWeeklyMock({ ...paperInputs(owned), client, graph });
 
   return {
     complete: isScheduledPaperComplete(bank),
-    conditions: toPlannedConditions({ ...owned, bank, plan: bank, structure: bank.structure }),
+    conditions: toPlannedConditions({ ...owned, bank, plan: bank }),
   };
 }
 

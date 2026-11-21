@@ -106,10 +106,10 @@ export async function planScheduledFromBank({
     exclude,
     finishedMocks: Promise.resolve(finishedMocks),
     goal,
+    graph: paperPlan?.graph,
     identity,
     now,
-    paperPlan: paperPlan ?? undefined,
-    skillIds: goalPlan.skills.filter((skill) => !skill.removed).map((skill) => skill.id),
+    skillIds: goalPlan.skills.map((skill) => skill.id),
     structure,
     today: scheduledFor,
     userId: goal.userId,
@@ -120,7 +120,7 @@ export async function planScheduledFromBank({
       ...setup,
       listening: plan.audio.recordings,
       missingParts: plan.audio.missingParts,
-      structure: plan.structure,
+      structure,
       unvoiced: plan.audio.unvoiced,
     },
     candidates: plan.candidates,
@@ -134,7 +134,6 @@ export async function planScheduledFromBank({
     },
     plan,
     reuse: false,
-    skillIds: plan.skillIds,
   };
 }
 
