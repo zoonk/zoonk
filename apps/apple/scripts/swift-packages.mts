@@ -24,7 +24,7 @@ export const swiftPackagesDirectory = path.join(homedir(), ".cache", "zoonk", "s
 /** Its time is when a build last used the folder, which is how the sweep finds unused versions. */
 export const READY_FILE = ".ready";
 
-function download(directory: string) {
+function download({ directory, lock }: { directory: string; lock: number }) {
   process.stderr.write("Downloading the Swift packages once for every checkout on this Mac…\n");
   rmSync(directory, { force: true, recursive: true });
   const derivedData = mkdtempSync(path.join(tmpdir(), "zoonk-swift-packages-"));
@@ -46,7 +46,8 @@ function download(directory: string) {
       directory,
       "-onlyUsePackageVersionsFromResolvedFile",
     ],
-    { stdio: ["ignore", "ignore", "inherit"] },
+    // The resolver holds the lock too, so it stays taken if this script dies mid-download.
+    { stdio: ["ignore", "ignore", "inherit", lock] },
   );
 
   rmSync(derivedData, { force: true, recursive: true });
@@ -73,7 +74,7 @@ function prepareSwiftPackages(): string {
 
   try {
     if (!existsSync(ready)) {
-      download(directory);
+      download({ directory, lock });
     }
 
     writeFileSync(ready, "");
