@@ -11,26 +11,19 @@ import {
 import { FactSegments } from "../_components/task-meta";
 import { useFormatMomentDate } from "../_utils/iso-date";
 import { useTestTime } from "../focus-test/use-focus-test-texts";
+import { formatLevelRange } from "../language/level-test/level-test-parts";
 import { usePlanScreen } from "./plan-context";
 
 type PlacementTestRow = NonNullable<PlanView["placementTest"]>;
 type LanguageRow = Extract<PlacementTestRow, { kind: "language" }>;
-type CefrRange = NonNullable<LanguageRow["result"]>["ranges"]["reading"];
-
-function formatRange(range: CefrRange): string | null {
-  if (!range) {
-    return null;
-  }
-
-  return range.low === range.high ? range.low : `${range.low}–${range.high}`;
-}
 
 function useLanguageResultFacts() {
   const t = useExtracted();
 
   return (result: NonNullable<LanguageRow["result"]>): string[] => {
-    const reading = formatRange(result.ranges.reading);
-    const listening = formatRange(result.ranges.listening);
+    const { listening: listeningRange, reading: readingRange } = result.ranges;
+    const reading = readingRange && formatLevelRange(readingRange);
+    const listening = listeningRange && formatLevelRange(listeningRange);
 
     return [
       reading &&
@@ -45,7 +38,7 @@ function useLanguageResultFacts() {
           message: "Listening {range}",
           values: { range: listening },
         }),
-    ].filter((fact) => fact !== null);
+    ].filter((fact) => typeof fact === "string");
   };
 }
 
@@ -87,7 +80,13 @@ function useRowFacts() {
 }
 
 /** The Plan's way into the test of what the learner already knows, and its last result. */
-export function PlanPlacementTest({ href }: { href: string }) {
+export function PlanPlacementTest({
+  levelTestHref,
+  placementTestHref,
+}: {
+  levelTestHref: string;
+  placementTestHref: string;
+}) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
   const rowFacts = useRowFacts();
@@ -98,7 +97,7 @@ export function PlanPlacementTest({ href }: { href: string }) {
   }
 
   return (
-    <ListRowLink href={href}>
+    <ListRowLink href={test.kind === "language" ? levelTestHref : placementTestHref}>
       <ListRowContent>
         <ListRowTitle>
           {test.kind === "language" ? t("Level test") : t("Test what you know")}

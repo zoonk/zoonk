@@ -42,7 +42,13 @@ async function PlacementTestContent() {
   const plan = await getGoalPlan(goal.id);
   const test = plan.status === "ready" ? plan.plan.placementTest : null;
 
-  if (test?.kind !== "learn") {
+  // A language course's test starts with its level; only its whole-course topic walk is here.
+  if (test?.kind === "language" && !test.attempt) {
+    redirect({ href: "/level-test", locale });
+    return null;
+  }
+
+  if (!test) {
     redirect({ href: "/plan", locale });
     return null;
   }

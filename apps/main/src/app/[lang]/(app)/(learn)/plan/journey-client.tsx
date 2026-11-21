@@ -153,6 +153,7 @@ function getJourneyLinks({
     course: getCourseHref,
     exam: goalKind === "exam" ? "/exam" : null,
     focusTest: "/focus-test",
+    levelTest: "/level-test",
     logbook: "/logbook",
     mindMaps: hasMindMaps ? "/mind-maps" : null,
     placementTest: "/placement-test",

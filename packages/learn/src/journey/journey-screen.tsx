@@ -53,6 +53,7 @@ export type JourneyLinks = JourneyPathLinks & {
   completedLessons: string | null;
   course: (course: { brandSlug: string; courseSlug: string }) => string;
   focusTest: string;
+  levelTest: string;
   logbook: string | null;
   placementTest: string;
   mindMaps: string | null;
@@ -114,7 +115,7 @@ function JourneyBody({
   const focusTest = (
     <>
       <PlanFocusTest />
-      <PlanPlacementTest href={links.placementTest} />
+      <PlanPlacementTest levelTestHref={links.levelTest} placementTestHref={links.placementTest} />
     </>
   );
 

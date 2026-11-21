@@ -33,26 +33,42 @@ function useMinutesLeft() {
     });
 }
 
+type TestChoice = PlacementLength | "testOut";
+
 export function PlacementLengthChoice({
   failed,
   onStart,
+  onTestOut,
   pressed,
+  testOutLevel = null,
   wholeCourseMinutes,
 }: {
   failed: boolean;
   onStart: (length: PlacementLength) => void;
+  onTestOut?: () => void;
   pressed: PlacementPressed;
+  /** A language course's next level the learner can test out of, offered beside the two lengths. */
+  testOutLevel?: string | null;
   wholeCourseMinutes: number;
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const [length, setLength] = useState<PlacementLength>("quick");
+  const [choice, setChoice] = useState<TestChoice>("quick");
+
+  const start = () => {
+    if (choice === "testOut") {
+      onTestOut?.();
+      return;
+    }
+
+    onStart(choice);
+  };
 
   return (
     <OnboardingColumn
       bar={
         <OnboardingActions failed={failed}>
-          <OnboardingPrimaryButton busy={pressed === "main"} onClick={() => onStart(length)}>
+          <OnboardingPrimaryButton busy={pressed === "main"} onClick={start}>
             {t("Start")}
           </OnboardingPrimaryButton>
         </OnboardingActions>
@@ -86,10 +102,23 @@ export function PlacementLengthChoice({
             }),
             value: "wholeCourse",
           },
+          ...(testOutLevel && onTestOut
+            ? [
+                {
+                  description: t("Skip {level} if you already know it", { level: testOutLevel }),
+                  label: t({
+                    description: "A short test of one language level, such as “Test out of B2”.",
+                    message: "Test out of {level}",
+                    values: { level: testOutLevel },
+                  }),
+                  value: "testOut" as const,
+                },
+              ]
+            : []),
         ]}
         label={t("How much do you want to check?")}
-        onChange={setLength}
-        value={length}
+        onChange={setChoice}
+        value={choice}
       />
 
       <p className="text-muted-foreground text-sm text-pretty">

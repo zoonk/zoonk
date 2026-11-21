@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   type PlacementAttemptView,
   type PlacementOutcome,
@@ -47,12 +47,12 @@ function ready(
 }
 
 describe(toPlacementTestPhase, () => {
-  test("with no test open, the learner chooses how much to check, whatever onboarding's state", () => {
+  it("with no test open, the learner chooses how much to check, whatever onboarding's state", () => {
     expect(toPlacementTestPhase(ready(null, QUESTION))).toStrictEqual({ kind: "choose" });
     expect(toPlacementTestPhase({ status: "unavailable" })).toStrictEqual({ kind: "choose" });
   });
 
-  test("an open test goes on at its next question", () => {
+  it("an open test goes on at its next question", () => {
     expect(toPlacementTestPhase(ready(ATTEMPT, QUESTION))).toMatchObject({
       answered: 3,
       kind: "question",
@@ -61,20 +61,20 @@ describe(toPlacementTestPhase, () => {
     });
   });
 
-  test("an open test waits while its questions are written", () => {
+  it("an open test waits while its questions are written", () => {
     expect(
       toPlacementTestPhase({ attempt: ATTEMPT, focusTest: null, status: "notReady" }),
     ).toStrictEqual({ kind: "waiting" });
   });
 
-  test("a part with nothing left to ask closes next", () => {
+  it("a part with nothing left to ask closes next", () => {
     expect(toPlacementTestPhase(ready(ATTEMPT, null))).toStrictEqual({
       attempt: ATTEMPT,
       kind: "partOver",
     });
   });
 
-  test("a part closed earlier offers the next one", () => {
+  it("a part closed earlier offers the next one", () => {
     const closed = { ...ATTEMPT, partComplete: true };
 
     expect(toPlacementTestPhase(ready(closed, null))).toStrictEqual({
@@ -86,7 +86,7 @@ describe(toPlacementTestPhase, () => {
 });
 
 describe(toFinishedPhase, () => {
-  test("a whole-course part with more to check says what it skipped and what's left", () => {
+  it("a whole-course part with more to check says what it skipped and what's left", () => {
     const next = { ...ATTEMPT, estimatedMinutes: 12, partComplete: true };
 
     expect(
@@ -103,7 +103,7 @@ describe(toFinishedPhase, () => {
     ).toStrictEqual({ attempt: next, kind: "between", lessonsSkipped: 6 });
   });
 
-  test("the last part shows the whole test's result", () => {
+  it("the last part shows the whole test's result", () => {
     expect(
       toFinishedPhase({
         finished: {

@@ -277,7 +277,7 @@ export function TestStep({
   progress,
   targetLanguage,
 }: {
-  actions: LanguageLevelTestActions;
+  actions: Pick<LanguageLevelTestActions, "answer" | "speak">;
   audioPending: boolean;
   next: ReadyTest["next"];
   onStop: () => void;
