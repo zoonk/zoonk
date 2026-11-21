@@ -63,7 +63,10 @@ function useSectionCount(syllabus: SyllabusSectionView): string {
   // The notice's own subjects, as the reveal counts them: the plan's extras aren't the exam's.
   if (syllabus.goal.kind === "exam") {
     return t("{count, plural, one {# subject} other {# subjects}}", {
-      count: syllabus.kind === "notice" ? subjects : syllabus.subjects.length,
+      count:
+        syllabus.kind === "notice"
+          ? subjects
+          : syllabus.subjects.filter((subject) => !subject.extra).length,
     });
   }
 
@@ -177,7 +180,7 @@ export function SyllabusSection({
           // A group's heading and its rows are one item of the list, so a rule sits above the
           // heading and none between it and its rows.
           <div key={group.extra ? "extra" : (group.name ?? "all")}>
-            <SubjectGroupHeading group={group} id={getGroupId(index)} />
+            <SubjectGroupHeading group={group} id={getGroupId(index)} syllabus={syllabus} />
 
             <ul
               aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}
