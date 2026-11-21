@@ -1,8 +1,9 @@
 "use client";
 
-import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS } from "@zoonk/core/exams/essays/contract";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { MAX_ESSAY_CHARACTERS } from "@zoonk/core/exams/essays/contract";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { deviceStorage, subscribeToDeviceStorage } from "../_utils/device-storage";
+import { createWritingClock } from "./writing-clock";
 import {
   type DraftPosition,
   type ServerDraft,
@@ -16,43 +17,22 @@ import { type WritingActions, type WrittenEssay } from "./writing-types";
 
 const DRAFT_SAVE_MS = 1500;
 
-/** Time on the field while the page is in view, on a clock a device's time change can't move. */
+/** The writing clock, paused while the page is out of view. */
 function useWritingClock() {
-  const total = useRef(0);
-  const since = useRef<number | null>(null);
-  const started = useRef(false);
+  const clock = useMemo(createWritingClock, []);
 
   useEffect(() => {
-    const onVisibility = () => {
-      if (document.visibilityState === "hidden" && since.current !== null) {
-        total.current += performance.now() - since.current;
-        since.current = null;
-      } else if (document.visibilityState === "visible" && started.current) {
-        since.current ??= performance.now();
-      }
-    };
+    const onVisibility = () =>
+      document.visibilityState === "hidden" ? clock.hidden() : clock.visible();
 
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, []);
+  }, [clock]);
 
   return {
-    durationMs: () => {
-      const running = since.current === null ? 0 : performance.now() - since.current;
-      return Math.round(Math.min(MAX_WRITING_MS, Math.max(0, total.current + running)));
-    },
-    reset: () => {
-      total.current = 0;
-      since.current = null;
-      started.current = false;
-    },
-    typed: () => {
-      started.current = true;
-
-      if (document.visibilityState === "visible") {
-        since.current ??= performance.now();
-      }
-    },
+    durationMs: clock.durationMs,
+    reset: clock.reset,
+    typed: () => clock.typed({ visible: document.visibilityState === "visible" }),
   };
 }
 
@@ -90,6 +70,21 @@ function useSaveOnLeave(flush: (options?: { keepalive?: boolean }) => Promise<bo
   }, []);
 }
 
+/** What the editor opens with: this device's copy when it belongs to the admission, else the saved draft. */
+function useOpenedDraft(essay: WrittenEssay) {
+  const raw = useSyncExternalStore(
+    subscribeToDeviceStorage,
+    () => deviceStorage.get(keptDraftKey(essay.blockId)),
+    () => null,
+  );
+
+  return openDraft({
+    admissionId: essay.admissionId ?? null,
+    kept: parseKeptDraft(raw),
+    saved: essay.draft ?? null,
+  });
+}
+
 /**
  * The text stays on this device as it's typed and goes to the block's saved draft a moment later,
  * so "Continue" works on another device. A save that finds a newer draft stops and asks which one
@@ -104,18 +99,7 @@ export function useWritingDraft({
 }) {
   const { blockId } = essay;
   const key = keptDraftKey(blockId);
-
-  const raw = useSyncExternalStore(
-    subscribeToDeviceStorage,
-    () => deviceStorage.get(key),
-    () => null,
-  );
-
-  const opened = openDraft({
-    admissionId: essay.admissionId ?? null,
-    kept: parseKeptDraft(raw),
-    saved: essay.draft ?? null,
-  });
+  const opened = useOpenedDraft(essay);
 
   // Null until the learner types or answers a conflict; before that, what the page opened with.
   const [local, setLocal] = useState<{ conflict: ServerDraft | null; text: string } | null>(null);
@@ -270,11 +254,22 @@ export function useWritingDraft({
 
   return {
     admissionId: ensureAdmission,
-    clear: () => deviceStorage.remove(key),
     conflict,
     conflicted: () => Boolean(live.current.conflict),
     durationMs: clock.durationMs,
     flush,
+    /**
+     * A grade came back for `gradedText`. When it's a replay of a send whose answer was lost, what's
+     * typed here since stays on this device for the rewrite: the server stops offering its draft once
+     * the admission is graded.
+     */
+    graded: (gradedText: string) => {
+      if (gradedText === live.current.text) {
+        deviceStorage.remove(key);
+      } else {
+        keep(live.current.text);
+      }
+    },
     keepMine: () => answerConflict(true),
     /** While an answer is out for grading, the field takes no edits. */
     lock: (value: boolean) => {

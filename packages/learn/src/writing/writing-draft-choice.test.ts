@@ -29,6 +29,7 @@ describe(openDraft, () => {
 
   it("never offers a copy typed under another admission", () => {
     const kept = { admissionId: REWRITE, base: 9, text: "Typed under another admission." };
+
     expect(openDraft({ admissionId: ADMISSION, kept, saved })).toMatchObject({
       conflict: null,
       text: saved.text,
