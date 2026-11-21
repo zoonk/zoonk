@@ -11,6 +11,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    globalSetup: ["./scripts/test-temp-folder.mts"],
     include: [
       "apps/apple/scripts/*.test.mts",
       "apps/evals/src/**/*.test.ts",
