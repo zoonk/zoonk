@@ -14,8 +14,11 @@ struct MistakeLessonQuestionView: View {
 
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceFocus) private var focuses
+  @Environment(\.lessonAudio) private var audio
+  @Environment(\.spokenAnswerRecording) private var recording
   @State private var state: LessonPlayerState
   @State private var work = ActivityWork()
+  @State private var prompt = LessonPromptAudio()
   @State private var cantTalk = LessonTodayChoices.standard.isChosenToday(.cantTalk)
   @State private var cantListen = LessonTodayChoices.standard.isChosenToday(.cantListen)
   @State private var micBlocked = false
@@ -64,6 +67,14 @@ struct MistakeLessonQuestionView: View {
     guard let result = state.currentResult else { return nil }
     return [String(localized: LessonVerdict.of(result, step: replay.step).title), result.feedback]
       .compactMap { $0 }.joinedSentences()
+  }
+
+  private var shownPrompt: URL? {
+    replay.step.shownPromptAudio(
+      spokenMode: SpokenAnswerMode(
+        canListen: true, canSpeak: recording.input != nil, cantTalk: cantTalk,
+        cantListen: cantListen, micBlocked: micBlocked),
+      cantListen: cantListen)
   }
 
   private func press(_ control: PracticeFocus) {
@@ -184,6 +195,7 @@ struct MistakeLessonQuestionView: View {
       }
     }
     .environment(work)
+    .environment(prompt)
     .announcesStatus(announcement)
     .onChange(of: grade) { _, grade in
       if grade != nil, pressedWithFocus != nil {
@@ -200,6 +212,9 @@ struct MistakeLessonQuestionView: View {
     }
     .onChange(of: cantListen) { _, value in
       LessonTodayChoices.standard.setChosenToday(.cantListen, value)
+    }
+    .onChange(of: shownPrompt) { _, url in
+      prompt.enter(prompt: url, audio: audio)
     }
   }
 

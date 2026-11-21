@@ -460,6 +460,18 @@ extension LessonPlayerStore {
   }
 }
 
+extension LessonStep {
+  /// The prompt this screen plays. Main's `ListeningInstead`: a spoken screen answered by listening
+  /// is a listening screen.
+  func shownPromptAudio(spokenMode: SpokenAnswerMode, cantListen: Bool) -> URL? {
+    switch content {
+    case .spokenAnswer(_, let listening?): spokenMode == .listen ? listening.promptAudio : nil
+    case .language(let exercise, _): exercise.promptAudio(cantListen: cantListen)
+    default: nil
+    }
+  }
+}
+
 private struct SpokenAnswerStepView: View {
   @Environment(\.spokenAnswerRecording) private var recording
   @FocusState private var isFocused: Bool

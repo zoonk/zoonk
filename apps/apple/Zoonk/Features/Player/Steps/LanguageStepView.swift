@@ -50,20 +50,16 @@ struct LessonAudioButton: View {
   }
 
   @Environment(\.lessonAudio) private var audio
-  @Environment(LessonPromptAudio.self) private var prompt: LessonPromptAudio?
+  @Environment(LessonPromptAudio.self) private var prompt
 
   let url: URL?
   var style = Style.prominent
 
   var body: some View {
     if let url {
-      let isPlaying = prompt?.playing == url
+      let isPlaying = prompt.playing == url
       let button = Button {
-        if let prompt {
-          prompt.toggle(url, audio: audio)
-        } else {
-          Task { await audio.play(url) }
-        }
+        prompt.toggle(url, audio: audio)
       } label: {
         Label {
           if isPlaying {
@@ -158,8 +154,8 @@ extension LessonStep {
   }
 }
 
-/// Per lesson, above the layout, so folding or unfolding the screen neither stops nor replays its
-/// prompt.
+/// Per lesson or practice question, above the layout, so folding or unfolding the screen neither
+/// stops nor replays its prompt.
 @MainActor
 @Observable
 final class LessonPromptAudio {
