@@ -225,5 +225,7 @@ enum WritingStart: Hashable, Sendable {
   case writing(generationId: String)
   case limitReached(returnsOn: String, task: Task?)
   case signUpRequired
+  /// A notice read again removed the task: nothing was admitted or written.
+  case unavailable
   case failed
 }

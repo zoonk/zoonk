@@ -1,4 +1,5 @@
 import Foundation
+import OpenAPIRuntime
 
 enum MockStartOutcome: Equatable, Sendable {
   typealias Limit = Components.Schemas.AnytimeMock.LimitPayload
@@ -19,6 +20,8 @@ enum MockQuestionsStart: Equatable, Sendable {
   case preparing
   case writing(generationId: String)
   case refused(HelpLimit)
+  /// The day's extra writing allowance is used until `returnsOn`.
+  case writingLimitReached(returnsOn: String)
 }
 
 enum MockStepOutcome: String, Decodable, Sendable {
@@ -176,7 +179,17 @@ struct ExamAPI {
       case .ok(let response): generation = try response.body.json
       case .accepted(let response): generation = try response.body.json
       case .tooManyRequests(let response):
-        return try refused(voiceRefusal(status: 429, error: try? response.body.json))
+        let refusal = voiceRefusal(status: 429, error: try? response.body.json)
+
+        // The day's extra writing is used: the written test's questions wait for that day.
+        if refusal.code == "USAGE_LIMIT_REACHED",
+          let returnsOn = (refusal.details?.value as? [String: (any Sendable)?])?["returnsOn"]
+            as? String
+        {
+          return .writingLimitReached(returnsOn: returnsOn)
+        }
+
+        return try refused(refusal)
       case .forbidden(let response):
         return try refused(voiceRefusal(status: 403, error: try? response.body.json))
       case .code402(let response):
@@ -382,6 +395,7 @@ struct ExamAPI {
       case .tooManyRequests(let response):
         return try WritingStartWire.recode(try response.body.json)
       case .forbidden: return .signUpRequired
+      case .conflict: return .unavailable
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: return .failed

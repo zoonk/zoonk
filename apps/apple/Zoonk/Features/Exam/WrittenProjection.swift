@@ -71,16 +71,24 @@ struct WrittenProjectionSections: View {
 
         switch projection.headline {
         case .below(let part):
+          // A part's name comes from the notice, so it opens a sentence rather than sitting inside one.
           Text(
-            "Below the minimum: \(part.name)", tableName: "Plan",
+            "Below the minimum to pass", tableName: "Plan",
             comment: "A written part's projected points are below its own minimum"
           )
           .typeStyle(.stepHeading)
           if let minimum = part.minimum {
-            Text(
-              "It asks for \(MockLabels.minimum(minimum)) points, whatever your other scores.",
-              tableName: "Plan", comment: "Why a part's own minimum matters"
-            )
+            Group {
+              if minimum.unit == .percent {
+                Text(
+                  "\(part.name) asks for \((minimum.value / 100).formatted(.percent.precision(.fractionLength(0)))) of its points, whatever your other scores.",
+                  tableName: "Plan", comment: "Why a part's own minimum matters, as a share")
+              } else {
+                Text(
+                  "\(part.name) asks for \(WritingLabels.points(minimum.value)) points, whatever your other scores.",
+                  tableName: "Plan", comment: "Why a part's own minimum matters")
+              }
+            }
             .foregroundStyle(.mutedForeground)
           }
         case .unmeasured(let part):
@@ -104,7 +112,9 @@ struct WrittenProjectionSections: View {
       ForEach(projection.parts, id: \.name) { part in
         ScoreRow(
           name: Text(part.name), range: part.range, max: part.max,
-          minimum: part.minimum?.unit == .points ? part.minimum?.value : nil
+          minimum: part.minimum.flatMap { minimum in
+            part.max.map { minimum.unit == .percent ? minimum.value / 100 * $0 : minimum.value }
+          }
         ) {
           PartStanding(part: part)
         }
@@ -176,10 +186,7 @@ private struct ScoreRow<Detail: View>: View {
         if let range {
           RangeBar(range: range, max: max, minimum: minimum)
         } else {
-          RoundedRectangle(cornerRadius: 3)
-            .strokeBorder(.border, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
-            .frame(height: 6)
-            .accessibilityHidden(true)
+          UnmeasuredBar()
         }
       }
 

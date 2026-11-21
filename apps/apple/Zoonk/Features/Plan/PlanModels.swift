@@ -121,6 +121,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
       struct Answer: Decodable, Equatable, Identifiable, Sendable {
         let attemptId: String
         let date: String
+        /// The server's count of the lines sent; nil on answers from before it was counted.
+        let estimatedLines: Int?
         let lines: Int?
         let range: WritingRange?
         let taskKey: String
@@ -138,10 +140,11 @@ struct GoalPlan: Decodable, Equatable, Sendable {
         let presentationShare: Double?
       }
 
-      /// What "Write" starts: each task, and whether it's open now, continues a draft or waits
-      /// for tomorrow's grades.
+      /// What "Write" starts: each task, and whether it's open now, continues an unfinished block
+      /// or waits for tomorrow's grades.
       struct WriteAction: Decodable, Equatable, Sendable {
         let availability: WritingAvailability
+        let blockId: String?
         let taskKey: String
 
         var waits: Bool {
@@ -157,9 +160,15 @@ struct GoalPlan: Decodable, Equatable, Sendable {
       let trend: [Sample]
       let writeActions: [WriteAction]?
 
-      /// The first task open now; else the first, to say when it comes back.
-      var writeAction: WriteAction? {
-        writeActions?.first { !$0.waits } ?? writeActions?.first
+      /// The unfinished task to continue, if any.
+      var unfinished: WriteAction? {
+        writeActions?.first { $0.availability == .continue && $0.blockId != nil }
+      }
+
+      /// Every task waits for tomorrow's grades, so a tap would be refused.
+      var waitsForTomorrow: Bool {
+        guard let writeActions, !writeActions.isEmpty else { return false }
+        return writeActions.allSatisfy(\.waits)
       }
     }
 

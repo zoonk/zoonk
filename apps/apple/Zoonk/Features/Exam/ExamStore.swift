@@ -197,6 +197,8 @@ final class ExamStore {
         try await api.waitForQuestions(token: token, generationId: generationId)
       case .refused(let limit):
         return .refused(limit)
+      case .writingLimitReached(let returnsOn):
+        return .writingLimitReached(returnsOn: returnsOn)
       case .ready, .preparing:
         break
       }

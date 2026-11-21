@@ -7,6 +7,26 @@ import XCTest
 /// Core's `countWritingLines` gives these counts and offsets; the writer, the result and the
 /// server must agree on where the board stops reading.
 final class WritingLinesTests: XCTestCase {
+  /// Core's shared cases (`packages/core/src/exams/essays/_test-utils/writing-lines.json`).
+  func testMatchesCoresSharedCases() {
+    let cases: [(text: String, perLine: Int, limit: Int?, lines: Int, ignoredFrom: Int?)] = [
+      ("e\u{301}🙂\r\n\r\nnext", 2, 2, 4, 8),
+      ("aaaaaaaaaa\n", 10, 1, 1, nil),
+      ("aaaaaaaaaa\r\n", 10, 1, 1, nil),
+      ("aaaaaaaaaa\r", 10, 1, 1, nil),
+      ("aaaaaaaaaa\u{2028}", 10, 1, 1, nil),
+      ("aaaaaaaaaa\u{2029}", 10, 1, 1, nil),
+      ("aaaaaaaaaa\r\n\r\n", 10, 1, 2, 12),
+      ("", 10, 1, 0, nil),
+    ]
+
+    for item in cases {
+      let count = WritingLines.count(item.text, charactersPerLine: item.perLine, limit: item.limit)
+      XCTAssertEqual(count.estimatedLines, item.lines, "lines of \(item.text.debugDescription)")
+      XCTAssertEqual(count.ignoredFrom, item.ignoredFrom, "limit of \(item.text.debugDescription)")
+    }
+  }
+
   func testCountsLinesAsCoreDoes() {
     let cases: [(text: String, perLine: Int, limit: Int?, lines: Int, ignoredFrom: Int?)] = [
       ("", 5, 3, 0, nil),
@@ -19,7 +39,7 @@ final class WritingLinesTests: XCTestCase {
       ("a\n\n\nb", 5, 2, 4, 3),
       ("👍🏽👨‍👩‍👧e\u{301}x", 2, 1, 2, 12),
       ("line\u{2028}two\u{2029}three", 10, nil, 3, nil),
-      ("\n", 5, nil, 2, nil),
+      ("\n", 5, nil, 1, nil),
       ("abcdefghijkl", 3, 2, 4, 6),
     ]
 
@@ -38,13 +58,13 @@ final class WritingLinesTests: XCTestCase {
     XCTAssertEqual(count, .init(estimatedLines: 31, ignoredFrom: 1650))
   }
 
-  func testTextPastTheLimitIsMarkedFromItsOffset() throws {
+  func testTheWordALimitSplitsIsMarkedPastItWhole() throws {
     let grade = try decode(WritingResult.self, Self.levels(ignoredFrom: 6, errors: "[]"))
 
-    let pieces = WritingMarks.pieces(grade: grade, text: "abcdefghij")
+    let pieces = WritingMarks.pieces(grade: grade, text: "abc defghij")
 
     XCTAssertEqual(pieces.map(\.ignored), [false, true])
-    XCTAssertEqual(pieces.last?.start, 6)
+    XCTAssertEqual(pieces.last?.start, 4)
   }
 
   func testAnErrorAfterAnEmojiIsMarkedAtItsUTF16Offset() throws {
@@ -228,7 +248,10 @@ private actor DraftTransport: ClientTransport {
   func send(
     _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
-    let data = try await body.map { try await Data(collecting: $0, upTo: 1 << 20) } ?? Data()
+    var data = Data()
+    if let body {
+      data = try await Data(collecting: body, upTo: 1 << 20)
+    }
 
     switch operationID {
     case "saveWritingDraft":

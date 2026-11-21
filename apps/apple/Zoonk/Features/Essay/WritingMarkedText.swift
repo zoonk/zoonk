@@ -64,7 +64,7 @@ enum WritingMarks {
       text.range(of: quote).map { text.utf16.distance(from: text.startIndex, to: $0.lowerBound) }
     }
     let stepLength = stepQuote?.utf16.count ?? 0
-    let ignoredFrom = min(grade.ignoredFrom ?? length, length)
+    let ignoredFrom = grade.ignoredFrom.map { wordStart(text, min($0, length)) } ?? length
     var cuts: Set<Int> = [0, length, ignoredFrom]
 
     for error in grade.errors {
@@ -88,6 +88,16 @@ enum WritingMarks {
         ignored: start >= ignoredFrom,
         step: stepStart.map { start >= $0 && start < $0 + stepLength } ?? false)
     }
+  }
+
+  /// A line limit falls inside a word as often as not; the word it splits is shown as past it, whole.
+  static func wordStart(_ text: String, _ offset: Int) -> Int {
+    let before = text.utf16.prefix(offset)
+    let splitWord = before.reversed().prefix { unit in
+      guard let scalar = Unicode.Scalar(unit) else { return true }
+      return !scalar.properties.isWhitespace
+    }
+    return offset - splitWord.count
   }
 
   static func attributed(

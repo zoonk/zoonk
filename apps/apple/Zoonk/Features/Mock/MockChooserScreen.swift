@@ -354,10 +354,12 @@ private struct MockChooser: View {
   /// A Start that failed, over the bar where Start was pressed; the bar's note reads it out.
   private var failure: String? {
     switch shownStatus {
-    case .writingLimitReached?:
+    case .writingLimitReached(let returnsOn)?:
       String(
-        localized: "No more grading today. You can start the written test tomorrow.",
-        table: "Mock", comment: "The written test refused: the day's extra grades are used")
+        localized:
+          "No more grading today. You can start the written test on \(PlanDate.longDay(returnsOn, today: PlanDate.today())).",
+        table: "Mock",
+        comment: "The written test refused before it starts: the day's extra grades are used until that day")
     case .notEnoughQuestions?:
       String(
         localized: "Not enough questions for this one yet. Pick another.", table: "Mock",

@@ -1,8 +1,8 @@
 import Foundation
 
 /// Core's `countWritingLines`: the lines a handwritten sheet would take, at `charactersPerLine`
-/// characters a line, erring toward more. A break starts a new line; `ignoredFrom` is where the
-/// text passes `limit`, in UTF-16 code units as the grade's offsets.
+/// characters a line, erring toward more. A break starts a new line, except one that ends the text;
+/// `ignoredFrom` is where the text passes `limit`, in UTF-16 code units as the grade's offsets.
 enum WritingLines {
   struct Count: Equatable {
     var estimatedLines: Int
@@ -16,6 +16,7 @@ enum WritingLines {
     var used = 0
     var ignoredFrom: Int?
     var offset = 0
+    let length = text.utf16.count
 
     for character in text {
       let isBreak = breaks.contains(character)
@@ -30,7 +31,7 @@ enum WritingLines {
       }
 
       if isBreak {
-        lines += 1
+        lines += offset + character.utf16.count < length ? 1 : 0
         used = 0
       } else {
         used += 1

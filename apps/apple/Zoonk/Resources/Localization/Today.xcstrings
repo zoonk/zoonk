@@ -3878,7 +3878,7 @@
         }
       }
     },
-    "Back tomorrow: today's extra grades are used" : {
+    "Back tomorrow: no more grading today" : {
       "comment" : "A written task that waits for tomorrow's grades"
     },
     "Beat the Trickster" : {
@@ -12147,6 +12147,9 @@
         }
       }
     },
+    "Use what you just learned" : {
+      "comment" : "Under a writing drill after a lesson"
+    },
     "We couldn't confirm the exam's details" : {
       "comment" : "What research found didn't match the exam",
       "localizations" : {
@@ -13278,6 +13281,9 @@
           }
         }
       }
+    },
+    "Writing drill" : {
+      "comment" : "A short writing task after a lesson, to use what it taught"
     },
     "Writing practice" : {
       "comment" : "A writing block",

@@ -62,14 +62,13 @@ private struct WritingPointsSection: View {
         if let share = prompt.partMinimum?.share {
           VStack(alignment: .leading, spacing: 6) {
             RangeBar(range: points.total, max: points.max, minimum: share * points.max)
-            Text(
-              "Minimum to pass the written test: \(share.formatted(.percent.precision(.fractionLength(0)))) of its points",
-              tableName: "Essay",
-              comment:
-                "Under a question's score: the written test's own minimum, on the sum of its questions"
-            )
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+            MinimumLegend(
+              Text(
+                "Minimum to pass the written test: \(share.formatted(.percent.precision(.fractionLength(0)))) of the points",
+                tableName: "Essay",
+                comment:
+                  "Under a question's score: the written test's own minimum, on the sum of its questions"
+              ))
           }
         } else {
           RangeBar(range: points.total, max: points.max)
@@ -88,10 +87,7 @@ private struct WritingPointsSection: View {
         }
 
         LabeledContent {
-          Text(
-            verbatim: points.deduction.high > 0
-              ? "−\(WritingLabels.range(points.deduction))" : WritingLabels.range(points.deduction)
-          )
+          Text(verbatim: WritingLabels.deduction(points.deduction))
           .typeStyle(.data)
         } label: {
           VStack(alignment: .leading, spacing: 2) {
@@ -107,6 +103,7 @@ private struct WritingPointsSection: View {
 
   private var errorCount: String { WritingLabels.errors(errors) }
 
+  /// The lines sent, against the question's limit when it has one.
   private var lineCount: String {
     let lines =
       self.lines
@@ -114,10 +111,17 @@ private struct WritingPointsSection: View {
         text, charactersPerLine: prompt.charactersPerLine, limit: prompt.lines
       ).estimatedLines
 
+    guard let limit = prompt.lines else {
+      return String(
+        localized: "about \(lines) lines", table: "Essay",
+        comment: "An answer's estimated handwritten lines")
+    }
+
     return String(
-      localized: "about \(lines) lines", table: "Essay",
-      comment: "An answer's estimated handwritten lines")
+      localized: "about \(lines) of \(limit) lines", table: "Essay",
+      comment: "An answer's estimated handwritten lines, of the question's limit")
   }
+
 }
 
 /// A range of points on its scale: what's surely earned, then what may be, then the rest.
@@ -354,5 +358,39 @@ private struct LevelCells: View {
       }
     }
     .accessibilityHidden(true)
+  }
+}
+
+/// The tick's legend under a meter, marked as the tick is.
+struct MinimumLegend: View {
+  let text: Text
+
+  init(_ text: Text) {
+    self.text = text
+  }
+
+  @ScaledMetric(relativeTo: .footnote) private var tick = 14.0
+
+  var body: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 8) {
+      Capsule()
+        .fill(Color(.foreground))
+        .frame(width: 2, height: tick)
+        .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 3 }
+        .accessibilityHidden(true)
+      text
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+    }
+  }
+}
+
+/// A meter's place while nothing is measured yet: a dashed outline.
+struct UnmeasuredBar: View {
+  var body: some View {
+    RoundedRectangle(cornerRadius: 3, style: .continuous)
+      .strokeBorder(.border, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+      .frame(height: 6)
+      .accessibilityHidden(true)
   }
 }

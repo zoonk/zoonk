@@ -1018,6 +1018,28 @@
         }
       }
     },
+    "%@ asks for %@ of its points, whatever your other scores." : {
+      "comment" : "Why a part's own minimum matters, as a share",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ asks for %2$@ of its points, whatever your other scores."
+          }
+        }
+      }
+    },
+    "%@ asks for %@ points, whatever your other scores." : {
+      "comment" : "Why a part's own minimum matters",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ asks for %2$@ points, whatever your other scores."
+          }
+        }
+      }
+    },
     "%@ at %@ counts %@ more, so your plan gives them more of your time. Weights from %@." : {
       "comment" : "How the learner's course weighs an exam's parts: the ones counted more; the last argument is the source's site",
       "localizations" : {
@@ -1627,6 +1649,9 @@
           }
         }
       }
+    },
+    "%@ of the score" : {
+      "comment" : "A written part's share of the exam's final score"
     },
     "%@ points below the %@ it asks for" : {
       "comment" : "How far a written part is below its own minimum",
@@ -14331,7 +14356,7 @@
         }
       }
     },
-    "Below the minimum: %@" : {
+    "Below the minimum to pass" : {
       "comment" : "A written part's projected points are below its own minimum"
     },
     "Bring %@ back to your lessons?" : {
@@ -21216,9 +21241,6 @@
         }
       }
     },
-    "It asks for %@ points, whatever your other scores." : {
-      "comment" : "Why a part's own minimum matters"
-    },
     "It usually takes a minute or two. Your plan opens here as soon as it's ready." : {
       "comment" : "Explains that the plan appears on its own once it's built",
       "localizations" : {
@@ -22720,6 +22742,9 @@
     "Minimum to pass: %@" : {
       "comment" : "A written part's own minimum"
     },
+    "Minimum to pass: %@ of the points" : {
+      "comment" : "A written part's own minimum, as a share of its points"
+    },
     "Mixed" : {
       "comment" : "Prerequisites with different choices",
       "localizations" : {
@@ -23132,6 +23157,9 @@
           }
         }
       }
+    },
+    "More grading tomorrow" : {
+      "comment" : "Every written task waits for tomorrow"
     },
     "More later: %@" : {
       "comment" : "Tools only later phases use",

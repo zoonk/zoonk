@@ -118,15 +118,23 @@ private struct SubjectContent: View {
     }
     .bottomBar(note: writeNote) {
       // A written part's main action is writing: its lessons are a small part of its time.
-      if let written {
-        let action = written.writeAction
-
+      // An unfinished task opens where it was left; once the day's grading is used the bar says
+      // when it returns instead of offering a tap that would be refused.
+      if let written, written.waitsForTomorrow {
+        Label {
+          Text("More grading tomorrow", tableName: "Plan", comment: "Every written task waits for tomorrow")
+        } icon: {
+          Image(systemName: "clock")
+        }
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+        .frame(maxWidth: .infinity, minHeight: 44)
+      } else if let written {
         WriteNowButton(
-          goalId: goal.id, taskKey: action?.taskKey,
-          continues: action?.availability == .continue, failed: $writeFailed
+          goalId: goal.id, taskKey: written.unfinished?.taskKey,
+          continues: written.unfinished != nil, failed: $writeFailed
         )
         .keyboardShortcut(.defaultAction)
-        .disabled(action?.waits == true)
       } else if let chapterId = nextChapterId {
         Button {
           router.open(chapterRoute(chapterId))
@@ -151,15 +159,7 @@ private struct SubjectContent: View {
   }
 
   private var writeNote: BarNote? {
-    if written?.writeAction?.waits == true {
-      return BarNote(
-        LocalizedStringResource(
-          "Back tomorrow: today's extra grades are used", table: "Today",
-          comment: "A written task that waits for tomorrow's grades"),
-        tone: .status)
-    }
-
-    return writeFailed
+    writeFailed
       ? BarNote(
         LocalizedStringResource(
           "That didn't go through. Try again in a moment.", table: "Plan",
@@ -183,8 +183,27 @@ private struct SubjectContent: View {
   /// the exam gives no question count, and how much is done while lessons teach it. Topics and
   /// chapters count themselves over their lists.
   private var facts: [String] {
+    if let written {
+      return writtenFacts(written)
+    }
+
     let inLessons = subject.notPlannedReason == nil && subject.preparation == nil
     return [origin, examShare, inLessons ? doneShare : nil].compactMap(\.self)
+  }
+
+  /// A written part says how many questions, its official time and its share of the score.
+  private func writtenFacts(_ written: GoalPlan.WrittenPractice.Subject) -> [String] {
+    [
+      written.questions.map {
+        String(localized: "\($0) questions", table: "Plan", comment: "A written part's questions")
+      },
+      written.minutes.map { studyDuration(minutes: $0) },
+      written.share.map {
+        String(
+          localized: "\($0.formatted(.percent.precision(.fractionLength(0)))) of the score",
+          table: "Plan", comment: "A written part's share of the exam's final score")
+      },
+    ].compactMap(\.self)
   }
 
   private var origin: String? {

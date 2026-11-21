@@ -17,7 +17,7 @@ struct EssayScreen: View {
     NavigationStack {
       Group {
         switch shownStart {
-        case .writing, .failed, .limitReached, .signUpRequired:
+        case .writing, .failed, .limitReached, .signUpRequired, .unavailable:
           WritingStartView(
             blockId: blockId, start: shownStart ?? .failed, onReady: { started = $0 })
         case .ready, nil:

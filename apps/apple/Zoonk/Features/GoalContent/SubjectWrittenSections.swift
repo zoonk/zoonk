@@ -25,21 +25,23 @@ private struct SubjectWrittenPoints: View {
 
         if let range = points.range, let max = points.max {
           PointsReadout(range: range, max: max)
-          RangeBar(
-            range: range, max: max,
-            minimum: points.minimum?.unit == .points ? points.minimum?.value : nil)
         } else {
           Text("Not measured yet", tableName: "Plan", comment: "A part with no graded answer yet")
             .typeStyle(.stepHeading)
         }
 
+        if let max = points.max {
+          let minimum = points.minimum.flatMap { minimumShare($0, max: max) }.map { $0 * max }
+
+          if let range = points.range {
+            RangeBar(range: range, max: max, minimum: minimum)
+          } else {
+            UnmeasuredBar()
+          }
+        }
+
         if let minimum = points.minimum {
-          Text(
-            "Minimum to pass: \(MockLabels.minimum(minimum))", tableName: "Plan",
-            comment: "A written part's own minimum"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          MinimumLegend(minimumText(minimum))
         }
       }
       .padding(.vertical, 4)
@@ -60,6 +62,21 @@ private struct SubjectWrittenPoints: View {
       }
     }
   }
+}
+
+/// Where a minimum falls on a scale, as a share of it.
+private func minimumShare(_ minimum: PointsMinimum, max: Double) -> Double? {
+  minimum.unit == .percent ? minimum.value / 100 : max > 0 ? minimum.value / max : nil
+}
+
+private func minimumText(_ minimum: PointsMinimum) -> Text {
+  minimum.unit == .percent
+    ? Text(
+      "Minimum to pass: \((minimum.value / 100).formatted(.percent.precision(.fractionLength(0)))) of the points",
+      tableName: "Plan", comment: "A written part's own minimum, as a share of its points")
+    : Text(
+      "Minimum to pass: \(WritingLabels.points(minimum.value))", tableName: "Plan",
+      comment: "A written part's own minimum")
 }
 
 /// One small bar per answer, oldest first, the latest in full color.
@@ -172,11 +189,27 @@ private struct SubjectWrittenAnswers: View {
     }
   }
 
+  /// The server's count of the lines sent, against the question's limit when it has one.
+  private func lineFact(_ answer: GoalPlan.WrittenPractice.Subject.Answer) -> String? {
+    switch (answer.estimatedLines, answer.lines) {
+    case (nil, nil):
+      nil
+    case (nil, let limit?):
+      String(localized: "\(limit) lines", table: "Plan", comment: "A written question's line limit")
+    case (let used?, nil):
+      String(
+        localized: "about \(used) lines", table: "Essay",
+        comment: "An answer's estimated handwritten lines")
+    case (let used?, let limit?):
+      String(
+        localized: "about \(used) of \(limit) lines", table: "Essay",
+        comment: "An answer's estimated handwritten lines, of the question's limit")
+    }
+  }
+
   private func facts(_ answer: GoalPlan.WrittenPractice.Subject.Answer) -> [String] {
     [
-      answer.lines.map {
-        String(localized: "\($0) lines", table: "Plan", comment: "A written question's line limit")
-      },
+      lineFact(answer),
       answer.versions > 1
         ? String(
           localized: "\(answer.versions) versions", table: "Plan",
@@ -185,4 +218,5 @@ private struct SubjectWrittenAnswers: View {
       PlanDate.text(answer.date, today: PlanDate.today()),
     ].compactMap(\.self)
   }
+
 }

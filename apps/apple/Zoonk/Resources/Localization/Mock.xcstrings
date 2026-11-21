@@ -8300,8 +8300,8 @@
         }
       }
     },
-    "No more grading today. You can start the written test tomorrow." : {
-      "comment" : "The written test refused: the day's extra grades are used"
+    "No more grading today. You can start the written test on %@." : {
+      "comment" : "The written test refused before it starts: the day's extra grades are used until that day"
     },
     "No written part" : {
       "comment" : "A mock exam with only the exam's objective questions, without its essay",

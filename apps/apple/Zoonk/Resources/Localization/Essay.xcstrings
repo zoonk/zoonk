@@ -276,6 +276,20 @@
         }
       }
     },
+    "−%@ to −%@" : {
+      "comment" : "Points language errors take off an answer, as a range, like '−0.3 to −0.6'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "−%1$@ to −%2$@"
+          }
+        }
+      }
+    },
+    "0 errors" : {
+      "comment" : "An answer with no language errors"
+    },
     "A detail" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -375,13 +389,13 @@
         }
       }
     },
-    "about %lld of %lld lines · the board won't read past line %lld" : {
-      "comment" : "An answer longer than the question's line limit",
+    "about %lld of %lld lines · %lld won't be read" : {
+      "comment" : "The approximate line count of a written answer past its limit; the lines past it are ones the exam board won't read.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "about %1$lld of %2$lld lines · the board won't read past line %3$lld"
+            "value" : "about %1$lld of %2$lld lines · %3$lld won't be read"
           }
         }
       }
@@ -444,6 +458,9 @@
           }
         }
       }
+    },
+    "Checking it against the exam's criteria…" : {
+      "comment" : "Under the step of writing a question"
     },
     "Comments" : {
       "comment" : "Comments on each criterion",
@@ -1141,6 +1158,9 @@
     },
     "Left for tomorrow" : {
       "comment" : "The task that waits"
+    },
+    "Minimum to pass the written test: %@ of the points" : {
+      "comment" : "Under a question's score: the written test's own minimum, on the sum of its questions"
     },
     "Missing" : {
       "comment" : "A criterion of a written answer not met"
@@ -2311,6 +2331,9 @@
     "The question didn't load" : {
       "comment" : "Loading failed"
     },
+    "This task is no longer on your exam" : {
+      "comment" : "A written task the exam's notice removed"
+    },
     "To what end" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -3026,6 +3049,9 @@
           }
         }
       }
+    },
+    "Your exam's notice changed. Nothing was used." : {
+      "comment" : "Under a written task the notice removed"
     },
     "Your last grade" : {
       "comment" : "The last grade while rewriting",

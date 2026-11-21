@@ -4,6 +4,7 @@ import SwiftUI
 /// are used. Asking again is always the learner's tap, or the run they started ending.
 struct WritingStartView: View {
   @Environment(ExamStore.self) private var store
+  @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
 
   let blockId: String
@@ -24,6 +25,8 @@ struct WritingStartView: View {
           onContinue: { dismiss() })
       case .writing(let generationId):
         waiting(generationId)
+      case .unavailable:
+        unavailable
       case .signUpRequired:
         ZoonkList {
           Section { LimitNotice(limit: .signUpRequired) }
@@ -75,6 +78,33 @@ struct WritingStartView: View {
       }
 
       follow(generationId)
+    }
+  }
+
+  private var unavailable: some View {
+    ZoonkList {
+      Section {
+        PageHeader(
+          Text(
+            "This task is no longer on your exam", tableName: "Essay",
+            comment: "A written task the exam's notice removed"),
+          supporting: Text(
+            "Your exam's notice changed. Nothing was used.", tableName: "Essay",
+            comment: "Under a written task the notice removed")
+        ) {
+          EmptyView()
+        }
+      }
+    }
+    .lonePage()
+    .bottomBar {
+      Button {
+        router.showRoot(of: .today)
+      } label: {
+        Text("Today", tableName: "Essay", comment: "Leaves a finished written task for Today")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     }
   }
 
