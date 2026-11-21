@@ -51,6 +51,8 @@ Each push starts CI and some reviewers again: watch and judge once more until no
 
 A bigger UX change the user should try by hand gets a Vercel preview as the very last step; a small UI change needs only its screenshots ([preview](references/preview.md)).
 
+You mark the PR ready yourself before handing it back: never hand back a draft or ask the user whether to mark it ready. Every step [verify](../verify/SKILL.md) requires for the change, the learner walk included, is done before that, never listed in the handoff as left for the user or as a decision for them. When something truly blocks a step, such as an outage or access only the user can give, raise it as a blocker as soon as you meet it, saying what you need, and finish the step once it's cleared.
+
 Hand back with:
 
 - the PR link and its head commit
