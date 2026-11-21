@@ -947,8 +947,11 @@ struct GenerationFollower<Content: View>: View {
       return
     }
 
-    // A run saves its id within a few seconds; with none after about 45 seconds, it didn't start.
-    for _ in 0..<22 {
+    // Mock papers can be owed while another paper is writing; the lookup ends that wait.
+    var attempts = 0
+    while !Task.isCancelled && (kind == .mockPaper || attempts < 22) {
+      attempts += 1
+
       if let id = await readGenerationID() {
         followedID = id
         return
@@ -961,7 +964,7 @@ struct GenerationFollower<Content: View>: View {
       }
     }
 
-    if restart != nil {
+    if !Task.isCancelled, restart != nil {
       failure = .notStarted
     }
   }

@@ -76,13 +76,13 @@ export function useWorkflowRun({
   }, [canPoll, isWaiting]);
 
   useEffect(() => {
-    if (!isWaiting) {
+    if (!isWaiting || kind === "mockPaper") {
       return;
     }
 
     const timer = setTimeout(() => dispatch({ type: "notStarted" }), NOT_STARTED_MS);
     return () => clearTimeout(timer);
-  }, [isWaiting]);
+  }, [isWaiting, kind]);
 
   useEffect(() => {
     if (state.reconnectIn === null) {

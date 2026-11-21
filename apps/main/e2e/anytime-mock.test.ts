@@ -299,7 +299,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.context().close();
   });
 
-  test("a scheduled mock follows its paper on arrival and offers Start when it is written", async ({
+  test("a scheduled mock follows its paper after a long queue and offers Start when it is written", async ({
     browser,
   }) => {
     const { blueprint, goal, plan, skills, user } = await createAnytimeMockLearner({
@@ -316,11 +316,26 @@ test.describe("Mocks whenever the learner wants", () => {
     const page = await openAs(browser, user);
 
     try {
+      await page.clock.install();
       await followRun({ events, page, runId });
 
+      const starting = { generationId: null, namespace: null, status: "starting" };
+      let claimed = false;
+
       await page.route(`**/v1/goals/${goal.id}/mock-writing?*`, (route) =>
-        route.fulfill({ json: { generationId: runId, namespace, status: "writing" } }),
+        route.fulfill({
+          json: claimed ? { generationId: runId, namespace, status: "writing" } : starting,
+        }),
       );
+
+      const lookup = page.waitForResponse(
+        (response) => new URL(response.url()).pathname === `/v1/goals/${goal.id}/mock-writing`,
+      );
+
+      await page.goto(`/challenge/${mock.id}`);
+      await lookup;
+      await page.clock.fastForward(60_000);
+      await expect(page.getByRole("progressbar")).toBeVisible();
 
       const stream = page.waitForRequest(
         (request) =>
@@ -328,8 +343,7 @@ test.describe("Mocks whenever the learner wants", () => {
           new URL(request.url()).pathname === `/v1/generations/${runId}/events`,
       );
 
-      await page.goto(`/challenge/${mock.id}`);
-
+      claimed = true;
       const request = await stream;
       expect(new URL(request.url()).searchParams.get("namespace")).toBe(namespace);
 
