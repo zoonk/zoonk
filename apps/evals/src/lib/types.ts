@@ -105,6 +105,7 @@ type TaskResult<T = unknown> = {
   usage: TaskUsage;
   userPrompt: string;
   systemPrompt: string;
+  initialPrompt?: { systemPrompt: string; userPrompt: string };
   probabilities?: Record<string, number>;
 };
 
@@ -241,7 +242,8 @@ export type RegisteredTask = Omit<
 
 export type OutputEntry = TokenUsage & {
   caseInputHash?: string;
-  generation?: { model: string; reasoning: Reasoning };
+  generation?: { model: string; reasoning: Reasoning; sourceHash?: string };
+  initialPromptHashes?: { system: string; user: string };
   testCaseId: string;
   output: string;
   /** Calls the eval made around the task, such as a simulated learner: spent, but not run cost. */

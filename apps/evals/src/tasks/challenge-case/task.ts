@@ -36,6 +36,7 @@ async function generateFirstChallengeDraft(params: ChallengeCaseParams) {
 
   return {
     data: written,
+    initialPrompt: { systemPrompt: plan.systemPrompt, userPrompt: plan.userPrompt },
     systemPrompt: `${plan.systemPrompt}\n\n${script.systemPrompt}`,
     usage: sumLanguageModelUsage([plan.usage, script.usage]),
     userPrompt: `${plan.userPrompt}\n---\n${script.userPrompt}`,

@@ -1,4 +1,3 @@
-import { isDeepStrictEqual } from "node:util";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import z from "zod";
 import { getRunCost } from "../cost";
@@ -6,7 +5,7 @@ import { evalImageDigest, readEvalImage } from "../image-files";
 import { getModelById } from "../models";
 import { loadModelOutputs } from "../output-loader";
 import { type OutputEntry } from "../types";
-import { hash, hashJson, promptHash } from "./identity";
+import { hash, hashJson } from "./identity";
 import { type Variant, identifier, type runSchema, side } from "./schemas";
 import { loadComparison } from "./storage";
 
@@ -29,29 +28,12 @@ export function variantFor({
   generation: NonNullable<OutputEntry["generation"]>;
   modelId: string;
 }): Variant {
-  const { model, reasoning } = generation;
-
-  const pipeline = entry.calls?.length ? entry.calls.map((call) => call.modelId) : [model];
-
   return {
     model: modelId,
-    pipeline,
-    reasoning,
-    settingsHash: hash(
-      JSON.stringify({
-        model,
-        pipeline,
-        reasoning,
-        service:
-          entry.calls
-            ?.map((candidate) => [candidate.serviceTier ?? null, candidate.speed ?? null])
-            .filter(
-              (value, index, accumulator) =>
-                index === 0 || !isDeepStrictEqual(value, accumulator[index - 1]),
-            ) ?? [],
-      }),
-    ),
-    systemPromptHash: hash(entry.systemPrompt),
+    pipeline: [generation.model],
+    reasoning: generation.reasoning,
+    settingsHash: hashJson(generation),
+    systemPromptHash: entry.initialPromptHashes?.system ?? hash(entry.systemPrompt),
   };
 }
 
@@ -116,6 +98,10 @@ async function sealedSource(taskId: string, spec: string): Promise<Source> {
 const imagePathSchema = z.object({ imagePath: z.string() });
 const imagePathFor = (output: string) => imagePathSchema.parse(JSON.parse(output)).imagePath;
 
+export function promptHashFor(entry: OutputEntry) {
+  return entry.initialPromptHashes?.user ?? hash(entry.userPrompt);
+}
+
 export async function readRunOutput(output: string, image: boolean) {
   return image ? Buffer.from(await readEvalImage(imagePathFor(output))) : output;
 }
@@ -172,7 +158,7 @@ async function savedArtifact({
       hash: hash(captured.output),
       ...(image ? { mediaType: "image/webp" as const } : {}),
       systemPromptHash: variant.systemPromptHash,
-      userPromptHash: promptHash(entry.userPrompt),
+      userPromptHash: promptHashFor(entry),
     },
   };
 }
@@ -209,7 +195,7 @@ export async function source(taskId: string, spec: string): Promise<Source> {
   }
 
   const outputs = saved.flatMap((entry) => {
-    if (!entry.generation || !entry.caseInputHash) {
+    if (!entry.generation?.sourceHash || !entry.caseInputHash) {
       return [];
     }
 

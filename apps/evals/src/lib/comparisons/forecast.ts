@@ -120,7 +120,7 @@ export function confirmForecast(
       forecast: {
         byReader,
         conditional:
-          "Estimates reverse reads on half of matched pairs and reserve reads on a third, up to the cap. Seat reads cost $0 on the gateway when they succeed. The estimate includes gateway fallback for every seat read. Answer-key solves and verification are additional.",
+          "Includes a read from every required family on every matched pair. Estimates reverse reads on half of matched pairs and optional reads on a third, up to the cap. Seat reads cost $0 on the gateway when they succeed. The estimate includes gateway fallback for every seat read. Answer-key solves and verification are additional.",
         generation,
         initialGatewayUsd: usd,
       },
