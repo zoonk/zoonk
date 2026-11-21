@@ -75,9 +75,9 @@ export function getSectionPlace({
   itemIds: readonly string[];
   navigation: SectionNavigation | null | undefined;
   rows: readonly SectionRow[];
-}): { changesLeft: number | null; resume: number } {
+}): { changedItemIds: string[]; changesLeft: number | null; resume: number } {
   if (!navigation?.forwardOnly) {
-    return { changesLeft: null, resume: getFreePlace({ itemIds, rows }) };
+    return { changedItemIds: [], changesLeft: null, resume: getFreePlace({ itemIds, rows }) };
   }
 
   const changesLeft =
@@ -85,5 +85,9 @@ export function getSectionPlace({
       ? null
       : Math.max(0, navigation.answerChanges - countChanges(rows));
 
-  return { changesLeft, resume: Math.max(0, getReached({ itemIds, rows })) };
+  return {
+    changedItemIds: rows.filter((row) => row.changes > 0).map((row) => row.itemId),
+    changesLeft,
+    resume: Math.max(0, getReached({ itemIds, rows })),
+  };
 }
