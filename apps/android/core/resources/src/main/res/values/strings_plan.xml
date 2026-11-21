@@ -559,7 +559,8 @@
     <string name="plan_time_none_month">There isn\'t enough time to cover everything by %1$s.</string>
     <string name="plan_time_none_by_then">There isn\'t enough time to cover everything.</string>
     <string name="plan_time_takes_everything">Covering everything takes about %1$s a day.</string>
-    <string name="plan_time_takes_most">The most you can cover is about %1$s, at %2$s a day.</string>
+    <!-- When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more. -->
+    <string name="plan_time_covers_most_any_time">%1$s a day covers as much as any time can.</string>
     <!-- Under a daily time that starts every exam topic but doesn't cover everything: each topic's first lessons are in the plan. %1$s is a day, such as "May 5". -->
     <string name="plan_time_first_lessons_every_exam_topic">Covers the first lessons of every exam topic by %1$s.</string>
     <!-- Under a daily time that starts every exam topic but doesn't cover everything: each topic's first lessons are in the plan. %1$s is a month and year, such as "May 2027". -->

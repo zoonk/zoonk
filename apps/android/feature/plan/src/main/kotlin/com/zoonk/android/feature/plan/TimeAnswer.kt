@@ -166,11 +166,7 @@ internal fun everythingTakesText(
         }
 
         else -> {
-            stringResource(
-                R.string.plan_time_takes_most,
-                formatPercent(full.coveredShare, locale),
-                formatMinutes(full.minutes, locale),
-            )
+            stringResource(R.string.plan_time_covers_most_any_time, formatMinutes(full.minutes, locale))
         }
     }
 }

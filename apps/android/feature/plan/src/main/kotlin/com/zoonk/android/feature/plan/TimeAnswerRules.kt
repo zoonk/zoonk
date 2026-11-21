@@ -56,14 +56,13 @@ fun suggestedMinutes(found: PlanTimeToCover?): Int? = found?.suggested?.minutes?
 
 /** The longest time worth studying: what covers everything, or as much as any time does when part never fits. */
 data class FullTime(
-    val coveredShare: Double,
     val everything: Boolean,
     val minutes: Int,
 )
 
 internal fun fullTime(found: PlanTimeToCover?): FullTime? =
-    found?.recommendedMinutes?.let { FullTime(coveredShare = 1.0, everything = true, minutes = it.toInt()) }
-        ?: found?.most?.let { FullTime(it.coveredShare, everything = false, minutes = it.minutes.toInt()) }
+    found?.recommendedMinutes?.let { FullTime(everything = true, minutes = it.toInt()) }
+        ?: found?.most?.let { FullTime(everything = false, minutes = it.minutes.toInt()) }
 
 /** The picker's marked times: the suggestion, and beside a focus one the time that covers everything. */
 data class MarkedTimes(
