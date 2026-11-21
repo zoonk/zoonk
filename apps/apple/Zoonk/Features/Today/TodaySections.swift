@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Being done for the day, or resting, never hides what comes next. Its first lesson and Keep
+/// Being done for the day, resting, or waiting on a mock never hides what comes next. Its first lesson and Keep
 /// learning add the same lessons, each as its own tap, so only the one pressed spins.
 struct TodayUpNextSection: View {
   let view: TodayView
