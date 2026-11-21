@@ -19,7 +19,7 @@ import { withTestSubmissionClaim } from "../_utils/test-submission-claim";
 import { writeLearnerChange } from "../_utils/write-learner-change";
 import { type ItemAnswerInput } from "../contract";
 import { recordLearnerAnswer } from "../record-learner-answer";
-import { countSkippableItems, getChapterSkills } from "./_utils/chapter-items";
+import { getChapterTestOutSkills } from "./_utils/chapter-items";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   type TestOutReceipt,
@@ -218,19 +218,17 @@ async function submitOwnedTestOut({
   }
 
   const plan = await loadTestOutPlan(goalId);
-  const chapterSkills = getChapterSkills({ chapterId, plan });
+  const eligible = getChapterTestOutSkills({ chapterId, plan });
 
-  if (chapterSkills.length === 0) {
-    return { status: "notFound" };
+  if (eligible.status !== "ready") {
+    return eligible;
   }
 
-  if (countSkippableItems({ plan, skills: chapterSkills }) === 0) {
-    return { status: "nothingToSkip" };
-  }
+  const chapterSkillIds = eligible.skills.map(({ id }) => id);
 
   const graded = await gradeAnswers({
     answers: firstAnswerPerItem(input.answers),
-    chapterSkillIds: chapterSkills.map((skill) => skill.id),
+    chapterSkillIds,
   });
 
   if (!graded) {
@@ -238,7 +236,7 @@ async function submitOwnedTestOut({
   }
 
   const score = scoreTestOut({
-    chapterSkillIds: chapterSkills.map((skill) => skill.id),
+    chapterSkillIds,
     results: graded.map(({ isCorrect, item }) => ({ isCorrect, skillId: item.skillId })),
   });
 

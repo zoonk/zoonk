@@ -8,7 +8,9 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { pickPlacementItemSkills } from "../../lookahead/placement-item-skills";
 import { askPlacement } from "../_test-utils/exam-test-goal";
 import { loadSkillEvidence } from "../_utils/load-skill-claims";
+import { applyPlacement } from "./_utils/apply-placement";
 import { pickSessionPlacementItems } from "./_utils/session-placement-items";
+import { answerPlacementQuestion } from "./answer-placement-question";
 
 async function examGoalFixture() {
   const [user, skill, blueprint] = await Promise.all([
@@ -84,7 +86,7 @@ describe("placement questions for an exam goal", () => {
           graph: {
             phases: [{ milestone: null, name: "Basics" }],
             skills: [
-              graphSkill("Objective", objective),
+              graphSkill("Redação Oficial", objective),
               { ...graphSkill(writtenArea, written), outcome: true },
             ],
           },
@@ -104,6 +106,18 @@ describe("placement questions for an exam goal", () => {
       examItemFixture({ blueprintId: blueprint.id, skillId: written.id }),
       examItemFixture({ blueprintId: blueprint.id, skillId: objective.id }),
     ]);
+
+    await expect(
+      answerPlacementQuestion({
+        goalId: goal.id,
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 1000,
+          itemId: wrongBankItem.id,
+          timeZone: "UTC",
+        },
+      }),
+    ).resolves.toStrictEqual({ status: "invalidItem" });
 
     const skills = [written, objective].map((node, index) => ({
       areaId: `phase:${index}`,
@@ -153,6 +167,16 @@ describe("placement questions for an exam goal", () => {
 
     expect(evidence.claims.has(written.id)).toBe(false);
     expect(evidence.known.has(written.id)).toBe(false);
+
+    const placed = await applyPlacement({
+      goalId: goal.id,
+      now: new Date(),
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(placed.state.knownSkillIds).not.toContain(written.id);
+    expect(placed.testedOutPlanItemIds).toStrictEqual([]);
   });
 
   it("waits for the exam's question while it's written, then asks it over the general one", async () => {

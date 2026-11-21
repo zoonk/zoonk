@@ -83,7 +83,7 @@ function claimRound({
     await tx.essayGradeClaim.deleteMany({ where: { id: { in: claimedIds } } });
 
     await tx.essayGradeClaim.createMany({
-      data: claimedIds.map((id) => ({ createdAt: now, id, localDate: receipt.localDate, userId })),
+      data: claimedIds.map((id) => ({ createdAt: now, id, userId })),
     });
 
     return rounds;

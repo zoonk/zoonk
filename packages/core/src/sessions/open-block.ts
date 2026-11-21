@@ -8,10 +8,11 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
 import { isCurrentSession } from "./_utils/current-session";
 import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
+import { loadExtraWritingAvailability } from "./_utils/extra-writing-availability";
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
 import { followSavedDay } from "./_utils/refresh-study-day-selection";
-import { type StudyBlockView, getNextBlockId, toStudyBlockView } from "./_utils/session-view";
+import { type StudyBlockView, getNextBlock, toStudyBlockView } from "./_utils/session-view";
 import {
   STUDY_SESSION_INCLUDE,
   type StudySessionRow,
@@ -38,6 +39,29 @@ type OpenedSession =
     }
   | { status: "goalNotActive" | "retryable" };
 
+async function loadOpenedBlockViews({
+  blocks,
+  now,
+  timeZone,
+  userId,
+}: {
+  blocks: StudySessionRow["blocks"];
+  now: Date;
+  timeZone: string;
+  userId: string;
+}) {
+  const withWritingAvailability = await loadExtraWritingAvailability({
+    blocks,
+    now,
+    timeZone,
+    userId,
+  });
+
+  return blocks.map((block) =>
+    withWritingAvailability(toStudyBlockView({ answeredItemIds: new Set(), block, blocks })),
+  );
+}
+
 async function openSavedSession({
   session,
   targetBlockId,
@@ -50,7 +74,8 @@ async function openSavedSession({
   userId: string;
 }): Promise<OpenedSession> {
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: deviceTimeZone });
-  const current = isCurrentSession({ now: new Date(), session, timeZone });
+  const now = new Date();
+  const current = isCurrentSession({ now, session, timeZone });
 
   if (current && session.goal && session.goal.status !== "active") {
     return { status: "goalNotActive" };
@@ -73,8 +98,11 @@ async function openSavedSession({
     phaseChallengesRequired: required,
   });
 
-  const targetId = targetBlockId ?? getNextBlockId(visible);
-  const target = visible.find((block) => block.id === targetId);
+  const visibleViews = await loadOpenedBlockViews({ blocks: visible, now, timeZone, userId });
+
+  const target = targetBlockId
+    ? visible.find((block) => block.id === targetBlockId)
+    : getNextBlock(visibleViews);
 
   // Queue reconciliation only appends work, so existing work does not wait for it. Entitlement replacement still runs before target selection.
   const selected =
@@ -84,16 +112,24 @@ async function openSavedSession({
       ? await followSavedDay({ session: refilled, timeZone })
       : refilled;
 
-  const blocks = withoutLockedPhaseChallenges({
-    blocks: selected.blocks,
-    phaseChallengesRequired: required,
-  });
+  const views =
+    selected === refilled
+      ? visibleViews
+      : await loadOpenedBlockViews({
+          blocks: withoutLockedPhaseChallenges({
+            blocks: selected.blocks,
+            phaseChallengesRequired: required,
+          }),
+          now,
+          timeZone,
+          userId,
+        });
 
   const view = await readLessonScreens({
-    blocks: blocks.map((block) => toStudyBlockView({ answeredItemIds: new Set(), block, blocks })),
+    blocks: views,
     current,
     id: selected.id,
-    nextBlockId: getNextBlockId(blocks),
+    nextBlockId: getNextBlock(views)?.id ?? null,
   });
 
   return { session: view, status: "ready", userId };

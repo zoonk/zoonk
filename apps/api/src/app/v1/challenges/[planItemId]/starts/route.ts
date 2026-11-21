@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { signUpRequiredError } from "@/lib/lesson-player-errors";
 import { challengePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
@@ -19,6 +20,10 @@ async function startChallengeRoute(
 
   if (result.status === "ready") {
     return NextResponse.json(result.destination);
+  }
+
+  if (result.status === "signUpRequired") {
+    return signUpRequiredError();
   }
 
   return result.status === "notToday"

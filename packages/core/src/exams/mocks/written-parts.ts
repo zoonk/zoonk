@@ -1,4 +1,5 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { withoutImplausibleWrittenCounts } from "../../library/exams/written-grading";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { namesMatch } from "../_utils/name-match";
 import { type MockSectionPlan } from "./mock-plan";
@@ -18,11 +19,19 @@ export type MockEssayCandidate = { itemId: string; taskKey: string };
 
 type WrittenPlacement = { essays: string[]; joins: number | null; part: MockWrittenPart };
 
-export function getDayWrittenParts(input: {
+export function getDayWrittenParts({
+  day,
+  structure,
+}: {
   day: number | null;
   structure: ExamStructure | null;
 }): MockWrittenPart[] {
-  return [...Map.groupBy(listWrittenTasks(input), (task) => task.section)].map(([name, tasks]) => ({
+  const writtenTasks = listWrittenTasks({
+    day,
+    structure: structure && withoutImplausibleWrittenCounts(structure),
+  });
+
+  return [...Map.groupBy(writtenTasks, (task) => task.section)].map(([name, tasks]) => ({
     minutes: tasks[0]?.minutes ?? null,
     name,
     tasks,

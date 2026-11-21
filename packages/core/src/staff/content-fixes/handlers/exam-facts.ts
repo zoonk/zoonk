@@ -1,5 +1,6 @@
 import { DbNull, sql } from "@zoonk/db";
 import { z } from "zod";
+import { refreshBlueprintWritingSkills } from "../../../learner/writing-skills";
 import {
   examEditionSchema,
   examStructureSchema,
@@ -103,8 +104,8 @@ export const blueprintSet = sharedRowHandler({
 
     return null;
   },
-  write: (tx, id, values) =>
-    tx.examBlueprint.update({
+  write: async (tx, id, values) => {
+    const updated = await tx.examBlueprint.update({
       data: {
         ...z
           .object({ board: text.nullable(), name: text, role: text.nullable() })
@@ -143,7 +144,18 @@ export const blueprintSet = sharedRowHandler({
           : { structure: examStructureSchema.parse(values.structure) }),
       },
       where: { id },
-    }),
+    });
+
+    if (values.structure !== undefined) {
+      await refreshBlueprintWritingSkills({
+        blueprintId: id,
+        structure: examStructureSchema.parse(values.structure),
+        tx,
+      });
+    }
+
+    return updated;
+  },
 });
 
 const cutoffFields = {

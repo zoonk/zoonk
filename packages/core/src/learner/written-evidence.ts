@@ -2,13 +2,21 @@ import "server-only";
 import { type Item, type TransactionClient } from "@zoonk/db";
 import { type z } from "zod";
 import { readEssayContent } from "../exams/essays/_utils/essay-content";
-import { writtenAnswerSchema } from "../exams/essays/writing-contract";
+import { type writtenAnswerSchema } from "../exams/essays/writing-contract";
 import { type ClaimEvent } from "./_utils/skill-claims";
+import { type WrittenSample, loadWrittenSamples } from "./facts/written-samples";
 
 type WrittenAnswer = z.infer<typeof writtenAnswerSchema>;
-type Sample = { id: string; answer: unknown; answeredAt: Date; item: Item | null; localDate: Date };
 
-function isStrong(grade: WrittenAnswer["grade"]) {
+type Sample = Pick<WrittenSample, "answeredAt" | "id" | "itemId" | "localDate"> & {
+  answer: {
+    conditions: Pick<WrittenAnswer["conditions"], "version">;
+    grade: { criteria: Pick<WrittenAnswer["grade"]["criteria"][number], "level">[] };
+  };
+  prompt: { assessedSkillIds: string[] };
+};
+
+function isStrong(grade: Sample["answer"]["grade"]) {
   return (
     grade.criteria.length > 0 &&
     grade.criteria.every(({ level }) => level === "strong" || level === "complete")
@@ -26,15 +34,12 @@ export function readWritingEvidence(
     (first, second) => first.answeredAt.getTime() - second.answeredAt.getTime(),
   );
 
-  return ordered.flatMap(({ answer, answeredAt, id, item, localDate }) => {
-    const writing = readEssayContent(item)?.writing;
-    const saved = writtenAnswerSchema.safeParse(answer).data;
-
-    if (!item || !writing || !saved || saved.conditions.version !== "firstDraft") {
+  return ordered.flatMap(({ answer, answeredAt, id, itemId, localDate, prompt }) => {
+    if (answer.conditions.version !== "firstDraft") {
       return [];
     }
 
-    return writing.assessedSkillIds.flatMap((skillId): ClaimEvent[] => {
+    return prompt.assessedSkillIds.flatMap((skillId): ClaimEvent[] => {
       if (!skillIds.has(skillId)) {
         return [];
       }
@@ -42,18 +47,18 @@ export function readWritingEvidence(
       const previous = last.get(skillId);
       const day = localDate.getTime();
 
-      if (previous?.promptIds.has(item.id)) {
+      if (previous?.promptIds.has(itemId)) {
         return [];
       }
 
       const promptIds = previous?.promptIds ?? new Set<string>();
-      promptIds.add(item.id);
+      promptIds.add(itemId);
 
       if (previous && previous.day >= day) {
         return [];
       }
 
-      const strong = isStrong(saved.grade);
+      const strong = isStrong(answer.grade);
       last.set(skillId, { day, promptIds, strong });
 
       const strongClaim = previous?.strong ? "confirmed" : "toConfirm";
@@ -86,13 +91,10 @@ export async function loadWritingEvidence({
     return [];
   }
 
-  const samples = await tx.attempt.findMany({
-    include: { item: true },
-    where: {
-      answer: { equals: "firstDraft", path: ["conditions", "version"] },
-      item: { examBlueprintId, format: "essay" },
-      userId,
-    },
+  const samples = await loadWrittenSamples({
+    scope: { examBlueprintId, firstDraft: true },
+    tx,
+    userId,
   });
 
   return readWritingEvidence(samples, skillIds);
@@ -117,7 +119,10 @@ export async function creditWrittenSkills({
     return;
   }
 
-  const attempt = await tx.attempt.findUniqueOrThrow({ where: { id: attemptId } });
+  const attempt = await tx.attempt.findUniqueOrThrow({
+    select: { answeredAt: true, userId: true },
+    where: { id: attemptId },
+  });
 
   const evidence = await loadWritingEvidence({
     examBlueprintId: item.examBlueprintId,

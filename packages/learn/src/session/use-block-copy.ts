@@ -145,7 +145,7 @@ export function useBlockDetail() {
   /** A written task's row says when it waits for tomorrow, or that its draft is kept. */
   function writingDetail({ writingAvailability }: BlockCopyInput): string | null {
     if (writingAvailability?.status === "tomorrow") {
-      return t("Back tomorrow: today's extra grades are used");
+      return t("Back tomorrow: no more grading today");
     }
 
     return writingAvailability?.status === "continue" ? t("Your draft is saved") : null;

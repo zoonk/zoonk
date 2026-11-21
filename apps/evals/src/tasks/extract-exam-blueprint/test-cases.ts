@@ -49,6 +49,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         {
           count: 1,
           criterionPoints: [30],
+          drawsOn: "P2",
           grading: "points",
           handwritten: true,
           kind: "writtenTask",
@@ -61,6 +62,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         {
           count: 1,
           criterionPoints: [70],
+          drawsOn: "P3",
           grading: "points",
           handwritten: true,
           kind: "writtenTask",
@@ -364,6 +366,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         {
           count: 1,
           criterionPoints: [],
+          drawsOn: null,
           grading: null,
           handwritten: null,
           kind: "writtenTask",

@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -9,7 +9,7 @@ import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
-import { readBlockPayload } from "../../sessions/block-payload";
+import { type BlockPayload, readBlockPayload } from "../../sessions/block-payload";
 import { getStoredBlockWait } from "../../sessions/block-wait";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { getSession } from "../../users/get-session";
@@ -62,6 +62,56 @@ async function describeRefusedTask({
     : undefined;
 }
 
+async function findFirstWriting({
+  block,
+  goal,
+  localDate,
+  payload,
+  tx,
+  userId,
+  writing,
+}: {
+  block: StudySessionBlock;
+  goal: Goal;
+  localDate: Date;
+  payload: BlockPayload;
+  tx: TransactionClient;
+  userId: string;
+  writing: NonNullable<BlockPayload["writing"]>;
+}) {
+  const request = {
+    count: 1,
+    skillId: writing.unit === "drill" ? payload.skillIds[0] : undefined,
+    taskKey: writing.taskKey,
+    unit: writing.unit,
+  };
+
+  const found = await findWritingPrompts({
+    goal,
+    goalId: goal.id,
+    requests: [request],
+    tx,
+    userId,
+  });
+
+  if (found.status === "ready") {
+    return admitWriting({
+      extra: payload.extra,
+      itemIds: found.itemIds,
+      localDate,
+      owner: { block },
+      tx,
+      userId,
+    });
+  }
+
+  const refusal = payload.extra ? await readWritingExtraLimit({ localDate, tx, userId }) : null;
+
+  return (
+    refusal ?? { input: { ...request, goalId: goal.id, userId }, status: "needsPrompt" as const }
+  );
+}
+
 export async function startWriting({
   blockId,
   previousAttemptId,
@@ -87,13 +137,11 @@ export async function startWriting({
       await lockUsageForViewer({ transaction: tx, userId });
 
       const block = await tx.studySessionBlock.findFirst({
-        include: { session: { include: { blocks: { orderBy: { position: "asc" } }, goal: true } } },
+        include: { session: { select: { goalId: true } } },
         where: { id: blockId, kind: "produce", session: { userId } },
       });
 
-      const goal = block?.session.goal;
-
-      if (!block || !goal) {
+      if (!block || !block.session.goalId) {
         return { status: "notFound" as const };
       }
 
@@ -104,9 +152,18 @@ export async function startWriting({
         return { status: "notFound" as const };
       }
 
+      const earlier =
+        writing.unit === "drill"
+          ? await tx.studySessionBlock.findUnique({
+              where: {
+                sessionPosition: { position: block.position - 1, sessionId: block.sessionId },
+              },
+            })
+          : null;
+
       if (
         block.status === "skipped" ||
-        getStoredBlockWait({ block, blocks: block.session.blocks })
+        getStoredBlockWait({ block, blocks: earlier ? [earlier] : [] })
       ) {
         return { status: "blockNotActive" as const };
       }
@@ -120,36 +177,25 @@ export async function startWriting({
         };
       }
 
+      const goal = await tx.goal.findUniqueOrThrow({ where: { id: block.session.goalId } });
+
       const localDate = getDateInTimeZone({
         date: new Date(),
         timeZone: getAnswerTimeZone({ goal }),
       });
 
-      const extra = payload.extra || Boolean(previousAttemptId);
-      const owner = { blockId, previousAttemptId };
+      const admission = previousAttemptId
+        ? await admitWriting({
+            extra: true,
+            itemIds: payload.itemIds,
+            localDate,
+            owner: { block, previousAttemptId },
+            tx,
+            userId,
+          })
+        : await findFirstWriting({ block, goal, localDate, payload, tx, userId, writing });
 
-      if (previousAttemptId) {
-        const allowed = await admitWriting({
-          extra,
-          itemIds: payload.itemIds,
-          localDate,
-          owner,
-          tx,
-          userId,
-        });
-
-        return allowed.status === "ready"
-          ? {
-              ...allowed,
-              admitted: allowed.admissionId !== writing.admissionId,
-              sessionId: block.sessionId,
-            }
-          : allowed;
-      }
-
-      const refusal = extra ? await readWritingExtraLimit({ localDate, tx, userId }) : null;
-
-      if (refusal) {
+      if (!previousAttemptId && admission.status === "limitReached") {
         const task = await describeRefusedTask({
           block,
           examBlueprintId: goal.examBlueprintId,
@@ -158,33 +204,15 @@ export async function startWriting({
           writing,
         });
 
-        return { ...refusal, ...(task && { task }) };
+        return { ...admission, ...(task && { task }) };
       }
-
-      const request = {
-        count: 1,
-        skillId: writing.unit === "drill" ? payload.skillIds[0] : undefined,
-        taskKey: writing.taskKey,
-        unit: writing.unit,
-      };
-
-      const result = await findWritingPrompts({ goalId: goal.id, requests: [request], tx, userId });
-
-      if (result.status === "missing") {
-        return { input: { ...request, goalId: goal.id, userId }, status: "needsPrompt" as const };
-      }
-
-      const admission = await admitWriting({
-        extra,
-        itemIds: result.itemIds,
-        localDate,
-        owner,
-        tx,
-        userId,
-      });
 
       return admission.status === "ready"
-        ? { ...admission, admitted: true, sessionId: block.sessionId }
+        ? {
+            ...admission,
+            admitted: admission.admissionId !== writing.admissionId,
+            sessionId: block.sessionId,
+          }
         : admission;
     }),
   );

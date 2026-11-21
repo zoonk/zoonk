@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { logInfo } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
@@ -21,7 +22,7 @@ export async function listWrittenBlueprintRepairs({ after }: { after?: string })
 
   const entries = await Promise.all(
     rows.map(async (blueprint) => {
-      const { structure } = readBlueprintContent(blueprint);
+      const { edition, structure } = readBlueprintContent(blueprint);
       const sections = (structure.mock?.sections ?? []).filter(({ kind }) => kind === "written");
       const tasks = sections.flatMap((section) => section.tasks ?? []);
       const written = sections.length > 0 || structure.formats.some(({ kind }) => kind === "essay");
@@ -32,6 +33,13 @@ export async function listWrittenBlueprintRepairs({ after }: { after?: string })
 
       if (tasks.length > 0 && tasks.every(({ grading, key }) => grading && key)) {
         return { blueprintId: blueprint.id, status: "keyed" as const };
+      }
+
+      if (
+        blueprint.noticeRereadSource &&
+        blueprint.noticeRereadSource === (edition.sourceHash ?? blueprint.sourceId)
+      ) {
+        return { blueprintId: blueprint.id, status: "read" as const };
       }
 
       const notice = await getSharedExamNotice(blueprint.id);
@@ -99,18 +107,14 @@ async function identifyFalseClaims({
   return { invalid: [...invalid], testedOut };
 }
 
-/** Internal staff capability. The caller authenticates and audits the staff actor. */
+type RepairMode = { apply: false } | { apply: true; actor: { clientId: string; userId: string } };
 /** @internal */
 export async function repairWrittenGoal({
-  apply,
   goalId,
   userId,
-}: {
-  apply: boolean;
-  goalId: string;
-  userId: string;
-}): Promise<number> {
-  if (!apply) {
+  ...mode
+}: RepairMode & { goalId: string; userId: string }): Promise<number> {
+  if (!mode.apply) {
     const preview = await identifyFalseClaims({ goalId, tx: prisma, userId });
     return preview?.invalid.length ?? 0;
   }
@@ -121,7 +125,7 @@ export async function repairWrittenGoal({
       const result = await identifyFalseClaims({ goalId, tx, userId });
 
       if (!result || result.invalid.length === 0) {
-        return unchanged(0);
+        return unchanged(null);
       }
 
       await tx.learnerSkill.updateMany({
@@ -149,18 +153,32 @@ export async function repairWrittenGoal({
         userId,
       });
 
-      return result.invalid.length;
+      return result;
     },
   );
 
-  if (reopened > 0) {
-    revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);
+  if (!reopened) {
+    return 0;
   }
 
-  return reopened;
+  logInfo(
+    JSON.stringify({
+      actorUserId: mode.actor.userId,
+      clientId: mode.actor.clientId,
+      event: "staff.writing-repair",
+      goalId,
+      learnerId: userId,
+      planItemIds: reopened.testedOut.map(({ id }) => id),
+      skillIds: reopened.invalid,
+      status: "reopened",
+    }),
+  );
+
+  revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);
+  return reopened.invalid.length;
 }
 
-export async function listWrittenGoalRepairs({ apply, after }: { apply: boolean; after?: string }) {
+export async function listWrittenGoalRepairs({ after, ...mode }: RepairMode & { after?: string }) {
   const goals = await prisma.goal.findMany({
     orderBy: { id: "asc" },
     select: { id: true, userId: true },
@@ -173,9 +191,9 @@ export async function listWrittenGoalRepairs({ apply, after }: { apply: boolean;
   for (const { id: goalId, userId } of goals) {
     try {
       // oxlint-disable-next-line no-await-in-loop -- Consecutive goals can share a learner and their skill rows.
-      const skills = await repairWrittenGoal({ apply, goalId, userId });
+      const skills = await repairWrittenGoal({ ...mode, goalId, userId });
 
-      const changed = apply ? "reopened" : "eligible";
+      const changed = mode.apply ? "reopened" : "eligible";
       entries.push({ goalId, skills, status: skills ? changed : "unchanged" });
     } catch {
       entries.push({ goalId, skills: 0, status: "failed" });

@@ -94,6 +94,7 @@ export async function readExamBlueprint({
     identity,
     notDownloaded,
     reading,
+    reread: force,
     sourceId: noticeId,
   });
 

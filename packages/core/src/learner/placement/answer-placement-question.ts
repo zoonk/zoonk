@@ -1,5 +1,5 @@
-import { prisma } from "@zoonk/db";
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";

@@ -1,3 +1,4 @@
+import "server-only";
 import {
   type Attempt,
   type LearnerSkill,
@@ -5,7 +6,6 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
-import "server-only";
 import { type JsonObject } from "@zoonk/utils/json";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";

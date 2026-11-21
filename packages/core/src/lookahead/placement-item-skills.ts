@@ -1,3 +1,4 @@
+import "server-only";
 import {
   type CourseLevel,
   type ExamBlueprint,
@@ -6,7 +7,6 @@ import {
   prisma,
 } from "@zoonk/db";
 import { toListeningExam } from "../exams/listening/listening-exam";
-import "server-only";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import { wantsPlacementQuestions } from "../learner/placement/focus-test-state";
 import { getKnownSubjects, getOwnLevel } from "../learner/placement/placement-contract";

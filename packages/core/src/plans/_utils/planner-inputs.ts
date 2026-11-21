@@ -105,24 +105,36 @@ export async function loadPlannerInputs({
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const isExam = goal.kind === "exam";
 
+  const examFactsRead = Promise.resolve(loadExamFacts({ goal, graph, picks: examPicks }));
+
   const [lessons, prerequisites, readiness, exam, evidence, bands, startLessonId] =
     await Promise.all([
       loadGoalPlannerLessons({ goal, graph, userId }),
       loadSkillPrerequisites(skillIds),
       loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
-      loadExamFacts({ goal, graph, picks: examPicks }),
-      loadSkillEvidence({ goalId: goal.id, skillIds, userId }),
+      examFactsRead,
+      examFactsRead.then(({ writtenSkillIds }) =>
+        loadSkillEvidence({
+          goalId: goal.id,
+          skillIds,
+          userId,
+          writingFact: {
+            examBlueprintId: goal.examBlueprintId,
+            skillIds: new Set(writtenSkillIds),
+          },
+        }),
+      ),
       isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
       findWrittenStartLessonId(goal),
     ]);
 
-  const { writingNotice, ...examFacts } = exam;
+  const { writingNotice, writtenSkillIds, ...examFacts } = exam;
 
   const writing =
-    writingNotice && goal.examBlueprintId && targetDate
+    writingNotice && goal.examBlueprintId
       ? await loadPlanWriting({
           examBlueprintId: goal.examBlueprintId,
-          graph,
+          skillIds: new Set(writtenSkillIds),
           userId,
           ...writingNotice,
         })
@@ -147,6 +159,7 @@ export async function loadPlannerInputs({
     readiness,
     startLessonId,
     strongAreas: new Set([...strongAreas].toSorted()),
+    writtenSkillIds,
     ...examFacts,
     ...(writing && { writing }),
   };

@@ -13,6 +13,7 @@ type SavedEffectItem = EffectItem & { lessons?: number | null; titleSnapshot: st
 export function withBuiltSettings({
   built,
   settings,
+  writtenSkillIds,
 }: {
   built: {
     checkpointOverflow: PlanSettings["checkpointOverflow"];
@@ -20,6 +21,7 @@ export function withBuiltSettings({
     writingSchedule?: PlanSettings["writingSchedule"];
   };
   settings: PlanSettings;
+  writtenSkillIds?: string[];
 }): PlanSettings {
   const { writingSchedule: _previous, ...retained } = settings;
 
@@ -28,6 +30,7 @@ export function withBuiltSettings({
     checkpointOverflow: built.checkpointOverflow,
     mockFunding: built.mockFunding,
     ...(built.writingSchedule && { writingSchedule: built.writingSchedule }),
+    ...(writtenSkillIds && { writtenSkillIds }),
   };
 }
 

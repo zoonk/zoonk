@@ -121,6 +121,11 @@ export function SubjectCoverage({
   );
 }
 
+/** Whether Details has a row to show: a written part with no question count, date or skipped lesson has none. */
+export function hasSubjectDetails(subject: SyllabusSubject): boolean {
+  return Boolean(subject.questions || subject.nextDate || subject.lessonsKnown > 0);
+}
+
 function SubjectDetails({
   questionsSource,
   subject,
@@ -173,15 +178,18 @@ function SubjectDetails({
 export function SubjectAside({
   questionsSource,
   subject,
+  written,
 }: {
   questionsSource: SyllabusView["questionsSource"];
   subject: SyllabusSubject;
+  /** A written part shows its estimated points instead of its lessons' preparation. */
+  written: boolean;
 }) {
   const t = useExtracted();
 
   return (
     <>
-      {(!subject.notPlannedReason || subject.preparation !== null) && (
+      {!written && (!subject.notPlannedReason || subject.preparation !== null) && (
         <DetailAsideSection
           className="hidden min-[72rem]:flex"
           title={subject.preparation === null ? t("Coverage") : t("Preparation")}
@@ -191,13 +199,15 @@ export function SubjectAside({
         </DetailAsideSection>
       )}
 
-      <DetailAsideSection
-        className="hidden min-[72rem]:flex"
-        title={t("Details")}
-        titleId="subject-details-title"
-      >
-        <SubjectDetails questionsSource={questionsSource} subject={subject} />
-      </DetailAsideSection>
+      {hasSubjectDetails(subject) && (
+        <DetailAsideSection
+          className="hidden min-[72rem]:flex"
+          title={t("Details")}
+          titleId="subject-details-title"
+        >
+          <SubjectDetails questionsSource={questionsSource} subject={subject} />
+        </DetailAsideSection>
+      )}
     </>
   );
 }

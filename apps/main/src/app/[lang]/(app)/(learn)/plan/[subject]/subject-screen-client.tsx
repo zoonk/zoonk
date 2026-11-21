@@ -70,6 +70,7 @@ export function SubjectScreenClient({
             back: "/plan",
             chapter: (chapterId) =>
               `/content/chapters/${chapterId}?from=${encodeURIComponent(subject.key)}`,
+            essay: (blockId) => `/essay/${encodeURIComponent(blockId)}`,
             mindMaps: hasMindMaps
               ? (key) => buildSubjectMindMapsHref({ page: "/mind-maps", subject: key })
               : undefined,

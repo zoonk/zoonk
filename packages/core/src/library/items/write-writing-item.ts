@@ -1,27 +1,24 @@
 import "server-only";
-import { type CallWait } from "@zoonk/ai/provider-options";
 import {
   type WritingPromptOutput,
   writeWritingPrompt,
 } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { prisma } from "@zoonk/db";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
-import { namesMatch } from "../../exams/_utils/name-match";
 import { ENEM_WRITING_MAX, hasEnemCompetences } from "../../exams/essays/_utils/enem-writing";
-import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
+import { type listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { getWritingTaskBasis } from "../../exams/essays/_utils/writing-task-basis";
 import { getNamedEssayRubric } from "../../exams/essays/essay-rubric";
 import { type WritingPrompt, writtenItemSchema } from "../../exams/essays/writing-contract";
 import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
-import { type WritingRequest, findWritingPrompts } from "../../exams/essays/writing-supply";
 import { getWrittenPartMinimum } from "../../exams/scoring/written-points";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getWritingSkillIds } from "../../learner/writing-skills";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toProvenanceData } from "../_utils/library-rows";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
-import { readBlueprintContent } from "../exams/save-exam-blueprint";
 import { createSkill } from "../skills/create-skill";
+import { type WritingSupplyInput, loadWritingSupply, readWritingPool } from "./writing-prompt-pool";
 
 const DRILL_WORD_FLOOR = 5;
 const WHOLE_ANSWER_WORD_FLOOR = 30;
@@ -30,43 +27,6 @@ const MINIMUM_WORDS_PER_LINE = 3;
 
 export function getWritingPromptId(runId: string, slot: number): string {
   return getAnswerAttemptId({ key: String(slot), questionId: runId, userId: "writing-prompt" });
-}
-
-export type WritingSupplyInput = Omit<WritingRequest, "count"> & {
-  count: number;
-  goalId: string;
-  userId: string;
-  wait?: CallWait;
-};
-
-export async function loadWritingSupply(input: WritingSupplyInput) {
-  const { goalId, userId } = input;
-
-  const goal = await prisma.goal.findFirst({
-    select: { examBlueprint: true, language: true, plan: { select: { graph: true } } },
-    where: { id: goalId, kind: "exam", userId },
-  });
-
-  const blueprint = goal?.examBlueprint;
-
-  if (!goal || !blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
-    return null;
-  }
-
-  const { structure } = readBlueprintContent(blueprint);
-
-  const task = listPracticeWritingTasks({ classTest: Boolean(blueprint.ownerId), structure }).find(
-    ({ key }) => key === input.taskKey,
-  );
-
-  if (!task) {
-    return null;
-  }
-
-  const result = await findWritingPrompts({ goalId, requests: [input], tx: prisma, userId });
-  const missing = result.status === "missing" ? (result.requests[0]?.count ?? 0) : 0;
-
-  return { blueprint, goal, missing, structure, task };
 }
 
 function getAnswerWordFloor({
@@ -86,7 +46,7 @@ function getAnswerWordFloor({
   );
 }
 
-type Task = ReturnType<typeof listPracticeWritingTasks>[number];
+type Task = Omit<ReturnType<typeof listPracticeWritingTasks>[number], "subjects">;
 
 function getIssuedTask(
   task: Task,
@@ -110,19 +70,6 @@ function getIssuedTask(
   return kind === task.grading.kind ? task : { ...task, grading: { ...task.grading, kind } };
 }
 
-function getSectionTopics(
-  structure: NonNullable<ReturnType<typeof readBlueprintContent>["structure"]>,
-  task: Task,
-) {
-  const subjects = structure.subjects.filter(({ group, name, partOf }) =>
-    [name, group, partOf].some(
-      (label) => label && (namesMatch(label, task.section) || namesMatch(label, task.description)),
-    ),
-  );
-
-  return [...new Set(subjects.flatMap(({ topics }) => topics))];
-}
-
 export function promptContent({
   data,
   input,
@@ -130,11 +77,13 @@ export function promptContent({
   skills,
   task,
   issuedTask = task,
+  placement,
 }: {
   data: WritingPromptOutput;
   issuedTask?: Task;
   input: WritingSupplyInput;
   partMinimum?: WritingPrompt["partMinimum"];
+  placement?: { chosenSubjects?: string[]; subject?: string };
   skills: { id: string; name: string }[];
   task: Task;
 }) {
@@ -181,6 +130,7 @@ export function promptContent({
         }),
     ...(!drill && partMinimum && { partMinimum }),
     points: drill ? null : issuedTask.points,
+    ...placement,
     ...((drill || task !== issuedTask) && { taskBasis: getWritingTaskBasis(task) }),
     taskKey: task.key,
     title: data.title,
@@ -197,7 +147,11 @@ export function promptContent({
   };
 }
 
-export async function writeWritingItem(input: WritingSupplyInput, itemId: string) {
+export async function writeWritingItem(
+  input: WritingSupplyInput,
+  itemId: string,
+  poolToken?: string,
+) {
   const alreadySaved = await prisma.item.findUnique({
     select: { id: true },
     where: { id: itemId },
@@ -207,13 +161,13 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
     return;
   }
 
-  const supply = await loadWritingSupply(input);
+  const supply = await loadWritingSupply(input, poolToken);
 
   if (!supply || supply.missing === 0) {
     return;
   }
 
-  const { blueprint, goal, structure, task } = supply;
+  const { blueprint, goal, scope, structure, task } = supply;
 
   const saved = blueprint.ownerId
     ? null
@@ -273,37 +227,29 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
     throw new Error("No eligible skill can anchor this writing drill.");
   }
 
-  const used = await prisma.item.findMany({
-    orderBy: { createdAt: "desc" },
-    select: { content: true },
-    take: 50,
-    where: {
-      content: { equals: task.key, path: ["writing", "taskKey"] },
-      examBlueprintId: blueprint.id,
-      format: "essay",
-      language: goal.language,
-    },
+  const pool = await readWritingPool({
+    blueprintId: blueprint.id,
+    language: goal.language,
+    scope,
+    taskKey: task.key,
   });
 
-  const usedTitles = used.flatMap(({ content }) => {
-    const parsed = promptMetadata(content);
-    return parsed ? [parsed] : [];
-  });
-
-  const issuedTask = getIssuedTask(task, getNamedEssayRubric(blueprint), input.unit);
+  const { subjects: _subjects, ...writtenTask } = task;
+  const issuedTask = getIssuedTask(writtenTask, getNamedEssayRubric(blueprint), input.unit);
 
   const { data, provenance } = await writeWritingPrompt({
     analytics: { distinctId: input.userId, goalId: input.goalId },
     input: {
       ...(blueprint.board && { board: blueprint.board }),
+      choices: scope.choices,
       drillSkillId: input.skillId ?? null,
       exam: blueprint.name,
       language: goal.language,
-      sectionTopics: getSectionTopics(structure, task),
       skills,
+      subject: pool.subject,
       task: issuedTask,
       unit: input.unit,
-      usedTitles,
+      usedTitles: pool.usedTitles,
     },
     shared: blueprint.visibility === "public",
     wait: input.wait ?? "learner",
@@ -314,8 +260,9 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
     input,
     issuedTask,
     partMinimum: getWrittenPartMinimum({ structure, taskKey: task.key }),
+    placement: pool.placement,
     skills,
-    task,
+    task: writtenTask,
   });
 
   const [skillId] = content.writing.assessedSkillIds;
@@ -340,10 +287,4 @@ export async function writeWritingItem(input: WritingSupplyInput, itemId: string
       skipDuplicates: true,
     });
   });
-}
-
-function promptMetadata(content: unknown): string | null {
-  return typeof content === "object" && content !== null && "writing" in content
-    ? (writtenItemSchema.safeParse(content.writing).data?.title ?? null)
-    : null;
 }

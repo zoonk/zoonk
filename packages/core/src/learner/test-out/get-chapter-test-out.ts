@@ -7,7 +7,7 @@ import { type QuestionView, parseChoiceItem, toQuestionView } from "../_utils/ch
 import { findOwnedGoal } from "../_utils/owned-goal";
 import { type SavedPlan, readSavedPlan } from "../facts/saved-plan";
 import { pickPlacementItem } from "../placement/placement-item-choice";
-import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
+import { getChapterTestOutSkills, loadSkillItems } from "./_utils/chapter-items";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   TEST_OUT_PASS_MARK,
@@ -80,21 +80,15 @@ export async function loadChapterTestOut({
   userId: string;
 }): Promise<Exclude<ChapterTestOutResult, { status: "unauthorized" }>> {
   const plan = await loadTestOutPlan(goal.id, { goal, source: savedPlan });
-  const chapterSkills = getChapterSkills({ chapterId, plan });
+  const eligible = getChapterTestOutSkills({ chapterId, plan });
 
-  if (chapterSkills.length === 0) {
-    return { status: "notFound" };
+  if (eligible.status !== "ready") {
+    return eligible;
   }
 
-  const skippable = countSkippableItems({ plan, skills: chapterSkills });
+  const sampled = pickTestOutSkills(eligible.skills);
 
-  if (skippable === 0) {
-    return { status: "nothingToSkip" };
-  }
-
-  const sampled = pickTestOutSkills(chapterSkills);
-
-  const count = Math.max(sampled.length, getTestOutQuestionCount(skippable));
+  const count = Math.max(sampled.length, getTestOutQuestionCount(eligible.skippable));
 
   const questionsPerSkill = getQuestionsPerSkill({ questions: count, skills: sampled.length });
 

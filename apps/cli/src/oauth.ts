@@ -81,10 +81,13 @@ function tokenError(result: HttpResult): TokenResult {
   return { error: oauthError(result) ?? `HTTP ${result.status}`, ok: false };
 }
 
-export async function requestDeviceCode(origin: string): Promise<DeviceCode> {
+export async function requestDeviceCode(
+  origin: string,
+  writingRepair = false,
+): Promise<DeviceCode> {
   const result = await postForm(new URL(ENDPOINTS.deviceCode, origin), {
     client_id: CLIENT_ID,
-    scope: SCOPE,
+    scope: writingRepair ? `${SCOPE} staff:repair-writing` : SCOPE,
   });
 
   const body = isRecord(result.body) ? result.body : {};

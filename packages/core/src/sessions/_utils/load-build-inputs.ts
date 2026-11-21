@@ -1,9 +1,9 @@
+import "server-only";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
 import { practicesShortAnswers } from "../../library/exams/short-answers";
-import "server-only";
 import { getGoalField } from "../../library/items/item-field";
 import {
   type AlphabetIntro,
@@ -205,6 +205,7 @@ export async function loadSessionBuildInput(
     // Written exam tasks must remain practiced even when their topics' lessons do not fit before the test.
     writing.produces ??
       loadSessionProduce({
+        blueprint: context.blueprint,
         goal,
         onDemand: Boolean(writing.scheduledWriting) && !access.includesMockExams,
         planSettings: plan.settings,

@@ -90,7 +90,11 @@ test.describe("Written exam practice", () => {
       await page.goto(`/essay/${day.blockId}`);
 
       await expect(
-        page.getByRole("heading", { level: 1, name: /^Your answer\s*16\.6–18\.7$/u }),
+        page.getByRole("heading", { level: 1, name: /^Your answer\s*16\.6–18\.7\s*of 30$/u }),
+      ).toBeVisible();
+
+      await expect(
+        page.getByText("Minimum to pass the written test: 50% of the points"),
       ).toBeVisible();
 
       await expect(
@@ -106,6 +110,11 @@ test.describe("Written exam practice", () => {
 
       await expect(page.getByText(SHORT_TITLE)).toBeVisible();
       await expect(page.getByLabel("Rewrite what needs work")).toBeHidden();
+
+      // The written test's page knows the day's grading is used, so it offers no tap to refuse.
+      await page.goto("/plan/written-test");
+      await expect(page.getByText("More grading tomorrow")).toBeVisible();
+      await expect(page.getByRole("button", { exact: true, name: "Write" })).toBeHidden();
     } finally {
       await page.context().close();
     }

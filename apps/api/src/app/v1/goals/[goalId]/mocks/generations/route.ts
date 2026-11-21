@@ -1,3 +1,4 @@
+import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { examError } from "@/lib/exam-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
@@ -8,7 +9,7 @@ import {
   getMockQuestionsToken,
   mockQuestionsWorkflow,
 } from "@/workflows/goals/mock-questions-workflow";
-import { ensureWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
+import { ensureMockWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
 import { mockQuestionsInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { requestMockQuestions } from "@zoonk/core/exams/mocks/request-questions";
 import { type NextRequest, NextResponse } from "next/server";
@@ -27,7 +28,7 @@ async function createMockQuestions(
   const result = await requestMockQuestions({ goalId: path.goalId, input: body });
 
   if (result.status === "writing") {
-    const supply = await ensureWritingPrompts(result.request);
+    const supply = await ensureMockWritingPrompts(result.requests);
 
     if (supply.status === "ready") {
       return NextResponse.json({ generationId: null, status: "ready" });
@@ -40,6 +41,15 @@ async function createMockQuestions(
         status: ACCEPTED,
       },
     );
+  }
+
+  if (result.status === "limitReached") {
+    return createErrorResponse({
+      code: "USAGE_LIMIT_REACHED",
+      details: { returnsOn: result.returnsOn },
+      message: "Today's extra writing allowance is used",
+      status: httpStatus.tooManyRequests,
+    });
   }
 
   if (result.status === "refused") {

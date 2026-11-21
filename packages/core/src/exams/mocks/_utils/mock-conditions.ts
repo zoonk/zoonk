@@ -1,5 +1,5 @@
-import { type ExamEdition } from "../../../library/exams/blueprint-contract";
 import "server-only";
+import { type ExamEdition } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";

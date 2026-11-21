@@ -1,11 +1,11 @@
+import "server-only";
 import { type Plan, type PlanItem, prisma } from "@zoonk/db";
 import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
-import "server-only";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
-import { loadWritingSkillIds } from "../writing-skills";
+import { loadGoalWritingFact } from "../writing-skills";
 import { loadWritingEvidence } from "../written-evidence";
 import {
   type ClaimEvent,
@@ -195,6 +195,7 @@ export async function loadPlanClaimEvents({
 
 export async function loadClaimEvents({
   goalId,
+  writingFact,
   planEvents,
   skillIds,
   userId,
@@ -202,27 +203,21 @@ export async function loadClaimEvents({
   goalId: string;
   /** A GET's request-wide `loadPlanClaimEvents`; without it, they're read fresh. */
   planEvents?: Promise<ClaimEvent[]>;
+  writingFact?: Awaited<ReturnType<typeof loadGoalWritingFact>>;
   skillIds: readonly string[];
   userId: string;
 }): Promise<ClaimEvent[]> {
   const asked = new Set(skillIds);
 
-  const [writtenSkills, goal] = await Promise.all([
-    loadWritingSkillIds(goalId),
-    prisma.goal.findUnique({ select: { examBlueprintId: true }, where: { id: goalId } }),
-  ]);
+  const { examBlueprintId, skillIds: writtenSkills } =
+    writingFact ?? (await loadGoalWritingFact(goalId));
 
   const writtenAsked = new Set(skillIds.filter((id) => writtenSkills.has(id)));
 
   const [fromPlan, answers, written] = await Promise.all([
     planEvents ?? loadPlanClaimEvents({ goalId, skillIds: asked }),
     loadAnswerEvents({ skillIds: skillIds.filter((id) => !writtenAsked.has(id)), userId }),
-    loadWritingEvidence({
-      examBlueprintId: goal?.examBlueprintId ?? null,
-      skillIds: writtenAsked,
-      tx: prisma,
-      userId,
-    }),
+    loadWritingEvidence({ examBlueprintId, skillIds: writtenAsked, tx: prisma, userId }),
   ]);
 
   return [
@@ -239,6 +234,7 @@ export async function loadSkillEvidence({
   goalId: string;
   /** The basics the learner passed over by choice, still to confirm (see `listKnownSkills`). */
   passedOver?: (skillId: string) => boolean;
+  writingFact?: Awaited<ReturnType<typeof loadGoalWritingFact>>;
   skillIds: readonly string[];
   userId: string;
 }): Promise<{ answeredWrong: Set<string>; claims: Map<string, SkillClaim>; known: Set<string> }> {

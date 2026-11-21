@@ -165,6 +165,7 @@ const planSettingsSchema = z.object({
     .default(null),
   writingSchedule: z.array(writingDaySchema).optional(),
   writtenCadence: z.enum(WRITTEN_CADENCES).default("weekly"),
+  writtenSkillIds: z.array(z.string()).optional(),
 });
 
 const planPhaseSchema = z.object({

@@ -17,8 +17,9 @@ import { TaskActions } from "../_components/task-layout";
 import { useFormatDuration } from "../_utils/time-format";
 import { useFinishTask } from "../essay/use-finish-essay";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
+import { type TomorrowTask } from "./writing-types";
 
-function TomorrowTask({ task }: { task: { minutes: number | null; title: string } }) {
+function TomorrowTaskList({ task }: { task: TomorrowTask }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
 
@@ -55,7 +56,7 @@ export function WritingRefused({
 }: {
   hrefs: { exit: string };
   onContinue: () => Promise<boolean>;
-  task: { minutes: number | null; title: string } | null;
+  task: TomorrowTask | null;
 }) {
   const t = useExtracted();
   const finishing = useFinishTask(onContinue);
@@ -79,7 +80,7 @@ export function WritingRefused({
           <StepDetail>{t("You'll have more tomorrow.")}</StepDetail>
         </StepHeader>
 
-        {task && <TomorrowTask task={task} />}
+        {task && <TomorrowTaskList task={task} />}
       </div>
     </TaskFrame>
   );

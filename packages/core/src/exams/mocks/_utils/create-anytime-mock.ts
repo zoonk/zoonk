@@ -8,7 +8,7 @@ import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { admitWriting } from "../../essays/writing-admission";
+import { admitWriting, readWritingExtraLimit } from "../../essays/writing-admission";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { getMockFormatMix } from "../mock-format-mix";
@@ -34,6 +34,7 @@ export type CreateAnytimeMockResult =
   | { status: "notEnoughQuestions" }
   | { status: "needsQuestions" }
   | { returnsOn: string; status: "limitReached" }
+  | { status: "signUpRequired" }
   | {
       availableAt?: Date | null;
       examQuestions: number;
@@ -187,6 +188,7 @@ export async function createAnytimeMock({
     }
 
     const writing = await findMockWriting({
+      goal,
       goalId: goal.id,
       shape: option,
       structure: setup.structure,
@@ -194,7 +196,18 @@ export async function createAnytimeMock({
       userId,
     });
 
-    if (writing.status === "missing" || asksForNew) {
+    if (writing.status === "missing") {
+      const localDate = getDateInTimeZone({
+        date: new Date(),
+        timeZone: getAnswerTimeZone({ goal }),
+      });
+
+      const refusal = await readWritingExtraLimit({ localDate, tx, userId });
+
+      return unchanged(refusal ?? { status: "needsQuestions" });
+    }
+
+    if (asksForNew) {
       return unchanged({ status: "needsQuestions" });
     }
 
@@ -268,17 +281,13 @@ async function persistAnytimeMock({
       extra: true,
       itemIds: essays.map((essay) => essay.itemId),
       localDate: getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) }),
-      owner: { mockId: created.id },
+      owner: { mock: created },
       tx,
       userId,
     });
 
-    if (admission.status === "limitReached") {
-      return unchanged(admission);
-    }
-
     if (admission.status !== "ready") {
-      throw new Error("A mock admission cannot be a rewrite.");
+      return unchanged(admission);
     }
   }
 

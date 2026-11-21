@@ -42,34 +42,25 @@ function sample({
       grade: {
         content: { high, low },
         criteria: [],
-        deduction: { high: 0, low: 0 },
-        errors: [],
-        ignoredFrom: null,
+        errorCount: 0,
         kind: "points",
         max: points,
-        nextStep: null,
-        progress: null,
         rows: [],
         total: { high, low },
-        zeroReason: null,
       },
-      text: "First answer.",
     },
+    answeredAt: new Date("2026-11-20"),
+    durationMs: 0,
     id,
-    item: null,
     itemId: id,
     localDate: new Date("2026-11-20"),
     mockExamId: null,
     numericEligible,
     prompt: {
-      aspects: [],
       assessedSkillIds: ["skill"],
-      charactersPerLine: 55,
       criteria: [],
       grading: CGU_WRITTEN_GRADING,
-      keySource: "practiceKey",
       lines,
-      minimumWords: 20,
       points,
       taskKey: key,
       title: "Topic",
@@ -171,10 +162,7 @@ describe(projectWritten, () => {
 
     task.grading = {
       ...grading,
-      criteria: grading.criteria.map((criterion) => ({
-        ...criterion,
-        text: "Apply the rule and justify the exception.",
-      })),
+      criteria: grading.criteria.map((criterion) => ({ ...criterion, points: 2 })),
     };
 
     const samples = [

@@ -1,112 +1,21 @@
 "use client";
 
 import { type WritingPrompt, type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
-import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
-import { Meter, MeterFill, MeterPart, MeterParts } from "@zoonk/ui/components/meter";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { Eyebrow } from "../_components/eyebrow";
 import { PageSectionFooter, PageSectionTitle } from "../_components/page";
-import {
-  LabeledStepTitle,
-  StepCard,
-  StepDetail,
-  StepHeader,
-  StepRow,
-  StepRows,
-  StepTitleNumber,
-  renderStepNumber,
-} from "../_components/step-card";
+import { StepRow, StepRows } from "../_components/step-card";
+import { useFormatRange } from "../_utils/range";
 import { ESSAY_QUOTE_CLASS, useFormatScore } from "../essay/essay-labels";
-import {
-  LEVEL_CELLS,
-  LEVEL_CELL_COUNT,
-  useFormatPointsRange,
-  useLevelName,
-} from "./writing-labels";
+import { LEVEL_CELLS, LEVEL_CELL_COUNT, useLevelName } from "./writing-labels";
 import { NextStepCard, NothingLeftComment } from "./writing-next-step";
+import { PointsHeader } from "./writing-points-header";
 import { WritingMarkedText } from "./writing-text";
 
 type Points = Extract<WritingResult, { kind: "points" }>;
-
-/** The total as a range on the question's scale, then what it's made of, so the parts never contradict it. */
-function PointsHeader({
-  grade,
-  text,
-  prompt,
-}: {
-  grade: Points;
-  prompt: WritingPrompt;
-  text: string;
-}) {
-  const t = useExtracted();
-  const formatScore = useFormatScore();
-  const formatRange = useFormatPointsRange();
-
-  const { estimatedLines } = countWritingLines({
-    charactersPerLine: prompt.charactersPerLine,
-    limit: prompt.lines,
-    text,
-  });
-
-  const low = grade.total.low / grade.max;
-  const high = grade.total.high / grade.max;
-  const errors = grade.errors.length;
-
-  return (
-    <StepCard className="items-stretch">
-      <StepHeader>
-        <LabeledStepTitle label={t("Your answer")}>
-          <StepTitleNumber>{formatRange(grade.total)}</StepTitleNumber>
-        </LabeledStepTitle>
-        <StepDetail className="text-sm">
-          {t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
-            max: formatScore(grade.max),
-            mono: renderStepNumber,
-          })}
-        </StepDetail>
-      </StepHeader>
-
-      <MeterParts>
-        {low > 0 && <MeterPart className="bg-success" weight={low} />}
-        {high > low && <MeterPart className="bg-success/40" weight={high - low} />}
-        {high < 1 && <MeterPart weight={1 - high} />}
-      </MeterParts>
-
-      {grade.zeroReason ? (
-        <p className="text-pretty" role="note">
-          {grade.zeroReason}
-        </p>
-      ) : (
-        <StepRows>
-          <StepRow>
-            <span className="min-w-0 flex-1">{t("Content")}</span>
-            <span className="font-mono text-xs tabular-nums">{formatRange(grade.content)}</span>
-          </StepRow>
-          <StepRow>
-            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span>{t("Language errors")}</span>
-              <span className="text-muted-foreground text-xs">
-                {[
-                  t("{count, plural, one {# error} other {# errors}}", { count: errors }),
-                  t("{count, plural, one {about # line} other {about # lines}}", {
-                    count: estimatedLines,
-                  }),
-                ].join(" · ")}
-              </span>
-            </span>
-            <span className="font-mono text-xs tabular-nums">
-              {grade.deduction.high > 0
-                ? `−${formatRange(grade.deduction)}`
-                : formatRange(grade.deduction)}
-            </span>
-          </StepRow>
-        </StepRows>
-      )}
-    </StepCard>
-  );
-}
 
 function WritingNextStep({ grade }: { grade: WritingResult }) {
   const t = useExtracted();
@@ -158,6 +67,20 @@ function WritingProgress({ grade }: { grade: WritingResult }) {
         </StepRow>
       )}
     </StepRows>
+  );
+}
+
+/** A criterion's points: what's sure in full, what the range leaves open in light. */
+function RowMeter({ max, range }: { max: number; range: { high: number; low: number } }) {
+  const low = Math.min(1, range.low / max);
+  const high = Math.min(1, range.high / max);
+
+  return (
+    <MeterParts className="w-16 shrink-0 sm:w-20">
+      {low > 0 && <MeterPart className="bg-foreground" weight={low} />}
+      {high > low && <MeterPart className="bg-foreground/30" weight={high - low} />}
+      {high < 1 && <MeterPart weight={1 - high} />}
+    </MeterParts>
   );
 }
 
@@ -217,30 +140,43 @@ function useCriteriaSource(prompt: WritingPrompt, grade: WritingResult): string 
 function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: WritingPrompt }) {
   const t = useExtracted();
   const formatScore = useFormatScore();
+  const formatRange = useFormatRange();
   const levelName = useLevelName();
   const source = useCriteriaSource(prompt, grade);
+  const rows = grade.kind === "points" ? grade.rows : [];
+
+  const scoreLabel = (row: Points["rows"][number]) =>
+    t("{score} of {max}", {
+      max: formatScore(row.max),
+      score: row.range
+        ? formatRange(formatScore(row.range.low), formatScore(row.range.high))
+        : formatScore(row.earned),
+    });
+
+  // One width for every score, so the meters before them line up whether a row is a range or not.
+  const scoreWidth = `${Math.max(0, ...rows.map((row) => scoreLabel(row).length))}ch`;
 
   return (
     <section className="flex flex-col gap-3" data-slot="writing-criteria">
       <PageSectionTitle>{t("Criteria")}</PageSectionTitle>
       <StepRows aria-label={t("Score by criterion")}>
         {grade.criteria.map((criterion) => {
-          const row =
-            grade.kind === "points" ? grade.rows.find(({ id }) => id === criterion.id) : null;
+          const row = rows.find(({ id }) => id === criterion.id);
 
           return (
             <StepRow key={criterion.id}>
               <span className="min-w-0 flex-1 text-pretty">{criterion.name}</span>
               {row ? (
                 <>
-                  <Meter className="w-16 shrink-0 sm:w-20">
-                    <MeterFill share={row.earned / row.max} />
-                  </Meter>
-                  <span className="shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums">
-                    {t("{score} of {max}", {
-                      max: formatScore(row.max),
-                      score: formatScore(row.earned),
-                    })}
+                  <RowMeter
+                    max={row.max}
+                    range={row.range ?? { high: row.earned, low: row.earned }}
+                  />
+                  <span
+                    className="shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums"
+                    style={{ minWidth: scoreWidth }}
+                  >
+                    {scoreLabel(row)}
                   </span>
                 </>
               ) : (
