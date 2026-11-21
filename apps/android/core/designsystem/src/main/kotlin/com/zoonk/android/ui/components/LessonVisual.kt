@@ -302,8 +302,8 @@ private class ValueAxis(
     val origin = max(domain.start, 0.0)
 
     val ticks =
-        niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) }.map {
-            it to text.label(formatAmount(it, text.locale, visual.numberUnit, compact = true))
+        niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) }.let { ticks ->
+            ticks.zip(formatTicks(ticks, text.locale, unit = visual.numberUnit).map(text::label))
         }
 
     val valueLabels = visual.series.map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.numberUnit)) } }
@@ -349,8 +349,14 @@ private class UprightLayout(
     val valueLabels: List<List<TextLayoutResult>>? =
         axis.valueLabels.takeIf { labels ->
             val bars = visual.chart == LessonVisual.Chart.Kind.Bar
-            val room = if (bars) barWidth + gap else band
-            val wideEnough = if (bars) barWidth >= with(text.density) { MIN_LABEL_WIDTH.toPx() } else visual.series.size == 1
+            val room = if (bars) barWidth else band
+            val wideEnough =
+                if (bars) {
+                    barWidth >= with(text.density) { MIN_LABEL_WIDTH.toPx() }
+                } else {
+                    visual.series.size == 1 &&
+                        band >= with(text.density) { MIN_POINT_LABEL_BAND.toPx() }
+                }
             wideEnough && labels.flatten().all { it.size.width <= room }
         }
 
@@ -388,16 +394,20 @@ private class SidewaysLayout(
 
     val plotBottom = barTops.last() + barsHeight
 
+    // Each label keeps half a gap inside the chart's edges, as main's `clampLabelCenter`.
     val ticks =
         axis.ticks.map { (tick, label) ->
             val at = x.toPixel(tick)
-            SidewaysTick(at, (at - label.size.width / 2f).coerceIn(0f, max(width - label.size.width, 0f)), label)
+            val half = (label.size.width + gap) / 2
+            SidewaysTick(at, at.coerceIn(half, max(width - half, half)) - label.size.width / 2f, label)
         }
 
     /** Every tick keeps its gridline, but only every [tickStep]th is labeled, so a large font's labels don't touch. */
     val tickStep =
-        fittingTickIndices(ticks.map { it.labelLeft to it.labelLeft + it.label.size.width }, gap)
-            .getOrNull(1) ?: max(ticks.size, 1)
+        fittingTickIndices(
+            ticks.map { it.labelLeft - gap / 2 to it.labelLeft + it.label.size.width + gap / 2 },
+            with(text.density) { TICK_LABEL_GAP.toPx() },
+        ).getOrNull(1) ?: max(ticks.size, 1)
 
     val ticksTop = plotBottom + gap
 
@@ -699,6 +709,7 @@ private const val GROUP_SHARE = 0.68f
 private val BAR_INSET = 1.dp
 private val MIN_BAR_WIDTH = 4.dp
 private val MIN_LABEL_WIDTH = 30.dp
+private val MIN_POINT_LABEL_BAND = 45.dp
 
 private const val UPRIGHT_NAME_LINES = 2
 private val SIDEWAYS_BAR = 14.dp
