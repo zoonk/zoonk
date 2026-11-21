@@ -5,10 +5,11 @@ CONFIGURATION ?= Debug
 XCODEBUILD_ARGUMENTS ?=
 # The WebRTC package is a binary download; with the default Keychain credential lookup, xcodebuild
 # can wait forever on a Keychain prompt in non-interactive shells. Public downloads need no login.
-# Builds stay in the checkout, so removing an agent's worktree removes them too. The Swift packages
-# are shared by every checkout on the Mac; CI caches them inside the build folder.
-XCODEBUILD_COMMAND := $(if $(CI),,node scripts/swift-packages.mts) xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc -derivedDataPath DerivedData/Make $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
-XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts) $(XCODEBUILD_COMMAND)
+# Builds stay in the checkout, so removing an agent's worktree removes them too. Every checkout on
+# the Mac shares the Swift packages (with-simulator.mts adds them to local test runs); CI caches them
+# inside the build folder.
+XCODEBUILD_COMMAND := xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc -derivedDataPath DerivedData/Make $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
+XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts node scripts/swift-packages.mts) $(XCODEBUILD_COMMAND)
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 TEST_ON_DESTINATION := $(if $(TEST_DESTINATION),$(XCODEBUILD) -destination "$(TEST_DESTINATION)",node scripts/with-simulator.mts $(XCODEBUILD_COMMAND))
 

@@ -44,6 +44,7 @@ function download(directory: string) {
       derivedData,
       "-clonedSourcePackagesDirPath",
       directory,
+      "-onlyUsePackageVersionsFromResolvedFile",
     ],
     { stdio: ["ignore", "ignore", "inherit"] },
   );
@@ -61,44 +62,54 @@ function download(directory: string) {
 /**
  * Checkouts with the same Package.resolved share one copy of the Swift packages, about 4 GB that
  * each build folder would otherwise download for itself. Builds read a downloaded copy in parallel
- * safely, but xcodebuild fails when several fill an empty folder at once, so one downloads it alone.
+ * safely, but xcodebuild fails when several fill an empty folder at once, so one downloads it alone,
+ * and the sweep removes an unused version only while holding the same lock.
  */
-export function prepareSwiftPackages(): string {
+function prepareSwiftPackages(): string {
   const version = createHash("sha256").update(readFileSync(resolvedPath)).digest("hex");
   const directory = path.join(swiftPackagesDirectory, version.slice(0, VERSION_DIGITS));
   const ready = path.join(directory, READY_FILE);
+  const lock = openExclusiveLock({ lockPath: `${directory}.lock` });
 
-  if (!existsSync(ready)) {
-    const lock = openExclusiveLock({ lockPath: `${directory}.lock` });
-
-    try {
-      if (!existsSync(ready)) {
-        download(directory);
-      }
-    } finally {
-      closeSync(lock);
+  try {
+    if (!existsSync(ready)) {
+      download(directory);
     }
+
+    writeFileSync(ready, "");
+  } finally {
+    closeSync(lock);
   }
 
-  writeFileSync(ready, "");
   return directory;
 }
 
-// With a command, runs it with the shared packages; alone, prints their folder for `xcodebuild`.
+/**
+ * The shared folder only ever holds Package.resolved's versions, so a checkout that changes a
+ * requirement can't move the packages under another checkout's build; it resolves without these.
+ */
+export function swiftPackagesArguments(): string[] {
+  return [
+    "-clonedSourcePackagesDirPath",
+    prepareSwiftPackages(),
+    "-onlyUsePackageVersionsFromResolvedFile",
+  ];
+}
+
+// With a command, runs it with the shared packages; alone, prints the arguments for `xcodebuild`.
 if (import.meta.main) {
   const [command, ...args] = process.argv.slice(2);
-  const directory = prepareSwiftPackages();
 
   if (command) {
     applyCommandExit(
       await runForegroundCommand({
-        args: ["-clonedSourcePackagesDirPath", directory, ...args],
+        args: [...swiftPackagesArguments(), ...args],
         command,
         currentDirectory: process.cwd(),
         environment: process.env,
       }),
     );
   } else {
-    process.stdout.write(`${directory}\n`);
+    process.stdout.write(`${swiftPackagesArguments().join(" ")}\n`);
   }
 }
