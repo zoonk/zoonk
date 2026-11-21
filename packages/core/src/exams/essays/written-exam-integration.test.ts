@@ -234,6 +234,7 @@ describe("CGU written exam preparation", () => {
         taskKey: "long",
         total: 2,
         unit: "answer",
+        writingTask: long,
       },
       unit: "answer",
     });
@@ -373,6 +374,13 @@ describe("CGU written exam preparation", () => {
     await expect(startWriting({ blockId: block.id })).resolves.toStrictEqual(started);
     await expect(prisma.writingAdmission.count({ where: { userId: user.id } })).resolves.toBe(1);
 
+    const shortTask = { distinctLines: true, lines: 30, number: 1, points: 30, total: 2 };
+
+    await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
+      essay: { admissionId: started.admissionId, draft: null, writingTask: shortTask },
+      status: "ready",
+    });
+
     await expect(
       saveWritingDraft({
         blockId: block.id,
@@ -382,7 +390,8 @@ describe("CGU written exam preparation", () => {
 
     await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
       essay: {
-        draft: { revision: 1, text: TEXT },
+        admissionId: started.admissionId,
+        draft: { admissionId: started.admissionId, revision: 1, text: TEXT },
         writing: {
           lines: 30,
           partMinimum: { max: 100, minimum: { unit: "points", value: 50 } },
@@ -428,10 +437,14 @@ describe("CGU written exam preparation", () => {
     expect(continued.block.id).toBe(block.id);
     expect(continued.sessionId).toBe(sessionId);
 
-    await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
+    const continuedEssay = await getEssay({ blockId: block.id });
+
+    expect(continuedEssay).toMatchObject({
       essay: { draft: { revision: 1, text: TEXT }, writing: { lines: 30, points: 30 } },
       status: "ready",
     });
+
+    expect(continuedEssay).not.toHaveProperty("essay.writingTask");
 
     const structure = structuredClone(CGU);
     const task = structure.mock?.sections.find(({ kind }) => kind === "written")?.tasks?.[0];
@@ -471,6 +484,18 @@ describe("CGU written exam preparation", () => {
     expect(first.score).toBeNull();
     expect(first.answer).toMatchObject({ conditions: { estimatedLines: 23 } });
 
+    const currentTask = { ...shortTask, lines: 1, points: 12 };
+
+    await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
+      essay: {
+        admissionId: started.admissionId,
+        draft: null,
+        drafts: [{ attemptId: first.id, writingTask: currentTask }],
+        writingTask: currentTask,
+      },
+      status: "ready",
+    });
+
     await expect(getSyllabusView({ goalId: goal.id })).resolves.toMatchObject({
       syllabus: {
         writtenPractice: {
@@ -489,6 +514,7 @@ describe("CGU written exam preparation", () => {
       attempt: {
         grade: { estimatedLines: 23 },
         writing: { partMinimum: { max: 100, minimum: { unit: "points", value: 50 } } },
+        writingTask: currentTask,
       },
       status: "ready",
     });
@@ -510,6 +536,13 @@ describe("CGU written exam preparation", () => {
     if (rewrite.status !== "ready") {
       throw new Error(rewrite.status);
     }
+
+    expect(rewrite.admissionId).not.toBe(started.admissionId);
+
+    await expect(getEssay({ blockId: block.id })).resolves.toMatchObject({
+      essay: { admissionId: rewrite.admissionId, draft: null, drafts: [{ attemptId: first.id }] },
+      status: "ready",
+    });
 
     const rewritten = {
       ...input,
@@ -551,6 +584,10 @@ describe("CGU written exam preparation", () => {
     await expect(prisma.learnerSkill.findUnique({ where: skillRow })).resolves.toMatchObject({
       state: "solid",
     });
+
+    const other = await userFixture();
+    mockSession(other.id);
+    await expect(getEssay({ blockId: block.id })).resolves.toStrictEqual({ status: "notFound" });
   });
 
   it("drops an unissued task from the day and Continue after the notice is read again", async () => {

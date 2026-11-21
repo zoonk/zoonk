@@ -33853,6 +33853,50 @@
           "unit"
         ]
       },
+      "WritingTask": {
+        "type": "object",
+        "properties": {
+          "lines": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "points": {
+            "nullable": true,
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "distinctLines": {
+            "type": "boolean",
+            "description": "Whether only one question in the written test has this stated line limit"
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The first question number for this task in notice order"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "The number of questions in the written test, counting repeats"
+          }
+        },
+        "required": [
+          "lines",
+          "points",
+          "distinctLines",
+          "number",
+          "total"
+        ],
+        "additionalProperties": false
+      },
       "__schema0": {
         "anyOf": [
           {
@@ -41605,6 +41649,12 @@
       "Essay": {
         "type": "object",
         "properties": {
+          "admissionId": {
+            "description": "The current admission issued for this block",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "blockId": {
             "type": "string",
             "format": "uuid",
@@ -41642,6 +41692,13 @@
                 },
                 "text": {
                   "type": "string"
+                },
+                "writingTask": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/WritingTask"
+                    }
+                  ]
                 }
               },
               "required": [
@@ -41691,6 +41748,13 @@
           },
           "writing": {
             "$ref": "#/components/schemas/WritingPromptOutput"
+          },
+          "writingTask": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingTask"
+              }
+            ]
           }
         },
         "required": [
@@ -43360,50 +43424,6 @@
           "range",
           "standing",
           "tasks"
-        ],
-        "additionalProperties": false
-      },
-      "WritingTask": {
-        "type": "object",
-        "properties": {
-          "lines": {
-            "nullable": true,
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
-          },
-          "points": {
-            "nullable": true,
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true
-          },
-          "distinctLines": {
-            "type": "boolean",
-            "description": "Whether only one question in the written test has this stated line limit"
-          },
-          "number": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991,
-            "description": "The first question number for this task in notice order"
-          },
-          "total": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991,
-            "description": "The number of questions in the written test, counting repeats"
-          }
-        },
-        "required": [
-          "lines",
-          "points",
-          "distinctLines",
-          "number",
-          "total"
         ],
         "additionalProperties": false
       },
@@ -100997,6 +101017,13 @@
           },
           "writing": {
             "$ref": "#/components/schemas/WritingPromptOutput"
+          },
+          "writingTask": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WritingTask"
+              }
+            ]
           }
         },
         "required": [
@@ -101124,6 +101151,13 @@
                     "enum": [
                       "drill",
                       "answer"
+                    ]
+                  },
+                  "writingTask": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/WritingTask"
+                      }
                     ]
                   }
                 },
