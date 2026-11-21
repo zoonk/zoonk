@@ -147,7 +147,7 @@
         <item quantity="one">%d mock exam</item>
         <item quantity="other">%d mock exams</item>
     </plurals>
-    <!-- %2$s is a date, such as "Nov 8". -->
+    <!-- %1$d is the lessons done, %2$d all the lessons, such as "3 of 15 lessons". -->
     <plurals name="plan_lessons_of">
         <item quantity="one">%1$d of %2$d lesson</item>
         <item quantity="other">%1$d of %2$d lessons</item>
@@ -328,11 +328,11 @@
     <!-- A focus the learner's Focus test answers suggest: %1$s lists up to three exam subjects. -->
     <string name="plan_change_focus_test">Your Focus test suggests more time for %1$s.</string>
     <string name="plan_change_follows_guide">Your plan follows the exam\'s official guide.</string>
-    <!-- Today\'s notice after the plan followed the exam\'s public notice (Brazil\'s "edital") by itself and dropped what the notice doesn\'t list. -->
+    <!-- Says the plan already changed by itself. The document is the exam\'s public notice (Brazil\'s "edital"). -->
     <string name="plan_change_now_follows_notice">Your plan now follows the official guide</string>
-    <!-- Today\'s notice after the plan followed the exam\'s official guide by itself and dropped what the guide doesn\'t list. -->
+    <!-- Says the plan already changed by itself. The document is the exam\'s official guide. -->
     <string name="plan_change_now_follows_guide">Your plan now follows the official guide</string>
-    <!-- %1$s lists the subjects and topics that left the plan, such as "Portuguese, Logic and English" or "Portuguese, Logic and 2 more". -->
+    <!-- Lists the subjects or topics the plan no longer holds, like "Portuguese, Logic and 2 more". -->
     <string name="plan_change_out_of_plan">Out of your plan: %1$s</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">The exam\'s likely date is now %1$s.</string>
@@ -360,6 +360,7 @@
     <string name="plan_change_phase_dates_moved">Your phase dates moved.</string>
     <string name="plan_change_fit_lessons">Lessons added to your plan.</string>
     <string name="plan_change_extras_added">Exam strategy added to your plan.</string>
+    <string name="plan_change_extras_removed">Exam strategy isn\'t in your plan.</string>
     <string name="plan_change_exam_choice">%1$s: %2$s.</string>
     <string name="plan_change_no_deadline">Your plan has no end date.</string>
     <string name="plan_change_full_course">Your plan goes on after the exam.</string>
@@ -832,6 +833,7 @@
     <string name="plan_ask_prerequisites">Change your prerequisites?</string>
     <string name="plan_ask_aim">Study up to %1$s?</string>
     <string name="plan_ask_fit_lessons">Add the lessons that fit your time?</string>
+    <string name="plan_ask_remove_extras">Take exam strategy out of your plan?</string>
     <string name="plan_ask_change">Change your plan?</string>
     <string name="plan_change_official_date">The official exam date is %1$s.</string>
     <string name="plan_change_estimate_updated">Your plan changed to match the time your lessons take.</string>

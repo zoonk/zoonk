@@ -306,7 +306,7 @@ private fun operationQuestion(
         }
 
         is PlanOp.Extras -> {
-            stringResource(R.string.plan_extra_offer_title).takeIf { op.skillIds.isNotEmpty() }
+            stringResource(if (op.skillIds.isEmpty()) R.string.plan_ask_remove_extras else R.string.plan_extra_offer_title)
         }
 
         else -> {
@@ -423,7 +423,7 @@ private fun operationStatement(
         }
 
         is PlanOp.Extras -> {
-            stringResource(if (op.skillIds.isEmpty()) R.string.plan_change_changed else R.string.plan_change_extras_added)
+            stringResource(if (op.skillIds.isEmpty()) R.string.plan_change_extras_removed else R.string.plan_change_extras_added)
         }
 
         is PlanOp.ExamChoice -> {
