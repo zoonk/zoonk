@@ -23,6 +23,8 @@ import { type OutputMark, ReadableOutput } from "./readable-output";
 
 type CriterionLabels = Record<string, string>;
 
+const SIDE_ORDER: Side[] = ["incumbent", "challenger"];
+
 type NumberedObservation = ObservationView & {
   anchor: string;
   family: string;
@@ -30,11 +32,13 @@ type NumberedObservation = ObservationView & {
   order: ReadOrder;
 };
 
+/** Numbered through the current model's answer and then the challenger's, so each answer's list counts up without gaps. */
 function numberObservations(caseId: string, run: RunView): NumberedObservation[] {
   return run.reads
     .flatMap((read) =>
       read.observations.map((view) => ({ ...view, family: read.reader.family, order: read.order })),
     )
+    .toSorted((left, right) => SIDE_ORDER.indexOf(left.side) - SIDE_ORDER.indexOf(right.side))
     .map((view, index) => ({
       ...view,
       anchor: `problem-${caseId}-${run.run}-${index + 1}`,
