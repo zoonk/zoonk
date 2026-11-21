@@ -4,6 +4,7 @@ import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import z from "zod";
 import { getTestCaseLanguage } from "../case-languages";
 import { getRunCost } from "../cost";
+import { captureEvalImages } from "../image-files";
 import { generateComparisonRun } from "../output-generator";
 import { type RegisteredTask } from "../types";
 import { confirmForecast, forecastReads } from "./forecast";
@@ -33,6 +34,7 @@ const plannedSelection = selectionSchema.extend({
 const frozenSchema = plannedSelection.extend({
   generate: z.boolean(),
   generationSource: digest.optional(),
+  provenanceVersion: z.literal(1).optional(),
   slots: z.array(runSchema),
 });
 export type PrepareOptions = {
@@ -63,6 +65,12 @@ export async function prepare(options: PrepareOptions) {
 
   const file = path.join(dir, "selection.json");
   const frozen = (await readOptional(file, frozenSchema)) ?? (await freeze(options));
+
+  if (!frozen.provenanceVersion) {
+    throw new Error(
+      "This pending selection predates generation provenance. Use a new comparison ID.",
+    );
+  }
 
   if (options.stopAfterFreeze) {
     return null;
@@ -240,6 +248,7 @@ async function freeze(options: PrepareOptions) {
   const slots = cases.flatMap((tc) =>
     Array.from({ length: options.runs }, (_, index) => {
       const runId = `${tc.id}-${index + 1}`;
+      const inputHash = hashJson(tc.input);
 
       const run: z.infer<typeof runSchema> = {
         caseId: tc.id,
@@ -256,23 +265,23 @@ async function freeze(options: PrepareOptions) {
           return;
         }
 
-        run.failures.push(
-          ...src.failures
-            .filter((fail) => fail.runId === runId)
-            .map((fail) => ({ costUsd: fail.costUsd, reason: fail.reason, side })),
+        const artifacts = src.artifacts.filter(
+          (artifact) => artifact.runId === runId && artifact.inputHash === inputHash,
         );
 
-        const captured = src.deliveries.find(
-          (entry) =>
-            entry.runId === runId &&
-            (entry.inputHash
-              ? entry.inputHash === hashJson(tc.input)
-              : isDeepStrictEqual(entry.input, tc.input)),
-        );
+        for (const artifact of artifacts) {
+          if ("slot" in artifact) {
+            if (run[side]) {
+              throw new Error(
+                `Several saved outputs match ${side} run ${runId}. Choose one variant.`,
+              );
+            }
 
-        if (captured) {
-          run[side] = captured.slot;
-          blobs.set(captured.slot.hash, captured.output);
+            run[side] = artifact.slot;
+            blobs.set(artifact.slot.hash, artifact.output);
+          } else {
+            run.failures.push({ costUsd: artifact.costUsd, reason: artifact.reason, side });
+          }
         }
       });
 
@@ -280,15 +289,12 @@ async function freeze(options: PrepareOptions) {
     }),
   );
 
-  const generation = generationForecast({
-    generate: options.generate,
-    history: challenger.costs,
-    slots,
-  });
+  const generate = options.generate && !challenger.variant;
+  const generation = generationForecast({ generate, history: challenger.forecastCosts, slots });
 
   const byReader = options.sealOnly
     ? []
-    : await forecastReads(selection, slots, blobs, Boolean(incumbent), options.generate);
+    : await forecastReads(selection, slots, blobs, Boolean(incumbent), generate);
 
   confirmForecast(byReader, generation, options.limit, options.confirm);
 
@@ -300,9 +306,9 @@ async function freeze(options: PrepareOptions) {
 
   return writeRecord(path.join(dir, "selection.json"), frozenSchema, {
     ...selection,
-    generate: options.generate,
-    generationSource:
-      options.generate && !selection.variants.challenger ? generationSourceHash() : undefined,
+    generate,
+    generationSource: generate ? generationSourceHash() : undefined,
+    provenanceVersion: 1,
     slots,
   });
 }
@@ -349,7 +355,7 @@ async function sealRun({
     const casePrompt = previous.find((prior) => prior.caseId === run.caseId && prior.challenger)
       ?.challenger?.systemPromptHash;
 
-    await generateSlot({ casePrompt, dir, frozen, run, task });
+    await captureEvalImages(() => generateSlot({ casePrompt, dir, frozen, run, task }));
   }
 
   if (
@@ -398,24 +404,24 @@ async function generateSlot({
     const entry = result.output;
 
     const costUsd = getRunCost({
-      model: resolveModel(frozen.challengerModel),
+      model: { gatewayModelId: entry.generation.model },
       prices: GATEWAY_PRICES,
       run: entry,
     });
 
-    const produced = variantFor(frozen.challengerModel, entry);
+    const produced = variantFor({
+      entry,
+      generation: entry.generation,
+      modelId: frozen.challengerModel,
+    });
 
-    const expected =
-      frozen.variants.challenger ??
-      (await readOptional(path.join(dir, "challenger.json"), variantSchema));
-
-    const expectedPrompt = frozen.generationSource ? casePrompt : expected?.systemPromptHash;
+    const expected = await readOptional(path.join(dir, "challenger.json"), variantSchema);
 
     if (
       !expected ||
       isDeepStrictEqual(produced, {
         ...expected,
-        systemPromptHash: expectedPrompt ?? produced.systemPromptHash,
+        systemPromptHash: casePrompt ?? produced.systemPromptHash,
       })
     ) {
       if (!expected) {

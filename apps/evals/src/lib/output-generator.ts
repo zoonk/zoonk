@@ -92,7 +92,7 @@ async function generateOutputForTestCase({
   runNumber: number;
   task: RegisteredTask;
   testCase: TestCase;
-}): Promise<OutputEntry> {
+}) {
   logInfo(`Generating output for: ${testCase.id} (run ${runNumber})`);
 
   const testCaseId = getTestCaseRunId({ runNumber, testCaseId: testCase.id });
@@ -123,6 +123,7 @@ async function generateOutputForTestCase({
     ...toRunCalls(billed),
     caseInputHash: hashJson(testCase.userInput),
     duration,
+    generation: { model: input.model, reasoning: input.reasoning },
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
     systemPrompt: result.systemPrompt,

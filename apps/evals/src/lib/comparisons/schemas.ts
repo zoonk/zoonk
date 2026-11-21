@@ -175,6 +175,7 @@ const sealedPacketSchema = z.object({
 });
 export const manifestSchema = selectionSchema.extend({
   packets: z.array(sealedPacketSchema),
+  provenanceVersion: z.literal(1).optional(),
   runsCompared: z.array(runSchema),
 });
 export type Manifest = z.infer<typeof manifestSchema>;

@@ -1,15 +1,14 @@
-import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import z from "zod";
-import { getFailedRunsCost, getRunCost } from "../cost";
-import { readEvalImage } from "../image-files";
-import { DEFAULT_REASONING, getModelById } from "../models";
+import { getRunCost } from "../cost";
+import { evalImageDigest, readEvalImage } from "../image-files";
+import { getModelById } from "../models";
 import { loadModelOutputs } from "../output-loader";
 import { type OutputEntry } from "../types";
 import { hash, hashJson, promptHash } from "./identity";
 import { type Variant, identifier, type runSchema, side } from "./schemas";
-import { loadComparison, readOptional } from "./storage";
+import { loadComparison } from "./storage";
 
 export function resolveModel(modelId: string) {
   const model = getModelById(modelId);
@@ -21,13 +20,18 @@ export function resolveModel(modelId: string) {
   return model;
 }
 
-export function variantFor(modelId: string, entry: OutputEntry): Variant {
-  const model = resolveModel(modelId);
-  const reasoning = model.reasoning ?? DEFAULT_REASONING;
+export function variantFor({
+  entry,
+  generation,
+  modelId,
+}: {
+  entry: OutputEntry;
+  generation: NonNullable<OutputEntry["generation"]>;
+  modelId: string;
+}): Variant {
+  const { model, reasoning } = generation;
 
-  const pipeline = entry.calls?.length
-    ? entry.calls.map((call) => call.modelId)
-    : [model.gatewayModelId];
+  const pipeline = entry.calls?.length ? entry.calls.map((call) => call.modelId) : [model];
 
   return {
     model: modelId,
@@ -35,6 +39,7 @@ export function variantFor(modelId: string, entry: OutputEntry): Variant {
     reasoning,
     settingsHash: hash(
       JSON.stringify({
+        model,
         pipeline,
         reasoning,
         service:
@@ -50,25 +55,16 @@ export function variantFor(modelId: string, entry: OutputEntry): Variant {
   };
 }
 
-const storedCase = z.object({ id: z.string(), userInput: z.record(z.string(), z.unknown()) });
-const resultsSchema = z.object({ results: z.array(z.object({ testCase: storedCase })) });
-
-type Delivery = {
-  runId: string;
-  inputHash?: string;
-  input: unknown;
-  slot: NonNullable<z.infer<typeof runSchema>["challenger"]>;
-  output: string | Buffer;
-};
-
-type Failure = { runId: string; costUsd: number; reason: string };
+type Artifact = { runId: string; inputHash: string } & (
+  | { slot: NonNullable<z.infer<typeof runSchema>["challenger"]>; output: string | Buffer }
+  | { costUsd: number; reason: string }
+);
 
 type Source = {
   model: ReturnType<typeof resolveModel>;
   variant: Variant | null;
-  deliveries: Delivery[];
-  failures: Failure[];
-  costs: number[];
+  artifacts: Artifact[];
+  forecastCosts: number[];
 };
 
 async function sealedSource(taskId: string, spec: string): Promise<Source> {
@@ -81,39 +77,104 @@ async function sealedSource(taskId: string, spec: string): Promise<Source> {
     throw new Error("No such variant in the sealed comparison.");
   }
 
-  const deliveries = comparison.manifest.runsCompared.flatMap((run) => {
+  if (!comparison.manifest.provenanceVersion) {
+    throw new Error(
+      "This sealed comparison predates generation provenance and can only be replayed.",
+    );
+  }
+
+  const cases = new Map(comparison.manifest.cases.map((tc) => [tc.id, hashJson(tc.input)]));
+
+  const artifacts = comparison.manifest.runsCompared.flatMap((run): Artifact[] => {
+    const inputHash = cases.get(run.caseId);
+
+    if (!inputHash) {
+      throw new Error("Missing sealed case.");
+    }
+
+    const identity = { inputHash, runId: `${run.caseId}-${run.run}` };
     const slot = run[subject];
     const output = slot && comparison.outputs[slot.hash];
 
-    if (!slot || !output) {
-      return [];
-    }
+    const failures = run.failures
+      .filter((failure) => failure.side === subject)
+      .map(({ costUsd, reason }) => ({ ...identity, costUsd, reason }));
 
-    const input = comparison.manifest.cases.find((tc) => tc.id === run.caseId)?.input;
-    return [{ input, output, runId: `${run.caseId}-${run.run}`, slot }];
+    return slot && output !== null && output !== undefined
+      ? [{ ...identity, output, slot }, ...failures]
+      : failures;
   });
 
-  const failures = comparison.manifest.runsCompared.flatMap((run) =>
-    run.failures
-      .filter((failure) => failure.side === subject)
-      .map((failure) => ({ ...failure, runId: `${run.caseId}-${run.run}` })),
-  );
-
   return {
-    costs: deliveries.map((entry) => entry.slot.costUsd),
-    deliveries,
-    failures,
+    artifacts,
+    forecastCosts: artifacts.flatMap((entry) => ("slot" in entry ? [entry.slot.costUsd] : [])),
     model: resolveModel(variant.model),
     variant,
   };
 }
 
 const imagePathSchema = z.object({ imagePath: z.string() });
+const imagePathFor = (output: string) => imagePathSchema.parse(JSON.parse(output)).imagePath;
 
 export async function readRunOutput(output: string, image: boolean) {
-  return image
-    ? Buffer.from(await readEvalImage(imagePathSchema.parse(JSON.parse(output)).imagePath))
-    : output;
+  return image ? Buffer.from(await readEvalImage(imagePathFor(output))) : output;
+}
+
+async function savedImage(output: string): Promise<{ output: Buffer } | { reason: string }> {
+  const imagePath = imagePathFor(output);
+  const digest = evalImageDigest(imagePath);
+
+  if (!digest) {
+    return { reason: "Saved image has no digest from its generation." };
+  }
+
+  try {
+    const bytes = Buffer.from(await readEvalImage(imagePath));
+
+    return hash(bytes) === digest
+      ? { output: bytes }
+      : { reason: "Saved image no longer matches its generation digest." };
+  } catch (error) {
+    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) {
+      throw error;
+    }
+
+    return { reason: "Saved image file is missing." };
+  }
+}
+
+async function savedArtifact({
+  costUsd,
+  entry,
+  image,
+  inputHash,
+  variant,
+}: {
+  costUsd: number;
+  entry: OutputEntry;
+  image: boolean;
+  inputHash: string;
+  variant: Variant;
+}): Promise<Artifact> {
+  const identity = { inputHash, runId: entry.testCaseId };
+  const captured = image ? await savedImage(entry.output) : { output: entry.output };
+
+  if ("reason" in captured) {
+    return { ...identity, costUsd, reason: captured.reason };
+  }
+
+  return {
+    ...identity,
+    output: captured.output,
+    slot: {
+      costUsd,
+      durationMs: entry.duration,
+      hash: hash(captured.output),
+      ...(image ? { mediaType: "image/webp" as const } : {}),
+      systemPromptHash: variant.systemPromptHash,
+      userPromptHash: promptHash(entry.userPrompt),
+    },
+  };
 }
 
 export async function source(taskId: string, spec: string): Promise<Source> {
@@ -124,14 +185,54 @@ export async function source(taskId: string, spec: string): Promise<Source> {
   const [id, suffix] = spec.split("@");
   const model = resolveModel(id ?? "");
   const data = await loadModelOutputs(taskId, model.id);
-  const outputs = data?.outputs ?? [];
 
-  const variants = new Map(
-    outputs.map((entry) => {
-      const variant = variantFor(model.id, entry);
-      return [hashJson(variant), variant];
-    }),
-  );
+  if (data && (data.taskId !== taskId || data.modelId !== model.id)) {
+    throw new Error("Saved output file does not belong to the requested task and model.");
+  }
+
+  const saved = data?.outputs ?? [];
+  const current = suffix === "current" || (!suffix && saved.length === 0);
+
+  if (current) {
+    return {
+      artifacts: [],
+      forecastCosts: saved.map((run) =>
+        getRunCost({
+          model: { gatewayModelId: run.generation?.model ?? model.gatewayModelId },
+          prices: GATEWAY_PRICES,
+          run,
+        }),
+      ),
+      model,
+      variant: null,
+    };
+  }
+
+  const outputs = saved.flatMap((entry) => {
+    if (!entry.generation || !entry.caseInputHash) {
+      return [];
+    }
+
+    const variant = variantFor({ entry, generation: entry.generation, modelId: model.id });
+
+    return [
+      {
+        entry,
+        gatewayModelId: entry.generation.model,
+        inputHash: entry.caseInputHash,
+        key: hashJson(variant),
+        variant,
+      },
+    ];
+  });
+
+  if (outputs.length === 0) {
+    throw new Error(
+      `No saved outputs have generation provenance. Select ${model.id}@current to generate.`,
+    );
+  }
+
+  const variants = new Map(outputs.map(({ key, variant }) => [key, variant]));
 
   const prefixes = suffix?.split("+") ?? [""];
 
@@ -139,12 +240,9 @@ export async function source(taskId: string, spec: string): Promise<Source> {
     prefixes.some((prefix) => key.startsWith(prefix)),
   );
 
-  const current = suffix === "current" || (!suffix && outputs.length === 0);
-
   if (
-    !current &&
-    (prefixes.some((prefix) => matches.filter(([key]) => key.startsWith(prefix)).length !== 1) ||
-      new Set(matches.map(([, found]) => hashJson({ ...found, systemPromptHash: "" }))).size !== 1)
+    prefixes.some((prefix) => matches.filter(([key]) => key.startsWith(prefix)).length !== 1) ||
+    new Set(matches.map(([, found]) => hashJson({ ...found, systemPromptHash: "" }))).size !== 1
   ) {
     throw new Error(
       `Choose a model@variant-hash, or several joined by + that differ only in their rendered system prompt, from ${JSON.stringify(
@@ -156,100 +254,36 @@ export async function source(taskId: string, spec: string): Promise<Source> {
   const selected = new Set(matches.map(([key]) => key));
   const first = matches[0]?.[1];
 
-  const variant =
-    current || !first
-      ? null
-      : {
-          ...first,
-          systemPromptHash:
-            matches.length === 1
-              ? first.systemPromptHash
-              : hashJson(matches.map(([, found]) => found.systemPromptHash).toSorted()),
-        };
+  if (!first) {
+    throw new Error("No matching saved variant.");
+  }
 
-  const scores = await readOptional(
-    path.join(
-      "eval-results",
-      "results",
-      identifier.parse(taskId),
-      `${model.id.replaceAll("/", "-")}.json`,
-    ),
-    resultsSchema,
-  );
+  const variant = {
+    ...first,
+    systemPromptHash:
+      matches.length === 1
+        ? first.systemPromptHash
+        : hashJson(matches.map(([, found]) => found.systemPromptHash).toSorted()),
+  };
 
-  const inputs = new Map(
-    scores?.results.map((record) => [record.testCase.id, record.testCase.userInput]),
-  );
-
-  const costs = outputs.map((run) => getRunCost({ model, prices: GATEWAY_PRICES, run }));
+  const candidates = outputs
+    .filter(({ key }) => selected.has(key))
+    .map((candidate) => ({
+      ...candidate,
+      costUsd: getRunCost({
+        model: { gatewayModelId: candidate.gatewayModelId },
+        prices: GATEWAY_PRICES,
+        run: candidate.entry,
+      }),
+    }));
 
   const image = model.kind === "image";
 
-  const imagePaths = image
-    ? outputs.map((entry) => imagePathSchema.parse(JSON.parse(entry.output)).imagePath)
-    : [];
-
-  const ambiguous = new Set(imagePaths.filter((file, index) => imagePaths.indexOf(file) !== index));
-
-  const delivered = await Promise.all(
-    outputs.map(async (entry, index): Promise<Delivery | Failure | null> => {
-      if (current || !selected.has(hashJson(variantFor(model.id, entry)))) {
-        return null;
-      }
-
-      const imagePath = imagePaths[index];
-
-      if (imagePath && ambiguous.has(imagePath)) {
-        return {
-          costUsd: costs[index] ?? 0,
-          reason: "Several saved runs share the same image file.",
-          runId: entry.testCaseId,
-        };
-      }
-
-      try {
-        const output = await readRunOutput(entry.output, image);
-
-        return {
-          input: inputs.get(entry.testCaseId),
-          inputHash: entry.caseInputHash,
-          output,
-          runId: entry.testCaseId,
-          slot: {
-            costUsd: costs[index] ?? 0,
-            durationMs: entry.duration,
-            hash: hash(output),
-            ...(image ? { mediaType: "image/webp" as const } : {}),
-            userPromptHash: promptHash(entry.userPrompt),
-          },
-        };
-      } catch (error) {
-        if (!image || !(error instanceof Error && "code" in error && error.code === "ENOENT")) {
-          throw error;
-        }
-
-        return {
-          costUsd: costs[index] ?? 0,
-          reason: "Saved image file is missing.",
-          runId: entry.testCaseId,
-        };
-      }
-    }),
+  const artifacts = await Promise.all(
+    candidates.map(({ costUsd, entry, inputHash, variant: produced }) =>
+      savedArtifact({ costUsd, entry, image, inputHash, variant: produced }),
+    ),
   );
 
-  const deliveries = delivered.filter((entry) => entry !== null);
-
-  const failures = (data?.failedRuns ?? []).map((fail) => ({
-    costUsd: getFailedRunsCost({ failedRuns: [fail], prices: GATEWAY_PRICES }),
-    reason: variants.size === 1 ? (fail.reason ?? "unknown") : "unattributed variant",
-    runId: fail.testCaseId,
-  }));
-
-  return {
-    costs,
-    deliveries: deliveries.filter((entry) => "slot" in entry),
-    failures: [...failures, ...deliveries.filter((entry) => "reason" in entry)],
-    model,
-    variant,
-  };
+  return { artifacts, forecastCosts: candidates.map(({ costUsd }) => costUsd), model, variant };
 }

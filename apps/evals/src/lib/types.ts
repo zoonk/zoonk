@@ -241,6 +241,7 @@ export type RegisteredTask = Omit<
 
 export type OutputEntry = TokenUsage & {
   caseInputHash?: string;
+  generation?: { model: string; reasoning: Reasoning };
   testCaseId: string;
   output: string;
   /** Calls the eval made around the task, such as a simulated learner: spent, but not run cost. */
