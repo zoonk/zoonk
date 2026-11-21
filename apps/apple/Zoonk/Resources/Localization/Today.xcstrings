@@ -5190,7 +5190,7 @@
       }
     },
     "done" : {
-      "comment" : "A day's status: the day's study time was met",
+      "comment" : "A day's status: the day's list was finished",
       "localizations" : {
         "de" : {
           "stringUnit" : {
