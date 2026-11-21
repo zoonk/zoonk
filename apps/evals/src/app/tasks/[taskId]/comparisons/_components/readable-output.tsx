@@ -195,7 +195,7 @@ function ListItem({ index, item, marks }: { index: number; item: unknown; marks:
   const title = heading ? `${index + 1} · ${humanizeKey(heading[1])}` : `${index + 1}`;
 
   return (
-    <li className="flex flex-col gap-2 border-t py-3 first:border-t-0 first:pt-0">
+    <li className="flex flex-col gap-2 border-t py-3 first:border-t-0 first:pt-0 last:pb-0">
       <p className="text-muted-foreground font-mono text-xs">{title}</p>
       <Value headingKey={heading?.[0]} marks={marks} value={item} />
     </li>
