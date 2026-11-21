@@ -187,6 +187,8 @@ struct BarNote: View {
 
   private let heading: AttributedString?
   private let message: AttributedString
+  /// A note drawn by its own view, which reads out its own changes.
+  private var content: AnyView?
   let tone: Tone
   let action: Action?
 
@@ -205,6 +207,12 @@ struct BarNote: View {
       action: nil)
   }
 
+  /// A note that changes on its own, such as a wait following its run.
+  init(@ViewBuilder content: () -> some View) {
+    self.init(nil, AttributedString(), tone: .status, action: nil)
+    self.content = AnyView(content())
+  }
+
   private init(
     _ heading: AttributedString?, _ message: AttributedString, tone: Tone, action: Action?
   ) {
@@ -216,12 +224,14 @@ struct BarNote: View {
 
   /// What the bar reads politely as this note shows or changes; a failure reads itself at once.
   var politeLine: String? {
-    guard tone != .failure else { return nil }
+    guard tone != .failure, content == nil else { return nil }
     return [heading, message].compactMap { $0.map { String($0.characters) } }.joinedSentences()
   }
 
   var body: some View {
-    if let heading {
+    if let content {
+      content
+    } else if let heading {
       GateWords(title: Text(heading), line: Text(message))
     } else {
       line

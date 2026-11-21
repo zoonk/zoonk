@@ -7,6 +7,20 @@ enum MockStartOutcome: Equatable, Sendable {
   case plusRequired
 }
 
+/// The run writing the paper of a mock being prepared (main's `MockWriting`).
+struct MockWriting: Equatable, Sendable {
+  enum Status: Sendable {
+    case writing
+    /// Its run starts in a few seconds: ask again.
+    case starting
+    /// Nothing is writing it now; the daily preparation goes on with it.
+    case none
+  }
+
+  let generationId: String?
+  let status: Status
+}
+
 enum MockStepOutcome: String, Decodable, Sendable {
   case next
   case finished
@@ -100,6 +114,30 @@ struct ExamAPI {
       case .ok(let response): return try PracticeJSON.recode(try response.body.json)
       case .notFound, .unprocessableContent: return nil
       case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  /// Only reads: it never starts a run.
+  func mockWriting(token: String, goalId: String, planItemId: String?) async throws -> MockWriting {
+    try await clients.perform(token: token) { client in
+      switch try await client.getMockWriting(
+        path: .init(goalId: goalId), query: .init(planItemId: planItemId))
+      {
+      case .ok(let response):
+        let writing = try response.body.json
+
+        let status: MockWriting.Status =
+          switch writing.status {
+          case .writing: .writing
+          case .starting: .starting
+          case .none: .none
+          }
+
+        return MockWriting(generationId: writing.generationId, status: status)
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }

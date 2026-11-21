@@ -2123,7 +2123,7 @@ msgstr "{lessons, plural, =0 {再戦は明日です。} other {明日、短い#�
 #: src/generation/use-generation-copy.ts
 msgctxt "k2oGSw"
 msgid "Getting your mock exam ready"
-msgstr ""
+msgstr "模試を準備しています"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -4628,18 +4628,18 @@ msgstr "学んだ内容の問題を作成しています"
 #: src/generation/use-generation-copy.ts
 msgctxt "UEvuXg"
 msgid "Recording the listening"
-msgstr ""
+msgstr "リスニングを録音しています"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "EIEV6g"
 msgid "Writing the questions"
-msgstr ""
+msgstr "問題を作成しています"
 
 #. A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about.
 #: src/generation/use-generation-copy.ts
 msgctxt "kO-7vs"
 msgid "Writing the texts"
-msgstr ""
+msgstr "文章を作成しています"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -7844,7 +7844,7 @@ msgstr "前回の模試"
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qsDQE3"
 msgid "Getting this mock exam ready"
-msgstr ""
+msgstr "この模試を準備しています"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
@@ -8174,7 +8174,7 @@ msgstr "このページに戻ると開始できます。"
 #: src/mock/mock-preparing.tsx
 msgctxt "89t5lc"
 msgid "About {time} left"
-msgstr ""
+msgstr "残り約{time}"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"

@@ -12,6 +12,8 @@ struct GenerationWait: Equatable, Sendable {
     case levelTestBank
     case lesson
     case challenge
+    /// The run writing the paper of a mock the learner waits to start.
+    case mockPaper
   }
 
   enum PhaseState: Equatable, Sendable {
@@ -394,6 +396,11 @@ struct GenerationWait: Equatable, Sendable {
         "recheckChallenge": .phase("fix"), "redraftChallenge": .phase("fix"),
         "lessonReady": .done,
       ]
+    case .mockPaper:
+      [
+        "writeMockTexts": .phase("texts"), "writeMockQuestions": .phase("questions"),
+        "recordMockListening": .phase("listening"), "mockPaperReady": .done,
+      ]
     }
   }
 
@@ -448,6 +455,26 @@ struct GenerationWait: Equatable, Sendable {
 
   private static func phases(for kind: Kind) -> [Phase] {
     switch kind {
+    case .mockPaper:
+      // Main's `mockPaper` kind, where its durations come from.
+      [
+        Phase(
+          id: "texts",
+          label: LocalizedStringResource(
+            "Writing the texts", table: "Mock",
+            comment:
+              "A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about."
+          ),
+          isOptional: true, seconds: 40),
+        Phase(
+          id: "questions",
+          label: LocalizedStringResource("Writing the questions", table: "Mock"),
+          isOptional: false, seconds: 200),
+        Phase(
+          id: "listening",
+          label: LocalizedStringResource("Recording the listening", table: "Mock"),
+          isOptional: true, seconds: 120),
+      ]
     case .understanding:
       [
         Phase(
@@ -1182,7 +1209,7 @@ extension GenerationTimeline where Header == EmptyView {
 
 /// Main's `useAnimatedProgress`: between reports the bar drifts toward the end of the running
 /// phases, never full before the work is, and never back unless the run started over.
-private struct GenerationWaitBar: View {
+struct GenerationWaitBar: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   let wait: GenerationWait
@@ -1243,6 +1270,8 @@ extension GenerationWait.Kind {
       LocalizedStringResource(
         "Writing your challenge", table: "Player",
         comment: "VoiceOver: the bar of a challenge's wait")
+    case .mockPaper:
+      LocalizedStringResource("Getting your mock exam ready", table: "Mock")
     }
   }
 }

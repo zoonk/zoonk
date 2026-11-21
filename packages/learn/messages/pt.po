@@ -2123,7 +2123,7 @@ msgstr "{lessons, plural, =0 {Revanche amanhã.} one {Revanche amanhã, depois d
 #: src/generation/use-generation-copy.ts
 msgctxt "k2oGSw"
 msgid "Getting your mock exam ready"
-msgstr ""
+msgstr "Preparando seu simulado"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -4628,18 +4628,18 @@ msgstr "Criando perguntas sobre o que você estudou"
 #: src/generation/use-generation-copy.ts
 msgctxt "UEvuXg"
 msgid "Recording the listening"
-msgstr ""
+msgstr "Gravando a parte de escuta"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "EIEV6g"
 msgid "Writing the questions"
-msgstr ""
+msgstr "Criando as questões"
 
 #. A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about.
 #: src/generation/use-generation-copy.ts
 msgctxt "kO-7vs"
 msgid "Writing the texts"
-msgstr ""
+msgstr "Criando os textos"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -7844,7 +7844,7 @@ msgstr "Seu último simulado"
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qsDQE3"
 msgid "Getting this mock exam ready"
-msgstr ""
+msgstr "Preparando este simulado"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
@@ -8174,7 +8174,7 @@ msgstr "Volte a esta página para começar."
 #: src/mock/mock-preparing.tsx
 msgctxt "89t5lc"
 msgid "About {time} left"
-msgstr ""
+msgstr "Cerca de {time} para terminar"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"

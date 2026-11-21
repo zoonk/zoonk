@@ -95,6 +95,16 @@ final class ExamStore {
     }
   }
 
+  /// The run writing a preparing mock's paper, which its wait asks for until it starts. Nil when it
+  /// can't be read, which the wait reads as a run still starting.
+  func mockWriting(goalId: String, planItemId: String? = nil) async -> MockWriting? {
+    guard let token = cache.session.authenticatedSession?.bearerToken else {
+      return nil
+    }
+
+    return try? await api.mockWriting(token: token, goalId: goalId, planItemId: planItemId)
+  }
+
   /// Only from a learner's tap.
   func startMock(goalId: String, shape: MockShape) async -> MutationResult<MockStartOutcome> {
     await write(invalidating: [.learnerModel]) { api, token in

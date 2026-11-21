@@ -2123,7 +2123,7 @@ msgstr "{lessons, plural, =0 {내일 재대결해요.} other {내일 짧은 레�
 #: src/generation/use-generation-copy.ts
 msgctxt "k2oGSw"
 msgid "Getting your mock exam ready"
-msgstr ""
+msgstr "모의고사를 준비하고 있어요"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -4628,18 +4628,18 @@ msgstr "공부한 내용으로 문제를 만들고 있어요"
 #: src/generation/use-generation-copy.ts
 msgctxt "UEvuXg"
 msgid "Recording the listening"
-msgstr ""
+msgstr "듣기를 녹음하고 있어요"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "EIEV6g"
 msgid "Writing the questions"
-msgstr ""
+msgstr "문제를 만들고 있어요"
 
 #. A step while we prepare a mock exam: writing the passages, cases and charts that several of its questions are about.
 #: src/generation/use-generation-copy.ts
 msgctxt "kO-7vs"
 msgid "Writing the texts"
-msgstr ""
+msgstr "지문을 만들고 있어요"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -7844,7 +7844,7 @@ msgstr "최근 모의고사"
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qsDQE3"
 msgid "Getting this mock exam ready"
-msgstr ""
+msgstr "선택한 모의고사를 준비하고 있어요"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
@@ -8174,7 +8174,7 @@ msgstr "이 페이지로 돌아와 시작해 보세요."
 #: src/mock/mock-preparing.tsx
 msgctxt "89t5lc"
 msgid "About {time} left"
-msgstr ""
+msgstr "약 {time} 남음"
 
 #: src/mock/mock-question.tsx
 msgctxt "VqcJmC"

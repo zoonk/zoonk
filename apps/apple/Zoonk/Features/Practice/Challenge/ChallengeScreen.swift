@@ -8,6 +8,7 @@ struct ChallengeScreen: View {
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
+  @Environment(ExamStore.self) private var exam
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var currentPlanItemId: String?
@@ -257,7 +258,17 @@ struct ChallengeScreen: View {
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
     } else if isPreparing(challenge) {
-      GateWords(title: Text(MockPreparing.title), line: Text(MockPreparing.line))
+      MockPreparingNote(
+        title: MockPreparing.title,
+        read: { [exam, itemId] in
+          await exam.mockWriting(goalId: challenge.goalId, planItemId: itemId)
+        },
+        written: {
+          startFoundPreparing = false
+          await read()
+          return true
+        }
+      )
 
       PracticeActionRow {
         if challenge.canMove, moved == nil {

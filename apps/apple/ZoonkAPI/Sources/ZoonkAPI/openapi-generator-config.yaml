@@ -164,6 +164,7 @@ filter:
     - getMistakePattern
     - getMock
     - getMockQuestionThread
+    - getMockWriting
     - getOnboarding
     - getPlanRevealToday
     - getOnboardingResume
