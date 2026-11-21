@@ -2,6 +2,7 @@ package com.zoonk.android.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Every page of main's app (`apps/main/src/app/[lang]`) as a typed route, plus the two screens
@@ -254,21 +255,19 @@ sealed interface AppRoute : NavKey {
     ) : AppRoute
 
     /**
-     * [writing]: what stood before the question when its start answered (the run writing it, the day's
-     * limit, a failure); with the limit, the task it leaves for tomorrow when the refusal named it.
-     * [drill]: the task is a short exercise after a lesson, not a whole answer.
+     * A start's answer belongs to the current visit. Restoring the route only restores the block ID.
      */
     @Serializable
     data class Essay(
         val blockId: String,
-        val writing: String? = null,
-        val taskDescription: String? = null,
-        val taskMinutes: Int? = null,
-        val taskLines: Int? = null,
-        val taskNumber: Int? = null,
-        val taskTotal: Int? = null,
-        val taskDistinctLines: Boolean = false,
-        val drill: Boolean = false,
+        @Transient val writing: String? = null,
+        @Transient val taskDescription: String? = null,
+        @Transient val taskMinutes: Int? = null,
+        @Transient val taskLines: Int? = null,
+        @Transient val taskNumber: Int? = null,
+        @Transient val taskTotal: Int? = null,
+        @Transient val taskDistinctLines: Boolean = false,
+        @Transient val drill: Boolean = false,
     ) : AppRoute
 
     /** A past written answer, read as its result was. */

@@ -63,8 +63,11 @@ import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.QuestionTitle
+import com.zoonk.android.feature.session.WritingRow
 import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.writing.WritingTaskName
+import com.zoonk.android.feature.writing.gradingReturnsLine
 import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.feature.writing.writingTaskTitle
 import com.zoonk.android.navigation.AppNavigator
@@ -104,9 +107,11 @@ import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.Essay
+import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.WritingPromptOutput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
@@ -154,7 +159,7 @@ fun EssayScreen(
                 }
 
                 read.error == ApiError.NotFound -> {
-                    TaskNotFound(navigator)
+                    WritingDayStart(blockId, signedIn, app, navigator)
                 }
 
                 else -> {
@@ -170,11 +175,57 @@ fun EssayScreen(
 }
 
 @Composable
+private fun WritingDayStart(
+    blockId: UUID,
+    signedIn: AuthenticatedSession,
+    app: AppContainer,
+    navigator: AppNavigator,
+) {
+    val resource = app.today.today
+    val day by resource.collectShown()
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val close = navigator::closeTask
+    when (val read = day) {
+        is LoadState.Loaded -> {
+            val step = (read.value as? TodayRead.Day)?.day?.steps?.firstOrNull { it.id == blockId && it.kind == StudyBlock.Kind.PRODUCE }
+            when {
+                step == null -> {
+                    WritingRemoved(stringResource(R.string.essay_written_answer), onClose = close)
+                }
+
+                step.writing == WritingRow.Tomorrow -> {
+                    WritingRefused(
+                        task = writingTaskTitle(step.drill, step.writingTask, step.title) to step.estimatedMinutes.toInt(),
+                        busy = false,
+                        onContinue = close,
+                        onClose = close,
+                        returnsOn = step.writingReturnsOn,
+                    )
+                }
+
+                else -> {
+                    val task = RefusedTask(step.title.orEmpty(), step.estimatedMinutes.toInt(), drill = step.drill, name = step.writingTask)
+                    WritingStart(blockId, null, step.drill, task, signedIn, app, navigator)
+                }
+            }
+        }
+
+        is LoadState.Failed -> {
+            RunLoadFailed(close, onRetry = { scope.launch { resource.refresh() } })
+        }
+
+        else -> {
+            RunLoading(close)
+        }
+    }
+}
+
+@Composable
 private fun WritingStart(
     blockId: UUID,
-    before: WritingBefore,
+    before: WritingBefore?,
     drill: Boolean,
-    refused: RefusedTask?,
+    task: RefusedTask?,
     signedIn: AuthenticatedSession,
     app: AppContainer,
     navigator: AppNavigator,
@@ -189,11 +240,14 @@ private fun WritingStart(
     val header = stringResource(if (drill) R.string.essay_writing_practice else R.string.essay_written_answer)
 
     when (val shown = state) {
+        WritingStartState.Available -> {
+            WritingAvailable(header, drill, task, asking, viewModel::requestStart, navigator::closeTask)
+        }
+
         is WritingStartState.LimitReached -> {
-            val task = shown.task ?: refused
             WritingRefused(
                 task =
-                    task?.let {
+                    (shown.task ?: task)?.let {
                         writingTaskTitle(drill = it.drill, task = it.name, fallback = it.description, lines = it.lines) to it.minutes
                     },
                 busy = false,
@@ -242,11 +296,48 @@ private fun WritingStart(
         }
 
         WritingStartState.Failed -> {
-            WritingFailed(header, drill, busy = asking, onRetry = viewModel::retry, onClose = navigator::closeTask)
+            WritingFailed(header, drill, busy = asking, onRetry = viewModel::requestStart, onClose = navigator::closeTask)
         }
 
         WritingStartState.SignUpRequired -> {
             WritingSignUp(header, onCreateAccount = { navigator.open(AppRoute.Login) }, onClose = navigator::closeTask)
+        }
+    }
+}
+
+@Composable
+internal fun WritingAvailable(
+    header: String,
+    drill: Boolean,
+    task: RefusedTask?,
+    busy: Boolean,
+    onWrite: () -> Unit,
+    onClose: () -> Unit,
+) {
+    RunPage(
+        onClose = onClose,
+        title = { BarTitle(header) },
+        bottomBar = {
+            TaskActionBar {
+                TaskActions { width ->
+                    Button(onClick = onWrite, modifier = width, busy = busy) { Text(stringResource(R.string.essay_write)) }
+                }
+            }
+        },
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(
+                writingTaskTitle(drill, task?.name, task?.description?.ifBlank { null }),
+                Modifier.pageTitle(),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            task?.minutes?.takeIf { it > 0 }?.let {
+                Text(
+                    stringResource(R.string.essay_start_about_time, formatMinutes(it, currentLocale())),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
 }
@@ -743,6 +834,7 @@ internal fun WritingRefused(
     busy: Boolean,
     onContinue: () -> Unit,
     onClose: () -> Unit,
+    returnsOn: LocalDate? = null,
 ) {
     RunPage(
         onClose = onClose,
@@ -763,7 +855,11 @@ internal fun WritingRefused(
             )
             Text(stringResource(R.string.essay_no_more_grading), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
             Text(
-                stringResource(R.string.essay_more_tomorrow),
+                if (returnsOn?.isAfter(LocalDate.now().plusDays(1)) == true) {
+                    gradingReturnsLine(returnsOn)
+                } else {
+                    stringResource(R.string.essay_more_tomorrow)
+                },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge,
             )

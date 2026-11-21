@@ -17,6 +17,8 @@ import java.util.UUID
 
 /** Before the question exists: it's being written, its writing failed, it needs an account, or the day's extra grades are used. */
 sealed interface WritingStartState {
+    data object Available : WritingStartState
+
     /** [drill]: the run writes a short exercise after a lesson, so its wait says so. */
     data class Writing(
         val generationId: String,
@@ -46,7 +48,7 @@ sealed interface WritingStartState {
  */
 class WritingStartViewModel(
     private val blockId: UUID,
-    initial: WritingBefore,
+    initial: WritingBefore?,
     private val drill: Boolean,
     private val store: EssayStore,
     source: GenerationSource,
@@ -54,6 +56,7 @@ class WritingStartViewModel(
     private val mutableState =
         MutableStateFlow(
             when (initial) {
+                null -> WritingStartState.Available
                 is WritingBefore.Writing -> WritingStartState.Writing(initial.generationId, drill)
                 WritingBefore.Failed -> WritingStartState.Failed
                 WritingBefore.SignUpRequired -> WritingStartState.SignUpRequired
@@ -75,8 +78,8 @@ class WritingStartViewModel(
         (initial as? WritingBefore.Writing)?.let { follow(it.generationId) }
     }
 
-    /** Try again, after a start that failed. */
-    fun retry() {
+    fun requestStart() {
+        if (mutableAsking.value) return
         viewModelScope.launch { ask() }
     }
 

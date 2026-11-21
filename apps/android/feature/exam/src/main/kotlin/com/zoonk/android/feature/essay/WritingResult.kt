@@ -152,7 +152,7 @@ private fun PointsHeader(
                                 ?: pluralStringResource(R.plurals.essay_about_lines, lines, lines),
                         ),
                     // The scale's decimals don't reach the deduction, which reads in tenths: "−0.3 to −0.6".
-                    value = deductionRange(points.deduction.low, points.deduction.high, DEDUCTION_DECIMALS),
+                    value = deductionRange(points.deduction.low, points.deduction.high),
                 )
             }
         }
@@ -622,4 +622,3 @@ internal fun wordStart(
 private const val LEVEL_CELLS = 4
 private const val ERROR_TINT = 0.1f
 private const val OPEN_ALPHA = 0.3f
-private const val DEDUCTION_DECIMALS = 1

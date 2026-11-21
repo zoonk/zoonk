@@ -9,7 +9,11 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.feature.practice.UnusedSessionSteps
+import com.zoonk.android.navigation.AppLink
+import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Essay
 import com.zoonk.api.models.WritingDraft
 import kotlinx.coroutines.CompletableDeferred
@@ -36,6 +40,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.util.UUID
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TestTimeSource
@@ -169,6 +174,26 @@ class EssayViewModelTest {
                     .last()
                     .revision,
             )
+        }
+
+    @Test
+    fun aConflictFoundWhileSendingStopsGradingUntilTheLearnerChooses() =
+        runTest(dispatcher) {
+            val api = FakeEssayApi(essay(draft = "Started here."))
+            val other = WritingDraft(ADMISSION, 2, "Edited on the laptop.")
+            api.saveAnswers += DraftSave.Conflict(other)
+            api.grade = { result(LEVELS_RESULT) }
+            val device = Device(this, api)
+            val viewModel = with(device) { open() }
+
+            viewModel.write(ANSWER_TEXT)
+            viewModel.send()
+            advanceUntilIdle()
+
+            assertEquals(emptyList<Any>(), api.submitted)
+            assertEquals(WritingSend.Idle, viewModel.ui.value.send)
+            assertEquals(other, viewModel.ui.value.conflict)
+            assertEquals(ANSWER_TEXT, device.keptOnDisk()?.text)
         }
 
     @Test
@@ -359,7 +384,8 @@ class EssayViewModelTest {
         runTest(dispatcher) {
             val api = FakeEssayApi()
             api.grade = { throw ApiException(ApiError.Network) }
-            val viewModel = opened(api)
+            val device = Device(this, api)
+            val viewModel = with(device) { open() }
 
             viewModel.write(ANSWER_TEXT)
             viewModel.send()
@@ -380,9 +406,74 @@ class EssayViewModelTest {
             )
             assertEquals("$ANSWER_TEXT Changed after the failure.", viewModel.ui.value.unsent)
 
-            viewModel.rewrite()
+            val kept = checkNotNull(device.keptOnDisk())
+            assertEquals(ADMISSION.toString(), kept.admissionId)
+            val restored = with(device) { open() }
+            assertEquals(WritingMode.Result, restored.ui.value.mode)
+            assertEquals(kept.text, restored.ui.value.unsent)
+            assertEquals("", restored.ui.value.text)
+
+            api.defaultStart = WritingStartAnswer.Ready(UUID.randomUUID())
+            restored.rewrite()
             advanceUntilIdle()
-            assertEquals("$ANSWER_TEXT Changed after the failure.", viewModel.ui.value.text)
+            assertEquals("$ANSWER_TEXT Changed after the failure.", restored.ui.value.text)
+            assertEquals(api.defaultStart, WritingStartAnswer.Ready(api.saved.last().admissionId))
+        }
+
+    @Test
+    fun anotherAdmissionDoesNotGetTheEditsKeptForAReplayedGrade() =
+        runTest(dispatcher) {
+            val api = FakeEssayApi(essay(graded = listOf(LEVELS_RESULT)).copy(admissionId = UUID.randomUUID()))
+            val device = Device(this, api)
+            with(device) { keptBefore(KeptWriting("Changed text", 1, ADMISSION.toString(), replayed = true)) }
+
+            val restored = with(device) { open() }
+
+            assertEquals(WritingMode.Result, restored.ui.value.mode)
+            assertNull(restored.ui.value.unsent)
+            assertNull(device.keptOnDisk())
+            assertEquals(emptyList<Any>(), api.saved)
+        }
+
+    @Test
+    fun aRestoredRouteDoesNotFollowARequestOrStartAgain() =
+        runTest(dispatcher) {
+            val api = FakeEssayApi()
+            val device = Device(this, api)
+            val runs = WritingRuns(write = "writeWritingPrompt", ready = "ready")
+
+            for (outcome in listOf("run-1", "failed", "signUp", "limit", "removed")) {
+                val live = AppRoute.Essay(ESSAY_BLOCK.toString(), writing = outcome, taskDescription = "Old task", drill = true)
+                val saved = ApiJson.encodeToString(AppRoute.serializer(), live)
+                val restored = ApiJson.decodeFromString(AppRoute.serializer(), saved) as AppRoute.Essay
+                assertEquals(AppRoute.Essay(ESSAY_BLOCK.toString()), restored)
+                val model = WritingStartViewModel(ESSAY_BLOCK, WritingBefore.of(restored.writing), restored.drill, device.store, runs)
+                advanceUntilIdle()
+                assertEquals(WritingStartState.Available, model.state.value)
+            }
+
+            assertEquals(emptyList<String>(), runs.followed)
+            assertEquals(emptyList<UUID?>(), api.started)
+        }
+
+    @Test
+    fun aLinkToAQuestionOnlyStartsAfterWriteIsTapped() =
+        runTest(dispatcher) {
+            val api = FakeEssayApi()
+            val device = Device(this, api)
+            val runs = WritingRuns(write = "writeWritingPrompt", ready = "ready")
+            val link = AppLink.parse("/essay/$ESSAY_BLOCK?writing=run-1") as AppRoute.Essay
+            val model = WritingStartViewModel(ESSAY_BLOCK, WritingBefore.of(link.writing), link.drill, device.store, runs)
+
+            advanceUntilIdle()
+            assertEquals(WritingStartState.Available, model.state.value)
+            assertEquals(emptyList<String>(), runs.followed)
+            assertEquals(emptyList<UUID?>(), api.started)
+
+            model.requestStart()
+            advanceUntilIdle()
+            assertEquals(WritingStartState.Ready, model.state.value)
+            assertEquals(listOf<UUID?>(null), api.started)
         }
 
     @Test

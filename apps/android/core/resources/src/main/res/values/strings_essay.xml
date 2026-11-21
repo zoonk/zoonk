@@ -64,6 +64,7 @@
     <!-- Under grading criteria taken from the exam's notice, applied with an answer key Zoonk wrote. -->
     <string name="essay_from_notice_practice_key">From the exam notice. The answer key is ours, for practice.</string>
     <string name="essay_write">Write</string>
+    <string name="essay_start_about_time">About %1$s</string>
     <!-- Goes on with a written answer the learner left unfinished. -->
     <string name="essay_continue">Continue</string>
     <!-- Opens the written question over the answer being written. -->
