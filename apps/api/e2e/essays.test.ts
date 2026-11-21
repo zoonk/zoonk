@@ -322,6 +322,7 @@ test.describe("Essays API", () => {
           taskKey: TASK.key,
           unit: "answer",
         },
+        unit: "answer",
       });
 
       const unissued = await api.get(path);
