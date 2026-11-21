@@ -109,7 +109,21 @@ export async function undoChange({
 
     await restorePlan({ context: writeContext, items, snapshot, tx });
     await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
-    await tx.planChange.update({ data: await toUndone({ change, tx }), where: { id: change.id } });
+    const undone = await toUndone({ change, tx });
+
+    await tx.planChange.update({
+      data:
+        change.kind === "testedOut" && undone.status === "undone"
+          ? {
+              ...undone,
+              payload: toPlanChangePayload({
+                ...parsePlanChangePayload(change.payload),
+                undoneAt: new Date().toISOString(),
+              }),
+            }
+          : undone,
+      where: { id: change.id },
+    });
 
     if (context.goal.kind === "exam" && readFocusTestRecord(context.goal)) {
       await keepTestFocus({

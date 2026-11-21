@@ -106,6 +106,7 @@ const planChangePayloadSchema = z.object({
   seenAt: z.iso.datetime().nullable().default(null),
   source: z.string().default("system"),
   todaySession: z.enum(["changed", "unchanged"]).nullable().default(null),
+  undoneAt: z.iso.datetime().optional(),
   versionAfter: z.int().nullable().default(null),
 });
 
