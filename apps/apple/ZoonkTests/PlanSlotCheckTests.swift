@@ -75,10 +75,10 @@ final class PlanSlotCheckTests: XCTestCase {
     try await activate(String(localized: "Add to plan", table: "Plan"), in: window)
 
     try await waitForTestCondition("The card did not state today's count") {
-      self.spoken(in: window).contains { $0.contains("3 lessons") }
+      self.spoken(in: window).contains { $0.contains("3 lessons".asFact) }
     }
     XCTAssertFalse(
-      spoken(in: window).contains { $0.contains("6 lessons") }, "\(spoken(in: window))")
+      spoken(in: window).contains { $0.contains("6 lessons".asFact) }, "\(spoken(in: window))")
   }
 
   // MARK: Each card
