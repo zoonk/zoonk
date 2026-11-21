@@ -36,4 +36,9 @@ class TodayTimeTest {
         assertEquals(0.0, short.heldMinutes, 0.0)
         assertEquals(0.0, short.minutesAfter(steps), 0.0)
     }
+
+    @Test fun extraRowsTakeNothingFromTheDaysTime() {
+        val extra = step(2).copy(estimatedMinutes = 30, extra = true)
+        assertEquals(179.0, day.copy(steps = steps + extra, lessonsComing = true).heldMinutes, 0.0)
+    }
 }
