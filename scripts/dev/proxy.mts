@@ -5,10 +5,21 @@ import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { getPnpmCommand } from "./process.mts";
 
-const PORTLESS_CLI_PATTERN = /(?<packageDirectory>\S+)\/dist\/cli\.js\b/u;
+// Everything after the Node binary up to Portless's entry point, so a checkout path may hold spaces.
+const PROXY_COMMAND_PATTERN =
+  /^\S+ (?<packageDirectory>.+\/portless)\/dist\/cli\.js proxy start\b/u;
+
+const PNPM_VERSION_PATTERN = /\/portless@(?<version>[^/_]+)\/node_modules\/portless$/u;
 const manifestSchema = z.object({ version: z.string() });
 
+/** pnpm names the install's folder after its version, which outlives a removed worktree's manifest. */
 function readPortlessVersion(packageDirectory: string): string | undefined {
+  const version = PNPM_VERSION_PATTERN.exec(packageDirectory)?.groups?.version;
+
+  if (version) {
+    return version;
+  }
+
   try {
     const manifest = readFileSync(join(packageDirectory, "package.json"), "utf8");
 
@@ -18,21 +29,21 @@ function readPortlessVersion(packageDirectory: string): string | undefined {
   }
 }
 
-export function getPortlessPackageDirectory(command: string): string | undefined {
-  return PORTLESS_CLI_PATTERN.exec(command)?.groups?.packageDirectory;
+export function getProxyPackageDirectory(command: string): string | undefined {
+  return PROXY_COMMAND_PATTERN.exec(command.trim())?.groups?.packageDirectory;
 }
 
 /**
- * The running proxy's Portless version, `null` when its install is gone, or undefined when no
- * Portless proxy runs (a stale PID file can name an unrelated process, which is never stopped).
+ * The running proxy's Portless version, or undefined when none can be found: a stale PID file can
+ * name an unrelated process, which is never stopped.
  */
-function getRunningProxyVersion(stateDirectory: string): string | null | undefined {
+function getRunningProxyVersion(stateDirectory: string): string | undefined {
   try {
     const pid = readFileSync(join(stateDirectory, "proxy.pid"), "utf8").trim();
     const command = execFileSync("ps", ["-o", "command=", "-p", pid], { encoding: "utf8" });
-    const packageDirectory = getPortlessPackageDirectory(command);
+    const packageDirectory = getProxyPackageDirectory(command);
 
-    return packageDirectory ? (readPortlessVersion(packageDirectory) ?? null) : undefined;
+    return packageDirectory ? readPortlessVersion(packageDirectory) : undefined;
   } catch {
     return undefined;
   }
@@ -41,17 +52,17 @@ function getRunningProxyVersion(stateDirectory: string): string | null | undefin
 /**
  * A proxy only sees route changes the way its own version watches for them: 0.17 watches
  * `routes.json` itself, so once 0.18 replaces the file it never sees a new route. Every checkout
- * shares the proxy, so one left running by an older Portless, or by an install since deleted, gives
- * way to this checkout's. An older checkout keeps a newer proxy, which reads its routes fine.
+ * shares the proxy, so one left running by an older Portless gives way to this checkout's. An older
+ * checkout keeps a newer proxy, which reads its routes fine.
  */
 export function shouldReplaceProxy({
   ownVersion,
   proxyVersion,
 }: {
   ownVersion: string;
-  proxyVersion: string | null;
+  proxyVersion: string;
 }): boolean {
-  return !proxyVersion || proxyVersion.localeCompare(ownVersion, undefined, { numeric: true }) < 0;
+  return proxyVersion.localeCompare(ownVersion, undefined, { numeric: true }) < 0;
 }
 
 /** Starts the checkout's shared proxy, replacing one an older Portless left running. */
@@ -73,23 +84,21 @@ export function startProxy({
       stdio: ["ignore", "ignore", "inherit"],
     });
 
+  // Started first, so the check sees whichever proxy won when several checkouts start at once.
+  portless("start");
+
   const proxyVersion = getRunningProxyVersion(stateDirectory);
 
   const ownVersion = readPortlessVersion(
     dirname(dirname(fileURLToPath(import.meta.resolve("portless")))),
   );
 
-  if (
-    ownVersion &&
-    proxyVersion !== undefined &&
-    shouldReplaceProxy({ ownVersion, proxyVersion })
-  ) {
+  if (ownVersion && proxyVersion && shouldReplaceProxy({ ownVersion, proxyVersion })) {
     process.stdout.write(
-      `Restarting the shared proxy on Portless ${ownVersion} (it ran ${proxyVersion ?? "an unknown version"})\n`,
+      `Restarting the shared proxy on Portless ${ownVersion} (it ran ${proxyVersion})\n`,
     );
 
     portless("stop");
+    portless("start");
   }
-
-  portless("start");
 }
