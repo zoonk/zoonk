@@ -103,7 +103,7 @@ test.describe("Testing what you know from the plan", () => {
     expect(await skippedLessons(goal.id)).toBeGreaterThan(0);
 
     await page.getByRole("button", { exact: true, name: "Undo" }).click();
-    await expect(page.getByText("The lessons are back in your plan.")).toBeVisible();
+    await expect(page.getByText(/^The lessons? (?:is|are) back in your plan\.$/u)).toBeVisible();
     await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeHidden();
 
     await page.getByRole("button", { exact: true, name: "Done" }).click();
@@ -173,7 +173,7 @@ test("a test's skip appears on Plan and Today and can be undone from Today", asy
   await expect(undo).toBeVisible();
   await undo.click();
 
-  await expect(card.getByText("The lessons are back in your plan.")).toBeVisible();
+  await expect(card.getByText(/^The lessons? (?:is|are) back in your plan\.$/u)).toBeVisible();
   expect(await skippedLessons(goal.id)).toBe(0);
 });
 

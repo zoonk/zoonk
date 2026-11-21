@@ -13,6 +13,7 @@ import { Steps } from "../_components/steps";
 import { TaskMeta } from "../_components/task-meta";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
+import { useSkippedLessonsSentences } from "../plan/use-skipped-lessons-sentences";
 import { DayMoment, StepWithDayMoment } from "../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../session/moment-ceremony";
 import { TaskMainLink } from "../shell/task-frame";
@@ -48,13 +49,14 @@ export type TestOutTest = {
 
 function useResultDetail({ outcome, undone }: { outcome: GradedTestOut; undone: boolean }) {
   const t = useExtracted();
+  const { back } = useSkippedLessonsSentences();
 
   if (!outcome.passed) {
     return t("The chapter stays in your plan, and your answers help it start at the right level.");
   }
 
   if (undone) {
-    return t("The lessons are back in your plan.");
+    return back(outcome.skippedLessons);
   }
 
   return t({

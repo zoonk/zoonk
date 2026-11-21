@@ -16,6 +16,7 @@ import {
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
 import { TestOutcome } from "../onboarding/test-outcome";
+import { useSkippedLessonsSentences } from "../plan/use-skipped-lessons-sentences";
 import { type ResultUndo, useResultUndo } from "../questions/undo-button";
 import { type PlacementLength } from "./placement-test-actions";
 import { type PlacementPressed } from "./use-placement-test";
@@ -188,6 +189,7 @@ export function PlacementBetweenParts({
 }) {
   const t = useExtracted();
   const skippedTitle = useSkippedTitle();
+  const sentences = useSkippedLessonsSentences();
   const left = useMinutesLeft();
   const { button, pending, undone } = useResultUndo(undo);
 
@@ -222,7 +224,7 @@ export function PlacementBetweenParts({
         </OnboardingTitle>
         <OnboardingDescription>{left(minutesLeft)}</OnboardingDescription>
       </OnboardingHeading>
-      {undone && <p role="status">{t("The lessons are back in your plan.")}</p>}
+      {undone && <p role="status">{sentences.back(lessonsSkipped ?? 0)}</p>}
       {onContinueOnboarding && (
         <p className="text-muted-foreground text-sm text-pretty">
           {t("You can finish the test from Plan.")}
@@ -253,6 +255,7 @@ export function PlacementResult({
 }) {
   const t = useExtracted();
   const skippedTitle = useSkippedTitle();
+  const sentences = useSkippedLessonsSentences();
   const { button, pending, undone } = useResultUndo(undo);
 
   return (
@@ -263,11 +266,9 @@ export function PlacementResult({
       failed={failed}
       lead={
         <OnboardingDescription role="status">
-          {undone && t("The lessons are back in your plan.")}
+          {undone && sentences.back(lessonsSkipped)}
           {!undone &&
-            (lessonsSkipped > 0
-              ? t("You already know them. They stay in your practice.")
-              : t("Your plan stays as it is."))}
+            (lessonsSkipped > 0 ? sentences.known(lessonsSkipped) : t("Your plan stays as it is."))}
         </OnboardingDescription>
       }
       onContinue={onDone}

@@ -17,6 +17,7 @@ import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { type GoalDateKind } from "./goal-date-kind";
 import { usePlanScreen } from "./plan-context";
 import { usePlanDateKind } from "./use-change-sentence";
+import { useSkippedLessonsSentences } from "./use-skipped-lessons-sentences";
 import { useSystemChangeSentence } from "./use-system-change-sentence";
 
 export function TestedOutChangeCard({
@@ -30,6 +31,7 @@ export function TestedOutChangeCard({
 }) {
   const t = useExtracted();
   const title = useSystemChangeSentence()(change) ?? t("Plan updated");
+  const sentences = useSkippedLessonsSentences();
   const [undone, setUndone] = useState(false);
   const [failed, setFailed] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -46,7 +48,7 @@ export function TestedOutChangeCard({
     <Suggestion answered={restored ? "undone" : false} data-slot="tested-out-change" label={title}>
       <SuggestionContent everyWidth>
         {restored ? (
-          <SuggestionResult>{t("The lessons are back in your plan.")}</SuggestionResult>
+          <SuggestionResult>{sentences.back(change.lessonsSkipped)}</SuggestionResult>
         ) : (
           <>
             <SuggestionHeader>{title}</SuggestionHeader>

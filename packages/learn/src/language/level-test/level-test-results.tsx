@@ -12,6 +12,7 @@ import {
 } from "../../onboarding/onboarding-frame";
 import { TestOutcome } from "../../onboarding/test-outcome";
 import { type PlacementPressed } from "../../placement-test/use-placement-test";
+import { useSkippedLessonsSentences } from "../../plan/use-skipped-lessons-sentences";
 import { useResultUndo } from "../../questions/undo-button";
 import { LevelRanges } from "./level-test-parts";
 import { type TestOutView } from "./use-language-plan-test";
@@ -46,6 +47,7 @@ export function LevelResult({
   const walks = length === "wholeCourse" && result?.wholeCourseReady === true;
   const skipped = result?.levelsSkipped ?? [];
   const lessons = result?.lessonsSkipped ?? 0;
+  const sentences = useSkippedLessonsSentences();
 
   const { button, pending, undone } = useResultUndo({ changeId: result?.changeId, onUndo });
 
@@ -59,7 +61,7 @@ export function LevelResult({
       failed={failed}
       lead={
         <OnboardingDescription role="status">
-          {undone && t("The lessons are back in your plan.")}
+          {undone && sentences.back(lessons)}
           {!undone &&
             (skipped.length > 0
               ? t({
@@ -107,6 +109,7 @@ export function TestOutResult({
 }) {
   const t = useExtracted();
   const lessons = view.result?.lessonsSkipped ?? 0;
+  const sentences = useSkippedLessonsSentences();
   const unchecked = view.total === 0;
 
   const { button, pending, undone } = useResultUndo({
@@ -121,12 +124,9 @@ export function TestOutResult({
       disabled={pending}
       lead={
         <OnboardingDescription role="status">
-          {undone && t("The lessons are back in your plan.")}
+          {undone && sentences.back(lessons)}
           {unchecked && t("There aren't enough questions for {level} yet.", { level: view.level })}
-          {!undone &&
-            !unchecked &&
-            lessons > 0 &&
-            t("You already know them. They stay in your practice.")}
+          {!undone && !unchecked && lessons > 0 && sentences.known(lessons)}
           {!unchecked && lessons === 0 && t("Your lessons keep adjusting as you answer.")}
         </OnboardingDescription>
       }
