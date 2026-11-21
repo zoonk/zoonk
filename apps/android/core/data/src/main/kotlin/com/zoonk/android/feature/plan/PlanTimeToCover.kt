@@ -80,7 +80,7 @@ sealed interface TimeToCoverAnswer {
     ) : TimeToCoverAnswer
 
     data class Focus(
-        val reachedShare: Double,
+        val reachedShare: Double?,
         val minutes: Int,
     ) : TimeToCoverAnswer
 

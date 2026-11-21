@@ -77,7 +77,7 @@ fun TimeAnswer(
     val lineWords = lineWords(date, exam, line, minutes, today, aim)
     // The sentence above already names the date, so "not enough time" doesn't repeat it.
     val takesWords =
-        date?.let { shown ->
+        date?.takeUnless { line is TimeLine.Share && line.reachedShare == null }?.let { shown ->
             takes?.let {
                 if (it.full == null) stringResource(R.string.plan_time_none_by_then) else everythingTakesText(shown, it.full, today)
             }
@@ -257,14 +257,10 @@ private fun lineWords(
                 )
             }
 
-            is TimeLine.Focus -> {
-                date ?: return AnnotatedString("")
-                return reachedWords(date, exam, line.reachedShare, today)
-            }
-
             is TimeLine.Share -> {
-                date ?: return AnnotatedString("")
-                return reachedWords(date, exam, line.reachedShare, today)
+                val reached = line.reachedShare
+                if (date == null || reached == null) return AnnotatedString("")
+                return reachedWords(date, exam, reached, today)
             }
 
             TimeLine.PastDate -> {

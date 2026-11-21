@@ -19,20 +19,18 @@ sealed interface TimeLine {
         val endDate: LocalDate,
     ) : TimeLine
 
-    /** On the suggested time, which can't cover everything; [reachedShare] is 1 when every topic gets its first lessons. */
-    data class Focus(
-        val reachedShare: Double,
-    ) : TimeLine
-
     data object NoDays : TimeLine
 
     data object NoFinish : TimeLine
 
     data object PastDate : TimeLine
 
-    /** On another time that doesn't cover everything; [reachedShare] is 1 when every topic gets its first lessons. */
+    /**
+     * On a time that doesn't cover everything; [reachedShare] is 1 when every topic gets its first lessons, and null
+     * when the plan doesn't say, which shows no sentence.
+     */
     data class Share(
-        val reachedShare: Double,
+        val reachedShare: Double?,
     ) : TimeLine
 
     data object Working : TimeLine
@@ -133,12 +131,12 @@ private fun datedLine(
     if (suggested?.minutes?.toInt() == minutes) {
         return when (suggested.kind) {
             PlanTimeToCoverSuggested.Kind.EVERYTHING -> TimeLine.Everything
-            PlanTimeToCoverSuggested.Kind.FOCUS -> TimeLine.Focus(suggested.reachedShare)
+            PlanTimeToCoverSuggested.Kind.FOCUS -> TimeLine.Share(suggested.reachedShare)
         }
     }
     if (advice != null) {
         val covered = advice.coveredShare ?: 0.0
-        return if (covered >= 1) TimeLine.Everything else TimeLine.Share(advice.reachedShare ?: 0.0)
+        return if (covered >= 1) TimeLine.Everything else TimeLine.Share(advice.reachedShare)
     }
     if (found == null) return if (findFailed) TimeLine.FindFailed else TimeLine.Working
     return asking

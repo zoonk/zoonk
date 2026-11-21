@@ -338,7 +338,7 @@ private fun ColumnScope.ScheduleTime(
             )
         }
 
-        val short = shown.line is TimeLine.Share || shown.line is TimeLine.Focus
+        val short = shown.line is TimeLine.Share
         if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
             val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
             FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })

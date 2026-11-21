@@ -44,14 +44,17 @@ internal fun timeEnough(plan: Plan): Boolean = plan.feasibility?.timeCovers ?: f
 
 internal fun canMoveDate(page: PlanPageState): Boolean = !page.isExam && planCoverage(page.plan) != null && !timeEnough(page.plan)
 
-/** Main's `useCoveredText`: what the learner's time a day covers now, named by that time beside an offer of another. */
+/**
+ * Main's `useCoveredText`: what the learner's time a day covers now, named by that time beside an offer of another;
+ * null when the plan doesn't say what it reaches.
+ */
 @Composable
 fun coveredText(
     plan: Plan,
     coverage: PlanFeasibility,
-): String {
+): String? {
     val minutes = plan.schedule.dailyMinutes.toInt()
-    val reached = coverage.reachedShare ?: 0.0
+    val reached = coverage.reachedShare ?: return null
     if (reached < MIN_SHOWN_SHARE || plan.schedule.targetDate == null) {
         return stringResource(R.string.plan_covered_not_enough, formatMinutes(minutes, currentLocale()))
     }

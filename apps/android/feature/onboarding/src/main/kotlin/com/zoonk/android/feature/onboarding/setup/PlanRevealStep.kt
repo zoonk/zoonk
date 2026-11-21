@@ -389,7 +389,7 @@ private fun RevealCoverageLine(plan: Plan) {
     val coverage = planCoverage(plan)
     if (coverage == null || plan.schedule.fullCourse) return
     Text(
-        coveredText(plan, coverage),
+        coveredText(plan, coverage) ?: return,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,
     )
