@@ -151,7 +151,7 @@ private fun Plot(visual: LessonVisual.Chart) {
         val sideways = layout is SidewaysLayout
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            AxisCaption(if (sideways) visual.categoryLabel else visual.unitLabel, TextAlign.Start)
+            AxisCaption(if (sideways) visual.categoryLabel else visual.unitLabel)
             if (layout != null) {
                 Canvas(
                     Modifier
@@ -172,7 +172,7 @@ private fun Plot(visual: LessonVisual.Chart) {
                     }
                 }
             }
-            AxisCaption(if (sideways) visual.unitLabel else visual.categoryLabel, TextAlign.Center)
+            AxisCaption(if (sideways) visual.unitLabel else visual.categoryLabel)
         }
     }
 }
@@ -180,7 +180,6 @@ private fun Plot(visual: LessonVisual.Chart) {
 @Composable
 internal fun AxisCaption(
     text: String,
-    align: TextAlign,
     description: String? = null,
 ) {
     Text(
@@ -188,7 +187,6 @@ internal fun AxisCaption(
         modifier = Modifier.fillMaxWidth().clearAndSetSemantics { description?.let { contentDescription = it } },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall,
-        textAlign = align,
     )
 }
 
@@ -500,11 +498,12 @@ private fun DrawScope.drawLines(
 }
 
 private fun DrawScope.drawCategories(layout: UprightLayout) {
+    val inset = CHART_LABEL_GAP.toPx() / 2
     layout.categoryLayouts.forEachIndexed { index, lines ->
         if (index % layout.categoryLines.step != 0) return@forEachIndexed
         var y = layout.categoriesTop
         lines.forEach { line ->
-            val x = (layout.center(index) - line.size.width / 2f).coerceIn(0f, max(size.width - line.size.width, 0f))
+            val x = axisLabelStart(layout.center(index), line.size.width.toFloat(), layout.left, size.width, inset)
             drawText(line, topLeft = Offset(x, y))
             y += line.size.height
         }

@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
@@ -50,7 +51,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-/** Main's `PlotVisualView`: numbers on both axes, each point where its values put it. */
 @Composable
 internal fun PlotVisual(
     visual: LessonVisual.Plot,
@@ -83,8 +83,8 @@ internal fun PlotVisual(
                     }
 
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    // The ranges are read first, before the points they place.
-                    AxisCaption(axisTitle(visual.yLabel, visual.yUnit), TextAlign.Start, reading.axes)
+                    // TalkBack reads the ranges before the points they place.
+                    AxisCaption(axisTitle(visual.yLabel, visual.yUnit), reading.axes)
                     Box {
                         Canvas(Modifier.fillMaxWidth().height(with(density) { layout.height.toDp() })) {
                             drawPlot(layout, marks, surface, grid, rule)
@@ -95,7 +95,7 @@ internal fun PlotVisual(
                             }
                         }
                     }
-                    AxisCaption(axisTitle(visual.xLabel, visual.xUnit), TextAlign.Center)
+                    AxisCaption(axisTitle(visual.xLabel, visual.xUnit))
                     if (layout.key.isNotEmpty()) PointKey(layout.key, Modifier.padding(top = 8.dp))
                 }
             }
@@ -116,10 +116,10 @@ private fun axisTitle(
     unit: String?,
 ) = if (unit.isNullOrEmpty()) label else "$label ($unit)"
 
-/** Large numbers shorten to "12K"; others keep every digit, and x drops grouping so years don't read as "2,024". */
+/** Large numbers shorten to "12K"; x groups its digits only then, so years don't read as "2,024". */
 private fun isLarge(values: List<Double>) = values.maxOfOrNull { abs(it) }?.let { it >= COMPACT_FROM } == true
 
-/** Main's `drawsDot`: a dotted series draws every point; a bare line draws its shape once, at its end, beside others. */
+/** A bare line marks its end with its series' shape only when there are other series to tell it from. */
 internal fun drawsDot(
     mark: LessonVisual.Plot.Mark,
     index: Int,
@@ -163,7 +163,6 @@ private fun PlotLegend(
     }
 }
 
-/** The numbers that stand for names that didn't fit beside their dots, each with its name. */
 @Composable
 private fun PointKey(
     key: List<KeyEntry>,
@@ -185,7 +184,6 @@ private fun PointKey(
     }
 }
 
-/** What TalkBack reads for the drawing: the ranges, then each series' points with named ones on their own, then the reference lines. */
 private class PlotReading(
     val axes: String,
     val parts: List<String>,
@@ -258,7 +256,6 @@ private class PlacedName(
     val text: TextLayoutResult,
 )
 
-/** Main's `getPlotLayout`, in pixels: the plot's box, its scales and where every tick, line and name goes. */
 private class PlotGeometry(
     val visual: LessonVisual.Plot,
     width: Float,
@@ -280,16 +277,13 @@ private class PlotGeometry(
 
     // Grows with the font, so a large font's axis labels don't crowd each other.
     val bottom = top + max(with(text.density) { CHART_PLOT_HEIGHT.toPx() }, lineHeight * CHART_PLOT_LINES)
-    val ticksTop = bottom + max(gap, lineHeight / 2)
-    val height = ticksTop + lineHeight
+    val tickBaseline = bottom + with(text.density) { TICK_OFFSET.toPx() }
+    val height = bottom + with(text.density) { PLOT_BOTTOM.toPx() }
 
     val yTicks = axes.second.ticks.map { PlotTick(it, text.label(formatAmount(it, text.locale, compact = compactY))) }
     val left = (yTicks.maxOfOrNull { it.label.size.width } ?: 0) + gap
 
-    /**
-     * Reference names sit past the plot's right edge, so they never cover the data. They wrap to a
-     * share of the width, but never narrower than their longest word, which would break inside it.
-     */
+    // Never narrower than the longest word, which would break inside it.
     private val room =
         visual.references.takeIf { it.isNotEmpty() }?.let { references ->
             val widest =
@@ -308,7 +302,9 @@ private class PlotGeometry(
                 }
             min(widest, max(width * MAX_GUTTER_SHARE, word))
         } ?: 0f
-    val plotRight = max(width - if (room > 0) room + gap else with(text.density) { CHART_PLOT_END.toPx() }, left + 1)
+    private val edge = plotEdge(width, left, room, unit)
+    val plotRight = edge.plotRight
+    val referenceLeft = edge.referenceLeft
 
     val x = LinearScale(axes.first.domain, left to plotRight)
     val y = LinearScale(axes.second.domain, bottom to top)
@@ -344,8 +340,7 @@ private class PlotGeometry(
         axes.first.ticks
             .map { tick ->
                 val label = text.label(formatAmount(tick, text.locale, compact = compactX, grouping = compactX))
-                val half = label.size.width / 2f
-                x.toPixel(tick).coerceIn(half, max(width - half, half)) to label
+                axisLabelStart(x.toPixel(tick), label.size.width.toFloat(), left, width, gap / 2) + label.size.width / 2f to label
             }.let { ticks ->
                 val kept =
                     fittingTickIndices(
@@ -353,7 +348,7 @@ private class PlotGeometry(
                             center - label.size.width / 2f to
                                 center + label.size.width / 2f
                         },
-                        unit * 4,
+                        gap,
                     )
                 ticks.filterIndexed { index, _ -> index in kept }
             }
@@ -366,7 +361,6 @@ private class PlotGeometry(
         return lines + references.map { Offset(left, it.y) to Offset(plotRight, it.y) }
     }
 
-    /** Stacks names top to bottom so close lines don't overlap, then lifts them back above the x axis's numbers. */
     private fun stackReferences(marks: List<Pair<Float, TextLayoutResult>>): List<ReferenceMark> {
         val spacing = REFERENCE_SPACING * unit
         val stacked =
@@ -397,7 +391,7 @@ private fun DrawScope.drawPlot(
     val dash = PathEffect.dashPathEffect(floatArrayOf(REFERENCE_DASH.toPx(), REFERENCE_DASH.toPx()))
     layout.references.forEach { reference ->
         drawLine(rule, Offset(layout.left, reference.y), Offset(layout.plotRight, reference.y), strokeWidth = stroke, pathEffect = dash)
-        drawText(reference.label, topLeft = Offset(layout.plotRight + layout.gap, reference.top))
+        drawText(reference.label, topLeft = Offset(layout.referenceLeft, reference.top))
     }
 
     layout.series.forEachIndexed { seriesIndex, pixels ->
@@ -422,11 +416,47 @@ private fun DrawScope.drawPlot(
     }
 
     layout.xTicks.forEach { (center, label) ->
-        drawText(label, topLeft = Offset(center - label.size.width / 2f, layout.ticksTop))
+        drawText(label, topLeft = Offset(center - label.size.width / 2f, layout.tickBaseline - label.firstBaseline))
     }
+}
+
+/**
+ * Where an axis label centered on [center] starts, kept [inset] past the y axis's numbers at [left]
+ * and inside [width], so the corner where the two axes meet never crowds.
+ */
+internal fun axisLabelStart(
+    center: Float,
+    labelWidth: Float,
+    left: Float,
+    width: Float,
+    inset: Float,
+): Float {
+    val start = left + inset
+    return (center - labelWidth / 2).coerceIn(start, max(width - inset - labelWidth, start))
+}
+
+internal class PlotEdge(
+    val plotRight: Float,
+    val referenceLeft: Float,
+)
+
+/** A point on the plot's right edge keeps clear of the reference names past it. [unit] is one dp in pixels. */
+internal fun plotEdge(
+    width: Float,
+    left: Float,
+    referenceRoom: Float,
+    unit: Float,
+): PlotEdge {
+    if (referenceRoom <= 0) return PlotEdge(max(width - CHART_PLOT_END.value * unit, left + 1), width)
+
+    val gutter = (PLOT_DOT_ROOM + CHART_LABEL_GAP.value) * unit
+    val plotRight = max(width - referenceRoom - gutter, left + 1)
+    return PlotEdge(plotRight, plotRight + gutter)
 }
 
 private const val COMPACT_FROM = 10_000
 private const val MAX_GUTTER_SHARE = 0.3f
 private const val REFERENCE_SPACING = 2
 private val REFERENCE_DASH = 4.dp
+private val TICK_OFFSET = 16.sp
+private val PLOT_BOTTOM = 26.sp

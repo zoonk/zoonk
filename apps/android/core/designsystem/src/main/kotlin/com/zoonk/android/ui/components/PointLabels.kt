@@ -26,7 +26,6 @@ data class PointLabels(
     val labels: List<PointLabel>,
 )
 
-/** What a name mustn't cover: the plot's [bounds], its drawn [dots] and the [segments] of its lines. */
 class LabelScene(
     val bounds: Rect,
     val dots: List<Offset>,
@@ -34,10 +33,9 @@ class LabelScene(
 )
 
 /**
- * Main's `getPointLabels`: every labeled point keeps its label. Names go beside their dots where
- * there's room; when one can't fit without covering another dot or label, every name moves to a
- * numbered key and the dots carry the numbers. Names as short as a number gain nothing from a key,
- * so they stay put. [size] measures a name; [unit] is one dp in pixels.
+ * Every labeled point keeps its name: beside its dot where there's room, and when one can't fit without
+ * covering another dot or name, every name moves to a numbered key and the dots carry the numbers.
+ * Names as short as a number gain nothing from a key, so they stay put. [unit] is one dp in pixels.
  */
 fun pointLabels(
     named: List<Pair<Offset, String>>,
@@ -55,14 +53,13 @@ fun pointLabels(
     return PointLabels(key, placeLabels(markers, scene, size, unit).map { it.first })
 }
 
-/** Takes the first side that stays inside the plot and covers no dot or earlier label, preferring one that crosses the fewest lines. */
 private fun placeLabels(
     named: List<Pair<Offset, String>>,
     scene: LabelScene,
     size: (String) -> Size,
     unit: Float,
 ): List<Pair<PointLabel, Boolean>> {
-    val taken = scene.dots.map { Rect(it, DOT_RADIUS * unit) }.toMutableList()
+    val taken = scene.dots.map { Rect(it, PLOT_DOT_ROOM * unit) }.toMutableList()
 
     return named.map { (point, text) ->
         val measured = size(text)
@@ -77,14 +74,13 @@ private fun placeLabels(
     }
 }
 
-/** Beside the dot first, then above and below it, so a label reads as its dot's name. */
 private fun candidates(
     dot: Offset,
     text: String,
     height: Float,
     unit: Float,
 ): List<PointLabel> {
-    val radius = DOT_RADIUS * unit
+    val radius = PLOT_DOT_ROOM * unit
     val offset = LABEL_OFFSET * unit
     val above = dot.y - offset - height / 2
     val below = dot.y + offset + height / 2
@@ -121,7 +117,6 @@ private fun Rect.overlaps(
     clearance: Float,
 ) = left < other.right + clearance && other.left < right + clearance && top < other.bottom + clearance && other.top < bottom + clearance
 
-/** Clips the segment to the box's x range, then checks the clipped part's y span against it. */
 internal fun crosses(
     segment: Pair<Offset, Offset>,
     box: Rect,
@@ -136,8 +131,7 @@ internal fun crosses(
     return ys.max() >= box.top && ys.min() <= box.bottom
 }
 
-/** Main's sizes in dp: the room a dot keeps, how far past its center a name starts, and the gap between names. */
-private const val DOT_RADIUS = 4.5f
-private const val LABEL_OFFSET = DOT_RADIUS + 3f
+internal const val PLOT_DOT_ROOM = 4.5f
+private const val LABEL_OFFSET = PLOT_DOT_ROOM + 3f
 private const val CLEARANCE = 1f
 private const val MAX_KEY_MARKER_LENGTH = 2

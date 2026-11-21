@@ -95,6 +95,30 @@ class LessonVisualTest {
         assertTrue((0..2).all { drawsDot(Plot.Mark.LineWithPoints, it, 3, 1) && drawsDot(Plot.Mark.Points, it, 3, 1) })
     }
 
+    @Test
+    fun aPointOnThePlotsRightEdgeKeepsClearOfTheReferenceNames() {
+        val unit = 2.75f
+        val edge = plotEdge(width = 900f, left = 120f, referenceRoom = 220f, unit = unit)
+
+        assertTrue(edge.referenceLeft - (edge.plotRight + PLOT_DOT_ROOM * unit) >= 4 * unit)
+        assertEquals(900f, edge.referenceLeft + 220f, 0.01f)
+    }
+
+    @Test
+    fun anAxisLabelOnTheYAxisStartsClearOfItsNumbers() {
+        val gap = 6f
+        val start = axisLabelStart(center = 120f, labelWidth = 20f, left = 120f, width = 900f, inset = gap / 2)
+
+        assertTrue(start - (120f - gap) >= gap)
+        assertEquals(500f, axisLabelStart(center = 510f, labelWidth = 20f, left = 120f, width = 900f, inset = 3f))
+        assertEquals(877f, axisLabelStart(center = 900f, labelWidth = 20f, left = 120f, width = 900f, inset = 3f))
+    }
+
+    @Test
+    fun aPlotWithoutReferencesRunsToTheCardsEdge() {
+        assertEquals(892f, plotEdge(width = 900f, left = 120f, referenceRoom = 0f, unit = 1f).plotRight)
+    }
+
     private fun scene() = LabelScene(Rect(0f, 0f, 300f, 160f), emptyList(), emptyList())
 
     private fun nameSize(name: String) = Size(name.length * 7f, 14f)
