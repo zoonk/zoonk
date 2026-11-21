@@ -173,13 +173,10 @@ struct CodeText: View {
   }
 }
 
-/// Draws the first row `width` further out than the rest.
+/// Draws the first row `width` further out than the rest, outside the text's frame: a side
+/// `displayPadding` would make SwiftUI lay the rows out wider than it measured them.
 private struct HangingIndent: TextRenderer {
   let width: CGFloat
-
-  var displayPadding: EdgeInsets {
-    EdgeInsets(top: 0, leading: width, bottom: 0, trailing: 0)
-  }
 
   func draw(layout: Text.Layout, in context: inout GraphicsContext) {
     for (index, line) in layout.enumerated() {

@@ -91,8 +91,10 @@ extension View {
 struct HandMarksRenderer: TextRenderer {
   let marks: InlineMarks
 
+  /// Below and above only: SwiftUI lays a text out wider by its renderer's side padding than it
+  /// measured it, so a line near the edge wraps later than the text's height counts on.
   var displayPadding: EdgeInsets {
-    EdgeInsets(top: 2, leading: 4, bottom: 10, trailing: 4)
+    EdgeInsets(top: 2, leading: 0, bottom: 10, trailing: 0)
   }
 
   func draw(layout: Text.Layout, in context: inout GraphicsContext) {
