@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function PlacementTestContent() {
   const [locale, list] = await Promise.all([lang(), listCurrentUserGoals()]);
-  const goal = list?.goals.find((candidate) => candidate.isActive) ?? null;
+  const goal = list?.goals.find((candidate) => candidate.id === list.activeGoalId) ?? null;
 
   if (!goal) {
     const t = await getExtracted();
