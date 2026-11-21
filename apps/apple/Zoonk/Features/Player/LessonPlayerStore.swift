@@ -97,6 +97,11 @@ final class LessonPlayerStore {
   var cantTalkToday: Bool {
     didSet { choices.setChosenToday(.cantTalk, cantTalkToday) }
   }
+  /// "I can't listen now" lasts the rest of the learner's day on this device, as music's by-ear
+  /// questions keep it.
+  var cantListenToday: Bool {
+    didSet { choices.setChosenToday(.cantListen, cantListenToday) }
+  }
   /// The microphone was off when a spoken screen tried it, so spoken screens are typed until the
   /// learner asks to speak again. Kept here, since both halves of a spread show it.
   var isMicBlocked = false
@@ -180,6 +185,7 @@ final class LessonPlayerStore {
     self.blockFinished = blockFinished
     self.sessionStarted = sessionStarted
     cantTalkToday = choices.isChosenToday(.cantTalk)
+    cantListenToday = choices.isChosenToday(.cantListen)
   }
 
   /// A 401 signs the session that opened the lesson out, and the lesson reloads for whoever is

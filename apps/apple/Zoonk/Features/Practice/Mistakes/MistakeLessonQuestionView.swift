@@ -17,6 +17,7 @@ struct MistakeLessonQuestionView: View {
   @State private var state: LessonPlayerState
   @State private var work = ActivityWork()
   @State private var cantTalk = LessonTodayChoices.standard.isChosenToday(.cantTalk)
+  @State private var cantListen = LessonTodayChoices.standard.isChosenToday(.cantListen)
   @State private var micBlocked = false
   @State private var attemptId = UUID().uuidString.lowercased()
   @State private var sent: LessonAnswer?
@@ -197,12 +198,15 @@ struct MistakeLessonQuestionView: View {
     .onChange(of: cantTalk) { _, value in
       LessonTodayChoices.standard.setChosenToday(.cantTalk, value)
     }
+    .onChange(of: cantListen) { _, value in
+      LessonTodayChoices.standard.setChosenToday(.cantListen, value)
+    }
   }
 
   private func content(_ part: LessonStepPart) -> some View {
     LessonQuestionStepView(
       step: replay.step, state: state, context: context, part: part,
-      cantTalk: $cantTalk, micBlocked: $micBlocked,
+      cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
       mistake: SpokenMistakeTarget(
         mistakeId: entry.mistakeId, attemptId: attemptId,
         goalId: goalId, answerIds: answerIds, questionStartedAt: shownAt),

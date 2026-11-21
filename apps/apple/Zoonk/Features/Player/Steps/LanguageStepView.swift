@@ -5,6 +5,7 @@ struct LanguageStepView: View {
   let wordHints: WordHints?
   let context: LessonStepContext
   let part: LessonStepPart
+  @Binding var cantListen: Bool
 
   var body: some View {
     switch (exercise.kind, part) {
@@ -23,7 +24,7 @@ struct LanguageStepView: View {
     case (.fillBlank, .turn):
       FillBlankView(exercise: exercise, context: context)
     case (.reading, _), (.listening, _):
-      ArrangeWordsView(exercise: exercise, context: context, part: part)
+      ArrangeWordsView(exercise: exercise, context: context, part: part, cantListen: $cantListen)
     case (.matchColumns, .screen):
       LessonQuestionText(
         text: exercise.content.question
@@ -127,6 +128,11 @@ struct LessonAudioButton: View {
 }
 
 extension LanguageExercise {
+  /// A learner who can't listen today reads a listening sentence, so it stays quiet.
+  func promptAudio(cantListen: Bool) -> URL? {
+    cantListen && kind == .listening ? nil : promptAudio
+  }
+
   /// Main's `getPlayerStepAudioUrl`.
   var promptAudio: URL? {
     let url: String? =
@@ -569,6 +575,7 @@ private struct ArrangeWordsView: View {
   let exercise: LanguageExercise
   let context: LessonStepContext
   let part: LessonStepPart
+  @Binding var cantListen: Bool
 
   private var isListening: Bool { exercise.kind == .listening }
 
@@ -605,19 +612,20 @@ private struct ArrangeWordsView: View {
 
   @ViewBuilder
   private func screen(_ sentence: LanguageExercise.Sentence) -> some View {
-    if isListening {
+    if isListening, let audio = exercise.promptAudio(cantListen: cantListen) {
       Text(
         "What do you hear?", tableName: "Player",
         comment: "The question over a sentence to listen to and arrange"
       )
       .typeStyle(.question)
       .accessibilityAddTraits(.isHeader)
-      HStack(spacing: 12) {
-        LessonAudioButton(url: exercise.promptAudio)
-        if exercise.promptAudio == nil {
-          LessonQuestionText(text: sentence.sentence)
-        }
-      }
+      LessonAudioButton(url: audio)
+    } else if isListening {
+      Chip(
+        Text(
+          "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
+        ))
+      LessonQuestionText(text: sentence.sentence)
     } else {
       Chip(
         Text(
@@ -676,6 +684,10 @@ private struct ArrangeWordsView: View {
         }
         .accessibilityFocused($focus, equals: .tile(index))
       }
+    }
+
+    if isListening, !context.isLocked, exercise.promptAudio != nil {
+      CantListenButton(cantListen: cantListen) { cantListen.toggle() }
     }
   }
 
