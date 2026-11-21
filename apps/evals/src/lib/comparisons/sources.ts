@@ -2,7 +2,7 @@ import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import z from "zod";
 import { getRunCost } from "../cost";
 import { evalImageDigest, readEvalImage } from "../image-files";
-import { getModelById } from "../models";
+import { generationModelSettings, getModelById } from "../models";
 import { loadModelOutputs } from "../output-loader";
 import { type OutputEntry } from "../types";
 import { hash, hashJson } from "./identity";
@@ -27,13 +27,41 @@ export function variantFor({
   entry: OutputEntry;
   generation: NonNullable<OutputEntry["generation"]>;
   modelId: string;
+}) {
+  return {
+    ...variantSettings({ generation, modelId }),
+    systemPromptHash: entry.initialPromptHashes?.system ?? hash(entry.systemPrompt),
+  };
+}
+
+export function requestedVariant({
+  model,
+  sourceHash,
+}: {
+  model: ReturnType<typeof resolveModel>;
+  sourceHash: string;
 }): Variant {
+  return {
+    ...variantSettings({
+      generation: { ...generationModelSettings(model), sourceHash },
+      modelId: model.id,
+    }),
+    systemPromptHash: null,
+  };
+}
+
+function variantSettings({
+  generation,
+  modelId,
+}: {
+  generation: NonNullable<OutputEntry["generation"]>;
+  modelId: string;
+}) {
   return {
     model: modelId,
     pipeline: [generation.model],
     reasoning: generation.reasoning,
     settingsHash: hashJson(generation),
-    systemPromptHash: entry.initialPromptHashes?.system ?? hash(entry.systemPrompt),
   };
 }
 
@@ -140,7 +168,7 @@ async function savedArtifact({
   entry: OutputEntry;
   image: boolean;
   inputHash: string;
-  variant: Variant;
+  variant: ReturnType<typeof variantFor>;
 }): Promise<Artifact> {
   const identity = { inputHash, runId: entry.testCaseId };
   const captured = image ? await savedImage(entry.output) : { output: entry.output };

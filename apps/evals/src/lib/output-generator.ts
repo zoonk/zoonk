@@ -9,7 +9,7 @@ import { hash, hashJson } from "./comparisons/identity";
 import { settleWithConcurrency } from "./concurrency";
 import { getFailedRunsCost } from "./cost";
 import { getImageRunsToReplace } from "./eval-runner";
-import { DEFAULT_REASONING, type ModelConfig, getModelById } from "./models";
+import { type ModelConfig, generationModelSettings, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs, withImageGeneration } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
 import {
@@ -42,12 +42,7 @@ function getTaskRunner({ model, task }: { model: ModelConfig; task: RegisteredTa
 }
 
 function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: TestCase }) {
-  return {
-    ...testCase.userInput,
-    model: model.gatewayModelId,
-    reasoning: model.reasoning ?? DEFAULT_REASONING,
-    useFallback: false,
-  };
+  return { ...testCase.userInput, ...generationModelSettings(model), useFallback: false };
 }
 
 type FailedAttempt = {

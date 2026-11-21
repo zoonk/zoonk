@@ -86,6 +86,20 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
     replay: comparison.replay,
     rows: classified,
     ...choice,
+    reason: [choice.reason, ...runFailureReasons(comparison.manifest)].join(" "),
+  });
+}
+
+function runFailureReasons({ runsCompared }: Comparison["manifest"]) {
+  const bySide = Map.groupBy(
+    runsCompared.flatMap((run) => run.failures),
+    (failure) => failure.side,
+  );
+
+  return sides.flatMap((side) => {
+    const counts = Map.groupBy(bySide.get(side) ?? [], (failure) => failure.reason);
+    const reasons = [...counts].map(([reason, failures]) => `${failures.length} ${reason}`);
+    return reasons.length > 0 ? [`The ${side} had run failures (${reasons.join(", ")}).`] : [];
   });
 }
 

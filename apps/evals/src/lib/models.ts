@@ -17,6 +17,10 @@ export type ModelConfig = {
 
 export const DEFAULT_REASONING: Reasoning = "provider-default";
 
+export function generationModelSettings(model: ModelConfig) {
+  return { model: model.gatewayModelId, reasoning: model.reasoning ?? DEFAULT_REASONING };
+}
+
 export const REASONING_OPTIONS = [
   { label: "Provider default", value: DEFAULT_REASONING },
   { label: "None", value: "none" },

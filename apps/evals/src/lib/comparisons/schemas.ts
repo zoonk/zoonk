@@ -125,7 +125,7 @@ export const variantSchema = z.object({
   pipeline: z.array(text),
   reasoning: text,
   settingsHash: digest,
-  systemPromptHash: digest,
+  systemPromptHash: digest.nullable(),
 });
 export type Variant = z.infer<typeof variantSchema>;
 const slotSchema = z.object({

@@ -24,7 +24,14 @@ import {
   selectionSchema,
   variantSchema,
 } from "./schemas";
-import { promptHashFor, readRunOutput, resolveModel, source, variantFor } from "./sources";
+import {
+  promptHashFor,
+  readRunOutput,
+  requestedVariant,
+  resolveModel,
+  source,
+  variantFor,
+} from "./sources";
 import { directory, readBlob, readOptional, readOutputs, writeBytes, writeRecord } from "./storage";
 
 const plannedSelection = selectionSchema.extend({
@@ -108,12 +115,22 @@ export async function prepare(options: PrepareOptions) {
 
   const outputs = await readOutputs(dir, { controls: frozen.controls, runsCompared });
 
+  const produced = frozen.generate
+    ? await readOptional(path.join(dir, "challenger.json"), variantSchema)
+    : null;
+
   const variant =
+    produced ??
     frozen.variants.challenger ??
-    (await readOptional(path.join(dir, "challenger.json"), variantSchema));
+    (frozen.generationSource
+      ? requestedVariant({
+          model: resolveModel(frozen.challengerModel),
+          sourceHash: frozen.generationSource,
+        })
+      : null);
 
   if (!variant) {
-    throw new Error("No successful generation identified the requested challenger.");
+    throw new Error("Select a saved challenger variant or enable generation.");
   }
 
   const systemPrompts = [
@@ -140,6 +157,25 @@ export async function prepare(options: PrepareOptions) {
     runsCompared,
     variants,
   });
+}
+
+function freezeChallenger({
+  challenger,
+  generate,
+}: {
+  challenger: Awaited<ReturnType<typeof source>>;
+  generate: boolean;
+}) {
+  if (!generate) {
+    return { generationSource: undefined, variant: challenger.variant };
+  }
+
+  const generationSource = generationSourceHash();
+
+  return {
+    generationSource,
+    variant: requestedVariant({ model: challenger.model, sourceHash: generationSource }),
+  };
 }
 
 async function controlBlobs(controls: z.infer<typeof controlsSchema>, image: boolean) {
@@ -306,6 +342,7 @@ async function freeze(options: PrepareOptions) {
   confirmForecast(byReader, generation, options.limit, options.confirm);
 
   const dir = directory(task.id, options.id);
+  const { generationSource, variant } = freezeChallenger({ challenger, generate });
 
   await Promise.all(
     [...blobs].map(([key, data]) => writeBytes(path.join(dir, "outputs", key), data)),
@@ -314,9 +351,10 @@ async function freeze(options: PrepareOptions) {
   return writeRecord(path.join(dir, "selection.json"), frozenSchema, {
     ...selection,
     generate,
-    generationSource: generate ? generationSourceHash() : undefined,
+    generationSource,
     provenanceVersion: 1,
     slots,
+    variants: { ...selection.variants, challenger: variant },
   });
 }
 
