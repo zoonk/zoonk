@@ -46,6 +46,9 @@ class FakePlanApi : PlanApi {
     val statuses = mutableListOf<LearnerSummaryGoal.Status>()
     val askedSince = mutableListOf<Instant>()
     var changeFailure: ApiException? = null
+
+    /** What a change answers in place of applying, such as core's unchanged. */
+    var changeAnswer: PlanChangeResult? = null
     var previewFailure: ApiException? = null
     var planFailure: ApiException? = null
 
@@ -202,6 +205,7 @@ class FakePlanApi : PlanApi {
         operations.firstNotNullOfOrNull { gates[it] }?.await()
         changeFailure?.let { throw it }
         changes += operations
+        changeAnswer?.let { return it }
         return PlanChangeResult(
             change = planChange(createdAt = createdAt(operations), id = changeId(operations)),
             status = PlanChangeResult.Status.APPLIED,

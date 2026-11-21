@@ -318,6 +318,24 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun anOfferThePlanAlreadyHoldsReadsThePlanAgainWithoutSayingAnything() =
+        runTest {
+            val plan = shown(EXTRA_PLAN)
+            api.changeAnswer =
+                PlanChangeResult(
+                    change = null,
+                    reason = PlanChangeResult.Reason.ALREADY_IN,
+                    status = PlanChangeResult.Status.UNCHANGED,
+                )
+
+            viewModel.addExtraOffer(plan, plan.extraOffer!!)
+
+            assertEquals(2, api.plans)
+            assertNull(viewModel.outcomes.saveFailed.value)
+            assertNull(viewModel.slotState.result)
+        }
+
+    @Test
     fun anOfferWhoseCheckThePlanRefusesReadsThePlanAgainInsteadOfFailingTheCheck() =
         runTest {
             val plan = shown(FIT_PLAN)
