@@ -220,4 +220,54 @@ describe(buildWeekView, () => {
       [1, 0],
     ]);
   });
+
+  it("never counts more lessons across a week than a topic still to be written holds", () => {
+    const standIn = {
+      ...lesson("2026-09-21", "todo"),
+      facts: {
+        days: [
+          ["2026-09-21", 5, 5],
+          ["2026-09-22", 5, 5],
+          ["2026-09-23", 5, 5],
+          ["2026-09-24", 5, 5],
+        ],
+        minutes: 20,
+        parts: { checkpoint: 0, practice: 0, unwritten: 20, written: 0 },
+        schemaVersion: 1,
+        skillIds: ["skill-stock"],
+      },
+      lessons: 3,
+      minutes: 20,
+      skillId: "skill-stock",
+    };
+
+    const { days } = buildWeek({ items: [standIn] });
+    const counts = days.flatMap(({ items }) => items.map((item) => item.lessons));
+
+    expect(counts.reduce((sum, count) => sum + count, 0)).toBe(3);
+  });
+
+  it("counts a kept topic's lessons by the minutes its saved days hold", () => {
+    const standIn = {
+      ...lesson("2026-09-21", "todo"),
+      facts: {
+        days: [
+          ["2026-09-21", 10, 5],
+          ["2026-09-22", 10, 5],
+        ],
+        minutes: 20,
+        parts: { checkpoint: 0, practice: 10, unwritten: 10, written: 0 },
+        schemaVersion: 1,
+        skillIds: ["skill-stock"],
+      },
+      lessons: 4,
+      minutes: 10,
+      skillId: "skill-stock",
+    };
+
+    const { days } = buildWeek({ items: [standIn] });
+    const counts = days.flatMap(({ items }) => items.map((item) => item.lessons));
+
+    expect(counts).toStrictEqual([2, 2]);
+  });
 });

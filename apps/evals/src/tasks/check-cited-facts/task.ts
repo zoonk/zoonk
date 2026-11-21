@@ -50,6 +50,13 @@ export const checkCitedFactsTask: Task<
   generate: checkCitedFacts,
   id: "check-cited-facts",
   name: "Check cited facts",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code keeps only blueprint facts the sources support",
+    reason: "An unsupported fact in a blueprint reaches every learner of that exam",
+    waits: "Prepared ahead; a learner's placement may wait on the research",
+  },
   score: scoreCheck,
   testCases: TEST_CASES,
 };

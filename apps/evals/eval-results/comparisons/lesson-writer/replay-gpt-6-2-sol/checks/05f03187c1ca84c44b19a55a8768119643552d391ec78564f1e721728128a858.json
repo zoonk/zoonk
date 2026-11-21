@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-patrimonio-liquido-dense-brief",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 7,
+  "problems": [
+    "Screen 7: Asks the question of screen 4 again with other numbers or names. Keep this screen's idea but ask something new about it: the reverse question, a harder case, a mistake to spot or a decision in a real situation."
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 8
+}

@@ -45,6 +45,13 @@ export const goalTutorSearchTask: Task<
   // Past `shouldSearchFirst`'s deadline the decision is dropped.
   latencyBudget: { p50: 1, p95: 2.5 },
   name: "Goal tutor search",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code decides whether the buddy's first step searches",
+    reason: "A yes or no inside a live answer; cheapest that matches, with a timeout",
+    waits: "A learner waits, with a timeout",
+  },
   score: scoreGoalTutorSearch,
   testCases: TEST_CASES,
 };

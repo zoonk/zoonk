@@ -299,4 +299,12 @@ export const EXCEPTIONS: AlignmentException[] = [
     relation: "lone-word",
     scenario: "/plan",
   },
+  {
+    configuration: "laptop keys pt",
+    issue: 2955,
+    piece: "page",
+    reason: "A two-line phase name on the Plan's roadmap leaves one word alone, on main too",
+    relation: "lone-word",
+    scenario: "/pt/plan",
+  },
 ];

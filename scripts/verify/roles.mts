@@ -8,6 +8,7 @@ import { slug } from "./measure.mts";
 import { OVERLAYS } from "./overlays.mts";
 import { redactQuery } from "./requests.mts";
 import { type RoleSample, readRoles } from "./roles-probe.mts";
+import { screenshot } from "./screenshot.mts";
 
 export type RoleCapture = RoleSample & {
   path: string;
@@ -106,7 +107,7 @@ export async function captureRoles(
 
   for (const sample of samples.filter((entry) => state === "page" || entry.role === "overlay")) {
     const file = join(directory, `${slug(state)}-${sample.role}-${sample.index}.png`);
-    await page.screenshot({ clip: sample.box, path: file, scale: "css" });
+    await screenshot(page, { clip: sample.box, path: file, scale: "css" });
     captures.push({ ...sample, file, path: redactQuery(path), state, viewport });
   }
 

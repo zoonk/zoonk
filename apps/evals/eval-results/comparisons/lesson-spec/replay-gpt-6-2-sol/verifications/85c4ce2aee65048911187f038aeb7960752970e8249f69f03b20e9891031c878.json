@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-mapa-imperio-romano",
+        "claimId": "72747af4ee0321f2",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "69bb942d9fcc96a78de97bee895433fc033467ef5a8cc4724f77a104bd9ae36d.second.27754d69-2803-473f-8636-2235e0870e82.2",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00301045,
+    "id": "85c4ce2aee65048911187f038aeb7960752970e8249f69f03b20e9891031c878",
+    "packet": [
+      {
+        "A": {
+          "blob": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+          "format": "text"
+        },
+        "B": {
+          "blob": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+          "format": "text"
+        },
+        "claim": "A explicação sobre o Mediterrâneo como ligação entre regiões e o transporte de trigo do Egito a Roma não mostra a rota nem um mapa com esses lugares.",
+        "claimId": "72747af4ee0321f2",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "9f85471e06fe5e54cf42319005000e430f49b10ef344865829daed20c849f940",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6b1e640eeda1dcc69e4efb30ebff393dbb458337b8542728e8cc9c17040057bf",
+          "format": "json"
+        },
+        "location": {
+          "detail": "a explicação sobre navios levando trigo do Egito a Roma",
+          "kind": "range"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "e695c9cd89373312",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "72747af4ee0321f2",
+          "finding": "holds",
+          "reason": "In output B, the screen explaining the Mediterranean as a link and the Egyptian wheat shipments to Rome has visual null and visualKind none, so it shows no route or map. Output A's equivalent screen does include a picture of the Mediterranean with Alexandria, Óstia and a route line, so the problem is only in B."
+        },
+        {
+          "claimId": "e695c9cd89373312",
+          "finding": "doesn't hold",
+          "reason": "Output A's application screen asks the learner to assess whether a 50% cut and a 50% raise cancel out by computing the overall change from the original pay ($4,000 to $3,000, 25% lower). It never asks for a compound annual growth rate, and neither output mentions one."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

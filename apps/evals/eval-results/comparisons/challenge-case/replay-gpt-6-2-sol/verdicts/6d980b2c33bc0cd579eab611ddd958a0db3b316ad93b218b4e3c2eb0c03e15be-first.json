@@ -1,0 +1,164 @@
+{
+  "attempt": "first",
+  "costUsd": 0.005014739999999999,
+  "failures": [],
+  "packetId": "6d980b2c33bc0cd579eab611ddd958a0db3b316ad93b218b4e3c2eb0c03e15be",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Ambos apresentam o mesmo caso, com um plantão, uma divergência de dose e prazo para resolver.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As escolhas e consequências são idênticas nas duas versões.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões incluem a mesma enfermeira, o mesmo médico e o mesmo apoio de cálculo, com papéis e tratamento de gênero adequados.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os mesmos debriefs específicos e respeitosos aparecem nas duas versões.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os cálculos e as doses são consistentes nas duas versões: 18 kg × 15 mg/kg por dose = 270 mg por administração.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões usam o mesmo nível e a mesma linguagem em português brasileiro.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os mesmos textos claros e exemplos práticos aparecem nas duas versões.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As saídas são idênticas e não há diferença para o leitor."
+        },
+        "pairId": "8e15627a-8563-4e2b-affb-918c9fccc12c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "B traz uma divergência concreta entre o plano terapêutico e a prescrição ativa, com uma etapa de conferência antes do preparo; isso cria uma situação de trabalho mais específica.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "B",
+            "reason": "B oferece mais caminhos com consequências distintas, incluindo opções de pedir ajuda, calcular por etapas e retomar uma conferência que foi adiada.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas incluem uma enfermeira, um médico e uma IA útil para checar cálculos, com os gêneros gramaticais adequados.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões dão feedback específico e respeitoso; B tem mais exemplos para a comunicação, mas não o suficiente para fazer diferença clara no conjunto.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "As contas apresentadas nas duas versões são consistentes. Em B, 900 mg/dia divididos por três administrações dão 300 mg por administração, ou 3 mL a 100 mg/mL.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B trabalha a diferença entre quantidade diária e por administração e inclui a conversão para mL, aprofundando o conteúdo intermediário.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A explica com mais simplicidade e menos etapas; B é mais densa e exige acompanhar vários caminhos e detalhes técnicos.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "B oferece uma prática de conferência mais completa e decisões mais variadas, sem comprometer a segurança: o preparo fica suspenso até a confirmação médica e a conferência de enfermagem."
+        },
+        "pairId": "a479f343-2c4d-4cd4-967a-3a560a1fe28c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões apresentam o mesmo cenário de loja, produto, prazo e meta de margem.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As escolhas e suas consequências são essencialmente as mesmas nas duas versões.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões incluem colegas de loja com funções distintas e uma IA que calcula quando solicitada.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os debriefs são os mesmos nas duas versões e explicam o que corrigir.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "As contas estão corretas em ambas: o preço após 20% de desconto é R$ 192,00, com margem de 25%, e o preço com 10% de desconto é R$ 216,00, com margem aproximada de 33,33%.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A explica os conceitos com palavras acessíveis para iniciantes; B troca explicações simples por fórmulas e termos técnicos sem explicá-los.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A usa exemplos e explicações diretas. A linguagem de B, como “fator multiplicativo” e “reversibilidade simétrica”, é difícil para alguém iniciante acompanhar.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A explicação usa fórmulas e termos abstratos sem introduzi-los em linguagem simples; além disso, a explicação da margem emprega abreviações técnicas sem defini-las. Isso destoa do nível iniciante solicitado.",
+            "criterion": "plainLanguage",
+            "learnerCost": "Uma pessoa iniciante pode não entender por que as porcentagens não se anulam nem acompanhar a explicação da margem, e pode deixar de aprender a regra prática.",
+            "location": {
+              "detail": "Ao longo das explicações: “Trata-se de variações percentuais compostas: o fator multiplicativo resultante é (1 + i₁)(1 − i₂) = 1,2 × 0,8 = 0,96, logo não há reversibilidade simétrica entre acréscimo e decréscimo”; também “A margem de contribuição percentual é MC% = (PV − CV) / PV, distinta do markup, que adota o custo como base de incidência.”",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A ensina os mesmos cálculos corretos com explicações adequadas a iniciantes. B mantém os números certos, mas sua linguagem técnica e abstrata pode afastar o leitor."
+        },
+        "pairId": "b0f9c9c4-141d-4916-99c7-0e2e72642b45"
+      }
+    ]
+  }
+}

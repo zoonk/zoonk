@@ -18,7 +18,6 @@ import { MistakeCause } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import {
-  itemCitationSchema,
   questionEntrySchema,
   questionImageSchema,
   questionSelectSchema,
@@ -29,15 +28,15 @@ import { clockTimeSchema } from "./exams";
 import { itemSetSchema } from "./item-set";
 import { mockLeftOutSchema } from "./mock-left-out";
 import {
+  MOCK_QUESTION_FORMATS,
   mockAdaptSchema,
+  mockReviewSchema,
   mockScoreNotesSchema,
   mockSectionSchema,
   mockSizeSourceSchema,
   mockVerdictSchema,
 } from "./mock-parts";
 import { logicalDateSchema } from "./study-sessions";
-
-const MOCK_QUESTION_FORMATS = ["multipleChoice", "numeric", "trueFalse", "typed"] as const;
 
 const mockQuestionSchema = z.object({
   area: z.string().nullable(),
@@ -53,7 +52,7 @@ const mockQuestionSchema = z.object({
     }),
   image: questionImageSchema,
   itemId: uuidSchema(),
-  number: z.number().int().min(1),
+  number: z.number().int().min(1).meta({ description: "The item's position in this section" }),
   options: z.array(z.string()).nullable(),
   question: z.string(),
   select: questionSelectSchema.nullable(),
@@ -82,6 +81,7 @@ const mockEssaySchema = z
           "`pending`: written and not graded yet: POST /v1/mocks/{blockId}/essay-grades right after hand-in, while the objective result already shows. `blank`: left blank",
       }),
     text: z.string().nullable(),
+    unsure: z.boolean().meta({ description: "Whether the learner marked the essay as unsure" }),
   })
   .meta({ id: "MockEssay" });
 
@@ -152,6 +152,12 @@ export const mockViewResponseSchema = z
             description:
               "A listening section's recordings with the plays already counted (POST /v1/mocks/{blockId}/plays as each play starts), so another tab or device has the same plays left; empty for other sections",
           }),
+        questionTotal: z
+          .number()
+          .int()
+          .min(0)
+          .optional()
+          .meta({ description: "The number of numbered questions in the running section" }),
         questions: z.array(mockQuestionSchema),
         resume: z
           .number()
@@ -229,30 +235,7 @@ export const mockViewResponseSchema = z
         description:
           "Questions it asks that the learner answered before, because the bank had no new ones left for them (the missed ones first, then the ones answered longest ago); 0 when every question is new",
       }),
-    review: z.array(
-      z.object({
-        area: z.string().nullable(),
-        citation: itemCitationSchema,
-        context: z
-          .string()
-          .nullable()
-          .meta({ description: "The text the question reads before it, as the mock showed it" }),
-        correctAnswer: z.string().nullable(),
-        explanation: z.string().nullable(),
-        format: z.enum(MOCK_QUESTION_FORMATS),
-        itemId: uuidSchema(),
-        learnerAnswer: z.string().nullable(),
-        number: z.number().int(),
-        outcome: z
-          .enum(["blank", "partial", "wrong"])
-          .meta({
-            description:
-              "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit",
-          }),
-        question: z.string(),
-        set: itemSetSchema.nullable(),
-      }),
-    ),
+    review: z.array(mockReviewSchema),
     scoreNotes: mockScoreNotesSchema,
     scoring: z.enum(MOCK_SCORINGS),
     scoringNote: z.string().nullable(),

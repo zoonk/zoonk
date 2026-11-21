@@ -2,6 +2,7 @@
 
 import { HandIcon, TimerOffIcon, TriangleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { LessonRichText } from "../../rich-text/lesson-rich-text";
 import { type Drill } from "./drill-types";
 
 export function DrillAnswerNotes({
@@ -40,7 +41,7 @@ export function DrillAnswerNotes({
         <p className="text-muted-foreground flex items-start gap-2 text-sm">
           <TriangleAlertIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
           <span>
-            <span className="font-medium">{t("The trap:")}</span> {trap}
+            <span className="font-medium">{t("The trap:")}</span> <LessonRichText text={trap} />
           </span>
         </p>
       )}

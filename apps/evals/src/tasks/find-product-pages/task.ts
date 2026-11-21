@@ -66,6 +66,13 @@ export const findProductPagesTask: Task<
   generate: findProductPages,
   id: "find-product-pages",
   name: "Find product pages",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code: the pages product research reads",
+    reason: "These pages feed a product many learners share; wrong pages aren't worth the saving",
+    waits: "A learner waits by default",
+  },
   score: scorePages,
   testCases: TEST_CASES,
 };

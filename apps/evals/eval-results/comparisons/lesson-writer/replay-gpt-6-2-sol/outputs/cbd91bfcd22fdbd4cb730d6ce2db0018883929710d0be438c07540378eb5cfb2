@@ -1,0 +1,153 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Na véspera da prova, Tainá lê no caderno que a célula, ao quebrar um açúcar, fabrica 4 moedas de energia. Mas o professor avisa que ela não fica com as 4. Quantas sobram de verdade?",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Primeiro, a célula investe",
+      "text": "Quando a célula quebra a glicose, um açúcar, a primeira etapa se chama **glicólise**. Ela acontece no citoplasma, o líquido que enche a célula: é o C do macete CMC (Cito, Matriz, Cristas). Logo de cara, a célula gasta 2 ATP, a moeda de energia dela, para ativar a glicose. É como um empréstimo: ela investe 2 para ganhar mais depois.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Depois, vem o retorno",
+      "text": "Na segunda parte, a glicólise rende 4 ATP. Como a célula gastou 2 no início, o saldo é 4 − 2 = 2 ATP por glicose. Ela ainda gera 2 **NADH**, carregadores que levam elétrons até a última etapa da respiração.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "mathCheck",
+      "context": "Uma célula do músculo de Kauã quebra {glicoses} glicoses pela glicólise. Cada glicose rende {producao} ATP, mas antes a célula gasta {gasto} ATP para ativar cada uma.",
+      "question": "Qual é o saldo de ATP que a célula ganha com essas glicoses todas?",
+      "math": {
+        "variables": [
+          {
+            "name": "glicoses",
+            "value": 3,
+            "min": 2,
+            "max": 10,
+            "step": 1,
+            "unit": null
+          },
+          {
+            "name": "producao",
+            "value": 4,
+            "min": 4,
+            "max": 4,
+            "step": 1,
+            "unit": "ATP"
+          },
+          {
+            "name": "gasto",
+            "value": 2,
+            "min": 2,
+            "max": 2,
+            "step": 1,
+            "unit": "ATP"
+          }
+        ],
+        "solution": "glicoses * (producao - gasto)",
+        "answer": 6,
+        "unit": "ATP",
+        "tolerance": {
+          "kind": "absolute",
+          "value": 0
+        },
+        "steps": [
+          {
+            "text": "Por glicose, o saldo é o que rende menos o que foi gasto: {result} ATP.",
+            "expression": "producao - gasto"
+          },
+          {
+            "text": "Com {glicoses} glicoses, multiplique esse saldo pelo número de glicoses: {result} ATP.",
+            "expression": "glicoses * (producao - gasto)"
+          }
+        ],
+        "commonMistakes": [
+          {
+            "expression": "glicoses * producao",
+            "misconception": "Contar só os ATP produzidos",
+            "reason": "Você somou só os ATP que a glicólise rende e esqueceu os que a célula gastou no início."
+          },
+          {
+            "expression": "glicoses * (producao + gasto)",
+            "misconception": "Somar o gasto em vez de subtrair",
+            "reason": "O ATP do investimento sai do caixa da célula, então ele é descontado, não somado."
+          },
+          {
+            "expression": "producao - gasto",
+            "misconception": "Dar o saldo de uma glicose só",
+            "reason": "Esse é o saldo de uma glicose. Aqui a célula quebrou várias, então o saldo se multiplica."
+          }
+        ]
+      },
+      "correctReason": "Cada glicose deixa {producao} − {gasto} ATP de saldo, e a célula quebrou {glicoses} glicoses, então o saldo total é esse valor vezes {glicoses}.",
+      "image": null,
+      "basis": {
+        "screen": 3,
+        "quote": "Como a célula gastou 2 no início, o saldo é 4 − 2 = 2 ATP por glicose."
+      }
+    },
+    {
+      "kind": "check",
+      "context": "No resumo para a prova, Davi escreveu: _a glicólise acontece na mitocôndria, a pequena estrutura onde rola o resto da respiração_.",
+      "question": "Onde a glicólise acontece de verdade?",
+      "options": [
+        {
+          "text": "No citoplasma, fora da mitocôndria",
+          "isCorrect": true,
+          "reason": "A glicólise é o C do macete CMC: Cito. Ela acontece no líquido que enche a célula.",
+          "picture": null
+        },
+        {
+          "text": "Na mitocôndria, como Davi escreveu",
+          "isCorrect": false,
+          "reason": "Essa é a pegadinha clássica. As etapas seguintes ficam na mitocôndria, na matriz e nas cristas, mas a glicólise vem antes, no citoplasma.",
+          "picture": null
+        },
+        {
+          "text": "No núcleo da célula",
+          "isCorrect": false,
+          "reason": "O núcleo guarda o material genético e não quebra glicose. A glicólise acontece no citoplasma.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Ela acontece no citoplasma, o líquido que enche a célula: é o C do macete CMC (Cito, Matriz, Cristas)."
+      }
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Glicólise no citoplasma",
+        "text": "A glicólise é a primeira etapa da quebra da glicose e acontece no citoplasma, o C do macete CMC."
+      },
+      {
+        "label": "Investimento de 2 ATP",
+        "text": "No início da glicólise, a célula gasta 2 ATP para ativar a glicose, como um empréstimo."
+      },
+      {
+        "label": "Rendimento: 4 ATP e NADH",
+        "text": "Na segunda parte, a glicólise rende 4 ATP e 2 NADH, que levam elétrons até a última etapa da respiração."
+      },
+      {
+        "label": "Saldo de 2 ATP",
+        "text": "O saldo da glicólise é 4 − 2 = 2 ATP por glicose."
+      }
+    ],
+    "shape": "hub"
+  }
+}

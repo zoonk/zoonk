@@ -39,6 +39,13 @@ export const pictureNeedTask: Task<PictureNeedInput, PictureNeedOutput, PictureN
   generate: route,
   id: "picture-need",
   name: "Picture need",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Code decides whether a lesson picture is worth drawing",
+    reason: "Code checks the answer; the cheapest that scored best",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scorePictureNeed,
   testCases: TEST_CASES,
 };

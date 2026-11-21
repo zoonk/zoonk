@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-soccer-formation",
+        "claimId": "096edbe1236a5dcd",
+        "criterion": "oneIdea",
+        "observationId": "ca4916fd1c2fb21f27966be46e23be91907a1fceada525bd9c840d6ad1f3e4d4.first.5fafe3f5-c2e1-442a-b808-b02fabd53490.2",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00295505,
+    "id": "a1edc2f3b7a290f974f06d11cb83b64fe7241a56bf21fae23ffcdc4fefe6f4b5",
+    "packet": [
+      {
+        "A": {
+          "blob": "93d007cf86e8fdfdc3bdeb1233d4836262c7b6a5eef73ab850d899ceb3ba58d1",
+          "format": "text"
+        },
+        "B": {
+          "blob": "5570b3704b2488614761a77cba5717e2fcd791b5037d0b5664d83fb03a53d529",
+          "format": "text"
+        },
+        "claim": "The plan never shows or explains a 4-4-2 formation alongside the 4-3-3, despite the requirement to compare them in one picture labeled 1 and 2.",
+        "claimId": "096edbe1236a5dcd",
+        "criterion": "oneIdea",
+        "expectations": {
+          "blob": "dccc089b38eb45036a7c5a8d6e2cbd2731dca0f8f6228734d0755773c85e5e5b",
+          "format": "text"
+        },
+        "input": {
+          "blob": "756d8ec6f2be545a0529ebd3f962e1f5bab37f9a3fa86a7648537d47891cf61f",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The whole lesson covers only the 4-3-3; no 4-4-2 comparison appears.",
+          "kind": "whole"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "2b526435668f4b9d",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "096edbe1236a5dcd",
+          "finding": "doesn't hold",
+          "reason": "Output B has no 4-4-2 anywhere, so the first part is true of it. The 'requirement to compare them' is not in the input: the expectations only call for a 4-4-2 picture 'when compared', and the lesson's description and brief never ask for a comparison."
+        },
+        {
+          "claimId": "2b526435668f4b9d",
+          "finding": "doesn't hold",
+          "reason": "The application screen in output A asks the learner to assess a claim that a 50% cut and a 50% raise cancel out, by computing the overall change from the original $4,000 (25% lower). It does not ask for a compound annual growth rate, and no CAGR appears anywhere in the output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -7,16 +7,11 @@ import {
   type CheckedVersion,
   type GateResult,
   checkFixedLesson,
-  citeScreensIfPossible,
   fixVersionDraft,
   readLessonSources,
-  toScreensToSave,
 } from "../lessons/_utils/checked-version";
 import { pickDraftWriter } from "../lessons/_utils/draft-writer";
-import {
-  publishStagedLessonVersion,
-  stageLessonVersion,
-} from "../lessons/_utils/save-lesson-content";
+import { publishStagedLessonVersion } from "../lessons/_utils/save-lesson-content";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
 import { readCurrentLessonVersion, readStagedLessonVersion } from "../lessons/lesson-versions";
 import { type LessonCheckPlan } from "../lessons/write-lesson-content";
@@ -25,12 +20,14 @@ import {
   type CheckContext,
   type PublishedDraftState,
   type PublishedFix,
-  keepPictures,
   loadCheck,
   loadVersionSteps,
+  readVersionWriterRunId,
   toHeldBackDraft,
   toProvenance,
 } from "./_utils/published-versions";
+import { stageFixedVersion } from "./_utils/stage-fixed-version";
+import { recordLessonQualityDecision } from "./lesson-quality-decision";
 import { runLessonQualityGate } from "./lesson-quality-gate";
 import { repairWrittenLesson } from "./lesson-repairs";
 
@@ -40,46 +37,6 @@ export type PublishedLessonOutcome =
   | { status: "passed" | "replaced" }
   | { savedAt: number; status: "republished"; version: number }
   | { draft: PublishedHeldBackDraft; status: "heldBack" };
-
-async function stageFixedVersion({
-  checked,
-  state,
-}: {
-  checked: Extract<CheckedVersion, { status: "passed" }>;
-  state: PublishedDraftState;
-}): Promise<PublishedLessonOutcome> {
-  const { context, inputs, repairBase, replaces } = state;
-
-  const [citations, previous] = await Promise.all([
-    citeScreensIfPossible({
-      analytics: state.gate.analytics,
-      inputs,
-      lesson: checked.version.lesson,
-      serviceTier: BACKGROUND_TIER,
-    }),
-    loadVersionSteps({ lessonId: context.lessonId, version: replaces }),
-  ]);
-
-  const screens = toScreensToSave({
-    citations,
-    inputs,
-    screens: checked.screens,
-    version: checked.version,
-  });
-
-  const version = await stageLessonVersion({
-    language: inputs.language,
-    lessonId: context.lessonId,
-    repairBase,
-    replaces,
-    screens: keepPictures({ previous, screens }),
-    summary: checked.version.lesson.summary,
-  });
-
-  return version === null
-    ? { status: "replaced" }
-    : { savedAt: Date.now(), status: "republished", version };
-}
 
 /** A step run again after staging its fix answers with that fix instead of writing another. */
 async function readStagedFix(lessonId: string): Promise<PublishedLessonOutcome | null> {
@@ -113,11 +70,23 @@ export async function checkPublishedLesson({
     blocking: checked.blocking.filter((problem) => problem.source === "review"),
   };
 
+  const versionKey = { lessonId: context.lessonId, version: plan.version };
+  const previous = first.blocking.length > 0 ? await loadVersionSteps(versionKey) : [];
+
+  const writerRunId =
+    plan.writerRunId ?? previous[0]?.runId ?? (await readVersionWriterRunId(versionKey));
+
+  await recordLessonQualityDecision({
+    blocking: first.blocking,
+    lessonId: context.lessonId,
+    phase: "firstReview",
+    reviewerRunId: checked.reviewerRunId,
+    writerRunId,
+  });
+
   if (first.blocking.length === 0) {
     return { status: "passed" };
   }
-
-  const previous = await loadVersionSteps({ lessonId: context.lessonId, version: plan.version });
 
   return {
     first,
@@ -183,6 +152,26 @@ export async function checkPublishedDraft({
     lesson: state.version.lesson,
     review: true,
   });
+
+  const writerRunId = state.writerRunId ?? state.version.provenanceByScreen[0]?.runId;
+  const { lessonId } = state.context;
+
+  await Promise.all([
+    recordLessonQualityDecision({
+      blocking: checked.blocking.filter((problem) => problem.source === "code"),
+      lessonId,
+      minor: checked.minor,
+      phase: "codeCheck",
+      writerRunId,
+    }),
+    recordLessonQualityDecision({
+      blocking: checked.blocking.filter((problem) => problem.source === "review"),
+      lessonId,
+      phase: "firstReview",
+      reviewerRunId: checked.reviewerRunId,
+      writerRunId,
+    }),
+  ]);
 
   return checked.blocking.length > 0
     ? { first: checked, state, status: "needsFix" }
@@ -315,6 +304,7 @@ export async function redraftPublishedLesson({
           sources: readLessonSources(inputs),
         })),
       },
+      writerRunId: draft.provenance.runId,
     },
     status: "drafted",
   };

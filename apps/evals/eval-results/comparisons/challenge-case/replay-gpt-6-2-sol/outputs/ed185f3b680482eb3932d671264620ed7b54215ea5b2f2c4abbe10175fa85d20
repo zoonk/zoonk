@@ -1,0 +1,487 @@
+{
+  "deadline": "Give {{charge}} a recommendation before the next bedside assignment huddle.",
+  "endings": [
+    {
+      "id": "adopted",
+      "outcome": "{{charge}} authorizes the new check-in for this ward. The observed improvement is 18 percentage points; the test result of about 1% describes how unusual such a gap would be if the routines worked equally well, not certainty about the benefit."
+    },
+    {
+      "id": "collecting",
+      "outcome": "The usual routine stays in place while more patient responses are collected. The recommendation remains open, and bedside survey work continues."
+    },
+    {
+      "id": "correction",
+      "outcome": "{{research}} catches the interpretation before the practice announcement: a test result of about 1% is not a 99% probability that the new routine works better. The recommendation returns for corrected wording rather than going straight to authorization."
+    },
+    {
+      "id": "not-authorized",
+      "outcome": "{{charge}} does not authorize a routine change from the early comparison. The observed gap of 20 percentage points remains promising, but the test result of about 15% does not meet the agreed 5% cutoff."
+    }
+  ],
+  "meters": [
+    {
+      "id": "support",
+      "label": "Support for the recommendation",
+      "start": 30,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Bedside capacity",
+      "start": 65,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Decide whether the ward should **use the new bedtime check-in routinely**. Use the comparison fairly and explain what it does—and does not—show about patients' reported rest.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 15
+            }
+          ],
+          "id": "use-early",
+          "next": "early-report",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "Stopping saved survey work, but left the agreed comparison incomplete. The target was 100 patients per group, not whichever early group happened to look promising.",
+              "example": "Complete collection to 100 patients per group."
+            },
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The observed 20-percentage-point gap matched the planning goal, but its test result of about 15% did not meet the 5% cutoff. A worthwhile-looking difference is not enough by itself.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I'll stop the comparison surveys. That frees up bedside time, though we're ending short of the agreed collection."
+            },
+            {
+              "from": "research",
+              "text": "Hypothesis testing checks a difference against what chance could produce. Our early result is about 15%, above the 5% cutoff; the promising gap hasn't met that test."
+            }
+          ],
+          "text": "End the patient surveys here and prepare my recommendation using the early comparison we already have.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 30
+            },
+            {
+              "meter": "capacity",
+              "change": -20
+            }
+          ],
+          "id": "finish-plan",
+          "next": "final-report",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You checked that the original sample target still suited the ward's question and completed it. That preserved the plan's chance of detecting the improvement it was designed for, at the cost of more survey work.",
+              "example": null
+            },
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You didn't treat the promising early gap as a reason to stop. Completing the planned comparison kept the decision from depending on an early result that had not met the cutoff.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The target of 100 patients per group still fits the 20-percentage-point improvement the ward wanted to detect. The early review isn't the planned endpoint."
+            },
+            {
+              "from": "research",
+              "text": "Hypothesis testing checks a gap against what chance could produce; the early 15% was above our 5% cutoff. We spent two weeks of survey time finishing the comparison."
+            }
+          ],
+          "text": "Ask {{ai}} to check the sample plan, then complete the surveys and calculate the final comparison.",
+          "timeJump": {
+            "label": "Two weeks later",
+            "panel": {
+              "title": "Completed comparison",
+              "metrics": [
+                {
+                  "label": "New check-in: enough rest",
+                  "value": "68 of 100 patients",
+                  "note": "At the planned endpoint"
+                },
+                {
+                  "label": "Usual check-in: enough rest",
+                  "value": "50 of 100 patients",
+                  "note": "At the planned endpoint"
+                },
+                {
+                  "label": "Observed difference",
+                  "value": "18 percentage points",
+                  "note": "Favors the new check-in"
+                },
+                {
+                  "label": "Chance-test result",
+                  "value": "About 1%",
+                  "note": "If the check-ins worked equally well, a gap at least this large in either direction would occur about 1% of the time."
+                }
+              ],
+              "note": "Collection completed over two weeks."
+            }
+          }
+        }
+      ],
+      "id": "sample",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "That early gap matches the improvement we planned for. Could we wrap up the surveys and use what we have? That would free up bedside time."
+        },
+        {
+          "from": "research",
+          "text": "I have the comparison plan handy if you want it checked. What should I tell the nurses handling the morning responses?"
+        }
+      ],
+      "prompt": "How will you handle the comparison?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 25
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "recommend",
+          "next": "adopted",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You matched the recommendation to the planned test: about 1% is below the 5% cutoff. That supports a local change without proving that the true benefit is exactly 18 percentage points.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "Your explanation separated the observed improvement from what the test measures. That gave {{charge}} a usable reason for the change without turning the result into a claim of certainty.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "research",
+              "text": "About 1% is below our 5% cutoff. If the check-ins worked equally well, a gap at least this large in either direction would occur about 1% of the time—not proof of the exact benefit."
+            },
+            {
+              "from": "charge",
+              "text": "I'll authorize it for this ward and use that wording. The handoff takes bedside time, but we can make the change without altering required care."
+            }
+          ],
+          "text": "Recommend the new check-in for this ward, explaining the observed improvement and what the chance-test result tells us.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 10
+            },
+            {
+              "meter": "capacity",
+              "change": -15
+            }
+          ],
+          "id": "seek-precision",
+          "next": "collecting",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You recognized that meeting the test cutoff doesn't pin down the size of the benefit. More responses can support a more precise estimate.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The ward needed a local recommendation, not a tightly pinned-down benefit estimate. Explain what the completed test supports rather than leaving that decision open while surveys continue.",
+              "example": "\"The result supports using the new check-in here. The exact size of its benefit is still uncertain.\""
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "research",
+              "text": "More responses could narrow our estimate; they wouldn't make the benefit certain. The completed result already meets the agreed cutoff for this ward's decision."
+            },
+            {
+              "from": "charge",
+              "text": "I'll keep the usual routine and continue the surveys. That leaves our local decision open and keeps bedside time tied up in collection."
+            }
+          ],
+          "text": "Keep the usual check-in for this ward and collect more patient responses to pin down the size of the benefit.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": -20
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "certainty-message",
+          "next": "correction",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The short message saved discussion, but assigned a probability the test did not calculate. Describe how unusual the observed comparison would be if the routines worked equally well.",
+              "example": "\"If the check-ins worked equally well, a gap at least this large in either direction would occur about 1% of the time.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That gives me a short message without much discussion. I'll pause the announcement if the wording needs a check."
+            },
+            {
+              "from": "research",
+              "text": "It does need a correction: about 1% describes gaps we'd see if the routines worked equally well. It doesn't give a 99% probability that the new check-in works better."
+            }
+          ],
+          "text": "Recommend the new check-in for this ward, saying the test gives a 99% probability that it works better.",
+          "timeJump": null
+        }
+      ],
+      "id": "final-report",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "We've reached 100 patients per group. The gap is 18 percentage points and the test result is about 1%; what should I take to the bedside assignment huddle?"
+        },
+        {
+          "from": "research",
+          "text": "More responses could help pin down the size of the benefit. I'd like a narrower estimate if we can manage the extra surveys."
+        },
+        {
+          "from": "charge",
+          "text": "I need a decision for this ward, and continued surveys take bedside time. Can we settle the routine with what we have?"
+        }
+      ],
+      "prompt": "What do you recommend, and how do you explain the result?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -15
+            }
+          ],
+          "id": "resume",
+          "next": "collecting",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You kept an inconclusive early test separate from a finding of no difference. A result above the cutoff does not establish either a benefit or equality.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You gave {{charge}} a clear reason to resume the planned collection without claiming the check-in worked or didn't work. That made the remaining uncertainty usable for a bedside decision.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "research",
+              "text": "Right—the early 15% is above our 5% cutoff, so it doesn't establish a difference. It doesn't establish that the routines work equally well, either."
+            },
+            {
+              "from": "charge",
+              "text": "I'll restart the planned surveys and keep the usual routine for now. That uses bedside time again, but gives me an honest explanation for leaving the question open."
+            }
+          ],
+          "text": "Explain that the early result doesn't settle the question and resume surveys to the planned endpoint.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "recommend-early",
+          "next": "not-authorized",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The planning difference described an improvement worth detecting, not a rule for authorizing a change. Compare the early test result with the cutoff rather than treating the observed gap as sufficient evidence.",
+              "example": "\"The gap looks worthwhile, but the early test hasn't met our cutoff. Let's complete the planned comparison.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "Keeping surveys stopped frees up bedside time, but I won't authorize a routine change from this early comparison."
+            },
+            {
+              "from": "research",
+              "text": "The 20-percentage-point gap is worth noticing, but about 15% is above the 5% cutoff. Matching the improvement used for planning doesn't establish that the check-in helped."
+            }
+          ],
+          "text": "Recommend the new check-in because the observed improvement matches the difference we used for the sample plan.",
+          "timeJump": null
+        }
+      ],
+      "id": "early-report",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "The 20-percentage-point gap looks useful, but the test result is about 15%. What should I tell the bedside team?"
+        },
+        {
+          "from": "charge",
+          "text": "I'd like to settle the routine without restarting surveys. Or can we call the routines equivalent and close the comparison?"
+        }
+      ],
+      "prompt": "How do you explain the early result and handle the recommendation?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Early bedside comparison",
+      "metrics": [
+        {
+          "label": "New check-in: enough rest",
+          "value": "17 of 25 patients",
+          "note": "Morning patient responses"
+        },
+        {
+          "label": "Usual check-in: enough rest",
+          "value": "12 of 25 patients",
+          "note": "Morning patient responses"
+        },
+        {
+          "label": "Chance-test result",
+          "value": "About 15%",
+          "note": "Two-sided comparison"
+        }
+      ],
+      "note": "Patients were randomly assigned; required nursing care was unchanged."
+    },
+    {
+      "title": "Recorded comparison plan",
+      "metrics": [
+        {
+          "label": "Planned endpoint",
+          "value": "100 patients per group",
+          "note": "Agreed before collection"
+        },
+        {
+          "label": "Test cutoff",
+          "value": "5%",
+          "note": "Agreed before results were available"
+        },
+        {
+          "label": "Difference used for planning",
+          "value": "20 percentage points",
+          "note": "Expected usual-care rate: 50%"
+        },
+        {
+          "label": "Collection to planned endpoint",
+          "value": "Two weeks",
+          "note": null
+        }
+      ],
+      "note": "The plan aims for about an 80% chance of detecting the specified improvement."
+    }
+  ],
+  "setting": "Evening shift at Willowbend Ward",
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Separate a difference from chance",
+      "practice": "Compare one test result with its stated cutoff, then explain why the result does not prove either explanation."
+    },
+    {
+      "id": "sample",
+      "name": "Choose a useful sample size",
+      "practice": "For one patient comparison, identify the planned group size, the difference worth detecting, and the cost of collecting more responses."
+    },
+    {
+      "id": "explain",
+      "name": "Explain a test result plainly",
+      "practice": "Write two sentences explaining one comparison to a bedside colleague without calling the result certain."
+    }
+  ],
+  "startNodeId": "sample",
+  "summary": [
+    "Hypothesis testing checks an observed difference against what chance could produce if the approaches worked equally well.",
+    "A sample plan should match the difference worth detecting, rather than end when early results look promising.",
+    "A test result above the agreed cutoff does not establish that the approaches work equally well."
+  ],
+  "team": [
+    {
+      "id": "research",
+      "role": "Clinical nurse specialist",
+      "expertise": "She maintains the comparison plan and wants a conclusion the evidence can support.",
+      "ai": false
+    },
+    {
+      "id": "charge",
+      "role": "Charge nurse",
+      "expertise": "He organizes bedside work and wants a useful decision without unnecessary patient surveys.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Checks sample plans and calculations when asked; nursing staff retain responsibility for practice changes.",
+      "ai": true
+    }
+  ],
+  "title": "Does the new bedtime check-in help patients rest?"
+}

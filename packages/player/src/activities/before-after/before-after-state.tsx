@@ -2,10 +2,10 @@
 
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { type FactChange, barShares, describeChange } from "./fact-change";
 

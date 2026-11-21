@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-brain-lobes",
+        "claimId": "41aa50d84e2cb9bd",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "b5d369a1e337cf30cebf96bbd992511f05eb83672e3510c30528064804618e4c.second.29ef6fa2-bfee-452e-9e34-793c6cef650a.2",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00352475,
+    "id": "754a48e3cb28a3b6e45a9e0f1c940cc2b59ed45f1563c17323c511232f523dfd",
+    "packet": [
+      {
+        "A": {
+          "blob": "9cc2cf50490f8b2c088f39f97a0b151448c154998ef46b6763480a1de96ae88c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "554112817b59f7d4f56ff5b6dad36038541a693a7576541a1af12150463306f9",
+          "format": "text"
+        },
+        "claim": "Screen 12 assigns activityTemplate labeledDiagram to an explanation screen with visual set to null and asks for all names already visible with no question to answer, contradicting the labeledDiagram template (which requires a wordless numbered picture for the learner to match with names).",
+        "claimId": "41aa50d84e2cb9bd",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6e25e90035f327f7fde1c3cf8f81fbfc845ef2829845eab55744811e0ce727b8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "bc9895e13431c1934d9bef0bebfe69eba568f87c870f4ae901d85dc7546fb912",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Let the learner explore the completed four-lobe map with all names already visible and no question to answer.",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "9079805edb91c9f3",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "41aa50d84e2cb9bd",
+          "finding": "holds",
+          "reason": "Screen 12 in output B is an explanation kind with activityTemplate labeledDiagram, visual null, and the brief asks the learner to explore a map with all names already visible and no question. The labeledDiagram template is meant for matching numbered parts to names, so using it here with no numbered picture and no matching task is a real mismatch."
+        },
+        {
+          "claimId": "9079805edb91c9f3",
+          "finding": "doesn't hold",
+          "reason": "The worked example divides by the starting wage, not $23: $23 − $20 = $3, then 3 ÷ 20 = 0.15, then 0.15 × 100 = 15%. It reports a 15% increase, not 13%, and this is the same in both outputs. The 13% figure is the wrong-denominator error from a different screen."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -1,0 +1,42 @@
+{
+  "pairs": [
+    {
+      "clean": {
+        "image": "47596c8f53846d2b2affb2baedd7dc6c1a86a07cd9b2e38a72dfe90020f52506"
+      },
+      "criterion": "subject",
+      "defect": "An antibody shield instead of an economics symbol.",
+      "expectations": "An object that clearly stands for economics: money, prices or markets (such as a coin with a rising arrow or a balance of goods and coins), not an unrelated office object. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+      "falseAllegation": "The icon shows an antibody shield.",
+      "flawed": {
+        "image": "d9e6f78dd42f79e4e5d603dba628e0ec8620db1632e095a9df8d669e62395192"
+      },
+      "input": {
+        "caseId": "pt-economia",
+        "description": "Economia estuda como pessoas, empresas e governos fazem escolhas com recursos escassos: preços, juros, inflação e o papel do governo.",
+        "language": "pt",
+        "title": "Economia"
+      },
+      "provenance": "Image and audio measurement P3"
+    },
+    {
+      "clean": {
+        "image": "5a9df11f2b83d8101c21e2c1fc54e2b87e5bbe337766c5f92a77b925e3261e57"
+      },
+      "criterion": "text",
+      "defect": "Adds the word DATA.",
+      "expectations": "An object that clearly stands for data analysis, such as a bar chart or a magnifying glass over a chart, not a generic computer. One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.",
+      "falseAllegation": "The icon spells DATA below the magnifying glass.",
+      "flawed": {
+        "image": "934eaa64523fb6f8235623080791b075573026ff92c0e8db02b096c18a860598"
+      },
+      "input": {
+        "caseId": "en-data-analysis",
+        "description": "Data analysis turns raw numbers into answers: cleaning data, summarizing it, charting it honestly and checking conclusions.",
+        "language": "en",
+        "title": "Data analysis"
+      },
+      "provenance": "Image and audio measurement P7"
+    }
+  ]
+}

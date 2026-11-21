@@ -1,0 +1,170 @@
+{
+  "lessons": [
+    {
+      "canDo": "Prever o novo preço e a nova quantidade após uma mudança na demanda",
+      "description": "Distinguir mudanças na demanda de reações ao próprio preço e prever o novo equilíbrio quando a curva de oferta permanece a mesma.",
+      "estimatedMinutes": 5,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Depois que um vídeo viraliza, aparece uma fila na barraca de açaí, mesmo sem promoção. O que essa fila pode mudar no preço da tigela?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "A curva de demanda mostra quantas tigelas os clientes querem comprar a cada preço. No gráfico, use tigelas por hora no eixo horizontal e preço no vertical: 20 a R$ 12,00, 40 a R$ 10,00 e 60 a R$ 8,00.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Depois do vídeo, os clientes querem comprar mais açaí a qualquer preço; os vendedores continuam oferecendo as mesmas quantidades a cada preço. O que tende a acontecer com o valor da tigela: fica mais alto (correta), fica igual (tentadora, porque nada mudou para os vendedores) ou fica mais baixo?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ao preço antigo de R$ 10,00, os clientes agora querem 60 tigelas por hora, mas só 40 são oferecidas, o que pressiona o preço para cima. Não é preciso aumentar o custo para o preço subir: ao valor antigo, falta açaí para atender todos os pedidos.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Se os clientes querem comprar mais a cada preço, a curva de demanda se desloca para a direita. No gráfico do açaí, compare antes e depois: a R$ 12,00, 20 e 40 tigelas por hora; a R$ 10,00, 40 e 60; a R$ 8,00, 60 e 80.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Se só o preço do próprio açaí cai de R$ 10,00 para R$ 8,00, os clientes passam de 40 para 60 tigelas por hora na mesma curva, sem deslocá-la. Mostre os dois pontos na curva original.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma loja baixa só o preço do filtro de papel, e os clientes querem comprar mais pacotes. Peça para escolher entre movimento ao longo da mesma curva (correta) e deslocamento para a direita porque a quantidade aumentou (tentadora).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Se a moda de um modelo de boné passa e os clientes querem comprar menos a cada preço, a curva de demanda se desloca para a esquerda. Mostre antes e depois: a R$ 40,00, 30 e 20 bonés por dia; a R$ 60,00, 20 e 10.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "A curva de oferta mostra quanto os vendedores querem vender a cada preço. No aluguel de bicicletas, desenhe a curva crescente com 4 aluguéis por hora a R$ 8,00 e 6 a R$ 10,00.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "lineCrossing",
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "O equilíbrio é o cruzamento em que clientes e vendedores querem negociar a mesma quantidade. Mostre aluguéis por hora no eixo horizontal e preço em reais no vertical, com demanda inicial P = 12 − Q e oferta P = 4 + Q; explore um deslocamento da demanda 2 unidades à direita, mantendo a oferta no lugar.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Terminada a temporada de formaturas, cai a procura por buquês a cada preço; no gráfico de quantidade diária e preço em reais, use oferta P = 10 + Q, demanda inicial P = 50 − Q e nova demanda P = 30 − Q, para Q de 0 a 30. Revele um passo por vez: leia o cruzamento inicial (20 buquês, R$ 30,00), acompanhe o deslocamento da demanda para a esquerda com a oferta parada e leia o novo cruzamento (10 buquês, R$ 20,00).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "chart",
+          "brief": "Mais gente passa a pedalar e quer comprar capacetes a cada preço; sem marcar os cruzamentos, mostre a oferta P = 20 + 2Q, a demanda inicial P = 80 − Q e a nova demanda P = 110 − Q, com Q de 0 a 40 em capacetes por dia e P em reais. Peça o novo preço e a nova quantidade: R$ 80,00 e 30 (correta) ou R$ 60,00 e 30 (tentadora, pois mantém o preço antigo).",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Quando um produto que o cliente pode usar no lugar de outro fica mais caro, a demanda pelo outro pode aumentar: são produtos substitutos. Se a manteiga encarece, parte dos clientes passa a querer mais margarina ao mesmo preço de antes.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Quando um produto usado junto com outro fica mais barato, a demanda pelo outro pode aumentar: são produtos complementares. Se as impressoras ficam mais baratas, mais gente compra impressoras e passa a querer cartuchos, mesmo sem desconto nos cartuchos.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Numa rede de supermercados, o café em pó encareceu e as máquinas de cápsulas baratearam; parte dos clientes troca o pó por cápsulas, e quem compra a máquina passa a usar cápsulas. Com a curva de oferta de cápsulas crescente e inalterada, peça para decidir se as duas mudanças se reforçam ou se compensam e prever o efeito: ambas empurram a demanda para a direita, elevando o preço e a quantidade de equilíbrio.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Distinguir o que desloca a demanda de uma mudança no próprio preço e usar o novo cruzamento com a oferta para prever preço e quantidade.",
+          "example": "Se a demanda por buquês cai e a curva de oferta continua a mesma, o equilíbrio pode passar de 20 buquês a R$ 30,00 para 10 a R$ 20,00.",
+          "hard": true,
+          "name": "Prever o equilíbrio após deslocamentos da demanda",
+          "topic": "Deslocamentos da demanda",
+          "useCase": "Estimar como uma mudança nas preferências dos clientes ou no preço de outro produto afeta o preço e as vendas do seu produto."
+        }
+      ],
+      "title": "Deslocamentos da curva de demanda"
+    }
+  ]
+}

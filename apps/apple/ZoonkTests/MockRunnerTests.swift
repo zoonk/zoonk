@@ -69,12 +69,32 @@ final class MockSectionMovesTests: XCTestCase {
     XCTAssertTrue(moves.canOpenAfterTimeout(1))
     XCTAssertFalse(moves.canOpenAfterTimeout(2))
   }
+
+  func testAnAnswerIsRecheckedOnlyWhereItCanStillChange() {
+    func canRecheck(_ navigation: MockSection.Navigation?) -> Bool {
+      MockSectionMoves(
+        answered: true, changed: [], changesAllowed: nil, navigation: navigation, position: 0,
+        reached: 0, total: 3
+      ).canRecheck
+    }
+
+    XCTAssertTrue(canRecheck(nil))
+    XCTAssertTrue(canRecheck(forwardOnly), "Its review changes answers")
+    XCTAssertFalse(
+      canRecheck(
+        MockSection.Navigation(
+          answerChanges: nil, forwardOnly: true, itemSeconds: nil, mustAnswer: false)))
+    XCTAssertFalse(
+      canRecheck(
+        MockSection.Navigation(
+          answerChanges: 0, forwardOnly: true, itemSeconds: nil, mustAnswer: false)))
+  }
 }
 
 @MainActor
 final class MockDraftQueueTests: XCTestCase {
   private func draft(_ itemId: String, _ answer: PracticeAnswer?) -> MockDraft {
-    MockDraft(answer: answer, durationMs: 0, flagged: false, itemId: itemId)
+    MockDraft(answer: answer, durationMs: 0, unsure: false, itemId: itemId)
   }
 
   func testAnswersGoOutInOrderAndANewerOneReplacesOneStillWaiting() async {
@@ -160,11 +180,11 @@ final class MockDraftQueueTests: XCTestCase {
     await queue.idle()
     XCTAssertFalse(queue.countsTowardsProgress(newAnswer, initiallyStored: nil))
 
-    var flagged = storedAnswer
-    flagged.flagged = true
-    queue.add(flagged)
+    var marked = storedAnswer
+    marked.unsure = true
+    queue.add(marked)
     await queue.idle()
-    XCTAssertTrue(queue.countsTowardsProgress(flagged, initiallyStored: storedAnswer))
+    XCTAssertTrue(queue.countsTowardsProgress(marked, initiallyStored: storedAnswer))
   }
 
   func testARefusedAnswerSaysSoUntilItsQuestionsAnswerIsStored() async {
@@ -328,20 +348,18 @@ final class MockBarNoteTests: XCTestCase {
 
 @MainActor
 final class MockAnswerSheetTests: XCTestCase {
-  /// The web's one sentence for blank and flagged questions, each counted in its own plural.
-  func testHandingInSaysBlankAndFlaggedInOneSentence() {
-    func leftOpen(blank: Int, flagged: Int, locale: String = "en") -> String {
-      var sentence = LocalizedStringResource(
-        "\(blank) questions are blank and \(flagged) are flagged.", table: "Mock")
-      sentence.locale = Locale(identifier: locale)
-      return String(localized: sentence)
+  /// The web's one sentence for blank and not-sure questions, each counted in its own plural.
+  func testHandingInSaysBlankAndNotSureInOneSentence() {
+    func leftOpen(blank: Int, unsure: Int) -> String {
+      String(
+        localized: "\(blank) questions are blank and you're not sure of \(unsure).", table: "Mock")
     }
 
-    XCTAssertEqual(leftOpen(blank: 2, flagged: 1), "2 questions are blank and 1 is flagged.")
-    XCTAssertEqual(leftOpen(blank: 1, flagged: 3), "1 question is blank and 3 are flagged.")
+    XCTAssertEqual(leftOpen(blank: 1, unsure: 3), "1 question is blank and you're not sure of 3.")
+    XCTAssertEqual(leftOpen(blank: 2, unsure: 1), "2 questions are blank and you're not sure of 1.")
     XCTAssertEqual(
-      leftOpen(blank: 1, flagged: 2, locale: "pt"),
-      "1 questão está em branco e 2 estão marcadas.", "The web's words")
+      String(localized: "You're not sure of \(1) answers.", table: "Mock"),
+      "You're not sure of 1 answer.")
   }
 
   /// Beside the sheet's title, as the web's: how many of the section's questions are answered.
@@ -357,10 +375,10 @@ final class MockAnswerSheetTests: XCTestCase {
     let window = try show(
       List {
         MockSheetRow(
-          name: "Question 1", answered: true, flagged: false, isCurrent: false, canOpen: false
+          name: "Question 1", answered: true, unsure: false, isCurrent: false, canOpen: false
         ) {}
         MockSheetRow(
-          name: "Question 2", answered: false, flagged: false, isCurrent: true, canOpen: true
+          name: "Question 2", answered: false, unsure: false, isCurrent: true, canOpen: true
         ) {}
       }
       .zoonkStyles())
@@ -413,8 +431,8 @@ final class MockRunKeptAnswersTests: XCTestCase {
   }
 
   func testANewerAnswerKeepsItsPlaceOnlyWhileTheOlderOneIsStillInLine() {
-    let first = MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne)
-    let second = MockDraft(answer: .choice(1), durationMs: 0, flagged: false, itemId: Self.itemTwo)
+    let first = MockDraft(answer: .choice(0), durationMs: 0, unsure: false, itemId: Self.itemOne)
+    let second = MockDraft(answer: .choice(1), durationMs: 0, unsure: false, itemId: Self.itemTwo)
     var newer = first
     newer.answer = .choice(2)
 
@@ -474,7 +492,7 @@ final class MockRunKeptAnswersTests: XCTestCase {
 
   func testAnAnswerSavedBeforeTheAccountLoadsReplacesItsOlderKeptCopy() async throws {
     unsent.keep(
-      MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne),
+      MockDraft(answer: .choice(0), durationMs: 0, unsure: false, itemId: Self.itemOne),
       inPlace: false)
     let account = HeldAccountAPI()
     let session = SessionStore(
@@ -509,7 +527,7 @@ final class MockRunKeptAnswersTests: XCTestCase {
   /// offline leaves the other questions' changes as they were.
   func testAKeptAnswerToAnAlreadyChangedQuestionUsesNoOtherChange() async throws {
     let stored = [Self.itemOne, Self.itemTwo, Self.itemThree].map {
-      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: $0)
+      MockDraft(answer: .choice(0), durationMs: 1000, unsure: false, itemId: $0)
     }
     var changedOnce = stored[0]
     changedOnce.answer = .choice(1)
@@ -538,7 +556,7 @@ final class MockRunKeptAnswersTests: XCTestCase {
 
   func testAKeptChangeTheServerHasNoChangeLeftForStaysLocked() async throws {
     let stored = [Self.itemOne, Self.itemTwo, Self.itemThree].map {
-      MockDraft(answer: .choice(0), durationMs: 1000, flagged: false, itemId: $0)
+      MockDraft(answer: .choice(0), durationMs: 1000, unsure: false, itemId: $0)
     }
     var keptChange = stored[0]
     keptChange.answer = .choice(1)
@@ -557,7 +575,7 @@ final class MockRunKeptAnswersTests: XCTestCase {
 
   func testAFinishedMockClearsItsKeptAnswers() async throws {
     unsent.keep(
-      MockDraft(answer: .choice(0), durationMs: 0, flagged: false, itemId: Self.itemOne),
+      MockDraft(answer: .choice(0), durationMs: 0, unsure: false, itemId: Self.itemOne),
       inPlace: false)
     let transport = MockTransport(itemIds: [Self.itemOne], status: "finished")
 

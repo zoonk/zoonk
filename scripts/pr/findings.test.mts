@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { basename } from "node:path";
 import { describe, it } from "vitest";
+import { bodyMedia } from "./body.mts";
 import { CLEAN, checkFixture, kinds } from "./check-fixture.mts";
 import { closedSection, resolveFinding } from "./findings.mts";
 import { type Finding, readManifest, readOf } from "./media.mts";
@@ -147,8 +148,10 @@ describe("the PR's list of findings closed without a fix", () => {
 
     const where = basename(folder);
 
+    const section = await closedSection(fixture.repository);
+
     assert.equal(
-      await closedSection(fixture.repository),
+      section,
       [
         "## Findings closed without a fix",
         "",
@@ -159,6 +162,8 @@ describe("the PR's list of findings closed without a fix", () => {
         `| The chevrons end 4 px apart | \`${where}/a.png\` | Exception granted by the user |`,
       ].join("\n"),
     );
+
+    assert.deepEqual(bodyMedia(section), { images: [], unsupported: [] });
   });
 
   it("says when nothing closed without a fix", async () => {

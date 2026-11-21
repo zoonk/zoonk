@@ -18,6 +18,13 @@ export const teachingChaptersTask: Task<
   generate: findTeachingChapters,
   id: "teaching-chapters",
   name: "Teaching chapters",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Code saves which chapters teach which skills",
+    reason: "Code checks the answer; the cheapest that placed every skill",
+    waits: "A learner waits only when a skill they need is in the band",
+  },
   score: scoreTeachingChapters,
   testCases: TEST_CASES,
 };

@@ -1,0 +1,17 @@
+{
+  "caseId": "en-particle-in-a-box-advanced",
+  "challenger": {
+    "costUsd": 0.063946,
+    "durationMs": 72425.779916,
+    "hash": "11f0865a7423ad8e7746ee573f2e64eb5b63c66a64e5ae3738c08f2231078089",
+    "userPromptHash": "4103e427ffc3f2b94e186969d6e68d827881ee67754e179d74341cf78f27e364"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.3593656,
+    "durationMs": 140812.27887500002,
+    "hash": "c0460e6737b7b59cbc992e2edac270e8780f697d45e221275bce7ad07c66286b",
+    "userPromptHash": "4103e427ffc3f2b94e186969d6e68d827881ee67754e179d74341cf78f27e364"
+  },
+  "run": 2
+}

@@ -1,0 +1,12 @@
+{
+  "caseId": "en-python-range-beginner",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 5,
+  "problems": [
+    "Screen 2: Shows emphasis marks the app can't pair, so learners see them: \"`range(1, 5)` gives you 1, 2, 3, and 4. With **`range()`**, you begin at the start and leave out the stop. To reach 5, set the stop to 6. When you count up by ones, subtract the start from the stop to find how many numbers you get.\"."
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 6
+}

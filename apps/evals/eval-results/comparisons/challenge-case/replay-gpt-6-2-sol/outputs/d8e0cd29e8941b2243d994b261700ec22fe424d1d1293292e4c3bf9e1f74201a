@@ -1,0 +1,487 @@
+{
+  "deadline": "Esclarecer a prescrição antes da dose das 14h.",
+  "endings": [
+    {
+      "id": "ready",
+      "outcome": "O preparo fica liberado pela prescrição substituta: 450 mg, equivalentes a 9 mL, por via oral, a cada 12 horas. O registro distingue os 900 mg por dia da dose por tomada e permite refazer a conferência."
+    },
+    {
+      "id": "returned",
+      "outcome": "A prescrição foi corrigida para 450 mg por tomada, e o volume de 9 mL foi conferido. {{nurse}} devolve o registro para incluir a base do cálculo e a referência à ordem válida antes de liberar o preparo; não houve administração de dose divergente."
+    },
+    {
+      "id": "pending",
+      "outcome": "A administração permanece bloqueada, mas o esquema ainda não foi esclarecido. {{nurse}} assume o contato direto com {{doctor}}; o cálculo não autoriza escolher entre o plano registrado e a prescrição vigente."
+    }
+  ],
+  "meters": [
+    {
+      "id": "risk",
+      "label": "Risco de preparo divergente",
+      "start": 75,
+      "goodWhen": "low"
+    },
+    {
+      "id": "capacity",
+      "label": "Disponibilidade da equipe",
+      "start": 80,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Você precisa **definir o volume por tomada de amoxicilina** e resolver a diferença entre o plano registrado e a prescrição antes de liberar o preparo. A decisão sobre o esquema cabe a {{doctor}}; sua responsabilidade é conferir o cálculo e registrar a orientação confirmada.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -5
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "convert-order",
+          "next": "contact",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "A conversão encontrou o volume da ordem escrita, mas deixou a diferença entre plano e prescrição sem análise. No cálculo de doses, converter mg em mL não confirma se a dose prescrita corresponde ao plano.",
+              "example": "Compare a quantidade diária do plano com a quantidade diária da prescrição."
+            },
+            {
+              "skill": "weight",
+              "kind": "improve",
+              "text": "Faltou usar o peso para separar a quantidade diária da dose por tomada. Os 45 mg/kg/dia do plano se referem ao dia, não a cada administração.",
+              "example": "Calcule a quantidade diária pelo peso e depois divida pelas tomadas do dia."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Pela ordem escrita: 900 mg × 5 mL ÷ 250 mg = 18 mL por tomada. Já temos esse volume como referência, sem liberar a administração."
+            },
+            {
+              "from": "nurse",
+              "text": "Isso adianta a organização, mas a conta só converte a ordem. Ainda falta comparar a quantidade diária com o plano; os 18 mL podem acabar virando referência por hábito."
+            }
+          ],
+          "text": "Converter a prescrição em volume e deixar a comparação do esquema para o contato com {{doctor}}.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -25
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "compare-all",
+          "next": "contact",
+          "notes": [
+            {
+              "skill": "weight",
+              "kind": "good",
+              "text": "Você separou os 900 mg por dia do plano em 450 mg por tomada e só então chegou aos 9 mL. Essa sequência preservou o significado de mg/kg/dia.",
+              "example": null
+            },
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "Você conferiu os dados usados por {{ai}} nas fontes, incluindo intervalo, via e apresentação. A comparação mostrou a divergência sem tratar o resultado do cálculo como autorização para administrar.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Plano: 45 mg/kg/dia × 20 kg = 900 mg/dia. A cada 12 horas são 2 tomadas por dia: 900 mg ÷ 2 = 450 mg por tomada."
+            },
+            {
+              "from": "ai",
+              "text": "250 mg ÷ 5 mL = 50 mg/mL; 450 mg ÷ 50 mg/mL = 9 mL. A ordem dá 900 mg × 2 = 1.800 mg/dia e 900 mg ÷ 50 mg/mL = 18 mL por tomada; ambas indicam via oral."
+            },
+            {
+              "from": "nurse",
+              "text": "Conferi as fontes com você: o cálculo de doses separou dia, tomada e volume. Isso exigiu conferir cada unidade, mas deixou a diferença clara; a definição do esquema continua com {{doctor}}."
+            }
+          ],
+          "text": "Pedir para {{ai}} separar dia, tomada e volume nos registros e conferir as contas com as fontes.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -15
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "compare-daily",
+          "next": "contact",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "Você colocou plano e prescrição na mesma unidade de tempo. Comparar 900 mg por dia com 1.800 mg por dia tornou a divergência verificável para o contato médico.",
+              "example": null
+            },
+            {
+              "skill": "weight",
+              "kind": "improve",
+              "text": "A conta pelo peso sustentou o contato, mas o volume ficou pendente. Após a definição médica, complete a sequência da quantidade diária para a dose por tomada e para os mL da apresentação disponível.",
+              "example": "Após a confirmação, registre a dose por tomada e sua conversão em volume."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Conferi sua comparação: 45 mg/kg/dia × 20 kg = 900 mg/dia. O intervalo de 12 horas dá 2 tomadas por dia; na prescrição, 900 mg × 2 = 1.800 mg/dia."
+            },
+            {
+              "from": "nurse",
+              "text": "A diferença já dá uma pergunta concreta para {{doctor}}. Essa parte do cálculo de doses ficou esclarecida, mas ainda falta converter a dose confirmada em volume para o preparo."
+            }
+          ],
+          "text": "Comparar à mão as quantidades diárias dos registros e levar a diferença para {{doctor}} esclarecer.",
+          "timeJump": null
+        }
+      ],
+      "id": "calculate",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "O peso e o frasco já estão conferidos, e essa dose ainda não foi administrada. Preciso organizar o preparo das 14h."
+        },
+        {
+          "from": "nurse",
+          "text": "Converter o que está na prescrição já adianta o volume. A discussão do esquema pode ficar para o contato com {{doctor}}."
+        }
+      ],
+      "prompt": "Como você faz a conferência para o preparo?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -25
+            },
+            {
+              "meter": "capacity",
+              "change": -15
+            }
+          ],
+          "id": "call-focused",
+          "next": "record",
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "good",
+              "text": "Você levou dados verificáveis e uma pergunta objetiva a quem define o esquema. Repetir a resposta, verificar a ordem substituta e conferir o volume com {{nurse}} fechou a dúvida sem transformar seu cálculo em prescrição.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "doctor",
+              "text": "Sim, eu pretendia prescrever 45 mg/kg/dia. A dose que você repetiu está correta: substituí a prescrição por amoxicilina 450 mg por tomada, por via oral, a cada 12 horas."
+            },
+            {
+              "from": "ai",
+              "text": "45 mg/kg/dia × 20 kg = 900 mg/dia; a cada 12 horas são 2 tomadas: 900 mg ÷ 2 = 450 mg por tomada. A suspensão tem 250 mg ÷ 5 mL = 50 mg/mL; 450 mg ÷ 50 mg/mL = 9 mL."
+            },
+            {
+              "from": "nurse",
+              "text": "Conferi com você a ordem substituta, o peso e o frasco: 450 mg por tomada correspondem a 9 mL por via oral, a cada 12 horas. A ligação mobilizou a equipe, mas resolveu a dúvida com a ordem atualizada."
+            }
+          ],
+          "text": "Ligar com peso, plano e prescrição, perguntar a dose por tomada, repetir a resposta e conferir a nova ordem com {{nurse}}.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -25
+            },
+            {
+              "meter": "capacity",
+              "change": -25
+            }
+          ],
+          "id": "write-then-call",
+          "next": "record",
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "good",
+              "text": "Você obteve a decisão médica, repetiu a orientação e conferiu a prescrição substituta com {{nurse}}. Essas etapas resolveram a divergência entre o plano e a ordem.",
+              "example": null
+            },
+            {
+              "skill": "communicate",
+              "kind": "improve",
+              "text": "O histórico completo adiou a pergunta sem acrescentar uma checagem clínica. Você poderia apresentar peso, plano e prescrição diretamente e manter a mesma confirmação da resposta.",
+              "example": "\"Com 20 kg, o plano é 45 mg/kg/dia e a ordem está em 900 mg por tomada, a cada 12 horas. Qual dose por tomada você confirma?\""
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "doctor",
+              "text": "Recebi o histórico. Minha intenção era 45 mg/kg/dia; confirmei sua repetição e substituí a ordem por amoxicilina 450 mg por tomada, por via oral, a cada 12 horas."
+            },
+            {
+              "from": "ai",
+              "text": "Pelo peso: 20 kg × 45 mg/kg/dia = 900 mg/dia. São 2 tomadas por dia no intervalo de 12 horas: 900 mg ÷ 2 = 450 mg por tomada; 250 mg ÷ 5 mL = 50 mg/mL; 450 mg ÷ 50 mg/mL = 9 mL."
+            },
+            {
+              "from": "nurse",
+              "text": "Conferimos a ordem substituta com peso e apresentação: 450 mg por tomada são 9 mL por via oral, a cada 12 horas. A confirmação resolveu; o relato longo tomou tempo sem acrescentar dados à pergunta."
+            }
+          ],
+          "text": "Escrever o histórico completo, ligar para confirmar a dose, repetir a resposta e conferir a nova ordem com {{nurse}}.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "routine-message",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "communicate",
+              "kind": "improve",
+              "text": "Você manteve a administração bloqueada, mas a mensagem não garantiu uma definição antes da dose. Use o telefone disponível para apresentar a divergência, perguntar a dose por tomada e repetir a orientação recebida.",
+              "example": "\"O plano está em 45 mg/kg/dia e a prescrição em 900 mg por tomada, a cada 12 horas. Qual dose por tomada você confirma?\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "A administração continua bloqueada, e {{doctor}} não precisou interromper o atendimento agora. Mas ainda não temos confirmação de recebimento nem uma pergunta específica sobre a diferença."
+            },
+            {
+              "from": "nurse",
+              "text": "A fila não garante resposta antes das 14h. Encaminhar a prescrição não esclareceu qual esquema deve valer."
+            }
+          ],
+          "text": "Enviar a prescrição para revisão na fila não urgente e manter a administração bloqueada enquanto aguardo a resposta.",
+          "timeJump": null
+        }
+      ],
+      "id": "contact",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "O plano e a prescrição ainda precisam de uma definição de {{doctor}}. A administração segue sem liberação."
+        },
+        {
+          "from": "doctor",
+          "text": "Estou entre atendimentos e consigo atender por telefone. Uma mensagem interrompe menos, mas a fila não urgente não garante retorno antes das 14h."
+        },
+        {
+          "from": "nurse",
+          "text": "Podemos escrever o histórico completo antes de ligar. Dá trabalho, mas fica tudo contado na ordem em que aconteceu."
+        }
+      ],
+      "prompt": "Como você busca a definição do esquema com {{doctor}}?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 5
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "volume-note",
+          "next": "returned",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "O volume transmitido estava conferido, mas faltou vinculá-lo à dose, à apresentação e à prescrição válida. Por isso, {{nurse}} precisou devolver o registro antes de liberar o preparo.",
+              "example": "Inclua a dose de 450 mg por tomada, a suspensão de 250 mg/5 mL e a referência à prescrição substituta."
+            },
+            {
+              "skill": "weight",
+              "kind": "improve",
+              "text": "Deixar a conta apenas na conversa impede refazer a passagem do peso para a quantidade diária e a dose por tomada. Registre essa base junto do volume.",
+              "example": "Registre 20 kg, 45 mg/kg/dia, 900 mg por dia e 450 mg por tomada, correspondentes a 9 mL."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Recebi os 9 mL e o horário, mas vou devolver o registro para completar a dose, a apresentação e a referência à ordem substituta. Sem isso, quem prepara precisa procurar nossa conversa."
+            },
+            {
+              "from": "nurse",
+              "text": "A anotação saiu rápido, mas o volume sozinho não mostra de onde veio a conta. A conferência está feita; falta deixá-la disponível no registro do preparo."
+            }
+          ],
+          "text": "Anotar volume e horário na passagem do preparo e manter os detalhes do cálculo na conversa da equipe.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -15
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "traceable-note",
+          "next": "ready",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "Você vinculou dose, apresentação, volume e via à prescrição substituta. O registro permite conferir o preparo sem confundir o cálculo com a autorização de quem prescreve.",
+              "example": null
+            },
+            {
+              "skill": "weight",
+              "kind": "good",
+              "text": "Você preservou no registro a sequência do peso para os 900 mg por dia, os 450 mg por tomada e os 9 mL. Assim, a quantidade diária não volta a parecer uma dose por tomada.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "nurse",
+              "text": "Agora consigo acompanhar os 900 mg por dia, os 450 mg por tomada e os 9 mL, com o peso e a apresentação registrados. A referência é a prescrição substituta de {{doctor}}."
+            },
+            {
+              "from": "nurse",
+              "text": "Completar isso tomou mais um momento, mas não preciso buscar a base da conta na conversa. O registro sustenta o preparo e permite repetir a conferência."
+            }
+          ],
+          "text": "Registrar peso, cálculo diário e por tomada, apresentação, volume, via e referência à prescrição substituta.",
+          "timeJump": null
+        }
+      ],
+      "id": "record",
+      "messages": [
+        {
+          "from": "nurse",
+          "text": "A prescrição substituta está conferida com o peso e o frasco: 450 mg por tomada correspondem a 9 mL por via oral, a cada 12 horas."
+        },
+        {
+          "from": "nurse",
+          "text": "Falta a passagem para o preparo. Se anotarmos só o volume e o horário, terminamos a digitação mais rápido; os detalhes já estão na nossa conversa."
+        }
+      ],
+      "prompt": "O que você deixa registrado para o preparo?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Prontuário e apresentação disponível",
+      "metrics": [
+        {
+          "label": "Peso atual",
+          "value": "20 kg",
+          "note": "Conferido no prontuário."
+        },
+        {
+          "label": "Plano médico",
+          "value": "45 mg/kg/dia",
+          "note": "Amoxicilina por via oral, a cada 12 horas."
+        },
+        {
+          "label": "Prescrição vigente",
+          "value": "900 mg por tomada",
+          "note": "Amoxicilina por via oral, a cada 12 horas."
+        },
+        {
+          "label": "Suspensão reconstituída",
+          "value": "250 mg/5 mL",
+          "note": "Apresentação disponível para o preparo."
+        }
+      ],
+      "note": "Plano e prescrição do mesmo atendimento. Próxima dose às 14h; ainda não administrada."
+    }
+  ],
+  "setting": "Plantão pediátrico no Hospital Ipê Claro",
+  "skills": [
+    {
+      "id": "weight",
+      "name": "Calcular dose por peso",
+      "practice": "Refaça um cálculo por peso, escrevendo separadamente a quantidade diária, a quantidade por tomada e o volume."
+    },
+    {
+      "id": "check",
+      "name": "Conferir a prescrição",
+      "practice": "Compare uma prescrição com o plano registrado e a apresentação disponível, marcando peso, unidade, intervalo e via."
+    },
+    {
+      "id": "communicate",
+      "name": "Comunicar uma dúvida ao médico",
+      "practice": "Ensaie uma ligação curta que apresente a divergência, faça uma pergunta objetiva e repita a orientação recebida."
+    }
+  ],
+  "startNodeId": "calculate",
+  "summary": [
+    "No cálculo de doses, mg/kg/dia indica a quantidade diária, que deve ser dividida pelas tomadas do dia.",
+    "Uma conversão correta de mg para mL não confirma que o esquema prescrito corresponde ao plano registrado.",
+    "O registro do cálculo deve distinguir quantidade diária, dose por tomada e volume, com referência à prescrição válida."
+  ],
+  "team": [
+    {
+      "id": "nurse",
+      "role": "Enfermeira supervisora",
+      "expertise": "Confere cálculos e registros de enfermagem; quer evitar que uma dose diária seja tratada como dose por tomada.",
+      "ai": false
+    },
+    {
+      "id": "doctor",
+      "role": "Médico pediatra",
+      "expertise": "Responde pelo esquema prescrito; está disponível por telefone, mas precisa conciliar o contato com os atendimentos.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "Assistente de cálculo",
+      "expertise": "Calcula com os dados fornecidos e explicita unidades; não decide o esquema nem autoriza a administração.",
+      "ai": true
+    }
+  ],
+  "title": "Qual volume de amoxicilina liberar?"
+}

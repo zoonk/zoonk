@@ -68,7 +68,7 @@ export function useProfileQuestionDescription(
     case "work":
       return t("We use this to pick examples you'll care about.");
     case "studies":
-      return t("Past or present, finished or not. Pick up to 3.");
+      return t("Past or present, finished or not.");
     case "conditions":
       return from === "settings"
         ? t(
@@ -85,7 +85,6 @@ export function useProfileQuestionDescription(
     case "play":
     case "read":
     case "activities":
-      return t("Pick up to 3.");
     case "addressForm":
       return null;
     default:

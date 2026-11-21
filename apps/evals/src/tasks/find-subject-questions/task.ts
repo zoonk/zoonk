@@ -74,6 +74,13 @@ export const findSubjectQuestionsTask: Task<
   id: "find-subject-questions",
   latencyBudget: { p50: 25, p95: 40 },
   name: "Find subject questions",
+  priorities: {
+    distribution: "shared",
+    first: "latency",
+    reads: "Code records the exam's subject questions",
+    reason: "A plan waits on it, at low reasoning",
+    waits: "A learner's plan may wait on it",
+  },
   score: scoreSubjectQuestions,
   testCases: TEST_CASES,
 };

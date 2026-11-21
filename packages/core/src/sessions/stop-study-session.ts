@@ -6,7 +6,11 @@ import { oweSessionPlanSettlement } from "./_utils/owe-session-plan-settlement";
 import { refreshPlanAroundSession } from "./_utils/refresh-plan";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
 import { settleSessionDay } from "./_utils/settle-session-day";
-import { type StudySessionRow, findOwnedStudySession } from "./_utils/study-session-access";
+import {
+  type OwnedStudySession,
+  type StudySessionRow,
+  findOwnedStudySession,
+} from "./_utils/study-session-access";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { finishLessonBlock } from "./finish-study-block";
 import {
@@ -70,14 +74,17 @@ async function markSessionStop({ session, timeZone, userId }: StopContext) {
   });
 }
 
-/** Requires ownership; preserves unfinished work for resumption and owes memory, preparation and a rebalance only on the first stop. */
-export async function stopStudySession({
+/**
+ * Requires ownership; preserves unfinished work for resumption and owes memory, preparation and a
+ * rebalance only on the first stop. For a caller that reads the summary on its next page.
+ */
+export async function recordStudySessionStop({
   input,
   sessionId,
 }: {
   input: StudySessionTimeZoneInput;
   sessionId: string;
-}): Promise<StudySessionSummaryResult> {
+}): Promise<Exclude<OwnedStudySession, { status: "ready" }> | { status: "ready" }> {
   const owned = await findOwnedStudySession(sessionId);
 
   if (owned.status !== "ready") {
@@ -95,5 +102,13 @@ export async function stopStudySession({
     await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
   }
 
-  return getStudySessionSummary({ input, sessionId });
+  return { status: "ready" };
+}
+
+export async function stopStudySession(input: {
+  input: StudySessionTimeZoneInput;
+  sessionId: string;
+}): Promise<StudySessionSummaryResult> {
+  const stopped = await recordStudySessionStop(input);
+  return stopped.status === "ready" ? getStudySessionSummary(input) : stopped;
 }

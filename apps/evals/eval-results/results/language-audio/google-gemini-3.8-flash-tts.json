@@ -1774,10 +1774,6 @@
       }
     },
     {
-      "classification": {
-        "expected": "read right",
-        "predicted": "misread"
-      },
       "judge": {
         "modelId": "google/gemini-3.8-flash",
         "usage": {
@@ -1785,23 +1781,11 @@
           "outputTokens": 347
         }
       },
-      "steps": [
-        {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
-          "kind": "majorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
-          "kind": "minorErrors",
-          "score": 1
-        },
-        {
-          "conclusion": "Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/).",
-          "kind": "potentialImprovements",
-          "score": 1
-        }
-      ],
+      "listeningReview": {
+        "audioPath": "language-audio/google-gemini-3.8-flash-tts/fr-lookalike-pain.mp3",
+        "conclusion": "Needs a listen: eval-results/audio/language-audio/google-gemini-3.8-flash-tts/fr-lookalike-pain.mp3. Single-provider flags: pain. Read \"pain\". gpt-transcribe heard \"Pain.\" (misheard []); the pronunciation check heard \"pas\" (unclear [\"pain\"]). As a look-alike it sounded native (called native, /pɛ̃/)."
+      },
+      "steps": [],
       "testCase": {
         "id": "fr-lookalike-pain-1",
         "userInput": {

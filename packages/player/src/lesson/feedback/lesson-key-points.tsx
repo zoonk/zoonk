@@ -1,9 +1,9 @@
 "use client";
 
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../_components/lesson-rich-text";
 
 export function LessonKeyPoints({ keyPoints }: { keyPoints: { met: boolean; text: string }[] }) {
   const t = useExtracted();

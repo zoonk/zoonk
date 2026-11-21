@@ -88,6 +88,13 @@ export const memoryReconcileTask: Task<
   generate: reconcileFact,
   id: "memory-reconcile",
   name: "Memory reconcile",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code replaces, merges or keeps facts",
+    reason: "Code checks the action; the cheapest that matched every one",
+    waits: "Nobody: background work",
+  },
   score: scoreMemoryReconcile,
   testCases: [...TEST_CASES, ...PERSONA_TEST_CASES],
 };

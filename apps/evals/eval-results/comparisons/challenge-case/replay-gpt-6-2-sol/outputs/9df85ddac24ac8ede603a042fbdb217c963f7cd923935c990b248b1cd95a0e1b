@@ -1,0 +1,523 @@
+{
+  "deadline": "Send the sales update to {{sales}} by 3:00 p.m.",
+  "endings": [
+    {
+      "id": "unsupported",
+      "outcome": "The update reports $70.00 across 8 fulfilled orders, treating the blank amount as zero. The arithmetic fits that rule, but the figure cannot support the requested average because the missing amount is unknown."
+    },
+    {
+      "id": "withheld",
+      "outcome": "{{sales}} receives a pending-data notice rather than an average while the finance record remains unavailable until the next business day. The checked $80.00 result for 7 fulfilled orders with recorded amounts goes unused, although it could have been shared with its limitation."
+    },
+    {
+      "id": "delivered",
+      "outcome": "{{sales}} receives $80.00 as the average for the 7 fulfilled orders with recorded amounts, with the missing amount disclosed. The unchanged source and change log make the result traceable without presenting it as the average for all fulfilled orders."
+    }
+  ],
+  "meters": [
+    {
+      "id": "usefulness",
+      "label": "Report usefulness",
+      "start": 30,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Team capacity for other work",
+      "start": 75,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "You support sales reporting at Juniper Parcel. Deliver a **defensible average fulfilled-order value** from a messy export, with a clear record of what you changed.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": -5
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "draft",
+          "next": "verify",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "improve",
+              "text": "The finished draft bundled different problems into a cleanup without a separate inspection. Repeated rows, status variations, and a blank amount need separate decisions.",
+              "example": "\"Show me the repeated rows, status variations, and blanks without changing them.\""
+            },
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "Requesting the method made the zero replacement visible, but the draft still contains an unapproved assumption. Compare that replacement with the source before using the average.",
+              "example": "\"Does the source show zero, or is the amount missing?\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "I cleaned the working copy by removing exact duplicate copies and standardizing status text. I also replaced the blank fulfilled-order amount with $0.00."
+            },
+            {
+              "from": "ai",
+              "text": "The draft has $560.00 across 8 fulfilled orders: $560.00 ÷ 8 = $70.00. That result uses the zero replacement, which wasn't an agreed cleaning rule."
+            }
+          ],
+          "text": "Ask {{ai}} to clean a working copy and return an average with its method.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": 15
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "inventory",
+          "next": "rules",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "You separated exact copies, inconsistent status text, missing emails, and a missing amount without changing the source. That leaves room to choose a different treatment for each problem.",
+              "example": null
+            },
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "You compared the flagged examples with the source. Matching order IDs and fields confirmed the copies, while the status check confirmed that the different spellings meant the same thing.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "There are 2 extra fulfilled-order copies, matching every field including order ID; removing them leaves 10 distinct orders. Grouping status spellings and end spaces gives 8 fulfilled orders and 2 canceled orders."
+            },
+            {
+              "from": "ai",
+              "text": "Fulfilled amounts: $40.00, $60.00, $80.00, $100.00, $120.00, $70.00, $90.00, and one blank. The 3 missing emails belong to fulfilled orders with recorded amounts and present, distinct order IDs."
+            },
+            {
+              "from": "data",
+              "text": "The source checks confirm the matching IDs mark exact copies and the status variants mean the same thing. That identifies what needs cleaning—fixing repeated entries and inconsistent text—without changing anything yet; the checks used some of our other-work time."
+            }
+          ],
+          "text": "Ask {{ai}} to flag problems without editing, then check examples against the source.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": 15
+            },
+            {
+              "meter": "capacity",
+              "change": -20
+            }
+          ],
+          "id": "manual",
+          "next": "rules",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "Direct inspection distinguished repeated orders from missing fields and inconsistent labels. You recorded the problems rather than quietly assigning a meaning to the blank amount.",
+              "example": null
+            },
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "Checking the source secured reliable findings, but inspecting every row used more team time. An AI-generated inventory could narrow your source checks while leaving the decisions with you.",
+              "example": "\"Flag possible problems without editing; I'll compare the examples with the source.\""
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "data",
+              "text": "Your row notes identify 2 extra fulfilled-order copies matching every field, including order ID, leaving 10 distinct orders. With status spaces and capitalization standardized, there are 8 fulfilled orders and 2 canceled orders."
+            },
+            {
+              "from": "data",
+              "text": "The fulfilled amounts are $40.00, $60.00, $80.00, $100.00, $120.00, $70.00, $90.00, and one blank. The 3 missing emails are on fulfilled orders with recorded amounts; their IDs are present and distinct."
+            },
+            {
+              "from": "sales",
+              "text": "Thanks for checking the source IDs and confirming the status spellings mean the same thing. You've mapped the cleaning work—removing repeats and tidying labels—but checking every row took time away from our other work."
+            }
+          ],
+          "text": "Inspect the source rows myself and record the problems before asking {{ai}} for help.",
+          "timeJump": null
+        }
+      ],
+      "id": "inspect",
+      "messages": [
+        {
+          "from": "sales",
+          "text": "Can you ask {{ai}} for a finished average with the method included? I need the update by 3:00 p.m., and we've got other work waiting."
+        },
+        {
+          "from": "data",
+          "text": "The original export is saved unchanged, and there's a working copy available. I can help check what you find."
+        }
+      ],
+      "prompt": "How do you want to work through the export?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": 25
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "safe-copy",
+          "next": "release",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You fixed confirmed repeats and status text in a copy, preserved blanks, and logged the changes. Keeping orders with missing emails retained usable amounts without inventing the missing amount.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "data",
+              "text": "The copy removes only exact duplicate copies, standardizes statuses, and preserves blanks. The change log records those edits and leaves canceled orders and the missing amount out of the average; checking it took time."
+            },
+            {
+              "from": "data",
+              "text": "The 7 fulfilled orders with recorded amounts total $560.00: $560.00 ÷ 7 = $80.00. The average for all fulfilled orders is still unknown—a blank amount isn't zero, and missing emails don't invalidate recorded amounts."
+            }
+          ],
+          "text": "Document fixes in a copy, keep missing emails, and average fulfilled orders with recorded amounts.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "all-orders",
+          "next": "unsupported",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "improve",
+              "text": "Including every fulfilled order made a quick figure possible, but the blank became a zero in the calculation. Preserve the blank and limit the average to orders with recorded amounts.",
+              "example": "\"Use recorded amounts only, and state that the all-order average is not yet available.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "sales",
+              "text": "That gives me a figure now: $560.00 across 8 fulfilled orders, averaging $70.00. But using zero makes the unknown amount count as a known value, even with the note."
+            }
+          ],
+          "text": "Divide recorded revenue across all fulfilled orders, noting that the blank contributes zero.",
+          "timeJump": null
+        }
+      ],
+      "id": "rules",
+      "messages": [
+        {
+          "from": "sales",
+          "text": "I'd like the average to cover all 8 fulfilled orders. Could we divide the recorded revenue across all of them and explain how we handled the blank?"
+        },
+        {
+          "from": "data",
+          "text": "The finance record for the missing amount won't be available until the next business day. What rules do you want me to apply to the working copy?"
+        }
+      ],
+      "prompt": "What cleaning and calculation rules do you choose?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "accept-note",
+          "next": "unsupported",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "improve",
+              "text": "The draft's division works under its stated rule, but that rule changes an unknown amount into zero. Checking the arithmetic alone doesn't establish that the average answers the sales question.",
+              "example": "\"Check whether the source supports the zero replacement.\""
+            },
+            {
+              "skill": "clean",
+              "kind": "improve",
+              "text": "Keeping the method note makes the replacement visible, but it doesn't justify changing the blank. Preserve missing values and document which calculation leaves them out.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "sales",
+              "text": "I'll put the draft into the update with its note; that leaves time for the other reports. The note explains the replacement, but it doesn't establish that the missing amount was actually zero."
+            }
+          ],
+          "text": "Use the finished draft and keep its note about replacing the blank amount with zero.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": 35
+            },
+            {
+              "meter": "capacity",
+              "change": -20
+            }
+          ],
+          "id": "rebuild",
+          "next": "release",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "You checked the source amounts and the number of orders used, not just the division. That exposed why a mathematically consistent draft could still answer the wrong question.",
+              "example": null
+            },
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You restored the blank, retained valid amounts on orders with missing emails, and verified a change log. The corrected copy supports an average without pretending the missing amount is known.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Source checks confirm 2 extra fulfilled-order copies match every field, including order ID, leaving 10 distinct orders. Status variants mean the same thing; standardizing spaces and capitalization gives 8 fulfilled orders and 2 canceled orders."
+            },
+            {
+              "from": "ai",
+              "text": "Fulfilled amounts are $40.00, $60.00, $80.00, $100.00, $120.00, $70.00, $90.00, and one blank. The 3 missing emails belong to fulfilled orders with recorded amounts and present, distinct IDs. The 7 recorded amounts total $560.00: $560.00 ÷ 7 = $80.00."
+            },
+            {
+              "from": "data",
+              "text": "I verified the copy: only exact copies removed, statuses standardized, blanks preserved. The log records those changes and excludes canceled orders and the missing amount from the average. Rechecking took time, but the all-fulfilled average remains unknown, not $70.00."
+            }
+          ],
+          "text": "Check the source, remove the zero replacement, and verify the corrected copy and change log.",
+          "timeJump": null
+        }
+      ],
+      "id": "verify",
+      "messages": [
+        {
+          "from": "sales",
+          "text": "The $70.00 draft looks ready, and the method explains the $0.00 replacement. Can I use it with that note? Reworking it will pull us off the other reports."
+        },
+        {
+          "from": "data",
+          "text": "The original rows are still available if you want to compare them with the draft."
+        }
+      ],
+      "prompt": "What do you do with the draft?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "pending",
+          "next": "withheld",
+          "notes": [
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "You respected the check's limit: the available result cannot stand for all fulfilled orders while an amount is missing.",
+              "example": null
+            },
+            {
+              "skill": "clean",
+              "kind": "improve",
+              "text": "Waiting for complete data left the checked result unused. Cleaned data can still contain blanks; share the average for recorded amounts with that scope made explicit.",
+              "example": "\"The average is $80.00 for the 7 fulfilled orders with recorded amounts; the all-order average is pending.\""
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "sales",
+              "text": "I'll use the pending notice, so there's no qualified result to prepare now. That avoids confusion, but it leaves the update without the checked average we could have shared with a clear limit."
+            }
+          ],
+          "text": "Send a pending-data notice and hold the average until the missing amount is available.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "usefulness",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "qualified",
+          "next": "delivered",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You delivered the cleaned result with its change log while keeping the missing amount visible. A traceable working copy does not need invented values to be useful.",
+              "example": null
+            },
+            {
+              "skill": "check",
+              "kind": "good",
+              "text": "You matched the report's wording to the checked calculation: $80.00 applies to the 7 fulfilled orders with recorded amounts, not every fulfilled order.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "sales",
+              "text": "I'll label it as the average for fulfilled orders with recorded amounts, not all fulfilled orders. That gives me a usable figure without hiding what's missing."
+            },
+            {
+              "from": "data",
+              "text": "The change log is attached, and I'll follow up on the finance record the next business day. Explaining the limit takes some time, but we don't need a complete export to share this scoped result."
+            }
+          ],
+          "text": "Send $80.00 for the 7 priced fulfilled orders, disclose the blank, and attach the change log.",
+          "timeJump": null
+        }
+      ],
+      "id": "release",
+      "messages": [
+        {
+          "from": "data",
+          "text": "The checked result is $80.00 for 7 fulfilled orders with recorded amounts. Finance can't supply the missing amount until the next business day."
+        },
+        {
+          "from": "sales",
+          "text": "Would a pending-data notice be better for this update? I don't want readers taking a partial result as the average for every fulfilled order, and we could avoid preparing a revision."
+        }
+      ],
+      "prompt": "What do you send for the sales update?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Order export",
+      "metrics": [
+        {
+          "label": "Rows",
+          "value": "12",
+          "note": "Original export"
+        },
+        {
+          "label": "Blank order amounts",
+          "value": "1",
+          "note": "Export field summary"
+        },
+        {
+          "label": "Blank customer emails",
+          "value": "3",
+          "note": "Export field summary"
+        }
+      ],
+      "note": "Status entries include “Fulfilled”, “fulfilled”, and “FULFILLED”; some have spaces at the ends."
+    }
+  ],
+  "setting": "Afternoon at Juniper Parcel",
+  "skills": [
+    {
+      "id": "spot",
+      "name": "Find problems in a data set",
+      "practice": "Inspect a small sheet and mark one duplicate, one blank, and one inconsistent entry without changing anything."
+    },
+    {
+      "id": "clean",
+      "name": "Clean data safely",
+      "practice": "Clean a copy of five rows and write a short note explaining each change and each exclusion."
+    },
+    {
+      "id": "check",
+      "name": "Check what AI produced",
+      "practice": "Compare one AI-generated average with its source amounts, checking both the total and the number of rows used."
+    }
+  ],
+  "startNodeId": "inspect",
+  "summary": [
+    "Inspect repeated rows, inconsistent labels, and blank fields separately before choosing cleaning rules.",
+    "Clean a working copy with a record of changes, preserving missing values rather than turning them into zeros.",
+    "Check an AI-generated average against its source amounts and the number of records it uses."
+  ],
+  "team": [
+    {
+      "id": "data",
+      "role": "Data analyst",
+      "expertise": "She knows the export and wants changes to remain traceable.",
+      "ai": false
+    },
+    {
+      "id": "sales",
+      "role": "Sales manager",
+      "expertise": "He needs an average for the sales update and wants to avoid postponing it.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Can inspect rows, suggest cleaning rules, and calculate summaries when asked.",
+      "ai": true
+    }
+  ],
+  "title": "What is the average fulfilled order worth?"
+}

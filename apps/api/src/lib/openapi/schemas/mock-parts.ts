@@ -1,5 +1,9 @@
+import { MOCK_REVIEW_OUTCOMES } from "@zoonk/core/exams/mocks/view-contract";
 import { sectionNavigationSchema } from "@zoonk/core/library/exams/blueprint-contract";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { itemCitationSchema } from "./common";
+import { itemSetSchema } from "./item-set";
 
 export const mockScoreNotesSchema = z
   .object({
@@ -162,3 +166,36 @@ export const mockVerdictSchema = z
       "Once it's over: the subject that went clearly best and the one that went clearly worst. Each is null unless its estimated range (without one, its share of right answers, given the same 90% range, with more points too) stands clear of every other subject's: the strongest's bottom above every other's top, the weakest's top below every other's bottom. A part is never measured against the subject it belongs to and the two are never both set, and a mock with no right answer or no miss sets neither. Null before it's over",
     id: "MockVerdict",
   });
+
+export const MOCK_QUESTION_FORMATS = ["multipleChoice", "numeric", "trueFalse", "typed"] as const;
+
+export const mockReviewSchema = z.object({
+  area: z.string().nullable(),
+  citation: itemCitationSchema,
+  context: z
+    .string()
+    .nullable()
+    .meta({ description: "The text the question reads before it, as the mock showed it" }),
+  correctAnswer: z.string().nullable(),
+  explanation: z.string().nullable(),
+  format: z.enum(MOCK_QUESTION_FORMATS),
+  itemId: uuidSchema(),
+  learnerAnswer: z.string().nullable(),
+  number: z.number().int().min(1).meta({ description: "The question's position in its section" }),
+  outcome: z
+    .enum(MOCK_REVIEW_OUTCOMES)
+    .meta({
+      description:
+        "`partial`: a question with several picks that earned part of its points, where the notice gives partial credit. `right`: answered correctly and marked as unsure",
+    }),
+  question: z.string(),
+  section: z.number().int().min(0).optional().meta({ description: "The zero-based section index" }),
+  set: itemSetSchema.nullable(),
+  total: z
+    .number()
+    .int()
+    .min(1)
+    .optional()
+    .meta({ description: "The number of numbered questions in this section" }),
+  unsure: z.boolean().meta({ description: "Whether the learner marked the question as unsure" }),
+});

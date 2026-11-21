@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-ligacao-covalente",
+        "claimId": "2a163e24acf06df5",
+        "criterion": "oneIdea",
+        "observationId": "71bd9c627b73b6545cf377cfcc0a706f9ab0d07a7eaab899d8ebaf6914dbc78a.first.165f0189-d92b-49ae-a05d-5d27eca8d513.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00280315,
+    "id": "6bce52d00491ddd9b9bb436c156ccfd02b16e335023a069396164f82fe117deb",
+    "packet": [
+      {
+        "A": {
+          "blob": "0040280dbfd094a3d2513ffda5e05a5328758ebde7584f060083c40277c63617",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ba8ed1befe8d6efdd9aeda700e01a9ee19cd6bc565f3af48726753090e4f837b",
+          "format": "text"
+        },
+        "claim": "O exemplo da habilidade afirma que “H, H” representa hidrogênios unidos por um par compartilhado, mas essa escrita não mostra a ligação; o próprio plano usa H—H para representá-la.",
+        "claimId": "2a163e24acf06df5",
+        "criterion": "oneIdea",
+        "expectations": {
+          "blob": "869c860b9a446c7f4575523b99b57163cce41c8b54accaa743ca398e69fc9682",
+          "format": "text"
+        },
+        "input": {
+          "blob": "00f4979a9bf56a9d3efe591af13ced5d5ca1292402be478f78bce9fb15bdabe6",
+          "format": "json"
+        },
+        "location": {
+          "detail": "H, H representa dois hidrogênios unidos por um par de elétrons compartilhado.",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "b09f03b1b6a18278",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2a163e24acf06df5",
+          "finding": "holds",
+          "reason": "The skill example in output A does say \"H, H representa dois hidrogênios unidos por um par de elétrons compartilhado\", and a comma between the symbols does not show a bond. Output A's own screens use H—H for the bond, while output B's example uses H–H and never has the \"H, H\" wording, so the problem is only in A."
+        },
+        {
+          "claimId": "b09f03b1b6a18278",
+          "finding": "doesn't hold",
+          "reason": "Output A's application screen asks the learner to assess Malik's 50% pay cut followed by a 50% raise, using overall change from the original pay (25% lower). It never mentions compound annual growth rate, so the claim misdescribes the screen."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

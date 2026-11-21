@@ -20,6 +20,13 @@ export const languageLessonFixTask: Task<
   generate: fixLanguageLesson,
   id: "language-lesson-fix",
   name: "Language lesson fix",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "A checker reads the fixed draft, then learners do",
+    reason: "The fix replaces a shared lesson",
+    waits: "Same as the language lesson check",
+  },
   score: scoreLanguageLessonFix,
   testCases: TEST_CASES,
 };

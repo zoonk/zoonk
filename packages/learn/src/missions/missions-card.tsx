@@ -54,6 +54,13 @@ function MissionRow({
 
 type RowsFold = { listId: string; onToggle: () => void; open: boolean };
 
+/**
+ * Today's tablet grid (`TODAY_ASIDE_CLASS`) sets the card beside the week, which leaves it the
+ * room to list the rows, so a folded card shows them there instead of an empty box.
+ */
+const FOLDED_ONLY_CLASS = "sm:max-[72rem]:hidden";
+const LISTED_ONLY_CLASS = "hidden sm:max-[72rem]:inline";
+
 function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
   const t = useExtracted();
   const title = won ? t("Missions done") : t("Today's missions");
@@ -63,16 +70,22 @@ function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
   }
 
   return (
-    <button
-      aria-controls={fold.listId}
-      aria-expanded={fold.open}
-      className="hit-area focus-visible:ring-ring/50 relative rounded-sm text-left outline-none focus-visible:ring-[3px]"
-      onClick={fold.onToggle}
-      type="button"
-    >
-      {title}
-      <FoldChevron className="text-muted-foreground ms-1 inline-block align-[-3px]" inline />
-    </button>
+    <>
+      <span className={LISTED_ONLY_CLASS}>{title}</span>
+      <button
+        aria-controls={fold.listId}
+        aria-expanded={fold.open}
+        className={cn(
+          "hit-area focus-visible:ring-ring/50 relative rounded-sm text-left outline-none focus-visible:ring-[3px]",
+          FOLDED_ONLY_CLASS,
+        )}
+        onClick={fold.onToggle}
+        type="button"
+      >
+        {title}
+        <FoldChevron className="text-muted-foreground ms-1 inline-block align-[-3px]" inline />
+      </button>
+    </>
   );
 }
 
@@ -90,7 +103,8 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
 /**
  * One list with one look wherever it shows: every mission is a row, named by what to do, and the
  * reward says what doing them all earns. Today folds the rows behind the title (`foldRows`),
- * since most of them are already rows of the day's list right above the card.
+ * since most of them are already rows of the day's list right above the card, except beside the
+ * week on a tablet.
  */
 export function MissionsCard({
   buddy,
@@ -142,7 +156,12 @@ export function MissionsCard({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(SURFACE_CLASS, "flex flex-col px-4 pt-4", open ? "pb-1.25" : "pb-4", className)}
+      className={cn(
+        SURFACE_CLASS,
+        "flex flex-col px-4 pt-4",
+        open ? "pb-1.25" : "pb-4 sm:max-[72rem]:pb-1.25",
+        className,
+      )}
       data-slot="missions-card"
     >
       <h2 className="text-sm leading-snug font-semibold text-balance wrap-break-word" id={titleId}>
@@ -163,7 +182,7 @@ export function MissionsCard({
         </span>
       </div>
 
-      <ListGroup className="mt-1.5" hidden={!open} id={listId}>
+      <ListGroup className={cn("mt-1.5", !open && "hidden sm:max-[72rem]:flex")} id={listId}>
         <ul>
           {missions.map((mission) => (
             <li key={mission.kind}>

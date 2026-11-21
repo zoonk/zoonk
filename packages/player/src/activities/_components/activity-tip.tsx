@@ -1,7 +1,7 @@
 import { FEEDBACK_MARKER_CLASS } from "@zoonk/learn/feedback-panel";
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { LightbulbIcon } from "lucide-react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
 export function ActivityTip({ text }: { text: string }) {
   return (

@@ -78,6 +78,13 @@ export const checkWordPronunciationTask: Task<
   generate: checkClip,
   id: "check-word-pronunciation",
   name: "Check word pronunciation",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Code rejects a word clip that isn't read with the language's sounds",
+    reason: "A yes or no that code checks; the cheapest model that judged every clip right",
+    waits: "Prepared ahead in a workflow, before a learner needs it",
+  },
   score: scoreCheck,
   skippedLanguages: { en: "it only hears words of other languages that English spells the same" },
   testCases: TEST_CASES,

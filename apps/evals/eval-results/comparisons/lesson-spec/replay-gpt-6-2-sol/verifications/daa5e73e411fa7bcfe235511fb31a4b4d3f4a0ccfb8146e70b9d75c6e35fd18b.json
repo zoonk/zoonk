@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-en-contour-lines",
+        "claimId": "ac859451cd62d9a5",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "ba4b61155e75f2d5507ea1e9d6d34f992ce0fe932f4d7b56f03d064675a2b71b.first.7072c5a6-241d-4a8a-aed1-218befda8385.2",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.00302125,
+    "id": "daa5e73e411fa7bcfe235511fb31a4b4d3f4a0ccfb8146e70b9d75c6e35fd18b",
+    "packet": [
+      {
+        "A": {
+          "blob": "ee5d2bbb20a544cd2a5284f2f51424009b1135c9162d5c529cfe42e845b1ff3b",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a53872d3805478aa5a1990ee4efd5b9f9a5d03f868c89c5c029970e02d694cb3",
+          "format": "text"
+        },
+        "claim": "The worked example and the check asking which stretch is steeper or gentler use W/E and N/S rather than labeling the named places A and B, as the case requires.",
+        "claimId": "ac859451cd62d9a5",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "6518313475f590d6010d09d99c3fd02abfb9856b349d005ab75c8cc0e5372443",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3711807c38957f0fd5e7c5a03310250c86acd24ae0a17925a0d4cb558904a3ac",
+          "format": "json"
+        },
+        "location": {
+          "detail": "The worked example and the check comparing N and S",
+          "kind": "range"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "c255faf39d6f452b",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "ac859451cd62d9a5",
+          "finding": "doesn't hold",
+          "reason": "In output A the worked example compares stretches X and Y and the check compares M and N, so neither uses W/E or N/S; those labels appear only in output B. The problem sits in B, not in the named output A."
+        },
+        {
+          "claimId": "c255faf39d6f452b",
+          "finding": "doesn't hold",
+          "reason": "The word 'depreciação' does not appear in output A at all; its first explanation is about variable costs. The term is also absent from output B, so the claim is false of both."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -29,6 +29,7 @@ const schema = z.object({
     z.object({
       sentence: z.string(),
       answer: z.string(),
+      translation: z.string(),
       options: z.array(z.string()).min(MIN_DRILL_OPTIONS),
       feedback: z.string(),
     }),
@@ -88,6 +89,7 @@ export async function findMistakePattern(params: FindMistakePatternParams) {
   const data = normalizeMistakePattern({
     mistakeCount: params.mistakes.length,
     pattern: result.output,
+    sameLanguage: params.learnerLanguage === params.targetLanguage,
   });
 
   return { data, provenance, systemPrompt, usage: result.usage, userPrompt };

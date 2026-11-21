@@ -19,7 +19,10 @@ export async function launchPressBrowser() {
 }
 
 /** Per page and size: how many presses, what was only held and why, and each failing press with its pictures. */
-export function pressSection(loads: LoadReport[], out: string): string[] {
+export function pressSection(
+  loads: Pick<LoadReport, "path" | "pressRecords" | "viewport" | "walk">[],
+  out: string,
+): string[] {
   const walked = loads.filter((load) => load.walk?.presses);
 
   if (walked.length === 0) {
@@ -62,10 +65,11 @@ export function pressSection(loads: LoadReport[], out: string): string[] {
         ...records.flatMap((record) => [
           `- **${record.control}**`,
           ...record.faults.map((fault) => `  - ${fault}`),
-          `  - pictures: ${[record.before, record.after]
-            .filter((file) => file !== null)
-            .map((file) => relative(out, file))
-            .join(", ")}`,
+          ...record.pictures.map((picture) =>
+            "file" in picture
+              ? `  - Saved the ${picture.name} picture to \`${relative(out, picture.file)}\``
+              : `  - Could not take the ${picture.name} picture. ${picture.error.replaceAll(/\s+/gu, " ").trim()}`,
+          ),
         ]),
         ...(records.length > 0 ? [""] : []),
       ];

@@ -110,15 +110,13 @@ data class SectionPlace(
     val total: Int,
 )
 
-fun sectionPlace(
-    position: Int,
-    questions: List<MockQuestion>,
-): SectionPlace? {
-    val question = questions.getOrNull(position) ?: return null
+fun MockRun.sectionPlace(): SectionPlace? {
+    val question = question ?: return null
     if (question.essay) return null
+    val total = view.current?.questionTotal?.toInt()
     return SectionPlace(
-        number = questions.take(position + 1).count { !it.essay },
-        total = questions.count { !it.essay },
+        number = if (total == null) position + 1 else question.number,
+        total = total ?: questions.count { !it.essay },
     )
 }
 
@@ -128,7 +126,7 @@ data class SectionCounts(
     val blank: Int,
     val blankEssays: Int,
     val essays: Int,
-    val flagged: Int,
+    val unsure: Int,
     val total: Int,
 )
 
@@ -143,7 +141,7 @@ fun sectionCounts(
         blank = blank.count { !it.essay },
         blankEssays = blank.count { it.essay },
         essays = questions.count { it.essay },
-        flagged = questions.count { drafts[it.itemId]?.flagged == true },
+        unsure = questions.count { drafts[it.itemId]?.unsure == true },
         total = questions.size,
     )
 }

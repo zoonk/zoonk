@@ -1,5 +1,5 @@
+import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ACTIVITY_CARD_CLASS } from "./activity-canvas";
 
 export function ActivityReasons({ children }: { children: React.ReactNode }) {
