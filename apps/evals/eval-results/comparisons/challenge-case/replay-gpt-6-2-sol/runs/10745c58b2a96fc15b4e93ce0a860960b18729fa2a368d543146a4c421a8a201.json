@@ -1,0 +1,17 @@
+{
+  "caseId": "pt-porcentagem-field-retail",
+  "challenger": {
+    "costUsd": 0.14079950000000002,
+    "durationMs": 142130.376917,
+    "hash": "a232029d9c77d873e71e49aee3c22c2bda9f4f7adc56438ab118e9c8a0ae4c00",
+    "userPromptHash": "909c02e3d675efd4c7a12cba787360792004da69215b69c624f891b2ceee4ade"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.12359400000000001,
+    "durationMs": 184474.167041,
+    "hash": "0a6115cc8ee3f6e58eda2338f17ed364692bd1caf5dc9e77d593f78d4034bd50",
+    "userPromptHash": "909c02e3d675efd4c7a12cba787360792004da69215b69c624f891b2ceee4ade"
+  },
+  "run": 1
+}

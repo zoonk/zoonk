@@ -1,0 +1,313 @@
+{
+  "attempt": "first",
+  "costUsd": 0.270024,
+  "failures": [],
+  "packetId": "9dd43aa4b7ff5ee22487db31df58821c282e6d98e68069440e50e400c99cb5df",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-neon",
+    "reserve": false
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "Both get the core three-year and commission-approval rules right, but A is more legally precise on permanent posts and avoids B's slight overgeneralizations about defense in every dismissal path and administrative review being the only route for misconduct.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B feels like a real teacher, opening with a lively everyday scene at a prefeitura, using concrete years (2023 to 2026) and a named scenario for Sabrina, whereas A reads flatter and more textbook-like.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "B",
+            "reason": "B uses short, natural spoken Brazilian Portuguese throughout, while A introduces the unexplained legal term 'lei complementar' and uses denser, fronted clauses.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both test the planned misconceptions with clear feedback; A has tighter reasons and a more complete basis quote on screen 5, while B offers a more concrete workplace scenario and four realistic options.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "B",
+            "reason": "B fits an adult beginner better with concrete Brazilian workplace scenes from screen 1 onward and no unexplained legal jargon, even though both skip naming 'processo administrativo'.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Uses the technical legal term 'lei complementar' in screen 4 (and again in the summary) without explaining what it means for a beginner.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner with no legal background may stall or feel lost when encountering unexplained legal jargon.",
+            "location": {
+              "detail": "O servidor também pode perder o cargo por decisão judicial sem mais recurso ou por avaliação periódica de desempenho, conforme lei complementar e com o mesmo direito de defesa.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Opens screen 1 with a flat summary instead of an everyday scene, starts screen 4 with a formal fronted clause and no concrete example, and keeps screen 5 abstract ('Uma servidora estável', 'uma falta grave').",
+            "criterion": "teacher",
+            "learnerCost": "The lesson feels drier and closer to a textbook, making it less engaging and memorable for an adult beginner.",
+            "location": {
+              "detail": "screens 1, 4 and 5",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Replaces 'processo administrativo' with generic 'um processo' instead of naming the term alongside its everyday explanation, even though the screen 4 brief and skill 2 call for teaching it.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "A learner studying for exams or reading about public service will not connect what they learned to the real term 'processo administrativo'.",
+            "location": {
+              "detail": "Screen 4 and summary omit the term 'processo administrativo'",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Overgeneralizes in the summary by claiming the right to defense applies to all paths for losing the post (overlooking constitutional budget-cut dismissals under Art. 169), narrows misconduct dismissal to an agency inquiry in screen 5's feedback (omitting final court judgment), and omits that stability applies to permanent posts ('cargo efetivo') on screen 2.",
+            "criterion": "accuracy",
+            "learnerCost": "A learner could later be surprised when encountering exceptions such as budget-cut dismissals, court-ordered removal, or non-statutory public jobs.",
+            "location": {
+              "detail": "Em todos os caminhos para a perda do cargo, o servidor estável tem direito de se defender.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Describes the administrative proceeding only as 'uma apuração no próprio órgão' without introducing the term 'processo administrativo' requested in the screen 4 brief and skill 2.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "A learner will not recognize the official term 'processo administrativo' when encountering it in real life or exam questions.",
+            "location": {
+              "detail": "Screen 4 and summary omit the term 'processo administrativo'",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Introduces the phrase 'avaliação especial' in screen 3 and its feedback without having used the word 'especial' when explaining the commission review on screen 2.",
+            "criterion": "clarity",
+            "learnerCost": "The learner may briefly wonder whether 'avaliação especial' is a different exam from the commission evaluation just described.",
+            "location": {
+              "detail": "A comissão ainda não fez a avaliação especial do trabalho dele.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Neither output has a major flaw, and B serves an adult beginner noticeably better with warm spoken Brazilian Portuguese, concrete workplace scenes, and no unexplained legal jargon like 'lei complementar'."
+        },
+        "pairId": "407f3087-59fd-4b1d-bebb-db46bceed023"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "tie",
+            "reason": "A and B are identical outputs.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Uses the technical legal term 'lei complementar' in screen 4 (and again in the summary) without explaining what it means for a beginner.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner with no legal background may stall or feel lost when encountering unexplained legal jargon.",
+            "location": {
+              "detail": "O servidor também pode perder o cargo por decisão judicial sem mais recurso ou por avaliação periódica de desempenho, conforme lei complementar e com o mesmo direito de defesa.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Uses the technical legal term 'lei complementar' in screen 4 (and again in the summary) without explaining what it means for a beginner.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner with no legal background may stall or feel lost when encountering unexplained legal jargon.",
+            "location": {
+              "detail": "O servidor também pode perder o cargo por decisão judicial sem mais recurso ou por avaliação periódica de desempenho, conforme lei complementar e com o mesmo direito de defesa.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Opens screen 1 with a flat summary instead of an everyday scene, starts screen 4 with a formal fronted clause and no concrete example, and keeps screen 5 abstract ('Uma servidora estável', 'uma falta grave').",
+            "criterion": "teacher",
+            "learnerCost": "The lesson feels drier and closer to a textbook, making it less engaging and memorable for an adult beginner.",
+            "location": {
+              "detail": "screens 1, 4 and 5",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Opens screen 1 with a flat summary instead of an everyday scene, starts screen 4 with a formal fronted clause and no concrete example, and keeps screen 5 abstract ('Uma servidora estável', 'uma falta grave').",
+            "criterion": "teacher",
+            "learnerCost": "The lesson feels drier and closer to a textbook, making it less engaging and memorable for an adult beginner.",
+            "location": {
+              "detail": "screens 1, 4 and 5",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Replaces 'processo administrativo' with generic 'um processo' instead of naming the term alongside its everyday explanation, even though the screen 4 brief and skill 2 call for teaching it.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "A learner studying for exams or reading about public service will not connect what they learned to the real term 'processo administrativo'.",
+            "location": {
+              "detail": "Screen 4 and summary omit the term 'processo administrativo'",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Replaces 'processo administrativo' with generic 'um processo' instead of naming the term alongside its everyday explanation, even though the screen 4 brief and skill 2 call for teaching it.",
+            "criterion": "fitAndApplication",
+            "learnerCost": "A learner studying for exams or reading about public service will not connect what they learned to the real term 'processo administrativo'.",
+            "location": {
+              "detail": "Screen 4 and summary omit the term 'processo administrativo'",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "A and B are identical word for word."
+        },
+        "pairId": "a1d4cdaa-9583-4cd3-b938-a96ed92905dd"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "A commits a major factual error on screen 2 by teaching two years (24 months) instead of the constitutional three-year requirement, contradicting both the source and its own later screens, while B is accurate throughout.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Five of six screens are identical, and on screen 2 both open with a definition rather than Ana's scene; B's slightly more formal phrasing does not make A noticeably more engaging.",
+            "criterion": "teacher"
+          },
+          {
+            "preference": "B",
+            "reason": "B stays consistent from start to finish, whereas A confuses a reader by teaching two years on screen 2 and then switching to three years in screen 5 and the summary.",
+            "criterion": "clarity"
+          },
+          {
+            "preference": "B",
+            "reason": "Although the check screens use the same wording, A's screen 5 asks about and justifies a three-year rule that contradicts what A taught on screen 2, whereas B's check aligns cleanly with its explanation.",
+            "criterion": "checks"
+          },
+          {
+            "preference": "B",
+            "reason": "B follows the plan's screen 2 brief accurately (three years of effective service), whereas A breaks that brief by teaching an outdated two-year rule.",
+            "criterion": "fitAndApplication"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Teaches on screen 2 that stability is gained after two years (24 months) instead of three years as required by Art. 41 of the Constitution in the sources, breaking the explicit expectation and contradicting screen 5 and the summary (which state three years).",
+            "criterion": "accuracy",
+            "learnerCost": "Misleads the learner with an outdated rule and leaves them confused when the later check and summary say three years instead of two.",
+            "location": {
+              "detail": "Quem entra por concurso ganha essa garantia depois de **dois anos** (24 meses) trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Opens screen 2 with a textbook-style definition instead of arriving at the rule through Ana's concrete situation from screen 1.",
+            "criterion": "teacher",
+            "learnerCost": "Feels more like reading a glossary entry than following a teacher through Ana's story.",
+            "location": {
+              "detail": "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Includes a UI meta-instruction ('A próxima tela mostra quais são.') in screen 3's reveal and squeezes a parenthetical definition into the middle of a long sentence on screen 4.",
+            "criterion": "clarity",
+            "learnerCost": "Breaks the conversational flow and makes screen 4's sentence slightly heavier to read in one pass.",
+            "location": {
+              "detail": "Sim, nos casos que a Constituição prevê. A próxima tela mostra quais são.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Opens screen 2 with a textbook-style definition instead of arriving at the rule through Ana's concrete situation from screen 1.",
+            "criterion": "teacher",
+            "learnerCost": "Feels more like reading a glossary entry than following a teacher through Ana's story.",
+            "location": {
+              "detail": "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Uses the legal phrases 'cargo efetivo' and 'efetivo exercício' on screen 2 without explaining them in plain words for a beginner, and also includes a UI meta-instruction on screen 3 and a parenthetical definition mid-sentence on screen 4.",
+            "criterion": "clarity",
+            "learnerCost": "A beginner with no legal background has to infer what 'cargo efetivo' and 'efetivo exercício' mean and parse slightly denser phrasing.",
+            "location": {
+              "detail": "Quem é nomeado por concurso para cargo efetivo ganha essa garantia depois de **três anos** de efetivo exercício, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A has a major accuracy error on screen 2, teaching two years (24 months) instead of three years and contradicting its own check and summary, while B teaches the constitutional rule accurately and consistently."
+        },
+        "pairId": "c4d7f7ef-e435-4dbb-a657-87e9fa0eb38d"
+      }
+    ]
+  }
+}

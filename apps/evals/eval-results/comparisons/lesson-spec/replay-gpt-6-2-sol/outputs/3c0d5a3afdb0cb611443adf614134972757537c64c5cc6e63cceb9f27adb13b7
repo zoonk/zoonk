@@ -1,0 +1,246 @@
+{
+  "lessons": [
+    {
+      "canDo": "Identificar quando o servidor concursado adquire estabilidade.",
+      "description": "Entenda quais requisitos o servidor concursado precisa cumprir para adquirir estabilidade e por que o tempo no cargo não basta.",
+      "estimatedMinutes": 3,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Wagner comemora três anos de trabalho na prefeitura e ouve da equipe que agora tem mais proteção contra a perda do cargo. Será que completar os três anos basta?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A proteção contra a perda do cargo fora das hipóteses previstas na Constituição se chama estabilidade. A regra do art. 41 vale para quem, por concurso público, foi nomeado para um cargo de provimento efetivo, como o de analista de uma secretaria.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Lorena entrou por concurso em cargo efetivo, completou três anos de trabalho e só recebeu elogios informais da chefia, sem passar por nenhuma avaliação. O que acontece ao completar esse tempo: «Já fica estável» (tentadora) ou «Ainda não fica estável» (correta)?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O art. 41, § 4º, exige aprovação em uma avaliação especial de desempenho, feita por uma comissão criada para esse fim. Elogios informais da chefia não substituem essa avaliação.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Os três anos começam quando a pessoa entra em efetivo exercício, ou seja, quando começa a trabalhar no cargo, conforme o art. 41. Se a nomeação saiu em março e o trabalho começou em abril, a contagem começa em abril.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Raimundo foi nomeado por concurso para cargo efetivo em 05/02/2023, começou a trabalhar em 20/02/2023 sem interrupções e já foi aprovado pela comissão. Mostre as etapas: confirmar o tipo de ingresso, contar três anos desde o início do trabalho e conferir a aprovação para concluir que ele fica estável em 20/02/2026.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Thaís foi nomeada por concurso para cargo efetivo em 12/05/2022, começou a trabalhar em 01/06/2022 sem interrupções e já foi aprovada na avaliação especial. Peça a data da estabilidade: 01/06/2025, não 12/05/2025, que conta desde a nomeação.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma servidora concursada de cargo efetivo já foi aprovada na avaliação especial, mas tem dois anos e dez meses de efetivo exercício. Peça para decidir se ela já está estável: ainda não, apesar da opção tentadora de tratar a aprovação como suficiente.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O RH de uma secretaria vai registrar a estabilidade de Murilo, nomeado por concurso para cargo efetivo, com base apenas na data da nomeação e em um elogio escrito da chefia. Peça para indicar o que o RH deve conferir antes do registro: três anos desde o início do efetivo exercício e aprovação na avaliação feita pela comissão.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Verificar se a pessoa nomeada por concurso para cargo efetivo completou três anos de efetivo exercício e foi aprovada na avaliação especial de desempenho.",
+          "example": "Uma analista concursada que completou três anos de efetivo exercício e foi aprovada na avaliação da comissão reúne os requisitos para a estabilidade.",
+          "hard": true,
+          "name": "Identificar quando o servidor adquire estabilidade",
+          "topic": "Aquisição da estabilidade",
+          "useCase": "Conferir se o RH já pode registrar a estabilidade de uma servidora recém-avaliada."
+        }
+      ],
+      "title": "Estabilidade do servidor público: aquisição"
+    },
+    {
+      "canDo": "Reconhecer quando um servidor estável pode perder o cargo.",
+      "description": "Veja em quais situações a Constituição permite a perda do cargo de um servidor estável e quais garantias precisam ser respeitadas.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Depois de uma troca de chefia, Sabrina ouve que a nova direção quer colocar outra pessoa no cargo que ela ocupa há anos. Em que situações alguém com essa proteção pode perder o cargo?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "A estabilidade impede que o servidor perca o cargo só por vontade da chefia. Numa secretaria, a direção preferir trabalhar com outra pessoa não é motivo suficiente.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um juiz determina que Cauê, servidor estável, perca o cargo, mas a decisão ainda pode ser contestada no próprio processo. Com base apenas nessa decisão, o órgão «Já pode retirar o servidor do cargo» (tentadora) ou «Tem de aguardar» (correta)?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Pelo art. 41, § 1º, I, a decisão judicial que determina a perda do cargo precisa ser definitiva, sem possibilidade de recurso: é a sentença transitada em julgado. A ordem do juiz no caso anterior ainda não basta.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Pelo art. 41, § 1º, II, o próprio órgão pode decidir pela perda do cargo em processo administrativo, desde que garanta ampla defesa, isto é, oportunidade de contestar a acusação e apresentar provas. Um relatório que acusa um fiscal de uma falta grave não substitui esse processo.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Pelo art. 41, § 1º, III, o desempenho de quem já é estável pode levar à perda do cargo por avaliação periódica de desempenho, em procedimento na forma de lei complementar, com ampla defesa. Uma nota baixa dada pela chefia, sozinha, não basta.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "O órgão apura uma falta grave atribuída a Rosana, permite que ela conteste a acusação e apresente provas, e ao fim do processo decide pela perda do cargo. Mostre como identificar a via administrativa, conferir a ampla defesa e concluir que essa via não exige sentença judicial.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Uma autarquia abre processo por uma falta grave, mas decide pela perda do cargo sem deixar o servidor contestar a acusação nem apresentar provas. Peça para decidir se o processo basta: não; a opção tentadora é achar que a gravidade da falta dispensa a defesa.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Se um estado ultrapassa o limite legal de gasto com pessoal, a perda do cargo de servidor estável só pode ser usada para voltar ao limite se as medidas anteriores não bastarem: reduzir em pelo menos 20% as despesas com cargos em comissão e funções de confiança e exonerar servidores não estáveis.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Se as medidas anteriores não bastarem, cada Poder precisa editar um ato normativo motivado, ou seja, uma norma que justifique a redução e indique a atividade funcional, o órgão ou a unidade administrativa atingida. Um aviso genérico de que a folha está cara não cumpre essa exigência.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Um município voltou ao limite legal de gasto com pessoal depois de aplicar as medidas anteriores, mas quer retirar servidores estáveis para economizar ainda mais. Peça para decidir se essa hipótese permite o corte: não; a opção tentadora é achar que ter ultrapassado o limite no passado já basta.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Num hospital público, uma servidora estável recebe nota baixa num formulário interno, e a direção cita também o excesso de gasto com pessoal para justificar a perda imediata do cargo. Peça para apontar o que falta em cada justificativa: o procedimento de avaliação previsto em lei complementar com ampla defesa e, na via fiscal, a insuficiência das medidas anteriores e o ato normativo motivado.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Conferir se o motivo e o procedimento apresentados permitem a perda do cargo de um servidor estável.",
+          "example": "Uma ordem judicial de perda do cargo que ainda admite recurso não basta para o órgão retirar o servidor estável do cargo por essa via.",
+          "hard": true,
+          "name": "Reconhecer as hipóteses de perda do cargo",
+          "topic": "Perda do cargo",
+          "useCase": "Avaliar se uma medida anunciada pela direção de um órgão respeita as garantias de quem já é estável."
+        }
+      ],
+      "title": "Estabilidade do servidor público: perda do cargo"
+    }
+  ]
+}

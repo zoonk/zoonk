@@ -1,0 +1,189 @@
+{
+  "pairs": [
+    {
+      "clean": {
+        "image": "4978940e79a5fc64cf9fd12eda79071d5ff5888afb8da571cf8e199e6dd35af4"
+      },
+      "criterion": "text",
+      "defect": "A branch heading reads Taxa constate.",
+      "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
+      "falseAllegation": "The third branch heading reads Taxa constate.",
+      "flawed": {
+        "image": "9f94015a556e943be11a9424c00c4c2dd430bddade4edc4a0e047f089ff61f3c"
+      },
+      "input": {
+        "caseId": "pt-functions",
+        "language": "pt",
+        "structure": {
+          "branches": [
+            {
+              "drawing": "a vending machine",
+              "explanation": "A entrada é o que você informa; a saída é a resposta.",
+              "points": [
+                "Tamanho do lanche leva ao preço",
+                "Cada entrada, uma única saída"
+              ],
+              "title": "Entrada e saída"
+            },
+            {
+              "drawing": "a box with an arrow in and an arrow out",
+              "explanation": "f(x) indica a saída quando a entrada é x.",
+              "points": [
+                "f(4) é a saída para entrada 4",
+                "Coloque a entrada no lugar de x"
+              ],
+              "title": "Notação f(x)"
+            },
+            {
+              "drawing": "a ramp",
+              "explanation": "A saída cresce sempre a mesma quantidade por unidade.",
+              "points": [
+                "Taxa: mudança na saída ÷ mudança na entrada",
+                "Reta mais íngreme sobe mais"
+              ],
+              "title": "Taxa constante"
+            },
+            {
+              "drawing": "a membership card",
+              "explanation": "O preço quando a entrada é zero, antes de qualquer uso.",
+              "points": [
+                "Assinatura R$ 12,00; uso R$ 3,00",
+                "O valor inicial muda o preço"
+              ],
+              "title": "Valor inicial"
+            },
+            {
+              "drawing": "an arc of water from a fountain",
+              "explanation": "Uma altura que sobe e desce muda de forma curva.",
+              "points": [
+                "x² na regra: função quadrática",
+                "a positivo abre para cima"
+              ],
+              "title": "Parábola"
+            }
+          ],
+          "centralIdea": "Uma função dá uma única saída para cada entrada, e o padrão de variação revela sua forma.",
+          "comparison": {
+            "columns": [
+              {
+                "name": "Função linear",
+                "points": [
+                  "Mesma mudança a cada unidade",
+                  "Gráfico é uma reta"
+                ]
+              },
+              {
+                "name": "Função quadrática",
+                "points": [
+                  "Mudança não é sempre igual",
+                  "Gráfico é uma parábola"
+                ]
+              }
+            ],
+            "title": "Variação constante ou quadrática"
+          },
+          "summary": "Funções ligam entradas a saídas únicas; o ritmo de variação, constante ou quadrático, mostra o padrão.",
+          "title": "Funções e relações entre variáveis"
+        }
+      },
+      "provenance": "Image and audio measurement P8"
+    },
+    {
+      "clean": {
+        "image": "bcf70fac83d02c7a6fd75761b168afb5904d4ed4d80ce83d7afb92e18d29db59"
+      },
+      "criterion": "style",
+      "defect": "The background is kraft brown.",
+      "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
+      "falseAllegation": "The background is kraft brown.",
+      "flawed": {
+        "image": "a9cdf043e8a697b04d46f0c5e4dff780fb5e467a5c77460fa5a312436c45810b"
+      },
+      "input": {
+        "caseId": "en-cell-structure",
+        "language": "en",
+        "structure": {
+          "branches": [
+            {
+              "drawing": "a round cell",
+              "explanation": "The smallest unit that can carry out life's work.",
+              "points": [
+                "A pond organism is one cell",
+                "You are made of many cells"
+              ],
+              "title": "Cell as unit"
+            },
+            {
+              "drawing": "a rod-shaped bacterium",
+              "explanation": "Cells differ in how they organize their DNA.",
+              "points": [
+                "Bacteria: DNA sits in cytoplasm",
+                "Animal cells: DNA sits in a nucleus"
+              ],
+              "title": "Prokaryotic vs eukaryotic"
+            },
+            {
+              "drawing": "a small conveyor belt",
+              "explanation": "Parts that build proteins and prepare them for delivery.",
+              "points": [
+                "The nucleus keeps the recipe",
+                "Ribosomes build; Golgi packages"
+              ],
+              "title": "Protein builders"
+            },
+            {
+              "drawing": "a recycling bin",
+              "explanation": "Parts that clean up worn-out material and shape the cell.",
+              "points": [
+                "Lysosomes break down worn-out parts",
+                "Cytoskeleton fibers act as tracks"
+              ],
+              "title": "Recycling and support"
+            },
+            {
+              "drawing": "a green leaf",
+              "explanation": "Features that set plant cells apart from other cells.",
+              "points": [
+                "A cell wall frames the membrane",
+                "Chloroplasts capture sunlight for sugar"
+              ],
+              "title": "Plant cell structures"
+            },
+            {
+              "drawing": "a ruler",
+              "explanation": "Estimating real cell size from a microscope photo.",
+              "points": [
+                "Magnification changes photo size, not cell",
+                "Count bar lengths, then multiply"
+              ],
+              "title": "Reading cell scale"
+            }
+          ],
+          "centralIdea": "Cell structures do jobs that build, maintain and power living things.",
+          "comparison": {
+            "columns": [
+              {
+                "name": "Bacterial cell",
+                "points": [
+                  "Prokaryotic cell",
+                  "DNA sits in cytoplasm"
+                ]
+              },
+              {
+                "name": "Animal cell",
+                "points": [
+                  "Eukaryotic cell",
+                  "DNA sits in a nucleus"
+                ]
+              }
+            ],
+            "title": "Bacterial and animal cells"
+          },
+          "summary": "Cell structures build, maintain and identify cells; a scale bar shows their true size.",
+          "title": "Cell structure and work"
+        }
+      },
+      "provenance": "Image and audio measurement P12"
+    }
+  ]
+}

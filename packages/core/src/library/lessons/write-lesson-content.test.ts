@@ -157,6 +157,7 @@ describe(writeLessonContent, () => {
         review: true,
         version: 1,
         writerModel: draft.model,
+        writerRunId: draft.runId,
       },
       fixed: false,
       status: "published",
@@ -164,6 +165,12 @@ describe(writeLessonContent, () => {
     });
 
     expect(checkLessonQuality).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject([
+      { outcome: "passed", phase: "codeCheck", reviewerRunId: null, writerRunId: draft.runId },
+    ]);
 
     const [steps, stored] = await Promise.all([
       listSteps(lesson.id),
@@ -289,6 +296,56 @@ describe(writeLessonContent, () => {
 
     expect(fixLessonDraft).toHaveBeenCalledOnce();
     expect(stored.setAsideAt).toBeNull();
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({
+        orderBy: { id: "asc" },
+        where: { lessonId: lesson.id },
+      }),
+    ).resolves.toMatchObject([
+      {
+        blocking: [expect.objectContaining({ screen: 4, source: "code" })],
+        outcome: "needsFix",
+        phase: "codeCheck",
+      },
+    ]);
+  });
+
+  it("records code checks for both drafts in the same workflow run", async () => {
+    const { lesson, workflowRunId } = await createClaimedLesson();
+
+    const filler = withScreen(
+      writtenTemperatureLesson(),
+      4,
+      explanation("It's worth noting that zero is a mark."),
+    );
+
+    const first = mockDraft(filler);
+    mockFix({ changedScreens: [], lesson: filler });
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { status: "heldBack" },
+    );
+
+    await expect(
+      claimLibraryGeneration({ id: lesson.id, target: "lessonContent", workflowRunId }),
+    ).resolves.toBe("claimed");
+
+    const second = mockDraft(writtenTemperatureLesson());
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { status: "published" },
+    );
+
+    await expect(
+      prisma.lessonQualityDecision.findMany({
+        orderBy: { id: "asc" },
+        where: { lessonId: lesson.id, phase: "codeCheck" },
+      }),
+    ).resolves.toMatchObject([
+      { outcome: "needsFix", writerRunId: first.runId },
+      { outcome: "passed", writerRunId: second.runId },
+    ]);
   });
 
   it("gives a private lesson only one fix pass", async () => {
@@ -408,6 +465,10 @@ describe(writeLessonContent, () => {
     expect(stored.contentStatus).toBe("failed");
     expect(stored.setAsideAt).toBeInstanceOf(Date);
     expect(planItem.status).toBe("skipped");
+
+    await expect(
+      prisma.lessonQualityDecision.count({ where: { lessonId: lesson.id } }),
+    ).resolves.toBe(0);
   });
 
   it("never reviews a private lesson, even one with math that a rewrite asks to review", async () => {
@@ -459,6 +520,7 @@ describe(writeLessonContent, () => {
     expect(result).toStrictEqual({
       problems: [
         {
+          code: "activityProgram",
           problem: String.raw`fields.expectedOutput: The solution prints "2\n"; the expected output must be exactly what it prints`,
           screen: 5,
           source: "code",
@@ -480,6 +542,15 @@ describe(writeLessonContent, () => {
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { fixed: false, status: "published" },
     );
+
+    await expect(
+      prisma.lessonQualityDecision.findFirstOrThrow({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject({
+      blocking: [],
+      minor: expect.arrayContaining([
+        expect.objectContaining({ code: "readingLevel", source: "code" }),
+      ]),
+    });
   });
 
   it("publishes advisory term order without a fix", async () => {

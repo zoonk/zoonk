@@ -1,0 +1,132 @@
+{
+  "lessons": [
+    {
+      "canDo": "Identify steep and gentle slopes from contour-line spacing",
+      "description": "Read contour-line spacing to recognize steep and gentle ground before choosing a route.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Caleb's short hike climbs so sharply that he has to stop for breath. How can a flat map warn you about a steep climb?",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "An overhead hill map with three nested, irregular contour loops labeled 100 ft, 120 ft, and 140 ft from outside inward; points P and Q lie on opposite sides of the 120-foot loop.",
+          "visualKind": "picture",
+          "brief": "A contour line joins places at the same height above sea level. Show that P and Q both lie on the 120-foot line, even though they are on opposite sides of the hill.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": "Two overhead hill maps labeled A and B at identical scale, each with a 200-foot scale bar: A has widely spaced nested contours labeled 800 ft, 820 ft, and 840 ft; B has closely spaced nested contours labeled 100 ft, 120 ft, and 140 ft; each marked climb runs straight across its three contours at right angles.",
+          "visualKind": "picture",
+          "brief": "Which marked climb will feel steeper: A on the higher hill or B on the lower hill? Options: A; B; equally steep—B is correct, while A is tempting because learners may confuse greater height with greater steepness.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Two overhead hill maps labeled A and B at identical scale, each with a 200-foot scale bar: A has widely spaced nested contours labeled 800 ft, 820 ft, and 840 ft; B has closely spaced nested contours labeled 100 ft, 120 ft, and 140 ft; each marked climb runs straight across its three contours at right angles.",
+          "visualKind": "picture",
+          "brief": "The height step between neighboring contour lines is the contour interval. Both maps use a 20-foot interval, so each marked climb gains the same 40 feet.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Two overhead hill maps labeled A and B at identical scale, each with a 200-foot scale bar: A has widely spaced nested contours labeled 800 ft, 820 ft, and 840 ft; B has closely spaced nested contours labeled 100 ft, 120 ft, and 140 ft; each marked climb runs straight across its three contours at right angles.",
+          "visualKind": "picture",
+          "brief": "Close contour lines mean the ground gains height over a short horizontal distance: a steep slope. B is steeper because its 40-foot rise is squeezed into less ground distance, despite being on the lower hill.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "Two overhead hill maps labeled A and B at identical scale, each with a 200-foot scale bar: A has widely spaced nested contours labeled 800 ft, 820 ft, and 840 ft; B has closely spaced nested contours labeled 100 ft, 120 ft, and 140 ft; each marked climb runs straight across its three contours at right angles.",
+          "visualKind": "picture",
+          "brief": "Widely spaced contour lines spread the height gain over more ground: a gentle slope. A's marked climb gains its 40 feet more gradually.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "workedExample",
+          "visual": "One overhead hill map with nested contours labeled 200 ft, 220 ft, and 240 ft; the contours are widely spaced on the west side and tightly spaced on the east side, with straight climbs W and E crossing their respective sides at right angles from the outer to the inner contour.",
+          "visualKind": "picture",
+          "brief": "Work through which side of a hill is steeper, W or E. Reveal three moves: both climbs go from 200 to 240 feet; E crosses the lines over less ground distance; E is steeper.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "One overhead hill map with nested contours labeled 300 ft, 320 ft, and 340 ft; the contours are tightly spaced on the north side and widely spaced on the south side, with straight climbs N and S crossing their respective sides at right angles from the outer to the inner contour.",
+          "visualKind": "picture",
+          "brief": "Ask which marked climb is gentler on a new hill: N or S; the answer is S, where the lines are farther apart. Include N as the tempting choice for someone who reverses the spacing rule.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "An overhead hillside map with five roughly parallel contours labeled 100 ft, 120 ft, 140 ft, 160 ft, and 180 ft; the gaps are wide between the first three lines and tight between the last three, with one straight uphill route crossing all five.",
+          "visualKind": "picture",
+          "brief": "A hillside can change steepness partway up, so inspect the spacing along the whole climb. Here the lower section has wide gaps, but the upper section has tight gaps.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": "An overhead hillside map with seven roughly parallel contours labeled 200 ft through 320 ft in 20-foot steps; a straight route crosses them at right angles, with lower section 200–240 ft widely spaced, middle section 240–280 ft tightly spaced, and upper section 280–320 ft moderately spaced; bracket and label the three sections lower, middle, and upper without identifying steepness.",
+          "visualKind": "picture",
+          "brief": "Ask which section of the marked climb is steepest: lower, middle, or upper; the answer is middle, where the gaps are smallest. Include upper as the tempting choice for someone who judges height instead of spacing.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "One overhead hill map with five nested irregular contours labeled 400 ft, 420 ft, 440 ft, 460 ft, and 480 ft; a shared trailhead lies on the 400-foot contour and a shared lookout on the 480-foot contour; shorter Route A ascends the east flank, where the 420-, 440-, and 460-foot contours bunch tightly, while longer Route B curves around the west flank, where all contours remain widely spaced; label both routes and show a 200-foot scale bar.",
+          "visualKind": "picture",
+          "brief": "You want a gentler climb to a lookout: choose Route A or Route B, then mark the section of the rejected route that supports your decision. The answer is B and A's tightly packed middle section; A's shorter length is the tempting distraction.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Use the spacing between equal-height-step contour lines to distinguish steep ground from gentle ground.",
+          "example": "On one map, closely packed 20-foot contours show a steeper slope than widely spaced 20-foot contours.",
+          "hard": true,
+          "name": "Identify slopes from contour-line spacing",
+          "topic": "Contour lines",
+          "useCase": "Choose a gentler hiking route and locate steep sections before setting out."
+        }
+      ],
+      "title": "Reading contour lines"
+    }
+  ]
+}

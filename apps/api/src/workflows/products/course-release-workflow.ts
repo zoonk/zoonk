@@ -1,4 +1,5 @@
 import { type CourseReleaseState } from "@zoonk/core/library/products/course-release";
+import { chunk } from "@zoonk/utils/chunk";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { deliverCourseContent } from "../_shared/course-content-notification";
@@ -50,10 +51,7 @@ function waitForRewrites(courseId: string): Promise<CourseReleaseState> {
 }
 
 async function startRewrites(flagIds: readonly string[]): Promise<void> {
-  const batches = Array.from(
-    { length: Math.ceil(flagIds.length / FLAGS_PER_REWRITE) },
-    (_, index) => flagIds.slice(index * FLAGS_PER_REWRITE, (index + 1) * FLAGS_PER_REWRITE),
-  );
+  const batches = chunk(flagIds, FLAGS_PER_REWRITE);
 
   await Promise.all(batches.map((batch) => start(flaggedContentWorkflow, [{ flagIds: batch }])));
 }

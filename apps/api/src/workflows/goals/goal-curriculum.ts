@@ -12,6 +12,7 @@ import {
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type GoalOpeningSkill } from "@zoonk/core/library/curriculum/opening-graph";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { chunk } from "@zoonk/utils/chunk";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { startOnce } from "../_shared/run-token";
@@ -42,9 +43,7 @@ import { claimLanguageGraphStep, reuseCurriculumStep } from "./steps/stored-plan
 const SKILL_SLICE = 12;
 
 export function toSlices<T>(items: readonly T[]): T[][] {
-  return Array.from({ length: Math.ceil(items.length / SKILL_SLICE) }, (_, index) =>
-    items.slice(index * SKILL_SLICE, (index + 1) * SKILL_SLICE),
-  );
+  return chunk(items, SKILL_SLICE);
 }
 
 export type BuiltCurriculum = BuiltGraph & {

@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-quantum-what-if",
+        "claimId": "3be70d9127be5cfa",
+        "criterion": "accuracy",
+        "observationId": "4c825179643ed78630eb783f07265c5c146e14bc0e094fb01e0e63b876e000ba.first.0d632f0d-7769-40ad-891b-0250953cf363.1",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0021384999999999998,
+    "id": "dde8d466c1079f12791c343c1840dc825bc6fe1f5fff5c871beb37ba7df174f7",
+    "packet": [
+      {
+        "A": {
+          "blob": "92dc278b451999e633b45b54164b7a25afcbd07154fc6595af9d73f672877022",
+          "format": "text"
+        },
+        "B": {
+          "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
+          "format": "text"
+        },
+        "claim": "The note says that at this brightness the device does not separate the arrivals, which repeats the false brightness rule.",
+        "claimId": "3be70d9127be5cfa",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
+          "format": "json"
+        },
+        "location": {
+          "detail": "improve note for the bright-view choice",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "f4febd679fff688e610d04efa0af844b908bd79a718993bedf593029ef369945",
+          "format": "text"
+        },
+        "B": {
+          "blob": "89785a9e3eb6d887ea0b4b05d3eb7d2929d30536ded69fcf4bd3af87c9096372",
+          "format": "text"
+        },
+        "claim": "The analyst calls the p-value the probability that the new dressing works no better than the old one.",
+        "claimId": "a0958e42cc019841",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "9382f8b347e56ece16f3c3bccad55d7b4f57113bfa1b2039190e635a1fe61a28",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e09a0b7b637669ee2291ef49ff6c5ce1dbbe2a41bf272087960a5ba87ed9f194",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "3be70d9127be5cfa",
+          "finding": "doesn't hold",
+          "reason": "A diz que, nesse brilho, o aparelho não separa as chegadas; isso descreve uma limitação do aparelho, não uma regra de que o brilho altera a energia de cada quantum. A nota não repete essa suposta regra falsa."
+        },
+        {
+          "claimId": "a0958e42cc019841",
+          "finding": "doesn't hold",
+          "reason": "No output A, o analista não chama o p-valor de probabilidade de a nova cobertura não funcionar melhor; a explicação apresentada é que uma diferença como essa pode ocorrer por acaso. O output B também não faz a afirmação atribuída."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

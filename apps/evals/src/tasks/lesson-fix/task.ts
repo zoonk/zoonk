@@ -15,6 +15,13 @@ export const lessonFixTask: Task<
   generate: (input) => fixLessonDraft({ ...input, country: input.country ?? null }),
   id: "lesson-fix",
   name: "Lesson fix",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "A checker re-reads the fixed draft, then learners read it",
+    reason: "Fixes shared lessons; runs on the writer's model",
+    waits: "With the lesson's wait; rechecks run in the background",
+  },
   score: scoreLessonFix,
   testCases: TEST_CASES,
 };

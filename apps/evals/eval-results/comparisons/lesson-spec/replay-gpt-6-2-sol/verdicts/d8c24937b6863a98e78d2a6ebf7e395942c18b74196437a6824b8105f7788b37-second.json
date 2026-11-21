@@ -1,0 +1,265 @@
+{
+  "attempt": "second",
+  "costUsd": 0.404748,
+  "failures": [],
+  "packetId": "d8c24937b6863a98e78d2a6ebf7e395942c18b74196437a6824b8105f7788b37",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "google",
+    "model": "google/gemini-4-neon",
+    "reserve": true
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and keep the lesson focused on one clear idea with a single well-formed, verb-first skill.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, sharing the same back-to-front explanation order and checks as well as the same flawed distractor rationale on screen 11.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, sharing the same sideways labeledDiagram activity and the same repeated, unlabeled field diagrams across screens 1 to 2 and 4 to 7.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, using US English at an appropriate overview level within the lesson's scope.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screens 4, 5, 6, and 7 reuse the exact same diagram description word for word with three unlabeled groups of dots instead of labeling Defenders on screen 5, Midfielders on screen 6, and Forwards on screen 7, breaking the expectation that a planned picture names every part or label its screen talks about and repeating the same picture with nothing new.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same unlabeled field diagram four screens in a row instead of seeing each new position name visually tied to its group on the field.",
+            "location": {
+              "detail": "screens 4 to 7",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Screens 4, 5, 6, and 7 reuse the exact same diagram description word for word with three unlabeled groups of dots instead of labeling Defenders on screen 5, Midfielders on screen 6, and Forwards on screen 7, breaking the expectation that a planned picture names every part or label its screen talks about and repeating the same picture with nothing new.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same unlabeled field diagram four screens in a row instead of seeing each new position name visually tied to its group on the field.",
+            "location": {
+              "detail": "screens 4 to 7",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 1 places a picture on the opening hook instead of keeping it text only, and screen 2 repeats that exact same broadcast graphic verbatim with nothing new added.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The opening scene uses an unnecessary visual and the first explanation repeats it unchanged rather than giving the learner something new to inspect.",
+            "location": {
+              "detail": "screens 1 to 2",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 1 places a picture on the opening hook instead of keeping it text only, and screen 2 repeats that exact same broadcast graphic verbatim with nothing new added.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The opening scene uses an unnecessary visual and the first explanation repeats it unchanged rather than giving the learner something new to inspect.",
+            "location": {
+              "detail": "screens 1 to 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The distractor rationale on screen 11 is logically backwards: the graphic already has four dots at the back plus a goalkeeper, so counting the goalkeeper as one of the defenders would give five at the back rather than making a learner think a defender is missing.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following this brief could produce contradictory feedback that confuses the learner about how the goalkeeper affects the player counts.",
+            "location": {
+              "detail": "A match preview says 4-3-3, but its field graphic shows only the goalkeeper, four dots at the back, two in the middle, and three up front. Ask what dot should be added where: “Midfielder in the middle” is right; “Defender at the back” is tempting if the learner counts the goalkeeper as one of the four.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The distractor rationale on screen 11 is logically backwards: the graphic already has four dots at the back plus a goalkeeper, so counting the goalkeeper as one of the defenders would give five at the back rather than making a learner think a defender is missing.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following this brief could produce contradictory feedback that confuses the learner about how the goalkeeper affects the player counts.",
+            "location": {
+              "detail": "A match preview says 4-3-3, but its field graphic shows only the goalkeeper, four dots at the back, two in the middle, and three up front. Ask what dot should be added where: “Midfielder in the middle” is right; “Defender at the back” is tempting if the learner counts the goalkeeper as one of the four.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "A and B are identical, so neither serves the writer or the learner better."
+        },
+        "pairId": "8c57ce16-2a6f-441e-b5dd-6cda48b6fde4"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs keep the lesson focused on one clear idea and define a single well-formed, verb-first skill for describing a 4-3-3 formation.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A sequences the lines cleanly from own goal to opponent's goal and pairs them with stronger checks, whereas B's screen 7 check can be answered by definition recall without using the flipped diagram and screen 11 bundles a choice with an unsupported tap task.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "B",
+            "reason": "B keeps the opening hook text only and plans a distinct, clearly labeled field diagram on every explanation screen showing how each line spreads out, whereas A puts a picture on the hook, duplicates it on screen 2, and repeats the exact same unlabeled diagram across screens 4 to 7.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use US English, stay within the scope of the 4-3-3 lesson, and keep explanations and checks appropriate for an overview level.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screens 4, 5, 6, and 7 reuse the exact same diagram description word for word with three unlabeled groups of dots instead of labeling Defenders on screen 5, Midfielders on screen 6, and Forwards on screen 7, breaking the expectation that a planned picture names every part or label its screen talks about and repeating the same picture with nothing new.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The learner sees the same unlabeled field diagram four screens in a row instead of seeing each new position name visually tied to its group on the field.",
+            "location": {
+              "detail": "screens 4 to 7",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 1 places a picture on the opening hook instead of keeping it text only, and screen 2 repeats that exact same broadcast graphic verbatim with nothing new added.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The opening scene uses an unnecessary visual and the first explanation repeats it unchanged rather than giving the learner something new to inspect.",
+            "location": {
+              "detail": "screens 1 to 2",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The distractor rationale on screen 11 is logically backwards: the graphic already has four dots at the back plus a goalkeeper, so counting the goalkeeper as one of the defenders would give five at the back rather than making a learner think a defender is missing.",
+            "criterion": "screenPlan",
+            "learnerCost": "A writer following this brief could produce contradictory feedback that confuses the learner about how the goalkeeper affects the player counts.",
+            "location": {
+              "detail": "A match preview says 4-3-3, but its field graphic shows only the goalkeeper, four dots at the back, two in the middle, and three up front. Ask what dot should be added where: “Midfielder in the middle” is right; “Defender at the back” is tempting if the learner counts the goalkeeper as one of the four.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 7 asks which group is nearest its own goal with options Four defenders or Three forwards, which is answerable purely by definition recall without reading the flipped diagram; flipping the orientation would only be tested by asking which group sits at the top or bottom of the graphic.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner can answer from memory of what defenders are instead of practicing how to read a formation when the field orientation changes.",
+            "location": {
+              "detail": "Show the team attacking downward and ask which group is nearest its own goal: “Four defenders” or “Three forwards.” The defenders are correct; the tempting error is reading the page from bottom to top instead of checking the goals.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "Screen 11 asks the learner to tap the group expected to play nearest the opponent's goal on a static picture screen (activityTemplate null, visualKind picture) whose player groups have no labels to select or refer to.",
+            "criterion": "activitiesAndVisuals",
+            "learnerCost": "The writer cannot build a tap-on-image interaction on a plain picture screen, and without group labels the planned visual does not support the second part of the question.",
+            "location": {
+              "detail": "A teammate asks you to explain this lineup before kickoff; choose its formation and tap the group expected to play nearest the opponent's goal. The answers are “4-3-3” and the front three; include “3-3-4” as the tempting reversed reading.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "In a visual lesson about how a formation lays out on the field, B's text-only hook and progressive, properly labeled diagrams serve the writer and learner far better than A's repeated identical unlabeled diagrams across screens 4 to 7, outweighing B's localized question issues on screens 7 and 11."
+        },
+        "pairId": "d225d1b3-75a5-4b01-9624-2784b070ce8a"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs define the exact same single lesson metadata and well-formed, verb-first skill for calculating percent change.",
+            "criterion": "oneIdea"
+          },
+          {
+            "preference": "A",
+            "reason": "A starts with an everyday salary scene and concrete intuition before moving to the formula, worked example, and checks, whereas B opens with a formal formula before any intuition and breaks continuity on screen 5 by referring to Leah's raise without ever introducing Leah.",
+            "criterion": "screenPlan"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the exact same visual plan, keeping calculation screens text only and specifying tables with exact values in the brief on screens 12 and 13.",
+            "criterion": "activitiesAndVisuals"
+          },
+          {
+            "preference": "A",
+            "reason": "A keeps the language accessible for a beginner and stays inside the lesson's scope, whereas B introduces symbolic notation, university-level jargon like logarithmic returns, and percentage-point change from a later chapter lesson on screens 1 and 2.",
+            "criterion": "levelAndScope"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Screen 1 is marked as a hook but opens with a formal formula definition instead of an everyday scene ending on a question, presenting symbolic notation before any concrete example or intuition.",
+            "criterion": "screenPlan",
+            "learnerCost": "The learner meets an abstract equation on the very first screen instead of an everyday situation that makes the idea click.",
+            "location": {
+              "detail": "Define percent change formally as Δ% = (V₁ − V₀) / V₀ × 100, where V₀ is the reference value and V₁ the terminal value.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screens 1 and 2 use advanced notation and jargon far above beginner level (Δ% = (V₁ − V₀) / V₀ × 100, reference value, terminal value, ratio of the absolute change, logarithmic returns) and pull in percentage-point change, which belongs to the later chapter lesson Percentage points.",
+            "criterion": "levelAndScope",
+            "learnerCost": "A beginner learner expecting plain everyday words would be overwhelmed by advanced terminology and out-of-scope concepts before learning basic percent change.",
+            "location": {
+              "detail": "screens 1 to 2",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Screen 5 refers to Leah's raise with a $300 difference and $3,000 starting value even though Leah and her salary were never introduced anywhere in screens 1 to 4.",
+            "criterion": "screenPlan",
+            "learnerCost": "The writer receives an incoherent brief pointing to a missing earlier story, leaving the learner wondering who Leah is and where the numbers came from.",
+            "location": {
+              "detail": "To express a change as a percent, use difference ÷ starting value × 100. For Leah’s raise, the difference is $300 and the starting value is $3,000.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A provides a coherent, beginner-friendly plan that moves from an everyday hook and concrete intuition to a worked example, classic-trap checks, and a realistic application, whereas B has major failures in its first two screens that break beginner level, chapter scope, and narrative continuity."
+        },
+        "pairId": "fe227985-09db-4f6a-a66e-730aa76fb95d"
+      }
+    ]
+  }
+}

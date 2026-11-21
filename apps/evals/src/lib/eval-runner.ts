@@ -3,6 +3,8 @@ import path from "node:path";
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
+import { hashJson } from "./comparisons/identity";
+import { writeBytes } from "./comparisons/storage";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
 import { getTestCaseRunIds } from "./test-case-runs";
@@ -20,11 +22,6 @@ import {
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const RESULTS_DIR = path.join(EVAL_RESULTS_DIR, "results");
-
-async function ensureResultsDir(taskId: string) {
-  const taskDir = path.join(RESULTS_DIR, taskId);
-  await fs.mkdir(taskDir, { recursive: true });
-}
 
 function getResultsFilePath(taskId: string, modelId: string): string {
   const modelPath = modelId.replaceAll("/", "-");
@@ -44,12 +41,10 @@ async function loadExistingScoredResults(taskId: string, modelId: string): Promi
 }
 
 async function saveScoredResults(taskId: string, modelId: string, results: ScoredResult[]) {
-  await ensureResultsDir(taskId);
-
   const taskResults: ScoredTaskResults = { modelId, results, taskId };
 
   const filePath = getResultsFilePath(taskId, modelId);
-  await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
+  await writeBytes(filePath, JSON.stringify(taskResults, null, 2), true);
 }
 
 export async function deleteModelResults({
@@ -104,7 +99,7 @@ async function scoreOutput({
         scoreCategories: task.scoreCategories,
       });
 
-  logInfo(`Score: ${scoreResult.score}`);
+  logInfo(scoreResult.listeningReview?.conclusion ?? `Score: ${scoreResult.score}`);
 
   const testCaseWithRun: TestCase = { ...testCase, id: output.testCaseId };
 
@@ -114,13 +109,44 @@ async function scoreOutput({
     itemsScored: scoreResult.itemsScored,
     judge: scoreResult.judge,
     keyFlaws: scoreResult.keyFlaws,
+    listeningReview: scoreResult.listeningReview,
+    outputHash: task.output === "image" ? hashJson(output) : undefined,
     steps: scoreResult.steps,
     testCase: testCaseWithRun,
   };
 }
 
-function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): boolean {
-  return existingResults.some((result) => result.testCase.id === testCaseId);
+function matchesOutput(result: ScoredResult, output: OutputEntry): boolean {
+  if (result.outputHash) {
+    return result.outputHash === hashJson(output);
+  }
+
+  // Legacy image reviews describe the shared filenames written before generation provenance.
+  return !result.imageReview || !output.generation?.sourceHash;
+}
+
+function matchingResults(outputs: OutputEntry[], results: ScoredResult[]) {
+  const byId = new Map(outputs.map((output) => [output.testCaseId, output]));
+
+  return results.filter((result) => {
+    const output = byId.get(result.testCase.id);
+    return output && matchesOutput(result, output);
+  });
+}
+
+export async function getImageRunsToReplace(modelOutputs: ModelOutputs) {
+  const { modelId, outputs, taskId } = modelOutputs;
+  const applicable = matchingResults(outputs, await loadExistingScoredResults(taskId, modelId));
+
+  const valid = new Set(
+    applicable.filter((result) => !result.imageReview).map((result) => result.testCase.id),
+  );
+
+  return new Set(
+    applicable
+      .filter((result) => result.imageReview && !valid.has(result.testCase.id))
+      .map((result) => result.testCase.id),
+  );
 }
 
 export async function runEval(
@@ -145,20 +171,24 @@ export async function runEval(
     throw new Error(`No outputs found for model ${modelId}. Generate outputs first.`);
   }
 
-  logInfo(`Found ${modelOutputs.outputs.length} outputs to score`);
+  logInfo(`Found ${modelOutputs.outputs.length} saved outputs`);
 
   const existingResults = await loadExistingScoredResults(task.id, modelId);
-  logInfo(`Found ${existingResults.length} existing scored results`);
+
+  const savedRuns = new Set(
+    matchingResults(modelOutputs.outputs, existingResults).map((result) => result.testCase.id),
+  );
+
+  logInfo(`Found ${existingResults.length} saved evaluation records`);
 
   const outputsToScore = modelOutputs.outputs.filter(
-    (output) =>
-      runIds.has(output.testCaseId) && !isAlreadyScored(existingResults, output.testCaseId),
+    (output) => runIds.has(output.testCaseId) && !savedRuns.has(output.testCaseId),
   );
 
   logInfo(`Scoring ${outputsToScore.length} outputs`);
 
   if (outputsToScore.length === 0) {
-    logInfo("All outputs already scored");
+    logInfo("Reusing saved evaluation records");
     return combineOutputsAndResults(task.id, modelId, modelOutputs, existingResults);
   }
 
@@ -186,10 +216,15 @@ export async function runEval(
     return [];
   });
 
-  const allScoredResults = [...existingResults, ...newResults];
+  const rescoredRuns = new Set(newResults.map((result) => result.testCase.id));
+
+  const allScoredResults = [
+    ...existingResults.filter((result) => !rescoredRuns.has(result.testCase.id)),
+    ...newResults,
+  ];
 
   await saveScoredResults(task.id, modelId, allScoredResults);
-  logInfo(`Saved ${allScoredResults.length} total scored results`);
+  logInfo(`Saved ${allScoredResults.length} evaluation records`);
 
   return combineOutputsAndResults(task.id, modelId, modelOutputs, allScoredResults);
 }
@@ -203,7 +238,7 @@ function combineOutputsAndResults(
   const results = scoredResults.flatMap((scored) => {
     const output = outputs.find((entry) => entry.testCaseId === scored.testCase.id);
 
-    if (!output) {
+    if (!output || !matchesOutput(scored, output)) {
       return [];
     }
 
@@ -216,11 +251,13 @@ function combineOutputsAndResults(
       classification: scored.classification,
       duration: output.duration,
       extraCalls: output.extraCalls,
+      imageReview: scored.imageReview,
       images: output.images,
       inputTokens: output.inputTokens,
       itemsScored: scored.itemsScored,
       judge: scored.judge,
       keyFlaws: scored.keyFlaws,
+      listeningReview: scored.listeningReview,
       output: output.output,
       outputTokens: output.outputTokens,
       reasoningTokens: output.reasoningTokens,

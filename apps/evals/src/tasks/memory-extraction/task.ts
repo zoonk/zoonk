@@ -118,6 +118,13 @@ export const memoryExtractionTask: Task<
   generate: extractMemoryFacts,
   id: "memory-extraction",
   name: "Memory extraction",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code: candidate facts go to the gate and the store",
+    reason: "Background and private: the cheapest model that matches",
+    waits: "Nobody: background work",
+  },
   score: scoreMemoryExtraction,
   testCases: TEST_CASES,
 };

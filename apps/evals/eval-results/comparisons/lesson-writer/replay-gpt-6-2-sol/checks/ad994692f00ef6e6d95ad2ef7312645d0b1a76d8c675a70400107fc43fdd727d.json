@@ -1,0 +1,13 @@
+{
+  "caseId": "en-python-range-beginner",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 5,
+  "problems": [
+    "Screen 3: Shows a code fence as text: \"```\".",
+    "Screen 3: Shows a code fence as text: \"```\"."
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 6
+}

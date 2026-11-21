@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type TaskScorer } from "@/lib/types";
+import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
 import { type ExamSpeakingCardOutput } from "@zoonk/ai/tasks/language/exam-speaking-card";
 import { EXAM_SPEAKING_CARD_SCORE_CATEGORIES } from "./score-categories";
 import { type ExamSpeakingCardInput } from "./test-cases";
@@ -78,27 +78,44 @@ function checkCard({
 }): CodeCheckResult {
   const card = JSON.parse(output) as ExamSpeakingCardOutput;
 
-  const problems = [
-    card.instructions.length > 0 && card.instructions.length <= MAX_INSTRUCTIONS
-      ? null
-      : `Instructions have ${card.instructions.length} lines instead of 1 to ${MAX_INSTRUCTIONS}.`,
-    card.prompts.length >= MIN_PROMPTS && card.prompts.length <= MAX_PROMPTS
-      ? null
-      : `Prompts have ${card.prompts.length} items instead of ${MIN_PROMPTS} to ${MAX_PROMPTS}.`,
-    checkMaterial({ card, stimulus: input.task.stimulus }),
-    card.characterBrief.trim() && card.openingLine.trim()
-      ? null
-      : "The script or its opening line is empty.",
-  ].filter((problem) => problem !== null);
+  const problems = {
+    instructions:
+      card.instructions.length > 0 && card.instructions.length <= MAX_INSTRUCTIONS
+        ? null
+        : `Instructions have ${card.instructions.length} lines instead of 1 to ${MAX_INSTRUCTIONS}.`,
+    material: checkMaterial({ card, stimulus: input.task.stimulus }),
+    prompts:
+      card.prompts.length >= MIN_PROMPTS && card.prompts.length <= MAX_PROMPTS
+        ? null
+        : `Prompts have ${card.prompts.length} items instead of ${MIN_PROMPTS} to ${MAX_PROMPTS}.`,
+    script:
+      card.characterBrief.trim() && card.openingLine.trim()
+        ? null
+        : "The script or its opening line is empty.",
+  };
 
+  const failures = Object.values(problems).filter((problem) => problem !== null);
   const total = 4;
-  return { judgedOutput: output, passed: total - problems.length, problems, total };
+
+  return {
+    criteria: [
+      ...(problems.instructions || problems.prompts ? ["examFit"] : []),
+      ...(problems.material ? ["material"] : []),
+      ...(problems.script ? ["script"] : []),
+    ],
+    judgedOutput: output,
+    passed: total - failures.length,
+    problems: failures,
+    total,
+  };
 }
+
+export const checkExamSpeakingCardOutput: TaskCodeChecks = ({ output, testCase }) =>
+  checkCard({ input: testCase.userInput as ExamSpeakingCardInput, output });
 
 export const scoreExamSpeakingCardOutput: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
-    check: (value) =>
-      checkCard({ input: testCase.userInput as ExamSpeakingCardInput, output: value }),
+    check: (value) => checkExamSpeakingCardOutput({ output: value, testCase }),
     output,
     scoreCategories: EXAM_SPEAKING_CARD_SCORE_CATEGORIES,
     testCase,

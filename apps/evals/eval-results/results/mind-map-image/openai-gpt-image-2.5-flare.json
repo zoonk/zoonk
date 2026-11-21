@@ -2,36 +2,6 @@
   "modelId": "openai/gpt-image-2.5-flare",
   "results": [
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every element is present and correctly placed. The title sits in the central cloud with the central idea at the top. The four numbered branches each have their own color, sentence, bullets and sketch, and connector lines join them to the center. The comparison table and summary sit at the bottom. Nothing overlaps or is cut off. The only flaw is the unrequested 'Ideia central' and 'Resumo:' labels.",
-          "score": 9,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a clean hand-drawn study sheet on a white background. It uses marker-style lettering, one soft color per branch and colored-pencil sketches. The sketches are slightly detailed but still fit the style.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "All text was checked letter by letter, and it is correct and has high contrast. The bullet text is small but readable. The meter sketch contains numbers on its display, which breaks the rule that sketches carry no words or numbers.",
-          "score": 7,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (27 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -42,23 +12,7 @@
           "reasoningTokens": 256
         }
       },
-      "steps": [
-        {
-          "conclusion": "The electric meter sketch shows digits ('0000') on its display, so the sketch carries numbers, which the brief forbids.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Two labels were added that the scene did not request: an 'Ideia central' header and a 'Resumo:' prefix on the summary. An extra lightbulb icon was also added to the summary box. The bullet text in the dashed boxes is fairly small next to the headings.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Leave the meter display blank, as the inverter display already is. Drop the extra header labels. Enlarge the bullet text slightly to use the space around the central cloud.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-solar-energy-1",
@@ -128,39 +82,10 @@
             "title": "Da luz à eletricidade"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every required part is present and correctly placed: the title in a central cloud, the central idea at the top, four numbered and color-coded branches each with its sentence, bullets and sketch, the comparison table and the summary at the bottom. Lines connect each branch to the center and nothing overlaps. Small deductions for the extra 'Ideia central' and 'Resumo:' labels and the added lightbulb icon.",
-          "score": 8,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a friendly hand-drawn study sheet on a clean white background, with marker lettering, one soft color per branch and colored-pencil-style sketches. It matches the brief well.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "The text is large, high-contrast and spelled correctly, including the accents (lâmpada, Reúne, proteção). However, the meter sketch displays digits, which violates the no-numbers-in-sketches rule.",
-          "score": 7,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (27 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -171,23 +96,7 @@
           "reasoningTokens": 253
         }
       },
-      "steps": [
-        {
-          "conclusion": "The electric-meter sketch in branch 4 shows digits ('0000') on its display, breaking the rule that sketches carry no words or numbers. The labels 'Ideia central' and 'Resumo:' were also added although they are not in the structure.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "A lightbulb icon was added to the summary box as extra decoration. The comparison table and summary make the lower third fairly dense compared with the airy branches above.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Leave the meter display blank. Drop the 'Ideia central' and 'Resumo:' labels so only the given text appears. Give the bottom section a little more breathing room.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-solar-energy-2",
@@ -257,39 +166,10 @@
             "title": "Da luz à eletricidade"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every required part is present and placed correctly. The title sits in a central cloud with the central idea at the top. The four numbered branches each have their own color, sentence, bullets and sketch, and lines join them to the center. The comparison table and the summary are at the bottom. Nothing overlaps or is cut off.",
-          "score": 9,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "It reads as a clean hand-drawn study sheet on a white background. The lettering looks like neat marker, each branch has one soft color, and the sketches look colored-pencil. Some sketches are slightly detailed, and the heading pills look somewhat polished.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "The text is spelled correctly and has high contrast. The bullet text is small but still legible. The meter sketch contains digits, which breaks the no-words-or-numbers-in-sketches rule.",
-          "score": 7,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (27 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -300,23 +180,7 @@
           "reasoningTokens": 216
         }
       },
-      "steps": [
-        {
-          "conclusion": "The electric-meter sketch for branch 4 shows digits ('0|000') on its display, so a sketch carries numbers, which the brief forbids.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "The map adds headings the structure does not contain: 'Ideia central' above the central idea and 'Resumo:' before the summary. The bullet text in the dashed boxes is fairly small next to the branch sentences.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Leave the meter display blank or show plain bars instead of digits. Enlarge the bullet text slightly for easier reading at full size.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-solar-energy-3",
@@ -386,39 +250,10 @@
             "title": "Da luz à eletricidade"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every part is present and in its place: the title in the central cloud, the central idea at the top, five numbered branches each with a sentence, bullets and a sketch, the comparison table and the summary line. Lines join each branch to the center and nothing overlaps or is cut off. Small deductions for the unrequested 'Ideia central' and 'Resumo:' labels and the lightbulb icon.",
-          "score": 8,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The map reads as a friendly hand-drawn study sheet on a clean white background. Each branch has its own soft color, the sketches look colored-pencil, and the marker lettering is neat.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "Text is high contrast and spelled correctly. However, the ÷ in branch 3 reads as '+', and the bullet text is somewhat small. The sketches carry no words.",
-          "score": 7,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (31 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -429,23 +264,7 @@
           "reasoningTokens": 423
         }
       },
-      "steps": [
-        {
-          "conclusion": "In branch 3, the division sign in 'Taxa: mudança na saída ÷ mudança na entrada' is drawn so it reads like a plus sign. This turns the rate definition into a wrong formula.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Two labels were added that the structure does not include: an 'Ideia central' header and a 'Resumo:' prefix. A lightbulb icon was also added to the summary bar. The bullet text inside the dashed boxes is fairly small next to the headings.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw an unmistakable ÷ symbol in branch 3. Drop the extra header labels. Enlarge the bullet lettering a little, using the spare space around the branches.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-functions-1",
@@ -524,39 +343,10 @@
             "title": "Funções e relações entre variáveis"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every part is present and in place: the title cloud sits in the center with the central idea at the top, and all five numbered, color-coded branches each have their sentence, bullets and sketch. The comparison table and summary sit at the bottom. Lines connect every branch to the center, and nothing overlaps or is cut off.",
-          "score": 9,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "It reads as a friendly hand-drawn study sheet on a clean white background, with one color per branch and colored-pencil sketches. The boxed and dashed panels are slightly structured, but they stay within the mind-map style.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "Text is high-contrast and readable, and the sketches carry no words. The bullet text is small, and the '÷' symbol is ambiguous.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (31 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -567,23 +357,7 @@
           "reasoningTokens": 328
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Small unrequested labels were added: 'Ideia central' and 'Resumo:'. The '÷' in branch 3 is thin enough to be misread as '+'. The bullet text in the dashed boxes is noticeably smaller than the rest of the lettering.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw the division sign in branch 3 more clearly. Enlarge the bullet lettering slightly. Drop the extra heading labels so the text matches the structure exactly.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-functions-2",
@@ -662,39 +436,10 @@
             "title": "Funções e relações entre variáveis"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "All required parts are present and placed well: the central cloud title, the central idea near the top, five numbered branches each with a sentence, bullets and a sketch, the comparison table and the summary at the bottom. Lines connect to the center and nothing overlaps or is cut off. The extra 'Ideia central' and 'Resumo' labels are minor additions.",
-          "score": 8,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "It is a clean, friendly hand-drawn study sheet on plain white, with marker lettering and colored-pencil sketches. The only weakness is the shared green between branch 4 and the central idea.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "Text is high-contrast and readable, and the sketches carry no words. The bullet text is fairly small, and the division symbol is ambiguous.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (31 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -705,23 +450,7 @@
           "reasoningTokens": 295
         }
       },
-      "steps": [
-        {
-          "conclusion": "The division sign in branch 3 ('mudança na saída ÷ mudança na entrada') is drawn so small that it reads almost like a '+'. A learner could misread the rate formula.",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Two unrequested labels, 'Ideia central' and 'Resumo:', were added. Branch 4 (Valor inicial) uses the same green as the central-idea box, so it is not clearly in its own color. The bullet text in the dashed boxes is small next to the headings.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw an unmistakable '÷' symbol. Give branch 4 a color distinct from the central-idea box. Enlarge the bullet lettering slightly, using the space between branches and the table.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-functions-3",
@@ -800,39 +529,10 @@
             "title": "Funções e relações entre variáveis"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every part is present and placed well. The title sits in the central cloud and the central idea is at the top. Four numbered, color-coded branches each have their sentence, bullets and a sketch, joined to the center by lines. The comparison table and the summary are at the bottom. Nothing overlaps or is cut off. The only extras are the added labels.",
-          "score": 9,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a clean, friendly hand-drawn study sheet on a white background. It uses marker lettering, one soft color per branch and colored-pencil sketches. The badge sketch adds small details that make it less blank than requested.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "All text is spelled correctly, including the accents, and has high contrast. The bullet text is fairly small but still readable at full size. The sketches contain no words.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (30 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -843,23 +543,7 @@
           "reasoningTokens": 308
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Two unrequested labels were added: 'Ideia central' above the central idea and 'Resumo:' before the summary. The name badge is not blank: it has an avatar and text-like lines. The bullet text inside the dashed boxes is noticeably smaller than the other text.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Remove the extra 'Ideia central' and 'Resumo' labels. Make the badge truly blank. Enlarge the bullet lettering slightly. Give the central idea a clearer connector to the title cloud.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-user-research-1",
@@ -936,39 +620,10 @@
             "title": "Planejamento de pesquisa com usuários"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every part is present and well placed: the title sits in the central cloud, the central idea is at the top, and the four numbered colored branches each have their sentence, bullets and sketch. The three-column comparison and the summary line sit at the bottom. Lines connect the branches to the center, with no overlaps or cut-offs. The text matches the structure letter for letter.",
-          "score": 9,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a friendly hand-drawn study sheet on a clean white background. It uses one soft color per branch, colored-pencil sketches and neat marker lettering. The only deviation is the badge sketch, which is not blank.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "Headers and sentences are clear and high-contrast. The bullet text inside the dashed boxes is small and thin, which makes it slightly harder to read. The sketches carry no words.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (30 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -979,23 +634,7 @@
           "reasoningTokens": 330
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The bullet text in the dashed boxes is noticeably smaller and thinner than the rest of the lettering, so it reads less easily at full size. Two headers were added that the structure did not ask for: 'Ideia central' and 'Resumo:'. The name badge was meant to be blank but shows a person silhouette and filler lines.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Enlarge and thicken the bullet lettering in the four branch boxes to match the explanation sentences. Leave the badge sketch truly blank. Drop or soften the extra 'Ideia central' and 'Resumo' labels so only the requested text appears.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-user-research-2",
@@ -1072,39 +711,10 @@
             "title": "Planejamento de pesquisa com usuários"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every part is present and correct: the title in a central cloud, the central idea at the top, and four numbered, color-coded branches. Each branch has its sentence, two bullets and a sketch. The three-column comparison and the summary sit at the bottom. Lines join each branch to the center, and nothing overlaps or is cut off. The added labels are minor.",
-          "score": 9,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "It reads as a friendly hand-drawn study sheet. The marker lettering is neat, each branch has its own soft color, and the colored-pencil sketches sit on a clean white background.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "I checked every word, including the accents, and all are correct. Contrast is good throughout. The bullet text is small and somewhat cramped compared with the headings. The sketches contain no words.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (30 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1115,23 +725,7 @@
           "reasoningTokens": 300
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The bullet text inside the dashed boxes is noticeably smaller than the rest of the lettering, so it reads less easily at full size. The labels 'Ideia central' and 'Resumo:' were not part of the structure. The name badge is not blank: it shows a person icon and lines that resemble text.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Enlarge the bullet lettering and give the branch boxes a little more room. Leave the badge blank so it matches the 'blank name badge' request. Drop the extra header labels so only the structured text appears.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "pt-user-research-3",
@@ -1208,39 +802,10 @@
             "title": "Planejamento de pesquisa com usuários"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every element is present and correctly placed. The title sits in a central cloud with the central idea at the top, and all six numbered, color-coded branches have their sentence, bullets and sketch. The comparison table and summary line are at the bottom. Connector lines join each branch to the center, and nothing overlaps or is cut off. The only weakness is slight crowding.",
-          "score": 9,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a clean hand-drawn mind map on a plain white background, with marker-style lettering, one soft color per branch and colored-pencil sketches. It is friendly and uncluttered for a study sheet.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "All the text, read letter by letter, matches the structure and is high-contrast. Some bullet text, especially in branch 1, is small, and the summary line is fairly tight. The sketches carry no words; the ruler shows tick marks only and the bin shows only a recycling symbol.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (35 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1251,23 +816,7 @@
           "reasoningTokens": 343
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The bullet text in branch 1 is noticeably smaller than the bullets in the other branches. The page is fairly dense, so the left-column branches sit close together. The image adds 'Central idea' and 'Summary:' header labels that the structure does not ask for, although they are harmless.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Enlarge the branch 1 bullets to match the others. Give the left-side branches a little more vertical breathing room. Drop the extra 'Central idea' and 'Summary:' headers so only the structured text appears.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "en-cell-structure-1",
@@ -1355,39 +904,10 @@
             "title": "Cell structure and work"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every element is present and correctly placed: the title in a central cloud, the central idea at the top, six numbered branches, each with its sentence, bullets and a sketch, plus the comparison table and the summary at the bottom. Colored lines connect every branch to the center, and nothing overlaps or is cut off. The layout is slightly crowded.",
-          "score": 9,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This is a friendly hand-drawn study sheet on a clean white background. It uses one soft color per branch, colored-pencil sketches and neat marker lettering.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "I checked all text letter by letter and it matches the structure exactly. Contrast is good throughout. The branch 1 bullets are small and some areas are dense, but everything stays readable. The sketches carry no words; the ruler shows tick marks only.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (35 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1398,23 +918,7 @@
           "reasoningTokens": 312
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The bullets in branch 1 are lettered noticeably smaller than the rest of the text. The sheet is densely packed, with the comparison table and summary squeezed tightly into the bottom third. Small 'Central idea' and 'Summary:' header labels were added, though they are harmless.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the branch 1 bullet text the same size as the other branches. Give the lower half a little more breathing room by tightening the branch blocks. The conveyor-belt sketch could show a clearer protein package so it better suggests 'packaging'.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "en-cell-structure-2",
@@ -1502,39 +1006,10 @@
             "title": "Cell structure and work"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     },
     {
-      "categoryScores": [
-        {
-          "categoryId": "layout",
-          "reasoning": "Every element is present and correctly placed. The title cloud sits in the center with the central idea at the top. All six numbered branches are linked to the center, and each has its sentence, bullets and sketch. The comparison table and summary line are at the bottom, and nothing overlaps or is cut off. The layout is slightly crowded, and the central idea is not joined to the cloud by a line.",
-          "score": 8,
-          "label": "Every part, clearly laid out",
-          "weight": 50
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "This reads as a friendly hand-drawn study sheet on a clean white background. It uses marker lettering, one soft color per branch and colored-pencil sketches. It is a bit busy overall.",
-          "score": 9,
-          "label": "Mind-map style",
-          "weight": 25
-        },
-        {
-          "categoryId": "legibility",
-          "reasoning": "All text matches the scene exactly and has good contrast. The sketches carry no words. Branch 1's bullets are small and some areas feel slightly crammed.",
-          "score": 8,
-          "label": "Legibility",
-          "weight": 25
-        },
-        {
-          "categoryId": "text",
-          "label": "Text matches the structure",
-          "reasoning": "Every word matches the structure (35 texts).",
-          "score": 10,
-          "weight": 100
-        }
-      ],
       "judge": {
         "modelId": "anthropic/claude-opus-5.5",
         "usage": {
@@ -1545,23 +1020,7 @@
           "reasoningTokens": 270
         }
       },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The sheet is densely packed, leaving little white space between branches and the comparison panel. The bullet text in branch 1 is noticeably smaller than in the other branches. The central-idea box is not linked to the title cloud by a line.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make all bullet text the same, larger size. Add a short connector from the central-idea box to the cloud. Loosen the spacing around the comparison table so the page breathes more.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
+      "steps": [],
       "testCase": {
         "expectations": "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.",
         "id": "en-cell-structure-3",
@@ -1649,7 +1108,8 @@
             "title": "Cell structure and work"
           }
         }
-      }
+      },
+      "imageReview": "Multiple saved runs used the same image file. The original image for this run cannot be identified. Generate this run again to score it."
     }
   ],
   "taskId": "mind-map-image"

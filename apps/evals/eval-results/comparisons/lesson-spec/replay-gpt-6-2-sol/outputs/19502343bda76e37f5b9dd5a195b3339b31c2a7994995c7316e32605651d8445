@@ -1,0 +1,150 @@
+{
+  "lessons": [
+    {
+      "canDo": "Trace water through the water cycle",
+      "description": "Follow water from the ocean into clouds, through rain and rivers, and back again.",
+      "estimatedMinutes": 4,
+      "screens": [
+        {
+          "activityTemplate": null,
+          "kind": "hook",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Rain falls on a farm miles inland, far from the shore. How can water from the ocean reach that farm?",
+          "skills": []
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Sunlight supplies energy that lets liquid ocean water change into an invisible gas; this change is evaporation. It happens at the surface without the ocean boiling.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "guess",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Ocean air cools above freezing, and a low cloud appears: what will its visible white patches contain—“Tiny liquid drops” or “Water in gas form”? The answer is tiny liquid drops; gas is tempting because water entered the air as gas.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "One low cloud over the ocean, with its edge drawn at an enlarged scale to show many separate tiny liquid drops suspended in air; label the drops 'tiny liquid drops'.",
+          "visualKind": "picture",
+          "brief": "As moist air cools, some invisible water gas changes into tiny liquid drops; this change is condensation. Many tiny drops together make the low cloud visible.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "One low cloud over the ocean, with its edge drawn at an enlarged scale to show many separate tiny liquid drops suspended in air; label the drops 'tiny liquid drops'.",
+          "visualKind": "picture",
+          "brief": "Water in its invisible gas form is called water vapor. The visible white cloud is made of drops, not water vapor.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "check",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "Warm, moist air cools over a chilly lake, producing a low cloud: which change formed its drops—“Condensation” or “Evaporation”? Answer: condensation; evaporation is the tempting reversal because it also moves water between liquid and gas.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A single coastal landscape with ocean on the left and a farm inland on the right; a horizontal arrow labeled 'wind' points inland through air containing a cloud.",
+          "visualKind": "picture",
+          "brief": "Wind carries water through the air from place to place. Air moving inland can carry ocean water as vapor or cloud drops toward the farm.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A rain cloud above a farm, with small drops inside the cloud and larger drops falling toward the ground; one downward arrow is labeled 'gravity'.",
+          "visualKind": "picture",
+          "brief": "Water falling from clouds is precipitation. In the farm's rain cloud, drops grow large enough for gravity to pull them down as rain; colder clouds can also produce snow.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A continuous sloping landscape from a farm hillside to a stream, a river, and the ocean; downhill arrows show surface water entering the stream and river, with labels 'runoff', 'stream', 'river', and 'ocean'.",
+          "visualKind": "picture",
+          "brief": "Rainwater flowing downhill over land is runoff. Gravity carries this water into streams and rivers that can lead back to the ocean.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": "processOrder",
+          "kind": "activity",
+          "visual": null,
+          "visualKind": "template",
+          "brief": "Starting with liquid ocean water, order this route: evaporation into gas (Sun), condensation into cloud drops (Cloud), wind carries the cloud inland (Wind), rain falls (CloudRain), runoff enters a river flowing to the ocean (Waves). Ask what must happen before cloud drops form: evaporation, not rainfall; explain each adjacent link using the changes already taught.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": "A cutaway of the farm's ground showing rain at the surface and downward arrows entering soil, with water occupying small spaces underground; label 'soil' and 'water underground'.",
+          "visualKind": "picture",
+          "brief": "Rain does not always flow straight into a river. Some rain on the farm soaks into soil and may remain underground before moving onward.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "explanation",
+          "visual": null,
+          "visualKind": "none",
+          "brief": "The water cycle repeats without one required starting point or route. Rain falling directly into the ocean can evaporate again without ever passing through a river.",
+          "skills": [
+            0
+          ]
+        },
+        {
+          "activityTemplate": null,
+          "kind": "application",
+          "visual": "One coastal landscape with ocean at left, clouds over an inland hillside, rain on the hillside, a stream leading downhill into a reservoir, and exposed soil beside the stream; label 'ocean', 'clouds', 'soil', 'stream', and 'reservoir', without process labels or route arrows.",
+          "visualKind": "picture",
+          "brief": "A town's reservoir rises after a storm carried in from the ocean: trace one possible route from ocean water to stored reservoir water, naming the changes and what moves the water. Expect evaporation powered by sunlight, condensation, wind inland, precipitation, and downhill runoff pulled by gravity; reject the claim that all rain must reach the reservoir because some can soak into soil.",
+          "skills": [
+            0
+          ]
+        }
+      ],
+      "skills": [
+        {
+          "description": "Follow water as it changes form and moves between the ocean, air, land, and rivers along repeating routes.",
+          "example": "Ocean water evaporates, forms cloud drops, falls as rain inland, and flows through a river back to the ocean.",
+          "hard": false,
+          "name": "Trace water through the water cycle",
+          "topic": "Water cycle",
+          "useCase": "Explain how ocean water can become inland rain that supplies rivers and reservoirs."
+        }
+      ],
+      "title": "The water cycle"
+    }
+  ]
+}

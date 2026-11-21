@@ -91,6 +91,7 @@ function getExportEntries({
 async function TaskModelHeader({ params }: TaskModelRouteProps) {
   const content = await getTaskModelContentFromParams(params);
   const { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName } = content;
+  const summary = getSummary(content);
 
   return (
     <EvalPageTop
@@ -103,7 +104,7 @@ async function TaskModelHeader({ params }: TaskModelRouteProps) {
             outputs: generatedOutputs?.outputs ?? [],
             results: results?.results ?? [],
           })}
-          summary={getSummary(content)}
+          summary={summary}
           taskId={taskId}
           taskName={taskName}
         />
@@ -119,7 +120,7 @@ async function TaskModelHeader({ params }: TaskModelRouteProps) {
     >
       <p className="text-muted-foreground font-mono text-xs">
         {outputStatus.completedOutputs} of {outputStatus.totalOutputs} outputs written ·{" "}
-        {results?.results.length ?? 0} scored
+        {summary.scored} scored
       </p>
     </EvalPageTop>
   );

@@ -1,0 +1,479 @@
+{
+  "deadline": "Sales briefing with {{ops}} today at 3:00 p.m.",
+  "endings": [
+    {
+      "id": "ready",
+      "outcome": "You deliver paid sales of $500.00 with a traceable working copy and change log. The unknown channel stays visible without removing a valid sale or blocking the requested total."
+    },
+    {
+      "id": "held",
+      "outcome": "The checked $500.00 total stays on hold while the channel lookup is pending. The missing channel remains visible, but it delays a total that does not need a channel breakdown."
+    },
+    {
+      "id": "unchecked",
+      "outcome": "You pass along the AI draft’s $520.00 as the briefing estimate. The figure looks usable, but without comparing retained order IDs and amounts with the source, it remains unchecked."
+    }
+  ],
+  "meters": [
+    {
+      "id": "confidence",
+      "label": "Confidence in the sales total",
+      "start": 25,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Briefing preparation capacity",
+      "start": 80,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "The export lists paid orders, identified by order ID. Deliver **today's paid-sales total** and a short cleanup note for the sales briefing.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": -5
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "whole-row",
+          "next": "missing",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "improve",
+              "text": "The log exposed an exact repeat, but the test still depends on every cell matching. Use order ID to find records of the same sale even when channel text differs.",
+              "example": "“Group the source by order ID and show the amount and channel for each record.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The log removes an exact repeat of order 4106: $100.00, Store. It also drops order 4103: $60.00, channel blank, with its ID and amount present."
+            },
+            {
+              "from": "analyst",
+              "text": "That saves us another pass for now. But duplicates are records of the same sale, and matching every cell doesn’t catch a sale whose channel text differs."
+            }
+          ],
+          "text": "Use matching values across the whole row as the test, and inspect the draft’s removal log.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 25
+            },
+            {
+              "meter": "capacity",
+              "change": -15
+            }
+          ],
+          "id": "order-id",
+          "next": "verify",
+          "notes": [
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "Grouping by order ID exposed the repeated sale hidden behind “Store” and “store ”, along with the blank channel and inconsistent labels. You checked which records represented the same order.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Grouped results: 4101—$120.00, Online; 4102—$80.00, Store and \"store \"; 4103—$60.00, channel blank. Order 4103 has its ID and amount."
+            },
+            {
+              "from": "ai",
+              "text": "4104—$90.00, WEB; 4105—$50.00, online; 4106—$100.00, Store, with an exact repeat. There are 6 distinct paid orders; the source is unchanged."
+            },
+            {
+              "from": "analyst",
+              "text": "That review took some prep time, but exposed duplicates: records of the same sale. The guide maps Online, online and WEB to Online; Store and \"store \" to Store—the last has lowercase text and a trailing space."
+            }
+          ],
+          "text": "Ask {{ai}} to group the source by order ID and show amounts and channels, leaving the source unchanged.",
+          "timeJump": null
+        }
+      ],
+      "id": "duplicates",
+      "messages": [
+        {
+          "from": "ops",
+          "text": "Can we reuse the draft for the 3:00 p.m. briefing? Matching whole rows is the spreadsheet tool I usually use."
+        },
+        {
+          "from": "analyst",
+          "text": "The original export is untouched. What rule do you want to use to decide which records count as duplicates?"
+        }
+      ],
+      "prompt": "How do you check for repeated sales records?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -20
+            }
+          ],
+          "id": "retain-order",
+          "next": "verify",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You kept order 4103 because its ID and paid amount are usable. A missing channel does not make that sale unusable for the requested total.",
+              "example": null
+            },
+            {
+              "skill": "spot",
+              "kind": "good",
+              "text": "The broader comparison found order 4102 under differently written channel labels. Checking order identity caught what whole-row matching missed.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The comparison shows 4101—$120.00, Online; 4102—$80.00, Store and \"store \"; 4103—$60.00, channel blank, with its ID and amount present."
+            },
+            {
+              "from": "ai",
+              "text": "Also: 4104—$90.00, WEB; 4105—$50.00, online; 4106—$100.00, Store, with an exact repeat. The source contains 6 distinct paid orders."
+            },
+            {
+              "from": "analyst",
+              "text": "That took another pass, but keeps the valid sale. The guide maps Online, online and WEB to Online, and Store and \"store \" to Store; lowercase text and a trailing space hid the repeated 4102."
+            }
+          ],
+          "text": "Keep orders with IDs and amounts; compare order IDs and use the channel guide to set cleanup rules.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "complete-records",
+          "next": "unchecked",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "improve",
+              "text": "The exclusion note explains the draft, but it does not justify removing order 4103 from paid sales. Keep its known amount and leave the missing channel visible.",
+              "example": "“Keep order 4103 and mark its channel Unknown.”"
+            },
+            {
+              "skill": "spot",
+              "kind": "improve",
+              "text": "Accepting the complete-record draft also leaves the whole-row duplicate test unresolved. Compare order IDs to check whether differently written records represent the same sale.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "ops",
+              "text": "I can reuse this sheet and pass along $520.00 as the estimate. I’ll include the note about excluded records."
+            },
+            {
+              "from": "analyst",
+              "text": "The note makes the exclusion visible, but order 4103 still has a paid amount we need. A blank channel doesn’t erase that sale, and the repeated-order check remains unresolved."
+            }
+          ],
+          "text": "Send the complete-record draft as the briefing estimate, with a note that records with blanks were excluded.",
+          "timeJump": null
+        }
+      ],
+      "id": "missing",
+      "messages": [
+        {
+          "from": "ops",
+          "text": "I’d rather keep the sheet without blanks. We can reuse it in reports, and sticking with this draft saves another cleanup pass."
+        },
+        {
+          "from": "analyst",
+          "text": "Order 4103 is in the source with $60.00 and an order ID. Its channel is blank."
+        }
+      ],
+      "prompt": "What do you do with the order whose channel is blank?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "count-check",
+          "next": "unchecked",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "improve",
+              "text": "Matching the draft’s row count to the distinct-order count checks its size, not its contents. Trace retained order IDs and amounts back to the source.",
+              "example": "“Show which source order each retained row represents.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "ops",
+              "text": "I’ll use $520.00 with the cleanup description. That leaves more time to put the briefing together."
+            },
+            {
+              "from": "analyst",
+              "text": "The row count matches, but it doesn’t tell us which orders survived. A missing sale and a retained repeat can hide behind the same count."
+            }
+          ],
+          "text": "Use the matching row count as the check, and send the draft total with its cleanup description.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 35
+            },
+            {
+              "meter": "capacity",
+              "change": -20
+            }
+          ],
+          "id": "reconcile",
+          "next": "release",
+          "notes": [
+            {
+              "skill": "verify",
+              "kind": "good",
+              "text": "You compared order identities and amounts with the source and independently added the distinct orders. That exposed the draft’s $20.00 error despite its matching row count.",
+              "example": null
+            },
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "The working copy keeps the source intact and records removed repeats and label mappings. Retaining order 4103 with Unknown makes the unresolved field visible without losing its sale.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The corrected working copy has 6 rows, no repeated order IDs, and order 4103’s channel marked Unknown. The log records removed repeats and channel-label mappings; the source is unchanged."
+            },
+            {
+              "from": "analyst",
+              "text": "The source check took prep time: $120.00 + $80.00 + $60.00 + $90.00 + $50.00 + $100.00 = $500.00. Repeats added $180.00 to the source; the draft is $20.00 high despite its correct row count."
+            }
+          ],
+          "text": "Ask {{ai}} for a logged copy by order ID; compare IDs and amounts with the source and add the distinct orders.",
+          "timeJump": null
+        }
+      ],
+      "id": "verify",
+      "messages": [
+        {
+          "from": "ops",
+          "text": "The source has 6 distinct paid orders, and the draft has 6 rows. That looks like a useful cross-check, and it leaves me time to prepare the briefing."
+        },
+        {
+          "from": "analyst",
+          "text": "The source comparison and channel guide are available. What check do you want behind the sales figure we send?"
+        }
+      ],
+      "prompt": "How do you validate the AI draft’s paid-sales total?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 10
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "deliver-total",
+          "next": "ready",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You delivered the supported paid-sales total while keeping Unknown visible. The cleanup fits the requested calculation without pretending the sheet is ready for a complete channel breakdown.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ops",
+              "text": "Thanks, I’ll use $500.00 for paid sales. I’ll explain that Unknown limits the channel breakdown, not this total."
+            },
+            {
+              "from": "analyst",
+              "text": "The note takes a little briefing space, but it keeps the boundary clear. The paid amount is known even though the channel isn’t."
+            }
+          ],
+          "text": "Send the checked total and cleanup note, with the missing channel explicitly marked Unknown.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": -15
+            }
+          ],
+          "id": "wait-channel",
+          "next": "held",
+          "notes": [
+            {
+              "skill": "clean",
+              "kind": "good",
+              "text": "You left the channel unresolved and asked {{ops}} to confirm it rather than guessing. That preserves the distinction between known and missing information.",
+              "example": null
+            },
+            {
+              "skill": "clean",
+              "kind": "improve",
+              "text": "Holding the report uses briefing capacity without improving the already checked total. Deliver paid sales with the limitation noted, and keep the channel lookup separate.",
+              "example": "“Paid sales are $500.00. The missing channel is marked Unknown pending confirmation.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "ops",
+              "text": "I’ll keep the report on hold while I look up the channel. That uses briefing prep time, but leaves open a fully populated sheet."
+            },
+            {
+              "from": "analyst",
+              "text": "Keeping the channel unresolved is honest. But we’re withholding a checked $500.00 total for a field that total paid sales doesn’t need."
+            }
+          ],
+          "text": "Hold the checked total and cleanup note while {{ops}} confirms the missing sales channel.",
+          "timeJump": null
+        }
+      ],
+      "id": "release",
+      "messages": [
+        {
+          "from": "analyst",
+          "text": "The checked total is $500.00, and the change log is ready. Order 4103’s channel is still Unknown."
+        },
+        {
+          "from": "ops",
+          "text": "Could we hold the report while I confirm that channel? I’d like a fully filled-in sheet for later channel reports, without an unresolved field to explain."
+        }
+      ],
+      "prompt": "What do you deliver for the sales briefing?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Paid-order export and AI draft",
+      "metrics": [
+        {
+          "label": "Original export rows",
+          "value": "8",
+          "note": null
+        },
+        {
+          "label": "Original amount total",
+          "value": "$680.00",
+          "note": null
+        },
+        {
+          "label": "AI draft rows",
+          "value": "6",
+          "note": null
+        },
+        {
+          "label": "AI draft paid sales",
+          "value": "$520.00",
+          "note": null
+        }
+      ],
+      "note": "AI draft: remove exact repeated rows, drop rows with any blank, then standardize channel labels. The original export is unchanged."
+    }
+  ],
+  "setting": "Afternoon at Bramble Cart",
+  "skills": [
+    {
+      "id": "spot",
+      "name": "Find problems in a data set",
+      "practice": "Inspect a small sheet and mark one repeated record, one blank field and one inconsistent label."
+    },
+    {
+      "id": "clean",
+      "name": "Clean data safely",
+      "practice": "Clean a copy of five messy rows and write a short note explaining each change and anything left unresolved."
+    },
+    {
+      "id": "verify",
+      "name": "Check what AI produced",
+      "practice": "Compare an AI-cleaned sheet with its source and trace one removed row and one retained row."
+    }
+  ],
+  "startNodeId": "duplicates",
+  "summary": [
+    "Duplicates represent the same real-world item even when some text differs.",
+    "A blank field does not make an entire record unusable for every calculation.",
+    "Check AI-cleaned data against source identities and values, not just row counts."
+  ],
+  "team": [
+    {
+      "id": "analyst",
+      "role": "Senior data analyst",
+      "expertise": "Knows the export structure and wants changes to remain traceable.",
+      "ai": false
+    },
+    {
+      "id": "ops",
+      "role": "Sales operations manager",
+      "expertise": "Needs a usable sales total for the briefing and wants to avoid rebuilding the report.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Can inspect rows, apply cleanup rules and calculate totals when given clear instructions.",
+      "ai": true
+    }
+  ],
+  "title": "What is today's paid-sales total?"
+}

@@ -1,0 +1,625 @@
+{
+  "deadline": "Rollout review with {{product}} in 4 business days.",
+  "endings": [
+    {
+      "id": "supported",
+      "outcome": "At the scheduled review, you recommend rollout with purchase rates of 10% versus 12% and a p-value of 0.43%. {{product}} accepts the recommendation as evidence of improvement, not a promise about future results."
+    },
+    {
+      "id": "delayed",
+      "outcome": "You recommend rollout for the observed improvement of 2 percentage points, without a revenue forecast. The larger sample supports the recommendation, but it arrives 6 business days after the scheduled review."
+    },
+    {
+      "id": "inconclusive",
+      "outcome": "The current checkout stays in place: the observed gap was 2 percentage points, but the p-value was 15.3%. The short experiment leaves rollout unresolved; it doesn't establish that the versions perform equally."
+    },
+    {
+      "id": "revision",
+      "outcome": "{{data}} returns the rollout brief because its recommendation goes beyond what the experiment supports. {{product}} keeps the current checkout live while the claim is revised, using more team capacity before a decision."
+    }
+  ],
+  "meters": [
+    {
+      "id": "confidence",
+      "label": "Recommendation confidence",
+      "start": 25,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Team capacity",
+      "start": 85,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "You support experiments for an online store. Recommend **whether to roll out the new checkout**, using enough evidence to distinguish a useful improvement from chance.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": -5
+            },
+            {
+              "meter": "capacity",
+              "change": 8
+            }
+          ],
+          "id": "short",
+          "next": "small-result",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "The short run preserved capacity, but it fell below the sample planned to detect a 2-percentage-point improvement. Match the sample to that useful difference, not just the earliest reporting date.",
+              "example": "Reserve 4,000 visitors per version, as recommended in the planning sheet."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "data",
+              "text": "That leaves room in the schedule, but gives us less chance of detecting the improvement we care about. Hypothesis testing checks a claim against what chance variation could produce."
+            }
+          ],
+          "text": "Reserve 1,000 visitors per version for an early answer, and send the results to {{product}}.",
+          "timeJump": {
+            "label": "1 business day later",
+            "panel": {
+              "title": "After 1 business day",
+              "metrics": [
+                {
+                  "label": "Current checkout purchases",
+                  "value": "100 among 1,000 visitors",
+                  "note": "Purchase rate: 10%"
+                },
+                {
+                  "label": "New checkout purchases",
+                  "value": "120 among 1,000 visitors",
+                  "note": "Purchase rate: 12%"
+                },
+                {
+                  "label": "Observed improvement",
+                  "value": "2 percentage points",
+                  "note": "20% relative lift: the increase compared with the current rate"
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 35
+            },
+            {
+              "meter": "capacity",
+              "change": -20
+            }
+          ],
+          "id": "planned",
+          "next": "explain-test",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You used the sample planned for the smallest useful improvement and requested a checked result. It targets at least an 80% chance of detecting that improvement if real, while fitting the review window.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "data",
+              "text": "That used the experiment slot through the review. It matched our useful improvement and the planned chance of detecting it."
+            },
+            {
+              "from": "ai",
+              "text": "Hypothesis testing checks a claim against chance variation. The p-value means that, with equal underlying purchase rates, a gap this large or larger in either direction has a 0.43% chance."
+            }
+          ],
+          "text": "Reserve 4,000 visitors per version for the review, and ask {{ai}} to check the completed sample.",
+          "timeJump": {
+            "label": "4 business days later",
+            "panel": {
+              "title": "Completed planned sample",
+              "metrics": [
+                {
+                  "label": "Current checkout purchases",
+                  "value": "400 among 4,000 visitors",
+                  "note": "Purchase rate: 10%"
+                },
+                {
+                  "label": "New checkout purchases",
+                  "value": "480 among 4,000 visitors",
+                  "note": "Purchase rate: 12%"
+                },
+                {
+                  "label": "Observed improvement",
+                  "value": "2 percentage points",
+                  "note": "20% relative lift: the increase compared with the current rate"
+                },
+                {
+                  "label": "p-value",
+                  "value": "0.43%",
+                  "note": "Below the agreed 5% cutoff"
+                }
+              ],
+              "note": "100% − 0.43% = 99.57%; that is not the probability that the new checkout is better."
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 40
+            },
+            {
+              "meter": "capacity",
+              "change": -45
+            }
+          ],
+          "id": "extended",
+          "next": "business-claim",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "The larger sample gave a more precise estimate of the purchase-rate difference.",
+              "example": null
+            },
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "That extra precision cost the scheduled review and more team capacity. The 4,000-visitors-per-version plan already targeted the improvement worth acting on.",
+              "example": "Use the recommended sample unless the decision needs a finer estimate."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "data",
+              "text": "The report took 10 business days, missing the review by 6 business days. We got a finer estimate, but tied up the slot longer than the planning target needed."
+            },
+            {
+              "from": "ai",
+              "text": "Hypothesis testing checks a claim against chance variation. The p-value is the chance of a gap this large or larger in either direction if the underlying purchase rates are equal."
+            }
+          ],
+          "text": "Reserve 10,000 visitors per version for a finer estimate, and request a report when it finishes.",
+          "timeJump": {
+            "label": "10 business days later",
+            "panel": {
+              "title": "Completed extended sample",
+              "metrics": [
+                {
+                  "label": "Current checkout purchases",
+                  "value": "1,000 among 10,000 visitors",
+                  "note": "Purchase rate: 10%"
+                },
+                {
+                  "label": "New checkout purchases",
+                  "value": "1,200 among 10,000 visitors",
+                  "note": "Purchase rate: 12%"
+                },
+                {
+                  "label": "Observed improvement",
+                  "value": "2 percentage points",
+                  "note": "20% relative lift: the increase compared with the current rate"
+                },
+                {
+                  "label": "p-value",
+                  "value": "Below 0.01%",
+                  "note": "Below the agreed 5% cutoff"
+                }
+              ],
+              "note": null
+            }
+          }
+        }
+      ],
+      "id": "sample",
+      "messages": [
+        {
+          "from": "product",
+          "text": "Can we reserve the shorter run? An early answer would help me clear the rollout calendar."
+        },
+        {
+          "from": "product",
+          "text": "I'd also consider the longest run if it gives us an estimate that's easier to defend."
+        },
+        {
+          "from": "data",
+          "text": "I can reserve the traffic once you choose. The planning sheet is ready, but I need to get back to the experiment setup."
+        }
+      ],
+      "prompt": "Which sample do you commit to?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -8
+            }
+          ],
+          "id": "explain-condition",
+          "next": "supported",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You kept the condition behind the p-value: the underlying purchase rates being equal. That makes the small p-value evidence against equal rates, not a probability that the new checkout is better.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "Your update paired the observed 10% versus 12% with a clear limit on future performance. That gives {{product}} an actionable recommendation without promising a repeat.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "product",
+              "text": "That takes a little more explaining, but I can use it. I'll present evidence for rollout, not a promise about what happens next."
+            },
+            {
+              "from": "data",
+              "text": "Yes—the 0.43% describes results we'd rarely see with equal underlying rates. It isn't a probability that our recommendation is right."
+            }
+          ],
+          "text": "Recommend rollout: 10% versus 12% is unlikely with equal underlying rates. That doesn't guarantee future results.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": -20
+            },
+            {
+              "meter": "capacity",
+              "change": 8
+            }
+          ],
+          "id": "probability-headline",
+          "next": "revision",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "Subtracting the p-value from 100% produced 99.57%, but not the probability that the new checkout is better. Keep the explanation tied to what could happen with equal underlying rates.",
+              "example": "\"With equal underlying purchase rates, a gap this large or larger in either direction has a 0.43% chance.\""
+            },
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The short headline was easy to repeat, but replaced the observed result and its limit with an unsupported probability. Give {{product}} the measured difference and a boundary on the claim.",
+              "example": "\"Purchase rates were 10% versus 12%, supporting rollout. The test doesn't guarantee future performance.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "product",
+              "text": "That's easy to fit into the brief. Can I really call it the chance that the new checkout is better?"
+            },
+            {
+              "from": "data",
+              "text": "No—the subtraction doesn't tell us that probability. The p-value describes results we'd see if the underlying rates were equal, so that headline needs another pass."
+            }
+          ],
+          "text": "Recommend rollout: “A 99.57% chance the new checkout is better.” Use that as the review headline.",
+          "timeJump": null
+        }
+      ],
+      "id": "explain-test",
+      "messages": [
+        {
+          "from": "product",
+          "text": "I need a headline I can repeat in the review. Can we give people a probability that the new checkout is better?"
+        },
+        {
+          "from": "data",
+          "text": "The checked results are in the report. What wording do you want in the rollout brief?"
+        }
+      ],
+      "prompt": "What do you tell {{product}}?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": -20
+            },
+            {
+              "meter": "capacity",
+              "change": 8
+            }
+          ],
+          "id": "revenue-forecast",
+          "next": "revision",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The revenue headline gave {{product}} a quick prioritization argument, but order values weren't measured. Keep the 20% relative lift attached to purchase completion rather than extending it to revenue.",
+              "example": "\"Purchase rates were 10% versus 12%. We recommend rollout for that improvement, without a revenue forecast.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "product",
+              "text": "That gives me a financial headline without another round of analysis. I'll use it to make the case for calendar space."
+            },
+            {
+              "from": "data",
+              "text": "We measured purchase completion, not order values. The clear purchase-rate difference doesn't establish the same revenue increase, so I can't approve that forecast."
+            }
+          ],
+          "text": "Use the 20% relative purchase lift as the revenue-growth forecast supporting the rollout recommendation.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 15
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "measured-outcome",
+          "next": "delayed",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You recommended rollout for the purchase-rate improvement the experiment measured. Leaving out a revenue forecast kept the business claim within the evidence, even though rebuilding the brief used capacity.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "product",
+              "text": "I'll need to rebuild the calendar request around purchases rather than revenue. It's more work, but I can stand behind that claim."
+            },
+            {
+              "from": "data",
+              "text": "The report supports that: purchase rates were 10% versus 12%. Without order values, it doesn't tell us the revenue change."
+            }
+          ],
+          "text": "Recommend rollout for the 2-percentage-point purchase improvement, without adding a revenue-growth forecast to the brief.",
+          "timeJump": null
+        }
+      ],
+      "id": "business-claim",
+      "messages": [
+        {
+          "from": "product",
+          "text": "We've missed the review, so I need a strong reason to get rollout back on the calendar. Can I use the 20% relative purchase lift as our revenue-growth forecast?"
+        },
+        {
+          "from": "data",
+          "text": "The completion report is ready for the brief. What business claim should I put beside the purchase results?"
+        }
+      ],
+      "prompt": "What claim do you put in the rollout brief?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 5
+            }
+          ],
+          "id": "use-visible-lift",
+          "next": "revision",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The observed gap matched the useful improvement, but that alone didn't show it was distinguishable from chance. Check the test result rather than treating the size of the gap as sufficient evidence.",
+              "example": "Ask {{ai}} to check the purchase counts and test the difference."
+            },
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Mentioning the short sample made a limitation visible, but didn't supply the missing support for rollout. Let the check determine whether the update can recommend rollout or must leave the question open.",
+              "example": "\"We observed a 2-percentage-point improvement. We still need to check what this short sample supports.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "product",
+              "text": "That gives me an answer now, and I'll keep the short-sample caveat in the brief."
+            },
+            {
+              "from": "data",
+              "text": "The caveat is useful, but we still haven't checked whether chance could reasonably explain this gap. Its size alone doesn't settle that."
+            }
+          ],
+          "text": "Recommend rollout from the 2-percentage-point lift, and tell {{product}} that this was a short sample.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "confidence",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -10
+            }
+          ],
+          "id": "check-and-limit",
+          "next": "inconclusive",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You asked for a verified test instead of relying on the useful-looking gap. The 15.3% p-value was above the agreed 5% cutoff, leaving the improvement unresolved rather than establishing equal performance.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You limited the recommendation to what the short sample supported. That gave {{product}} a reason to keep the current checkout without turning an inconclusive result into a claim of no difference.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "The counts check out: 100 among 1,000 versus 120 among 1,000. The p-value is 15.3%: with equal underlying rates, that's the chance of a gap this large or larger in either direction, above the agreed 5% cutoff."
+            },
+            {
+              "from": "product",
+              "text": "Thanks for checking, even though it takes more work and leaves me without an immediate rollout recommendation. I'll keep the current checkout; this doesn't tell us the versions are equal."
+            }
+          ],
+          "text": "Ask {{ai}} to verify the test calculation, then give {{product}} a recommendation based on that check.",
+          "timeJump": null
+        }
+      ],
+      "id": "small-result",
+      "messages": [
+        {
+          "from": "product",
+          "text": "We're seeing 10% versus 12%—that's the improvement we wanted. Can we recommend rollout now and free up the experiment slot?"
+        },
+        {
+          "from": "data",
+          "text": "The short-run counts are ready. What do you want to send back to {{product}}?"
+        }
+      ],
+      "prompt": "How do you handle the short sample's result?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Experiment planning sheet",
+      "metrics": [
+        {
+          "label": "Current purchase rate",
+          "value": "10%",
+          "note": "Planning baseline"
+        },
+        {
+          "label": "Minimum useful improvement",
+          "value": "2 percentage points",
+          "note": "From 10% to 12%"
+        },
+        {
+          "label": "Recommended sample",
+          "value": "4,000 visitors per version",
+          "note": "At least 80% chance to detect the target improvement if real"
+        },
+        {
+          "label": "Rollout review",
+          "value": "In 4 business days",
+          "note": null
+        }
+      ],
+      "note": "Random assignment; each visitor counted once. Records purchase completion, not order values."
+    },
+    {
+      "title": "Traffic and test settings",
+      "metrics": [
+        {
+          "label": "Daily traffic per version",
+          "value": "1,000 visitors",
+          "note": "Per business day"
+        },
+        {
+          "label": "Short sample option",
+          "value": "1,000 visitors per version",
+          "note": null
+        },
+        {
+          "label": "Extended sample option",
+          "value": "10,000 visitors per version",
+          "note": null
+        },
+        {
+          "label": "Test cutoff",
+          "value": "5%",
+          "note": "Difference in either direction"
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Monday at Lantern Cart",
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Separate a difference from chance",
+      "practice": "For one experiment summary, explain what its p-value says about results that chance alone could produce."
+    },
+    {
+      "id": "sample",
+      "name": "Choose a useful sample size",
+      "practice": "Choose a sample from three options for one stated minimum useful improvement, and explain the tradeoff."
+    },
+    {
+      "id": "explain",
+      "name": "Explain what a test supports",
+      "practice": "Write a two-sentence experiment update that states the observed difference and one limit on the conclusion."
+    }
+  ],
+  "startNodeId": "sample",
+  "summary": [
+    "Choose a sample size that can detect the smallest improvement worth acting on.",
+    "A p-value describes how likely a result at least as extreme would be if the underlying rates were equal, not the probability that a change is better.",
+    "A test supports claims about the outcome it measured, not automatically about other business outcomes."
+  ],
+  "team": [
+    {
+      "id": "data",
+      "role": "Experimentation analyst",
+      "expertise": "She owns the experiment design and wants conclusions that match the evidence.",
+      "ai": false
+    },
+    {
+      "id": "product",
+      "role": "Store manager",
+      "expertise": "He controls the rollout calendar and wants a decision at the scheduled review.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI analysis assistant",
+      "expertise": "Checks sample calculations and test results when asked; people own the recommendation.",
+      "ai": true
+    }
+  ],
+  "title": "Does the new checkout deserve a rollout?"
+}

@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-particle-in-a-box-advanced",
+        "claimId": "399d32004572ae00",
+        "criterion": "clarity",
+        "observationId": "97b4b7b49fd53e697e5acd7914a46652bbfe8a2a60339a58f9a6c97e381043d0.first.37c5d6fa-efc8-470a-9f82-aaf289d76823.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00368245,
+    "id": "9885d5f8b10a4fc93c38f3782d2257b5f7700316b56923737c5f1a96dff23dc1",
+    "packet": [
+      {
+        "A": {
+          "blob": "143064c4bd0b04d7c58235ecffc4f5eb2f808336d44336c1b29849f7fd91d763",
+          "format": "text"
+        },
+        "B": {
+          "blob": "5d48edb42d86961d01f9a263610cd5e2dbb32692290b3af67e3f7df07853297b",
+          "format": "text"
+        },
+        "claim": "Uses ψ on screen 2 and the integral of |ψ|² = 1 on screen 7 without ever naming or explaining what the wave function ψ is or that |ψ|² represents probability density, breaking the expectation to explain each new term when it first appears.",
+        "claimId": "399d32004572ae00",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "3c587294f43c7027889d63b1acb62e565747ad7e21b91f826bafa6df8f5ec6a9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d0d1610e53699d022ef6e26bfd37de01ecc85f20eaec13c2dfb3b6413defc7d6",
+          "format": "json"
+        },
+        "location": {
+          "detail": "screens 2 and 7",
+          "kind": "range"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
+          "format": "text"
+        },
+        "B": {
+          "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
+          "format": "text"
+        },
+        "claim": "A tela 2 diz que a estabilidade vem depois de três anos, mas a fonte do input fala em dois anos de exercício.",
+        "claimId": "a646190539bae2a3",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
+          "format": "text"
+        },
+        "input": {
+          "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "399d32004572ae00",
+          "finding": "holds",
+          "reason": "In output A, ψ appears on screen 2 (\"Because ψ must be continuous\") and the normalization ∫|ψ|²dx = 1 appears on screen 7, but neither names ψ as the wave function or says |ψ|² is a probability density. Output B names ψ as the wave function with its probability meaning on screen 3, so the problem is not shared."
+        },
+        {
+          "claimId": "a646190539bae2a3",
+          "finding": "doesn't hold",
+          "reason": "Output A's screen 2 says stability comes after three years of effective exercise, which matches Art. 41 of the input source. The source says \"três anos\", not two, so the claimed conflict is not there."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

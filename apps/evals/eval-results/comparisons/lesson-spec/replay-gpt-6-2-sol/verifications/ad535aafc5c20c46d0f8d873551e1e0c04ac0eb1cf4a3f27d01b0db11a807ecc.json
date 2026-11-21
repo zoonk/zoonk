@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-mapa-imperio-romano",
+        "claimId": "996d1df717a2ee15",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "e2123c26177fcb5d58b2ea3444f2181977a2dafb778ed14d0d1f09fa14512129.second.1a5d1cdb-43b9-4b39-a6fb-9d380e6caef5.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0019584,
+    "id": "ad535aafc5c20c46d0f8d873551e1e0c04ac0eb1cf4a3f27d01b0db11a807ecc",
+    "packet": [
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "42458d295fa41ee995a955a9c1a5eaee165eccade705f52833cb509c7667f061",
+          "format": "text"
+        },
+        "claim": "The plan's application screen asks the learner to compute a compound annual growth rate.",
+        "claimId": "61283a77e4fc8a2b",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+          "format": "text"
+        },
+        "B": {
+          "blob": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+          "format": "text"
+        },
+        "claim": "The guess asks what a traveler would find along the Mediterranean coast, but the screen has no visual, so the learner has to picture the coast and its ports to answer.",
+        "claimId": "996d1df717a2ee15",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "9f85471e06fe5e54cf42319005000e430f49b10ef344865829daed20c849f940",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6b1e640eeda1dcc69e4efb30ebff393dbb458337b8542728e8cc9c17040057bf",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Perguntar: no auge dessa expansão, o que um viajante encontraria ao percorrer todo o litoral do Mediterrâneo?",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "61283a77e4fc8a2b",
+          "finding": "doesn't hold",
+          "reason": "The application asks learners to calculate the overall change from $4,000 to $3,000, which is a 25% decrease—not a compound annual growth rate. The other output’s application asks the same thing."
+        },
+        {
+          "claimId": "996d1df717a2ee15",
+          "finding": "holds",
+          "reason": "Output A’s guess asks what a traveler would find along the Mediterranean coast and has no visual, so the learner must reason about the geography without a map. Output B’s guess includes a map visual."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

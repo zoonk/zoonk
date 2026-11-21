@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-en-lever",
+  "challenger": {
+    "costUsd": 0.058979000000000004,
+    "durationMs": 51006.438417,
+    "hash": "23ec55f7392e02a620ebf46011ecf8211485fedba0d6d843aa68686d44c73f91",
+    "userPromptHash": "c5cdbc93d62f4f15102e087a30cce7cd977a076332cdec234dce18bd49444241"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.05685900000000001,
+    "durationMs": 75671.968583,
+    "hash": "6d723fb0be86c2907d11e6e86aa402ca2e2043628a8c081b986007a2a87636c8",
+    "userPromptHash": "c5cdbc93d62f4f15102e087a30cce7cd977a076332cdec234dce18bd49444241"
+  },
+  "run": 1
+}

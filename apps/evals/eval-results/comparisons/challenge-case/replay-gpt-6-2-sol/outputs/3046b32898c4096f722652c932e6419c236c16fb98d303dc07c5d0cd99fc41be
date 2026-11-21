@@ -1,0 +1,698 @@
+{
+  "deadline": "Before the next bedside schedule is set",
+  "endings": [
+    {
+      "id": "adopted",
+      "outcome": "The nursing lead authorizes the new script based on the planned comparison: 70% versus 55% comfort, with a p-value of about 2.8%. Your handoff makes clear that neither the exact benefit nor an individual patient's response is guaranteed."
+    },
+    {
+      "id": "retained",
+      "outcome": "The usual script stays in place. Your handoff explains that the pilot's 70% versus 55% comfort result, with a p-value of about 16.6%, leaves improvement unresolved rather than showing equal effectiveness."
+    },
+    {
+      "id": "pending",
+      "outcome": "The usual script stays in place for the next schedule. Adoption awaits a handoff that pairs a checked comparison with a conclusion the evidence supports."
+    }
+  ],
+  "meters": [
+    {
+      "id": "clarity",
+      "label": "Decision-ready evidence",
+      "start": 25,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Bedside capacity",
+      "start": 85,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Decide whether to **adopt a new bedtime comfort check** based on a fair comparison with the usual check. You must give the nursing team a recommendation before the next bedside schedule is set.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": 5
+            },
+            {
+              "meter": "clarity",
+              "change": -5
+            }
+          ],
+          "id": "pilot",
+          "next": "pilot-evidence",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You kept the smaller collection's role clear by treating it as preliminary evidence rather than a completed adoption study.",
+              "example": null
+            },
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "The pilot saved documentation time, but gave up the sample planned to detect a useful improvement. The feasible target of 100 patients per group better matched the schedule decision.",
+              "example": "Use the agreed sample and protect its documentation time."
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "The pilot tally is in. That was less documentation to fit around bedside care."
+            },
+            {
+              "from": "research",
+              "text": "Hypothesis testing checks whether a difference could be due to chance. This pilot gives us an early look, but not the sample we planned for the adoption question."
+            }
+          ],
+          "text": "Run the smaller pilot and use the results as a preliminary look.",
+          "timeJump": {
+            "label": "When the smaller pilot finishes",
+            "panel": {
+              "title": "Pilot collection complete",
+              "metrics": [
+                {
+                  "label": "Comfortable with new script",
+                  "value": "28 of 40 patients",
+                  "note": "70% report being comfortable."
+                },
+                {
+                  "label": "Comfortable with usual script",
+                  "value": "22 of 40 patients",
+                  "note": "55% report being comfortable."
+                },
+                {
+                  "label": "Comfort-rate gap",
+                  "value": "15 percentage points",
+                  "note": "Higher with the new script."
+                }
+              ],
+              "note": "Preliminary results from the smaller pilot."
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 15
+            },
+            {
+              "meter": "capacity",
+              "change": -20
+            }
+          ],
+          "id": "planned",
+          "next": "full-evidence",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You matched the sample to the adoption question and the useful improvement, rather than choosing only by paperwork. Protecting time made the planned collection feasible.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "The planned collection is complete. It took more documentation time, but required care stayed unchanged."
+            },
+            {
+              "from": "research",
+              "text": "For hypothesis testing—checking whether a difference could be due to chance—we have the agreed sample. It was planned around the improvement worth detecting."
+            }
+          ],
+          "text": "Use the agreed sample and reserve the bedside time for its documentation.",
+          "timeJump": {
+            "label": "When the planned collection finishes",
+            "panel": {
+              "title": "Planned collection complete",
+              "metrics": [
+                {
+                  "label": "Comfortable with new script",
+                  "value": "70 of 100 patients",
+                  "note": "70% report being comfortable."
+                },
+                {
+                  "label": "Comfortable with usual script",
+                  "value": "55 of 100 patients",
+                  "note": "55% report being comfortable."
+                },
+                {
+                  "label": "Comfort-rate gap",
+                  "value": "15 percentage points",
+                  "note": "Higher with the new script."
+                }
+              ],
+              "note": "The agreed collection target has been reached."
+            }
+          }
+        }
+      ],
+      "id": "sample",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "I can protect the documentation time, but the smaller pilot would leave more room for bedside work. I'd rather keep the paperwork light while we try a different routine."
+        },
+        {
+          "from": "research",
+          "text": "The collection window can fit either option without reducing required care. Which sample should I put on the collection sheet?"
+        }
+      ],
+      "prompt": "Which collection plan do you choose?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "test",
+          "next": "full-handoff",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You checked the actual response counts against the agreed cutoff. The 2.8% result addresses how unusual this gap would be in comparable random comparisons if the scripts worked equally well.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Comparing 70 of 100 with 55 of 100 gives a p-value of about 2.8%, below the agreed 5% cutoff. This is the chance of a gap this large or larger in either direction if the scripts work equally well."
+            },
+            {
+              "from": "research",
+              "text": "That used our protected handoff slot. The result supports an improvement, but it doesn't pin down the exact benefit or guarantee better comfort for every patient."
+            }
+          ],
+          "text": "Ask {{ai}} to compare the response counts and explain the result if the scripts work equally well.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": 5
+            },
+            {
+              "meter": "clarity",
+              "change": -10
+            }
+          ],
+          "id": "percentages",
+          "next": "unchecked-handoff",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The percentages describe the result, but leave chance unexplored. Use the response counts in the planned test to check whether the gap clears the agreed cutoff.",
+              "example": "\"Please compare the counts and explain how unusual this gap would be if the scripts worked equally well.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I can put those percentages into the handoff quickly. But random assignment alone doesn't tell me how unusual this gap would be if the scripts worked equally well."
+            }
+          ],
+          "text": "Build the recommendation around the higher comfort percentage and the random assignment used for the comparison.",
+          "timeJump": null
+        }
+      ],
+      "id": "full-evidence",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "The new script came out ahead, and the team put a lot into collecting these responses. Can we build the recommendation around those percentages?"
+        },
+        {
+          "from": "research",
+          "text": "Collection is closed at the agreed target. What would you like me to include in the handoff?"
+        }
+      ],
+      "prompt": "How do you prepare the comparison for the handoff?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": 5
+            },
+            {
+              "meter": "clarity",
+              "change": -10
+            }
+          ],
+          "id": "direction",
+          "next": "unchecked-handoff",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The pilot's direction is promising, but a gap from a small sample can still be due to chance. Check its actual counts against the agreed cutoff before treating it as support for adoption.",
+              "example": "\"Please test the pilot counts and explain what they support.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That gives me a quick scheduling proposal. I'm still missing how much the pilot tells us beyond the new script coming out ahead in this group."
+            }
+          ],
+          "text": "Use the higher comfort rate to recommend the new script for the next bedside schedule.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "test",
+          "next": "pilot-handoff",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You used the pilot's counts, not just its percentage gap. Its 16.6% result does not clear the 5% cutoff, showing why the number of observations matters when judging a promising difference.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "Comparing 28 of 40 with 22 of 40 gives a p-value of about 16.6%, above 5%. This measures how often equally effective scripts would produce a gap this large or larger in either direction."
+            },
+            {
+              "from": "research",
+              "text": "The check took a handoff slot. The pilot doesn't give enough evidence to separate this gap from chance at our cutoff, but it doesn't show that the scripts work equally well either."
+            }
+          ],
+          "text": "Ask {{ai}} to test the pilot counts against the agreed cutoff and explain the result.",
+          "timeJump": null
+        }
+      ],
+      "id": "pilot-evidence",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "The new script has the higher comfort rate, and we kept the documentation manageable. I'd like to turn that into a recommendation for the next schedule."
+        },
+        {
+          "from": "research",
+          "text": "The pilot tally is complete at 40 patients per group. What do you want included with those results?"
+        }
+      ],
+      "prompt": "What do you do with the pilot results?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 5
+            },
+            {
+              "meter": "capacity",
+              "change": -15
+            }
+          ],
+          "id": "extend",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You recognized that the positive test does not establish the exact size of the benefit. Seeking a more precise estimate is a valid aim.",
+              "example": null
+            },
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "Requiring a larger sample because the observed gain is below 20 percentage points changes the decision rule after seeing the result. That planning value was not the nursing lead's adoption threshold.",
+              "example": "\"The planned test supports adoption, though the exact benefit remains uncertain.\""
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "research",
+              "text": "More responses could help narrow the estimated benefit, but 20 percentage points was a planning assumption, not an adoption requirement. We've reached the agreed finish."
+            },
+            {
+              "from": "charge",
+              "text": "I'll leave adoption open. A larger collection would need more bedside documentation time."
+            }
+          ],
+          "text": "Request a larger comparison: the gain is below the improvement used in planning, so I'd like more responses before recommending adoption.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "bounded",
+          "next": "adopted",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You made the positive planned result usable without turning the observed gap into a guaranteed benefit. Your recommendation separates evidence of improvement from certainty about its size or individual outcomes.",
+              "example": null
+            },
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You used the agreed sample's completed test for the intended decision. You did not turn the improvement used in sample planning into a new adoption threshold.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That takes a little more explanation than calling it a win, but I can use it. I'll send the adoption recommendation with those limits to the nursing lead."
+            }
+          ],
+          "text": "Recommend adoption: the planned test supports better comfort on average, but the exact benefit and each patient's response remain uncertain.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": 5
+            },
+            {
+              "meter": "clarity",
+              "change": -15
+            }
+          ],
+          "id": "certainty",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The adoption recommendation has support, but the promised expectation goes beyond the test. Describe the observed improvement as an estimate, not the benefit future patients can count on.",
+              "example": "\"The test supports better comfort on average; the exact benefit and each patient's response remain uncertain.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That's easy to pass along, but I can't present the measured gain as a settled expectation. The test supports improvement, not an exact future benefit or better comfort for every patient."
+            }
+          ],
+          "text": "Recommend adoption: use the measured comfort improvement as the benefit future patients can expect when the new script becomes routine.",
+          "timeJump": null
+        }
+      ],
+      "id": "full-handoff",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "I'd love to tell the team their work paid off with a clear win. What can I say patients should expect?"
+        },
+        {
+          "from": "research",
+          "text": "The observed gain is 15 percentage points; we used 20 percentage points when planning. What recommendation do you want in the handoff?"
+        }
+      ],
+      "prompt": "What recommendation do you send to the nursing lead?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "bounded",
+          "next": "retained",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You separated the immediate scheduling choice from a claim of equality. The pilot's 16.6% result leaves improvement unresolved at the agreed cutoff; it does not show that the scripts work equally well.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I'll keep the usual script on the schedule. I'll need to explain that the visible gap is still unresolved, not that we've ruled out a useful improvement."
+            }
+          ],
+          "text": "Keep the usual script for now; explain that the pilot leaves improvement unresolved rather than showing the scripts work equally well.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": 5
+            },
+            {
+              "meter": "clarity",
+              "change": -15
+            }
+          ],
+          "id": "equal",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Keeping the usual script is supportable, but saying the scripts are equally effective is not. A result above the cutoff means this pilot did not settle the difference, not that it proved there is none.",
+              "example": "\"We'll keep the usual script because the pilot leaves the improvement unresolved.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "research",
+              "text": "That would close the paperwork, but this test didn't establish equality. With this small pilot, not finding enough evidence of improvement still leaves improvement possible."
+            }
+          ],
+          "text": "Keep the usual script in place; explain that the test found the scripts equally effective and the comparison can now be closed.",
+          "timeJump": null
+        }
+      ],
+      "id": "pilot-handoff",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "The pilot didn't clear the cutoff. Can I tell the team the scripts work equally well and close this out?"
+        }
+      ],
+      "prompt": "How do you explain the pilot result in the handoff?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": 5
+            },
+            {
+              "meter": "clarity",
+              "change": -10
+            }
+          ],
+          "id": "recommend",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "The higher observed rate describes the collected responses, but it is not a checked test result. Label what was observed separately from what the planned comparison can support.",
+              "example": "\"The new script had the higher observed rate; we need the planned test before recommending a practice change.\""
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "That gives me a clear proposal, but I can't move it forward on the tally alone. We still haven't checked whether chance could reasonably account for the gap."
+            }
+          ],
+          "text": "Present the higher comfort rate as support for changing the routine, and ask the nursing lead to adopt the new script.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "clarity",
+              "change": 10
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "qualify",
+          "next": "pending",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You distinguished the observed direction from a tested conclusion. Requesting the missing comparison prevents an unchecked gap from becoming a practice claim, even though adoption remains unresolved for this schedule.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "charge",
+              "text": "I'll label those as observed results and leave the usual script on the schedule. The test still needs handoff time, so adoption stays open rather than resting on an unchecked claim."
+            }
+          ],
+          "text": "Describe the observed gap, keep the usual script for now, and request the planned test before making a practice-change recommendation.",
+          "timeJump": null
+        }
+      ],
+      "id": "unchecked-handoff",
+      "messages": [
+        {
+          "from": "charge",
+          "text": "The draft gives me the higher comfort rate, but no checked comparison. A recommendation to change would be easier to schedule around than an open question."
+        }
+      ],
+      "prompt": "What do you put in the handoff?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Bedside comparison plan",
+      "metrics": [
+        {
+          "label": "Usual-script planning rate",
+          "value": "50%",
+          "note": "Patients reporting comfort before lights out."
+        },
+        {
+          "label": "Useful improvement",
+          "value": "20 percentage points",
+          "note": "Used to plan the sample, not as an adoption threshold."
+        },
+        {
+          "label": "Planned sample",
+          "value": "100 patients per group",
+          "note": "About an 80% detection chance; 5% test cutoff."
+        },
+        {
+          "label": "Smaller pilot",
+          "value": "40 patients per group",
+          "note": "Less bedside documentation."
+        }
+      ],
+      "note": "Random assignment; one comfort response per patient. Capacity allows the planned sample without reducing required care. Test at collection end."
+    },
+    {
+      "title": "Decision agreement",
+      "metrics": [
+        {
+          "label": "Adoption basis",
+          "value": "Positive planned comparison",
+          "note": "The nursing lead authorizes any practice change."
+        },
+        {
+          "label": "If the handoff is unresolved",
+          "value": "Keep the usual script",
+          "note": "A checked comparison and a supportable conclusion are required."
+        }
+      ],
+      "note": "Both scripts leave required care unchanged."
+    }
+  ],
+  "setting": "Evening shift at Willowbend Ward",
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Tell a difference from chance",
+      "practice": "For one group comparison, write what a chance-only explanation would mean and what evidence would count against it."
+    },
+    {
+      "id": "sample",
+      "name": "Choose a sample size",
+      "practice": "Compare two proposed sample sizes with a stated target and explain which can answer the intended question."
+    },
+    {
+      "id": "explain",
+      "name": "Explain a test result",
+      "practice": "Explain one test result in two sentences: what it supports and what it does not establish."
+    }
+  ],
+  "startNodeId": "sample",
+  "summary": [
+    "Hypothesis testing checks how unusual an observed difference would be if there were no real difference.",
+    "Plan the sample size around the improvement worth detecting.",
+    "Not finding enough evidence of a difference does not establish that the options work equally well."
+  ],
+  "team": [
+    {
+      "id": "charge",
+      "role": "Charge nurse",
+      "expertise": "Knows the bedside workload and wants a clear recommendation for the next schedule.",
+      "ai": false
+    },
+    {
+      "id": "research",
+      "role": "Research nurse",
+      "expertise": "Designed the random assignment and sample plan; wants conclusions that match the evidence.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Calculates group comparisons and checks explanations when asked; does not authorize nursing practice changes.",
+      "ai": true
+    }
+  ],
+  "title": "Should the new bedtime comfort check become routine?"
+}

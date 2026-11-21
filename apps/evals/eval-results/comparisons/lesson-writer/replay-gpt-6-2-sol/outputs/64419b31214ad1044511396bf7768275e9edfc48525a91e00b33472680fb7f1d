@@ -1,0 +1,121 @@
+{
+  "screens": [
+    {
+      "image": {
+        "alt": "Ana recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega sorridente.",
+        "prompt": "Ana, adulta, recebe o crachá no primeiro dia na prefeitura, ao lado de uma colega."
+      },
+      "kind": "hookText",
+      "text": "Ana passou num concurso e tomou posse na prefeitura. No primeiro dia, uma colega diz: “Agora você está garantida para sempre.” Será que é isso mesmo?",
+      "visual": null
+    },
+    {
+      "exampleLineIdea": null,
+      "explore": null,
+      "image": null,
+      "kind": "explanation",
+      "text": "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem entra por concurso ganha essa garantia depois de **dois anos** (24 meses) trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
+      "title": "Dois anos e uma avaliação",
+      "visual": null
+    },
+    {
+      "image": null,
+      "kind": "hookGuess",
+      "options": [
+        {
+          "isCorrect": false,
+          "text": "Não, nunca mais"
+        },
+        {
+          "isCorrect": true,
+          "text": "Sim, nos casos que a Constituição prevê"
+        },
+        {
+          "isCorrect": false,
+          "text": "Só se ela pedir para sair"
+        }
+      ],
+      "question": "Depois de estável, Ana ainda pode perder o cargo?",
+      "reveal": "Sim, nos casos que a Constituição prevê. A próxima tela mostra quais são.",
+      "visual": null
+    },
+    {
+      "exampleLineIdea": null,
+      "explore": null,
+      "image": null,
+      "kind": "explanation",
+      "text": "Estabilidade não é para sempre. Por falta ou mau desempenho, o servidor estável pode perder o cargo por uma decisão da Justiça da qual não cabe mais recurso, por um **processo administrativo** (uma apuração feita pelo próprio órgão, em que ele pode se defender) ou por avaliações periódicas do seu trabalho, também com direito a defesa.",
+      "title": "Estável também pode sair",
+      "visual": null
+    },
+    {
+      "basis": null,
+      "context": null,
+      "image": null,
+      "kind": "check",
+      "options": [
+        {
+          "isCorrect": true,
+          "picture": null,
+          "reason": "Os três anos são só uma parte: sem a aprovação na avaliação, ele ainda não é estável.",
+          "text": "Não, falta ser aprovado na avaliação"
+        },
+        {
+          "isCorrect": false,
+          "picture": null,
+          "reason": "É a pegadinha mais comum: o tempo sozinho não dá estabilidade, a avaliação é obrigatória.",
+          "text": "Sim, três anos bastam"
+        },
+        {
+          "isCorrect": false,
+          "picture": null,
+          "reason": "A posse não dá estabilidade. Os três anos são de efetivo exercício, contados a partir do início do exercício.",
+          "text": "Sim, desde a posse"
+        }
+      ],
+      "question": "Pedro completou três anos de efetivo exercício em cargo efetivo, mas a comissão ainda não avaliou o trabalho dele. Ele já é estável?",
+      "visual": null
+    },
+    {
+      "basis": null,
+      "context": "Lúcia é servidora estável da prefeitura de Recife. O chefe dela acha que ela cometeu uma falta grave.",
+      "image": null,
+      "kind": "check",
+      "options": [
+        {
+          "isCorrect": true,
+          "picture": null,
+          "reason": "Uma servidora estável só perde o cargo depois de um processo em que possa se defender.",
+          "text": "Não, antes vem um processo com direito a defesa"
+        },
+        {
+          "isCorrect": false,
+          "picture": null,
+          "reason": "O chefe pode abrir o processo, mas não decide sozinho nem na hora.",
+          "text": "Sim, falta grave permite demitir na hora"
+        },
+        {
+          "isCorrect": false,
+          "picture": null,
+          "reason": "Pagar indenização não substitui o processo: acusada de falta grave, ela só perde o cargo depois de um processo em que possa se defender.",
+          "text": "Sim, se a prefeitura pagar uma indenização"
+        }
+      ],
+      "question": "O chefe pode demiti-la no mesmo dia, sem processo?",
+      "visual": null
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Estabilidade em três anos",
+        "text": "Quem é nomeado por concurso para cargo efetivo fica estável depois de três anos de efetivo exercício, se for aprovado na avaliação do seu trabalho feita por uma comissão."
+      },
+      {
+        "label": "Perda do cargo",
+        "text": "Por falta ou mau desempenho, o servidor estável pode perder o cargo por decisão judicial definitiva, por processo administrativo ou por avaliação periódica, sempre com direito a defesa."
+      }
+    ],
+    "shape": "hub"
+  }
+}

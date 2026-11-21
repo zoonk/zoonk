@@ -13,12 +13,13 @@ type LayOutInput = Omit<
   Parameters<typeof scheduleCarriedAndRest>[0],
   "carried" | "days" | "units" | "yielded"
 > & {
+  keepsSavedDays: boolean;
   start: Date;
   thisWeek: Parameters<typeof layOutAfterThisWeek>[0]["kept"];
   units: readonly QueueUnit[];
 };
 
-export function createLayOut({ start, thisWeek, units, ...rest }: LayOutInput) {
+export function createLayOut({ keepsSavedDays, start, thisWeek, units, ...rest }: LayOutInput) {
   const layOut = ({
     context = rest,
     days,
@@ -32,6 +33,7 @@ export function createLayOut({ start, thisWeek, units, ...rest }: LayOutInput) {
   }) =>
     layOutAfterThisWeek({
       days,
+      keepsSavedDays,
       kept: thisWeek,
       layOut: (laid) =>
         scheduleCarriedAndRest({ ...context, ...laid, kept: [...context.kept, ...kept] }),

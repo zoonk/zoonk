@@ -48,6 +48,13 @@ export const findChoiceOptionsTask: Task<
   id: "find-choice-options",
   latencyBudget: { p50: 20, p95: 35 },
   name: "Find choice options",
+  priorities: {
+    distribution: "shared",
+    first: "latency",
+    reads: "Code records the exam's choice options",
+    reason: "Code checks the counts; it must fit the learner's wait",
+    waits: "A learner's placement may wait on it",
+  },
   score: scoreChoiceOptions,
   testCases: TEST_CASES,
 };

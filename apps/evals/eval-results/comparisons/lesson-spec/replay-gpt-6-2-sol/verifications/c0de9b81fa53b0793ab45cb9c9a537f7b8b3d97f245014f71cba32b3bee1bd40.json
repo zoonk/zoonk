@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-circuito-serie-paralelo",
+        "claimId": "3a46ace3e3f08afe",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "e8ca7ef0568714e239ca9f24c62267c0d14cca9bd8b6060003b5286699c6c118.first.ca634745-d964-4aa1-a405-ce810cf10e74.2",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0031119499999999996,
+    "id": "c0de9b81fa53b0793ab45cb9c9a537f7b8b3d97f245014f71cba32b3bee1bd40",
+    "packet": [
+      {
+        "A": {
+          "blob": "39b3863c21eebec3cb2075e9c28b7f44523ed2b0c992be556e2620fe42fae7a5",
+          "format": "text"
+        },
+        "B": {
+          "blob": "208110edf75c30edda90864cb7271190bc52e5921863cfb073a5e06620a90c48",
+          "format": "text"
+        },
+        "claim": "Os circuitos identificam as lâmpadas por letras (A, B, C, P, Q, R), não por números, apesar da exigência explícita de lâmpadas numeradas.",
+        "claimId": "3a46ace3e3f08afe",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "c2ad90b5d602b118d1a7f6d7ad538ea59e46c51f04f17fb79ad5525b85a620fe",
+          "format": "text"
+        },
+        "input": {
+          "blob": "c32d2b011c58b6b5f9ae9822efc60ccf49a7e3a97923160061fbc8706bdb3137",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Nas telas que mostram circuitos, as lâmpadas são nomeadas com letras, inclusive nas perguntas sobre quais continuam acesas.",
+          "kind": "range"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "7acd9a8ab2e399492d6db62fe1796d0d42ed21ebc620e11e0745f37b5bdd6e13",
+          "format": "text"
+        },
+        "claim": "O plano usa o termo 'depreciação' na primeira explicação sem explicá-lo.",
+        "claimId": "c0281dcfe14517f3",
+        "criterion": "levelAndScope",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "3a46ace3e3f08afe",
+          "finding": "holds",
+          "reason": "Output B names every bulb with a letter (A, B, C, P, Q, R, and in other screens D, E, F, L, M, N) and never with a number, while the expectations ask for numbered bulbs. The location range confirms the letter naming appears in the circuit screens and in the questions about which bulbs stay lit."
+        },
+        {
+          "claimId": "c0281dcfe14517f3",
+          "finding": "doesn't hold",
+          "reason": "The word 'depreciação' does not appear in output A or output B, so the claim is misquoted and the problem is not in the named output. Both lessons teach fixed and variable costs only."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -1,0 +1,596 @@
+{
+  "deadline": "The booking board closes at 3:30 p.m. today. If you release the slot, it goes to the waiting bench.",
+  "endings": [
+    {
+      "id": "candidate-run",
+      "outcome": "The bench books a detector run at 26°. The note gives the curve estimate as the reason for testing there without calling it a measured gain."
+    },
+    {
+      "id": "baseline-run",
+      "outcome": "The bench books a repeat at 22° to check whether the baseline reading holds up. That run won’t add a measured dot at 26°."
+    },
+    {
+      "id": "no-run",
+      "outcome": "The waiting bench takes the slot. With no follow-up booked, there’s still no measured dot at 26°."
+    }
+  ],
+  "meters": [
+    {
+      "id": "readout",
+      "label": "Readout reliability",
+      "start": 40,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Bench prep capacity",
+      "start": 75,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Use the photon detector plot to **pick a dial setting for the next run**. In the booking note, distinguish what the detector measured from what the curve suggests.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": 16
+            },
+            {
+              "meter": "capacity",
+              "change": -9
+            }
+          ],
+          "id": "check-ticks",
+          "next": "benchmark",
+          "notes": [
+            {
+              "skill": "intervals",
+              "kind": "good",
+              "text": "You used the difference between the printed dial labels to find how far apart they were.",
+              "example": null
+            },
+            {
+              "skill": "between",
+              "kind": "good",
+              "text": "You checked that the baseline dot landed on the halfway guide before recording 22°.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "24° minus 20° gives 4° between labels, so the halfway guide is 2° past 20°. That puts the dot at 22°."
+            },
+            {
+              "from": "bench",
+              "text": "I held the draft while you checked the dot against the screen. I’ve got a setting I can enter now."
+            }
+          ],
+          "text": "Ask {{ai}} to work out the guide spacing from the labels, then check where the dot lands.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": 5
+            },
+            {
+              "meter": "capacity",
+              "change": 6
+            }
+          ],
+          "id": "mark-position",
+          "next": "benchmark",
+          "notes": [
+            {
+              "skill": "between",
+              "kind": "good",
+              "text": "You gave the bench a way to find the baseline dot without guessing what the unlabeled guide meant.",
+              "example": null
+            },
+            {
+              "skill": "intervals",
+              "kind": "improve",
+              "text": "To make the draft usable without reopening the plot, subtract the neighboring dial labels and use half that gap to locate the guide.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "bench",
+              "text": "That’s enough to queue the draft without guessing. I’ll still need the plot open when I set the dial."
+            }
+          ],
+          "text": "Write where the dot sits on the screen and leave the dial field open in the draft.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": -12
+            },
+            {
+              "meter": "capacity",
+              "change": 10
+            }
+          ],
+          "id": "count-guide",
+          "next": "benchmark",
+          "notes": [
+            {
+              "skill": "intervals",
+              "kind": "improve",
+              "text": "The shortcut gave the bench a dial entry, but it put the baseline at the wrong setting. Use the difference between the printed labels to find what the halfway guide stands for.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "bench",
+              "text": "I can fill the dial field right away with that."
+            },
+            {
+              "from": "plot",
+              "text": "Hang on, that setting doesn’t line up with the dot. The halfway guide stands for half the gap between the labels."
+            }
+          ],
+          "text": "Count the guide as a degree past the label and send the bench that dial setting.",
+          "timeJump": null
+        }
+      ],
+      "id": "locate",
+      "messages": [
+        {
+          "from": "plot",
+          "text": "I’ve got the plot open—that’s the graph from the detector scan. I’m working on the run log while you put the draft together."
+        },
+        {
+          "from": "bench",
+          "text": "I can get the draft in the queue now. A dial setting would be great, but a note that tells me where to find the dot will get it moving."
+        }
+      ],
+      "prompt": "How do you put the baseline dot’s dial position in the working note?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 6
+            }
+          ],
+          "id": "use-trend",
+          "next": "compare",
+          "notes": [
+            {
+              "skill": "points",
+              "kind": "improve",
+              "text": "The curve gave you a reference for the overall pattern. For the recorded baseline, read the filled dot at that dial position instead.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "plot",
+              "text": "The curve is halfway from 80 to 100 clicks/s there, so it gives 90 clicks/s. That works for comparing the overall pattern, but it isn’t the reading the detector took."
+            }
+          ],
+          "text": "Read the smooth curve at the baseline setting and use its rate as the reference.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": 13
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "use-dot",
+          "next": "compare",
+          "notes": [
+            {
+              "skill": "read",
+              "kind": "good",
+              "text": "You matched the baseline dot to the rate labels and recorded the value with its units.",
+              "example": null
+            },
+            {
+              "skill": "points",
+              "kind": "good",
+              "text": "You labeled 100 clicks/s as measured because it came from the filled dot, not the nearby curve.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "plot",
+              "text": "The filled dot lines up with 100 clicks/s. I’ll mark that as measured in the note so it doesn’t get mixed up with a rate read from the curve."
+            }
+          ],
+          "text": "Read the filled dot against the rate marks and use its measured rate as the reference.",
+          "timeJump": null
+        }
+      ],
+      "id": "benchmark",
+      "messages": [
+        {
+          "from": "plot",
+          "text": "At the baseline setting, the dot and the curve are at different heights. I need a reference rate for the note."
+        },
+        {
+          "from": "bench",
+          "text": "Could we use the curve for both settings? That keeps the comparison on the same line instead of putting all the weight on a single dot."
+        }
+      ],
+      "prompt": "Which rate do you put in the note as the baseline reference?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 4
+            }
+          ],
+          "id": "use-height",
+          "next": "book",
+          "notes": [
+            {
+              "skill": "cut-axis",
+              "kind": "improve",
+              "text": "The 50% described the heights above the bottom of this plot, not the change in detector rate. Read both rates from the printed labels to compare them.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "bench",
+              "text": "The curve looks 50% higher than the dot when I measure from the bottom. That fits the box, but it’s a percentage of the heights on screen, not a gain in detector rate."
+            },
+            {
+              "from": "plot",
+              "text": "Right, the bottom is 80 clicks/s, not zero."
+            }
+          ],
+          "text": "Give the bench a percentage based on how much higher the curve sits on the screen.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": 11
+            },
+            {
+              "meter": "capacity",
+              "change": -7
+            }
+          ],
+          "id": "read-scale",
+          "next": "book",
+          "notes": [
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You used the neighboring rate labels to estimate the curve’s value at 26°, where there was no measured dot.",
+              "example": null
+            },
+            {
+              "skill": "cut-axis",
+              "kind": "good",
+              "text": "You subtracted the rates themselves, so the gap didn’t depend on where the bottom of the plot was drawn.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "plot",
+              "text": "At 26° the curve is halfway from 100 to 120 clicks/s, so I’d put about 110 clicks/s. Subtract the dot’s 100 clicks/s and the estimate is about 10 clicks/s higher."
+            },
+            {
+              "from": "bench",
+              "text": "I held the draft while you checked the rates. I can put that gap in the box as an estimate."
+            }
+          ],
+          "text": "Read the curve between the rate labels and subtract the rate at the measured dot.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": 5
+            },
+            {
+              "meter": "capacity",
+              "change": 3
+            }
+          ],
+          "id": "direction-only",
+          "next": "book",
+          "notes": [
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You described where the curve sat without calling it a measured gain.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "improve",
+              "text": "To give the bench a gap to look for, read the curve between the printed rate labels and subtract the measured baseline rate.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "bench",
+              "text": "That’s quick to put in the box. It tells me which way the curve points, just not how big a difference to look for on a run."
+            }
+          ],
+          "text": "Write that the curve is above the measured dot and leave the size of the gap open.",
+          "timeJump": null
+        }
+      ],
+      "id": "compare",
+      "messages": [
+        {
+          "from": "bench",
+          "text": "The curve at 26° looks a lot higher than the baseline dot. Could we turn that height difference into a quick percentage for the reason box?"
+        },
+        {
+          "from": "plot",
+          "text": "There’s no dot at 26°. The curve is all we have for that setting."
+        }
+      ],
+      "prompt": "What comparison do you put in the reason box?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": 4
+            }
+          ],
+          "id": "release-slot",
+          "next": "no-run",
+          "notes": [
+            {
+              "skill": "curve",
+              "kind": "improve",
+              "text": "Releasing the slot kept an unmeasured rate off the board, but it also gave away the chance to measure it. Use the curve to pick a test setting without reporting its rate as measured.",
+              "example": "“Book 26° as a test. The rate is a curve estimate until we run it.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "bench",
+              "text": "The waiting bench has it. There’s no estimate on our booking note, but we don’t have a follow-up run booked to get that dot, either."
+            }
+          ],
+          "text": "Give the slot to the waiting bench and hold off on 26° until there’s a measured dot.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": 5
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "repeat-dot",
+          "next": "baseline-run",
+          "notes": [
+            {
+              "skill": "points",
+              "kind": "good",
+              "text": "You booked the repeat at the dial setting of the measured dot, giving the bench a way to check the baseline.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "improve",
+              "text": "The repeat checks the baseline but leaves the candidate untested. Use the higher curve at 26° to choose where to take a new reading.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "bench",
+              "text": "The dot is at 22°, and I’ve booked the repeat there. That’ll let us check the baseline, but it uses the slot we could’ve put toward 26°."
+            }
+          ],
+          "text": "Read the dial setting at the baseline dot and use the slot to repeat that detector run.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "readout",
+              "change": 10
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "test-curve",
+          "next": "candidate-run",
+          "notes": [
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You used the curve to choose where to measure next without claiming the detector had already recorded an improvement at 26°.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "bench",
+              "text": "26° is booked, so there’s no baseline repeat in this slot. I’ve marked the rate as a curve estimate until we take a detector reading there."
+            }
+          ],
+          "text": "Book the slot to test 26° and label the rate in the note as a curve estimate.",
+          "timeJump": null
+        }
+      ],
+      "id": "book",
+      "messages": [
+        {
+          "from": "bench",
+          "text": "The board closes at 3:30 p.m. I need a dial setting for the slot, or I can pass it to the waiting bench."
+        },
+        {
+          "from": "plot",
+          "text": "I’d rather have a detector reading behind what goes on the board. We could repeat the baseline, or hand over the slot and leave 26° off the note for now."
+        }
+      ],
+      "prompt": "What do you tell the bench to do with the slot?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Detector scan: measured dot",
+      "metrics": [
+        {
+          "label": "Dial ticks",
+          "value": "20°, 24°, 28°",
+          "note": "There is one unlabeled guide halfway between neighboring labeled ticks."
+        },
+        {
+          "label": "Baseline dot: dial position",
+          "value": "First guide after 20°",
+          "note": null
+        },
+        {
+          "label": "Detector rate ticks",
+          "value": "80, 100, 120 clicks/s",
+          "note": "The bottom of the plot is at 80 clicks/s."
+        },
+        {
+          "label": "Baseline dot: detector rate",
+          "value": "On the 100 clicks/s tick",
+          "note": null
+        }
+      ],
+      "note": "Filled dots are detector measurements."
+    },
+    {
+      "title": "Detector scan: smooth curve",
+      "metrics": [
+        {
+          "label": "Curve at baseline dial position",
+          "value": "Halfway from 80 to 100 clicks/s",
+          "note": null
+        },
+        {
+          "label": "Candidate dial setting",
+          "value": "26°",
+          "note": "There is no measured dot at 26°."
+        },
+        {
+          "label": "Curve at candidate dial setting",
+          "value": "Halfway from 100 to 120 clicks/s",
+          "note": null
+        }
+      ],
+      "note": "The smooth curve shows the overall pattern in the scan."
+    }
+  ],
+  "setting": "Afternoon at Brindle Arc Lab",
+  "skills": [
+    {
+      "id": "read",
+      "name": "Read an experimental plot",
+      "practice": "Pick a mark on a plot and write its horizontal value, vertical value, and units on a single line."
+    },
+    {
+      "id": "between",
+      "name": "Estimate between axis ticks",
+      "practice": "Find a mark halfway between neighboring ticks and write the estimate it represents."
+    },
+    {
+      "id": "points",
+      "name": "Read plotted data points",
+      "practice": "Pick a measured dot near a curve and record the dot's value without using the curve."
+    },
+    {
+      "id": "curve",
+      "name": "Estimate from a plotted curve",
+      "practice": "Choose a setting with no data point, read the curve there, and label your answer as an estimate."
+    },
+    {
+      "id": "cut-axis",
+      "name": "Read a truncated axis",
+      "practice": "Find a plot that starts above zero and compare two readings using the axis labels rather than their heights above the bottom."
+    },
+    {
+      "id": "intervals",
+      "name": "Interpret axis intervals",
+      "practice": "Subtract neighboring tick labels and use the difference to label a halfway guide."
+    }
+  ],
+  "startNodeId": "locate",
+  "summary": [
+    "A halfway guide is half the difference between neighboring tick labels past the lower label.",
+    "A measured dot gives a recorded reading, while the smooth curve gives an estimate.",
+    "When the bottom of a plot is above zero, compare the labeled values rather than the heights above the bottom."
+  ],
+  "team": [
+    {
+      "id": "plot",
+      "role": "Experimental physicist",
+      "expertise": "She maintains the scan display and wants the run log to distinguish detector readings from curve estimates.",
+      "ai": false
+    },
+    {
+      "id": "bench",
+      "role": "Bench technician",
+      "expertise": "He queues detector runs and wants a dial setting he can enter before the slot goes to the waiting bench.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Can check tick spacing and arithmetic from the displayed values; you verify the readout and make the booking call.",
+      "ai": true
+    }
+  ],
+  "title": "Should you test the detector at 26°?"
+}

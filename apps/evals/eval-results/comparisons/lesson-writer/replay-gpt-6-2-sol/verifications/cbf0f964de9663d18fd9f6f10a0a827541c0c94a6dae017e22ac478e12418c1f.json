@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-estabilidade-sourced",
+        "claimId": "e6bcce250a9c9b86",
+        "criterion": "clarity",
+        "observationId": "75077874121734f81383f44d148fe5aa8598870663da78027bd9e0f23daf31f1.first.a84478dd-c25e-4964-a1e9-15dcc0794451.3",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0025341499999999998,
+    "id": "cbf0f964de9663d18fd9f6f10a0a827541c0c94a6dae017e22ac478e12418c1f",
+    "packet": [
+      {
+        "A": {
+          "blob": "66b32c2ea47cc0ae5eea3d6615999445a0ca2904d3e65a61358795fdd41ac5cb",
+          "format": "text"
+        },
+        "B": {
+          "blob": "64419b31214ad1044511396bf7768275e9edfc48525a91e00b33472680fb7f1d",
+          "format": "text"
+        },
+        "claim": "A tela 2 diz que a estabilidade vem depois de três anos, mas a fonte do input fala em dois anos de exercício.",
+        "claimId": "df4cbd9eb4f0a6fe",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "70fee87f9c4709d2176cfcb928ebf68e289c61bc3479c53e2ee3bed48f325fa7",
+          "format": "text"
+        },
+        "input": {
+          "blob": "265af12932a34346942fe9d0ba562cc9ef6e2dba9c639e152ccae4ddfaa44094",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "322df4cd28f4249a116fcc3916359088d66dd561bbb4f8261f46ed8f1dfd957e",
+          "format": "text"
+        },
+        "B": {
+          "blob": "a615ed6f22a7e1b9f559d52fbc5a86672a607f3a29f587e41aee982d225605e7",
+          "format": "text"
+        },
+        "claim": "A expressão técnica «processo administrativo» aparece sem uma explicação cotidiana do procedimento em si; a explicação de ampla defesa não basta para definir o termo.",
+        "claimId": "e6bcce250a9c9b86",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "01610b1bc2b44eb414cb43c4d861a05293e452785d41665061cdba27346a538a",
+          "format": "text"
+        },
+        "input": {
+          "blob": "e87cce8e5c96d9055d3d140fa9f68bc53ba27308832ab47b3825045a97b05d7a",
+          "format": "json"
+        },
+        "location": {
+          "detail": "um processo administrativo, se cometer uma falta",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "df4cbd9eb4f0a6fe",
+          "finding": "doesn't hold",
+          "reason": "The source (Art. 41 of the Constituição) says stability comes after three years of effective service, so the claim misquotes it. Output A's screen 2 correctly says three years; the two-year figure appears only in output B, not in the named output A."
+        },
+        {
+          "claimId": "e6bcce250a9c9b86",
+          "finding": "holds for both",
+          "reason": "Neither output explains what a processo administrativo is in everyday words, namely a procedure run by the public body itself in which the servant can defend herself. Output A only adds that she can give her version and show proof, and never separately explains ampla defesa. Output B's gloss on ampla defesa and 'se cometer uma falta' does not define the procedure either, so the shared gap is not a reason to prefer either output."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

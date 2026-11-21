@@ -3,7 +3,7 @@ import { markAnnouncedUnits } from "./announced-lessons";
 import { getAreaRates } from "./area-rates";
 import { findBeyondNoticeSkillIds } from "./beyond-notice-skills";
 import { type BossMinutes, getPlannedBossMinutes } from "./boss-minutes";
-import { putChapterInProgressFirst } from "./chapter-in-progress";
+import { markChapterInProgress, putChapterInProgressFirst } from "./chapter-in-progress";
 import { getHarderStartSkillIds, getSkillArea, keepWrittenTestsIn } from "./graph-areas";
 import { addPhaseCheckpoints } from "./phase-checkpoints";
 import { type PlanBase } from "./plan-bases";
@@ -258,23 +258,29 @@ export function buildPlanQueue(queueInput: QueueInput): {
       .map((skill) => skill.skillId),
   );
 
-  const inProgressFirst = putChapterInProgressFirst({
-    items: input.items,
+  const announced = markAnnouncedUnits({
+    announcements: input.announcements ?? [],
     lessons: input.lessons,
-    prerequisites: input.prerequisites,
-    units: markAnnouncedUnits({
-      announcements: input.announcements ?? [],
+    skills: input.graph.skills,
+    units: buildLessonUnits({
       lessons: input.lessons,
-      skills: input.graph.skills,
-      units: buildLessonUnits({
-        lessons: input.lessons,
-        paceFactor: input.paceFactor,
-        prerequisites: input.prerequisites,
-        preserveCourseOrder: input.goal.targetDate === null,
-        skills: ordered,
-      }),
+      paceFactor: input.paceFactor,
+      prerequisites: input.prerequisites,
+      preserveCourseOrder: input.goal.targetDate === null,
+      skills: ordered,
     }),
   });
+
+  // A language plan's topics take turns, so a started chapter waits for its topic's next turn.
+  const inProgressFirst =
+    input.goal.kind === "language"
+      ? markChapterInProgress({ items: input.items, units: announced })
+      : putChapterInProgressFirst({
+          items: input.items,
+          lessons: input.lessons,
+          prerequisites: input.prerequisites,
+          units: announced,
+        });
 
   const lessonUnits = putStartLessonFirst({
     lessonId: input.startLessonId,

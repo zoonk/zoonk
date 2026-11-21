@@ -13,6 +13,7 @@
     "./buddy": "./src/buddy.ts",
     "./categories": "./src/categories.ts",
     "./character-target": "./src/character-target.ts",
+    "./chunk": "./src/chunk.ts",
     "./cefr": "./src/cefr.ts",
     "./certificate-links": "./src/certificate-links.ts",
     "./course-level-names": "./src/course-level-names.ts",

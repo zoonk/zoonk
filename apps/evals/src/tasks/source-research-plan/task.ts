@@ -17,6 +17,13 @@ export const sourceResearchPlanTask: Task<
   generate: generateSourceResearchPlan,
   id: "source-research-plan",
   name: "Source research plan",
+  priorities: {
+    distribution: "private",
+    first: "cost",
+    reads: "Code: search hints for source research",
+    reason: "Search hints; two models tied, so the cheaper",
+    waits: "A learner waits on a new goal; refreshes in the background",
+  },
   score: scoreResearchPlan,
   testCases: TEST_CASES,
 };

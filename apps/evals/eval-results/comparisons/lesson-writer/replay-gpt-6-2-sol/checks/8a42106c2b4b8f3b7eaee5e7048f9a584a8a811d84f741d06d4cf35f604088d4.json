@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-glicolise-from-slides",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 5,
+  "problems": [
+    "Screen 1: Uses \"ATP\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term."
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 6
+}

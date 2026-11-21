@@ -1,0 +1,17 @@
+{
+  "caseId": "visual-pt-ligacao-covalente",
+  "challenger": {
+    "costUsd": 0.029317799999999998,
+    "durationMs": 30232.02350000001,
+    "hash": "ba8ed1befe8d6efdd9aeda700e01a9ee19cd6bc565f3af48726753090e4f837b",
+    "userPromptHash": "c9eb4080a5187a34e6bd225e2ebad09c342ab1e6b8420e618e14be6fc6c15e66"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0398186,
+    "durationMs": 74002.258291,
+    "hash": "0040280dbfd094a3d2513ffda5e05a5328758ebde7584f060083c40277c63617",
+    "userPromptHash": "c9eb4080a5187a34e6bd225e2ebad09c342ab1e6b8420e618e14be6fc6c15e66"
+  },
+  "run": 1
+}

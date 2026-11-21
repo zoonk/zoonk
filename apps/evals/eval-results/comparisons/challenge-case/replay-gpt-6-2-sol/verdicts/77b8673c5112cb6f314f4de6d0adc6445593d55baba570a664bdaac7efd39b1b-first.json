@@ -1,0 +1,175 @@
+{
+  "attempt": "first",
+  "costUsd": 0.009080189999999998,
+  "failures": [],
+  "packetId": "77b8673c5112cb6f314f4de6d0adc6445593d55baba570a664bdaac7efd39b1b",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are realistic ward cases with a colleague, a prescription and an AI helper, and both use a plausible weight-based dose problem.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "B",
+            "reason": "B has a trap that stays in play to the end: daily dose versus per-dose amount, with each choice leading to a different ending. A is a shorter path with a clear best route.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give one clinical colleague, a physician or nurse, plus a calculation helper, with placeholders and no names in the text.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both debriefs name the specific step taken and give concrete improvements with example wording.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "I checked the arithmetic in both: 25 mg/kg × 18 kg = 450 mg, and 45 mg/kg/dia × 20 kg = 900 mg/dia, 450 mg per tomada, 9 mL at 250 mg/5 mL. Both are correct and consistent.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are at the right depth for an intermediate nurse, in Portuguese, with no promises of results.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use short messages and explain terms like dose and volume in plain Portuguese, with no clear advantage.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "B",
+          "reason": "B's daily-versus-per-dose trap and its weak and strong paths give the learner more to think about, while A is a simpler ward check that is also sound."
+        },
+        "pairId": "2b2f767f-e778-4f9c-bb20-013365067d53"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical and the doses and units are correct.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "9836770e-9877-45c9-bbb6-9f9c8e652c47"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are a store scenario about a coffee maker discount and both use the same colleagues and approval flow.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both have the same branching, with the same margin traps and the same strong and weak choices.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give a manager, an analyst and an AI helper with clear roles.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The debrief notes are the same in both and name the specific step taken.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "I checked both: R$ 240,00 minus 20% gives R$ 192,00, the margin is 48 divided by 192 which is 25%, and 10% off gives R$ 216,00 with 33,33%. Both are correct.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A explains successive percentages in everyday words for a beginner, while B switches to formal terms and fits the level worse.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A uses everyday money language, such as sobra and preço, that a retail learner can follow, while B's core explanations use formulas and technical names the learner has not been introduced to.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The technical terms here are not explained and are not needed for a beginner in retail. A reader with no background cannot tell what a multiplicative factor or incidence base is, so the sentence does not help them choose a discount.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A beginner who reads this stops at the first formula and does not learn why the 200 reais price does not return to the original price.",
+            "location": {
+              "detail": "The pricing message in the start node.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The margin definition is given as a formula with the MC% abbreviation and a comparison to markup, neither of which is introduced. A beginner cannot act on it when they need to compute the margin for the manager.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The learner cannot apply the margin rule in the step where they must send an analysis, so the core lesson of the case is lost.",
+            "location": {
+              "detail": "The pricing message in the margin node.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A teaches the same correct lessons in plain language that a beginner can follow, while B buries them in technical terms that would stop this reader."
+        },
+        "pairId": "a6a91e51-1acb-4733-a367-57ecc7a76447"
+      }
+    ]
+  }
+}

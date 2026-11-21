@@ -1,23 +1,29 @@
 import "server-only";
 import { type UserProgress, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { type findActiveSubscription } from "../../auth/subscription";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { measurePreparation } from "../../preparation/section-preparation";
 import { projectPersistedEnergy } from "../../progress/energy";
 import { loadGoalLessons } from "../../view-models/syllabus/_utils/load-goal-lessons";
 import { getLessonShare } from "../../view-models/syllabus/lesson-share";
+import { type SyllabusView } from "../../view-models/syllabus/syllabus-contract";
 import { type SessionSnapshot, type SessionState } from "./session-snapshot";
+
+/** A GET's request-cached reads of the goal; writes leave them out to read fresh. */
+export type GoalStateReads = {
+  lessons: () => Promise<SyllabusView["lessons"] | null>;
+  preparation: () => ReturnType<typeof loadPreparationInputs>;
+};
 
 async function measureGoal({
   goalId,
   now,
-  readSubscription,
+  reads,
   userId,
 }: {
   goalId: string | null;
   now: Date;
-  readSubscription?: typeof findActiveSubscription;
+  reads?: GoalStateReads;
   userId: string;
 }): Promise<Pick<SessionState, "preparation" | "progress" | "skillStates">> {
   if (!goalId) {
@@ -25,8 +31,8 @@ async function measureGoal({
   }
 
   const [inputs, lessons] = await Promise.all([
-    loadPreparationInputs({ goalId, now, subscription: await readSubscription?.(userId), userId }),
-    loadGoalLessons(goalId),
+    reads ? reads.preparation() : loadPreparationInputs({ goalId, now, userId }),
+    reads ? reads.lessons() : loadGoalLessons(goalId),
   ]);
 
   return {
@@ -69,19 +75,18 @@ export async function measureProgress({
 export async function measureSessionState({
   goalId,
   now,
-  readSubscription,
+  reads,
   timeZone,
   userId,
 }: {
   goalId: string | null;
   now: Date;
-  /** A GET passes `readActiveSubscription`; without it, the subscription is read fresh. */
-  readSubscription?: typeof findActiveSubscription;
+  reads?: GoalStateReads;
   timeZone: string;
   userId: string;
 }): Promise<SessionState> {
   const [goal, progress] = await Promise.all([
-    measureGoal({ goalId, now, readSubscription, userId }),
+    measureGoal({ goalId, now, reads, userId }),
     measureProgress({ now, timeZone, userId }),
   ]);
 
