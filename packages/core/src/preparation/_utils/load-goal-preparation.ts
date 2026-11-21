@@ -117,6 +117,7 @@ export async function loadOwnedGoalPreparation({
 
   const structure = blueprint
     ? toChosenStructure({
+        includePendingWriting: true,
         picks: readExamPicks(selectedPlan?.state.settings ?? savedPlan?.settings),
         structure: readBlueprintContent(blueprint).structure,
       })

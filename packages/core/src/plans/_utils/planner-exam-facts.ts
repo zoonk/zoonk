@@ -27,7 +27,7 @@ type ExamFacts = {
   shortMockMinutes: number | null;
   topicLevels: TopicLevel[];
   writtenSkillIds?: string[];
-  writingNotice?: { classTest: boolean; structure: ExamStructure };
+  writingNotice?: { classTest: boolean; picks: ExamPicks; structure: ExamStructure };
 };
 
 type NoticeBlueprint = Pick<ExamBlueprint, "edition" | "ownerId" | "structure" | "topicFrequency">;
@@ -77,7 +77,7 @@ async function loadNoticeFacts({
     mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
     shortMockMinutes: ownerId ? getWeeklyMockMinutes({ fullLength: true, structure }) : null,
     writtenSkillIds: [...getWritingSkillIds({ graph, structure: stored })],
-    ...(parsed && { writingNotice: { classTest: Boolean(ownerId), structure: parsed } }),
+    ...(stored && { writingNotice: { classTest: Boolean(ownerId), picks, structure: stored } }),
     topicLevels: parsed ? listTopicLevels({ structure: parsed, topicFrequency }) : [],
   };
 }

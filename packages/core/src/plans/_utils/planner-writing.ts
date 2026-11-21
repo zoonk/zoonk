@@ -1,6 +1,6 @@
 import "server-only";
+import { type ExamPicks } from "../../exams/choices/exam-choices";
 import { getEstimatedMinutes, loadWritingPace } from "../../exams/essays/_utils/load-produce";
-import { listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type PlanWriting } from "../planner/writing-allocation";
 import { listWrittenPapers } from "../planner/written-test-planning";
@@ -8,33 +8,34 @@ import { listWrittenPapers } from "../planner/written-test-planning";
 export async function loadPlanWriting({
   classTest,
   examBlueprintId,
+  picks,
   skillIds,
   structure,
   userId,
 }: {
   classTest: boolean;
   examBlueprintId: string;
+  picks: ExamPicks;
   skillIds: ReadonlySet<string>;
   structure: ExamStructure;
   userId: string;
 }): Promise<PlanWriting | undefined> {
-  const tasks = listPracticeWritingTasks({ classTest, structure });
-
-  if (tasks.length === 0) {
-    return;
-  }
-
   const practice = await loadWritingPace({
     examBlueprintId,
+    picks,
     privateExam: classTest,
-    tasks,
+    structure,
     userId,
   });
+
+  if (practice.length === 0) {
+    return;
+  }
 
   return {
     practice: practice.map(({ last: _last, ...task }) => task),
     skillIds,
-    tests: listWrittenPapers(structure).map((paper) => ({
+    tests: listWrittenPapers({ picks, structure }).map((paper) => ({
       ...paper,
       tasks: paper.tasks.flatMap((task) =>
         Array.from({ length: task.count }, () => ({

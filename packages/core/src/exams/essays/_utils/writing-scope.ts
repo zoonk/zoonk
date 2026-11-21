@@ -1,3 +1,4 @@
+import { toNameWords } from "@zoonk/utils/name-words";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 import { namesMatch } from "../../_utils/name-match";
@@ -30,7 +31,6 @@ export function writingNeedsChoice(groups: Iterable<string>): WritingNeedsChoice
   return choiceGroups.length > 0 ? { choiceGroups, status: "needsChoice" } : undefined;
 }
 
-/** A blueprint read before its tasks recorded their subjects: the subjects named like the task. */
 function findNamedSubjects({ structure, task }: { structure: ExamStructure; task: Task }) {
   return structure.subjects.filter(({ group, name, partOf }) =>
     [name, group, partOf].some(
@@ -39,10 +39,22 @@ function findNamedSubjects({ structure, task }: { structure: ExamStructure; task
   );
 }
 
-/**
- * Without a recorded link, any choice of the exam may be the one the task is on, so every option
- * the learner picked scopes it and no prompt crosses options.
- */
+function findNamedTaskGroups({ structure, task }: { structure: ExamStructure; task: Task }) {
+  const words = new Set(toNameWords(task.description));
+
+  return structure.subjects.filter(({ choiceGroup, group }) =>
+    [choiceGroup, group].some((label) => {
+      if (!label || namesMatch(label, task.section)) {
+        return false;
+      }
+
+      // Notices often omit the paper code from the heading when describing the task.
+      const heading = toNameWords(label.replace(/\s*\([A-Z]+\d+\)$/u, ""));
+      return heading.length > 0 && heading.every((word) => words.has(word));
+    }),
+  );
+}
+
 export function getWritingScope({
   picks,
   structure,
@@ -55,11 +67,15 @@ export function getWritingScope({
   const { subjects: linked } = task;
   const groups = listChoiceGroups(structure);
 
-  const candidates = linked
+  const named = linked
     ? structure.subjects.filter((subject) => linked.includes(subject.name))
-    : findNamedSubjects({ structure, task });
+    : findNamedTaskGroups({ structure, task });
 
-  const relevant = linked
+  const scoped = linked || named.length > 0;
+  const candidates = scoped ? named : findNamedSubjects({ structure, task });
+
+  // An unlinked task that names no subject group can still depend on any choice in the exam.
+  const relevant = scoped
     ? groups.filter((group) => group.options.some((option) => candidates.includes(option)))
     : groups;
 
@@ -80,7 +96,7 @@ export function getWritingScope({
     .filter(({ name }) => !choices.some(({ group }) => group === name))
     .map(({ name }) => name);
 
-  const available = linked
+  const available = scoped
     ? subjects.length > 0 || (candidates.length === 0 && groups.length === 0)
     : missing.length === 0;
 
