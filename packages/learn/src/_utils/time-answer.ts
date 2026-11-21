@@ -31,7 +31,7 @@ export type FullTime = { coveredShare: number; everything: boolean; minutes: num
  * The time that covers the most: what covers everything, or as much as any time does when part
  * never fits. More time than this buys more practice, not more coverage.
  */
-export function getFullTime(found: PlanTimeToCover | null): FullTime | null {
+function getFullTime(found: PlanTimeToCover | null): FullTime | null {
   const minutes = found?.recommendedMinutes ?? null;
 
   if (minutes !== null) {
