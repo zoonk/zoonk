@@ -17,7 +17,7 @@ import {
   getLayout,
 } from "./_utils/chart-layout";
 import { getSeriesMark } from "./_utils/series-marks";
-import { useChartSize } from "./_utils/use-text-scale";
+import { useChartSize } from "./_utils/use-chart-size";
 import { BarRows } from "./chart-bar-rows";
 import { ChartDrawing, ChartFigure, ScreenReaderData, ValueGrid } from "./chart-frame";
 import { SeriesBar, SeriesLegend, SeriesLine, SeriesPoint } from "./series-marks";

@@ -6,7 +6,7 @@ import { useFormatNumber } from "../_utils/use-format-number";
 import { HEIGHT, LABEL_LINE_HEIGHT } from "./_utils/chart-layout";
 import { type PlotLayout, drawsDot, getPlotLayout } from "./_utils/plot-layout";
 import { getSeriesMark } from "./_utils/series-marks";
-import { useChartSize } from "./_utils/use-text-scale";
+import { useChartSize } from "./_utils/use-chart-size";
 import { ChartDrawing, ChartFigure, ScreenReaderData, ValueGrid } from "./chart-frame";
 import { SeriesLegend, SeriesLine, SeriesPoint } from "./series-marks";
 

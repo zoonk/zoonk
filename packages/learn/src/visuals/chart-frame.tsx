@@ -3,7 +3,7 @@ import { type LinearScale } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { SURFACE_CLASS } from "../_components/surface";
 import { LABEL_GAP } from "./_utils/chart-layout";
-import { type ChartSize, LABEL_FONT_SIZE } from "./_utils/use-text-scale";
+import { type ChartSize, LABEL_FONT_SIZE } from "./_utils/use-chart-size";
 
 export function ChartFigure({
   children,
