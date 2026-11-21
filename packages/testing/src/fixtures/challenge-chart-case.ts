@@ -29,7 +29,7 @@ const FINE_SCAN = {
   yUnit: "counts/s",
 };
 
-function startDecision() {
+function detectorDecision() {
   return {
     choices: [
       {
@@ -156,7 +156,7 @@ export function challengeChartCaseFixture() {
       { goodWhen: "high" as const, id: "signal", label: "Signal quality", start: 50 },
     ],
     mission: "Pick **one spot** for the detector so tonight's run gets the strongest signal.",
-    nodes: [startDecision(), fineDecision()],
+    nodes: [detectorDecision(), fineDecision()],
     panels: [],
     setting: "Beamline 4, 6 pm",
     skills: [

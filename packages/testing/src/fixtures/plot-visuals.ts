@@ -1,4 +1,3 @@
-/** A scatter whose points are named, as a lesson or a challenge draws it. */
 export const DETECTOR_SCAN_PLOT = {
   kind: "plot" as const,
   references: [],
@@ -23,7 +22,6 @@ export const DETECTOR_SCAN_PLOT = {
   yUnit: "counts/s",
 };
 
-/** A control chart: one line of daily samples between dashed limits. */
 export const FILL_WEIGHT_PLOT = {
   kind: "plot" as const,
   references: [

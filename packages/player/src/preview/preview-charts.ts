@@ -16,14 +16,28 @@ export const chartEntries: PreviewEntry[] = [
     id: "explanation-plot",
     label: "Explanation with named points",
     screen: (id) =>
-      explanationStep({ ...playableStepContent.explanation, visual: DETECTOR_SCAN_PLOT }, { id }),
+      explanationStep(
+        {
+          text: "The scan measured five spots, 1 mm apart. **C** counts highest, but the real peak could sit anywhere between **B** and **D**.",
+          title: "Look between the points",
+          visual: DETECTOR_SCAN_PLOT,
+        },
+        { id },
+      ),
   }),
   entry({
     group: "Lesson screens",
     id: "explanation-limits",
     label: "Explanation with limit lines",
     screen: (id) =>
-      explanationStep({ ...playableStepContent.explanation, visual: FILL_WEIGHT_PLOT }, { id }),
+      explanationStep(
+        {
+          text: "Each dot is one day's average fill. It stayed near the **500 ml target** for a week, then crossed the **upper limit** on day 8.",
+          title: "Drifting past the limit",
+          visual: FILL_WEIGHT_PLOT,
+        },
+        { id },
+      ),
   }),
   entry({
     group: "Lesson screens",
