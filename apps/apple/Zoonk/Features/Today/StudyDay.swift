@@ -292,6 +292,10 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let topics: [String]
   let waitReason: WaitReason?
   let weakest: Bool
+  /// A written task's: its draft is saved, or the day's extra grades are used until `returnsOn`.
+  let writingAvailability: WritingAvailability?
+  /// A drill or a whole answer, known before any question is assigned.
+  let writingUnit: WritingPrompt.Unit?
 
   var isFinished: Bool {
     status == .completed || status == .skipped
@@ -332,6 +336,25 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case .practice: return .practice
     case .produce: return .essay
     case .review: return .review
+    }
+  }
+}
+
+enum WritingAvailability: Decodable, Hashable, Sendable {
+  case available
+  case `continue`
+  case tomorrow(returnsOn: String)
+
+  private enum CodingKeys: String, CodingKey { case returnsOn, status }
+
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    switch try container.decode(String.self, forKey: .status) {
+    case "continue": self = .continue
+    case "tomorrow":
+      self = .tomorrow(returnsOn: try container.decode(String.self, forKey: .returnsOn))
+    default: self = .available
     }
   }
 }

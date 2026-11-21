@@ -54,11 +54,6 @@ private struct MockStage: View {
           finishedHere = true
         }
       }
-      .onChange(of: scenePhase) { _, phase in
-        if phase == .active {
-          run.offerGradingOnANewDay()
-        }
-      }
       .onDisappear { run.queue.stop() }
   }
 

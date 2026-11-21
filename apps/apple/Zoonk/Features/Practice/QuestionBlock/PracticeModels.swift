@@ -392,6 +392,9 @@ extension PracticeBlock: NamedBlock {
   var hasCapsules: Bool {
     kind == .review && !capsules.isEmpty
   }
+
+  /// A question block is never written work.
+  var writingUnit: WritingPrompt.Unit? { nil }
 }
 
 /// Questions never come with their answers.

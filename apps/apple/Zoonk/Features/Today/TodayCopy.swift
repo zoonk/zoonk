@@ -17,6 +17,8 @@ protocol NamedBlock {
   var questions: Int { get }
   var title: String? { get }
   var topics: [String] { get }
+  /// A written block's drill or whole answer; nil for anything else.
+  var writingUnit: WritingPrompt.Unit? { get }
 }
 
 struct BlockChallenge {
@@ -77,6 +79,11 @@ extension NamedBlock {
       return title
         ?? String(
           localized: "New lesson", table: "Today", comment: "A lesson block without a title")
+    // A drill and a whole answer never share a name.
+    case .produce where writingUnit == .drill:
+      return String(
+        localized: "Writing drill", table: "Today",
+        comment: "A short writing task after a lesson, to use what it taught")
     case .produce:
       return title
         ?? String(localized: "Writing practice", table: "Today", comment: "A writing block")
@@ -156,6 +163,22 @@ extension StudyBlock {
       comment: "A short list of topics and how many more")
   }
 
+  /// A written task's row says when it waits for tomorrow, or that its draft is kept.
+  private var writingDetail: String? {
+    switch writingAvailability {
+    case .tomorrow:
+      String(
+        localized: "Back tomorrow: no more grading today", table: "Today",
+        comment: "A written task that waits for tomorrow's grades")
+    case .continue:
+      String(
+        localized: "Your draft is saved", table: "Today",
+        comment: "A written task with a saved, unsent draft")
+    case .available, nil:
+      nil
+    }
+  }
+
   /// The row's line where the block is told on its own, as "Up next" does.
   var detail: String? {
     if hasCapsules && weakest {
@@ -183,8 +206,15 @@ extension StudyBlock {
       return nil
     }
 
+    if kind == .produce, writingUnit == .drill {
+      return writingDetail
+        ?? String(
+          localized: "Use what you just learned", table: "Today",
+          comment: "Under a writing drill after a lesson")
+    }
+
     if kind == .produce {
-      return canDo
+      return writingDetail ?? canDo
     }
 
     if fullReview {

@@ -68,6 +68,8 @@ private enum ChooserStatus: Equatable {
   case notEnoughQuestions
   case failed
   case refused(HelpLimit)
+  /// The written test past the day's extra grades: it starts again on `returnsOn`.
+  case writingLimitReached(returnsOn: String)
   case plusRequired
 }
 
@@ -170,25 +172,46 @@ private struct MockChooser: View {
     }
   }
 
+  /// An exam of several tests (an objective one in the morning, a written one in the afternoon).
+  private var tests: Int { severalDays ? 0 : MockLabels.examTests(view.options) }
+
+  /// An exam of several tests lists each test and all of them first, then the shorter, objective-only
+  /// options; any other exam lists the exam, then one subject.
+  private func leads(_ option: MockOption) -> Bool {
+    tests > 1 ? option.kind != .half && option.kind != .area : option.kind != .area
+  }
+
   @ViewBuilder
   private var choices: some View {
-    let examOptions = view.options.filter { $0.kind != .area }
-    let subjects = view.options.filter { $0.kind == .area }
+    let examOptions = view.options.filter(leads)
+    let rest = view.options.filter { !leads($0) }
 
     Section {
       ForEach(examOptions) { optionRow($0) }
     } header: {
-      if !subjects.isEmpty {
+      if tests > 1 {
+        SectionTitle(
+          Text(
+            "Your exam has \(tests) tests", tableName: "Mock",
+            comment: "Over the mock exams of an exam held as several tests"))
+      } else if !rest.isEmpty {
         SectionTitle(
           Text("The exam", tableName: "Mock", comment: "Mock exams of a whole exam or exam day"))
       }
     }
 
-    if !subjects.isEmpty {
+    if !rest.isEmpty {
       Section {
-        ForEach(subjects) { optionRow($0) }
+        ForEach(rest) { optionRow($0, objectiveTitled: tests > 1) }
       } header: {
-        SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
+        if tests > 1 {
+          SectionTitle(
+            Text(
+              "Shorter, objective questions only", tableName: "Mock",
+              comment: "Over shorter mock exams without the written test"))
+        } else {
+          SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
+        }
       }
     }
   }
@@ -331,6 +354,12 @@ private struct MockChooser: View {
   /// A Start that failed, over the bar where Start was pressed; the bar's note reads it out.
   private var failure: String? {
     switch shownStatus {
+    case .writingLimitReached(let returnsOn)?:
+      String(
+        localized:
+          "No more grading today. You can start the written test on \(PlanDate.longDay(returnsOn, today: PlanDate.today())).",
+        table: "Mock",
+        comment: "The written test refused before it starts: the day's extra grades are used until that day")
     case .notEnoughQuestions?:
       String(
         localized: "Not enough questions for this one yet. Pick another.", table: "Mock",
@@ -369,17 +398,22 @@ private struct MockChooser: View {
     switch status {
     case .refused(let limit):
       return [limit.words(.mockExams).said]
-    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed, .short:
+    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed, .short,
+      .writingLimitReached:
       return []
     }
   }
 
-  private func optionRow(_ option: MockOption) -> some View {
-    choiceRow(
+  /// An exam taken as one test reads its options as it always did; its sections say nothing new.
+  private func optionRow(_ option: MockOption, objectiveTitled: Bool = false) -> some View {
+    var shown = option
+    if tests < 2 { shown.sections = nil }
+
+    return choiceRow(
       isPicked: option.id == pickedOption?.id,
-      title: MockLabels.optionName(option, severalDays: severalDays),
-      detail: optionDetail(option),
-      trailing: optionSize(option)
+      title: MockLabels.optionName(shown, severalDays: severalDays, tests: tests),
+      detail: objectiveTitled ? nil : optionDetail(shown),
+      trailing: optionSize(shown)
     ) {
       picked = option.id
     }
@@ -390,7 +424,7 @@ private struct MockChooser: View {
   private func optionSize(_ option: MockOption) -> [String] {
     let size = String(
       localized:
-        "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
+        "\(MockLabels.questions(option)) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
       table: "Mock", comment: "A mock exam's size: its number of questions, then its time limit.")
 
     guard let usual = MockLabels.usualMinutes(option) else {
@@ -435,6 +469,13 @@ private struct MockChooser: View {
   }
 
   private func optionDetail(_ option: MockOption) -> String {
+    let sessions = (option.sections ?? []).compactMap(\.session)
+
+    // A test of an exam of several says when it happens, if the notice says; its name says the rest.
+    if !(option.sections ?? []).isEmpty, option.kind != .half {
+      return sessions.formatted(.list(type: .and))
+    }
+
     let subjects = severalDays && option.kind != .area ? option.areas : []
     let parts = option.covers ?? subjects + option.written
 
@@ -456,7 +497,14 @@ private struct MockChooser: View {
     starting.run {
       let result = await exam.startMock(
         goalId: goalId, shape: pickedOption.shape, acceptFewer: acceptFewer,
-        onWriting: { if !Task.isCancelled { status = .writing } })
+        onWriting: { generationId in
+          guard !Task.isCancelled else { return }
+          status = .writing
+          if pickedOption.asksWriting {
+            UsageAnalytics.track(
+              .writingPromptWaitViewed(generationID: generationId, surface: "mock"))
+          }
+        })
       guard !Task.isCancelled else { return nil }
 
       switch result {
@@ -469,6 +517,8 @@ private struct MockChooser: View {
           availableAt: availableAt, minutes: minutes, questions: questions)
       case .done(.notEnoughQuestions): return .notEnoughQuestions
       case .done(.refused(let limit)): return .refused(limit)
+      case .done(.writingLimitReached(let returnsOn)):
+        return .writingLimitReached(returnsOn: returnsOn)
       case .done(.plusRequired):
         // The server's answer is the access now, even if the read after it fails; a later read
         // (a subscription bought) replaces it.

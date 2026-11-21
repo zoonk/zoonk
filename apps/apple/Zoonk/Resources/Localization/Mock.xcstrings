@@ -4071,6 +4071,29 @@
         }
       }
     },
+    "All %lld tests" : {
+      "comment" : "A mock exam of every test of an exam",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "All %lld test"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "All %lld tests"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "An answer wasn't saved." : {
       "comment" : "During a mock exam: one of the learner's answers couldn't be saved.",
       "localizations" : {
@@ -4779,6 +4802,9 @@
           }
         }
       }
+    },
+    "Both tests" : {
+      "comment" : "A mock exam of both tests"
     },
     "Break" : {
       "comment" : "A break between mock sections",
@@ -8274,6 +8300,9 @@
         }
       }
     },
+    "No more grading today. You can start the written test on %@." : {
+      "comment" : "The written test refused before it starts: the day's extra grades are used until that day"
+    },
     "No written part" : {
       "comment" : "A mock exam with only the exam's objective questions, without its essay",
       "localizations" : {
@@ -10421,6 +10450,9 @@
           }
         }
       }
+    },
+    "Shorter, objective questions only" : {
+      "comment" : "Over shorter mock exams without the written test"
     },
     "Skip %lld lessons you already know?" : {
       "comment" : "Offer to take lessons the mock exam showed the learner knows off the plan",
@@ -15086,6 +15118,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cevapların kaydedildi."
+          }
+        }
+      }
+    },
+    "Your exam has %lld tests" : {
+      "comment" : "Over the mock exams of an exam held as several tests",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Your exam has %lld test"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Your exam has %lld tests"
+                }
+              }
+            }
           }
         }
       }

@@ -1585,6 +1585,10 @@ actor StudyAPIStub: StudyAPIClient {
     return writeOutcome
   }
 
+  func startWriting(token: String, blockID: String) async throws -> WritingStart {
+    .ready(admissionId: "admission-\(blockID)")
+  }
+
   func prepareLessons(token: String, goalID: String) async throws {
     preparedGoals.append(goalID)
   }

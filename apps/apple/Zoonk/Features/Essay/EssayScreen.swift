@@ -1,47 +1,77 @@
 import SwiftUI
 
+/// A written question of an exam: read it, write it, read the grade, rewrite. Opening it was its
+/// start (`start`), which admitted the grading, or is writing the question, or was refused.
 struct EssayScreen: View {
   @Environment(ExamStore.self) private var store
   @Environment(\.dismiss) private var dismiss
 
   let blockId: String
+  var start: WritingStart?
+
+  @State private var started: WritingStart?
+
+  private var shownStart: WritingStart? { started ?? start }
+
+  var body: some View {
+    NavigationStack {
+      Group {
+        switch shownStart {
+        case .writing, .failed, .limitReached, .signUpRequired, .unavailable:
+          WritingStartView(
+            blockId: blockId, start: shownStart ?? .failed, onReady: { started = $0 })
+        case .ready, nil:
+          EssayLoader(blockId: blockId, admissionId: shownStart?.admissionId)
+        }
+      }
+      .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+}
+
+extension WritingStart {
+  fileprivate var admissionId: String? {
+    if case .ready(let id) = self { id } else { nil }
+  }
+}
+
+private struct EssayLoader: View {
+  @Environment(ExamStore.self) private var store
+  @Environment(\.dismiss) private var dismiss
+
+  let blockId: String
+  let admissionId: String?
 
   var body: some View {
     let essay = store.essay(blockId: blockId)
 
-    NavigationStack {
-      Group {
-        switch essay.state {
-        case .idle, .loading:
-          ProgressView()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .lonePage()
-        case .empty, .failed(.notFound):
-          NotFoundView()
-        case .failed:
-          PageLoadFailure {
-            Label {
-              Text("The essay didn't load", tableName: "Essay", comment: "Loading failed")
-            } icon: {
-              Image(systemName: "wifi.exclamationmark")
-            }
-          } retry: {
-            await essay.refresh()
+    Group {
+      switch essay.state {
+      case .idle, .loading:
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .lonePage()
+      case .empty, .failed(.notFound):
+        NotFoundView()
+      case .failed:
+        PageLoadFailure {
+          Label {
+            Text("The question didn't load", tableName: "Essay", comment: "Loading failed")
+          } icon: {
+            Image(systemName: "wifi.exclamationmark")
           }
-        case .loaded(let view):
-          EssayContent(store: store, essay: view)
+        } retry: {
+          await essay.refresh()
         }
+      case .loaded(let view):
+        EssayContent(store: store, essay: view, admissionId: admissionId)
+          .id(view.blockId)
       }
-      .navigationTitle(
-        essay.value?.rubric.promptLabel
-          ?? String(localized: "Writing practice", table: "Essay", comment: "A writing task")
-      )
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        if essay.value == nil {
-          ToolbarItem(placement: .cancellationAction) {
-            Button(role: .close) { dismiss() }
-          }
+    }
+    .toolbar {
+      if essay.value == nil {
+        ToolbarItem(placement: .cancellationAction) {
+          Button(role: .close) { dismiss() }
         }
       }
     }
@@ -50,336 +80,365 @@ struct EssayScreen: View {
 }
 
 private struct EssayContent: View {
-  @Environment(ExamStore.self) private var store
   @Environment(PracticeStore.self) private var practice
+  @Environment(ExamStore.self) private var store
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
   @State private var writer: EssayWriter
-  @State private var finishing = false
+  @State private var finishing = VisitRequest<Bool>()
   @State private var finishFailures = 0
-  @State private var confirmsLeave = false
+  @State private var sheet: Sheet?
   @State private var showsSaveReport = false
-  @State private var openCriteria: Set<String> = []
-  @FocusState private var isBoxFocused: Bool
+
+  enum Sheet: String, Identifiable {
+    case question
+    case criteria
+
+    var id: String { rawValue }
+  }
 
   let essay: EssayView
 
-  init(store: ExamStore, essay: EssayView) {
-    _writer = State(initialValue: EssayWriter(store: store, blockId: essay.blockId))
+  init(store: ExamStore, essay: EssayView, admissionId: String?) {
+    _writer = State(initialValue: EssayWriter(store: store, view: essay, admissionId: admissionId))
     self.essay = essay
   }
 
-  private var canSend: Bool {
-    WordCount.count(writer.text) > 0 && writer.status != .grading && essay.gradesLeft > 0
-      && !finishing
-  }
-
   var body: some View {
-    Group {
-      if writer.isWriting {
-        PaneSplit(isSpread: true) {
-          ZoonkList {
-            promptSections
-          }
-        } secondary: {
-          ZoonkList {
-            writeSections
-          }
-          .safeAreaBar(edge: .bottom) { actionBar }
-        } single: {
-          ZoonkList {
-            promptSections
-            writeSections
-          }
-          .safeAreaBar(edge: .bottom) { actionBar }
-        }
-      } else if let grade = essay.drafts.first?.grade {
-        PaneSplit {
-          ZoonkList {
-            EssayScoreSections(grade: grade, isClosed: writer.isClosed)
-            EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
-          }
-        } secondary: {
-          ZoonkList {
-            EssayNextStepSections(grade: grade)
-          }
-          .safeAreaBar(edge: .bottom) { actionBar }
-        } single: {
-          ZoonkList {
-            EssayGradeSections(grade: grade, isClosed: writer.isClosed)
-            EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
-          }
-          .safeAreaBar(edge: .bottom) { actionBar }
-        }
-      } else {
-        ZoonkList {
-          Section {
-            LessonTextBlocks(essay.question)
-              .typeStyle(.body.weight(.semibold))
-          } footer: {
-            SectionFooter {
-              Text(
-                "You skipped this essay.", tableName: "Essay",
-                comment: "An essay the learner skipped without sending a draft")
-
+    content
+      .navigationTitle(WritingLabels.header(essay.writing))
+      .toolbar {
+        ToolbarItem(placement: .cancellationAction) {
+          Button(role: .close) {
+            Task {
+              await writer.flush()
+              dismiss()
             }
           }
         }
-        .safeAreaBar(edge: .bottom) { actionBar }
-        .lonePage()
-      }
-    }
-    .toolbar {
-      ToolbarItem(placement: .cancellationAction) {
-        Button(role: .close) {
-          if writer.isWriting, writer.unsent {
-            confirmsLeave = true
-          } else {
-            dismiss()
+
+        if writer.mode == .write {
+          ToolbarItem(placement: .primaryAction) {
+            Button {
+              sheet = .question
+            } label: {
+              Text("Question", tableName: "Essay", comment: "Opens the question while writing")
+            }
           }
         }
       }
-    }
-    .interactiveDismissDisabled(writer.isWriting && writer.unsent)
-    .feedbackSheet(
-      isPresented: $showsSaveReport,
-      context: FeedbackContext(screen: "essay", reportType: .saveFailure), isReport: true
-    )
-    .confirmationDialog(
-      Text("Leave for now?", tableName: "Essay", comment: "Leaving with unsent text"),
-      isPresented: $confirmsLeave, titleVisibility: .visible
-    ) {
-      Button {
-        dismiss()
-      } label: {
-        Text("Leave", tableName: "Essay", comment: "Leaves the essay")
-      }
-      Button(role: .cancel) {
-      } label: {
-        Text("Keep writing", tableName: "Essay", comment: "Stays on the essay")
-      }
-    } message: {
-      Text(
-        "Your text stays on this device, here when you come back.", tableName: "Essay",
-        comment: "Unsent text is kept")
-    }
-  }
-
-  private var actionBar: some View {
-    VStack(spacing: 10) {
-      if writer.isClosed {
-        Button {
-          router.showRoot(of: .today)
-        } label: {
-          Text("Today", tableName: "Essay", comment: "Leaves a finished essay for Today")
+      .sheet(item: $sheet) { sheet in
+        NavigationStack {
+          ZoonkList {
+            switch sheet {
+            case .question:
+              WritingQuestionBody(essay: essay)
+              WritingCriteriaList(writing: essay.writing)
+            case .criteria:
+              WritingCriteriaList(writing: essay.writing, detail: true)
+            }
+          }
+          .navigationTitle(
+            sheet == .question
+              ? essay.writing.title
+              : String(localized: "Grading criteria", table: "Essay", comment: "Criteria sheet")
+          )
+          .navigationBarTitleDisplayMode(.inline)
+          .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+              Button(role: .close) { self.sheet = nil }
+            }
+          }
         }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
-      } else {
-        writeActions
+        .presentationDetents(sheet == .question ? [.large] : [.medium, .large])
       }
-    }
-    .scenePadding(.horizontal)
-    .padding(.vertical, 10)
-    .keepsOffFold()
-    .announcesStatus(statusNote)
+      .feedbackSheet(
+        isPresented: $showsSaveReport,
+        context: FeedbackContext(screen: "essay", reportType: .saveFailure), isReport: true
+      )
+      .onDisappear { finishing.leave() }
   }
 
   @ViewBuilder
-  private var writeActions: some View {
-    statusLine
-    ButtonRow(spacing: 12) {
-      if !essay.drafts.isEmpty {
+  private var content: some View {
+    switch writer.mode {
+    case .question:
+      questionPage
+    case .write:
+      WritingEditorPage(writer: writer, essay: essay, onSend: { Task { await writer.send() } })
+    case .result:
+      if let latest = writer.latest {
+        resultPage(latest)
+      } else {
+        questionPage
+      }
+    case .refused:
+      WritingRefusedView(
+        task: .init(title: essay.writing.title, minutes: essay.pacing.minutes),
+        isBusy: finishing.isRunning, onContinue: finish)
+    }
+  }
+
+  private var questionPage: some View {
+    ZoonkList {
+      Section {
+        PageHeader(
+          Text(essay.writing.title), facts: WritingLabels.facts(essay.writing, pacing: essay.pacing)
+        ) {
+          EmptyView()
+        }
+      }
+      WritingQuestionBody(essay: essay)
+      Section {
         Button {
-          Task { await finish() }
+          sheet = .criteria
+        } label: {
+          ListRow(
+            Text("Grading criteria", tableName: "Essay", comment: "Opens the criteria sheet"),
+            description: Text(WritingCriteriaList.summary(essay.writing))
+          )
+          .disclosureChevron()
+        }
+      }
+    }
+    .lonePage()
+    .bottomBar {
+      if essay.isClosed {
+        todayButton
+      } else {
+        Button {
+          writer.mode = .write
+        } label: {
+          writer.hasDraft
+            ? Text("Continue", tableName: "Essay", comment: "Continues a saved draft")
+            : Text("Write", tableName: "Essay", comment: "Starts writing the answer")
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      }
+    }
+  }
+
+  private func resultPage(_ answer: WritingAnswer) -> some View {
+    ZoonkList {
+      WritingResultSections(grade: answer.grade, prompt: essay.writing, text: answer.text)
+    }
+    .lonePage()
+    .bottomBar(note: resultNote) {
+      if essay.isClosed {
+        todayButton
+      } else {
+        Button {
+          finish()
         } label: {
           Text("Skip", tableName: "Essay", comment: "Goes on without rewriting")
         }
         .buttonStyle(.outline)
-        .controlSize(.large)
-        .disabled(finishing || writer.status == .grading)
-      }
+        .disabled(finishing.isRunning || writer.isRewriting)
 
-      if writer.isWriting {
-        BusyButton(isBusy: writer.status == .grading) {
-          Task { await writer.send() }
+        BusyButton(isBusy: writer.isRewriting) {
+          Task { await writer.rewrite() }
         } label: {
-          if essay.drafts.isEmpty {
-            Text("Grade essay", tableName: "Essay", comment: "Sends a draft")
-          } else {
-            Text("Grade rewrite", tableName: "Essay", comment: "Sends a rewrite")
-          }
+          Text("Rewrite", tableName: "Essay", comment: "Rewrites the answer")
         }
         .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .disabled(!canSend && writer.status != .grading)
-      } else {
-        Button {
-          writer.writing = true
-        } label: {
-          Text("Rewrite", tableName: "Essay", comment: "Rewrites the essay")
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
         .keyboardShortcut(.defaultAction)
+        .disabled(finishing.isRunning)
       }
     }
   }
 
-  @ViewBuilder
-  private var promptSections: some View {
+  private var todayButton: some View {
+    Button {
+      router.showRoot(of: .today)
+    } label: {
+      Text("Today", tableName: "Essay", comment: "Leaves a finished written task for Today")
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+  }
+
+  private var resultNote: BarNote? {
+    guard finishFailures > 0 || writer.failures > 0, !finishing.isRunning else { return nil }
+
+    return BarNote(
+      LocalizedStringResource(
+        "That didn't go through. Try again in a moment.", table: "Essay",
+        comment: "Finishing or rewriting a written task failed"),
+      action: .init(
+        label: Text("Report", tableName: "Essay", comment: "Reports a save that keeps failing"),
+        perform: { showsSaveReport = true }))
+  }
+
+  /// The finished block goes on to the session.
+  private func finish() {
+    let essay = essay
+
+    finishing.run {
+      let result = await store.cache.mutate(
+        invalidating: [.goals, .learnerModel, .userProgress, .userSession],
+        { [api = practice.api] identity in
+          try await api.finishStudyBlock(
+            token: identity.bearerToken, sessionId: essay.sessionId, blockId: essay.blockId)
+        })
+
+      switch result {
+      case .done: return true
+      case .failed: return false
+      case .obsolete: return nil
+      }
+    } then: { done in
+      if done == true {
+        finishFailures = 0
+        dismiss()
+      } else if done == false {
+        finishFailures += 1
+      }
+    }
+  }
+}
+
+/// The field fills the screen; the line count a board would see stays under it, in view while the
+/// keyboard is up.
+private struct WritingEditorPage: View {
+  @Bindable var writer: EssayWriter
+  let essay: EssayView
+  let onSend: () -> Void
+  @FocusState private var isFocused: Bool
+
+  private var label: Text {
+    writer.answers.isEmpty
+      ? Text("Your answer", tableName: "Essay", comment: "The box for a written answer")
+      : Text("Rewrite what needs work", tableName: "Essay", comment: "The rewrite box")
+  }
+
+  var body: some View {
+    let count = WritingLabels.lineCount(writer.text, writing: essay.writing)
+
+    VStack(alignment: .leading, spacing: 8) {
+      TextEditor(text: Binding(get: { writer.text }, set: { writer.write($0) }))
+        .typeStyle(.writing)
+        .scrollContentBackground(.hidden)
+        .focused($isFocused)
+        .fieldBorder(isFocused: isFocused)
+        .frame(maxHeight: .infinity)
+        .accessibilityLabel(label)
+        .accessibilityHint(Text(count.words))
+
+      Text(count.words)
+        .typeStyle(.data)
+        .foregroundStyle(count.isOver ? .warningText : .mutedForeground)
+        .accessibilityHidden(true)
+    }
+    .scenePadding(.horizontal)
+    .padding(.top, 8)
+    .padding(.bottom, 4)
+    .readableColumn(640)
+    .bottomBar(note: note) {
+      BusyButton(isBusy: writer.status == .grading) {
+        onSend()
+      } label: {
+        writer.answers.isEmpty
+          ? Text("Grade answer", tableName: "Essay", comment: "Sends an answer to be graded")
+          : Text("Grade rewrite", tableName: "Essay", comment: "Sends a rewrite to be graded")
+      }
+      .buttonStyle(.mainAction)
+      .disabled(!writer.canSend)
+    }
+    .onDisappear {
+      Task { await writer.flush() }
+    }
+  }
+
+  private var note: BarNote? {
+    switch writer.status {
+    case .failed:
+      BarNote(
+        LocalizedStringResource(
+          "That didn't go through. Your text is still here. Try again in a moment.",
+          table: "Essay", comment: "Grading failed"))
+    case .grading:
+      BarNote(
+        writer.slow
+          ? LocalizedStringResource(
+            "Still grading. This is taking longer than usual.", table: "Essay",
+            comment: "Grading is slow")
+          : LocalizedStringResource(
+            "Reading your essay against each criterion. It can take up to 30 seconds.",
+            table: "Essay", comment: "Grading a draft"),
+        tone: .status)
+    case .idle:
+      nil
+    }
+  }
+}
+
+/// The support text and what to write: the question's body, on its page and in the writer's sheet.
+struct WritingQuestionBody: View {
+  let essay: EssayView
+
+  var body: some View {
     if let context = essay.context, !context.isEmpty {
       Section {
-        LessonTextBlocks(context)
-          .typeStyle(.reading)
+        QuotedPassage(context, isItalic: false)
       } header: {
-        SectionTitle(Text(essay.rubric.textsLabel))
+        SectionTitle(
+          Text("Support text", tableName: "Essay", comment: "Text to read before writing"))
       }
     }
 
     Section {
       LessonTextBlocks(essay.question)
-        .typeStyle(.body.weight(.semibold))
+        .typeStyle(.reading)
+    } header: {
+      SectionTitle(Text("What to write", tableName: "Essay", comment: "A written question's task"))
     }
   }
+}
 
-  @ViewBuilder
-  private var writeSections: some View {
-    if let grade = essay.drafts.first?.grade, grade.zeroReason != .tooShort {
-      Section {
-        if let next = grade.nextStep {
-          VStack(alignment: .leading, spacing: 4) {
-            if let criterion = grade.nextStepCriterion {
-              Text("Next step: \(criterion.name)", tableName: "Essay", comment: "Rewrite guide")
-                .typeStyle(.body.weight(.semibold))
-            }
-            Text(next.text)
-          }
-        } else {
-          Text(
-            "Every criterion has full marks in this estimate.", tableName: "Essay",
-            comment: "Full marks")
-        }
-        Button {
-          writer.writing = false
-        } label: {
-          Text("See the grade", tableName: "Essay", comment: "Back to the last grade")
-        }
-      } header: {
-        SectionTitle(
-          Text("Your last grade", tableName: "Essay", comment: "The last grade while rewriting"))
-      }
+/// How the question's points are split, one row away from it.
+struct WritingCriteriaList: View {
+  let writing: WritingPrompt
+  var detail = false
+
+  static func summary(_ writing: WritingPrompt) -> String {
+    if writing.criteria.contains(where: { $0.points != nil }), let points = writing.points {
+      return String(
+        localized: "How the \(WritingLabels.points(points)) points are split", table: "Essay",
+        comment: "Under the criteria row: how a question's points are split")
     }
 
-    let words = WordCount.count(writer.text)
+    return String(
+      localized: "What the answer is judged on", table: "Essay",
+      comment: "Under the criteria row of a question without points")
+  }
 
+  var body: some View {
     Section {
-      TextEditor(text: $writer.text)
-        .typeStyle(.writing)
-        .frame(minHeight: 280)
-        .scrollContentBackground(.hidden)
-        .focused($isBoxFocused)
-        .fieldBorder(isFocused: isBoxFocused)
-        .accessibilityLabel(Text(boxLabel))
-        .accessibilityHint(EssayWords.hint(words))
+      ForEach(writing.criteria) { criterion in
+        LabeledContent {
+          if let points = criterion.points {
+            Text(verbatim: WritingLabels.points(points))
+              .typeStyle(.data)
+          }
+        } label: {
+          Text(criterion.name)
+        }
+      }
     } header: {
-      SectionTitle(Text(boxLabel))
+      if detail {
+        SectionTitle(Text(Self.summary(writing)))
+      } else {
+        SectionTitle(Text("Grading criteria", tableName: "Essay", comment: "Criteria section"))
+      }
     } footer: {
       SectionFooter {
-        if words > 0 {
-          EssayWords.text(words)
-            .monospacedDigit()
-        }
+        writing.keySource == .notice
+          ? Text("From the exam notice.", tableName: "Essay", comment: "Where criteria come from")
+          : Text(
+            "From the exam notice. The answer key is ours, for practice.", tableName: "Essay",
+            comment: "Where criteria come from, with Zoonk's practice key")
       }
-    }
-  }
-
-  private var boxLabel: String {
-    essay.drafts.isEmpty
-      ? essay.rubric.writingName
-      : String(localized: "Rewrite what needs work", table: "Essay", comment: "The rewrite box")
-  }
-
-  @ViewBuilder
-  private var statusLine: some View {
-    Group {
-      if finishFailures > 0, !finishing {
-        SaveFailureNotice(
-          failures: finishFailures,
-          firstMessage: LocalizedStringResource(
-            "That didn't go through. Try again in a moment.", table: "Essay",
-            comment: "Finishing the block failed"),
-          onReport: { showsSaveReport = true })
-      } else if writer.status == .failed {
-        SaveFailureNotice(
-          failures: writer.saveFailures,
-          firstMessage: LocalizedStringResource(
-            "That didn't go through. Your text is still here. Try again in a moment.",
-            table: "Essay", comment: "Grading failed"),
-          onReport: { showsSaveReport = true })
-      } else if writer.isWriting, writer.status == .signUpRequired {
-        LimitNotice(limit: .signUpRequired)
-      } else if let statusNote {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(statusNote)
-            .foregroundStyle(.mutedForeground)
-
-        }
-      }
-    }
-    .typeStyle(.body)
-    .frame(maxWidth: .infinity, alignment: .leading)
-  }
-
-  private var statusNote: String? {
-    guard finishFailures == 0, writer.status != .failed else {
-      return nil
-    }
-
-    if writer.isWriting, writer.status == .signUpRequired {
-      return HelpLimit.signUpRequired.words().said
-    }
-
-    if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {
-      return String(
-        localized: "You've used today's essay grades. Your text stays here; send it tomorrow.",
-        table: "Essay", comment: "No essay grades left today")
-    }
-
-    if writer.status == .grading {
-      return writer.slow
-        ? String(
-          localized: "Still grading. This is taking longer than usual.", table: "Essay",
-          comment: "Grading is slow")
-        : String(
-          localized: "Reading your essay against each criterion. It can take up to 30 seconds.",
-          table: "Essay", comment: "Grading a draft")
-    }
-
-    return nil
-  }
-
-  private func finish() async {
-    finishing = true
-    defer { finishing = false }
-    let essay = essay
-
-    switch await store.cache.mutate(
-      invalidating: [.goals, .learnerModel, .userProgress, .userSession],
-      { [api = practice.api] identity in
-        try await api.finishStudyBlock(
-          token: identity.bearerToken, sessionId: essay.sessionId, blockId: essay.blockId)
-      })
-    {
-    case .done:
-      finishFailures = 0
-      writer.didFinish()
-      dismiss()
-    case .failed:
-      finishFailures += 1
-    case .obsolete:
-      break
     }
   }
 }

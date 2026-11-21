@@ -10,6 +10,7 @@ final class ExamStore {
   @ObservationIgnored private var options: [String: Resource<MockOptions>] = [:]
   @ObservationIgnored private var mocks: [String: Resource<MockView>] = [:]
   @ObservationIgnored private var essays: [String: Resource<EssayView>] = [:]
+  @ObservationIgnored private var attempts: [String: Resource<WritingAttempt>] = [:]
   @ObservationIgnored private let saves: LearnerSaves
 
   init(api: ExamAPI, cache: AppCache) {
@@ -84,6 +85,71 @@ final class ExamStore {
     return essay
   }
 
+  /// A past answer from the written part's page, read as its result was.
+  func writingAttempt(id: String) -> Resource<WritingAttempt> {
+    if let attempt = attempts[id] {
+      return attempt
+    }
+
+    let api = api
+    let attempt: Resource<WritingAttempt> = cache.resource(audience: .signedIn) { session in
+      guard let session else { return nil }
+      return try await api.writingAttempt(token: session.bearerToken, attemptId: id)
+    }
+
+    attempts[id] = attempt
+    return attempt
+  }
+
+  /// Only from a learner's tap: it admits the grading, or starts writing the question.
+  func startWriting(blockId: String, previousAttemptId: String? = nil) async
+    -> MutationResult<WritingStart>
+  {
+    await write(invalidating: [.userSession]) { api, token in
+      try await api.startWriting(
+        token: token, blockId: blockId, previousAttemptId: previousAttemptId)
+    }
+  }
+
+  /// "Write" on a page: the learner's own block for a written task, then its start, as one tap.
+  func writeNow(goalId: String, taskKey: String? = nil) async
+    -> MutationResult<(blockId: String, start: WritingStart)>
+  {
+    await write(invalidating: [.userSession]) { api, token in
+      let blockId = try await api.createWritingBlock(token: token, goalId: goalId, taskKey: taskKey)
+      return (blockId, try await api.startWriting(token: token, blockId: blockId))
+    }
+  }
+
+  /// Saved even when the screen goes away first, so leaving never loses what was typed.
+  func saveWritingDraft(blockId: String, draft: WritingDraft) async
+    -> MutationResult<WritingDraftSave>
+  {
+    await saves.save {
+      await self.write { api, token in
+        try await api.saveWritingDraft(token: token, blockId: blockId, draft: draft)
+      }
+    }
+  }
+
+  /// A run that ends before the question is written fails the wait.
+  func waitForWritingPrompt(generationId: String) async throws {
+    guard let token = cache.session.authenticatedSession?.bearerToken else {
+      throw APIError.unauthorized
+    }
+
+    for try await event in api.clients.generationEvents(id: generationId, token: token) {
+      if event.status == "error" { throw APIError.unavailable }
+      if event.status == "completed",
+        ["writeWritingPrompt", "ready", "signUpRequired"].contains(event.step)
+      {
+        return
+      }
+    }
+
+    throw APIError.unavailable
+  }
+
   func write<Value: Sendable>(
     invalidating domains: Set<DataDomain> = [],
     _ operation: @escaping (ExamAPI, String) async throws -> Value
@@ -107,7 +173,7 @@ final class ExamStore {
   /// for the learner to start it knowingly (`acceptFewer`), also after the questions were written.
   func startMock(
     goalId: String, shape: MockShape, acceptFewer: Bool,
-    onWriting: @escaping @MainActor () -> Void
+    onWriting: @escaping @MainActor (String) -> Void
   ) async -> MutationResult<MockStartOutcome> {
     await write(invalidating: [.learnerModel]) { api, token in
       let first = try await api.startMock(
@@ -127,10 +193,12 @@ final class ExamStore {
 
       switch writing {
       case .writing(let generationId):
-        onWriting()
+        onWriting(generationId)
         try await api.waitForQuestions(token: token, generationId: generationId)
       case .refused(let limit):
         return .refused(limit)
+      case .writingLimitReached(let returnsOn):
+        return .writingLimitReached(returnsOn: returnsOn)
       case .ready, .preparing:
         break
       }

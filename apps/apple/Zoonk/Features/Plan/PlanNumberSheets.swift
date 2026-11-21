@@ -4,6 +4,7 @@ import SwiftUI
 struct PlanStandingSheet: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(PlanStore.self) private var store
+  @Environment(ExamStore.self) private var exams
 
   let context: PlanContext
   let syllabus: GoalSyllabus?
@@ -19,6 +20,10 @@ struct PlanStandingSheet: View {
           line: Text(
             "From what you've studied and how well you answer.", tableName: "Plan",
             comment: "What the exam preparation number is made of"))
+
+        if let projection = exams.exam(goalId: context.goal.id).value?.writtenProjection {
+          WrittenProjectionSections(projection: projection, goalId: context.goal.id)
+        }
 
         if !preparation.areas.isEmpty {
           Section {
@@ -82,6 +87,7 @@ struct PlanStandingSheet: View {
     .navigationTitle(title)
     .toolbarTitleDisplayMode(.inline)
     .sheetClose { dismiss() }
+    .modifier(ExamLoading(goal: context.goal))
   }
 
   private func readout(share: Double, text: String, line: Text) -> some View {
@@ -314,6 +320,21 @@ private struct PlanWeekRings: View {
     case .rest: Text("rest day", tableName: "Plan", comment: "Spoken state of a rest day")
     case .today: Text("today", tableName: "Plan", comment: "Spoken state of today")
     case .upcoming: Text("planned", tableName: "Plan", comment: "Spoken state of a day ahead")
+    }
+  }
+}
+
+/// An exam goal's sheet reads its projected score beside its preparation.
+private struct ExamLoading: ViewModifier {
+  @Environment(ExamStore.self) private var exams
+
+  let goal: LearnerGoal
+
+  func body(content: Content) -> some View {
+    if goal.kind == .exam {
+      content.loads(exams.exam(goalId: goal.id), refreshable: false)
+    } else {
+      content
     }
   }
 }

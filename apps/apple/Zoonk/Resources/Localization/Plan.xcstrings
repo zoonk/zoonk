@@ -1018,6 +1018,28 @@
         }
       }
     },
+    "%@ asks for %@ of its points, whatever your other scores." : {
+      "comment" : "Why a part's own minimum matters, as a share",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ asks for %2$@ of its points, whatever your other scores."
+          }
+        }
+      }
+    },
+    "%@ asks for %@ points, whatever your other scores." : {
+      "comment" : "Why a part's own minimum matters",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ asks for %2$@ points, whatever your other scores."
+          }
+        }
+      }
+    },
     "%@ at %@ counts %@ more, so your plan gives them more of your time. Weights from %@." : {
       "comment" : "How the learner's course weighs an exam's parts: the ones counted more; the last argument is the source's site",
       "localizations" : {
@@ -1502,6 +1524,9 @@
         }
       }
     },
+    "%@ isn't measured yet." : {
+      "comment" : "A written part with no graded answer yet"
+    },
     "%@ level" : {
       "localizations" : {
         "de" : {
@@ -1621,6 +1646,20 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%@ of the score" : {
+      "comment" : "A written part's share of the exam's final score"
+    },
+    "%@ points below the %@ it asks for" : {
+      "comment" : "How far a written part is below its own minimum",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ points below the %2$@ it asks for"
           }
         }
       }
@@ -6643,6 +6682,29 @@
         }
       }
     },
+    "%lld lines" : {
+      "comment" : "A written question's line limit",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld line"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lines"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld modules" : {
       "comment" : "How many modules the plan has",
       "localizations" : {
@@ -10919,6 +10981,29 @@
         }
       }
     },
+    "%lld versions" : {
+      "comment" : "How many times an answer was written",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld version"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld versions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld with every lesson" : {
       "comment" : "Part of the prerequisites statement: how many are studied with every lesson",
       "localizations" : {
@@ -12560,6 +12645,9 @@
           }
         }
       }
+    },
+    "Above the %@ points it asks for" : {
+      "comment" : "A written part above its own minimum"
     },
     "Add %@ back to your plan?" : {
       "comment" : "Asks to bring subjects the learner took out back into the plan",
@@ -14268,6 +14356,9 @@
         }
       }
     },
+    "Below the minimum to pass" : {
+      "comment" : "A written part's projected points are below its own minimum"
+    },
     "Bring %@ back to your lessons?" : {
       "comment" : "Asks to bring practice activities back to the lessons, such as Listening",
       "localizations" : {
@@ -15893,6 +15984,9 @@
           }
         }
       }
+    },
+    "Close to the %@ points it asks for" : {
+      "comment" : "A written part's range straddles its own minimum"
     },
     "Coming up" : {
       "comment" : "Spoken state of a later lesson",
@@ -18374,6 +18468,9 @@
           }
         }
       }
+    },
+    "Estimated score" : {
+      "comment" : "A written part's projected points\nThe exam's projected score"
     },
     "Estimated speaking level: %@" : {
       "comment" : "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2",
@@ -21675,6 +21772,29 @@
         }
       }
     },
+    "last %lld answers" : {
+      "comment" : "How many answers the written trend shows",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "last %lld answer"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "last %lld answers"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Learning" : {
       "comment" : "A skill being learned",
       "localizations" : {
@@ -22619,6 +22739,12 @@
         }
       }
     },
+    "Minimum to pass: %@" : {
+      "comment" : "A written part's own minimum"
+    },
+    "Minimum to pass: %@ of the points" : {
+      "comment" : "A written part's own minimum, as a share of its points"
+    },
     "Mixed" : {
       "comment" : "Prerequisites with different choices",
       "localizations" : {
@@ -23031,6 +23157,9 @@
           }
         }
       }
+    },
+    "More grading tomorrow" : {
+      "comment" : "Every written task waits for tomorrow"
     },
     "More later: %@" : {
       "comment" : "Tools only later phases use",
@@ -25368,6 +25497,9 @@
         }
       }
     },
+    "Not measured yet" : {
+      "comment" : "A part with no graded answer yet"
+    },
     "Not now" : {
       "comment" : "Puts a suggestion off",
       "localizations" : {
@@ -25721,6 +25853,9 @@
           }
         }
       }
+    },
+    "Objective test" : {
+      "comment" : "The exam's objective test"
     },
     "One short lesson each" : {
       "comment" : "Prerequisite option: one short lesson",
@@ -27517,6 +27652,9 @@
           }
         }
       }
+    },
+    "Presentation and structure" : {
+      "comment" : "How a written answer is laid out"
     },
     "Progress" : {
       "comment" : "Label of the goal's progress number",
@@ -31803,6 +31941,9 @@
           }
         }
       }
+    },
+    "That didn't go through. Try again in a moment." : {
+      "comment" : "Starting a written answer failed"
     },
     "That didn't save. Try again." : {
       "comment" : "A plan suggestion's change or its Undo didn't save; trying again may work\nThe tool choice didn't save; Save tries again",
@@ -36549,6 +36690,9 @@
         }
       }
     },
+    "Write" : {
+      "comment" : "Starts a written answer"
+    },
     "Writing" : {
       "comment" : "A language skill\nPractice activity",
       "localizations" : {
@@ -39231,6 +39375,9 @@
           }
         }
       }
+    },
+    "Your answers" : {
+      "comment" : "Past written answers"
     },
     "Your call opens as soon as it's ready." : {
       "comment" : "A practice call opens by itself once it's written",

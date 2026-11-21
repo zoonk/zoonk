@@ -4,7 +4,7 @@ import Observation
 enum StudyDestination: Hashable, Sendable {
   case challenge(planItemID: String, sessionID: String)
   case checkpoint(blockID: String, sessionID: String)
-  case essay(blockID: String)
+  case essay(blockID: String, start: WritingStart?)
   case lesson(lessonID: String, sessionID: String)
   case mock(blockID: String, sessionID: String)
   case questionBlock(blockID: String)
@@ -463,6 +463,17 @@ final class TodayStore {
   private func destination(of opening: StudyBlockOpening, for identity: AuthenticatedSession)
     async throws -> StudyDestination
   {
+    // Opening a written question is its start: the tap admits the grading, or starts writing it.
+    if case .essay(let essay) = opening {
+      guard cache.session.authenticatedSession == identity else {
+        throw CancellationError()
+      }
+
+      let start = try await api.startWriting(
+        token: identity.bearerToken, blockID: essay.blockId)
+      return .essay(blockID: essay.blockId, start: start)
+    }
+
     guard case .unwrittenLesson(let lesson) = opening else {
       return StudyDestination(opening)
     }
@@ -570,7 +581,7 @@ extension StudyDestination {
     case .preparingLesson(let step):
       self = .lessonWait(blockID: step.blockId, writing: .preparing)
     case .essay(let essay):
-      self = .essay(blockID: essay.blockId)
+      self = .essay(blockID: essay.blockId, start: nil)
     case .checkpoint(let checkpoint):
       self = .checkpoint(blockID: checkpoint.blockId, sessionID: checkpoint.sessionId)
     case .mock(let mock):

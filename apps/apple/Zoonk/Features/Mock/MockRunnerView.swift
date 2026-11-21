@@ -339,12 +339,17 @@ private struct MockEssayBox: View {
   let isLocked: Bool
   @FocusState private var isFocused: Bool
 
+  private var label: Text {
+    Text("Your answer", tableName: "Essay", comment: "The box for a written answer")
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text((view.essayRubric ?? .custom).writingName)
+      label
         .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
 
+      let count = question.writing.map { WritingLabels.lineCount(text.wrappedValue, writing: $0) }
       let words = WordCount.count(text.wrappedValue)
 
       TextEditor(text: text)
@@ -354,11 +359,16 @@ private struct MockEssayBox: View {
         .focused($isFocused)
         .fieldBorder(isFocused: isFocused)
         .disabled(isLocked)
-        .accessibilityLabel(Text((view.essayRubric ?? .custom).writingName))
-        .accessibilityHint(EssayWords.hint(words))
+        .accessibilityLabel(label)
+        .accessibilityHint(Text(count?.words ?? ""))
 
-      if words > 0 {
-        EssayWords.text(words)
+      if let count {
+        Text(count.words)
+          .typeStyle(.data)
+          .foregroundStyle(count.isOver ? .warningText : .mutedForeground)
+          .accessibilityHidden(true)
+      } else if words > 0 {
+        Text("\(words) words", tableName: "Essay", comment: "An answer's word count")
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
