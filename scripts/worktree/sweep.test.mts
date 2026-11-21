@@ -84,6 +84,12 @@ describe(findBuildOutputs, () => {
     ).toStrictEqual([join(root, "other/node_modules")]);
   });
 
+  it("finds what Xcode remakes when the scratch folder is itself Xcode's build folder", () => {
+    const root = makeTree(["info.plist", "Build/Products/", "Logs/Test/run.xcresult/"]);
+
+    expect(findBuildOutputs({ inWorktree: false, root })).toStrictEqual([join(root, "Build")]);
+  });
+
   it("finds nothing when the scratch folder is itself a worktree to skip", () => {
     const root = makeTree(["apps/main/node_modules/zod/"]);
 

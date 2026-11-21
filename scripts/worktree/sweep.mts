@@ -123,7 +123,7 @@ export function findBuildOutputs({
     const entries = readEntries(directory);
     const names = new Set(entries.map(({ name }) => name));
 
-    if (depth > 0 && isXcodeBuildFolder(names)) {
+    if (isXcodeBuildFolder(names)) {
       found.push(
         ...entries
           .filter((entry) => entry.isDirectory() && XCODE_OUTPUTS.has(entry.name))
@@ -281,7 +281,9 @@ export async function sweep({ dryRun = false }: { dryRun?: boolean } = {}): Prom
       const outputs = findBuildOutputs({ inWorktree: true, root: worktree });
       const changedAt = Math.max(gitActivity(worktree), ...outputs.map((item) => lastChange(item)));
 
-      return now - changedAt >= IDLE_MS ? outputs.map((output) => ({ output, owner: worktree })) : [];
+      return now - changedAt >= IDLE_MS
+        ? outputs.map((output) => ({ output, owner: worktree }))
+        : [];
     });
 
   const idleScratchOutputs = listScratchRoots().flatMap((root) =>
