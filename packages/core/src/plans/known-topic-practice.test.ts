@@ -7,6 +7,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { lowGuessTapItems } from "../learner/_test-utils/placement-tap-items";
 import { loadPlacementPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../learner/_utils/known-skills";
 import { getGoalPreparation } from "../preparation/get-goal-preparation";
@@ -16,10 +17,10 @@ import { answerStudyQuestion } from "../sessions/answer-study-question";
 import { readBlockPayload } from "../sessions/block-payload";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
-import { getTodayView } from "../view-models/today/get-today-view";
 import { finishChallengesFixture } from "./_test-utils/finish-challenges";
 import { keepPaceOwn } from "./_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { loadPlanChangeView } from "./_utils/owned-plan";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanGraph } from "./planner/plan-state";
@@ -134,6 +135,7 @@ async function setup(
     attemptFixture({
       answeredAt: day(-1),
       isCorrect,
+      isPlacement: true,
       itemId: itemsOf(skill)[0]?.id ?? null,
       skillId: skill.id,
       userId: user.id,
@@ -143,19 +145,22 @@ async function setup(
     placementAnswer({ isCorrect: false, skill: missed }),
     placementAnswer({ isCorrect: true, skill: frequent }),
     placementAnswer({ isCorrect: true, skill: ordinary }),
-    attemptFixture({
-      answeredAt: day(-1),
-      isCorrect: true,
-      itemId: itemsOf(ordinary)[1]?.id ?? null,
-      skillId: ordinary.id,
-      userId: user.id,
-    }),
-    attemptFixture({
-      answeredAt: day(-1),
-      isCorrect: true,
-      itemId: itemsOf(frequent)[1]?.id ?? null,
-      skillId: frequent.id,
-      userId: user.id,
+    ...[ordinary, frequent].map(async (skill) => {
+      const taps = await lowGuessTapItems(skill.id);
+
+      return Promise.all(
+        taps.map(({ answer, item }) =>
+          attemptFixture({
+            answer,
+            answeredAt: day(-1),
+            isCorrect: true,
+            isPlacement: true,
+            itemId: item.id,
+            skillId: skill.id,
+            userId: user.id,
+          }),
+        ),
+      );
     }),
     learnerSkillFixture({
       difficulty: 5,
@@ -338,73 +343,113 @@ describe.each([
     await expect(readCoverage(goal.id)).resolves.toMatchObject({ studiedSkills: 1 });
   });
 
-  it("brings a known topic's lessons back when practice misses it, and says so in the plan", async () => {
-    const { goal, itemsOf, ordinary, plan } = await setup(shape);
-    const { blockId, payload, sessionId } = await startPractice(goal.id);
-    const question = payload.itemIds.find((id) => itemsOf(ordinary).some((item) => item.id === id));
+  it.each([false, true])(
+    "rechecks a practice miss before bringing a skipped topic back (practice confirmed: %s)",
+    async (confirmed) => {
+      const { frequent, goal, itemsOf, ordinary, plan } = await setup({
+        ...shape,
+        days: confirmed ? Math.max(3, shape.days) : shape.days,
+      });
 
-    const answer = await answerStudyQuestion({
-      blockId,
-      input: { answer: { selectedIndex: WRONG }, durationMs: 4000, itemId: question ?? "" },
-      sessionId,
-    });
+      const isOrdinary = (id: string) => itemsOf(ordinary).some((item) => item.id === id);
 
-    expect(answer).toMatchObject({ feedback: { isCorrect: false }, status: "ready" });
+      if (confirmed) {
+        const first = await startPractice(goal.id);
 
-    const lessons = await loadLessonItems({ planId: plan.id, skillId: ordinary.id });
+        await answerStudyQuestion({
+          blockId: first.blockId,
+          input: {
+            answer: { selectedIndex: RIGHT },
+            durationMs: 4000,
+            itemId: first.payload.itemIds.find(isOrdinary)!,
+          },
+          sessionId: first.sessionId,
+        });
 
-    expect(lessons.length).toBeGreaterThan(0);
+        setClock(1);
+      }
 
-    expect(lessons.every((item) => item.status === "todo" && item.scheduledFor !== null)).toBe(
-      true,
-    );
+      const { blockId, payload, sessionId } = await startPractice(goal.id);
 
-    await expect(readCoverage(goal.id)).resolves.toMatchObject({ studiedSkills: 0 });
+      await expect(
+        answerStudyQuestion({
+          blockId,
+          input: {
+            answer: { selectedIndex: WRONG },
+            durationMs: 4000,
+            itemId: payload.itemIds.find(isOrdinary)!,
+          },
+          sessionId,
+        }),
+      ).resolves.toMatchObject({ feedback: { isCorrect: false }, status: "ready" });
 
-    await expectRelearnChange({ goalId: goal.id, topic: shape.topics[2] });
-  });
+      const lessonIds = { planId: plan.id, skillId: ordinary.id };
+      const skipped = await loadLessonItems(lessonIds);
+      expect(skipped.length).toBeGreaterThan(0);
+      expect(skipped.every((item) => item.status === "testedOut")).toBe(true);
 
-  it("brings a known topic's lessons back when practice misses it after confirming it", async () => {
-    const { goal, itemsOf, ordinary, plan } = await setup(shape);
-    const isOrdinary = (id: string) => itemsOf(ordinary).some((item) => item.id === id);
-    const first = await startPractice(goal.id);
-    const confirm = first.payload.itemIds.find((id) => isOrdinary(id));
+      await expect(readCoverage(goal.id)).resolves.toMatchObject({
+        studiedSkills: confirmed ? 1 : 0,
+      });
 
-    await answerStudyQuestion({
-      blockId: first.blockId,
-      input: { answer: { selectedIndex: RIGHT }, durationMs: 4000, itemId: confirm ?? "" },
-      sessionId: first.sessionId,
-    });
+      const fresh = await lowGuessTapItems(ordinary.id);
+      setClock(confirmed ? 2 : 1);
 
-    setClock(1);
+      const next = await getTodayStudySession({ goalId: goal.id });
+      expect(next.status).toBe("ready");
 
-    const next = await startPractice(goal.id);
-    const question = next.payload.itemIds.find((id) => isOrdinary(id));
+      if (next.status !== "ready") {
+        throw new Error(`Expected a new study day, got ${next.status}`);
+      }
 
-    expect(question).toBeDefined();
+      expect(next.session.id).not.toBe(sessionId);
 
-    await answerStudyQuestion({
-      blockId: next.blockId,
-      input: { answer: { selectedIndex: WRONG }, durationMs: 4000, itemId: question ?? "" },
-      sessionId: next.sessionId,
-    });
+      const blocks = await prisma.studySessionBlock.findMany({
+        where: { sessionId: next.session.id },
+      });
 
-    const lessons = await loadLessonItems({ planId: plan.id, skillId: ordinary.id });
+      const freshIds = new Set(fresh.map(({ item }) => item.id));
 
-    expect(lessons.length).toBeGreaterThan(0);
-    expect(lessons.every((item) => item.status === "todo")).toBe(true);
-    await expectRelearnChange({ goalId: goal.id, topic: shape.topics[2] });
-  });
+      const recheck = blocks
+        .map((block) => ({
+          block,
+          itemId: readBlockPayload(block).placementRecheckItemIds?.find((id) => freshIds.has(id)),
+        }))
+        .find(({ itemId }) => itemId);
+
+      expect(recheck?.itemId).toBeDefined();
+
+      const { block: check, itemId } = recheck!;
+      await startStudyBlock({ blockId: check.id, input: {}, sessionId: next.session.id });
+
+      await expect(
+        answerStudyQuestion({
+          blockId: check.id,
+          input: { answer: { dontKnow: true }, durationMs: 4000, itemId: itemId! },
+          sessionId: next.session.id,
+        }),
+      ).resolves.toMatchObject({ feedback: { isCorrect: false }, status: "ready" });
+
+      const lessons = await loadLessonItems(lessonIds);
+      expect(lessons.length).toBeGreaterThan(0);
+
+      expect(lessons.every((item) => item.status === "todo" && item.scheduledFor !== null)).toBe(
+        true,
+      );
+
+      const other = await loadLessonItems({ planId: plan.id, skillId: frequent.id });
+      expect(other.every((item) => item.status === "testedOut")).toBe(true);
+
+      await expectRelearnChange({ goalId: goal.id, topic: shape.topics[2] });
+    },
+  );
 });
 
 async function expectRelearnChange({ goalId, topic }: { goalId: string; topic?: string }) {
-  const [change, today] = await Promise.all([
-    prisma.planChange.findFirstOrThrow({
-      orderBy: { createdAt: "desc" },
-      where: { kind: "relearn", plan: { goalId } },
-    }),
-    getTodayView({ goalId }),
-  ]);
+  const change = await prisma.planChange.findFirstOrThrow({
+    orderBy: { createdAt: "desc" },
+    where: { kind: "relearn", plan: { goalId } },
+  });
 
   expect(change.status).toBe("applied");
 
@@ -412,7 +457,7 @@ async function expectRelearnChange({ goalId, topic }: { goalId: string; topic?: 
     topicsAdded: [{ area: "Biologia", topics: [topic] }],
   });
 
-  expect(today.status === "ready" && today.today.planChange?.kind).not.toBe("relearn");
+  await expect(loadPlanChangeView(change.id)).resolves.toMatchObject({ canUndo: true });
 }
 
 describe("a known topic Pedro's time left without lessons", () => {

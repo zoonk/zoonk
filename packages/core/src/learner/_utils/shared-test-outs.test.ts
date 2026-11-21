@@ -106,7 +106,7 @@ async function setup() {
 }
 
 describe("test-outs across goals", () => {
-  it("shares only the assessed scope with active and paused plans and their saved days", async () => {
+  it("shares only the assessed scope with active and paused plans while keeping the shown day", async () => {
     const fixture = await setup();
     await fixture.testOut();
 
@@ -126,7 +126,7 @@ describe("test-outs across goals", () => {
 
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: fixture.pending.id } }),
-    ).resolves.toMatchObject({ status: "skipped" });
+    ).resolves.toStrictEqual(fixture.pending);
 
     const beforeRetry = await prisma.plan.findMany({
       where: { id: { in: [fixture.other.id, fixture.paused.id] } },
@@ -157,8 +157,12 @@ describe("test-outs across goals", () => {
     ).resolves.toMatchObject({ inputVersion: fixture.other.inputVersion + 1 });
 
     await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: fixture.shared.id } }),
+    ).resolves.toMatchObject({ completedAt: NOW, status: "testedOut" });
+
+    await expect(
       prisma.followUp.count({ where: { kind: "settleSessionDay", userId: fixture.user.id } }),
-    ).resolves.toBe(1);
+    ).resolves.toBe(0);
   });
 
   it("leaves an archived goal's lessons and saved day unchanged", async () => {

@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import * as database from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession } from "../_test-utils/mock-session";
@@ -19,63 +19,60 @@ async function unopenedDayFixture() {
   return { ...fixture, user };
 }
 
-/** A real table lock pauses only the later plan-basis read, after Open read the old goal. */
+const { prisma } = database;
+
+const basisRead = vi.hoisted((): { before?: () => Promise<void>; goalId?: string } => ({}));
+
+// Delay the real basis read for this goal only. Other tests can still read and write their plans.
+vi.mock("@zoonk/db", async (load) => {
+  const db = await load<typeof database>();
+
+  return {
+    ...db,
+    prisma: db.prisma.$extends({
+      query: {
+        plan: {
+          async findUnique({ args, query }) {
+            if (args.where.goalId === basisRead.goalId && args.select?.inputVersion) {
+              const before = basisRead.before;
+              basisRead.before = undefined;
+              await before?.();
+            }
+
+            return query(args);
+          },
+        },
+      },
+    }),
+  };
+});
+
 async function changeBeforeBasis({
   goalId,
   userId,
-  read,
+  read = () => openStudyDay({ goalId, shownDate: "2026-09-30", timeZone: "UTC" }),
 }: {
   goalId: string;
   userId: string;
   read?: () => Promise<unknown>;
 }) {
-  const ready = Promise.withResolvers<number>();
-  const release = Promise.withResolvers<null>();
-
-  const writing = prisma.$transaction(
-    async (tx) => {
-      await tx.$executeRaw`SET LOCAL lock_timeout = '1s'`;
+  const write = vi.fn(() =>
+    prisma.$transaction(async (tx) => {
       await markLearnerChanged(tx, { planInputs: true, userId });
-      await tx.$executeRaw`LOCK TABLE plans IN ACCESS EXCLUSIVE MODE`;
-      const [connection] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
-      ready.resolve(connection!.pid);
-      await release.promise;
       await tx.goal.update({ data: { dailyMinutes: 5 }, where: { id: goalId } });
-    },
-    { timeout: 12_000 },
+    }),
   );
 
-  void writing.catch(ready.reject);
-  const held = Promise.allSettled([writing]);
+  basisRead.goalId = goalId;
+  basisRead.before = write;
 
   try {
-    const pid = await ready.promise;
-
-    const opening = Promise.allSettled([
-      read ? read() : openStudyDay({ goalId, shownDate: "2026-09-30", timeZone: "UTC" }),
-    ]);
-
-    try {
-      await expect
-        .poll(
-          () => prisma.$queryRaw<{ query: string }[]>`
-        SELECT query FROM pg_stat_activity
-        WHERE datname = current_database() AND ${pid} = ANY(pg_blocking_pids(pid))
-          AND query ~* 'SELECT.*plans'
-      `,
-          { interval: 10, timeout: 4000 },
-        )
-        .not.toHaveLength(0);
-    } finally {
-      release.resolve(null);
-      await opening;
-    }
-
-    await expect(writing).resolves.toBeUndefined();
-    return await opening;
+    const result = await read();
+    expect(write).toHaveBeenCalledOnce();
+    return result;
   } finally {
-    release.resolve(null);
-    await held;
+    basisRead.goalId = undefined;
+    basisRead.before = undefined;
   }
 }
 
@@ -96,9 +93,7 @@ describe("Open binds the goal snapshot to the later plan basis", () => {
       userId: user.id,
     });
 
-    expect(result).toMatchObject([
-      { status: "fulfilled", value: { context: { goal: { dailyMinutes: 5 } }, status: "ready" } },
-    ]);
+    expect(result).toMatchObject({ context: { goal: { dailyMinutes: 5 } }, status: "ready" });
   });
 
   it("retries a computed writer from fresh inputs after losing its token", async () => {
@@ -135,7 +130,7 @@ describe("Open binds the goal snapshot to the later plan basis", () => {
       await prisma.goal.update({ data: { dailyMinutes: 30 }, where: { id: day.goal.id } });
       const before = await readLapsedDayState(day.user.id);
       const opening = await changeBeforeBasis({ goalId: day.goal.id, userId: day.user.id });
-      expect(opening).toMatchObject([{ status: "fulfilled", value: { status: "opened" } }]);
+      expect(opening).toMatchObject({ status: "opened" });
       const after = await readLapsedDayState(day.user.id);
       expect(after.sessions).toHaveLength(1);
 

@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
 import { getChapterTestOut } from "../learner/test-out/get-chapter-test-out";
 import { submitChapterTestOut } from "../learner/test-out/submit-chapter-test-out";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -115,7 +116,7 @@ describe("today's session after a plan change", () => {
     expect(kept?.subject).toBe(learn?.subject);
   });
 
-  it("drops a chapter the learner tested out of from the part of today not started", async () => {
+  it("keeps the shown day after a chapter test-out and skips its lessons on a new day", async () => {
     const user = await userFixture();
 
     const library = await planLibraryFixture({
@@ -133,13 +134,13 @@ describe("today's session after a plan change", () => {
       userId: user.id,
     });
 
-    await Promise.all([
+    const [[bank]] = await Promise.all([
+      placementItemBank([library.skills[0]!.id]),
       createGoalPlan({ goalId: goal.id, graph: library.graph }),
       learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-      ...Array.from({ length: 4 }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: library.skills[0]?.id ?? "" }),
-      ),
     ]);
+
+    const answers = new Map(bank!.map(({ answer, item }) => [item.id, answer]));
 
     mockSession(user.id);
 
@@ -163,7 +164,7 @@ describe("today's session after a plan change", () => {
       goalId: goal.id,
       input: {
         answers: questions.map((question) => ({
-          answer: { selectedIndex: 0 },
+          answer: answers.get(question.itemId)!,
           durationMs: 5000,
           itemId: question.itemId,
         })),
@@ -174,7 +175,12 @@ describe("today's session after a plan change", () => {
 
     expect(result.status === "ready" && result.outcome.passed).toBe(true);
 
-    const after = await todayLessons();
-    expect(after.some((lessonId) => basics.has(lessonId))).toBe(false);
+    await expect(todayLessons()).resolves.toStrictEqual(before);
+
+    vi.setSystemTime(new Date("2026-10-01T12:00:00Z"));
+
+    const next = await todayLessons();
+    expect(next.length).toBeGreaterThan(0);
+    expect(next.some((lessonId) => basics.has(lessonId))).toBe(false);
   });
 });

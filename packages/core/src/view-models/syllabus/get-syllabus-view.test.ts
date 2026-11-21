@@ -13,6 +13,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { placementItemBank } from "../../learner/_test-utils/placement-tap-items";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
 import { getSyllabusView } from "./get-syllabus-view";
@@ -490,7 +491,7 @@ describe(getSyllabusView, () => {
     });
   });
 
-  it("says a topic is known only from three right true-or-false answers of its own", async () => {
+  it("says a topic is known only after its own quick answer and three low-guess taps", async () => {
     const { goal, lawChapter, user } = await signedInExamLearner({ topics: true });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
@@ -500,16 +501,27 @@ describe(getSyllabusView, () => {
 
     await prisma.planItem.deleteMany({ where: { chapterId: lawChapter.id, planId: plan.id } });
 
-    const answerRight = async () => {
-      const item = await itemFixture({ format: "trueFalse", skillId });
-      await attemptFixture({ isPlacement: true, itemId: item.id, skillId, userId: user.id });
-    };
+    const trueFalse = await Promise.all(
+      Array.from({ length: 3 }, () => itemFixture({ format: "trueFalse", skillId })),
+    );
 
-    await answerRight();
-    await answerRight();
+    await Promise.all(
+      trueFalse.map((item) =>
+        attemptFixture({ isPlacement: true, itemId: item.id, skillId, userId: user.id }),
+      ),
+    );
+
     await expect(readTopicStatus("Princípios fundamentais")).resolves.toBe("notPlanned");
 
-    await answerRight();
+    const [bank] = await placementItemBank([skillId]);
+
+    const answerRight = ({ answer, item }: NonNullable<typeof bank>[number]) =>
+      attemptFixture({ answer, isPlacement: true, itemId: item.id, skillId, userId: user.id });
+
+    await Promise.all(bank!.slice(0, 3).map((entry) => answerRight(entry)));
+    await expect(readTopicStatus("Princípios fundamentais")).resolves.toBe("notPlanned");
+
+    await answerRight(bank![3]!);
     await expect(readTopicStatus("Princípios fundamentais")).resolves.toBe("known");
   });
 

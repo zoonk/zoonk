@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockAccountSession } from "../_test-utils/mock-session";
+import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
 import { answerPlacementQuestion } from "../learner/placement/answer-placement-question";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { lockPlanSourceWrite, writePlanInputs } from "../library/_utils/plan-input-write";
@@ -211,10 +212,7 @@ describe.each([true, false])("background re-plan bursts (guest: %s)", (isAnonymo
     const user = await userFixture();
     await prisma.user.update({ data: { isAnonymous }, where: { id: user.id } });
 
-    const { goal, lessons, skills, items } = await sessionGoalFixture({
-      lessons: 3,
-      userId: user.id,
-    });
+    const { goal, lessons, skills } = await sessionGoalFixture({ lessons: 3, userId: user.id });
 
     mockAccountSession({ isAnonymous, user });
 
@@ -238,15 +236,15 @@ describe.each([true, false])("background re-plan bursts (guest: %s)", (isAnonymo
       },
     });
 
+    const [bank] = await placementItemBank([skills[0]!.id]);
+
     await Promise.all(
-      items
-        .filter((item) => item.skillId === skills[0]!.id)
-        .map((item) =>
-          answerPlacementQuestion({
-            goalId: goal.id,
-            input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: item.id },
-          }),
-        ),
+      bank!.map(({ answer, item }) =>
+        answerPlacementQuestion({
+          goalId: goal.id,
+          input: { answer, durationMs: 9000, itemId: item.id },
+        }),
+      ),
     );
 
     await expect(

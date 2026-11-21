@@ -1,18 +1,15 @@
 import { type CourseLevel, type Skill, prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { listeningBlueprintFixture } from "@zoonk/testing/fixtures/listening";
-import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
+import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { markPlanInputsUntil } from "./_test-utils/mark-plan-inputs";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { parsePlanChangePayload } from "./_utils/plan-change-payload";
-import { parsePlanSnapshot } from "./_utils/plan-snapshot";
 import { settleNewPlan } from "./_utils/recommended-bases";
 import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
@@ -87,26 +84,6 @@ async function settledLearner(
 }
 
 describe("a language exam's listening basics at the learner's own level", () => {
-  it("leaves in-session inferred starts unchanged when there is no skip to announce", async () => {
-    const { goal, settings } = await settledLearner({ level: "basic" });
-    expect(settings.pastBasicsAreas).toStrictEqual([]);
-
-    await expect(
-      markPlanItemsTestedOut({
-        followToday: false,
-        goalId: goal.id,
-        items: [],
-        knownSkillIds: new Set(),
-        pastBasicsAreas: ["Listening"],
-        testedOutAt: new Date(),
-        timeZone: "UTC",
-      }),
-    ).resolves.toMatchObject({ changeId: null, pastBasicsAdded: [] });
-
-    const saved = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-    expect(parsePlanSettings(saved.settings).pastBasicsAreas).toStrictEqual([]);
-  });
-
   it("keeps the inferred starts as inputs when background marks win the layout save", async () => {
     const { marks, settings } = await settledLearner({ level: "intermediate" }, true);
     expect(marks).toBeGreaterThan(1);
@@ -201,28 +178,23 @@ async function placedLearner({
 
   const reading = library.skills.slice(4, 6);
 
+  const banks = await placementItemBank(reading.map((skill) => skill.id));
+
   await Promise.all(
-    reading.map(async (skill, index) => {
-      const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
-      const right = readingRight[index] ?? false;
-
-      const confirmation = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
-
-      return Promise.all(
-        [item, confirmation].map((question) =>
-          attemptFixture({
-            answer: { selectedIndex: right ? 0 : 1 },
-            isCorrect: right,
-            itemId: question.id,
-            skillId: skill.id,
-            userId: user.id,
-          }),
-        ),
-      );
-    }),
+    banks.flatMap((bank, index) =>
+      bank.map(({ answer, item }) =>
+        attemptFixture({
+          answer: readingRight[index] ? answer : { dontKnow: true },
+          isCorrect: readingRight[index] ?? false,
+          itemId: item.id,
+          skillId: item.skillId,
+          userId: user.id,
+        }),
+      ),
+    ),
   );
 
-  await finishGoalPlacement({ goalId: goal.id, input: {} });
+  const finished = await finishGoalPlacement({ goalId: goal.id, input: {} });
   await settleNewPlan({ goalId: goal.id });
 
   const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
@@ -232,46 +204,28 @@ async function placedLearner({
       where: { kind: "lesson", planId: plan.id, skillId: skill?.id, status: "todo" },
     });
 
-  return { goal, settings: parsePlanSettings(saved.settings), skills: library.skills, todo, user };
+  return { finished, settings: parsePlanSettings(saved.settings), skills: library.skills, todo };
 }
 
 describe("a language exam's listening basics after placement's text questions", () => {
-  it("start past the basics when placement confirmed the text basics of their band", async () => {
-    const { goal, settings, skills, todo, user } = await placedLearner({
+  it("keeps listening lessons even when placement confirms every reading topic of their band", async () => {
+    const { finished, settings, skills, todo } = await placedLearner({
       listeningLevel: "beginner",
       readingRight: [true, true],
     });
 
-    const [sounds, talks, details, gist] = skills;
+    expect(finished).toMatchObject({
+      completion: {
+        knownSkillIds: expect.arrayContaining(skills.slice(4, 6).map((skill) => skill.id)),
+      },
+      status: "ready",
+    });
 
-    expect(settings.pastBasicsAreas).toStrictEqual(["Listening"]);
-    await expect(Promise.all([todo(sounds), todo(talks)])).resolves.toStrictEqual([0, 0]);
-    await expect(Promise.all([todo(details), todo(gist)])).resolves.toStrictEqual([2, 2]);
-
-    const basics = [sounds?.id ?? "", talks?.id ?? ""];
+    expect(settings.pastBasicsAreas).toStrictEqual([]);
 
     await expect(
-      loadSkillsToConfirm({ goalId: goal.id, skillIds: basics, userId: user.id }),
-    ).resolves.toStrictEqual(new Set(basics));
-
-    const change = await prisma.planChange.findFirstOrThrow({
-      where: { kind: "testedOut", plan: { goalId: goal.id } },
-    });
-
-    const { effect } = parsePlanChangePayload(change.payload);
-
-    expect(effect?.topicsLeftOut).toContainEqual({
-      area: "Listening",
-      topics: [sounds?.name, talks?.name],
-    });
-
-    expect(effect?.listeningPastBasics).toStrictEqual(["Listening"]);
-
-    const snapshot = await prisma.planChangeSnapshot.findUniqueOrThrow({
-      where: { changeId: change.id },
-    });
-
-    expect(parsePlanSnapshot(snapshot.plan)?.state.settings.pastBasicsAreas).toStrictEqual([]);
+      Promise.all(skills.slice(0, 4).map((skill) => todo(skill))),
+    ).resolves.toStrictEqual([2, 2, 2, 2]);
   });
 
   it("stay when placement missed as many of the band's text basics as it confirmed", async () => {

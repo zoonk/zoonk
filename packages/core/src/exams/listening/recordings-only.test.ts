@@ -8,6 +8,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
+import { lowGuessTapItems } from "../../learner/_test-utils/placement-tap-items";
 import { startPlacementSitting } from "../../learner/placement/start-placement-sitting";
 import { getChapterTestOut } from "../../learner/test-out/get-chapter-test-out";
 import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
@@ -513,7 +514,7 @@ describe("an exam's listening skills in text tests", () => {
 
     const { chapters, goal, plan, skills } = await learnerGoalFixture({
       challengesDone: true,
-      itemsPerSkill: 4,
+      itemsPerSkill: 1,
       phases: [2, 2],
       userId: user.id,
     });
@@ -534,6 +535,7 @@ describe("an exam's listening skills in text tests", () => {
       }),
     ]);
 
+    await lowGuessTapItems(skills[3]!.id);
     mockSession(user.id);
 
     await expect(
@@ -543,7 +545,7 @@ describe("an exam's listening skills in text tests", () => {
     const mixed = await getChapterTestOut({ chapterId: chapters[1]?.id ?? "", goalId: goal.id });
     const asked = mixed.status === "ready" ? mixed.testOut.questions : [];
 
-    expect(asked.length).toBeGreaterThan(0);
+    expect(asked).toHaveLength(4);
 
     expect(new Set(asked.map((question) => question.skillId))).toStrictEqual(
       new Set([skills[3]?.id]),

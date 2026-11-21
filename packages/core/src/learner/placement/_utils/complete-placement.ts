@@ -86,7 +86,7 @@ export async function completePlacement({
   const applied = await applyPlacement({ goalId, now, plan, timeZone, userId });
 
   if (!applied.changeId && (!goal.planRevealedAt || tested)) {
-    await replanAfterPlacement({ goalId, now, pastBasicsAreas: applied.pastBasicsAreas, timeZone });
+    await replanAfterPlacement({ goalId, now, timeZone });
   }
 
   await owePlanStartLessons({ goalId, userId });

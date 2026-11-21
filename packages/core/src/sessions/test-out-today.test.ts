@@ -10,6 +10,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/p
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { decidePlanChange } from "../plans/decide-plan-change";
 import { getTodayStudySession } from "./_test-utils/open-today";
+import { getStudySession } from "./get-study-session";
 import { startStudyBlock } from "./start-study-block";
 
 /** Predates other tests' learning events so their pace cannot affect the fixture. */
@@ -40,7 +41,7 @@ describe("a chapter test passed in the middle of a lesson", () => {
     vi.useRealTimers();
   });
 
-  it("takes the lessons it covered off today, the one open too, and goes on with the next", async () => {
+  it("preserves the active lesson and pending blocks, even after midnight", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 3 }, { lessons: 3 }] });
 
@@ -64,8 +65,10 @@ describe("a chapter test passed in the middle of a lesson", () => {
       sessionId: today.id,
     });
 
+    const before = await readToday(goal.id);
+    const readSaved = () => getStudySession({ input: { timeZone: "UTC" }, sessionId: today.id });
+    const shown = await readSaved();
     const known = library.skills[0]?.id ?? "";
-    const coveredLessons = new Set(library.lessons.slice(0, 3).map((lesson) => lesson.id));
 
     const { items } = await loadGoalPlan(goal.id);
 
@@ -77,21 +80,30 @@ describe("a chapter test passed in the middle of a lesson", () => {
       timeZone: "UTC",
     });
 
-    const after = await readToday(goal.id);
+    const blocks = () =>
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: today.id },
+      });
 
-    const open = after.blocks.filter(
-      (block) => block.status === "active" || block.status === "pending",
-    );
+    expect(before.blocks.find((block) => block.id === opened?.id)?.status).toBe("active");
+    expect(before.blocks.some((block) => block.status === "pending")).toBe(true);
 
-    expect(after.id).toBe(today.id);
-    expect(after.blocks.find((block) => block.id === opened?.id)?.status).toBe("skipped");
-    expect(open.some((block) => block.lessonId && coveredLessons.has(block.lessonId))).toBe(false);
+    await expect(blocks()).resolves.toStrictEqual(before.blocks);
 
-    const next = open.find((block) => block.kind === "learn");
-    expect(library.lessons.slice(3).map((lesson) => lesson.id)).toContain(next?.lessonId);
+    vi.setSystemTime(new Date("2020-09-29T00:01:00Z"));
+
+    expect(shown.status).toBe("ready");
+
+    await expect(readSaved()).resolves.toMatchObject({
+      session: { blocks: shown.status === "ready" ? shown.session.blocks : [] },
+      status: "ready",
+    });
+
+    await expect(blocks()).resolves.toStrictEqual(before.blocks);
   });
 
-  it("gives back the day it changed when the learner undoes it", async () => {
+  it("restores the plan while keeping the shown day when the learner undoes it", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 3 }, { lessons: 3 }] });
 
@@ -140,5 +152,9 @@ describe("a chapter test passed in the middle of a lesson", () => {
     );
 
     expect(after.missions).toStrictEqual(before.missions);
+
+    await expect(
+      prisma.planItem.count({ where: { plan: { goalId: goal.id }, status: "testedOut" } }),
+    ).resolves.toBe(0);
   });
 });

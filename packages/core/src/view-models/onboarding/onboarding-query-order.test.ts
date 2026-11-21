@@ -8,6 +8,7 @@ import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getMockOptions } from "../../exams/mocks/get-mock-options";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
+import { placementItemBank } from "../../learner/_test-utils/placement-tap-items";
 import { answerPlacementQuestion } from "../../learner/placement/answer-placement-question";
 import { finishGoalPlacement } from "../../learner/placement/finish-goal-placement";
 import { toPlanChangePayload } from "../../plans/_utils/plan-change-payload";
@@ -80,20 +81,24 @@ describe("onboarding transaction queries", () => {
   it("saves a schedule and finishes placement without overlapping transaction queries", async () => {
     const user = await userFixture();
 
-    const { goal, items, skills } = await learnerGoalFixture({ phases: [2], userId: user.id });
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [2],
+      userId: user.id,
+    });
 
     mockSession(user.id);
     const skill = skills[0]!;
 
+    const [bank] = await placementItemBank([skill.id]);
+
     await Promise.all(
-      items
-        .filter((item) => item.skillId === skill.id)
-        .map((item) =>
-          answerPlacementQuestion({
-            goalId: goal.id,
-            input: { answer: { selectedIndex: 0 }, durationMs: 3000, itemId: item.id },
-          }),
-        ),
+      bank!.map(({ answer, item }) =>
+        answerPlacementQuestion({
+          goalId: goal.id,
+          input: { answer, durationMs: 3000, itemId: item.id },
+        }),
+      ),
     );
 
     const { overlaps, result } = await observeDatabaseQueries(async () => {
