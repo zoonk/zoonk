@@ -10,7 +10,7 @@ import {
   subarray,
 } from "fast-check";
 import { describe, expect, it } from "vitest";
-import { type PlacementEvidence, countRightAnswersToKnow } from "./placement-beliefs";
+import { type PlacementEvidence } from "./placement-beliefs";
 import { type PlacementSkill } from "./placement-graph";
 import { listKnownSkillIds, readSkillStatuses } from "./placement-known";
 import { type OwnLevel, chooseNextPlacementSkill, isPlacementSettled } from "./placement-steps";
@@ -100,6 +100,17 @@ function answer(
   return { format, outcome, skillId };
 }
 
+function confirmation(skillId: string): PlacementEvidence[] {
+  return [
+    { ...answer(skillId, "correct"), itemId: "quick" },
+    ...[1, 2, 3].map((index) => ({
+      ...answer(skillId, "correct", "order"),
+      content: { steps: ["a", "b", "c", "d"] },
+      itemId: `order-${index}`,
+    })),
+  ];
+}
+
 function statusesOf({
   evidence,
   ...claims
@@ -118,9 +129,7 @@ function statusesOf({
 
 describe(readSkillStatuses, () => {
   it("takes as known only what a skill's own answers confirm; what a right answer builds on is to confirm", () => {
-    const statuses = statusesOf({
-      evidence: [answer("graficos", "correct"), answer("graficos", "correct")],
-    });
+    const statuses = statusesOf({ evidence: confirmation("graficos") });
 
     expect(["funcoes", "graficos", "modelos"].map((id) => statuses.get(id))).toStrictEqual([
       "inferred",
@@ -146,7 +155,7 @@ describe(readSkillStatuses, () => {
 
   it("takes a claimed skill as known once its own answers confirm it, and as a gap after a miss", () => {
     const confirmed = statusesOf({
-      evidence: [answer("adm-atos", "correct"), answer("adm-atos", "correct")],
+      evidence: confirmation("adm-atos"),
       knownAreas: ["Administrative law"],
     });
 
@@ -162,8 +171,7 @@ describe(readSkillStatuses, () => {
   it("keeps what a skill's own answers decided when its subject's other answers contradict its Library level", () => {
     const evidence = [
       answer("oversight", "wrong"),
-      answer("principles", "correct"),
-      answer("principles", "correct"),
+      ...confirmation("principles"),
       answer("oversight", "wrong"),
     ];
 
@@ -177,7 +185,6 @@ describe(readSkillStatuses, () => {
 });
 
 type Learner = {
-  format: "multipleChoice" | "trueFalse";
   knownAreas: string[];
   knows: ReadonlySet<string>;
   ownLevel: OwnLevel | null;
@@ -188,7 +195,7 @@ function walk(
   learner: Learner,
   evidence: readonly PlacementEvidence[] = [],
 ): readonly PlacementEvidence[] {
-  const { format, knownAreas, knows, ownLevel, skills } = learner;
+  const { knownAreas, knows, ownLevel, skills } = learner;
 
   const statuses = readSkillStatuses({ answers: evidence, evidence, knownAreas, ownLevel, skills });
 
@@ -206,16 +213,18 @@ function walk(
     return evidence;
   }
 
+  const count = evidence.filter((entry) => entry.skillId === next).length;
+  const item = confirmation(next)[count] ?? answer(next, "wrong");
+
   return walk(learner, [
     ...evidence,
-    { format, outcome: knows.has(next) ? "correct" : "wrong", skillId: next },
+    { ...item, itemId: `item-${evidence.length}`, outcome: knows.has(next) ? "correct" : "wrong" },
   ]);
 }
 
 const AREAS = ["Law", "Math"];
 
 const learners = record({
-  format: constantFrom<Learner["format"]>("multipleChoice", "trueFalse"),
   knownAreas: subarray(AREAS),
   ownLevel: constantFrom<OwnLevel | null>(null, "none", "basic", "intermediate", "advanced"),
   phaseSplit: integer({ max: 8, min: 1 }),
@@ -254,7 +263,6 @@ const learners = record({
 describe("placement with a learner who answers consistently", () => {
   it("settles, asking no skill more often than its own answers need", () => {
     const knowsHarderNotEasier: Learner = {
-      format: "multipleChoice",
       knownAreas: [],
       knows: new Set(["principles", "stateLaw"]),
       ownLevel: null,
@@ -278,7 +286,7 @@ describe("placement with a learner who answers consistently", () => {
 
         expect(
           Math.max(...[...asked.values()].map((answers) => answers.length)),
-        ).toBeLessThanOrEqual(countRightAnswersToKnow(learner.format));
+        ).toBeLessThanOrEqual(4);
       }),
       { examples: [[knowsHarderNotEasier]] },
     );
@@ -290,10 +298,11 @@ function known(evidence: PlacementEvidence[]) {
 }
 
 describe(listKnownSkillIds, () => {
-  it("needs two multiple-choice answers, including for a claimed subject", () => {
+  it("requires one quick answer and three low-guess answers", () => {
     const right = answer("funcoes", "correct");
     expect(known([right])).toStrictEqual([]);
-    expect(known([right, right])).toStrictEqual(["funcoes"]);
+    expect(known([right, right])).toStrictEqual([]);
+    expect(known(confirmation("funcoes"))).toStrictEqual(["funcoes"]);
 
     expect(
       statusesOf({
@@ -303,11 +312,11 @@ describe(listKnownSkillIds, () => {
     ).toBe("claimed");
   });
 
-  it("takes a true-or-false topic as known after three right answers of its own, never fewer", () => {
+  it("never confirms from true-or-false answers", () => {
     const right = answer("funcoes", "correct", "trueFalse");
 
     expect(known([right, right])).toStrictEqual([]);
-    expect(known([right, right, right])).toStrictEqual(["funcoes"]);
+    expect(known([right, right, right])).toStrictEqual([]);
     expect(known([right, right, right, answer("funcoes", "wrong", "trueFalse")])).toStrictEqual([]);
   });
 });
