@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { roundOutward } from "./writing-labels";
+import { roundOutward } from "./round-outward";
 
 describe(roundOutward, () => {
   it("rounds the low end down and the high end up", () => {

@@ -4,6 +4,7 @@ import { type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { daysBetween, useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
 import { useFormatRange } from "../_utils/range";
+import { roundOutward } from "./round-outward";
 
 export type WritingLevel = WritingResult["criteria"][number]["level"];
 
@@ -43,22 +44,6 @@ type Range = { high: number; low: number };
 
 /** A deduction's minus: the typographic one, which a hyphen only imitates. */
 const MINUS = "\u2212";
-
-/** 0.3 × 10 is 3.0000000000000004 in floating point, which must still round to 3. */
-const FLOAT_SLACK = 1e-9;
-
-/**
- * A headline range rounded outward to `decimals`, its low end down and its high end up, so it never
- * claims more than its parts. Zero stays zero, never "−0".
- */
-export function roundOutward({ high, low }: Range, decimals: number): Range {
-  const step = 10 ** decimals;
-
-  return {
-    high: Math.ceil(high * step - FLOAT_SLACK) / step || 0,
-    low: Math.floor(low * step + FLOAT_SLACK) / step || 0,
-  };
-}
 
 /** Exactly `decimals` digits after the point, so every number of one scale reads alike. */
 export function fixedDecimals(decimals: number) {

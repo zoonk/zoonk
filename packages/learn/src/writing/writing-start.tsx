@@ -98,7 +98,7 @@ function WritingTaskRemoved({ hrefs }: { hrefs: { exit: string } }) {
 }
 
 /** One model call writes the question: the wait says what's coming, with no steps it doesn't have. */
-export function WritingPromptWait({ run, unit }: { run: GenerationRun; unit?: WritingUnit }) {
+function WritingPromptWait({ run, unit }: { run: GenerationRun; unit?: WritingUnit }) {
   const t = useExtracted();
 
   return unit === "drill" ? (
