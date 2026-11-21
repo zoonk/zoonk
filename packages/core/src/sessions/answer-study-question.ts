@@ -9,6 +9,7 @@ import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
 import { applyDrillRules } from "../mistakes/drill-answer";
 import { isLeftBlank } from "./_utils/net-score";
 import { recordStudyAnswer } from "./_utils/record-study-answer";
+import { retrySessionRecheck } from "./_utils/retry-session-recheck";
 import { getBlockAnswers } from "./_utils/session-answers";
 import { loadAnsweredSession } from "./_utils/session-events";
 import {
@@ -169,7 +170,9 @@ export async function answerStudyQuestion({
   }
 
   if (previous && block.kind !== "checkpoint") {
-    return { status: "alreadyAnswered" };
+    return retrySessionRecheck({ attempt: previous, session, timeZone: input.timeZone }).then(
+      () => ({ status: "alreadyAnswered" as const }),
+    );
   }
 
   const storedAnswer = getStoredCheckpointAnswer({ block, previous });
