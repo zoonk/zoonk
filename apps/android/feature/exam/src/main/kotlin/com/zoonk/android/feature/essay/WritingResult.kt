@@ -603,11 +603,15 @@ private fun markText(
     return MarkedText(annotated, offsets)
 }
 
-/** A line limit falls inside a word as often as not; the word it splits is shown as past it, whole. */
-private fun wordStart(
+/**
+ * A line limit falls inside a word as often as not; the word it splits is shown as past it, whole.
+ * A limit on the space after a word leaves that word where the grader read it.
+ */
+internal fun wordStart(
     text: String,
     offset: Int,
 ): Int {
+    if (offset >= text.length || text[offset].isWhitespace()) return offset
     var start = offset
     while (start > 0 && !text[start - 1].isWhitespace()) start--
     return start

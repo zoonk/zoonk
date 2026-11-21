@@ -142,7 +142,7 @@ internal fun LazyListScope.subjectWritten(
                             answer.range?.let {
                                 {
                                     Text(
-                                        pointsRange(it.low, it.high, answer.decimals?.toInt()),
+                                        pointsRange(it.low, it.high, answer.decimals?.toInt() ?: 0),
                                         style = MaterialTheme.zoonkType.data,
                                     )
                                 }
@@ -208,7 +208,7 @@ internal fun WrittenStanding(written: WrittenPracticeSubjectsInner) {
 
     val max = points.max
     val range = points.range
-    val decimals = (points.decimals ?: written.decimals)?.toInt()
+    val decimals = (points.decimals ?: written.decimals)?.toInt() ?: 0
     val share = points.minimum?.let { minimumShare(it.unit == WrittenPartPointsMinimum.Unit.PERCENT, it.value, max) }
 
     Column(

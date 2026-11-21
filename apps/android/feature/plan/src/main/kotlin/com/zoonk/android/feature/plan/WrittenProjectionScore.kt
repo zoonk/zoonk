@@ -95,7 +95,7 @@ internal fun WrittenProjectionScore(
                     part.range,
                     part.max,
                     minimumShare = part.minimum?.let { minimumShare(it.unit == WrittenPartPointsMinimum.Unit.PERCENT, it.value, part.max) },
-                    decimals = part.decimals?.toInt(),
+                    decimals = part.decimals?.toInt() ?: 0,
                     levels = !part.inPoints(),
                 ) { Standing(part) }
             }
@@ -133,7 +133,7 @@ private fun ScoreRow(
     range: WritingRangeOutput?,
     max: Double?,
     minimumShare: Double? = null,
-    decimals: Int? = null,
+    decimals: Int = 0,
     /** Graded by level: no points to wait for, so no meter holds their place. */
     levels: Boolean = false,
     below: @Composable () -> Unit = {},
@@ -155,7 +155,7 @@ private fun Standing(part: WrittenPartPoints) {
     val range = part.range ?: return
     val locale = currentLocale()
     val points = formatPoints(minimum, locale)
-    val decimals = part.decimals?.toInt()
+    val decimals = part.decimals?.toInt() ?: 0
 
     when (part.standing) {
         WrittenPartPoints.Standing.MET -> {

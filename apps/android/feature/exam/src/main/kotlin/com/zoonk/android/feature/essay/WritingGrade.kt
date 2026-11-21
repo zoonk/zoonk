@@ -41,8 +41,8 @@ data class WritingPoints(
     val zeroReason: String?,
     /** Which rule zeroed it; older answers leave it out. */
     val zeroKind: WritingResultOutputOneOf1.ZeroKind? = null,
-    /** How many decimals this scale shows; older answers leave it out. */
-    val decimals: Int? = null,
+    /** How many decimals this scale shows. */
+    val decimals: Int,
 )
 
 /** `Limit` and `Zero` have no grader's words: the app words them from the task and the zero's kind. */
@@ -124,7 +124,7 @@ fun WritingResultOutput.toGrade(): WritingGrade =
                     value.rows,
                     value.zeroReason,
                     value.zeroKind,
-                    value.decimals?.toInt(),
+                    value.decimals?.toInt() ?: 0,
                 ),
                 value.estimatedLines?.toInt(),
             )
