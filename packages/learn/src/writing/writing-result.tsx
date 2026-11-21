@@ -5,11 +5,11 @@ import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
-import { Eyebrow } from "../_components/eyebrow";
 import { PageSectionFooter, PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useFormatRange } from "../_utils/range";
 import { ESSAY_QUOTE_CLASS, useFormatScore } from "../essay/essay-labels";
+import { getNextStep } from "./next-step";
 import { LEVEL_CELLS, LEVEL_CELL_COUNT, useLevelName } from "./writing-labels";
 import { NextStepCard, NothingLeftComment } from "./writing-next-step";
 import { PointsHeader } from "./writing-points-header";
@@ -17,22 +17,56 @@ import { WritingMarkedText } from "./writing-text";
 
 type Points = Extract<WritingResult, { kind: "points" }>;
 
-function WritingNextStep({ grade }: { grade: WritingResult }) {
+function WritingNextStep({
+  grade,
+  lines,
+  text,
+}: {
+  grade: WritingResult;
+  lines: number | null;
+  text: string;
+}) {
   const t = useExtracted();
-  const { nextStep } = grade;
+  const step = getNextStep({ grade, text });
 
-  if (!nextStep) {
+  if (step.kind === "done") {
     return <NothingLeftComment />;
   }
 
-  const criterion = grade.criteria.find(({ id }) => id === nextStep.criterionId);
+  if (step.kind === "limit") {
+    return (
+      <NextStepCard
+        example={null}
+        quote={null}
+        text={
+          lines
+            ? t("Graders stop at line {lines}, so the rest isn't read.", { lines: String(lines) })
+            : t("Graders stop at the line limit, so the rest isn't read.")
+        }
+        title={
+          lines
+            ? t("Fit it in {lines} lines", { lines: String(lines) })
+            : t("Fit it in the line limit")
+        }
+      />
+    );
+  }
+
+  const fallbackTitle =
+    step.kind === "zero"
+      ? t({
+          description:
+            "The next step of a written answer that scored zero, for example for being off the topic.",
+          message: "Answer the question asked",
+        })
+      : t("What to rewrite");
 
   return (
     <NextStepCard
-      example={nextStep.example}
-      quote={nextStep.quote}
-      text={nextStep.text}
-      title={criterion?.name ?? t("What to rewrite")}
+      example={step.example}
+      quote={step.quote}
+      text={step.text}
+      title={step.title ?? fallbackTitle}
     />
   );
 }
@@ -218,10 +252,11 @@ export function WritingResultView({
   return (
     <div className="flex flex-col gap-10" data-slot="writing-result">
       <div className="flex flex-col gap-6">
-        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+        {/* A heading, not a chip: one chip sits over a title, and the next step has its own. */}
+        {eyebrow && <PageSectionTitle>{eyebrow}</PageSectionTitle>}
         {grade.kind === "points" && <PointsHeader grade={grade} prompt={prompt} text={text} />}
         <WritingProgress grade={grade} />
-        <WritingNextStep grade={grade} />
+        <WritingNextStep grade={grade} lines={prompt.lines} text={text} />
       </div>
       <WritingCriteria grade={grade} prompt={prompt} />
       <WritingMarkedText grade={grade} lines={prompt.lines} text={text} />

@@ -11,6 +11,7 @@ import { TaskActions } from "../_components/task-layout";
 import { EssaySkipButton } from "../essay/essay-skip-button";
 import { useFinishTask } from "../essay/use-finish-essay";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
+import { getNextStep } from "./next-step";
 import { type WritingDraftState, useWritingDraft } from "./use-writing-draft";
 import { useHeaderLabel } from "./writing-header";
 import { WritingQuestionScreen } from "./writing-question";
@@ -43,6 +44,7 @@ function ResultScreen({
   const t = useExtracted();
   const finishing = useFinishTask(finish);
   const label = useHeaderLabel(writing);
+  const done = getNextStep({ grade: graded.grade, text: graded.text }).kind === "done";
 
   useEffect(() => focusStepTitle(document.body), []);
 
@@ -51,9 +53,13 @@ function ResultScreen({
       exitHref={hrefs.exit}
       footer={
         <TaskActions>
-          {closed ? (
-            <TaskMainLink href={hrefs.exit}>{t("Today")}</TaskMainLink>
-          ) : (
+          {closed && <TaskMainLink href={hrefs.exit}>{t("Today")}</TaskMainLink>}
+          {!closed && done && (
+            <TaskMainButton busy={finishing.pending} onClick={() => void finishing.finish()}>
+              {t("Continue")}
+            </TaskMainButton>
+          )}
+          {!closed && !done && (
             <>
               <EssaySkipButton finishing={finishing} />
               <TaskMainButton busy={rewriting} onClick={onRewrite}>
@@ -156,6 +162,7 @@ export function WritingScreen({
           hrefs={hrefs}
           onContinue={actions.finish}
           task={{
+            lines: essay.writing.lines,
             minutes: essay.pacing?.minutes ?? null,
             title: essay.writing.title,
             unit: essay.writing.unit,
