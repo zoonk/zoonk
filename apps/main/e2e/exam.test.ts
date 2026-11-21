@@ -1,5 +1,6 @@
 import { type Browser, type Request, type Route } from "@playwright/test";
-import { addGradedEssay, addTodayMock, createEnemEssayDay, playMock } from "./exam-fixtures";
+import { addGradedEssay, createEnemEssayDay } from "./exam-essay-fixtures";
+import { addTodayMock, playMock } from "./exam-fixtures";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { nextStep, stepDots } from "./result-steps";
