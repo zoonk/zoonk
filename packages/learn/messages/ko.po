@@ -863,6 +863,12 @@ msgstr "{dateKind, select, month {목표의 약 <b>{share}</b>에 해당하는 �
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
+msgctxt "_c2i3I"
+msgid "{dateKind, select, month {Covers everything in your plan by {date}.} other {Covers everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {{date}까지 계획에 있는 내용을 모두 다뤄요.} other {{date}까지 계획에 있는 내용을 모두 다뤄요.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
 msgctxt "wtnatU"
 msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
 msgstr "{dateKind, select, month {{date}까지 시험에 나오는 모든 주제를 다뤄요.} other {{date}까지 시험에 나오는 모든 주제를 다뤄요.}}"

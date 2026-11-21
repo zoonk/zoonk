@@ -863,6 +863,12 @@ msgstr "{dateKind, select, month {Deckt bis {date} die ersten Lektionen in etwa 
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
+msgctxt "_c2i3I"
+msgid "{dateKind, select, month {Covers everything in your plan by {date}.} other {Covers everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {Deckt bis {date} alles in deinem Plan ab.} other {Deckt bis zum {date} alles in deinem Plan ab.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
 msgctxt "wtnatU"
 msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
 msgstr "{dateKind, select, month {Deckt bis {date} alle deine Prüfungsthemen ab.} other {Deckt bis zum {date} alle deine Prüfungsthemen ab.}}"
