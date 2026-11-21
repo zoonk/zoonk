@@ -143,9 +143,11 @@ async function verifyBatch(
   });
 }
 
-export async function verifyClaims(comparison: Comparison, attempt: string) {
-  const attempted = new Set<string>();
-
+export async function verifyClaims(
+  comparison: Comparison,
+  attempt: string,
+  attempted: Set<string>,
+) {
   for (;;) {
     const deciding = decisiveClaims(comparison);
     const pending = deciding.filter((claim) => !attempted.has(claim.id));

@@ -5,6 +5,7 @@ import {
   canAdjudicate,
   caseVotes,
   missingReaderFamilies,
+  needsBlindOwnerRead,
   readerRecords,
   settle,
   sides,
@@ -71,12 +72,20 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
 
   return decisionSchema.parse({ cases, readers, rows: classified, ...choice });
 }
-export function decisiveClaims(comparison: Comparison) {
+
+function assessComparison(comparison: Comparison) {
   const cases = caseVotes(comparison, acceptedReads(comparison));
   const claims = verifiedClaims(comparison);
-  const rows = deliveryTable(comparison, cases, claims);
 
-  return assess(comparison, cases, claims, rows).decisive;
+  return assess(comparison, cases, claims, deliveryTable(comparison, cases, claims));
+}
+
+export function needsModelReads(comparison: Comparison) {
+  return assessComparison(comparison).modelReads;
+}
+
+export function decisiveClaims(comparison: Comparison) {
+  return assessComparison(comparison).decisive;
 }
 
 export function decisiveUnresolved(comparison: Comparison) {
@@ -198,20 +207,33 @@ function preferenceBounds(manifest: Comparison["manifest"], cases: Cases) {
   };
 }
 
-function readingChoice({ cases, manifest }: { cases: Cases; manifest: Comparison["manifest"] }) {
+function assessReading({
+  cases,
+  decisive,
+  manifest,
+}: {
+  cases: Cases;
+  decisive?: Claims;
+  manifest: Comparison["manifest"];
+}) {
   const unresolved = cases.filter((item) => item.result === "unresolved");
 
   if (unresolved.some((item) => !canAdjudicate(manifest, item))) {
-    return result(
-      "insufficient evidence",
-      "Some unresolved cases are awaiting qualified model reads.",
+    return assessment(
+      result("insufficient evidence", "Some unresolved cases are awaiting qualified model reads."),
+      decisive,
+      true,
     );
   }
 
-  return {
-    ...result("insufficient evidence", "Your blind read can settle the unresolved cases."),
-    reasonCode: "owner_blind_read_required" as const,
-  };
+  return assessment(
+    {
+      ...result("insufficient evidence", "Your blind read can settle the unresolved cases."),
+      reasonCode: "owner_blind_read_required",
+    },
+    decisive,
+    true,
+  );
 }
 
 const keyChoice = result("insufficient evidence", "Some answer keys are unchecked.");
@@ -227,7 +249,7 @@ function assess(comparison: Comparison, cases: Cases, claims: Claims, rows: Deci
   const rules = manifest.priorities.comparison;
 
   if (!manifest.variants.incumbent || !incumbent || !challenger) {
-    return assessment(result("insufficient evidence", "Single-output audit."));
+    return assessment(result("insufficient evidence", "Single-output audit."), [], true);
   }
 
   const challengerFailed = challenger.status === "disqualified";
@@ -345,7 +367,7 @@ function assessEligibleChallenger({
   }
 
   if (best.outcome === "switch") {
-    return assessment(switchCoverage({ cases, manifest }) ?? best);
+    return switchCoverage({ cases, manifest }) ?? assessment(best);
   }
 
   if (
@@ -370,8 +392,8 @@ function assessEligibleChallenger({
   return assessment(current.outcome === best.outcome ? current : best);
 }
 
-function assessment(choice: Choice, decisive: Claims = []) {
-  return { choice, decisive };
+function assessment(choice: Choice, decisive: Claims = [], modelReads = false) {
+  return { choice, decisive, modelReads };
 }
 
 function hardRequirementChoice(keyMatters: boolean, hard: Claims) {
@@ -385,12 +407,22 @@ function hardRequirementChoice(keyMatters: boolean, hard: Claims) {
 
 function switchCoverage({ cases, manifest }: { cases: Cases; manifest: Comparison["manifest"] }) {
   if (cases.some((item) => missingReaderFamilies(manifest, item.votes).length > 0)) {
-    return readingChoice({ cases, manifest });
+    return assessReading({ cases, manifest });
   }
 
-  return manifest.priorities.distribution === "shared" &&
-    cases.some((item) => !item.owner && !item.adjudication)
-    ? result("insufficient evidence", "Shared content awaits the owner’s blind read.")
+  const unread = cases.filter((item) => needsBlindOwnerRead(manifest, item));
+
+  if (unread.some((item) => item.adjudication)) {
+    return assessment(
+      result(
+        "insufficient evidence",
+        "Shared content needs a new comparison for cases ruled on before a blind read.",
+      ),
+    );
+  }
+
+  return unread.length > 0
+    ? assessment(result("insufficient evidence", "Shared content awaits the owner’s blind read."))
     : null;
 }
 
@@ -413,7 +445,7 @@ function assessOpenTradeOrReads({
   const decisive = tradeMatters ? trade.decisive : [];
 
   if (decideWithinBounds(preferences.worst, trade.best).outcome !== best.outcome) {
-    return assessment(readingChoice({ cases, manifest }), decisive);
+    return assessReading({ cases, decisive, manifest });
   }
 
   return assessment(

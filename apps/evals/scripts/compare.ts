@@ -2,7 +2,12 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { checkRuns } from "@/lib/comparisons/checks";
-import { decide, decisionSchema, decisiveUnresolved } from "@/lib/comparisons/decision";
+import {
+  decide,
+  decisionSchema,
+  decisiveUnresolved,
+  needsModelReads,
+} from "@/lib/comparisons/decision";
 import {
   DEFAULT_RESERVE_READ_CAP,
   confirmForecast,
@@ -272,6 +277,8 @@ async function readOne(packet: SealedPacket, { manifest, outputs }: Comparison) 
       seatContext: saved.seatContext,
     })}\n`,
   );
+
+  return saved;
 }
 
 async function reserveStarts(comparison: Comparison) {
@@ -286,8 +293,11 @@ async function reserveStarts(comparison: Comparison) {
   return started;
 }
 
-async function readOrder(reverse: boolean, reserve = false) {
-  const comparison = await loadComparison(taskId, id);
+async function readOrder(comparison: Comparison, reverse: boolean, reserve = false) {
+  if (!needsModelReads(comparison)) {
+    return false;
+  }
+
   const { manifest } = comparison;
   const decisive = reserve ? new Set(decisiveUnresolved(comparison)) : null;
   const unresolved = decide(comparison).cases.filter((entry) => entry.result === "unresolved");
@@ -336,14 +346,56 @@ async function readOrder(reverse: boolean, reserve = false) {
   }
 
   await runInOrder(available, async (packet) => {
+    if (!needsModelReads(comparison)) {
+      return;
+    }
+
     if (reserve && !decisiveUnresolved(await current()).includes(packet.mapping[0]?.caseId ?? "")) {
       return;
     }
 
-    await readOne(packet, comparison);
+    comparison.attempts.push(await readOne(packet, comparison));
   });
 
   return false;
+}
+
+async function readPackets(comparison: Comparison) {
+  return (
+    (await readOrder(comparison, false)) ||
+    (await readOrder(comparison, true)) ||
+    (options.reserve !== "none" && (await readOrder(comparison, true, true)))
+  );
+}
+
+async function evidenceStep(attempted: Set<string>) {
+  const comparison = await current();
+  const reads = comparison.attempts.length;
+
+  if ((await readPackets(comparison)) || options["stop-after"] === "reads") {
+    return "stop";
+  }
+
+  const checked = comparison.attempts.length === reads ? comparison : await current();
+  const previous = checked.verifications.length;
+  await verifyClaims(checked, attempt, attempted);
+
+  return checked.verifications.length !== previous && needsModelReads(checked)
+    ? "read again"
+    : "report";
+}
+
+async function collectEvidence() {
+  const attempted = new Set<string>();
+
+  for (;;) {
+    // oxlint-disable-next-line no-await-in-loop -- A saved verification can make another read decisive.
+    const next = await evidenceStep(attempted);
+
+    if (next !== "read again") {
+      return next === "stop";
+    }
+  }
 }
 
 async function getManifest() {
@@ -461,28 +513,8 @@ async function run() {
     return;
   }
 
-  const checked = await current();
-
-  if (
-    !decide(checked).rows.some(
-      (reader) => reader.side === "challenger" && reader.status === "disqualified",
-    )
-  ) {
-    const interrupted = await readOrder(false);
-
-    if (
-      interrupted ||
-      (await readOrder(true)) ||
-      (options.reserve !== "none" && (await readOrder(true, true)))
-    ) {
-      return;
-    }
-
-    if (options["stop-after"] === "reads") {
-      return;
-    }
-
-    await verifyClaims(await current(), attempt);
+  if (await collectEvidence()) {
+    return;
   }
 
   const comparison = await current();

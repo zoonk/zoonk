@@ -1,7 +1,7 @@
 import { Fold } from "@/components/fold";
 import { FoldRowTitle } from "@/components/fold-row-title";
 import { type Decision } from "@/lib/comparisons/decision";
-import { canAdjudicate } from "@/lib/comparisons/evidence";
+import { canAdjudicate, needsBlindOwnerRead } from "@/lib/comparisons/evidence";
 import { type Comparison } from "@/lib/comparisons/schemas";
 import { CaseInput } from "../_components/case-input";
 import { CaseRuns } from "../_components/case-view";
@@ -97,7 +97,7 @@ export function CasesSection({
               >
                 <div className="flex flex-col gap-6 pt-2 pb-6">
                   {!audit && <CaseVotes item={item} />}
-                  {canAdjudicate(manifest, item) && (
+                  {canAdjudicate(manifest, item) && !needsBlindOwnerRead(manifest, item) && (
                     <RulingForm
                       blindRead={item.owner}
                       caseId={item.caseId}

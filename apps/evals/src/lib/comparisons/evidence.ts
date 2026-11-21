@@ -28,7 +28,7 @@ export function acceptedReads(comparison: Comparison) {
         const attempt = ruling
           ? attempts.find(
               (entry) =>
-                entry.recordedAt && ruling.recordedAt && entry.recordedAt < ruling.recordedAt,
+                entry.recordedAt && ruling.recordedAt && entry.recordedAt <= ruling.recordedAt,
             )
           : attempts[0];
 
@@ -99,7 +99,9 @@ function summarizeVotes(votes: Direction[]): Direction {
 }
 
 export function settle(votes: Direction[]): Direction {
-  const expressed = votes.filter((vote) => vote !== "split");
+  if (votes.includes("split")) {
+    return "unresolved";
+  }
 
   const winner = sides.find(
     (subject) =>
@@ -107,8 +109,7 @@ export function settle(votes: Direction[]): Direction {
   );
 
   return (
-    winner ??
-    (expressed.length >= 2 && expressed.every((vote) => vote === "tie") ? "tie" : "unresolved")
+    winner ?? (votes.length >= 2 && votes.every((vote) => vote === "tie") ? "tie" : "unresolved")
   );
 }
 
@@ -188,6 +189,13 @@ function latestRuling(
     (!blindOwner?.vote || (ruling.recordedAt ?? "") >= (blindOwner.attempt.recordedAt ?? ""))
     ? ruling
     : undefined;
+}
+
+export function needsBlindOwnerRead(
+  manifest: Comparison["manifest"],
+  item: Pick<Decision["cases"][number], "owner">,
+) {
+  return manifest.priorities.distribution === "shared" && !item.owner;
 }
 
 function requiredReaderFamilies(manifest: Comparison["manifest"]) {
