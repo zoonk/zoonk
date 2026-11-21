@@ -37,9 +37,11 @@ export function useTimeAnswerTexts() {
 
     return full.everything
       ? t("Covering everything takes about {time} a day.", { time })
-      : t("The most you can cover is about {share}, at {time} a day.", {
-          share: formatShare(full.coveredShare),
-          time,
+      : t({
+          description:
+            "When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more.",
+          message: "{time} a day covers as much as any time can.",
+          values: { time },
         });
   };
 

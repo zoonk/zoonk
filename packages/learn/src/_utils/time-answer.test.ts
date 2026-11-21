@@ -120,18 +120,13 @@ function plateauAt(minutes: number) {
 describe(getEverythingTakes, () => {
   it("says what covering everything takes beside a focus suggestion", () => {
     expect(getEverythingTakes(foundTime(focusAt(805)))).toStrictEqual({
-      coveredShare: 1,
       everything: true,
       minutes: 805,
     });
   });
 
   it("says the most any time covers when part never fits, or that nothing covers everything", () => {
-    expect(getEverythingTakes(plateauAt(480))).toStrictEqual({
-      coveredShare: 0.99,
-      everything: false,
-      minutes: 480,
-    });
+    expect(getEverythingTakes(plateauAt(480))).toStrictEqual({ everything: false, minutes: 480 });
 
     expect(getEverythingTakes(foundTime(focusAt(null)))).toBeNull();
   });

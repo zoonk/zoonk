@@ -25,7 +25,7 @@ export function getSuggestedMinutes(found: PlanTimeToCover | null): number | nul
   return found?.suggested?.minutes ?? null;
 }
 
-export type FullTime = { coveredShare: number; everything: boolean; minutes: number };
+export type FullTime = { everything: boolean; minutes: number };
 
 /**
  * The time that covers the most: what covers everything, or as much as any time does when part
@@ -35,10 +35,10 @@ function getFullTime(found: PlanTimeToCover | null): FullTime | null {
   const minutes = found?.recommendedMinutes ?? null;
 
   if (minutes !== null) {
-    return { coveredShare: 1, everything: true, minutes };
+    return { everything: true, minutes };
   }
 
-  return found?.most ? { ...found.most, everything: false } : null;
+  return found?.most ? { everything: false, minutes: found.most.minutes } : null;
 }
 
 export function getMarkedTimes(found: PlanTimeToCover | null): {
