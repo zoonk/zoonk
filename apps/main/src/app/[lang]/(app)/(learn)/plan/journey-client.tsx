@@ -155,6 +155,7 @@ function getJourneyLinks({
     focusTest: "/focus-test",
     logbook: "/logbook",
     mindMaps: hasMindMaps ? "/mind-maps" : null,
+    placementTest: "/placement-test",
     subject: (key) => `/plan/${key}`,
   };
 }

@@ -15,10 +15,11 @@ import {
 import { QuestionTitle } from "../../_components/question-title";
 import { AnswersSaveError } from "../../_components/save-error";
 import { getSentDurationMs } from "../../mistakes/drill/drill-types";
-import { ItemLine, ItemSupport } from "../../questions/item-text";
+import { ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { useSpokenText } from "../../rich-text/use-spoken-text";
-import { type Choice } from "../choice-list";
+import { QuestionInputs } from "../../session/question-block/question-view";
+import { type StudyQuestionAnswer } from "../../session/session-types";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
   OnboardingBottomBar,
@@ -28,46 +29,35 @@ import {
   OnboardingSubject,
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
-import { TypedAnswerField } from "./typed-answer-field";
 
-function useQuestionChoices({
-  question,
-  trueFalseLabels,
-}: {
-  question: PlacementQuestion;
-  trueFalseLabels: TrueFalseLabels;
-}): Choice<string>[] {
+function useTrueFalseChoices(trueFalseLabels: TrueFalseLabels) {
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
 
-  if (question.format === "trueFalse") {
-    return [
-      { label: answerLabel(true), value: "true" },
-      { label: answerLabel(false), value: "false" },
-    ];
-  }
-
-  return (question.options ?? []).map((option, index) => ({
-    label: <ItemLine text={option} />,
-    value: String(index),
-  }));
+  return [
+    { label: answerLabel(true), value: true },
+    { label: answerLabel(false), value: false },
+  ];
 }
 
-function PlacementOptions({
-  choices,
+/** A statement's title is the question itself, so it keeps the plain two options under it. */
+function TrueFalseOptions({
   label,
   onChange,
-  value,
+  trueFalseLabels,
 }: {
-  choices: Choice<string>[];
   label: string;
-  onChange: (value: string) => void;
-  value: string | null;
+  onChange: (answer: PlacementAnswer) => void;
+  trueFalseLabels: TrueFalseLabels;
 }) {
+  const choices = useTrueFalseChoices(trueFalseLabels);
+  const [picked, setPicked] = useState<boolean | null>(null);
+
   const pick = (index: number) => {
     const choice = choices[index];
 
     if (choice) {
-      onChange(choice.value);
+      setPicked(choice.value);
+      onChange({ isTrue: choice.value });
     }
   };
 
@@ -78,10 +68,10 @@ function PlacementOptions({
       {choices.map((choice, index) => (
         <AnswerOption
           aria-keyshortcuts={shortcutKeys("pick", index)}
-          key={choice.value}
+          key={String(choice.value)}
           marker={index + 1}
-          onClick={() => onChange(choice.value)}
-          picked={value === choice.value}
+          onClick={() => pick(index)}
+          picked={picked === choice.value}
         >
           {choice.label}
         </AnswerOption>
@@ -90,20 +80,9 @@ function PlacementOptions({
   );
 }
 
-function toAnswer({
-  question,
-  value,
-}: {
-  question: PlacementQuestion;
-  value: string;
-}): PlacementAnswer {
-  if (question.format === "typed") {
-    return { text: value.trim() };
-  }
-
-  return question.format === "trueFalse"
-    ? { isTrue: value === "true" }
-    : { selectedIndex: Number(value) };
+/** A placement question is answered by taps alone; a number or text never comes from one. */
+function toTapAnswer(answer: StudyQuestionAnswer): PlacementAnswer | null {
+  return "number" in answer || "text" in answer ? null : answer;
 }
 
 type PlacementControl = "confirm" | "dontKnow" | "stop";
@@ -154,6 +133,7 @@ export function PlacementQuestionScreen({
   onAnswer,
   onStop,
   pending,
+  position,
   progress,
   question,
   stopHint,
@@ -169,6 +149,8 @@ export function PlacementQuestionScreen({
   onAnswer: (answer: PlacementAnswer, durationMs: number) => void;
   onStop: () => void;
   pending: boolean;
+  /** Where the question sits, over its title; "Question n of m" by default. */
+  position?: string;
   /** 0 to 1. */
   progress: number;
   question: PlacementQuestion;
@@ -179,8 +161,7 @@ export function PlacementQuestionScreen({
 }) {
   const t = useExtracted();
   const spoken = useSpokenText();
-  const choices = useQuestionChoices({ question, trueFalseLabels });
-  const [value, setValue] = useState<string | null>(null);
+  const [value, setValue] = useState<PlacementAnswer | null>(null);
   // oxlint-disable-next-line react/hook-use-state -- Read once as the question opens, never updated.
   const [shownAt] = useState(() => Date.now());
   // A saved answer opens the next question as a new screen (keyed by its item), so a send kept
@@ -191,17 +172,13 @@ export function PlacementQuestionScreen({
 
   const [pressed, setPressed] = useState<PlacementControl | null>(null);
   const title = useRef<HTMLDivElement>(null);
-  const isTyped = question.format === "typed";
 
-  // The control that sent the last answer is gone, so focus would fall to the page. A typed answer's
-  // field takes it instead.
+  // The control that sent the last answer is gone, so focus would fall to the page.
   useEffect(() => {
-    if (!isTyped) {
-      title.current?.focus({ preventScroll: true });
-    }
-  }, [isTyped]);
+    title.current?.focus({ preventScroll: true });
+  }, []);
 
-  const canConfirm = value !== null && value.trim().length > 0;
+  const canConfirm = value !== null;
 
   const send = (answer: PlacementAnswer, control: PlacementControl) => {
     const durationMs = getSentDurationMs({
@@ -216,8 +193,8 @@ export function PlacementQuestionScreen({
   };
 
   const confirm = () => {
-    if (value !== null && canConfirm && !pending) {
-      send(toAnswer({ question, value }), "confirm");
+    if (value !== null && !pending) {
+      send(value, "confirm");
     }
   };
 
@@ -243,9 +220,10 @@ export function PlacementQuestionScreen({
           {subject && number !== undefined && (
             <OnboardingSubject
               position={
-                total === undefined
+                position ??
+                (total === undefined
                   ? t("Question {number, number}", { number })
-                  : t("Question {number, number} of {total, number}", { number, total })
+                  : t("Question {number, number} of {total, number}", { number, total }))
               }
             >
               {subject}
@@ -264,14 +242,30 @@ export function PlacementQuestionScreen({
           <QuestionTitle heading="h1" ref={title} tabIndex={-1} text={question.question} />
         </OnboardingHeading>
 
-        {isTyped ? (
-          <TypedAnswerField onChange={setValue} onSubmit={confirm} value={value ?? ""} />
-        ) : (
-          <PlacementOptions
-            choices={choices}
+        {question.format === "trueFalse" ? (
+          <TrueFalseOptions
             label={spoken.blocks(question.question)}
             onChange={setValue}
-            value={value}
+            trueFalseLabels={trueFalseLabels}
+          />
+        ) : (
+          <QuestionInputs
+            allowBlank={false}
+            disabled={pending}
+            onChange={(answer) => setValue(answer && toTapAnswer(answer))}
+            onSubmit={confirm}
+            question={{
+              entry: null,
+              format: question.format,
+              left: question.left ?? null,
+              options: question.options,
+              question: question.question,
+              right: question.right ?? null,
+              select: question.select ?? null,
+              unit: null,
+            }}
+            result={null}
+            trueFalseLabels={trueFalseLabels}
           />
         )}
 

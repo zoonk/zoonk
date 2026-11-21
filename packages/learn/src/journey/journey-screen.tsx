@@ -19,6 +19,7 @@ import {
 import { PlanEditor } from "../plan/plan-editor";
 import { type PlanEditorSection } from "../plan/plan-editor-sections";
 import { PlanFocusTest } from "../plan/plan-focus-test";
+import { PlanPlacementTest } from "../plan/plan-placement-test";
 import { PlanProperties } from "../plan/plan-properties";
 import { PlanRebuildNotice } from "../plan/plan-rebuild-notice";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
@@ -53,6 +54,7 @@ export type JourneyLinks = JourneyPathLinks & {
   course: (course: { brandSlug: string; courseSlug: string }) => string;
   focusTest: string;
   logbook: string | null;
+  placementTest: string;
   mindMaps: string | null;
   subject: (key: string) => string;
 };
@@ -108,7 +110,13 @@ function JourneyBody({
   const course = getPlanLibraryCourse(plan);
   const courseHref = course && links.course(course);
   const structure = hasSyllabusSection(syllabus) ? syllabus : null;
-  const focusTest = <PlanFocusTest />;
+
+  const focusTest = (
+    <>
+      <PlanFocusTest />
+      <PlanPlacementTest href={links.placementTest} />
+    </>
+  );
 
   const numbers = (variant: "stats" | "tiles", className: string) =>
     standing && (

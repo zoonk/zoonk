@@ -49,11 +49,13 @@ function ready(
 ): PlacementOutcome {
   return {
     answered,
+    attempt: null,
     complete: false,
     dayBudgetSpent: 0,
     dayBudgetUsed: false,
     focusTest,
     next,
+    result: null,
     started: false,
     status: "ready",
     trueFalseLabels: "trueFalse",

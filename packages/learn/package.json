@@ -58,6 +58,8 @@
     "./finish-ready": "./src/_components/finish-ready.tsx",
     "./focus-test": "./src/focus-test/focus-test-flow.tsx",
     "./focus-test/actions": "./src/focus-test/focus-test-actions.ts",
+    "./placement-test": "./src/placement-test/placement-test-flow.tsx",
+    "./placement-test/actions": "./src/placement-test/placement-test-actions.ts",
     "./format-number": "./src/_utils/use-format-number.ts",
     "./generation": "./src/generation/generation-wait.tsx",
     "./generation/follower": "./src/generation/generation-follower.tsx",

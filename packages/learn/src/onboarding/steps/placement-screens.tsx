@@ -56,15 +56,24 @@ export function PlacementIntro({
 
 /** A test that's over and not saved yet: the learner came back to it, or its last save failed. */
 export function PlacementDone({
+  failed,
   onContinue,
   pending,
 }: {
+  failed?: boolean;
   onContinue: () => void;
   pending: boolean;
 }) {
   const t = useExtracted();
 
-  return <TestOutcome busy={pending} onContinue={onContinue} title={t("Your answers are saved")} />;
+  return (
+    <TestOutcome
+      busy={pending}
+      failed={failed}
+      onContinue={onContinue}
+      title={t("Your answers are saved")}
+    />
+  );
 }
 
 export function PlacementUnavailable({

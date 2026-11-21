@@ -20,6 +20,8 @@ import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
 import { startPlacementSitting } from "@zoonk/core/learner/placement/sitting";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
+import { getGoalPlan } from "@zoonk/core/plans/get";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import {
@@ -29,9 +31,11 @@ import {
   type PlanOutcome,
   type WaitlistOutcome,
 } from "@zoonk/learn/onboarding/actions";
+import { type PlacementPartOutcome } from "@zoonk/learn/placement-test/actions";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
+import { toPlacementOutcome } from "./placement-outcome";
 import { readRevealedPlan } from "./revealed-plan";
 
 /** Failures become outcomes the screens can say, never thrown errors. */
@@ -115,40 +119,6 @@ export async function answerOnboardingAction(
     : { status: "failed" };
 }
 
-type PlacementState = Extract<
-  Awaited<ReturnType<typeof getGoalPlacement>>,
-  { status: "ready" }
->["placement"];
-
-const NOT_READY = new Set<PlacementState["status"]>(["preparing", "waitingForQuestions"]);
-
-/** Whether an answer was right stays on the server: no placement screen shows it. */
-function toPlacementOutcome(placement: PlacementState): PlacementOutcome {
-  if (NOT_READY.has(placement.status)) {
-    return { focusTest: placement.focusTest, status: "notReady" };
-  }
-
-  if (placement.status === "failed") {
-    return { status: "generationFailed" };
-  }
-
-  if (placement.status === "unavailable") {
-    return { status: "unavailable" };
-  }
-
-  return {
-    answered: placement.answered,
-    complete: placement.complete,
-    dayBudgetSpent: placement.dayBudgetSpent,
-    dayBudgetUsed: placement.dayBudgetUsed,
-    focusTest: placement.focusTest,
-    next: placement.next,
-    started: placement.started,
-    status: "ready",
-    trueFalseLabels: placement.trueFalseLabels,
-  };
-}
-
 export async function getPlacementAction({
   goalId,
   timeZone,
@@ -165,12 +135,16 @@ export async function getPlacementAction({
   return result.status === "ready" ? toPlacementOutcome(result.placement) : { status: "failed" };
 }
 
-/** Opens an exam goal's next sitting; asked again, it answers with the one already open. */
+/**
+ * Opens an exam goal's next sitting, or with a `length` the test taken from the plan (its next part
+ * once one ended); asked again, it answers with the one already open.
+ */
 export async function startPlacementSittingAction({
   goalId,
   ...input
 }: {
   goalId: string;
+  length?: "quick" | "wholeCourse";
   timeZone: string;
 }): Promise<PlacementOutcome> {
   const parsed = placementSittingInputSchema.safeParse(input);
@@ -189,6 +163,8 @@ export async function answerPlacementAction({
   ...input
 }: {
   answer: unknown;
+  attemptId?: string;
+  part?: number;
   durationMs: number;
   goalId: string;
   itemId: string;
@@ -223,6 +199,50 @@ export async function finishPlacementAction({
   const result = await finishGoalPlacement({ goalId, input: parsed.data });
 
   return result.status === "ready" ? { focusTest: result.completion.focusTest } : null;
+}
+
+/** The first topic still to study, where the plan goes on after a test; null when none is left. */
+function findNextTopic(plan: PlanView): string | null {
+  const chapters = plan.phases.flatMap((phase) => phase.chapters);
+  return chapters.find((chapter) => chapter.state !== "done" && !chapter.testedOut)?.title ?? null;
+}
+
+/** Closes a part of the test taken from the plan and applies what it skipped. */
+export async function finishPlacementPartAction({
+  goalId,
+  ...input
+}: {
+  attemptId: string;
+  goalId: string;
+  part: number;
+  timeZone: string;
+}): Promise<PlacementPartOutcome> {
+  const parsed = placementCompletionInputSchema.safeParse({ ...input, fromScratch: false });
+
+  if (!parsed.success || !isUuid(goalId)) {
+    return { status: "failed" };
+  }
+
+  const finished = await finishGoalPlacement({ goalId, input: parsed.data });
+
+  if (finished.status === "staleAttempt") {
+    return { status: "stale" };
+  }
+
+  if (finished.status !== "ready") {
+    return { status: "failed" };
+  }
+
+  const { completion } = finished;
+  const plan = await getGoalPlan(goalId);
+
+  return {
+    attempt: completion.attempt ?? null,
+    lessonsSkipped: completion.partLessonsSkipped ?? 0,
+    nextTopic: plan.status === "ready" ? findNextTopic(plan.plan) : null,
+    result: completion.result ?? null,
+    status: "finished",
+  };
 }
 
 export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
