@@ -537,6 +537,12 @@ describe("mocks taken any time", () => {
         input: { shape: { area: null, day: null, kind: "half" } },
       }),
     ).resolves.toStrictEqual({ status: "preparing" });
+
+    await expect(
+      prisma.followUp.findFirst({
+        where: { key: goal.id, kind: "prepareMockSupply", userId: user.id },
+      }),
+    ).resolves.toMatchObject({ input: { later: false } });
   });
 
   it("keeps today's paper available before the learner's first on-demand mock", async () => {
@@ -720,7 +726,7 @@ describe("mocks taken any time", () => {
       priority: mockPaperKey(input.shape),
     });
 
-    expect(papers.map((paper) => paper.later)).toStrictEqual([true]);
+    expect(papers.map((paper) => paper.later)).toStrictEqual([false]);
     const writes = papers.flatMap((paper) => paper.writes);
 
     expect(

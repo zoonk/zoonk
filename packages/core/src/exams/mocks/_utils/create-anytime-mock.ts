@@ -146,7 +146,7 @@ export async function createAnytimeMock({
             input: {
               examBlueprintId: goal.examBlueprintId,
               goalId: goal.id,
-              later: reuse,
+              later: false,
               paper: mockPaperKey(shape),
             },
             kind: "prepareMockSupply",

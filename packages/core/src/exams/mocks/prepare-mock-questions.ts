@@ -239,7 +239,7 @@ export async function listMockPrepWrites({
 
       papers.push({
         key: target.key,
-        later: priority !== target.key || ("reuse" in target && target.reuse),
+        later: priority !== target.key,
         quickFormat,
         writes: batch ?? [],
         ...(batch && batch.length > 0 && !reuseRequested ? { allowStimulusSets: true } : {}),
