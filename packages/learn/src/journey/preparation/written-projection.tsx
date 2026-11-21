@@ -12,6 +12,7 @@ import { getMinimumPoints, getMinimumShare } from "../../writing/minimum-points"
 import { PointsMeter, PointsReadout } from "../../writing/points-readout";
 import { useWritingTaskName } from "../../writing/writing-header";
 import { useFormatPointsRange } from "../../writing/writing-labels";
+import { getProjectionWriteTask } from "./projection-write-task";
 
 type Range = { high: number; low: number };
 
@@ -261,11 +262,7 @@ export function WrittenProjectionScore({
 }) {
   const t = useExtracted();
   const headline = useHeadline(projection);
-  const needsWriting = projection.parts.some((part) => !part.range || part.standing === "below");
-
-  const unmeasuredTask = projection.parts
-    .flatMap(({ tasks }) => tasks)
-    .find(({ range }) => range === null);
+  const write = getProjectionWriteTask(projection);
 
   return (
     <section className="flex flex-col gap-3" data-slot="written-projection">
@@ -306,7 +303,7 @@ export function WrittenProjectionScore({
         ))}
       </div>
 
-      {needsWriting && <WriteAction goalId={goalId} taskKey={unmeasuredTask?.key} />}
+      {write && <WriteAction goalId={goalId} taskKey={write.taskKey} />}
     </section>
   );
 }
