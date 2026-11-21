@@ -44,7 +44,6 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
-import com.zoonk.android.ui.richtext.isNumberedItem
 import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
@@ -217,11 +216,7 @@ internal fun splitExample(
 ): ExampleSplit? {
     val quote = example?.trim()?.takeIf { it.isNotEmpty() } ?: return null
     val at = text.indexOf(quote).takeIf { it >= 0 } ?: return null
-    val end = at + quote.length
-    // A numbered list split around the example would number each part from 1 again, so it stays whole.
-    val lines = text.substring(text.lastIndexOf('\n', at - 1) + 1, text.indexOf('\n', end).takeIf { it >= 0 } ?: text.length)
-    if (lines.lines().any(::isNumberedItem)) return null
-    return ExampleSplit(text.substring(0, at).trim(), quote, text.substring(end).trim())
+    return ExampleSplit(text.substring(0, at).trim(), quote, text.substring(at + quote.length).trim())
 }
 
 /**

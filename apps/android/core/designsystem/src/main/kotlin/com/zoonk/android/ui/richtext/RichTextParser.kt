@@ -26,7 +26,7 @@ sealed interface RichBlock {
 
     /**
      * A numbered list starts at its first item's number, as in CommonMark, so steps split by a code
-     * block number on; [start] is null for bullets.
+     * block or an example's frame number on; [start] is null for bullets.
      */
     data class ListBlock(
         val items: List<List<RichSegment>>,
@@ -328,9 +328,6 @@ fun parseRichLine(
         .filter { piece -> piece.any { it.text.isNotBlank() } }
         .flatMapIndexed { index, piece -> if (index == 0) piece else listOf(SPACE_SEGMENT) + piece }
 }
-
-/** A line the parser reads as a numbered list's item, which lists number by their place. */
-fun isNumberedItem(line: String): Boolean = ORDERED_ITEM.containsMatchIn(line)
 
 private fun List<RichSegment>.shownText(): String = joinToString("") { it.text }
 
