@@ -73,7 +73,7 @@ export function SandboxRunBar({
       </div>
 
       {runtimeStatus === "loading" && (
-        <p aria-live="polite" className="text-muted-foreground text-xs text-pretty">
+        <p aria-live="polite" className="text-muted-foreground text-xs">
           {t("Getting {runtime} ready. This takes a few seconds the first time.", {
             runtime: runtimeName,
           })}

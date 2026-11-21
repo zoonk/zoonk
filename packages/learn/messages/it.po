@@ -598,13 +598,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Stiamo impiegando più tempo del solito. Si aprirà automaticamente, non serve toccare di nuovo."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Scorri a sinistra"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Scorri a destra"
@@ -1326,7 +1324,6 @@ msgstr "Ciao! Sono {name}, il tuo socio di studio con l’IA. Dimmi cosa vuoi im
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Domande precedenti"
@@ -7779,11 +7776,6 @@ msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
 msgstr "{answered, plural, =0 {# risposte date} one {# risposta data} other {# risposte date}}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "Vai alle domande successive"
-
-#: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -13055,6 +13047,7 @@ msgstr "Esercitati per {minutes} min"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "Prepara le lezioni"
@@ -13087,12 +13080,6 @@ msgid "What changed"
 msgstr "Cos’è cambiato"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "Preparale ora"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Le tue prossime lezioni"
@@ -13103,12 +13090,6 @@ msgstr "Le tue prossime lezioni"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "Non ancora pronte"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "Ci stiamo mettendo più tempo del solito"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13149,16 +13130,6 @@ msgstr "Se vuoi studiare, trovi le prossime lezioni qui sotto."
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "Goditi il tuo giorno di riposo!"
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "Ci stiamo mettendo più del solito a preparare le lezioni di oggi."
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "Torna tra qualche minuto."
 
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"

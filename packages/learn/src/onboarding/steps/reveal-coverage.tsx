@@ -25,7 +25,7 @@ export function RevealCoverage({ onAddTime }: { onAddTime: () => void }) {
       className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2"
       data-slot="reveal-coverage"
     >
-      <p className="text-muted-foreground min-w-0 flex-1 basis-56 text-sm text-pretty">
+      <p className="text-muted-foreground min-w-0 flex-1 basis-56 text-sm">
         {coveredText(coverage)}
       </p>
 

@@ -32,7 +32,7 @@ function StartNote({ children, className }: { children: ReactNode; className?: s
       <LineMarker>
         <CirclePlayIcon aria-hidden="true" className="size-4" />
       </LineMarker>
-      <span className="text-pretty">{children}</span>
+      <span>{children}</span>
     </p>
   );
 }

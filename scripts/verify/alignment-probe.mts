@@ -905,11 +905,33 @@ export function readAlignment({
     ];
   }
 
-  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
-  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+  /** What scrolls under a bar: a sticky bar's nearest clipping ancestor, else the document. */
+  function scrollerOf(bar: Element): Element {
+    if (getComputedStyle(bar).position === "sticky") {
+      for (let holder = bar.parentElement; holder; holder = holder.parentElement) {
+        if (["auto", "hidden", "scroll"].includes(getComputedStyle(holder).overflowY)) {
+          return holder;
+        }
+      }
+    }
 
-  const pinnedShown = (atEnd ? [...document.querySelectorAll(pinnedBars)] : []).filter(
-    (bar) => present(bar) && ["fixed", "sticky"].includes(getComputedStyle(bar).position),
+    return document.documentElement;
+  }
+
+  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
+  function atScrollEnd(bar: Element): boolean {
+    const scroller = scrollerOf(bar);
+
+    return scroller === document.documentElement
+      ? scrollY + innerHeight >= scroller.scrollHeight - 1
+      : scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
+  }
+
+  const pinnedShown = [...document.querySelectorAll(pinnedBars)].filter(
+    (bar) =>
+      present(bar) &&
+      ["fixed", "sticky"].includes(getComputedStyle(bar).position) &&
+      atScrollEnd(bar),
   );
 
   const elements = pieces.flatMap(({ name: pieceName, web: piece }) =>
@@ -1115,11 +1137,13 @@ export function readAlignment({
       getComputedStyle(element).getPropertyValue("--button-variant").trim() === "ghost";
 
     /**
-     * Where a strip that scrolls sideways (`HorizontalScroll`) continues, it fades past the column,
-     * the sign that it scrolls: what passes the column on that side is under the fade.
+     * Where a strip that scrolls sideways (`HorizontalScroll`, `SidewaysScroll`) continues, it fades
+     * past the column, the sign that it scrolls: what passes the column on that side is under the fade.
      */
     const unfaded = (element: Element, area: Rect, edges: { left: number; right: number }) => {
-      const scroller = element.closest("[data-slot=horizontal-scroll] > *");
+      const scroller = element.closest(
+        "[data-slot=horizontal-scroll] > *,[data-slot=sideways-scroll]",
+      );
 
       if (!(scroller instanceof HTMLElement)) {
         return area;
@@ -1572,7 +1596,9 @@ export function readAlignment({
     const style = getComputedStyle(element);
 
     return (
-      element.matches("input,textarea,select,[data-slot=horizontal-scroll]") ||
+      element.matches(
+        "input,textarea,select,[data-slot=horizontal-scroll],[data-slot=sideways-scroll]",
+      ) ||
       [style.overflowX, style.overflowY].some((overflow) =>
         ["auto", "scroll"].includes(overflow),
       ) ||
@@ -1587,7 +1613,7 @@ export function readAlignment({
         !(element instanceof HTMLElement) ||
         !present(element) ||
         element.closest(
-          "svg,[data-slot=horizontal-scroll],[data-slot=contribution-calendar-viewport]",
+          "svg,[data-slot=horizontal-scroll],[data-slot=sideways-scroll],[data-slot=contribution-calendar-viewport]",
         )
       ) {
         return [];

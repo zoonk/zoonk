@@ -230,7 +230,7 @@ function EmptyNotebook({ showingFixed }: { showingFixed: boolean }) {
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground text-sm text-pretty" data-slot="mistakes-empty">
+    <p className="text-muted-foreground text-sm" data-slot="mistakes-empty">
       {showingFixed
         ? t("Mistakes you fix in practice show up here.")
         : t("Nothing to fix right now. Mistakes from your lessons and reviews show up here.")}

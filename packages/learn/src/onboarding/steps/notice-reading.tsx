@@ -171,7 +171,7 @@ export function UsualStructureNote() {
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground text-xs text-pretty">
+    <p className="text-muted-foreground text-xs">
       {t(
         "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
       )}

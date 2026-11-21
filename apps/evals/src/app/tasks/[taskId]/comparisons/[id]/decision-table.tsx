@@ -2,7 +2,6 @@ import { type Decision } from "@/lib/comparisons/decision";
 import { caseRunKey } from "@/lib/comparisons/identity";
 import { type Comparison, type Variant } from "@/lib/comparisons/schemas";
 import { formatDollars, formatSeconds } from "@/lib/format";
-import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import {
   Table,
   TableBody,
@@ -262,7 +261,7 @@ export function DecisionTable({
 
   return (
     <div className="flex flex-col gap-2">
-      <Table scrollLabels={SCROLL_LABELS}>
+      <Table scrollLabel="Decision table">
         <TableHeader>
           <TableRow>
             <TableHead className="w-1/4" />

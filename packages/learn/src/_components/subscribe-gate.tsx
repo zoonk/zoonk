@@ -24,11 +24,9 @@ export function GateWords({
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-0.5" data-slot="gate-words">
-      {title && <p className="text-sm font-medium text-pretty">{title}</p>}
+      {title && <p className="text-sm font-medium">{title}</p>}
       {line && (
-        <p className={cn("text-muted-foreground text-sm text-pretty", provisional && "invisible")}>
-          {line}
-        </p>
+        <p className={cn("text-muted-foreground text-sm", provisional && "invisible")}>{line}</p>
       )}
     </div>
   );

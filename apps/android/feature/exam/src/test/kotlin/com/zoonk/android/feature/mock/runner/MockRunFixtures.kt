@@ -64,16 +64,25 @@ internal fun currentSection(
     drafts: String = "",
     deadline: String = "${Clock.System.now() + 1.hours}",
     kind: String = "null",
-) =
-    """{"changesLeft":null,"deadline":"$deadline","drafts":[$drafts],"kind":$kind,"plays":[],"questions":[$questions],"resume":0,"section":$section}"""
+    resume: Int = 0,
+    changesLeft: Int? = null,
+    changedItemIds: List<String> = emptyList(),
+): String {
+    val changed = changedItemIds.joinToString(",") { "\"$it\"" }
+    return """{"changedItemIds":[$changed],"changesLeft":$changesLeft,"deadline":"$deadline","drafts":[$drafts],"kind":$kind,"plays":[],
+        "questions":[$questions],"resume":$resume,"section":$section}"""
+}
 
 /** A running mock whose first section moves by [navigation], main's section rules. */
-internal fun navigatedMock(navigation: String) =
-    runningMock(
-        extra =
-            """"sections":[{"breakAfterMinutes":null,"essays":0,"index":0,"minutes":30,"name":"Mathematics","navigation":$navigation,"questions":2,"status":"current","tools":null},
+internal fun navigatedMock(
+    navigation: String,
+    current: String = currentSection(),
+) = runningMock(
+    current = current,
+    extra =
+        """"sections":[{"breakAfterMinutes":null,"essays":0,"index":0,"minutes":30,"name":"Mathematics","navigation":$navigation,"questions":2,"status":"current","tools":null},
             {"breakAfterMinutes":null,"essays":0,"index":1,"minutes":30,"name":"Languages","navigation":null,"questions":1,"status":"upcoming","tools":null}]""",
-    )
+)
 
 internal const val FORWARD_ONLY = """{"answerChanges":null,"forwardOnly":true,"itemSeconds":null,"mustAnswer":false}"""
 internal const val A_MINUTE_EACH = """{"answerChanges":null,"forwardOnly":true,"itemSeconds":60,"mustAnswer":false}"""

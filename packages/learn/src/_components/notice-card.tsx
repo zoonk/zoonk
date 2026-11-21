@@ -34,7 +34,7 @@ export function NoticeCardContent({ className, ...props }: React.ComponentProps<
 export function NoticeCardTitle({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-sm leading-snug font-medium text-pretty", className)}
+      className={cn("text-sm leading-snug font-medium", className)}
       data-slot="notice-card-title"
       {...props}
     />
@@ -44,7 +44,7 @@ export function NoticeCardTitle({ className, ...props }: React.ComponentProps<"p
 export function NoticeCardDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-muted-foreground text-compact leading-snug text-pretty", className)}
+      className={cn("text-muted-foreground text-compact leading-snug", className)}
       data-slot="notice-card-description"
       {...props}
     />

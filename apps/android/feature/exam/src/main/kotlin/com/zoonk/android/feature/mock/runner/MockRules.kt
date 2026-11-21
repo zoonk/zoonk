@@ -29,6 +29,17 @@ data class SectionMoves(
 
     fun canChange(target: Int): Boolean = !forwardOnly || target >= reached || target in changed || (changesLeft ?: 0) > 0
 
+    /** What the review has changed once the answer on screen goes from [saved] to [next]; null when it may not change. */
+    fun changedAfter(
+        saved: Answer?,
+        next: Answer?,
+    ): Set<Int>? =
+        when {
+            !canChange(position) -> null
+            reviewing && position < reached && saved != next -> changed + position
+            else -> changed
+        }
+
     companion object {
         fun of(
             navigation: MockExamSectionsInnerNavigation?,

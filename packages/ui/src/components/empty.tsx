@@ -4,10 +4,7 @@ import { type VariantProps, cva } from "class-variance-authority";
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "flex w-full min-w-0 flex-1 flex-col items-start gap-4 text-left text-balance",
-        className,
-      )}
+      className={cn("flex w-full min-w-0 flex-1 flex-col items-start gap-4 text-left", className)}
       data-slot="empty"
       {...props}
     />
@@ -56,7 +53,7 @@ function EmptyMedia({
 function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("text-sm leading-5 font-semibold tracking-[-0.01em]", className)}
+      className={cn("text-sm leading-5 font-semibold tracking-[-0.01em] text-balance", className)}
       data-slot="empty-title"
       {...props}
     />
@@ -67,7 +64,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <div
       className={cn(
-        "text-muted-foreground [&>a:hover]:text-foreground text-compact leading-snug text-pretty [&>a]:underline [&>a]:underline-offset-4",
+        "text-muted-foreground [&>a:hover]:text-foreground text-compact leading-snug [&>a]:underline [&>a]:underline-offset-4",
         className,
       )}
       data-slot="empty-description"

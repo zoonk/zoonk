@@ -103,6 +103,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/research/translate-pass-marks": { translatePassMarks: vi.fn() },
   "@zoonk/ai/tasks/research/upload-visibility": { classifyUploadVisibility: vi.fn() },
   "@zoonk/ai/tasks/tutor/goal-tutor": { streamGoalTutorAnswer: vi.fn() },
+  "@zoonk/ai/tasks/variants/example-lines": { generateExampleLines: vi.fn() },
   "@zoonk/ai/tasks/variants/step-variant": { generateStepVariant: vi.fn() },
   "@zoonk/ai/tasks/warm-up/check-warm-up-cards": { checkWarmUpCards: vi.fn() },
   "@zoonk/ai/tasks/warm-up/write-warm-up-cards": { generateWarmUpCards: vi.fn() },

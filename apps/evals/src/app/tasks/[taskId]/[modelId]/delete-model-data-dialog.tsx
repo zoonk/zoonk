@@ -42,7 +42,7 @@ export function DeleteModelDataDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete outputs and results?</AlertDialogTitle>
-          <AlertDialogDescription className="text-pretty">
+          <AlertDialogDescription>
             Every output and result of this model on this task is deleted for good. To score it
             again, you generate and evaluate from the start.
           </AlertDialogDescription>

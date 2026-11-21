@@ -58,7 +58,7 @@ async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
 
     return (
       <>
-        <p className="text-muted-foreground -mt-3 flex-1 text-pretty">
+        <p className="text-muted-foreground -mt-3 flex-1">
           {t("Log in with your Zoonk staff account first. You'll come back here to approve it.")}
         </p>
         <BottomBar>
