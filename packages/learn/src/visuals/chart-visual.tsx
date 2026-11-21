@@ -22,7 +22,7 @@ import {
 import { getSeriesMark } from "./_utils/series-marks";
 import { LABEL_FONT_SIZE, useTextScale } from "./_utils/use-text-scale";
 import { BarRows } from "./chart-bar-rows";
-import { SeriesBar, SeriesLine, SeriesPoint, SeriesSwatch } from "./series-marks";
+import { SeriesBar, SeriesLegend, SeriesLine, SeriesPoint } from "./series-marks";
 
 const FALLBACK_WIDTH = 318;
 const MIN_LABEL_WIDTH = 30;
@@ -200,23 +200,6 @@ function Lines({
   });
 }
 
-function Legend({ visual }: { visual: ChartVisual }) {
-  if (visual.series.length < 2) {
-    return null;
-  }
-
-  return (
-    <ul aria-hidden="true" className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
-      {visual.series.map((series, index) => (
-        <li className="flex items-center gap-1.5" key={series.name}>
-          <SeriesSwatch chart={visual.chart} mark={getSeriesMark(index)} />
-          {series.name}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function ChartData({ visual }: { visual: ChartVisual }) {
   const format = useFormatNumber();
 
@@ -270,6 +253,7 @@ export function ChartVisualView({
   });
 
   const sideways = layout.orientation === "horizontal";
+  const chartDraw = visual.chart === "line" ? "point" : "bar";
 
   return (
     <figure
@@ -280,7 +264,7 @@ export function ChartVisualView({
         {visual.title}
       </figcaption>
 
-      <Legend visual={visual} />
+      <SeriesLegend series={visual.series.map(({ name }) => ({ draw: chartDraw, name }))} />
 
       <div className="flex flex-col gap-1">
         <p aria-hidden="true" className="text-muted-foreground text-xs">

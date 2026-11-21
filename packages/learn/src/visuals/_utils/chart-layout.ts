@@ -145,7 +145,15 @@ function placeRows({
 }
 
 /** Keeps every Nth tick label, the fewest skipped that leaves none touching where they're drawn. */
-function thinTicks({ ticks, width, x }: { ticks: Tick[]; width: number; x: LinearScale }): Tick[] {
+export function thinTicks({
+  ticks,
+  width,
+  x,
+}: {
+  ticks: Tick[];
+  width: number;
+  x: LinearScale;
+}): Tick[] {
   const bounds = ticks.map((tick) => {
     const center = clampLabelCenter({ lines: [tick.label], width, x: x.toPixel(tick.value) });
     const half = getLabelWidth(tick.label) / 2;
