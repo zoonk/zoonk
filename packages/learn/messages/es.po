@@ -55,7 +55,6 @@ msgstr "PM"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
@@ -805,6 +804,11 @@ msgstr "Opciones de pantalla"
 msgctxt "WE1eNa"
 msgid "The test didn't open. Try again."
 msgstr "La prueba no se abrió. Inténtalo de nuevo."
+
+#: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "¿Ya conoces el siguiente capítulo?"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"

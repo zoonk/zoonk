@@ -35,7 +35,7 @@ export function FinishedChapterMapProvider({
   return <FinishedChapterMapContext value={map}>{children}</FinishedChapterMapContext>;
 }
 
-/** After the day's moment and before "Up next", when the completion finished a chapter. */
+/** After the day's moment, when the completion finished a chapter. */
 export function FinishedChapterMoment({ chapter }: { chapter: FinishedChapter | null }) {
   const ChapterMap = use(FinishedChapterMapContext);
 
