@@ -21,6 +21,8 @@ import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.api.models.PlacementCompletion
+import com.zoonk.api.models.LanguageLevelTestResult
+import com.zoonk.android.feature.onboarding.PlacementPart
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,6 +38,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.UUID
 
 /**
  * What the setup's requests lead to belongs to the visit that asked: a recreation lands the request
@@ -65,15 +68,18 @@ class SetupOutcomesTest {
                     override suspend fun finishLevelTest(
                         session: AuthenticatedSession,
                         goalId: String,
-                    ) {
+                        attemptId: UUID?,
+                    ): LanguageLevelTestResult {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)
+                        return LanguageLevelTestResult(levels = emptyList())
                     }
 
                     override suspend fun finishPlacement(
                         session: AuthenticatedSession,
                         goalId: String,
                         fromScratch: Boolean,
+                        attempt: PlacementPart?,
                     ): PlacementCompletion {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)
@@ -229,7 +235,7 @@ class SetupOutcomesTest {
     @Test
     fun aPlacementFinishThatFailsAfterTheSetupWasLeftSaysNothingOnReturn() =
         check(fails = true) { store, _ ->
-            val vm = PlacementViewModel(GOAL_ID, store, null, SavedStateHandle()) { WriteOutcome.Done(Unit) }.kept()
+            val vm = PlacementViewModel(GOAL_ID, store, SavedStateHandle()) { WriteOutcome.Done(Unit) }.kept()
             vm.finish(fromScratch = false)
             runCurrent()
             vm.visit.end()
@@ -242,7 +248,7 @@ class SetupOutcomesTest {
     @Test
     fun aPlacementStopThatFailsWhileTheSetupIsRecreatedSaysSoOnItsQuestion() =
         check(fails = true) { store, _ ->
-            val vm = PlacementViewModel(GOAL_ID, store, null, SavedStateHandle()) { WriteOutcome.Done(Unit) }.kept()
+            val vm = PlacementViewModel(GOAL_ID, store, SavedStateHandle()) { WriteOutcome.Done(Unit) }.kept()
             vm.finish(fromScratch = false, fromQuestion = true)
             gate.complete(Unit)
             runCurrent()
@@ -255,7 +261,7 @@ class SetupOutcomesTest {
         check { store, _ ->
             var saved = 0
             val vm =
-                PlacementViewModel(GOAL_ID, store, null, SavedStateHandle()) {
+                PlacementViewModel(GOAL_ID, store, SavedStateHandle()) {
                     saved++
                     WriteOutcome.Done(Unit)
                 }.kept()

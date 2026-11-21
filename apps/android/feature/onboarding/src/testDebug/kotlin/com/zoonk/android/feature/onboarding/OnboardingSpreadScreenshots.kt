@@ -198,11 +198,10 @@ class OnboardingSpreadScreenshots {
             listOf(
                 Screen("placement-intro") { placement(placementOf()) },
                 Screen("placement-choice", start = true) { placement(placementOf()) },
-                Screen("placement-typed", start = true) { placement(placementOf(next = typedQuestion())) },
+                Screen("placement-order", start = true) { placement(placementOf(next = orderQuestion())) },
                 Screen("placement-visual", start = true) { placement(placementOf(next = VISUAL_QUESTION)) },
                 Screen("level-test-reading") { levelTest(levelTestOf(answered = 3)) },
                 Screen("level-test-listening") { levelTest(levelTestOf(next = listeningQuestion(), answered = 6)) },
-                Screen("level-test-speaking") { levelTest(levelTestOf(next = SPEAKING_NEXT, answered = 11)) },
             )
 
         fun placement(placement: Placement) =

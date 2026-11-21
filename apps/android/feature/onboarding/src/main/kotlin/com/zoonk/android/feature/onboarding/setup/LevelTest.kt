@@ -9,11 +9,9 @@ import com.zoonk.api.models.LanguageLevelTestOneOf
 import com.zoonk.api.models.LanguageLevelTestOneOf1
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1Next
-import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOf1Speaking
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
 
 internal typealias LevelTestQuestion = LanguageLevelTestOneOf1NextOneOfQuestion
-internal typealias LevelTestSentence = LanguageLevelTestOneOf1NextOneOf1Speaking
 internal typealias SkillLevel = LanguageLevelTestOneOf1LevelsInner
 
 internal sealed interface LevelTestPhase {
@@ -23,19 +21,14 @@ internal sealed interface LevelTestPhase {
 
     data object Waiting : LevelTestPhase
 
+    /** [confirmation]: a level's check, where every right option is picked so a guess rarely passes. */
     data class Question(
         val question: LevelTestQuestion,
         /** 0 to 1. */
         val progress: Float,
         val number: Int = 1,
         val total: Int = 1,
-    ) : LevelTestPhase
-
-    data class Speaking(
-        val sentence: LevelTestSentence,
-        val progress: Float,
-        val number: Int = 1,
-        val total: Int = 1,
+        val confirmation: Boolean = false,
     ) : LevelTestPhase
 
     data class Done(
@@ -60,7 +53,7 @@ internal fun levelTestPhase(
     val value = (test as? LoadState.Loaded)?.value
     val ready = (value as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value
     val preparing = (value as? LanguageLevelTest.LanguageLevelTestOneOfValue)?.value
-    val ended = ready?.next is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value
+    val ended = ready?.next.let { it is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value || it is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf3Value }
 
     return when {
         stopped -> LevelTestPhase.Done(ready?.levels.orEmpty())
@@ -82,30 +75,17 @@ private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     val progress = answered.toFloat() / total.coerceAtLeast(1)
     return when (val next = next) {
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOfValue -> {
-            LevelTestPhase.Question(
-                next.value.question,
-                progress,
-                (
-                    answered +
-                        1
-                ).toInt(),
-                total.toInt(),
-            )
+            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt())
         }
 
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf1Value -> {
-            LevelTestPhase.Speaking(
-                next.value.speaking,
-                progress,
-                (
-                    answered +
-                        1
-                ).toInt(),
-                total.toInt(),
-            )
+            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt(), confirmation = true)
         }
 
-        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value -> {
+        // An older test's spoken sentence isn't asked anymore: its levels come from reading and listening.
+        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf2Value,
+        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf3Value,
+        -> {
             LevelTestPhase.Done(levels)
         }
     }

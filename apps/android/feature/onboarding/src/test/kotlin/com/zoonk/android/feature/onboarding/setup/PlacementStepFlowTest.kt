@@ -29,7 +29,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
-import com.zoonk.android.feature.onboarding.typedQuestion
+import com.zoonk.android.feature.onboarding.orderQuestion
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
@@ -151,10 +151,10 @@ class PlacementStepFlowTest {
         rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
 
         api.placementGate = null
-        api.placement = placementOf(next = typedQuestion())
+        api.placement = placementOf(next = orderQuestion())
         rule.mainClock.advanceTimeBy(POLL_MS)
 
-        rule.onNodeWithText("In your own words, what is hearsay?").assertIsDisplayed()
+        rule.onNodeWithText("Put a civil case's stages in order.").assertIsDisplayed()
     }
 
     @Test

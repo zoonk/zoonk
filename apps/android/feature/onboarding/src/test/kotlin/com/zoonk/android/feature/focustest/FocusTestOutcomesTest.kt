@@ -20,12 +20,13 @@ import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.onboarding.PlacementPart
+import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.models.Placement
-import com.zoonk.api.models.PlacementAnswer
-import com.zoonk.api.models.PlacementAnswerAnyOf
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletion
+import com.zoonk.api.models.PlacementLength
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -68,10 +69,11 @@ class FocusTestOutcomesTest {
                     override suspend fun startPlacementSitting(
                         session: AuthenticatedSession,
                         goalId: String,
+                        length: PlacementLength?,
                     ): Placement {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)
-                        return fake.startPlacementSitting(session, goalId)
+                        return fake.startPlacementSitting(session, goalId, length)
                     }
 
                     override suspend fun answerPlacement(
@@ -88,17 +90,18 @@ class FocusTestOutcomesTest {
                         session: AuthenticatedSession,
                         goalId: String,
                         fromScratch: Boolean,
+                        attempt: PlacementPart?,
                     ): PlacementCompletion {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)
-                        return fake.finishPlacement(session, goalId, fromScratch)
+                        return fake.finishPlacement(session, goalId, fromScratch, attempt)
                     }
                 }
             val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
             val cache = AppCache(session, backgroundScope)
             val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
             val vm =
-                FocusTestViewModel(GOAL_ID, store, PlanStore(FakePlanApi(), cache), null, SavedStateHandle()) {
+                FocusTestViewModel(GOAL_ID, store, PlanStore(FakePlanApi(), cache), SavedStateHandle()) {
                     hostGate?.await()
                     saves++
                     WriteOutcome.Done(Unit)
@@ -131,7 +134,7 @@ class FocusTestOutcomesTest {
         ) as FocusTestPhase.Question
     }
 
-    private val typed = PlacementAnswer.PlacementAnswerAnyOfValue(PlacementAnswerAnyOf("hearsay"))
+    private val picked = Answer.Choice(0)
 
     /** Starts [request], ends the visit while it's out, then lets it land. */
     private fun TestScope.leaveWhile(
@@ -231,7 +234,7 @@ class FocusTestOutcomesTest {
     fun anAnswerThatFailsAfterTheTestWasLeftSaysNothingOnReturn() =
         check(fails = true) { vm ->
             val question = vm.question()
-            leaveWhile(vm) { vm.answer(question, typed, durationMs = 1_000) }
+            leaveWhile(vm) { vm.answer(question, picked, durationMs = 1_000) }
 
             assertEquals(0, vm.saveFailures)
         }
@@ -240,7 +243,7 @@ class FocusTestOutcomesTest {
     fun anAnswerThatFailsWhileTheTestIsRecreatedSaysSoOnItsQuestion() =
         check(fails = true) { vm ->
             val question = vm.question()
-            recreateWhile { vm.answer(question, typed, durationMs = 1_000) }
+            recreateWhile { vm.answer(question, picked, durationMs = 1_000) }
 
             assertEquals(1, vm.saveFailures)
         }

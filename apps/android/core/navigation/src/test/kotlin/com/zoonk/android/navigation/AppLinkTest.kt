@@ -69,6 +69,8 @@ class AppLinkTest {
             "/test-out/chapter-1?session=session-1" to AppRoute.TestOut("chapter-1", "session-1"),
             "/focus-test" to AppRoute.FocusTest(),
             "/focus-test?goal=goal-1" to AppRoute.FocusTest("goal-1"),
+            "/placement-test" to AppRoute.PlacementTest(),
+            "/level-test?testOut=1" to AppRoute.LevelTest(testOut = true),
             "/challenge/item-1" to AppRoute.Challenge("item-1"),
             "/challenge/item-1?session=session-1" to AppRoute.Challenge("item-1", "session-1"),
             "/checkpoint/block-1?session=session-1" to AppRoute.Checkpoint("block-1", "session-1"),

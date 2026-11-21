@@ -2,7 +2,6 @@ package com.zoonk.android.feature.focustest
 
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.onboarding.setup.PlacementItem
 import com.zoonk.android.feature.onboarding.setup.isPending
 import com.zoonk.android.feature.onboarding.setup.item
 import com.zoonk.api.models.FocusTest
@@ -36,7 +35,7 @@ internal sealed interface FocusTestPhase {
     ) : FocusTestPhase
 
     data class Question(
-        val item: PlacementItem,
+        val item: com.zoonk.android.feature.questions.Question,
         val sitting: FocusTestSitting,
         val labels: TrueFalseLabels,
     ) : FocusTestPhase

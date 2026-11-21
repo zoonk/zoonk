@@ -12,13 +12,12 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
-import com.zoonk.android.feature.onboarding.setup.SetupDrafts
 import com.zoonk.android.feature.onboarding.setup.refreshed
-import com.zoonk.android.feature.onboarding.setup.typedDraftStep
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.questions.Answer
+import com.zoonk.android.feature.questions.tap
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.Placement
-import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import kotlinx.coroutines.launch
@@ -45,7 +44,6 @@ internal class FocusTestViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
     private val plans: PlanStore,
-    private val drafts: SetupDrafts?,
     handle: SavedStateHandle,
     private val hostSave: LeaveTest = { WriteOutcome.Done(Unit) },
 ) : ViewModel() {
@@ -131,19 +129,18 @@ internal class FocusTestViewModel(
 
     fun answer(
         question: FocusTestPhase.Question,
-        answer: PlacementAnswer,
+        answer: Answer,
         durationMs: Long,
     ) {
+        val tap = answer.tap() ?: return
         if (busy) return
         answering = true
         failure.clear()
         val asked = visit.number
-        val draft = drafts?.sending(goalId, typedDraftStep(question.item.itemId))
         viewModelScope.launch {
-            when (val sent = store.answerPlacement(goalId, question.item.itemId, answer, durationMs)) {
+            when (val sent = store.answerPlacement(goalId, question.item.itemId, tap, durationMs)) {
                 is WriteOutcome.Done -> {
                     saveFailure.clear()
-                    draft?.remove()
                     // A sitting that's over closes in the same save; if that fails, its screen holds the retry.
                     if (sent.value.placement.sittingOver() != null && !close(asked)) failure.send(asked, Unit)
                 }

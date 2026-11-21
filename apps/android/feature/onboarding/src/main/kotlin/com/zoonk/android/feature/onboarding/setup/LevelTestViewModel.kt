@@ -14,13 +14,17 @@ import com.zoonk.android.data.Visit
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestGeneration
+import com.zoonk.api.models.LanguageLevelTestResult
 import kotlinx.coroutines.launch
+import java.util.UUID
 
-private class SentTestAnswer(
+private data class SentTestAnswer(
     val questionId: String,
     val answerIndex: Long?,
+    val answerIndices: List<Long>?,
     val durationMs: Long,
     val skipped: Boolean,
 )
@@ -28,27 +32,33 @@ private class SentTestAnswer(
 /**
  * Opening it only reads; only the learner's Start asks for a language pair's questions, and
  * answering and finishing are POSTs from their taps. [saveStep] saves the setup's placement step
- * once the test is finished.
+ * once the test is finished. With an [attemptId], it's a test the plan's Start already opened: its
+ * questions show at once, and the test closes itself once it asks nothing more, leaving its [result].
  */
 internal class LevelTestViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
     handle: SavedStateHandle,
+    private val attemptId: UUID? = null,
     private val saveStep: suspend () -> WriteOutcome<*>,
 ) : ViewModel() {
     /** This visit to the test: a save that fails says so only on it. */
     val visit = Visit()
 
-    private var savedStarted by handle.saved { false }
+    private var savedStarted by handle.saved { attemptId != null }
 
     private var started by mutableStateOf(savedStarted)
 
     /** The wait shows from this screen's Start until the questions arrive or writing them stops. */
-    private var begun by mutableStateOf(false)
+    private var begun by mutableStateOf(attemptId != null)
 
     private var stopped by mutableStateOf(false)
 
-    var bank by mutableStateOf(BankWait())
+    var bank by mutableStateOf(if (attemptId != null) BankWait(askedAt = now()) else BankWait())
+        private set
+
+    /** A plan's test, once closed: its ranges and what it skipped. */
+    var result by mutableStateOf<LanguageLevelTestResult?>(null)
         private set
 
     var isStarting by mutableStateOf(false)
@@ -65,7 +75,7 @@ internal class LevelTestViewModel(
 
     val finishFailed get() = finishFailure.value != null
 
-    private val test get() = store.levelTests[goalId]
+    private val test get() = store.levelTest(goalId, attemptId)
     private var sent: SentTestAnswer? = null
 
     fun phase(state: LoadState<LanguageLevelTest>) = levelTestPhase(state, started, begun, stopped, bank)
@@ -113,10 +123,13 @@ internal class LevelTestViewModel(
         return read
     }
 
-    /** [answerIndex] is null for "I don't know"; a [skipped] listening question doesn't count toward a level. */
+    /**
+     * [answer] is a pick, a confirmation's picks, or "I don't know"; a [skipped] listening question doesn't count toward
+     * a level.
+     */
     fun answer(
         questionId: String,
-        answerIndex: Long?,
+        answer: Answer,
         durationMs: Long,
         skipped: Boolean = false,
     ) {
@@ -124,12 +137,14 @@ internal class LevelTestViewModel(
         finishFailure.clear()
         val started = visit.number
         val previous = sent
+        val answerIndex = (answer as? Answer.Choice)?.index?.toLong()
+        val answerIndices = (answer as? Answer.Choices)?.indexes?.map(Int::toLong)
         val duration =
             previous
                 ?.takeIf {
-                    it.questionId == questionId && it.answerIndex == answerIndex && it.skipped == skipped
+                    it.copy(durationMs = durationMs) == SentTestAnswer(questionId, answerIndex, answerIndices, durationMs, skipped)
                 }?.durationMs ?: durationMs
-        val answer = SentTestAnswer(questionId, answerIndex, duration, skipped)
+        val sending = SentTestAnswer(questionId, answerIndex, answerIndices, duration, skipped)
         isSaving = true
         viewModelScope.launch {
             if (previous != null) {
@@ -147,12 +162,28 @@ internal class LevelTestViewModel(
                     return@launch
                 }
             }
-            sent = answer
-            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)) {
+            sent = sending
+            val saved =
+                store.answerLevelTest(
+                    goalId,
+                    sending.questionId,
+                    sending.answerIndex,
+                    sending.durationMs,
+                    sending.skipped,
+                    attemptId,
+                    sending.answerIndices,
+                )
+            when (saved) {
                 is WriteOutcome.Done -> {
                     sent = null
                     saveFailure.clear()
                     finishFailure.clear()
+                    // A plan's test that asks nothing more closes in the same save; if that fails, its levels hold the retry.
+                    if (attemptId != null && phase(test.state.value) is LevelTestPhase.Done) {
+                        isSaving = false
+                        finish()
+                        return@launch
+                    }
                 }
 
                 WriteOutcome.Obsolete -> {}
@@ -174,12 +205,6 @@ internal class LevelTestViewModel(
         }
     }
 
-    fun skipSpeaking() {
-        if (isSaving) return
-        stopped = true
-        finish(fromQuestion = false) { WriteOutcome.Done(Unit) }
-    }
-
     /** "Continue" from the levels, or a skip: finishes the test, then saves the setup's step. */
     fun finish() = finish(fromQuestion = false, then = saveStep)
 
@@ -192,7 +217,8 @@ internal class LevelTestViewModel(
         finishFailure.clear()
         val started = visit.number
         viewModelScope.launch {
-            val outcome = store.finishLevelTest(goalId)
+            val outcome = store.finishLevelTest(goalId, attemptId)
+            if (outcome is WriteOutcome.Done && attemptId != null) result = outcome.value
             val completed = if (outcome is WriteOutcome.Done) then() else outcome
             when (completed) {
                 is WriteOutcome.Done -> {

@@ -227,6 +227,17 @@ class FakeLessonPlayerApi(
         return ApiJson.decodeFromString(COMPLETION)
     }
 
+    val dismissedOffers = mutableListOf<String>()
+
+    override suspend fun dismissPlacementOffer(
+        session: AuthenticatedSession,
+        lessonId: String,
+        runId: String,
+    ): LibraryLessonCompletion {
+        dismissedOffers += runId
+        return ApiJson.decodeFromString(COMPLETION)
+    }
+
     override suspend fun readiness(
         session: AuthenticatedSession,
         lessonId: String,

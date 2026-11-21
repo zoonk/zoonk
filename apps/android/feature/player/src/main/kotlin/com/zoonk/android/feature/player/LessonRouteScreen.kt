@@ -79,6 +79,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.VisitOf
 import kotlinx.coroutines.launch
 
 /** `/learn/{lessonId}`: the lesson's screens, its outline while it waits to be written, or a visitor's way in. */
@@ -200,6 +201,7 @@ internal fun PlayingLesson(
                 hosted = endSlot != null,
             )
         }
+    VisitOf(viewModel.visit)
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = (session as? SessionState.SignedIn)?.session
     val played by viewModel.state.collectAsStateWithLifecycle()

@@ -15,6 +15,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.data.value
@@ -1066,6 +1067,37 @@ class LessonPlayerViewModel(
             }
 
         return (result as? MutationResult.Done)?.value ?: CheckOutcome.Failed
+    }
+
+    /** This visit to the lesson: "Not now" on its end's offer that fails says so only on it. */
+    val visit = Visit()
+
+    private val offerFailure = visit.outcome<Unit>()
+
+    /** "Not now" on the lesson end's offer to check the learner's level didn't save on this visit. */
+    val offerFailed get() = offerFailure.value != null
+
+    /** The learner said "Not now" to the lesson end's offer, which waits until something new happens. */
+    var offerDismissed by mutableStateOf(false)
+        private set
+
+    var dismissingOffer by mutableStateOf(false)
+        private set
+
+    fun dismissOffer() {
+        val runId = (mutableState.value?.run as? LessonRun.Started)?.runId ?: return
+        if (dismissingOffer) return
+        dismissingOffer = true
+        offerFailure.clear()
+        val asked = visit.number
+        viewModelScope.launch {
+            when (cache.mutate { session -> store.api.dismissPlacementOffer(session, lessonId, runId) }) {
+                is MutationResult.Done -> offerDismissed = true
+                is MutationResult.Failed -> offerFailure.send(asked, Unit)
+                MutationResult.Obsolete -> {}
+            }
+            dismissingOffer = false
+        }
     }
 
     private fun saveCompletion() {
