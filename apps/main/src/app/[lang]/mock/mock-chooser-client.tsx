@@ -5,13 +5,14 @@ import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
 import { answerHere, openingHere, stayingHere } from "@/lib/session/tap-answer";
 import { useResetWhenDone } from "@/lib/use-reset-when-done";
-import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
+import { isWritingPromptRun, useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import {
   MockChooserScreen,
   type MockChooserStatus,
   getMockOptionKey,
 } from "@zoonk/learn/mock/chooser";
+import { useWritingWaitViewed } from "@zoonk/learn/writing/start";
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
 import { type MockStartOutcome, startAnytimeMockAction } from "./mock-start-actions";
@@ -87,18 +88,23 @@ function WritingMock({
   onReady,
   restart,
   screen,
+  writtenQuestions,
 }: {
   generationId: string;
   onReady: () => void;
   restart: () => Promise<string | null>;
   screen: Omit<React.ComponentProps<typeof MockChooserScreen>, "status">;
+  writtenQuestions: boolean;
 }) {
-  const run = useWorkflowRun({ generationId, kind: "mockQuestions", onReady, restart });
+  const kind = writtenQuestions ? "writingPrompt" : "mockQuestions";
+  const run = useWorkflowRun({ generationId, kind, onReady, restart });
+
+  useWritingWaitViewed({ generationId: writtenQuestions ? generationId : null, surface: "mock" });
 
   return <MockChooserScreen {...screen} status={{ kind: "writing", run }} />;
 }
 
-type Writing = { generationId: string; option: MockOptionView };
+type Writing = { generationId: string; option: MockOptionView; writtenQuestions: boolean };
 
 type Here = () => Promise<boolean>;
 
@@ -179,7 +185,18 @@ function MockChooserVisit({
     const result: QuestionWriting = asked === "failed" ? { status: "failed" } : asked.answer;
 
     if (result.status === "writing") {
-      setWriting({ generationId: result.generationId, option });
+      const mayWriteQuestions = option.kind === "written" || option.kind === "full";
+
+      const { data: writtenQuestions } = await safeAsync(async () =>
+        mayWriteQuestions ? isWritingPromptRun(result.generationId) : false,
+      );
+
+      setWriting({
+        generationId: result.generationId,
+        option,
+        writtenQuestions: writtenQuestions ?? false,
+      });
+
       return;
     }
 
@@ -245,6 +262,7 @@ function MockChooserVisit({
         return again.status === "writing" ? again.generationId : null;
       }}
       screen={screen}
+      writtenQuestions={writing.writtenQuestions}
     />
   );
 }

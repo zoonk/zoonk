@@ -1,12 +1,9 @@
-import { createHash } from "node:crypto";
 import { type z } from "zod";
 import { ENEM_WRITING_MAX, hasEnemCompetences } from "./_utils/enem-writing";
+import { getWritingRounding, getWritingRubricFingerprint } from "./_utils/writing-task-basis";
 import { type writtenItemSchema } from "./writing-contract";
 
-type Basis = Pick<
-  z.infer<typeof writtenItemSchema>,
-  "charactersPerLine" | "criteria" | "grading" | "lines" | "minimumWords" | "points"
->;
+type Basis = Pick<z.infer<typeof writtenItemSchema>, "criteria" | "grading" | "points">;
 
 export type WritingArithmetic = {
   rounding: { mode: "nearest" | "down"; places: number } | null;
@@ -26,11 +23,12 @@ export function getWritingArithmetic(
   basis: Basis,
   observed?: { model: string; promptVersion: string },
 ): WritingArithmetic | null {
-  const { charactersPerLine, grading, lines, minimumWords, points } = basis;
+  const { grading, points } = basis;
 
   if (
     points === null ||
     grading.kind === "levels" ||
+    getWritingRounding(grading.rounding) === "unknown" ||
     (grading.kind === "enem"
       ? points !== ENEM_WRITING_MAX || !hasEnemCompetences(basis.criteria)
       : grading.criteria.length === 0)
@@ -38,16 +36,7 @@ export function getWritingArithmetic(
     return null;
   }
 
-  const fingerprint = createHash("sha256")
-    .update(
-      JSON.stringify(
-        { charactersPerLine, grading, lines, minimumWords, points },
-        (key, value: unknown) => (key === "sourceId" ? undefined : value),
-      ),
-    )
-    .digest("hex");
-
-  const passed = passedEvaluations[fingerprint];
+  const passed = passedEvaluations[getWritingRubricFingerprint(basis)];
 
   if (
     !passed ||

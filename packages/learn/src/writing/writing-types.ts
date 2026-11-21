@@ -1,10 +1,13 @@
 import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contract";
-import { type WritingDraft } from "@zoonk/core/exams/essays/writing-contract";
+import {
+  type WritingDraft,
+  type WritingTaskSummary,
+} from "@zoonk/core/exams/essays/writing-contract";
 
 export type WritingStartAnswer =
   | { admissionId: string; status: "ready" }
   | { generationId: string; status: "writing" }
-  | { returnsOn: string; status: "limitReached" }
+  | { returnsOn: string; status: "limitReached"; task?: WritingTaskSummary }
   | { status: "failed" | "signUpRequired" };
 
 export type WritingDraftAnswer =
@@ -28,3 +31,6 @@ export type WritingActions = {
 };
 
 export type WrittenEssay = EssayView;
+
+/** What a refusal lists for tomorrow: the task by its name and its time. */
+export type TomorrowTask = { minutes: number | null; title: string };

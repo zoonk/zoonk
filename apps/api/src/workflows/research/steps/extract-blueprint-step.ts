@@ -35,6 +35,7 @@ import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { FatalError } from "workflow";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
+import { readWrittenTaskSubjectsStep } from "./written-task-subjects-step";
 
 export type BlueprintReading = {
   content: BlueprintContent;
@@ -160,7 +161,7 @@ async function extractBlueprintDraftStep({
     ),
     documents,
     exam,
-    readFormats: false,
+    readFollowUps: false,
     serviceTier,
   });
 
@@ -235,13 +236,15 @@ export async function extractBlueprint({
     sourceIds,
   });
 
-  const extraction = await readBlueprintFormatsStep({
-    analytics,
-    exam,
-    extraction: draft.data,
-    serviceTier,
-    sourceIds,
-  }).catch(() => draft.data);
+  const reads = { analytics, exam, serviceTier, sourceIds };
+
+  const withFormats = await readBlueprintFormatsStep({ ...reads, extraction: draft.data }).catch(
+    () => draft.data,
+  );
+
+  const extraction = await readWrittenTaskSubjectsStep({ ...reads, extraction: withFormats }).catch(
+    () => withFormats,
+  );
 
   const { batches, facts } = await prepareBlueprintChecksStep({ documents, extraction });
 

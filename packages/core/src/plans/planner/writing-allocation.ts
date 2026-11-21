@@ -166,7 +166,7 @@ function listWritingSchedule({
   planStart: Date;
   practiceBudget: number;
   start: Date;
-  targetDate: Date;
+  targetDate: Date | null;
   writing: PlanWriting;
 }): Entry[] {
   const studyDays = days.map((day) => ({
@@ -183,7 +183,9 @@ function listWritingSchedule({
 
   const keptByDate = new Map(kept.map((entry) => [entry.date, entry]));
 
-  const tests = scheduleWrittenPapers({ studyDays, targetDate, tests: writing.tests });
+  const tests = targetDate
+    ? scheduleWrittenPapers({ studyDays, targetDate, tests: writing.tests })
+    : new Map<string, Paper>();
 
   const eligible = studyDays.flatMap(({ date, minutes }, index) => {
     const day = days[index];
@@ -199,7 +201,8 @@ function listWritingSchedule({
   );
 
   const room = eligible.reduce((total, day) => total + (tests.has(day.date) ? 0 : day.minutes), 0);
-  const budget = Math.max(0, practiceBudget - testsMinutes);
+  const practiceMinutes = Math.min(...writing.practice.map(({ minutes }) => minutes));
+  const budget = Math.max(practiceMinutes, practiceBudget - testsMinutes);
   const share = room > 0 ? Math.min(1, budget / room) : 0;
 
   const state = { accrued: 0, next: 0, remaining: 0, room, spent: 0 };
@@ -257,7 +260,7 @@ export function allocateWriting({
     goal: { targetDate },
   } = input;
 
-  if (!writing || !targetDate || writing.practice.length === 0) {
+  if (!writing || writing.practice.length === 0) {
     return { days, schedule: undefined, teachingMinutes: 0, writingRequirement: undefined };
   }
 

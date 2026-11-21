@@ -1,5 +1,5 @@
 import { mockOptionsResponseSchema } from "@/lib/openapi/schemas/mocks";
-import { ensureWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
+import { ensureMockWritingPrompts } from "@/workflows/sessions/writing-prompt-workflow";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -13,7 +13,9 @@ import { GET as listMocks, POST as startMock } from "./route";
 
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 // Exercise HTTP delivery with a fixed run ID without starting a paid generation.
-vi.mock("@/workflows/sessions/writing-prompt-workflow", () => ({ ensureWritingPrompts: vi.fn() }));
+vi.mock("@/workflows/sessions/writing-prompt-workflow", () => ({
+  ensureMockWritingPrompts: vi.fn(),
+}));
 
 const WRITTEN = { area: null, day: null, kind: "written" };
 const RUN_ID = "run_written_prompt";
@@ -40,6 +42,7 @@ describe("the written mock API", () => {
     const goal = await goalFixture({
       examBlueprintId: blueprint.id,
       kind: "exam",
+      timezone: "UTC",
       userId: user.id,
     });
 
@@ -73,7 +76,7 @@ describe("the written mock API", () => {
     const waiting = await startMock(request(goal.id), context(goal.id));
     await expect(waiting.json()).resolves.toStrictEqual({ id: null, status: "needsQuestions" });
 
-    vi.mocked(ensureWritingPrompts).mockResolvedValue({ runId: RUN_ID, status: "writing" });
+    vi.mocked(ensureMockWritingPrompts).mockResolvedValue({ runId: RUN_ID, status: "writing" });
     const generation = await generate(request(goal.id, "/generations"), context(goal.id));
     expect(generation.status).toBe(202);
     expect(generation.headers.get("location")).toBe(`/v1/generations/${RUN_ID}`);
@@ -83,14 +86,31 @@ describe("the written mock API", () => {
       status: "generating",
     });
 
-    expect(ensureWritingPrompts).toHaveBeenCalledExactlyOnceWith({
-      count: 1,
-      goalId: goal.id,
-      taskKey: "short",
-      unit: "answer",
-      userId: user.id,
+    expect(ensureMockWritingPrompts).toHaveBeenCalledExactlyOnceWith(
+      expect.arrayContaining(
+        ["short", "long"].map((taskKey) => ({
+          count: 1,
+          goalId: goal.id,
+          taskKey,
+          unit: "answer",
+          userId: user.id,
+        })),
+      ),
+    );
+
+    await prisma.writingAdmission.createMany({
+      data: Array.from({ length: 6 }, () => ({
+        extra: true,
+        id: crypto.randomUUID(),
+        itemIds: [],
+        localDate: new Date(new Date().toISOString().slice(0, 10)),
+        userId: user.id,
+      })),
     });
 
+    const refused = await generate(request(goal.id, "/generations"), context(goal.id));
+    expect(refused.status).toBe(429);
+    expect(ensureMockWritingPrompts).toHaveBeenCalledOnce();
     await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 });

@@ -97,7 +97,9 @@ async function setup({ plus = true, shortOnly = false } = {}) {
           aspects: [{ criterionId: "case", description: "Applies the rule", points: 1 }],
           assessedSkillIds: [writing.id],
           charactersPerLine: 55,
-          criteria: [{ id: "case", name: "Application", points: 1 }],
+          criteria: [
+            { id: "case", name: taskKey === "short" ? "Presentation" : "Application", points: 1 },
+          ],
           grading: CGU_WRITTEN_GRADING,
           keySource: "practiceKey",
           lines: taskKey === "short" ? 30 : 60,
@@ -273,9 +275,15 @@ describe("written mock sittings", () => {
       itemId: short.id,
     });
 
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 5000));
+
     await expect(saveMockAnswer({ blockId: id, input })).resolves.toStrictEqual({
       status: "saved",
     });
+
+    await expect(
+      prisma.mockExamAnswer.findFirst({ where: { itemId: short.id, mockExamId: id } }),
+    ).resolves.toMatchObject({ durationMs: 5000 });
 
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + SESSION_LENGTH_MS - 1000));
     await submitMockSection({ blockId: id, input: UTC, section: 0 });
@@ -354,7 +362,7 @@ describe("written mock sittings", () => {
               points: { standing: "unmeasured" },
               questions: 2,
               share: 0.5,
-              trend: [{ contentShare: null, errors: 0, presentationShare: null }],
+              trend: [{ contentShare: null, errors: 0, presentationShare: 0 }],
             },
           ],
         },

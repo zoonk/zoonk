@@ -38,8 +38,14 @@ function entries(structure: ExamStructure | null): Entry[] {
     .flatMap((section) => (section.tasks ?? []).map((task) => ({ section, task })));
 }
 
+function sameDimensions(first: Task, second: Task): boolean {
+  return (
+    first.count === second.count && first.lines === second.lines && first.points === second.points
+  );
+}
+
 function match(entry: Entry, candidates: Entry[]) {
-  const official = entry.task.officialIdentifier;
+  const { officialIdentifier: official } = entry.task;
 
   const byOfficial = official
     ? candidates.filter(
@@ -51,15 +57,27 @@ function match(entry: Entry, candidates: Entry[]) {
     return byOfficial;
   }
 
-  const sameLabel = ({ section, task }: Entry) =>
-    taskIdentity(section, task) === taskIdentity(entry.section, entry.task);
+  const inSection = candidates.filter(
+    ({ section }) => label(section.name) === label(entry.section.name),
+  );
 
-  return byOfficial.length > 0
-    ? byOfficial.filter((candidate) => sameLabel(candidate))
-    : candidates.filter(
-        ({ section, task }) =>
-          (!official || !task.officialIdentifier) && sameLabel({ section, task }),
-      );
+  const comparable = inSection.filter(
+    ({ task }) =>
+      (!official || !task.officialIdentifier || byOfficial.length > 0) &&
+      sameDimensions(task, entry.task),
+  );
+
+  const labeled = comparable.filter(
+    ({ task }) => label(task.description) === label(entry.task.description),
+  );
+
+  if (labeled.length > 0) {
+    return labeled;
+  }
+
+  return !official && inSection.length === entry.section.tasks?.length
+    ? comparable.filter(({ task }) => !task.officialIdentifier)
+    : [];
 }
 
 export function withWrittenTaskKeys({
@@ -77,18 +95,31 @@ export function withWrittenTaskKeys({
 
   const old = entries(current);
 
+  const oldKeys = new Set(old.map(({ section, task }) => task.key ?? legacyKey(section, task)));
+
+  const legacyCounts = Map.groupBy(incoming, ({ section, task }) => legacyKey(section, task));
+
   const keys = new Map(
     incoming.map((entry) => {
       const [prior, ...ambiguous] = match(entry, old);
       const sameIncoming = match(entry, incoming);
 
-      const key =
+      const legacy = legacyKey(entry.section, entry.task);
+
+      if (
         ambiguous.length > 0 ||
         sameIncoming.length !== 1 ||
         (prior !== undefined && match(prior, incoming).length !== 1)
-          ? randomUUID()
-          : (prior?.task.key ??
-            (prior ? legacyKey(prior.section, prior.task) : legacyKey(entry.section, entry.task)));
+      ) {
+        return [entry.task, randomUUID()] as const;
+      }
+
+      if (prior) {
+        return [entry.task, prior.task.key ?? legacyKey(prior.section, prior.task)] as const;
+      }
+
+      const key =
+        oldKeys.has(legacy) || legacyCounts.get(legacy)?.length !== 1 ? randomUUID() : legacy;
 
       return [entry.task, key] as const;
     }),
@@ -125,6 +156,7 @@ function toTask({
     points: task.points ?? null,
     section: section.name,
     session: section.session ?? null,
+    subjects: task.subjects ?? null,
   };
 }
 

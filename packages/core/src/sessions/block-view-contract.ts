@@ -133,5 +133,9 @@ export const studyBlockSchema = z
           "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty",
       }),
     writingAvailability: writingAvailabilitySchema.optional(),
+    writingUnit: z
+      .enum(["drill", "answer"])
+      .optional()
+      .describe("The size of this writing block, when it is a writing drill or a whole answer"),
   })
   .meta({ id: "StudyBlock" });

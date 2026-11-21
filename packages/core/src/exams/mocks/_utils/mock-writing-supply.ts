@@ -1,17 +1,19 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { findWritingPrompts } from "../../essays/writing-supply";
 import { type MockShape } from "../mock-contract";
 import { listWrittenRequests } from "../written-parts";
 
 export async function findMockWriting({
+  goal,
   goalId,
   shape,
   structure,
   tx = prisma,
   userId,
 }: {
+  goal?: Goal;
   goalId: string;
   shape: Pick<MockShape, "day" | "kind">;
   structure: ExamStructure | null;
@@ -27,7 +29,7 @@ export async function findMockWriting({
     return { essays: [], status: "ready" as const };
   }
 
-  const found = await findWritingPrompts({ goalId, requests, tx, userId });
+  const found = await findWritingPrompts({ goal, goalId, requests, tx, userId });
 
   if (found.status === "missing") {
     return {

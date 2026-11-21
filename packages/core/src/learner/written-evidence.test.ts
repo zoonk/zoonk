@@ -57,14 +57,14 @@ async function samplesFixture() {
           estimatedLines: 20,
           origin: "block",
           timed: false,
-          version: rewrite ? "rewrite" : "firstDraft",
+          version: rewrite ? ("rewrite" as const) : ("firstDraft" as const),
         },
         grade: {
           criteria: [
             {
               ...CRITERION,
               comment: "Feedback",
-              level: strong ? "strong" : "partial",
+              level: strong ? ("strong" as const) : ("partial" as const),
               quote: null,
             },
           ],
@@ -78,8 +78,9 @@ async function samplesFixture() {
       },
       answeredAt: localDate,
       id: crypto.randomUUID(),
-      item: block,
+      itemId: block.id,
       localDate,
+      prompt: { assessedSkillIds: [skill.id] },
     };
   }
 

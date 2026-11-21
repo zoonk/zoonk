@@ -22,7 +22,13 @@ export const essayViewResponseSchema = z
         text: z.string(),
       }),
     ),
-    gradesLeft: z.number().int().min(0),
+    gradesLeft: z
+      .number()
+      .int()
+      .min(0)
+      .describe(
+        "Extra writing starts left today. A scheduled or already admitted answer can still be submitted.",
+      ),
     pacing: writingPacingSchema,
     question: z.string(),
     rubric: z

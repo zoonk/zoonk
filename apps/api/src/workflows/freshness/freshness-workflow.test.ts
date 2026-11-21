@@ -540,6 +540,10 @@ describe(freshnessWorkflow, () => {
     );
 
     expect(generateSourceChangeNotice).not.toHaveBeenCalled();
+    const saved = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
+    const edition = examEditionSchema.parse(saved.edition);
+    expect(saved.noticeRereadSource).toBe(edition.sourceHash ?? saved.sourceId);
+    expect(saved.noticeRereadSource).toBeTruthy();
     await expect(readFollowerDetails(goal.id)).resolves.toMatchObject(RECOUNTED);
   });
 

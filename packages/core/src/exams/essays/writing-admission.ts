@@ -1,7 +1,8 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { type MockExam, type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
-import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
+import { claimGuestShare } from "../../entitlements/_utils/guest-spend-budget";
+import { ESSAY_GRADE_COST_MICROS } from "../../entitlements/limits";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { addDays, toIsoDate } from "../../plans/planner/plan-calendar";
 import { readBlockPayload } from "../../sessions/block-payload";
@@ -50,6 +51,7 @@ export function getWritingAdmissionId(owner: WritingOwner): string {
   return getAnswerAttemptId({ key, questionId, userId: "writing-admission" });
 }
 
+// The caller holds the usage lock and passes an owned target read in this transaction.
 export async function admitWriting({
   extra,
   itemIds,
@@ -61,22 +63,26 @@ export async function admitWriting({
   extra: boolean;
   itemIds: string[];
   localDate: Date;
-  owner: WritingOwner;
+  owner: { block: StudySessionBlock; previousAttemptId?: string } | { mock: MockExam };
   tx: TransactionClient;
   userId: string;
 }): Promise<
-  { admissionId: string; status: "ready" } | { returnsOn: string; status: "limitReached" }
+  | { admissionId: string; status: "ready" }
+  | { returnsOn: string; status: "limitReached" }
+  | { status: "signUpRequired" }
 > {
-  await lockUsageForViewer({ transaction: tx, userId });
-
-  const admissionId = getWritingAdmissionId(owner);
+  const admissionId = getWritingAdmissionId(
+    "block" in owner
+      ? { blockId: owner.block.id, previousAttemptId: owner.previousAttemptId }
+      : { mockId: owner.mock.id },
+  );
 
   const target =
-    "blockId" in owner
-      ? await findBlockAdmission({ owner, tx, userId })
-      : await findMockAdmission({ mockId: owner.mockId, tx, userId });
+    "block" in owner
+      ? blockAdmission({ block: owner.block, tx, userId })
+      : mockAdmission({ mock: owner.mock, tx });
 
-  const previousAttemptId = "blockId" in owner ? owner.previousAttemptId : undefined;
+  const previousAttemptId = "block" in owner ? owner.previousAttemptId : undefined;
 
   if (target.currentId && (!previousAttemptId || target.currentId === admissionId)) {
     return { admissionId: target.currentId, status: "ready" };
@@ -92,6 +98,16 @@ export async function admitWriting({
     return refusal;
   }
 
+  if (
+    !(await claimGuestShare({
+      costMicros: itemIds.length * ESSAY_GRADE_COST_MICROS,
+      transaction: tx,
+      userId,
+    }))
+  ) {
+    return { status: "signUpRequired" };
+  }
+
   await tx.writingAdmission.create({
     data: { extra, id: admissionId, itemIds, localDate, userId },
   });
@@ -101,23 +117,19 @@ export async function admitWriting({
   return { admissionId, status: "ready" };
 }
 
-async function findBlockAdmission({
-  owner,
+function blockAdmission({
+  block,
   tx,
   userId,
 }: {
-  owner: Extract<WritingOwner, { blockId: string }>;
+  block: StudySessionBlock;
   tx: TransactionClient;
   userId: string;
 }) {
-  const block = await tx.studySessionBlock.findFirst({
-    where: { id: owner.blockId, kind: "produce", session: { userId } },
-  });
+  const payload = readBlockPayload(block);
+  const { writing } = payload;
 
-  const payload = block ? readBlockPayload(block) : null;
-  const writing = payload?.writing;
-
-  if (!block || !payload || !writing) {
+  if (block.kind !== "produce" || !writing) {
     throw new Error("Writing admission requires an owned writing block.");
   }
 
@@ -153,18 +165,8 @@ async function findBlockAdmission({
   };
 }
 
-async function findMockAdmission({
-  mockId,
-  tx,
-  userId,
-}: {
-  mockId: string;
-  tx: TransactionClient;
-  userId: string;
-}) {
-  const mock = await tx.mockExam.findFirst({ where: { id: mockId, userId } });
-
-  if (!mock || !isJsonObject(mock.conditions)) {
+function mockAdmission({ mock, tx }: { mock: MockExam; tx: TransactionClient }) {
+  if (!isJsonObject(mock.conditions)) {
     throw new Error("Writing admission requires an owned mock.");
   }
 
@@ -175,7 +177,7 @@ async function findMockAdmission({
     save: (writingAdmissionId: string) =>
       tx.mockExam.update({
         data: { conditions: { ...conditions, writingAdmissionId } },
-        where: { id: mockId },
+        where: { id: mock.id },
       }),
   };
 }

@@ -2,12 +2,12 @@
 
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
-import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import {
   ListGroup,
   ListRowBody,
+  ListRowContent,
   ListRowDescription,
   ListRowLink,
   ListRowTitle,
@@ -23,10 +23,15 @@ import { StepRow, StepRows } from "../_components/step-card";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatScore } from "../essay/essay-labels";
-import { PointsReadout } from "../writing/points-readout";
+import {
+  MinimumLegend,
+  PointsMeter,
+  PointsReadout,
+  getMinimumShare,
+} from "../writing/points-readout";
 import { useFormatPointsRange } from "../writing/writing-labels";
 
-type WrittenSubject = NonNullable<WrittenPractice["subjects"]>[number];
+export type WrittenSubject = NonNullable<WrittenPractice["subjects"]>[number];
 
 const PERCENT = 100;
 const TREND_SAMPLES = 4;
@@ -46,40 +51,16 @@ export function findWrittenSubject({
   );
 }
 
-function PointsMeter({ written }: { written: WrittenSubject }) {
-  const { max, minimum, range } = written.points;
-
-  if (!range || max === null) {
-    return <div className="border-border rounded-meter h-1.5 border border-dashed" />;
-  }
-
-  const low = range.low / max;
-  const high = range.high / max;
-
-  return (
-    <div className="relative">
-      <MeterParts>
-        {low > 0 && <MeterPart className="bg-success" weight={low} />}
-        {high > low && <MeterPart className="bg-success/40" weight={high - low} />}
-        {high < 1 && <MeterPart weight={1 - high} />}
-      </MeterParts>
-      {minimum && (
-        <span
-          aria-hidden="true"
-          className="bg-foreground absolute -top-1 h-3.5 w-0.5 -translate-x-1/2 rounded-full"
-          style={{ left: `${(minimum.value / max) * PERCENT}%` }}
-        />
-      )}
-    </div>
-  );
-}
-
 /** The part's estimated points, its own minimum, and each question's share of them. */
 function WrittenPoints({ written }: { written: WrittenSubject }) {
   const t = useExtracted();
   const formatScore = useFormatScore();
   const formatRange = useFormatPointsRange();
+  const format = useFormatter();
   const { max, minimum, range, tasks } = written.points;
+
+  const formatShare = (share: number) =>
+    format.number(share, { maximumFractionDigits: 0, style: "percent" });
 
   return (
     <PageSection aria-label={t("Estimated score")}>
@@ -90,11 +71,21 @@ function WrittenPoints({ written }: { written: WrittenSubject }) {
         ) : (
           <p className="text-lg font-semibold">{t("Not measured yet")}</p>
         )}
-        <PointsMeter written={written} />
+        {max !== null && (
+          <PointsMeter
+            max={max}
+            minimumShare={minimum && getMinimumShare({ max, minimum })}
+            range={range}
+          />
+        )}
         {minimum && (
-          <p className="text-muted-foreground text-xs">
-            {t("Minimum to pass: {minimum}", { minimum: formatScore(minimum.value) })}
-          </p>
+          <MinimumLegend>
+            {minimum.unit === "percent"
+              ? t("Minimum to pass: {share} of the points", {
+                  share: formatShare(minimum.value / PERCENT),
+                })
+              : t("Minimum to pass: {minimum}", { minimum: formatScore(minimum.value) })}
+          </MinimumLegend>
         )}
       </div>
       <StepRows>
@@ -204,6 +195,59 @@ function WrittenTrend({ written }: { written: WrittenSubject }) {
   );
 }
 
+type WrittenAnswer = WrittenSubject["answers"][number];
+
+/** The server's count of the lines sent, against the question's limit when it has one. */
+function useLineFact() {
+  const t = useExtracted();
+
+  return function lineFact({ estimatedLines, lines }: WrittenAnswer): string | null {
+    if (estimatedLines === undefined) {
+      return lines === null
+        ? null
+        : t("{count, plural, one {# line} other {# lines}}", { count: lines });
+    }
+
+    return lines === null
+      ? t("{count, plural, one {about # line} other {about # lines}}", { count: estimatedLines })
+      : t("about {used} of {lines} lines", { lines: String(lines), used: String(estimatedLines) });
+  };
+}
+
+function AnswerRow({ answer, href }: { answer: WrittenAnswer; href: string }) {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+  const formatRange = useFormatPointsRange();
+  const lineFact = useLineFact();
+
+  return (
+    <ListRowLink href={href}>
+      <ListRowBody>
+        <ListRowContent>
+          <ListRowTitle>{answer.title}</ListRowTitle>
+          <ListRowDescription>
+            <FactSegments
+              facts={[
+                lineFact(answer),
+                answer.versions > 1 &&
+                  t("{count, plural, one {# version} other {# versions}}", {
+                    count: answer.versions,
+                  }),
+                formatDate(answer.date),
+              ]}
+            />
+          </ListRowDescription>
+        </ListRowContent>
+        {answer.range && (
+          <ListRowTrailing className="font-mono text-xs">
+            {formatRange(answer.range)}
+          </ListRowTrailing>
+        )}
+      </ListRowBody>
+    </ListRowLink>
+  );
+}
+
 function WrittenAnswers({
   answerHref,
   written,
@@ -212,8 +256,6 @@ function WrittenAnswers({
   written: WrittenSubject;
 }) {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const formatRange = useFormatPointsRange();
 
   if (written.answers.length === 0) {
     return null;
@@ -227,29 +269,7 @@ function WrittenAnswers({
       </PageSectionHeader>
       <ListGroup>
         {written.answers.map((answer) => (
-          <ListRowLink href={answerHref(answer.attemptId)} key={answer.attemptId}>
-            <ListRowBody>
-              <ListRowTitle>{answer.title}</ListRowTitle>
-              <ListRowDescription>
-                <FactSegments
-                  facts={[
-                    answer.lines !== null &&
-                      t("{count, plural, one {# line} other {# lines}}", { count: answer.lines }),
-                    answer.versions > 1 &&
-                      t("{count, plural, one {# version} other {# versions}}", {
-                        count: answer.versions,
-                      }),
-                    formatDate(answer.date),
-                  ]}
-                />
-              </ListRowDescription>
-            </ListRowBody>
-            {answer.range && (
-              <ListRowTrailing className="font-mono text-xs">
-                {formatRange(answer.range)}
-              </ListRowTrailing>
-            )}
-          </ListRowLink>
+          <AnswerRow answer={answer} href={answerHref(answer.attemptId)} key={answer.attemptId} />
         ))}
       </ListGroup>
     </PageSection>

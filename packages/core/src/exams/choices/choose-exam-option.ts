@@ -1,5 +1,5 @@
-import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import "server-only";
 import { trackPlanEdited } from "../../analytics/track-plan-edited";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
@@ -11,8 +11,9 @@ import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { withPlanRetry } from "../../plans/plan-conflict";
 import { type PlanChangeView } from "../../plans/plan-view-contract";
 import { type PlanOperationError } from "../../plans/planner/plan-operations";
+import { findChosenOptions } from "./choice-groups";
 import { type ExamChoiceInput } from "./exam-choice-contract";
-import { type ExamChoice, findChosenOptions, isSamePick } from "./exam-choices";
+import { type ExamChoice, isSamePick } from "./exam-choices";
 
 export type ExamChoiceResult =
   | { change: PlanChangeView | null; status: "applied" }

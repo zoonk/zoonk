@@ -7,8 +7,13 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
+import {
+  ESSAY_GRADE_COST_MICROS,
+  GUEST_DAILY_SPEND_BUDGET_MICROS,
+} from "../../entitlements/limits";
 import { findCarriedOverSession } from "../../sessions/_utils/current-session";
 import { claimEssayGrades } from "./_utils/essay-grade-claims";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
@@ -29,7 +34,7 @@ const TASK = {
 const LOCAL_DATE = new Date("2026-11-20");
 const CRITERION = { id: "evidence", name: "Evidence", points: null };
 
-async function setup() {
+async function setup(localDate = LOCAL_DATE) {
   const [blueprint, user, skill] = await Promise.all([
     examBlueprintFixture({
       structure: {
@@ -102,7 +107,7 @@ async function setup() {
       format: "essay",
       skillId: skill.id,
     }),
-    studySessionFixture({ goalId: goal.id, localDate: LOCAL_DATE, userId: user.id }),
+    studySessionFixture({ goalId: goal.id, localDate, userId: user.id }),
   ]);
 
   const block = await studySessionBlockFixture({ ...toProduceBlock(TASK), sessionId: session.id });
@@ -110,6 +115,42 @@ async function setup() {
 }
 
 describe("writing receipts and drafts", () => {
+  it("reserves a guest grade at admission and resumes for free after the budget fills", async () => {
+    const day = new Date("2040-11-24");
+    const { block, user } = await setup(day);
+    mockSession(user.id);
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+
+    await prisma.guestSpendDay.create({
+      data: { day, spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS },
+    });
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(day);
+
+    try {
+      await expect(startWriting({ blockId: block.id })).resolves.toStrictEqual({
+        status: "signUpRequired",
+      });
+
+      await prisma.guestSpendDay.update({
+        data: { spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS - ESSAY_GRADE_COST_MICROS },
+        where: { day },
+      });
+
+      const first = await startWriting({ blockId: block.id });
+      expect(first).toMatchObject({ status: "ready" });
+      await expect(startWriting({ blockId: block.id })).resolves.toStrictEqual(first);
+
+      await expect(prisma.guestSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({
+        spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS,
+      });
+    } finally {
+      vi.useRealTimers();
+      await prisma.guestSpendDay.delete({ where: { day } });
+    }
+  });
+
   it("issues one receipt to two starts, hides the key, saves one draft revision, and resumes the same block", async () => {
     const { block, goal, item, session, user } = await setup();
     mockSession(user.id);
@@ -257,16 +298,19 @@ describe("writing receipts and drafts", () => {
     });
 
     const start = ({ extra, id }: { extra: boolean; id: string }) =>
-      prisma.$transaction((tx) =>
-        admitWriting({
+      prisma.$transaction(async (tx) => {
+        await lockUsageForViewer({ transaction: tx, userId: user.id });
+        const block = await tx.studySessionBlock.findUniqueOrThrow({ where: { id } });
+
+        return admitWriting({
           extra,
           itemIds: [item.id],
           localDate: LOCAL_DATE,
-          owner: { blockId: id },
+          owner: { block },
           tx,
           userId: user.id,
-        }),
-      );
+        });
+      });
 
     const admissions = await Promise.all(
       blocks.slice(0, 2).map(({ id }) => start({ extra: true, id })),
@@ -301,16 +345,18 @@ describe("writing receipts and drafts", () => {
 
     const itemIds = [item.id, crypto.randomUUID()];
 
-    const receipt = await prisma.$transaction((tx) =>
-      admitWriting({
+    const receipt = await prisma.$transaction(async (tx) => {
+      await lockUsageForViewer({ transaction: tx, userId: user.id });
+
+      return admitWriting({
         extra: true,
         itemIds,
         localDate: LOCAL_DATE,
-        owner: { mockId: mock.id },
+        owner: { mock },
         tx,
         userId: user.id,
-      }),
-    );
+      });
+    });
 
     if (receipt.status !== "ready") {
       throw new Error(receipt.status);

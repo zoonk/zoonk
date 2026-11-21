@@ -10,11 +10,20 @@ type Mark = { error: number | null; ignored: boolean; step: boolean };
 
 type Piece = Mark & { end: number; start: number };
 
+/** A line limit falls inside a word as often as not; the word it splits is shown as past it, whole. */
+function toWordStart(text: string, offset: number): number {
+  const splitWord = /\S*$/u.exec(text.slice(0, offset))?.[0] ?? "";
+  return offset - splitWord.length;
+}
+
 /** Offsets are UTF-16 code units into the saved text, as the grade's `start` and `ignoredFrom`. */
 function cutText({ grade, text }: { grade: WritingResult; text: string }): Piece[] {
   const stepQuote = grade.nextStep?.quote;
   const stepStart = stepQuote ? text.indexOf(stepQuote) : -1;
-  const ignoredFrom = grade.ignoredFrom ?? text.length;
+
+  const ignoredFrom =
+    grade.ignoredFrom === null ? text.length : toWordStart(text, grade.ignoredFrom);
+
   const cuts = new Set([0, text.length, ignoredFrom]);
 
   grade.errors.forEach(({ quote, start }) => {

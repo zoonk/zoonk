@@ -5,6 +5,7 @@ import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit"
 import { isUsableBlueprint } from "@zoonk/core/library/exams/blueprint-content";
 import { getFormatShares } from "@zoonk/core/library/exams/format-shares";
 import { getMarkingPenalty } from "@zoonk/core/library/exams/marking-penalty";
+import { findTaskSubjects } from "@zoonk/core/library/exams/written-task-subjects";
 import { normalizeString } from "@zoonk/utils/string";
 import {
   type ExtractionEvalInput,
@@ -58,6 +59,8 @@ type WrittenTaskFact = {
   kind: "writtenTask";
   count?: number;
   criterionPoints?: number[];
+  /** The group whose every subject, and only those, the task is on; null when it names none. */
+  drawsOn?: string | null;
   grading?: WrittenGrading["kind"] | null;
   handwritten?: boolean | null;
   language?: { factor: number; method: "errorsPerLine" | "perError" | "other" } | null;
@@ -81,6 +84,7 @@ type WrittenTask = {
   handwritten?: boolean | null;
   lines?: number | null;
   points?: number | null;
+  subjects?: string[] | null;
 };
 
 type PointsMinimum = { unit: "percent" | "points"; value: number };
@@ -480,6 +484,38 @@ function hasGrading(fact: WrittenTaskFact, grading: WrittenGrading | null | unde
   );
 }
 
+function drawsOn({
+  fact,
+  reading,
+  task,
+}: {
+  fact: WrittenTaskFact;
+  reading: Reading;
+  task: WrittenTask;
+}): boolean {
+  if (fact.drawsOn === undefined) {
+    return true;
+  }
+
+  const found = findTaskSubjects({ names: task.subjects ?? [], subjects: reading.subjects });
+
+  if (fact.drawsOn === null) {
+    return found.length === 0;
+  }
+
+  const wanted = normalizeString(fact.drawsOn);
+
+  const group = reading.subjects.filter((subject) =>
+    normalizeString(subject.group ?? "").includes(wanted),
+  );
+
+  return (
+    group.length > 0 &&
+    found.length === group.length &&
+    group.every((subject) => found.includes(subject))
+  );
+}
+
 function hasWrittenTask({ fact, reading }: { fact: WrittenTaskFact; reading: Reading }): boolean {
   return (reading.mock?.sections ?? [])
     .filter((section) => section.kind === "written")
@@ -490,7 +526,8 @@ function hasWrittenTask({ fact, reading }: { fact: WrittenTaskFact; reading: Rea
         sameValue(fact.lines, task.lines) &&
         sameValue(fact.points, task.points) &&
         sameValue(fact.handwritten, task.handwritten) &&
-        hasGrading(fact, task.grading),
+        hasGrading(fact, task.grading) &&
+        drawsOn({ fact, reading, task }),
     );
 }
 

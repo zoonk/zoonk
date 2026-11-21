@@ -60,7 +60,7 @@ async function setup() {
   ]);
 
   const [passive, organelles, nucleus, virus] = library.skills;
-  const osmosis = library.lessons[2];
+  const [osmosis] = library.lessons;
 
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 10,

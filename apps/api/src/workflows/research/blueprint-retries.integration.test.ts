@@ -6,6 +6,7 @@ import {
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { extractQuestionFormats } from "@zoonk/ai/tasks/research/extract-question-formats";
+import { findWrittenTaskSubjects } from "@zoonk/ai/tasks/research/find-written-task-subjects";
 import { translatePassMarks } from "@zoonk/ai/tasks/research/translate-pass-marks";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it, vi } from "vitest";
@@ -28,6 +29,11 @@ vi.mock("@zoonk/ai/tasks/research/check-cited-facts", async (importOriginal) => 
 vi.mock("@zoonk/ai/tasks/research/extract-question-formats", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   extractQuestionFormats: vi.fn(),
+}));
+
+vi.mock("@zoonk/ai/tasks/research/find-written-task-subjects", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  findWrittenTaskSubjects: vi.fn(),
 }));
 
 vi.mock("@zoonk/ai/tasks/research/check-exam-reading", async (importOriginal) => ({
@@ -56,6 +62,7 @@ describe("blueprint extraction durability", () => {
     vi.mocked(extractExamBlueprint).mockResolvedValue(taskResult(extraction));
 
     vi.mocked(extractQuestionFormats).mockResolvedValue(taskResult(extraction.formats));
+    vi.mocked(findWrittenTaskSubjects).mockResolvedValue(taskResult([]));
 
     vi.mocked(checkExamReading).mockResolvedValue(
       taskResult({ missingSubjects: [], statedCounts: [] }),

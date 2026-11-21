@@ -20,9 +20,13 @@ const TARGET = addDays(START, DAYS);
 async function setup({
   dailyMinutes,
   structure,
+  targetDate = TARGET,
+  writtenArea = "Writing",
 }: {
   dailyMinutes: number;
   structure: ExamStructure;
+  targetDate?: Date | null;
+  writtenArea?: string;
 }) {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-09-30T12:00:00Z"));
@@ -33,7 +37,7 @@ async function setup({
     planLibraryFixture({
       skills: [
         { area: "Control", lessons: 60 },
-        { area: "Writing", lessons: 30 },
+        { area: writtenArea, lessons: 30 },
       ],
     }),
   ]);
@@ -44,7 +48,7 @@ async function setup({
     examBlueprintId: blueprint.id,
     kind: "exam",
     settings: { startDate: toIsoDate(START) },
-    targetDate: TARGET,
+    targetDate,
     timezone: "UTC",
     userId: user.id,
   });
@@ -207,6 +211,48 @@ describe("written exam allocation", () => {
 
     expect(blocks).toMatchObject([{ estimatedMinutes: 70, kind: "produce" }]);
   });
+
+  it.each([
+    { hasTest: false, targetDate: null, writtenArea: "Writing" },
+    { hasTest: true, targetDate: TARGET, writtenArea: "A different subject" },
+  ])(
+    "reserves the same writing the day builds when the graph or date is incomplete ($writtenArea, $targetDate)",
+    async ({ hasTest, targetDate, writtenArea }) => {
+      const { goal, saved } = await setup({
+        dailyMinutes: 240,
+        structure: CGU,
+        targetDate,
+        writtenArea,
+      });
+
+      const schedule = parsePlanSettings(saved.settings).writingSchedule ?? [];
+
+      expect(schedule[0]).toMatchObject({
+        date: toIsoDate(START),
+        minutes: 70,
+        tasks: [{ taskKey: "short" }],
+      });
+
+      expect(schedule.some(({ test }) => test)).toBe(hasTest);
+
+      const { blocks } = buildSessionBlocks(
+        await loadSessionBuildInput({
+          goal,
+          localDate: START,
+          now: START,
+          timeZone: "UTC",
+          userId: goal.userId,
+        }),
+      );
+
+      const writing = blocks.find(({ kind }) => kind === "produce");
+
+      expect(writing).toMatchObject({
+        estimatedMinutes: 70,
+        payload: { writing: { taskKey: "short" } },
+      });
+    },
+  );
 
   it("keeps the original allocation for an objective-only notice", async () => {
     const structure = structuredClone(CGU);

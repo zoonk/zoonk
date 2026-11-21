@@ -33,7 +33,11 @@ export const writingPromptSchema = z
 export const writtenItemSchema = writingPromptSchema.extend({
   aspects: z.array(z.object({ criterionId: z.string(), description: z.string(), points })),
   assessedSkillIds: z.array(uuidSchema()).min(1),
+  /** The learner's options it was written for; only learners with the same options get it. */
+  chosenSubjects: z.array(z.string()).optional(),
   grading: writtenGradingSchema,
+  /** The subject its question is on, so the next prompt of the task can take another. */
+  subject: z.string().optional(),
   taskBasis: z.string().optional(),
 });
 

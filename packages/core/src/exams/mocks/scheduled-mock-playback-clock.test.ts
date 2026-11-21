@@ -358,7 +358,7 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
 
     await expect(
       startMock({ blockId: block.id, input: { timeZone: "UTC" } }),
-    ).resolves.toMatchObject({ request: { count: 1, unit: "answer" }, status: "writing" });
+    ).resolves.toMatchObject({ requests: [{ count: 1, unit: "answer" }], status: "writing" });
 
     await expect(prisma.mockExam.count({ where: { blockId: block.id } })).resolves.toBe(0);
   });

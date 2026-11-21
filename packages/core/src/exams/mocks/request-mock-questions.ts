@@ -1,14 +1,17 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getRequestPlatform } from "../../analytics/request-platform";
 import { type AnalyticsPlatform } from "../../analytics/shared-properties";
 import { claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readExtraWritingLimit } from "../../learner/facts/extra-writing";
 import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
 } from "../../learner/placement/placement-quick-format";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
 import {
   listMissingRecordings,
@@ -23,9 +26,16 @@ import { type MockFormatShortfall } from "./mock-shortfall";
 /** On `start`, the caller must dispatch generation; `preparing` requires polling until the skill map exists. */
 export type MockQuestionsRequest =
   | { status: "preparing" }
+  | { returnsOn: string; status: "limitReached" }
   | { status: "ready" }
   | {
-      request: { count: number; goalId: string; taskKey: string; unit: "answer"; userId: string };
+      requests: {
+        count: number;
+        goalId: string;
+        taskKey: string;
+        unit: "answer";
+        userId: string;
+      }[];
       status: "writing";
     }
   | {
@@ -91,8 +101,20 @@ export async function requestMockQuestions({
     userId,
   });
 
-  if (writing.status === "missing" && writing.requests[0]) {
-    return { request: { ...writing.requests[0], goalId, userId }, status: "writing" };
+  if (writing.status === "missing") {
+    const localDate = getDateInTimeZone({
+      date: new Date(),
+      timeZone: getAnswerTimeZone({ goal }),
+    });
+
+    const refusal = await readExtraWritingLimit(userId, toIsoDate(localDate));
+
+    return (
+      refusal ?? {
+        requests: writing.requests.map((request) => ({ ...request, goalId, userId })),
+        status: "writing",
+      }
+    );
   }
 
   if (option.kind === "written") {

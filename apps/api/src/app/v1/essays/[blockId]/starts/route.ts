@@ -44,6 +44,10 @@ async function postStart(request: Request, context: { params: Promise<{ blockId:
         return NextResponse.json(replay);
       }
 
+      if (replay.status === "signUpRequired") {
+        return examError(replay);
+      }
+
       if (replay.status === "limitReached") {
         return NextResponse.json(replay, { status: httpStatus.tooManyRequests });
       }
@@ -52,6 +56,7 @@ async function postStart(request: Request, context: { params: Promise<{ blockId:
     }
     case "blockNotActive":
     case "notFound":
+    case "signUpRequired":
     case "unauthorized":
       return examError(result);
     default:
