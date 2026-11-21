@@ -29,6 +29,7 @@ import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.recordsInBar
+import com.zoonk.android.feature.player.steps.spokenRecordNote
 import com.zoonk.android.feature.practice.DrillStage
 import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunMeter
@@ -139,6 +140,7 @@ internal fun MistakeLessonQuestion(
         mainAction = actions::runPrimary,
         report = null,
         progress = { MistakeSegments(state) },
+        note = if (ideas || checked) null else spokenRecordNote(task.step, lesson, actions),
         actions = {
             if (ideas) {
                 DrillStartButton(viewModel::startDrill)

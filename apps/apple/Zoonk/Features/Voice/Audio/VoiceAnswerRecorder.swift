@@ -40,7 +40,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
         status
       }
-      .recordsInBar(bar, recorder: recorder, isChecking: checking) {
+      .recordsInBar(bar, recorder: recorder, isChecking: checking, line: line) {
         Task { await record() }
       }
       .announcesStatus(announcement)
@@ -64,14 +64,39 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   private var status: some View {
     if case .limit(let limit) = issue, !recorder.isRecording {
       LimitNotice(limit: limit)
-    } else if issue == .failed, !recorder.isRecording, let hint {
-      FailureLine(message: hint)
-        .typeStyle(.note)
-    } else if let hint {
-      Text(hint)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .accessibilityAddTraits(.updatesFrequently)
+    } else if bar?.showsNote != true, let hint {
+      if issue == .failed, !recorder.isRecording {
+        FailureLine(message: hint)
+          .typeStyle(.note)
+      } else {
+        Text(hint)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .accessibilityAddTraits(.updatesFrequently)
+      }
+    }
+  }
+
+  /// The line for a bar that draws it over its Record, with the tone that reads it out as
+  /// `announcement` does here.
+  private var line: RecorderLine? {
+    guard let hint else {
+      return nil
+    }
+
+    if recorder.isRecording {
+      return RecorderLine(text: hint, tone: .hint)
+    }
+
+    if checking {
+      return RecorderLine(text: hint, tone: .status)
+    }
+
+    switch issue {
+    case .limit: return nil
+    case .noSpeech: return RecorderLine(text: hint, tone: .waiting)
+    case .failed: return RecorderLine(text: hint, tone: .failure)
+    case nil: return RecorderLine(text: hint, tone: .hint)
     }
   }
 
@@ -85,8 +110,8 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       return limit.words().said
     }
 
-    // A failure is a `FailureLine`, which reads itself out.
-    return checking || issue == .noSpeech ? hint : nil
+    // A failure is a `FailureLine`, which reads itself out, and a bar reads its own line.
+    return bar?.showsNote != true && (checking || issue == .noSpeech) ? hint : nil
   }
 
   private var hint: String? {

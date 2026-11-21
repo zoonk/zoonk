@@ -164,6 +164,10 @@ struct BarNote: View {
     /// A failure the screen is still working through, such as an answer being sent again: drawn as
     /// a failure, read as a status.
     case waiting
+    /// What the bar's main action does now, such as "Tap Record", drawn as a status but not read as
+    /// it changes: it changes as that action is used, and VoiceOver's speech would end up in a
+    /// recording.
+    case hint
   }
 
   struct Action {
@@ -193,7 +197,7 @@ struct BarNote: View {
 
   /// What the bar reads politely as this note shows or changes; a failure reads itself at once.
   var politeLine: String? {
-    tone == .failure ? nil : String(message.characters)
+    [.status, .waiting].contains(tone) ? String(message.characters) : nil
   }
 
   var body: some View {
@@ -201,7 +205,7 @@ struct BarNote: View {
       switch tone {
       case .failure:
         FailureLine(message: message)
-      case .status:
+      case .status, .hint:
         Text(message)
           .foregroundStyle(.mutedForeground)
       case .waiting:

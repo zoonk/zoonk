@@ -79,6 +79,25 @@ function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
       });
     },
     getLessonPictures: () => Promise.resolve([]),
+    gradeSpokenAnswer: ({ stepId }) => {
+      const step = lesson.steps.find((item) => item.id === stepId);
+      const transcript = step?.kind === "spokenAnswer" ? step.content.targetText : "";
+
+      return Promise.resolve({
+        grade: {
+          attemptId: crypto.randomUUID(),
+          explanation: null,
+          isCorrect: true,
+          score: 1,
+          transcript,
+          words: transcript
+            .split(" ")
+            .map((text) => ({ heard: null, status: "correct" as const, text })),
+          wordsToPractice: [],
+        },
+        status: "graded",
+      });
+    },
   };
 }
 

@@ -72,9 +72,10 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.audio.VoiceAnswerButton
-import com.zoonk.android.feature.audio.VoiceAnswerLine
+import com.zoonk.android.feature.audio.VoiceAnswerLimit
 import com.zoonk.android.feature.audio.VoiceAnswerModel
 import com.zoonk.android.feature.audio.voiceAnswerModel
+import com.zoonk.android.feature.audio.voiceAnswerNote
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
@@ -670,12 +671,7 @@ internal fun SpokenAnswerView(
     }
 
     QuestionScene {
-        if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                QuestionText(spoken.prompt)
-                TargetText(spoken)
-            }
-        }
+        if (part.showsScreen) TargetText(spoken)
 
         if (part.showsTurn) {
             when {
@@ -697,7 +693,7 @@ internal fun SpokenAnswerView(
                 }
 
                 !locked || state.phase == LessonPhase.Checking -> {
-                    VoiceAnswerLine(voice, navigator)
+                    VoiceAnswerLimit(voice, navigator)
                 }
             }
 
@@ -746,6 +742,20 @@ fun offersDontKnow(
     return state.phase == LessonPhase.Playing && !screen.canExplainFirst && !isNumberAnswer(typed.acceptedAnswers)
 }
 
+/**
+ * What the spoken screen's take is doing (how to start, listening, checking, what went wrong), for the bar's note right over
+ * [SpokenRecordAction]; null while the learner types or listens instead, or once the answer is checked.
+ */
+@Composable
+fun spokenRecordNote(
+    step: LessonStep?,
+    state: LessonPlayerState,
+    actions: StepActions,
+): (@Composable () -> Unit)? {
+    val answering = state.phase == LessonPhase.Playing || state.phase == LessonPhase.Checking
+    return if (step != null && answering && recordsInBar(step, actions)) voiceAnswerNote(spokenVoice(step, actions)) else null
+}
+
 /** Whether [SpokenRecordAction] takes the bar's main action on this screen now. */
 @Composable
 fun recordsInBar(
@@ -760,6 +770,7 @@ private fun TargetText(spoken: SpokenAnswerStepContent) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             text = spoken.targetText,
+            modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.headlineSmall.copy(localeList = LocaleList(spoken.language)),
         )
         listOfNotNull(spoken.romanization, translation).forEach {

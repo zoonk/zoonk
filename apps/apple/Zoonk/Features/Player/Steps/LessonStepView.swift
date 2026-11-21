@@ -497,10 +497,10 @@ private struct SpokenAnswerStepView: View {
 
   @ViewBuilder
   private var screen: some View {
-    LessonQuestionText(text: content.prompt)
     VStack(alignment: .leading, spacing: 4) {
       Text(content.targetText)
         .typeStyle(.section.weight(.medium))
+        .accessibilityAddTraits(.isHeader)
       if let romanization = content.romanization {
         Text(romanization).foregroundStyle(.mutedForeground)
       }
@@ -513,18 +513,23 @@ private struct SpokenAnswerStepView: View {
   @ViewBuilder
   private var turn: some View {
     if mode == .speak, let input = recording.input {
-      input(
-        SpokenAnswerContext(
-          lessonId: context.lessonId, stepId: step.id, content: content,
-          isLocked: context.isLocked,
-          waitForRun: waitForRun,
-          studySessionId: studySessionId,
-          onGraded: context.resolveSpoken,
-          onBlocked: {
-            micBlocked = true
-            announcePolitely(Self.micBlockedLine)
-          }, mistake: mistake, onPracticeGraded: onPracticeGraded,
-          onCheckingChanged: onCheckingChanged))
+      // A recorder whose line is in the bar usually draws nothing here.
+      ClosingColumn(spacing: 20) {
+        input(
+          SpokenAnswerContext(
+            lessonId: context.lessonId, stepId: step.id, content: content,
+            isLocked: context.isLocked,
+            waitForRun: waitForRun,
+            studySessionId: studySessionId,
+            onGraded: context.resolveSpoken,
+            onBlocked: {
+              micBlocked = true
+              announcePolitely(Self.micBlockedLine)
+            }, mistake: mistake, onPracticeGraded: onPracticeGraded,
+            onCheckingChanged: onCheckingChanged))
+
+        modeSwitch
+      }
     } else {
       if micBlocked, !context.isLocked {
         VStack(alignment: .leading, spacing: 4) {
@@ -549,9 +554,9 @@ private struct SpokenAnswerStepView: View {
       ) {
         context.select($0.isEmpty ? nil : .spokenAnswer(text: $0))
       }
-    }
 
-    modeSwitch
+      modeSwitch
+    }
   }
 
   private static var micBlockedLine: String {
@@ -590,6 +595,40 @@ private struct SpokenAnswerStepView: View {
         }
       }
       .buttonStyle(.borderless)
+    }
+  }
+}
+
+/// A leading column whose views that draw nothing take no room and no spacing, as main's
+/// `empty:hidden` does.
+private struct ClosingColumn: Layout {
+  let spacing: CGFloat
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    let sizes = subviews.map {
+      $0.sizeThatFits(ProposedViewSize(width: proposal.width, height: nil))
+    }
+    let shown = sizes.filter { $0.height > 0 }
+
+    return CGSize(
+      width: proposal.width ?? shown.map(\.width).max() ?? 0,
+      height: shown.map(\.height).reduce(0, +) + spacing * CGFloat(max(shown.count - 1, 0)))
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    var y = bounds.minY
+
+    for subview in subviews {
+      let size = subview.sizeThatFits(ProposedViewSize(width: bounds.width, height: nil))
+      subview.place(
+        at: CGPoint(x: bounds.minX, y: y),
+        proposal: ProposedViewSize(width: bounds.width, height: size.height))
+
+      if size.height > 0 {
+        y += size.height + spacing
+      }
     }
   }
 }

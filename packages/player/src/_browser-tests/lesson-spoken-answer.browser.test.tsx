@@ -1,5 +1,4 @@
 import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playable-lesson";
-import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
@@ -16,22 +15,9 @@ import {
 } from "../lesson/lesson-player-types";
 import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
-import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
+import { spokenAnswerStep, spokenSentenceStep, teachingStep } from "../preview/preview-steps";
 
 type GradeSpokenAnswer = NonNullable<LessonPlayerAdapters["gradeSpokenAnswer"]>;
-
-function spokenSentenceStep(): PlayableSpokenAnswerStep {
-  return {
-    ...spokenAnswerStep(),
-    content: parseStepContent("spokenAnswer", {
-      language: "en",
-      prompt: "Pergunte quanto é o aluguel.",
-      targetText: "How much is the rent?",
-      translation: "Quanto é o aluguel?",
-    }),
-    listening: languageStep("listening").exercise,
-  };
-}
 
 function openSpokenLesson({
   gradeSpokenAnswer,

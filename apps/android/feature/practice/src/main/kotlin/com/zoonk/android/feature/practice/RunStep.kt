@@ -151,6 +151,7 @@ internal fun RunFrame(
     closeLabel: String? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     asideTitle: String? = null,
+    note: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.(part: StepPart, inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
@@ -193,6 +194,7 @@ internal fun RunFrame(
                 actions = { report?.let { ReportProblemMenu(app, it) } },
                 closeLabel = closeLabel,
                 bottomBar = actions?.let { { TaskActionBar { it(asideShown(hasAside, fold)) } } },
+                note = note,
                 // A passage takes the rail over the run's own pane, as main's aside; across a fold both go on the page before it.
                 aside =
                     when {

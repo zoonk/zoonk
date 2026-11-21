@@ -3549,17 +3549,17 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "答えを書いてください"
 
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "「録音」をタップして、声に出して言ってください"
-
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "CzQFwa"
 msgid "Listening… Tap Stop to check."
 msgstr "聞き取っています…「停止」をタップすると答え合わせができます。"
+
+#. “Record” is the label of the button that starts the recording.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "「録音」をタップして、声に出して言ってください"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
@@ -3581,11 +3581,6 @@ msgstr "今は話せる"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "声に出して答える"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "pjy2sy"
-msgid "Type what you'd say"
-msgstr "話す内容を入力してください"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "eUqe2x"

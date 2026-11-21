@@ -23,7 +23,7 @@ import {
   lettersChart,
   numberedCheckStep,
   pictureCheckStep,
-  spokenAnswerStep,
+  spokenSentenceStep,
   teachingStep,
 } from "./preview-steps";
 
@@ -194,7 +194,7 @@ const screenEntries: PreviewEntry[] = [
     group: "Lesson screens",
     id: "spoken-answer",
     label: "Spoken answer",
-    screen: (id) => spokenAnswerStep({ id }),
+    screen: (id) => spokenSentenceStep({ id }),
   }),
   entry({
     group: "Lesson screens",

@@ -39,13 +39,21 @@ struct RecordButton: View {
 }
 
 /// A screen whose step records puts its Record button in the screen's bottom bar: the step hands
-/// its recorder here, and the bar draws `RecordButton` in its main action's place.
+/// its recorder here, and the bar draws `RecordButton` in its main action's place. A bar that
+/// `showsNote` also draws the recorder's line (`note`) right over itself, next to the Record it
+/// talks about; elsewhere the recorder keeps its line under what the learner says.
 @MainActor
 @Observable
 final class RecordInBar {
+  let showsNote: Bool
   fileprivate(set) var recorder: VoiceRecorder?
   fileprivate(set) var isChecking = false
+  fileprivate(set) var line: RecorderLine?
   @ObservationIgnored fileprivate var start: (() -> Void)?
+
+  init(showsNote: Bool = false) {
+    self.showsNote = showsNote
+  }
 
   var button: RecordButton? {
     guard let recorder, let start else {
@@ -54,25 +62,42 @@ final class RecordInBar {
 
     return RecordButton(recorder: recorder, isDisabled: isChecking, onStart: start)
   }
+
+  var note: BarNote? {
+    guard showsNote, let line else {
+      return nil
+    }
+
+    return BarNote(line.text, tone: line.tone)
+  }
+}
+
+/// What a recorder says about its take: what Record or Stop does, the check, or what went wrong.
+struct RecorderLine: Equatable {
+  let text: String
+  let tone: BarNote.Tone
 }
 
 extension View {
-  /// Hands `recorder` to the screen's bottom bar while this view shows.
+  /// Hands `recorder` and its `line` to the screen's bottom bar while this view shows.
   func recordsInBar(
-    _ bar: RecordInBar?, recorder: VoiceRecorder, isChecking: Bool, start: @escaping () -> Void
+    _ bar: RecordInBar?, recorder: VoiceRecorder, isChecking: Bool, line: RecorderLine?,
+    start: @escaping () -> Void
   ) -> some View {
     onAppear {
       bar?.recorder = recorder
       bar?.start = start
     }
     .onChange(of: isChecking, initial: true) { _, value in bar?.isChecking = value }
+    .onChange(of: line, initial: true) { _, value in bar?.line = value }
     // A step removed in the update that ends its check never sends that change, so its checking
-    // goes with its recorder.
+    // and its line go with its recorder.
     .onDisappear {
       if bar?.recorder === recorder {
         bar?.recorder = nil
         bar?.start = nil
         bar?.isChecking = false
+        bar?.line = nil
       }
     }
   }

@@ -3549,17 +3549,17 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Escreva sua resposta"
 
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Toque em Gravar e fale em voz alta"
-
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "CzQFwa"
 msgid "Listening… Tap Stop to check."
 msgstr "Ouvindo… Toque em Parar para conferir."
+
+#. “Record” is the label of the button that starts the recording.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "Toque em Gravar e fale em voz alta"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
@@ -3581,11 +3581,6 @@ msgstr "Posso falar agora"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "Prefiro falar"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "pjy2sy"
-msgid "Type what you'd say"
-msgstr "Digite o que você falaria"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "eUqe2x"

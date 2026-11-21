@@ -22,7 +22,6 @@ import {
 import { StepWayOut } from "../../components/step-way-out";
 import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
-import { LessonQuestion } from "../_components/lesson-step-text";
 import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
@@ -36,15 +35,37 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
 
   return (
     <div className="flex flex-col gap-1">
-      <p
+      <h2
         className="text-2xl leading-tight font-semibold tracking-[-0.02em]"
         lang={step.content.language}
       >
         {targetText}
-      </p>
+      </h2>
       {romanization && <p className="text-muted-foreground text-sm">{romanization}</p>}
       {showsTranslation && <p className="text-muted-foreground text-sm">{translation}</p>}
     </div>
+  );
+}
+
+function RecordNote({ isRecording, noSpeech }: { isRecording: boolean; noSpeech: string | null }) {
+  const t = useExtracted();
+
+  if (noSpeech) {
+    return <p className="text-destructive-text">{noSpeech}</p>;
+  }
+
+  return (
+    <p className="text-muted-foreground">
+      {isRecording
+        ? t({
+            description: "“Stop” is the label of the button that ends the recording.",
+            message: "Listening… Tap Stop to check.",
+          })
+        : t({
+            description: "“Record” is the label of the button that starts the recording.",
+            message: "Tap Record and say it out loud",
+          })}
+    </p>
   );
 }
 
@@ -56,7 +77,6 @@ function RecordAnswer({
   onProblem: (problem: MicrophoneProblem) => void;
   stepId: string;
 }) {
-  const t = useExtracted();
   const { actions, state } = useLessonPlayer();
 
   const onRecorded = useCallback(
@@ -85,33 +105,21 @@ function RecordAnswer({
 
   return (
     <>
-      <div aria-live="polite" className="flex flex-col">
-        {limit ? (
-          <LessonHelpLimitNotice limit={limit} />
-        ) : (
-          <p
-            className={cn(
-              "text-muted-foreground text-sm",
-              issue?.status === "noSpeech" && "text-destructive-text",
-            )}
-          >
-            {isIdle &&
-              (issue?.status === "noSpeech"
-                ? noSpeech
-                : t({
-                    description: "“Record” is the label of the button that starts the recording.",
-                    message: "Tap Record and say it out loud",
-                  }))}
-            {isRecording &&
-              t({
-                description: "“Stop” is the label of the button that ends the recording.",
-                message: "Listening… Tap Stop to check.",
-              })}
-          </p>
-        )}
+      <div aria-live="polite" className="empty:hidden">
+        {limit && <LessonHelpLimitNotice limit={limit} />}
       </div>
 
-      <MainActionInBar>
+      <MainActionInBar
+        note={
+          !limit &&
+          (isIdle || isRecording) && (
+            <RecordNote
+              isRecording={isRecording}
+              noSpeech={issue?.status === "noSpeech" ? noSpeech : null}
+            />
+          )
+        }
+      >
         <RecordButton
           busy={recorder.status === "acquiring"}
           elapsedMs={recorder.elapsedMs}
@@ -274,11 +282,6 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
 
   return (
     <InteractiveStepLayout>
-      <div className="font-normal [&_h2]:font-normal">
-        <LessonQuestion>
-          {answerMode.micProblem === "blocked" ? t("Type what you'd say") : step.content.prompt}
-        </LessonQuestion>
-      </div>
       <TargetText step={step} />
 
       {answerMode.mode === "type" ? (

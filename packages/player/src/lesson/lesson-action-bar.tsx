@@ -1,6 +1,6 @@
 "use client";
 
-import { MainActionSlot } from "@zoonk/learn/main-action-slot";
+import { MainActionSlot, usePlacedMainActionNote } from "@zoonk/learn/main-action-slot";
 import {
   BackWithSecondAction,
   QuestionActions,
@@ -98,13 +98,14 @@ function DontKnow() {
 export function LessonActionBar() {
   const { actions, screen } = useLessonPlayer();
   const primary = useLessonPrimary();
+  const note = usePlacedMainActionNote();
 
   if (!primary) {
     return null;
   }
 
   return (
-    <TaskActionBar>
+    <TaskActionBar note={note}>
       <QuestionActions>
         <BackWithSecondAction
           back={

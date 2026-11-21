@@ -7,8 +7,9 @@ struct LessonStageView: View {
   @Environment(\.spokenAnswerRecording) private var recording
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var isCheckSlow = false
-  /// A spoken answer's Record button is the bar's main action, where Check is on other steps.
-  @State private var recordInBar = RecordInBar()
+  /// A spoken answer's Record button is the bar's main action, where Check is on other steps, with
+  /// what to do with it right over the bar.
+  @State private var recordInBar = RecordInBar(showsNote: true)
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -221,7 +222,7 @@ struct LessonStageView: View {
               }
             }
           }
-          .bottomBar {
+          .bottomBar(note: recordInBar.note) {
             LessonActionBar(
               store: store, state: state, step: step, showsOwnAsk: offersHelp || offersDidntGetIt)
           }

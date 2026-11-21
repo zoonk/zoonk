@@ -10,6 +10,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -193,9 +194,9 @@ fun VoiceAnswerButton(
 }
 
 /**
- * What [model]'s take is doing: listening, checking, what went wrong, or a limit with its way on. The line is
- * the take's visit, as the one piece shown from Record through the grading to what went wrong (a lesson's bar
- * drops Record while the take is checked), so the take's visit ends only when the line goes for real.
+ * What [model]'s take is doing: listening, checking, what went wrong, or a limit with its way on, for a screen that keeps it
+ * under its Record. A screen whose Record is in its bottom bar draws [VoiceAnswerLimit] in its column and [voiceAnswerNote] in
+ * the bar's note instead.
  */
 @Composable
 fun VoiceAnswerLine(
@@ -204,7 +205,44 @@ fun VoiceAnswerLine(
     modifier: Modifier = Modifier,
     asksToSpeak: Boolean = true,
 ) {
+    VoiceAnswerLimit(model, navigator, modifier)
+    voiceAnswerNote(model, asksToSpeak)?.let { note -> Box(modifier) { note() } }
+}
+
+/**
+ * The take's limit with its way on, once it hits one. It is the take's visit, as the one piece shown from Record through the
+ * grading to what went wrong (a lesson's bar drops Record while the take is checked), so the take's visit ends only when it goes
+ * for real.
+ */
+@Composable
+fun VoiceAnswerLimit(
+    model: VoiceAnswerModel,
+    navigator: AppNavigator,
+    modifier: Modifier = Modifier,
+) {
     VisitOf(model.visit)
+    val status by model.recorder.state.collectAsStateWithLifecycle()
+    val issue = model.issue.value.takeUnless { status is VoiceRecorder.Status.Recording }
+    if (issue !is VoiceIssue.Limited) return
+
+    LimitNotice(
+        issue.limit,
+        LimitSubject.Help,
+        onCreateAccount = { navigator.open(AppRoute.Login) },
+        onSubscribe = { navigator.open(AppRoute.Subscription) },
+        modifier = modifier,
+    )
+}
+
+/**
+ * The line saying what [model]'s take is doing (how to start, listening, checking, what went wrong), or null when there's
+ * nothing to say, as at a limit, which [VoiceAnswerLimit] shows.
+ */
+@Composable
+fun voiceAnswerNote(
+    model: VoiceAnswerModel,
+    asksToSpeak: Boolean = true,
+): (@Composable () -> Unit)? {
     val status by model.recorder.state.collectAsStateWithLifecycle()
     val recording = status is VoiceRecorder.Status.Recording
     val slow by produceState(false, model.checking) {
@@ -225,24 +263,15 @@ fun VoiceAnswerLine(
             issue == VoiceIssue.Failed -> stringResource(R.string.audio_check_failed)
             asksToSpeak -> stringResource(R.string.audio_say_it)
             else -> null
-        }
+        } ?: return null
+    val wrong = issue == VoiceIssue.NoSpeech || issue == VoiceIssue.Failed
 
-    if (issue is VoiceIssue.Limited) {
-        LimitNotice(
-            issue.limit,
-            LimitSubject.Help,
-            onCreateAccount = { navigator.open(AppRoute.Login) },
-            onSubscribe = { navigator.open(AppRoute.Subscription) },
-            modifier = modifier,
-        )
-        return
-    }
-    hint?.let {
+    return {
         Text(
-            text = it,
+            text = hint,
             // Announcing the take's start would speak into the microphone.
-            modifier = modifier.semantics { if (!recording) liveRegion = LiveRegionMode.Polite },
-            color = if (issue == VoiceIssue.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.semantics { if (!recording) liveRegion = LiveRegionMode.Polite },
+            color = if (wrong) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
     }
