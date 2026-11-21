@@ -9,6 +9,7 @@ import { FOCUS_TEST_SOURCE } from "../learner/placement/focus-test-contract";
 import { commitPlan } from "./_utils/commit-plan";
 import { computeCheckedChange } from "./_utils/extra-offer";
 import { followPlanToday } from "./_utils/follow-plan-today";
+import { proposesNoticeGraph } from "./_utils/notice-graph-proposal";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
 import {
@@ -90,7 +91,7 @@ async function acceptProposal({
 }: Decision & { quote: PlanChangeQuote | null }) {
   const payload = parsePlanChangePayload(change.payload);
 
-  if (payload.operations.some(({ kind }) => kind === "followNotice")) {
+  if (proposesNoticeGraph(payload.operations)) {
     return { status: "conflict" as const };
   }
 

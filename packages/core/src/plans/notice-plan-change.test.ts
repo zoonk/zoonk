@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { listGoalChangeNotices } from "../library/sources/source-change-notices";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { readPlanScreen } from "./_test-utils/ahead-plan";
 import { followNoticeReading, noticeWaitFixture } from "./_test-utils/notice-landing";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { seenQuote } from "./_test-utils/seen-quote";
@@ -590,7 +591,7 @@ describe(proposeNoticeChange, () => {
     ]);
   });
 
-  it("replaces a legacy graph proposal with the exam-day question", async () => {
+  it("hides a waiting legacy graph proposal and replaces it with the exam-day question", async () => {
     const { goal } = await plannedExam({
       days: ["2020-11-08"],
       targetDate: "2020-12-20",
@@ -601,10 +602,32 @@ describe(proposeNoticeChange, () => {
 
     const legacy = await planChangeFixture({
       kind: "edited",
-      payload: { operations: [{ kind: "followNotice" }], source: NOTICE_SOURCE },
+      payload: {
+        effect: {
+          endDateAfter: "2020-10-04",
+          endDateBefore: "2020-10-05",
+          lessonsAdded: 0,
+          lessonsRemoved: 1,
+        },
+        operations: [{ kind: "followNotice" }],
+        source: NOTICE_SOURCE,
+      },
       planId: plan.id,
       status: "proposed",
     });
+
+    const [today, screen] = await Promise.all([
+      loadTodayPlanChange({ goal, now: NOW }),
+      readPlanScreen(),
+    ]);
+
+    expect.soft(today).toBeNull();
+    expect(screen?.changes).toBeDefined();
+    expect.soft(screen?.changes).not.toContainEqual(expect.objectContaining({ id: legacy.id }));
+
+    await expect(prisma.planChange.findUnique({ where: { id: legacy.id } })).resolves.toMatchObject(
+      { status: "proposed" },
+    );
 
     await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("proposed");
 
@@ -619,6 +642,11 @@ describe(proposeNoticeChange, () => {
         },
       },
     ]);
+
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
+      operations: [{ kind: "setNoticeDate" }],
+      status: "proposed",
+    });
   });
 
   it("says the notice's change once on Today: the news a change carries isn't shown again", async () => {

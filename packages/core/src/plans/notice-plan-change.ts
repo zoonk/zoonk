@@ -3,6 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { loadNoticeDay } from "../exams/_utils/notice-day";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { proposeChange } from "./_utils/apply-plan-change";
+import { noticeGraphPayload } from "./_utils/notice-graph-proposal";
 import { type PlanContext } from "./_utils/plan-context";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "./_utils/plan-setup-tasks";
 import { loadPlanAtToken } from "./_utils/plan-token";
@@ -59,12 +60,8 @@ async function replaceNoticeProposals({
   const waiting = await prisma.planChange.findMany({
     select: { id: true },
     where: {
-      AND: [
-        { payload: { equals: NOTICE_SOURCE, path: ["source"] } },
-        ...(graphOnly
-          ? [{ payload: { array_contains: [{ kind: "followNotice" }], path: ["operations"] } }]
-          : []),
-      ],
+      AND: graphOnly ? { payload: noticeGraphPayload } : undefined,
+      payload: { equals: NOTICE_SOURCE, path: ["source"] },
       planId: context.plan.id,
       status: "proposed",
     },
@@ -132,11 +129,7 @@ export function proposeNoticeChange(request: NoticeChangeRequest): Promise<Notic
 export async function retireWaitingNoticeGraph(goalId: string): Promise<void> {
   const waiting = await prisma.planChange.findFirst({
     select: { id: true },
-    where: {
-      payload: { array_contains: [{ kind: "followNotice" }], path: ["operations"] },
-      plan: { goalId },
-      status: "proposed",
-    },
+    where: { payload: noticeGraphPayload, plan: { goalId }, status: "proposed" },
   });
 
   if (waiting) {
