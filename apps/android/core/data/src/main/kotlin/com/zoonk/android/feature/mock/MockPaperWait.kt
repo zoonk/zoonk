@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 class MockPaperWait(
     scope: CoroutineScope,
-    source: GenerationSource,
+    source: (String?) -> GenerationSource,
     private val read: suspend () -> MockWriting?,
 ) {
     private val mutableIdle = MutableStateFlow(false)
@@ -24,7 +24,19 @@ class MockPaperWait(
     /** Nothing is writing the paper now (what was written fell short): the daily preparation goes on with it. */
     val idle: StateFlow<Boolean> = mutableIdle.asStateFlow()
 
-    private val follower = GenerationFollower(GenerationKind.MockPaper, scope, source, readGenerationId = ::readId)
+    private var namespace: String? = null
+
+    private val follower =
+        GenerationFollower(
+            GenerationKind.MockPaper,
+            scope,
+            object : GenerationSource {
+                override fun events(id: String) = source(namespace).events(id)
+
+                override suspend fun status(id: String) = source(null).status(id)
+            },
+            readGenerationId = ::readId,
+        )
 
     val run: StateFlow<GenerationRun> = follower.run
 
@@ -38,6 +50,7 @@ class MockPaperWait(
             mutableIdle.value = true
             follower.stop()
         }
+        namespace = writing?.namespace
         return writing?.generationId
     }
 }

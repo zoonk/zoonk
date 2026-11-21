@@ -1,8 +1,8 @@
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { getWorkflowMetadata } from "workflow";
-import { claimRunToken, startOnce, waitForRunToken } from "../_shared/run-token";
+import { startOnce, waitForRunToken } from "../_shared/run-token";
 import { endFollowUpStep } from "../follow-ups/steps/follow-up-steps";
-import { createMockPaperProgress, getMockPaperToken } from "./mock-paper-progress";
+import { openMockPaperProgress } from "./mock-paper-progress";
 import { prepareMockRecordings, writeMockQuestions } from "./mock-question-writes";
 import { pickMockSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
 import {
@@ -40,7 +40,7 @@ async function prepareSets({
   supply: MockQuestionWrites;
 }) {
   if (!supply.allowStimulusSets) {
-    return false;
+    return { addedSets: false, failed: false };
   }
 
   const sets = await pickMockSetTargetsStep({
@@ -49,132 +49,214 @@ async function prepareSets({
     writes: supply.writes,
   });
 
-  const stored = await Promise.all(
+  const stored = await Promise.allSettled(
     sets.map((target) =>
       prepareItemSet({ goalId, target, wait: supply.later ? "later" : "learner", workflowRunId }),
     ),
   );
 
-  return stored.some(Boolean);
+  return {
+    addedSets: stored.some((result) => result.status === "fulfilled" && result.value),
+    failed: stored.some((result) => result.status === "rejected"),
+  };
 }
 
-type PaperProgress = ReturnType<typeof createMockPaperProgress>;
+type PaperProgress = Awaited<ReturnType<typeof openMockPaperProgress>>;
+type SupplyPlan = { goalId: string; priority?: string };
 
-async function isPaperWritten({ goalId, paper }: { goalId: string; paper: string }) {
-  const { papers } = await listMockPrepWritesStep({ goalId, only: paper, priority: paper });
-  return papers.length === 0 ? "written" : "short";
-}
-
-async function writeSupply({
-  goalId,
+async function preparePaperSets({
   progress,
-  workflowRunId,
   supply,
+  goalId,
+  workflowRunId,
 }: {
-  goalId: string;
   progress: PaperProgress;
-  workflowRunId: string;
   supply: MockQuestionWrites;
+  goalId: string;
+  workflowRunId: string;
 }) {
-  await progress.step(supply.key, "writeMockQuestions", () =>
-    writeMockQuestions({ ...supply, goalId, workflowRunId }),
-  );
-
-  const { recordings } = supply;
-
-  if (recordings) {
-    await progress.step(supply.key, "recordMockListening", () =>
-      prepareMockRecordings({ goalId, later: supply.later, recordings, workflowRunId }),
-    );
+  if (!supply.allowStimulusSets) {
+    return { addedSets: false, failed: false };
   }
 
-  if (progress.follows(supply.key)) {
-    await progress.end(await isPaperWritten({ goalId, paper: supply.key }));
+  try {
+    return await progress.step("writeMockTexts", () =>
+      prepareSets({ goalId, supply, workflowRunId }),
+    );
+  } catch {
+    return { addedSets: false, failed: true };
   }
 }
 
-/** The texts the papers written first share, planned again when it wrote any. */
-async function prepareFirstSets({
+async function writePaper({
   input,
   progress,
+  supply,
   workflowRunId,
+  setsFailed,
 }: {
-  input: { goalId: string; priority?: string };
+  input: SupplyPlan;
   progress: PaperProgress;
+  supply: MockQuestionWrites;
   workflowRunId: string;
+  setsFailed: boolean;
 }) {
-  const planned = await listMockPrepWritesStep(input);
-  const first = planned.papers.filter((supply) => !supply.alternative);
-  const followed = first.find((supply) => progress.follows(supply.key));
+  const { goalId } = input;
+  let written = false;
 
-  if (!followed) {
-    await progress.end("written");
-  }
-
-  const writeSets = () =>
-    Promise.all(
-      first.map((supply) => prepareSets({ goalId: input.goalId, supply, workflowRunId })),
+  try {
+    await progress.step("writeMockQuestions", () =>
+      writeMockQuestions({ ...supply, goalId, workflowRunId }),
     );
 
-  const stored = followed?.allowStimulusSets
-    ? await progress.step(followed.key, "writeMockTexts", writeSets)
-    : await writeSets();
+    const { recordings } = supply;
 
-  return stored.some(Boolean) ? listMockPrepWritesStep(input) : planned;
+    if (recordings) {
+      await progress.step("recordMockListening", () =>
+        prepareMockRecordings({ goalId, later: supply.later, recordings, workflowRunId }),
+      );
+    }
+
+    const { papers } = await listMockPrepWritesStep({ ...input, only: supply.key });
+    written = !setsFailed && papers.length === 0;
+  } catch {
+    // Exhausted step retries leave only this paper short.
+  }
+
+  await progress.end(written ? "written" : "short");
 }
 
-async function prepareGoalSupply({
-  ask,
-  goalId,
-  paper,
-  progress,
+function reservedPapers(papers: MockQuestionWrites[]) {
+  return papers.filter(({ alternative }) => !alternative);
+}
+
+async function prepareAlternative({
+  input,
+  key,
+  open,
   workflowRunId,
 }: {
-  ask?: SupplyAsk;
-  goalId: string;
-  paper?: string;
-  progress: PaperProgress;
+  input: SupplyPlan;
+  key: string;
+  open: (paper: string) => Promise<PaperProgress>;
   workflowRunId: string;
 }) {
+  const next = { ...input, only: key };
+  const { papers: short } = await listMockPrepWritesStep(next);
+  const [supply] = short;
+
+  if (!supply) {
+    return;
+  }
+
+  const progress = await open(key);
+
+  const { addedSets, failed } = await preparePaperSets({
+    goalId: input.goalId,
+    progress,
+    supply,
+    workflowRunId,
+  });
+
+  const recounted = addedSets ? await listMockPrepWritesStep(next) : { papers: short };
+  const [remaining] = recounted.papers;
+
+  if (remaining) {
+    await writePaper({ input, progress, setsFailed: failed, supply: remaining, workflowRunId });
+  } else {
+    await progress.end(failed ? "short" : "written");
+  }
+}
+
+async function preparePapers({
+  input,
+  workflowRunId,
+}: {
+  input: SupplyPlan;
+  workflowRunId: string;
+}) {
+  const { goalId, priority } = input;
+  const progressByPaper = new Map<string, PaperProgress>();
+
+  async function open(paper: string) {
+    const progress = progressByPaper.get(paper) ?? (await openMockPaperProgress({ goalId, paper }));
+    progressByPaper.set(paper, progress);
+    return progress;
+  }
+
   try {
-    const input = { goalId, priority: paper };
-    const { papers } = await prepareFirstSets({ input, progress, workflowRunId });
+    const waited = priority ? await open(priority) : null;
+    const planned = await listMockPrepWritesStep(input);
+    const first = reservedPapers(planned.papers);
 
-    const reserved = papers
-      .filter((entry) => !entry.alternative)
-      .toSorted((a, b) => Number(a.later) - Number(b.later));
-
-    if (!reserved.some((supply) => progress.follows(supply.key))) {
-      await progress.end("written");
+    if (!first.some(({ key }) => key === priority)) {
+      await waited?.end("written");
     }
+
+    const sets = await Promise.all(
+      first.map(async (supply) => ({
+        key: supply.key,
+        ...(await preparePaperSets({
+          goalId,
+          progress: await open(supply.key),
+          supply,
+          workflowRunId,
+        })),
+      })),
+    );
+
+    const { papers } = sets.some(({ addedSets }) => addedSets)
+      ? await listMockPrepWritesStep(input)
+      : planned;
+
+    const reserved = reservedPapers(papers).toSorted((a, b) => Number(a.later) - Number(b.later));
 
     /* oxlint-disable no-await-in-loop -- Each chooser alternative can use the last paper's writes. */
-    for (const supply of reserved) {
-      await writeSupply({ goalId, progress, supply, workflowRunId });
+    for (const { key, failed } of sets) {
+      if (!reserved.some((supply) => supply.key === key)) {
+        const progress = await open(key);
+        await progress.end(failed ? "short" : "written");
+      }
     }
 
-    if (paper) {
+    for (const supply of reserved) {
+      await writePaper({
+        input,
+        progress: await open(supply.key),
+        setsFailed: sets.some(({ key, failed }) => key === supply.key && failed),
+        supply,
+        workflowRunId,
+      });
+    }
+
+    if (priority) {
       return;
     }
 
     const current = reserved.length > 0 ? await listMockPrepWritesStep(input) : { papers };
 
     for (const alternative of current.papers.filter((supply) => supply.alternative)) {
-      const next = { ...input, only: alternative.key };
-      const { papers: short } = await listMockPrepWritesStep(next);
-      const [supply] = short;
-
-      if (supply) {
-        const addedSets = await prepareSets({ goalId, supply, workflowRunId });
-        const recounted = addedSets ? await listMockPrepWritesStep(next) : { papers: short };
-        const [remaining] = recounted.papers;
-
-        if (remaining) {
-          await writeSupply({ goalId, progress, supply: remaining, workflowRunId });
-        }
-      }
+      await prepareAlternative({ input, key: alternative.key, open, workflowRunId });
     }
     /* oxlint-enable no-await-in-loop */
+  } finally {
+    await Promise.all([...progressByPaper.values()].map((progress) => progress.end("short")));
+  }
+}
+
+async function prepareGoalSupply({
+  ask,
+  goalId,
+  paper,
+  workflowRunId,
+}: {
+  ask?: SupplyAsk;
+  goalId: string;
+  paper?: string;
+  workflowRunId: string;
+}) {
+  try {
+    await preparePapers({ input: { goalId, priority: paper }, workflowRunId });
   } finally {
     await checkMockSupplyStep(goalId, { priority: paper });
 
@@ -190,33 +272,20 @@ async function prepareGoalSupply({
 export async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAsk }) {
   "use workflow";
   const { workflowRunId } = getWorkflowMetadata();
-  const paper = input.ask && !input.later ? input.paper : undefined;
 
-  // Held from before its turn, so the learner waiting for the paper finds this run and follows it.
-  using writer = paper
-    ? await claimRunToken(getMockPaperToken({ goalId: input.goalId, paper }))
-    : null;
+  if (!(await waitForRunToken(supplyKey(input)))) {
+    throw new Error("The previous mock supply run is still writing.");
+  }
 
-  const progress = createMockPaperProgress(writer?.conflict === null ? paper : undefined);
+  const goals = input.ask ? [input.goalId] : await listExamSupplyGoalsStep(input);
 
-  try {
-    if (!(await waitForRunToken(supplyKey(input)))) {
-      throw new Error("The previous mock supply run is still writing.");
-    }
-
-    const goals = input.ask ? [input.goalId] : await listExamSupplyGoalsStep(input);
-
-    for (const goalId of goals) {
-      // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
-      await prepareGoalSupply({
-        ask: input.ask,
-        goalId,
-        paper: !input.later && goalId === input.goalId ? input.paper : undefined,
-        progress,
-        workflowRunId,
-      });
-    }
-  } finally {
-    await progress.end("short");
+  for (const goalId of goals) {
+    // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
+    await prepareGoalSupply({
+      ask: input.ask,
+      goalId,
+      paper: !input.later && goalId === input.goalId ? input.paper : undefined,
+      workflowRunId,
+    });
   }
 }

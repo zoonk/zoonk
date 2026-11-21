@@ -259,7 +259,7 @@ struct ChallengeScreen: View {
       }
     } else if isPreparing(challenge) {
       MockPreparingNote(
-        title: MockPreparing.title,
+        title: MockPreparing.title, goalID: challenge.goalId, surface: "scheduledMock",
         read: { [exam, itemId] in
           await exam.mockWriting(goalId: challenge.goalId, planItemId: itemId)
         },

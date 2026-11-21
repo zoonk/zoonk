@@ -6,21 +6,25 @@ import SwiftUI
 /// note says to come back.
 struct MockPreparingNote: View {
   let title: LocalizedStringResource
+  let goalID: String
+  let surface: String
   /// Nil when it can't be read, which counts as a run still starting.
   let read: () async -> MockWriting?
   /// The run says the paper is written: the screen reads itself again, which then offers Start.
   let written: () async -> Bool
 
   @State private var isIdle = false
+  @State private var namespace: String?
 
   var body: some View {
     if isIdle {
       ComeBackWords(title: title)
     } else {
       GenerationFollower(
-        generationID: nil, kind: .mockPaper,
+        generationID: nil, kind: .mockPaper, namespace: namespace,
         readGenerationID: {
           let writing = await read()
+          namespace = writing?.namespace
           isIdle = writing?.status == MockWriting.Status.none
           return writing?.generationId
         },
@@ -29,6 +33,10 @@ struct MockPreparingNote: View {
         content: { run in
           if run.failure == nil {
             MockWritingProgress(title: title, wait: run.wait)
+              .measuresWait(
+                surface: surface, contentKind: "mockPaper",
+                isActive: !run.wait.isDone && !run.ended,
+                goalID: goalID)
           } else {
             ComeBackWords(title: title)
           }

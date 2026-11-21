@@ -23,6 +23,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.PhaseStatus
+import com.zoonk.android.data.TrackVisibleWait
 import com.zoonk.android.data.progress
 import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.ui.components.GenerationProgressBar
@@ -44,6 +45,8 @@ private const val SECONDS_PER_MINUTE = 60
 @Composable
 fun MockPreparingNote(
     title: String,
+    goalId: String,
+    surface: String,
     createWait: (CoroutineScope) -> MockPaperWait,
     onWritten: suspend () -> Unit,
 ) {
@@ -65,6 +68,7 @@ fun MockPreparingNote(
     if (idle || run.status == GenerationRun.Status.Failed) {
         GateWords(title = title, line = stringResource(R.string.mock_preparing_line))
     } else {
+        if (run.status != GenerationRun.Status.Ready) TrackVisibleWait(surface, "mockPaper", goalId)
         MockWritingProgress(title, run)
     }
 }

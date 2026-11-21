@@ -17,7 +17,7 @@ import java.util.UUID
  * request while its questions are written (the options then say so).
  */
 class MockChooserViewModel(
-    private val goalId: UUID,
+    val goalId: UUID,
     private val starter: MockStarter,
     val paperWait: (CoroutineScope) -> MockPaperWait,
     private val refused: suspend () -> Unit = {},

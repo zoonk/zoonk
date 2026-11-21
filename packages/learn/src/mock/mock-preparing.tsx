@@ -18,9 +18,15 @@ import { type GenerationRun } from "../generation/generation-run";
 import { useGenerationStepLabel } from "../generation/generation-step-label";
 import { useGenerationProgress } from "../generation/generation-wait";
 import { useGenerationCopy } from "../generation/use-generation-copy";
+import { useVisibleWait } from "../generation/use-visible-wait";
+import { useLearnAnalytics } from "../learn-context";
 
 /** GET /goals/{goalId}/mock-writing: the run writing the paper the learner waits for. */
-export type MockWriting = { generationId: string | null; status: "none" | "starting" | "writing" };
+export type MockWriting = {
+  generationId: string | null;
+  namespace: string | null;
+  status: "none" | "starting" | "writing";
+};
 
 export type MockWritingWait = {
   read: () => Promise<MockWriting>;
@@ -55,7 +61,27 @@ function useTimeLeft({ seconds, value }: { seconds: number; value: number }): st
   });
 }
 
-function MockWritingProgress({ run, title }: { run: GenerationRun; title: string }) {
+function MockWritingProgress({
+  goalId,
+  run,
+  surface,
+  title,
+}: {
+  goalId: string;
+  run: GenerationRun;
+  surface: string;
+  title: string;
+}) {
+  const { track } = useLearnAnalytics();
+
+  useVisibleWait({
+    contentKind: "mockPaper",
+    enabled: run.status === "waiting" || run.status === "following",
+    goalId,
+    surface,
+    track,
+  });
+
   const locale = useAppLocale();
   const copy = useGenerationCopy("mockPaper");
   const step = useGenerationStepLabel({ kind: "mockPaper", run });
@@ -97,7 +123,17 @@ function MockWritingProgress({ run, title }: { run: GenerationRun; title: string
  * about how long is left. With nothing writing it (what was written fell short, or the run stopped),
  * the daily preparation goes on with it, so the note says to come back.
  */
-export function MockPreparingNote({ title, wait }: { title: string; wait: MockWritingWait }) {
+export function MockPreparingNote({
+  goalId,
+  surface,
+  title,
+  wait,
+}: {
+  goalId: string;
+  surface: "mockChooser" | "scheduledMock";
+  title: string;
+  wait: MockWritingWait;
+}) {
   const [idle, setIdle] = useState(false);
 
   if (idle) {
@@ -107,7 +143,10 @@ export function MockPreparingNote({ title, wait }: { title: string; wait: MockWr
   const readGenerationId = async () => {
     const writing = await wait.read();
     setIdle(writing.status === "none");
-    return writing.generationId;
+
+    return writing.generationId && writing.namespace
+      ? { id: writing.generationId, namespace: writing.namespace }
+      : writing.generationId;
   };
 
   return (
@@ -122,7 +161,7 @@ export function MockPreparingNote({ title, wait }: { title: string; wait: MockWr
         run.status === "failed" ? (
           <MockPreparingWords title={title} />
         ) : (
-          <MockWritingProgress run={run} title={title} />
+          <MockWritingProgress goalId={goalId} run={run} surface={surface} title={title} />
         )
       }
     </FollowedRun>

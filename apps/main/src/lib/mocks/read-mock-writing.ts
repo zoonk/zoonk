@@ -26,6 +26,7 @@ export async function readMockWriting({
 
   return {
     generationId: getString(body, "generationId"),
+    namespace: getString(body, "namespace"),
     status: status === "none" || status === "writing" ? status : "starting",
   };
 }

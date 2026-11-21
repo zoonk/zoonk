@@ -32,7 +32,10 @@ interface MockApi {
         planItemId: UUID?,
     ): MockWriting
 
-    fun generations(session: AuthenticatedSession?): GenerationSource
+    fun generations(
+        session: AuthenticatedSession?,
+        namespace: String?,
+    ): GenerationSource
 }
 
 class LiveMockApi(
@@ -49,7 +52,10 @@ class LiveMockApi(
         planItemId: UUID?,
     ) = perform { api.clients(session).exams.getMockWriting(goalId, planItemId) }
 
-    override fun generations(session: AuthenticatedSession?) = LiveGenerationSource(api, session)
+    override fun generations(
+        session: AuthenticatedSession?,
+        namespace: String?,
+    ) = LiveGenerationSource(api, session, namespace)
 }
 
 /** The mocks an exam goal offers any time; Today's practice, the exam page and the chooser share it. */
@@ -77,7 +83,10 @@ class MockStore(
         planItemId: UUID? = null,
     ): MockPaperWait {
         val owner = cache.session.current
-        return MockPaperWait(scope, api.generations(owner)) { owner?.let { api.writing(it, goalId, planItemId) } }
+        return MockPaperWait(
+            scope,
+            { namespace -> api.generations(owner, namespace) },
+        ) { owner?.let { api.writing(it, goalId, planItemId) } }
     }
 
     fun requested(

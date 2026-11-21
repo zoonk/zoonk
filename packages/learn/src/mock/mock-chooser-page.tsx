@@ -56,7 +56,14 @@ export function ChooserHeader({ detail, title }: { detail: string; title: string
 }
 
 /** Why Start didn't start, read out as it shows: over the bar, where the learner pressed. */
-function useChooserNote({ busy, gated, preparing, status, writing }: ChooserBarProps): ReactNode {
+function useChooserNote({
+  busy,
+  gated,
+  goalId,
+  preparing,
+  status,
+  writing,
+}: ChooserBarProps): ReactNode {
   const t = useExtracted();
 
   if (gated) {
@@ -71,6 +78,8 @@ function useChooserNote({ busy, gated, preparing, status, writing }: ChooserBarP
     return (
       <MockPreparingNote
         key={preparing}
+        goalId={goalId}
+        surface="mockChooser"
         title={t({
           description:
             "Over the mock exam chooser's main button, after the learner picked a mock exam that isn't ready to start yet: we're writing its questions now. Other picks may start right away.",
@@ -95,6 +104,7 @@ function useChooserNote({ busy, gated, preparing, status, writing }: ChooserBarP
 type ChooserBarProps = {
   busy: boolean;
   gated: boolean;
+  goalId: string;
   /** The picked option's key while it's being prepared. */
   preparing: string | null;
   status: MockChooserStatus;

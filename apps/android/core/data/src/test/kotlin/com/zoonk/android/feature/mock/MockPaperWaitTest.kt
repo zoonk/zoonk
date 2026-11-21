@@ -19,18 +19,22 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalCoroutinesApi::class)
 class MockPaperWaitTest {
     private fun TestScope.wait(
-        runs: WritingRuns = WritingRuns("writeMockQuestions", "mockPaperReady"),
+        source: (String?) -> WritingRuns = { WritingRuns("writeMockQuestions", "mockPaperReady") },
         read: suspend () -> MockWriting?,
-    ) = MockPaperWait(CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), runs, read)
+    ) = MockPaperWait(CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), source, read)
 
     @Test
     fun followsTheRunOnceItTakesThePaper() =
         runTest {
             val runs = WritingRuns("writeMockQuestions", "mockPaperReady")
-            val starting = MockWriting(null, MockWriting.Status.STARTING)
-            val writing = MockWriting("paper-run", MockWriting.Status.WRITING)
+            val starting = MockWriting(generationId = null, namespace = null, status = MockWriting.Status.STARTING)
+            val namespace = "mock-paper:goal:paper"
+            val writing = MockWriting(generationId = "paper-run", namespace = namespace, status = MockWriting.Status.WRITING)
             var reads = 0
-            val wait = wait(runs) { if (++reads < 3) starting else writing }
+            val wait =
+                wait(source = { if (it == namespace) runs else WritingRuns() }) {
+                    if (++reads < 3) starting else writing
+                }
 
             wait.start()
             runCurrent()
@@ -50,7 +54,7 @@ class MockPaperWaitTest {
             val wait =
                 wait {
                     reads++
-                    MockWriting(null, MockWriting.Status.NONE)
+                    MockWriting(generationId = null, namespace = null, status = MockWriting.Status.NONE)
                 }
 
             wait.start()

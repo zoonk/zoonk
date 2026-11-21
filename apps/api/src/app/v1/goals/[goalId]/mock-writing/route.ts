@@ -10,7 +10,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { type NextRequest, NextResponse } from "next/server";
 import { getHookByToken } from "workflow/api";
 
-/** The run holding the paper's token, while it runs: a learner's ask takes it before its turn. */
 async function findPaperWriter(token: string): Promise<string | null> {
   const { data: hook } = await safeAsync(() => getHookByToken(token));
   return hook && (await isRunActive(hook.runId)) ? hook.runId : null;
@@ -30,13 +29,18 @@ async function readMockWriting(
   }
 
   const { goalId, owed, paper } = result;
-  const writer = paper ? await findPaperWriter(getMockPaperToken({ goalId, paper })) : null;
+  const namespace = paper ? getMockPaperToken({ goalId, paper }) : null;
+  const writer = namespace ? await findPaperWriter(namespace) : null;
 
   if (writer) {
-    return NextResponse.json({ generationId: writer, status: "writing" });
+    return NextResponse.json({ generationId: writer, namespace, status: "writing" });
   }
 
-  return NextResponse.json({ generationId: null, status: owed ? "starting" : "none" });
+  return NextResponse.json({
+    generationId: null,
+    namespace: null,
+    status: owed ? "starting" : "none",
+  });
 }
 
 export const GET = withApiErrorBoundary(readMockWriting);

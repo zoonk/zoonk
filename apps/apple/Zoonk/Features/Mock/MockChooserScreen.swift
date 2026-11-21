@@ -255,7 +255,7 @@ private struct MockChooser: View {
     if isPreparing {
       return BarNote {
         MockPreparingNote(
-          title: MockPreparing.chooserTitle,
+          title: MockPreparing.chooserTitle, goalID: goalId, surface: "mockChooser",
           read: { [exam, goalId] in await exam.mockWriting(goalId: goalId) },
           written: { [readAgain] in
             await readAgain()

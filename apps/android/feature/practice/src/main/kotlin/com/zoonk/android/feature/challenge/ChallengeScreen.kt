@@ -864,6 +864,8 @@ private fun PreparingActions(
 ) {
     MockPreparingNote(
         stringResource(R.string.mock_preparing_title),
+        goalId = goalId.toString(),
+        surface = "scheduledMock",
         createWait = { scope -> actions.viewModel.paperWait(scope, goalId) },
         onWritten = { actions.viewModel.challenge.refresh() },
     )

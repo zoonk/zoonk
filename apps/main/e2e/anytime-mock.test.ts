@@ -1,5 +1,6 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { WRITTEN_ESSAY } from "./anytime-mock-exams";
 import {
@@ -8,6 +9,7 @@ import {
   failEssayGrading,
 } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
+import { followRun } from "./generation-run";
 import { holdActionAnswer } from "./held-action";
 import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
@@ -295,6 +297,66 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
     await expect.poll(mocks).toBe(1);
     await page.context().close();
+  });
+
+  test("a scheduled mock follows its paper on arrival and offers Start when it is written", async ({
+    browser,
+  }) => {
+    const { blueprint, goal, plan, skills, user } = await createAnytimeMockLearner({
+      plus: true,
+      questionsPerSkill: 0,
+    });
+
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    const mock = await planItemFixture({ kind: "mock", planId: plan.id, scheduledFor: today });
+    const runId = "scheduled-paper";
+    const namespace = `mock-paper:${goal.id}:${today.toISOString()}`;
+    const events = [{ at: Date.now(), status: "started", step: "writeMockQuestions" }];
+    const page = await openAs(browser, user);
+
+    try {
+      await followRun({ events, page, runId });
+
+      await page.route(`**/v1/goals/${goal.id}/mock-writing?*`, (route) =>
+        route.fulfill({ json: { generationId: runId, namespace, status: "writing" } }),
+      );
+
+      const stream = page.waitForRequest(
+        (request) =>
+          request.method() === "GET" &&
+          new URL(request.url()).pathname === `/v1/generations/${runId}/events`,
+      );
+
+      await page.goto(`/challenge/${mock.id}`);
+
+      const request = await stream;
+      expect(new URL(request.url()).searchParams.get("namespace")).toBe(namespace);
+
+      const start = page.getByRole("button", { exact: true, name: "Start" });
+      await expect(page.getByText(/Writing the questions · About/u)).toBeVisible();
+      await expect(page.getByRole("link", { name: "Keep studying" })).toBeVisible();
+      await expect(start).toBeHidden();
+
+      await Promise.all(
+        skills.flatMap((skill) =>
+          Array.from({ length: 4 }, (_, index) =>
+            itemFixture({
+              content: choiceItemContent(`${skill.name}, question ${index + 1}?`),
+              examBlueprintId: blueprint.id,
+              mockOnly: true,
+              skillId: skill.id,
+            }),
+          ),
+        ),
+      );
+
+      events.push({ at: Date.now(), status: "completed", step: "mockPaperReady" });
+
+      await expect(start).toBeEnabled();
+    } finally {
+      await page.context().close();
+    }
   });
 
   test("leaving while a mock starts goes where the learner tapped at once, never into the mock", async ({

@@ -18,6 +18,7 @@ struct MockWriting: Equatable, Sendable {
   }
 
   let generationId: String?
+  let namespace: String?
   let status: Status
 }
 
@@ -135,7 +136,8 @@ struct ExamAPI {
           case .none: .none
           }
 
-        return MockWriting(generationId: writing.generationId, status: status)
+        return MockWriting(
+          generationId: writing.generationId, namespace: writing.namespace, status: status)
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable

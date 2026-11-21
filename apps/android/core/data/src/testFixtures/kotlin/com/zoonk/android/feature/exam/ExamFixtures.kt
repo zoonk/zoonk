@@ -80,7 +80,7 @@ class FakeExamApi(
 /** [writing] is what the wait on a preparing mock finds, nothing by default; [runs] the runs it follows. */
 class FakeMockApi(
     private val options: MockOptions?,
-    private val writing: MockWriting = MockWriting(generationId = null, status = MockWriting.Status.NONE),
+    private val writing: MockWriting = MockWriting(generationId = null, namespace = null, status = MockWriting.Status.NONE),
     private val runs: GenerationSource = WritingRuns(),
 ) : MockApi {
     override suspend fun options(
@@ -94,7 +94,10 @@ class FakeMockApi(
         planItemId: UUID?,
     ) = writing
 
-    override fun generations(session: AuthenticatedSession?) = runs
+    override fun generations(
+        session: AuthenticatedSession?,
+        namespace: String?,
+    ) = runs
 }
 
 /** A run that wrote a mock paper's shared texts and has written its questions for a minute and a half. */
@@ -114,4 +117,8 @@ private val paperWritingRun =
 
 /** Mocks whose preparing paper a run is writing now. */
 fun writingPaperApi(options: MockOptions?) =
-    FakeMockApi(options, MockWriting(generationId = "paper-run", status = MockWriting.Status.WRITING), paperWritingRun)
+    FakeMockApi(
+        options,
+        MockWriting(generationId = "paper-run", namespace = "mock-paper:goal:paper", status = MockWriting.Status.WRITING),
+        paperWritingRun,
+    )

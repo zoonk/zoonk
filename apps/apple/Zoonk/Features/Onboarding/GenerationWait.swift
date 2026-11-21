@@ -814,6 +814,7 @@ struct FollowedRun {
 struct GenerationFollower<Content: View>: View {
   let generationID: String?
   let kind: GenerationWait.Kind
+  var namespace: String?
   /// Asks for the run's id while the caller doesn't have it: a run saves it a few seconds after it starts.
   var readGenerationID: (() async -> String?)?
   /// A POST the learner's tap makes; nil when there's nothing left to write. Without it, a stopped
@@ -889,7 +890,7 @@ struct GenerationFollower<Content: View>: View {
     wait = current
 
     do {
-      for try await event in onboarding.events(generationID: id) {
+      for try await event in onboarding.events(generationID: id, namespace: namespace) {
         if let deckID = event.warmUpID {
           warmUpID = deckID
           onboarding.found(deckID: deckID, generationID: id)

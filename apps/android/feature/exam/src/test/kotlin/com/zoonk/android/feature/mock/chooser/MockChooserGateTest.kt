@@ -84,9 +84,12 @@ class MockChooserGateTest {
                     session: AuthenticatedSession,
                     goalId: UUID,
                     planItemId: UUID?,
-                ) = MockWriting(generationId = null, status = MockWriting.Status.NONE)
+                ) = MockWriting(generationId = null, namespace = null, status = MockWriting.Status.NONE)
 
-                override fun generations(session: AuthenticatedSession?) = WritingRuns()
+                override fun generations(
+                    session: AuthenticatedSession?,
+                    namespace: String?,
+                ) = WritingRuns()
             },
             cache,
         )

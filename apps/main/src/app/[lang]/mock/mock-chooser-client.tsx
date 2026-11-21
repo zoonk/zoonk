@@ -64,6 +64,7 @@ function MockChooserVisit({
     <MockChooserScreen
       bar={bar}
       busy={busy}
+      goalId={goalId}
       hrefs={{ mock: MOCK_ENTRY_HREFS.mock }}
       onStart={begin}
       readAgain={() => router.refresh()}

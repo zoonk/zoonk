@@ -5253,6 +5253,17 @@
           },
           {
             "in": "query",
+            "name": "namespace",
+            "schema": {
+              "description": "Mock paper stream namespace returned by the mock writing lookup",
+              "type": "string",
+              "format": "starts_with",
+              "pattern": "^mock-paper:.*"
+            },
+            "description": "Mock paper stream namespace returned by the mock writing lookup"
+          },
+          {
+            "in": "query",
             "name": "startIndex",
             "schema": {
               "description": "Zero-based event index to resume from",
@@ -20070,7 +20081,7 @@
     },
     "/goals/{goalId}/mock-writing": {
       "get": {
-        "description": "The run writing the paper of a mock that is being prepared, for the wait on the mock chooser and on a scheduled mock's intro: the anytime mock the learner last asked to start, or the scheduled one named by `planItemId`. A learner's Start on a mock whose questions aren't ready asks for them, and that run writes the paper first; any wait on the same paper follows it. Ask again every few seconds while `status` is `starting`. Only reads: it never starts a run. Uncached.",
+        "description": "The run writing the paper of a mock that is being prepared, for the wait on the mock chooser and on a scheduled mock's intro: the anytime mock the learner last asked to start, or the scheduled one named by `planItemId`. A supply run can write several papers. Each paper has its own stream namespace, whether supply started in the background or after a learner asked to start. Ask again every few seconds while `status` is `starting`. Only reads: it never starts a run. Uncached.",
         "operationId": "getMockWriting",
         "security": [
           {
@@ -89903,7 +89914,13 @@
         "properties": {
           "generationId": {
             "nullable": true,
-            "description": "The run writing the paper: stream GET /generations/{generationId}/events, the `mockPaper` steps `writeMockTexts` (only when it writes texts that several questions share), `writeMockQuestions`, `recordMockListening` (only for a paper with recordings), then `mockPaperReady`, or `workflowError` when the paper is still short. Null unless `status` is `writing`",
+            "description": "The run writing the paper. GET /generations/{generationId}/events with the paper namespace streams the `mockPaper` steps `writeMockTexts` (only when it writes texts that several questions share), `writeMockQuestions`, `recordMockListening` (only for a paper with recordings), then `mockPaperReady`, or `workflowError` when the paper is still short. Null unless `status` is `writing`",
+            "type": "string",
+            "minLength": 1
+          },
+          "namespace": {
+            "nullable": true,
+            "description": "The paper's stream namespace within this run. Null unless `status` is `writing`",
             "type": "string",
             "minLength": 1
           },
@@ -89914,11 +89931,12 @@
               "starting",
               "none"
             ],
-            "description": "`writing`: follow `generationId`. `starting`: its run starts in a few seconds; ask again. `none`: nothing is writing it now (the mock is ready, or what was written fell short and the daily preparation goes on with it)"
+            "description": "`writing`: the paper has a generation ID and stream namespace. `starting`: its run starts in a few seconds; ask again. `none`: nothing is writing it now (the mock is ready, or what was written fell short and the daily preparation goes on with it)"
           }
         },
         "required": [
           "generationId",
+          "namespace",
           "status"
         ],
         "additionalProperties": false

@@ -42,13 +42,14 @@ data class GenerationEvent(
 fun ApiClients.generationEvents(
     id: String,
     session: AuthenticatedSession?,
+    namespace: String? = null,
 ): Flow<GenerationEvent> =
     flow {
         var received = 0
         var dropsWithoutEvents = 0
         while (true) {
             try {
-                openGenerationEvents(id, session, startIndex = received).collect { event ->
+                openGenerationEvents(id, session, namespace, startIndex = received).collect { event ->
                     received++
                     dropsWithoutEvents = 0
                     emit(event)
@@ -69,6 +70,7 @@ private const val MAX_DROPS = 3
 private fun ApiClients.openGenerationEvents(
     id: String,
     session: AuthenticatedSession?,
+    namespace: String?,
     startIndex: Int,
 ): Flow<GenerationEvent> =
     callbackFlow {
@@ -77,6 +79,7 @@ private fun ApiClients.openGenerationEvents(
                 .newBuilder()
                 .addPathSegments("generations/$id/events")
                 .addQueryParameter("startIndex", startIndex.toString())
+                .apply { namespace?.let { addQueryParameter("namespace", it) } }
                 .build()
         val client = session?.let { streamingHttp.withBearer(it.bearerToken) } ?: streamingHttp
         val listener =

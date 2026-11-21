@@ -149,7 +149,13 @@ internal fun PracticeChooser(
                 preparing -> (
                     {
                         key(picked) {
-                            MockPreparingNote(stringResource(R.string.mock_preparing_chooser_title), viewModel.paperWait, readAgain)
+                            MockPreparingNote(
+                                stringResource(R.string.mock_preparing_chooser_title),
+                                viewModel.goalId.toString(),
+                                "mockChooser",
+                                viewModel.paperWait,
+                                readAgain,
+                            )
                         }
                     }
                 )

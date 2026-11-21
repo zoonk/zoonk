@@ -120,6 +120,7 @@ type MockChooserProps = {
   readAgain: () => void;
   /** The run writing the mock the learner asked for, while it's being prepared. */
   readWriting: () => Promise<MockWriting>;
+  goalId: string;
   status: MockChooserStatus;
   view: MockOptionsView;
 };
@@ -130,6 +131,7 @@ export function MockChooserScreen({
   hrefs,
   onStart,
   readAgain,
+  goalId,
   readWriting,
   status,
   view,
@@ -169,6 +171,7 @@ export function MockChooserScreen({
           onStart={start}
           preparing={preparing}
           status={status}
+          goalId={goalId}
           writing={{ read: readWriting, written: readAgain }}
         />
       }

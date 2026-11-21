@@ -288,6 +288,8 @@ function usePreparingNote(): React.ReactNode {
 
   return isPreparing(screen) ? (
     <MockPreparingNote
+      goalId={screen.challenge.goalId}
+      surface="scheduledMock"
       title={t("Getting your mock exam ready")}
       wait={{
         read: mockWriting.read,

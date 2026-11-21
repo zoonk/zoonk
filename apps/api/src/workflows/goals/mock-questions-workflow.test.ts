@@ -1,11 +1,16 @@
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createHook } from "workflow";
+import { createHook, getWritable } from "workflow";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { writeMockQuestions } from "./mock-question-writes";
 import { mockSupplyWorkflow } from "./mock-questions-workflow";
-import { listMockPrepWritesStep } from "./steps/mock-question-steps";
+import { pickMockSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
+import {
+  checkMockSupplyStep,
+  listExamSupplyGoalsStep,
+  listMockPrepWritesStep,
+} from "./steps/mock-question-steps";
 
 vi.mock("./mock-question-writes", () => ({
   prepareMockRecordings: vi.fn(),
@@ -41,6 +46,7 @@ function paper(
 const GOAL_ID = "goal";
 const DAY_1 = JSON.stringify(["full", 1, null]);
 const DAY_2 = JSON.stringify(["full", 2, null]);
+const SCHEDULED = "2026-11-21T00:00:00.000Z";
 
 function waitedRequest() {
   const ask = { id: crypto.randomUUID(), revision: 0 };
@@ -58,11 +64,20 @@ function plan(...reads: MockQuestionWrites[][]) {
   planned.mockResolvedValue({ papers: [], urgentShort: false });
 }
 
-function streamedSteps() {
-  return getStreamedEvents().map((event) => `${String(event.step)}:${String(event.status)}`);
+function streamedSteps(key: string) {
+  const calls = vi.mocked(getWritable).mock.calls;
+  const namespace = `mock-paper:${GOAL_ID}:${key}`;
+
+  return getStreamedEvents()
+    .filter((_, index) => calls[index]?.[0]?.namespace === namespace)
+    .map((event) => `${String(event.step)}:${String(event.status)}`);
 }
 
 describe(mockSupplyWorkflow, () => {
+  beforeEach(() => {
+    vi.mocked(pickMockSetTargetsStep).mockReset().mockResolvedValue([]);
+  });
+
   it.each([true, false])("prioritizes the waiting paper when waiting is %s", async (waiting) => {
     const waitedOn = paper("waited on", { later: !waiting });
     const scheduled = paper("scheduled");
@@ -106,6 +121,34 @@ describe(mockSupplyWorkflow, () => {
     );
   });
 
+  it("writes every paper's questions when one paper's shared texts fail", async () => {
+    const waited = paper(DAY_1, { allowStimulusSets: true, later: false });
+    const scheduled = paper(DAY_2, { allowStimulusSets: true });
+    const written: string[] = [];
+
+    plan([waited, scheduled]);
+
+    vi.mocked(pickMockSetTargetsStep).mockImplementation(async ({ writes }) =>
+      writes === waited.writes ? [{} as never] : [],
+    );
+
+    vi.mocked(prepareItemSet).mockRejectedValueOnce(new Error("The set writer gave up"));
+
+    vi.mocked(writeMockQuestions)
+      .mockReset()
+      .mockImplementation(async ({ key }) => {
+        written.push(key);
+        return { failed: 0, written: 1 };
+      });
+
+    await expect(mockSupplyWorkflow(waitedRequest())).resolves.toBeUndefined();
+
+    expect(written).toStrictEqual([DAY_1, DAY_2]);
+    expect(checkMockSupplyStep).toHaveBeenCalledWith(GOAL_ID, { priority: DAY_1 });
+    expect(streamedSteps(DAY_1).at(-1)).toBe("workflowError:error");
+    expect(streamedSteps(DAY_2).at(-1)).toBe("mockPaperReady:completed");
+  });
+
   describe("the learner waiting for a paper", () => {
     beforeEach(() => {
       vi.mocked(writeMockQuestions).mockReset().mockResolvedValue({ failed: 0, written: 1 });
@@ -121,7 +164,7 @@ describe(mockSupplyWorkflow, () => {
 
       expect(createHook).toHaveBeenCalledWith({ token: `mock-paper:${GOAL_ID}:${DAY_1}` });
 
-      expect(streamedSteps()).toStrictEqual([
+      expect(streamedSteps(DAY_1)).toStrictEqual([
         "writeMockTexts:started",
         "writeMockTexts:completed",
         "writeMockQuestions:started",
@@ -139,7 +182,7 @@ describe(mockSupplyWorkflow, () => {
 
       await mockSupplyWorkflow(waitedRequest());
 
-      expect(streamedSteps()).toStrictEqual([
+      expect(streamedSteps(DAY_1)).toStrictEqual([
         "writeMockQuestions:started",
         "writeMockQuestions:completed",
         "workflowError:error",
@@ -151,17 +194,20 @@ describe(mockSupplyWorkflow, () => {
 
       await mockSupplyWorkflow(waitedRequest());
 
-      expect(streamedSteps()).toStrictEqual(["mockPaperReady:completed"]);
+      expect(streamedSteps(DAY_1)).toStrictEqual(["mockPaperReady:completed"]);
       expect(writeMockQuestions).toHaveBeenCalledOnce();
     });
 
-    it("ends the wait when the run fails", async () => {
+    it("ends the wait when question writing fails", async () => {
       plan([paper(DAY_1, { later: false })]);
       vi.mocked(writeMockQuestions).mockRejectedValueOnce(new Error("Provider unavailable"));
 
-      await expect(mockSupplyWorkflow(waitedRequest())).rejects.toThrow("Provider unavailable");
+      await mockSupplyWorkflow(waitedRequest());
 
-      expect(streamedSteps()).toStrictEqual(["writeMockQuestions:started", "workflowError:error"]);
+      expect(streamedSteps(DAY_1)).toStrictEqual([
+        "writeMockQuestions:started",
+        "workflowError:error",
+      ]);
     });
 
     it("leaves the stream to the run already writing the paper, which the wait follows", async () => {
@@ -174,20 +220,31 @@ describe(mockSupplyWorkflow, () => {
 
       await mockSupplyWorkflow(waitedRequest());
 
-      expect(streamedSteps()).toStrictEqual([]);
+      expect(streamedSteps(DAY_1)).toStrictEqual([]);
       expect(writeMockQuestions).toHaveBeenCalledOnce();
     });
 
-    it("streams nothing for a run that writes ahead", async () => {
-      plan([paper(DAY_2)]);
+    it("streams each paper separately when a system run writes ahead", async () => {
+      const alternative = paper(DAY_2, { alternative: true });
+      vi.mocked(listExamSupplyGoalsStep).mockResolvedValueOnce([GOAL_ID]);
+      plan([paper(SCHEDULED), alternative], [], [alternative], [alternative], [alternative]);
 
-      await mockSupplyWorkflow({ ...waitedRequest(), later: true, paper: undefined });
+      await mockSupplyWorkflow({ examBlueprintId: null, goalId: GOAL_ID, later: true });
 
-      expect(createHook).not.toHaveBeenCalledWith({
-        token: expect.stringMatching(/^mock-paper:/u),
-      });
+      expect(createHook).toHaveBeenCalledWith({ token: `mock-paper:${GOAL_ID}:${SCHEDULED}` });
+      expect(createHook).toHaveBeenCalledWith({ token: `mock-paper:${GOAL_ID}:${DAY_2}` });
 
-      expect(streamedSteps()).toStrictEqual([]);
+      expect(streamedSteps(SCHEDULED)).toStrictEqual([
+        "writeMockQuestions:started",
+        "writeMockQuestions:completed",
+        "mockPaperReady:completed",
+      ]);
+
+      expect(streamedSteps(DAY_2)).toStrictEqual([
+        "writeMockQuestions:started",
+        "writeMockQuestions:completed",
+        "workflowError:error",
+      ]);
     });
   });
 });
