@@ -243,7 +243,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
                   {column.cell(entry, index)}
                 </TableCell>
               ))}
-              <TableCell className={CELL_CLASS}>
+              <TableCell className="align-middle">
                 <RowChevron />
               </TableCell>
             </TableRow>
