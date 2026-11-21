@@ -256,9 +256,9 @@ private fun plotLayout(
     if (visual.categories.isEmpty() || visual.series.isEmpty()) return null
 
     val axis = ValueAxis(visual, text)
-    val gap = with(text.density) { LABEL_GAP.toPx() }
+    val gap = with(text.density) { CHART_LABEL_GAP.toPx() }
     val left = (axis.ticks.maxOfOrNull { it.second.size.width } ?: 0) + gap
-    val right = width - with(text.density) { PLOT_END.toPx() }
+    val right = width - with(text.density) { CHART_PLOT_END.toPx() }
     val band = max(right - left, 1f) / visual.categories.size
     val labelWidth = { line: String -> text.label(line).size.width + gap }
 
@@ -305,7 +305,7 @@ private class UprightLayout(
     val right: Float,
     val categoryLines: CategoryLabels,
 ) : PlotLayout {
-    private val gap = with(text.density) { LABEL_GAP.toPx() }
+    private val gap = with(text.density) { CHART_LABEL_GAP.toPx() }
     val ticks = axis.ticks
     val band = max(right - left, 1f) / visual.categories.size
 
@@ -317,7 +317,7 @@ private class UprightLayout(
     val top = lineHeight + gap
 
     // Grows with the font, so a large font's axis labels don't crowd each other.
-    private val plotHeight = max(with(text.density) { PLOT_HEIGHT.toPx() }, lineHeight * PLOT_LINES)
+    private val plotHeight = max(with(text.density) { CHART_PLOT_HEIGHT.toPx() }, lineHeight * CHART_PLOT_LINES)
     val bottom = top + plotHeight
 
     val categoryLayouts = categoryLines.lines.map { lines -> lines.map(text::label) }
@@ -352,7 +352,7 @@ private class SidewaysLayout(
     text: ChartText,
     axis: ValueAxis,
 ) : PlotLayout {
-    private val gap = with(text.density) { LABEL_GAP.toPx() }
+    private val gap = with(text.density) { CHART_LABEL_GAP.toPx() }
     private val barGap = with(text.density) { SIDEWAYS_BAR_GAP.toPx() }
     val names = visual.categories.map { text.wrappedLabel(it, width) }
 
@@ -432,7 +432,7 @@ private fun DrawScope.drawGrid(
     layout: UprightLayout,
     color: Color,
 ) {
-    val gap = LABEL_GAP.toPx()
+    val gap = CHART_LABEL_GAP.toPx()
     layout.ticks.forEach { (tick, label) ->
         val y = layout.y.toPixel(tick)
         drawLine(color, Offset(layout.left, y), Offset(layout.right, y), strokeWidth = 1.dp.toPx())
@@ -444,7 +444,7 @@ private fun DrawScope.drawBars(
     layout: UprightLayout,
     marks: List<SeriesMark>,
 ) {
-    val gap = LABEL_GAP.toPx()
+    val gap = CHART_LABEL_GAP.toPx()
     val zero = layout.y.toPixel(layout.origin)
 
     layout.visual.series.forEachIndexed { seriesIndex, series ->
@@ -470,7 +470,7 @@ private fun DrawScope.drawLines(
     marks: List<SeriesMark>,
     surface: Color,
 ) {
-    val gap = LABEL_GAP.toPx()
+    val gap = CHART_LABEL_GAP.toPx()
     val dot = DOT_RADIUS.toPx()
 
     layout.visual.series.forEachIndexed { seriesIndex, series ->
@@ -516,7 +516,7 @@ private fun DrawScope.drawSideways(
     grid: Color,
     marks: List<SeriesMark>,
 ) {
-    val gap = LABEL_GAP.toPx()
+    val gap = CHART_LABEL_GAP.toPx()
     val zero = layout.x.toPixel(layout.origin)
 
     layout.ticks.forEachIndexed { index, tick ->
@@ -672,10 +672,10 @@ private fun TimelineVisual(
     }
 }
 
-internal val LABEL_GAP = 6.dp
-internal val PLOT_END = 8.dp
-internal val PLOT_HEIGHT = 160.dp
-internal const val PLOT_LINES = 6
+internal val CHART_LABEL_GAP = 6.dp
+internal val CHART_PLOT_END = 8.dp
+internal val CHART_PLOT_HEIGHT = 160.dp
+internal const val CHART_PLOT_LINES = 6
 private const val UNIT_TARGET = 12
 private val BAR_RADIUS = 3.dp
 private val SWATCH_RADIUS = 2.dp

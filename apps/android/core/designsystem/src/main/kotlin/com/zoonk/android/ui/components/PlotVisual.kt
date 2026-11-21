@@ -213,7 +213,8 @@ private fun plotReading(
                 val inSeries = { text: String -> if (visual.series.size > 1) named(series.name, text) else text }
                 val unnamed = series.points.filter { it.label == null }
                 val plain = unnamed.takeIf { it.isNotEmpty() }?.joinToString("; ", transform = point)
-                listOfNotNull(plain?.let(inSeries)) + series.points.mapNotNull { it.label?.let { label -> inSeries(named(label, point(it))) } }
+                listOfNotNull(plain?.let(inSeries)) +
+                    series.points.mapNotNull { it.label?.let { label -> inSeries(named(label, point(it))) } }
             }
         val references =
             visual.references.takeIf { it.isNotEmpty() }?.let { lines ->
@@ -223,8 +224,18 @@ private fun plotReading(
         PlotReading(
             axes =
                 listOf(
-                    resources.getString(R.string.visual_plot_horizontal_axis, visual.xLabel, xValue(x.domain.start), xValue(x.domain.endInclusive)),
-                    resources.getString(R.string.visual_plot_vertical_axis, visual.yLabel, yValue(y.domain.start), yValue(y.domain.endInclusive)),
+                    resources.getString(
+                        R.string.visual_plot_horizontal_axis,
+                        visual.xLabel,
+                        xValue(x.domain.start),
+                        xValue(x.domain.endInclusive),
+                    ),
+                    resources.getString(
+                        R.string.visual_plot_vertical_axis,
+                        visual.yLabel,
+                        yValue(y.domain.start),
+                        yValue(y.domain.endInclusive),
+                    ),
                 ).joinToString(". "),
             parts = series + listOfNotNull(references),
         )
@@ -253,7 +264,7 @@ private class PlotGeometry(
     width: Float,
     text: ChartText,
 ) {
-    val gap = with(text.density) { LABEL_GAP.toPx() }
+    val gap = with(text.density) { CHART_LABEL_GAP.toPx() }
     private val unit = with(text.density) { 1.dp.toPx() }
     private val axes = plotAxes(visual)
     private val points = visual.series.flatMap { it.points }
@@ -268,7 +279,7 @@ private class PlotGeometry(
     private val top = lineHeight + gap
 
     // Grows with the font, so a large font's axis labels don't crowd each other.
-    val bottom = top + max(with(text.density) { PLOT_HEIGHT.toPx() }, lineHeight * PLOT_LINES)
+    val bottom = top + max(with(text.density) { CHART_PLOT_HEIGHT.toPx() }, lineHeight * CHART_PLOT_LINES)
     val ticksTop = bottom + max(gap, lineHeight / 2)
     val height = ticksTop + lineHeight
 
@@ -278,16 +289,21 @@ private class PlotGeometry(
     /** Reference names sit past the plot's right edge, so they never cover the data. */
     private val room =
         visual.references
-            .maxOfOrNull { text.label(it.label).size.width.toFloat() }
-            ?.let { min(it, width * MAX_GUTTER_SHARE) } ?: 0f
-    val plotRight = max(width - if (room > 0) room + gap else with(text.density) { PLOT_END.toPx() }, left + 1)
+            .maxOfOrNull {
+                text
+                    .label(it.label)
+                    .size.width
+                    .toFloat()
+            }?.let { min(it, width * MAX_GUTTER_SHARE) } ?: 0f
+    val plotRight = max(width - if (room > 0) room + gap else with(text.density) { CHART_PLOT_END.toPx() }, left + 1)
 
     val x = LinearScale(axes.first.domain, left to plotRight)
     val y = LinearScale(axes.second.domain, bottom to top)
 
     val series = visual.series.map { series -> series.points.map { Offset(x.toPixel(it.x), y.toPixel(it.y)) } }
 
-    val references = stackReferences(visual.references.map { reference -> y.toPixel(reference.y) to text.wrappedLabel(reference.label, room) })
+    val references =
+        stackReferences(visual.references.map { reference -> y.toPixel(reference.y) to text.wrappedLabel(reference.label, room) })
 
     private val labeled =
         pointLabels(
@@ -318,7 +334,14 @@ private class PlotGeometry(
                 val half = label.size.width / 2f
                 x.toPixel(tick).coerceIn(half, max(width - half, half)) to label
             }.let { ticks ->
-                val kept = fittingTickIndices(ticks.map { (center, label) -> center - label.size.width / 2f to center + label.size.width / 2f }, unit * 4)
+                val kept =
+                    fittingTickIndices(
+                        ticks.map { (center, label) ->
+                            center - label.size.width / 2f to
+                                center + label.size.width / 2f
+                        },
+                        unit * 4,
+                    )
                 ticks.filterIndexed { index, _ -> index in kept }
             }
 

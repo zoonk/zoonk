@@ -144,7 +144,11 @@ class LessonVisualScreenshots {
                         ),
                     ).copy(
                         references =
-                            listOf(Plot.Reference("Upper limit", 503.0), Plot.Reference("Target", 500.0), Plot.Reference("Lower limit", 497.0)),
+                            listOf(
+                                Plot.Reference("Upper limit", 503.0),
+                                Plot.Reference("Target", 500.0),
+                                Plot.Reference("Lower limit", 497.0),
+                            ),
                     ),
                 "plot-named-countries" to
                     plot(
@@ -199,7 +203,9 @@ class LessonVisualScreenshots {
                         Plot.Series(
                             "Population",
                             Plot.Mark.LineWithPoints,
-                            listOf(1950.0 to 2.5, 1970.0 to 3.7, 1990.0 to 5.3, 2010.0 to 6.9, 2023.0 to 8.0).map { (x, y) -> Plot.Point(x, y) },
+                            listOf(1950.0 to 2.5, 1970.0 to 3.7, 1990.0 to 5.3, 2010.0 to 6.9, 2023.0 to 8.0).map { (x, y) ->
+                                Plot.Point(x, y)
+                            },
                         ),
                     ),
                 "regions" to bars("Participação no total, por região", "Região", "Participação", REGIONS, "%", 18, 42, 64, 30, 22),

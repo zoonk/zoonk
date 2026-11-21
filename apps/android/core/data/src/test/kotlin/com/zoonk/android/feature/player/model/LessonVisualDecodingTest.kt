@@ -6,6 +6,7 @@ import com.zoonk.android.ui.components.LessonVisual.Plot
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlayableLibraryStep
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.encodeToJsonElement
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -43,7 +44,11 @@ class LessonVisualDecodingTest {
                 yLabel = "Fill weight",
                 series =
                     listOf(
-                        Plot.Series("Fill weight", Plot.Mark.LineWithPoints, listOf(Plot.Point(1.0, 499.8), Plot.Point(2.0, 503.8, "Spike"))),
+                        Plot.Series(
+                            "Fill weight",
+                            Plot.Mark.LineWithPoints,
+                            listOf(Plot.Point(1.0, 499.8), Plot.Point(2.0, 503.8, "Spike")),
+                        ),
                         Plot.Series("Spec", Plot.Mark.Points, listOf(Plot.Point(1.5, 500.0))),
                     ),
                 xUnit = null,
@@ -57,7 +62,10 @@ class LessonVisualDecodingTest {
 
     @Test
     fun aKindThisVersionDoesntKnowDrawsNothingInsteadOfFailingItsLesson() {
-        val step = step("""{"kind":"explanation","content":{"text":"Rivers run downhill.","visual":{"kind":"map","title":"Rivers","regions":[]}}}""")
+        val step =
+            step(
+                """{"kind":"explanation","content":{"text":"Rivers run downhill.","visual":{"kind":"map","title":"Rivers","regions":[]}}}""",
+            )
 
         val explanation = (step.content as StepContent.Explanation).content
 

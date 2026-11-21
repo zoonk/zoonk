@@ -74,6 +74,7 @@ typealias WorkedExampleStepContent = PlayableLibraryStepAnyOf8Content
 typealias LanguageExercise = PlayableLibraryStepAnyOf9Exercise
 typealias WordHints = PlayableLibraryStepAnyOf9WordHints
 typealias StepCitation = PlayableLibraryStepAnyOfCitation
+
 /** A screen's or a decision's visual as the API sends it; the app reads it as a `LessonVisual`. */
 typealias StepVisual = JsonElement
 typealias StepBasis = PlayableLibraryStepAnyOf2ContentBasis

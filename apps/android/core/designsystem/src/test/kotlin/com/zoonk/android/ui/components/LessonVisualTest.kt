@@ -38,7 +38,10 @@ class LessonVisualTest {
                 title = "Plot",
                 xLabel = "x",
                 yLabel = "y",
-                series = listOf(Plot.Series("A", Plot.Mark.Points, listOf(Plot.Point(10.0, 27.0), Plot.Point(11.0, 25.0), Plot.Point(20.0, 30.0)))),
+                series =
+                    listOf(
+                        Plot.Series("A", Plot.Mark.Points, listOf(Plot.Point(10.0, 27.0), Plot.Point(11.0, 25.0), Plot.Point(20.0, 30.0))),
+                    ),
                 references = listOf(Plot.Reference("Limit", 40.0)),
             )
 
