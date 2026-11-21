@@ -277,7 +277,7 @@ export type AlignmentException = {
   configuration: string;
   piece: string;
   reason: string;
-  relation: Relation | "one-filled" | (typeof PAGE_RULES)[number];
+  relation: Relation | "one-filled" | "pinned" | (typeof PAGE_RULES)[number];
   scenario: string;
 } & ({ grantedBy: "user" } | { issue: number });
 
@@ -289,5 +289,22 @@ export const EXCEPTIONS: AlignmentException[] = [
     reason: "A far topic's row gives its title only the width its start line leaves, on main too",
     relation: "lone-word",
     scenario: "/plan/matematica-e-suas-tecnologias",
+  },
+  {
+    configuration: "laptop keys pt",
+    issue: 2952,
+    piece: "page",
+    reason:
+      "The capture reads the document's scroll, not the task's own scroller, so the bar seems to cover a check's last row, on main too",
+    relation: "pinned",
+    scenario: "/pt/learn/5b3c5a16-014a-8708-8542-85118dccfd75",
+  },
+  {
+    configuration: "laptop keys pt",
+    issue: 2843,
+    piece: "page",
+    reason: "The buddy's suggestion button leaves a word alone on its last line, on main too",
+    relation: "lone-word",
+    scenario: "/pt/learn/5b3c5a16-014a-8708-8542-85118dccfd75",
   },
 ];
