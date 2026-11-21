@@ -12,6 +12,7 @@ import {
   getWeekDays,
   toStudiedMinutes,
 } from "../../sessions/daily-goal";
+import { DAY_BLOCK_WHERE } from "../../sessions/day-blocks";
 import { type WeeklyStudyTime } from "../weekly-study-time-contract";
 
 export type StudyWeek = {
@@ -47,7 +48,7 @@ async function loadWeekFacts({
 }) {
   const where = { goalId: goal.id, localDate: { gte: from, lt: until }, userId: goal.userId };
 
-  const [days, sessions, settings] = await Promise.all([
+  const [days, sessions, settings, counts] = await Promise.all([
     // Session rows repeat their blocks' seconds and answers.
     prisma.learningEvent.groupBy({
       _sum: { correctAnswers: true, incorrectAnswers: true, seconds: true },
@@ -55,13 +56,18 @@ async function loadWeekFacts({
       where: { ...where, kind: { not: "session" } },
     }),
     prisma.studySession.findMany({
-      select: { endedAt: true, localDate: true, plannedMinutes: true },
+      select: { endedAt: true, id: true, localDate: true, plannedMinutes: true },
       where,
     }),
     planSettings === undefined ? loadSavedSettings(goal.id) : Promise.resolve(planSettings),
+    prisma.studySessionBlock.groupBy({
+      _count: true,
+      by: ["sessionId", "status"],
+      where: { ...DAY_BLOCK_WHERE, session: where, status: { not: "skipped" } },
+    }),
   ]);
 
-  return { days, sessions, settings };
+  return { counts, days, sessions, settings };
 }
 
 function buildStudyWeek({
@@ -105,6 +111,15 @@ function buildStudyWeek({
   const studied = days.map((day) => ({ date: day.localDate, seconds: day._sum.seconds ?? 0 }));
 
   const week = getWeekDays({
+    counts: sessions.map((session) => {
+      const counts = facts.counts.filter((count) => count.sessionId === session.id);
+
+      return {
+        completed: counts.find((count) => count.status === "completed")?._count ?? 0,
+        date: session.localDate,
+        total: counts.reduce((sum, count) => sum + count._count, 0),
+      };
+    }),
     days: studied,
     finishedDates,
     getPlanDay: (date) => ({

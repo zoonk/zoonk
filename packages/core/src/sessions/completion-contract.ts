@@ -269,8 +269,17 @@ export const studyBlockCompletionSchema = z
         "What the block took the learner to, for its moment to celebrate; nothing on a retry, which celebrates none of it again",
     }),
     reminderOffer: reminderOfferSchema,
-    sessionBar: z.object({ completed: countSchema, total: countSchema }),
-    sessionCompleted: z.boolean(),
+    sessionBar: z
+      .object({ completed: countSchema, total: countSchema })
+      .meta({
+        description: "Completed day blocks and total day blocks not skipped, excluding extra work.",
+      }),
+    sessionCompleted: z
+      .boolean()
+      .meta({
+        description:
+          "Whether the day's session first finished, including while extra work remains.",
+      }),
     testOutOffer: z
       .object({
         chapterId: idSchema,

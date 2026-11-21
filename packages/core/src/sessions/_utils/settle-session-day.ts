@@ -4,6 +4,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getSessionMemoryFollowUps } from "../../memory/memory-follow-ups";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
+import { DAY_BLOCK_WHERE, isDayBlock } from "../day-blocks";
 import { type Mission } from "../missions";
 import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
@@ -46,16 +47,19 @@ async function completeIfFinished({
   timeZone,
   userId,
 }: SessionDay & { answers: readonly SessionAnswer[] }): Promise<boolean> {
-  const finished = session.blocks.every(
-    (block) => block.status === "completed" || block.status === "skipped",
-  );
+  const finished = session.blocks
+    .filter((block) => isDayBlock(block))
+    .every((block) => block.status === "completed" || block.status === "skipped");
 
   if (!finished) {
     return false;
   }
 
   // A retry or an owed settlement can complete a session later; it still ended with its last block.
-  const finishes = session.blocks.flatMap((block) => block.completedAt?.getTime() ?? []);
+  const finishes = session.blocks
+    .filter((block) => isDayBlock(block))
+    .flatMap((block) => block.completedAt?.getTime() ?? []);
+
   const endedAt = finishes.length > 0 ? new Date(Math.max(...finishes)) : new Date();
 
   const [end, memoryFollowUps] = await Promise.all([
@@ -79,7 +83,7 @@ async function completeIfFinished({
 
       // Reload after the queue lock to include work committed while completion waited.
       const openBlocks = await tx.studySessionBlock.count({
-        where: { sessionId: session.id, status: { in: ["active", "pending"] } },
+        where: { ...DAY_BLOCK_WHERE, sessionId: session.id, status: { in: ["active", "pending"] } },
       });
 
       if (openBlocks > 0) {
@@ -93,7 +97,7 @@ async function completeIfFinished({
       }
 
       const refilled = await tx.studySessionBlock.count({
-        where: { sessionId: session.id, status: { in: ["active", "pending"] } },
+        where: { ...DAY_BLOCK_WHERE, sessionId: session.id, status: { in: ["active", "pending"] } },
       });
 
       if (refilled > 0) {
@@ -109,10 +113,10 @@ async function completeIfFinished({
       // A block finished while completion waited ends the session later than the blocks read above.
       const { _max: latest } = await tx.studySessionBlock.aggregate({
         _max: { completedAt: true },
-        where: { sessionId: session.id },
+        where: { ...DAY_BLOCK_WHERE, sessionId: session.id },
       });
 
-      const lastFinish = latest.completedAt ?? endedAt;
+      const lastFinish = current.endedAt ?? latest.completedAt ?? endedAt;
 
       await tx.studySession.update({
         data: { endedAt: lastFinish, status: "completed" },

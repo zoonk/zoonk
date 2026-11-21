@@ -238,6 +238,41 @@ describe("the plan the buddy looks up", () => {
   });
 
   describe("schedule", () => {
+    it("uses the finish date for work planned outside the lookup window", async () => {
+      const { goal, plan, user } = await plannedLearner();
+      await prisma.goal.update({ data: { timezone: "UTC" }, where: { id: goal.id } });
+      const item = plan.items.find((row) => row.lessonId);
+
+      if (!item) {
+        throw new Error("Expected written lesson");
+      }
+
+      await prisma.planItem.update({
+        data: {
+          completedAt: new Date("2021-06-02T12:00:00Z"),
+          scheduledFor: new Date("2021-06-20T00:00:00Z"),
+          status: "done",
+          titleSnapshot: "Finished earlier",
+        },
+        where: { id: item.id },
+      });
+
+      const found = await lookUp(await answering({ goalId: goal.id, userId: user.id }), {
+        query: "2021-06-01",
+        what: "schedule",
+      });
+
+      expect(found).toMatchObject({
+        days: [
+          {
+            date: "2021-06-02",
+            items: [expect.objectContaining({ status: "done", title: "Finished earlier" })],
+          },
+        ],
+        status: "found",
+      });
+    });
+
     it("reads the plan's saved days from tomorrow through two weeks, with this week's minutes", async () => {
       const { goal, plan, user } = await plannedLearner();
 

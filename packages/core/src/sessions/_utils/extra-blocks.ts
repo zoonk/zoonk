@@ -278,15 +278,7 @@ export async function appendExtraBlocks({
     })),
   });
 
-  await transaction.studySession.update({
-    data: {
-      plannedMinutes: {
-        increment: planned.reduce((sum, block) => sum + block.estimatedMinutes, 0),
-      },
-      status: "active",
-    },
-    where: { id: session.id },
-  });
+  await transaction.studySession.update({ data: { status: "active" }, where: { id: session.id } });
 
   const first = blocks.find((block) => block.position === start);
 

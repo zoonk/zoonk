@@ -75,6 +75,7 @@ export async function loadSessionTime({
           planSettings: plan?.settings,
         })
       : 0,
+    endedAt: session.endedAt,
     planned: getVisibleSessionTotal({
       blocks: stored.blocks,
       planned: stored.plannedMinutes,
@@ -139,7 +140,7 @@ export async function loadCompletionQueue({
   const nextBlockId = getNextBlockId(session.blocks);
   const nextBlock = projection.blocks.find((block) => block.id === nextBlockId) ?? null;
   const sessionBar = getSessionBar(session.blocks);
-  const sessionCompleted = session.status === "completed" && nextBlockId === null;
+  const sessionCompleted = session.endedAt !== null;
 
   return {
     blocks: projection.blocks,
