@@ -1,5 +1,5 @@
 import { normalizeString } from "@zoonk/utils/string";
-import { matchNoticeAreas } from "../../exams/_utils/match-areas";
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 
 type NoticeSkill = {
   area: string | null;
@@ -9,12 +9,7 @@ type NoticeSkill = {
   topics?: readonly string[];
 };
 
-type NoticeSubject = {
-  name: string;
-  shortName?: string | null;
-  topics: readonly string[];
-  writtenTasks?: readonly string[];
-};
+type NoticeSubject = { name: string; shortName?: string | null; topics: readonly string[] };
 
 export function findOutsideNoticeSkills({
   protectedIds = new Set<string>(),
@@ -37,18 +32,16 @@ export function findOutsideNoticeSkills({
   }
 
   const areas = [...new Set(skills.flatMap((skill) => skill.area || []))];
-  const { matches, named } = matchNoticeAreas({ areas, subjects });
+  const named = matchAreasToSubjects({ areas, subjects });
 
-  const roots = [
-    ...official,
-    ...skills.filter(
-      (skill) =>
-        !protectedIds.has(skill.id) &&
+  const roots = skills.filter(
+    (skill) =>
+      teachesNotice(skill) ||
+      (!protectedIds.has(skill.id) &&
         skill.area !== null &&
-        ((skill.topics === undefined && named.has(skill.area)) ||
-          (skill.outcome && matches.has(skill.area))),
-    ),
-  ];
+        named.has(skill.area) &&
+        skill.topics?.length !== 0),
+  );
 
   const byId = new Map(skills.map((skill) => [skill.id, skill]));
   const kept = new Set<string>();
@@ -63,6 +56,6 @@ export function findOutsideNoticeSkills({
   roots.forEach((skill) => visit(skill.id));
 
   return skills.flatMap((skill) =>
-    kept.has(skill.id) || protectedIds.has(skill.id) ? [] : [skill.id],
+    kept.has(skill.id) || skill.outcome || protectedIds.has(skill.id) ? [] : [skill.id],
   );
 }

@@ -11,7 +11,7 @@ const subjects = [
 ];
 
 describe(findOutsideNoticeSkills, () => {
-  it("keeps notice skills, scored parts, unknown matched skills and their transitive bases", () => {
+  it("keeps scored parts and matched content, walking prerequisites only from notice content", () => {
     const skills = [
       {
         area: "Public Finance",
@@ -22,7 +22,10 @@ describe(findOutsideNoticeSkills, () => {
       { area: "Accounting", id: "accounting", prerequisites: ["arithmetic"], topics: [] },
       { area: "Arithmetic", id: "arithmetic", topics: [] },
       { area: "Finance", id: "old" },
-      { area: "Fiscal opinion", id: "writing", outcome: true, topics: [] },
+      { area: "Written exams", id: "writing", outcome: true, topics: [] },
+      { area: "Fiscal opinion", id: "opinion", outcome: true, prerequisites: ["writing-base"] },
+      { area: "Portuguese", id: "writing-base" },
+      { area: "Finance", id: "reworded", topics: ["Laws on the budget"] },
       { area: "Public Finance", id: "scores", outcome: true, topics: [] },
       { area: "Public Finance", id: "irrelevant-finance", topics: [] },
       { area: "Strategy", id: "strategy", prerequisites: ["logic"], topics: [] },
@@ -33,6 +36,7 @@ describe(findOutsideNoticeSkills, () => {
     ];
 
     expect(findOutsideNoticeSkills({ skills, subjects })).toStrictEqual([
+      "writing-base",
       "irrelevant-finance",
       "strategy",
       "logic",
