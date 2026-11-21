@@ -329,7 +329,7 @@ internal fun QuestionCell(
     val enabled = run.moves.canOpen(index)
     val shape = RoundedCornerShape(10.dp)
     // A written test's questions are numbered, so two of them don't look the same.
-    val writtenNumber = sectionPlace(index, run.questions)?.takeIf { question.essay && it.total > 1 }?.number
+    val writtenNumber = run.sectionPlace(question, index)?.takeIf { question.essay }?.number
     val number =
         when {
             writtenNumber != null -> stringResource(R.string.mock_question_number, writtenNumber)

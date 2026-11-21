@@ -7863,6 +7863,21 @@ msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Continuar respondendo"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Seção {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Questão {number} de {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Questão {number} de {total}"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8044,11 +8059,6 @@ msgid "Leave blank"
 msgstr "Deixar em branco"
 
 #: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Questão {number} de {total}"
-
-#: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "Prova discursiva · {area}"
@@ -8059,11 +8069,6 @@ msgstr "Prova discursiva · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Prova discursiva"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Questão {number} de {total} · {area}"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8427,13 +8432,6 @@ msgid "After this mock exam"
 msgstr "Depois deste simulado"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-#: src/writing/writing-header.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Questão {number}"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "Questões para revisar"
@@ -8496,11 +8494,6 @@ msgstr "Suas respostas estão salvas."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Entregue"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Seção {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8600,6 +8593,12 @@ msgstr "Melhor desempenho: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Pratique: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+#: src/writing/writing-header.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Questão {number}"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
@@ -11522,6 +11521,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Ex.: fazer pão, carros, astronomia"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Adicionar"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11551,6 +11556,12 @@ msgstr "{field}: curso ou matéria (opcional)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Ex.: jornalismo"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "Remover {tool}"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11620,9 +11631,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "A gente usa isso para escolher exemplos que te interessem."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "O que você estuda ou já estudou, mesmo sem concluir. Escolha até 3."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "No passado ou no presente, concluído ou não."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11638,11 +11649,6 @@ msgstr "Opcional. A gente usa o que você escolher para adaptar o conteúdo às 
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Escolha o que te ajuda."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Escolha até 3."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

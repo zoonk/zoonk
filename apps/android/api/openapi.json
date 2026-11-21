@@ -412,7 +412,7 @@
     },
     "/me/profile-questions/answers": {
       "post": {
-        "description": "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Typed memory facts start sensitive until a follow-up checks them.",
+        "description": "Saves or declines one question. Biography answers require memory on; conditions require explicit consent. Facts with typed text or custom tool names start sensitive until a follow-up checks them.",
         "operationId": "answerCurrentUserProfileQuestion",
         "security": [
           {
@@ -26818,20 +26818,13 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct tool names or general tool option ids",
+                    "maxItems": 100,
                     "type": "array",
                     "items": {
                       "type": "string",
-                      "enum": [
-                        "excel",
-                        "googleSheets",
-                        "word",
-                        "powerPoint",
-                        "canva",
-                        "figma",
-                        "notion",
-                        "vsCode"
-                      ]
+                      "minLength": 1,
+                      "maxLength": 120
                     }
                   }
                 },
@@ -26863,7 +26856,7 @@
                   },
                   "studies": {
                     "default": [],
-                    "description": "Up to three distinct fields",
+                    "description": "Distinct fields",
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -26934,7 +26927,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -26987,7 +26980,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -27042,7 +27035,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -27095,7 +27088,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -27146,7 +27139,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32691,20 +32684,13 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct tool names or general tool option ids",
+                    "maxItems": 100,
                     "type": "array",
                     "items": {
                       "type": "string",
-                      "enum": [
-                        "excel",
-                        "googleSheets",
-                        "word",
-                        "powerPoint",
-                        "canva",
-                        "figma",
-                        "notion",
-                        "vsCode"
-                      ]
+                      "minLength": 1,
+                      "maxLength": 120
                     }
                   }
                 },
@@ -32737,7 +32723,7 @@
                   },
                   "studies": {
                     "default": [],
-                    "description": "Up to three distinct fields",
+                    "description": "Distinct fields",
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -32809,7 +32795,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32863,7 +32849,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32919,7 +32905,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32973,7 +32959,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -33025,7 +33011,7 @@
                   },
                   "picks": {
                     "default": [],
-                    "description": "Up to three distinct option ids",
+                    "description": "Distinct option ids",
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -35456,13 +35442,13 @@
         "enum": [
           "addressForm",
           "work",
-          "tools",
           "studies",
           "watch",
           "listen",
           "play",
           "read",
           "activities",
+          "tools",
           "conditions",
           "learningSupport"
         ],
@@ -35494,7 +35480,7 @@
             "items": {
               "$ref": "#/components/schemas/ProfileQuestionView"
             },
-            "description": "All ten optional profile questions in screen order"
+            "description": "All eleven optional profile questions in screen order"
           }
         },
         "required": [
@@ -35521,11 +35507,11 @@
                 },
                 "id": {
                   "type": "string",
-                  "description": "Stable option id, accepted by the answer input"
+                  "description": "Option id accepted by the answer input. Tools use the general id for matching labels, or the tool's name"
                 },
                 "label": {
                   "type": "string",
-                  "description": "Option label in the request locale"
+                  "description": "Option label in the request locale or the name of a personalized tool"
                 }
               },
               "required": [
@@ -35535,7 +35521,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "Selectable options in order, with locale extras first"
+            "description": "Selectable options in order. Tools use the learner's suggestions when available and include previously saved tools"
           },
           "saved": {
             "type": "object",
@@ -92452,6 +92438,12 @@
                 },
                 "description": "A listening section's recordings with the plays already counted (POST /v1/mocks/{blockId}/plays as each play starts), so another tab or device has the same plays left; empty for other sections"
               },
+              "questionTotal": {
+                "description": "The number of numbered questions in the running section",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
               "questions": {
                 "type": "array",
                 "items": {
@@ -92501,7 +92493,8 @@
                     "number": {
                       "type": "integer",
                       "minimum": 1,
-                      "maximum": 9007199254740991
+                      "maximum": 9007199254740991,
+                      "description": "The item's position in this section"
                     },
                     "options": {
                       "nullable": true,
@@ -92909,8 +92902,9 @@
                 },
                 "number": {
                   "type": "integer",
-                  "minimum": -9007199254740991,
-                  "maximum": 9007199254740991
+                  "minimum": 1,
+                  "maximum": 9007199254740991,
+                  "description": "The question's position in its section"
                 },
                 "outcome": {
                   "type": "string",
@@ -92924,6 +92918,12 @@
                 "question": {
                   "type": "string"
                 },
+                "section": {
+                  "description": "The zero-based section index",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
                 "set": {
                   "nullable": true,
                   "allOf": [
@@ -92931,6 +92931,12 @@
                       "$ref": "#/components/schemas/ItemSet"
                     }
                   ]
+                },
+                "total": {
+                  "description": "The number of numbered questions in this section",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
                 }
               },
               "required": [
@@ -95392,13 +95398,13 @@
           "schedule",
           "addressForm",
           "work",
-          "tools",
           "studies",
           "watch",
           "listen",
           "play",
           "read",
           "activities",
+          "tools",
           "conditions",
           "learningSupport",
           "buddy",

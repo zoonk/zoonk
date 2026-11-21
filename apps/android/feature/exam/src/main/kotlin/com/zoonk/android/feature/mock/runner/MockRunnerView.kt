@@ -62,6 +62,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.mock.mockQuestionPlace
+import com.zoonk.android.feature.mock.mockSectionTitle
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.mock.rememberNow
 import com.zoonk.android.ui.components.AlertDialog
@@ -282,8 +284,8 @@ private fun RunnerProgress(
 ) {
     val question = run.question ?: return
     val counts = run.counts
-    val place = sectionPlace(run.position, run.questions)
-    val spokenPlace = questionPlace(run, question)
+    val place = run.sectionPlace(question)
+    val spokenPlace = questionPlace(place, question)
 
     val progressLabel = stringResource(R.string.mock_progress_label)
 
@@ -322,22 +324,20 @@ private fun RunnerProgress(
 
 /** "Question 12 of 45 · Mathematics", for TalkBack. */
 @Composable
-internal fun questionPlace(
-    run: MockRun,
+private fun questionPlace(
+    place: SectionPlace?,
     question: MockQuestion,
 ): String {
     val area = question.question.area
-    if (question.essay) {
-        // A written test counts its questions; the screen's header already names the test.
-        sectionPlace(run.position, run.questions)
-            ?.takeIf { it.total > 1 }
-            ?.let { return stringResource(R.string.mock_written_question_place, it.number, it.total) }
+    if (place == null) {
         return area?.let { stringResource(R.string.mock_written_part_area, it) }
             ?: stringResource(R.string.mock_written_part)
     }
-    val total = run.view.questions.toInt()
-    return area?.let { stringResource(R.string.mock_question_place_area, question.number, total, it) }
-        ?: stringResource(R.string.mock_question_place, question.number, total)
+    return if (question.essay) {
+        stringResource(R.string.mock_written_question_place, place.number, place.total)
+    } else {
+        mockQuestionPlace(place.number, place.total, area)
+    }
 }
 
 /** A timer isn't a live region, so it never reads every second. */
@@ -595,6 +595,8 @@ internal fun SheetSections(
         if (titled) Text(stringResource(R.string.mock_sections), style = MaterialTheme.typography.titleSmall)
         run.view.sections.forEachIndexed { index, section ->
             if (index > 0) HorizontalDivider()
+            val current = section.status == MockExamSectionsInner.Status.CURRENT
+            val total = if (current && run.view.current != null) counts.total.toLong() else section.questions + section.essays
             Row(
                 Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics(mergeDescendants = true) {},
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -608,12 +610,10 @@ internal fun SheetSections(
                     },
                 )
                 Text(
-                    section.name ?: stringResource(R.string.mock_section_number, section.index.toInt() + 1),
+                    mockSectionTitle(section),
                     Modifier.weight(1f),
                     color =
-                        if (section.status ==
-                            MockExamSectionsInner.Status.CURRENT
-                        ) {
+                        if (current) {
                             MaterialTheme.colorScheme.onSurface
                         } else {
                             MaterialTheme.colorScheme.onSurfaceVariant
@@ -626,19 +626,8 @@ internal fun SheetSections(
                     } else {
                         stringResource(
                             R.string.mock_section_answered_of,
-                            formatNumber(
-                                (
-                                    if (section.status ==
-                                        MockExamSectionsInner.Status.CURRENT
-                                    ) {
-                                        counts.answered
-                                    } else {
-                                        0
-                                    }
-                                ).toDouble(),
-                                locale,
-                            ),
-                            formatNumber((section.questions + section.essays).toDouble(), locale),
+                            formatNumber((if (current) counts.answered else 0).toDouble(), locale),
+                            formatNumber(total.toDouble(), locale),
                         )
                     },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

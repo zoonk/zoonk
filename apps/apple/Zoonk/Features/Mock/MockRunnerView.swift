@@ -225,7 +225,8 @@ private struct MockQuestionMeta: View {
           comment: "A written test question's place, like '1 of 2'")
       } else if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
-      } else if let place = sectionPlace {
+      } else {
+        let place = sectionPlace
         Text("\(place.number) of \(place.total)", tableName: "Mock", comment: "Question place")
           .monospacedDigit()
       }
@@ -236,14 +237,15 @@ private struct MockQuestionMeta: View {
     .accessibilityLabel(accessibilityPlace)
   }
 
-  private var sectionPlace: (number: Int, total: Int)? {
-    let questions = run.questions.filter { $0.format != .essay }
-    guard let index = questions.firstIndex(of: question) else { return nil }
-    return (index + 1, questions.count)
+  private var sectionPlace: (number: Int, total: Int) {
+    if let total = run.current?.questionTotal {
+      return (question.number, total)
+    }
+    return (run.position + 1, run.questions.count { $0.format != .essay })
   }
 
   private var writtenTestPlace: (number: Int, total: Int)? {
-    run.questions.writtenTestPlace(of: question)
+    run.writtenTestPlace(of: question)
   }
 
   private var accessibilityPlace: Text {
@@ -257,15 +259,9 @@ private struct MockQuestionMeta: View {
       } ?? Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
     }
 
-    if let area = question.area {
-      return Text(
-        "Question \(question.number) of \(view.questions)\u{00A0}· \(area)", tableName: "Mock",
-        comment: "A question's place in the mock, with its subject")
-    }
-
+    let place = sectionPlace
     return Text(
-      "Question \(question.number) of \(view.questions)", tableName: "Mock",
-      comment: "A question's place in the mock")
+      MockLabels.questionPlace(number: place.number, total: place.total, area: question.area))
   }
 }
 
@@ -661,11 +657,7 @@ private struct MockAnswerSheet: View {
                 Text(MockLabels.duration(minutes: section.minutes)).monospacedDigit()
               }
             } label: {
-              Text(
-                section.name
-                  ?? String(
-                    localized: "Section \(section.index + 1)", table: "Mock",
-                    comment: "A section without a name"))
+              Text(MockLabels.sectionTitle(section))
             }
             .typeWeight(section.status == .current ? .semibold : .regular)
           }
@@ -693,7 +685,7 @@ private struct MockAnswerSheet: View {
   private func row(_ question: MockQuestion, at index: Int) -> some View {
     let draft = run.drafts[question.itemId]
 
-    let writtenNumber = run.questions.writtenTestPlace(of: question)?.number
+    let writtenNumber = run.writtenTestPlace(of: question)?.number
 
     return MockSheetRow(
       name: question.format == .essay && writtenNumber == nil
@@ -711,14 +703,13 @@ private struct MockAnswerSheet: View {
   }
 }
 
-extension [MockQuestion] {
-  /// A written test (a section of essays only) numbers its questions, so two never look the same;
-  /// nil for an essay beside objective questions, or the only one.
+extension MockRun {
   func writtenTestPlace(of question: MockQuestion) -> (number: Int, total: Int)? {
-    guard count > 1, allSatisfy({ $0.format == .essay }), let index = firstIndex(of: question)
+    guard question.format == .essay, let total = current?.questionTotal,
+      total > 1, question.number <= total
     else { return nil }
 
-    return (index + 1, count)
+    return (question.number, total)
   }
 }
 

@@ -373,9 +373,10 @@ describe("written mock sittings", () => {
 
     await expect(view(id)).resolves.toMatchObject({
       current: {
+        questionTotal: 2,
         questions: [
-          { itemId: short.id, writing: { taskKey: "short" } },
-          { itemId: long?.id, writing: { taskKey: "long" } },
+          { itemId: short.id, number: 1, writing: { taskKey: "short" } },
+          { itemId: long?.id, number: 2, writing: { taskKey: "long" } },
         ],
       },
       minutes: 210,

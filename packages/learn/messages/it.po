@@ -7863,6 +7863,21 @@ msgctxt "p7qnGJ"
 msgid "Keep answering"
 msgstr "Continua a rispondere"
 
+#: src/mock/mock-labels.tsx
+msgctxt "4osCkq"
+msgid "Section {number, number}"
+msgstr "Sezione {number, number}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "cPym2K"
+msgid "Question {number} of {total} · {area}"
+msgstr "Domanda {number} di {total} · {area}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Domanda {number} di {total}"
+
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
 msgid "Review: you can go back to any question."
@@ -8044,11 +8059,6 @@ msgid "Leave blank"
 msgstr "Lascia in bianco"
 
 #: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Domanda {number} di {total}"
-
-#: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "Parte scritta · {area}"
@@ -8059,11 +8069,6 @@ msgstr "Parte scritta · {area}"
 msgctxt "kyHVVK"
 msgid "Written part"
 msgstr "Parte scritta"
-
-#: src/mock/mock-question.tsx
-msgctxt "cPym2K"
-msgid "Question {number} of {total} · {area}"
-msgstr "Domanda {number} di {total} · {area}"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -8427,13 +8432,6 @@ msgid "After this mock exam"
 msgstr "Dopo questa simulazione"
 
 #: src/mock/mock-review.tsx
-#: src/mock/use-question-cell-label.ts
-#: src/writing/writing-header.ts
-msgctxt "kQXPCE"
-msgid "Question {number}"
-msgstr "Domanda {number}"
-
-#: src/mock/mock-review.tsx
 msgctxt "yBMNyR"
 msgid "Questions to review"
 msgstr "Domande da rivedere"
@@ -8496,11 +8494,6 @@ msgstr "Abbiamo salvato le tue risposte."
 msgctxt "QT1r8L"
 msgid "Handed in"
 msgstr "Consegnata"
-
-#: src/mock/mock-sheet-sections.tsx
-msgctxt "4osCkq"
-msgid "Section {number, number}"
-msgstr "Sezione {number, number}"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
@@ -8600,6 +8593,12 @@ msgstr "Punto forte: {best}."
 msgctxt "RmMq3H"
 msgid "Work on: {worst}."
 msgstr "Da migliorare: {worst}."
+
+#: src/mock/use-question-cell-label.ts
+#: src/writing/writing-header.ts
+msgctxt "kQXPCE"
+msgid "Question {number}"
+msgstr "Domanda {number}"
 
 #. A cell of the mock exam's answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.
 #: src/mock/use-question-cell-label.ts
@@ -11522,6 +11521,12 @@ msgctxt "DXGCS2"
 msgid "E.g., baking bread, cars, astronomy"
 msgstr "Es. fare il pane, auto, astronomia"
 
+#. Adds the tool typed in the field to the learner's list.
+#: src/profile-questions/profile-chip-bodies.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Aggiungi"
+
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "3o2Lj7"
 msgid "From your earlier answer"
@@ -11551,6 +11556,12 @@ msgstr "{field}: corso o materia (facoltativo)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Es. giornalismo"
+
+#. Removes a tool the learner typed. {tool} is its name, such as Photoshop.
+#: src/profile-questions/profile-chips.tsx
+msgctxt "VKAcMO"
+msgid "Remove {tool}"
+msgstr "Rimuovi {tool}"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -11620,9 +11631,9 @@ msgid "We use this to pick examples you'll care about."
 msgstr "Ci serve per scegliere esempi che ti interessano."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "Passati o attuali, conclusi o meno. Scegline fino a 3."
+msgctxt "bofvjf"
+msgid "Past or present, finished or not."
+msgstr "Passati o presenti, conclusi o no."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "esh22C"
@@ -11638,11 +11649,6 @@ msgstr "Facoltativo. Usiamo le tue scelte per adattare i contenuti alle tue esig
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Scegli tutto ciò che ti aiuta."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Scegli fino a 3 opzioni."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

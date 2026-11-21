@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 extension View {
   /// Main's input around a `TextField` or `TextEditor` drawn outside a list row: the stronger line,
@@ -71,7 +72,8 @@ private struct FieldBorder: ViewModifier {
 
 /// Main's field under its `Label`: the label and an optional line about it over the field, in a
 /// list row or on its own. The field keeps its own label for VoiceOver, so the visible one is
-/// hidden from it.
+/// hidden from it. In a `ZoonkList`, a field taking focus scrolls clear of the keyboard and the
+/// bottom bar over it: the system clears only the keyboard.
 struct FormField<Field: View, Hint: View>: View {
   let title: Text
   var isFocused = false
@@ -79,7 +81,31 @@ struct FormField<Field: View, Hint: View>: View {
   @ViewBuilder let field: Field
   @ViewBuilder let hint: Hint
 
+  @Environment(\.listScroll) private var scroll
+  @State private var row = UUID()
+
   var body: some View {
+    form
+      .id(row)
+      .onChange(of: isFocused) {
+        showIfFocused()
+      }
+      .onReceive(
+        NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)
+      ) { _ in
+        showIfFocused()
+      }
+  }
+
+  private func showIfFocused() {
+    if isFocused {
+      withAnimation {
+        scroll?.scrollTo(row)
+      }
+    }
+  }
+
+  private var form: some View {
     VStack(alignment: .leading, spacing: 8) {
       VStack(alignment: .leading, spacing: 1) {
         title

@@ -6,20 +6,18 @@ import { useExtracted } from "next-intl";
 /** An answer sheet cell's spoken name: the question's, and whether it's marked to look at again. */
 export function useQuestionCellLabel({
   flagged,
-  number,
+  numbered,
   question,
 }: {
   flagged: boolean;
-  /** A written test's own count of its questions, which have no number of their own. */
-  number?: number;
+  numbered: boolean;
   question: MockQuestion;
 }): string {
   const t = useExtracted();
 
-  const label =
-    question.format === "essay" && number === undefined
-      ? t("Written part")
-      : t("Question {number}", { number: String(number ?? question.number) });
+  const label = numbered
+    ? t("Question {number}", { number: String(question.number) })
+    : t("Written part");
 
   return flagged
     ? t({

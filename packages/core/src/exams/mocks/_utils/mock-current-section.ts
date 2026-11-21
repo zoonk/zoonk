@@ -9,7 +9,7 @@ import { loadMockEssayItems } from "./mock-essays";
 import { loadMockItems, toMockQuestionView } from "./mock-items";
 import { getSectionPlace } from "./mock-navigation";
 import { listSectionPlays } from "./mock-plays";
-import { getFirstNumber } from "./mock-sections";
+import { numberMockQuestions } from "./mock-sections";
 import { type MockSitting, getSectionDeadline } from "./owned-mock";
 
 export async function loadCurrentSection({
@@ -30,15 +30,13 @@ export async function loadCurrentSection({
     loadMockEssayItems(section.essays),
   ]);
 
-  const first = getFirstNumber({ conditions: mock.conditions, section: mock.sectionIndex });
-
   const answered = new Set(
     mock.answers.flatMap((answer) =>
       isMockAnswerPresent(readMockAnswer(answer.answer)) ? [answer.itemId] : [],
     ),
   );
 
-  const questions = section.itemIds.flatMap((itemId, index): MockQuestion[] => {
+  const questions = section.itemIds.flatMap((itemId): Omit<MockQuestion, "number">[] => {
     const item = items.get(itemId);
 
     return item && isStillAsked({ answered: answered.has(itemId), item })
@@ -46,13 +44,12 @@ export async function loadCurrentSection({
           {
             ...toMockQuestionView({ item, mockId: mock.id }),
             area: areas.get(item.skillId) ?? null,
-            number: first + index,
           },
         ]
       : [];
   });
 
-  const written = section.essays.flatMap((itemId, index): MockQuestion[] => {
+  const written = section.essays.flatMap((itemId): Omit<MockQuestion, "number">[] => {
     const essay = essays.get(itemId);
     const writing = essay ? writingPromptSchema.parse(essay.content.writing) : null;
 
@@ -65,7 +62,6 @@ export async function loadCurrentSection({
             format: "essay",
             image: null,
             itemId,
-            number: first + section.questions + index,
             ...(writing && { writing }),
             options: null,
             question: essay.content.question,
@@ -80,7 +76,13 @@ export async function loadCurrentSection({
   });
 
   const asked = new Set([...section.itemIds, ...section.essays]);
-  const shownIds = [...questions, ...written].map((question) => question.itemId);
+
+  const numbered = numberMockQuestions([...questions, ...written]).map(({ number, question }) => ({
+    ...question,
+    number,
+  }));
+
+  const shownIds = numbered.map((question) => question.itemId);
   const rows = mock.answers.filter((answer) => asked.has(answer.itemId));
 
   const drafts = rows.map((answer) => ({
@@ -96,8 +98,9 @@ export async function loadCurrentSection({
     deadline: getSectionDeadline(mock).toISOString(),
     drafts,
     kind: section.kind ?? null,
-    plays: listSectionPlays({ plays: mock.listeningPlays, questions }),
-    questions: [...questions, ...written],
+    plays: listSectionPlays({ plays: mock.listeningPlays, questions: numbered }),
+    questionTotal: questions.length > 0 ? questions.length : written.length,
+    questions: numbered,
     section: mock.sectionIndex,
   };
 }

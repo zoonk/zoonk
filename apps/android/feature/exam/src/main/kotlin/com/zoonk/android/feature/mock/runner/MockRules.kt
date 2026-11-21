@@ -110,18 +110,15 @@ data class SectionPlace(
     val total: Int,
 )
 
-fun sectionPlace(
-    position: Int,
-    questions: List<MockQuestion>,
+fun MockRun.sectionPlace(
+    question: MockQuestion,
+    index: Int = position,
 ): SectionPlace? {
-    val question = questions.getOrNull(position) ?: return null
-    // Written questions sit apart from an objective section's count, unless the section is all written (a written test).
-    val writtenTest = questions.all { it.essay }
-    val counted = { it: MockQuestion -> !it.essay || writtenTest }
-    if (!counted(question)) return null
+    val total = view.current?.questionTotal?.toInt()
+    if (question.essay && (total == null || total <= 1 || question.number > total)) return null
     return SectionPlace(
-        number = questions.take(position + 1).count(counted),
-        total = questions.count(counted),
+        number = if (total == null) index + 1 else question.number,
+        total = total ?: questions.count { !it.essay },
     )
 }
 

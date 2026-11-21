@@ -1,10 +1,10 @@
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { updateMemorySettings } from "../../memory/update-memory-settings";
 import { answerProfileQuestion } from "./answer-profile-question";
 import { getProfileQuestions } from "./get-profile-questions";
-import { normalizeProfileAnswer } from "./profile-answer-normalization";
 import { profileAnswerInputSchema } from "./profile-question-contract";
 
 /** Each answer as the apps send it, with every field, so a client's rebuilt answer can equal it. */
@@ -19,16 +19,25 @@ const ANSWERS = [
   {
     answer: {
       declined: false,
+      favorites: "ClinicalKey, Notion",
+      picks: ["Whitebook", "Medscape", "UpToDate", "excel", "Tasy"],
+    },
+    question: "tools",
+    suggestedTools: ["Whitebook", "Medscape", "UpToDate", "Google Drive", "Excel"],
+  },
+  {
+    answer: {
+      declined: false,
       studies: [
+        { field: "business", subject: null },
         { field: "media", subject: "journalism" },
         { field: "other", subject: "astronomy" },
-        { field: "business", subject: null },
       ],
     },
     question: "studies",
   },
   {
-    answer: { declined: false, favorites: "Star Trek, Fringe", picks: ["anime", "sciFi"] },
+    answer: { declined: false, favorites: "Star Trek, Fringe", picks: ["sciFi", "anime"] },
     question: "watch",
   },
   {
@@ -86,6 +95,14 @@ describe("profile answers as native clients read them back", () => {
       const user = await userFixture();
       mockSession(user.id);
 
+      if ("suggestedTools" in input) {
+        // oxlint-disable-next-line no-await-in-loop -- one learner at a time: the session is global.
+        await learningProfileFixture({
+          suggestedTools: [...input.suggestedTools],
+          userId: user.id,
+        });
+      }
+
       const parsed = profileAnswerInputSchema.parse({
         answer: input.answer,
         question: input.question,
@@ -100,7 +117,7 @@ describe("profile answers as native clients read them back", () => {
       const view = await getProfileQuestions({ locale: "en" });
 
       fixtures.push({
-        answer: normalizeProfileAnswer(parsed),
+        answer: parsed,
         view: view?.questions.find((question) => question.id === input.question),
       });
     }
@@ -133,7 +150,7 @@ describe("profile answers as native clients read them back", () => {
       status: "declined",
     });
 
-    fixtures.push({ answer: normalizeProfileAnswer(support), view });
+    fixtures.push({ answer: support, view });
 
     await expect(`${JSON.stringify({ fixtures }, null, 2)}\n`).toMatchFileSnapshot(
       "profile-native-fixtures.json",

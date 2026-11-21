@@ -17,8 +17,8 @@ import { isMultiPick } from "../questions/pick-rule";
 import { WritingLineCount } from "../writing/writing-editor";
 import { WritingQuestionBody } from "../writing/writing-question";
 import { useMockScreen } from "./mock-context";
+import { isNumberedMockQuestion, useMockQuestionLabel } from "./mock-labels";
 import { MockOptions, MockPicks, useLocked } from "./mock-options";
-import { getSectionPlace } from "./mock-place";
 
 const MAX_TYPED_ANSWER = 500;
 
@@ -107,31 +107,25 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
   );
 }
 
-export function useQuestionPlace(question: MockQuestion): string {
+export function useQuestionPlace({
+  question,
+  total,
+}: {
+  question: MockQuestion;
+  total: number;
+}): string {
   const t = useExtracted();
-  const { runner } = useMockScreen();
+  const label = useMockQuestionLabel();
 
   if (question.format === "essay") {
-    const questions = runner.view.current?.questions ?? [];
-
-    const inTest = getSectionPlace({ position: questions.indexOf(question), questions });
-
-    // A written test counts its questions; the screen's chip already names the test.
-    if (inTest && inTest.total > 1) {
-      return t("Question {number} of {total}", {
-        number: String(inTest.number),
-        total: String(inTest.total),
-      });
+    if (isNumberedMockQuestion({ question, total })) {
+      return label({ number: question.number, total });
     }
 
     return question.area ? t("Written part · {area}", { area: question.area }) : t("Written part");
   }
 
-  const place = { number: String(question.number), total: String(runner.view.questions) };
-
-  return question.area
-    ? t("Question {number} of {total} · {area}", { ...place, area: question.area })
-    : t("Question {number} of {total}", place);
+  return label({ area: question.area, number: question.number, total });
 }
 
 function MockAnswerInput({ question }: { question: MockQuestion }) {

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { continueToStep } from "./result-steps";
@@ -118,6 +119,8 @@ test.describe("Mock essays need a learner's grading request", () => {
 
       await page.goto(url);
       const answer = page.getByRole("textbox");
+
+      await expectHydrated(answer);
       await expect(answer).toHaveValue(ESSAY_TEXT);
       await answer.fill(OFFLINE_EDIT);
       await page.reload();
@@ -142,7 +145,10 @@ test.describe("Mock essays need a learner's grading request", () => {
 
       try {
         await other.goto(url);
-        await other.getByRole("textbox").fill(OTHER_DEVICE_EDIT);
+        const otherAnswer = other.getByRole("textbox");
+
+        await expectHydrated(otherAnswer);
+        await otherAnswer.fill(OTHER_DEVICE_EDIT);
 
         await expect
           .poll(() => prisma.mockExamAnswer.findFirstOrThrow({ where }))

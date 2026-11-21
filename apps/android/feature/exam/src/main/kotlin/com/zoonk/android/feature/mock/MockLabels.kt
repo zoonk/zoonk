@@ -8,6 +8,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamMockSummary
+import com.zoonk.api.models.MockExamSectionsInner
 import com.zoonk.api.models.MockShape
 import kotlin.math.floor
 import kotlin.math.roundToLong
@@ -15,6 +16,19 @@ import kotlin.time.Instant
 
 @Composable
 fun mockTitle(number: Long): String = stringResource(R.string.mock_title, number)
+
+@Composable
+fun mockSectionTitle(section: MockExamSectionsInner): String =
+    section.name ?: stringResource(R.string.mock_section_number, section.index.toInt() + 1)
+
+@Composable
+fun mockQuestionPlace(
+    number: Int,
+    total: Int,
+    area: String? = null,
+): String =
+    area?.let { stringResource(R.string.mock_question_place_area, number, total, it) }
+        ?: stringResource(R.string.mock_question_place, number, total)
 
 /** A one-subject mock exam is told apart by its subject; a full or half one needs no label. */
 fun mockSubject(shape: MockShape?): String = if (shape?.kind == MockShape.Kind.AREA) shape.area.orEmpty() else ""

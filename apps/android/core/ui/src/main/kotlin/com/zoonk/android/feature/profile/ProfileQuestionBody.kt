@@ -7,11 +7,19 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -19,16 +27,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.maxTextLength
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.CheckList
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SelectionChip
@@ -66,10 +82,6 @@ fun profileQuestionDescription(
                 R.string.profile_questions_work_description
             }
 
-            ProfileQuestion.TOOLS -> {
-                R.string.profile_questions_tools_description
-            }
-
             ProfileQuestion.STUDIES -> {
                 R.string.profile_questions_studies_description
             }
@@ -86,12 +98,8 @@ fun profileQuestionDescription(
                 R.string.profile_questions_support_description
             }
 
-            ProfileQuestion.ADDRESS_FORM -> {
-                null
-            }
-
             else -> {
-                R.string.profile_questions_interest_description
+                null
             }
         }
     return line?.let { stringResource(it) }
@@ -109,15 +117,7 @@ fun ProfileQuestionBody(
     declineAsSkip: Boolean = false,
     inSettings: Boolean = false,
 ) {
-    var atCap by rememberSaveable(question.id) { mutableStateOf(false) }
     var noteOpen by rememberSaveable(question.id) { mutableStateOf(false) }
-    val change: (ProfileDraft) -> Unit = {
-        atCap = false
-        onChange(it)
-    }
-    val pick: (String) -> Unit = { id ->
-        if (id !in draft.picks && draft.picks.size == 3) atCap = true else change(draft.toggle(id))
-    }
     val choices = question.options.map { Choice(it.id, it.label, it.description) }
     val label = profileQuestionTitle(question.id)
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -134,9 +134,9 @@ fun ProfileQuestionBody(
                     readOnly = !enabled,
                     onChange = { id ->
                         if (id == "_declined") {
-                            change(ProfileDraft(declined = true))
+                            onChange(ProfileDraft(declined = true))
                         } else {
-                            change(
+                            onChange(
                                 draft.copy(
                                     picks = listOf(id),
                                     text = draft.text.takeIf { id in listOf("work", "workAndStudy") }.orEmpty(),
@@ -155,7 +155,7 @@ fun ProfileQuestionBody(
                                     enabled,
                                     placeholder = R.string.profile_questions_job_placeholder,
                                     help = R.string.profile_questions_earlier_answer.takeIf { role != null && draft.text == role },
-                                ) { change(draft.copy(text = it, declined = false)) }
+                                ) { onChange(draft.copy(text = it, declined = false)) }
                             }
                         }
                     },
@@ -172,7 +172,17 @@ fun ProfileQuestionBody(
                     value = if (draft.declined) "_declined" else draft.picks.firstOrNull(),
                     label = label,
                     readOnly = !enabled,
-                    onChange = { id -> change(if (id == "_declined") ProfileDraft(declined = true) else ProfileDraft(picks = listOf(id))) },
+                    onChange = { id ->
+                        onChange(
+                            if (id ==
+                                "_declined"
+                            ) {
+                                ProfileDraft(declined = true)
+                            } else {
+                                ProfileDraft(picks = listOf(id))
+                            },
+                        )
+                    },
                 )
             }
 
@@ -186,7 +196,7 @@ fun ProfileQuestionBody(
                     readOnly = !enabled,
                     onToggle = { id ->
                         focusNote = id == "other" && id !in draft.picks && draft.text.isBlank()
-                        change(draft.toggle(id))
+                        onChange(draft.toggle(id))
                     },
                     afterChoice = { id ->
                         if (id == "other" && id in draft.picks) {
@@ -197,7 +207,7 @@ fun ProfileQuestionBody(
                                     120,
                                     enabled,
                                     modifier = Modifier.focusRequester(note),
-                                ) { change(draft.copy(text = it, declined = false)) }
+                                ) { onChange(draft.copy(text = it, declined = false)) }
                             }
                             if (focusNote) {
                                 LaunchedEffect(Unit) {
@@ -223,7 +233,7 @@ fun ProfileQuestionBody(
                     value = draft.picks,
                     label = label,
                     readOnly = !enabled,
-                    onToggle = { id -> change(draft.toggle(id)) },
+                    onToggle = { id -> onChange(draft.toggle(id)) },
                 )
                 if (memoryEnabled) {
                     if (noteOpen || draft.text.isNotEmpty()) {
@@ -239,7 +249,7 @@ fun ProfileQuestionBody(
                                 } else {
                                     R.string.profile_questions_support_note_help
                                 },
-                        ) { change(draft.copy(text = it, declined = false)) }
+                        ) { onChange(draft.copy(text = it, declined = false)) }
                     } else {
                         TextButton(
                             onClick = { noteOpen = true },
@@ -251,18 +261,13 @@ fun ProfileQuestionBody(
 
             else -> {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    question.options.forEach { option -> ProfileChip(option.label, option.id in draft.picks, enabled) { pick(option.id) } }
+                    question.options.forEach { option ->
+                        ProfileChip(option.label, option.id in draft.picks, enabled) { onChange(draft.toggle(option.id)) }
+                    }
                 }
-                if (atCap) {
-                    Text(
-                        stringResource(R.string.profile_questions_cap),
-                        Modifier.semantics {
-                            liveRegion = LiveRegionMode.Polite
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-                if (question.id == ProfileQuestion.STUDIES) {
+                if (question.id == ProfileQuestion.TOOLS) {
+                    TypedTools(question, draft, enabled, onChange)
+                } else if (question.id == ProfileQuestion.STUDIES) {
                     draft.picks.forEach { id ->
                         val field =
                             if (id ==
@@ -286,7 +291,7 @@ fun ProfileQuestionBody(
                             enabled,
                             placeholder = R.string.profile_questions_subject_placeholder,
                         ) {
-                            change(draft.copy(subjects = draft.subjects + (id to it), declined = false))
+                            onChange(draft.copy(subjects = draft.subjects + (id to it), declined = false))
                         }
                     }
                 } else {
@@ -297,7 +302,7 @@ fun ProfileQuestionBody(
                         120,
                         enabled,
                         placeholder = placeholder,
-                    ) { change(draft.copy(text = it, declined = false)) }
+                    ) { onChange(draft.copy(text = it, declined = false)) }
                 }
             }
         }
@@ -318,6 +323,78 @@ private fun ProfileChip(
         onClick = onClick,
         modifier = Modifier.defaultMinSize(minHeight = 48.dp),
     )
+}
+
+/** The tools field: what the learner adds by name becomes a picked chip under it, never above, so nothing they see moves. */
+@Composable
+private fun TypedTools(
+    question: ProfileQuestionView,
+    draft: ProfileDraft,
+    enabled: Boolean,
+    onChange: (ProfileDraft) -> Unit,
+) {
+    val canAdd = draft.canAdd(question.options)
+    val add = { onChange(draft.added(question.options)) }
+    val newest = remember { BringIntoViewRequester() }
+    var shownTyped by remember { mutableIntStateOf(draft.typed.size) }
+    LaunchedEffect(draft.typed.size) {
+        // A tool just added shows above the action bar, even while the keyboard covers the screen's lower half.
+        if (draft.typed.size > shownTyped) newest.bringIntoView()
+        shownTyped = draft.typed.size
+    }
+    OutlinedTextField(
+        draft.text,
+        { onChange(draft.typing(it, question.options)) },
+        Modifier.fillMaxWidth(),
+        enabled = enabled,
+        label = stringResource(R.string.profile_questions_tools_other),
+        placeholder = { Text(stringResource(R.string.profile_questions_tools_placeholder)) },
+        trailingIcon = {
+            TextButton(
+                onClick = add,
+                enabled = enabled && canAdd,
+                size = ButtonSize.Small,
+            ) { Text(stringResource(R.string.profile_questions_add)) }
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { if (canAdd) add() else defaultKeyboardAction(ImeAction.Done) }),
+        singleLine = true,
+    )
+    if (draft.typed.isNotEmpty()) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            draft.typed.forEachIndexed { index, tool ->
+                val remove = { onChange(draft.removing(tool)) }
+                val name = stringResource(R.string.profile_questions_remove_tool, tool)
+                SelectionChip(
+                    text = tool,
+                    selected = true,
+                    enabled = enabled,
+                    onClick = remove,
+                    trailingIcon = {
+                        Icon(
+                            painterResource(R.drawable.ic_close),
+                            contentDescription = null,
+                            Modifier.size(FilterChipDefaults.IconSize * LocalDensity.current.fontScale),
+                        )
+                    },
+                    // The whole chip removes the tool, so TalkBack reads it as that one action.
+                    modifier =
+                        Modifier
+                            .defaultMinSize(minHeight = 48.dp)
+                            .then(if (index == draft.typed.lastIndex) Modifier.bringIntoViewRequester(newest) else Modifier)
+                            .clearAndSetSemantics {
+                                contentDescription = name
+                                role = Role.Button
+                                onClick {
+                                    remove()
+                                    true
+                                }
+                                if (!enabled) disabled()
+                            },
+                )
+            }
+        }
+    }
 }
 
 @Composable
