@@ -7,8 +7,6 @@ import { useGradingReturnsLine } from "./writing-labels";
 
 type WritingUnit = WritingPrompt["unit"];
 
-type WritingAvailability = NonNullable<StudyBlock["writingAvailability"]>;
-
 /** Where a task sits in the exam's written test, as the server says it before any question is assigned. */
 export type WritingTaskPlace = NonNullable<StudyBlock["writingTask"]>;
 
@@ -108,17 +106,15 @@ export function useWritingLine() {
   const gradingReturns = useGradingReturnsLine();
 
   return function writingLine({
+    hasWritingDraft,
     writingAvailability,
     writingUnit,
-  }: {
-    writingAvailability?: WritingAvailability;
-    writingUnit?: WritingUnit;
-  }): string | null {
+  }: Pick<StudyBlock, "hasWritingDraft" | "writingAvailability" | "writingUnit">): string | null {
     if (writingAvailability?.status === "tomorrow") {
       return gradingReturns(writingAvailability.returnsOn);
     }
 
-    if (writingAvailability?.status === "continue") {
+    if (hasWritingDraft) {
       return t("Your draft is saved");
     }
 

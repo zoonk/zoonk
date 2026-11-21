@@ -49,6 +49,9 @@ test.describe("Written exam practice", () => {
       const other = await openAs(browser, day.user);
 
       try {
+        await other.goto("/today");
+        await expect(other.getByText("Your draft is saved", { exact: true })).toBeVisible();
+
         await other.goto(`/essay/${day.blockId}`);
         await other.getByRole("button", { exact: true, name: "Continue" }).click();
         await expect(other.getByLabel("Your answer")).toHaveValue(DRAFT);

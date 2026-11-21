@@ -15,6 +15,7 @@ type BlockCopyInput = Pick<
   | "estimatedMinutes"
   | "extra"
   | "fullReview"
+  | "hasWritingDraft"
   | "kind"
   | "mistakesOnly"
   | "questions"
