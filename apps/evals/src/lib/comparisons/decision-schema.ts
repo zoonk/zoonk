@@ -21,6 +21,25 @@ const deliverySchema = z.object({
   p95: z.number().nullable(),
   successful: z.int(),
 });
+
+const preferenceCounts = z.object({
+  challenger: z.int().nonnegative(),
+  incumbent: z.int().nonnegative(),
+  tie: z.int().nonnegative(),
+});
+
+const preferenceBreakdown = z.object({
+  families: z.array(preferenceCounts.extend({ family: z.string() })),
+  lean: side.nullable(),
+  total: preferenceCounts,
+});
+
+const preferenceRow = preferenceBreakdown.extend({
+  byLanguage: z.array(preferenceBreakdown.extend({ language: z.string() })),
+  criterion: z.string().nullable(),
+  label: z.string(),
+});
+
 export const decisionSchema = z.object({
   cases: z.array(
     z.object({
@@ -33,6 +52,7 @@ export const decisionSchema = z.object({
     }),
   ),
   outcome: z.enum(["switch", "retain", "neither qualifies", "insufficient evidence"]),
+  preferences: z.array(preferenceRow),
   readers: z.array(
     z.object({
       failedPackets: z.int(),

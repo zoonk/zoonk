@@ -50,6 +50,10 @@ export function familyLabel(family: string): string {
   return FAMILY_LABELS[family] ?? family;
 }
 
+export function preferenceLeanLabel(side: Side): string {
+  return `Every model reader family leaned toward the ${SIDE_LABELS[side].toLowerCase()} model.`;
+}
+
 export function modelName(model: string): string {
   return model.split("/").at(-1) ?? model;
 }

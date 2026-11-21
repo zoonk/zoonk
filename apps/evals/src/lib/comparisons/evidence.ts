@@ -50,6 +50,87 @@ export function acceptedReads(comparison: Comparison) {
 }
 type Read = ReturnType<typeof acceptedReads>[number];
 
+type Preference = NonNullable<Read["vote"]>;
+type PreferenceBreakdown = Pick<Decision["preferences"][number], "families" | "lean" | "total">;
+
+function preferenceCounts(votes: Preference[]) {
+  const groups = Map.groupBy(votes, (vote) => vote);
+
+  return {
+    challenger: groups.get("challenger")?.length ?? 0,
+    incumbent: groups.get("incumbent")?.length ?? 0,
+    tie: groups.get("tie")?.length ?? 0,
+  };
+}
+
+function preferenceBreakdown({
+  criterion,
+  reads,
+}: {
+  criterion: string | null;
+  reads: Read[];
+}): PreferenceBreakdown {
+  const ballots = reads.flatMap(({ mapping, packet, verdict, vote }) => {
+    const preference = criterion
+      ? voteFor(
+          verdict.criteria.find((entry) => entry.criterion === criterion)?.preference,
+          mapping.first,
+        )
+      : vote;
+
+    const family = packet.reader.channel === "owner" ? "owner" : packet.reader.family;
+
+    return preference ? [{ family, preference }] : [];
+  });
+
+  const families = [...Map.groupBy(ballots, (ballot) => ballot.family)]
+    .toSorted(([first], [second]) => first.localeCompare(second))
+    .map(([family, votes]) => ({
+      family,
+      ...preferenceCounts(votes.map((vote) => vote.preference)),
+    }));
+
+  const models = families.filter(({ family }) => family !== "owner");
+
+  const lean = sides.find(
+    (side) => models.length > 1 && models.every((votes) => votes[side] > votes[opposite(side)]),
+  );
+
+  return {
+    families,
+    lean: lean ?? null,
+    total: preferenceCounts(ballots.map((ballot) => ballot.preference)),
+  };
+}
+
+export function readerPreferences({
+  manifest,
+  reads,
+}: {
+  manifest: Comparison["manifest"];
+  reads: Read[];
+}) {
+  const pairedReads = reads.filter((read) => read.vote !== undefined);
+
+  if (pairedReads.length === 0) {
+    return [];
+  }
+
+  const caseLanguages = new Map(manifest.cases.map(({ id, language }) => [id, language]));
+  const byLanguage = Map.groupBy(pairedReads, ({ mapping }) => caseLanguages.get(mapping.caseId));
+
+  return [{ id: null, label: "Overall" }, ...manifest.criteria].map(({ id, label }) => ({
+    ...preferenceBreakdown({ criterion: id, reads: pairedReads }),
+    byLanguage: [...byLanguage].flatMap(([language, languageReads]) =>
+      language
+        ? [{ language, ...preferenceBreakdown({ criterion: id, reads: languageReads }) }]
+        : [],
+    ),
+    criterion: id,
+    label,
+  }));
+}
+
 function isControlFreeOwnerRead({ attempt, packet }: Read) {
   return (
     packet.reader.channel === "owner" &&

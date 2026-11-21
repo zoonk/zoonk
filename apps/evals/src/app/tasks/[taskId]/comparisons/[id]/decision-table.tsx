@@ -14,9 +14,11 @@ import { Fragment } from "react";
 import {
   SIDE_LABELS,
   STATUS_LABELS,
+  familyLabel,
   formatDate,
   languageName,
   laterModels,
+  preferenceLeanLabel,
   variantName,
 } from "../_utils/labels";
 import { plural } from "../_utils/words";
@@ -235,6 +237,72 @@ function GroupRow({ label }: { label: string }) {
   );
 }
 
+type PreferenceRow = Decision["preferences"][number];
+
+function PreferenceCounts({ counts }: { counts: PreferenceRow["total"] }) {
+  return (
+    <span className="inline-flex flex-wrap gap-x-1.5">
+      <span>
+        Current <span className="font-mono">{counts.incumbent}</span>
+      </span>
+      <span>
+        · Challenger <span className="font-mono">{counts.challenger}</span>
+      </span>
+      <span>
+        · Tie <span className="font-mono">{counts.tie}</span>
+      </span>
+    </span>
+  );
+}
+
+function PreferenceSplit({ split }: { split: Pick<PreferenceRow, "families" | "lean" | "total"> }) {
+  if (split.families.length === 0) {
+    return <span className="text-muted-foreground">No reads yet</span>;
+  }
+
+  return (
+    <>
+      <PreferenceCounts counts={split.total} />
+      {split.lean && <p className="mt-1 text-xs">{preferenceLeanLabel(split.lean)}</p>}
+      <ul className="text-muted-foreground mt-1 flex flex-col gap-0.5 text-xs">
+        {split.families.map((family) => (
+          <li className="flex flex-wrap gap-x-2" key={family.family}>
+            <span className="font-medium">{familyLabel(family.family)}</span>
+            <PreferenceCounts counts={family} />
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+function ReaderPreferenceRow({ row }: { row: PreferenceRow }) {
+  return (
+    <TableRow>
+      <th
+        className="text-muted-foreground py-2 pr-3 text-left align-top text-sm font-normal"
+        scope="row"
+      >
+        {row.label}
+      </th>
+      <TableCell className="align-top whitespace-normal" colSpan={2}>
+        <PreferenceSplit split={row} />
+        {row.byLanguage.length > 1 && (
+          <details className="mt-1.5">
+            <summary className="text-muted-foreground cursor-pointer text-xs">By language</summary>
+            {row.byLanguage.map((language) => (
+              <div className="mt-2 border-s ps-3" key={language.language}>
+                <p className="mb-1 text-xs font-medium">{languageName(language.language)}</p>
+                <PreferenceSplit split={language} />
+              </div>
+            ))}
+          </details>
+        )}
+      </TableCell>
+    </TableRow>
+  );
+}
+
 /** Both sides on the matched cases: what they delivered, how readers judged them, what they cost. */
 export function DecisionTable({
   decision,
@@ -286,8 +354,17 @@ export function DecisionTable({
 
         <TableBody>
           <FactRow cell={statusCell} label="Status" rows={rows} />
-          <FactRow cell={preferredCell} label="Readers preferred it" rows={rows} />
+          <FactRow cell={preferredCell} label="Settled cases" rows={rows} />
           <FactRow cell={deliveredCell} label="Runs delivered" rows={rows} />
+
+          {decision.preferences.length > 0 && (
+            <>
+              <GroupRow label="Readers preferred" />
+              {decision.preferences.map((row) => (
+                <ReaderPreferenceRow key={row.criterion ?? ""} row={row} />
+              ))}
+            </>
+          )}
 
           <GroupRow label={`${showRun ? "Runs" : "Cases"} with a confirmed major problem`} />
           <FactRow cell={weightedTotalCell} label="Weighted total" rows={rows} />

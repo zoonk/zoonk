@@ -6,6 +6,7 @@ import {
   caseVotes,
   missingReaderFamilies,
   needsBlindOwnerRead,
+  readerPreferences,
   readerRecords,
   settle,
   sides,
@@ -15,14 +16,6 @@ import { type Comparison } from "./schemas";
 import { meetsWaitSaving, tradeBounds } from "./trade-bounds";
 
 export { decisionSchema, type Decision } from "./decision-schema";
-export function decide(comparison: Comparison): Decision {
-  return decisionWith(
-    comparison,
-    caseVotes(comparison, acceptedReads(comparison)),
-    verifiedClaims(comparison),
-  );
-}
-
 type Claims = ReturnType<typeof verifiedClaims>;
 type Cases = ReturnType<typeof caseVotes>;
 
@@ -32,8 +25,11 @@ function hasMoreWeightedMajors(row: Decision["rows"][number], rival: Decision["r
   );
 }
 
-function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Decision {
-  const readers = readerRecords(comparison, acceptedReads(comparison));
+export function decide(comparison: Comparison): Decision {
+  const reads = acceptedReads(comparison);
+  const cases = caseVotes(comparison, reads);
+  const claims = verifiedClaims(comparison);
+  const readers = readerRecords(comparison, reads);
   const rows = deliveryTable(comparison, cases, claims);
   const { choice } = assess(comparison, cases, claims, rows);
 
@@ -82,6 +78,7 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
 
   return decisionSchema.parse({
     cases,
+    preferences: readerPreferences({ manifest: comparison.manifest, reads }),
     readers,
     replay: comparison.replay,
     rows: classified,
@@ -132,7 +129,9 @@ export function decisiveUnresolved(comparison: Comparison) {
   }
 
   const claims = verifiedClaims(comparison);
-  const current = decisionWith(comparison, cases, claims);
+
+  const outcome = assess(comparison, cases, claims, deliveryTable(comparison, cases, claims)).choice
+    .outcome;
 
   const reserve = comparison.manifest.readers.find((reader) => reader.reserve);
 
@@ -169,7 +168,10 @@ export function decisiveUnresolved(comparison: Comparison) {
       return { ...item, result: best ?? item.result };
     });
 
-    return decisionWith(comparison, scenario, claims).outcome !== current.outcome;
+    return (
+      assess(comparison, scenario, claims, deliveryTable(comparison, scenario, claims)).choice
+        .outcome !== outcome
+    );
   });
 
   return matters
