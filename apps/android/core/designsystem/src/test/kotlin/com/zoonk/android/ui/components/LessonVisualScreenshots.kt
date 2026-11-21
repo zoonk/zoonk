@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.LessonVisual.Chart
+import com.zoonk.android.ui.components.LessonVisual.Plot
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -65,19 +66,19 @@ class LessonVisualScreenshots {
     @Config(qualifiers = "w320dp-h1600dp-xxhdpi")
     fun narrowPhoneAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        capture("320-light-font200", CHARTS.filterKeys { it == "regions" })
+        capture("320-light-font200", CHARTS.filterKeys { it in LARGE_FONT })
     }
 
     @Test
     @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
     fun phoneAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        capture("390-light-font200", CHARTS.filterKeys { it == "regions" })
+        capture("390-light-font200", CHARTS.filterKeys { it in LARGE_FONT })
     }
 
     private fun capture(
         suffix: String,
-        charts: Map<String, Chart>,
+        charts: Map<String, LessonVisual>,
         dark: Boolean = false,
     ) {
         var shown by mutableStateOf(charts.values.first())
@@ -106,10 +107,101 @@ class LessonVisualScreenshots {
     private companion object {
         const val TAG = "chart"
 
+        val LARGE_FONT = setOf("regions", "plot-scatter", "plot-control")
+
         private val REGIONS = listOf("Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste")
 
-        val CHARTS =
+        val CHARTS: Map<String, LessonVisual> =
             linkedMapOf(
+                "plot-scatter" to
+                    plot(
+                        "Detector scan",
+                        "Detector position",
+                        "mm",
+                        "Count rate",
+                        "counts/s",
+                        Plot.Series(
+                            "Scan",
+                            Plot.Mark.Points,
+                            listOf(0.5 to 810.0, 1.5 to 880.0, 3.0 to 952.0, 4.5 to 890.0, 5.5 to 820.0).mapIndexed { index, (x, y) ->
+                                Plot.Point(x, y, "ABCDE"[index].toString())
+                            },
+                        ),
+                    ),
+                "plot-control" to
+                    plot(
+                        "Bottle fill weight, last 10 days",
+                        "Day",
+                        null,
+                        "Fill weight",
+                        "ml",
+                        Plot.Series(
+                            "Fill weight",
+                            Plot.Mark.LineWithPoints,
+                            listOf(499.8, 500.6, 499.3, 501.0, 500.4, 501.6, 502.3, 503.8, 502.9, 502.1).mapIndexed { day, weight ->
+                                Plot.Point(day + 1.0, weight)
+                            },
+                        ),
+                    ).copy(
+                        references =
+                            listOf(Plot.Reference("Upper limit", 503.0), Plot.Reference("Target", 500.0), Plot.Reference("Lower limit", 497.0)),
+                    ),
+                "plot-named-countries" to
+                    plot(
+                        "Spending on health and life expectancy, 2021",
+                        "Health spending per person",
+                        "US$",
+                        "Life expectancy",
+                        "years",
+                        Plot.Series(
+                            "Countries",
+                            Plot.Mark.Points,
+                            listOf(
+                                Plot.Point(12_318.0, 76.4, "United States"),
+                                Plot.Point(8_011.0, 82.9, "Switzerland"),
+                                Plot.Point(6_166.0, 80.8, "Germany"),
+                                Plot.Point(4_666.0, 84.5, "Japan"),
+                                Plot.Point(1_514.0, 72.8, "Brazil"),
+                                Plot.Point(1_265.0, 74.4, "Mexico"),
+                                Plot.Point(57.0, 67.2, "India"),
+                            ),
+                        ),
+                    ).copy(source = "World Bank"),
+                "plot-two-lines" to
+                    plot(
+                        "Average temperature by month",
+                        "Month",
+                        null,
+                        "Temperature",
+                        "°C",
+                        Plot.Series(
+                            "Recife",
+                            Plot.Mark.Line,
+                            listOf(27.6, 27.7, 27.5, 27.0, 26.2, 25.4, 24.9, 25.0, 25.6, 26.4, 26.9, 27.3).mapIndexed { month, value ->
+                                Plot.Point(month + 1.0, value)
+                            },
+                        ),
+                        Plot.Series(
+                            "Porto Alegre",
+                            Plot.Mark.Line,
+                            listOf(24.6, 24.4, 23.1, 19.9, 16.6, 14.1, 13.9, 15.1, 16.4, 19.1, 21.2, 23.4).mapIndexed { month, value ->
+                                Plot.Point(month + 1.0, value)
+                            },
+                        ),
+                    ),
+                "plot-years" to
+                    plot(
+                        "World population",
+                        "Year",
+                        null,
+                        "People",
+                        "billion",
+                        Plot.Series(
+                            "Population",
+                            Plot.Mark.LineWithPoints,
+                            listOf(1950.0 to 2.5, 1970.0 to 3.7, 1990.0 to 5.3, 2010.0 to 6.9, 2023.0 to 8.0).map { (x, y) -> Plot.Point(x, y) },
+                        ),
+                    ),
                 "regions" to bars("Participação no total, por região", "Região", "Participação", REGIONS, "%", 18, 42, 64, 30, 22),
                 "long-names" to
                     bars(
@@ -189,6 +281,15 @@ class LessonVisualScreenshots {
                         Chart.Series("Litoral", listOf(24.0, 31.0, 35.0, 40.0)),
                     ).take(series),
             )
+
+        private fun plot(
+            title: String,
+            xLabel: String,
+            xUnit: String?,
+            yLabel: String,
+            yUnit: String?,
+            vararg series: Plot.Series,
+        ) = Plot(title = title, xLabel = xLabel, yLabel = yLabel, series = series.toList(), xUnit = xUnit, yUnit = yUnit)
 
         private fun bars(
             title: String,

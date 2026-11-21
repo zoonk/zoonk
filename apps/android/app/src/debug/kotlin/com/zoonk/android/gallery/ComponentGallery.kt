@@ -724,6 +724,49 @@ private fun LessonVisuals() {
             ),
         )
         LessonVisual(
+            LessonVisual.Plot(
+                title = "Detector scan",
+                xLabel = "Detector position",
+                xUnit = "mm",
+                yLabel = "Count rate",
+                yUnit = "counts/s",
+                series =
+                    listOf(
+                        LessonVisual.Plot.Series(
+                            "Scan",
+                            LessonVisual.Plot.Mark.Points,
+                            listOf(0.5 to 810.0, 1.5 to 880.0, 3.0 to 952.0, 4.5 to 890.0, 5.5 to 820.0).mapIndexed { index, (x, y) ->
+                                LessonVisual.Plot.Point(x, y, "ABCDE"[index].toString())
+                            },
+                        ),
+                    ),
+            ),
+        )
+        LessonVisual(
+            LessonVisual.Plot(
+                title = "Bottle fill weight, last 10 days",
+                xLabel = "Day",
+                yLabel = "Fill weight",
+                yUnit = "ml",
+                series =
+                    listOf(
+                        LessonVisual.Plot.Series(
+                            "Fill weight",
+                            LessonVisual.Plot.Mark.LineWithPoints,
+                            listOf(499.8, 500.6, 499.3, 501.0, 500.4, 501.6, 502.3, 503.8, 502.9, 502.1).mapIndexed { day, weight ->
+                                LessonVisual.Plot.Point(day + 1.0, weight)
+                            },
+                        ),
+                    ),
+                references =
+                    listOf(
+                        LessonVisual.Plot.Reference("Upper limit", 503.0),
+                        LessonVisual.Plot.Reference("Target", 500.0),
+                        LessonVisual.Plot.Reference("Lower limit", 497.0),
+                    ),
+            ),
+        )
+        LessonVisual(
             LessonVisual.Timeline(
                 title = "Brazil becomes a republic",
                 events =

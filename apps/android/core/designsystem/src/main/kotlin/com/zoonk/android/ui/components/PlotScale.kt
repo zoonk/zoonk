@@ -56,6 +56,22 @@ fun niceDomain(
     return if (start.isFinite() && end.isFinite()) cleanFloat(start)..cleanFloat(end) else low..high
 }
 
+class PlotAxis(
+    val domain: ClosedFloatingPointRange<Double>,
+    val ticks: List<Double>,
+)
+
+/**
+ * Main's `getPlotAxes`: x is proportional and y fits the points and the reference levels, neither
+ * forced to zero.
+ */
+fun plotAxes(plot: LessonVisual.Plot): Pair<PlotAxis, PlotAxis> {
+    val points = plot.series.flatMap { it.points }
+    return plotAxis(points.map { it.x }) to plotAxis(points.map { it.y } + plot.references.map { it.y })
+}
+
+private fun plotAxis(values: List<Double>) = niceDomain(values, includeZero = false).let { PlotAxis(it, niceTicks(it)) }
+
 private fun niceStep(
     span: Double,
     count: Int,

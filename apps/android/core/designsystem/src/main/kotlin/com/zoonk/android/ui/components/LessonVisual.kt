@@ -52,10 +52,6 @@ import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.moneyUnit
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonClassDiscriminator
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -70,6 +66,8 @@ fun LessonVisual(
     when (visual) {
         is LessonVisual.Chart -> ChartVisual(visual, modifier)
         is LessonVisual.Timeline -> TimelineVisual(visual, modifier)
+        is LessonVisual.Plot -> PlotVisual(visual, modifier)
+        LessonVisual.Unknown -> Unit
     }
 }
 
@@ -180,13 +178,14 @@ private fun Plot(visual: LessonVisual.Chart) {
 }
 
 @Composable
-private fun AxisCaption(
+internal fun AxisCaption(
     text: String,
     align: TextAlign,
+    description: String? = null,
 ) {
     Text(
         text = text,
-        modifier = Modifier.fillMaxWidth().clearAndSetSemantics {},
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics { description?.let { contentDescription = it } },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall,
         textAlign = align,
@@ -215,7 +214,7 @@ private fun chartSummary(
     }
 }
 
-private class ChartText(
+internal class ChartText(
     private val measurer: TextMeasurer,
     private val label: TextStyle,
     private val value: TextStyle,
@@ -673,10 +672,10 @@ private fun TimelineVisual(
     }
 }
 
-private val LABEL_GAP = 6.dp
-private val PLOT_END = 8.dp
-private val PLOT_HEIGHT = 160.dp
-private const val PLOT_LINES = 6
+internal val LABEL_GAP = 6.dp
+internal val PLOT_END = 8.dp
+internal val PLOT_HEIGHT = 160.dp
+internal const val PLOT_LINES = 6
 private const val UNIT_TARGET = 12
 private val BAR_RADIUS = 3.dp
 private val SWATCH_RADIUS = 2.dp

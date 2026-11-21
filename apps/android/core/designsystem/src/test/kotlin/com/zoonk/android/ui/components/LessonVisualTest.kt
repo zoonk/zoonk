@@ -1,5 +1,9 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import com.zoonk.android.ui.components.LessonVisual.Plot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -26,6 +30,55 @@ class LessonVisualTest {
             assertEquals(ticks, niceTicks(niceDomain(values, includeZero)))
         }
     }
+
+    @Test
+    fun aPlotSpacesXByValueAndFitsYToItsPointsAndReferenceLines() {
+        val plot =
+            Plot(
+                title = "Plot",
+                xLabel = "x",
+                yLabel = "y",
+                series = listOf(Plot.Series("A", Plot.Mark.Points, listOf(Plot.Point(10.0, 27.0), Plot.Point(11.0, 25.0), Plot.Point(20.0, 30.0)))),
+                references = listOf(Plot.Reference("Limit", 40.0)),
+            )
+
+        val (x, y) = plotAxes(plot)
+
+        assertEquals(10.0..20.0, x.domain)
+        assertEquals(listOf(10.0, 12.5, 15.0, 17.5, 20.0), x.ticks)
+        assertEquals(25.0..40.0, y.domain)
+        assertEquals(listOf(25.0, 30.0, 35.0, 40.0), y.ticks)
+    }
+
+    @Test
+    fun pointNamesSitBesideTheirDotsWhenThereIsRoom() {
+        val labels = pointLabels(listOf(Offset(50f, 50f) to "Brazil", Offset(150f, 80f) to "Japan"), scene(), ::nameSize, unit = 1f)
+
+        assertEquals(emptyList<KeyEntry>(), labels.key)
+        assertEquals(listOf(LabelAnchor.Start, LabelAnchor.Start), labels.labels.map { it.anchor })
+        assertEquals(listOf("Brazil", "Japan"), labels.labels.map { it.text })
+    }
+
+    @Test
+    fun crowdedNamesMoveToANumberedKeyAndNoneIsDropped() {
+        val crowded = (0 until 10).map { Offset(150f + it * 0.5f, 80f) to "Country ${it + 1}" }
+
+        val labels = pointLabels(crowded, scene(), ::nameSize, unit = 1f)
+
+        assertEquals(crowded.map { it.second }, labels.key.map { it.label })
+        assertEquals((1..10).map(Int::toString), labels.labels.map { it.text })
+    }
+
+    @Test
+    fun aBareLineMarksOnlyItsEndAndOnlyBesideOtherSeries() {
+        assertEquals(listOf(false, false, true), (0..2).map { drawsDot(Plot.Mark.Line, it, 3, 2) })
+        assertEquals(listOf(false, false, false), (0..2).map { drawsDot(Plot.Mark.Line, it, 3, 1) })
+        assertTrue((0..2).all { drawsDot(Plot.Mark.LineWithPoints, it, 3, 1) && drawsDot(Plot.Mark.Points, it, 3, 1) })
+    }
+
+    private fun scene() = LabelScene(Rect(0f, 0f, 300f, 160f), emptyList(), emptyList())
+
+    private fun nameSize(name: String) = Size(name.length * 7f, 14f)
 
     @Test
     fun aDomainNearTheLargestNumberStaysDrawable() {

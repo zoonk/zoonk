@@ -19,7 +19,6 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf1ContentTeamInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOf2Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf2ContentBasis
 import com.zoonk.api.models.PlayableLibraryStepAnyOf2ContentOptionsInner
-import com.zoonk.api.models.PlayableLibraryStepAnyOf2ContentVisual
 import com.zoonk.api.models.PlayableLibraryStepAnyOf3Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf4ContentOneOf
 import com.zoonk.api.models.PlayableLibraryStepAnyOf4ContentOneOf1
@@ -41,6 +40,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfMinTolerance
 import com.zoonk.api.models.ScreenPicture
 import com.zoonk.api.models.StepMarks
+import kotlinx.serialization.json.JsonElement
 
 // The contract's names for each screen's content, so code reads by meaning, not by union position.
 typealias ActivityStepContent = PlayableLibraryStepAnyOfContent
@@ -74,7 +74,8 @@ typealias WorkedExampleStepContent = PlayableLibraryStepAnyOf8Content
 typealias LanguageExercise = PlayableLibraryStepAnyOf9Exercise
 typealias WordHints = PlayableLibraryStepAnyOf9WordHints
 typealias StepCitation = PlayableLibraryStepAnyOfCitation
-typealias StepVisual = PlayableLibraryStepAnyOf2ContentVisual
+/** A screen's or a decision's visual as the API sends it; the app reads it as a `LessonVisual`. */
+typealias StepVisual = JsonElement
 typealias StepBasis = PlayableLibraryStepAnyOf2ContentBasis
 typealias PictureDescription = PlayableLibraryStepAnyOfContentOneOfImage
 

@@ -30,6 +30,7 @@ fun formatAmount(
     compact: Boolean = false,
     maximumFractionDigits: Int? = null,
     signed: Boolean = false,
+    grouping: Boolean = true,
 ): String {
     val money = moneyUnit(unit)
     if (money != null) {
@@ -38,7 +39,7 @@ fun formatAmount(
     }
 
     val digits = maximumFractionDigits ?: fractionDigitsFor(value)
-    val number = if (compact) formatCompact(value, locale, digits) else formatNumber(value, locale, digits, signed = signed)
+    val number = if (compact) formatCompact(value, locale, digits) else formatNumber(value, locale, digits, signed, grouping)
     return withUnit(number, unit)
 }
 

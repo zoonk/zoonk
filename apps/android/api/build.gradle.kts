@@ -51,6 +51,12 @@ openApiGenerate {
             "SpokenAnswerRequest",
             "__schema0",
             "__schema1",
+            // A visual's kind picks its shape; the app reads it as its own `LessonVisual`, whose kinds it
+            // doesn't know yet draw nothing instead of failing the response they're in.
+            "ItemSetVisual",
+            "LessonVisual",
+            "PlayableLibraryStepAnyOf1ContentNodesInnerVisual",
+            "PlayableLibraryStepAnyOf2ContentVisual",
         ).associateWith { "kotlinx.serialization.json.JsonElement" } +
         // The response's copy of `LessonStepAnswer`, which differs only in refusing extra keys.
         mapOf(
