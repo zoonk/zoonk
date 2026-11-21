@@ -9343,6 +9343,7 @@ msgstr "Solo lo nuevo o difícil"
 
 #: src/onboarding/steps/level-choices.tsx
 #: src/onboarding/steps/placement-screens.tsx
+#: src/writing/writing-start.tsx
 msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "Aproximadamente {time}"

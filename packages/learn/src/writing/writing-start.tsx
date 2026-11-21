@@ -7,6 +7,7 @@ import { StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { SignUpMainAction } from "../_components/subscribe-gate";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions, TaskStopMessage } from "../_components/task-layout";
+import { useFormatDuration } from "../_utils/time-format";
 import { useFinishTask } from "../essay/use-finish-essay";
 import { FollowedRun } from "../generation/generation-follower";
 import { type GenerationRun, hasStopped } from "../generation/generation-run";
@@ -132,6 +133,7 @@ function WritingPromptWait({ run, unit }: { run: GenerationRun; unit?: WritingUn
 
 function StartMessage({ state, task }: { state: WritingStartState; task: TomorrowTask }) {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
   const writingTitle = useWritingTaskTitle();
 
   if ("status" in state && state.status === "signUpRequired") {
@@ -158,6 +160,9 @@ function StartMessage({ state, task }: { state: WritingStartState; task: Tomorro
   return (
     <StepHeader className="gap-3">
       <StepTitle>{writingTitle({ ...task, task: task.writingTask })}</StepTitle>
+      {task.minutes !== null && (
+        <StepDetail>{t("About {time}", { time: formatDuration(task.minutes) })}</StepDetail>
+      )}
     </StepHeader>
   );
 }

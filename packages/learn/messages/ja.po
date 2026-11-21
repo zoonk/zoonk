@@ -9343,6 +9343,7 @@ msgstr "知らないことや難しいことだけを学びます"
 
 #: src/onboarding/steps/level-choices.tsx
 #: src/onboarding/steps/placement-screens.tsx
+#: src/writing/writing-start.tsx
 msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "約{time}"
