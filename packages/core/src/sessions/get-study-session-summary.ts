@@ -194,7 +194,7 @@ export async function getStudySessionSummary({
     loadCeremony(userId),
     loadUnshownCertificates(userId),
     loadTomorrow({ session }),
-    withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
+    withExtraStudyCheck({ day: view, session, userId }),
     netScoredItemIds.length > 0
       ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
       : null,

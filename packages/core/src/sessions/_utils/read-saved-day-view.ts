@@ -65,15 +65,13 @@ export async function readSavedDayView({
     return view;
   }
 
+  const preparing = new Set(
+    view.blocks.filter((block) => block.preparing).map((block) => block.position),
+  );
+
   const review =
     !entitlement && view.nextBlockId === null
-      ? await planSavedMockReview({
-          preparing: new Set(
-            view.blocks.filter((block) => block.preparing).map((block) => block.position),
-          ),
-          session,
-          timeZone,
-        })
+      ? await planSavedMockReview({ preparing, session, timeZone })
       : null;
 
   const refill: { blocks: DayBlockInput[]; plannedMinutes: number } | null =
@@ -149,7 +147,13 @@ export async function readSavedDayView({
       ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
       : null,
     emptyDay: null,
-    extraTime: getExtraTime({ blocks: refill.blocks, current: view.current }),
+    extraTime: getExtraTime({
+      blocks: refill.blocks.map((block) => ({
+        preparing: preparing.has(block.position),
+        status: block.status,
+      })),
+      current: view.current,
+    }),
     minutes: getSessionMinutes({
       blocks: refill.blocks,
       dailyGoal: view.minutes.dailyGoal,

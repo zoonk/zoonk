@@ -11,7 +11,7 @@ import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { PRACTICE_MINUTES_PER_QUESTION, toMinutes } from "../block-minutes";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
-import { type ExtraTime } from "../extra-time";
+import { type ExtraTime, type UpNextDay, listsUpNext } from "../extra-time";
 import { type PlannedBlock } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
@@ -203,14 +203,16 @@ export async function planExtraBlocks({
 
 /** Offer more time only after checking it has actual work to add; expose those lessons before the tap. */
 export async function withExtraStudyCheck({
-  extraTime,
+  day,
   session,
   userId,
 }: {
-  extraTime: ExtraTime;
+  day: UpNextDay & { extraTime: ExtraTime };
   session: ExtraDay;
   userId: string;
 }): Promise<ExtraTime> {
+  const { extraTime } = day;
+
   if (!extraTime.available) {
     return extraTime;
   }
@@ -223,11 +225,13 @@ export async function withExtraStudyCheck({
     return { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" };
   }
 
-  const lessons = planned.flatMap((block) =>
-    block.kind === "learn"
-      ? [{ minutes: block.estimatedMinutes, title: block.payload.title ?? "" }]
-      : [],
-  );
+  const lessons = listsUpNext(day)
+    ? planned.flatMap((block) =>
+        block.kind === "learn"
+          ? [{ minutes: block.estimatedMinutes, title: block.payload.title ?? "" }]
+          : [],
+      )
+    : [];
 
   return { ...extraTime, lessons };
 }

@@ -201,7 +201,7 @@ export async function loadStudySessionView({
   });
 
   const [extraTime, catchUp] = await Promise.all([
-    withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
+    withExtraStudyCheck({ day: view, session, userId }),
     loadCatchUpView({
       blocks: session.blocks,
       dailyMinutes: session.goal?.dailyMinutes ?? 0,

@@ -117,16 +117,17 @@ export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status">
 export function toStudySessionView({
   blockViews: blocks,
   ...input
-}: Omit<DayViewFieldsInput, "session" | "missions" | "sessionBar"> & {
+}: Omit<DayViewFieldsInput, "missions" | "preparing" | "session" | "sessionBar"> & {
   blockViews: StudyBlockView[];
   missions: Mission[];
   session: StudySessionRow;
 }): StudySessionView {
   const { session } = input;
   const next = getNextDayBlock(blocks);
+  const preparing = new Set(blocks.flatMap((block) => (block.preparing ? [block.position] : [])));
 
   return withDayState({
-    ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
+    ...toDayViewFields({ ...input, preparing, sessionBar: getSessionBar(session.blocks) }),
     blocks,
     id: session.id,
     missions: input.missions,

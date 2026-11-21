@@ -84,6 +84,7 @@ export async function loadUnstartedDayView({
     ...reservation,
     missions,
     outlines: reservation.lessonRoom ? (day.plan.outlines ?? "idle") : null,
+    preparing: day.preparing,
     session: {
       blocks,
       freshStart: day.input.freshStart,
@@ -110,11 +111,7 @@ export async function loadUnstartedDayView({
       readItems: () => readCatchUpItems(userId, goal.id),
       selectedItems,
     }),
-    withExtraStudyCheck({
-      extraTime: fields.extraTime,
-      session: { blocks, goal, goalId: goal.id },
-      userId,
-    }),
+    withExtraStudyCheck({ day: fields, session: { blocks, goal, goalId: goal.id }, userId }),
   ]);
 
   const previewCatchUp = catchUp

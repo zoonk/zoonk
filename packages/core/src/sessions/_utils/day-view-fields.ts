@@ -24,6 +24,8 @@ export type DayViewFieldsInput = {
   lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
   outlines?: DayOutlines;
+  /** Positions of the day's mocks whose questions aren't ready yet. */
+  preparing?: ReadonlySet<number>;
   sessionBar: StudySessionView["sessionBar"];
   session: {
     blocks: readonly DayBlockInput[];
@@ -37,6 +39,8 @@ export type DayViewFieldsInput = {
   timeZone?: string;
   week: SessionWeek;
 };
+
+const NO_POSITIONS: ReadonlySet<number> = new Set();
 
 export function getNextDayBlock<
   Block extends { status: DayBlockInput["status"]; preparing: boolean },
@@ -58,6 +62,7 @@ export function toDayViewFields({
   lessonRoom = false,
   missions,
   outlines = null,
+  preparing = NO_POSITIONS,
   session,
   sessionBar,
   timeZone = "UTC",
@@ -80,7 +85,13 @@ export function toDayViewFields({
     emptyDay: lessons.emptyDay,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
-    extraTime: getExtraTime({ blocks: session.blocks, current }),
+    extraTime: getExtraTime({
+      blocks: session.blocks.map((block) => ({
+        preparing: preparing.has(block.position),
+        status: block.status,
+      })),
+      current,
+    }),
     freshStart: session.freshStart,
     fullMeal: {
       bonus: getMissionBonus(missions),

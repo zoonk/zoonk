@@ -16,6 +16,7 @@ import {
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
 import { loadCompletionQueue } from "./_utils/completion-queue";
+import { addExtraStudyBlock } from "./add-extra-study-block";
 import { toBlockPayload } from "./block-payload";
 import { toDayBlockRef } from "./day-block";
 import { getSessionPageView } from "./get-session-page-view";
@@ -202,7 +203,7 @@ describe("a saved day whose last scheduled mock becomes unavailable", () => {
     expect(queue.blocks.find((block) => block.id === mock.id)?.preparing).toBe(true);
   });
 
-  it("ends the session for now after the fallback review while its mock is still preparing", async () => {
+  it("ends the session for now after the fallback review, and its mock leads again once ready", async () => {
     const { goal, mock, reserve, session } = await savedDay();
 
     await Promise.all([
@@ -239,6 +240,8 @@ describe("a saved day whose last scheduled mock becomes unavailable", () => {
       summary: { finished: true, status: "active" },
     });
 
+    const extra = await addExtraStudyBlock({ input: {}, sessionId: session.id });
+    expect(extra).toMatchObject({ status: "ready" });
     await prisma.item.update({ data: { retiredAt: null }, where: { id: reserve.id } });
 
     await expect(getSessionPageView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({

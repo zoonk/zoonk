@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { seedPersonaCopy } from "../seed/seed";
 import { getTodayView } from "../view-models/today/get-today-view";
+import { addExtraStudyBlock } from "./add-extra-study-block";
 import { toDayBlockRef } from "./day-block";
 import { openStudyDay } from "./open-study-day";
 
@@ -65,6 +66,90 @@ describe("Today on a preparing mock day", () => {
       status: "opened",
       target: { kind: "review" },
       targetStatus: "next",
+    });
+  });
+
+  it("offers Ana's next lessons once only her preparing mock is left", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-20T15:00:00Z"));
+    const localDate = new Date("2026-11-20");
+    const copyKey = randomUUID();
+
+    const { goalId, userId } = await seedPersonaCopy({
+      copyKey,
+      email: `preparing-mock-up-next-${copyKey}@zoonk.test`,
+      persona: "exam",
+    });
+
+    mockSession(userId);
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: userId, status: "active" },
+    });
+
+    const mock = await prisma.planItem.findFirstOrThrow({
+      orderBy: { scheduledFor: "asc" },
+      where: { kind: "mock", plan: { goalId }, scheduledFor: { gt: localDate } },
+    });
+
+    await prisma.planItem.update({ data: { scheduledFor: localDate }, where: { id: mock.id } });
+    await prisma.studySession.deleteMany({ where: { goalId, localDate } });
+    const before = await getTodayView({ goalId });
+
+    if (before.status !== "ready") {
+      throw new Error(before.status);
+    }
+
+    const review = before.today.session.blocks.find(
+      (block) => block.position === before.today.session.nextPosition,
+    );
+
+    const opened = await openStudyDay({
+      goalId,
+      shownDate: "2026-11-20",
+      target: { kind: "next", shown: toDayBlockRef(review!) },
+    });
+
+    if (opened.status !== "opened" || opened.opening?.kind !== "session") {
+      throw new Error(opened.status);
+    }
+
+    const { sessionId } = opened.opening;
+
+    await prisma.studySessionBlock.updateMany({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { kind: "review", sessionId },
+    });
+
+    const after = await getTodayView({ goalId });
+
+    if (after.status !== "ready") {
+      throw new Error(after.status);
+    }
+
+    const day = after.today.session;
+
+    expect(day).toMatchObject({ nextPosition: null, state: "waiting" });
+
+    expect(day.blocks).toContainEqual(
+      expect.objectContaining({ kind: "checkpoint", preparing: true, status: "pending" }),
+    );
+
+    expect(day.extraTime.available).toBe(true);
+    expect(day.extraTime.lessons.length).toBeGreaterThan(0);
+
+    const added = await addExtraStudyBlock({ input: {}, sessionId });
+    expect(added).toMatchObject({ block: { kind: "learn" }, status: "ready" });
+
+    const next = await getTodayView({ goalId });
+
+    if (next.status !== "ready" || added.status !== "ready") {
+      throw new Error(next.status);
+    }
+
+    expect(next.today.session).toMatchObject({
+      nextPosition: added.block.position,
+      state: "underway",
     });
   });
 });
