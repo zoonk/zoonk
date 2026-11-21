@@ -70,7 +70,7 @@ internal fun result(json: String): WritingResultOutput = ApiJson.decodeFromStrin
 
 internal const val WRITING =
     """{"charactersPerLine":55,"keySource":"practiceKey","lines":30,"minimumWords":30,"points":30,"taskKey":"short",
-    "title":"Internal and external control","unit":"answer",
+    "title":"Internal and external control","unit":"answer","partMinimum":{"max":100,"minimum":{"unit":"points","value":50}},
     "criteria":[{"id":"a1","name":"Internal and external control","points":9.5},{"id":"a2","name":"The TCU's powers","points":9.5},
     {"id":"presentation","name":"Presentation and structure","points":11}]}"""
 

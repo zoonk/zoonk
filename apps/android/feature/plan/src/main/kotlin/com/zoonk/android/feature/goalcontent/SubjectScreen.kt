@@ -3,6 +3,7 @@ package com.zoonk.android.feature.goalcontent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -400,7 +401,8 @@ private fun WriteButton(
         }
         return
     }
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    // The bar's modifier sizes the action within the bar, so it goes on the outermost piece.
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (writeNow.failed) {
             Text(
                 stringResource(R.string.essay_finish_failed),
@@ -409,7 +411,7 @@ private fun WriteButton(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        Button(onClick = { writeNow.write(null) }, modifier = modifier, busy = writeNow.busy, size = ButtonSize.Large) {
+        Button(onClick = { writeNow.write(null) }, modifier = Modifier.fillMaxWidth(), busy = writeNow.busy, size = ButtonSize.Large) {
             Text(stringResource(R.string.essay_write))
         }
     }

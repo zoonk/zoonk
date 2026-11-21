@@ -9,6 +9,8 @@
     <string name="essay_range">%1$s–%2$s</string>
     <!-- A score on its scale, such as "16–19 of 30". %1$s is the score or its range, %2$s the most points. -->
     <string name="essay_points_of">%1$s of %2$s</string>
+    <!-- Beside a large score, its scale, such as "of 30" in "16–19 of 30". -->
+    <string name="essay_of_max">of %1$s</string>
     <!-- A criterion's score, such as "7.13 of 9.5". -->
     <string name="essay_score_of">%1$s of %2$s</string>
     <!-- A written question or test the learner hasn't answered yet, so it has no estimate. -->

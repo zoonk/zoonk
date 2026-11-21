@@ -193,7 +193,6 @@ private fun WritingProgress(grade: WritingGrade) {
         if (fixed.isNotEmpty()) {
             Text(
                 stringResource(R.string.essay_fixed, fixed.joinToString(", ") { grade.criterionName(it) }),
-                color = MaterialTheme.colorScheme.tertiary,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }

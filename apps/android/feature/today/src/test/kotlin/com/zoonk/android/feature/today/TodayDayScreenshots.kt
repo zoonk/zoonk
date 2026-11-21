@@ -248,6 +248,7 @@ class TodayDayScreenshots {
                         "title" to "Answer in a 10-line paragraph",
                         "subject" to "Written test",
                         "estimatedMinutes" to 8,
+                        "writingUnit" to "drill",
                         "writingAvailability" to
                             buildJsonObject {
                                 put("status", "tomorrow")

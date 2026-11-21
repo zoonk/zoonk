@@ -100,6 +100,18 @@ class MockChooserScreenshots {
         }
     }
 
+    /** A CGU-like exam: an objective test in the morning and a written one in the afternoon. */
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun phoneTwoTests() = capture("08-mock-options", options = TWO_TESTS)
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun phoneTwoTestsAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("08-mock-options-font200", options = TWO_TESTS)
+    }
+
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun phoneWithoutPlus() = capture("chooser-phone-free", options = """$OPTIONS,"access":"plusRequired"""")

@@ -69,6 +69,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitSubject
@@ -81,6 +82,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
@@ -621,8 +623,8 @@ internal fun WritingRefused(
         task?.let { (title, minutes) ->
             Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 SectionHeader(stringResource(R.string.essay_left_for_tomorrow))
-                Column {
-                    HorizontalDivider()
+                Column(Modifier.bleed(LIST_ITEM_INSET)) {
+                    HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
                     ListRow(
                         headline = { Text(title) },
                         leading = { KindMark(LearnKind.Essay) },
@@ -638,7 +640,7 @@ internal fun WritingRefused(
                                 null
                             },
                     )
-                    HorizontalDivider()
+                    HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
                 }
             }
         }

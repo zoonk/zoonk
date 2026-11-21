@@ -16,11 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
-import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -76,10 +79,27 @@ fun PointsReadout(
     max: Double,
     modifier: Modifier = Modifier,
 ) {
-    Readout(
-        stringResource(R.string.essay_points_of, pointsRange(low, high), formatPoints(max, currentLocale())),
+    // The range keeps its dash at the number's size; only the scale beside it is small.
+    val large =
+        MaterialTheme.typography.displaySmall
+            .withTabularFigures()
+            .copy(fontWeight = FontWeight.SemiBold)
+    val scale =
+        SpanStyle(
+            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    val range = pointsRange(low, high)
+    val ofMax = stringResource(R.string.essay_of_max, formatPoints(max, currentLocale()))
+    Text(
+        buildAnnotatedString {
+            append(range)
+            append(" ")
+            withStyle(scale) { append(ofMax) }
+        },
         modifier,
-        style = MaterialTheme.typography.displaySmall,
+        style = large,
     )
 }
 
