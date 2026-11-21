@@ -51,7 +51,7 @@ export function familyLabel(family: string): string {
 }
 
 export function preferenceLeanLabel(side: Side): string {
-  return `Every model reader family leaned toward the ${SIDE_LABELS[side].toLowerCase()} model.`;
+  return `Among reads that picked a side, every model family favored the ${SIDE_LABELS[side].toLowerCase()} model.`;
 }
 
 export function modelName(model: string): string {
