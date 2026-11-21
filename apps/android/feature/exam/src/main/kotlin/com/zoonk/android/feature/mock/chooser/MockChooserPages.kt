@@ -145,12 +145,17 @@ internal fun PracticeChooser(
         note =
             when {
                 gated -> ({ MockGate() })
-                preparing -> ({
-                    key(picked) {
-                        MockPreparingNote(stringResource(R.string.mock_preparing_chooser_title), viewModel.paperWait, readAgain)
+
+                preparing -> (
+                    {
+                        key(picked) {
+                            MockPreparingNote(stringResource(R.string.mock_preparing_chooser_title), viewModel.paperWait, readAgain)
+                        }
                     }
-                })
+                )
+
                 failed -> ({ StartFailed() })
+
                 else -> null
             },
         bar = { TaskActions { main -> action(main) } },

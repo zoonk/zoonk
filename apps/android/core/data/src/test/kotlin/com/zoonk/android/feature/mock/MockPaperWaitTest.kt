@@ -27,11 +27,10 @@ class MockPaperWaitTest {
     fun followsTheRunOnceItTakesThePaper() =
         runTest {
             val runs = WritingRuns("writeMockQuestions", "mockPaperReady")
+            val starting = MockWriting(null, MockWriting.Status.STARTING)
+            val writing = MockWriting("paper-run", MockWriting.Status.WRITING)
             var reads = 0
-            val wait =
-                wait(runs) {
-                    if (++reads < 3) MockWriting(null, MockWriting.Status.STARTING) else MockWriting("paper-run", MockWriting.Status.WRITING)
-                }
+            val wait = wait(runs) { if (++reads < 3) starting else writing }
 
             wait.start()
             runCurrent()

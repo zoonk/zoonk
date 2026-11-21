@@ -146,7 +146,15 @@ class ChallengeScreenshots {
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val viewModel = ChallengeViewModel(challenge.planItemId, null, ChallengeStore(api, cache) { "UTC" }, source, SavedStateHandle(), MockStore(mocks, cache))
+        val viewModel =
+            ChallengeViewModel(
+                challenge.planItemId,
+                null,
+                ChallengeStore(api, cache) { "UTC" },
+                source,
+                SavedStateHandle(),
+                MockStore(mocks, cache),
+            )
         if (moved) viewModel.moveToMonday()
 
         rule.setContent {
@@ -222,8 +230,7 @@ class ChallengeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
-    fun phoneMockPreparingDark() =
-        show("phone-mock-preparing-dark-more-contrast", *mockToday, mocks = writingPaperApi(null), dark = true)
+    fun phoneMockPreparingDark() = show("phone-mock-preparing-dark-more-contrast", *mockToday, mocks = writingPaperApi(null), dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

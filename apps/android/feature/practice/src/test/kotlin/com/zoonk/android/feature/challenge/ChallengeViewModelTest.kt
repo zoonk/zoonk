@@ -110,7 +110,16 @@ class ChallengeViewModelTest {
                 override suspend fun status(id: String) = Generation.Status.COMPLETED
             }
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return ChallengeViewModel(challenge.planItemId, "session", ChallengeStore(api, cache) { "UTC" }, source, saved, MockStore(FakeMockApi(null), cache))
+        return ChallengeViewModel(
+            challenge.planItemId,
+            "session",
+            ChallengeStore(api, cache) {
+                "UTC"
+            },
+            source,
+            saved,
+            MockStore(FakeMockApi(null), cache),
+        )
     }
 
     @Test

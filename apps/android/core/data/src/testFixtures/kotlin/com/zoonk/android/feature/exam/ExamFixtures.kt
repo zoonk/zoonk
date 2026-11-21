@@ -8,9 +8,9 @@ import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.feature.mock.MockApi
 import com.zoonk.api.ApiJson
-import com.zoonk.api.models.Generation
 import com.zoonk.api.models.ExamResult
 import com.zoonk.api.models.ExamView
+import com.zoonk.api.models.Generation
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockWriting
 import kotlinx.coroutines.awaitCancellation
