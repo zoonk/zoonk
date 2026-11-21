@@ -263,6 +263,7 @@ export const visitorsChart: ChartVisual = {
   chart: "line",
   series: [{ name: "Visitantes", values: [10_050, 10_120, 10_200, 10_310, 10_380] }],
   title: "Visitantes por mês, com o eixo a partir de 10.000",
+  unit: null,
   valueLabel: "Visitantes",
 };
 
@@ -272,6 +273,7 @@ export const japaneseRegionsChart: ChartVisual = {
   categoryLabel: "地方",
   series: [{ name: "回答数", values: [18, 42, 64, 30, 22] }],
   title: "地方別の回答数",
+  unit: null,
   valueLabel: "回答数",
 };
 
