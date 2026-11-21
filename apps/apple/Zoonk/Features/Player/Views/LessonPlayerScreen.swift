@@ -301,7 +301,7 @@ private struct LessonPlayerContent: View {
           LessonCompletionView(
             completion: completion, correct: state.correctCount, answered: state.answeredCount,
             soundsEnabled: store.soundsEnabled, guestEnding: guestEnding, lesson: store.lesson,
-            ending: ending
+            ending: ending, dismissPlacementOffer: store.dismissPlacementOffer
           ) {
             Task { await store.finish() }
           } close: {

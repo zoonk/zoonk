@@ -976,6 +976,22 @@ final class LessonPlayerStore {
     Task { await saveCompletion() }
   }
 
+  /// "Not now" on the lesson end's offer to check the level, saved with the run that made it; false
+  /// when it didn't save.
+  func dismissPlacementOffer() async -> Bool {
+    guard let runId = state?.runId else {
+      return false
+    }
+
+    let api = api
+    let lessonId = lessonId
+    let dismissed = await write { token in
+      try await api.dismissPlacementOffer(id: lessonId, runId: runId, token: token)
+    }
+
+    if case .done(true) = dismissed { return true } else { return false }
+  }
+
   func finish() async {
     state?.completionSaving()
     await saveCompletion()

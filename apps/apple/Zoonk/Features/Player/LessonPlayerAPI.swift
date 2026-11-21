@@ -297,6 +297,9 @@ struct LessonPlayerAPI: Sendable {
           finishedChapter: completion.finishedChapter?.value1,
           planReveal: completion.planReveal.map {
             PlanRevealLead(goalID: $0.goalId, goalTitle: $0.goalTitle, planReady: $0.planReady)
+          },
+          placementOffer: completion.placementOffer.flatMap {
+            try? PracticeJSON.recode($0, as: LevelCheckOffer.self)
           }))
     case .unprocessableContent:
       return .incomplete
@@ -304,6 +307,26 @@ struct LessonPlayerAPI: Sendable {
       throw APIError.unauthorized
     case .badRequest, .notFound, .internalServerError, .undocumented:
       return .failed
+    }
+  }
+
+  /// "Not now" on the lesson end's offer to check the level: the same offer waits until something
+  /// new happens. False when it didn't save.
+  func dismissPlacementOffer(id: String, runId: String, token: String) async throws -> Bool {
+    let body = Components.Schemas.LibraryLessonCompletionInput(
+      dismissPlacementOffer: true, runId: runId, timeZone: TimeZone.current.identifier)
+
+    let output = try await clients.perform(token: token) {
+      try await $0.createLibraryLessonCompletion(path: .init(lessonId: id), body: .json(body))
+    }
+
+    switch output {
+    case .ok:
+      return true
+    case .unauthorized:
+      throw APIError.unauthorized
+    default:
+      return false
     }
   }
 
