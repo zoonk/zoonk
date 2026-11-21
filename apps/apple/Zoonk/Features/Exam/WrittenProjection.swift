@@ -32,6 +32,13 @@ struct WrittenPartPoints: Hashable, Decodable, Sendable {
   var tasks: [Task]
 
   var shownScale: WritingScale { scale ?? (range != nil ? .points : .levels) }
+
+  /// The minimum in the part's points, which its range is in: a share of the part becomes points.
+  var minimumPoints: Double? {
+    guard let minimum else { return nil }
+    guard minimum.unit == .percent else { return minimum.value }
+    return max.map { minimum.value / 100 * $0 }
+  }
 }
 
 /// Whether a written part can be estimated in points yet, or its answers are graded by level.
@@ -99,14 +106,14 @@ struct WrittenProjectionSections: View {
           .typeStyle(.stepHeading)
           if let minimum = part.minimum {
             Group {
-              if minimum.unit == .percent {
+              if let points = part.minimumPoints {
                 Text(
-                  "\(part.name) asks for \(WritingLabels.share(minimum.value / 100)) of its points, whatever your other scores.",
-                  tableName: "Plan", comment: "Why a part's own minimum matters, as a share")
+                  "\(part.name) needs \(WritingLabels.points(points)) points, whatever your other scores.",
+                  tableName: "Plan")
               } else {
                 Text(
-                  "\(part.name) asks for \(WritingLabels.points(minimum.value)) points, whatever your other scores.",
-                  tableName: "Plan", comment: "Why a part's own minimum matters")
+                  "\(part.name) needs \(WritingLabels.share(minimum.value / 100)) of its points, whatever your other scores.",
+                  tableName: "Plan")
               }
             }
             .foregroundStyle(.mutedForeground)
@@ -130,9 +137,7 @@ struct WrittenProjectionSections: View {
         ScoreRow(
           name: Text(part.name), range: part.range, max: part.max, decimals: part.decimals,
           levels: part.shownScale == .levels,
-          minimum: part.minimum.flatMap { minimum in
-            part.max.map { minimum.unit == .percent ? minimum.value / 100 * $0 : minimum.value }
-          }
+          minimum: part.minimumPoints
         ) {
           PartStanding(part: part)
         }
@@ -173,11 +178,11 @@ struct PointsReadout: View {
 
   var body: some View {
     HStack(alignment: .lastTextBaseline, spacing: 6) {
-      Text(verbatim: WritingLabels.range(range, decimals: decimals, headline: true))
+      Text(verbatim: WritingLabels.range(range, decimals: decimals))
         .typeStyle(.momentReadout)
         .monospacedDigit()
       Text(
-        "of \(WritingLabels.points(max))", tableName: "Essay",
+        "of \(WritingLabels.points(max, decimals: decimals))", tableName: "Essay",
         comment: "After a score: the question's total, like 'of 30'"
       )
       .typeStyle(.body)
@@ -216,6 +221,7 @@ private struct ScoreRow<Detail: View>: View {
         if let range, let max {
           Text(verbatim: WritingLabels.range(range, of: max, decimals: decimals))
             .typeStyle(.data)
+            .foregroundStyle(Color(.foreground))
         } else if levels {
           Text("Graded by level", tableName: "Plan")
             .typeStyle(.note)
@@ -248,7 +254,7 @@ private struct PartStanding: View {
   let part: WrittenPartPoints
 
   var body: some View {
-    if let minimum = part.minimum?.value, let range = part.range {
+    if let minimum = part.minimumPoints, let range = part.range {
       let points = WritingLabels.points(minimum)
 
       switch part.standing {

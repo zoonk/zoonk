@@ -40,12 +40,13 @@ private struct WritingPointsSection: View {
         VStack(alignment: .leading, spacing: 2) {
           HStack(alignment: .lastTextBaseline, spacing: 6) {
             Text(
-              verbatim: WritingLabels.range(points.total, decimals: points.decimals, headline: true)
+              verbatim: WritingLabels.range(points.total, decimals: points.decimals)
             )
             .typeStyle(.momentReadout)
             .monospacedDigit()
             Text(
-              "of \(WritingLabels.points(points.max))", tableName: "Essay",
+              "of \(WritingLabels.points(points.max, decimals: points.decimals))",
+              tableName: "Essay",
               comment: "After a score: the question's total, like 'of 30'"
             )
             .typeStyle(.body)
@@ -82,6 +83,7 @@ private struct WritingPointsSection: View {
         LabeledContent {
           Text(verbatim: WritingLabels.range(points.content, decimals: points.decimals))
             .typeStyle(.data)
+            .foregroundStyle(Color(.foreground))
         } label: {
           Text("Content", tableName: "Essay", comment: "A written answer's content points")
         }
@@ -89,6 +91,7 @@ private struct WritingPointsSection: View {
         LabeledContent {
           Text(verbatim: WritingLabels.deduction(points.deduction, decimals: 1))
             .typeStyle(.data)
+            .foregroundStyle(Color(.foreground))
         } label: {
           VStack(alignment: .leading, spacing: 2) {
             Text("Language errors", tableName: "Essay", comment: "Points taken off for language")
@@ -167,8 +170,10 @@ private struct WritingProgressSection: View {
   var body: some View {
     let fixed = grade.progress?.fixed ?? []
     let persists = grade.progress?.persists ?? []
+    // A zeroed answer's one step is the rule it broke, not a criterion still short.
+    let isZeroed = grade.points?.zeroReason != nil || grade.nextStep?.kind == .zero
 
-    if !fixed.isEmpty || !persists.isEmpty {
+    if !isZeroed, !fixed.isEmpty || !persists.isEmpty {
       Section {
         if !fixed.isEmpty {
           Text(
@@ -355,21 +360,37 @@ private struct WritingCriteriaSection: View {
         row(criterion)
       }
 
-      DisclosureGroup(isExpanded: $showsComments) {
-        ForEach(grade.criteria) { criterion in
-          VStack(alignment: .leading, spacing: 6) {
-            Text(criterion.name)
-              .typeStyle(.rowTitle)
-            if let quote = criterion.quote {
-              QuotedPassage(quote)
-                .foregroundStyle(.mutedForeground)
-            }
-            Text(criterion.comment)
-              .typeStyle(.reading)
-          }
-        }
+      Button {
+        showsComments = true
       } label: {
         Text("See comments", tableName: "Essay", comment: "Opens the comment on each criterion")
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+      .sheet(isPresented: $showsComments) {
+        NavigationStack {
+          ZoonkList {
+            ForEach(grade.criteria) { criterion in
+              VStack(alignment: .leading, spacing: 6) {
+                Text(criterion.name)
+                  .typeStyle(.rowTitle)
+                if let quote = criterion.quote {
+                  QuotedPassage(quote)
+                    .foregroundStyle(.mutedForeground)
+                }
+                Text(criterion.comment)
+                  .typeStyle(.reading)
+              }
+            }
+          }
+          .navigationTitle(
+            String(localized: "Comments", table: "Essay", comment: "The criteria comments sheet")
+          )
+          .navigationBarTitleDisplayMode(.inline)
+          .sheetClose { showsComments = false }
+        }
+        .presentationDetents([.medium, .large])
+        .zoonkSheet()
       }
     } header: {
       SectionTitle(Text("Criteria", tableName: "Essay", comment: "A written answer's criteria"))

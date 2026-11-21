@@ -78,6 +78,7 @@ private struct SubjectWrittenPoints: View {
           if let range = task.range, let max = task.max {
             Text(verbatim: WritingLabels.range(range, of: max, decimals: decimals))
               .typeStyle(.data)
+              .foregroundStyle(Color(.foreground))
           } else {
             Text("Not measured yet", tableName: "Plan", comment: "A part with no graded answer yet")
               .typeStyle(.note)
@@ -160,6 +161,7 @@ private struct SubjectWrittenTrend: View {
           TrendBars(values: values)
           Text(verbatim: last)
             .typeStyle(.data)
+            .foregroundStyle(Color(.foreground))
             .frame(minWidth: 56, alignment: .trailing)
         }
       } label: {
@@ -214,6 +216,7 @@ private struct SubjectWrittenAnswers: View {
               if let range = answer.range {
                 Text(verbatim: WritingLabels.range(range, decimals: answer.decimals))
                   .typeStyle(.data)
+                  .foregroundStyle(Color(.foreground))
               }
             }
             .disclosureChevron()

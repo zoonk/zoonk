@@ -133,6 +133,8 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
   let readableWidth: CGFloat
   let spacing: CGFloat
   var isSpread = true
+  /// The bar's one line, over the page with the actions.
+  var note: BarNote?
   @ViewBuilder let header: () -> Header
   @ViewBuilder let stimulus: () -> Stimulus
   @ViewBuilder let response: () -> Response
@@ -144,9 +146,10 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
         .pageHeader(header)
     } secondary: {
       ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: response)
+        .barNote(note)
         .safeAreaBar(edge: .bottom, content: actions)
     } single: {
-      QuestionColumn(readableWidth: readableWidth, spacing: spacing, header: header) {
+      QuestionColumn(readableWidth: readableWidth, spacing: spacing, note: note, header: header) {
         stimulus()
         response()
       } actions: {
@@ -161,6 +164,7 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
 struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
+  var note: BarNote?
   @ViewBuilder let header: () -> Header
   @ViewBuilder let content: () -> Content
   @ViewBuilder let actions: () -> Actions
@@ -168,6 +172,7 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   var body: some View {
     ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: content)
       .pageHeader(header)
+      .barNote(note)
       .safeAreaBar(edge: .bottom, content: actions)
   }
 }

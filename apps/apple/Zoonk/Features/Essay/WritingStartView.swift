@@ -114,7 +114,9 @@ struct WritingStartView: View {
       Button {
         router.showRoot(of: .today)
       } label: {
-        Text("Today", tableName: "Essay", comment: "Leaves a finished written task for Today")
+        Text(
+          "Continue", tableName: "Essay",
+          comment: "Goes on after a written task the exam notice removed")
       }
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)

@@ -273,6 +273,8 @@ struct EssayView: Hashable, Decodable, Sendable {
     case skipped
   }
 
+  /// The start the learner is writing under, saved draft or not; a rewrite's once it starts.
+  var admissionId: String?
   var blockId: String
   var context: String?
   var draft: WritingDraft?
@@ -283,6 +285,8 @@ struct EssayView: Hashable, Decodable, Sendable {
   var sessionId: String
   var status: Status
   var writing: WritingPrompt
+  /// Which question of the written test this is; nil once the notice removed it.
+  var writingTask: WritingTaskName?
 
   var isClosed: Bool { status == .completed || status == .skipped }
 }
