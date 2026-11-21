@@ -13,22 +13,19 @@ import { useFormatPointsRange } from "../../writing/writing-labels";
 
 type Range = { high: number; low: number };
 
-/** What the projection contract will carry: whether a part can be estimated in points. */
-type Part = WrittenProjection["parts"][number] & { scale?: "levels" | "points" };
+type Part = WrittenProjection["parts"][number];
 
 const PERCENT = 100;
 const HALF = 0.5;
 
-/**
- * Until the server says (`scale`), a part measured in points can be; anything else is graded by
- * level, as every rubric is until its evaluation passes.
- */
+/** A server from before `scale` says a part is in points by having measured it in points. */
 function getPartScale(part: Part): "levels" | "points" {
   return part.scale ?? (part.range ? "points" : "levels");
 }
 
 function ScoreRow({
   children,
+  decimals,
   levels = false,
   max,
   minimumShare = null,
@@ -36,6 +33,7 @@ function ScoreRow({
   range,
 }: {
   children?: React.ReactNode;
+  decimals?: number;
   /** Graded by level: no points to wait for, so no meter holds their place. */
   levels?: boolean;
   max: number | null;
@@ -49,7 +47,10 @@ function ScoreRow({
 
   const value = () => {
     if (range && max !== null) {
-      return t("{range} of {max}", { max: formatScore(max), range: formatRange(range) });
+      return t("{range} of {max}", {
+        max: formatScore(max),
+        range: formatRange(range, { decimals }),
+      });
     }
 
     return levels ? t("Graded by level") : t("Not measured yet");
@@ -104,7 +105,7 @@ function Standing({ part }: { part: Part }) {
         <XIcon aria-hidden="true" className="size-3.5" />
         {t("{points} points short of the {minimum} needed", {
           minimum: formatScore(minimum),
-          points: formatRange(short),
+          points: formatRange(short, { decimals: part.decimals }),
         })}
       </p>
     );
@@ -252,6 +253,7 @@ export function WrittenProjectionScore({
         </ScoreRow>
         {projection.parts.map((part) => (
           <ScoreRow
+            decimals={part.decimals}
             key={part.name}
             levels={getPartScale(part) === "levels"}
             max={part.max}

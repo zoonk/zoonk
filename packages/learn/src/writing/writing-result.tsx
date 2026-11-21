@@ -3,17 +3,23 @@
 import { type WritingPrompt, type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { PageSectionFooter, PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
-import { useFormatRange } from "../_utils/range";
 import { ESSAY_QUOTE_CLASS, useFormatScore } from "../essay/essay-labels";
 import { getNextStep } from "./next-step";
-import { LEVEL_CELLS, LEVEL_CELL_COUNT, useLevelName } from "./writing-labels";
+import {
+  LEVEL_CELLS,
+  LEVEL_CELL_COUNT,
+  fixedDecimals,
+  useFormatPointsRange,
+  useLevelName,
+} from "./writing-labels";
 import { NextStepCard, NothingLeftComment } from "./writing-next-step";
 import { PointsHeader } from "./writing-points-header";
 import { WritingMarkedText } from "./writing-text";
+import { useZeroStepCopy } from "./writing-zero-step";
 
 type Points = Extract<WritingResult, { kind: "points" }>;
 
@@ -27,6 +33,7 @@ function WritingNextStep({
   text: string;
 }) {
   const t = useExtracted();
+  const zeroCopy = useZeroStepCopy();
   const step = getNextStep({ grade, text });
 
   if (step.kind === "done") {
@@ -52,21 +59,25 @@ function WritingNextStep({
     );
   }
 
-  const fallbackTitle =
-    step.kind === "zero"
-      ? t({
-          description:
-            "The next step of a written answer that scored zero, for example for being off the topic.",
-          message: "Answer the question asked",
-        })
-      : t("What to rewrite");
+  if (step.kind === "zero") {
+    const copy = zeroCopy(step.zeroKind);
+
+    return (
+      <NextStepCard
+        example={null}
+        quote={null}
+        text={copy?.text ?? (step.text || t("Rewrite it following the rule above."))}
+        title={copy?.title ?? t("Answer the question asked")}
+      />
+    );
+  }
 
   return (
     <NextStepCard
       example={step.example}
       quote={step.quote}
       text={step.text}
-      title={step.title ?? fallbackTitle}
+      title={step.title ?? t("What to rewrite")}
     />
   );
 }
@@ -173,19 +184,24 @@ function useCriteriaSource(prompt: WritingPrompt, grade: WritingResult): string 
 
 function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: WritingPrompt }) {
   const t = useExtracted();
+  const format = useFormatter();
   const formatScore = useFormatScore();
-  const formatRange = useFormatRange();
+  const formatPoints = useFormatPointsRange();
   const levelName = useLevelName();
   const source = useCriteriaSource(prompt, grade);
   const rows = grade.kind === "points" ? grade.rows : [];
 
-  const scoreLabel = (row: Points["rows"][number]) =>
-    t("{score} of {max}", {
-      max: formatScore(row.max),
-      score: row.range
-        ? formatRange(formatScore(row.range.low), formatScore(row.range.high))
-        : formatScore(row.earned),
+  const scoreLabel = (row: Points["rows"][number]) => {
+    const decimals = row.decimals ?? (grade.kind === "points" ? grade.decimals : undefined);
+
+    return t("{score} of {max}", {
+      max:
+        decimals === undefined
+          ? formatScore(row.max)
+          : format.number(row.max, fixedDecimals(decimals)),
+      score: formatPoints(row.range ?? { high: row.earned, low: row.earned }, { decimals }),
     });
+  };
 
   // One width for every score, so the meters before them line up whether a row is a range or not.
   const scoreWidth = `${Math.max(0, ...rows.map((row) => scoreLabel(row).length))}ch`;

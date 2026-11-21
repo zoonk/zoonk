@@ -55,14 +55,19 @@ describe(getNextStep, () => {
     expect(getNextStep({ grade: points(), text: TEXT })).toStrictEqual({ kind: "done" });
   });
 
-  it("never calls a zeroed answer done", () => {
+  it("never calls a zeroed answer done, and names the rule it broke", () => {
     const grade = points({
       rows: [{ earned: 0, id: "a1", max: 10 }],
       total: { high: 0, low: 0 },
+      zeroKind: "offTopic",
       zeroReason: "An answer off the topic gets zero.",
     });
 
-    expect(getNextStep({ grade, text: TEXT }).kind).toBe("criterion");
+    expect(getNextStep({ grade, text: TEXT })).toStrictEqual({
+      kind: "zero",
+      text: "",
+      zeroKind: "offTopic",
+    });
   });
 
   it("asks to fit the limit when text runs past it and nothing else needs fixing", () => {
@@ -75,14 +80,14 @@ describe(getNextStep, () => {
     const grade = levels({
       criteria: [criterion("partial")],
       ignoredFrom: 20,
-      nextStep: { ...step, kind: "limit" } as WritingResult["nextStep"],
+      nextStep: { ...step, kind: "limit" },
     });
 
     expect(getNextStep({ grade, text: TEXT })).toStrictEqual({ kind: "limit" });
   });
 
   it("names the change itself, falling back to the criterion for older answers", () => {
-    const titled = { ...step, title: "Say how they work together" } as WritingResult["nextStep"];
+    const titled = { ...step, kind: "criterion" as const, title: "Say how they work together" };
     const graded = levels({ criteria: [criterion("partial")], nextStep: titled });
     const older = levels({ criteria: [criterion("partial")], nextStep: step });
 

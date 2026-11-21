@@ -59,7 +59,7 @@ export function PointsHeader({
     <StepCard className="items-stretch">
       <StepHeader>
         <LabeledStepTitle label={t("Your answer")}>
-          <PointsReadout max={grade.max} range={grade.total} />
+          <PointsReadout decimals={grade.decimals} max={grade.max} range={grade.total} />
         </LabeledStepTitle>
         <StepDetail className="text-sm">{t("Estimated score")}</StepDetail>
       </StepHeader>
@@ -81,7 +81,9 @@ export function PointsHeader({
         <StepRows>
           <StepRow>
             <span className="min-w-0 flex-1">{t("Content")}</span>
-            <span className="font-mono text-xs tabular-nums">{formatRange(grade.content)}</span>
+            <span className="font-mono text-xs tabular-nums">
+              {formatRange(grade.content, { decimals: grade.decimals })}
+            </span>
           </StepRow>
           <StepRow>
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">

@@ -15,19 +15,13 @@ import { type WrittenSubject } from "./subject-written-score";
 
 const PERCENT = 100;
 
-/** What the written-practice contract will carry: the part's scale, and a levels answer's criteria. */
-export type ScaledSubject = WrittenSubject & { decimals?: number; scale?: "levels" | "points" };
-
 /**
- * Whether the part can be estimated in points. Until the server says (`scale`), an answer or a part
- * already measured in points says so; otherwise answers are graded by level, as every rubric is
- * until its evaluation passes.
+ * Whether the part can be estimated in points. A server from before `scale` says so by having
+ * measured something in points; otherwise answers are graded by level.
  */
 export function getWrittenScale(written: WrittenSubject): "levels" | "points" {
-  const { scale } = written as ScaledSubject;
-
-  if (scale) {
-    return scale;
+  if (written.scale) {
+    return written.scale;
   }
 
   return written.points.range || written.answers.some(({ range }) => range) ? "points" : "levels";
@@ -88,7 +82,7 @@ function PointsScale({ written }: { written: WrittenSubject }) {
   const formatRange = useFormatPointsRange();
   const minimumLine = useMinimumLine();
   const { max, minimum, range, tasks } = written.points;
-  const { decimals } = written as ScaledSubject;
+  const decimals = written.points.decimals ?? written.decimals;
 
   return (
     <>

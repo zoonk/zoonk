@@ -47,6 +47,11 @@ const MINUS = "\u2212";
 /** 0.3 × 10 is 3.0000000000000004 in floating point, which must still round to 3. */
 const FLOAT_SLACK = 1e-9;
 
+/** Exactly `decimals` digits after the point, so every number of one scale reads alike. */
+export function fixedDecimals(decimals: number) {
+  return { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
+}
+
 /**
  * A range of points, one number when both ends round alike ("29.8", never "29.79–29.8"), and both
  * ends with the same decimals ("12.0–17.5", never "12–17.5"): the scale's own (`decimals`) when the
@@ -70,7 +75,7 @@ export function useFormatPointsRange() {
       scaleDecimals ?? ([low, high].some((value) => Math.round(value * 10) % 10 !== 0) ? 1 : 0);
 
     const step = 10 ** decimals;
-    const options = { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
+    const options = fixedDecimals(decimals);
 
     const end = (value: number) => {
       const written = format.number(value, options);

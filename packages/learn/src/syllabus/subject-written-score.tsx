@@ -24,7 +24,7 @@ import { FactSegments } from "../_components/task-meta";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useWritingTaskTitle } from "../writing/writing-header";
 import { useFormatPointsRange } from "../writing/writing-labels";
-import { type ScaledSubject, WrittenStanding } from "./subject-written-standing";
+import { WrittenStanding } from "./subject-written-standing";
 
 export type WrittenSubject = NonNullable<WrittenPractice["subjects"]>[number];
 
@@ -158,14 +158,10 @@ function useAnswerResult() {
   const t = useExtracted();
   const formatRange = useFormatPointsRange();
 
-  return function answerResult(answer: WrittenAnswer, decimals?: number): string | null {
-    if (answer.range) {
-      return formatRange(answer.range, { decimals });
+  return function answerResult({ criteria, decimals, range }: WrittenAnswer): string | null {
+    if (range) {
+      return formatRange(range, { decimals });
     }
-
-    const { criteria } = answer as WrittenAnswer & {
-      criteria?: { complete: number; total: number };
-    };
 
     return criteria
       ? t({
@@ -178,20 +174,12 @@ function useAnswerResult() {
   };
 }
 
-function AnswerRow({
-  answer,
-  decimals,
-  href,
-}: {
-  answer: WrittenAnswer;
-  decimals?: number;
-  href: string;
-}) {
+function AnswerRow({ answer, href }: { answer: WrittenAnswer; href: string }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const lineFact = useLineFact();
   const writingTitle = useWritingTaskTitle();
-  const result = useAnswerResult()(answer, decimals);
+  const result = useAnswerResult()(answer);
 
   return (
     <ListRowLink href={href}>
@@ -239,12 +227,7 @@ function WrittenAnswers({
       </PageSectionHeader>
       <ListGroup>
         {written.answers.map((answer) => (
-          <AnswerRow
-            answer={answer}
-            decimals={(written as ScaledSubject).decimals}
-            href={answerHref(answer.attemptId)}
-            key={answer.attemptId}
-          />
+          <AnswerRow answer={answer} href={answerHref(answer.attemptId)} key={answer.attemptId} />
         ))}
       </ListGroup>
     </PageSection>

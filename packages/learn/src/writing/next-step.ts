@@ -1,18 +1,15 @@
 import { type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 
-type GradedStep = NonNullable<WritingResult["nextStep"]> & {
-  /** What the grader asks to change. `limit` and `zero` are worded by the app. */
-  kind?: "criterion" | "limit" | "zero";
-  /** The change itself in a few words, written by the grader. Older answers have none. */
-  title?: string | null;
-};
+type ZeroKind = Extract<WritingResult, { kind: "points" }>["zeroKind"];
 
+/** `limit` and `zero` have no grader's words: the app words them from the task and `zeroKind`. */
 export type NextStep =
   | { kind: "done" }
   | { kind: "limit" }
+  | { kind: "zero"; text: string; zeroKind: ZeroKind }
   | {
       example: string | null;
-      kind: "criterion" | "zero";
+      kind: "criterion";
       quote: string | null;
       text: string;
       title: string | null;
@@ -45,11 +42,20 @@ function weakestCriterion(grade: WritingResult): NextStep {
 
 /**
  * The one thing to work on next. "Nothing left" only when every criterion is complete and every
- * line is read; text past the limit is the step when nothing else is. A quote is shown only when
- * it's in the text, where it's underlined.
+ * line is read; a zeroed answer's step is the rule it broke; text past the limit is the step when
+ * nothing else is. A quote is shown only when it's in the text, where it's underlined. Older saved
+ * answers have no `kind` or `title`, so the same rules read them.
  */
 export function getNextStep({ grade, text }: { grade: WritingResult; text: string }): NextStep {
-  const step: GradedStep | null = grade.nextStep;
+  const step = grade.nextStep;
+
+  if (step?.kind === "zero" || (grade.kind === "points" && grade.zeroReason !== null)) {
+    return {
+      kind: "zero",
+      text: step?.text ?? "",
+      zeroKind: grade.kind === "points" ? grade.zeroKind : undefined,
+    };
+  }
 
   if (step?.kind === "limit" || (grade.ignoredFrom !== null && isComplete(grade))) {
     return { kind: "limit" };
@@ -63,9 +69,9 @@ export function getNextStep({ grade, text }: { grade: WritingResult; text: strin
 
   return {
     example: step.example,
-    kind: step.kind === "zero" ? "zero" : "criterion",
+    kind: "criterion",
     quote: step.quote && text.includes(step.quote) ? step.quote : null,
     text: step.text,
-    title: step.title ?? (step.kind === "zero" ? null : (criterion?.name ?? null)),
+    title: step.title ?? criterion?.name ?? null,
   };
 }
