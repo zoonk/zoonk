@@ -70,7 +70,12 @@ fun plotAxes(plot: LessonVisual.Plot): Pair<PlotAxis, PlotAxis> {
     return plotAxis(points.map { it.x }) to plotAxis(points.map { it.y } + plot.references.map { it.y })
 }
 
-private fun plotAxis(values: List<Double>) = niceDomain(values, includeZero = false).let { PlotAxis(it, niceTicks(it)) }
+/** Whole-number data keeps whole ticks, so a day or count axis doesn't read 2.5. */
+private fun plotAxis(values: List<Double>): PlotAxis {
+    val domain = niceDomain(values, includeZero = false)
+    val wholeNumbers = values.all { it == Math.floor(it) }
+    return PlotAxis(domain, niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) })
+}
 
 private fun niceStep(
     span: Double,

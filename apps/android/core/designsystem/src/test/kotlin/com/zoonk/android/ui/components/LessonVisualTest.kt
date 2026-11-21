@@ -48,9 +48,25 @@ class LessonVisualTest {
         val (x, y) = plotAxes(plot)
 
         assertEquals(10.0..20.0, x.domain)
-        assertEquals(listOf(10.0, 12.5, 15.0, 17.5, 20.0), x.ticks)
+        assertEquals(listOf(10.0, 15.0, 20.0), x.ticks)
         assertEquals(25.0..40.0, y.domain)
         assertEquals(listOf(25.0, 30.0, 35.0, 40.0), y.ticks)
+    }
+
+    @Test
+    fun aPlotKeepsFractionalTicksOnlyWhenItsDataHasFractions() {
+        val plot =
+            Plot(
+                title = "Plot",
+                xLabel = "x",
+                yLabel = "y",
+                series = listOf(Plot.Series("A", Plot.Mark.Points, listOf(Plot.Point(1.0, 0.5), Plot.Point(10.0, 1.5)))),
+            )
+
+        val (x, y) = plotAxes(plot)
+
+        assertEquals(listOf(0.0, 5.0, 10.0), x.ticks)
+        assertEquals(listOf(0.5, 0.75, 1.0, 1.25, 1.5), y.ticks)
     }
 
     @Test
