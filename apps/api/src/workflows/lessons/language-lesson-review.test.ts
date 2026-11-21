@@ -99,6 +99,7 @@ describe("a language lesson's review", () => {
     await expect(
       prisma.lessonQualityDecision.findMany({ orderBy: { id: "asc" }, where: { lessonId } }),
     ).resolves.toMatchObject([
+      { outcome: "passed", phase: "codeCheck" },
       { outcome: "passed", phase: "firstReview", reviewerRunId: expect.any(String) },
     ]);
 
@@ -186,7 +187,10 @@ describe("a language lesson's review", () => {
 
     await expect(
       prisma.lessonQualityDecision.findMany({ orderBy: { id: "asc" }, where: { lessonId } }),
-    ).resolves.toMatchObject([{ outcome: "needsFix", phase: "firstReview" }]);
+    ).resolves.toMatchObject([
+      { outcome: "passed", phase: "codeCheck" },
+      { outcome: "needsFix", phase: "firstReview" },
+    ]);
 
     expect(held.contentStatus).not.toBe("completed");
     expect(held.words).toStrictEqual([]);
