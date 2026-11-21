@@ -21,6 +21,7 @@ import {
   readTextLines,
   showMarks,
 } from "./press-probe.mts";
+import { screenshot } from "./screenshot.mts";
 import { type Action, type Comparison, snapshotLayout } from "./states-probe.mts";
 
 /**
@@ -72,7 +73,7 @@ export function pressWalk(
 
     const { error } = await safeAsync(async () => {
       await mkdir(folder, { recursive: true });
-      await page.screenshot({ animations: "disabled", path: file, scale: "css" });
+      await screenshot(page, { path: file, scale: "css" });
     });
 
     await page.evaluate(showMarks, { on: false, targetId });
