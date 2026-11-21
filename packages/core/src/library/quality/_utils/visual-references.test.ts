@@ -54,6 +54,42 @@ describe("what a screen's words point at", () => {
   });
 
   it.each([
+    ["de", "Welche Kurve steigt in diesem Diagramm am stärksten?"],
+    ["en", "Which label marks the steepest rise on this plot?"],
+    ["en", "Where does the graph reach its peak?"],
+    ["en", "What does this chart tell you about pressure?"],
+    ["es", "¿Qué valor señala el punto A en esta gráfica?"],
+    ["es", "¿Qué valor alcanza la curva en este gráfico?"],
+    ["fr", "Quel point est le plus haut sur ce graphique ?"],
+    ["it", "Qual è il punto più alto di questo grafico?"],
+    ["ja", "このグラフで最も高い点はどれですか？"],
+    ["ko", "이 그래프의 최고점은 어디인가요?"],
+    ["pl", "Gdzie na tym wykresie jest najwyższy punkt?"],
+    ["pt", "Qual é o ponto mais alto deste gráfico?"],
+    ["tr", "Bu grafiğin en yüksek noktası nerede?"],
+  ])("finds direct %s references to a chart or plot (%s)", (language, text) => {
+    expect(pointedAt(language, text)).toStrictEqual(["chart"]);
+  });
+
+  it.each([
+    ["de", "Tragen Sie das Medikament in die Patientenakte ein."],
+    ["en", "Record the medication in the chart."],
+    ["en", "Put the guests from the seating chart on the list."],
+    ["en", "Enter the new seat assignments on the chart."],
+    ["en", "Plant the seedlings in this plot of land."],
+    ["es", "Anota el medicamento en la ficha clínica."],
+    ["fr", "Notez le médicament dans le dossier médical."],
+    ["it", "Annota il farmaco nella cartella clinica."],
+    ["ja", "このカルテに薬の名前を記録してください。"],
+    ["ko", "이 차트에 투약 내용을 기록하세요."],
+    ["pl", "Zapisz lek w karcie pacjenta."],
+    ["pt", "Registre o medicamento no prontuário."],
+    ["tr", "İlacı hasta dosyasına kaydedin."],
+  ])("allows ordinary %s prose without a chart (%s)", (language, text) => {
+    expect(pointedAt(language, text)).toStrictEqual([]);
+  });
+
+  it.each([
     [
       "it",
       "Nell'immagine, Giulia è accanto a una bicicletta. Nella tabella ci sono i prezzi.",

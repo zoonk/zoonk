@@ -8,8 +8,11 @@ type VisualPatterns = Readonly<Record<VisualKind, readonly RegExp[]>>;
 
 const EN_PATTERNS: VisualPatterns = {
   chart: [
-    / (?:in|on|from|look at|read) the (?:graph|chart|plot|bar chart|line chart|line graph|bar graph) /u,
-    / the (?:graph|chart|plot) (?:below|above|shows) /u,
+    / (?:the|this|that) (?:graph|(?:bar|line) (?:chart|graph)) /u,
+    / (?:this|that) (?:chart (?!of accounts )|plot (?!of land ))/u,
+    / (?:in|on|from|look at|read) the plot (?!of land )/u,
+    / (?:look at|read) the chart (?!of accounts )/u,
+    / the (?:chart|plot) (?:below|above|shows) /u,
   ],
   image: [
     / (?:in|on) the (?:picture|photo|illustration|cartoon|drawing|diagram|infographic|flowchart|schematic)s? /u,
@@ -29,7 +32,10 @@ const EN_PATTERNS: VisualPatterns = {
 
 const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
   de: {
-    chart: [/ (?:im|auf dem) (?:diagramm|schaubild) /u, / das diagramm (?:unten|zeigt) /u],
+    chart: [
+      / (?:im|auf dem|dieses|diesem|jenes|jenem) (?:diagramm|schaubild) /u,
+      / das diagramm (?:unten|zeigt) /u,
+    ],
     image: [
       / (?:auf|in) dem (?:bild|foto|schema) /u,
       / (?:auf|in) den bildern /u,
@@ -43,7 +49,7 @@ const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
   },
   en: EN_PATTERNS,
   es: {
-    chart: [/ en el (?:grafico|diagrama) /u, / el grafico (?:muestra|siguiente|de abajo) /u],
+    chart: [/ (?:el|este|ese) grafico /u, / (?:la|esta|esa) grafica /u, / en el diagrama /u],
     image: [
       / en (?:la|las) (?:imagen|imagenes|foto|fotos|ilustracion|vineta|figura|infografia) /u,
       / (?:observa|mira) (?:la|las) (?:imagen|imagenes|foto|figura) /u,
@@ -61,7 +67,7 @@ const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
     timeline: [/ en la linea de tiempo /u, / la linea de tiempo (?:muestra|siguiente) /u],
   },
   fr: {
-    chart: [/ (?:dans|sur) le (?:graphique|diagramme) /u, / le graphique (?:ci dessous|montre) /u],
+    chart: [/ (?:le|ce) graphique /u, / (?:(?:dans|sur) le|ce) diagramme /u],
     image: [
       / (?:sur|dans) (?:l image|la photo|l illustration|la figure|les images|le schema|l infographie) /u,
       / l image (?:ci dessous|ci dessus|montre) /u,
@@ -73,7 +79,10 @@ const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
     timeline: [/ sur la frise /u],
   },
   it: {
-    chart: [/ (?:nel|sul|dal) grafico /u, / il grafico (?:qui sotto|sotto|seguente|mostra) /u],
+    chart: [
+      / (?:nel|sul|dal|questo|quel) grafico /u,
+      / il grafico (?:qui sotto|sotto|seguente|mostra) /u,
+    ],
     image: [
       / (?:nell|nella|sull|sulla|dall|dalla) (?:immagine|immagini|foto|illustrazione|vignetta|infografica|mappa|cartina) /u,
       / (?:nella|sulla|dalla) figura (?!(?:retorica|retoriche|professionale|chiave|del|della|dello|dei|degli|delle|di) )/u,
@@ -92,7 +101,10 @@ const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
     timeline: [/ (?:sulla|nella) linea del tempo /u],
   },
   ja: {
-    chart: [/(?:下|上|次|左|右)の(?:グラフ|図表)/u, /グラフ(?:を見|から|によると|が示)/u],
+    chart: [
+      /(?:(?:下|上|次|左|右)の|この|その|あの)(?:グラフ|図表)/u,
+      /グラフ(?:を見|から|によると|が示)/u,
+    ],
     image: [
       /(?:下|上|次|左|右)の(?:図|絵|写真|イラスト|画像|地図)/u,
       /(?:図|写真|イラスト)[0-9０-９]+(?![0-9０-９]*[枚点])/u,
@@ -103,7 +115,7 @@ const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
     timeline: [/年表(?![彰明示])/u, /(?:下|上|次|左|右)の(?:年表|タイムライン)/u],
   },
   ko: {
-    chart: [/ (?:아래|위|다음)의? 그래프/u, / 그래프(?:에서|를 보|가 보여)/u],
+    chart: [/ (?:(?:아래|위|다음)의?|이|그|저) (?:그래프|도표)/u, / 그래프(?:에서|를 보|가 보여)/u],
     image: [
       / (?:아래|위|다음)의? (?:그림|사진|이미지|삽화|지도|도식|인포그래픽)/u,
       / (?:그림|사진) ?[0-9]+ /u,
@@ -114,7 +126,11 @@ const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
     timeline: [/ 연표/u, / (?:아래|위|다음)의? 타임라인/u],
   },
   pl: {
-    chart: [/ na (?:wykresie|diagramie) /u, / wykres (?:ponizej|powyzej|pokazuje) /u],
+    chart: [
+      / na (?:wykresie|diagramie) /u,
+      / wykres (?:ponizej|powyzej|pokazuje) /u,
+      / (?:ten wykres|tym wykres(?:ie|em)|tego wykresu|temu wykresowi) /u,
+    ],
     image: [
       / na (?:rysunku|zdjeciu|ilustracji|obrazku|mapie|schemacie|infografice) /u,
       / (?:spojrz|popatrz) na (?:rysunek|zdjecie|ilustracje|obrazek|mape|schemat) /u,
@@ -128,7 +144,8 @@ const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
   pt: {
     chart: [
       / n[ao]s? graficos? /u,
-      / (?:o|este|esse|um) grafico (?:abaixo|acima|a seguir|ao lado|mostra) /u,
+      / (?:o|um) grafico (?:abaixo|acima|a seguir|ao lado|mostra) /u,
+      / [dn]?(?:este|esse|aquele) grafico /u,
     ],
     image: [
       / [nd][ao]s? (?:imagem|imagens|fotos?|fotografias?|ilustracao|ilustracoes|charges?|tirinhas?) /u,
@@ -154,7 +171,12 @@ const PATTERNS: Readonly<Record<SupportedLocale, VisualPatterns>> = {
     timeline: [/ na linha do tempo /u, / a linha do tempo (?:abaixo|a seguir|mostra) /u],
   },
   tr: {
-    chart: [/ grafikte /u, / grafige (?:gore|bak)/u, / (?:asagıdaki|yukarıdaki) grafik/u],
+    chart: [
+      / grafikte /u,
+      / grafige (?:gore|bak)/u,
+      / (?:asagıdaki|yukarıdaki) grafik/u,
+      / (?:bu|su|o) (?:grafik(?:te|ten)?|grafig(?:i|in|e|inde|inden|ine|ini)) /u,
+    ],
     image: [
       / (?:resimde|fotografta|gorselde|cizimde|haritada|semada|infografikte) /u,
       / (?:asagıdaki|yukarıdaki) (?:resim|fotograf|gorsel|sekil |sekle|cizim|harita|sema)/u,

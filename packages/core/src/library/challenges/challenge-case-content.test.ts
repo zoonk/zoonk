@@ -89,6 +89,28 @@ describe(checkWrittenChallenge, () => {
     ).toStrictEqual([expect.stringContaining("the ending has no chart")]);
   });
 
+  it.each([
+    ["en", "Which label marks the steepest rise on this plot?", true],
+    ["es", "¿Qué valor señala el punto A en esta gráfica?", true],
+    ["en", "Record the medication in the chart.", false],
+  ])("checks whether a %s decision prompt needs a chart (%s)", (language, prompt, needsChart) => {
+    const written = writtenChallengeCaseFixture();
+
+    const nodes = written.nodes.map((node) =>
+      node.id === written.startNodeId ? { ...node, prompt } : node,
+    );
+
+    const { problems } = checkWrittenChallenge({
+      language,
+      variant: "work",
+      written: { ...written, nodes },
+    });
+
+    const missingChart = expect.stringContaining('Decision "start" points at a chart');
+
+    expect(problems).toStrictEqual(needsChart ? [missingChart] : []);
+  });
+
   it.each(["Pressure: ███", "y | * * *", "Pressure: ###"])(
     "rejects a one-line drawing in learner text (%s)",
     (drawing) => {
