@@ -7,6 +7,7 @@ const NOT_THROUGH = "That didn't go through. Your answers are saved. Try again i
 
 async function holdPosts(page: Page, matches: (request: Request) => boolean) {
   const held: Route[] = [];
+  const { promise: intercepted, resolve } = Promise.withResolvers<Request>();
   let holding = true;
 
   await page.route("**/*", async (route) => {
@@ -14,6 +15,7 @@ async function holdPosts(page: Page, matches: (request: Request) => boolean) {
 
     if (holding && request.method() === "POST" && matches(request)) {
       held.push(route);
+      resolve(request);
       return;
     }
 
@@ -21,6 +23,7 @@ async function holdPosts(page: Page, matches: (request: Request) => boolean) {
   });
 
   return {
+    intercepted,
     release: async () => {
       holding = false;
       await Promise.all(held.map((route) => route.abort().catch(() => null)));
@@ -81,6 +84,7 @@ test.describe("Exam goal", () => {
         .getByRole("button", { name: "Hand in" });
 
       await expect(handIn).toBeDisabled();
+      await handingIn.intercepted;
       await page.clock.fastForward(11_000);
 
       await expect(
@@ -101,6 +105,16 @@ test.describe("Exam goal", () => {
 
       await expect(
         page.getByRole("heading", { level: 1, name: /^Mock exam 2\s*\d+–\d+$/u }),
+      ).toBeVisible();
+
+      const review = page.getByRole("region", { name: "Questions to review" });
+
+      await expect(
+        review.getByRole("button", { name: /Question 1\b.+Wrong.+Not sure$/u }),
+      ).toBeVisible();
+
+      await expect(
+        review.getByRole("button", { name: /Question 2\b.+Right.+Not sure$/u }),
       ).toBeVisible();
     });
   });

@@ -71,7 +71,7 @@
 - “Step” the learner takes or follows (the next step, a solution’s or worked example’s steps, a run’s steps): “passo” (“Próximo passo”, “Passo 2”); “etapa” only for a stage of a process or a flow (“as etapas da fotossíntese”, “nas próximas etapas”)
 - “Weekly challenge”: “Desafio semanal”
 - “Mock exam”, including speaking mocks: “Simulado”, not “prova simulada” or “simulação”
-- A mock exam’s “Flag” / “Remove flag” / “flagged”: “Marcar” / “Remover marcação” / “marcada”, not “sinalizada” or “com dúvida”
+- A mock exam’s “Not sure” (the button and the mark it leaves on an answer): “Em dúvida”
 - “Logbook”: “Diário de bordo”
 - “Fading” (needs review): “Para revisar”
 - “Focus test”: “Teste de foco”

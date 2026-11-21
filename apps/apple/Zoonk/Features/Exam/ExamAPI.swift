@@ -543,7 +543,7 @@ private struct MockAnswerRequest: Encodable {
     try container.encode(draft.isAnswered ? draft.answer : nil, forKey: .answer)
     try container.encode(min(max(draft.durationMs, 0), 24 * 60 * 60 * 1000), forKey: .durationMs)
     try container.encodeIfPresent(draft.edit, forKey: .edit)
-    try container.encode(draft.flagged, forKey: .flagged)
+    try container.encode(draft.unsure, forKey: .flagged)
     try container.encode(draft.itemId, forKey: .itemId)
   }
 }

@@ -12,6 +12,7 @@ import { readAlignment, webCapture } from "../verify/alignment-probe.mts";
 import { WEB_TABLE } from "../verify/alignment-table.mts";
 import { evaluateFile } from "../verify/alignment.mts";
 import { openPage, waitForQuiet } from "../verify/browser.mts";
+import { screenshot } from "../verify/screenshot.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "../verify/viewports.mts";
 import { carryReads } from "./carry.mts";
 import {
@@ -28,7 +29,11 @@ import { type CheckoutBuild, bindBuild, sha256File } from "./provenance.mts";
  * Waits until the page stops changing, unless `settle` is false, as for a loading state.
  * `scenario` names the state shown, with the id every platform uses for it.
  */
-type ShotOptions = Omit<PageScreenshotOptions, "path"> & { scenario?: string; settle?: boolean };
+type ShotOptions = Omit<PageScreenshotOptions, "animations" | "path"> & {
+  scenario?: string;
+  settle?: boolean;
+};
+
 type Shot = (name: string, options?: ShotOptions) => Promise<void>;
 
 /** A `--steps` module's default export, run once on each screen and scheme. */
@@ -166,7 +171,7 @@ async function captureScreen({
       await page.screencast.hideActions();
     }
 
-    await page.screenshot({ animations: "disabled", ...options, path: join(folder, file) });
+    await screenshot(page, { ...options, path: join(folder, file) });
 
     if (video) {
       await page.screencast.showActions();

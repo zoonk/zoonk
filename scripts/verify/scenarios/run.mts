@@ -11,6 +11,7 @@ import { alignmentLines, summaryLine } from "../alignment-summary.mts";
 import { WEB_TABLE } from "../alignment-table.mts";
 import { evaluateFile } from "../alignment.mts";
 import { installPageHelpers } from "../page-helpers.mts";
+import { screenshot } from "../screenshot.mts";
 import { signIn } from "../sign-in.mts";
 import { VIEWPORTS, VIEWPORT_NAMES, type ViewportName } from "../viewports.mts";
 import { localePath, proofIn } from "./configuration.mts";
@@ -274,7 +275,7 @@ async function capture(
 
     const read = await page.evaluate(readAlignment, { ...WEB_TABLE, anchors });
 
-    await page.screenshot({
+    await screenshot(page, {
       fullPage: true,
       path: join(out, `${scenario.id}-${label.replaceAll(" ", "-")}.png`),
     });

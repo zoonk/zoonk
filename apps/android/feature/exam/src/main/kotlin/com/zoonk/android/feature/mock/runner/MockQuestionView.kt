@@ -313,7 +313,7 @@ internal fun MockRecording(
     )
 }
 
-/** A cell of the answer sheet: blank, answered, flagged or the one on screen, never by color alone. */
+/** A cell of the answer sheet: blank, answered, marked not sure or the one on screen, never by color alone. */
 @Composable
 internal fun QuestionCell(
     run: MockRun,
@@ -324,7 +324,7 @@ internal fun QuestionCell(
 ) {
     val draft = run.drafts[question.itemId]
     val answered = run.isCountedAsAnswered(question.itemId)
-    val flagged = draft?.flagged == true
+    val unsure = draft?.unsure == true
     val current = index == run.position
     val enabled = run.moves.canOpen(index)
     val shape = RoundedCornerShape(10.dp)
@@ -336,21 +336,22 @@ internal fun QuestionCell(
             question.essay -> stringResource(R.string.mock_written_part)
             else -> stringResource(R.string.mock_question_number, question.number)
         }
-    // Flagged is read in the key's words, as the web's cell is.
-    val name = if (flagged) stringResource(R.string.mock_cell_flagged, number) else number
+    val name = if (unsure) stringResource(R.string.mock_cell_unsure, number) else number
     val states = if (answered) stringResource(R.string.mock_cell_answered) else ""
-    // The current one has a bar under its number and a flagged one an amber tint with its flag, the web's: never a
-    // ring, except the amber one more contrast asks for.
+    // The current one has a bar under its number and every one marked not sure its bookmark; an answered one is
+    // filled, amber when marked, the web's: never a ring, except the amber one more contrast asks for. A blank one
+    // stays blank, so a mark never hides an answer still missing.
+    val amber = unsure && answered
     val moreContrast = LocalMoreContrast.current
     val border =
         when {
-            flagged && moreContrast -> MaterialTheme.zoonk.warning
-            flagged || answered -> Color.Transparent
+            amber && moreContrast -> MaterialTheme.zoonk.warning
+            answered -> Color.Transparent
             else -> MaterialTheme.colorScheme.outlineVariant
         }
     val fill =
         when {
-            flagged -> MaterialTheme.zoonk.warning.copy(alpha = FLAGGED_TINT)
+            amber -> MaterialTheme.zoonk.warning.copy(alpha = UNSURE_TINT)
             answered -> MaterialTheme.zoonk.selectedTint
             else -> Color.Transparent
         }
@@ -376,12 +377,12 @@ internal fun QuestionCell(
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .clip(shape)
                 .background(fill)
-                .border(if (flagged) 2.dp else 1.dp, border, shape)
+                .border(if (amber) 2.dp else 1.dp, border, shape)
                 .indication(interactions, ripple()),
             contentAlignment = Alignment.Center,
         ) {
-            CellLabel(question, writtenNumber, answered || current, flagged && !answered)
-            if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
+            CellLabel(question, writtenNumber, strong = answered || current)
+            if (unsure) UnsureMark(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
             if (current) {
                 Box(
                     Modifier
@@ -396,10 +397,10 @@ internal fun QuestionCell(
     }
 }
 
-/** Flagged is the Flag button's own mark, never its color alone. */
+/** Not sure is the Not sure button's own mark, never its color alone. */
 @Composable
-internal fun FlagGlyph(modifier: Modifier = Modifier) {
-    Icon(painterResource(R.drawable.ic_flag_filled), contentDescription = null, modifier = modifier, tint = MaterialTheme.zoonk.warning)
+internal fun UnsureMark(modifier: Modifier = Modifier) {
+    Icon(painterResource(R.drawable.ic_bookmark_filled), contentDescription = null, modifier = modifier, tint = MaterialTheme.zoonk.warning)
 }
 
 @Composable
@@ -407,7 +408,6 @@ private fun CellLabel(
     question: MockQuestion,
     writtenNumber: Int?,
     strong: Boolean,
-    flagged: Boolean,
 ) {
     if (question.essay && writtenNumber == null) {
         Icon(painterResource(R.drawable.ic_border_color), contentDescription = null, modifier = Modifier.size(16.dp))
@@ -415,11 +415,7 @@ private fun CellLabel(
         Text(
             (writtenNumber ?: question.number).toString(),
             color =
-                when {
-                    flagged -> MaterialTheme.zoonk.warningText
-                    strong -> MaterialTheme.colorScheme.onSurface
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                },
+                if (strong) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             softWrap = false,
             style = MaterialTheme.typography.labelLarge.withTabularFigures(),
@@ -469,7 +465,7 @@ private const val MS_PER_SECOND = 1000L
 private const val DISABLED_ALPHA = 0.38f
 
 /** Main's `bg-warning/14`. */
-private const val FLAGGED_TINT = 0.14f
+private const val UNSURE_TINT = 0.14f
 
 internal val MockExam.trueFalseWords: TrueFalseWords
     get() = if (trueFalseLabels.value == "rightWrong") TrueFalseWords.RightWrong else TrueFalseWords.TrueFalse

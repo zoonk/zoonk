@@ -256,12 +256,14 @@ function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: Writ
 export function WritingResultView({
   eyebrow,
   grade,
+  note,
   prompt,
   text,
 }: {
   /** Which answer this is, where a result shows several (a written test). */
   eyebrow?: string | null;
   grade: WritingResult;
+  note?: React.ReactNode;
   prompt: WritingPrompt;
   text: string;
 }) {
@@ -269,7 +271,12 @@ export function WritingResultView({
     <div className="flex flex-col gap-10" data-slot="writing-result">
       <div className="flex flex-col gap-6">
         {/* A heading, not a chip: one chip sits over a title, and the next step has its own. */}
-        {eyebrow && <PageSectionTitle>{eyebrow}</PageSectionTitle>}
+        {(eyebrow || note) && (
+          <div className="flex flex-col gap-1">
+            {eyebrow && <PageSectionTitle>{eyebrow}</PageSectionTitle>}
+            {note}
+          </div>
+        )}
         {grade.kind === "points" && <PointsHeader grade={grade} prompt={prompt} text={text} />}
         {/* A zeroed answer's one step is the rule it broke: no criterion to compare yet. */}
         {getNextStep({ grade, text }).kind !== "zero" && <WritingProgress grade={grade} />}

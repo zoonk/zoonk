@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,11 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.essay.WritingResultView
 import com.zoonk.android.feature.essay.toGrade
-import com.zoonk.android.feature.essay.writingLabel
 import com.zoonk.android.feature.mock.runner.EssayGrading
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.api.models.MockEssay
@@ -38,18 +37,11 @@ import kotlin.time.Duration.Companion.seconds
 /** One essay's step: its result once it's graded, read as a practice answer's is. */
 internal data class EssayStep(
     val essay: MockEssay,
-    val eyebrow: String?,
 ) {
     val id = "essay-${essay.itemId}"
 }
 
-internal fun essaySteps(view: MockExam): List<EssayStep> {
-    val essays = view.essays
-    return essays.map { essay ->
-        // One chip sits over a title, and the next step has its own: several answers are told apart by their topic alone.
-        EssayStep(essay, if (essays.size > 1) essay.writing?.title else null)
-    }
-}
+internal fun essaySteps(view: MockExam): List<EssayStep> = view.essays.map(::EssayStep)
 
 @Composable
 internal fun EssayStepContent(
@@ -62,19 +54,27 @@ internal fun EssayStepContent(
     val writing = essay.writing
     if (grade != null && writing != null) {
         val shown = remember(grade) { grade.toGrade() }
-        WritingResultView(shown, writing, essay.text.orEmpty(), eyebrow = step.eyebrow)
+        WritingResultView(shown, writing, essay.text.orEmpty(), eyebrow = writing.title, note = if (essay.unsure) ({ EssayUnsure() }) else null)
         return
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        step.eyebrow?.let { Eyebrow(it) }
-        StepTitle(writing?.let { writingLabel(it) } ?: stringResource(R.string.essay_written_answer), Modifier.stepHeading())
+        StepTitle(writing?.title ?: stringResource(R.string.essay_written_answer), Modifier.stepHeading())
         if (essay.status == MockEssay.Status.BLANK) StepDetail(stringResource(R.string.mock_result_left_blank))
+        if (essay.unsure) EssayUnsure()
     }
     if (essay.status == MockEssay.Status.PENDING) PendingGrade(grading, onGrade)
 }
 
-/** Grading is started by the hand-in; here it shows going, and offers Grade it again when it didn't go through. */
+/** Not sure, as the review's rows show it, on an essay the learner marked. */
+@Composable
+private fun EssayUnsure() {
+    ProvideTextStyle(MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)) {
+        UnsureFacts("", unsure = true)
+    }
+}
+
+/** Grading is started by the hand-in; here it shows going, and offers Grade it again while it can still go through. */
 @Composable
 private fun PendingGrade(
     grading: EssayGrading,

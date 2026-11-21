@@ -12,12 +12,12 @@
   "mock_result_below_minimum_points_decimal": "3b43a9e4886bc1b2ab3b33faa01f54ad8929b43cd81ee9b38ce8a5f4e7e2b721",
   "mock_result_below_percent": "05093ce2ede1fb8af264038a1fd7bb57e66da2cde62ab2df097d6dfe147a0508",
   "mock_result_blank": "f5f2d42073140c78e19cf7476ac86119c3b08d9c7fd52acdeaf58365acb6dc85",
-  "mock_result_blank_gain": "77690bfad70718c6972d35d7f3bd601d6bb46571ba693c8c728430aa3f458e90",
+  "mock_result_blank_gain": "9b22b02cf4dc4abeb9636d6e832c5b64dac779fc39d5ded6c2af046cb6a87c85",
   "mock_result_blank_wrong": "7af2f56a92e93cbd0a6381804efef771b261510291859566286d45f02ed4240a",
   "mock_result_by_area": "8e78f31ecc43b6094af7a1ec2c287fbca2e51b4023b893a70179a2d7b5fa2bbc",
   "mock_result_by_test": "7041d11948e3ed769c73043d24c40a2a87037b642a9e553d8bc577912f1f3437",
   "mock_result_by_topic": "f7b6e85f1d8985732cc58275daaa42d2de9e957d2f4922125cb0b5a83daa4885",
-  "mock_result_calibration_detail": "15b98949cb68c13c931819e662b9c794b4c1b929755e3b71de068ff6b98dfa64",
+  "mock_result_calibration_detail": "0cb6c5104d6cc8833d7c95c5be612eb3143994cfedd7da1ed746cb60a29065c5",
   "mock_result_change_plan": "0262ea0b4408ac16feff2149381a89660c60313db8d8fb5facddba7afaf754a1",
   "mock_result_continue": "daaaccf19c3ada9f5b740c4a62ed6111f73bb010c7dc2990249b58ff9c8e63a3",
   "mock_result_details": "ae2a977ff16edd589dbb84a4f591ca2c970bf5af442c0276ecad1d766a76f418",
@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "1179df7898daad57dcbf0a7aedb0073387a317191fcf6af604fc81f4326f5aeb",
   "mock_result_estimated_score": "0e697c3c88c4c13ca9001bebbd2db25616cd56281e1881cf803328bfb160db83",
   "mock_result_every_minimum": "40cfc3fd7ea1f3a79390f9d79c01240fa38848d59b59b1a1a5d42b250a0b3ee1",
-  "mock_result_flagged_answers": "9a09113e99df9ac94819625cb9562c249418051f5616883ff8dd5b90357aa2ec",
   "mock_result_focus_done": "f775546dfa2b4b810d3f7b4fe16adbfc2becf48474c3b3fae5d54fff56f2e9e3",
   "mock_result_focus_line": "265791a912237893ce57738a417c90716a70e231d384c90a103549755c8ecf58",
   "mock_result_focus_title": "97f29c41bf7b8da80994db3ba1ab1a4d8d49e777f72bcf9c8aca6ae78124f9c0",
@@ -39,7 +38,7 @@
   "mock_result_grading_slow": "db069173017c03faf07914445078e3bf8259c26ec5d9ea2aa090816b29a399b8",
   "mock_result_had_of": "743f1c88fe214efbe2d2962f7e227f44d78592876713428c224f4ce091349651",
   "mock_result_insights": "a2c129820166a5166ee70dc63a0c51622d11126cc354bdcbed59017f052cd92e",
-  "mock_result_keep_answering": "1d87b44682a544e0879dc914d4f2e06fbb1546ccd0493658d953414d10d1e0d3",
+  "mock_result_keep_answering": "7616960b0c0eea33870eadb1c9130325a15db4fb6dead7fad8e369e8b958e670",
   "mock_result_keep_them": "6d91cbeab3424ced0151e7fd592134f4e3d69e38b2684ff793e46a44b0d575dc",
   "mock_result_left_at_timeout": "dd808f4f00fa25741cd936b19184fa80e67cab22503d9deb60dd883896c2ef4f",
   "mock_result_left_blank": "bbc0b69f1657254f341f2e39b92688f6c0dd85f2b7082ef974cba03a9a3ba903",
@@ -115,6 +114,7 @@
   "mock_result_unjudged_together_percent": "a37d6d117ed54876faca6be82a21384935413a2ad8520e47456ae71b2fa5dac5",
   "mock_result_unjudged_together_points": "2190753a42dae99d06f2b14af3f9a34461b542c59e40f6aef6cf7c40b838cf7b",
   "mock_result_unjudged_together_points_decimal": "051e76e7740a1580814f355e91bc11efe5ecb645db059869e71857ed0762d566",
+  "mock_result_unsure_answers": "965aa83d024c664688c5a8ba0067722e9901bee9e7198f731dea435c1f3ad3d6",
   "mock_result_up": "ae69b974e4429e3682eaad6b8d330f79c262bc31322c2e18e6a9aa65c5225de7",
   "mock_result_up_from": "0e25532296b24d1aa92b5394abe3ddb1a50d4914becf17abd155c3979761e0bf",
   "mock_result_work_on": "10a1db842434f059a96ece9c915d04c76c4018d6dbd26c9276e44041821b7a5c",
@@ -302,23 +302,23 @@
         <item quantity="many">Hai sbagliato %d domande facili. Rivedile per prime.</item>
         <item quantity="other">Hai sbagliato %d domande facili. Rivedile per prime.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">Risposte contrassegnate</string>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure) while taking the mock exam. -->
+    <string name="mock_result_unsure_answers">Risposte in dubbio</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d risposta corretta su %2$d</item>
         <item quantity="many">%1$d risposte corrette su %2$d</item>
         <item quantity="other">%1$d risposte corrette su %2$d</item>
     </plurals>
-    <!-- %1$s is how the answers the learner didn't flag went, %2$s how the flagged ones went, each a mock_result_right_of. -->
-    <string name="mock_result_calibration_detail">Non contrassegnate: %1$s. Contrassegnate: %2$s.</string>
+    <!-- %1$s is how the answers the learner was sure of went, %2$s how the ones they marked "Not sure" went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">Con sicurezza: %1$s. In dubbio: %2$s.</string>
     <!-- %1$s can be a decimal, such as "1.5". -->
     <plurals name="mock_result_blank_gain">
-        <item quantity="one">Se avessi lasciato in bianco le risposte contrassegnate, avresti ottenuto %1$s punto in più.</item>
-        <item quantity="many">Se avessi lasciato in bianco le risposte contrassegnate, avresti ottenuto %1$s punti in più.</item>
-        <item quantity="other">Se avessi lasciato in bianco le risposte contrassegnate, avresti ottenuto %1$s punti in più.</item>
+        <item quantity="one">Lasciando in bianco le risposte che avevi segnato «In dubbio», avresti ottenuto %1$s punto.</item>
+        <item quantity="many">Lasciando in bianco le risposte che avevi segnato «In dubbio», avresti ottenuto %1$s punti.</item>
+        <item quantity="other">Lasciando in bianco le risposte che avevi segnato «In dubbio», avresti ottenuto %1$s punti.</item>
     </plurals>
-    <string name="mock_result_keep_answering">Anche le risposte contrassegnate ti hanno fatto guadagnare punti, quindi continua a rispondere.</string>
+    <string name="mock_result_keep_answering">Le risposte in dubbio ti hanno comunque fatto guadagnare punti, quindi continua a rispondere.</string>
     <string name="mock_result_review">Domande da rivedere</string>
     <string name="mock_result_question">Domanda %1$d</string>
     <string name="mock_result_left_blank">Non hai risposto.</string>

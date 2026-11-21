@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.mock.runner
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
@@ -19,20 +18,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -73,7 +74,6 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.SwapLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
@@ -94,10 +94,11 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamSectionsInner
+import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-/** Main's `MockRunnerView`: one question at a time with no feedback, Flag and Next at the thumb, the answer sheet a tap away. */
+/** Main's `MockRunnerView`: one question at a time with no feedback, Not sure and Next at the thumb, the answer sheet a tap away. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MockRunnerView(
@@ -112,13 +113,25 @@ internal fun MockRunnerView(
     var sheetOpen by rememberSaveable { mutableStateOf(false) }
     val handIn = { confirming = true }
     val focus = remember { FocusRequester() }
+    val tip = rememberTooltipState(isPersistent = true)
+    val tipSeen = rememberUnsureTipSeen()
+    val scope = rememberCoroutineScope()
+    val toggleUnsure: () -> Unit = {
+        val turningOn = run.drafts[question.itemId]?.unsure != true
+        viewModel.toggleUnsure()
+        if (turningOn && tipSeen.markFirstTime()) scope.launch { tip.show() }
+    }
 
     // Keys reach the focused field first, so the runner's shortcuts never take its typing; a new question takes them back.
-    LaunchedEffect(question.itemId) { focus.requestFocus() }
+    // The tip is about the question it was shown on.
+    LaunchedEffect(question.itemId) {
+        focus.requestFocus()
+        tip.dismiss()
+    }
 
     TaskScaffold(
         onClose = onClose,
-        modifier = Modifier.focusRequester(focus).focusable().onKeyEvent { runnerKey(it, viewModel, run) },
+        modifier = Modifier.focusRequester(focus).focusable().onKeyEvent { runnerKey(it, viewModel, run, toggleUnsure) },
         title = {
             if (taskAsideBeside()) {
                 Text(mockTitle(run.view.number), Modifier.semantics { heading() }, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -134,7 +147,7 @@ internal fun MockRunnerView(
                 }
             }
         },
-        bottomBar = { RunnerActions(viewModel, run, handIn) },
+        bottomBar = { RunnerActions(viewModel, run, tip, onUnsure = toggleUnsure, onHandIn = handIn) },
         note = mockStepNote(viewModel, run),
         aside =
             TaskAside(
@@ -237,11 +250,12 @@ private fun SheetCounts(run: MockRun) {
     )
 }
 
-/** Keys as on main, once however long they're held: the arrows move, Enter goes on, F flags, numbers pick. */
+/** Keys as on main, once however long they're held: the arrows move, Enter goes on, U marks not sure, numbers pick. */
 private fun runnerKey(
     event: KeyEvent,
     viewModel: MockRunnerViewModel,
     run: MockRun,
+    onUnsure: () -> Unit,
 ): Boolean {
     if (event.type != KeyEventType.KeyDown || event.nativeKeyEvent.repeatCount > 0) return false
     if (event.isCtrlPressed || event.isAltPressed || event.isMetaPressed) return false
@@ -265,8 +279,8 @@ private fun runnerKey(
             true
         }
 
-        Key.F -> {
-            viewModel.toggleFlag()
+        Key.U -> {
+            onUnsure()
             true
         }
 
@@ -370,48 +384,24 @@ internal fun SectionClock(
     }
 }
 
-/** Flag and Next: across the phone's foot, or at the end of the question's column beside the sheet, as main's. */
+/** Not sure and Next: across the phone's foot, or at the end of the question's column beside the sheet, as main's. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RunnerActions(
     viewModel: MockRunnerViewModel,
     run: MockRun,
+    tip: TooltipState,
+    onUnsure: () -> Unit,
     onHandIn: () -> Unit,
 ) {
     val question = run.question
-    val flagged = question != null && run.drafts[question.itemId]?.flagged == true
+    val unsure = question != null && run.drafts[question.itemId]?.unsure == true
     val last = run.position >= run.questions.lastIndex
     val handingIn = run.busy == MockStep.Submit
 
     TaskActionBar {
         TaskActions { width ->
-            OutlinedButton(
-                onClick = viewModel::toggleFlag,
-                border =
-                    if (flagged) {
-                        BorderStroke(
-                            1.dp,
-                            MaterialTheme.zoonk.warning,
-                        )
-                    } else {
-                        ButtonDefaults.outlinedButtonBorder(enabled = true)
-                    },
-                colors =
-                    ButtonDefaults.outlinedButtonColors(
-                        contentColor = if (flagged) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurface,
-                    ),
-            ) {
-                Icon(
-                    painterResource(if (flagged) R.drawable.ic_flag_filled else R.drawable.ic_flag),
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-                SwapLabel(
-                    labels = listOf(stringResource(R.string.mock_flag), stringResource(R.string.mock_unflag)),
-                    shown = if (flagged) 1 else 0,
-                    modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
-                    alignment = Alignment.CenterStart,
-                )
-            }
+            UnsureButton(on = unsure, tip = tip, forwardOnly = run.moves.forwardOnly, onClick = onUnsure)
             MockMainButton(
                 text =
                     when {
@@ -481,11 +471,11 @@ private fun HandInDialog(
     val counts = run.counts
     val questions =
         when {
-            counts.blank > 0 && counts.flagged > 0 -> {
+            counts.blank > 0 && counts.unsure > 0 -> {
                 stringResource(
-                    R.string.mock_left_blank_and_flagged,
+                    R.string.mock_left_blank_and_unsure,
                     pluralStringResource(R.plurals.mock_left_blank, counts.blank, counts.blank),
-                    pluralStringResource(R.plurals.mock_left_flagged, counts.flagged, counts.flagged),
+                    pluralStringResource(R.plurals.mock_left_unsure, counts.unsure, counts.unsure),
                 )
             }
 
@@ -493,8 +483,8 @@ private fun HandInDialog(
                 pluralStringResource(R.plurals.mock_left_blank_only, counts.blank, counts.blank)
             }
 
-            counts.flagged > 0 -> {
-                pluralStringResource(R.plurals.mock_left_flagged_only, counts.flagged, counts.flagged)
+            counts.unsure > 0 -> {
+                pluralStringResource(R.plurals.mock_left_unsure_only, counts.unsure, counts.unsure)
             }
 
             counts.total > counts.essays -> {
@@ -638,9 +628,13 @@ internal fun SheetSections(
     }
 }
 
+/** "34 answered · 3 not sure", the second only once one is marked. */
 @Composable
 private fun sheetCounts(counts: SectionCounts): String =
-    pluralStringResource(R.plurals.mock_answered_count, counts.answered, counts.answered)
+    factsLine(
+        pluralStringResource(R.plurals.mock_answered_count, counts.answered, counts.answered),
+        counts.unsure.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.mock_unsure_count, it, it) },
+    )
 
 private const val MAP_ROW = 7
 private val MAP_GAP = 8.dp

@@ -66,6 +66,7 @@ test.describe("Mocks whenever the learner wants", () => {
     const answer = page.getByLabel("Your answer");
 
     await answer.fill(essayText);
+    await page.getByRole("button", { exact: true, name: "Not sure" }).click();
     await expect(page.getByText(/^about \d+ of 30 lines$/u)).toBeVisible();
 
     const resumeGrading = await failEssayGrading(page);
@@ -89,9 +90,10 @@ test.describe("Mocks whenever the learner wants", () => {
           where: { answer: { equals: { text: essayText } }, mockExamId: mockId },
         }),
       )
-      .not.toBeNull();
+      .toMatchObject({ flagged: true });
 
-    await continueToStep(page, "Your answer");
+    await continueToStep(page, "Controle externo");
+    await expect(page.getByText("Not sure", { exact: true })).toBeVisible();
     await expect(page.getByText("That didn't go through. Try again in a moment.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Grade it" })).toBeEnabled();
     await resumeGrading();
@@ -151,6 +153,8 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1/u })).toBeVisible();
     await continueToStep(page, "Thesis");
 
+    await expect(page.getByText("Controle externo", { exact: true })).toBeVisible();
+    await expect(page.getByText("Not sure", { exact: true })).toBeVisible();
     await expect(page.getByText("Back the thesis with the law.")).toBeVisible();
   });
 

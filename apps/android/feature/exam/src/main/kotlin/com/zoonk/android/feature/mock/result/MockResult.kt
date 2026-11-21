@@ -92,7 +92,8 @@ internal fun MockResult(
     val offers by offersViewModel.state.collectAsStateWithLifecycle()
     val placement = view.purpose == MockExam.Purpose.PLACEMENT
     // A question with several picks answered partly right missed some, so the notebook keeps it too.
-    val mistakes = view.review.count { it.outcome != MockExamReviewInner.Outcome.BLANK }
+    val mistakes =
+        view.review.count { it.outcome == MockExamReviewInner.Outcome.WRONG || it.outcome == MockExamReviewInner.Outcome.PARTIAL }
     val essays = essaySteps(view)
     val speaking = view.speaking
     val preparation = result?.preparation?.takeIf { it.hasMoved() }

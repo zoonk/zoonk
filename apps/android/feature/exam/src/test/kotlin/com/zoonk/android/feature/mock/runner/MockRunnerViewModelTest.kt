@@ -80,7 +80,7 @@ class MockRunnerViewModelTest {
         runTest(dispatcher) {
             api.mock = navigatedMock(FORWARD_ONLY)
             val store = store()
-            val kept = MockDraft(ITEM_ONE, Answer.Choice(2), durationMs = 4000, flagged = true).nextEdit()
+            val kept = MockDraft(ITEM_ONE, Answer.Choice(2), durationMs = 4000, unsure = true).nextEdit()
             store.unsent(ana, RUN_BLOCK).save(listOf(kept))
 
             val viewModel = store.runner()

@@ -9,19 +9,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.UUID
 import kotlin.math.min
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-/** Everything about one question on the answer sheet: the answer (null is blank), the time on it and the flag. */
+/** Everything about one question on the answer sheet: the answer (null is blank), the time on it and whether the learner is sure of it. */
 @Serializable
 data class MockDraft(
     val itemId: String,
     val answer: Answer? = null,
     val durationMs: Long = 0,
-    val flagged: Boolean = false,
+    // The name drafts already kept on devices use, as the API does.
+    @SerialName("flagged") val unsure: Boolean = false,
     val revision: String? = null,
     val edit: Edit? = null,
 ) {

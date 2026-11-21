@@ -11,6 +11,7 @@ import { type StepsItem } from "../_components/steps";
 import { useWritingName } from "../essay/essay-labels";
 import { WritingResultView } from "../writing/writing-result";
 import { useMockScreen } from "./mock-context";
+import { UnsureFact } from "./mock-labels";
 
 const SLOW_GRADING_MS = 30_000;
 
@@ -54,8 +55,11 @@ function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: 
     <StepCard>
       <StepHeader>
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <StepTitle>{writingName(runner.view.essayRubric ?? "custom")}</StepTitle>
+        <StepTitle>
+          {essay.writing?.title ?? writingName(runner.view.essayRubric ?? "custom")}
+        </StepTitle>
         {essay.status === "blank" && <StepDetail>{t("You left it blank.")}</StepDetail>}
+        {essay.unsure && <UnsureFact className="text-sm" />}
       </StepHeader>
       {essay.status === "pending" && <PendingState />}
     </StepCard>
@@ -87,8 +91,9 @@ export function useEssayItems(): StepsItem[] {
       {
         content: (
           <WritingResultView
-            eyebrow={eyebrow}
+            eyebrow={essay.writing.title}
             grade={grade}
+            note={essay.unsure && <UnsureFact className="text-sm" />}
             prompt={essay.writing}
             text={essay.text ?? ""}
           />

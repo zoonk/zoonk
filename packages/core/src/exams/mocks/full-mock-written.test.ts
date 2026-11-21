@@ -395,7 +395,7 @@ describe("written mock sittings", () => {
     const input = mockAnswerInputSchema.parse({
       answer: { text },
       durationMs: SESSION_LENGTH_MS,
-      flagged: false,
+      flagged: true,
       itemId: short.id,
     });
 
@@ -414,8 +414,8 @@ describe("written mock sittings", () => {
 
     await expect(view(id)).resolves.toMatchObject({
       essays: [
-        { status: "pending", text },
-        { status: "blank", text: null },
+        { status: "pending", text, unsure: true },
+        { status: "blank", text: null, unsure: false },
       ],
       result: { points: { written: [{ range: null, standing: "unmeasured" }] }, total: 0 },
       status: "finished",
@@ -458,6 +458,7 @@ describe("written mock sittings", () => {
             nextStep: { kind: "limit", title: null },
           },
           status: "graded",
+          unsure: true,
           writing: { partMinimum: PART_MINIMUM },
         },
         { grade: null, status: "blank" },

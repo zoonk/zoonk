@@ -235,9 +235,10 @@ struct MockResultView: View {
     mainAction
   }
 
-  /// The questions answered wrong: the ones to fix. Blanks are reviewed but aren't mistakes.
+  /// The questions answered wrong: the ones to fix. Blanks and right answers the learner wasn't
+  /// sure of are reviewed but aren't mistakes.
   private var mistakes: Int {
-    view.review.filter { $0.outcome != .blank }.count
+    view.review.filter { $0.outcome == .wrong || $0.outcome == .partial }.count
   }
 
   /// With mistakes to fix, reviewing them is the way on and leaving the other one, as on main.
@@ -715,7 +716,7 @@ private struct MockInsightsSection: View {
     if hasInsights {
       Section {
         if slowest != nil || result.unansweredAtTimeout > 0 {
-          insight(
+          NoteRow(
             Text("Timing", tableName: "Mock", comment: "Insight about pace"), systemImage: "timer"
           ) {
             if let slowest, let target = slowest.targetSecondsPerQuestion {
@@ -735,7 +736,7 @@ private struct MockInsightsSection: View {
         }
 
         if let coherence = incoherent {
-          insight(
+          NoteRow(
             Text("Easy questions", tableName: "Mock", comment: "Insight about IRT coherence"),
             systemImage: "scalemass"
           ) {
@@ -746,24 +747,21 @@ private struct MockInsightsSection: View {
         }
 
         if let calibration = unsure {
-          insight(
-            Text("Flagged answers", tableName: "Mock", comment: "Insight about unsure"),
-            systemImage: "scalemass"
+          NoteRow(
+            Text("Answers you weren't sure of", tableName: "Mock"),
+            systemImage: "bookmark"
           ) {
             Text(
-              "Not flagged: \(calibration.sure.right) of \(calibration.sure.answered) right. Flagged: \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
-              tableName: "Mock",
-              comment:
-                "How many of the answers the learner was sure of were right, against those flagged as unsure"
-            )
+              "Sure: \(calibration.sure.right) of \(calibration.sure.answered) right. Not sure: \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
+              tableName: "Mock")
             if calibration.advice == .blankUnsure {
               Text(
-                "Leaving the flagged ones blank would have added \(Int(calibration.blankingGain.rounded())) points.",
-                tableName: "Mock", comment: "What blanking unsure answers would have gained")
+                "Leaving the ones you weren't sure of blank would have added \(Int(calibration.blankingGain.rounded())) points.",
+                tableName: "Mock")
             } else if calibration.advice == .keepAnswering {
               Text(
-                "Your flagged answers still earned points, so keep answering them.",
-                tableName: "Mock", comment: "Keep answering unsure ones")
+                "The answers you weren't sure of still earned points, so keep answering them.",
+                tableName: "Mock")
             }
           }
         }
@@ -795,19 +793,6 @@ private struct MockInsightsSection: View {
   private var unsure: NetCalibration? {
     result.calibration.flatMap { $0.unsure.answered > 0 ? $0 : nil }
   }
-
-  private func insight<Content: View>(
-    _ title: Text, systemImage: String, @ViewBuilder content: () -> Content
-  ) -> some View {
-    Label {
-      VStack(alignment: .leading, spacing: 4) {
-        title.typeStyle(.body.weight(.semibold))
-        content().foregroundStyle(.mutedForeground)
-      }
-    } icon: {
-      Image(systemName: systemImage)
-    }
-  }
 }
 
 private struct MockEssaySections: View {
@@ -832,6 +817,10 @@ private struct MockEssaySections: View {
         } else {
           LessonTextBlocks(essay.question)
             .typeStyle(.body.weight(.semibold))
+        }
+        if essay.unsure {
+          FactSegments(facts: [.unsure])
+            .typeStyle(.note)
         }
         status
       }
@@ -1257,14 +1246,18 @@ private struct MockReviewSection: View {
             if let context = item.context {
               LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
-            if item.outcome != .blank,
+            if item.outcome != .blank, item.outcome != .right,
               let answer = TrueFalseWords.savedAnswer(
                 item.learnerAnswer, format: item.format, labels: labels)
             {
               MistakeAnswerRow(text: answer, isRight: false, isLiteral: item.format == "typed")
             }
+            // A typed question can accept more than one answer, so a right one shows the
+            // learner's own.
             if let correct = TrueFalseWords.savedAnswer(
-              item.correctAnswer, format: item.format, labels: labels)
+              item.outcome == .right
+                ? item.learnerAnswer ?? item.correctAnswer : item.correctAnswer,
+              format: item.format, labels: labels)
             {
               MistakeAnswerRow(text: correct, isRight: true, isLiteral: item.format == "typed")
             }
@@ -1276,12 +1269,12 @@ private struct MockReviewSection: View {
             }
           }
         } label: {
-          // What it asked, then which question it was and how it went: a wrong answer needs no
-          // word, the list is of them.
+          // What it asked, then which question it was and how it went, in a word for every
+          // outcome: the list holds right answers marked "Not sure" too.
           VStack(alignment: .leading, spacing: 2) {
             LessonRichText(item.question)
               .typeStyle(.body.weight(.medium))
-            FactSegments(facts(item))
+            FactSegments(facts: facts(item))
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
@@ -1299,13 +1292,33 @@ private struct MockReviewSection: View {
     }
   }
 
-  private func facts(_ item: MockReviewItem) -> [String] {
-    let outcome: String? =
+  private func facts(_ item: MockReviewItem) -> [FactSegments.Fact] {
+    let outcome =
       switch item.outcome {
-      case .blank: String(localized: "Blank", table: "Mock", comment: "A blank question")
+      case .blank:
+        String(
+          localized: "mockReviewBlank", defaultValue: "Blank", table: "Mock",
+          comment:
+            "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\"."
+        )
       case .partial:
-        String(localized: "Partly right", table: "Mock", comment: "Partly right answers")
-      case .wrong: nil
+        String(
+          localized: "mockReviewPartlyRight", defaultValue: "Partly right", table: "Mock",
+          comment:
+            "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\"."
+        )
+      case .right:
+        String(
+          localized: "mockReviewRight", defaultValue: "Right", table: "Mock",
+          comment:
+            "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\"."
+        )
+      case .wrong:
+        String(
+          localized: "mockReviewWrong", defaultValue: "Wrong", table: "Mock",
+          comment:
+            "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\"."
+        )
       }
 
     let place =
@@ -1315,7 +1328,9 @@ private struct MockReviewSection: View {
     let section = item.section.flatMap { index in
       sections.count { $0.questions > 0 } > 1 ? sections.first { $0.index == index } : nil
     }
-    return [place, section.map(MockLabels.sectionTitle) ?? item.area, outcome].compactMap { $0 }
+    return [place, section.map(MockLabels.sectionTitle) ?? item.area, outcome]
+      .compactMap { $0.map { FactSegments.Fact(text: $0) } }
+      + (item.unsure ? [.unsure] : [])
   }
 }
 

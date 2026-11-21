@@ -14,7 +14,7 @@ export function useSectionCounts() {
     blank: blank.filter((question) => question.format !== "essay").length,
     blankEssays: blank.filter((question) => question.format === "essay").length,
     essays: questions.filter((question) => question.format === "essay").length,
-    flagged: questions.filter((question) => runner.drafts[question.itemId]?.flagged).length,
     total: questions.length,
+    unsure: questions.filter((question) => runner.drafts[question.itemId]?.flagged).length,
   };
 }

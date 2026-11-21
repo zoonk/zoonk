@@ -17,21 +17,35 @@ import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
+import { FactSegments } from "../_components/task-meta";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { countsTowardMockProgress } from "./mock-answer-progress";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
-import { isNumberedMockQuestion } from "./mock-labels";
+import { UnsureMark, isNumberedMockQuestion } from "./mock-labels";
 import { MovesNote } from "./mock-moves";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
 import { useQuestionCellLabel } from "./use-question-cell-label";
 
-function useSheetCountLine(): string {
+function SheetCountLine() {
   const t = useExtracted();
-  const { answered } = useSectionCounts();
+  const { answered, unsure } = useSectionCounts();
 
-  return t("{answered, plural, =0 {# answered} one {# answered} other {# answered}}", { answered });
+  return (
+    <FactSegments
+      facts={[
+        t("{answered, plural, =0 {# answered} one {# answered} other {# answered}}", { answered }),
+        unsure > 0 &&
+          t({
+            description:
+              'On the mock exam\'s answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more.',
+            message: "{unsure, plural, one {# not sure} other {# not sure}}",
+            values: { unsure },
+          }),
+      ]}
+    />
+  );
 }
 
 const CELL_FILLED_CLASS =
@@ -40,8 +54,11 @@ const CELL_FILLED_CLASS =
 const CELL_CURRENT_CLASS =
   "after:bg-foreground after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full";
 
-/** A flag is a tint in its own color, never a ring; an answered one keeps its number in ink. */
-const CELL_FLAGGED_CLASS =
+/**
+ * An answered "Not sure" question is a tint in its own color, never a ring, with its number in ink.
+ * A blank one keeps the blank look, so the badge alone says it's marked.
+ */
+const CELL_UNSURE_CLASS =
   "bg-warning/14 enabled:hover:bg-warning/14 contrast-more:ring-warning ring-transparent contrast-more:ring-2";
 
 function QuestionCell({
@@ -62,7 +79,8 @@ function QuestionCell({
     total: runner.view.current?.questionTotal ?? 0,
   });
 
-  const label = useQuestionCellLabel({ flagged: Boolean(draft?.flagged), numbered, question });
+  const unsure = Boolean(draft?.flagged);
+  const label = useQuestionCellLabel({ numbered, question, unsure });
 
   const isAnswered = countsTowardMockProgress(runner, question.itemId);
 
@@ -73,20 +91,15 @@ function QuestionCell({
       className={cn(
         "focus-visible:outline-ring/50 text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-3 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
         isAnswered && CELL_FILLED_CLASS,
-        draft?.flagged && cn(CELL_FLAGGED_CLASS, !isAnswered && "text-warning-text"),
-        isCurrent && cn(CELL_CURRENT_CLASS, !draft?.flagged && "text-foreground"),
+        unsure && isAnswered && CELL_UNSURE_CLASS,
+        isCurrent && cn(CELL_CURRENT_CLASS, "text-foreground"),
       )}
       disabled={!runner.moves.canOpen(index)}
       onClick={() => onPick(index)}
       type="button"
     >
       {numbered ? question.number : <PenLineIcon aria-hidden="true" className="size-4" />}
-      {draft?.flagged && (
-        <span
-          aria-hidden="true"
-          className="bg-warning absolute inset-e-1 top-1 size-1 rounded-full"
-        />
-      )}
+      {unsure && <UnsureMark className="text-warning absolute inset-e-1.5 top-0" />}
     </button>
   );
 }
@@ -197,14 +210,21 @@ function SheetNotes() {
 
 function MockSheetContent({
   onPick,
+  withCount = false,
   withMoves = false,
 }: {
   onPick: (position: number) => void;
+  withCount?: boolean;
   withMoves?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
+        {withCount && (
+          <p className="text-muted-foreground font-mono text-xs tabular-nums">
+            <SheetCountLine />
+          </p>
+        )}
         <SheetGrid onPick={onPick} />
         {withMoves && (
           <div className="text-muted-foreground text-xs empty:hidden">
@@ -246,18 +266,16 @@ export function useMockSheetAside({
 }): TaskFrameAside {
   const t = useExtracted();
   const { runner } = useMockScreen();
-  const counts = useSheetCountLine();
 
   return {
     children: (
       <>
         <SectionClock deadline={deadline} place="aside" />
-        <MockSheetContent onPick={runner.go} />
+        <MockSheetContent onPick={runner.go} withCount />
       </>
     ),
     footer: <SheetHandIn onHandIn={onHandIn} />,
     label: t("Answer sheet"),
-    meta: counts,
     title: t("Answer sheet"),
   };
 }
@@ -266,7 +284,6 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const [open, setOpen] = useState(false);
-  const counts = useSheetCountLine();
 
   return (
     <Drawer onOpenChange={setOpen} open={open}>
@@ -286,7 +303,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
           <div className="flex min-w-0 flex-col gap-1">
             <DrawerTitle>{t("Answer sheet")}</DrawerTitle>
             <DrawerDescription className="font-mono text-xs tabular-nums">
-              {counts}
+              <SheetCountLine />
             </DrawerDescription>
           </div>
         </SheetHeader>

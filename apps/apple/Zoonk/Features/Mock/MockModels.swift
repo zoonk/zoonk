@@ -34,7 +34,8 @@ struct MockDraft: Hashable, Codable, Sendable {
 
   var answer: PracticeAnswer?
   var durationMs: Int
-  var flagged: Bool
+  /// The learner marked it "Not sure".
+  var unsure: Bool
   var itemId: String
   var revision: String? = nil
   var edit: Edit? = nil
@@ -49,6 +50,11 @@ struct MockDraft: Hashable, Codable, Sendable {
     return draft
   }
 
+  private enum CodingKeys: String, CodingKey {
+    case answer, durationMs, itemId, revision, edit
+    case unsure = "flagged"
+  }
+
   /// A number counts even when it's zero.
   var isAnswered: Bool {
     switch answer {
@@ -59,7 +65,7 @@ struct MockDraft: Hashable, Codable, Sendable {
   }
 
   static func empty(_ itemId: String) -> MockDraft {
-    MockDraft(answer: nil, durationMs: 0, flagged: false, itemId: itemId)
+    MockDraft(answer: nil, durationMs: 0, unsure: false, itemId: itemId)
   }
 }
 
@@ -345,6 +351,8 @@ struct MockEssay: Hashable, Decodable, Sendable, Identifiable {
   var question: String
   var status: Status
   var text: String?
+  /// The learner marked it "Not sure".
+  var unsure: Bool
   var writing: WritingPrompt?
 
   var id: String { itemId }
@@ -354,6 +362,7 @@ struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   enum Outcome: String, Decodable, Sendable {
     case blank
     case partial
+    case right
     case wrong
   }
 
@@ -370,6 +379,8 @@ struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   var question: String
   var section: Int?
   var total: Int?
+  /// The learner marked it "Not sure"; a right answer is reviewed only when marked.
+  var unsure: Bool
 
   var id: String { itemId }
 }

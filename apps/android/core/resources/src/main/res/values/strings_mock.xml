@@ -36,8 +36,11 @@
     <string name="mock_written_question_place">Question %1$d of %2$d</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">Question %1$d of %2$d · %3$s</string>
-    <string name="mock_flag">Flag</string>
-    <string name="mock_unflag">Remove flag</string>
+    <!-- A button beside "Next" the learner turns on for a question whose answer they aren't sure of, to check it again before handing in; the result shows how those answers went. -->
+    <string name="mock_not_sure">Not sure</string>
+    <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
+    <string name="mock_not_sure_tip">Check it again before you hand in. Your result shows how these answers went.</string>
+    <string name="mock_not_sure_tip_forward_only">Your result shows how these answers went.</string>
     <string name="mock_next">Next</string>
     <string name="mock_hand_in_section">Hand in section</string>
     <string name="mock_moves_review_any">Review: you can go back to any question.</string>
@@ -51,24 +54,26 @@
     <string name="mock_moves_must">Answer each question to move on.</string>
     <string name="mock_hand_in_mock_title">Hand in the mock exam?</string>
     <string name="mock_hand_in_section_title">Hand in this section?</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_unsure: "3 questions are blank and you're not sure of 2." -->
     <plurals name="mock_left_blank">
         <item quantity="one">%d question is blank</item>
         <item quantity="other">%d questions are blank</item>
     </plurals>
-    <plurals name="mock_left_flagged">
-        <item quantity="one">%d is flagged</item>
-        <item quantity="other">%d are flagged</item>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), read after mock_left_blank: "3 questions are blank and you're not sure of 2." -->
+    <plurals name="mock_left_unsure">
+        <item quantity="one">you\'re not sure of %d</item>
+        <item quantity="other">you\'re not sure of %d</item>
     </plurals>
-    <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
-    <string name="mock_left_blank_and_flagged">%1$s and %2$s.</string>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_unsure. -->
+    <string name="mock_left_blank_and_unsure">%1$s and %2$s.</string>
     <plurals name="mock_left_blank_only">
         <item quantity="one">%d question is blank.</item>
         <item quantity="other">%d questions are blank.</item>
     </plurals>
-    <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d question is flagged.</item>
-        <item quantity="other">%d questions are flagged.</item>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), when none is blank. -->
+    <plurals name="mock_left_unsure_only">
+        <item quantity="one">You\'re not sure of %d answer.</item>
+        <item quantity="other">You\'re not sure of %d answers.</item>
     </plurals>
     <string name="mock_every_answered">Every question is answered.</string>
     <string name="mock_essay_blank">The essay is blank.</string>
@@ -94,12 +99,17 @@
         <item quantity="one">%d answered</item>
         <item quantity="other">%d answered</item>
     </plurals>
+    <!-- On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more. -->
+    <plurals name="mock_unsure_count">
+        <item quantity="one">%d not sure</item>
+        <item quantity="other">%d not sure</item>
+    </plurals>
     <string name="mock_questions">Questions</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">Question %1$d</string>
     <string name="mock_cell_answered">answered</string>
-    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_flagged">%1$s, flagged</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked "Not sure" (mock_not_sure). %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_unsure">%1$s, not sure</string>
     <string name="mock_sections">Sections</string>
     <string name="mock_section_number">Section %1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

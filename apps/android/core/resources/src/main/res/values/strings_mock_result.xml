@@ -164,21 +164,21 @@
         <item quantity="one">You missed %d easy question. Review those first.</item>
         <item quantity="other">You missed %d easy questions. Review those first.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">Flagged answers</string>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure) while taking the mock exam. -->
+    <string name="mock_result_unsure_answers">Answers you weren\'t sure of</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="one">%1$d of %2$d right</item>
         <item quantity="other">%1$d of %2$d right</item>
     </plurals>
-    <!-- %1$s is how the answers the learner didn't flag went, %2$s how the flagged ones went, each a mock_result_right_of. -->
-    <string name="mock_result_calibration_detail">Not flagged: %1$s. Flagged: %2$s.</string>
+    <!-- %1$s is how the answers the learner was sure of went, %2$s how the ones they marked "Not sure" went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">Sure: %1$s. Not sure: %2$s.</string>
     <!-- %1$s can be a decimal, such as "1.5". -->
     <plurals name="mock_result_blank_gain">
-        <item quantity="one">Leaving the flagged ones blank would have added %1$s point.</item>
-        <item quantity="other">Leaving the flagged ones blank would have added %1$s points.</item>
+        <item quantity="one">Leaving the ones you weren\'t sure of blank would have added %1$s point.</item>
+        <item quantity="other">Leaving the ones you weren\'t sure of blank would have added %1$s points.</item>
     </plurals>
-    <string name="mock_result_keep_answering">Your flagged answers still earned points, so keep answering them.</string>
+    <string name="mock_result_keep_answering">The answers you weren\'t sure of still earned points, so keep answering them.</string>
     <string name="mock_result_review">Questions to review</string>
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">You left it blank.</string>

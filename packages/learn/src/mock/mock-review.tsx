@@ -32,12 +32,17 @@ import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
-import { useMockQuestionLabel, useMockSectionTitle } from "./mock-labels";
+import { UnsureFact, useMockQuestionLabel, useMockSectionTitle } from "./mock-labels";
 
+/**
+ * A right answer shows once, as the learner gave it: a typed question can accept more than one.
+ * Any other shows theirs over the right one.
+ */
 function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: TrueFalseLabels }) {
   const { answerText } = useTrueFalseLabels(labels);
-  const yours = entry.learnerAnswer;
-  const right = entry.correctAnswer;
+  const isRight = entry.outcome === "right";
+  const yours = isRight ? null : entry.learnerAnswer;
+  const right = isRight ? (entry.learnerAnswer ?? entry.correctAnswer) : entry.correctAnswer;
 
   const line = (text: string) =>
     entry.format === "typed" ? (
@@ -54,7 +59,7 @@ function ReviewAnswers({ entry, labels }: { entry: MockReviewEntry; labels: True
   );
 }
 
-/** The row says which question it is and how it went; a wrong answer needs no word, the list is of them. */
+/** The row says which question it is and how it went, in a word for every outcome: the list holds right answers marked "Not sure" too. */
 function useEntryFacts(section: MockSectionView | undefined) {
   const t = useExtracted();
   const title = useMockSectionTitle();
@@ -63,7 +68,32 @@ function useEntryFacts(section: MockSectionView | undefined) {
   return (entry: MockReviewEntry): (string | null)[] => [
     label({ number: entry.number, total: entry.total }),
     section ? title(section) : entry.area,
-    { blank: t("Blank"), partial: t("Partly right"), wrong: null }[entry.outcome],
+    {
+      blank: t({
+        description:
+          "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+        id: "mockReviewBlank",
+        message: "Blank",
+      }),
+      partial: t({
+        description:
+          "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+        id: "mockReviewPartlyRight",
+        message: "Partly right",
+      }),
+      right: t({
+        description:
+          "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+        id: "mockReviewRight",
+        message: "Right",
+      }),
+      wrong: t({
+        description:
+          "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+        id: "mockReviewWrong",
+        message: "Wrong",
+      }),
+    }[entry.outcome],
   ];
 }
 
@@ -105,6 +135,7 @@ function ReviewEntry({
   section: MockSectionView | undefined;
 }) {
   const facts = useEntryFacts(section);
+  const unsure = entry.unsure ? <UnsureFact /> : null;
 
   return (
     <li data-slot="mock-review-entry">
@@ -115,7 +146,7 @@ function ReviewEntry({
               <ItemLine text={entry.question} />
             </ListRowTitle>
             <ListRowDescription>
-              <FactSegments facts={facts(entry)} />
+              <FactSegments extra={unsure} facts={facts(entry)} />
             </ListRowDescription>
           </ListRowContent>
           <FoldChevron />
@@ -129,8 +160,8 @@ function ReviewEntry({
 }
 
 /**
- * Every question the learner missed, as rows of one list: what each asked, and which it was. A row
- * opens in place to its passage, the two answers and why.
+ * Every question the learner missed or wasn't sure of, as rows of one list: what each asked, and
+ * which it was. A row opens in place to its passage, the answers and why.
  */
 export function MockReview({
   review,

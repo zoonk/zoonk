@@ -12,12 +12,12 @@
   "mock_result_below_minimum_points_decimal": "537528a54911c595b33bd6a3f4a0c3ce34e0ed58f381619de735a798e2240905",
   "mock_result_below_percent": "8144013b56a9fd5eb8f403523b42e7bf7495f970011a7492724ba3914b5c2337",
   "mock_result_blank": "0f4e631f55d736c1fba1d7fbed33db4ef7e4d7139ffd7e164bc25f615a101d90",
-  "mock_result_blank_gain": "e6d404276008faea8138a64a8942216c243717703d8e3bf1b471833917da566f",
+  "mock_result_blank_gain": "245399d76a58ab70f612f2a45d24aef27c959dd27893eac0d7609dc2102ca6ec",
   "mock_result_blank_wrong": "04ce8c6d38d876fdbc7fde5ac986af54f50882334dfbe381ff8bb14d0a839d13",
   "mock_result_by_area": "cfe8ce623785d7303b8dfb1242b2f41198feb5b357ebe98ce3c0c1f7862916c1",
   "mock_result_by_test": "3929eb0a636a4982235c852399160f62aa61fbcdd16a4977168628120531ca23",
   "mock_result_by_topic": "240b4ee396151acdbea15aba86298a02f8aaa7710b5377da414d8e67b7c53a93",
-  "mock_result_calibration_detail": "c1ca93cf49ed63d23208b378b2b6d268cb2c7b967ed18e0ec2866c8481cc7a50",
+  "mock_result_calibration_detail": "b8e2b1e28258b256b55541d063fffe5689e6be5604db9ffd6d9ac3f476b4a59f",
   "mock_result_change_plan": "046e704e6506f9db4fb5004f1f66559b4a7a2646c321b62386fb84d553ade36c",
   "mock_result_continue": "924ebf5cb09f20ac97e2a45a7d06c330257da26e28882f1212b2f6d32daf3f50",
   "mock_result_details": "3df4d28be3bd1027cb397e1c5915ceac64876eac18f59576a2e88cdff1a19ed2",
@@ -29,7 +29,6 @@
   "mock_result_estimated_exam_score": "8cf40eae77c47613bfc6c7372f9170f9f30722b715163cdcb81c8f0ff636f62e",
   "mock_result_estimated_score": "250b9dc3603fe5d2bfcbed1f2e2e93fda8f160e3068c21cc70619c229d7206b5",
   "mock_result_every_minimum": "58412d9ddb1bfc048c53941889133dc71091aef905fe2aa7aacd338780649018",
-  "mock_result_flagged_answers": "830438cec11c5d1e44f8341ebdf8f811ba9c4af89603e485ca65092b9a25ed9e",
   "mock_result_focus_done": "3241ca47552b287d0aa19c6e3e8e4988b64a6303b3c5e68ec242ad79eee8a549",
   "mock_result_focus_line": "2dea2ba541a8038364b0965589efdb57e7850aaeda537f7aff97f97267f64a72",
   "mock_result_focus_title": "634756f14d0723c27fc75e978f06ae83e4ec7904cc229321a7173ce1c34ba632",
@@ -39,7 +38,7 @@
   "mock_result_grading_slow": "16f9559d3add72cc5e5deac81f510aeac27250fadf21d267d88c33e70eed74c7",
   "mock_result_had_of": "c580409bc01c776b565be3b2d6f7914edeea58523aa3235d70f27dd084688870",
   "mock_result_insights": "bcb3254a2ef83ddd22602fe46d19c144d5c46794e0040d4105967e1219bd52b0",
-  "mock_result_keep_answering": "f79076208073ba4b0504f270edb0a8d1885de513710d67d71e0304aae4c8ba0d",
+  "mock_result_keep_answering": "d6e3ef3656ae09d1004c0393fbd6557c29664d2faf649d815ed43444672bb653",
   "mock_result_keep_them": "68200615b855e6b78608b2c9fdaa33fba792622ee92fa082a91a474863d4898f",
   "mock_result_left_at_timeout": "b9300c37fc1b74579170285dd1dde6701a58447e5365859309ba62cc3b91901b",
   "mock_result_left_blank": "69b5f0fea7cb7805f4102ce053b798a09de0b4d60bc78a2dc5cf83fbb6f5fcd1",
@@ -115,6 +114,7 @@
   "mock_result_unjudged_together_percent": "0a0ad783cb7c770efc56f780308284a2ab3d99a64cfd05c04102d5d514378950",
   "mock_result_unjudged_together_points": "e13d38562c2ad950a1be1378f0c19b6d5b25e11214836b181f82321b0f1d3ea5",
   "mock_result_unjudged_together_points_decimal": "2e41e7c6ae94ef4d99175e00d702be8c2e28dd1f0c769cf2ef3021baab482135",
+  "mock_result_unsure_answers": "d937c91321d1770de2aa44f79e3c5df21131442bf0c1ddf8dc1abf12e84768ab",
   "mock_result_up": "0ad3c8cbbcf6be5b187ddfb317889e6efddcf13122a28d45e40e96d627e6199d",
   "mock_result_up_from": "33a7de792f4342e7c3b0c59a0586d3138f285adecb2c5fe58d87a0c8d232e2d2",
   "mock_result_work_on": "56e115e9d0735d3dddda239e2e0c5888e1f772b379add4d3714ba738a5a6115c",
@@ -274,19 +274,19 @@
     <plurals name="mock_result_easy_missed">
         <item quantity="other">쉬운 문제 %d개를 틀렸어요. 이 문제부터 복습해 보세요.</item>
     </plurals>
-    <!-- The answers the learner flagged as unsure while taking the mock exam. -->
-    <string name="mock_result_flagged_answers">표시한 답안</string>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure) while taking the mock exam. -->
+    <string name="mock_result_unsure_answers">‘헷갈려요’로 표시한 답</string>
     <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
     <plurals name="mock_result_right_of">
         <item quantity="other">%1$d문제 정답(총 %2$d문제)</item>
     </plurals>
-    <!-- %1$s is how the answers the learner didn't flag went, %2$s how the flagged ones went, each a mock_result_right_of. -->
-    <string name="mock_result_calibration_detail">표시하지 않은 답안: %1$s. 표시한 답안: %2$s.</string>
+    <!-- %1$s is how the answers the learner was sure of went, %2$s how the ones they marked "Not sure" went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">확신: %1$s. 헷갈려요: %2$s.</string>
     <!-- %1$s can be a decimal, such as "1.5". -->
     <plurals name="mock_result_blank_gain">
-        <item quantity="other">표시한 문제에 답하지 않았다면 %1$s점을 더 받았을 거예요.</item>
+        <item quantity="other">헷갈린 답을 빈칸으로 뒀다면 %1$s점을 더 얻었을 거예요.</item>
     </plurals>
-    <string name="mock_result_keep_answering">표시한 문제에서도 점수를 얻었으니, 계속 답해 보세요.</string>
+    <string name="mock_result_keep_answering">헷갈렸던 답으로도 점수를 얻었으니 계속 답을 골라 보세요.</string>
     <string name="mock_result_review">다시 볼 문제</string>
     <string name="mock_result_question">%1$d번 문제</string>
     <string name="mock_result_left_blank">답하지 않았어요.</string>

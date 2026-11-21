@@ -9,7 +9,7 @@
   "mock_break_detail": "d5dbd2f5f4633d5183aac47f3d4e2e9f4f0f2e7827d383a4bda1a1007bb916c4",
   "mock_break_time_left": "c242660b660cd52ce630a0983d01149f104f45ee1ffaf62624ed12d07a9e0b81",
   "mock_cell_answered": "104bdd3ddf561f40b8299398f49ded7effef14828ed816aa146b7579fb9857d3",
-  "mock_cell_flagged": "2a1cdb397390f3fecbdc5716700f17442b0249cd6966756eb3a219ae4dec7750",
+  "mock_cell_unsure": "1d24ccb1bcb6ce992d7262c7e085fddad8b4c50f4cdcd43b75e9c7f7bd025760",
   "mock_continue": "d1eed4bd1214e1028b8fa6e5ca751d7782d93a8ff8c852df2f0960293f592731",
   "mock_continue_section": "b756f1009d5558f0fa38b9c2972ed8a7e14d8ad928bfcd6e9e1dd126af55be97",
   "mock_essay_blank": "c8766822cc7ca0a22fee1e791dc4f12ba6f55b7ea56f73ad48cd8b187f9b7633",
@@ -17,7 +17,6 @@
   "mock_every_answered": "8bcdc71e7406b5b1b75248772891005be0b24493905662c5b70b7e268d89c2a1",
   "mock_expired_detail": "af960480653996ed80878272c5bb900843d2e72be16e93515c07a4228901aed8",
   "mock_expired_title": "dad5cf48ea29fc3e73f5662afa64853e264ab62eefe4e0e322bb65c071101533",
-  "mock_flag": "a845ac8fe708af28a2933a8ea205fb76763e216455217d1ab205b56ff08f080d",
   "mock_hand_in": "e4480de1f117143755bb0938f6e495f11930797c2ffd96d2ca558a2792773a70",
   "mock_hand_in_final": "09974785c9bcb8bdf83d096c4b4afe5da55de63d2f21efefefb5afab9e7c9265",
   "mock_hand_in_mock_title": "36eed1b97c9385b588b6a1ed12de33621ae545d463eb52326fb6ef355b26038c",
@@ -30,10 +29,10 @@
   "mock_label": "bffdece59ec6c657d417adf077d448efdd270e451c67eda8aa70dec72ba628cb",
   "mock_label_shape": "034242280bd96c59c6a094571d00716aae7aed09c4260090203b91eba97fafc2",
   "mock_left_blank": "dc873129f06ed57fa0ed16a49069d135432abb9739b8f3bf85d500a89ddfd82a",
-  "mock_left_blank_and_flagged": "28879f2dff189b9c621e2e545fb7abd17fbac3b830c9c6b52ed682661265f66b",
+  "mock_left_blank_and_unsure": "18ec80d3b8241b83a4461f598d7f3b7bc8124eaa7caa542c3cd370f1431f84b2",
   "mock_left_blank_only": "cdf3c19a07513bb9722031b3b3337fd1f3b8aef9782c51c1115fb08a7a1902f9",
-  "mock_left_flagged": "499ed3460887e429cd81b2cd647cdad99a882b958c8114319ec7bfb6a1143f34",
-  "mock_left_flagged_only": "6f98420c553cf8bb5e45e157ca17aed596342136811e169e1ca505d32349366d",
+  "mock_left_unsure": "e41c7d119fdd51b4df2efb95018497161716834a751e740e411b05233db5cf67",
+  "mock_left_unsure_only": "cc7be4267611a5a2d3de7878369695231b350e3b50d1a0a344e800ca3fff6b12",
   "mock_moves_forward": "2fda31c05d0e03b5f3ed4a2eae6467f654f2689a9a006e03a8045d53eea84384",
   "mock_moves_forward_must": "642453c7caf8ef66cf664ab9d4929b44e185f2dcf3dc9a77b9e960b7f1ec5ada",
   "mock_moves_must": "b98cbd713a6e6ce4ff44b2783a443d23489bd34247009c91c2dadd9f3a7b8e23",
@@ -44,6 +43,9 @@
   "mock_next": "01a02e5f1fd4ed9dda65c2b90cf65a4c6922bf2dac1866d8d958acbff1227cbf",
   "mock_next_named": "feda83fe7c18a7717b4281f20721c29cbfcce562c9e7af4ecb2f66a496236e1a",
   "mock_next_section": "ff464d8b7c8aca10ff628a7398007c2a954ebc76be2822af58d952a59eec34ed",
+  "mock_not_sure": "fccbba6168dfddb0ce4cba512a29760a519a2ac13f414d4f73954d426e5d4d3b",
+  "mock_not_sure_tip": "40a551d0fe5141a7c258eff2a541b104c356b406b796d2cb785d4f81f97b73e5",
+  "mock_not_sure_tip_forward_only": "0374bd374ab58e18d38e49bdd23644d2dbecb8bb649e95adcde99f42cac10fa3",
   "mock_place": "71872615f909946fca7e9bc741ed97b205f02213e846f068751e1c13029998cd",
   "mock_points_of": "7ee7c2b96463f0b561165232cbccfaee0f65d1c4533122e72340302edb835f49",
   "mock_progress_label": "c3413be759f5d2a12f80514f416b944e202146657e7baf520faaf16d9f9b9559",
@@ -89,7 +91,7 @@
   "mock_time_up": "c2c9e596d2aace7461bcbfeb2b8477876b633be143dac9bdc1d32a6dc33e30b7",
   "mock_title": "97a157aeab34789ebf003dc2bad54586c36673d172d366c711f3533c0a9c1be3",
   "mock_try_again": "6902745cd20287e9893552ed99bbde3e5cbdf03a61b4b697971c300682ab5b78",
-  "mock_unflag": "72bfe8f47a5bdac1dce9dc6929b42e97d0eb627d817b927873ea6416ca2aa878",
+  "mock_unsure_count": "f9ecf7afadfdec8999f39f819e34add59e1c4f7716c1c49afc349e6596c3842c",
   "mock_words": "e649665ced8cd8ddbba5bf8f8d557d0b8e098043b5da57e8bf5dcc1f1d00a70c",
   "mock_written_part": "db6b0a534dc3f9c9f217d6f5693ddc7b706d0212d01842efbf68e3613c952015",
   "mock_written_part_area": "337fbbf983416ff5144c8222f88c81faeace47bd06ff4828643b0a8fa61ca82c",
@@ -134,8 +136,11 @@
     <string name="mock_written_question_place">第%1$d問（全%2$d問）</string>
     <!-- %3$s is the question's area, such as Mathematics. -->
     <string name="mock_question_place_area">第%1$d問（全%2$d問） · %3$s</string>
-    <string name="mock_flag">見直し</string>
-    <string name="mock_unflag">見直しを解除する</string>
+    <!-- A button beside "Next" the learner turns on for a question whose answer they aren't sure of, to check it again before handing in; the result shows how those answers went. -->
+    <string name="mock_not_sure">自信なし</string>
+    <!-- Shown once beside the mock_not_sure button, the first time the learner turns it on. -->
+    <string name="mock_not_sure_tip">提出する前にもう一度答えを見直しましょう。結果を見ると、これらの答えがどうだったかわかります。</string>
+    <string name="mock_not_sure_tip_forward_only">結果を見ると、これらの答えがどうだったかわかります。</string>
     <string name="mock_next">次へ</string>
     <string name="mock_hand_in_section">セクションを提出する</string>
     <string name="mock_moves_review_any">見直し：どの問題にも戻れます。</string>
@@ -148,20 +153,22 @@
     <string name="mock_moves_must">次に進むには各問題への回答が必要です。</string>
     <string name="mock_hand_in_mock_title">模試を提出しますか？</string>
     <string name="mock_hand_in_section_title">このセクションを提出しますか？</string>
-    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <!-- Read with mock_left_unsure: "3 questions are blank and you're not sure of 2." -->
     <plurals name="mock_left_blank">
         <item quantity="other">空欄の問題が%d問あります</item>
     </plurals>
-    <plurals name="mock_left_flagged">
-        <item quantity="other">見直し対象の問題が%d問あります</item>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), read after mock_left_blank: "3 questions are blank and you're not sure of 2." -->
+    <plurals name="mock_left_unsure">
+        <item quantity="other">自信がないのは%d</item>
     </plurals>
-    <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
-    <string name="mock_left_blank_and_flagged">%1$s、%2$s。</string>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_unsure. -->
+    <string name="mock_left_blank_and_unsure">%1$s、%2$s。</string>
     <plurals name="mock_left_blank_only">
         <item quantity="other">未回答の問題が%d問あります。</item>
     </plurals>
-    <plurals name="mock_left_flagged_only">
-        <item quantity="other">見直し対象の問題が%d問あります。</item>
+    <!-- The answers the learner marked "Not sure" (mock_not_sure), when none is blank. -->
+    <plurals name="mock_left_unsure_only">
+        <item quantity="other">%d問に自信なしを付けています。</item>
     </plurals>
     <string name="mock_every_answered">すべての問題に答えました。</string>
     <string name="mock_essay_blank">小論文が白紙です。</string>
@@ -184,12 +191,16 @@
     <plurals name="mock_answered_count">
         <item quantity="other">%d問に回答済み</item>
     </plurals>
+    <!-- On the mock exam's answer sheet, after "34 answered ·": how many answers the learner marked with the "Not sure" button, as in "34 answered · 3 not sure". Keep it as short as the English. The number is 1 or more. -->
+    <plurals name="mock_unsure_count">
+        <item quantity="other">自信なし：%d問</item>
+    </plurals>
     <string name="mock_questions">問題</string>
     <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
     <string name="mock_question_number">問題%1$d</string>
     <string name="mock_cell_answered">回答済み</string>
-    <!-- A cell of the mock exam's answer sheet the learner flagged to look at again. %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
-    <string name="mock_cell_flagged">%1$s（見直し）</string>
+    <!-- A cell of the mock exam's answer sheet the learner marked "Not sure" (mock_not_sure). %1$s is "Question 12" or "Written part", so use a form that agrees with both. -->
+    <string name="mock_cell_unsure">%1$s（自信なし）</string>
     <string name="mock_sections">セクション</string>
     <string name="mock_section_number">セクション%1$d</string>
     <!-- A section's status in the list of the mock's sections. -->

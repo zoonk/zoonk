@@ -5,9 +5,9 @@
   "exam_add_result": "875ba839a0230e3fceb7c06244a2202cb8c257ecd2c954d7f5431d13c411b87a",
   "exam_add_result_detail": "7f09f7eb97a82f6d8bddcf67084fb1c1324d2c23a7c6af9542d42648be20474d",
   "exam_by_subject": "d360bf3337e032a3d559d35a837884dbfa656ba8320d572ac7c05e9714f39c07",
-  "exam_calibration": "686b8dc9e08944f50df5a09bd8ad804c039b83bc4fb4a92a5ce7da589e7b3190",
-  "exam_calibration_blank_unsure": "cf3bfa816dc88ea5d0267160a52c8003130bc8652135f2f86fa088243842dedc",
-  "exam_calibration_keep_answering": "d3d28dcd7b18b7ee46757e6baea7c7daeb6a72619918e6db40671b32549477f3",
+  "exam_calibration": "a943ffffa2373c1527098e7787cf7b380ecb74ea378340f9f43bbbee9aa55f89",
+  "exam_calibration_blank_unsure": "407255ac7f05ad1f4040a1c8b76c83ee1a494e30579f75bd7b1e594df264f9d6",
+  "exam_calibration_keep_answering": "b900feb63f48b0f99207e160b175acd27d202dd95dcda2bd71c332d77840d64d",
   "exam_calibration_right": "ffb41c274794f6deeb2458adec8d7321367da44d935428acb211200c516c07e0",
   "exam_checklist_black_pen": "256f44facd86c790d9cea6c88ba8ed17392ccc83dcf7c5dc726f7879d8f9bcee",
   "exam_checklist_count": "037c04b72636847ab44f74d0dba758d882c111ea7bfb2bda78f32d9bcb1c3e27",
@@ -224,14 +224,14 @@
     <string name="exam_rule_irt">Kolay bir soruyu kaçırmak, zor bir soruyu kaçırmaktan daha çok puan kaybettirir, bu yüzden önce kolay soruları çöz.</string>
     <string name="exam_rule_raw_title">Her doğru cevap bir puan kazandırır</string>
     <string name="exam_rule_raw">Her soruyu cevapla.</string>
-    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">Deneme sınavlarında: işaretlemediğin cevaplarda %1$s, işaretlediğin cevaplarda %2$s.</string>
+    <!-- How the learner did in mock exams on the answers they were sure of and on those they marked "Not sure". %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">Deneme sınavlarında: emin olduklarında %1$s, emin olmadıklarında %2$s.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d/%2$d doğru</item>
         <item quantity="other">%1$d/%2$d doğru</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">İşaretlediğin cevaplar kazandırdığından fazla puan kaybettiriyor: bunları boş bırak.</string>
-    <string name="exam_calibration_keep_answering">İşaretlediğin cevaplar yine de puan kazandırıyor: cevaplamaya devam et.</string>
+    <string name="exam_calibration_blank_unsure">Emin değilsen boş bırak: bu cevaplar kazandırdıklarından fazlasını kaybettiriyor.</string>
+    <string name="exam_calibration_keep_answering">Emin olmasan da cevapla: bu cevaplar puan kazandırıyor.</string>
     <string name="exam_to_pass">Geçmek için</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">Sınav belgelerinde yazıldığı gibi, %1$s.</string>

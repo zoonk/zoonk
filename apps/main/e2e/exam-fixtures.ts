@@ -115,13 +115,40 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
 
 type MockAnswers = Awaited<ReturnType<typeof addTodayMock>>["answers"];
 
-async function handInMock(page: Page) {
-  await page
-    .getByRole("complementary", { name: "Answer sheet" })
-    .getByRole("button", { name: "Hand in" })
-    .click();
+const UNSURE_TIP = "Check it again before you hand in. Your result shows how these answers went.";
 
-  await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+async function handInMock(page: Page) {
+  const sheet = page.getByRole("complementary", { name: "Answer sheet" });
+
+  await expect(sheet.getByRole("button", { name: "Question 2, not sure" })).toBeVisible();
+  await expect(sheet.getByText("2 not sure")).toBeVisible();
+  await sheet.getByRole("button", { name: "Hand in" }).click();
+
+  const dialog = page.getByRole("alertdialog");
+
+  await expect(dialog).toContainText("You're not sure of 2 answers.");
+  await dialog.getByRole("button", { name: "Hand in" }).click();
+}
+
+async function markUnsure(page: Page, { firstPress }: { firstPress: boolean }) {
+  const button = page.getByRole("button", { exact: true, name: "Not sure" });
+
+  await button.click();
+  await expect(button).toHaveAttribute("aria-pressed", "true");
+
+  await expect(page.getByText(UNSURE_TIP)).toBeVisible({ visible: firstPress });
+}
+
+/** Coming back to the question the tip opened on doesn't show it again: only a press does. */
+async function revisitFirstQuestion(page: Page) {
+  const sheet = page.getByRole("complementary", { name: "Answer sheet" });
+
+  await expect(page.getByText(UNSURE_TIP)).toBeHidden();
+  await sheet.getByRole("button", { name: "Question 1, not sure" }).click();
+  await expect(page.getByText(/^Question 1 of \d+/u)).toBeVisible();
+  await expect(page.getByText(UNSURE_TIP)).toBeHidden();
+  await sheet.getByRole("button", { exact: true, name: "Question 2" }).click();
+  await expect(page.getByText(/^Question 2 of \d+/u)).toBeVisible();
 }
 
 async function answerMockQuestion(
@@ -130,6 +157,10 @@ async function answerMockQuestion(
 ) {
   await expect(page.getByText(new RegExp(`^Question ${number} of \\d+`, "u"))).toBeVisible();
 
+  if (number === 2) {
+    await revisitFirstQuestion(page);
+  }
+
   const main = page.getByRole("main");
   const heading = (await main.getByRole("heading", { level: 2 }).textContent()) ?? "";
   const answer = answerForMockHeading({ answers, heading });
@@ -137,8 +168,8 @@ async function answerMockQuestion(
 
   await page.getByRole("radio", { name: isFirst ? answer.wrong : answer.right }).click();
 
-  if (isFirst) {
-    await page.getByRole("button", { name: "Flag" }).click();
+  if (number <= 2) {
+    await markUnsure(page, { firstPress: isFirst });
   }
 
   if (number === total) {

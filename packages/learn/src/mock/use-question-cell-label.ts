@@ -3,15 +3,15 @@
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { useExtracted } from "next-intl";
 
-/** An answer sheet cell's spoken name: the question's, and whether it's marked to look at again. */
+/** An answer sheet cell's spoken name: the question's, and whether the learner marked it "Not sure". */
 export function useQuestionCellLabel({
-  flagged,
   numbered,
   question,
+  unsure,
 }: {
-  flagged: boolean;
   numbered: boolean;
   question: MockQuestion;
+  unsure: boolean;
 }): string {
   const t = useExtracted();
 
@@ -19,11 +19,11 @@ export function useQuestionCellLabel({
     ? t("Question {number}", { number: String(question.number) })
     : t("Written part");
 
-  return flagged
+  return unsure
     ? t({
         description:
-          'A cell of the mock exam\'s answer sheet the learner flagged to look at again. {question} is "Question 12" or "Written part", so use a form that agrees with both.',
-        message: "{question}, flagged",
+          'A cell of the mock exam\'s answer sheet the learner marked with the "Not sure" button. {question} is "Question 12" or "Written part", so use a form that agrees with both.',
+        message: "{question}, not sure",
         values: { question: label },
       })
     : label;

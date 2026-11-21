@@ -156,7 +156,7 @@ struct MockRunnerView: View {
 
   private var actionBar: some View {
     MockActionBar {
-      FlagButton(run: run)
+      UnsureButton(run: run)
       nextButton
     }
   }
@@ -309,8 +309,10 @@ private struct MockQuestionCard: View {
     }
   }
 
+  /// Handing in empties the run's questions while this card still draws its last one.
   private var previous: MockQuestion? {
-    run.position > 0 ? run.questions[run.position - 1] : nil
+    let index = run.position - 1
+    return run.questions.indices.contains(index) ? run.questions[index] : nil
   }
 
   /// The exam plays each recording a set number of times and gives none back, so the mock counts
@@ -417,35 +419,64 @@ private struct MockEssayBox: View {
   }
 }
 
-private struct FlagButton: View {
+/// Marks the question as one the learner isn't sure of, to check before handing in where it can
+/// still change; the result shows how those answers went. The first mark on a device says so once.
+private struct UnsureButton: View {
   @Environment(\.dynamicTypeSize) private var typeSize
+  @AppStorage("mockUnsureTipShown") private var tipShown = false
+  @State private var showsTip = false
   let run: MockRun
 
   var body: some View {
-    let flagged = run.question.map { run.drafts[$0.itemId]?.flagged ?? false } ?? false
+    let unsure = run.question.map { run.drafts[$0.itemId]?.unsure ?? false } ?? false
+    let typesAnswer = run.question.map { [.typed, .numeric, .essay].contains($0.format) } ?? true
 
-    Button {
-      run.toggleFlag()
-    } label: {
+    Toggle(
+      isOn: Binding(
+        get: { unsure },
+        set: { isOn in
+          run.toggleUnsure()
+          if isOn, !tipShown {
+            tipShown = true
+            showsTip = true
+          }
+        })
+    ) {
       Label {
-        SwapLabel(
-          labels: [
-            Text("Flag", tableName: "Mock", comment: "Flags a question to come back to"),
-            Text(
-              "Remove flag", tableName: "Mock", comment: "Takes the flag off a flagged question"),
-          ],
-          shown: flagged ? 1 : 0, alignment: .leading)
+        Text(
+          "Not sure", tableName: "Mock",
+          comment:
+            "A toggle button in a mock exam: marks the current answer as one the learner isn't sure of, to check before handing in. Its label stays the same when pressed."
+        )
       } icon: {
-        Image(systemName: flagged ? "flag.fill" : "flag")
+        Image(systemName: unsure ? "bookmark.fill" : "bookmark")
       }
     }
+    .toggleStyle(.button)
     .labelStyle(
       typeSize.isAccessibilitySize ? AnyLabelStyle(.iconOnly) : AnyLabelStyle(.titleAndIcon)
     )
     .buttonStyle(.outline)
     .controlSize(.large)
-    .buttonTone(flagged ? .warning : .neutral)
+    .buttonTone(unsure ? .warning : .neutral)
     .disabled(run.timeUp || run.pending)
+    .keyboardShortcut(typesAnswer ? nil : KeyboardShortcut("u", modifiers: []))
+    .popover(isPresented: $showsTip, attachmentAnchor: .point(.top), arrowEdge: .bottom) {
+      Group {
+        if run.moves.canRecheck {
+          Text(
+            "Check it again before you hand in. Your result shows how these answers went.",
+            tableName: "Mock")
+        } else {
+          Text("Your result shows how these answers went.", tableName: "Mock")
+        }
+      }
+      .typeStyle(.body)
+      .padding()
+      .frame(idealWidth: 280)
+      .fixedSize(horizontal: false, vertical: true)
+      .presentationCompactAdaptation(.popover)
+    }
   }
 }
 
@@ -526,7 +557,7 @@ struct MockSectionCounts {
   var blank = 0
   var blankEssays = 0
   var essays = 0
-  var flagged = 0
+  var unsure = 0
   var total = 0
 
   init(run: MockRun) {
@@ -534,7 +565,7 @@ struct MockSectionCounts {
       let draft = run.drafts[question.itemId]
       total += 1
 
-      if draft?.flagged == true { flagged += 1 }
+      if draft?.unsure == true { unsure += 1 }
 
       if question.format == .essay {
         essays += 1
@@ -555,27 +586,32 @@ struct MockSectionCounts {
   var leftOpen: String {
     var parts: [String] = []
 
-    if blank > 0, flagged > 0 {
+    if blank > 0, unsure > 0 {
       parts.append(
         String(
-          localized: "\(blank) questions are blank and \(flagged) are flagged.", table: "Mock",
-          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+          localized: "\(blank) questions are blank and you're not sure of \(unsure).",
+          table: "Mock",
+          comment:
+            "Before handing in a mock exam: how many of its questions are blank, or marked with the \"Not sure\" button. Both numbers are 1 or more."
+        )
       )
     } else if blank > 0 {
       parts.append(
         String(
           localized: "\(blank) questions are blank.", table: "Mock",
-          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+          comment: "Before handing in a mock exam: how many of its questions are blank.")
       )
-    } else if flagged > 0 {
+    } else if unsure > 0 {
       parts.append(
         String(
-          localized: "\(flagged) questions are flagged.", table: "Mock",
-          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+          localized: "You're not sure of \(unsure) answers.", table: "Mock",
+          comment:
+            "Before handing in a mock exam: how many of its questions are blank, or marked with the \"Not sure\" button."
+        )
       )
     }
 
-    if blank == 0, flagged == 0, total > essays {
+    if blank == 0, unsure == 0, total > essays {
       parts.append(
         String(
           localized: "Every question is answered.", table: "Mock",
@@ -610,10 +646,18 @@ private struct MockAnswerSheet: View {
       NavigationStack {
         sheet
           .navigationTitle(Text("Answer sheet", tableName: "Mock"))
-          .navigationSubtitle(Text(MockLabels.answered(MockSectionCounts(run: run).answered)))
+          .navigationSubtitle(Text(verbatim: summary.joinedFacts()))
           .navigationBarTitleDisplayMode(.inline)
       }
     }
+  }
+
+  /// How many are answered, then how many the learner isn't sure of once there are any.
+  private var summary: [String] {
+    let counts = MockSectionCounts(run: run)
+    return [String(localized: MockLabels.answered(counts.answered))]
+      + (counts.unsure > 0
+        ? [String(localized: MockLabels.unsure(counts.unsure))] : [])
   }
 
   private var sheet: some View {
@@ -623,7 +667,7 @@ private struct MockAnswerSheet: View {
           Text("Answer sheet", tableName: "Mock")
             .typeStyle(.body.weight(.semibold))
             .accessibilityAddTraits(.isHeader)
-          Text(MockLabels.answered(MockSectionCounts(run: run).answered))
+          FactSegments(summary)
             .typeStyle(.note)
             .monospacedDigit()
             .foregroundStyle(.mutedForeground)
@@ -694,7 +738,7 @@ private struct MockAnswerSheet: View {
           localized: "Question \(writtenNumber ?? question.number)", table: "Mock",
           comment: "A question by number"),
       answered: run.isCountedAsAnswered(question.itemId),
-      flagged: draft?.flagged ?? false,
+      unsure: draft?.unsure ?? false,
       isCurrent: index == run.position,
       canOpen: run.moves.canOpen(index) && !run.timeUp
     ) {
@@ -718,7 +762,7 @@ extension MockRun {
 struct MockSheetRow: View {
   let name: String
   let answered: Bool
-  let flagged: Bool
+  let unsure: Bool
   let isCurrent: Bool
   let canOpen: Bool
   let onPick: () -> Void
@@ -732,8 +776,9 @@ struct MockSheetRow: View {
 
         Spacer()
 
-        if flagged {
-          Image(systemName: "flag.fill")
+        if unsure {
+          Image(systemName: "bookmark.fill")
+            .imageScale(.small)
             .foregroundStyle(.warning)
         }
 
@@ -742,11 +787,11 @@ struct MockSheetRow: View {
       }
     }
     .accessibilityLabel(
-      flagged
+      unsure
         ? Text(
-          "\(name), flagged", tableName: "Mock",
+          "\(name), not sure", tableName: "Mock",
           comment:
-            "A cell of the mock exam's answer sheet the learner flagged to look at again. %@ is \"Question 12\" or \"Written part\", so use a form that agrees with both."
+            "A cell of the mock exam's answer sheet the learner marked with the \"Not sure\" button. %@ is \"Question 12\" or \"Written part\", so use a form that agrees with both."
         )
         : Text(name)
     )

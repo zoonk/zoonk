@@ -83,12 +83,18 @@ internal fun WritingResultView(
     prompt: WritingPromptOutput,
     text: String,
     eyebrow: String? = null,
+    note: (@Composable () -> Unit)? = null,
 ) {
     val step = remember(grade, text) { grade.nextStep(text) }
     Column(verticalArrangement = Arrangement.spacedBy(40.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             // A heading, not a chip: one chip sits over a title, and the next step has its own.
-            eyebrow?.let { SectionHeader(it) }
+            if (eyebrow != null || note != null) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    eyebrow?.let { SectionHeader(it) }
+                    note?.invoke()
+                }
+            }
             grade.points?.let { PointsHeader(it, grade, prompt, text) }
             WritingProgress(grade)
             WritingNextStep(step, prompt.lines?.toInt(), headingFirst = grade.points == null)

@@ -51,13 +51,16 @@ internal const val IRT = """"irt":{"high":680,"low":610,"score":645,"se":18,"the
 internal const val MISSED =
     """{"area":"Languages","citation":null,"context":null,"correctAnswer":"house","explanation":"A noun names a thing.",
     "format":"multipleChoice","itemId":"$ITEM_THREE","learnerAnswer":"run","number":3,"outcome":"wrong",
-    "question":"Which word is a noun?","set":null}"""
+    "question":"Which word is a noun?","set":null,"unsure":false}"""
 
-internal fun pendingEssay(item: String = ESSAY_ONE) =
-    """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow."}"""
+internal fun pendingEssay(
+    item: String = ESSAY_ONE,
+    unsure: Boolean = false,
+) =
+    """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow.","unsure":$unsure}"""
 
-internal fun gradedEssay() =
-    """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded",
+internal fun gradedEssay(unsure: Boolean = false) =
+    """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded","unsure":$unsure,
     "text":"Cities grow and that is it. Transport must follow them.",
     "writing":{"charactersPerLine":55,"keySource":"practiceKey","lines":30,"minimumWords":30,"points":null,"taskKey":"essay",
       "title":"Cities and transport","unit":"answer","criteria":[{"id":"c1","name":"Argument","points":null},

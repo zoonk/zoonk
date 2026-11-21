@@ -123,7 +123,7 @@ class LiveMockRunApi(
                     MockAnswerInput(
                         answer = draft.answer?.recode<Answer, MockAnswer>(),
                         durationMs = draft.durationMs,
-                        flagged = draft.flagged,
+                        flagged = draft.unsure,
                         itemId = UUID.fromString(draft.itemId),
                         edit = draft.edit?.recode(),
                     ),

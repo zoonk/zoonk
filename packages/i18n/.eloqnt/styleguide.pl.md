@@ -46,7 +46,7 @@
 - “share” (personal facts): “opowiedzieć”, not “udostępnić”
 - “task” (a speaking exam's task): “zadanie”
 - “hand in” (a mock or one of its parts): “oddać”
-- “flag” (a mock question to come back to): “oznaczyć”
+- A mock exam's “Not sure” (the button and the mark it leaves on an answer): “Niepewne”
 - “pattern” (a mistake that recurs): “powtarzający się błąd”
 - “link” (between a cause and its effect): “związek”, not “link” or “połączenie”
 - “score”, including an exam's “band”: “wynik”, not “ocena” (an essay's grade)

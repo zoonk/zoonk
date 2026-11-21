@@ -99,6 +99,7 @@ export async function loadMockEssayViews({
         question: essay.content.question,
         status: getEssayStatus({ grade, text }),
         text,
+        unsure: draft?.flagged ?? false,
         writing,
       },
     ];
