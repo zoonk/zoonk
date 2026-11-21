@@ -9,6 +9,7 @@ import {
 import { createdLessonQuestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import {
   studySessionBlockFixture,
@@ -266,6 +267,53 @@ test.describe("Library lessons API", () => {
     ]);
 
     expect(writes.map((response) => response.status())).toStrictEqual([401, 401, 401, 401]);
+    await api.dispose();
+  });
+
+  test("offers a Quick test after two easy windows and remembers dismissal across retries", async () => {
+    const [{ api, userId }, { lesson, steps }] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "easy-windows" }),
+      playableLessonFixture({ steps: ["check", "summary"] }),
+    ]);
+
+    const goal = await goalFixture({
+      livingPlanWindow: {
+        closed: { at: "2026-11-19T00:00:00.000Z", missedSkillIds: [], result: "easy", streak: 1 },
+        correct: 19,
+        missedSkillIds: [],
+        total: 19,
+      },
+      userId,
+    });
+
+    await planFixture({ goalId: goal.id, items: [{ kind: "lesson", lessonId: lesson.id }] });
+    const runId = await startRun({ api, lessonId: lesson.id });
+
+    const checked = await check({
+      answer: { kind: "check", optionId: "likely" },
+      api,
+      runId,
+      step: stepId(steps, "check"),
+    });
+
+    expect(checked.ok()).toBe(true);
+
+    const complete = (data: { dismissPlacementOffer?: true; runId: string }) =>
+      api.post(`/v1/library/lessons/${lesson.id}/completions`, { data });
+
+    const read = async (data: { dismissPlacementOffer?: true; runId: string }) =>
+      readBody({ response: await complete(data), schema: libraryLessonCompletionSchema });
+
+    const expected = { goalId: goal.id, kind: "quick" };
+    const first = await read({ runId });
+    const repeated = await read({ runId });
+    const dismissed = await read({ dismissPlacementOffer: true, runId });
+    const after = await read({ runId });
+
+    expect(first.placementOffer).toStrictEqual(expected);
+    expect(repeated.placementOffer).toStrictEqual(expected);
+    expect(dismissed.placementOffer).toBeUndefined();
+    expect(after.placementOffer).toBeUndefined();
     await api.dispose();
   });
 

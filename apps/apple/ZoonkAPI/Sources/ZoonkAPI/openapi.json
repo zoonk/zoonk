@@ -9075,7 +9075,7 @@
     },
     "/library/lessons/{lessonId}/completions": {
       "post": {
-        "description": "Finishes a run once every screen that takes an answer was answered or explicitly skipped through `skippedWritingStepIds`, or once \"I know this\" got every check right. Only typed-answer screens can be explicitly skipped, in any lesson: these choices are recorded on the run without calling the grader, adding an answer verdict or changing future runs. In a language lesson of a language the learner has a plan for, it accepts any screens their plan could have served, since the app's copy may predate a plan change: a kind of practice (words, listening, writing or speaking) they didn't finish isn't needed, unless only the summary would be left; an answered screen of it still counts. Adds Brain Power, Energy and the day's totals; a replay counts as a review. Repeating it returns the same result without counting twice.",
+        "description": "Finishes a run once every screen that takes an answer was answered or explicitly skipped through `skippedWritingStepIds`, or once \"I know this\" got every check right. Only typed-answer screens can be explicitly skipped, in any lesson: these choices are recorded on the run without calling the grader, adding an answer verdict or changing future runs. In a language lesson of a language the learner has a plan for, it accepts any screens their plan could have served, since the app's copy may predate a plan change: a kind of practice (words, listening, writing or speaking) they didn't finish isn't needed, unless only the summary would be left; an answered screen of it still counts. Adds Brain Power, Energy and the day's totals; a replay counts as a review. Repeating it returns the saved result without counting twice. A completion can include a placement offer. On a completed run, sending `dismissPlacementOffer: true` with the same run ID dismisses the offer and returns the completion.",
         "operationId": "createLibraryLessonCompletion",
         "security": [
           {
@@ -27726,6 +27726,9 @@
       "LibraryLessonCompletionInput": {
         "type": "object",
         "properties": {
+          "dismissPlacementOffer": {
+            "type": "boolean"
+          },
           "runId": {
             "type": "string",
             "format": "uuid",
@@ -76894,6 +76897,27 @@
           "isFirstCompletion": {
             "type": "boolean",
             "description": "False for a replay: it completes, but doesn't count as a new lesson learned"
+          },
+          "placementOffer": {
+            "type": "object",
+            "properties": {
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "quick"
+                ]
+              }
+            },
+            "required": [
+              "goalId",
+              "kind"
+            ],
+            "additionalProperties": false
           },
           "planReveal": {
             "nullable": true,

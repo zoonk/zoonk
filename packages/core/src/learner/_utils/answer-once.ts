@@ -59,7 +59,7 @@ export type RefusedOutcome<Refusal extends string> = { refusal: Refusal; status:
 
 type RecordAnswerInput = {
   answer: LearnerAnswer;
-  withAnswer?: (transaction: TransactionClient) => Promise<void>;
+  withAnswer?: (transaction: TransactionClient, attempt: Attempt) => Promise<void>;
 };
 
 /** Locks the learner before refuse/withAnswer and records an attempt id only once. Refusals roll back; duplicate ids return the saved attempt; other failures propagate. */
@@ -90,7 +90,7 @@ export async function recordAnswerOnce<Refusal extends string>({
       }
 
       const persisted = await persistLearnerAnswer({ input: answer, transaction });
-      await withAnswer?.(transaction);
+      await withAnswer?.(transaction, persisted.recorded.attempt);
       return persisted;
     }),
   );

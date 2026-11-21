@@ -7,6 +7,7 @@ const MAX_SKIPPED_WRITING_STEPS = 200;
 
 export const libraryLessonCompletionInputSchema = z
   .object({
+    dismissPlacementOffer: z.boolean().optional(),
     runId: lessonRunIdSchema,
     skippedWritingStepIds: z
       .array(uuidSchema())

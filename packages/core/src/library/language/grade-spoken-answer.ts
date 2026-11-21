@@ -21,6 +21,7 @@ import { findOpenLessonRun } from "../../lesson-player/_utils/lesson-runs";
 import { loadPlayableSteps } from "../../lesson-player/_utils/load-playable-steps";
 import { gradeSpokenMistake } from "../../mistakes/grade-spoken-mistake";
 import { type MistakeReplay } from "../../mistakes/mistake-replay";
+import { recordLessonWindowAnswer } from "../../sessions/_utils/record-lesson-window";
 import { getSession } from "../../users/get-session";
 import { SPOKEN_EVIDENCE_SCORE, gradeSpokenRecording } from "./_utils/grade-spoken-recording";
 import { type SpokenAudio, isValidSpokenAudio } from "./_utils/hear-spoken-sentence";
@@ -227,9 +228,17 @@ export async function gradeSpokenAnswer({
         until: receivedAt,
         userId,
       }),
-    withAnswer: evidence
-      ? (transaction) => writeLanguageStepEvidence(transaction, evidence)
-      : undefined,
+    withAnswer: async (transaction, attempt) => {
+      if (evidence) {
+        await writeLanguageStepEvidence(transaction, evidence);
+      }
+
+      await recordLessonWindowAnswer(transaction, {
+        attempt,
+        kind: "spokenAnswer",
+        lessonId: step.lessonId,
+      });
+    },
   });
 
   const attemptId = getSpokenAttemptId(outcome);

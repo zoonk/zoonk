@@ -12,6 +12,7 @@ import {
 } from "../learner/_utils/answer-once";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { claimModelGrade } from "../learner/_utils/model-grading";
+import { recordLessonWindowAnswer } from "../sessions/_utils/record-lesson-window";
 import { getSession } from "../users/get-session";
 import { findClosingAnswer } from "./_utils/answer-recording";
 import { checkSaved, toCheckResult } from "./_utils/check-results";
@@ -184,9 +185,18 @@ async function recordCheck({
 
       return overtaken ? "overtaken" : null;
     },
-    withAnswer: evidence
-      ? (transaction) => writeLanguageStepEvidence(transaction, evidence)
-      : undefined,
+    withAnswer: async (transaction, attempt) => {
+      if (evidence) {
+        await writeLanguageStepEvidence(transaction, evidence);
+      }
+
+      await recordLessonWindowAnswer(transaction, {
+        attempt,
+        kind: answeredKind,
+        lessonId: row.lessonId,
+        run,
+      });
+    },
   });
 
   if (outcome.status === "refused") {
