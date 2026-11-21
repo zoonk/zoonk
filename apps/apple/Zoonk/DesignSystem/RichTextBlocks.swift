@@ -96,12 +96,13 @@ struct RichTextBlocks: View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Text(start.map { "\($0 + index)." } ?? "•")
             .monospacedDigit()
-            .accessibilityHidden(true)
+            .accessibilityHidden(start == nil)
 
           line(
             inline(item), mark: mark?.item == index ? mark : nil,
             underline: underline?.item == index ? underline : nil)
         }
+        .accessibilityElement(children: .combine)
       }
     }
   }
