@@ -86,7 +86,11 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 
       await Promise.all([
         levelTestBank
-          ? startLevelTestBank({ analytics: { distinctId: userId, goalId }, pair: levelTestBank })
+          ? startLevelTestBank({
+              analytics: { distinctId: userId, goalId },
+              pair: levelTestBank,
+              upgrade: true,
+            })
           : null,
         writeTopics
           ? startOnce(

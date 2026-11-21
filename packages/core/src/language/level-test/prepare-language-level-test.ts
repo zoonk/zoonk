@@ -4,7 +4,7 @@ import { loadLevelTestContext } from "./_utils/level-test-state";
 import { readLevelTestSummary } from "./read-level-test-summary";
 
 export type LanguageLevelTestPreparation =
-  | { learnerId: string; pair: LanguagePair; status: "preparing" | "ready" }
+  | { learnerId: string; pair: LanguagePair; status: "preparing" | "ready"; upgrade?: true }
   | { status: "notFound" | "notLanguage" | "unauthorized" };
 
 export async function prepareLanguageLevelTest(
@@ -26,5 +26,6 @@ export async function prepareLanguageLevelTest(
     learnerId: userId,
     pair,
     status: state?.status ?? (context.bank ? "ready" : "preparing"),
+    ...(attempt && { upgrade: true as const }),
   };
 }

@@ -11,6 +11,7 @@ import {
   isPrismaUniqueConstraintError,
   prisma,
 } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { logError } from "@zoonk/utils/logger";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import {
@@ -73,7 +74,7 @@ export async function keepBankQuestions({
     }
 
     await tx.languageLevelTest.update({
-      data: { content: { ...bank, questions } },
+      data: { content: { ...(isJsonObject(row?.content) && row.content), questions } },
       where: { languagePair: pair },
     });
 
@@ -184,26 +185,33 @@ export async function releaseClaim({ claimId, pair }: { claimId: string; pair: L
   });
 }
 
+function isUpgrading(content: unknown): boolean {
+  return isJsonObject(content) && content.upgrading === true;
+}
+
 /** A null claim means another run owns the bank; do not start a second writer. */
 export async function claimBank({
   pair,
   row,
+  upgrade,
 }: {
   pair: LanguagePair;
-  row: Pick<LanguageLevelTest, "generatedAt" | "runId"> | null;
+  row: Pick<LanguageLevelTest, "content" | "generatedAt" | "runId"> | null;
+  upgrade: boolean;
 }): Promise<{ claimId: string; startedAt: Date } | null> {
   const claimId = crypto.randomUUID();
   const startedAt = new Date();
 
   if (row) {
-    const { count } = await prisma.languageLevelTest.updateMany({
-      data: { generatedAt: startedAt, runId: claimId },
-      where: {
-        ...pair,
-        generatedAt: { lt: new Date(Date.now() - STALE_CLAIM_MS) },
-        runId: row.runId,
-      },
-    });
+    const canClaim = upgrade && !isUpgrading(row.content);
+    const stale = new Date(startedAt.getTime() - STALE_CLAIM_MS);
+
+    const count = await prisma.$executeRaw`
+      UPDATE language_level_tests
+      SET run_id = ${claimId}, generated_at = ${startedAt},
+          content = CASE WHEN ${upgrade} THEN content || '{"upgrading":true}'::jsonb ELSE content END
+      WHERE language = ${pair.language} AND target_language = ${pair.targetLanguage}
+        AND run_id = ${row.runId} AND (${canClaim} OR generated_at < ${stale})`;
 
     return count > 0 ? { claimId, startedAt } : null;
   }
@@ -241,6 +249,10 @@ export async function loadLevelTestBank(
     return { bank, id: row.id, runId: row.runId, status: "ready", writtenAt: row.generatedAt };
   }
 
-  const running = row && row.generatedAt.getTime() > Date.now() - STALE_CLAIM_MS;
+  const running =
+    row &&
+    (!bank || isUpgrading(row.content)) &&
+    row.generatedAt.getTime() > Date.now() - STALE_CLAIM_MS;
+
   return { startedAt: running ? row.generatedAt : null, status: "preparing" };
 }
