@@ -22915,7 +22915,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "last %lld answer"
+                  "value" : "last answer"
                 }
               },
               "other" : {
