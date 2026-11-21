@@ -72,8 +72,11 @@ describe(getLayout, () => {
     expect(layoutFor(lines, WIDE).orientation).toBe("vertical");
   });
 
-  it("keeps the axis width for short tick labels", () => {
-    expect(columns(layoutFor(visual, 320)).left).toBe(PADDING.left);
+  it("fits the axis to its widest tick label, leaving no empty band beside short ones", () => {
+    const layout = columns(layoutFor(visual, 320));
+
+    expect(layout.left).toBe(Math.max(...layout.yTicks.map((tick) => getLabelWidth(tick.label))));
+    expect(layout.left).toBeLessThan(PADDING.left);
   });
 
   it("widens the axis so a long tick label isn't cut off", () => {
@@ -149,10 +152,10 @@ describe(getLayout, () => {
       series: [{ name: "A", values: [18, 42, 64, 30, 22] }],
     };
 
-    for (const width of [NARROW, WIDE]) {
-      const layout = rows(layoutFor(regions, width));
-      expect(layout.rows.map((row) => row.lines.join(" "))).toStrictEqual(REGIONS);
-    }
+    const layout = rows(layoutFor(regions, NARROW));
+
+    expect(layout.rows.map((row) => row.lines.join(" "))).toStrictEqual(REGIONS);
+    expect(layoutFor(regions, WIDE).orientation).toBe("vertical");
   });
 
   it("gives each series its own bar under the name and grows taller with each row", () => {

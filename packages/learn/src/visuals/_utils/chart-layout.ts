@@ -269,7 +269,7 @@ export function getLayout({
     values,
   };
 
-  const left = Math.max(PADDING.left, getWidestLabel(tickLabels, labelWidth));
+  const left = getWidestLabel(tickLabels, labelWidth);
   const plotWidth = Math.max(width - left - PADDING.right, 1);
   const band = plotWidth / visual.categories.length;
   const labels = getCategoryLabels({ band, categories: visual.categories, labelWidth });
