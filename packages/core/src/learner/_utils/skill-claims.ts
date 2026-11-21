@@ -222,7 +222,7 @@ export function listTakenToKnow(events: readonly ClaimEvent[]): Set<string> {
 export function listPassedOverToRelearn(events: readonly ClaimEvent[]): Set<string> {
   return new Set(
     [...readClaimStates(events)].flatMap(([skillId, state]) =>
-      state.claimSource === "choice" && !state.studied && isKnownClaim({ passedOver: false, state })
+      state.claimSource !== "test" && !state.studied && isKnownClaim({ passedOver: false, state })
         ? [skillId]
         : [],
     ),
