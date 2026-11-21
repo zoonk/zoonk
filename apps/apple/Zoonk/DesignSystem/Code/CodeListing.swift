@@ -175,9 +175,11 @@ private struct CodeGutterKey: PreferenceKey {
   }
 }
 
-/// One arrow under a wrapped line's number for each row after its first, as an editor marks them.
+/// One arrow for each row of a wrapped line after its first, as an editor marks them: at the end of
+/// its frame under a line's number, or at its start where a snippet's rows hang in.
 private struct ContinuationMarks: View {
   let rowHeight: CGFloat
+  var anchor = UnitPoint.trailing
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -198,8 +200,9 @@ private struct ContinuationMarks: View {
 
       for row in 1..<rows {
         context.draw(
-          arrow, at: CGPoint(x: canvas.width, y: (CGFloat(row) + 0.5) * rowHeight),
-          anchor: .trailing)
+          arrow,
+          at: CGPoint(x: canvas.width * anchor.x, y: (CGFloat(row) + 0.5) * rowHeight),
+          anchor: anchor)
       }
     }
     .accessibilityHidden(true)
@@ -207,10 +210,10 @@ private struct ContinuationMarks: View {
 }
 
 /// Main's `CodeTokens`: a line's colored runs. Wrapped, its extra rows start at its own
-/// indentation, `hang` columns further in.
+/// indentation, `hang` columns further in, each after an arrow there.
 struct CodeText: View {
   let tokens: [CodeHighlight.Token]
-  /// For a line with no number to mark its extra rows.
+  /// For a line with no number to carry the arrows that mark its extra rows.
   var hang = 0
 
   @Environment(\.codeWraps) private var wraps
@@ -226,6 +229,17 @@ struct CodeText: View {
       .textRenderer(HangingIndent(width: hang))
       .padding(.leading, CGFloat(line.indent) * column + hang)
       .fixedSize(horizontal: !wraps, vertical: true)
+      .overlay(alignment: .topLeading) {
+        if hang > 0 {
+          // Half a row's gap above and below, as a numbered line's own padding gives its arrows.
+          ContinuationMarks(
+            rowHeight: TypeStyle.code.rowHeight(dynamicTypeSize), anchor: .leading
+          )
+          .frame(width: hang)
+          .padding(.vertical, -TypeStyle.code.rowGap(dynamicTypeSize) / 2)
+          .offset(x: CGFloat(line.indent) * column)
+        }
+      }
       .accessibilityLabel(Text(verbatim: line.written))
       .accessibilityHidden(line.written.allSatisfy(\.isWhitespace))
   }
@@ -416,7 +430,7 @@ struct CodeBlock: View {
 
 /// Main's `CodeSnippet`: code inside something the learner presses or reads in one line, such as an
 /// answer option. No panel and no line numbers: each line wraps, its extra rows two columns further
-/// in than it.
+/// in than it, after an arrow, as a block marks them under its numbers.
 struct CodeSnippet: View {
   let code: String
   let language: String?
