@@ -1,9 +1,7 @@
-import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { levelTestBankFixture } from "@zoonk/testing/fixtures/level-tests";
-import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { appliedFixFixture } from "../../staff/content-fixes/_test-utils/applied-fix";
 import { toJson } from "../../staff/content-fixes/_utils/resolved-change";
@@ -11,7 +9,6 @@ import { readGoalDetails } from "../_utils/language-goal";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
-import { gradeLevelTestSpeech } from "./grade-level-test-speech";
 import { levelTestPart } from "./level-test-parts";
 
 const MINUTE_MS = 60_000;
@@ -228,151 +225,5 @@ describe("level test answers saved before a fix", () => {
     await expect(
       prisma.learningEvent.findFirst({ where: { goalId, lessonKind: "levelTest" } }),
     ).resolves.toMatchObject({ correctAnswers: 1, incorrectAnswers: 0 });
-  });
-});
-
-const SPEAKING_LEVELS = ["A1", "A2", "B1"];
-
-function speakingSentences(suffix: string) {
-  return SPEAKING_LEVELS.map((level) => ({
-    level,
-    sentence: `Say ${level}${suffix}`,
-    translation: "Diga",
-  }));
-}
-
-/** Rewrites every speaking sentence from `from` to `to` suffixes, as an approved fix would. */
-async function fixSpeakingSentences({
-  bankId,
-  from,
-  questions,
-  to,
-}: {
-  bankId: string;
-  from: string;
-  questions: Awaited<ReturnType<typeof learnerWithBank>>["questions"];
-  to: string;
-}) {
-  const before = { questions, speaking: speakingSentences(from) };
-  const after = { questions, speaking: speakingSentences(to) };
-
-  await prisma.languageLevelTest.update({ data: { content: after }, where: { id: bankId } });
-
-  await appliedFixFixture({
-    changes: [
-      {
-        fields: [{ after: toJson(after), before: toJson(before), field: "content" }],
-        id: bankId,
-        model: "LanguageLevelTest",
-        op: "set",
-        parts: SPEAKING_LEVELS.map((level) => levelTestPart({ kind: "speaking", level })),
-      },
-    ],
-    unit: "levelTest",
-    unitId: bankId,
-  });
-}
-
-async function reachSpeakingPart(goalId: string) {
-  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-
-  await prisma.goal.update({
-    data: {
-      details: {
-        ...readGoalDetails(goal),
-        levelTest: {
-          answers: ["reading", "listening"].flatMap((skill) =>
-            SPEAKING_LEVELS.map((level) => ({ answerIndex: 0, id: `${skill}-${level}-0` })),
-          ),
-          speaking: null,
-          startedAt: new Date().toISOString(),
-        },
-      },
-    },
-    where: { id: goalId },
-  });
-}
-
-/** The learner says the sentence they were shown, so the word a later fix added is missed. */
-function learnerMisses(word: string) {
-  vi.mocked(assessPronunciation).mockImplementation(async ({ expectedText }) => ({
-    data: {
-      transcript: expectedText.replace(` ${word}`, ""),
-      words: expectedText
-        .split(" ")
-        .map((text) => ({
-          heard: null,
-          issue: null,
-          status: text === word ? ("missed" as const) : ("correct" as const),
-          text,
-        })),
-    },
-    provenance: {
-      generatedAt: "",
-      latencyMs: 1,
-      model: "m",
-      promptVersion: "v",
-      provider: "p",
-      requestedModel: "m",
-      runId: "r",
-      usage: {},
-    },
-    systemPrompt: "",
-    usage: undefined as never,
-    userPrompt: "",
-  }));
-}
-
-async function savedSpeaking(goalId: string) {
-  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-  return (readGoalDetails(goal).levelTest as { speaking: unknown }).speaking;
-}
-
-const audio = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" };
-
-describe("level test sentence fixed during the test", () => {
-  it("doesn't score a take of the old sentence, asks the fixed one again, then scores it", async () => {
-    const { bankId, goalId, questions } = await learnerWithBank();
-    await fixSpeakingSentences({ bankId, from: "", questions, to: " now" });
-    await reachSpeakingPart(goalId);
-    learnerMisses("now");
-
-    await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
-      status: "ready",
-      test: { next: { kind: "speaking", speaking: { sentence: expect.stringContaining("now") } } },
-    });
-
-    await expect(savedSpeaking(goalId)).resolves.toBeNull();
-
-    await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
-      status: "ready",
-      test: { next: { kind: "done" } },
-    });
-
-    await expect(savedSpeaking(goalId)).resolves.toMatchObject({ score: expect.any(Number) });
-  });
-
-  it("doesn't score a take of the shown fixed sentence once staff fix it again, then scores", async () => {
-    const { bankId, goalId, questions } = await learnerWithBank();
-    await fixSpeakingSentences({ bankId, from: "", questions, to: " now" });
-    await reachSpeakingPart(goalId);
-    learnerMisses("now");
-    await gradeLevelTestSpeech({ audio, goalId });
-
-    await fixSpeakingSentences({ bankId, from: " now", questions, to: " now please" });
-    learnerMisses("please");
-
-    await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
-      status: "ready",
-      test: {
-        next: { kind: "speaking", speaking: { sentence: expect.stringContaining("please") } },
-      },
-    });
-
-    await expect(savedSpeaking(goalId)).resolves.toBeNull();
-
-    await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
-      test: { next: { kind: "done" } },
-    });
   });
 });

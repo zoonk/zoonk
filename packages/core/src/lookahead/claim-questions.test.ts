@@ -42,7 +42,23 @@ async function setup() {
     attemptFixture({ itemId: virusItem.id, skillId: virus.id, userId: user.id }),
   ]);
 
-  return { goal, nucleus, user };
+  return { goal, nucleus, user, virus };
+}
+
+function orderTaps(skillId: string) {
+  return Promise.all(
+    ["Transcription", "Export", "Translation"].map((step) =>
+      itemFixture({
+        content: {
+          question: `Order how a cell makes a protein (${step}).`,
+          reason: "Each step needs the one before.",
+          steps: ["Unwinding", step, "Folding", "Shipping"],
+        },
+        format: "order",
+        skillId,
+      }),
+    ),
+  );
 }
 
 describe(requestClaimQuestionsFor, () => {
@@ -55,19 +71,23 @@ describe(requestClaimQuestionsFor, () => {
     ).resolves.toStrictEqual({ status: "notFound" });
   });
 
-  it("asks for a few questions only for a topic to confirm that practice has none left to ask", async () => {
-    const { goal, nucleus, user } = await setup();
+  it("asks for tap questions only for a topic to confirm that has fewer than three left to ask", async () => {
+    const { goal, nucleus, user, virus } = await setup();
     const request = { goalId: goal.id, userId: user.id };
+
+    await orderTaps(virus.id);
 
     await expect(requestClaimQuestionsFor(request)).resolves.toMatchObject({
       analytics: { distinctId: user.id, goalId: goal.id },
-      format: "multipleChoice",
-      questionsPerSkill: 3,
       skillIds: [nucleus.id],
       status: "start",
     });
 
     await itemFixture({ content: choiceItemContent(), skillId: nucleus.id });
+
+    await expect(requestClaimQuestionsFor(request)).resolves.toMatchObject({ status: "start" });
+
+    await orderTaps(nucleus.id);
 
     await expect(requestClaimQuestionsFor(request)).resolves.toStrictEqual({ status: "ready" });
   });

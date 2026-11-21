@@ -11,12 +11,8 @@ vi.mock("server-only", () => ({}));
 
 vi.mock("./placement-items.prompt.md", () => ({
   default:
-    "# Goal\n\n`QUICK_COUNT` quick{{TYPED_GOAL}} each.\n\n{{TYPED_CHECK}}\n- Medium.\n{{TRUE_FALSE_BALANCE}}\n{{TYPED_ANSWERS}}\n",
+    "# Goal\n\n{{#quick}}Quick.\n{{/quick}}{{#trueFalse}}Half true.\n{{/trueFalse}}{{#taps}}Taps.\n{{/taps}}",
 }));
-
-vi.mock("./placement-items-typed-check.prompt.md", () => ({ default: "- Typed confirms.\n" }));
-vi.mock("./placement-items-true-false.prompt.md", () => ({ default: "- Half true.\n" }));
-vi.mock("./placement-items-typed-answers.prompt.md", () => ({ default: "- Accepted answers.\n" }));
 
 vi.mock("./item-rules", () => ({
   withItemRules: vi.fn((taskPrompt: string) => `${taskPrompt}\n# Rules`),
@@ -31,6 +27,8 @@ const skill = {
   description: "Successive percentages.",
   level: "intermediate",
   name: "Percentages",
+  quickCount: 1,
+  tapCount: 0,
 } as const;
 
 const quickItem = {
@@ -61,7 +59,7 @@ describe(generatePlacementItems, () => {
     vi.clearAllMocks();
   });
 
-  it("writes a mock's quick questions with no typed rules, lines or list", async () => {
+  it("writes a mock's quick questions with no tap rules, lines or list", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({ skills: [{ quick: [quickItem], skill: 1 }] }),
     );
@@ -70,13 +68,11 @@ describe(generatePlacementItems, () => {
       country: null,
       examFormat: { name: "ENEM", optionCount: 5, style: "ENEM style" },
       language: "pt",
-      quickCount: 2,
       quickFormat: "multipleChoice",
-      skills: [skill],
-      typedCount: 0,
+      skills: [{ ...skill, quickCount: 2 }],
     });
 
-    expect(systemPrompt).toBe("# Goal\n\n`QUICK_COUNT` quick each.\n\n- Medium.\n\n# Rules");
+    expect(systemPrompt).toBe("# Goal\n\nQuick.\n\n# Rules");
 
     expect(withItemRules).toHaveBeenCalledWith(expect.any(String), {
       field: false,
@@ -86,41 +82,93 @@ describe(generatePlacementItems, () => {
     });
 
     expect(userPrompt).toContain("OPTION_COUNT: 5");
-    expect(userPrompt).not.toMatch(/TYPED_COUNT|TARGET_LANGUAGE|FIELD/u);
-    expect(data.skills).toStrictEqual([{ quick: [quickItem], typed: [] }]);
+    expect(userPrompt).toContain("QUICK_COUNT: 2");
+    expect(userPrompt).not.toMatch(/TAP_COUNT|TARGET_LANGUAGE|FIELD/u);
+    expect(data.skills).toStrictEqual([{ quick: [quickItem], taps: [] }]);
     await expect(writtenSkillFields()).resolves.toStrictEqual(["skill", "quick"]);
   });
 
-  it("writes placement's typed confirmations and a language goal's questions with their rules", async () => {
+  it("writes placement's tap confirmations with their rules and turns select-all into multiple choice", async () => {
+    const order = {
+      difficulty: "medium",
+      format: "order",
+      question: "Order the steps.",
+      reason: "Why.",
+      steps: ["a", "b", "c", "d"],
+    };
+
+    const option = { isCorrect: true, misconception: null, reason: "Right.", text: "x" };
+
+    const selectAll = {
+      context: null,
+      difficulty: "hard",
+      format: "selectAll",
+      options: [option, option, option, option, option],
+      question: "Which apply?",
+    };
+
     vi.mocked(generateText).mockResolvedValueOnce(
-      createGenerateTextResult({ skills: [{ quick: [], skill: 1, typed: [] }] }),
+      createGenerateTextResult({ skills: [{ quick: [], skill: 1, taps: [order, selectAll] }] }),
     );
 
-    const { systemPrompt, userPrompt } = await generatePlacementItems({
+    const { data, systemPrompt, userPrompt } = await generatePlacementItems({
       country: null,
       language: "pt",
-      quickCount: 1,
       quickFormat: "trueFalse",
-      skills: [skill],
+      skills: [{ ...skill, tapCount: 3 }],
       targetLanguage: "en",
-      typedCount: 1,
     });
 
-    expect(systemPrompt).toBe(
-      "# Goal\n\n`QUICK_COUNT` quick and exactly `TYPED_COUNT` in the `typed` format each.\n\n- Typed confirms.\n- Medium.\n- Half true.\n- Accepted answers.\n\n# Rules",
-    );
+    expect(systemPrompt).toBe("# Goal\n\nQuick.\nHalf true.\nTaps.\n\n# Rules");
 
     expect(withItemRules).toHaveBeenCalledWith(expect.any(String), {
       field: false,
-      formats: ["trueFalse", "typed"],
+      formats: ["trueFalse", "matchPairs", "order"],
       languageGoal: true,
       usedSituations: false,
     });
 
-    expect(userPrompt).toContain("TYPED_COUNT: 1");
+    expect(userPrompt).toContain("QUICK_COUNT: 1\n   TAP_COUNT: 3");
     expect(userPrompt).toMatch(/TARGET_LANGUAGE: \S/u);
     expect(userPrompt).not.toContain("OPTION_COUNT");
-    await expect(writtenSkillFields()).resolves.toStrictEqual(["skill", "quick", "typed"]);
+    await expect(writtenSkillFields()).resolves.toStrictEqual(["skill", "quick", "taps"]);
+
+    expect(data.skills[0]?.taps).toStrictEqual([
+      order,
+      {
+        context: null,
+        difficulty: "hard",
+        fixedOrder: false,
+        format: "multipleChoice",
+        image: null,
+        options: selectAll.options,
+        question: "Which apply?",
+        visual: null,
+      },
+    ]);
+  });
+
+  it("writes only taps when no skill needs a quick question", async () => {
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({ skills: [{ skill: 1, taps: [] }] }),
+    );
+
+    const { systemPrompt, userPrompt } = await generatePlacementItems({
+      country: null,
+      language: "en",
+      quickFormat: "multipleChoice",
+      skills: [{ ...skill, quickCount: 0, tapCount: 3 }],
+    });
+
+    expect(systemPrompt).toBe("# Goal\n\nTaps.\n\n# Rules");
+    expect(userPrompt).not.toMatch(/QUICK_FORMAT|QUICK_COUNT|OPTION_COUNT/u);
+
+    expect(withItemRules).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ formats: ["matchPairs", "order"] }),
+    );
+
+    await expect(writtenSkillFields()).resolves.toStrictEqual(["skill", "taps"]);
   });
 
   it("sets a language goal's questions where the practiced language is spoken", async () => {
@@ -131,11 +179,9 @@ describe(generatePlacementItems, () => {
     const { userPrompt } = await generatePlacementItems({
       country: null,
       language: "pt",
-      quickCount: 1,
       quickFormat: "multipleChoice",
       skills: [skill],
       targetLanguage: "it",
-      typedCount: 0,
     });
 
     expect(userPrompt).toContain("- Place: Italy");
@@ -158,10 +204,8 @@ describe(generatePlacementItems, () => {
     const { userPrompt } = await generatePlacementItems({
       country: null,
       language: "en",
-      quickCount: 1,
       quickFormat: "multipleChoice",
       skills: [used, fresh],
-      typedCount: 0,
     });
 
     expect(withItemRules).toHaveBeenCalledWith(
@@ -170,7 +214,7 @@ describe(generatePlacementItems, () => {
     );
 
     expect(userPrompt).toContain(
-      "LEVEL: intermediate\n   USED_SITUATIONS:\n     - Ana splits a bill.\n     - A shop raises prices twice.\n2. SKILL: Ratios",
+      "LEVEL: intermediate\n   QUICK_COUNT: 1\n   USED_SITUATIONS:\n     - Ana splits a bill.\n     - A shop raises prices twice.\n2. SKILL: Ratios",
     );
 
     expect(userPrompt.match(/USED_SITUATIONS/gu)).toHaveLength(1);

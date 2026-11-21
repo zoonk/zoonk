@@ -9,10 +9,28 @@ import {
 } from "../../provenance/combine-task-provenance";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { formatLocalContext } from "../_utils/language-context";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
-import systemPrompt from "./level-test-bank.prompt.md";
-import { LEVEL_TEST_LEVELS, type TestLevel } from "./level-test-levels";
+import {
+  type LevelTestLanguages,
+  QUESTION_SITUATIONS,
+  QUESTION_TESTS,
+  formatLevelTestLanguages,
+  formatWords,
+  hashText,
+  withLevelTestRules,
+} from "./_utils/level-test-writing";
+import template from "./level-test-bank.prompt.md";
+import {
+  type GenerateLevelTestConfirmationsParams,
+  type LevelTestConfirmation,
+  generateLevelTestConfirmations,
+} from "./level-test-confirmations";
+import {
+  LEVEL_TEST_LEVELS,
+  LEVEL_TEST_PASSAGE_WORDS,
+  LEVEL_TEST_SKILLS,
+  type LevelTestSkill,
+  type TestLevel,
+} from "./level-test-levels";
 
 /**
  * Written once per pair and shared, so quality wins. On 8 banks (11 Nov 2026), a blind GPT-6.1 Sol
@@ -30,81 +48,20 @@ const fallbackModels = [
   "openai/gpt-6.1-terra",
 ] as const;
 
-const TEST_SKILLS = ["reading", "listening"] as const;
+/** A level's questions per skill: enough for a whole-course test to stop on its own. */
+const LEVEL_TEST_QUESTIONS_PER_SKILL = 12;
+
+/** Short calls side by side, so a learner waiting on the bank waits for the longest of them. */
+const QUESTIONS_PER_CALL = 4;
+
 /** The test's scoring counts on a one-in-four guess, so every question shows four options. */
 const WRONG_OPTIONS = 3;
 const OPTIONS_PER_QUESTION = WRONG_OPTIONS + 1;
 
-type TestSkill = (typeof TEST_SKILLS)[number];
-type WordRange = { max: number; min: number };
-
-/**
- * The model picks one before writing the text, so a B2 question is planned as an implication
- * instead of drifting into a stated detail.
- */
-const QUESTION_TESTS = {
-  A1: ["one stated fact"],
-  A2: ["two stated facts put together", "the order of events"],
-  B1: ["the main point", "a reason", "a stated opinion"],
-  B2: ["an implied attitude", "the writer's purpose", "the point of an argument"],
-  C1: ["implicit meaning", "the speaker's stance", "tone or register", "a qualified or mixed view"],
-} as const satisfies Record<TestLevel, readonly [string, ...string[]]>;
-
-/**
- * Voice messages play at speaking pace, so they're shorter, and an advanced learner's six questions
- * still take a few minutes. The eval's code checks read the same limits.
- */
-export const LEVEL_TEST_PASSAGE_WORDS = {
-  A1: { listening: { max: 25, min: 10 }, reading: { max: 25, min: 8 } },
-  A2: { listening: { max: 40, min: 25 }, reading: { max: 45, min: 25 } },
-  B1: { listening: { max: 65, min: 45 }, reading: { max: 75, min: 50 } },
-  B2: { listening: { max: 85, min: 60 }, reading: { max: 100, min: 70 } },
-  C1: { listening: { max: 100, min: 75 }, reading: { max: 120, min: 90 } },
-} as const satisfies Record<TestLevel, Record<TestSkill, WordRange>>;
-
-const SPEAKING_WORDS = {
-  A1: "4 to 6",
-  A2: "about 8",
-  B1: "about 12",
-  B2: "about 16",
-  C1: "about 20",
-} as const satisfies Record<TestLevel, string>;
-
-/**
- * The levels are written at the same time, so this keeps them from reusing a situation; topics move
- * from concrete at A1 to abstract at C1, as CEFR's descriptors do.
- */
-const SITUATIONS = {
-  A1: {
-    listening: ["getting around town", "meeting a friend"],
-    reading: ["a shop, café or market", "a home or a family"],
-  },
-  A2: {
-    listening: ["an appointment or a booking", "a weekend activity"],
-    reading: ["a trip or a holiday", "a place to live"],
-  },
-  B1: {
-    listening: ["a problem while traveling", "a sport, hobby or club"],
-    reading: ["work or a new job", "a course or a class"],
-  },
-  B2: {
-    listening: ["a product or service someone tried", "technology in daily life"],
-    reading: ["a change at work or school", "a neighborhood or city issue"],
-  },
-  C1: {
-    listening: [
-      "a radio guest talking about their field",
-      "someone looking back on a big decision",
-    ],
-    reading: [
-      "a review of a book, film, show or restaurant",
-      "an opinion column on how people live or work",
-    ],
-  },
-} as const satisfies Record<TestLevel, Record<TestSkill, readonly string[]>>;
+const systemPrompt = withLevelTestRules(template);
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what the question tests comes first, then the text, its question, the evidence for the answer, how a learner one level below would misread it, and the right option before the wrong ones. */
-function createLevelSchema(level: TestLevel) {
+function createQuestionsSchema(level: TestLevel) {
   const questionSchema = z.object({
     tests: z.enum(QUESTION_TESTS[level]),
     passage: z.string(),
@@ -115,19 +72,14 @@ function createLevelSchema(level: TestLevel) {
     wrongOptions: z.array(z.string()),
   });
 
-  return z.object({
-    reading: z.array(questionSchema),
-    listening: z.array(questionSchema),
-    speaking: z.object({ sentence: z.string(), translation: z.string() }),
-  });
+  return z.object({ questions: z.array(questionSchema) });
 }
 /* oxlint-enable eslint/sort-keys */
 
-type GeneratedLevel = z.infer<ReturnType<typeof createLevelSchema>>;
-type GeneratedQuestion = GeneratedLevel["reading"][number];
+type GeneratedQuestion = z.infer<ReturnType<typeof createQuestionsSchema>>["questions"][number];
 
-type LevelTestQuestion = {
-  skill: TestSkill;
+export type LevelTestQuestion = {
+  skill: LevelTestSkill;
   level: TestLevel;
   passage: string;
   question: string;
@@ -137,32 +89,15 @@ type LevelTestQuestion = {
 
 export type GenerateLevelTestBankSchema = {
   questions: LevelTestQuestion[];
-  speaking: { level: TestLevel; sentence: string; translation: string }[];
+  confirmations: LevelTestConfirmation[];
 };
 
-export type GenerateLevelTestBankParams = {
-  targetLanguage: string;
-  learnerLanguage: string;
+export type GenerateLevelTestBankParams = LevelTestLanguages & {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
-
-/**
- * Models tend to put the right answer in the same place, so code places it: by the question's
- * text, which spreads answers across positions without a sequence a learner could learn.
- */
-function getAnswerIndex(question: GeneratedQuestion): number {
-  const text = `${question.passage}${question.question}`;
-
-  const sum = Array.from(
-    { length: text.length },
-    (_, index) => text.codePointAt(index) ?? 0,
-  ).reduce((total, code) => total + code, 0);
-
-  return sum % OPTIONS_PER_QUESTION;
-}
 
 function toTestQuestion({
   level,
@@ -171,9 +106,9 @@ function toTestQuestion({
 }: {
   level: TestLevel;
   question: GeneratedQuestion;
-  skill: TestSkill;
+  skill: LevelTestSkill;
 }): LevelTestQuestion {
-  const answerIndex = getAnswerIndex(question);
+  const answerIndex = hashText(`${question.passage}${question.question}`) % OPTIONS_PER_QUESTION;
   const { correctOption, passage, wrongOptions } = question;
 
   return {
@@ -186,65 +121,35 @@ function toTestQuestion({
   };
 }
 
-function toLevelQuestions({
+function buildQuestionsPrompt({
   level,
-  output,
-}: {
+  situations,
+  skill,
+  ...languages
+}: LevelTestLanguages & {
   level: TestLevel;
-  output: GeneratedLevel;
-}): LevelTestQuestion[] {
-  return TEST_SKILLS.flatMap((skill) =>
-    output[skill]
-      .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
-      .map((question) => toTestQuestion({ level, question, skill })),
-  );
-}
-
-function formatWords({ max, min }: WordRange): string {
-  return `${min} to ${max}`;
-}
-
-function formatSituations(level: TestLevel): string {
-  return TEST_SKILLS.flatMap((skill) =>
-    SITUATIONS[level][skill].map((situation, index) => `- ${skill} ${index + 1}: ${situation}`),
-  ).join("\n");
-}
-
-function buildLevelPrompt({
-  languages,
-  level,
-  targetLanguage,
-}: {
-  languages: ReturnType<typeof getLanguagePromptContext>;
-  level: TestLevel;
-  targetLanguage: string;
+  situations: readonly string[];
+  skill: LevelTestSkill;
 }): string {
-  const words = LEVEL_TEST_PASSAGE_WORDS[level];
-
   return `
-TARGET_LANGUAGE: ${languages.targetLanguageName}
-LEARNER_LANGUAGE: ${languages.userLanguageName}
-${formatLocalContext({ country: null, language: targetLanguage, register: false })}
+${formatLevelTestLanguages(languages)}
 LEVEL: ${level}
-READING_WORDS: ${formatWords(words.reading)}
-LISTENING_WORDS: ${formatWords(words.listening)}
-SPEAKING_WORDS: ${SPEAKING_WORDS[level]}
+SKILL: ${skill}
+WORDS: ${formatWords(LEVEL_TEST_PASSAGE_WORDS[level][skill])}
 SITUATIONS:
-${formatSituations(level)}
+${situations.map((situation, index) => `- ${index + 1}: ${situation}`).join("\n")}
 `;
 }
 
-type GenerateLevelTestBankLevelParams = GenerateLevelTestBankParams & { level: TestLevel };
+type QuestionsCall = GenerateLevelTestBankParams & {
+  level: TestLevel;
+  situations: readonly string[];
+  skill: LevelTestSkill;
+};
 
-export async function generateLevelTestBankLevel(params: GenerateLevelTestBankLevelParams) {
-  const { analytics, level, model = defaultModel, reasoning, useFallback = true } = params;
-
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
-  });
-
-  const userPrompt = buildLevelPrompt({ languages, level, targetLanguage: params.targetLanguage });
+async function writeQuestions(params: QuestionsCall) {
+  const { analytics, level, model = defaultModel, reasoning, skill, useFallback = true } = params;
+  const userPrompt = buildQuestionsPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
@@ -253,7 +158,7 @@ export async function generateLevelTestBankLevel(params: GenerateLevelTestBankLe
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema: createLevelSchema(level) }),
+        output: Output.object({ schema: createQuestionsSchema(level) }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -263,38 +168,95 @@ export async function generateLevelTestBankLevel(params: GenerateLevelTestBankLe
     task: "level-test-bank",
   });
 
-  const { output } = result;
+  const questions = result.output.questions
+    .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
+    .map((question) => toTestQuestion({ level, question, skill }));
+
+  return { provenance, questions, usage: result.usage, userPrompt };
+}
+
+function chunk<Item>(items: readonly Item[], size: number): Item[][] {
+  return Array.from({ length: Math.ceil(items.length / size) }, (_, index) =>
+    items.slice(index * size, (index + 1) * size),
+  );
+}
+
+/** `count` questions of one skill at one level, each on its own situation. */
+async function generateLevelTestQuestions({
+  count = LEVEL_TEST_QUESTIONS_PER_SKILL,
+  ...params
+}: GenerateLevelTestBankParams & { count?: number; level: TestLevel; skill: LevelTestSkill }) {
+  const situations = QUESTION_SITUATIONS[params.level][params.skill].slice(0, count);
+
+  const calls = await Promise.all(
+    chunk(situations, QUESTIONS_PER_CALL).map((slice) =>
+      writeQuestions({ ...params, situations: slice }),
+    ),
+  );
 
   return {
-    data: {
-      questions: toLevelQuestions({ level, output }),
-      speaking: { level, ...output.speaking },
-    },
-    provenance,
+    data: { questions: calls.flatMap((call) => call.questions) },
+    provenance: combineTaskProvenance(calls.map((call) => call.provenance)),
     systemPrompt,
-    usage: result.usage,
-    userPrompt,
+    usage: sumLanguageModelUsage(calls.map((call) => call.usage)),
+    userPrompt: calls.map((call) => call.userPrompt).join("\n"),
   };
 }
 
-export async function generateLevelTestBank(params: GenerateLevelTestBankParams) {
-  // The levels are one job, so their calls share a trace unless the caller's job already has one.
-  const analytics = { ...params.analytics, traceId: params.analytics?.traceId ?? randomUUID() };
+type GenerateLevelTestBankLevelParams = GenerateLevelTestBankParams &
+  Pick<GenerateLevelTestConfirmationsParams, "level">;
 
-  const levels = await Promise.all(
-    LEVEL_TEST_LEVELS.map((level) => generateLevelTestBankLevel({ ...params, analytics, level })),
-  );
+/** A whole level: its questions in each skill and its confirmations. */
+export async function generateLevelTestBankLevel(params: GenerateLevelTestBankLevelParams) {
+  const [reading, listening, confirmations] = await Promise.all([
+    generateLevelTestQuestions({ ...params, skill: "reading" }),
+    generateLevelTestQuestions({ ...params, skill: "listening" }),
+    generateLevelTestConfirmations(params),
+  ]);
+
+  const parts = [reading, listening, confirmations];
 
   const data: GenerateLevelTestBankSchema = {
-    questions: levels.flatMap((level) => level.data.questions),
-    speaking: levels.map((level) => level.data.speaking),
+    confirmations: confirmations.data.confirmations,
+    questions: [...reading.data.questions, ...listening.data.questions],
   };
 
   return {
     data,
-    provenance: combineTaskProvenance(levels.map((level) => level.provenance)),
+    provenance: combineTaskProvenance(parts.map((part) => part.provenance)),
     systemPrompt,
-    usage: sumLanguageModelUsage(levels.map((level) => level.usage)),
-    userPrompt: levels.map((level) => level.userPrompt).join("\n"),
+    usage: sumLanguageModelUsage(parts.map((part) => part.usage)),
+    userPrompt: parts.map((part) => part.userPrompt).join("\n"),
+  };
+}
+
+/** Every level's questions, `questionsPerSkill` per skill: the bank its eval reads, levels side by side. */
+export async function generateLevelTestBank({
+  questionsPerSkill = LEVEL_TEST_QUESTIONS_PER_SKILL,
+  ...params
+}: GenerateLevelTestBankParams & { questionsPerSkill?: number }) {
+  // The levels are one job, so their calls share a trace unless the caller's job already has one.
+  const analytics = { ...params.analytics, traceId: params.analytics?.traceId ?? randomUUID() };
+
+  const parts = await Promise.all(
+    LEVEL_TEST_LEVELS.flatMap((level) =>
+      LEVEL_TEST_SKILLS.map((skill) =>
+        generateLevelTestQuestions({
+          ...params,
+          analytics,
+          count: questionsPerSkill,
+          level,
+          skill,
+        }),
+      ),
+    ),
+  );
+
+  return {
+    data: { questions: parts.flatMap((part) => part.data.questions) },
+    provenance: combineTaskProvenance(parts.map((part) => part.provenance)),
+    systemPrompt,
+    usage: sumLanguageModelUsage(parts.map((part) => part.usage)),
+    userPrompt: parts.map((part) => part.userPrompt).join("\n"),
   };
 }

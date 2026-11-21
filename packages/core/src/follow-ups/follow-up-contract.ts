@@ -54,7 +54,11 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     kind: z.literal("settleSessionDay"),
   }),
   z.object({
-    input: z.object({ goalId: uuidSchema(), lessonsAskedAt: z.number().nullable() }),
+    input: z.object({
+      goalId: uuidSchema(),
+      lessonsAskedAt: z.number().nullable(),
+      levelTestNotice: z.literal(true).optional(),
+    }),
     kind: z.literal("prepareGoalLessons"),
   }),
   z.object({ input: z.object({ lessonId: uuidSchema() }), kind: z.literal("writeLesson") }),
@@ -62,8 +66,10 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({
     input: z.object({
       goalId: uuidSchema(),
+      levelTestBank: z.object({ language: z.string(), targetLanguage: z.string() }).optional(),
       skillIds: z.array(uuidSchema()).optional(),
       waitsForNotice: z.boolean(),
+      writeTopics: z.boolean().optional(),
     }),
     kind: z.literal("preparePlacementItems"),
   }),

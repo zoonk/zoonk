@@ -12,7 +12,7 @@ import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { isFocusTestStarted } from "../focus-test-state";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
 
-export async function loadPlacement({
+async function loadPlacement({
   goalId,
   plan,
   timeZone = "UTC",
@@ -65,6 +65,7 @@ export async function applyPlacement({
   extraWrites,
   followToday = false,
   goalId,
+  livingPlanDay,
   now,
   plan,
   testedOutAt = now,
@@ -77,6 +78,7 @@ export async function applyPlacement({
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
   followToday?: boolean;
   goalId: string;
+  livingPlanDay?: string;
   now: Date;
   plan?: GoalPlan;
   /** When the items are tested out: `now`, unless a retry keeps an earlier attempt's time. */
@@ -110,6 +112,7 @@ export async function applyPlacement({
     goalId,
     items: goalPlan.items,
     knownSkillIds: new Set(state.knownSkillIds),
+    livingPlanDay,
     now,
     pastBasicsAreas,
     placedSkills: goalPlan.skills,

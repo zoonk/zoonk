@@ -1,5 +1,5 @@
 import { type ItemFormat } from "@zoonk/db";
-import { isLowGuessTap, isQuickChoice } from "./placement-guess-rate";
+import { LOW_GUESS_ANSWERS_TO_SKIP, isLowGuessTap, isQuickChoice } from "./placement-guess-rate";
 
 /** Test answers can skip lessons but still need practice confirmation; a later miss reopens the gap. */
 export type SkillClaim = "confirmed" | "gap" | "toConfirm";
@@ -15,7 +15,7 @@ export type OwnAnswer = {
 type SkillEvidence = OwnAnswer | { undoneOn: Date };
 
 export type ClaimEvent = { at: Date; skillId: string } & (
-  | { kind: "claim" | "studied" | "undone"; localDate?: Date }
+  | { kind: "claim" | "passedOver" | "studied" | "undone"; localDate?: Date }
   | ({ kind: "practice" | "test"; isCorrect: boolean; recheck?: boolean } & Partial<
       Omit<OwnAnswer, "isCorrect">
     >)
@@ -60,7 +60,7 @@ export function isSkillConfirmed({ answers }: { answers: readonly SkillEvidence[
 
   return (
     quick.length > 0 &&
-    lowGuess.length >= 3 &&
+    lowGuess.length >= LOW_GUESS_ANSWERS_TO_SKIP &&
     (reset === -1 ||
       (blockedOn !== undefined &&
         [...quick, ...lowGuess].some((answer) => answer.localDate && answer.localDate > blockedOn)))
@@ -70,7 +70,7 @@ export function isSkillConfirmed({ answers }: { answers: readonly SkillEvidence[
 type ClaimState = {
   answers: SkillEvidence[];
   claim: SkillClaim | undefined;
-  claimed: boolean;
+  claimSource: "choice" | "test" | null;
   pendingRecheck: Date | null;
   studied: boolean;
 };
@@ -86,43 +86,57 @@ function nextClaim({ current, event }: { current: ClaimState; event: ClaimEvent 
     return {
       ...current,
       answers: [...current.answers, { undoneOn: event.localDate ?? event.at }],
-      claimed: false,
+      claimSource: null,
       pendingRecheck: null,
     };
   }
 
   if (event.kind === "practice" || event.kind === "test") {
-    const answers = [
-      ...current.answers,
-      { ...event, format: event.format ?? "multipleChoice", itemId: event.itemId ?? null },
-    ];
-
-    if (event.recheck) {
-      return {
-        ...current,
-        answers,
-        claim: event.isCorrect ? "confirmed" : "gap",
-        claimed: current.claimed && event.isCorrect,
-        pendingRecheck: null,
-      };
-    }
-
-    if (current.claimed && !studied && !event.isCorrect) {
-      return {
-        ...current,
-        answers,
-        pendingRecheck:
-          event.kind === "practice"
-            ? (current.pendingRecheck ?? event.localDate ?? event.at)
-            : current.pendingRecheck,
-      };
-    }
-
-    return { ...current, answers, claim: getAnswerClaim({ claim, event, studied }) };
+    return nextAnswerClaimState({ current, event });
   }
 
-  const claimed = { ...current, claimed: true };
+  const claimSource = event.kind === "claim" ? "test" : (current.claimSource ?? "choice");
+  const claimed = { ...current, claimSource };
+
   return studied || claim === "confirmed" ? claimed : { ...claimed, claim: "toConfirm" };
+}
+
+function nextAnswerClaimState({
+  current,
+  event,
+}: {
+  current: ClaimState;
+  event: Extract<ClaimEvent, { kind: "practice" | "test" }>;
+}): ClaimState {
+  const { claim, studied } = current;
+
+  const answers = [
+    ...current.answers,
+    { ...event, format: event.format ?? "multipleChoice", itemId: event.itemId ?? null },
+  ];
+
+  if (event.recheck) {
+    return {
+      ...current,
+      answers,
+      claim: event.isCorrect ? "confirmed" : "gap",
+      claimSource: event.isCorrect ? current.claimSource : null,
+      pendingRecheck: null,
+    };
+  }
+
+  if (current.claimSource === "test" && !studied && !event.isCorrect) {
+    return {
+      ...current,
+      answers,
+      pendingRecheck:
+        event.kind === "practice"
+          ? (current.pendingRecheck ?? event.localDate ?? event.at)
+          : current.pendingRecheck,
+    };
+  }
+
+  return { ...current, answers, claim: getAnswerClaim({ claim, event, studied }) };
 }
 
 function getAnswerClaim({
@@ -162,7 +176,7 @@ function readClaimStates(events: readonly ClaimEvent[]) {
       const current = all.get(event.skillId) ?? {
         answers: [],
         claim: undefined,
-        claimed: false,
+        claimSource: null,
         pendingRecheck: null,
         since: event.at,
         studied: false,
@@ -205,6 +219,16 @@ export function listTakenToKnow(events: readonly ClaimEvent[]): Set<string> {
   );
 }
 
+export function listPassedOverToRelearn(events: readonly ClaimEvent[]): Set<string> {
+  return new Set(
+    [...readClaimStates(events)].flatMap(([skillId, state]) =>
+      state.claimSource === "choice" && !state.studied && isKnownClaim({ passedOver: false, state })
+        ? [skillId]
+        : [],
+    ),
+  );
+}
+
 /** Omits skills with no claim. */
 export function readDatedClaims(events: readonly ClaimEvent[]): Map<string, DatedClaim> {
   const states = readClaimStates(events);
@@ -238,7 +262,7 @@ function isKnownClaim({ passedOver, state }: { passedOver: boolean; state: Claim
     claim !== undefined &&
     claim !== "gap" &&
     !(claim === "toConfirm" && passedOver) &&
-    (state.studied || state.claimed || isSkillConfirmed({ answers: state.answers }))
+    (state.studied || state.claimSource !== null || isSkillConfirmed({ answers: state.answers }))
   );
 }
 

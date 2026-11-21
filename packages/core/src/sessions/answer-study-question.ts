@@ -2,7 +2,8 @@ import "server-only";
 import { type Attempt, type StudySessionBlock, prisma } from "@zoonk/db";
 import { isBlockDuelDecided } from "../checkpoints/_utils/checkpoint-outcome";
 import { loadCheckpointReinforcement } from "../checkpoints/_utils/checkpoint-reinforcement";
-import { loadSkippedRecheckSkills } from "../learner/_utils/load-skill-claims";
+import { loadClaimEvents, loadSkippedRecheckSkills } from "../learner/_utils/load-skill-claims";
+import { listPassedOverToRelearn } from "../learner/_utils/skill-claims";
 import { gradeTypedItemAnswer } from "../learner/_utils/typed-grading";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
@@ -19,6 +20,7 @@ import {
   readRecordedAnswer,
 } from "./_utils/session-items";
 import { loadAnsweredTranscript } from "./_utils/set-transcript";
+import { settleSavedSessionRecheck } from "./_utils/settle-saved-session-recheck";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { getBlockItemIds, readBlockPayload } from "./block-payload";
 import { getHyperdriveLevel, scoreAnswers } from "./brain-power";
@@ -28,14 +30,20 @@ import { shouldSuggestPause } from "./pause-suggestion";
 async function isSkippedRecheck({
   item,
   placement,
+  recheckItemIds,
   session,
 }: {
   item: SessionItem;
   placement: boolean;
+  recheckItemIds: readonly string[] | undefined;
   session: StudySessionRow;
 }): Promise<boolean> {
   if (!placement || !session.goalId || !item.skillId) {
     return false;
+  }
+
+  if (recheckItemIds) {
+    return recheckItemIds.includes(item.id);
   }
 
   const due = await loadSkippedRecheckSkills({
@@ -46,6 +54,30 @@ async function isSkippedRecheck({
   });
 
   return due.has(item.skillId);
+}
+
+async function isPassedOverMiss({
+  isCorrect,
+  item,
+  placement,
+  session,
+}: {
+  isCorrect: boolean;
+  item: SessionItem;
+  placement: boolean;
+  session: StudySessionRow;
+}): Promise<boolean> {
+  if (placement || isCorrect || !session.goalId || !item.skillId) {
+    return false;
+  }
+
+  const events = await loadClaimEvents({
+    goalId: session.goalId,
+    skillIds: [item.skillId],
+    userId: session.userId,
+  });
+
+  return listPassedOverToRelearn(events).has(item.skillId);
 }
 
 /** Replays use the stored answer and avoid grading a changed typed submission with a model. */
@@ -163,7 +195,9 @@ export async function answerStudyQuestion({
   }
 
   if (previous && block.kind !== "checkpoint") {
-    return { status: "alreadyAnswered" };
+    return settleSavedSessionRecheck({ attempt: previous, session, timeZone: input.timeZone }).then(
+      () => ({ status: "alreadyAnswered" as const }),
+    );
   }
 
   const storedAnswer = getStoredCheckpointAnswer({ block, previous });
@@ -192,8 +226,19 @@ export async function answerStudyQuestion({
     graded,
     input,
     item,
+    passedOverMiss: await isPassedOverMiss({
+      isCorrect: drilled.isCorrect,
+      item,
+      placement,
+      session,
+    }),
     placement,
-    recheck: await isSkippedRecheck({ item, placement, session }),
+    recheck: await isSkippedRecheck({
+      item,
+      placement,
+      recheckItemIds: payload.placementRecheckItemIds,
+      session,
+    }),
     session,
     sessionId,
     userId,

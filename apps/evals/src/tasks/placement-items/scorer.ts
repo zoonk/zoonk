@@ -6,13 +6,28 @@ import {
 } from "@zoonk/ai/tasks/items/placement-items";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { checkItem, findOwnEmDashes } from "@zoonk/core/library/items/checks";
+import { isTapWorthStoring } from "@zoonk/core/lookahead/placement-item-skills";
 import { findNumberFormatFlaws } from "@zoonk/utils/number-format-flaws";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "../generate-items/score-categories";
 
 type PlacementItemsCase = Pick<
   PlacementItemsParams,
-  "examFormat" | "language" | "quickCount" | "quickFormat" | "skills" | "typedCount"
+  "examFormat" | "language" | "quickFormat" | "skills"
 >;
+
+const TAP_FORMATS = new Set<GeneratedItem["format"]>(["matchPairs", "multipleChoice", "order"]);
+
+/** A tap question passes the checks the pipeline runs before storing it. */
+function checkTap({ item, language }: { item: GeneratedItem; language: string }): string[] {
+  if (!TAP_FORMATS.has(item.format)) {
+    return [`Is ${item.format}, not a tap question.`];
+  }
+
+  return [
+    ...checkItem({ item, language, select: "all" }),
+    ...(isTapWorthStoring(item) ? [] : ["A blind guess passes it more than 1 time in 20."]),
+  ];
+}
 
 type RoleCheck = {
   passing: (GeneratedItem & { itemLocator: string })[];
@@ -21,27 +36,25 @@ type RoleCheck = {
 };
 
 function checkRole({
-  format,
+  check,
   items,
   itemPath,
   label,
   language,
-  optionCount,
   wanted,
 }: {
-  format: GeneratedItem["format"];
+  check: (item: GeneratedItem) => string[];
   items: GeneratedItem[];
   itemPath: string;
   label: string;
   language: string;
-  optionCount: number | null;
   wanted: number;
 }): RoleCheck {
   const checked = items.map((item, index) => ({
     item,
     itemLocator: `${itemPath}[${index}]`,
     problems: [
-      ...checkItem({ expectedFormat: format, item, language, optionCount }),
+      ...check(item),
       ...findOwnEmDashes(item),
       ...findNumberFormatFlaws({ language, value: item }),
     ].map((problem) => `${label} ${index + 1}: ${problem}`),
@@ -66,26 +79,31 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
     input.quickFormat === "multipleChoice" ? (input.examFormat?.optionCount ?? null) : null;
 
   const perSkill = input.skills.map((skill, index) => {
-    const written = skills[index] ?? { quick: [], typed: [] };
+    const written = skills[index] ?? { quick: [], taps: [] };
+    const shared = { language: input.language };
 
     const roles = [
       checkRole({
-        format: input.quickFormat,
+        ...shared,
+        check: (item) =>
+          checkItem({
+            expectedFormat: input.quickFormat,
+            item,
+            language: input.language,
+            optionCount,
+          }),
         itemPath: `skills[${index}].quick`,
         items: written.quick,
         label: `${skill.name}, quick`,
-        language: input.language,
-        optionCount,
-        wanted: input.quickCount,
+        wanted: skill.quickCount,
       }),
       checkRole({
-        format: "typed",
-        itemPath: `skills[${index}].typed`,
-        items: written.typed,
-        label: `${skill.name}, typed`,
-        language: input.language,
-        optionCount: null,
-        wanted: input.typedCount,
+        ...shared,
+        check: (item) => checkTap({ item, language: input.language }),
+        itemPath: `skills[${index}].taps`,
+        items: written.taps,
+        label: `${skill.name}, tap`,
+        wanted: skill.tapCount,
       }),
     ];
 
@@ -97,10 +115,10 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
   return {
     judgedOutput: JSON.stringify(
       {
-        skills: perSkill.map(({ name, roles: [quick, typed] }) => ({
+        skills: perSkill.map(({ name, roles: [quick, taps] }) => ({
           quick: quick?.passing ?? [],
           skill: name,
-          typed: typed?.passing ?? [],
+          taps: taps?.passing ?? [],
         })),
       },
       null,

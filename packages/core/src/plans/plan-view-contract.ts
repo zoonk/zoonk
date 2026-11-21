@@ -1,11 +1,14 @@
 import { type PlanChangeStatus, type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
-import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { type BossTiming } from "../checkpoints/_utils/challenge-reach";
 import { type ExamChoiceView } from "../exams/choices/exam-choice-contract";
 import { type ExamDocument } from "../exams/exam-document";
 import { type LanguageActivityType } from "../language/activities/language-activities";
 import { type LanguageAimView } from "../language/aims/language-aims";
+import {
+  levelTestOutLevelSchema,
+  levelTestResultSchema,
+} from "../language/level-test/level-test-contract";
 import { type FocusTestSummary } from "../learner/placement/focus-test-contract";
 import {
   placementAttemptViewSchema,
@@ -178,8 +181,6 @@ export type MockScheduleView = {
   weekday: number | null;
 };
 
-const cefrRangeSchema = z.object({ high: z.enum(CEFR_LEVELS), low: z.enum(CEFR_LEVELS) });
-
 const placementRowShape = {
   estimatedMinutes: z.number().int().nonnegative(),
   state: z.enum(["start", "continue", "result"]),
@@ -197,17 +198,8 @@ export const planPlacementTestSchema = z
       ...placementRowShape,
       attempt: placementAttemptViewSchema.nullable(),
       kind: z.literal("language"),
-      nextTestOutLevel: z.enum(["B2", "C1", "C2"]).nullable(),
-      result: placementResultSchema
-        .omit({ lessonsSkipped: true })
-        .extend({
-          levelsSkipped: z.array(z.enum(CEFR_LEVELS)),
-          ranges: z.object({
-            listening: cefrRangeSchema.optional(),
-            reading: cefrRangeSchema.optional(),
-          }),
-        })
-        .nullable(),
+      nextTestOutLevel: levelTestOutLevelSchema.nullable(),
+      result: levelTestResultSchema.nullable(),
     }),
   ])
   .meta({ id: "PlanPlacementTest" });

@@ -12,12 +12,18 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { unplannedGoalFixture } from "./_test-utils/plan-library";
+import { announceTestedOutItems } from "./announce-tested-out-items";
 import { bringBackMissedLessons } from "./bring-back-missed-lessons";
 import { createGoalPlan } from "./create-goal-plan";
+import { decidePlanChange } from "./decide-plan-change";
 import { type PlanGraph } from "./planner/plan-state";
 
 const NOW = new Date("2026-10-12T12:00:00Z");
@@ -91,7 +97,7 @@ async function setup() {
     where: { kind: "lesson", planId: plan.id },
   });
 
-  return { goal, missed, plan, shared: shared?.id ?? "" };
+  return { goal, known, missed, plan, shared: shared?.id ?? "" };
 }
 
 describe(bringBackMissedLessons, () => {
@@ -134,5 +140,140 @@ describe(bringBackMissedLessons, () => {
     expect(positions.map((item) => item.position)).toStrictEqual(
       positions.map((_, index) => index),
     );
+  });
+
+  it("batches failed re-checks for the shown day and undoes them without changing its queue", async () => {
+    const { goal, known, missed, plan } = await setup();
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      status: "active",
+      userId: goal.userId,
+    });
+
+    const shown = await Promise.all([
+      studySessionBlockFixture({
+        kind: "review",
+        position: 0,
+        sessionId: session.id,
+        status: "active",
+      }),
+      studySessionBlockFixture({ position: 1, sessionId: session.id, status: "pending" }),
+    ]);
+
+    const apply = (skillId: string) =>
+      bringBackMissedLessons({
+        goalId: goal.id,
+        livingPlanDay: "2026-10-12",
+        now: NOW,
+        skillIds: [skillId],
+        timeZone: "UTC",
+      });
+
+    await apply(missed.id);
+    await apply(known.id);
+    await apply(known.id);
+
+    const changes = await prisma.planChange.findMany({
+      where: { kind: "relearn", planId: plan.id, status: "applied" },
+    });
+
+    expect(changes).toHaveLength(1);
+
+    expect(changes[0]?.payload).toMatchObject({
+      effect: {
+        topicsAdded: [
+          { area: "Design", topics: expect.arrayContaining([missed.name, known.name]) },
+        ],
+      },
+    });
+
+    const undo = await decidePlanChange({
+      changeId: changes[0]?.id ?? "",
+      goalId: goal.id,
+      input: { status: "undone" },
+    });
+
+    expect(undo).toMatchObject({ change: { status: "undone" }, status: "updated" });
+
+    const [blocks, items] = await Promise.all([
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: session.id },
+      }),
+      prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } }),
+    ]);
+
+    expect(blocks).toStrictEqual(shown);
+    expect(items.length).toBeGreaterThan(0);
+
+    expect(items.every((item) => item.status === "testedOut")).toBe(true);
+    expect(items.map((item) => item.completedAt)).toStrictEqual(items.map(() => NOW));
+  });
+
+  it("puts a skip and a failed re-check on one card with one Undo", async () => {
+    const { goal, known, missed, plan } = await setup();
+    const knownWhere = { kind: "lesson" as const, planId: plan.id, skillId: known.id };
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: null, status: "todo" },
+      where: knownWhere,
+    });
+
+    await bringBackMissedLessons({
+      goalId: goal.id,
+      livingPlanDay: "2026-10-12",
+      now: NOW,
+      skillIds: [missed.id],
+      timeZone: "UTC",
+    });
+
+    const skipped = await prisma.planItem.updateManyAndReturn({
+      data: { completedAt: NOW, status: "testedOut" },
+      where: knownWhere,
+    });
+
+    const result = await announceTestedOutItems({
+      goalId: goal.id,
+      livingPlanDay: "2026-10-12",
+      now: NOW,
+      planItemIds: skipped.map((item) => item.id),
+      timeZone: "UTC",
+    });
+
+    const changes = await prisma.planChange.findMany({
+      where: { kind: { in: ["relearn", "testedOut"] }, planId: plan.id, status: "applied" },
+    });
+
+    expect(changes).toHaveLength(1);
+    expect(result?.changeId).toBe(changes[0]?.id);
+
+    expect(changes[0]?.payload).toMatchObject({
+      effect: {
+        topicsAdded: [{ area: "Design", topics: [missed.name] }],
+        topicsLeftOut: [{ area: "Design", topics: [known.name] }],
+      },
+      lessonsSkipped: skipped.length,
+    });
+
+    await expect(
+      decidePlanChange({
+        changeId: changes[0]?.id ?? "",
+        goalId: goal.id,
+        input: { status: "undone" },
+      }),
+    ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
+
+    const items = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
+
+    expect(
+      items.filter((item) => item.skillId === known.id).every((item) => item.status === "todo"),
+    ).toBe(true);
+
+    expect(
+      items
+        .filter((item) => item.skillId === missed.id)
+        .every((item) => item.status === "testedOut"),
+    ).toBe(true);
   });
 });

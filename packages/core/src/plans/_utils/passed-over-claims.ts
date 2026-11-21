@@ -30,7 +30,7 @@ export function toPassedOverClaims({
       changes.find((change) =>
         change.operations.some((operation) => makesChoice({ operation, passed: entry })),
       )?.at ?? createdAt,
-    kind: "claim",
+    kind: "passedOver",
     skillId: entry.skillId,
   }));
 }

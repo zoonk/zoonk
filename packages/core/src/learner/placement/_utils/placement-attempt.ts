@@ -2,7 +2,6 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
@@ -14,6 +13,7 @@ import {
   getPlacementEstimate,
   getTopicsAhead,
   readPlacementAttempt,
+  readReadyAssessmentId,
 } from "./placement-attempt-record";
 
 export async function savePlacementAttempt({
@@ -31,23 +31,6 @@ export async function savePlacementAttempt({
     },
     where: { id: goal.id },
   });
-}
-
-function readReadyAssessmentId(details: unknown): string | null {
-  const levelTest = isJsonObject(details) ? details.levelTest : null;
-  const attempt = isJsonObject(levelTest) ? levelTest.attempt : null;
-
-  if (
-    !isJsonObject(attempt) ||
-    !isJsonObject(attempt.result) ||
-    attempt.result.wholeCourseReady !== true ||
-    typeof attempt.attemptId !== "string" ||
-    !isUuid(attempt.attemptId)
-  ) {
-    return null;
-  }
-
-  return attempt.attemptId;
 }
 
 export async function openPlacementAttempt({

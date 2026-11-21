@@ -17,7 +17,11 @@ import {
   writeLevelTestBankLevelStep,
 } from "./steps/level-test-bank-steps";
 
-export type LevelTestBankInput = { analytics?: ContentAnalytics; pair: LanguagePair };
+export type LevelTestBankInput = {
+  analytics?: ContentAnalytics;
+  pair: LanguagePair;
+  upgrade?: true;
+};
 
 export type LevelTestBankResult = { status: "ready" | "unfinished" | "written" };
 
@@ -80,7 +84,7 @@ async function writeLevel(run: WriteRun & { level: TestLevel }): Promise<LevelTe
 }
 
 async function claimAndWrite(run: WriteRun): Promise<WriteStatus> {
-  const claim = await claimLevelTestBankStep(run.pair);
+  const claim = await claimLevelTestBankStep(run.pair, run.upgrade);
 
   if (claim.status !== "claimed") {
     return claim.status;

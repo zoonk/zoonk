@@ -92,23 +92,58 @@ const QUICK_ITEMS = {
   },
 } as const satisfies Record<PlacementItemsParams["quickFormat"], GeneratedItem>;
 
-const TYPED_ITEM: GeneratedItem = {
-  acceptedAnswers: [],
-  context: null,
-  difficulty: "medium",
-  format: "typed",
-  image: null,
-  keyPoints: ["Names the rule"],
-  question: "Which rule applies here, and why?",
-  sampleAnswer: "The rule, because the case fits it.",
-  visual: null,
-};
+const TAP_OPTION = { isCorrect: true, misconception: null, reason: "It fits the rule." };
 
-function writtenFor(params: PlacementItemsParams) {
+const TAP_ITEMS: GeneratedItem[] = [
+  {
+    difficulty: "medium",
+    format: "matchPairs",
+    pairs: ["a", "b", "c", "d"].map((left) => ({ left, right: left.toUpperCase() })),
+    question: "Match each case to its rule.",
+    reason: "Each case follows its rule.",
+  },
+  {
+    difficulty: "medium",
+    format: "order",
+    question: "Put the steps in order.",
+    reason: "Each step needs the one before.",
+    steps: ["First", "Second", "Third", "Fourth"],
+  },
+  {
+    context: null,
+    difficulty: "hard",
+    fixedOrder: false,
+    format: "multipleChoice",
+    image: null,
+    options: [
+      { ...TAP_OPTION, text: "Fits one way" },
+      { ...TAP_OPTION, text: "Fits another way" },
+      ...["Breaks it", "Ignores it", "Reverses it"].map((text) => ({
+        isCorrect: false,
+        misconception: `${text} the rule`,
+        reason: `It ${text.toLowerCase()}.`,
+        text,
+      })),
+    ],
+    question: "Which cases follow the rule?",
+    visual: null,
+  },
+];
+
+/** As the writer answers: only the lists a skill asked for, at its counts. */
+function writtenFor(
+  params: PlacementItemsParams,
+  quick: (format: PlacementItemsParams["quickFormat"]) => readonly GeneratedItem[] = (format) => [
+    QUICK_ITEMS[format],
+  ],
+) {
   return taskResult({
-    skills: params.skills.map(() => ({
-      quick: Array.from({ length: params.quickCount }, () => QUICK_ITEMS[params.quickFormat]),
-      typed: params.typedCount > 0 ? [TYPED_ITEM] : [],
+    skills: params.skills.map((skill) => ({
+      quick:
+        skill.quickCount > 0
+          ? Array.from({ length: skill.quickCount }, () => quick(params.quickFormat)).flat()
+          : [],
+      taps: TAP_ITEMS.slice(0, skill.tapCount),
     })),
   });
 }
@@ -187,8 +222,12 @@ describe(shortPlanPracticeWorkflow, () => {
     });
 
     expect(
-      vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.quickCount),
-    ).toStrictEqual([6, 6]);
+      vi
+        .mocked(generatePlacementItems)
+        .mock.calls.map(([params]) =>
+          params.skills.map((skill) => [skill.quickCount, skill.tapCount]),
+        ),
+    ).toStrictEqual([[[6, 0]], [[6, 0]]]);
   });
 });
 
@@ -266,18 +305,13 @@ describe(placementItemsWorkflow, () => {
     const figure = { alt: "A cell with its nucleus labeled.", prompt: `A cell ${randomUUID()}` };
 
     vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
-      taskResult({
-        skills: params.skills.map(() => ({
-          quick: [
-            {
-              ...QUICK_ITEMS.multipleChoice,
-              context: "In the figure, an arrow points at the nucleus.",
-              image: figure,
-            },
-          ],
-          typed: [],
-        })),
-      }),
+      writtenFor(params, () => [
+        {
+          ...QUICK_ITEMS.multipleChoice,
+          context: "In the figure, an arrow points at the nucleus.",
+          image: figure,
+        },
+      ]),
     );
 
     vi.mocked(generateImageScene).mockImplementation(({ request }) =>
@@ -299,7 +333,7 @@ describe(placementItemsWorkflow, () => {
     ).resolves.toMatchObject({ failed: 0, written: 1 });
 
     const item = await prisma.item.findFirstOrThrow({
-      where: { format: "multipleChoice", skillId: { in: skillIds } },
+      where: { format: "multipleChoice", mediaAssetId: { not: null }, skillId: { in: skillIds } },
     });
 
     expect(item.mediaAssetId).toStrictEqual(expect.any(String));
@@ -322,12 +356,10 @@ describe(placementItemsWorkflow, () => {
     };
 
     vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
-      taskResult({
-        skills: params.skills.map(() => ({
-          quick: [noRightOption, QUICK_ITEMS.multipleChoice],
-          typed: [],
-        })),
-      }),
+      writtenFor(
+        { ...params, skills: params.skills.map((skill) => ({ ...skill, tapCount: 0 })) },
+        () => [noRightOption, QUICK_ITEMS.multipleChoice],
+      ),
     );
 
     vi.mocked(solveItems).mockImplementation(async ({ items }) =>
@@ -351,41 +383,105 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
-  it("writes the picked skills a few per call, with the quick questions that confirm a right pick", async () => {
+  it("writes each picked skill's quick and tap questions, the first pick's in two calls at the learner's wait", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 7 });
 
     await expect(
       placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds }),
     ).resolves.toStrictEqual({ failed: 0, status: "written", written: 7 });
 
-    expect(calledSkillCounts()).toStrictEqual([1, 2, 2, 2]);
+    const calls = vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params);
 
-    expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
-      examFormat: null,
-      quickCount: 2,
-      quickFormat: "multipleChoice",
-      typedCount: 0,
-    });
+    // The batches run side by side, so their calls land in any order.
+    const writes = calls
+      .map((params) => {
+        const [skill] = params.skills;
+        return `${params.skills.length}:${skill?.quickCount}:${skill?.tapCount}:${params.serviceTier ?? "soon"}`;
+      })
+      .toSorted((first, second) => first.localeCompare(second));
 
-    expect(
-      vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.serviceTier),
-    ).toStrictEqual(["priority", undefined, undefined, undefined]);
-
-    expect(vi.mocked(solveItems).mock.calls.map(([params]) => params.serviceTier)).toStrictEqual([
-      "priority",
-      undefined,
-      undefined,
-      undefined,
+    expect(writes).toStrictEqual([
+      "1:0:3:priority",
+      "1:1:0:priority",
+      ...Array.from({ length: 6 }, () => "1:1:3:soon"),
     ]);
 
-    await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(14);
-    await expect(countItems({ format: "typed", skillIds })).resolves.toBe(0);
+    expect(calls.every((params) => params.examFormat === null)).toBe(true);
+    expect(calls.every((params) => params.quickFormat === "multipleChoice")).toBe(true);
+
+    const firstPick = calls.filter((params) => params.serviceTier === "priority");
+    expect(new Set(firstPick.map((params) => params.skills[0]?.name)).size).toBe(1);
+
+    const solveTiers = vi
+      .mocked(solveItems)
+      .mock.calls.map(([params]) => [params.select ?? 1, params.serviceTier]);
+
+    expect(
+      solveTiers
+        .filter(([, tier]) => tier === "priority")
+        .map(([select]) => String(select))
+        .toSorted((first, second) => first.localeCompare(second)),
+    ).toStrictEqual(["1", "all"]);
+
+    expect(solveTiers).toHaveLength(14);
+
+    await expect(
+      Promise.all(
+        (["multipleChoice", "matchPairs", "order", "typed"] as const).map((format) =>
+          countItems({ format, skillIds }),
+        ),
+      ),
+    ).resolves.toStrictEqual([14, 7, 7, 0]);
+
+    await expect(
+      prisma.item.count({
+        where: { content: { equals: "all", path: ["select"] }, skillId: { in: skillIds } },
+      }),
+    ).resolves.toBe(7);
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
     ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
 
     expect(trackServerEvent).not.toHaveBeenCalled();
+  });
+
+  it("never stores a tap question a guess passes too often", async () => {
+    const { goal, skillIds } = await goalWithSkills({ count: 1 });
+    const [pairs, order, selectAll] = TAP_ITEMS as [GeneratedItem, GeneratedItem, GeneratedItem];
+
+    const fewPairs = {
+      ...pairs,
+      pairs: [
+        { left: "a", right: "A" },
+        { left: "b", right: "B" },
+        { left: "c", right: "C" },
+      ],
+    };
+
+    const fewOptions =
+      selectAll.format === "multipleChoice"
+        ? { ...selectAll, options: selectAll.options.slice(0, 4) }
+        : selectAll;
+
+    vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
+      taskResult({
+        skills: params.skills.map((skill) => ({
+          quick: skill.quickCount > 0 ? [QUICK_ITEMS.multipleChoice] : [],
+          taps: skill.tapCount > 0 ? [fewPairs, order, fewOptions] : [],
+        })),
+      }),
+    );
+
+    await placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds });
+
+    await expect(
+      prisma.item.findMany({ select: { format: true }, where: { skillId: { in: skillIds } } }),
+    ).resolves.toStrictEqual(
+      expect.arrayContaining([{ format: "multipleChoice" }, { format: "order" }]),
+    );
+
+    await expect(prisma.item.count({ where: { skillId: { in: skillIds } } })).resolves.toBe(2);
   });
 
   it("writes no placement questions for a learner who skipped placement, and still writes a test-out's", async () => {
@@ -490,7 +586,7 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
-  it("waits for a language exam's blueprint, not only its formats, so listening skills get no text questions", async () => {
+  it("waits for a language exam's blueprint, so listening skills get no text questions", async () => {
     const { blueprint, goal, listeningSkills, reading } = await listeningGoalFixture();
     const listeningIds = listeningSkills.map((skill) => skill.id);
 
@@ -521,9 +617,9 @@ describe(placementItemsWorkflow, () => {
     await expect(
       Promise.all([
         countItems({ format: "multipleChoice", skillIds: [reading.id] }),
-        countItems({ format: "multipleChoice", skillIds: listeningIds }),
+        prisma.item.count({ where: { skillId: { in: listeningIds } } }),
       ]),
-    ).resolves.toStrictEqual([1, 0]);
+    ).resolves.toStrictEqual([2, 0]);
   });
 
   it("waits for earlier placement writing, then picks from the latest answer", async () => {
@@ -569,58 +665,11 @@ describe(placementItemsWorkflow, () => {
     });
 
     await expect(
-      writePlacementBatchStep({ ...context, quickCount: 1, quickFormat, skills: batches[0] ?? [] }),
+      writePlacementBatchStep({ ...context, quickFormat, skills: batches[0] ?? [] }),
     ).rejects.toBe(unavailable);
   });
 
-  it("writes an exam's true/false questions under its blueprint once research has read its notice", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
-
-    await preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds });
-
-    const blueprint = await examBlueprintFixture({
-      name: "Polícia Federal",
-      role: "Agente",
-      structure: CEBRASPE_STRUCTURE,
-    });
-
-    await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
-    vi.mocked(generatePlacementItems).mockClear();
-
-    await expect(
-      preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds }),
-    ).resolves.toStrictEqual({ failed: 0, written: 2 });
-
-    expect(vi.mocked(generatePlacementItems).mock.calls).toStrictEqual([
-      [
-        expect.objectContaining({
-          examFormat: expect.objectContaining({ name: "Polícia Federal, Agente" }),
-          quickCount: 3,
-          quickFormat: "trueFalse",
-          typedCount: 0,
-        }),
-      ],
-      [expect.objectContaining({ quickCount: 3, quickFormat: "trueFalse", typedCount: 0 })],
-    ]);
-
-    expect(
-      vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.serviceTier),
-    ).toStrictEqual(["priority", undefined]);
-
-    const examItems = await prisma.item.findMany({
-      where: { examBlueprintId: blueprint.id, skillId: { in: skillIds } },
-    });
-
-    expect(examItems.map((item) => item.format)).toStrictEqual(
-      Array.from({ length: 6 }, () => "trueFalse"),
-    );
-
-    vi.mocked(generatePlacementItems).mockClear();
-    await preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds });
-    expect(generatePlacementItems).not.toHaveBeenCalled();
-  });
-
-  it("writes a new exam's first questions in the formats a first pass over its notice read", async () => {
+  it("keeps an exam's placement questions general, written once whatever its notice says", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
 
     await prisma.goal.update({
@@ -637,34 +686,36 @@ describe(placementItemsWorkflow, () => {
       }),
     ).resolves.toMatchObject({ failed: 0, written: 2 });
 
-    expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
-      examFormat: { blueprintId: null, style: expect.stringContaining("Itens Certo ou Errado.") },
-      quickFormat: "trueFalse",
-      serviceTier: "priority",
+    expect(sleep).not.toHaveBeenCalled();
+
+    expect(
+      vi
+        .mocked(generatePlacementItems)
+        .mock.calls.every(
+          ([params]) => params.examFormat === null && params.quickFormat === "multipleChoice",
+        ),
+    ).toBe(true);
+
+    const blueprint = await examBlueprintFixture({
+      name: "Polícia Federal",
+      role: "Agente",
+      structure: CEBRASPE_STRUCTURE,
     });
 
-    await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(0);
-    await expect(countItems({ format: "trueFalse", skillIds })).resolves.toBe(6);
-  });
-
-  it("waits for a new notice's formats before writing questions, and goes on without them in the end", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 1, kind: "exam" });
+    await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
+    vi.mocked(generatePlacementItems).mockClear();
 
     await expect(
-      placementItemsWorkflow({
-        analytics: context.analytics,
-        goalId: goal.id,
-        skillIds,
-        waitsForNotice: true,
-      }),
-    ).resolves.toMatchObject({ written: 1 });
+      preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds }),
+    ).resolves.toStrictEqual({ failed: 0, written: 0 });
 
-    expect(sleep).toHaveBeenCalledTimes(39);
+    expect(generatePlacementItems).not.toHaveBeenCalled();
 
-    expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
-      examFormat: null,
-      quickFormat: "multipleChoice",
-    });
+    await expect(
+      prisma.item.count({ where: { examBlueprintId: { not: null }, skillId: { in: skillIds } } }),
+    ).resolves.toBe(0);
+
+    await expect(countItems({ format: "trueFalse", skillIds })).resolves.toBe(0);
   });
 
   it("writes a multiple-choice exam's own questions once when its notice lands", async () => {

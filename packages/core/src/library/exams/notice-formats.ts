@@ -87,12 +87,9 @@ export function awaitsExamBlueprint(
 }
 
 /** Internal workflow bridge: the goal must belong to the research run. */
-export async function getPlacementExamWait(
-  goalId: string,
-): Promise<"blueprint" | "formats" | null> {
+export async function getPlacementExamWait(goalId: string): Promise<"blueprint" | null> {
   const goal = await prisma.goal.findUnique({
     select: {
-      details: true,
       examBlueprintId: true,
       kind: true,
       plan: { select: { noticeWaitEndedAt: true } },
@@ -101,13 +98,5 @@ export async function getPlacementExamWait(
     where: { id: goalId },
   });
 
-  if (!goal) {
-    return null;
-  }
-
-  if (awaitsExamBlueprint(goal)) {
-    return goal.plan?.noticeWaitEndedAt ? null : "blueprint";
-  }
-
-  return goal.examBlueprintId || readNoticeFormats(goal.details) ? null : "formats";
+  return goal && awaitsExamBlueprint(goal) && !goal.plan?.noticeWaitEndedAt ? "blueprint" : null;
 }

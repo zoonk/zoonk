@@ -1,17 +1,22 @@
+import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
 import {
   getPlacementEstimate,
   placementAttemptView,
+  readPendingTopicWalkAssessmentId,
   readPlacementAttempt,
 } from "../../learner/placement/_utils/placement-attempt-record";
 import { type PlanView } from "../plan-view-contract";
 import { type PlanContext } from "./plan-context";
 
 export function readPlanPlacementTest(context: PlanContext): PlanView["placementTest"] {
-  if (context.goal.kind !== "learn") {
+  const { goal } = context;
+
+  if (goal.kind !== "learn" && goal.kind !== "language") {
     return null;
   }
 
-  const { attempt, result } = readPlacementAttempt(context.goal);
+  const placement = readPlacementAttempt(goal);
+  const { attempt, result } = placement;
 
   const settled = new Set(
     context.items.flatMap((item) =>
@@ -21,15 +26,35 @@ export function readPlanPlacementTest(context: PlanContext): PlanView["placement
 
   const ahead = context.state.graph.skills.filter((skill) => !settled.has(skill.skillId));
 
-  const whenIdle = result ? "result" : "start";
+  const estimatedMinutes =
+    attempt?.estimatedMinutes ??
+    getPlacementEstimate({ length: "wholeCourse", topics: ahead.length });
+
+  const attemptView = attempt ? placementAttemptView(attempt) : null;
+
+  if (goal.kind === "language") {
+    const summary = readLevelTestSummary(goal);
+    const waitingForTopicWalk = readPendingTopicWalkAssessmentId(goal, placement) !== null;
+    const continuing = attempt || summary.attempt || waitingForTopicWalk;
+    const idleState = summary.result ? "result" : "start";
+
+    return {
+      attempt: attemptView,
+      estimatedMinutes,
+      kind: "language",
+      nextTestOutLevel: summary.nextTestOutLevel,
+      result: summary.result,
+      state: continuing ? "continue" : idleState,
+    };
+  }
+
+  const idleState = result ? "result" : "start";
 
   return {
-    attempt: attempt ? placementAttemptView(attempt) : null,
-    estimatedMinutes:
-      attempt?.estimatedMinutes ??
-      getPlacementEstimate({ length: "wholeCourse", topics: ahead.length }),
+    attempt: attemptView,
+    estimatedMinutes,
     kind: "learn",
     result,
-    state: attempt ? "continue" : whenIdle,
+    state: attempt ? "continue" : idleState,
   };
 }

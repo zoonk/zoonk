@@ -10,10 +10,10 @@ import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
 import { getChapterTestOut } from "../learner/test-out/get-chapter-test-out";
 import { submitChapterTestOut } from "../learner/test-out/submit-chapter-test-out";
 import { moveOnWithoutLesson } from "../library/generation/hold-back-lesson";
-import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { runOwedSettlements } from "./_test-utils/owed-settlements";
 import { sessionGoalFixture } from "./_test-utils/session-goal";
@@ -72,9 +72,9 @@ const PASSED = { outcome: { lessonsSkipped: 1, passed: true }, status: "ready" }
 async function startedDay() {
   const user = await userFixture();
 
-  const { chapters, goal, planItems } = await learnerGoalFixture({
+  const { chapters, goal, planItems, skills } = await learnerGoalFixture({
     challengesDone: true,
-    itemsPerSkill: 4,
+    itemsPerSkill: 0,
     phases: [1, 1],
     userId: user.id,
   });
@@ -114,10 +114,27 @@ async function startedDay() {
     sessionId: session.id,
   });
 
-  return { chapterId: chapters[1]?.id ?? "", goal, last, session, user };
+  const bank = await placementItemBank([skills[1]?.id ?? ""]);
+
+  return {
+    answersById: new Map(bank.flat().map(({ answer, item }) => [item.id, answer])),
+    chapterId: chapters[1]?.id ?? "",
+    goal,
+    last,
+    planItemId: planItems[1]?.id ?? "",
+    session,
+  };
 }
 
-async function passChapterTest({ chapterId, goalId }: { chapterId: string; goalId: string }) {
+async function passChapterTest({
+  answersById,
+  chapterId,
+  goalId,
+}: {
+  answersById: Awaited<ReturnType<typeof startedDay>>["answersById"];
+  chapterId: string;
+  goalId: string;
+}) {
   const testOut = await getChapterTestOut({ chapterId, goalId });
   const questions = testOut.status === "ready" ? testOut.testOut.questions : [];
   const finishDeferredWork = runDeferredWork();
@@ -127,7 +144,7 @@ async function passChapterTest({ chapterId, goalId }: { chapterId: string; goalI
     goalId,
     input: {
       answers: questions.map((question) => ({
-        answer: { selectedIndex: 0 },
+        answer: answersById.get(question.itemId) ?? { dontKnow: true },
         durationMs: 6000,
         itemId: question.itemId,
       })),
@@ -140,58 +157,34 @@ async function passChapterTest({ chapterId, goalId }: { chapterId: string; goalI
   return result;
 }
 
-async function expectCompletedDay({
-  goalId,
-  sessionId,
-  userId,
-}: {
-  goalId: string;
-  sessionId: string;
-  userId: string;
-}) {
-  await runOwedSettlements(userId);
+describe("a chapter test-out during a shown session", () => {
+  it.each(["pending", "active"] as const)(
+    "keeps its %s lesson and leaves the session open",
+    async (status) => {
+      const { answersById, chapterId, goal, last, planItemId, session } = await startedDay();
 
-  const [saved, ledger, followUps, today] = await Promise.all([
-    prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } }),
-    prisma.learningEvent.findFirstOrThrow({
-      where: { contentIds: { equals: sessionId, path: ["studySessionId"] }, kind: "session" },
-    }),
-    prisma.followUp.findMany({ select: { key: true, kind: true }, where: { userId } }),
-    getTodayView({ goalId, timeZone: "UTC" }),
-  ]);
+      if (status === "active") {
+        await startStudyBlock({ blockId: last.id, input: {}, sessionId: session.id });
+      }
 
-  expect(saved).toMatchObject({ endedAt: expect.any(Date), status: "completed" });
-  expect(ledger.endedAt).toStrictEqual(saved.endedAt);
-  expect(followUps).toContainEqual({ key: sessionId, kind: "prepareSession" });
-  expect(followUps).toContainEqual({ key: sessionId, kind: "rememberSession" });
+      await expect(
+        passChapterTest({ answersById, chapterId, goalId: goal.id }),
+      ).resolves.toMatchObject(PASSED);
 
-  expect(today).toMatchObject({
-    status: "ready",
-    today: { session: { state: "done", status: "completed" } },
-  });
-}
+      const [block, day, item] = await Promise.all([
+        prisma.studySessionBlock.findUniqueOrThrow({ where: { id: last.id } }),
+        prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+        prisma.planItem.findUniqueOrThrow({ where: { id: planItemId } }),
+      ]);
 
-describe("a started day whose last open lesson a test-out takes away", () => {
-  it("completes, with its end ledger, memory and next preparation", async () => {
-    const { chapterId, goal, session, user } = await startedDay();
+      expect(block.status).toBe(status);
+      expect(day).toMatchObject({ endedAt: null, status: "active" });
+      expect(item.status).toBe("testedOut");
+    },
+  );
+});
 
-    await expect(passChapterTest({ chapterId, goalId: goal.id })).resolves.toMatchObject(PASSED);
-    await expectCompletedDay({ goalId: goal.id, sessionId: session.id, userId: user.id });
-  });
-
-  it("completes when the learner had that lesson open", async () => {
-    const { chapterId, goal, last, session, user } = await startedDay();
-
-    await startStudyBlock({ blockId: last.id, input: {}, sessionId: session.id });
-    await expect(passChapterTest({ chapterId, goalId: goal.id })).resolves.toMatchObject(PASSED);
-
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: last.id } }),
-    ).resolves.toMatchObject({ status: "skipped" });
-
-    await expectCompletedDay({ goalId: goal.id, sessionId: session.id, userId: user.id });
-  });
-
+describe("a started day whose last open lesson an explicit removal takes away", () => {
   it("completes when the day's other lesson is set aside while the test-out skips this one", async () => {
     const { session, setAside, testOut, user } = await startedDayOfTwoLessons();
     const holding = Promise.withResolvers<null>();

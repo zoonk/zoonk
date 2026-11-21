@@ -263,13 +263,13 @@ function simulatePair({
 }
 
 describe("checking a pair's questions against simulated learners", () => {
-  it("removes a wrong key and a label two bands too high, and no good question", () => {
+  it("removes a wrong key and an overstated level, and no good question", () => {
     const removed = simulatePair({
-      faults: { "listening-B2-0": { band: 1 }, "reading-B1-0": { key: 1 } },
+      faults: { "listening-B2-0": { band: 0 }, "reading-A2-0": { key: 1 } },
       tests: 600,
     });
 
-    expect(removed).toStrictEqual(["listening-B2-0", "reading-B1-0"]);
+    expect(removed).toStrictEqual(["listening-B2-0", "reading-A2-0"]);
   });
 
   it("removes no good question when learners listen two bands better than they read", () => {

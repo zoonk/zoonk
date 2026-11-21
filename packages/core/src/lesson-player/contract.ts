@@ -243,6 +243,11 @@ export const libraryLessonOpenedSchema = z
 
 export type LibraryLessonRun = z.infer<typeof libraryLessonRunSchema>;
 
+export const lessonPlacementOfferSchema = z.object({
+  goalId: uuidSchema(),
+  kind: z.literal("quick"),
+});
+
 export const libraryLessonCompletionSchema = z
   .object({
     // Session lessons celebrate in studyBlock's moment, so completion itself reaches nothing.
@@ -257,6 +262,7 @@ export const libraryLessonCompletionSchema = z
       .meta({
         description: "False for a replay: it completes, but doesn't count as a new lesson learned",
       }),
+    placementOffer: lessonPlacementOfferSchema.optional(),
     planReveal: z
       .object({
         goalId: uuidSchema(),

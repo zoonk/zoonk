@@ -11,7 +11,19 @@ export async function loadUndoneTestOuts(
 ): Promise<ClaimEvent[]> {
   const changes = await tx.planChange.findMany({
     select: { createdAt: true, payload: true },
-    where: { kind: "testedOut", plan: { goalId }, status: "undone" },
+    where: { kind: { in: ["testedOut", "relearn"] }, plan: { goalId }, status: "undone" },
+  });
+
+  const reclaim = changes.flatMap((change) => {
+    const { livingPlanDay, recheckedSkillIds, undoneAt } = parsePlanChangePayload(change.payload);
+
+    return livingPlanDay && undoneAt
+      ? recheckedSkillIds.map((skillId): ClaimEvent => ({
+          at: new Date(undoneAt),
+          kind: "claim",
+          skillId,
+        }))
+      : [];
   });
 
   const undone = changes.flatMap((change) => {
@@ -22,7 +34,7 @@ export async function loadUndoneTestOuts(
   });
 
   if (undone.length === 0) {
-    return [];
+    return reclaim;
   }
 
   const items = await tx.planItem.findMany({
@@ -46,12 +58,15 @@ export async function loadUndoneTestOuts(
     ]),
   );
 
-  return undone.flatMap(({ at, itemId, localDate }) =>
-    (skillsOf.get(itemId) ?? []).map((skillId): ClaimEvent => ({
-      at,
-      kind: "undone",
-      localDate,
-      skillId,
-    })),
-  );
+  return [
+    ...reclaim,
+    ...undone.flatMap(({ at, itemId, localDate }) =>
+      (skillsOf.get(itemId) ?? []).map((skillId): ClaimEvent => ({
+        at,
+        kind: "undone",
+        localDate,
+        skillId,
+      })),
+    ),
+  ];
 }

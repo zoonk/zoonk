@@ -19,7 +19,7 @@ async function storeUncheckedBank(passage: string) {
   await prisma.languageLevelTest.create({
     data: {
       ...pair,
-      content: { questions, speaking: levels.map((level) => level.speaking) },
+      content: { questions, speaking: [] },
       model: "test",
       promptVersion: "test",
       runId: crypto.randomUUID(),

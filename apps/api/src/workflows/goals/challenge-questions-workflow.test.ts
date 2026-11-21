@@ -66,7 +66,7 @@ describe(challengeQuestionsWorkflow, () => {
     const { empty, goal, held } = await challengeSkills();
 
     vi.mocked(generatePlacementItems).mockResolvedValue(
-      taskResult({ skills: [{ quick: [writtenItem([3, 4]), writtenItem([5, 6])], typed: [] }] }),
+      taskResult({ skills: [{ quick: [writtenItem([3, 4]), writtenItem([5, 6])], taps: [] }] }),
     );
 
     await expect(
@@ -81,11 +81,9 @@ describe(challengeQuestionsWorkflow, () => {
 
     expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        quickCount: 2,
         quickFormat: "multipleChoice",
         serviceTier: "flex",
-        skills: [expect.objectContaining({ name: "Rectangle area" })],
-        typedCount: 0,
+        skills: [expect.objectContaining({ name: "Rectangle area", quickCount: 2, tapCount: 0 })],
       }),
     );
 

@@ -1,1 +1,0 @@
-- A typed question whose answer is a number, a term or a name lists its correct wordings in `acceptedAnswers`, each once: matching ignores case, symbols such as % and extra spaces, so "18%" and "18" are the same answer.

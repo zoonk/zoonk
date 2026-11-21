@@ -1,4 +1,5 @@
 import "server-only";
+import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import {
   type CourseLevel,
   type ExamBlueprint,
@@ -8,13 +9,17 @@ import {
 } from "@zoonk/db";
 import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
+import {
+  LOW_GUESS_ANSWERS_TO_SKIP,
+  isLowGuessTap,
+  isQuickChoice,
+} from "../learner/_utils/placement-guess-rate";
 import { wantsPlacementQuestions } from "../learner/placement/focus-test-state";
 import { getKnownSubjects, getOwnLevel } from "../learner/placement/placement-contract";
 import { pickPlacementItemSkillIds } from "../learner/placement/placement-item-picks";
 import { isOwnMaterialTest } from "../learner/placement/placement-material";
 import {
   type PlacementQuickFormat,
-  confirmsInWriting,
   getConfirmingCount,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
@@ -78,9 +83,10 @@ async function readPickedSkillIds({
   });
 }
 
-export type PlacementItemFormat = PlacementQuickFormat | "typed";
+/** `tap` is a low-guess tap question (`isLowGuessTap`): match pairs, an order or a select-all. */
+export type PlacementItemFormat = PlacementQuickFormat | "tap";
 
-export type PlacementItemPick = PlacementItemSkill & { needsTyped: boolean };
+export type PlacementItemPick = PlacementItemSkill & { needsQuick: boolean; tapsNeeded: number };
 
 export type PlacementItemPicks = {
   /** The quick questions each picked skill gets beyond the first (`getConfirmingCount`). */
@@ -89,8 +95,21 @@ export type PlacementItemPicks = {
   skills: PlacementItemPick[];
 };
 
+/** The writer asks for these shapes, but only one a blind guess rarely passes can confirm a skill. */
+export function isTapWorthStoring(item: GeneratedItem): boolean {
+  return isLowGuessTap({
+    content: item.format === "multipleChoice" ? { ...item, select: "all" } : item,
+    format: item.format,
+  });
+}
+
+/** A select-all multiple-choice question is a tap question, never a quick one. */
+function isQuickChoiceOrStatement(item: SkillItem): boolean {
+  return item.format === "trueFalse" || isQuickChoice(item);
+}
+
 function isQuickFormat(format: PlacementItemFormat): format is PlacementQuickFormat {
-  return format !== "typed";
+  return format !== "tap";
 }
 
 type SkillItem = {
@@ -108,29 +127,35 @@ function isAnswered(item: SkillItem): boolean {
 
 /** Questions incompatible with the goal's current format or option count do not satisfy coverage. */
 function toPick({
-  covers,
+  coversQuick,
+  coversTap,
   exam,
   exceptAnswered,
-  quickFormat,
   quickNeeded,
   row,
-  writesTyped,
+  writesQuick,
+  writesTaps,
 }: {
-  covers: (item: SkillItem) => boolean;
+  coversQuick: (item: SkillItem) => boolean;
+  coversTap: (item: SkillItem) => boolean;
   exam: PlacementItemExam | null;
   /** Questions the goal's learner already answered don't cover the skill: they won't be asked. */
   exceptAnswered: boolean;
-  quickFormat: PlacementQuickFormat;
   quickNeeded: number;
   row: SkillRow;
-  writesTyped: boolean;
+  writesQuick: boolean;
+  writesTaps: boolean;
 }): Omit<PlacementItemPick, "usedSituations"> | null {
-  const fitting = row.items.filter((item) => covers(item) && !(exceptAnswered && isAnswered(item)));
+  const unanswered = row.items.filter((item) => !(exceptAnswered && isAnswered(item)));
 
-  const formats = new Set(fitting.map((item) => item.format));
-  const quick = fitting.filter((item) => item.format === quickFormat).length;
+  const needsQuick =
+    writesQuick && unanswered.filter((item) => coversQuick(item)).length < quickNeeded;
 
-  if (quick >= quickNeeded) {
+  const tapsNeeded = writesTaps
+    ? Math.max(0, LOW_GUESS_ANSWERS_TO_SKIP - unanswered.filter((item) => coversTap(item)).length)
+    : 0;
+
+  if (!needsQuick && tapsNeeded === 0) {
     return null;
   }
 
@@ -142,8 +167,9 @@ function toPick({
     language: row.language,
     level: row.level,
     name: row.name,
-    needsTyped: writesTyped && !formats.has("typed"),
+    needsQuick,
     ownerId: row.ownerId,
+    tapsNeeded,
     targetLanguage: row.targetLanguage,
   };
 }
@@ -161,7 +187,7 @@ export async function pickPlacementItemSkills({
   choice?: PlacementChoice;
   /** Questions the goal's learner already answered don't count: they won't be asked again. */
   exceptAnswered?: boolean;
-  /** Only placement respects an explicit placement skip; tests and practice may still request questions. */
+  /** Only placement respects an explicit placement skip; tests and practice may still request questions. Placement writes tap questions unless `formats` says otherwise. */
   forPlacement?: boolean;
   formats?: readonly PlacementItemFormat[];
   goalId: string;
@@ -188,7 +214,21 @@ export async function pickPlacementItemSkills({
   const picked = await readPickedSkillIds({ forPlacement, goal, listeningSkillIds, skillIds });
 
   const blueprint = goal?.examBlueprint ?? null;
-  const { choices, exam, formats: structure } = getPickingExam({ choice, goal });
+  const writesQuick = !formats || formats.some((format) => isQuickFormat(format));
+  const writesTaps = formats ? formats.includes("tap") : forPlacement;
+
+  /**
+   * Placement and tap questions ask whether the learner has the skill, not the exam's format, so
+   * they're general ones every course and exam teaching the skill shares. Mocks, test-outs and
+   * challenges ask their own formats.
+   */
+  const general = forPlacement || !writesQuick;
+
+  const {
+    choices,
+    exam,
+    formats: structure,
+  } = general ? { choices: [], exam: null, formats: null } : getPickingExam({ choice, goal });
 
   const fits = (item: SkillItem) =>
     formats ? fitsExamOptions({ choices, item }) : fitsExamChoice({ choices, item });
@@ -199,14 +239,23 @@ export async function pickPlacementItemSkills({
   const quickFormat =
     formats?.find((format) => isQuickFormat(format)) ?? getPlacementQuickFormat(structure);
 
-  const writesTyped = formats?.includes("typed") ?? (goal !== null && confirmsInWriting(goal));
-  const confirmingCount = getConfirmingCount({ forPlacement, formats, quickFormat, writesTyped });
-  const needed = new Set<ItemFormat>([quickFormat, "typed"]);
+  const confirmingCount = getConfirmingCount({
+    forPlacement,
+    formats: formats?.filter((format) => isQuickFormat(format)),
+    quickFormat,
+    writesTyped: writesTaps,
+  });
 
-  const covers = (item: SkillItem) =>
-    needed.has(item.format) &&
-    (!ownExamOnly || item.examBlueprintId === exam?.blueprintId) &&
+  const fitsAudience = (item: SkillItem) =>
+    !ownExamOnly || item.examBlueprintId === exam?.blueprintId;
+
+  const coversQuick = (item: SkillItem) =>
+    item.format === quickFormat &&
+    isQuickChoiceOrStatement(item) &&
+    fitsAudience(item) &&
     fits(item);
+
+  const coversTap = (item: SkillItem) => isLowGuessTap(item) && fitsAudience(item);
 
   const skills = await prisma.skill.findMany({
     select: {
@@ -236,7 +285,7 @@ export async function pickPlacementItemSkills({
     where: { id: { in: picked } },
   });
 
-  const rules = { covers, exam, exceptAnswered, quickFormat, writesTyped };
+  const rules = { coversQuick, coversTap, exam, exceptAnswered, writesQuick, writesTaps };
 
   const picks = picked
     .map((id) => skills.find((row) => row.id === id))
