@@ -89,6 +89,7 @@ export async function findMistakePattern(params: FindMistakePatternParams) {
   const data = normalizeMistakePattern({
     mistakeCount: params.mistakes.length,
     pattern: result.output,
+    sameLanguage: params.learnerLanguage === params.targetLanguage,
   });
 
   return { data, provenance, systemPrompt, usage: result.usage, userPrompt };

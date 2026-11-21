@@ -30,25 +30,61 @@ function pattern(overrides: Partial<MistakePattern> = {}): MistakePattern {
 
 describe(isWellFormedDrillQuestion, () => {
   it("accepts one blank with the answer among distinct options", () => {
-    expect(isWellFormedDrillQuestion(drillQuestion())).toBe(true);
+    expect(isWellFormedDrillQuestion({ question: drillQuestion(), sameLanguage: false })).toBe(
+      true,
+    );
   });
 
   it("rejects a sentence without exactly one blank", () => {
-    expect(isWellFormedDrillQuestion(drillQuestion({ sentence: "I've lived here 2020." }))).toBe(
-      false,
-    );
+    expect(
+      isWellFormedDrillQuestion({
+        question: drillQuestion({ sentence: "I've lived here 2020." }),
+        sameLanguage: false,
+      }),
+    ).toBe(false);
 
     expect(
-      isWellFormedDrillQuestion(drillQuestion({ sentence: "I ___ lived here ___ 2020." })),
+      isWellFormedDrillQuestion({
+        question: drillQuestion({ sentence: "I ___ lived here ___ 2020." }),
+        sameLanguage: false,
+      }),
     ).toBe(false);
   });
 
   it("rejects an answer that isn't an option and repeated options", () => {
-    expect(isWellFormedDrillQuestion(drillQuestion({ answer: "during" }))).toBe(false);
+    expect(
+      isWellFormedDrillQuestion({
+        question: drillQuestion({ answer: "during" }),
+        sameLanguage: false,
+      }),
+    ).toBe(false);
 
-    expect(isWellFormedDrillQuestion(drillQuestion({ options: ["since", "for", "for"] }))).toBe(
+    expect(
+      isWellFormedDrillQuestion({
+        question: drillQuestion({ options: ["since", "for", "for"] }),
+        sameLanguage: false,
+      }),
+    ).toBe(false);
+  });
+
+  it("needs a translation for a learner reading another language, and none for one reading the same", () => {
+    expect(
+      isWellFormedDrillQuestion({
+        question: drillQuestion({ translation: " " }),
+        sameLanguage: false,
+      }),
+    ).toBe(false);
+
+    expect(isWellFormedDrillQuestion({ question: drillQuestion(), sameLanguage: true })).toBe(
       false,
     );
+
+    expect(
+      isWellFormedDrillQuestion({
+        question: drillQuestion({ translation: "" }),
+        sameLanguage: true,
+      }),
+    ).toBe(true);
   });
 
   it("treats accented forms as different options", () => {
@@ -58,7 +94,7 @@ describe(isWellFormedDrillQuestion, () => {
       sentence: "La tienda ___ cerrada.",
     });
 
-    expect(isWellFormedDrillQuestion(question)).toBe(true);
+    expect(isWellFormedDrillQuestion({ question, sameLanguage: false })).toBe(true);
   });
 });
 
@@ -67,6 +103,7 @@ describe(normalizeMistakePattern, () => {
     const result = normalizeMistakePattern({
       mistakeCount: 4,
       pattern: pattern({ mistakeNumbers: [3, 1, 3, 9, 0, 1.5] }),
+      sameLanguage: false,
     });
 
     expect(result.mistakeNumbers).toStrictEqual([1, 3]);
@@ -81,6 +118,7 @@ describe(normalizeMistakePattern, () => {
           drillQuestion({ answer: "x" }),
         ],
       }),
+      sameLanguage: false,
     });
 
     expect(result.drill).toStrictEqual([drillQuestion()]);
@@ -90,6 +128,7 @@ describe(normalizeMistakePattern, () => {
     const result = normalizeMistakePattern({
       mistakeCount: 4,
       pattern: pattern({ mistakeNumbers: [2, 7] }),
+      sameLanguage: false,
     });
 
     expect(result).toStrictEqual({
@@ -106,6 +145,7 @@ describe(normalizeMistakePattern, () => {
     const result = normalizeMistakePattern({
       mistakeCount: 4,
       pattern: pattern({ kind: "typos", mistakeNumbers: [1, 2] }),
+      sameLanguage: false,
     });
 
     expect(result).toMatchObject({
@@ -117,7 +157,11 @@ describe(normalizeMistakePattern, () => {
   });
 
   it("empties everything for none", () => {
-    const result = normalizeMistakePattern({ mistakeCount: 4, pattern: pattern({ kind: "none" }) });
+    const result = normalizeMistakePattern({
+      mistakeCount: 4,
+      pattern: pattern({ kind: "none" }),
+      sameLanguage: false,
+    });
 
     expect(result).toMatchObject({ drill: [], kind: "none", mistakeNumbers: [], title: "" });
   });

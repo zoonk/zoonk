@@ -31,14 +31,25 @@ const NO_PATTERN: MistakePattern = {
   title: "",
 };
 
-/** Accents and case count, since "esta" and "está" are different answers. */
-export function isWellFormedDrillQuestion(question: DrillQuestion): boolean {
+/**
+ * Accents and case count, since "esta" and "está" are different answers. A learner reading the app
+ * in another language needs the translation to know which meaning the blank takes; one reading it
+ * in the language they learn would only see the answer given away.
+ */
+export function isWellFormedDrillQuestion({
+  question,
+  sameLanguage,
+}: {
+  question: DrillQuestion;
+  sameLanguage: boolean;
+}): boolean {
   const options = question.options.map((option) => option.trim());
 
   return (
     (question.sentence.match(BLANK_PATTERN) ?? []).length === 1 &&
     options.includes(question.answer.trim()) &&
-    new Set(options).size === options.length
+    new Set(options).size === options.length &&
+    (sameLanguage ? question.translation === "" : question.translation.trim() !== "")
   );
 }
 
@@ -60,9 +71,11 @@ function toValidMistakeNumbers({
 export function normalizeMistakePattern({
   mistakeCount,
   pattern,
+  sameLanguage,
 }: {
   mistakeCount: number;
   pattern: MistakePattern;
+  sameLanguage: boolean;
 }): MistakePattern {
   const mistakeNumbers = toValidMistakeNumbers({ mistakeCount, numbers: pattern.mistakeNumbers });
 
@@ -79,7 +92,7 @@ export function normalizeMistakePattern({
   }
 
   const drill = pattern.drill
-    .filter((question) => isWellFormedDrillQuestion(question))
+    .filter((question) => isWellFormedDrillQuestion({ question, sameLanguage }))
     .map((question) => ({
       ...question,
       sentence: question.sentence.replaceAll(BLANK_PATTERN, DRILL_BLANK),
