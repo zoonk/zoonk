@@ -719,7 +719,7 @@ private struct MockInsightsSection: View {
     if hasInsights {
       Section {
         if slowest != nil || result.unansweredAtTimeout > 0 {
-          insight(
+          NoteRow(
             Text("Timing", tableName: "Mock", comment: "Insight about pace"), systemImage: "timer"
           ) {
             if let slowest, let target = slowest.targetSecondsPerQuestion {
@@ -739,7 +739,7 @@ private struct MockInsightsSection: View {
         }
 
         if let coherence = incoherent {
-          insight(
+          NoteRow(
             Text("Easy questions", tableName: "Mock", comment: "Insight about IRT coherence"),
             systemImage: "scalemass"
           ) {
@@ -750,7 +750,7 @@ private struct MockInsightsSection: View {
         }
 
         if let calibration = unsure {
-          insight(
+          NoteRow(
             Text("Answers you weren't sure of", tableName: "Mock"),
             systemImage: "bookmark"
           ) {
@@ -795,19 +795,6 @@ private struct MockInsightsSection: View {
 
   private var unsure: NetCalibration? {
     result.calibration.flatMap { $0.unsure.answered > 0 ? $0 : nil }
-  }
-
-  private func insight<Content: View>(
-    _ title: Text, systemImage: String, @ViewBuilder content: () -> Content
-  ) -> some View {
-    Label {
-      VStack(alignment: .leading, spacing: 4) {
-        title.typeStyle(.body.weight(.semibold))
-        content().foregroundStyle(.mutedForeground)
-      }
-    } icon: {
-      Image(systemName: systemImage)
-    }
   }
 }
 
