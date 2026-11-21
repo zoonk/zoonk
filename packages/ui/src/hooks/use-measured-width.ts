@@ -1,24 +1,27 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-export function useMeasuredWidth<TElement extends HTMLElement>(fallback: number) {
+export function useMeasuredWidth<TElement extends HTMLElement>(
+  fallback: number,
+  { measureBeforePaint = false }: { measureBeforePaint?: boolean } = {},
+) {
   const ref = useRef<TElement>(null);
   const [width, setWidth] = useState(fallback);
+
+  const updateWidth = useCallback((contentWidth: number) => {
+    const next = Math.round(contentWidth);
+
+    if (next > 0) {
+      setWidth(next);
+    }
+  }, []);
 
   useLayoutEffect(() => {
     const element = ref.current;
 
-    if (!element) {
+    if (!measureBeforePaint || !element) {
       return;
-    }
-
-    function updateWidth(contentWidth: number) {
-      const next = Math.round(contentWidth);
-
-      if (next > 0) {
-        setWidth(next);
-      }
     }
 
     const { paddingLeft, paddingRight } = getComputedStyle(element);
@@ -27,12 +30,20 @@ export function useMeasuredWidth<TElement extends HTMLElement>(fallback: number)
       Number(paddingLeft.replace("px", "")) + Number(paddingRight.replace("px", ""));
 
     updateWidth(element.clientWidth - paddingWidth);
+  }, [measureBeforePaint, updateWidth]);
+
+  useEffect(() => {
+    const element = ref.current;
+
+    if (!element) {
+      return;
+    }
 
     const observer = new ResizeObserver(([entry]) => updateWidth(entry?.contentRect.width ?? 0));
 
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [updateWidth]);
 
   return { ref, width };
 }
