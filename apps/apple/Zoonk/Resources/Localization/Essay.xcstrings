@@ -306,6 +306,7 @@
     "Leave out anything that identifies you" : {},
     "Past line %@: graders stop reading here" : {},
     "Past the limit: graders stop reading here" : {},
+    "Question %@" : {},
     "Reach the minimum length" : {
       "comment" : "The next step of a written answer zeroed for being shorter than the exam's minimum number of lines."
     },
@@ -317,6 +318,12 @@
     },
     "Start with the points the question asks for." : {},
     "Take the support text as a starting point, not as your answer." : {},
+    "The %@-line question" : {
+      "comment" : "One question of an exam's written test, named by its line limit, such as 30 lines."
+    },
+    "The question" : {
+      "comment" : "The only question of an exam's written test."
+    },
     "This question is no longer on your exam" : {},
     "Use your own words" : {},
     "We couldn't write your exercise" : {},

@@ -525,6 +525,12 @@ struct MockSectionCounts {
 
       if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blank += 1 }
     }
+
+    // A written test numbers its questions, so a blank one is a blank question, never "the essay".
+    if essays > 1, essays == total {
+      blank = blankEssays
+      blankEssays = 0
+    }
   }
 
   var leftOpen: String {

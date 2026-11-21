@@ -25,6 +25,13 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
 
   func body(content: Content) -> some View {
     content
+      // The page's own overlay sits in its safe area, so the note ends on the bar's top edge and,
+      // unlike a view drawn outside the bar's bounds, its action takes taps.
+      .overlay(alignment: .bottom) {
+        if let note = bar.note {
+          note.floatingNote()
+        }
+      }
       .announcesStatus(bar.note?.politeLine)
       .onPreferenceChange(ColumnMarginsKey.self) { columns = $0 }
       .safeAreaBar(edge: .bottom) {
@@ -109,16 +116,17 @@ private struct BottomBar<Actions: View>: View {
         .overlay(alignment: .top) { Divider() }
         .ignoresSafeArea(edges: .bottom)
     }
-    .floatingAbove {
-      if let note {
-        note
-          .typeStyle(.body)
-          .frame(maxWidth: .infinity)
-          .padding(.horizontal, 16)
-          .padding(.vertical, 8)
-          .background(.background)
-      }
-    }
+  }
+}
+
+extension BarNote {
+  /// Over the screen just above the bar, on the page's background.
+  fileprivate func floatingNote() -> some View {
+    typeStyle(.body)
+      .frame(maxWidth: .infinity)
+      .padding(.horizontal, 16)
+      .padding(.vertical, 8)
+      .background(.background)
   }
 }
 

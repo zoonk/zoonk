@@ -293,7 +293,10 @@ private struct MockAnswersSection: View {
   }
 
   private var parts: [Part] {
-    guard let counts = result.answerCounts else { return [] }
+    // A written test has no objective answers to count.
+    guard let counts = result.answerCounts,
+      counts.right + counts.wrong + Double(counts.partial + counts.blank) > 0
+    else { return [] }
 
     return [
       Part(

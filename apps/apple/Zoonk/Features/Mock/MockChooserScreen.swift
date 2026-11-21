@@ -609,7 +609,10 @@ struct MockSummaryRow: View {
         StatusMark(status: .done)
       } trailing: {
         VStack(alignment: isStacked ? .leading : .trailing, spacing: 2) {
-          Text(score)
+          // A written test has no objective questions to score.
+          if mock.total > 0 {
+            Text(score)
+          }
           Text(PlanDate.moment(mock.finishedAt, .row, weekday: true))
         }
       }
