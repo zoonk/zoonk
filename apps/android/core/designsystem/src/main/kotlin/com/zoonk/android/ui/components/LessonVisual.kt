@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
+import com.zoonk.android.ui.format.isAttachedUnit
 import com.zoonk.android.ui.format.moneyUnit
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -107,28 +108,30 @@ internal fun ChartCard(
 }
 
 internal data class ChartUnit(
-    val currency: String?,
-    val valueLabel: String,
+    val numberUnit: String?,
+    val label: String,
 )
 
 /**
- * Core's `placeChartUnit`: money keeps its currency on each number, since only the currency's own format shows cents.
- * Any other unit, and the rest of a money unit ("per hour"), is shown once beside the value label.
+ * Core's `placeChartUnit`: a unit that is part of how the number is written stays on each tick and value label, a
+ * currency since only its own format shows cents ("$3.50") and a sign written against the digits ("45%"). Any other
+ * unit, and the rest of a money unit ("per hour"), is shown once beside the axis label. Charts and plots share it.
  */
 internal fun placeChartUnit(
     unit: String?,
-    valueLabel: String,
+    label: String,
 ): ChartUnit {
     val money = moneyUnit(unit)
-    val labelUnit = money?.rest ?: unit
-    return ChartUnit(money?.currency, if (labelUnit.isNullOrEmpty()) valueLabel else "$valueLabel ($labelUnit)")
+    val attached = unit.takeIf(::isAttachedUnit)
+    val labelUnit = money?.rest ?: unit.takeIf { attached == null }
+    return ChartUnit(money?.currency ?: attached, if (labelUnit.isNullOrEmpty()) label else "$label ($labelUnit)")
 }
 
-private val LessonVisual.Chart.currency: String?
-    get() = placeChartUnit(unit, valueLabel).currency
+private val LessonVisual.Chart.numberUnit: String?
+    get() = placeChartUnit(unit, valueLabel).numberUnit
 
 private val LessonVisual.Chart.unitLabel: String
-    get() = placeChartUnit(unit, valueLabel).valueLabel
+    get() = placeChartUnit(unit, valueLabel).label
 
 @Composable
 private fun Legend(visual: LessonVisual.Chart) {
@@ -317,10 +320,10 @@ private class ValueAxis(
 
     val ticks =
         niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) }.let { ticks ->
-            ticks.zip(formatTicks(ticks, text.locale, unit = visual.currency).map(text::label))
+            ticks.zip(formatTicks(ticks, text.locale, unit = visual.numberUnit).map(text::label))
         }
 
-    val valueLabels = visual.series.map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.currency)) } }
+    val valueLabels = visual.series.map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.numberUnit)) } }
 }
 
 private class UprightLayout(

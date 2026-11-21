@@ -286,6 +286,15 @@ class PlotLayoutTest {
     }
 
     @Test
+    fun aPlotKeepsAPercentOnEachTickTheWayACategoryChartDoes() {
+        val labels = layoutFor(CONTROL.copy(references = emptyList(), yLabel = "Yield", yUnit = "%")).yTicks.map { it.label }
+
+        assertTrue(labels.isNotEmpty())
+        assertTrue(labels.all { it.endsWith("%") })
+        assertTrue(layoutFor(CONTROL.copy(references = emptyList())).yTicks.none { "ml" in it.label })
+    }
+
+    @Test
     fun yearsOnTheXAxisHaveNoThousandsSeparator() {
         assertEquals(listOf("1960", "1980"), formatTicks(listOf(1960.0, 1980.0), en, xAxis = true))
         assertEquals(listOf("950", "1.000"), formatTicks(listOf(950.0, 1000.0), Locale.forLanguageTag("pt")))

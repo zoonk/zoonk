@@ -31,7 +31,7 @@ class LessonVisualTest {
     }
 
     @Test
-    fun aChartNamesItsUnitOnceBesideTheValueLabelAndKeepsACurrencyOnEachNumber() {
+    fun aChartNamesItsUnitOnceBesideTheValueLabelAndKeepsACurrencyOrPercentOnEachNumber() {
         assertEquals(ChartUnit(null, "Distance (km)"), placeChartUnit("km", "Distance"))
         assertEquals(
             ChartUnit(null, "Sorting time (hours per 1,000 letters)"),
@@ -40,6 +40,7 @@ class LessonVisualTest {
         assertEquals(ChartUnit("BRL", "Price"), placeChartUnit("R$", "Price"))
         assertEquals(ChartUnit("BRL", "Pay (per hour)"), placeChartUnit("R$ per hour", "Pay"))
         assertEquals(ChartUnit("USD", "Cost (per response)"), placeChartUnit("USD per response", "Cost"))
+        assertEquals(ChartUnit("%", "Fill rate"), placeChartUnit("%", "Fill rate"))
         assertEquals(ChartUnit(null, "Letters"), placeChartUnit(null, "Letters"))
     }
 

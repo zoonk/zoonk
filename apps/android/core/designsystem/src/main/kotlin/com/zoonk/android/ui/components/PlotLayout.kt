@@ -59,7 +59,7 @@ private class Gutters(
     locale: Locale,
 ) {
     val axes = plotAxes(visual)
-    val yLabels = formatTicks(axes.second.ticks, locale)
+    val yLabels = formatTicks(axes.second.ticks, locale, unit = placeChartUnit(visual.yUnit, visual.yLabel).numberUnit)
     val left = max(PLOT_LEFT, yLabels.maxOfOrNull(text::labelWidth) ?: 0f)
     private val names = visual.references.map { it.label }
     val longest = names.maxOfOrNull(text::labelWidth) ?: 0f
@@ -154,7 +154,7 @@ class PlotGeometry(
      */
     val xTicks =
         axes.first.ticks
-            .zip(formatTicks(axes.first.ticks, locale, xAxis = true))
+            .zip(formatTicks(axes.first.ticks, locale, xAxis = true, unit = placeChartUnit(visual.xUnit, visual.xLabel).numberUnit))
             .map { (value, label) ->
                 val center = x.toPixel(value)
                 val half = text.label(label) / 2

@@ -95,7 +95,7 @@ internal fun PlotVisual(
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 // TalkBack reads the ranges before the points they place.
-                AxisCaption(axisTitle(visual.yLabel, visual.yUnit), reading.axes)
+                AxisCaption(placeChartUnit(visual.yUnit, visual.yLabel).label, reading.axes)
                 Box {
                     Canvas(Modifier.fillMaxWidth().height(with(density) { (PLOT_HEIGHT * drawing.scale * density.density).toDp() })) {
                         drawPlot(drawing, marks, surface, grid, rule)
@@ -106,17 +106,12 @@ internal fun PlotVisual(
                         }
                     }
                 }
-                AxisCaption(axisTitle(visual.xLabel, visual.xUnit))
+                AxisCaption(placeChartUnit(visual.xUnit, visual.xLabel).label)
                 if (drawing.layout.key.isNotEmpty()) PointKey(drawing.layout.key, Modifier.padding(top = 8.dp))
             }
         }
     }
 }
-
-private fun axisTitle(
-    label: String,
-    unit: String?,
-) = if (unit.isNullOrEmpty()) label else "$label ($unit)"
 
 /** A label's width in layout units: drawn at 12 units, whatever the reader's text size. */
 private fun unitWidth(

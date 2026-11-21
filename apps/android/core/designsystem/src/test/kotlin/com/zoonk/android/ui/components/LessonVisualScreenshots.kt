@@ -118,6 +118,7 @@ class LessonVisualScreenshots {
             setOf(
                 "regions",
                 "unit-km",
+                "unit-percent",
                 "unit-long",
                 "money-brl",
                 "plot-scatter",
@@ -361,6 +362,22 @@ class LessonVisualScreenshots {
                     bars("Visitors per day", "Day", "Visitors", listOf("Mon", "Tue", "Wed"), null, 10_050, 10_200, 10_380)
                         .copy(chart = Chart.Kind.Line, axisStart = 10_000.0),
                 "unit-km" to bars("Distance run this week", "Runner", "Distance", listOf("Ana", "Bruno", "Carla"), "km", 35, 42, 28),
+                "unit-percent" to bars("Fill rate by line", "Line", "Fill rate", listOf("North", "South", "East"), "%", 45, 62, 38),
+                "plot-percent" to
+                    plot(
+                        "Yield by batch",
+                        "Batch",
+                        null,
+                        "Yield",
+                        "%",
+                        Plot.Series(
+                            "Yield",
+                            Plot.Mark.LineWithPoints,
+                            listOf(41.0, 47.0, 52.0, 58.0).mapIndexed { index, y ->
+                                Plot.Point(index + 1.0, y)
+                            },
+                        ),
+                    ),
                 "unit-long" to
                     amounts("Time to sort mail", "Desk", "Sorting time", "hours per 1,000 letters", 3.5, 2.8, 4.1)
                         .copy(categories = listOf("Desk A", "Desk B", "Desk C")),
