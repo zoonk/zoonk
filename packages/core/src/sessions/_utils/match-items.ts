@@ -47,7 +47,6 @@ export function toMatchQuestion(item: MatchItem) {
     question: item.content.question,
     right: getRightOrder(item).map((index) => pairs[index]?.right ?? ""),
     skillId: item.skillId,
-    unit: null,
     visual: null,
   };
 }

@@ -128,7 +128,7 @@ export function toSessionQuestion({ blockId, item }: { blockId: string; item: Se
     case "matchPairs":
       return { ...NO_EXTRAS, ...toMatchQuestion(item) };
     case "order":
-      return toOrderQuestion(item);
+      return { ...NO_EXTRAS, ...toOrderQuestion(item) };
     case "typed":
       return { ...NO_EXTRAS, ...toTypedQuestionView(item) };
     case "multipleChoice":
