@@ -153,7 +153,6 @@ final class LayoutCaptureTests: XCTestCase {
     return LayoutRuns.shared.lines(of: part)
   }
 
-  /// A window on the app's scene that's never shown, sized to `frame`.
   @MainActor
   private func sceneWindow(_ frame: CGRect) throws -> UIWindow {
     let scene = try XCTUnwrap(
