@@ -729,7 +729,7 @@ describe("a post-start level test", () => {
     );
 
     expect(finished).toMatchObject({
-      result: { lessonsSkipped: 1, levelsSkipped: expect.arrayContaining(["A1"]) },
+      result: { changeId: null, lessonsSkipped: 1, levelsSkipped: expect.arrayContaining(["A1"]) },
       status: "ready",
     });
 
@@ -772,7 +772,14 @@ describe("a post-start level test", () => {
       where: { kind: "testedOut", planId: lowItem.planId, status: "applied" },
     });
 
-    await expect(finishLanguageLevelTest(goal.id, attemptId)).resolves.toStrictEqual(finished);
+    const recovered = await finishLanguageLevelTest(goal.id, attemptId);
+
+    expect(recovered).toMatchObject({
+      result: { changeId: change.id, lessonsSkipped: 1 },
+      status: "ready",
+    });
+
+    await expect(finishLanguageLevelTest(goal.id, attemptId)).resolves.toStrictEqual(recovered);
 
     await expect(
       prisma.planChange.count({ where: { kind: "testedOut", planId: lowItem.planId } }),

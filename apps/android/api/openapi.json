@@ -22590,7 +22590,7 @@
     },
     "/goals/{goalId}/onboarding/answers": {
       "post": {
-        "description": "Saves one onboarding answer and returns the screens still ahead. Skippable questions take null and are never asked again. The schedule re-plans, splits the day's time between goals typed together and starts writing the lessons and outlines the first days now hold, as `POST /goals/{goalId}/lesson-preparations` does. The buddy goes to the learner's profile. A language goal whose reason names a language certificate (IELTS, DELE, Celpe-Bras…) moves to an exam goal for it, whose research and curriculum start: the response is then that goal's onboarding (`goal.id` changes), and the next answers go to it.",
+        "description": "Saves one onboarding answer and returns the screens still ahead. A placement answer with an attempt id requires a finished placement part. Skippable questions take null and are never asked again. The schedule re-plans, splits the day's time between goals typed together and starts writing the lessons and outlines the first days now hold, as `POST /goals/{goalId}/lesson-preparations` does. The buddy goes to the learner's profile. A language goal whose reason names a language certificate (IELTS, DELE, Celpe-Bras…) moves to an exam goal for it, whose research and curriculum start: the response is then that goal's onboarding (`goal.id` changes), and the next answers go to it.",
         "operationId": "answerOnboardingQuestion",
         "security": [
           {
@@ -32576,6 +32576,12 @@
           {
             "type": "object",
             "properties": {
+              "attemptId": {
+                "description": "The placement attempt whose first part has finished",
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
               "question": {
                 "type": "string",
                 "enum": [
@@ -44486,6 +44492,12 @@
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
+                  "changeId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
                   "finishedAt": {
                     "type": "string",
                     "format": "date-time",
@@ -44621,6 +44633,12 @@
                 "type": "object",
                 "properties": {
                   "attemptId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "changeId": {
                     "nullable": true,
                     "type": "string",
                     "format": "uuid",
@@ -45124,6 +45142,12 @@
                 "format": "uuid",
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
+              "changeId": {
+                "nullable": true,
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
               "finishedAt": {
                 "type": "string",
                 "format": "date-time",
@@ -45193,6 +45217,7 @@
             },
             "required": [
               "attemptId",
+              "changeId",
               "finishedAt",
               "lessonsSkipped",
               "levelsSkipped",
@@ -45412,6 +45437,12 @@
             "nullable": true,
             "type": "object",
             "properties": {
+              "changeId": {
+                "nullable": true,
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
               "finishedAt": {
                 "type": "string",
                 "format": "date-time",
@@ -45432,6 +45463,7 @@
               }
             },
             "required": [
+              "changeId",
               "finishedAt",
               "lessonsSkipped",
               "topicsSkipped"
@@ -84669,6 +84701,13 @@
               }
             ]
           },
+          "changeId": {
+            "nullable": true,
+            "description": "The plan change that recorded the skips, or null when no change was recorded",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "complete": {
             "type": "boolean",
             "description": "Every area of every phase had a confident start when placement finished. False when the plan had no skills yet: nothing was placed"
@@ -84690,6 +84729,11 @@
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
               "description": "Skill ID"
             }
+          },
+          "lessonsSkipped": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
           },
           "partLessonsSkipped": {
             "type": "integer",
@@ -84721,9 +84765,11 @@
         },
         "required": [
           "areas",
+          "changeId",
           "complete",
           "focusTest",
           "knownSkillIds",
+          "lessonsSkipped",
           "phases",
           "testedOutPlanItemIds"
         ],
@@ -87913,6 +87959,12 @@
                 "type": "object",
                 "properties": {
                   "attemptId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "changeId": {
                     "nullable": true,
                     "type": "string",
                     "format": "uuid",

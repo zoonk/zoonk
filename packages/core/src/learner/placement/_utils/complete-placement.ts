@@ -19,11 +19,13 @@ import { type ClosedSitting, closeTestSitting } from "./test-sitting";
 export type PlacementCompletion = {
   areas: AreaStart[];
   attempt?: PlacementAttemptView | null;
+  changeId: string | null;
   /** False when the plan has no skills. */
   complete: boolean;
   /** An exam goal's test after this finish, with its result; null for other goals. */
   focusTest: FocusTestView | null;
   knownSkillIds: string[];
+  lessonsSkipped: number;
   partLessonsSkipped?: number;
   phases: PhaseStart[];
   result?: PlacementResult | null;
@@ -103,9 +105,11 @@ export async function completePlacement({
   return {
     completion: {
       areas: state.areas,
+      changeId: applied.changeId,
       complete: state.complete,
       focusTest: state.focusTest,
       knownSkillIds: state.knownSkillIds,
+      lessonsSkipped: applied.lessonsSkipped,
       phases: state.phases,
       testedOutPlanItemIds: applied.testedOutPlanItemIds,
     },

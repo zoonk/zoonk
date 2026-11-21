@@ -19,6 +19,7 @@ const testOutQuestionSchema = z.object({
 });
 
 const testOutResultSchema = z.object({
+  changeId: uuidSchema().nullable().optional(),
   finishedAt: z.iso.datetime(),
   planItemIds: z.array(uuidSchema()),
   topicsSkipped: z.array(uuidSchema()),

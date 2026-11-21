@@ -10,8 +10,12 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
+import { decidePlanChange } from "../../plans/decide-plan-change";
+import { getGoalPlan } from "../../plans/get-goal-plan";
 import { gradeOrder, parseOrderItem } from "../../sessions/_utils/order-items";
 import { loadSessionPlacement } from "../../sessions/_utils/session-placement";
+import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
@@ -47,6 +51,70 @@ describe("learn placement attempts", () => {
 
     await expect(finish()).resolves.toStrictEqual({ status: "staleAttempt" });
   });
+
+  it.each(["learn", "language"] as const)(
+    "completes %s onboarding after part one and resumes part two",
+    async (kind) => {
+      const user = await userFixture();
+      const { goal } = await learnerGoalFixture({ itemsPerSkill: 1, phases: [1], userId: user.id });
+      const assessmentId = randomUUID();
+
+      await prisma.goal.update({
+        data: {
+          details:
+            kind === "language"
+              ? {
+                  levelTest: {
+                    attempt: { attemptId: assessmentId, result: { wholeCourseReady: true } },
+                  },
+                }
+              : {},
+          kind,
+        },
+        where: { id: goal.id },
+      });
+
+      mockSession(user.id);
+
+      const begin = () =>
+        startPlacementSitting({ goalId: goal.id, input: { length: "wholeCourse" } });
+
+      const opened = await begin();
+
+      if (opened.status !== "ready" || !opened.placement.attempt) {
+        throw new Error("Expected a whole-course attempt");
+      }
+
+      const attemptId = opened.placement.attempt.id;
+
+      const completeStep = (id: string) =>
+        answerOnboardingQuestion({
+          goalId: goal.id,
+          input: { attemptId: id, question: "placement" },
+        });
+
+      await expect(completeStep(attemptId)).resolves.toMatchObject({ status: "invalid" });
+
+      await expect(
+        finishGoalPlacement({ goalId: goal.id, input: { attemptId, part: 1 } }),
+      ).resolves.toMatchObject({
+        completion: { attempt: { id: attemptId, partComplete: true } },
+        status: "ready",
+      });
+
+      await expect(completeStep(randomUUID())).resolves.toMatchObject({ status: "invalid" });
+      await expect(completeStep(attemptId)).resolves.toMatchObject({ status: "saved" });
+      await expect(completeStep(attemptId)).resolves.toMatchObject({ status: "saved" });
+
+      await expect(prisma.goal.findUnique({ where: { id: goal.id } })).resolves.toMatchObject({
+        details: { answered: ["placement"] },
+      });
+
+      await expect(begin()).resolves.toMatchObject({
+        placement: { attempt: { id: attemptId, part: 2 } },
+      });
+    },
+  );
 
   it("opens one language topic walk per completed whole-course assessment", async () => {
     const user = await userFixture();
@@ -284,11 +352,45 @@ describe("learn placement attempts", () => {
       status: "todo",
     });
 
-    await expect(
-      finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
-    ).resolves.toMatchObject({
-      completion: { result: { lessonsSkipped: 1 }, testedOutPlanItemIds: [item.id] },
+    const finish = () => finishGoalPlacement({ goalId: goal.id, input: { attemptId } });
+    const [finished, retried] = await Promise.all([finish(), finish()]);
+
+    expect(finished).toMatchObject({
+      completion: {
+        changeId: expect.any(String),
+        lessonsSkipped: 1,
+        result: { lessonsSkipped: 1 },
+        testedOutPlanItemIds: [item.id],
+      },
       status: "ready",
+    });
+
+    if (finished.status !== "ready" || !finished.completion.changeId) {
+      throw new Error("Expected the Undo change");
+    }
+
+    const { changeId } = finished.completion;
+    expect(retried).toMatchObject({ completion: { changeId } });
+    await expect(finish()).resolves.toMatchObject({ completion: { changeId } });
+
+    await expect(loadTodayPlanChange({ goal, now: new Date() })).resolves.toMatchObject({
+      canUndo: true,
+      id: changeId,
+    });
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: {
+        changes: expect.arrayContaining([expect.objectContaining({ canUndo: true, id: changeId })]),
+      },
+      status: "ready",
+    });
+
+    await expect(
+      decidePlanChange({ changeId, goalId: goal.id, input: { status: "undone" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(prisma.planItem.findUnique({ where: { id: item.id } })).resolves.toMatchObject({
+      status: "todo",
     });
 
     await expect(

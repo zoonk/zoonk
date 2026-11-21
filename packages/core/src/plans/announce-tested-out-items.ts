@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import {
   keepOpenSessionSelection,
   skipTestedOutBlocks,
@@ -12,7 +12,8 @@ import {
   loadLivingPlanBatch,
   mergeChangeTopics,
 } from "./_utils/living-plan-change";
-import { toPlanChangePayload } from "./_utils/plan-change-payload";
+import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
+import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
 import { countLessons } from "./_utils/stand-in-lessons";
@@ -22,18 +23,36 @@ import { withPlanRetry } from "./plan-conflict";
 /** For logs and admin only; the apps word it as "Skipped 12 lessons you already know". */
 const TESTED_OUT_NOTE = "Placement or a test-out skipped lessons the learner already knows.";
 
+function readSkipBatch({
+  context,
+  livingPlanDay,
+  now,
+  testReceipt,
+}: {
+  context: PlanContext;
+  livingPlanDay?: string;
+  now: Date;
+  testReceipt?: string;
+}) {
+  if (livingPlanDay) {
+    return loadLivingPlanBatch({ context, day: livingPlanDay });
+  }
+
+  return testReceipt ? null : findUnseenSkip({ context, now });
+}
+
 export async function announceTestedOutItems({
   extraWrites,
   followToday = false,
   goalId,
   livingPlanDay,
-  mergeWithUnseen = true,
   now,
   planItemIds,
   skipBlocks = false,
+  testReceipt,
   timeZone,
 }: {
-  extraWrites?: (tx: TransactionClient) => Promise<unknown>;
+  extraWrites?: (tx: TransactionClient, changeId: string | null) => Promise<unknown>;
   /**
    * True for a test the learner took on its own; an answer inside today's session keeps the rest of
    * the day as shown.
@@ -41,11 +60,11 @@ export async function announceTestedOutItems({
   followToday?: boolean;
   goalId: string;
   livingPlanDay?: string;
-  mergeWithUnseen?: boolean;
   now: Date;
   planItemIds: readonly string[];
   /** Shared notices save every goal's undo snapshot before pending blocks are skipped. */
   skipBlocks?: boolean;
+  testReceipt?: string;
   timeZone: string;
 }): Promise<{ changeId: string | null; lessonsSkipped: number; planVersion: number } | null> {
   if (planItemIds.length === 0) {
@@ -61,54 +80,69 @@ export async function announceTestedOutItems({
       return null;
     }
 
+    if (testReceipt) {
+      const recorded = await prisma.planChange.findFirst({
+        select: { id: true, payload: true },
+        where: {
+          kind: "testedOut",
+          payload: { equals: testReceipt, path: ["testReceipt"] },
+          planId: context.plan.id,
+        },
+      });
+
+      if (recorded) {
+        return {
+          changeId: recorded.id,
+          lessonsSkipped: parsePlanChangePayload(recorded.payload).lessonsSkipped ?? 0,
+          planVersion: context.plan.version,
+        };
+      }
+    }
+
     const lessonsSkipped = countLessons(context.items.filter((item) => skipped.has(item.id)));
 
-    const existing = livingPlanDay
-      ? await loadLivingPlanBatch({ context, day: livingPlanDay })
-      : await findUnseenSkip({ context, now });
+    const unseen = await readSkipBatch({ context, livingPlanDay, now, testReceipt });
 
     if (
-      existing &&
+      unseen &&
       !extraWrites &&
-      planItemIds.every((id) => existing.payload.planItemIds.includes(id))
+      planItemIds.every((id) => unseen.payload.planItemIds.includes(id))
     ) {
       if (skipBlocks) {
         await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
       }
 
       if (followToday) {
-        await followPlanToday({ changeId: existing.change.id, context });
+        await followPlanToday({ changeId: unseen.change.id, context });
       }
 
-      return { changeId: existing.change.id, lessonsSkipped, planVersion: context.plan.version };
+      return { changeId: unseen.change.id, lessonsSkipped, planVersion: context.plan.version };
     }
 
-    const unseen = livingPlanDay || mergeWithUnseen ? existing : null;
+    const keepSession = !followToday && !skipBlocks;
 
-    const save = async (tx: TransactionClient) => {
-      await extraWrites?.(tx);
+    const save = async (tx: TransactionClient, changeId: string | null) => {
+      await extraWrites?.(tx, changeId);
 
-      if (!followToday && !skipBlocks) {
+      if (keepSession) {
         await keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 });
       }
     };
 
     const computed = await computePlan({ context, mode: "forced", now });
 
-    const skippedTopics = livingPlanDay
-      ? listChangeTopics({
-          graph: context.state.graph,
-          skillIds: new Set(
-            context.items.flatMap((item) =>
-              skipped.has(item.id) && item.skillId ? [item.skillId] : [],
-            ),
-          ),
-        })
-      : undefined;
+    const skippedTopics = listChangeTopics({
+      graph: context.state.graph,
+      skillIds: new Set(
+        context.items.flatMap((item) =>
+          skipped.has(item.id) && item.skillId ? [item.skillId] : [],
+        ),
+      ),
+    });
 
     const effect = {
       ...computed.effect,
-      ...(skippedTopics && {
+      ...(skippedTopics.length > 0 && {
         topicsLeftOut: mergeChangeTopics(computed.effect.topicsLeftOut, skippedTopics),
       }),
     };
@@ -130,21 +164,23 @@ export async function announceTestedOutItems({
     const changeId = unseen
       ? unseen.change.id
       : await commitPlan({
+          afterChange: save,
           change: {
             kind: "testedOut",
             payload: toPlanChangePayload({
               effect,
               lessonsSkipped,
-              ...(livingPlanDay && { livingPlanDay, todaySession: "unchanged" }),
+              ...(livingPlanDay && { livingPlanDay }),
               planItemIds: [...skipped],
               source: "system",
+              ...(testReceipt && { testReceipt }),
+              ...(keepSession && { todaySession: "unchanged" }),
             }),
             reason: TESTED_OUT_NOTE,
             status: "applied",
           },
           computed,
           context,
-          extraWrites: save,
         });
 
     if (skipBlocks) {

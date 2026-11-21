@@ -78,9 +78,11 @@ export async function finishGoalPlacement({
     return {
       completion: {
         areas: getScratchAreaStarts(plan.skills),
+        changeId: null,
         complete: plan.skills.length > 0,
         focusTest: null,
         knownSkillIds: [],
+        lessonsSkipped: 0,
         phases: getScratchPhaseStarts(plan.skills),
         testedOutPlanItemIds: [],
       },

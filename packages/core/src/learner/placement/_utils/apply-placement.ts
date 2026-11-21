@@ -76,13 +76,22 @@ export async function applyPlacement({
   testedOutAt?: Date;
   timeZone: string;
   userId: string;
-}): Promise<{ changeId: string | null; state: PlacementState; testedOutPlanItemIds: string[] }> {
+}): Promise<{
+  changeId: string | null;
+  lessonsSkipped: number;
+  state: PlacementState;
+  testedOutPlanItemIds: string[];
+}> {
   const { goalPlan, state } = await loadPlacement({ goalId, plan, timeZone, userId });
 
   await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
 
   // A question inside today's session keeps the rest of the day as the learner was shown it.
-  const { changeId, planItemIds: testedOutPlanItemIds } = await markPlanItemsTestedOut({
+  const {
+    changeId,
+    lessonsSkipped,
+    planItemIds: testedOutPlanItemIds,
+  } = await markPlanItemsTestedOut({
     announceAlso,
     extraWrites,
     followToday,
@@ -98,7 +107,7 @@ export async function applyPlacement({
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
-  return { changeId, state, testedOutPlanItemIds };
+  return { changeId, lessonsSkipped, state, testedOutPlanItemIds };
 }
 
 /** A learner who declined placement and later started the Focus test has answers to apply. */

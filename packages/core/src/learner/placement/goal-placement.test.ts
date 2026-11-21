@@ -1309,9 +1309,11 @@ describe(finishGoalPlacement, () => {
 
     expect(result.status === "ready" && result.completion).toStrictEqual({
       areas: [{ area: null, confident: true, startSkillId: skills[0]?.id }],
+      changeId: null,
       complete: true,
       focusTest: null,
       knownSkillIds: [],
+      lessonsSkipped: 0,
       phases: [
         { confident: true, phase: 0, startSkillId: skills[0]?.id },
         { confident: true, phase: 1, startSkillId: skills[3]?.id },

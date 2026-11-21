@@ -16,6 +16,7 @@ import {
 import { writePlan } from "./write-plan";
 
 export async function commitPlan({
+  afterChange,
   change,
   computed,
   context,
@@ -27,6 +28,7 @@ export async function commitPlan({
   revalidation = "now",
   replacement,
 }: {
+  afterChange?: (tx: TransactionClient, changeId: string) => Promise<unknown>;
   replacement?: ProposalReplacement;
   change: PlanChangeRecord | null;
   computed: ComputedPlan;
@@ -81,6 +83,10 @@ export async function commitPlan({
           },
         })
       : null;
+
+    if (created) {
+      await afterChange?.(tx, created.id);
+    }
 
     const undoable = created && isUndoableChange(created) ? created.id : restorable;
 

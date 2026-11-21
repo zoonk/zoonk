@@ -118,9 +118,9 @@ export async function findUnseenSkip({
   }
 
   const payload = parsePlanChangePayload(latest.payload);
-  const { livingPlanDay, seenAt, versionAfter } = payload;
+  const { livingPlanDay, testReceipt, seenAt, versionAfter } = payload;
 
-  if (livingPlanDay || seenAt !== null || versionAfter !== context.plan.version) {
+  if (livingPlanDay || testReceipt || seenAt !== null || versionAfter !== context.plan.version) {
     return null;
   }
 
@@ -150,7 +150,7 @@ export async function commitTestedOutBatch({
   context: PlanContext;
   effect: PlanEffect;
   livingPlanDay?: string;
-  save: (tx: TransactionClient) => Promise<unknown>;
+  save: (tx: TransactionClient, changeId: string) => Promise<unknown>;
   skipped: ReadonlySet<string>;
   unseen: LivingPlanBatch;
 }): Promise<void> {
@@ -166,7 +166,7 @@ export async function commitTestedOutBatch({
     computed,
     context,
     extraWrites: async (tx) => {
-      await save(tx);
+      await save(tx, unseen.change.id);
 
       const seen = getSeenEffect({
         computed,
@@ -187,8 +187,8 @@ export async function commitTestedOutBatch({
               ...seen,
               ...(livingPlanDay && {
                 topicsAdded: mergeChangeTopics(added.effect?.topicsAdded, effect.topicsAdded),
-                topicsLeftOut: mergeChangeTopics(added.effect?.topicsLeftOut, effect.topicsLeftOut),
               }),
+              topicsLeftOut: mergeChangeTopics(added.effect?.topicsLeftOut, effect.topicsLeftOut),
             },
           }),
           lessonsSkipped: (added.lessonsSkipped ?? 0) + newlySkipped,

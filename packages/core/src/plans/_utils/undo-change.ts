@@ -82,6 +82,8 @@ export async function undoChange({
 
   const payload = parsePlanChangePayload(change.payload);
 
+  const keepSession = payload.todaySession === "unchanged";
+
   const skipped = new Set(
     change.kind === "testedOut" || payload.livingPlanDay ? payload.planItemIds : [],
   );
@@ -101,7 +103,7 @@ export async function undoChange({
     const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
 
     const session =
-      !payload.livingPlanDay &&
+      !keepSession &&
       snapshot.todaySession &&
       (await lockDaySession({
         goalId: context.goal.id,
@@ -132,7 +134,7 @@ export async function undoChange({
 
     await restorePlan({ context: writeContext, items, snapshot, tx });
 
-    if (payload.livingPlanDay) {
+    if (keepSession) {
       await keepOpenSessionSelection(tx, {
         goalId: context.goal.id,
         planVersion: context.plan.version + 1,
@@ -185,7 +187,7 @@ export async function undoChange({
   await refreshSavedGoalPlanAdvice(context.goal.id);
   revalidatePlanTags(context.goal.userId);
 
-  if (!restored && !payload.livingPlanDay) {
+  if (!restored && !keepSession) {
     await followPlanToday({ context });
   } else if (restored?.settle) {
     await settleSessionDay({

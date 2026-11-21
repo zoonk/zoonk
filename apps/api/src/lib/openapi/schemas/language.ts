@@ -111,7 +111,7 @@ export const languageLevelTestResultSchema = z
         description:
           "Scores from assessed skills; speaking is present for older tests that assessed it",
       }),
-    result: levelTestResultSchema.optional(),
+    result: levelTestResultSchema.extend({ changeId: uuidSchema().nullable() }).optional(),
   })
   .meta({ id: "LanguageLevelTestResult" });
 
@@ -174,6 +174,7 @@ export const languageLevelTestOutViewSchema = z
       }),
     result: z
       .object({
+        changeId: uuidSchema().nullable(),
         finishedAt: z.iso.datetime(),
         lessonsSkipped: z.int().nonnegative(),
         topicsSkipped: z.array(uuidSchema()),

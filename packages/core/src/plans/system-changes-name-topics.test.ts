@@ -152,7 +152,7 @@ describe("a change the learner didn't make names the topics it moves", () => {
     vi.useRealTimers();
   });
 
-  it("names the topics a test-out brings into the plan", async () => {
+  it("names the topics a test-out skips and brings into the plan", async () => {
     const { goal, library, plan } = await setup({
       dailyMinutes: 9,
       daysAway: 14,
@@ -213,7 +213,7 @@ describe("a change the learner didn't make names the topics it moves", () => {
 
     await expect(readChange({ kind: "testedOut", planId: plan.id })).resolves.toStrictEqual({
       added: ["Matemática: aplicação"],
-      leftOut: [],
+      leftOut: ["Matemática: fundamentos"],
     });
   });
 

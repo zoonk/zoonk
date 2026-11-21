@@ -53,7 +53,9 @@ const insightChange = (status: "applied" | "proposed"): Today["insight"] => ({
 
 const planChange = (status: "applied" | "proposed", id = "change"): Today["planChange"] => ({
   behind: null,
+  canUndo: status === "applied",
   id,
+  kind: "edited",
   status,
 });
 
@@ -65,11 +67,30 @@ const fallingBehind: Today["planChange"] = {
     currentMinutes: 45,
     measure: "exam",
   },
+  canUndo: false,
   id: "behind",
+  kind: "missedDays",
   status: "applied",
 };
 
 describe(pickTodayNotice, () => {
+  it("offers Undo for a just-finished test even on a welcome-back day", () => {
+    expect(
+      pick({
+        view: {
+          planChange: {
+            behind: null,
+            canUndo: true,
+            id: "skip",
+            kind: "testedOut",
+            status: "applied",
+          },
+          session: welcomeBack(),
+        },
+      }),
+    ).toBe("planChange");
+  });
+
   it("shows nothing on an ordinary day", () => {
     expect(pick({})).toBeNull();
   });

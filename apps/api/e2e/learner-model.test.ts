@@ -17,6 +17,7 @@ import {
   placementCompletionResponseSchema,
   placementResponseSchema,
 } from "../src/lib/openapi/schemas/learner";
+import { onboardingResponseSchema } from "../src/lib/openapi/schemas/onboarding";
 import {
   chapterTestOutRecordSchema,
   chapterTestOutResponseSchema,
@@ -229,6 +230,55 @@ test.describe("Learner model API", () => {
       .toStrictEqual([{ generated: true, targetId: lesson.id }]);
 
     await guestApi.dispose();
+  });
+
+  test("completes onboarding at the end of the first whole-course part", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "whole-course-onboarding",
+    });
+
+    const { goal } = await createGoal(user.id);
+    const path = `/v1/goals/${goal.id}`;
+
+    const begin = () =>
+      apiContext.post(`${path}/placement/sittings`, { data: { length: "wholeCourse" } });
+
+    const { attempt } = await readBody({
+      response: await begin(),
+      schema: placementResponseSchema,
+    });
+
+    if (!attempt) {
+      throw new Error("Expected a saved whole-course attempt");
+    }
+
+    const complete = () =>
+      apiContext.post(`${path}/onboarding/answers`, {
+        data: { attemptId: attempt.id, question: "placement" },
+      });
+
+    const premature = await complete();
+    expect(premature.status()).toBe(422);
+
+    const finished = await readBody({
+      response: await apiContext.post(`${path}/placement/completion`, {
+        data: { attemptId: attempt.id, part: 1 },
+      }),
+      schema: placementCompletionResponseSchema,
+    });
+
+    expect(finished).toMatchObject({
+      attempt: { id: attempt.id, partComplete: true },
+      changeId: null,
+      lessonsSkipped: 0,
+    });
+
+    await readBody({ response: await complete(), schema: onboardingResponseSchema });
+    const resumed = await readBody({ response: await begin(), schema: placementResponseSchema });
+    expect(resumed.attempt).toMatchObject({ id: attempt.id, part: 2 });
+
+    await apiContext.dispose();
   });
 
   test("tests out a chapter the learner already knows", async () => {

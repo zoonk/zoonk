@@ -1,5 +1,6 @@
 import { type ProfileQuestion } from "@zoonk/db/enums";
 import { type RegionChoice } from "@zoonk/utils/language-regions";
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import {
   type ExamChoiceView,
@@ -298,7 +299,14 @@ export const onboardingAnswerInputSchema = z
       })
       .strict(),
     scheduleAnswerSchema,
-    z.object({ question: z.literal("placement") }).strict(),
+    z
+      .object({
+        attemptId: uuidSchema()
+          .optional()
+          .meta({ description: "The placement attempt whose first part has finished" }),
+        question: z.literal("placement"),
+      })
+      .strict(),
     z
       .object({
         buddy: learningProfileUpdateSchema.shape.buddy.unwrap(),

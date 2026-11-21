@@ -230,6 +230,11 @@ export const placementCompletionResponseSchema = z
   .object({
     areas: z.array(areaStartSchema),
     attempt: placementAttemptViewSchema.nullable().optional(),
+    changeId: uuidSchema()
+      .nullable()
+      .meta({
+        description: "The plan change that recorded the skips, or null when no change was recorded",
+      }),
     complete: z
       .boolean()
       .meta({
@@ -243,6 +248,7 @@ export const placementCompletionResponseSchema = z
           "An exam goal's Focus test after this finish, with its result (`checkpoint`); null for other goals",
       }),
     knownSkillIds: z.array(skillIdSchema),
+    lessonsSkipped: z.number().int().nonnegative(),
     partLessonsSkipped: z.number().int().nonnegative().optional(),
     phases: z.array(phaseStartSchema),
     result: placementResultSchema.nullable().optional(),

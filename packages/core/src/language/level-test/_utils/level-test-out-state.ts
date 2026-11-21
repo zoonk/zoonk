@@ -95,6 +95,7 @@ export async function readTestOutView({
     preparing: isPreparingLevelTestOut(progress),
     result: progress.result
       ? {
+          changeId: progress.result.changeId ?? null,
           finishedAt: progress.result.finishedAt,
           lessonsSkipped: progress.result.planItemIds.length,
           topicsSkipped: progress.result.topicsSkipped,

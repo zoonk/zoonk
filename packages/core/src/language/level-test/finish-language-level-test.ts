@@ -1,5 +1,5 @@
 import "server-only";
-import { type LanguageSkill, type TransactionClient } from "@zoonk/db";
+import { type Goal, type LanguageSkill, type TransactionClient, prisma } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
@@ -50,7 +50,7 @@ import { readLevelTestAttempts } from "./read-level-test-summary";
 export type FinishLanguageLevelTestResult =
   | {
       levels: { label: string; score: number; skill: LanguageSkill }[];
-      result?: LevelTestResult;
+      result?: LevelTestResult & { changeId: string | null };
       status: "ready";
     }
   | { status: "notFound" | "notLanguage" | "notReady" | "unauthorized" };
@@ -160,6 +160,7 @@ async function recordLevelTestResult({
 
   const result = {
     attemptId: currentProgress.attemptId ?? null,
+    changeId: null,
     finishedAt: now.toISOString(),
     lessonsSkipped: unannounced.length,
     levelsSkipped:
@@ -221,6 +222,33 @@ async function recordLevelTestResult({
 function readPreviousSkillLevels(goal: Parameters<typeof readGoalDetails>[0]) {
   const { skillLevels } = readGoalDetails(goal);
   return isJsonObject(skillLevels) ? skillLevels : {};
+}
+
+async function finishLevelTestNotice({
+  attemptId,
+  goal,
+  progress,
+  timeZone,
+}: {
+  attemptId?: string;
+  goal: Pick<Goal, "id" | "userId">;
+  progress: LevelTestProgress;
+  timeZone: string;
+}) {
+  const { placement, result } = progress;
+
+  if (!placement?.unannounced.length) {
+    return result;
+  }
+
+  const announced = await announceLevelTestPlacement({ attemptId, goal, placement, timeZone });
+
+  if (!announced || !result) {
+    return result;
+  }
+
+  const current = await prisma.goal.findUnique({ where: { id: goal.id, userId: goal.userId } });
+  return (current && readLevelTestProgress(current, attemptId)?.result) ?? result;
 }
 
 export async function finishLanguageLevelTest(
@@ -291,13 +319,11 @@ export async function finishLanguageLevelTest(
     });
   }
 
-  if (progress.placement) {
-    await announceLevelTestPlacement({ attemptId, goal, placement: progress.placement, timeZone });
-  }
+  const result = await finishLevelTestNotice({ attemptId, goal, progress, timeZone });
 
   return {
     levels: listLevelTestLevels(progress.scores ?? {}),
-    ...(progress.result && { result: progress.result }),
+    ...(result && { result: { ...result, changeId: result.changeId ?? null } }),
     status: "ready",
   };
 }

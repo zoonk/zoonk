@@ -10,6 +10,7 @@ import { announceTestedOutItems } from "../../../plans/announce-tested-out-items
 import { isPlanConflictError } from "../../../plans/plan-conflict";
 import { type LevelTestProgress } from "../level-test-contract";
 import { getBand } from "../level-test-rules";
+import { readLevelTestAttempts } from "../read-level-test-summary";
 import {
   canWriteLevelTest,
   levelTestDetailsWithProgress,
@@ -81,11 +82,13 @@ export async function skipConfirmedLanguageLessons({
 
 async function clearAnnounced({
   attemptId,
+  changeId,
   goalId,
   placement,
   tx,
 }: {
   attemptId?: string;
+  changeId: string | null;
   goalId: string;
   placement: ResultPlacement;
   tx: TransactionClient;
@@ -102,12 +105,27 @@ async function clearAnnounced({
     return false;
   }
 
+  const result = progress.result && { ...progress.result, changeId };
+
   const details = levelTestDetailsWithProgress(goal, {
     ...progress,
     placement: { ...placement, pastBasicsAreas: [], unannounced: [] },
+    result,
   });
 
-  await tx.goal.update({ data: { details }, where: { id: goalId } });
+  const { lastResult } = readLevelTestAttempts(goal);
+  const latest = isDeepStrictEqual(lastResult, progress.result) ? result : lastResult;
+
+  await tx.goal.update({
+    data: {
+      details: {
+        ...details,
+        levelTest: { ...details.levelTest, ...(latest && { lastResult: latest }) },
+      },
+    },
+    where: { id: goalId },
+  });
+
   return true;
 }
 
@@ -131,8 +149,8 @@ export async function announceLevelTestPlacement({
 
   const { data, error } = await safeAsync(() =>
     announceTestedOutItems({
-      extraWrites: async (tx) => {
-        if (!(await clearAnnounced({ attemptId, goalId, placement, tx }))) {
+      extraWrites: async (tx, changeId) => {
+        if (!(await clearAnnounced({ attemptId, changeId, goalId, placement, tx }))) {
           throw new PlacementAnnouncedError();
         }
       },
@@ -141,6 +159,7 @@ export async function announceLevelTestPlacement({
       now: new Date(),
       planItemIds: unannounced,
       skipBlocks: false,
+      testReceipt: `levelTest:${attemptId ?? "onboarding"}`,
       timeZone,
     }),
   );
@@ -158,7 +177,9 @@ export async function announceLevelTestPlacement({
   }
 
   await writeLearnerChange({ userId }, async (tx) =>
-    (await clearAnnounced({ attemptId, goalId, placement, tx })) ? null : unchanged(null),
+    (await clearAnnounced({ attemptId, changeId: null, goalId, placement, tx }))
+      ? null
+      : unchanged(null),
   );
 
   return true;

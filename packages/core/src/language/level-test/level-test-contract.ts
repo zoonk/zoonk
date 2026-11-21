@@ -119,6 +119,7 @@ export type LevelTestRanges = z.infer<typeof levelTestRangesSchema>;
 
 export const levelTestResultSchema = z.object({
   attemptId: uuidSchema().nullable(),
+  changeId: uuidSchema().nullable().optional(),
   finishedAt: z.iso.datetime(),
   lessonsSkipped: z.int().nonnegative().default(0),
   levelsSkipped: z.array(z.enum(CEFR_LEVELS)),

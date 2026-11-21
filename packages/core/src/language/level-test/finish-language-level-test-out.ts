@@ -99,7 +99,7 @@ export async function announceLevelTestOutSkips({
     return true;
   }
 
-  async function clear(tx: TransactionClient) {
+  async function clear(tx: TransactionClient, changeId: string | null) {
     const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
     const { testOut } = readLevelTestAttempts(goal);
 
@@ -109,7 +109,7 @@ export async function announceLevelTestOutSkips({
 
     await saveTestOut({
       goal,
-      progress: { ...testOut, result: { ...testOut.result, unannounced: [] } },
+      progress: { ...testOut, result: { ...testOut.result, changeId, unannounced: [] } },
       tx,
     });
   }
@@ -122,6 +122,7 @@ export async function announceLevelTestOutSkips({
       now: new Date(),
       planItemIds: ids,
       skipBlocks: false,
+      testReceipt: `levelTestOut:${progress.id}`,
       timeZone,
     }),
   );

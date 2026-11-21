@@ -5,6 +5,7 @@ import { listeningSetFixture } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
 import { finishLanguageLevelTestOut } from "./finish-language-level-test-out";
 import {
   type LanguageLevelTestOutResult,
@@ -110,10 +111,23 @@ describe("a language level test-out", () => {
 
     expect(finished).toMatchObject({
       status: "ready",
-      test: { answered: 8, next: null, result: { topicsSkipped: [reading.id, listening.id] } },
+      test: {
+        answered: 8,
+        next: null,
+        result: {
+          changeId: expect.any(String),
+          lessonsSkipped: 2,
+          topicsSkipped: [reading.id, listening.id],
+        },
+      },
     });
 
     await expect(finishLanguageLevelTestOut(input)).resolves.toStrictEqual(finished);
+
+    await expect(loadTodayPlanChange({ goal, now: new Date() })).resolves.toMatchObject({
+      canUndo: true,
+      id: finished.status === "ready" ? finished.test.result?.changeId : null,
+    });
 
     const statuses = await prisma.planItem.findMany({
       select: { id: true, status: true },

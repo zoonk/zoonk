@@ -136,11 +136,11 @@ export async function finishPlacementAttempt({
   const testedOutAt = new Date(saved.finishedAt);
   await announceSharedTestOuts({ goalId, now: testedOutAt, testedOutAt, userId });
 
-  await announceTestedOutItems({
+  const change = await announceTestedOutItems({
     goalId,
-    mergeWithUnseen: false,
     now: testedOutAt,
     planItemIds: saved.testedOutPlanItemIds,
+    testReceipt: `${attemptId}:${part}`,
     timeZone,
   });
 
@@ -152,9 +152,11 @@ export async function finishPlacementAttempt({
   return {
     areas: state.areas,
     attempt: state.attempt,
+    changeId: change?.changeId ?? null,
     complete: !state.attempt,
     focusTest: null,
     knownSkillIds: saved.knownSkillIds,
+    lessonsSkipped: saved.lessonsSkipped,
     partLessonsSkipped: saved.lessonsSkipped,
     phases: state.phases,
     result: state.result,
