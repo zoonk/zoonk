@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.placementtest
 
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -122,6 +121,7 @@ private fun ColumnScope.LevelTestPlanFlow(
                 onDone = { WriteOutcome.Done(Unit) },
                 plan =
                     PlanAttempt(attempt, onLeave = navigator::closeTask, leaving = false) { result ->
+                        val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
                         LevelResult(
                             result = result,
                             walks = store.levelTest(goalId, attempt).wholeCourse && result.result?.wholeCourseReady == true,
@@ -132,10 +132,7 @@ private fun ColumnScope.LevelTestPlanFlow(
                             onDone = navigator::closeTask,
                             onWalkTopics = vm::walkTopics,
                             onTestOut = { vm.testOut(it, Pressed.Other) },
-                            undo = {
-                                val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
-                                PlacementUndo(app.plans, goal.id, changeId, enabled = !vm.busy)
-                            },
+                            undo = rememberPlacementUndo(app.plans, goal.id, changeId),
                         )
                     },
             )
@@ -176,7 +173,7 @@ internal fun ColumnScope.LevelResult(
     onDone: () -> Unit,
     onWalkTopics: () -> Unit,
     onTestOut: (String) -> Unit,
-    undo: (@Composable () -> Unit)? = null,
+    undo: PlacementUndoViewModel? = null,
 ) {
     val skipped =
         result.result
@@ -198,14 +195,15 @@ internal fun ColumnScope.LevelResult(
         busy = pressed == Pressed.Main,
         enabled = pressed != Pressed.Other,
         failed = failed,
+        undo = undo,
         other =
             if (testOutLevel != null && !walks) {
-                {
+                { width ->
                     TextButton(
                         busy = pressed == Pressed.Other,
                         onClick = { onTestOut(testOutLevel) },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = pressed != Pressed.Main,
+                        modifier = width,
+                        enabled = pressed != Pressed.Main && undo?.saving != true,
                     ) {
                         Text(stringResource(R.string.placementtest_test_out, testOutLevel))
                     }
@@ -227,7 +225,6 @@ internal fun ColumnScope.LevelResult(
                 }
             }
         if (rows.isNotEmpty()) LevelRows(rows)
-        undo?.invoke()
     }
 }
 
@@ -301,10 +298,8 @@ private fun ColumnScope.TestOutFlow(
         }
 
         else -> {
-            TestOutResult(test, onLeave) {
-                val changeId = test.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
-                PlacementUndo(plans, UUID.fromString(goalId), changeId)
-            }
+            val changeId = test.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
+            TestOutResult(test, onLeave, undo = rememberPlacementUndo(plans, UUID.fromString(goalId), changeId))
         }
     }
 }
@@ -314,7 +309,7 @@ private fun ColumnScope.TestOutFlow(
 internal fun ColumnScope.TestOutResult(
     test: LanguageLevelTestOut,
     onDone: () -> Unit,
-    undo: (@Composable () -> Unit)? = null,
+    undo: PlacementUndoViewModel? = null,
 ) {
     val lessons = test.result?.lessonsSkipped?.toInt() ?: 0
     val level = test.level.value
@@ -328,7 +323,8 @@ internal fun ColumnScope.TestOutResult(
             },
         action = stringResource(R.string.placementtest_done),
         onAction = onDone,
-    ) { undo?.invoke() }
+        undo = undo,
+    )
 }
 
 private val CEFR_LEVELS = listOf("A1", "A2", "B1", "B2", "C1", "C2")
