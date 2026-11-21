@@ -93,7 +93,11 @@ export async function readTestOutView({
     level: progress.level,
     next: next?.question ?? null,
     result: progress.result
-      ? { finishedAt: progress.result.finishedAt, topicsSkipped: progress.result.topicsSkipped }
+      ? {
+          finishedAt: progress.result.finishedAt,
+          lessonsSkipped: progress.result.planItemIds.length,
+          topicsSkipped: progress.result.topicsSkipped,
+        }
       : null,
     total: progress.questions.length,
   };

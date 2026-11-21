@@ -54,7 +54,11 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     kind: z.literal("settleSessionDay"),
   }),
   z.object({
-    input: z.object({ goalId: uuidSchema(), lessonsAskedAt: z.number().nullable() }),
+    input: z.object({
+      goalId: uuidSchema(),
+      lessonsAskedAt: z.number().nullable(),
+      levelTestNotice: z.literal(true).optional(),
+    }),
     kind: z.literal("prepareGoalLessons"),
   }),
   z.object({ input: z.object({ lessonId: uuidSchema() }), kind: z.literal("writeLesson") }),

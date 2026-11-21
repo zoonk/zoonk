@@ -167,7 +167,11 @@ export const languageLevelTestOutViewSchema = z
       .extend({ skill: z.enum(["reading", "listening"]) })
       .nullable(),
     result: z
-      .object({ finishedAt: z.iso.datetime(), topicsSkipped: z.array(uuidSchema()) })
+      .object({
+        finishedAt: z.iso.datetime(),
+        lessonsSkipped: z.int().nonnegative(),
+        topicsSkipped: z.array(uuidSchema()),
+      })
       .nullable(),
     total: z.int().nonnegative(),
   })

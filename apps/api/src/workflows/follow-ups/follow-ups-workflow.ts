@@ -22,6 +22,7 @@ import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
+import { announceLevelTestNoticeStep } from "./steps/announce-level-test-notice-step";
 import {
   endFollowUpStep,
   listFollowUpsStep,
@@ -63,7 +64,10 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);
       return;
     case "prepareGoalLessons":
-      await start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]);
+      await (followUp.input.levelTestNotice
+        ? announceLevelTestNoticeStep({ goalId: followUp.input.goalId, userId })
+        : start(sessionPreparationWorkflow, [{ ...followUp.input, userId }]));
+
       return;
     case "rebuildGoalCurriculum": {
       const ask = getGoalRebuildAsk({ followUp, goalId: followUp.input.goalId });

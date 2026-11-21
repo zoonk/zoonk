@@ -27,6 +27,7 @@ import {
   loadLevelTestContext,
   readLevelTestProgress,
 } from "./_utils/level-test-state";
+import { oweLevelTestNotice } from "./_utils/owe-level-test-notice";
 import {
   type LevelTestBank,
   type LevelTestProgress,
@@ -155,16 +156,14 @@ async function recordLevelTestResult({
   const through = getConfirmedLevel(input);
   const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
   const unannounced = await skipConfirmedLanguageLessons({ goalId, now, through, tx: transaction });
-  const { usedConfirmations, lastResult } = readLevelTestAttempts(current);
+  const { usedConfirmations } = readLevelTestAttempts(current);
 
   const result = {
     attemptId: currentProgress.attemptId ?? null,
     finishedAt: now.toISOString(),
-    levelsSkipped: CEFR_LEVELS.filter(
-      (level) =>
-        lastResult?.levelsSkipped.includes(level) ||
-        (through && unannounced.length > 0 && getBand(level) <= getBand(through)),
-    ),
+    lessonsSkipped: unannounced.length,
+    levelsSkipped:
+      through && unannounced.length > 0 ? CEFR_LEVELS.slice(0, getBand(through) + 1) : [],
     ranges: getLevelTestRanges(input),
     ...(currentProgress.length === "wholeCourse" &&
       getNextLevelTestStep(input).kind === "done" && { wholeCourseReady: true as const }),
@@ -215,6 +214,7 @@ async function recordLevelTestResult({
 
   await saveSkillLevels(transaction, { language: current.targetLanguage, scores, userId });
   await owePlanStartLessons({ db: transaction, goalId, userId });
+  await oweLevelTestNotice({ db: transaction, goalId, unannounced, userId });
   return saved;
 }
 

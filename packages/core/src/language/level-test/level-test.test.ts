@@ -8,6 +8,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it, vi } from "vitest";
+import { listOwed } from "../../_test-utils/follow-ups";
 import {
   LEARNER_LOCK,
   holdLearnerLock,
@@ -15,8 +16,11 @@ import {
 } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import * as ownedGoalFact from "../../learner/facts/owned-goal";
+import * as announcements from "../../plans/announce-tested-out-items";
 import { decidePlanChange } from "../../plans/decide-plan-change";
+import { PlanConflictError } from "../../plans/plan-conflict";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
+import { announcePendingLevelTestSkips } from "./announce-pending-level-test-skips";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
@@ -709,10 +713,16 @@ describe("a post-start level test", () => {
     const { attemptId } = started.test;
     await completeTapTest({ attemptId, goalId: goal.id, test: started.test });
 
-    const finished = await finishLanguageLevelTest(goal.id, attemptId);
+    const announce = vi
+      .spyOn(announcements, "announceTestedOutItems")
+      .mockRejectedValueOnce(new PlanConflictError());
+
+    const finished = await finishLanguageLevelTest(goal.id, attemptId).finally(() =>
+      announce.mockRestore(),
+    );
 
     expect(finished).toMatchObject({
-      result: { levelsSkipped: expect.arrayContaining(["A1"]) },
+      result: { lessonsSkipped: 1, levelsSkipped: expect.arrayContaining(["A1"]) },
       status: "ready",
     });
 
@@ -731,6 +741,25 @@ describe("a post-start level test", () => {
       });
 
     await expect(readBlocks()).resolves.toStrictEqual(blocks);
+
+    await expect(
+      prisma.planChange.count({
+        where: { kind: "testedOut", planId: lowItem.planId, status: "applied" },
+      }),
+    ).resolves.toBe(0);
+
+    const owed = await listOwed(user.id);
+
+    expect(owed).toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          input: expect.objectContaining({ goalId: goal.id, levelTestNotice: true }),
+          kind: "prepareGoalLessons",
+        }),
+      ]),
+    );
+
+    await announcePendingLevelTestSkips({ goalId: goal.id, userId: user.id });
 
     const change = await prisma.planChange.findFirstOrThrow({
       where: { kind: "testedOut", planId: lowItem.planId, status: "applied" },
