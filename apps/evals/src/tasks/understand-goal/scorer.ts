@@ -13,7 +13,8 @@ type ExpectedGoal = {
   displayName?: RegExp;
   examDay?: "booked" | "official" | null;
   examMonth?: number;
-  examName?: RegExp;
+  /** Null when the goal must name no public exam: a test on the learner's own material. */
+  examName?: RegExp | null;
   examSubjects?: RegExp[] | null;
   examTarget?: "admission" | "position" | "score" | null;
   examYear?: number;
@@ -22,6 +23,10 @@ type ExpectedGoal = {
   nativeLanguage?: string;
   ownLevel?: string;
   purpose?: string;
+  /** Null when the words give no reason, such as a line the app wrote from the learner's choice. */
+  reason?: null;
+  /** The exact day, for a relative date the words give. */
+  targetDate?: string;
   targetLanguage?: string;
   /** Null when the words name no country of the language. */
   targetRegion?: string | null;
@@ -97,7 +102,9 @@ function getExamChecks({
 }): [boolean, string][] {
   return [
     [
-      matchesText({ pattern: expected.examName, value: goal.examName }),
+      expected.examName === null
+        ? !goal.examName
+        : matchesText({ pattern: expected.examName, value: goal.examName }),
       `exam ${show(goal.examName)}`,
     ],
     [
@@ -142,6 +149,11 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
       !expected.month || Boolean(targetDate?.startsWith(expected.month)),
       `date ${show(targetDate)} not in ${expected.month}`,
     ],
+    [
+      expected.targetDate === undefined || targetDate === expected.targetDate,
+      `date ${show(targetDate)} instead of ${expected.targetDate}`,
+    ],
+    [expected.reason === undefined || !goal.reason, `reason ${show(goal.reason)}`],
     [
       !expected.targetLanguage || goal.targetLanguage === expected.targetLanguage,
       `language ${show(goal.targetLanguage)}`,
