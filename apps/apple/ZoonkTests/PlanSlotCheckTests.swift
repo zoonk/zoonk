@@ -42,6 +42,45 @@ final class PlanSlotCheckTests: XCTestCase {
     XCTAssertFalse(context.slotCheck(.fitLessons).failed)
   }
 
+  /// Other numbers today replace the lessons the card first stated, so "Add to plan" confirms the
+  /// count it applies.
+  func testARepricedOfferStatesTodaysLessonCount() async throws {
+    let api = PlanAPIStub()
+    let offer = try fitOffer()
+    let today = try JSONDecoder().decode(
+      PlanEffect.self, from: Data(#"{"lessonsAdded":3,"lessonsRemoved":0}"#.utf8))
+    await api.setPreview(
+      PlanChangePreview(
+        effect: today, feasibility: nil, finishDate: nil, ready: true, unchanged: false))
+    let context = try context()
+    let session = SessionStore.preview(account: .planTestAccount)
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      List {
+        PlanOfferSlot(
+          context: context, item: .extraLessons, offer: offer,
+          title: { _ in Text(verbatim: "Strategy") },
+          facts: {
+            [String(localized: "\(($0 ?? offer.effect).lessonsAdded) lessons", table: "Plan")]
+          },
+          actions: PlanSlotActions(apply: { _ in }, notNow: {}))
+      }
+      .environment(PlanStore(api: api, cache: AppCache(session: session)))
+      .environment(session)
+      .environment(AppRouter())
+      .zoonkStyles())
+    window.frame = frame(.narrow)
+    try await waitForLayout(in: window)
+
+    try await activate(String(localized: "Add to plan", table: "Plan"), in: window)
+
+    try await waitForTestCondition("The card did not state today's count") {
+      self.spoken(in: window).contains { $0.contains("3 lessons") }
+    }
+    XCTAssertFalse(
+      spoken(in: window).contains { $0.contains("6 lessons") }, "\(spoken(in: window))")
+  }
+
   // MARK: Each card
 
   private func addsAcross(from: Width, to: Width) async throws {
@@ -59,7 +98,7 @@ final class PlanSlotCheckTests: XCTestCase {
       from: from, to: to, tap: "Add to plan", api: api
     ) {
       PlanOfferSlot(
-        context: context, item: .fitLessons, offer: offer, title: Text(verbatim: "Fit"),
+        context: context, item: .fitLessons, offer: offer, title: { _ in Text(verbatim: "Fit") },
         actions: actions)
     } completed: {
       applied.count == 1
