@@ -5,7 +5,7 @@
   "mock_chooser_both_tests": "3ec952c9210f0c13d8ad723000d73d375773902267a01c5fef9cad4fb75a7aea",
   "mock_chooser_day": "c6361cbfefc6ea0cff5c98906b8d463523e24d4c14e1b2086561e47233af519f",
   "mock_chooser_day_without": "cdf354307a85c8815dbd1543619500641102512f4e73067de2e149bb80243758",
-  "mock_chooser_exam_tests": "1de1f234c974fcd64a1fd8e6acc32fe168d798ed960aff472f570ef6d0ded3a7",
+  "mock_chooser_exam_tests": "22b2a3e2764f89696ccebd1cfda3c5166306cd42cfc5f2845942ba7e425aaf99",
   "mock_chooser_failed": "24307d5a9eac38fee1035f888670a1e152161e0c6cc61786f76bfef06350dafc",
   "mock_chooser_full_exam": "771df7fb385d4660c1e3eff24da11c07ca836b52d201c6609c53d95de8ca9a97",
   "mock_chooser_full_exam_without": "7807ecbe1fba8ffe55527ca9090ad36bb87fcdd51b9eb90ceac7f12b9971424f",
@@ -98,8 +98,8 @@
     <string name="mock_chooser_last_mock">Seu último simulado</string>
     <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
     <plurals name="mock_chooser_exam_tests">
-        <item quantity="one">Sua prova tem %d teste</item>
-        <item quantity="many">Sua prova tem %d testes</item>
-        <item quantity="other">Sua prova tem %d testes</item>
+        <item quantity="one">Sua prova tem %d prova</item>
+        <item quantity="many">Sua prova tem %d provas</item>
+        <item quantity="other">Sua prova tem %d provas</item>
     </plurals>
 </resources>

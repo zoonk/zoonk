@@ -93,7 +93,7 @@
   "mock_words": "eb553ea24edc73926f9077a568fc91bd79dbdc7fba73368ff845152ab1feb5e9",
   "mock_written_part": "36ece6d4391dcc395fdf94326178a83b2fd2ca616114da1af20e669d731c34a8",
   "mock_written_part_area": "b4c5eb14dc3eb6f16939d3e7502cd46324d4c403273a4d4c66d0f0ef4bba9a0e",
-  "mock_written_questions_blank": "6a0bb18305333476409746ac72c4dd979129e386e7f17b06b088a3a9309ea844",
+  "mock_written_questions_blank": "c6e22b3fc8e3f80df87e066a2ea0d5998c9cdcb404198be748aa16018bb995ea",
   "mock_your_essay": "555c798e197e77cc8d5908bd1b1d0dfa0f153456d3c72b603a79fd11d519e750"
 }
 -->
@@ -177,9 +177,9 @@
     <string name="mock_essay_blank">La redacción está en blanco.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <plurals name="mock_written_questions_blank">
-        <item quantity="one">La pregunta de desarrollo está en blanco.</item>
-        <item quantity="many">%d preguntas de desarrollo están en blanco.</item>
-        <item quantity="other">%d preguntas de desarrollo están en blanco.</item>
+        <item quantity="one">La respuesta escrita está en blanco.</item>
+        <item quantity="many">Hay %d respuestas escritas en blanco.</item>
+        <item quantity="other">Hay %d respuestas escritas en blanco.</item>
     </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">Hay %d redacción en blanco.</item>

@@ -86,7 +86,7 @@
   "goalcontent_topics_studied_spoken": "9eaf6f5a07807af290ab19b81cbd2785e2b9a9ace47caf48a47c888ad9dbcccf",
   "goalcontent_written_answers": "7374dc8c5c3467f36960e38d80c480ff21120851efe2f51c833fdf218a253955",
   "goalcontent_written_estimated": "119f48f8d29bd27c4e0129e4e1d1b8a3d43d79efe943cdabd9e4746f1bfff433",
-  "goalcontent_written_last_answers": "9698f8ae0edc65ed5ada04e83f31a8cc55bef4897d4b9197183c5bef83b67a67",
+  "goalcontent_written_last_answers": "0eeee02e37dc58b72124ddd1f824994e985dbe365d034c57c0bf8e371231723d",
   "goalcontent_written_levels": "6ac01180105ebae0c25ffb55df80a8b7bab0c4f2f67a5249ebb6048bf98b6ef6",
   "goalcontent_written_lines": "792580f182e4c9f642ff7a19a3c147d7cc7b63ef1910d83838af7053c6c4794c",
   "goalcontent_written_minimum": "03bbb4493db33a0ae4a1ffb711e36841552348ef8340e74960f1658431829b9f",
@@ -307,8 +307,8 @@
     <string name="goalcontent_written_progress">Tu progreso</string>
     <plurals name="goalcontent_written_last_answers">
         <item quantity="one">última respuesta</item>
-        <item quantity="many">las últimas %d respuestas</item>
-        <item quantity="other">las últimas %d respuestas</item>
+        <item quantity="many">últimas %d respuestas</item>
+        <item quantity="other">últimas %d respuestas</item>
     </plurals>
     <string name="goalcontent_written_presentation">Presentación y estructura</string>
     <string name="goalcontent_written_answers">Tus respuestas</string>
