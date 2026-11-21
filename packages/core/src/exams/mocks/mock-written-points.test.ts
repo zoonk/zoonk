@@ -67,6 +67,7 @@ function graded({
     question: "Question",
     status: "graded",
     text: "Answer",
+    unsure: false,
   };
 }
 
