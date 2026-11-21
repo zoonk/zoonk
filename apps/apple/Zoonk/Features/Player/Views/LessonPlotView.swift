@@ -12,18 +12,24 @@ struct LessonPlotView: View {
   private static let label = TypeStyle.meta
   private static let pointLabel = TypeStyle.meta.weight(.medium)
 
-  private var scale: Double {
+  private var textScale: Double {
     Self.label.uiFont(textSize, legibility: legibility).pointSize / 12
   }
 
   private func textWidth(_ style: TypeStyle) -> (String) -> Double {
-    let (scale, textSize, legibility) = (scale, textSize, legibility)
-    return { style.width(of: $0, dynamicTypeSize: textSize, legibility: legibility) / scale }
+    let (textScale, textSize, legibility) = (textScale, textSize, legibility)
+    return { style.width(of: $0, dynamicTypeSize: textSize, legibility: legibility) / textScale }
+  }
+
+  private func drawingFont(_ style: TypeStyle, scale: Double) -> Font {
+    let font = style.uiFont(textSize, legibility: legibility)
+    return Font(font.withSize(font.pointSize * scale / textScale))
   }
 
   var body: some View {
-    let layout = LessonPlotLayout(
-      plot, width: width / scale, textWidth: textWidth(Self.pointLabel))
+    let textWidth = textWidth(Self.pointLabel)
+    let scale = LessonPlotLayout.scale(plot, text: textScale, width: width, textWidth: textWidth)
+    let layout = LessonPlotLayout(plot, width: width / scale, textWidth: textWidth)
 
     VStack(alignment: .leading, spacing: 12) {
       Text(plot.title)
@@ -35,7 +41,7 @@ struct LessonPlotView: View {
 
       VStack(alignment: .leading, spacing: 4) {
         LessonChartCaption(text: Self.caption(plot.yLabel, unit: plot.yUnit))
-        drawing(layout)
+        drawing(layout, scale: scale)
           .frame(maxWidth: .infinity)
           .frame(height: LessonPlotLayout.height * scale)
           .onGeometryChange(for: Double.self) {
@@ -58,10 +64,9 @@ struct LessonPlotView: View {
     }
   }
 
-  private func drawing(_ layout: LessonPlotLayout) -> some View {
-    let scale = scale
-    let label = Font(Self.label.uiFont(textSize, legibility: legibility)).monospacedDigit()
-    let named = Font(Self.pointLabel.uiFont(textSize, legibility: legibility))
+  private func drawing(_ layout: LessonPlotLayout, scale: Double) -> some View {
+    let label = drawingFont(Self.label, scale: scale).monospacedDigit()
+    let named = drawingFont(Self.pointLabel, scale: scale)
     let tickWidth = textWidth(Self.label)
     let plot = plot
 

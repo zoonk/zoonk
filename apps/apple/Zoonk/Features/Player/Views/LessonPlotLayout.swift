@@ -1,9 +1,12 @@
 import Foundation
 
-/// In points for 12-point labels; a larger text size scales the whole drawing, and `textWidth`
-/// measures a label at that size.
+/// In points for 12-point labels; a larger text size scales the whole drawing by `scale`, and
+/// `textWidth` measures a label at the text size.
 struct LessonPlotLayout {
   static let height = 208.0
+  /// The plot area the web keeps at its largest text on a small phone, 128 wide, without reference
+  /// lines.
+  static let minPlotWidth = 128 - minLeft - right
   static let top = 22.0
   static let bottom = 26.0
   static let minLeft = 48.0
@@ -79,28 +82,12 @@ struct LessonPlotLayout {
     let scale = LessonPlotScale(plot)
     let points = plot.series.flatMap(\.points)
     let compactX = Self.isLarge(points.map(\.x))
-    let compactY = Self.isLarge(points.map(\.y) + plot.references.map(\.y))
     let labelWidth = { (text: String) in textWidth(text) + Self.labelGap }
+    let gutters = Gutters(plot, scale: scale, textWidth: textWidth, locale: locale)
+    let (left, yTicks) = (gutters.left, gutters.yTicks)
+    let room = gutters.room(width)
 
-    let yTicks = scale.y.ticks.map {
-      Tick(
-        label: ActivityNumberFormat.format($0, compact: compactY, locale: locale), value: $0)
-    }
-    let left = max(Self.minLeft, yTicks.map { labelWidth($0.label) }.max() ?? 0)
-    // Wrapped to a share of the width, but never narrower than the longest word, which would break
-    // inside it.
-    let room =
-      plot.references.isEmpty
-      ? 0
-      : min(
-        plot.references.map { labelWidth($0.label) }.max() ?? 0,
-        max(
-          width * Self.maxGutterShare,
-          plot.references.flatMap { $0.label.split(separator: " ") }.map {
-            labelWidth(String($0))
-          }.max() ?? 0))
-
-    let plotRight = max(width - (room > 0 ? room + Self.referenceGap : Self.right), left + 1)
+    let plotRight = max(width - room - gutters.gap, left + 1)
     let plotBottom = Self.height - Self.bottom
     let toPoint = { (x: Double, y: Double) in
       Pixel(
@@ -172,6 +159,26 @@ struct LessonPlotLayout {
     self.xTicks = LessonChartTicks.labeled(frames, gap: 0).map { xTicks[$0] }
   }
 
+  /// Grows with the text until the plot area would get narrower than `minPlotWidth`, where the x
+  /// axis would lose its numbers and the points their names; the text around the drawing keeps
+  /// growing.
+  static func scale(
+    _ plot: LessonPlot, text: Double, width: Double, textWidth: (String) -> Double,
+    locale: Locale = .courseLanguage
+  ) -> Double {
+    let gutters = Gutters(plot, scale: LessonPlotScale(plot), textWidth: textWidth, locale: locale)
+    let fixed = gutters.left + gutters.gap + minPlotWidth
+    // The reference names take a share of the width, down to their widest word.
+    let minWidth =
+      gutters.longest == 0
+      ? fixed
+      : min(
+        fixed + gutters.longest,
+        max(fixed / (1 - maxGutterShare), fixed + gutters.widestWord))
+
+    return min(text, max(width / minWidth, 1))
+  }
+
   func tickCenter(_ tick: Tick, textWidth: Double) -> Double {
     Self.tickCenter(
       Self.position(tick.value, domain: scale.x.domain, range: left...plotRight),
@@ -194,6 +201,42 @@ struct LessonPlotLayout {
     -> Bool
   {
     mark != .line || (seriesCount > 1 && index == pointCount - 1)
+  }
+
+  /// The y axis's numbers on the left and the reference names on the right, which keep their size
+  /// at any width.
+  private struct Gutters {
+    let yTicks: [Tick]
+    let left: Double
+    /// The widest reference name on one line, and the widest word in one, which a wrap never breaks.
+    let longest: Double
+    let widestWord: Double
+
+    init(
+      _ plot: LessonPlot, scale: LessonPlotScale, textWidth: (String) -> Double, locale: Locale
+    ) {
+      func labelWidth(_ text: String) -> Double { textWidth(text) + LessonPlotLayout.labelGap }
+      let compactY = LessonPlotLayout.isLarge(
+        plot.series.flatMap(\.points).map(\.y) + plot.references.map(\.y))
+
+      yTicks = scale.y.ticks.map {
+        Tick(
+          label: ActivityNumberFormat.format($0, compact: compactY, locale: locale), value: $0)
+      }
+      left = max(LessonPlotLayout.minLeft, yTicks.map { labelWidth($0.label) }.max() ?? 0)
+      longest = plot.references.map { labelWidth($0.label) }.max() ?? 0
+      widestWord =
+        plot.references.flatMap { $0.label.split(separator: " ") }.map {
+          labelWidth(String($0))
+        }.max() ?? 0
+    }
+
+    var gap: Double { longest > 0 ? LessonPlotLayout.referenceGap : LessonPlotLayout.right }
+
+    /// Wrapped to a share of the width, but never narrower than the widest word.
+    func room(_ width: Double) -> Double {
+      min(longest, max(width * LessonPlotLayout.maxGutterShare, widestWord))
+    }
   }
 
   private static func isLarge(_ values: [Double]) -> Bool {

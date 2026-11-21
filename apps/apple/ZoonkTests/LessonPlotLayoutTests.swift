@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -110,6 +111,32 @@ final class LessonPlotLayoutTests: XCTestCase {
     for line in narrow.references.flatMap(\.lines) {
       XCTAssertTrue(line.split(separator: " ").allSatisfy { words.contains(String($0)) }, line)
     }
+  }
+
+  func testAtTheLargestTextSizeTheXAxisKeepsItsNumbersAndThePointItsName() throws {
+    let largest = TypeStyle.meta.uiFont(.accessibility5, legibility: nil).pointSize / 12
+    let hours = [500.4, 499.1, 501.2, 500.8, 502.9, 503.6, 504.8, 506.3]
+    let drift = try plot(
+      series: [
+        series(
+          "lineWithPoints",
+          hours.enumerated().map {
+            (Double($0.offset + 1), $0.element, $0.offset == hours.count - 1 ? "Hour 8" : nil)
+          })
+      ],
+      references: [("Upper limit", 506), ("Target", 500), ("Lower limit", 494)])
+    let scale = LessonPlotLayout.scale(
+      drift, text: largest, width: plotWidthOnAPhone, textWidth: textWidth)
+    let capped = layout(drift, width: plotWidthOnAPhone / scale)
+
+    XCTAssertLessThan(scale, largest)
+    XCTAssertGreaterThanOrEqual(
+      capped.plotRight - capped.left, LessonPlotLayout.minPlotWidth - 0.001)
+    XCTAssertEqual(capped.key, [])
+    XCTAssertEqual(capped.labels.map(\.text), ["Hour 8"])
+    XCTAssertGreaterThanOrEqual(capped.xTicks.count, 3)
+    XCTAssertEqual(
+      LessonPlotLayout.scale(drift, text: 1, width: plotWidthOnAPhone, textWidth: textWidth), 1)
   }
 
   func testAPlotWithoutReferencesUsesTheFullWidth() throws {
