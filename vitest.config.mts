@@ -19,6 +19,7 @@ export default defineConfig({
       "scripts/dev/*.test.mts",
       "scripts/e2e/*.test.mts",
       "scripts/perf/*.test.mts",
+      "scripts/*.test.mts",
       "scripts/pr/*.test.mts",
       "scripts/theme/*.test.mts",
       "scripts/verify/*.test.mts",
