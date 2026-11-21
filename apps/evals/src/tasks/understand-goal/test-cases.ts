@@ -635,6 +635,16 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "I have a test tomorrow",
     language: "en",
   }),
+  testCase("ko-asking-to-prepare-for-an-unnamed-exam-is-unclear", {
+    expected: { route: "unclear" },
+    goal: "12월 10일 시험 준비하고 싶어요",
+    language: "ko",
+  }),
+  testCase("en-asking-to-prepare-for-an-unnamed-exam-is-unclear", {
+    expected: { route: "unclear" },
+    goal: "Help me prepare for my exam on December 10.",
+    language: "en",
+  }),
   testCase("pt-school-test-naming-its-subject-is-a-goal", {
     expected: { goals: [{ kind: "exam" }], route: "goals" },
     goal: "Prova de matemática na sexta sobre frações",
