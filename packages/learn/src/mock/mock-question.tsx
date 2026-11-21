@@ -117,11 +117,26 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
   );
 }
 
+/** A section of written questions only (a written test): its questions, else none. */
+export function getWrittenTestQuestions(questions: readonly MockQuestion[]): MockQuestion[] {
+  return questions.every(({ format }) => format === "essay") ? [...questions] : [];
+}
+
 export function useQuestionPlace(question: MockQuestion): string {
   const t = useExtracted();
   const { runner } = useMockScreen();
 
   if (question.format === "essay") {
+    const essays = getWrittenTestQuestions(runner.view.current?.questions ?? []);
+
+    // A written test of several questions counts them; the screen's chip already names the test.
+    if (essays.length > 1) {
+      return t("Question {number} of {total}", {
+        number: String(essays.indexOf(question) + 1),
+        total: String(essays.length),
+      });
+    }
+
     return question.area ? t("Written part · {area}", { area: question.area }) : t("Written part");
   }
 
