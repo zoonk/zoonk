@@ -656,7 +656,7 @@ describe("a challenge put off for the day's lessons", () => {
 
 describe("completion refits today's lessons", () => {
   it("keeps a finished day complete after Keep learning and an extra lesson finishes", async () => {
-    const { blocks, session } = await setup({ lessons: 6, minutes: 20, queued: 2 });
+    const { blocks, playable, session } = await setup({ lessons: 6, minutes: 20, queued: 2 });
     const [first, second] = blocks;
 
     if (!first || !second) {
@@ -697,19 +697,28 @@ describe("completion refits today's lessons", () => {
 
     await expect(read()).resolves.toMatchObject(expected);
 
-    const extras = await prisma.studySessionBlock.findMany({
-      orderBy: { position: "asc" },
-      where: { sessionId: session.id, status: "pending" },
+    const queuedLessonIds = await prisma.studySessionBlock.findMany({
+      select: { lessonId: true },
+      where: { sessionId: session.id },
     });
 
-    expect(extras.map((block) => readBlockPayload(block).extra)).toStrictEqual([true, true]);
-    const [firstExtra, lastExtra] = extras;
+    const unqueued = playable.find(
+      ({ lesson }) => !queuedLessonIds.some((block) => block.lessonId === lesson.id),
+    );
 
-    if (!firstExtra || !lastExtra) {
-      throw new Error("Expected two extra lessons");
+    if (!unqueued) {
+      throw new Error("Expected a lesson left for a second extra");
     }
 
-    const extra = await finish({ block: firstExtra, elapsedMinutes: 10, sessionId: session.id });
+    const lastExtra = await studySessionBlockFixture({
+      estimatedMinutes: 10,
+      lessonId: unqueued.lesson.id,
+      payload: toBlockPayload({ extra: true }),
+      position: added.block.position + 1,
+      sessionId: session.id,
+    });
+
+    const extra = await finish({ block: added.block, elapsedMinutes: 10, sessionId: session.id });
 
     expect(extra.completion).toMatchObject({
       dayProgress: { lead: "complete", percent: 100 },
