@@ -107,6 +107,17 @@ export type CallWritingStepName = (typeof CALL_WRITING_STEPS)[number];
 
 export const CALL_READY_STEP: CallWritingStepName = "callReady";
 
+const MOCK_PAPER_STEPS = [
+  "writeMockTexts",
+  "writeMockQuestions",
+  "recordMockListening",
+  "mockPaperReady",
+] as const;
+
+export type MockPaperStepName = (typeof MOCK_PAPER_STEPS)[number];
+
+export const MOCK_PAPER_READY_STEP: MockPaperStepName = "mockPaperReady";
+
 const SETUP_LESSON_STEPS = ["joinSetupLessons", "writeSetupLessons", "setupLessonsReady"] as const;
 
 export type SetupLessonStepName = (typeof SETUP_LESSON_STEPS)[number];

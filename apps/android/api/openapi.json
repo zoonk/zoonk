@@ -20068,6 +20068,101 @@
         }
       }
     },
+    "/goals/{goalId}/mock-writing": {
+      "get": {
+        "description": "The run writing the paper of a mock that is being prepared, for the wait on the mock chooser and on a scheduled mock's intro: the anytime mock the learner last asked to start, or the scheduled one named by `planItemId`. A learner's Start on a mock whose questions aren't ready asks for them, and that run writes the paper first; any wait on the same paper follows it. Ask again every few seconds while `status` is `starting`. Only reads: it never starts a run. Uncached.",
+        "operationId": "getMockWriting",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get the run writing a mock's questions",
+        "tags": [
+          "Exams"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "query",
+            "name": "planItemId",
+            "schema": {
+              "description": "A scheduled mock's plan item, for its paper; without it, the mock the learner last asked to take any time",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "A scheduled mock's plan item, for its paper; without it, the mock the learner last asked to take any time"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Whether a run is writing the paper",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockWriting"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/mocks": {
       "get": {
         "description": "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; the last requested option and whether it is ready to start; and the diagnostic mock offered during onboarding.",
@@ -89816,6 +89911,31 @@
           "open",
           "fixed"
         ]
+      },
+      "MockWriting": {
+        "type": "object",
+        "properties": {
+          "generationId": {
+            "nullable": true,
+            "description": "The run writing the paper: stream GET /generations/{generationId}/events, the `mockPaper` steps `writeMockTexts` (only when it writes texts that several questions share), `writeMockQuestions`, `recordMockListening` (only for a paper with recordings), then `mockPaperReady`, or `workflowError` when the paper is still short. Null unless `status` is `writing`",
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "writing",
+              "starting",
+              "none"
+            ],
+            "description": "`writing`: follow `generationId`. `starting`: its run starts in a few seconds; ask again. `none`: nothing is writing it now (the mock is ready, or what was written fell short and the daily preparation goes on with it)"
+          }
+        },
+        "required": [
+          "generationId",
+          "status"
+        ],
+        "additionalProperties": false
       },
       "MockOptions": {
         "type": "object",

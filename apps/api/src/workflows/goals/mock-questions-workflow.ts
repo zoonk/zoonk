@@ -1,7 +1,8 @@
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { getWorkflowMetadata } from "workflow";
-import { startOnce, waitForRunToken } from "../_shared/run-token";
+import { claimRunToken, startOnce, waitForRunToken } from "../_shared/run-token";
 import { endFollowUpStep } from "../follow-ups/steps/follow-up-steps";
+import { createMockPaperProgress, getMockPaperToken } from "./mock-paper-progress";
 import { prepareMockRecordings, writeMockQuestions } from "./mock-question-writes";
 import { pickMockSetTargetsStep, prepareItemSet } from "./steps/item-set-step";
 import {
@@ -57,57 +58,99 @@ async function prepareSets({
   return stored.some(Boolean);
 }
 
+type PaperProgress = ReturnType<typeof createMockPaperProgress>;
+
+async function isPaperWritten({ goalId, paper }: { goalId: string; paper: string }) {
+  const { papers } = await listMockPrepWritesStep({ goalId, only: paper, priority: paper });
+  return papers.length === 0 ? "written" : "short";
+}
+
 async function writeSupply({
   goalId,
+  progress,
   workflowRunId,
   supply,
 }: {
   goalId: string;
+  progress: PaperProgress;
   workflowRunId: string;
   supply: MockQuestionWrites;
 }) {
-  await writeMockQuestions({ ...supply, goalId, workflowRunId });
+  await progress.step(supply.key, "writeMockQuestions", () =>
+    writeMockQuestions({ ...supply, goalId, workflowRunId }),
+  );
 
-  if (supply.recordings) {
-    await prepareMockRecordings({
-      goalId,
-      later: supply.later,
-      recordings: supply.recordings,
-      workflowRunId,
-    });
+  const { recordings } = supply;
+
+  if (recordings) {
+    await progress.step(supply.key, "recordMockListening", () =>
+      prepareMockRecordings({ goalId, later: supply.later, recordings, workflowRunId }),
+    );
   }
+
+  if (progress.follows(supply.key)) {
+    await progress.end(await isPaperWritten({ goalId, paper: supply.key }));
+  }
+}
+
+/** The texts the papers written first share, planned again when it wrote any. */
+async function prepareFirstSets({
+  input,
+  progress,
+  workflowRunId,
+}: {
+  input: { goalId: string; priority?: string };
+  progress: PaperProgress;
+  workflowRunId: string;
+}) {
+  const planned = await listMockPrepWritesStep(input);
+  const first = planned.papers.filter((supply) => !supply.alternative);
+  const followed = first.find((supply) => progress.follows(supply.key));
+
+  if (!followed) {
+    await progress.end("written");
+  }
+
+  const writeSets = () =>
+    Promise.all(
+      first.map((supply) => prepareSets({ goalId: input.goalId, supply, workflowRunId })),
+    );
+
+  const stored = followed?.allowStimulusSets
+    ? await progress.step(followed.key, "writeMockTexts", writeSets)
+    : await writeSets();
+
+  return stored.some(Boolean) ? listMockPrepWritesStep(input) : planned;
 }
 
 async function prepareGoalSupply({
   ask,
   goalId,
   paper,
+  progress,
   workflowRunId,
 }: {
   ask?: SupplyAsk;
   goalId: string;
   paper?: string;
+  progress: PaperProgress;
   workflowRunId: string;
 }) {
   try {
     const input = { goalId, priority: paper };
-    const planned = await listMockPrepWritesStep(input);
-
-    const first = planned.papers.filter((supply) => !supply.alternative);
-
-    const stored = await Promise.all(
-      first.map((supply) => prepareSets({ goalId, supply, workflowRunId })),
-    );
-
-    const { papers } = stored.some(Boolean) ? await listMockPrepWritesStep(input) : planned;
+    const { papers } = await prepareFirstSets({ input, progress, workflowRunId });
 
     const reserved = papers
       .filter((entry) => !entry.alternative)
       .toSorted((a, b) => Number(a.later) - Number(b.later));
 
+    if (!reserved.some((supply) => progress.follows(supply.key))) {
+      await progress.end("written");
+    }
+
     /* oxlint-disable no-await-in-loop -- Each chooser alternative can use the last paper's writes. */
     for (const supply of reserved) {
-      await writeSupply({ goalId, supply, workflowRunId });
+      await writeSupply({ goalId, progress, supply, workflowRunId });
     }
 
     if (paper) {
@@ -127,7 +170,7 @@ async function prepareGoalSupply({
         const [remaining] = recounted.papers;
 
         if (remaining) {
-          await writeSupply({ goalId, supply: remaining, workflowRunId });
+          await writeSupply({ goalId, progress, supply: remaining, workflowRunId });
         }
       }
     }
@@ -147,20 +190,33 @@ async function prepareGoalSupply({
 export async function mockSupplyWorkflow(input: SupplyRequest & { ask?: SupplyAsk }) {
   "use workflow";
   const { workflowRunId } = getWorkflowMetadata();
+  const paper = input.ask && !input.later ? input.paper : undefined;
 
-  if (!(await waitForRunToken(supplyKey(input)))) {
-    throw new Error("The previous mock supply run is still writing.");
-  }
+  // Held from before its turn, so the learner waiting for the paper finds this run and follows it.
+  using writer = paper
+    ? await claimRunToken(getMockPaperToken({ goalId: input.goalId, paper }))
+    : null;
 
-  const goals = input.ask ? [input.goalId] : await listExamSupplyGoalsStep(input);
+  const progress = createMockPaperProgress(writer?.conflict === null ? paper : undefined);
 
-  for (const goalId of goals) {
-    // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
-    await prepareGoalSupply({
-      ask: input.ask,
-      goalId,
-      paper: !input.later && goalId === input.goalId ? input.paper : undefined,
-      workflowRunId,
-    });
+  try {
+    if (!(await waitForRunToken(supplyKey(input)))) {
+      throw new Error("The previous mock supply run is still writing.");
+    }
+
+    const goals = input.ask ? [input.goalId] : await listExamSupplyGoalsStep(input);
+
+    for (const goalId of goals) {
+      // oxlint-disable-next-line no-await-in-loop -- Recount after each goal so peers draw on the questions just written.
+      await prepareGoalSupply({
+        ask: input.ask,
+        goalId,
+        paper: !input.later && goalId === input.goalId ? input.paper : undefined,
+        progress,
+        workflowRunId,
+      });
+    }
+  } finally {
+    await progress.end("short");
   }
 }

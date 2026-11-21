@@ -107,6 +107,7 @@
     "./exams/mocks/get": "./src/exams/mocks/get-mock.ts",
     "./exams/mocks/grade-essays": "./src/exams/mocks/grade-mock-essays.ts",
     "./exams/mocks/options": "./src/exams/mocks/get-mock-options.ts",
+    "./exams/mocks/paper-writing": "./src/exams/mocks/mock-paper-writing.ts",
     "./exams/mocks/prep": "./src/exams/mocks/prepare-mock-questions.ts",
     "./exams/mocks/record-play": "./src/exams/mocks/record-mock-play.ts",
     "./exams/mocks/start": "./src/exams/mocks/start-mock.ts",

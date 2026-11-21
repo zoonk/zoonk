@@ -122,3 +122,33 @@ export const mockPlanOfferResultSchema = z
     status: z.enum(["applied", "unchanged"]),
   })
   .meta({ id: "MockPlanOfferResult" });
+
+export const mockWritingQuerySchema = z
+  .object({
+    planItemId: uuidSchema()
+      .optional()
+      .meta({
+        description:
+          "A scheduled mock's plan item, for its paper; without it, the mock the learner last asked to take any time",
+      }),
+  })
+  .meta({ id: "MockWritingQuery" });
+
+export const mockWritingSchema = z
+  .object({
+    generationId: z
+      .string()
+      .min(1)
+      .nullable()
+      .meta({
+        description:
+          "The run writing the paper: stream GET /generations/{generationId}/events, the `mockPaper` steps `writeMockTexts` (only when it writes texts that several questions share), `writeMockQuestions`, `recordMockListening` (only for a paper with recordings), then `mockPaperReady`, or `workflowError` when the paper is still short. Null unless `status` is `writing`",
+      }),
+    status: z
+      .enum(["writing", "starting", "none"])
+      .meta({
+        description:
+          "`writing`: follow `generationId`. `starting`: its run starts in a few seconds; ask again. `none`: nothing is writing it now (the mock is ready, or what was written fell short and the daily preparation goes on with it)",
+      }),
+  })
+  .meta({ id: "MockWriting" });

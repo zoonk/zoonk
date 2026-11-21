@@ -13,6 +13,8 @@ import {
   anytimeMockResponseSchema,
   mockOptionsResponseSchema,
   mockPlanOfferResultSchema,
+  mockWritingQuerySchema,
+  mockWritingSchema,
 } from "../schemas/mocks";
 import { goalPathParamsSchema, mockPathParamsSchema } from "../schemas/paths";
 import { planChangedWhileSavingResponse } from "../schemas/plan-errors";
@@ -36,6 +38,24 @@ const commonErrors = {
 };
 
 export const mockPaths = {
+  "/goals/{goalId}/mock-writing": {
+    get: {
+      description:
+        "The run writing the paper of a mock that is being prepared, for the wait on the mock chooser and on a scheduled mock's intro: the anytime mock the learner last asked to start, or the scheduled one named by `planItemId`. A learner's Start on a mock whose questions aren't ready asks for them, and that run writes the paper first; any wait on the same paper follows it. Ask again every few seconds while `status` is `starting`. Only reads: it never starts a run. Uncached.",
+      operationId: "getMockWriting",
+      requestParams: { path: goalPathParamsSchema, query: mockWritingQuerySchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: mockWritingSchema } },
+          description: "Whether a run is writing the paper",
+        },
+        ...commonErrors,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get the run writing a mock's questions",
+      tags: TAGS,
+    },
+  },
   "/goals/{goalId}/mocks": {
     get: {
       description:
