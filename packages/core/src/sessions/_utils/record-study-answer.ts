@@ -4,6 +4,7 @@ import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
 import { type LearnerAnswer } from "../../learner/record-learner-answer";
 import { type applyDrillRules } from "../../mistakes/drill-answer";
 import { bringBackMissedLessons } from "../../plans/bring-back-missed-lessons";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type StudyAnswerInput } from "../contract";
 import { recordSessionAttempt } from "./record-session-attempt";
 import { refreshAfterPlacementAnswer } from "./refresh-plan";
@@ -67,11 +68,13 @@ export async function recordStudyAnswer({
   }
 
   const { recorded } = claimed;
+  const livingPlanDay = toIsoDate(session.localDate);
 
   if (placement && !recheck && session.goalId) {
     const { changeId } = await applyPlacement({
       followToday: false,
       goalId: session.goalId,
+      livingPlanDay,
       now: new Date(),
       timeZone,
       userId,
@@ -90,6 +93,7 @@ export async function recordStudyAnswer({
   if (recheck && !drilled.isCorrect && session.goalId && item.skillId) {
     await bringBackMissedLessons({
       goalId: session.goalId,
+      livingPlanDay,
       now: new Date(),
       skillIds: [item.skillId],
       timeZone,

@@ -19,7 +19,7 @@ export async function refreshPlanAroundSession({
   }
 
   const { data, error } = await safeAsync(() =>
-    refreshGoalPlan({ goalId, pace, revalidation: "skip" }),
+    refreshGoalPlan({ goalId, keepsOpenUndo: true, pace, revalidation: "skip" }),
   );
 
   if (error) {

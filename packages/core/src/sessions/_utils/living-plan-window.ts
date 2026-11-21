@@ -8,6 +8,7 @@ const closedWindowSchema = z.object({
   at: z.iso.datetime(),
   missedSkillIds: z.array(z.string()),
   result: z.enum(["easy", "steady", "hard"]),
+  sessionDay: z.iso.date().optional(),
   streak: z.int().min(1),
 });
 
@@ -49,10 +50,12 @@ function windowResult(accuracy: number): ClosedLivingPlanWindow["result"] {
 function recordAnswer({
   answer,
   at,
+  sessionDay,
   state,
 }: {
   answer: LessonWindowAnswer;
   at: string;
+  sessionDay?: string;
   state: LivingPlanWindow;
 }): LivingPlanWindow {
   const total = state.total + 1;
@@ -72,7 +75,13 @@ function recordAnswer({
   const streak = state.closed?.result === result ? state.closed.streak + 1 : 1;
 
   return {
-    closed: { at, missedSkillIds: result === "hard" ? missedSkillIds : [], result, streak },
+    closed: {
+      at,
+      missedSkillIds: result === "hard" ? missedSkillIds : [],
+      result,
+      ...(sessionDay && { sessionDay }),
+      streak,
+    },
     correct: 0,
     missedSkillIds: [],
     total: 0,
@@ -82,16 +91,18 @@ function recordAnswer({
 export function recordLivingPlanAnswers({
   answers,
   at,
+  sessionDay,
   stored,
 }: {
   answers: readonly LessonWindowAnswer[];
   at: Date;
+  sessionDay?: string;
   stored: unknown;
 }): LivingPlanWindow {
   const closedAt = at.toISOString();
 
   return answers.reduce(
-    (state, answer) => recordAnswer({ answer, at: closedAt, state }),
+    (state, answer) => recordAnswer({ answer, at: closedAt, sessionDay, state }),
     readLivingPlanWindow(stored),
   );
 }

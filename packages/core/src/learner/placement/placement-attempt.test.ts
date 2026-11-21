@@ -155,7 +155,7 @@ describe("learn placement attempts", () => {
     const now = new Date(Date.now() + 14 * MS_PER_DAY);
     const localDate = getDateInTimeZone({ date: now, timeZone: "UTC" });
 
-    const selected = await loadSessionPlacement({
+    const { placementItemIds: selected } = await loadSessionPlacement({
       context: { goal: current, localDate, now, timeZone: "UTC", userId: user.id },
       isReviewDay: false,
       plan: {
@@ -167,6 +167,7 @@ describe("learn placement attempts", () => {
         skills: goalPlan.skills,
         structure: null,
       },
+      signals: { earlyReviewSkillIds: [], easySkillIds: [], hardRecheckSkillIds: [] },
       used: new Set(),
     });
 

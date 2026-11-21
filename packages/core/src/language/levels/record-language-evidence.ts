@@ -162,6 +162,7 @@ export async function recordLanguageLessonWindow(
     at,
     details,
     language,
+    sessionDay,
     skill,
     userId,
   }: {
@@ -169,6 +170,7 @@ export async function recordLanguageLessonWindow(
     at: Date;
     details: Record<string, unknown>;
     language: string;
+    sessionDay?: string;
     skill: LanguageSkill;
     userId: string;
   },
@@ -183,6 +185,7 @@ export async function recordLanguageLessonWindow(
   const livingPlanWindow = recordLivingPlanAnswers({
     answers,
     at,
+    sessionDay,
     stored: current?.livingPlanWindow,
   });
 

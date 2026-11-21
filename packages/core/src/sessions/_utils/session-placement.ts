@@ -6,7 +6,7 @@ import { type GoalPlan, type GoalSkillNode } from "../../learner/_utils/goal-ski
 import { loadSkippedRecheckSkills } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent, listSkippedRechecks } from "../../learner/_utils/skill-claims";
 import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
-import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
+import { pickSessionChecks } from "../../learner/placement/_utils/session-placement-items";
 import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
 import { readSessionQuestions } from "../../learner/placement/focus-test-summary";
 import {
@@ -19,6 +19,7 @@ import { getPlacementQuickFormat } from "../../learner/placement/placement-quick
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getAreaShares } from "../../plans/_utils/exam-subject-shares";
 import { type PlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
+import { type loadLivingPlanSignals } from "./living-plan-session";
 
 export type SessionDayContext = {
   /** The goal's exam blueprint when a GET already read it; without it, it's read fresh. */
@@ -107,6 +108,7 @@ export async function loadSessionPlacement({
   context,
   isReviewDay,
   plan,
+  signals,
   used,
 }: {
   context: BuildContext;
@@ -120,12 +122,14 @@ export async function loadSessionPlacement({
     skills: GoalSkillNode[];
     structure: ExamStructure | null;
   };
+  signals: Awaited<ReturnType<typeof loadLivingPlanSignals>>;
   used: ReadonlySet<string>;
-}): Promise<string[]> {
+}): Promise<{ placementItemIds: string[]; placementRecheckItemIds: string[] }> {
   const { finalStretchStart, graph, skills, structure } = plan;
+  const empty = { placementItemIds: [], placementRecheckItemIds: [] };
 
   if (skills.length === 0) {
-    return [];
+    return empty;
   }
 
   const skipped = new Set(
@@ -141,18 +145,25 @@ export async function loadSessionPlacement({
   const recheckOnly =
     !asksPlacement(context) || placesNothing({ context, finalStretchStart, isReviewDay });
 
-  const recheckSkillIds = await readRechecks({ context, skillIds });
+  const practiceRechecks = await readRechecks({ context, skillIds });
+  const recheckSkillIds = new Set([...signals.hardRecheckSkillIds, ...practiceRechecks]);
   const followUpSkillIds = new Set(readPlacementAttempt(context.goal).quickFollowUpSkillIds);
 
-  if (recheckOnly && recheckSkillIds.size === 0 && followUpSkillIds.size === 0) {
-    return [];
+  if (
+    recheckOnly &&
+    recheckSkillIds.size === 0 &&
+    followUpSkillIds.size === 0 &&
+    signals.easySkillIds.length === 0
+  ) {
+    return empty;
   }
 
   const settings = parsePlanSettings(plan.settings);
 
-  return pickSessionPlacementItems({
+  return pickSessionChecks({
     areaShares: structure ? getAreaShares({ graph, structure }) : null,
     blueprint: context.blueprint,
+    easySkillIds: signals.easySkillIds,
     excludeItemIds: used,
     focusAreas: settings.focusAreas,
     followUpSkillIds,
