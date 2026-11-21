@@ -152,7 +152,7 @@ fun blockDetail(step: DayStep): String? {
         step.kind == StudyBlock.Kind.PRODUCE -> {
             when (step.writing) {
                 WritingRow.Tomorrow -> gradingReturnsLine(step.writingReturnsOn)
-                WritingRow.Continue -> stringResource(R.string.session_block_writing_draft_saved)
+                WritingRow.DraftSaved -> stringResource(R.string.session_block_writing_draft_saved)
                 null -> if (step.drill) stringResource(R.string.essay_short_exercise_detail) else step.canDo
             }
         }

@@ -7,7 +7,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCapsulesInner
 import com.zoonk.api.models.StudyBlockWritingAvailability
-import com.zoonk.api.models.StudyBlockWritingAvailabilityOneOf
 import com.zoonk.api.models.StudyCheckpoint
 import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudyExtraTime
@@ -66,17 +65,16 @@ data class SessionBar(
     val total: Int,
 )
 
-enum class WritingRow { Continue, Tomorrow }
+enum class WritingRow { DraftSaved, Tomorrow }
 
-private fun StudyBlockWritingAvailability.toWritingRow(): WritingRow? =
-    when (this) {
-        is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOfValue -> {
-            WritingRow.Continue.takeIf { value.status == StudyBlockWritingAvailabilityOneOf.Status.CONTINUE }
-        }
-
-        is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value -> {
-            WritingRow.Tomorrow
-        }
+private fun writingRow(
+    availability: StudyBlockWritingAvailability?,
+    hasWritingDraft: Boolean?,
+): WritingRow? =
+    when {
+        availability is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value -> WritingRow.Tomorrow
+        hasWritingDraft == true -> WritingRow.DraftSaved
+        else -> null
     }
 
 /** The day a written task waiting for tomorrow's grading returns. */
@@ -341,7 +339,7 @@ fun StudyBlock.toDayStep(): DayStep =
         weakest = weakest,
         opensInPlayer = opensInPlayer,
         waitReason = waitReason,
-        writing = writingAvailability?.toWritingRow(),
+        writing = writingRow(writingAvailability, hasWritingDraft),
         writingReturnsOn = writingAvailability?.returnsOn(),
         writingTask = writingTask?.toName(),
         drill = writingUnit == StudyBlock.WritingUnit.DRILL,
@@ -379,7 +377,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         weakest = weakest,
         opensInPlayer = opensInPlayer,
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
-        writing = writingAvailability?.toWritingRow(),
+        writing = writingRow(writingAvailability, hasWritingDraft),
         writingReturnsOn = writingAvailability?.returnsOn(),
         writingTask = writingTask?.toName(),
         drill = writingUnit == UnstartedStudyDayBlocksInner.WritingUnit.DRILL,
