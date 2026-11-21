@@ -205,6 +205,7 @@ export async function loadSessionBuildInput(
     // Written exam tasks must remain practiced even when their topics' lessons do not fit before the test.
     writing.produces ??
       loadSessionProduce({
+        blueprint: context.blueprint,
         goal,
         onDemand: Boolean(writing.scheduledWriting) && !access.includesMockExams,
         planSettings: plan.settings,

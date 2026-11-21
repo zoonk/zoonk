@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 import { daysBetween, fromIsoDate } from "../../../plans/planner/plan-calendar";
@@ -119,6 +119,7 @@ export async function loadWritingPace({
 }
 
 export async function loadSessionProduce({
+  blueprint: knownBlueprint,
   goal,
   onDemand = false,
   planSettings,
@@ -126,6 +127,7 @@ export async function loadSessionProduce({
   today,
   userId,
 }: {
+  blueprint?: ExamBlueprint | null;
   goal: Pick<Goal, "examBlueprintId" | "kind" | "targetDate">;
   onDemand?: boolean;
   planSettings: unknown;
@@ -137,7 +139,10 @@ export async function loadSessionProduce({
     return null;
   }
 
-  const blueprint = await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } });
+  const blueprint =
+    knownBlueprint === undefined
+      ? await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+      : knownBlueprint;
 
   if (!blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
     return null;
