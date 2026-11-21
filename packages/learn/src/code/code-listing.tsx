@@ -283,8 +283,8 @@ const SNIPPET_HANG = 2;
 /**
  * Code inside something the learner presses or reads in one line, such as an answer option: no
  * scroller and no line numbers, each line wrapped with its extra rows indented. Spans, so it fits
- * inside a button or a sentence. As wide as its widest line, so an option's tag sits after its last
- * line when there's room, as it follows an answer's words.
+ * inside a button or a sentence. Its lines are its own children, so an option can lay them out
+ * with its tag.
  */
 export function CodeSnippet({ code, language }: { code: string; language: string | null }) {
   const { snippet } = useSpokenCode();
@@ -299,23 +299,23 @@ export function CodeSnippet({ code, language }: { code: string; language: string
       dir="ltr"
       translate="no"
     >
-      <span aria-hidden="true">
-        {highlightCode(code, language).map((tokens, index) => {
-          const key = `${index}:${codeLineText(tokens)}`;
-
-          return (
-            <span
-              className="block wrap-anywhere whitespace-pre-wrap"
-              key={key}
-              style={wrapIndent(indentOf(tokens) + SNIPPET_HANG)}
-            >
-              <CodeTokens tokens={tokens} />
-            </span>
-          );
-        })}
-      </span>
-
       <span className="sr-only select-none">{snippet(code)}</span>
+
+      {highlightCode(code, language).map((tokens, index) => {
+        const key = `${index}:${codeLineText(tokens)}`;
+
+        return (
+          <span
+            aria-hidden="true"
+            className="block wrap-anywhere whitespace-pre-wrap"
+            data-slot="code-snippet-line"
+            key={key}
+            style={wrapIndent(indentOf(tokens) + SNIPPET_HANG)}
+          >
+            <CodeTokens tokens={tokens} />
+          </span>
+        );
+      })}
     </span>
   );
 }

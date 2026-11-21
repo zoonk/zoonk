@@ -61,6 +61,42 @@ async function chromeNames(role: string): Promise<string[]> {
     .map((node) => String(node.name?.value ?? ""));
 }
 
+/** Picking a code option keeps its tag on its last line at the card's end, with nothing moving. */
+async function expectTagOnLastLineAtEnd(name: string) {
+  const option = page.getByRole("radio", { name });
+  await expect.element(option).toBeVisible();
+
+  const tagRow = () => {
+    const lines = option.element().querySelectorAll("[data-slot='code-snippet-line']");
+    const tags = option.element().querySelectorAll("[data-slot='line-marker']");
+    const last = [...lines].at(-1)?.getBoundingClientRect();
+    const tag = [...tags].at(-1)?.getBoundingClientRect();
+
+    return { height: option.element().getBoundingClientRect().height, last, tag };
+  };
+
+  const before = tagRow();
+
+  expect((before.tag?.top ?? 0) + (before.tag?.height ?? 0) / 2).toBeLessThan(
+    before.last?.bottom ?? 0,
+  );
+
+  await option.click();
+  await expect.element(option.getByText("Your answer")).toBeVisible();
+
+  const after = tagRow();
+  expect(after.height).toBe(before.height);
+  expect(after.tag?.top).toBe(before.tag?.top);
+
+  const words = option.element().querySelector("[data-slot='answer-option-tag']");
+  const row = words?.closest("[data-slot='line-marker']")?.parentElement;
+
+  expect(words?.getBoundingClientRect().right).toBeCloseTo(
+    row?.getBoundingClientRect().right ?? 0,
+    0,
+  );
+}
+
 describe("code in a lesson", () => {
   it("shows a question's program as written and its code options as code, on a phone", async () => {
     await atViewport({ height: 844, width: 390 }, async () => {
@@ -205,7 +241,7 @@ describe("code in a lesson", () => {
     expect(panel.element().getAttribute("tabindex")).toBeNull();
   });
 
-  it("keeps a code option's tag beside its last line, picked or not", async () => {
+  it("keeps a code option's tag on its last line at the card's end, picked or not", async () => {
     await atViewport({ height: 844, width: 390 }, async () => {
       const lesson = buildLesson([
         contentStep("check", {
@@ -214,6 +250,7 @@ describe("code in a lesson", () => {
             options: [
               { id: "one", isCorrect: true, reason: "It prints both.", text: "```\n8 12\n```" },
               { id: "two", isCorrect: false, reason: "One per line.", text: "```\n8\n12\n```" },
+              { id: "wide", isCorrect: false, reason: "No list.", text: fence("js", LONG_LINE) },
             ],
             question: "What does it print?",
           },
@@ -221,32 +258,10 @@ describe("code in a lesson", () => {
       ]);
 
       renderLessonPlayer({ lesson });
-
-      const option = page.getByRole("radio", { name: "Line 1: 8 Line 2: 12" });
-      await expect.element(option).toBeVisible();
-
-      const tagRow = () => {
-        const lines = option.element().querySelectorAll("[data-slot='code-snippet'] > * > *");
-        const tags = option.element().querySelectorAll("[data-slot='line-marker']");
-        const last = [...lines].at(-1)?.getBoundingClientRect();
-        const tag = [...tags].at(-1)?.getBoundingClientRect();
-
-        return { height: option.element().getBoundingClientRect().height, last, tag };
-      };
-
       await document.fonts.ready;
-      const before = tagRow();
 
-      expect((before.tag?.top ?? 0) + (before.tag?.height ?? 0) / 2).toBeLessThan(
-        before.last?.bottom ?? 0,
-      );
-
-      await option.click();
-      await expect.element(option.getByText("Your answer")).toBeVisible();
-
-      const after = tagRow();
-      expect(after.height).toBe(before.height);
-      expect(after.tag?.top).toBe(before.tag?.top);
+      await expectTagOnLastLineAtEnd("Line 1: 8 Line 2: 12");
+      await expectTagOnLastLineAtEnd(`Line 1: ${LONG_LINE[0]} Line 2: ${LONG_LINE[1]}`);
     });
   });
 
