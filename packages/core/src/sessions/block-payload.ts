@@ -81,6 +81,7 @@ const blockPayloadSchema = z.object({
   netScored: z.boolean().default(false),
   /** Unsettled placement questions lead the first week's sessions. */
   placementItemIds: z.array(z.string()).default([]),
+  placementRecheckItemIds: z.array(z.string()).optional(),
   planItemId: z.string().nullable().default(null),
   planItemKey: z.string().nullable().default(null),
   /** Retain the subject when re-planning removes the original plan item. */

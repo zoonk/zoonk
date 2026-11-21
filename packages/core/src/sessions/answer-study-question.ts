@@ -28,14 +28,20 @@ import { shouldSuggestPause } from "./pause-suggestion";
 async function isSkippedRecheck({
   item,
   placement,
+  recheckItemIds,
   session,
 }: {
   item: SessionItem;
   placement: boolean;
+  recheckItemIds: readonly string[] | undefined;
   session: StudySessionRow;
 }): Promise<boolean> {
   if (!placement || !session.goalId || !item.skillId) {
     return false;
+  }
+
+  if (recheckItemIds) {
+    return recheckItemIds.includes(item.id);
   }
 
   const due = await loadSkippedRecheckSkills({
@@ -193,7 +199,12 @@ export async function answerStudyQuestion({
     input,
     item,
     placement,
-    recheck: await isSkippedRecheck({ item, placement, session }),
+    recheck: await isSkippedRecheck({
+      item,
+      placement,
+      recheckItemIds: payload.placementRecheckItemIds,
+      session,
+    }),
     session,
     sessionId,
     userId,

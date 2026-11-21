@@ -72,6 +72,7 @@ export type SessionBuildInput = {
 
   /** First-week placement opens before capsules. */
   placementItemIds: string[];
+  placementRecheckItemIds?: string[];
   freshStart: StudyFreshStart | null;
   lessons: PlannedLesson[];
   fillLessons?: PlannedLesson[];
@@ -112,10 +113,10 @@ function getSessionBudget(input: SessionBuildInput): number {
 
 function buildReviewBlock({
   capsules,
-  input: { placementItemIds, weakestReview = false },
+  input: { placementItemIds, placementRecheckItemIds, weakestReview = false },
 }: {
   capsules: readonly BlockCapsule[];
-  input: Pick<SessionBuildInput, "placementItemIds" | "weakestReview">;
+  input: Pick<SessionBuildInput, "placementItemIds" | "placementRecheckItemIds" | "weakestReview">;
 }): PlannedBlock | null {
   const questions =
     placementItemIds.length + capsules.reduce((sum, capsule) => sum + capsule.itemIds.length, 0);
@@ -132,6 +133,7 @@ function buildReviewBlock({
     payload: toBlockPayload({
       capsules: [...capsules],
       placementItemIds: [...placementItemIds],
+      ...(placementRecheckItemIds && { placementRecheckItemIds }),
       skillIds: capsules.flatMap((capsule) => capsule.skillIds),
       weakest: weakestReview,
     }),

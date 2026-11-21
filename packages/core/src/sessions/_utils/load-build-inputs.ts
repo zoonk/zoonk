@@ -26,6 +26,7 @@ import { findPlannedReview } from "./day-review";
 import { listFittingLessons } from "./day-stretch";
 import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
 import { getExamPrepAccess } from "./exam-access";
+import { loadLivingPlanSignals } from "./living-plan-session";
 import { loadDayPlanLessons } from "./load-plan-lessons";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { getPlanTopics } from "./practice-blocks";
@@ -150,7 +151,18 @@ export async function loadSessionBuildInput(
   const testSkillIds = getPlanTestSkillIds(plan);
 
   const access = getExamPrepAccess({ examPrep: plan.examPrep, goal });
-  const review = toReviewInput({ context, field, netScored, plan });
+
+  const signals = await loadLivingPlanSignals({
+    goal,
+    localDate,
+    plan,
+    timeZone: context.timeZone,
+  });
+
+  const review = {
+    ...toReviewInput({ context, field, netScored, plan }),
+    confirmSkillIds: signals.earlyReviewSkillIds,
+  };
 
   const dayLessons = loadDayPlanLessons({
     dayMinutes,
@@ -264,7 +276,7 @@ export async function loadSessionBuildInput(
     writingMinutes: getDayWritingMinutes({ reservedItems, today: localDate }),
   };
 
-  const work = { context, dueCapsules, isReviewDay, plan, practiceQuery };
+  const work = { context, dueCapsules, isReviewDay, plan, practiceQuery, signals };
 
   return loadHeldDayInput({
     checkpoints,
