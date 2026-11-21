@@ -10407,7 +10407,7 @@ msgstr "{count, plural, one {Tienes tiempo para # lección más} other {Tienes t
 #: src/plan/use-operation-question.ts
 msgctxt "pt_Ckx"
 msgid "Study exam strategy too?"
-msgstr ""
+msgstr "¿Estudiar también estrategias para el examen?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -11006,7 +11006,7 @@ msgstr "¿Estudiar hasta {level}?"
 #: src/plan/use-operation-question.ts
 msgctxt "1zOEec"
 msgid "Take exam strategy out of your plan?"
-msgstr ""
+msgstr "¿Quitar la estrategia para el examen de tu plan?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11184,12 +11184,12 @@ msgstr "Las fechas de tus fases cambiaron."
 #: src/plan/use-operation-statement.ts
 msgctxt "ydxIUz"
 msgid "Exam strategy added to your plan."
-msgstr ""
+msgstr "La estrategia para el examen se agregó a tu plan."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "OWcZlN"
 msgid "Exam strategy isn't in your plan."
-msgstr ""
+msgstr "La estrategia para el examen no está en tu plan."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -13028,7 +13028,7 @@ msgstr "Aún no está listo"
 #: src/syllabus/use-extra-label.ts
 msgctxt "s2GuyF"
 msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {No está en la convocatoria} other {No está en la guía oficial}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13320,7 +13320,7 @@ msgstr "Practicar con {name}"
 #: src/today/today-notice-followed.tsx
 msgctxt "YQdum0"
 msgid "Out of your plan: {names}"
-msgstr ""
+msgstr "Fuera de tu plan: {names}"
 
 #: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
@@ -13332,7 +13332,7 @@ msgstr "Ver la siguiente sugerencia"
 #: src/today/today-notice-followed.tsx
 msgctxt "J2u8IN"
 msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {Tu plan ahora sigue la convocatoria} other {Tu plan ahora sigue la guía oficial}}"
 
 #: src/today/today-plan-change.tsx
 msgctxt "BxNBZP"

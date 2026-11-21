@@ -10407,7 +10407,7 @@ msgstr "{count, plural, one {Hai tempo per # lezione in più} other {Hai tempo p
 #: src/plan/use-operation-question.ts
 msgctxt "pt_Ckx"
 msgid "Study exam strategy too?"
-msgstr ""
+msgstr "Vuoi studiare anche la strategia d’esame?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -11006,7 +11006,7 @@ msgstr "Studiare fino al livello {level}?"
 #: src/plan/use-operation-question.ts
 msgctxt "1zOEec"
 msgid "Take exam strategy out of your plan?"
-msgstr ""
+msgstr "Vuoi togliere la strategia d’esame dal tuo piano?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11184,12 +11184,12 @@ msgstr "Le date delle fasi cambiano."
 #: src/plan/use-operation-statement.ts
 msgctxt "ydxIUz"
 msgid "Exam strategy added to your plan."
-msgstr ""
+msgstr "La strategia d’esame è stata aggiunta al tuo piano."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "OWcZlN"
 msgid "Exam strategy isn't in your plan."
-msgstr ""
+msgstr "La strategia d’esame non è nel tuo piano."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -13028,7 +13028,7 @@ msgstr "Non ancora disponibile"
 #: src/syllabus/use-extra-label.ts
 msgctxt "s2GuyF"
 msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {Non previsto dal bando ufficiale} other {Non previsto dalla guida ufficiale}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13320,7 +13320,7 @@ msgstr "Esercitati con {name}"
 #: src/today/today-notice-followed.tsx
 msgctxt "YQdum0"
 msgid "Out of your plan: {names}"
-msgstr ""
+msgstr "Fuori dal tuo piano: {names}"
 
 #: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
@@ -13332,7 +13332,7 @@ msgstr "Vedi il prossimo suggerimento"
 #: src/today/today-notice-followed.tsx
 msgctxt "J2u8IN"
 msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {Ora il tuo piano segue il bando ufficiale} other {Ora il tuo piano segue la guida ufficiale}}"
 
 #: src/today/today-plan-change.tsx
 msgctxt "BxNBZP"

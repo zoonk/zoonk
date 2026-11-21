@@ -10407,7 +10407,7 @@ msgstr "{count, plural, other {あと#レッスン分の時間があります}}"
 #: src/plan/use-operation-question.ts
 msgctxt "pt_Ckx"
 msgid "Study exam strategy too?"
-msgstr ""
+msgstr "試験対策も学習しますか？"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -11006,7 +11006,7 @@ msgstr "{level}まで学びますか？"
 #: src/plan/use-operation-question.ts
 msgctxt "1zOEec"
 msgid "Take exam strategy out of your plan?"
-msgstr ""
+msgstr "学習計画から試験対策を外しますか？"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11184,12 +11184,12 @@ msgstr "各フェーズの日程を変更しました。"
 #: src/plan/use-operation-statement.ts
 msgctxt "ydxIUz"
 msgid "Exam strategy added to your plan."
-msgstr ""
+msgstr "試験対策を学習計画に追加しました。"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "OWcZlN"
 msgid "Exam strategy isn't in your plan."
-msgstr ""
+msgstr "試験対策は学習計画に含まれていません。"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -13028,7 +13028,7 @@ msgstr "まだ準備できていません"
 #: src/syllabus/use-extra-label.ts
 msgctxt "s2GuyF"
 msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {公式要項に含まれていない} other {公式ガイドに含まれていない}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13320,7 +13320,7 @@ msgstr "{name}と練習する"
 #: src/today/today-notice-followed.tsx
 msgctxt "YQdum0"
 msgid "Out of your plan: {names}"
-msgstr ""
+msgstr "学習計画から外れた項目：{names}"
 
 #: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
@@ -13332,7 +13332,7 @@ msgstr "次の提案"
 #: src/today/today-notice-followed.tsx
 msgctxt "J2u8IN"
 msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {学習計画が公式要項に沿った内容になりました} other {学習計画が公式ガイドに沿った内容になりました}}"
 
 #: src/today/today-plan-change.tsx
 msgctxt "BxNBZP"

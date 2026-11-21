@@ -10407,7 +10407,7 @@ msgstr "{count, plural, other {레슨 #개를 더 할 시간이 있어요}}"
 #: src/plan/use-operation-question.ts
 msgctxt "pt_Ckx"
 msgid "Study exam strategy too?"
-msgstr ""
+msgstr "시험 전략도 공부할까요?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -11006,7 +11006,7 @@ msgstr "{level}까지 공부할까요?"
 #: src/plan/use-operation-question.ts
 msgctxt "1zOEec"
 msgid "Take exam strategy out of your plan?"
-msgstr ""
+msgstr "계획에서 시험 전략을 뺄까요?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11184,12 +11184,12 @@ msgstr "단계별 일정이 바뀌어요."
 #: src/plan/use-operation-statement.ts
 msgctxt "ydxIUz"
 msgid "Exam strategy added to your plan."
-msgstr ""
+msgstr "시험 전략이 계획에 추가됐어요."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "OWcZlN"
 msgid "Exam strategy isn't in your plan."
-msgstr ""
+msgstr "시험 전략은 계획에 없어요."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -13028,7 +13028,7 @@ msgstr "아직 준비되지 않음"
 #: src/syllabus/use-extra-label.ts
 msgctxt "s2GuyF"
 msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {공식 공고에 없는 내용} other {공식 안내서에 없는 내용}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13320,7 +13320,7 @@ msgstr "{name}하고 연습하기"
 #: src/today/today-notice-followed.tsx
 msgctxt "YQdum0"
 msgid "Out of your plan: {names}"
-msgstr ""
+msgstr "계획에서 제외: {names}"
 
 #: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
@@ -13332,7 +13332,7 @@ msgstr "다음 제안"
 #: src/today/today-notice-followed.tsx
 msgctxt "J2u8IN"
 msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {계획이 이제 공식 공고를 따르고 있어요} other {계획이 이제 공식 안내서를 따르고 있어요}}"
 
 #: src/today/today-plan-change.tsx
 msgctxt "BxNBZP"

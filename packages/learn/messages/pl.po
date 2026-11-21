@@ -10407,7 +10407,7 @@ msgstr "{count, plural, one {Masz czas na jeszcze # lekcję} few {Masz czas na j
 #: src/plan/use-operation-question.ts
 msgctxt "pt_Ckx"
 msgid "Study exam strategy too?"
-msgstr ""
+msgstr "Dodać też naukę strategii egzaminacyjnych?"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -11006,7 +11006,7 @@ msgstr "Uczyć się do poziomu: {level}?"
 #: src/plan/use-operation-question.ts
 msgctxt "1zOEec"
 msgid "Take exam strategy out of your plan?"
-msgstr ""
+msgstr "Usunąć naukę strategii egzaminacyjnych z planu?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "ZmtKF9"
@@ -11184,12 +11184,12 @@ msgstr "Przesunięto terminy etapów."
 #: src/plan/use-operation-statement.ts
 msgctxt "ydxIUz"
 msgid "Exam strategy added to your plan."
-msgstr ""
+msgstr "Nauka strategii egzaminacyjnych dodana do planu."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "OWcZlN"
 msgid "Exam strategy isn't in your plan."
-msgstr ""
+msgstr "Nauki strategii egzaminacyjnych nie ma w planie."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -13028,7 +13028,7 @@ msgstr "Jeszcze niegotowe"
 #: src/syllabus/use-extra-label.ts
 msgctxt "s2GuyF"
 msgid "{document, select, notice {Not in the official guide} other {Not in the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {Poza oficjalnym ogłoszeniem} other {Poza oficjalnym informatorem}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
@@ -13320,7 +13320,7 @@ msgstr "Ćwicz z: {name}"
 #: src/today/today-notice-followed.tsx
 msgctxt "YQdum0"
 msgid "Out of your plan: {names}"
-msgstr ""
+msgstr "Poza planem: {names}"
 
 #: src/today/today-notice-followed.tsx
 #: src/today/today-plan-change.tsx
@@ -13332,7 +13332,7 @@ msgstr "Pokaż kolejną propozycję"
 #: src/today/today-notice-followed.tsx
 msgctxt "J2u8IN"
 msgid "{document, select, notice {Your plan now follows the official guide} other {Your plan now follows the official guide}}"
-msgstr ""
+msgstr "{document, select, notice {Plan jest teraz zgodny z oficjalnym ogłoszeniem} other {Plan jest teraz zgodny z oficjalnym informatorem}}"
 
 #: src/today/today-plan-change.tsx
 msgctxt "BxNBZP"
