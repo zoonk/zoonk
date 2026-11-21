@@ -29,7 +29,7 @@
   "tutor_description_plan": "14ca0507bdeb78c6504e10a942569807101ee78c22c85e61fce9e478a4ee773c",
   "tutor_description_step": "ecef043f75bebe9d44c476607ec67e3fde970ff268754177968954dbbe19266e",
   "tutor_description_subject": "e5dca42293f0417e143bbb117363459c6ab24625ff9a3385275ae953eafa19f6",
-  "tutor_empty_ai": "abe3e7a11ee09ba70f68b65f4ede3409db97390d746b64e393137cc55017fdfb",
+  "tutor_empty_ai": "8da5ddb67bb6351f19d8bf57db0f887804227b75153bd4a928372887ee3a04fd",
   "tutor_empty_title": "dd3526a21f337522457c5347771919e5f0663c822a7f6ec26dd9867abd57f2a4",
   "tutor_error_failed": "169f7825a73ddd4a981f9de847b66d9d5f19072b683b45c171698b472eb5027e",
   "tutor_error_gone": "f0de231e2413933b105e8d6b8139e1322623f394a040698db6eec6b516ab8927",
@@ -72,7 +72,7 @@
   "tutor_offer_logbook_description": "4626c106fd6cc689f8f8695dd62a7605ad760e712cd2d51fab4a9f430d0d0d9d",
   "tutor_offer_manage": "dffa2e5a712f91f10cff1609989ceeacfc467bae22637dcc465cf5448d941c65",
   "tutor_offer_memory": "155213c0a47f41d8bdf42c5ccc4226b3db62362bf7f8877089d6b6c03f46135f",
-  "tutor_offer_memory_description": "1c2501d63c78b846320eb4e2fd973f7268b5a6a2200752d706e06c1e2d04a4fb",
+  "tutor_offer_memory_description": "3c0c0a9c7ebc39a18a4d4ddd3fb9b786c9b43f4e3f5c0b59c7a14948f2cc726f",
   "tutor_offer_mistakes": "442bb23d36523b5fa8fd40f5cca2af2e593d21f75c6752011dca6498ef4ddd62",
   "tutor_offer_mistakes_open": "ad96ff5dcef0c26365c022a5793e5f5f45cb74e70303aca89143df5a035a21ae",
   "tutor_offer_mock": "76cfdda71965fcc0f599d7ae23aa66fcf9427ee5ca04c5aa2ba4eb84d0359917",
@@ -91,7 +91,7 @@
   "tutor_offer_stats_description": "729332722ee02bec16b116241185735b2196c63bb7fcc357410f9aa60d2cfef5",
   "tutor_offer_take_test": "c0d6160fc6ba8699cc58cd55182719fdbde99cc0c57db8115808f755b9782288",
   "tutor_offer_variety_applied": "19f2c8229d43d93b9ba1a7fe87029a8a6b8d077415694169dd22d324b2ea51f4",
-  "tutor_offer_variety_description": "25192e4a25452ae11dc2d8fb2688f8441900858e20af79d5f50996ce61ce4737",
+  "tutor_offer_variety_description": "1fd4f62255a67886f26f94663c5629066abfa516b5be1deababc7b03c5fa2333",
   "tutor_page_sign_up": "e2f8164302daa3532c14e17a33ab0989ad4925027500920c376f4a01ac5fef1f",
   "tutor_placeholder_answer": "5892b89ebce44a8dcf35e80f9dba2f0f22eec0dfe1cfd4578970ec8c9998597d",
   "tutor_placeholder_chapter": "b5f1c43f6cb20f825c759a4ce62de3de9818bcc043dfeb831d8f85b02b09f4e5",
@@ -125,12 +125,12 @@
   "tutor_today": "b035bf1c59b5b2f95d6af2cb0feb76cee50e2a3149aac8bd539da400d0fa0d55",
   "tutor_try_again": "36f7d6fa69c3fdd7862bd37ec7675e16c3b788e45d2a6f19863078d1503ddb29",
   "tutor_yesterday": "5da1c03001493e90945c539c4484a6f60ff984c8443e61e6e08440a00bbc9902",
-  "tutor_your_buddy": "0186bf3bafa76fb10a40b960468c2feccfd3e709558a73e234b735bae4da548a"
+  "tutor_your_buddy": "f4394b33bcafb52bc1ff2b2e65b0cfb27eb100194ee8668a9cfecc56c161efe5"
 }
 -->
 <resources>
     <!-- Before the buddy is known. -->
-    <string name="tutor_your_buddy">Ton compagnon</string>
+    <string name="tutor_your_buddy">Ton binôme</string>
     <string name="tutor_ask">Demander à %1$s</string>
     <!-- The button that opens the buddy's chat before the buddy's name is known. -->
     <string name="tutor_ask_for_help">Demander de l’aide</string>
@@ -160,7 +160,7 @@
     <string name="tutor_about_question">À propos de cette question</string>
     <string name="tutor_empty_title">Sur quoi aimerais-tu de l’aide ?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="tutor_empty_ai">%1$s est un compagnon d’étude basé sur l’IA et peut faire des erreurs.</string>
+    <string name="tutor_empty_ai">%1$s est un binôme d’étude doté d’une IA et peut faire des erreurs.</string>
     <string name="tutor_guest_title">Crée un compte gratuit pour poser des questions</string>
     <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
     <string name="tutor_loading">Chargement de la conversation…</string>
@@ -258,11 +258,11 @@
     <!-- Describes the Logbook: what the learner did this week compared with the week before, and what comes next. -->
     <string name="tutor_offer_logbook_description">Ton activité cette semaine par rapport à la précédente, et ce qui t’attend ensuite.</string>
     <string name="tutor_offer_memory">Mémoire</string>
-    <string name="tutor_offer_memory_description">Consulte, corrige ou supprime ce que ton compagnon retient de toi.</string>
+    <string name="tutor_offer_memory_description">Consulte, corrige ou supprime ce que ton binôme retient sur toi.</string>
     <string name="tutor_offer_stats">Statistiques</string>
     <string name="tutor_offer_stats_description">Énergie, ceinture, bonnes réponses et moments où tu étudies le mieux.</string>
     <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
-    <string name="tutor_offer_variety_description">Ton compagnon et tes appels d’entraînement utilisent %1$s.</string>
+    <string name="tutor_offer_variety_description">Ton binôme et tes appels d’entraînement utilisent %1$s.</string>
     <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
     <string name="tutor_offer_variety_applied">Enregistré. Tu peux modifier ce choix dans ton plan.</string>
     <string name="tutor_offer_plus">Abonnement</string>

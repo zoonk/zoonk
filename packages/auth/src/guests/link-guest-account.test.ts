@@ -96,6 +96,35 @@ describe(linkGuestAccount, () => {
     await expect(readMarks({ goalIds })).resolves.toStrictEqual(linked);
   });
 
+  it("carries a guest's daily summary visits across signup and keeps the account's on collision", async () => {
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+    ]);
+
+    const firstDay = new Date("2026-11-19T00:00:00Z");
+    const nextDay = new Date("2026-11-20T00:00:00Z");
+    const accountVisit = { localDate: firstDay, userId: accountId, visitId: randomUUID() };
+    const guestVisit = { localDate: nextDay, userId: guestId, visitId: randomUUID() };
+
+    await prisma.studySummaryVisit.createMany({
+      data: [
+        accountVisit,
+        { localDate: firstDay, userId: guestId, visitId: randomUUID() },
+        guestVisit,
+      ],
+    });
+
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
+
+    await expect(
+      prisma.studySummaryVisit.findMany({
+        orderBy: { localDate: "asc" },
+        where: { userId: { in: [accountId, guestId] } },
+      }),
+    ).resolves.toStrictEqual([accountVisit, { ...guestVisit, userId: accountId }]);
+  });
+
   it("marks the account before it takes any lock of its own rows", async () => {
     const { accountId, guestId } = await createLearnersWithPlans();
 

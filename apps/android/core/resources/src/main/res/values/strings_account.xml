@@ -24,7 +24,7 @@
     <string name="account_send_again">Send again</string>
     <string name="account_change_email">Change email</string>
     <!-- %1$s is an email address. -->
-    <string name="account_new_code_sent">We sent a new code to %1$s.</string>
+    <string name="account_new_code_sent">We emailed %1$s again.</string>
     <string name="account_new_code_wait">Wait a minute before asking for another code.</string>
     <string name="account_new_code_failed">We couldn\'t send a new code. Try again.</string>
     <string name="account_failure_invalid_email">Enter a valid email address</string>

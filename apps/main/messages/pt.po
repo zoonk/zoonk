@@ -99,6 +99,8 @@ msgid "Keyboard shortcuts"
 msgstr "Atalhos de teclado"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(settings)/_components/follow-us.tsx
+#: src/components/public/public-footer.tsx
 msgctxt "tv5FG3"
 msgid "Blog"
 msgstr "Blog"
@@ -231,7 +233,7 @@ msgstr "Plano"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "1L2nnA"
 msgid "Buddy"
-msgstr "Parceiro"
+msgstr "Colega"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -854,12 +856,12 @@ msgstr "Perguntas mais antigas"
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
-msgstr "Seu parceiro"
+msgstr "Seu colega"
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
-msgstr "Seu parceiro responde às suas perguntas e ajusta seu plano."
+msgstr "Seu colega responde às suas perguntas e ajusta seu plano."
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "BV0cQk"
@@ -1082,6 +1084,12 @@ msgctxt "9m9h0p"
 msgid "Start a course"
 msgstr "Começar um curso"
 
+#. Under the level question when a course's language isn't the app's. Both placeholders are language names, as they're written mid-sentence
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+msgctxt "qHRoxo"
+msgid "This course is in {courseLanguage}. Your lessons will be in {language}."
+msgstr "Este curso está em {courseLanguage}. Suas aulas serão em {language}."
+
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 #: src/components/pricing/plus-pricing.tsx
@@ -1294,7 +1302,7 @@ msgstr "Salvar"
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "40quiV"
 msgid "Your answers shape your examples and your buddy. Everything is optional."
-msgstr "Suas respostas ajudam a personalizar seus exemplos e seu parceiro. Tudo é opcional."
+msgstr "Suas respostas ajudam a personalizar seus exemplos e seu colega. Tudo é opcional."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "uOIiKt"
@@ -3099,7 +3107,7 @@ msgstr "Simulados com tempo de prova real"
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "qYv-RO"
 msgid "An AI study buddy whenever you're stuck"
-msgstr "Um parceiro de estudos com IA para quando você precisar de ajuda"
+msgstr "Um colega de estudos com IA para quando você precisar de ajuda"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "K8v_UD"
@@ -3240,7 +3248,7 @@ msgstr "O Plus é mesmo ilimitado?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "gX3xv3"
 msgid "For normal study, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking practice calls have daily and monthly limits, higher than on Free. <link>Read our fair use policy</link>."
-msgstr "Para quem está estudando, sim. As aulas, os objetivos e o parceiro de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas de prática têm limites diários e mensais, maiores que no Grátis. <link>Leia nossa política de uso justo</link>."
+msgstr "Para quem está estudando, sim. As aulas, os objetivos e o colega de estudos com IA só têm limites para impedir o uso por robôs e ferramentas automatizadas. As conversas de prática têm limites diários e mensais, maiores que no Grátis. <link>Leia nossa política de uso justo</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
@@ -3266,22 +3274,22 @@ msgstr "<link>Escreva para a gente</link> e a gente analisa seu caso. As compras
 #: src/components/pricing/study-buddy-allowance.ts
 msgctxt "LKY79v"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
-msgstr "Um parceiro de estudos com IA: {count, plural, one {# mensagem} other {# mensagens}} por dia, até {month} por mês"
+msgstr "Um colega de estudos com IA: {count, plural, one {# mensagem} other {# mensagens}} por dia, até {month} por mês"
 
 #: src/components/pricing/study-buddy-allowance.ts
 msgctxt "5ZDN6U"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Um parceiro de estudos com IA: {count, plural, one {# mensagem} other {# mensagens}} por dia"
+msgstr "Um colega de estudos com IA: {count, plural, one {# mensagem} other {# mensagens}} por dia"
 
 #: src/components/pricing/study-buddy-allowance.ts
 msgctxt "K2QNT9"
 msgid "An AI study buddy: up to {month, plural, one {# message} other {# messages}} a month"
-msgstr "Um parceiro de estudos com IA: até {month, plural, one {# mensagem} other {# mensagens}} por mês"
+msgstr "Um colega de estudos com IA: até {month, plural, one {# mensagem} other {# mensagens}} por mês"
 
 #: src/components/pricing/study-buddy-allowance.ts
 msgctxt "y1mZxN"
 msgid "An AI study buddy"
-msgstr "Um parceiro de estudos com IA"
+msgstr "Um colega de estudos com IA"
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "iB3ixY"

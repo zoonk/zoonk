@@ -3,10 +3,11 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { HARNESS } from "./harness.mjs";
 import { pinStoryClock } from "./story-clock.mjs";
 
 const [lang, dpr = "3", step = "2"] = process.argv.slice(2);
-const view = `http://localhost:5199/?view=goal-entry&lang=${lang}`;
+const view = `${HARNESS}/?view=goal-entry&lang=${lang}`;
 const out = fileURLToPath(new URL(`../assets/real/${lang}/seq/typing/`, import.meta.url));
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });

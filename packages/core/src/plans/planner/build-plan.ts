@@ -274,7 +274,7 @@ function planGoal({
       : [toKeptItem({ input, item, units: unitsByKey, windows: days.windows })],
   );
 
-  const setAside = setAsideLeftWork({ input, placed: [...kept, ...units], yielded });
+  const setAside = setAsideLeftWork({ input, placed: [...kept, ...units], queue, yielded });
 
   const merged = mergePlanItems({
     events: spare.events,

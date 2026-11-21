@@ -40,7 +40,7 @@ async function setup() {
 }
 
 describe("the day's lesson reservation", () => {
-  it("keeps a day open after every written block finishes, including when its outline goes stale", async () => {
+  it("keeps a day open after every written block finishes, and asks for its lessons once its outline goes stale", async () => {
     const { course, goal, user } = await setup();
     const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
     const sessionId = opened.today.session.id;
@@ -80,7 +80,7 @@ describe("the day's lesson reservation", () => {
           lessonsComing: false,
           lessonsToPrepare: true,
           minutes: { left: 24 },
-          state: "waiting",
+          state: "prepare",
         },
       },
     });

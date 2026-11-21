@@ -84,7 +84,7 @@ struct TutorPanel: View {
   }
 
   private func quoteLine(_ question: String) -> String {
-    if case .item(_, _, true, _, _) = scope {
+    if case .item(_, _, true, _) = scope {
       return String(
         localized: "About your answer to “\(question)”", table: "Tutor",
         comment: "The checked practice question the panel is about")
@@ -102,38 +102,26 @@ struct TutorAskToolbarItem: ToolbarContent {
   var body: some ToolbarContent {
     ToolbarItem(placement: .primaryAction) {
       TutorAskButton(scope: scope)
+        .buttonStyle(.outline)
     }
   }
 }
 
-/// After a missed answer it says the buddy's name, when asking helps most.
+/// Styled where it sits: `tutorAskIcon()` in a task's bar.
 struct TutorAskButton: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var summary
 
   let scope: TutorScope
   var quote: String?
-  var iconOnly = false
 
   var body: some View {
     // The router presents the panel over the screen: the button can sit in a pane or a bar that a
     // resize draws again, and the panel stays.
-    let button = Button {
+    Button {
       router.present(.tutor(scope, quote: quote))
     } label: {
       TutorAskLabel()
-    }
-
-    Group {
-      // Beside a question's Check it's the buddy's face alone, so the bar keeps room for its
-      // actions, until a miss, as main's bar does.
-      if iconOnly {
-        button.tutorAskIcon()
-      } else if case .item(_, _, _, missed: false, mistakeId: _) = scope {
-        button.tutorAskIcon()
-      } else {
-        button.buttonStyle(.outline)
-      }
     }
     .accessibilityLabel(Text(scope.askLabel(summary.buddyDisplayName)))
   }
@@ -156,8 +144,8 @@ struct TutorAskLabel: View {
 }
 
 extension View {
-  /// The ask-the-buddy button beside a screen's main action: main's 44pt outline square with the
-  /// buddy's face, as tall as the action beside it.
+  /// The ask-the-buddy button after a task's main action: main's 44pt outline square with the
+  /// buddy's face, as tall as the action beside it, at every size.
   func tutorAskIcon() -> some View {
     labelStyle(.iconOnly)
       .buttonStyle(.outline.icon)

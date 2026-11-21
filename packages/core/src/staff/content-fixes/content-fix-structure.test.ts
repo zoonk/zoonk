@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
   courseChapterFixture,
   libraryChapterFixture,
@@ -11,7 +12,9 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { linkResolvedCourseEdition } from "../../library/curriculum/link-resolved-course-edition";
 import {
   approve,
   proposeFix,
@@ -34,6 +37,107 @@ async function apply(changes: object[]) {
 }
 
 describe("staff curriculum collections", () => {
+  it("links two published courses as editions and can undo the link", async () => {
+    const [source, edition] = await Promise.all([
+      courseFixture({ isPublished: true }),
+      courseFixture({ isPublished: true, language: "pt" }),
+    ]);
+
+    const fix = await apply([{ id: source.id, linkEdition: edition.id, model: "Course" }]);
+    const linked = await prisma.course.findUniqueOrThrow({ where: { id: source.id } });
+
+    expect(linked.familyId).toBeTruthy();
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: edition.id } }),
+    ).resolves.toMatchObject({ familyId: linked.familyId });
+
+    await signInProposer();
+
+    const inverse = await revertFix({
+      fixId: fix.id,
+      reason: "These courses cover different topics.",
+    });
+
+    if (inverse.status !== "proposed") {
+      throw new Error(JSON.stringify(inverse));
+    }
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.course.count({ where: { familyId: null, id: { in: [source.id, edition.id] } } }),
+    ).resolves.toBe(2);
+  });
+
+  it.each([
+    { isPublished: false },
+    { language: "en-GB" },
+    { format: "exam" as const },
+    { targetLanguage: "es" },
+    { visibility: "private" as const },
+  ])("refuses an incompatible course edition: %j", async (attrs) => {
+    const [source, edition] = await Promise.all([
+      courseFixture({ isPublished: true }),
+      courseFixture({ isPublished: true, language: "pt", ...attrs }),
+    ]);
+
+    await signInProposer();
+
+    await expect(
+      proposeContentFix({
+        changes: [{ id: source.id, linkEdition: edition.id, model: "Course" }],
+        reason: "Link editions.",
+      }),
+    ).resolves.toMatchObject({ status: "invalid" });
+  });
+
+  it("refuses to merge existing course families", async () => {
+    const [first, second] = await Promise.all([
+      prisma.courseFamily.create({ data: {} }),
+      prisma.courseFamily.create({ data: {} }),
+    ]);
+
+    const [source, edition] = await Promise.all([
+      courseFixture({ familyId: first.id, isPublished: true }),
+      courseFixture({ familyId: second.id, isPublished: true, language: "pt" }),
+    ]);
+
+    await signInProposer();
+
+    await expect(
+      proposeContentFix({
+        changes: [{ id: source.id, linkEdition: edition.id, model: "Course" }],
+        reason: "Link editions.",
+      }),
+    ).resolves.toMatchObject({
+      message: expect.stringContaining("different families"),
+      status: "invalid",
+    });
+  });
+
+  it("refuses to link a course that has an owner", async () => {
+    const [source, owner] = await Promise.all([
+      courseFixture({ isPublished: true }),
+      userFixture(),
+    ]);
+
+    const edition = await courseFixture({ isPublished: true, language: "pt", userId: owner.id });
+
+    await signInProposer();
+
+    await expect(
+      proposeContentFix({
+        changes: [{ id: source.id, linkEdition: edition.id, model: "Course" }],
+        reason: "Link editions.",
+      }),
+    ).resolves.toMatchObject({ message: expect.stringContaining("ownerless"), status: "invalid" });
+  });
+
   it("reorders lessons, keeps addresses, and reverts the collection", async () => {
     const chapter = await libraryChapterFixture();
     const first = await libraryLessonFixture({ homeChapterId: chapter.id });
@@ -259,5 +363,80 @@ describe("shared plan graphs", () => {
     await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
       fix: { status: "applied" },
     });
+  });
+
+  it("refuses a second edition in the same content language", async () => {
+    const family = await prisma.courseFamily.create({ data: {} });
+
+    const [source, extra] = await Promise.all([
+      courseFixture({ familyId: family.id, isPublished: true }),
+      courseFixture({ isPublished: true, language: "pt-BR" }),
+    ]);
+
+    const changes = [{ id: source.id, linkEdition: extra.id, model: "Course" }];
+    await signInProposer();
+    const pending = await proposeFix({ changes, reason: "Link the new edition." });
+    await courseFixture({ familyId: family.id, isPublished: true, language: "pt" });
+
+    await expect(
+      proposeContentFix({ changes, reason: "Link the new edition." }),
+    ).resolves.toMatchObject({ status: "invalid" });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: pending.id, key })).resolves.toMatchObject({
+      fix: { status: "stale" },
+    });
+  });
+
+  it("keeps a detached edition separate when it was linked through another family member", async () => {
+    const [family, user] = await Promise.all([
+      prisma.courseFamily.create({ data: {} }),
+      userFixture(),
+    ]);
+
+    const [anchor, source, edition] = await Promise.all([
+      courseFixture({ familyId: family.id, isPublished: true }),
+      courseFixture({ familyId: family.id, isPublished: true, language: "es" }),
+      courseFixture({ isPublished: true, language: "pt" }),
+    ]);
+
+    async function candidate(originId: string, course: { id: string; language: string }) {
+      const goal = await goalFixture({
+        language: course.language,
+        primaryCourseId: course.id,
+        sourceCourseId: originId,
+        userId: user.id,
+      });
+
+      return planFixture({
+        goalId: goal.id,
+        graph: {
+          editionCandidate: true,
+          skills: [
+            { courseIds: [course.id], lessons: 1, name: "Study", phase: 0, skillId: randomUUID() },
+          ],
+        },
+      });
+    }
+
+    await candidate(source.id, edition);
+    await linkResolvedCourseEdition({ courseId: edition.id });
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: edition.id } }),
+    ).resolves.toMatchObject({ familyId: family.id });
+
+    const retained = await candidate(source.id, anchor);
+    await apply([{ id: anchor.id, model: "Course", unlinkEdition: edition.id }]);
+    await linkResolvedCourseEdition({ courseId: edition.id });
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: edition.id } }),
+    ).resolves.toMatchObject({ familyId: null });
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: retained.id } }),
+    ).resolves.toHaveProperty("graph.editionCandidate", true);
   });
 });

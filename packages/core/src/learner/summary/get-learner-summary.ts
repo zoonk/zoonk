@@ -5,6 +5,7 @@ import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getActiveSubscription } from "../../auth/subscription";
 import {
+  COURSE_LIST_CACHE_TAG,
   getGoalsCacheTag,
   getLearnerModelCacheTag,
   getLearningProfileCacheTag,
@@ -13,6 +14,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
+import { getCourseGoalIds } from "../../goals/_utils/find-course-goal";
 import { followsCourse } from "../../goals/_utils/follows-course";
 import { loadGoalCountryViews } from "../../goals/_utils/goal-country-views";
 import { getGoalLanguageFlag } from "../../goals/_utils/goal-language-flag";
@@ -61,7 +63,9 @@ async function toSummaryGoals({
   activeGoalId,
   countries,
   phaseFacts,
+  courseStarts,
 }: {
+  courseStarts: Map<string, string>;
   activeGoalId: string | null;
   countries: Awaited<ReturnType<typeof loadGoalCountryViews>>;
   phaseFacts: readonly PlanPhaseFacts[];
@@ -111,6 +115,9 @@ async function toSummaryGoals({
           language: goal.language,
           languageFlag: getGoalLanguageFlag(goal),
           regionChoices: getGoalRegionChoices(goal),
+          startCourseIds: [...courseStarts]
+            .filter(([, goalId]) => goalId === goal.id)
+            .map(([id]) => id),
           status: goal.status,
           targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
           targetDateEstimated: dateKind.estimated,
@@ -218,6 +225,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const isAnonymous = Boolean(session.user.isAnonymous);
 
   cacheTag(
+    COURSE_LIST_CACHE_TAG,
     getUserSessionCacheTag(userId),
     getGoalsCacheTag(userId),
     getLearningProfileCacheTag(userId),
@@ -237,24 +245,26 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
 
   const now = await getRequestInstant();
 
-  const [profile, goals, subscription, sessions, phaseFacts, facts] = await Promise.all([
-    readLearningProfile(userId),
-    prisma.goal.findMany({ orderBy: { createdAt: "asc" }, where: { userId } }),
-    isAnonymous ? null : getActiveSubscription(),
-    prisma.studySession.findMany({
-      include: { blocks: { orderBy: { position: "asc" } } },
-      where: { localDate: getRecentSessionRange(now), userId },
-    }),
-    loadPlanPhaseFacts({ userId }),
-    loadLearnerFacts(userId),
-  ]);
+  const [profile, goals, subscription, sessions, phaseFacts, facts, courseStarts] =
+    await Promise.all([
+      readLearningProfile(userId),
+      prisma.goal.findMany({ orderBy: { createdAt: "asc" }, where: { userId } }),
+      isAnonymous ? null : getActiveSubscription(),
+      prisma.studySession.findMany({
+        include: { blocks: { orderBy: { position: "asc" } } },
+        where: { localDate: getRecentSessionRange(now), userId },
+      }),
+      loadPlanPhaseFacts({ userId }),
+      loadLearnerFacts(userId),
+      getCourseGoalIds(prisma, userId),
+    ]);
 
   const activeGoal = findActiveGoal({ activeGoalId: profile?.activeGoalId, goals });
   const activeGoalId = activeGoal?.id ?? null;
   const timeZone = getAnswerTimeZone({ goal: activeGoal });
   const localDate = getDateInTimeZone({ date: now, timeZone });
   const countries = await loadGoalCountryViews({ goals, profile, readRecentCountries });
-  const listed = await toSummaryGoals({ activeGoalId, countries, phaseFacts });
+  const listed = await toSummaryGoals({ activeGoalId, countries, courseStarts, phaseFacts });
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
   const tier = getTier({ isAnonymous, subscription });

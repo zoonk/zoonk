@@ -23,7 +23,7 @@ export const skillOutlinePaths = {
   "/goals/{goalId}/skills/{skillId}/outline": {
     get: {
       description:
-        "A topic of the goal's plan as its lesson plan stands. The plan writes each topic's lessons ahead for the next two weeks; a topic further away shows what the plan knows (its lesson count and first day on the Journey and the syllabus) until its course is outlined. `ready` lists the chapters that teach it; `writing` means its course's outline is being written; `available` means nothing is written yet, and POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now. A skill outside the goal's plan isn't found.",
+        "A topic of the goal's plan as its lesson plan stands. The plan writes each topic's lessons ahead for the next two weeks; a topic further away shows what the plan knows (its lesson count and first day on the Journey and the syllabus) until its course is outlined. `ready` lists the chapters that teach it; `writing` means the learner asked for it and it's being written; `available` means nothing is written yet, and POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now. A skill outside the goal's plan isn't found.",
       operationId: "getSkillOutline",
       requestParams: { path: goalSkillPathParamsSchema },
       responses: {
@@ -41,7 +41,7 @@ export const skillOutlinePaths = {
   "/goals/{goalId}/skills/{skillId}/outline/generations": {
     post: {
       description:
-        "Writes a far topic's lesson plan when the learner asks to see it (never on a screen view). `ready` when its chapters exist. Otherwise the outline of its course's level band is written (its other topics in the plan come with it, the chapter teaching this one first, about half a minute) and the answer is 202; it's shared Library content, so the next learner of the course gets it free. A request while its course is being outlined starts nothing and is 202 without a `generationId`. A new one counts once per topic toward the learner's lesson plans (`resource: outline`: three a day and ten a month on the free plan, one for a guest, fair use with Plus), so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "Writes a far topic's lesson plan when the learner asks to see it (never on a screen view). `ready` when its chapters exist. Otherwise the outline of its course's level band is written (its other topics in the plan come with it, the chapter teaching this one first, about half a minute) and the answer is 202; it's shared Library content, so the next learner of the course gets it free. Another request while the learner's last one for the topic is still being written starts nothing and is 202 without a `generationId`; another learner's outline running on the same course doesn't hold it back. A new one counts once per topic toward the learner's lesson plans (`resource: outline`: three a day and ten a month on the free plan, one for a guest, fair use with Plus), so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
       operationId: "createSkillOutlineGeneration",
       requestParams: { path: goalSkillPathParamsSchema },
       responses: {

@@ -66,7 +66,8 @@ export async function decideGoalScopeStep({
 }: RunScope & { inputs: GoalCurriculumInputs }): Promise<CurriculumScope> {
   "use step";
 
-  const { goal, startedCourse } = inputs;
+  const { goal } = inputs;
+  const startedCourse = inputs.startedCourse ?? inputs.sourceCourse;
 
   const shared = {
     country: goal.contentCountry,

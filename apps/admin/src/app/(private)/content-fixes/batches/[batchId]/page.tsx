@@ -21,7 +21,7 @@ import { ContentFixChanges } from "../../_components/content-fix-changes";
 import { RejectForm, ReviewBar, ReviewBarSkeleton } from "../../_components/content-fix-decision";
 import { ContentFixEffects } from "../../_components/content-fix-effects";
 import { ContentFixTechnicalDetails, proposalFacts } from "../../_components/content-fix-facts";
-import { ContentFixVoice } from "../../_components/content-fix-voice";
+import { ContentFixMedia } from "../../_components/content-fix-media";
 import { sharedPlace, sharedReason } from "../../content-fix-batch";
 import { ContentFixStatusMark, contentFixState, findAppliedRevert } from "../../content-fix-status";
 import { readContentFixViewer } from "../../content-fix-viewer";
@@ -62,10 +62,10 @@ export default function ContentFixBatchPage({ params }: Props) {
   );
 }
 
-/** Waiting for review, and of those, the ones a passkey can approve now (not waiting for a clip). */
+/** Waiting for review, and of those, the ones a passkey can approve now (not waiting for its media). */
 function waitingFixes(fixes: readonly BatchFix[]) {
   const waiting = fixes.filter((fix) => fix.status === "proposed");
-  const approvable = waiting.filter((fix) => !fix.voiceOwedAt).map((fix) => fix.id);
+  const approvable = waiting.filter((fix) => !fix.mediaOwedAt).map((fix) => fix.id);
 
   return { approvable, waiting };
 }
@@ -116,15 +116,14 @@ function fixesDescription({
   mine: number;
 }): string | undefined {
   const { approvable, waiting } = waitingFixes(fixes);
-  const recording = waiting.length - approvable.length;
+  const preparing = waiting.length - approvable.length;
 
   return (
     [
       waiting.length > 0 &&
         "Each fix applies on its own. Reject the ones you don't want, then approve the rest.",
-      recording === 1 && "1 waits for its new clip and can be approved once it's recorded.",
-      recording > 1 &&
-        `${String(recording)} wait for their new clips and can be approved once they're recorded.`,
+      preparing === 1 && "1 can be approved once its media is ready.",
+      preparing > 1 && `${String(preparing)} can be approved once their media is ready.`,
       fixes.some((fix) => contentFixState(fix) === "applied") &&
         "To undo an applied fix, open it and propose undoing it.",
       mine > 0 &&
@@ -199,7 +198,7 @@ function FixRow({
       {isWaiting && (
         <>
           <ContentFixChanges compact fix={fix} />
-          <ContentFixVoice fix={fix} />
+          <ContentFixMedia fix={fix} />
           <div className="flex flex-col gap-2">
             <span className="text-muted-foreground text-xs">What else approving does</span>
             <ContentFixEffects fix={fix} />

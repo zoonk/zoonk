@@ -1,4 +1,7 @@
-import { GenerationFollowerProvider } from "@repo/packages/learn/src/generation/generation-follower.tsx";
+import {
+  type FollowedRunProps,
+  GenerationFollowerProvider,
+} from "@repo/packages/learn/src/generation/generation-follower.tsx";
 // Shared phone frame for the goal screens: the learn adapters, the tab root's top bar and the bottom tabs.
 import { LearnProvider } from "@repo/packages/learn/src/learn-provider.tsx";
 import { GoalSwitcher } from "@repo/packages/learn/src/shell/goal-switcher.tsx";
@@ -16,30 +19,32 @@ import { Avatar, AvatarFallback } from "@repo/packages/ui/src/components/avatar.
 import { BeltIndicator } from "@repo/packages/ui/src/components/belt-indicator.tsx";
 import { Button } from "@repo/packages/ui/src/components/button.tsx";
 import { PageTopBar } from "@repo/packages/ui/src/components/page-top.tsx";
+import { type BeltColor } from "@repo/packages/utils/src/belt-level.ts";
 import { SearchIcon, User } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { type ComponentProps } from "react";
 import { ADAPTERS } from "../learn/common";
 import { story, type Lang } from "../story";
 
 export const NOOP = () => {};
-export const NOOP_ASYNC = async () => null as any;
+export const NOOP_ASYNC = async () => null;
 
-function Follower({ children }: any) {
-  return children?.({ status: "running" }) ?? null;
+function Follower({ children }: FollowedRunProps) {
+  return children({ failure: null, status: "following", steps: {} });
 }
 
 export function Learn({ children }: { children: React.ReactNode }) {
   return (
     <LearnProvider adapters={ADAPTERS}>
-      <GenerationFollowerProvider follower={Follower as any}>{children}</GenerationFollowerProvider>
+      <GenerationFollowerProvider follower={Follower}>{children}</GenerationFollowerProvider>
     </LearnProvider>
   );
 }
 
 export type GoalKey = "exam" | "language" | "career" | "learn";
 
-export function switcherGoals(lang: Lang) {
-  const s = story[lang] as any;
+export function switcherGoals(lang: Lang): ComponentProps<typeof GoalSwitcher>["goals"] {
+  const s = story[lang];
   return [
     {
       dailyMinutes: s.exam.minutesPerDay,
@@ -48,7 +53,9 @@ export function switcherGoals(lang: Lang) {
       kind: "exam",
       status: "active",
       targetDate: s.exam.date,
+      languageFlag: null,
       targetDateEstimated: false,
+      targetRegion: null,
       targetLanguage: null,
     },
     {
@@ -58,7 +65,9 @@ export function switcherGoals(lang: Lang) {
       kind: "language",
       status: "active",
       targetDate: null,
+      languageFlag: null,
       targetDateEstimated: false,
+      targetRegion: null,
       targetLanguage: s.language.target,
     },
     {
@@ -68,7 +77,9 @@ export function switcherGoals(lang: Lang) {
       kind: "learn",
       status: "active",
       targetDate: s.career.date,
+      languageFlag: null,
       targetDateEstimated: false,
+      targetRegion: null,
       targetLanguage: null,
     },
   ];
@@ -83,7 +94,7 @@ export const DEFAULT_BUDDY_VIEW = {
   studiedToday: true,
 } as const;
 
-function BarLevel({ color, level }: { color: any; level: number }) {
+function BarLevel({ color, level }: { color: BeltColor; level: number }) {
   return (
     <span className="text-muted-foreground relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono text-[0.8125rem] tabular-nums">
       <BeltIndicator aria-hidden="true" className="size-2.5" color={color} label="" />
@@ -105,7 +116,6 @@ function Search() {
 
 /** The tab root's top bar on phones: goal switcher, then search, belt and level, avatar. */
 export function TopBar({ goal, lang }: { goal: GoalKey; lang: Lang }) {
-  const initial = (story[lang] as any).learnerName?.[0];
   return (
     <div className={FRAME_COLUMN_CLASS}>
       <PageTopBar
@@ -115,7 +125,9 @@ export function TopBar({ goal, lang }: { goal: GoalKey; lang: Lang }) {
             <BarLevel color="yellow" level={4} />
             <span className="relative size-7 shrink-0 rounded-full">
               <Avatar className="size-full">
-                <AvatarFallback>{initial || <User size={16} />}</AvatarFallback>
+                <AvatarFallback>
+                  <User size={16} />
+                </AvatarFallback>
               </Avatar>
             </span>
           </>
@@ -125,10 +137,11 @@ export function TopBar({ goal, lang }: { goal: GoalKey; lang: Lang }) {
             activeGoalId={goal}
             explanationHref="/explain"
             exploreHref="/courses"
-            goals={switcherGoals(lang) as any}
+            goals={switcherGoals(lang)}
+            hasAccount
             newGoalHref="/start"
-            onSelect={NOOP_ASYNC}
-            onStartWaiting={NOOP_ASYNC}
+            onSelect={async () => true}
+            onStartWaiting={async () => true}
             placement="bar"
             waitingGoals={[]}
           />
@@ -151,7 +164,7 @@ export function AppFrame({
   tab,
   topBar = true,
 }: {
-  buddy?: any;
+  buddy?: ComponentProps<typeof LearnBottomNavigation>["buddy"];
   children: React.ReactNode;
   goal?: GoalKey;
   lang: Lang;
@@ -165,7 +178,12 @@ export function AppFrame({
         <LearnShellContent>
           {topBar && <TopBar goal={goal} lang={lang} />}
           <LearnShellMain>{children}</LearnShellMain>
-          <LearnBottomNavigation activeTab={tab} buddy={buddy} missions={missions} />
+          <LearnBottomNavigation
+            activeTab={tab}
+            buddy={buddy}
+            missions={missions}
+            onSearch={() => {}}
+          />
         </LearnShellContent>
       </LearnShell>
     </Learn>

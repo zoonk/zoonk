@@ -21,6 +21,7 @@ type RequestCommand = Extract<Command, { name: "request" }>;
 
 type Options = {
   batch?: string;
+  check?: boolean;
   fields?: string;
   limit?: string;
   offset?: string;
@@ -158,6 +159,14 @@ const COMMANDS = new Map<string, CommandSpec>([
     },
   ],
   [
+    "staff lesson",
+    {
+      arguments: 1,
+      build: ([id = ""]) => get(`/staff/lessons/${encodeURIComponent(id)}`),
+      options: [],
+    },
+  ],
+  [
     "staff get",
     {
       arguments: 2,
@@ -189,11 +198,11 @@ const COMMANDS = new Map<string, CommandSpec>([
     "staff fixes propose",
     {
       arguments: 1,
-      build: ([file = ""]) => ({
-        ...post("/staff/content-fixes", readJsonObject(file)),
-        note: proposalNote,
-      }),
-      options: [],
+      build: ([file = ""], { check }) =>
+        check
+          ? post("/staff/content-fixes/check", readJsonObject(file))
+          : { ...post("/staff/content-fixes", readJsonObject(file)), note: proposalNote },
+      options: ["check"],
     },
   ],
   [
@@ -309,6 +318,7 @@ function parseCommandLine(argv: string[]) {
       options: {
         api: { type: "string" },
         batch: { type: "string" },
+        check: { type: "boolean" },
         fields: { type: "string" },
         help: { short: "h", type: "boolean" },
         limit: { type: "string" },

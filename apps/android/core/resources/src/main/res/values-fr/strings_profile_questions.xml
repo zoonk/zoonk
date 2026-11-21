@@ -11,7 +11,7 @@
   "profile_questions_conditions_description_settings": "7ee65e4b742d0d622a8f11a92daecbb1ccc65875a32b56830fe2a47715749d69",
   "profile_questions_conditions_saved": "642ac4860fb448cfe551ff752a93f84b06f6ebb05f57fd00749c349918420a00",
   "profile_questions_conditions_title": "f8e222e2ff5f428cd85f9b8646558a48412a8b9feaf801862e9ef3d2b570e899",
-  "profile_questions_description": "cd68a2bf08dafdf6f82043e5cc73fc0aad29eb5be3bb129ec121f2b31856c5b6",
+  "profile_questions_description": "ebe33522b6bae0d0baca40bcd6278c99f463c54ecdea40968761b741243a55d0",
   "profile_questions_earlier_answer": "817c74f735a4040672f6a2e425e0fa8a8dc8de4473d8d713f9d48bd2792e03eb",
   "profile_questions_for_fun": "297a17d7b0a150255b77025c0518e58a7a88e4f27542c143102cf5c7d590cccb",
   "profile_questions_how_learn": "ab664db2b0a5e37f5c5017355ef75672cf80dadf18acc55dfef7e13f77c37480",
@@ -65,7 +65,7 @@
   "profile_questions_title": "facc83c35874ec64c39f8a82399416492c6d9f5b645dd88fd633462a5ead0fe7",
   "profile_questions_tools_other": "0e61b3d15b3a60abd82d5dc8f638a9253d70bfe2f0dd07724e9b901254f1f36e",
   "profile_questions_tools_placeholder": "5e87cb6220b96773d43aa54c61d934d7d5b0738ac90ec6bb0be46ebfaa843b08",
-  "profile_questions_tools_title": "371a2436743a3625e90609b93dde126d5e89545db0caf101d3c8b0187afce11d",
+  "profile_questions_tools_title": "45a85946e11154e3c37b5e02d8b18e4d6c1963f3131db065cecffdd1f7d1c5ba",
   "profile_questions_watch_favorites": "bbb4f410fdc06eeda779f8bc86f34485fd29a4c9f0b2d915067d0646ea0431b3",
   "profile_questions_watch_placeholder": "cf77ffd06242809d111790d6a909708cd1c653ae9c9cda0467e86e04f0241c71",
   "profile_questions_watch_title": "6b224ed9dac4ba34a55c1892a5cd5b30cda9a8c8d1cae94cc7d31f13e20f2461",
@@ -78,7 +78,7 @@
 -->
 <resources>
     <string name="profile_questions_title">À propos de toi</string>
-    <string name="profile_questions_description">Ce que tu nous dis ici nous aide à personnaliser tes exemples et ton compagnon. Tout est facultatif.</string>
+    <string name="profile_questions_description">Ce que tu nous dis ici nous aide à personnaliser tes exemples et ton binôme. Tout est facultatif.</string>
     <string name="profile_questions_skip_all">Tout sauter</string>
     <string name="profile_questions_skip_all_label">Sauter les questions restantes sur toi</string>
     <string name="profile_questions_never_ask">Ne plus me poser ces questions</string>
@@ -89,7 +89,7 @@
     <string name="profile_questions_job_placeholder">Ex. : ingénieur logiciel, infirmier</string>
     <string name="profile_questions_earlier_answer">D’après ta réponse précédente</string>
     <string name="profile_questions_prefer_not">Je préfère ne pas le dire</string>
-    <string name="profile_questions_tools_title">Quels outils et applis utilises-tu le plus ?</string>
+    <string name="profile_questions_tools_title">Quelles applis et quels outils utilises-tu le plus ?</string>
     <string name="profile_questions_tools_other">Autres (facultatif)</string>
     <string name="profile_questions_tools_placeholder">Ex. : Photoshop, Python, SAP</string>
     <string name="profile_questions_studies_title">Qu’as-tu étudié ?</string>

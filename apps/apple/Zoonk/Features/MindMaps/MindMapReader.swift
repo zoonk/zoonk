@@ -253,20 +253,20 @@ struct MindMapReader: View {
     }
   }
 
-  /// The lesson player's bar: Previous from the second map, then Next, which is Done on the last.
+  /// The lesson player's bar: Previous, dimmed on the first map, then Next, which is Done on the
+  /// last.
   @ViewBuilder
   private func actionBar(_ cards: [MindMapCard], index: Int) -> some View {
     let isLast = index == cards.count - 1
 
     Group {
-      if index > 0 {
-        StepBackButton(
-          label: Text(
-            "Previous", tableName: "MindMaps", comment: "Goes to the deck's previous map")
-        ) {
-          move(to: cards[index - 1])
-        }
+      StepBackButton(
+        label: Text(
+          "Previous", tableName: "MindMaps", comment: "Goes to the deck's previous map")
+      ) {
+        move(to: cards[index - 1])
       }
+      .disabled(index == 0)
 
       BusyButton(isBusy: false) {
         if isLast {

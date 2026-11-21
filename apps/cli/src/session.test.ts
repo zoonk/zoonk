@@ -5,19 +5,23 @@ import { type AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { WHOAMI_REQUEST } from "./args.ts";
 import { type StoredLogin, credentialsPath, readLogin, saveLogin } from "./credentials.ts";
 import { EXIT_CODES } from "./errors.ts";
+import { logOut } from "./login.ts";
 import { sendAuthorized } from "./session.ts";
+
+/** `lost`: the server takes the refresh, then the connection drops before the answer. */
+type RefreshAnswer =
+  | { body: unknown; delayMs?: number; headers?: Record<string, string>; status: number }
+  | "lost";
 
 type FakeApiOptions = {
   acceptedToken: string;
   beforeRejecting?: () => Promise<unknown>;
-  /** `lost`: the server takes the refresh, then the connection drops before the answer. */
-  refresh:
-    | { body: unknown; delayMs?: number; headers?: Record<string, string>; status: number }
-    | "lost";
+  /** A list answers each refresh in turn, its last answer repeating. */
+  refresh: RefreshAnswer | RefreshAnswer[];
 };
 
 const HOUR_MS = 3_600_000;
@@ -44,8 +48,15 @@ function runWhoami({ file, origin }: { file: string; origin: string }): Promise<
   });
 }
 
+const REPLAY_SECONDS = 120;
+
 function storedLogin(name: string, expiresAt: number): StoredLogin {
-  return { accessToken: `access-${name}`, expiresAt, refreshToken: `refresh-${name}` };
+  return {
+    accessToken: `access-${name}`,
+    expiresAt,
+    refreshToken: `refresh-${name}`,
+    replaySeconds: REPLAY_SECONDS,
+  };
 }
 
 function tokenResponse(name: string) {
@@ -53,6 +64,7 @@ function tokenResponse(name: string) {
     access_token: `access-${name}`,
     expires_in: 3600,
     refresh_token: `refresh-${name}`,
+    refresh_token_reuse_seconds: REPLAY_SECONDS,
     token_type: "Bearer",
   };
 }
@@ -90,14 +102,16 @@ async function startFakeApi(options: FakeApiOptions) {
   const server = createServer(async (request, response) => {
     if (request.url === "/v1/auth/oauth2/token") {
       refreshRequests.push(await readForm(request));
+      const answers = [options.refresh].flat();
+      const answer = answers[Math.min(refreshRequests.length, answers.length) - 1];
 
-      if (options.refresh === "lost") {
+      if (!answer || answer === "lost") {
         request.socket.destroy();
         return;
       }
 
-      await delay(options.refresh.delayMs ?? 0);
-      reply({ response, ...options.refresh });
+      await delay(answer.delayMs ?? 0);
+      reply({ response, ...answer });
       return;
     }
 
@@ -130,6 +144,8 @@ async function startFakeApi(options: FakeApiOptions) {
 
 describe(sendAuthorized, () => {
   afterEach(async () => {
+    vi.restoreAllMocks();
+
     await Promise.all(
       servers.splice(0).map(
         (server) =>
@@ -299,35 +315,212 @@ describe(sendAuthorized, () => {
       (error: unknown) => error,
     );
 
-    expect(failure).toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
+    expect(failure).toMatchObject({ exitCode: EXIT_CODES.failed });
     expect(String(failure)).not.toContain("SECRET");
     expect(api.staffCalls).toStrictEqual([]);
-    expect(readLogin({ file, origin: api.origin })).toBeNull();
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
 
-  it("forgets the login when a refresh's answer is lost, so the rotated token is never sent again", async () => {
+  it("asks again when a refresh's answer is lost and saves the pair the server already issued", async () => {
     const file = createCredentialsFile();
-    const api = await startFakeApi({ acceptedToken: "access-new", refresh: "lost" });
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: ["lost", { body: tokenResponse("new"), status: 200 }],
+    });
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
+
+    expect(result.status).toBe(200);
+
+    expect(api.refreshRequests.map((form) => form.refresh_token)).toStrictEqual([
+      "refresh-old",
+      "refresh-old",
+    ]);
+
+    expect(api.staffCalls).toStrictEqual(["Bearer access-new"]);
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-new" });
+  });
+
+  it.each<[string, RefreshAnswer[]]>([
+    ["both answers are lost", ["lost"]],
+    [
+      "the retry is refused while the first refresh may still be running",
+      ["lost", { body: { error: "invalid_grant" }, status: 400 }],
+    ],
+    ["the server fails", [{ body: {}, status: 500 }]],
+    ["the gateway times out", [{ body: {}, status: 504 }]],
+  ])("keeps the login for the next command when %s", async (_case, refresh) => {
+    const file = createCredentialsFile();
+    const api = await startFakeApi({ acceptedToken: "access-new", refresh });
 
     await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
 
     await expect(
       sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
     ).rejects.toMatchObject({
-      exitCode: EXIT_CODES.notLoggedIn,
-      message:
-        `Couldn't confirm the login renewal with ${api.origin}. ` +
-        `Run \`pnpm zoonk login --api ${api.origin}\` to log in again.`,
+      exitCode: EXIT_CODES.failed,
+      message: `Couldn't confirm the login renewal with ${api.origin}. It's kept; try again shortly.`,
     });
 
-    expect(readLogin({ file, origin: api.origin })).toBeNull();
+    expect(api.refreshRequests).toHaveLength(2);
+    expect(api.staffCalls).toStrictEqual([]);
+
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({
+      maybeRotatedAt: expect.any(Number),
+      refreshToken: "refresh-old",
+    });
+  });
+
+  it("forgets the login after a lost answer when the server never said it replays rotated tokens", async () => {
+    const file = createCredentialsFile();
+    const api = await startFakeApi({ acceptedToken: "access-new", refresh: "lost" });
+    const withoutReplay = { ...storedLogin("old", Date.now() - 1000), replaySeconds: undefined };
+
+    await saveLogin({ file, login: withoutReplay, origin: api.origin });
 
     await expect(
       sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
     ).rejects.toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
 
     expect(api.refreshRequests).toHaveLength(1);
+    expect(readLogin({ file, origin: api.origin })).toBeNull();
+  });
+
+  it("remembers that the token may have rotated when its retry can't be sent", async () => {
+    const file = createCredentialsFile();
+    const api = await startFakeApi({ acceptedToken: "access-new", refresh: "lost" });
+    const unreachable = Object.assign(new Error("getaddrinfo ENOTFOUND"), { code: "ENOTFOUND" });
+    const realFetch = globalThis.fetch;
+
+    vi.spyOn(globalThis, "fetch")
+      .mockImplementationOnce(realFetch)
+      .mockRejectedValueOnce(new TypeError("fetch failed", { cause: unreachable }));
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.failed });
+
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({
+      maybeRotatedAt: expect.any(Number),
+    });
+  });
+
+  it("recovers the pair on the next command and forgets that the token may have rotated", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), status: 200 },
+    });
+
+    await saveLogin({
+      file,
+      login: { ...storedLogin("old", Date.now() - 1000), maybeRotatedAt: Date.now() - 30_000 },
+      origin: api.origin,
+    });
+
+    const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
+
+    expect(result.status).toBe(200);
+
+    expect(readLogin({ file, origin: api.origin })).toStrictEqual(
+      storedLogin("new", expect.any(Number)),
+    );
+  });
+
+  it("keeps a token that may have rotated when the server refuses it, since its refresh may still be running", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: { error: "invalid_grant" }, status: 400 },
+    });
+
+    const maybeRotatedAt = Date.now() - 5000;
+
+    await saveLogin({
+      file,
+      login: { ...storedLogin("old", Date.now() - 1000), maybeRotatedAt },
+      origin: api.origin,
+    });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.failed });
+
+    expect(api.refreshRequests).toHaveLength(1);
+    expect(readLogin({ file, origin: api.origin })).toMatchObject({ maybeRotatedAt });
+  });
+
+  it("forgets a token that may have rotated once the server's replay window has passed, without sending it", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), status: 200 },
+    });
+
+    await saveLogin({
+      file,
+      login: { ...storedLogin("old", Date.now() - 1000), maybeRotatedAt: Date.now() - 100_000 },
+      origin: api.origin,
+    });
+
+    await expect(
+      sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
+    ).rejects.toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
+
+    expect(api.refreshRequests).toStrictEqual([]);
+    expect(readLogin({ file, origin: api.origin })).toBeNull();
+  });
+
+  it("logs out of a token that may have rotated on this machine only, without revoking it", async () => {
+    const file = createCredentialsFile();
+
+    const api = await startFakeApi({
+      acceptedToken: "access-new",
+      refresh: { body: tokenResponse("new"), status: 200 },
+    });
+
+    await saveLogin({
+      file,
+      login: { ...storedLogin("old", Date.now() - 1000), maybeRotatedAt: Date.now() - 1000 },
+      origin: api.origin,
+    });
+
+    await expect(logOut({ file, origin: api.origin })).rejects.toMatchObject({
+      message: expect.stringContaining("Logged out on this machine"),
+    });
+
+    expect(api.refreshRequests).toStrictEqual([]);
     expect(api.staffCalls).toStrictEqual([]);
+    expect(readLogin({ file, origin: api.origin })).toBeNull();
+  });
+
+  it("keeps the login when a sandbox denies the connection, without asking again", async () => {
+    const file = createCredentialsFile();
+    const origin = "http://127.0.0.1:9";
+
+    const denied = new TypeError("fetch failed", {
+      cause: Object.assign(new Error("connect EPERM"), { code: "EPERM" }),
+    });
+
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(denied);
+
+    await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin });
+
+    await expect(sendAuthorized({ file, origin, request: WHOAMI_REQUEST })).rejects.toMatchObject({
+      exitCode: EXIT_CODES.failed,
+      message: `Couldn't complete the request to ${origin} (EPERM).`,
+    });
+
+    expect(fetchSpy).toHaveBeenCalledOnce();
+    expect(readLogin({ file, origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
 
   it("keeps the login when the API can't be reached", async () => {
@@ -367,24 +560,4 @@ describe(sendAuthorized, () => {
 
     expect(readLogin({ file, origin: api.origin })).toMatchObject({ refreshToken: "refresh-old" });
   });
-
-  it.each([500, 502, 503, 504])(
-    "forgets the login when a refresh ends in HTTP %i",
-    async (status) => {
-      const file = createCredentialsFile();
-
-      const api = await startFakeApi({
-        acceptedToken: "access-new",
-        refresh: { body: {}, status },
-      });
-
-      await saveLogin({ file, login: storedLogin("old", Date.now() - 1000), origin: api.origin });
-
-      await expect(
-        sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST }),
-      ).rejects.toMatchObject({ exitCode: EXIT_CODES.notLoggedIn });
-
-      expect(readLogin({ file, origin: api.origin })).toBeNull();
-    },
-  );
 });

@@ -4,7 +4,7 @@
   "otpDisclaimer": "Si tu n’as pas demandé ce code, tu peux ignorer ce message.",
   "otpExpiry": "Ce code expire dans 5 minutes.",
   "otpIntro": "Voici ton code pour te connecter à Zoonk :",
-  "otpSubject": "Ton code pour te connecter à Zoonk",
+  "otpSubject": "{code} est ton code Zoonk",
   "plusAccountLabel": "Compte",
   "plusAlreadyActiveSubject": "Tu as déjà Zoonk Plus",
   "plusEmailLegal": "Ton abonnement est régi par nos {termsLink} et notre {privacyLink}.",

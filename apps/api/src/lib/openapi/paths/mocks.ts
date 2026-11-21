@@ -17,6 +17,7 @@ import {
   mockQuestionsGenerationSchema,
 } from "../schemas/mocks";
 import { goalPathParamsSchema, mockPathParamsSchema } from "../schemas/paths";
+import { planChangedWhileSavingResponse } from "../schemas/plan-errors";
 import {
   conflictResponse,
   forbiddenResponse,
@@ -207,6 +208,7 @@ export const mockPaths = {
           description: "Applied, or why nothing moved",
         },
         ...commonErrors,
+        "409": planChangedWhileSavingResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Change the plan from a mock",

@@ -20,6 +20,7 @@ enum AppRoute: Hashable, Identifiable {
   case course(courseId: String, title: String)
 
   case session
+  case sessionSummary(sessionId: String)
   case logbook
   /// `fromCatalog`: started from a public catalog page (its Library page, or "Try a lesson" on a
   /// course or chapter), where main asks its first question.

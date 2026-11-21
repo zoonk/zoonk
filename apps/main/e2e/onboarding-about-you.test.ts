@@ -120,12 +120,17 @@ test("the tools question comes last with the learner's own list, takes any numbe
   }
 
   const field = page.getByLabel("Others (optional)");
+
   const typed = page
     .getByRole("listitem")
     .filter({ has: page.getByRole("button", { name: /^Remove /u }) });
 
+  const add = page.getByRole("button", { exact: true, name: "Add" });
+  await expect(add).toBeDisabled();
+
   await field.fill("ClinicalKey");
-  await page.getByRole("button", { exact: true, name: "Add" }).click();
+  await expect(add).toBeEnabled();
+  await add.click();
   await field.fill("Medscape");
   await field.press("Enter");
 

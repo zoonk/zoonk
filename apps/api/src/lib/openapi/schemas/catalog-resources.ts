@@ -146,6 +146,10 @@ export const courseResourceSchema = z
           "About how long the level question's quick test (\"Not sure\") takes when starting this course: the level test of the language goal it starts, or another goal's placement",
       }),
     slug: z.string(),
+    supportsEditions: z
+      .boolean()
+      .optional()
+      .meta({ description: "Whether this course can be started in another content language." }),
     targetLanguage: z.string().nullable(),
     title: z.string(),
     tryLesson: catalogTryLessonSchema

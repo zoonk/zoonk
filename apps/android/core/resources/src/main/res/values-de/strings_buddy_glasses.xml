@@ -8,7 +8,7 @@
   "buddy_glasses_earn_cat_eye": "0925011dd79d8e0aa79bfb4bc8a3b2b8e09914c4912069cf6c20e0ef1d72d55b",
   "buddy_glasses_earn_monocle": "d8e94ddea6f776927529f0f7807c5a970e6549ab683c021e21682e7b24bfea75",
   "buddy_glasses_earn_retro": "98502393983f4e087218d6e1e9c74d5b1cf598488ecd98a86464772f1a7dface",
-  "buddy_glasses_earn_round": "c22c6e0410fa320132da39c32fd4e002242bbfb1a9425e7abf8e45a9b6002b2d",
+  "buddy_glasses_earn_round": "4ab8e7849dfdc246828f9bab230d9142061a0361e8b392de37378a369d7887fa",
   "buddy_glasses_earn_star": "7f47e66e6b87cfd065eb0551e0c11cbe76cb614b390af20a9980810b7d8b7f4a",
   "buddy_glasses_monocle": "91b8262631df8c76dbe5fb6b74058226159d3a24dbe229b169bf573a083533a5",
   "buddy_glasses_retro": "822bd5d0d25bb2735465aebde08868d733055d7dcd43cbfac16f78ea693fcb3b",
@@ -39,7 +39,7 @@
     <string name="buddy_glasses_worn_cat_eye">Katzenaugenbrille</string>
     <string name="buddy_glasses_worn_retro">Retrobrille</string>
     <string name="buddy_glasses_worn_monocle">Ein Monokel</string>
-    <string name="buddy_glasses_earn_round">Ist bei deinem Kumpel dabei</string>
+    <string name="buddy_glasses_earn_round">Dein Buddy bringt sie mit</string>
     <string name="buddy_glasses_earn_star">Deine erste Herausforderung gewinnen</string>
     <string name="buddy_glasses_earn_aviator">Schließe deine erste wöchentliche Herausforderung ab</string>
     <string name="buddy_glasses_earn_cat_eye">Schließe an 7 verschiedenen Tagen alle Missionen ab</string>

@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { checkpointPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { planChangeInvalid } from "@/lib/plan-errors";
+import { planChangeInvalid, planChangedWhileSaving } from "@/lib/plan-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { moveWeeklyChallenge } from "@zoonk/core/checkpoints/move";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
@@ -27,6 +27,10 @@ async function moveChallenge(
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
+  }
+
+  if (result.status === "conflict") {
+    return planChangedWhileSaving();
   }
 
   return result.status === "notFound"

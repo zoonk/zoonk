@@ -22,7 +22,7 @@ const OVER_BUDGET_UNTIL_SPLIT: Record<string, number> = {
   ".agents/skills/zoonk-design/references/foldables.md": 14_000,
   ".agents/skills/zoonk-motion/SKILL.md": 14_000,
   ".agents/skills/zoonk-persona-walkthrough/references/personas.md": 14_000,
-  ".agents/skills/zoonk-staff-data/SKILL.md": 16_000,
+  ".agents/skills/zoonk-staff-data/SKILL.md": 10_000,
   "apps/android/AGENTS.md": 26_000,
   "apps/apple/AGENTS.md": 22_000,
 };

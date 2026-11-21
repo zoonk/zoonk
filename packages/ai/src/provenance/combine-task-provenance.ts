@@ -38,35 +38,51 @@ export function joinDistinct(values: readonly string[]): string {
   return [...new Set(values)].join(", ");
 }
 
-/**
- * Latency is the slowest call's and the row keeps the first call's run id; each call still sends
- * its own `$ai_generation` event.
- */
-export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProvenance {
+type StoredProvenance = Pick<TaskProvenance, "generatedAt" | "model" | "promptVersion" | "runId">;
+
+function firstRun<T extends StoredProvenance>(runs: readonly T[]): T {
   const [first] = runs;
 
   if (!first) {
     throw new Error("Combining provenance needs at least one run.");
   }
 
-  const sum = (read: (usage: TaskUsage) => number | undefined) =>
-    sumKnown(runs.map((run) => read(run.usage)));
+  return first;
+}
+
+export function combineStoredProvenance(runs: readonly StoredProvenance[]): StoredProvenance {
+  const first = firstRun(runs);
 
   return {
-    costUsd: sumKnown(runs.map((run) => run.costUsd)),
-    credential: first.credential,
-    gatewayCostUsd: sumKnown(runs.map((run) => run.gatewayCostUsd)),
     generatedAt:
       runs
         .map((run) => run.generatedAt)
         .toSorted()
         .at(-1) ?? first.generatedAt,
-    latencyMs: Math.max(...runs.map((run) => run.latencyMs)),
     model: joinDistinct(runs.map((run) => run.model)),
     promptVersion: first.promptVersion,
+    runId: first.runId,
+  };
+}
+
+/**
+ * Latency is the slowest call's and the row keeps the first call's run id; each call still sends
+ * its own `$ai_generation` event.
+ */
+export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProvenance {
+  const first = firstRun(runs);
+
+  const sum = (read: (usage: TaskUsage) => number | undefined) =>
+    sumKnown(runs.map((run) => read(run.usage)));
+
+  return {
+    ...combineStoredProvenance(runs),
+    costUsd: sumKnown(runs.map((run) => run.costUsd)),
+    credential: first.credential,
+    gatewayCostUsd: sumKnown(runs.map((run) => run.gatewayCostUsd)),
+    latencyMs: Math.max(...runs.map((run) => run.latencyMs)),
     provider: joinDistinct(runs.map((run) => run.provider)),
     requestedModel: first.requestedModel,
-    runId: first.runId,
     serviceTier: first.serviceTier,
     ...(runs.every((run) => run.speed === "fast") ? { speed: "fast" as const } : {}),
     usage: {

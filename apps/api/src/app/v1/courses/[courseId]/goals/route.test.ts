@@ -18,19 +18,21 @@ vi.mock("@zoonk/core/goals/record-generation", () => ({ recordGoalGeneration: vi
 const COURSE_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";
 const GOAL_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190c";
 
-function startRequest() {
+function startRequest(input = {}) {
   return startFromCourse(
     new NextRequest(`http://localhost/v1/courses/${COURSE_ID}/goals`, {
-      body: JSON.stringify({}),
+      body: JSON.stringify(input),
       method: "POST",
     }),
     { params: Promise.resolve({ courseId: COURSE_ID }) },
   );
 }
 
-function createdGoal(goal: Pick<GoalView, "examBlueprintId" | "kind">) {
+function createdGoal(
+  goal: Pick<GoalView, "examBlueprintId" | "kind"> & Partial<Pick<GoalView, "primaryCourseId">>,
+) {
   vi.mocked(startCourseGoal).mockResolvedValue({
-    goal: { id: GOAL_ID, ...goal } as GoalView,
+    goal: { id: GOAL_ID, primaryCourseId: COURSE_ID, ...goal } as GoalView,
     status: "created",
   });
 }
@@ -43,6 +45,21 @@ describe("POST /v1/courses/{courseId}/goals", () => {
           runId: Object.is(workflow, researchWorkflow) ? "wrun_research" : "wrun_goal",
         }) as Awaited<ReturnType<typeof start>>,
     );
+  });
+
+  it("accepts the learner's language and passes it to the course start", async () => {
+    createdGoal({ examBlueprintId: null, kind: "learn", primaryCourseId: null });
+
+    const response = await startRequest({ language: "pt-BR" });
+
+    expect(response.status).toBe(201);
+
+    expect(start).toHaveBeenCalledWith(researchWorkflow, [{ goalId: GOAL_ID }], expect.any(Object));
+
+    expect(startCourseGoal).toHaveBeenCalledWith({
+      courseId: COURSE_ID,
+      input: { language: "pt" },
+    });
   });
 
   it("reads the notice of an exam course nobody stored an exam for before writing its plan", async () => {

@@ -117,6 +117,8 @@ extension AppRoute {
         .catalogDestinations()
     case .session:
       SessionScreen()
+    case .sessionSummary(let sessionId):
+      SessionScreen(summarySessionID: sessionId)
     case .logbook:
       LogbookScreen()
     case .lesson(let lessonId, let sessionId, let fromCatalog, let opening, let activated):

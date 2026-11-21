@@ -66,7 +66,7 @@ describe("profile question capabilities", () => {
 
     await expect(save(watch)).resolves.toMatchObject({
       question: {
-        saved: { picks: ["anime", "sciFi"], text: "Star Trek, Fringe" },
+        saved: { picks: ["sciFi", "anime"], text: "Star Trek, Fringe" },
         status: "answered",
       },
       status: "saved",
@@ -561,7 +561,11 @@ describe("profile question capabilities", () => {
 
     expect(
       view?.questions.find((question) => question.id === "studies")?.saved.studies,
-    ).toHaveLength(3);
+    ).toStrictEqual([
+      { field: "computing", subject: null },
+      { field: "business", subject: null },
+      { field: "law", subject: null },
+    ]);
   });
 
   it.each([

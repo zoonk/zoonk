@@ -20,5 +20,5 @@ export const auth = betterAuth({
 /** Vitest aliases the package root to this module, so it mirrors the production export without Next's cookie context. */
 export const reauthorizeEmailForAccountDeletion = createEmailDeletionReauthentication({
   rateLimit: { enabled: false },
-  storeOTP: "hashed",
+  storeOTP: "encrypted",
 });

@@ -25,6 +25,8 @@ function loginRefusal(status: "forbidden" | "missingScope" | "unauthorized") {
 
 export function proposalResponse(result: Awaited<ReturnType<typeof proposeContentFix>>) {
   switch (result.status) {
+    case "checked":
+      return NextResponse.json({ fixes: result.fixes });
     case "proposed":
       return NextResponse.json(
         { batchId: result.batchId, fixes: result.fixes, reviewUrl: result.reviewUrl },

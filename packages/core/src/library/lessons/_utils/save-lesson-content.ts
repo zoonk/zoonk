@@ -19,6 +19,7 @@ import {
   retireUnaskedQuestions,
   startLessonVersion,
 } from "../lesson-versions";
+import { readLessonRepairBase } from "./lesson-repair-base";
 import { lockPreparedScreens } from "./prepare-screens";
 import { parseScreenQuestion, saveQuestionItems, toScreenQuestion } from "./screen-question-item";
 import { toStepData } from "./step-data";
@@ -164,17 +165,19 @@ export async function saveLessonContent({
 
 /**
  * Stages the version that replaces `replaces`, which learners keep getting until
- * `publishStagedLessonVersion`. Returns null if `replaces` is no longer current.
+ * `publishStagedLessonVersion`. Returns null if the version or repair inputs changed.
  */
 export async function stageLessonVersion({
   language,
   lessonId,
+  repairBase,
   replaces,
   screens,
   summary,
 }: {
   language: string;
   lessonId: string;
+  repairBase?: string;
   replaces: number;
   screens: LessonScreenToSave[];
   summary: LessonMap;
@@ -193,7 +196,11 @@ export async function stageLessonVersion({
 
     const current = await lockCurrentLessonVersion(tx, lessonId);
 
-    if (current !== replaces) {
+    if (
+      current !== replaces ||
+      (repairBase !== undefined &&
+        repairBase !== (await readLessonRepairBase({ lessonId, version: replaces }, tx)))
+    ) {
       throw new LessonPublicationLostError();
     }
 

@@ -63,8 +63,8 @@
   "certificates_meaning_plan": "4850258ba7d2e0b4d7540bbe33ae6a21277471177c0e844b2123b8706473b2dd",
   "certificates_meaning_record": "3e93c8fc1646528473d0a64b4069c8fdfdb6687559632bab1b97a07361b26d1a",
   "certificates_meaning_title": "da18a3236e4705fefe46dcc5d6e619c263496f8b49e5863bd6a39b062735914c",
-  "certificates_name_hint": "87e14a35365099f6d705703980a7603d4f06b2b00f78b1d1a4780fd18a24c49f",
-  "certificates_name_hint_new": "d17fc8a65465989a8fdd36af6971c51ae603eacdbc6360f094dce0b691f2569e",
+  "certificates_name_hint": "c2a51a3bcd6f3f66ac969cafaca42f31e1f53559eca885a1fda5d159dc8ac2de",
+  "certificates_name_hint_new": "bb2e656a711c72f41046d95c35e31b3ed45f3d1577b4ab34d9da8dde4c926a01",
   "certificates_name_label": "c8af5fec62aba030d37dc119113cc7e2e2c5eec5c72473b5316f6fa7f5aabdd3",
   "certificates_name_label_new": "7f5dffbbf79b25c31b59121a1a2983e585e0c82ea0871c713ac3bf62fda86629",
   "certificates_name_placeholder": "177c404a6b25119a11d33b063b228465a35cabd51c614619d9e9afd36209ad89",
@@ -132,8 +132,8 @@
     <!-- The label of the field with the learner's current name, when they change it. -->
     <string name="certificates_name_label">Nombre en tus certificados</string>
     <string name="certificates_name_placeholder">Tu nombre completo</string>
-    <string name="certificates_name_hint_new">Este nombre aparece en tus certificados y tu compañero te llama así. Puedes cambiarlo cuando quieras.</string>
-    <string name="certificates_name_hint">Este nombre aparece en tus certificados y tu compañero te llama así.</string>
+    <string name="certificates_name_hint_new">Este nombre aparece en tus certificados y tu compa te llama así. Puedes cambiarlo cuando quieras.</string>
+    <string name="certificates_name_hint">Este nombre aparece en tus certificados y tu compa te llama así.</string>
     <string name="certificates_save">Guardar</string>
     <string name="certificates_cancel">Cancelar</string>
     <string name="certificates_name_save_failed">No se pudo guardar. Inténtalo de nuevo.</string>

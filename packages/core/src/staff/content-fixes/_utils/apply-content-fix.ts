@@ -20,6 +20,7 @@ import { getChapterCacheTags } from "../../../library/chapters/chapter-cache-tag
 import { type StoredChange } from "../contract";
 import { type FixContext } from "../handlers/fix-handler";
 import { findStoredHandler } from "../handlers/registry";
+import { changesLearnerLesson } from "./lesson-version-effect";
 import { type FixUnit } from "./resolved-change";
 import { applyVocabularyUnit, findLessonsShowing, isVocabularyUnit } from "./vocabulary-unit";
 
@@ -51,9 +52,15 @@ export async function lockFixRows(
   tx: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: FixUnit },
 ): Promise<void> {
-  await tx.$queryRaw`SELECT id FROM ${UNIT_TABLES[unit.kind]} WHERE id = ${unit.id}::uuid FOR NO KEY UPDATE`;
+  if (unit.kind !== "course") {
+    await tx.$queryRaw`SELECT id FROM ${UNIT_TABLES[unit.kind]} WHERE id = ${unit.id}::uuid FOR NO KEY UPDATE`;
+  }
 
-  const rows = changes.map((change) => findStoredHandler(change).lockRows(change));
+  const rows = [
+    ...changes.map((change) => findStoredHandler(change).lockRows(change)),
+    ...(unit.kind === "course" ? [{ ids: [unit.id], table: UNIT_TABLES.course }] : []),
+  ];
+
   const tables = [...new Map(rows.map((row) => [row.table.sql, row.table])).entries()];
 
   for (const [name, table] of tables.toSorted(([left], [right]) => left.localeCompare(right))) {
@@ -117,8 +124,7 @@ export async function lockFixPlans(
 }
 
 /**
- * Writes exactly the prepared changes. Every fix under a lesson moves its `updatedAt`, which the
- * lesson player reads as the lesson's version in every app.
+ * The lesson player reads `updatedAt` as part of the lesson version in every app.
  */
 export async function applyFixChanges(
   tx: TransactionClient,
@@ -133,7 +139,7 @@ export async function applyFixChanges(
     await findStoredHandler(change).apply(tx, change, context);
   }
 
-  if (unit.kind === "lesson") {
+  if (unit.kind === "lesson" && changes.some((change) => changesLearnerLesson(change))) {
     await tx.lesson.update({ data: { updatedAt: context.now }, where: { id: unit.id } });
   }
 

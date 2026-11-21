@@ -19,6 +19,8 @@ export const SIDES: Record<Side, { label: string; mark: string; own: "added" | "
 
 export type Names = ReadonlyMap<string, string>;
 
+export const NO_NAMES: Names = new Map();
+
 function toText(value: unknown): string {
   return typeof value === "string" ? value : JSON.stringify(value);
 }
@@ -113,13 +115,27 @@ function pathInWords(path: string): string {
     .join(" › ");
 }
 
-function ValueChange({ change, names }: { change: ShownChange; names: Names }) {
+export function ValueChange({
+  about = null,
+  after,
+  before,
+  isAnswerKey = false,
+  label,
+  names,
+}: {
+  about?: string | null;
+  after: unknown;
+  before: unknown;
+  isAnswerKey?: boolean;
+  label: string;
+  names: Names;
+}) {
   return (
     <li className="flex flex-col gap-2 py-3">
       <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="text-xs font-medium">{pathInWords(change.path)}</span>
-        {change.about && <span className="text-muted-foreground text-xs">of “{change.about}”</span>}
-        {change.isAnswerKey && (
+        <span className="text-xs font-medium">{label}</span>
+        {about && <span className="text-muted-foreground text-xs">of “{about}”</span>}
+        {isAnswerKey && (
           <StateMark className="text-xs" state="answerKey" tone="attention">
             Changes the right answer
           </StateMark>
@@ -127,8 +143,8 @@ function ValueChange({ change, names }: { change: ShownChange; names: Names }) {
       </span>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <ValueSide after={change.after} before={change.before} names={names} side="before" />
-        <ValueSide after={change.after} before={change.before} names={names} side="after" />
+        <ValueSide after={after} before={before} names={names} side="before" />
+        <ValueSide after={after} before={before} names={names} side="after" />
       </div>
     </li>
   );
@@ -241,7 +257,15 @@ export function FieldChanges({
     <>
       <ul className="divide-y">
         {toValueChanges({ field, model, names }).map((change) => (
-          <ValueChange change={change} key={change.path} names={names} />
+          <ValueChange
+            about={change.about}
+            after={change.after}
+            before={change.before}
+            isAnswerKey={change.isAnswerKey}
+            key={change.path}
+            label={pathInWords(change.path)}
+            names={names}
+          />
         ))}
       </ul>
 

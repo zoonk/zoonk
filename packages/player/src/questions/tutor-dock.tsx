@@ -245,7 +245,10 @@ export function TutorConversationLink({ fallback = null }: { fallback?: React.Re
   return buddy ? <ConversationLink buddy={buddy} fallback={fallback} /> : fallback;
 }
 
-/** One size in every state, so a miss never resizes the main action beside it. */
+/**
+ * One size in every state, so a miss never resizes the main action beside it. On a phone it's the
+ * buddy's face alone, leaving the row's room to the main action.
+ */
 export function TutorAskButton() {
   const t = useExtracted();
   const buddy = useTutorBuddy();
@@ -263,7 +266,7 @@ export function TutorAskButton() {
         onClick={() => buddy.open()}
         render={
           <Button
-            className="with-aside:hidden h-11 shrink-0"
+            className="with-aside:hidden h-11 shrink-0 max-lg:w-11 max-lg:px-0"
             size="lg"
             type="button"
             variant="outline"
@@ -271,7 +274,7 @@ export function TutorAskButton() {
         }
       >
         <AskTutorFace identity={buddy.identity} />
-        {t("Ask")}
+        <span className="max-lg:hidden">{t("Ask")}</span>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>

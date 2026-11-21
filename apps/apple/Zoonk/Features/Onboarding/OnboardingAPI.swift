@@ -916,9 +916,10 @@ struct OnboardingAPI: Sendable {
     courseID: String,
     chapterID: String?,
     level: String?,
+    language: String,
     token: String
   ) async throws -> String {
-    var body: [String: Any] = ["timeZone": TimeZone.current.identifier]
+    var body: [String: Any] = ["language": language, "timeZone": TimeZone.current.identifier]
 
     // A chapter's start doesn't ask the level: the plan starts at that chapter.
     if let chapterID {

@@ -190,6 +190,7 @@
     "./tasks/challenge/assemble": "./src/tasks/challenge/assemble-challenge-case.ts",
     "./tasks/challenge/fix": "./src/tasks/challenge/challenge-fix.ts",
     "./tasks/challenge/plan": "./src/tasks/challenge/challenge-plan.ts",
+    "./tasks/audio/wav-fixture": "./src/tasks/audio/_test-utils/wav-fixture.ts",
     "./tasks/challenge/plan-fixture": "./src/tasks/challenge/_test-utils/challenge-plan.ts",
     "./tasks/challenge/plan-paths": "./src/tasks/challenge/challenge-plan-paths.ts",
     "./tasks/challenge/script": "./src/tasks/challenge/challenge-script.ts",

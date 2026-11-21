@@ -1,8 +1,9 @@
+import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { isInputRangeError } from "@zoonk/core/plans/target-date-range";
 import { logError } from "@zoonk/utils/logger";
 import { unstable_rethrow } from "next/navigation";
 import { errors } from "./api-errors";
-import { targetDateOutOfRange } from "./plan-errors";
+import { planChangedWhileSaving, targetDateOutOfRange } from "./plan-errors";
 import { InvalidRequestError } from "./request-input";
 
 type ProductRouteHandler<TArguments extends unknown[]> = (
@@ -31,6 +32,10 @@ export function withApiErrorBoundary<TArguments extends unknown[]>(
       // own code.
       if (isInputRangeError(error)) {
         return isQuery(args) ? errors.validation(error) : targetDateOutOfRange(error);
+      }
+
+      if (isPlanConflictError(error)) {
+        return planChangedWhileSaving();
       }
 
       logError("[Public API Error]", error);

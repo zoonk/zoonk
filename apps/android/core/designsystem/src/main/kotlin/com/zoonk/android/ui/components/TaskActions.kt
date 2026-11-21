@@ -44,10 +44,11 @@ fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
 }
 
 /**
- * Main's `TaskActions`: [back] at the start and the main action last. Where the bar has room (a tablet,
- * a tablet's page in a spread, a wide window), the main action sits at the end at its own width; on a
- * phone or a book's page it fills its line, and moves to a line of its own when the others don't leave
- * it room, so a large font never breaks its word. The bar's measured width decides, never the window's.
+ * Main's `TaskActions`: [back] at the start and the main action after the others, followed only by the
+ * buddy's ask. Where the bar has room (a tablet, a tablet's page in a spread, a wide window), the main
+ * action sits at the end at its own width; on a phone or a book's page it fills its line, and moves to a
+ * line of its own when the others don't leave it room, so a large font never breaks its word. The bar's
+ * measured width decides, never the window's.
  */
 @Composable
 fun TaskActions(

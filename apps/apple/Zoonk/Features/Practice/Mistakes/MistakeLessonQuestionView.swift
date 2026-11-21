@@ -176,7 +176,9 @@ struct MistakeLessonQuestionView: View {
               lessonId: replay.lessonId, stepId: replay.step.id,
               stepNumber: replay.step.position + 1,
               answer: tutorAnswer,
-              suggestions: [], mistakeId: entry.mistakeId), iconOnly: grade?.isCorrect != false)
+              suggestions: [], mistakeId: entry.mistakeId)
+          )
+          .tutorAskIcon()
         }
       }
     }

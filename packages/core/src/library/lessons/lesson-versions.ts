@@ -86,6 +86,7 @@ export async function readCurrentLessonVersion(lessonId: string): Promise<number
 export async function retireUnaskedQuestions(
   tx: TransactionClient,
   askedBy: StepWhereInput,
+  { sourcesLocked = false }: { sourcesLocked?: boolean } = {},
 ): Promise<void> {
   const unasked = await tx.item.findMany({
     select: { id: true, skillId: true },
@@ -99,7 +100,11 @@ export async function retireUnaskedQuestions(
     return;
   }
 
-  await lockPlanSourceWrite(tx, { skillIds: [...new Set(unasked.map(({ skillId }) => skillId))] });
+  if (!sourcesLocked) {
+    await lockPlanSourceWrite(tx, {
+      skillIds: [...new Set(unasked.map(({ skillId }) => skillId))],
+    });
+  }
 
   await tx.item.updateMany({
     data: { retiredAt: new Date() },

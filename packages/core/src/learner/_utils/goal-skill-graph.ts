@@ -12,6 +12,7 @@ import {
   expandItems,
   firstPerSkill,
   getPhaseAreaId,
+  listRemovedSkillIds,
   toGraphEntries,
   unique,
 } from "./goal-plan-projection";
@@ -32,6 +33,8 @@ export type GoalSkillNode = PlacementSkill & {
   areaId: string;
   areaTitle: string;
   memberSkillIds: string[];
+  /** In a subject the learner took out of the plan; its lessons stay in the plan's history. */
+  removed: boolean;
 };
 
 export type GoalPlanItem = Pick<PlanItem, "chapterId" | "id" | "status"> & { skillIds: string[] };
@@ -176,6 +179,7 @@ export async function loadPlanEntries(input: PlanRead) {
 
   const survivorOf = await readSurvivorOf(
     unique([
+      ...parsePlanGraph(loaded.plan.graph).skills.map((skill) => skill.skillId),
       ...loaded.allEntries.map((entry) => entry.skillId),
       ...members.flatMap((entry) => [entry.memberId, entry.skillId]),
     ]),
@@ -197,6 +201,7 @@ export async function loadPlanEntries(input: PlanRead) {
     allEntries,
     entries: firstPerSkill(allEntries),
     membersOf: Map.groupBy(survivingMembers, (entry) => entry.skillId),
+    survivorOf,
   };
 }
 
@@ -208,7 +213,7 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
     return { items: [], skills: [] };
   }
 
-  const { allEntries, entries, membersOf, plan } = loaded;
+  const { allEntries, entries, membersOf, plan, survivorOf } = loaded;
   const skillIds = entries.map((entry) => entry.skillId);
 
   const [titles, edges, bands] = await readDatabaseFacts(
@@ -220,6 +225,13 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
 
   const graph = parsePlanGraph(plan.graph);
   const sections = new Map(graph.skills.map((skill) => [skill.skillId, skill.area]));
+
+  const removed = listRemovedSkillIds({
+    entries: allEntries,
+    graph,
+    settings: plan.settings,
+    survivorOf,
+  });
 
   const prerequisites = new Map(
     [...Map.groupBy(edges, (edge) => edge.skillId)].map(([skillId, list]) => [
@@ -257,6 +269,7 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
       order,
       phase: entry.phase,
       prerequisiteIds: prerequisites.get(entry.skillId) ?? [],
+      removed: removed.has(entry.skillId),
       sectionTitle: sections.get(entry.skillId) ?? itemSections.get(entry.planItemId) ?? null,
     })),
   };
@@ -306,12 +319,17 @@ export async function loadGoalSkillIds(goalId: string): Promise<string[]> {
   return plan.skills.map((skill) => skill.id);
 }
 
-/** Where a goal's answers and mistakes are recorded: its skills and their finer lesson skills. */
-export function getMemberSkillIds(skills: readonly Pick<GoalSkillNode, "memberSkillIds">[]) {
-  return unique(skills.flatMap((skill) => skill.memberSkillIds));
+/**
+ * A goal's mistakes are the ones on its skills and their finer lesson skills, outside the subjects
+ * the learner took out. They're kept, so they return if the subject does.
+ */
+export function getMistakeSkillIds(
+  skills: readonly Pick<GoalSkillNode, "memberSkillIds" | "removed">[],
+): string[] {
+  return unique(skills.filter((skill) => !skill.removed).flatMap((skill) => skill.memberSkillIds));
 }
 
-export async function loadGoalMemberSkillIds(goalId: string): Promise<string[]> {
+export async function loadGoalMistakeSkillIds(goalId: string): Promise<string[]> {
   const plan = await loadGoalPlan(goalId);
-  return getMemberSkillIds(plan.skills);
+  return getMistakeSkillIds(plan.skills);
 }

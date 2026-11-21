@@ -18,7 +18,7 @@ struct AccountDeletionView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
-  @State private var code = ""
+  @State private var code = EmailVerificationCode()
   @State private var hasSentCode = false
   @FocusState private var isCodeFocused: Bool
   @State private var isAppStoreSubscriptionManagementPresented = false
@@ -109,7 +109,7 @@ struct AccountDeletionView: View {
       deletedData
       emailReauthenticationSection
     } buttons: {
-      AccountFailureMessage(failure: session.failure)
+      AccountFailureMessage(failure: code.displayedFailure(session.failure))
       emailReauthenticationButtons
     }
     .onChange(of: hasSentCode) {
@@ -199,7 +199,7 @@ struct AccountDeletionView: View {
 
       if hasSentCode {
         TextField(
-          text: $code,
+          text: $code.text,
           prompt: Text(
             "6-digit code",
             tableName: "Account",
@@ -241,7 +241,7 @@ struct AccountDeletionView: View {
             comment: "Verifies the email code and permanently deletes the account")
         }
         .buttonStyle(.mainAction)
-        .disabled((normalizedCode.count != 6 || session.isWorking) && !isPerformingDeletion)
+        .disabled((!code.canSubmit || session.isWorking) && !isPerformingDeletion)
 
         BusyButton(isBusy: session.isWorking && !isPerformingDeletion) {
           Task {
@@ -352,10 +352,6 @@ struct AccountDeletionView: View {
           "Shown only to subscribers, in the box that deletes their account.")
   }
 
-  private var normalizedCode: String {
-    code.filter(\.isNumber)
-  }
-
   private var normalizedEmail: String {
     email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
   }
@@ -430,12 +426,15 @@ struct AccountDeletionView: View {
   }
 
   private func performConfirmedDeletion() async {
-    guard let pendingDeletion else {
+    guard let pendingDeletion, !isPerformingDeletion else {
       return
     }
 
     isPerformingDeletion = true
-    defer { isPerformingDeletion = false }
+    defer {
+      isPerformingDeletion = false
+      self.pendingDeletion = nil
+    }
 
     let result: AccountDeletionResult
 
@@ -445,13 +444,21 @@ struct AccountDeletionView: View {
     case .direct:
       result = await session.deleteAccount()
     case .email:
+      guard code.canSubmit, !session.isWorking else {
+        return
+      }
+
+      let submittedCode = code.normalized
       result = await session.deleteAccount(
         reauthorizedEmail: normalizedEmail,
-        code: normalizedCode)
+        code: submittedCode)
+
+      if result == .failed {
+        code.recordFailure(session.failure, for: submittedCode)
+      }
     }
 
     apply(result)
-    self.pendingDeletion = nil
   }
 
   private func sendEmailCode() async {
@@ -466,7 +473,7 @@ struct AccountDeletionView: View {
       return
     }
 
-    code = ""
+    code = EmailVerificationCode()
     hasSentCode = true
   }
 

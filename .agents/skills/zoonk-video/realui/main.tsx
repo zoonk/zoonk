@@ -8,22 +8,27 @@ import { NextIntlClientProvider } from "next-intl";
 import { createRoot } from "react-dom/client";
 import { TODAY } from "./story";
 
-type View = (p: { lang: "en" | "pt"; state: string; q: URLSearchParams }) => any;
+type View = (p: { lang: "en" | "pt"; state: string; q: URLSearchParams }) => React.ReactNode;
 
-// A module that no longer compiles against the app only loses its own views.
+// A module that no longer compiles against the app only loses its own views. `views=<module>` loads only
+// that one, so a stage with many pieces doesn't load every screen's code once per piece.
 const modules = import.meta.glob<{ views: Record<string, View> }>([
   "./player.tsx",
   "./art.tsx",
   "./*/index.tsx",
 ]);
-const loaded = await Promise.allSettled(Object.values(modules).map((load) => load()));
+const q = new URLSearchParams(location.search);
+const only = q.get("views");
+const wanted = Object.entries(modules)
+  .filter(([path]) => !only || path === `./${only}/index.tsx` || path === `./${only}.tsx`)
+  .map(([, load]) => load());
+const loaded = await Promise.allSettled(wanted);
 const views: Record<string, View> = {};
 for (const result of loaded) {
   if (result.status === "fulfilled") Object.assign(views, result.value.views);
   else console.error(result.reason);
 }
 
-const q = new URLSearchParams(location.search);
 const lang = q.get("lang") === "pt" ? "pt" : "en";
 const messages = mergeMessages(
   await playerMessages(lang),

@@ -95,7 +95,7 @@ fun shortFocusName(
         }
 
         ShortExamFocus.MOCK_AND_REVIEW -> {
-            stringResource(if (mocksRequirePlus) R.string.plan_short_full_review else R.string.plan_short_mock_and_review)
+            stringResource(if (mocksRequirePlus) R.string.plan_short_full_review else R.string.plan_short_mock)
         }
 
         ShortExamFocus.LIGHT_REVIEW -> {

@@ -29,6 +29,7 @@ type SessionScreen = {
   goalId?: string;
   limit: LessonLimit | null;
   preparing?: boolean;
+  summary?: boolean;
   reason?: "setAside";
 };
 
@@ -39,6 +40,7 @@ export function getSessionHref({
   limit,
   preparing,
   reason,
+  summary,
 }: SessionScreen) {
   const params = new URLSearchParams();
 
@@ -56,6 +58,10 @@ export function getSessionHref({
     params.set(SESSION_BLOCK_PARAM, blockId);
   } else if (goalId) {
     params.set(SESSION_GOAL_PARAM, goalId);
+  }
+
+  if (summary) {
+    params.set("summary", "1");
   }
 
   const query = params.toString();
@@ -98,12 +104,13 @@ function useOpenSession() {
     (screen: SessionScreen, onAddress?: (address: SessionAddress) => void) => {
       const href = getSessionHref(screen);
 
-      const stopped = new URLSearchParams(globalThis.location.search).has(SESSION_STOPPED_PARAM);
+      const params = new URLSearchParams(globalThis.location.search);
 
       if (pathname !== SESSION_PATH) {
         router.push(href);
       } else if (
-        stopped ||
+        params.has(SESSION_STOPPED_PARAM) ||
+        params.has("summary") ||
         screen.limit ||
         screen.reason ||
         screen.generationId ||

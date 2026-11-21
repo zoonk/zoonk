@@ -17,9 +17,10 @@ import { isSharedExamGraph } from "./shared-graph-prompt";
 
 export type ReusableCurriculum = PlanSkillGraph & { primaryCourseId: string | null };
 
-type SharedInputs = Parameters<typeof isSharedExamGraph>[0]["inputs"] & {
-  goal: Pick<GoalCurriculumInputs["goal"], "examBlueprintId" | "id" | "language">;
-};
+type SharedInputs = Parameters<typeof isSharedExamGraph>[0]["inputs"] &
+  Pick<GoalCurriculumInputs, "sourceCourse"> & {
+    goal: Pick<GoalCurriculumInputs["goal"], "examBlueprintId" | "id" | "language">;
+  };
 
 function countFollowUps(details: unknown): number {
   const values = isJsonObject(details) ? details : {};
@@ -148,7 +149,14 @@ function findLanguageGraphKey({
   }
 
   const { language, prompt, targetLanguage } = inputs.goal;
-  const answers = [language, targetLanguage, normalizeString(prompt), inputs.sharedContext ?? null];
+
+  const answers = [
+    language,
+    targetLanguage,
+    normalizeString(prompt),
+    inputs.sharedContext ?? null,
+    ...(inputs.sourceCourse ? [inputs.sourceCourse.id, scope.country ?? null] : []),
+  ];
 
   return createHash("sha256").update(JSON.stringify(answers)).digest("hex");
 }

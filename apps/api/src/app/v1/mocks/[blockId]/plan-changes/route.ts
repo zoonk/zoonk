@@ -1,6 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
+import { planChangedWhileSaving } from "@/lib/plan-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { adaptPlanFromMock } from "@zoonk/core/exams/mocks/adapt-plan";
 import { mockPlanOfferInputSchema } from "@zoonk/core/exams/mocks/contract";
@@ -23,6 +24,10 @@ async function postPlanChange(
 
   if (result.status === "unchanged") {
     return NextResponse.json({ changeId: null, lessonsSkipped: 0, ...result });
+  }
+
+  if (result.status === "conflict") {
+    return planChangedWhileSaving();
   }
 
   return result.status === "unauthorized" ? errors.unauthorized() : errors.notFound();

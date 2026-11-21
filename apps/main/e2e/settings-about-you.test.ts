@@ -110,6 +110,7 @@ test("typed tools come back as chips, and a removed one is gone once saved", asy
   await expect(row).toContainText("Kinvo, Trademap");
 
   await row.click();
+
   await expect(
     page.getByRole("listitem").filter({ has: page.getByRole("button", { name: /^Remove /u }) }),
   ).toHaveText(["Kinvo", "Trademap"]);

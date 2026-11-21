@@ -239,7 +239,7 @@ private func readThread(
     case .notFound: throw APIError.notFound
     case .badRequest, .internalServerError, .undocumented: throw APIError.unavailable
     }
-  case .item(let itemId, _, _, _, _):
+  case .item(let itemId, _, _, _):
     let output = try await client.getItemQuestionThread(
       path: .init(itemId: itemId), query: .init(cursor: cursor, mistakeId: scope.mistakeId))
 
@@ -273,7 +273,7 @@ private func createQuestion(
   case .lesson(let lessonId, _, _), .step(let lessonId, _, _, _, _, _):
     return try createdQuestion(
       try await client.createLessonQuestion(path: .init(lessonId: lessonId), body: .json(request)))
-  case .item(let itemId, _, _, _, _):
+  case .item(let itemId, _, _, _):
     return try createdQuestion(
       try await client.createItemQuestion(path: .init(itemId: itemId), body: .json(request)))
   }
@@ -430,7 +430,7 @@ extension TutorScope {
           stepNumber: stepNumber))
     case .step(_, let stepId, let stepNumber, nil, _, let mistakeId):
       .case2(.init(kind: .step, mistakeId: mistakeId, stepId: stepId, stepNumber: stepNumber))
-    case .item(_, let blockId, let answered, _, let mistakeId):
+    case .item(_, let blockId, let answered, let mistakeId):
       .case5(.init(answered: answered, blockId: blockId, kind: .item, mistakeId: mistakeId))
     }
   }

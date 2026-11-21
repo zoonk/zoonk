@@ -18,9 +18,8 @@ const IMAGE_MIME_TYPE = "image/webp";
 
 const IMAGE_FILE_NAME = "step.webp";
 
-export type SaveImageAssetInput = {
+type ImageAssetInput = {
   alt: string | null;
-  image: Uint8Array;
   reuseKey: string;
   prompt: string;
   scene: ImageScene;
@@ -66,19 +65,27 @@ export async function uploadImageFile({
   return { height, url: upload.data, width };
 }
 
-export async function saveImageAsset(
-  input: SaveImageAssetInput,
-): Promise<{ created: boolean; row: MediaAsset }> {
+type ImageAssetFile = Awaited<ReturnType<typeof uploadImageFile>>;
+
+function saveAsset({
+  checkOwedAt,
+  input,
+  loadFile,
+}: {
+  checkOwedAt: Date | null;
+  input: ImageAssetInput;
+  loadFile: () => Promise<ImageAssetFile>;
+}): Promise<{ created: boolean; row: MediaAsset }> {
   assertIdentityKeyScope({ key: input.reuseKey, ownerId: input.ownerId });
 
   return createOrFindByIdentity({
     create: async () => {
-      const file = await uploadImageFile({ image: input.image, ownerId: input.ownerId });
+      const file = await loadFile();
 
       return prisma.mediaAsset.create({
         data: {
           alt: input.alt,
-          checkOwedAt: new Date(),
+          checkOwedAt,
           kind: "image",
           language: input.language,
           mimeType: IMAGE_MIME_TYPE,
@@ -95,4 +102,19 @@ export async function saveImageAsset(
     },
     findExisting: () => prisma.mediaAsset.findUnique({ where: { reuseKey: input.reuseKey } }),
   });
+}
+
+export function saveImageAsset({ image, ...input }: ImageAssetInput & { image: Uint8Array }) {
+  return saveAsset({
+    checkOwedAt: new Date(),
+    input,
+    loadFile: () => uploadImageFile({ image, ownerId: input.ownerId }),
+  });
+}
+
+export function saveCheckedImageAsset({
+  file,
+  ...input
+}: ImageAssetInput & { file: ImageAssetFile }) {
+  return saveAsset({ checkOwedAt: null, input, loadFile: async () => file });
 }

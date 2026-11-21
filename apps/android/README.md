@@ -77,8 +77,9 @@ The theme (`ui/theme`), shared pieces (`ui/components`), formatters (`ui/format`
 Author English copy in your feature's `core/resources/src/main/res/values/strings_<feature>.xml`, with names prefixed by the feature (`today_blocks_left`); shared words live in [strings.xml](core/resources/src/main/res/values/strings.xml). Each file is its own Eloqnt catalog. Then use `stringResource` or `pluralStringResource`. Android resources are explicit, not automatically extracted from Kotlin.
 
 ```sh
-pnpm --filter android i18n       # Translate missing/changed copy and prune removed entries
-pnpm --filter android i18n:lint  # Check completeness and freshness without translating
+pnpm --filter android i18n        # Translate missing/changed copy and prune removed entries
+pnpm --filter android i18n:prune  # After deleting English strings, prune every locale offline
+pnpm --filter android i18n:lint   # Check translations and generated catalogs without writing
 ```
 
 Root `pnpm i18n` includes Android. For targeted retranslation, add `--id navigation_today`. Translation uses the shared Codex CLI configuration; CI validates committed translations without model credentials.

@@ -6,7 +6,7 @@
   "search_ask_detail": "b57c16be2c0ef95919375d47ad16ed81ac037769f27567c3d7a830686ba10591",
   "search_ask_question": "3dfbf6be1e655cdf2358f04ae27807df2a222c92f650020e6022941401dc1e34",
   "search_blog": "5cb46e5fdceb6c0d6b8855d6876874003cbb6f7582b4acf81c6246363c1eafb1",
-  "search_buddy_keyword": "b67fca40279b1973377c1c800fab907bde9762edca9bc8376135a9accc243f0e",
+  "search_buddy_keyword": "d4a50ff4eef76f4d104f4595d71207cdcaf33630287016d849157a2154d3cc2b",
   "search_clear": "9711eee1babd1e1b90ea6cfca265f68b74e5c2421345750b89262acd02fac229",
   "search_close": "ac5c882fa4b9c86057fa6c45d2cabf6ed29f0d49dc2fd1a18c87b6e57464da35",
   "search_continue": "03de24d2b37c7887f1c5d673b85fe9fd5d1a537e6cd60aaa8d3a9891c00388c6",
@@ -71,7 +71,7 @@
     <string name="search_practice_mistakes">Practicar tus errores</string>
     <string name="search_ask_buddy">Preguntar a %1$s…</string>
     <string name="search_start_new_goal">Crear un nuevo objetivo</string>
-    <string name="search_buddy_keyword">Compañero</string>
+    <string name="search_buddy_keyword">Compa</string>
     <string name="search_mistakes_notebook">Cuaderno de errores</string>
     <string name="search_logbook">Bitácora</string>
     <string name="search_switch_goal">Cambiar a %1$s</string>
