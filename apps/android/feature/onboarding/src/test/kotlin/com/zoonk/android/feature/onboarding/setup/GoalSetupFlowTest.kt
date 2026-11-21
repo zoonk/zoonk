@@ -391,9 +391,13 @@ class GoalSetupFlowTest {
         show()
         pickTime(from = "45\u00A0min", to = "30\u00A0min")
 
-        rule.mainClock.advanceTimeBy(10_000)
+        rule.waitForIdle()
+        repeat(3) {
+            rule.mainClock.advanceTimeBy(3_000)
+            rule.waitForIdle()
+        }
+        rule.runOnIdle { assertEquals(4, reads) }
         rule.onNodeWithText("We couldn't work out what 30\u00A0min a day covers.").performScrollTo().assertIsDisplayed()
-        assertEquals(4, reads)
 
         api.advice = { adviceOf(0.6) }
         rule.onNodeWithText("Try again").performScrollTo().performClick()
