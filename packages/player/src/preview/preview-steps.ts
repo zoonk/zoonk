@@ -245,15 +245,15 @@ export function languageStep(
 
 export const lettersChart: ChartVisual = {
   axisStart: null,
-  categories: ["Maio", "Junho", "Julho"],
-  categoryLabel: "Mês",
+  categories: ["Monday", "Tuesday", "Wednesday"],
+  categoryLabel: "Day",
   chart: "bar",
   kind: "chart",
-  series: [{ name: "Ofícios respondidos", values: [35, 36, 40] }],
+  series: [{ name: "Distance", values: [35, 36, 40] }],
   source: null,
-  title: "Ofícios respondidos por mês",
-  unit: null,
-  valueLabel: "Ofícios",
+  title: "Distance traveled",
+  unit: "km",
+  valueLabel: "Distance",
 };
 
 export const visitorsChart: ChartVisual = {
