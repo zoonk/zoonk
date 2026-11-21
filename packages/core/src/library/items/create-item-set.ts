@@ -15,6 +15,7 @@ type SetItem =
 
 export type ItemSetToStore<Question = SetItem> = {
   content: object;
+  mockOnly?: boolean;
   examBlueprintId?: string | null;
   items: readonly Question[];
   kind: ItemSetKind;
@@ -30,6 +31,7 @@ export type ItemSetToStore<Question = SetItem> = {
 export async function createItemSet({
   content,
   examBlueprintId = null,
+  mockOnly = false,
   items,
   kind,
   language,
@@ -66,12 +68,18 @@ export async function createItemSet({
     return { rejected, set: null };
   }
 
-  const shared = { examBlueprintId, language };
+  const shared = { examBlueprintId, language, mockOnly };
 
   const set = await prisma.$transaction(async (transaction) => {
     const existing = await transaction.itemSet.findFirst({
       include: { items: { orderBy: { setPosition: "asc" } } },
-      where: { content: { equals: content }, examBlueprintId, kind, runId: provenance.runId },
+      where: {
+        content: { equals: content },
+        examBlueprintId,
+        kind,
+        mockOnly,
+        runId: provenance.runId,
+      },
     });
 
     if (existing) {

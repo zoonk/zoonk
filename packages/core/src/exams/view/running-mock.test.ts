@@ -28,7 +28,7 @@ async function startAnytime(goalId: string) {
 
   const shape = { area: option.area, day: option.day, kind: option.kind };
 
-  const started = await startAnytimeMock({ goalId, input: { acceptFewer: true, shape } });
+  const started = await startAnytimeMock({ goalId, input: { shape } });
 
   if (started.status !== "started") {
     throw new Error(`Expected a started mock, got ${started.status}`);

@@ -54,6 +54,7 @@ import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.checkpoint.checkpointName
 import com.zoonk.android.feature.conversation.ChecklistRow
+import com.zoonk.android.feature.mock.MockPreparingNote
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.RunLoadFailed
@@ -131,6 +132,7 @@ fun ChallengeScreen(
                 app.challenges,
                 LiveGenerationSource(app.api, signedIn),
                 createSavedStateHandle(),
+                app.mocks,
             )
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
@@ -734,6 +736,10 @@ private fun ChallengeFooter(
                     StatusLine(R.drawable.ic_calendar_clock, stringResource(R.string.challenge_opens_after_lessons))
                 }
 
+                challenge.access == Challenge.Access.PREPARING -> {
+                    PreparingActions(challenge.goalId, ui, movable, actions)
+                }
+
                 challenge.status == Challenge.Status.READY -> {
                     StartActions(challenge, ui, movable, actions)
                 }
@@ -846,6 +852,31 @@ private fun StartActions(
         ) {
             Text(stringResource(if (challenge.mock) R.string.challenge_mock_start else R.string.challenge_start))
         }
+    }
+}
+
+@Composable
+private fun PreparingActions(
+    goalId: UUID,
+    ui: ChallengeUi,
+    movable: Boolean,
+    actions: ChallengeActions,
+) {
+    MockPreparingNote(
+        stringResource(R.string.mock_preparing_title),
+        createWait = { scope -> actions.viewModel.paperWait(scope, goalId) },
+        onWritten = { actions.viewModel.challenge.refresh() },
+    )
+    MoveFailed(ui)
+    TaskActions { width ->
+        if (movable) {
+            OutlinedButton(
+                busy = ui.moving,
+                onClick = actions.viewModel::moveToMonday,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+            ) { Text(stringResource(R.string.challenge_move)) }
+        }
+        Button(onClick = actions::toToday, modifier = width) { Text(stringResource(R.string.mock_preparing_keep_studying)) }
     }
 }
 

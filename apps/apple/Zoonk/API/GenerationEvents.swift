@@ -80,12 +80,12 @@ extension APIClientFactory {
   /// naming the run already doing the same work.
   private static let readySteps: Set<String> = [
     "callReady", "challengeQuestionsReady", "explanationReady", "goalReady", "lessonReady",
-    "levelTestBankReady", "mockQuestionsReady", "setupLessonsReady", "testOutQuestionsReady",
+    "levelTestBankReady", "setupLessonsReady", "testOutQuestionsReady",
     "understandingReady",
   ]
 
   private static let joinSteps: Set<String> = [
-    "joinChallengeQuestions", "joinLevelTestBank", "joinMockQuestions", "joinRunningCall",
+    "joinChallengeQuestions", "joinLevelTestBank", "joinRunningCall",
     "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson",
     "joinRunningUnderstanding", "joinSetupLessons", "joinTestOutQuestions",
   ]

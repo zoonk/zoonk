@@ -180,8 +180,7 @@ class BottomBarTest {
         }
         val page = compose.onNodeWithTag(PAGE).getUnclippedBoundsInRoot().let { it.bottom - it.top }
 
-        // 20dp short of the page's height, its 16dp of padding included.
-        noteHeight = page - 36.dp
+        noteHeight = page - 44.dp
         compose.waitForIdle()
 
         assertEquals("the note draws its full height over the page", (page - 20.dp).value, room.height.value, 1f)

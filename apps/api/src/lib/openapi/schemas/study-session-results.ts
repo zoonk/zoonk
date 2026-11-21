@@ -57,7 +57,7 @@ export const studySessionSummaryResponseSchema = z
       .boolean()
       .meta({
         description:
-          'Every block is done or skipped. False right after "Stop for today": the rest of the session waits to be picked up',
+          "No study block is available next. True while the only work left is a mock exam still being prepared.",
       }),
     fullMeal: z.boolean(),
     minutes: z.number().int().min(0),

@@ -5,13 +5,13 @@ import {
   catalogCourseFixture,
   privateCourseFixture,
 } from "@zoonk/testing/fixtures/library-courses";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
+import { scheduledMockSetup } from "../exams/mocks/_test-utils/scheduled-mock";
 import { startMock } from "../exams/mocks/start-mock";
 import { submitMockSection } from "../exams/mocks/submit-mock-section";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
@@ -270,39 +270,18 @@ describe("the tutor beyond lessons", () => {
     });
 
     it("answers about a mock only once it's finished, from its result and the goal's plan", async () => {
-      const user = await userFixture();
-      const blueprint = await examBlueprintFixture();
-
-      const { goal, plan } = await sessionGoalFixture({
-        goal: { examBlueprintId: blueprint.id, kind: "exam" },
-        userId: user.id,
-      });
-
-      await Promise.all([
-        checkpointItemFixture({
-          kind: "mock",
-          planId: plan.id,
-          position: 10,
-          scheduledFor: SESSION_TODAY,
-        }),
-        prisma.subscription.create({
-          data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-        }),
-      ]);
-
-      mockSession(user.id);
-
-      const today = await getTodayStudySession({ goalId: goal.id });
-      const blockId = today.status === "ready" ? (today.session.blocks.at(-1)?.id ?? "") : "";
+      const { blockId } = await scheduledMockSetup();
       const target = { blockId, kind: "mock" } as const;
 
-      await startMock({ blockId, input: {} });
+      await expect(startMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "ready" });
 
       await expect(ask({ context: { kind: "mock" }, target })).resolves.toStrictEqual({
         status: "notFound",
       });
 
-      await submitMockSection({ blockId, input: {}, section: 0 });
+      await expect(submitMockSection({ blockId, input: {}, section: 0 })).resolves.toStrictEqual({
+        status: "finished",
+      });
 
       const question = await askCreated({
         context: { kind: "mock" },

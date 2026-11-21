@@ -26,7 +26,6 @@
   "limit_mind_maps_day": "8231cadd565235460490588df76f52ae33cfde05064bcc73fcdbf6a5e8ed09f6",
   "limit_mind_maps_guest": "40b607cca3747759260954bf18408e0bca54906c3a92565da9bed3cc3e6e08d2",
   "limit_mind_maps_used": "3e115ada8273ebd9261477c91923f854387bcd58825203c339c2e301b584136d",
-  "limit_mock_exams_used": "50e4a30efb0c35a13c7bedf77e470bd69b3a238947952f3e8477b3192bac753e",
   "limit_more_later_today": "7301044839b5f36115658a702ae7cd756ca373f780382abc8b362dbaac8954a0",
   "limit_more_later_today_or_subscribe": "e0881e436ac2a26df9623d90a9942e739d5c7ec8583c0b62822e6eca14384d76",
   "limit_more_on": "f6af874e3df51dd5a1089ce801cb9c1eb8bf1571190bef5d76e9656877805201",
@@ -83,7 +82,6 @@
     <string name="limit_call_time_used">Twój czas na rozmowy się skończył</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Możesz znów rozmawiać</string>
-    <string name="limit_mock_exams_used">Wykorzystano limit egzaminów próbnych</string>
     <string name="limit_lessons_guest">Do kolejnych lekcji potrzebujesz konta</string>
     <string name="limit_lessons_free">Wykorzystano wszystkie bezpłatne lekcje</string>
     <string name="limit_lessons_day">To już wszystkie nowe lekcje na dziś</string>

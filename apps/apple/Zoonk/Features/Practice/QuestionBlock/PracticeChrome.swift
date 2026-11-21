@@ -83,6 +83,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
       }
     }
     .background(Color(.systemBackground))
+    // As the bottom bar: a soft edge would fade the page above the bar's hairline.
+    .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
 
   private var segmentsBar: TaskSegments? {
@@ -109,6 +111,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
       // The bottom bar's inset, so a run's actions sit where every screen's do.
       .scenePadding()
       .frame(maxWidth: .infinity)
+      .barBackdrop()
     }
   }
 }

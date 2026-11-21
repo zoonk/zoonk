@@ -3,11 +3,18 @@ package com.zoonk.android.feature.exam
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.GenerationEvent
+import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.feature.mock.MockApi
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ExamResult
 import com.zoonk.api.models.ExamView
+import com.zoonk.api.models.Generation
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.MockWriting
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -46,7 +53,7 @@ fun mockOptions(extra: String): MockOptions {
                 {"access":"open","examDocument":"notice","examName":"ENEM","goalId":"$GOAL","lastMock":null,
                  "options":[{"area":null,"day":1,"kind":"full","areas":[],"covers":null,"estimatedMinutes":300,"leftOut":[],
                   "minutes":330,"objectiveOnly":false,"questions":90,"written":[]}],
-                 "placement":null,"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
+                 "placement":null,"requested":null,"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
                 """.trimIndent(),
             ).jsonObject
     val fields = if (extra.isEmpty()) emptyMap() else ApiJson.parseToJsonElement("{$extra}").jsonObject
@@ -70,11 +77,41 @@ class FakeExamApi(
     ): ExamResult = ExamResult(report.maxScore, report.passed, Clock.System.now(), report.scale, report.score)
 }
 
+/** [writing] is what the wait on a preparing mock finds, nothing by default; [runs] the runs it follows. */
 class FakeMockApi(
     private val options: MockOptions?,
+    private val writing: MockWriting = MockWriting(generationId = null, status = MockWriting.Status.NONE),
+    private val runs: GenerationSource = WritingRuns(),
 ) : MockApi {
     override suspend fun options(
         session: AuthenticatedSession,
         goalId: UUID,
     ) = options ?: throw ApiException(ApiError.NotFound)
+
+    override suspend fun writing(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        planItemId: UUID?,
+    ) = writing
+
+    override fun generations(session: AuthenticatedSession?) = runs
 }
+
+/** A run that wrote a mock paper's shared texts and has written its questions for a minute and a half. */
+private val paperWritingRun =
+    object : GenerationSource {
+        override fun events(id: String) =
+            flow {
+                val now = System.currentTimeMillis()
+                emit(GenerationEvent(at = now - 130_000, status = "started", step = "writeMockTexts"))
+                emit(GenerationEvent(at = now - 90_000, status = "completed", step = "writeMockTexts"))
+                emit(GenerationEvent(at = now - 90_000, status = "started", step = "writeMockQuestions"))
+                awaitCancellation()
+            }
+
+        override suspend fun status(id: String) = Generation.Status.RUNNING
+    }
+
+/** Mocks whose preparing paper a run is writing now. */
+fun writingPaperApi(options: MockOptions?) =
+    FakeMockApi(options, MockWriting(generationId = "paper-run", status = MockWriting.Status.WRITING), paperWritingRun)

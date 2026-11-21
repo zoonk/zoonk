@@ -5965,7 +5965,6 @@
       }
     },
     "Getting ready…" : {
-      "comment" : "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5982,13 +5981,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation…"
+            "value" : "Préparation en cours…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando tutto…"
+            "value" : "Stiamo preparando…"
           }
         },
         "ja" : {
@@ -6384,7 +6383,6 @@
       }
     },
     "Keep learning" : {
-      "comment" : "Adds the plan's next lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6419,7 +6417,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계속 학습하기"
+            "value" : "계속 배우기"
           }
         },
         "pl" : {
@@ -6431,7 +6429,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar estudando"
+            "value" : "Continuar aprendendo"
           }
         },
         "tr" : {

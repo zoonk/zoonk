@@ -11,24 +11,12 @@
   "mock_chooser_last_mock": "5f3b91cf3d0667d8ad3f10c5e31df0e3d4c7879ccf0201787ef28dbbd5ebb169",
   "mock_chooser_line": "dd4a44ef14137b7a66b1cbb8b79ffb779b98ee5ae1e410c3d8fc155f24e8684a",
   "mock_chooser_no_written_part": "dc0c71c2b4800ac0ded36836c77355d7d12a5a3195ec11461fcfabe8e7463683",
-  "mock_chooser_not_enough": "932c0dd1379d758a7498f17118afe3405745cf28516e8ae2f106ef7a5d6c0559",
   "mock_chooser_one_subject": "895bcf9ea419b7af9d9c2fff277db9ff017456938cbd8af3da2452113a0afe8a",
   "mock_chooser_option_size": "d1be103766c2835bea323d15e6ae070568d42d960f9a93bf7b054ff8a5e57728",
-  "mock_chooser_pick_another": "46de6b3c7fce088440b8b4c6eebf67babf6c462da91918444160e067bc5e69e8",
-  "mock_chooser_preparing": "265d2d4dfdc4588191d5addb0b6bd001e1b4b2a792e99610e8797d5582f958ab",
-  "mock_chooser_preparing_detail": "d209ab9ce72af963f56d85f60b28d733cdab7da60ea1cf2e7c28c7a6f21c1768",
-  "mock_chooser_short_day": "3f6548b3b7bed3467eea230953a004113a15675e30f9d52ff11fcc2ab0b2d0d5",
-  "mock_chooser_short_later_today": "8152d7bbcc9f5f4f882848530a25df94c41428f2842c9470a4cd3565c6c8d3f8",
-  "mock_chooser_short_line": "7fe464535b4fce24d9598cad89137348b3d88b99d3c7f6563cf33ed9a93917f8",
-  "mock_chooser_short_on": "9c1355fe5867570e4305d19baa2c1a852d5e634c7ce14b9b42f55e4573bb32d7",
-  "mock_chooser_short_title": "7a8401ada08d46b61465136de92f3065be6ab5e2e56cc8a10ef07b67791e8762",
   "mock_chooser_start": "17804e400290d23f05b4bf056b65a666e3c4368e8d3cf4a028aead168a1374d1",
   "mock_chooser_the_exam": "c2cd4b59462ea55a0dd34d0e8d9c7a6eaeab53b7f272ecac6717cebf573c1fa4",
   "mock_chooser_title": "d3139eaa9d8f8036169c2a201d01c04ae52fe06be895bfef3a70715bf78e7c22",
-  "mock_chooser_usually": "59b3578f5eddca989d30c3e7a3f011e594fc9a7e3c958868a3fd30758bfa00d2",
-  "mock_chooser_writing": "d508607b347d98377e471f89cf12e5ae3a8d64a5e3b5f114ed387e908f66a611",
-  "mock_chooser_writing_questions": "80cf97fc9b691ec94b524661ef0c7928afcbb5e17ab1d2f9f2266a8346f94ea8",
-  "mock_chooser_writing_questions_line": "a3a9ed610f567d85da63ccb494810a1e507421d76b9cc6dc89f5396604fd3317"
+  "mock_chooser_usually": "59b3578f5eddca989d30c3e7a3f011e594fc9a7e3c958868a3fd30758bfa00d2"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -56,24 +44,7 @@
         <item quantity="many">%1$d domande · %2$s</item>
         <item quantity="other">%1$d domande · %2$s</item>
     </plurals>
-    <!-- PluralsCandidate: %1$d names which exam day it is, not a count. -->
-    <string name="mock_chooser_not_enough">Non ci sono ancora abbastanza domande per questa simulazione. Scegline un’altra.</string>
     <string name="mock_chooser_failed">Non siamo riusciti ad avviare la simulazione. Riprova.</string>
-    <string name="mock_chooser_short_title">Vuoi iniziare una simulazione più breve?</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_day">Oggi questa simulazione ha %1$s domande su %2$s e dura circa %3$s. Potrai fare quella completa domani.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
-    <string name="mock_chooser_short_later_today">Oggi questa simulazione ha %1$s domande su %2$s e dura circa %3$s. Potrai svolgerla per intero più tardi in giornata.</string>
-    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Oggi questa simulazione ha %1$s domande su %2$s e dura circa %3$s. Potrai svolgerla per intero il %4$s.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_line">Oggi questa simulazione ha %1$s domande su %2$s e dura circa %3$s.</string>
-    <string name="mock_chooser_pick_another">Scegline un’altra</string>
-    <string name="mock_chooser_preparing">Stiamo preparando la tua simulazione d’esame</string>
-    <string name="mock_chooser_preparing_detail">Stiamo preparando per te domande simili a quelle dell’esame. La simulazione inizia qui appena sono pronte.</string>
-    <string name="mock_chooser_writing">Stiamo preparando la tua simulazione</string>
-    <string name="mock_chooser_writing_questions">Stiamo preparando domande simili a quelle dell’esame</string>
-    <string name="mock_chooser_writing_questions_line">Stiamo scegliendo cosa chiedere per ogni materia…</string>
     <!-- After a mock exam's size and time limit: about how long learners usually take. -->
     <string name="mock_chooser_usually">di solito %1$s</string>
     <string name="mock_chooser_last_mock">La tua ultima simulazione d’esame</string>

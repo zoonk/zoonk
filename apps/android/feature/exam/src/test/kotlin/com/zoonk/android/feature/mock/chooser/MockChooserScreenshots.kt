@@ -10,7 +10,6 @@ import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
@@ -18,11 +17,10 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
-import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.StepState
 import com.zoonk.android.feature.exam.FakeMockApi
 import com.zoonk.android.feature.exam.GOAL
 import com.zoonk.android.feature.exam.mockOptions
+import com.zoonk.android.feature.exam.writingPaperApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
@@ -78,27 +76,61 @@ class MockChooserScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
-    fun phoneShort() = captureShort("chooser-phone-short")
+    fun phonePreparing() = capturePreparing("chooser-phone-preparing")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-night-xxhdpi")
+    fun phonePreparingDark() = capturePreparing("chooser-phone-preparing-dark", dark = true)
 
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
-    fun tabletShort() = captureShort("chooser-tablet-short")
+    fun tabletPreparing() = capturePreparing("chooser-tablet-preparing")
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
-    fun phoneShortAtTwiceTheFontSize() {
+    fun phonePreparingAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        captureShort("chooser-phone-short-font200")
+        capturePreparing("chooser-phone-preparing-font200")
     }
 
-    /** The shorter mock's dialog, offered when the full mock can't start. */
-    private fun captureShort(name: String) {
-        starts.starts = listOf { short() }
-        capture(name) {
-            compose.onNodeWithText("Day 1").performClick()
-            compose.onNodeWithText("Start").performClick()
+    @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h1400dp-xxhdpi")
+    fun phonePreparingInPortuguese() = capturePreparing("chooser-phone-preparing-pt", day = "Dia 1", start = "Começar")
+
+    /** Nothing is writing the paper: the note says to come back. */
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun phonePreparingWithNothingWriting() = capturePreparing("chooser-phone-preparing-come-back", writing = false)
+
+    private fun capturePreparing(
+        name: String,
+        dark: Boolean = false,
+        writing: Boolean = true,
+        day: String = "Day 1",
+        start: String = "Start",
+    ) {
+        starts.starts = listOf { preparing() }
+        val mocks =
+            if (writing) {
+                writingPaperApi(mockOptions(OPTIONS))
+            } else {
+                FakeMockApi(mockOptions(OPTIONS))
+            }
+        capture(name, dark = dark, mocks = mocks) {
+            compose.onNodeWithText(day).performClick()
+            compose.onNodeWithText(start).performClick()
         }
     }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun phoneReady() =
+        capture(
+            "chooser-phone-ready",
+            options = """$OPTIONS,"requested":{"shape":{"area":null,"day":1,"kind":"full"},"status":"ready"}""",
+        ) {
+            compose.onNodeWithText("Day 1").performClick()
+        }
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
@@ -129,38 +161,6 @@ class MockChooserScreenshots {
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
     fun expandedDark() = capture("chooser-expanded-dark", dark = true)
 
-    @Test
-    @Config(qualifiers = "w411dp-h1000dp-xxhdpi")
-    fun writing() = writing("chooser-writing")
-
-    @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun writingUnfolded() = writing("chooser-writing-fold", fold = true)
-
-    private fun writing(
-        name: String,
-        fold: Boolean = false,
-    ) {
-        compose.mainClock.autoAdvance = false
-        compose.setContent {
-            ZoonkTheme {
-                Surface {
-                    MockWriting(
-                        run =
-                            GenerationRun(
-                                status = GenerationRun.Status.Following,
-                                steps = mapOf("writeMockQuestions" to StepState.Started),
-                            ),
-                        onRetry = {},
-                    )
-                }
-            }
-        }
-        if (fold) compose.unfoldBook(folds)
-        compose.mainClock.advanceTimeBy(WRITING_FOR)
-        write(name, compose.onRoot().captureRender().asAndroidBitmap())
-    }
-
     private val starts = FakeMockStartApi()
 
     private fun capture(
@@ -169,9 +169,9 @@ class MockChooserScreenshots {
         moreContrast: Boolean = false,
         options: String = OPTIONS,
         fold: Boolean = false,
+        mocks: FakeMockApi = FakeMockApi(mockOptions(options)),
         act: () -> Unit = {},
     ) {
-        val mocks = FakeMockApi(mockOptions(options))
         compose.setContent {
             val context = LocalContext.current
             val app = remember { AppContainer.preview(context) }
@@ -182,15 +182,15 @@ class MockChooserScreenshots {
                         CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
                     )
                 }
+            val store = remember { MockStore(mocks, cache) }
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface {
                     MockChooser(
                         goalId = GOAL,
                         app = app,
                         navigator = rememberAppNavigator(),
-                        mockStore = remember { MockStore(mocks, cache) },
-                        starter = remember { MockStarter(starts, cache) },
-                        generations = { ReadyRuns() },
+                        mockStore = store,
+                        starter = remember { MockStarter(starts, cache, store) },
                     )
                 }
             }
@@ -218,8 +218,6 @@ class MockChooserScreenshots {
     }
 
     private companion object {
-        const val WRITING_FOR = 4_000L
-
         val OPTIONS =
             """
             "examName":"ENEM",

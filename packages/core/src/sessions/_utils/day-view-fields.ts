@@ -24,6 +24,8 @@ export type DayViewFieldsInput = {
   lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
   outlines?: DayOutlines;
+  /** Positions of the day's mocks whose questions aren't ready yet. */
+  preparing?: ReadonlySet<number>;
   sessionBar: StudySessionView["sessionBar"];
   session: {
     blocks: readonly DayBlockInput[];
@@ -38,14 +40,14 @@ export type DayViewFieldsInput = {
   week: SessionWeek;
 };
 
-function getNextPosition(
-  blocks: readonly Pick<DayBlockInput, "status" | "position">[],
-): number | null {
+const NO_POSITIONS: ReadonlySet<number> = new Set();
+
+export function getNextDayBlock<
+  Block extends { status: DayBlockInput["status"]; preparing: boolean },
+>(blocks: readonly Block[]): Block | undefined {
   return (
-    (
-      blocks.find((block) => block.status === "active") ??
-      blocks.find((block) => block.status === "pending")
-    )?.position ?? null
+    blocks.find((block) => block.status === "active") ??
+    blocks.find((block) => block.status === "pending" && !block.preparing)
   );
 }
 
@@ -60,13 +62,14 @@ export function toDayViewFields({
   lessonRoom = false,
   missions,
   outlines = null,
+  preparing = NO_POSITIONS,
   session,
   sessionBar,
   timeZone = "UTC",
   week,
 }: DayViewFieldsInput): Omit<
   StudySessionView,
-  "blocks" | "id" | "missions" | "nextBlockId" | "state" | "status"
+  "blocks" | "id" | "missions" | "nextBlockId" | "nextPosition" | "state" | "status"
 > {
   const streak = scoreAnswers({ answers }).streak;
   const lessons = getDayLessons({ blocks: session.blocks, dayMinutes, lessonRoom, outlines });
@@ -82,7 +85,13 @@ export function toDayViewFields({
     emptyDay: lessons.emptyDay,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
-    extraTime: getExtraTime({ blocks: session.blocks, current }),
+    extraTime: getExtraTime({
+      blocks: session.blocks.map((block) => ({
+        preparing: preparing.has(block.position),
+        status: block.status,
+      })),
+      current,
+    }),
     freshStart: session.freshStart,
     fullMeal: {
       bonus: getMissionBonus(missions),
@@ -101,7 +110,6 @@ export function toDayViewFields({
       planned: session.plannedMinutes,
       reserved: lessonRoom,
     }),
-    nextPosition: getNextPosition(session.blocks),
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
     sessionBar,
     week: { days: week.days, nextStudyDate: week.nextStudyDate },

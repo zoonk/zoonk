@@ -7,11 +7,13 @@ import {
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
 import { isCurrentSession } from "./_utils/current-session";
+import { getNextDayBlock } from "./_utils/day-view-fields";
 import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
-import { followSavedDay } from "./_utils/refresh-study-day-selection";
-import { type StudyBlockView, getNextBlockId, toStudyBlockView } from "./_utils/session-view";
+import { loadPreparingMockPositions } from "./_utils/preparing-mock-blocks";
+import { openSavedDay } from "./_utils/saved-mock-review";
+import { type StudyBlockView, toStudyBlockView } from "./_utils/session-view";
 import {
   STUDY_SESSION_INCLUDE,
   type StudySessionRow,
@@ -73,7 +75,13 @@ async function openSavedSession({
     phaseChallengesRequired: required,
   });
 
-  const targetId = targetBlockId ?? getNextBlockId(visible);
+  const preparing = await loadPreparingMockPositions({ ...refilled, blocks: visible });
+
+  const next = getNextDayBlock(
+    visible.map((block) => ({ ...block, preparing: preparing.has(block.position) })),
+  );
+
+  const targetId = targetBlockId ?? next?.id;
   const target = visible.find((block) => block.id === targetId);
 
   // Queue reconciliation only appends work, so existing work does not wait for it. Entitlement replacement still runs before target selection.
@@ -81,7 +89,7 @@ async function openSavedSession({
     current &&
     refilled.goal &&
     (!target || (target.status !== "pending" && target.status !== "active"))
-      ? await followSavedDay({ session: refilled, timeZone })
+      ? await openSavedDay({ session: refilled, timeZone })
       : refilled;
 
   const blocks = withoutLockedPhaseChallenges({
@@ -89,11 +97,23 @@ async function openSavedSession({
     phaseChallengesRequired: required,
   });
 
+  const currentPreparing =
+    selected === refilled ? preparing : await loadPreparingMockPositions({ ...selected, blocks });
+
+  const views = blocks.map((block) =>
+    toStudyBlockView({
+      answeredItemIds: new Set(),
+      block,
+      blocks,
+      preparing: currentPreparing.has(block.position),
+    }),
+  );
+
   const view = await readLessonScreens({
-    blocks: blocks.map((block) => toStudyBlockView({ answeredItemIds: new Set(), block, blocks })),
+    blocks: views,
     current,
     id: selected.id,
-    nextBlockId: getNextBlockId(blocks),
+    nextBlockId: getNextDayBlock(views)?.id ?? null,
   });
 
   return { session: view, status: "ready", userId };
@@ -154,6 +174,11 @@ async function openNext({
     return openSessionBlock({ block: next, sessionId: session.id, timeZone, userId });
   }
 
+  // The day isn't over while a mock is still being prepared, so there's no summary yet: Today says when to come back.
+  if (session.blocks.some((block) => block.preparing && block.status === "pending")) {
+    return openingResult({ kind: "today" });
+  }
+
   const seenWithoutPendingRewards = await prisma.studySummaryVisit.findUnique({
     select: { visitId: true },
     where: {
@@ -205,7 +230,7 @@ async function openTappedBlock({
   }
 
   // A day that's over starts nothing new, as Continue and missions don't; work under way goes on.
-  if (!opened.session.current && block.status === "pending") {
+  if (block.preparing || (!opened.session.current && block.status === "pending")) {
     return openingResult({ kind: "today" });
   }
 
@@ -235,7 +260,8 @@ async function openMission({
           (candidate) =>
             candidate.id === target.blockId &&
             (candidate.status === "pending" || candidate.status === "active") &&
-            candidate.waitReason === null,
+            candidate.waitReason === null &&
+            !candidate.preparing,
         )
       : undefined;
 

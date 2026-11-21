@@ -7,17 +7,11 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
-import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.AnytimeMockInput
-import com.zoonk.api.models.MockQuestionsGeneration
-import com.zoonk.api.models.MockQuestionsInput
 import com.zoonk.api.models.MockShape
-import kotlinx.coroutines.delay
-import java.time.Instant
 import java.util.UUID
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaInstant
 
 sealed interface MockStartOutcome {
     /** Started now, or the one already running: either way the learner goes on in it. */
@@ -25,58 +19,18 @@ sealed interface MockStartOutcome {
         val id: String,
     ) : MockStartOutcome
 
-    /** The bank asks well under the questions picked and none can be written now. */
-    data class Short(
-        val questions: Long,
-        val examQuestions: Long,
-        val minutes: Long,
-        val limit: AnytimeMock.Limit?,
-        /** When the full mock fits again, for a cap counted over the last 30 days. */
-        val availableAt: Instant?,
-    ) : MockStartOutcome
-
-    data object NeedsQuestions : MockStartOutcome
-
-    data object NotEnoughQuestions : MockStartOutcome
+    /** Its questions are still being written: the server saved the request, and no clock runs. */
+    data object Preparing : MockStartOutcome
 
     data object PlusRequired : MockStartOutcome
 }
 
-sealed interface QuestionWriting {
-    /** Nothing to write, or nothing more for now: start with what the bank has. */
-    data object Ready : QuestionWriting
-
-    data class Writing(
-        val generationId: String,
-    ) : QuestionWriting
-
-    data class Refused(
-        val limit: Limit,
-    ) : QuestionWriting
-
-    data object PlusRequired : QuestionWriting
-}
-
-/**
- * Which start this is: the learner's first tap, the start after a question-writing run (the server
- * then answers with the mock or its short numbers, never asks for questions again), or the start the
- * learner confirmed after seeing those numbers.
- */
-enum class MockStartAsk { First, AfterWriting, AcceptFewer }
-
-interface MockStartApi {
+fun interface MockStartApi {
     suspend fun start(
         session: AuthenticatedSession,
         goalId: UUID,
         shape: MockShape,
-        ask: MockStartAsk,
     ): AnytimeMock
-
-    suspend fun writeQuestions(
-        session: AuthenticatedSession,
-        goalId: UUID,
-        shape: MockShape,
-    ): MockQuestionsGeneration
 }
 
 class LiveMockStartApi(
@@ -86,113 +40,52 @@ class LiveMockStartApi(
         session: AuthenticatedSession,
         goalId: UUID,
         shape: MockShape,
-        ask: MockStartAsk,
-    ) = perform {
-        api.clients(session).exams.startAnytimeMock(
-            goalId,
-            AnytimeMockInput(
-                shape = shape,
-                acceptFewer = ask == MockStartAsk.AcceptFewer,
-                afterWriting = ask == MockStartAsk.AfterWriting,
-            ),
-        )
-    }
-
-    override suspend fun writeQuestions(
-        session: AuthenticatedSession,
-        goalId: UUID,
-        shape: MockShape,
-    ) = perform {
-        api.clients(session).exams.createMockQuestionsGeneration(
-            goalId,
-            MockQuestionsInput(shape = shape),
-        )
-    }
+    ) = perform { api.clients(session).exams.startAnytimeMock(goalId, AnytimeMockInput(shape = shape)) }
 }
 
-/**
- * Starts a mock taken any time, as main's chooser does: only from the learner's tap, since asking
- * for questions runs models.
- */
+/** Starts a mock taken any time, as main's chooser does: only from the learner's tap. */
 class MockStarter(
     private val api: MockStartApi,
     private val cache: AppCache,
+    private val mocks: MockStore,
 ) {
     suspend fun start(
         goalId: UUID,
         shape: MockShape,
-        ask: MockStartAsk,
     ): MutationResult<MockStartOutcome> {
         val result =
             cache.mutate { session ->
                 try {
-                    outcome(api.start(session, goalId, shape, ask))
+                    outcome(api.start(session, goalId, shape))
                 } catch (e: ApiException) {
-                    when (e.code) {
-                        PLUS_REQUIRED -> MockStartOutcome.PlusRequired
-                        NOT_ENOUGH_QUESTIONS -> MockStartOutcome.NotEnoughQuestions
-                        else -> throw e
-                    }
+                    if (e.code == PLUS_REQUIRED) MockStartOutcome.PlusRequired else throw e
                 }
             }
-        val outcome = (result as? MutationResult.Done)?.value
-        if (outcome is MockStartOutcome.Opened) cache.invalidate(setOf(DataDomain.LearnerModel))
-        if (outcome == MockStartOutcome.PlusRequired) cache.invalidate(setOf(DataDomain.UserSubscription))
-        return result
-    }
+        when ((result as? MutationResult.Done)?.value) {
+            is MockStartOutcome.Opened -> {
+                cache.invalidate(setOf(DataDomain.LearnerModel))
+            }
 
-    /** While the goal's skill map is still drawn (a goal in onboarding), it asks again for a while. */
-    suspend fun writeQuestions(
-        goalId: UUID,
-        shape: MockShape,
-    ): MutationResult<QuestionWriting> {
-        val result =
-            cache.mutate { session ->
-                try {
-                    var writing = api.writeQuestions(session, goalId, shape)
-                    var asked = 1
-                    while (writing.status == MockQuestionsGeneration.Status.PREPARING && asked < PREPARING_TRIES) {
-                        delay(PREPARING_RETRY)
-                        writing = api.writeQuestions(session, goalId, shape)
-                        asked++
-                    }
-                    writing.generationId?.takeIf { writing.status == MockQuestionsGeneration.Status.GENERATING }?.let(
-                        QuestionWriting::Writing,
-                    )
-                        ?: QuestionWriting.Ready
-                } catch (e: ApiException) {
-                    Limit.of(e)?.let(QuestionWriting::Refused) ?: if (e.code == PLUS_REQUIRED) QuestionWriting.PlusRequired else throw e
-                }
+            MockStartOutcome.Preparing -> {
+                mocks.requested(goalId, shape)
             }
-        if ((result as? MutationResult.Done)?.value == QuestionWriting.PlusRequired) cache.invalidate(setOf(DataDomain.UserSubscription))
+
+            MockStartOutcome.PlusRequired -> {
+                cache.invalidate(setOf(DataDomain.UserSubscription))
+            }
+
+            null -> {}
+        }
         return result
     }
 
     private fun outcome(mock: AnytimeMock): MockStartOutcome =
         when (mock.status) {
-            AnytimeMock.Status.STARTED, AnytimeMock.Status.RUNNING -> {
-                MockStartOutcome.Opened(checkNotNull(mock.id).toString())
-            }
-
-            AnytimeMock.Status.NEEDS_QUESTIONS -> {
-                MockStartOutcome.NeedsQuestions
-            }
-
-            AnytimeMock.Status.SHORT -> {
-                MockStartOutcome.Short(
-                    questions = mock.questions ?: 0,
-                    examQuestions = mock.examQuestions ?: 0,
-                    minutes = mock.minutes ?: 0,
-                    limit = mock.limit,
-                    availableAt = mock.availableAt?.toJavaInstant(),
-                )
-            }
+            AnytimeMock.Status.STARTED, AnytimeMock.Status.RUNNING -> MockStartOutcome.Opened(checkNotNull(mock.id).toString())
+            AnytimeMock.Status.PREPARING -> MockStartOutcome.Preparing
         }
 
     private companion object {
         const val PLUS_REQUIRED = "PLUS_REQUIRED"
-        const val NOT_ENOUGH_QUESTIONS = "NOT_ENOUGH_QUESTIONS"
-        const val PREPARING_TRIES = 60
-        val PREPARING_RETRY = 3.seconds
     }
 }

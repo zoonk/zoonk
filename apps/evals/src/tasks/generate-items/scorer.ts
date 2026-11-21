@@ -9,7 +9,7 @@ import {
 import { checkItem, findOwnEmDashes } from "@zoonk/core/library/items/checks";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "./score-categories";
 
-type GenerateItemsCase = {
+export type GenerateItemsCase = {
   examFormat?: {
     entry?: NumericEntry | null;
     optionCount?: number | null;
@@ -19,7 +19,7 @@ type GenerateItemsCase = {
   language: string;
 };
 
-function checkGeneratedItems(output: string, input: GenerateItemsCase): CodeCheckResult {
+export function checkGeneratedItems(output: string, input: GenerateItemsCase): CodeCheckResult {
   const { items } = JSON.parse(output) as { items: GeneratedItem[] };
 
   if (items.length === 0) {

@@ -227,11 +227,7 @@ enum ComingLessons {
         localized: "Not ready yet", table: "Today",
         comment: "The day's next lessons, which nobody has asked for yet")
     case .beingWritten:
-      String(
-        localized: "Getting ready…", table: "Today",
-        comment:
-          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-      )
+      String(localized: "Getting ready…", table: "Today")
     }
   }
 }
@@ -314,11 +310,13 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let kind: Kind
   let lessonId: String?
   let mistakesOnly: Bool
+  let mockPreparationReview: Bool?
   let opensInPlayer: Bool
   let oftenTested: Bool
   let planItemId: String?
   let planItemKey: String?
   let position: Int
+  let preparing: Bool
   let questions: Int
   let refresh: Bool
   let reinforcement: Bool
@@ -409,6 +407,7 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     let extra: Bool
     let fullReview: Bool
     let mistakesOnly: Bool
+    let mockPreparationReview: Bool?
     let refresh: Bool
     let reinforcement: Bool
     let weakest: Bool
@@ -456,7 +455,8 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
     }
     flags = Flags(
       extra: block.extra, fullReview: block.fullReview, mistakesOnly: block.mistakesOnly,
-      refresh: block.refresh, reinforcement: block.reinforcement, weakest: block.weakest)
+      mockPreparationReview: block.mockPreparationReview, refresh: block.refresh,
+      reinforcement: block.reinforcement, weakest: block.weakest)
     kind = block.kind
     lessonId = block.lessonId
     planItemKey = block.planItemKey

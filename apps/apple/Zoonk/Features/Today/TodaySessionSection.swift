@@ -27,13 +27,18 @@ struct TodaySessionSection: View {
   private var session: StudyDay { view.session }
 
   var body: some View {
+    let status = TodayDayStatus(view: view, writingStalled: writingStalled)
+
     Section {
       queue
 
-      if let status = TodayDayStatus(view: view, writingStalled: writingStalled) {
+      if let status {
         status
       }
     }
+    // Main's status line closes the day's list with a hairline, and opens a day with no list.
+    .listSectionSeparator(
+      status == nil ? .hidden : .visible, edges: session.blocks.isEmpty ? .all : .bottom)
   }
 
   @ViewBuilder
@@ -116,14 +121,14 @@ struct TodaySessionSection: View {
   }
 
   /// A block still to do opens from its row, in whatever order the learner likes; one waiting for
-  /// earlier work doesn't.
+  /// earlier work or mock supply stays closed.
   @ViewBuilder
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
       isBusy: busy == .block(block.position), failed: failed == .block(block.position))
 
-    if block.waitReason == nil {
+    if block.waitReason == nil && !block.preparing {
       Button {
         open(block, false)
       } label: {
@@ -172,7 +177,7 @@ struct TodaySessionAction: View {
   let writingStalled: Bool
   let open: (StudyBlock, Bool) -> Void
   let prepare: () -> Void
-  /// Adds the plan's next lessons once the day is done or resting.
+  /// Adds the plan's next lessons once the day has nothing of its own left to start.
   let keepLearning: () -> Void
   /// After an exam's date: studies the lessons left after the exam.
   let keepStudying: () -> Void
@@ -340,7 +345,7 @@ struct TodayMainAction: View {
     case .continueSession:
       Text("Continue", tableName: "Today", comment: "Continues today's session")
     case .keepLearning:
-      Text("Keep learning", tableName: "Today", comment: "Adds the plan's next lessons")
+      Text("Keep learning", tableName: "Today")
     case .practice(let minutes):
       Text(
         "Practice \(minutes) min", tableName: "Today",
@@ -370,7 +375,7 @@ struct TodayDayLead: View {
 
   var body: some View {
     if session.showsDayProgress {
-      DayProgressRow(session: session, writingStalled: writingStalled)
+      DayProgressRow(view: view, writingStalled: writingStalled)
     }
   }
 }
@@ -488,12 +493,8 @@ struct BlockRow: View {
 
   /// A row is its title and at most one short line.
   private var line: String? {
-    if let view, today.isBeingWritten(block, in: view) {
-      return String(
-        localized: "Getting ready…", table: "Today",
-        comment:
-          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
-      )
+    if today.isGettingReady(block, in: view) {
+      return String(localized: "Getting ready…", table: "Today")
     }
 
     return lineOverride ?? (showsDetail ? block.detail : block.label)
@@ -649,6 +650,7 @@ struct TodayDayStatus: View {
   }
 
   @Environment(AppRouter.self) private var router
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let view: TodayView
   private let sentence: String
@@ -743,15 +745,23 @@ struct TodayDayStatus: View {
     [sentence, clause].compactMap(\.self).joinedSentences()
   }
 
+  /// Main's `TodayStatusLine`: the sentence in medium, its clause muted after it on the same line.
+  private var words: AttributedString {
+    var lead = AttributedString(sentence)
+    lead.inlinePresentationIntent = .stronglyEmphasized
+
+    guard let clause else { return lead }
+
+    var rest = AttributedString(
+      String([sentence, clause].joinedSentences().dropFirst(sentence.count)))
+    rest.foregroundColor = .mutedForeground
+    return lead + rest
+  }
+
   var body: some View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
-        Text(sentence)
-
-        if let clause {
-          Text(clause)
-            .foregroundStyle(.mutedForeground)
-        }
+        Text(words, strong: .medium, legibility: legibilityWeight)
 
         switch link {
         case .summary(let sessionID):
@@ -772,7 +782,7 @@ struct TodayDayStatus: View {
       Image(systemName: systemImage)
         .foregroundStyle(.mutedForeground)
     }
-    .typeStyle(.note)
+    .typeStyle(.body)
   }
 
 }

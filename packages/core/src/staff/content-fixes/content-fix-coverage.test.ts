@@ -81,6 +81,7 @@ const NOT_FIXED: Record<string, string> = {
   MistakePattern: ONE_LEARNERS,
   MockExam: ONE_LEARNERS,
   MockExamAnswer: ONE_LEARNERS,
+  MockItemUse: ONE_LEARNERS,
   ModelGrade: BOOKKEEPING,
   OauthAccessToken: SIGN_IN,
   OauthClient: SIGN_IN,

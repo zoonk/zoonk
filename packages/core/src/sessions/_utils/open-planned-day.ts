@@ -4,8 +4,8 @@ import { persistEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
 import { persistStudyDay } from "./persist-study-day";
 import { type PlannedStudyDay, planStudyDay } from "./plan-study-day";
-import { followSavedDay } from "./refresh-study-day-selection";
 import { findSavedDaySession } from "./saved-day-session";
+import { openSavedDay } from "./saved-mock-review";
 import { type SelectedDayPlan, selectDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { type StudySessionRow } from "./study-session-access";
@@ -28,7 +28,7 @@ export async function openPlannedDay(
       return { status: "stale" };
     }
 
-    const session = await followSavedDay({ session: refilled, timeZone });
+    const session = await openSavedDay({ session: refilled, timeZone });
     // Every Start catches up a Focus test summary a write left behind; a new day's plan save does it.
     await refreshGoalTestSummary(goal);
     return { created: false, session, status: "opened" };

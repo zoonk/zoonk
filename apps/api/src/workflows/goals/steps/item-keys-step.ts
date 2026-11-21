@@ -10,6 +10,7 @@ export async function checkItemKeysStep<Item extends GeneratedItem>({
   analytics: AiGenerationContext;
   items: Item[];
   language: string;
+  mockOnly?: boolean;
   optionCount?: number | null;
   optionLanguage?: string | null;
   select?: OptionSelect;

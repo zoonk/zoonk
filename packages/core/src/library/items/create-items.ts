@@ -23,6 +23,7 @@ type ItemRows = {
   answerFormat: ItemAnswerFormat;
   examBlueprintId: string | null;
   field: string | null;
+  mockOnly: boolean;
   format: ItemFormat;
   language: string;
   provenance: LibraryProvenance;
@@ -157,6 +158,7 @@ export async function createItems({
   entry,
   examBlueprintId = null,
   field = null,
+  mockOnly = false,
   format,
   items,
   language,
@@ -172,6 +174,7 @@ export async function createItems({
     analytics?: ImageAnalytics;
     examBlueprintId?: string | null;
     field?: string | null;
+    mockOnly?: boolean;
     language: string;
     optionCount?: number | null;
     provenance: LibraryProvenance;
@@ -195,6 +198,7 @@ export async function createItems({
     field,
     format,
     language,
+    mockOnly,
     provenance,
     skillId,
     source,

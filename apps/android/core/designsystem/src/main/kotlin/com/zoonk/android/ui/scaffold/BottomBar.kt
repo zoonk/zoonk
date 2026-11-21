@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -50,6 +51,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.zoonk.android.app.LocalSnackbarAnchors
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LocalButtonSize
@@ -59,9 +61,10 @@ import com.zoonk.android.ui.components.LocalButtonSize
  * keeps its margin ([columnMargin], the page's by default) at the sides of its buttons and over and under them
  * alike, one number on purpose so a button alone in its corner sits even, clear of the system bars and the keyboard, with its lines 8dp apart and its buttons [ButtonSize.Large]; [columnWidth] keeps them
  * under a page's column, which a page whose column starts at its pane's edge or keeps another side margin says
- * with [columnAtStart] and [columnMargin], so the buttons end where the column does. A [note] (an error, a status) draws over the page
- * just above the bar, so the bar never grows and its buttons never move; [noteRoom] tells the page how tall it is, for its scrolling
- * content to end clear of it. A note taller than the room between the page's content ([barNoteViewport]) and the bar goes into the
+ * with [columnAtStart] and [columnMargin], so the buttons end where the column does. A [note] (an error, a status) is the bar's top:
+ * the hairline moves above it, the bar's surface behind it and its words in the buttons' column, as far from the hairline as the
+ * buttons are from it. It draws over the page rather than pushing the bar's buttons up, so they never move; [noteRoom] tells the page
+ * how tall it is, for its scrolling content to end clear of it. A note taller than the room between the page's content ([barNoteViewport]) and the bar goes into the
  * page's scroll instead ([BarNoteInPage]), where it can be read whole. Its slot stays in place as a polite live region, so a new note
  * is read out. The window's snackbars show above it. Across an unfolded book's fold,
  * or a spread's split on a wide window ([screenSplit]), it sits on the page after it, off the fold.
@@ -79,7 +82,6 @@ fun BottomBar(
     val anchors = LocalSnackbarAnchors.current
     val key = remember { Any() }
     var span by remember { mutableStateOf<PageSpan?>(null) }
-    val margin = pageMargin()
     var barTop by remember { mutableFloatStateOf(Float.NaN) }
     val room = noteRoom ?: remember { BarNoteRoom() }
 
@@ -94,45 +96,76 @@ fun BottomBar(
                 anchors.set(key, barTop)
             }.onPageSpan { span = it },
     ) {
-        // Placed before the bar, so Tab reaches the note's action before the buttons under it, as on the web.
-        Box(
-            Modifier
-                .aboveBar(room) { barTop }
-                .fillMaxWidth()
-                .semantics { liveRegion = LiveRegionMode.Polite },
-        ) {
-            note?.takeUnless { room.inPage }?.let {
-                Surface(Modifier.fillMaxWidth()) { Box(Modifier.padding(horizontal = margin, vertical = 8.dp)) { it() } }
-            }
-        }
-        Surface {
-            BoxWithConstraints {
-                val fold = screenSplit(maxWidth, span)
+        BoxWithConstraints {
+            val foldEnd = screenSplit(maxWidth, span)?.end ?: 0.dp
 
-                Column {
-                    HorizontalDivider()
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .windowInsetsPadding(
-                                WindowInsets.safeDrawing
-                                    .only(
-                                        WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal,
-                                    ).union(WindowInsets.ime),
-                            ).padding(start = fold?.end ?: 0.dp),
-                        contentAlignment = if (columnAtStart) Alignment.TopStart else Alignment.TopCenter,
-                    ) {
-                        CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
-                            Column(
-                                Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(columnMargin),
-                                verticalArrangement = Arrangement.spacedBy(BAR_GAP),
-                                content = content,
-                            )
+            // Placed before the bar, so Tab reaches the note's action before the buttons under it, as on the web, and drawn over the
+            // bar's hairline.
+            Box(
+                Modifier
+                    .aboveBar(room) { barTop }
+                    .zIndex(1f)
+                    .fillMaxWidth()
+                    .semantics { liveRegion = LiveRegionMode.Polite },
+            ) {
+                note?.takeUnless { room.inPage }?.let {
+                    Surface(Modifier.fillMaxWidth()) {
+                        Column {
+                            HorizontalDivider()
+                            BarRow(
+                                insets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+                                foldEnd = foldEnd,
+                                columnWidth = columnWidth,
+                                columnAtStart = columnAtStart,
+                                padding = PaddingValues(start = columnMargin, top = columnMargin, end = columnMargin),
+                            ) { it() }
                         }
                     }
                 }
             }
+            Surface {
+                Column {
+                    HorizontalDivider()
+                    CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
+                        BarRow(
+                            insets =
+                                WindowInsets.safeDrawing
+                                    .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal)
+                                    .union(WindowInsets.ime),
+                            foldEnd = foldEnd,
+                            columnWidth = columnWidth,
+                            columnAtStart = columnAtStart,
+                            padding = PaddingValues(columnMargin),
+                            content = content,
+                        )
+                    }
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun BarRow(
+    insets: WindowInsets,
+    foldEnd: Dp,
+    columnWidth: Dp,
+    columnAtStart: Boolean,
+    padding: PaddingValues,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(insets)
+            .padding(start = foldEnd),
+        contentAlignment = if (columnAtStart) Alignment.TopStart else Alignment.TopCenter,
+    ) {
+        Column(
+            Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(padding),
+            verticalArrangement = Arrangement.spacedBy(BAR_GAP),
+            content = content,
+        )
     }
 }
 
@@ -221,8 +254,9 @@ fun PaddingValues.plusBottom(extra: Dp): PaddingValues {
 }
 
 /**
- * Laid out with no height of its own and drawn just above its parent's top ([barTop]), so what it holds never moves the bar. It draws
- * only when it fits between the page's content top and the bar; otherwise it sends the note into the page's scroll.
+ * Laid out with no height of its own and drawn just above its parent's top ([barTop]), over the bar's hairline so the note's own is
+ * the bar's only one, and what it holds never moves the bar. It draws only when it fits between the page's content top and the bar;
+ * otherwise it sends the note into the page's scroll.
  */
 private fun Modifier.aboveBar(
     room: BarNoteRoom,
@@ -230,13 +264,14 @@ private fun Modifier.aboveBar(
 ): Modifier =
     layout { measurable, constraints ->
         val placeable = measurable.measure(constraints.copy(minHeight = 0))
+        val above = (placeable.height - DividerDefaults.Thickness.roundToPx()).coerceAtLeast(0)
         val bar = barTop()
-        val fits = room.top.isNaN() || placeable.height <= bar - room.top
+        val fits = room.top.isNaN() || above <= bar - room.top
         // Until the bar has its place, nothing draws and nothing is decided.
-        if (placeable.height > 0 && !bar.isNaN() && !fits) room.inPage = true
-        val shown = placeable.height.takeIf { fits && !bar.isNaN() } ?: 0
+        if (above > 0 && !bar.isNaN() && !fits) room.inPage = true
+        val shown = above.takeIf { fits && !bar.isNaN() } ?: 0
         room.height = shown.toDp()
-        layout(placeable.width, 0) { if (shown > 0) placeable.place(0, -placeable.height) }
+        layout(placeable.width, 0) { if (shown > 0) placeable.place(0, -above) }
     }
 
 private const val BAR_NOTE_KEY = "bar-note"

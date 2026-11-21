@@ -1,4 +1,4 @@
-import { UsageKind } from "@zoonk/db";
+import { USAGE_KINDS, type UsageKind } from "@zoonk/db";
 import { type Allowance, type AllowanceItem, type EntitlementTier } from "../contract";
 import { getActiveGoalLimit, getExamPrepAccess, getUsageRule } from "../limits";
 import { getUsageAvailableAt } from "./rolling-usage";
@@ -96,7 +96,7 @@ export function toAllowance({
       generatedLimit === undefined
         ? null
         : { limit: generatedLimit, used: totals.kinds.get("lessonStart")?.generatedTotal ?? 0 },
-    items: Object.values(UsageKind).map((kind) => toAllowanceItem({ kind, now, tier, totals })),
+    items: Object.values(USAGE_KINDS).map((kind) => toAllowanceItem({ kind, now, tier, totals })),
     resets: getUsageResets(now),
     tier,
   };

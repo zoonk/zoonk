@@ -21,6 +21,7 @@ import {
   loadTomorrow,
 } from "./_utils/load-summary-parts";
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
+import { loadPreparingMockPositions } from "./_utils/preparing-mock-blocks";
 import { loadSessionAnswers } from "./_utils/session-answers";
 import { sumSessionSeconds } from "./_utils/session-ledger";
 import {
@@ -29,7 +30,7 @@ import {
   readSessionEnd,
   readSessionSnapshot,
 } from "./_utils/session-snapshot";
-import { EMPTY_WEEK, toStudySessionView } from "./_utils/session-view";
+import { EMPTY_WEEK, toStudyBlockViews, toStudySessionView } from "./_utils/session-view";
 import { type StudySessionRow, findOwnedStudySession } from "./_utils/study-session-access";
 import { scoreAnswers } from "./brain-power";
 import { type StudySessionTimeZoneInput } from "./contract";
@@ -54,7 +55,6 @@ type StudySessionSummary = {
   correct: number;
   energy: Change<number> | null;
   extraTime: ExtraTime;
-  /** False after Stop for today while unfinished blocks remain. */
   finished: boolean;
   fullMeal: boolean;
   /** Actual recorded time, consistent with learner stats. */
@@ -140,15 +140,21 @@ export async function getStudySessionSummary({
   const { session, userId } = owned;
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
   const snapshot = readSessionSnapshot(session.startSnapshot);
+  const now = new Date();
+  const current = isCurrentSession({ now, session, timeZone });
 
-  const [answers, after, missions, mistakesSaved, seconds] = await Promise.all([
+  const [answers, after, { missions, preparing }, mistakesSaved, seconds] = await Promise.all([
     loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
     measureSummaryState({ session, timeZone, userId }),
-    getDayMissions({
-      session,
-      timeZone,
-      ...(isCurrentSession({ now: new Date(), session, timeZone }) && { through: new Date() }),
-    }),
+    loadPreparingMockPositions(session).then(async (positions) => ({
+      missions: await getDayMissions({
+        preparing: positions,
+        session,
+        timeZone,
+        ...(current && { through: now }),
+      }),
+      preparing: positions,
+    })),
     prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
     sumSessionSeconds(prisma, { sessionId, userId }),
   ]);
@@ -160,7 +166,8 @@ export async function getStudySessionSummary({
 
   const view = toStudySessionView({
     answers,
-    current: isCurrentSession({ now: new Date(), session, timeZone }),
+    blockViews: toStudyBlockViews({ answers, blocks: session.blocks, preparing }),
+    current,
     dayMinutes: session.plannedMinutes,
     examAccess: { includesMockExams: true },
     missions,
@@ -187,7 +194,7 @@ export async function getStudySessionSummary({
     loadCeremony(userId),
     loadUnshownCertificates(userId),
     loadTomorrow({ session }),
-    withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
+    withExtraStudyCheck({ day: view, session, userId }),
     netScoredItemIds.length > 0
       ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
       : null,

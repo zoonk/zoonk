@@ -121,7 +121,10 @@ export async function loadStudySessionView({
       userId,
       ...(initialDay &&
         storedSession.startedAt === null &&
-        storedSession.blocks.every((block) => block.status === "pending") && { answers: [] }),
+        storedSession.blocks.every((block) => block.status === "pending") && {
+          answers: [],
+          preparing: initialDay.preparing,
+        }),
     }),
   ]);
 
@@ -173,6 +176,7 @@ export async function loadStudySessionView({
     loadDayOutlines({ dayMinutes, plan, session }),
     getDayMissions({
       displayBlocks,
+      preparing: blockViews.preparing,
       readProgress: readDayProgress,
       session,
       timeZone,
@@ -197,7 +201,7 @@ export async function loadStudySessionView({
   });
 
   const [extraTime, catchUp] = await Promise.all([
-    withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
+    withExtraStudyCheck({ day: view, session, userId }),
     loadCatchUpView({
       blocks: session.blocks,
       dailyMinutes: session.goal?.dailyMinutes ?? 0,

@@ -56,7 +56,7 @@ export async function savePlanItems({
   planId: string;
   standInLessons: ReadonlyMap<string, number>;
   tx: TransactionClient;
-}): Promise<void> {
+}): Promise<boolean> {
   const lessonsOf = (item: SavedPlanItem) =>
     isStandIn(item) ? (standInLessons.get(item.skillId ?? "") ?? null) : null;
 
@@ -179,4 +179,18 @@ export async function savePlanItems({
       ) AS v
       WHERE p.id = v.id`;
   }
+
+  const scheduled = new Map(
+    existing
+      .filter((item) => item.kind === "mock")
+      .map((item) => [item.id, item.scheduledFor?.getTime()]),
+  );
+
+  return items.some(
+    (item) =>
+      item.kind === "mock" &&
+      item.status === "todo" &&
+      item.scheduledFor &&
+      (!item.id || scheduled.get(item.id) !== item.scheduledFor.getTime()),
+  );
 }

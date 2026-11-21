@@ -12,6 +12,7 @@ import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
 import { ChallengeCallGate } from "../language/conversation/challenge-call-gate";
+import { MockPreparingNote } from "../mock/mock-preparing";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { useMoveFailed } from "./challenge-move-failed";
@@ -168,6 +169,18 @@ function ResumeButton() {
   );
 }
 
+function KeepStudyingLink() {
+  const t = useExtracted();
+  const { hrefs } = useChallengeScreen();
+
+  return (
+    <TaskActions>
+      <MoveToMondayButton />
+      <TaskMainLink href={hrefs.exit}>{t("Keep studying")}</TaskMainLink>
+    </TaskActions>
+  );
+}
+
 function OpenLink({ children }: { children: React.ReactNode }) {
   const { hrefs } = useChallengeScreen();
 
@@ -216,6 +229,10 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
         };
       }
 
+      if (isPreparing({ challenge, start })) {
+        return { actions: <KeepStudyingLink />, line: null };
+      }
+
       if (challenge.status === "ready" && writingLimit) {
         return {
           actions: <LimitMainAction limit={writingLimit} />,
@@ -253,16 +270,48 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 }
 
+type ScreenState = Pick<ReturnType<typeof useChallengeScreen>, "challenge" | "start">;
+
+function isPreparing({ challenge, start }: ScreenState) {
+  return (
+    start.problem !== "plusRequired" &&
+    (challenge.status === "ready" || challenge.status === "started") &&
+    !challenge.waitReason &&
+    (challenge.access === "preparing" || start.problem === "preparing")
+  );
+}
+
+function usePreparingNote(): React.ReactNode {
+  const t = useExtracted();
+  const screen = useChallengeScreen();
+  const { mockWriting, start } = screen;
+
+  return isPreparing(screen) ? (
+    <MockPreparingNote
+      title={t("Getting your mock exam ready")}
+      wait={{
+        read: mockWriting.read,
+        written: () => {
+          start.clearProblem();
+          mockWriting.written();
+        },
+      }}
+    />
+  ) : null;
+}
+
 export function useChallengeFooterNote(): React.ReactNode {
   const { challenge } = useChallengeScreen();
+  const preparing = usePreparingNote();
   const startProblem = useStartProblem();
   const moveFailed = useMoveFailed();
   const startShows = challenge.status === "ready" && challenge.waitReason === null;
-  const start = startShows ? startProblem : null;
+  const start = startShows && !preparing ? startProblem : null;
 
   return (
-    (start || moveFailed) && (
+    (preparing || start || moveFailed) && (
       <>
+        {preparing}
         {start}
         {moveFailed}
       </>

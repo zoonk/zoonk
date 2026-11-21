@@ -1,6 +1,6 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { WRITTEN_ESSAY } from "./anytime-mock-exams";
 import {
   answerMockQuestions,
@@ -11,6 +11,8 @@ import { expect, test } from "./fixtures";
 import { holdActionAnswer } from "./held-action";
 import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
+
+const MOCK_READ_AGAIN_MS = 15_000;
 
 async function confirmMockHandIn(page: Page) {
   const mockId = new URL(page.url()).pathname.split("/").at(-1);
@@ -228,35 +230,68 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.context().close();
   });
 
-  test("a mock exam that comes out shorter than the one picked starts only once the learner agrees", async ({
+  test("a mock exam still being prepared says so, and Start comes back once it's ready", async ({
     browser,
   }) => {
-    const { user } = await createAnytimeMockLearner({ plus: true, questionsPerSkill: 2 });
-    // Today's question writing is used up, so nothing more can be written for the full exam.
-    await usageRecordsFixture({ count: 2, kind: "mockQuestions", userId: user.id });
+    const { blueprint, skills, user } = await createAnytimeMockLearner({
+      plus: true,
+      questionsPerSkill: 2,
+    });
+
     const page = await openAs(browser, user);
     const mocks = () => prisma.mockExam.count({ where: { userId: user.id } });
-
+    await page.clock.install();
     await page.goto("/mock/new");
 
     const start = page.getByRole("button", { name: "Start" });
+    const keepStudying = page.getByRole("link", { name: "Keep studying" });
+    const exam = page.getByRole("radiogroup", { name: "The exam" });
     await expect(start).toBeDisabled();
 
-    const exam = page.getByRole("radiogroup", { name: "The exam" });
     await exam.getByText("The full exam", { exact: true }).click();
+    const startBox = await start.boundingBox();
     await start.click();
 
-    const shorter = page.getByRole("alertdialog", { name: "Start a shorter mock exam?" });
-    await expect(shorter).toContainText("8 of its 16 questions");
+    await expect(page.getByText("Getting this mock exam ready")).toBeVisible();
+    await expect(keepStudying).toHaveAttribute("href", /\/today$/u);
+    await expect(start).toBeHidden();
 
-    await shorter.getByRole("button", { name: "Pick another" }).click();
-    await expect(shorter).toBeHidden();
-    await expect(exam.getByRole("radio", { name: /^The full exam/u })).toBeChecked();
+    const keepBox = await keepStudying.boundingBox();
+
+    expect(keepBox?.y).toBe(startBox?.y);
+
+    expect((keepBox?.x ?? 0) + (keepBox?.width ?? 0)).toBe(
+      (startBox?.x ?? 0) + (startBox?.width ?? 0),
+    );
+
+    await expect(mocks()).resolves.toBe(0);
+
+    await exam.getByText("Half the exam", { exact: true }).click();
+    await expect(start).toBeEnabled();
+    await expect(page.getByText("Getting this mock exam ready")).toBeHidden();
+
+    await exam.getByText("The full exam", { exact: true }).click();
+    await expect(keepStudying).toBeVisible();
+
+    await Promise.all(
+      skills.flatMap((skill) =>
+        [3, 4].map((copy) =>
+          itemFixture({
+            content: choiceItemContent(`${skill.name}, question ${copy}?`),
+            examBlueprintId: blueprint.id,
+            mockOnly: true,
+            skillId: skill.id,
+          }),
+        ),
+      ),
+    );
+
+    await page.clock.runFor(MOCK_READ_AGAIN_MS);
+    await expect(start).toBeEnabled();
+    await expect(keepStudying).toBeHidden();
     await expect(mocks()).resolves.toBe(0);
 
     await start.click();
-    await shorter.getByRole("button", { name: "Start" }).click();
-
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
     await expect.poll(mocks).toBe(1);
     await page.context().close();

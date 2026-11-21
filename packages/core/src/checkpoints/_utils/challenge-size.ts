@@ -17,6 +17,7 @@ import { loadMockCard } from "./mock-card";
 import { type ChallengeBlock, type OwnedChallenge, isLanguageCall } from "./owned-challenge";
 
 type ChallengeSize = {
+  preparing: boolean;
   estimatedMinutes: number | null;
   fullLength: boolean;
   minutes: number | null;
@@ -38,7 +39,7 @@ async function loadMockSize({
   challenge: OwnedChallenge;
 }): Promise<ChallengeSize> {
   const [fixed, pace] = await Promise.all([
-    block ? getMock(block.id) : null,
+    block && block.status !== "pending" ? getMock(block.id) : null,
     loadMockPace(challenge.goal.examBlueprintId),
   ]);
 
@@ -61,6 +62,7 @@ async function loadMockSize({
       minutes: mock.minutes,
       netScored: mock.scoring === "net",
       number: mock.number,
+      preparing: false,
       questions: mock.questions,
       sections: mock.sections.flatMap(({ index, minutes, name, questions, tools }) =>
         questions > 0 ? [{ index, minutes, name, questions, tools }] : [],
@@ -91,6 +93,7 @@ async function loadMockSize({
     minutes: card.conditions.timeLimitMinutes,
     netScored: card.conditions.netScoring,
     number: finished + 1,
+    preparing: card.preparing,
     questions: card.conditions.questions,
     sections: card.conditions.sections.flatMap(({ minutes, name, questions, tools }, index) =>
       minutes && questions ? [{ index, minutes, name, questions, tools }] : [],
@@ -127,6 +130,7 @@ function getCheckpointSize(questions: number | null): ChallengeSize {
     minutes,
     netScored: false,
     number: null,
+    preparing: false,
     questions,
     sections: [],
     startTime: null,

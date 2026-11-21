@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -66,6 +67,23 @@ describe(syncCurrentUserAppleSubscription, () => {
     ).rejects.toMatchObject({ reason: "unauthorized" });
 
     expect(getAppleSubscriptionFromTransaction).not.toHaveBeenCalled();
+  });
+
+  it("owes the first mock for an active exam goal when Plus starts", async () => {
+    const user = await authenticateUser();
+    const goal = await goalFixture({ kind: "exam", userId: user.id });
+
+    vi.mocked(getAppleSubscriptionFromTransaction).mockResolvedValue(
+      makeAppleSubscription({ accountToken: user.id }),
+    );
+
+    await syncCurrentUserAppleSubscription({ signedTransaction: "plus" });
+
+    await expect(
+      prisma.followUp.findFirst({
+        where: { key: goal.id, kind: "prepareMockSupply", userId: user.id },
+      }),
+    ).resolves.toMatchObject({ input: { examBlueprintId: null, goalId: goal.id, later: true } });
   });
 
   it("persists a verified monthly entitlement for the matching account", async () => {

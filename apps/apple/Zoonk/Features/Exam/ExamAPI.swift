@@ -1,22 +1,24 @@
 import Foundation
 
 enum MockStartOutcome: Equatable, Sendable {
-  typealias Limit = Components.Schemas.AnytimeMock.LimitPayload
-
   case started(id: String)
-  case needsQuestions
-  /// `availableAt`: when the full mock fits, once a monthly cap shortened it.
-  case short(examQuestions: Int, limit: Limit?, availableAt: Date?, minutes: Int, questions: Int)
-  case notEnoughQuestions
+  /// Its questions are being written: nothing started, and the server keeps the request.
+  case preparing
   case plusRequired
-  case refused(HelpLimit)
 }
 
-enum MockQuestionsStart: Equatable, Sendable {
-  case ready
-  case preparing
-  case writing(generationId: String)
-  case refused(HelpLimit)
+/// The run writing the paper of a mock being prepared (main's `MockWriting`).
+struct MockWriting: Equatable, Sendable {
+  enum Status: Sendable {
+    case writing
+    /// Its run starts in a few seconds: ask again.
+    case starting
+    /// Nothing is writing it now; the daily preparation goes on with it.
+    case none
+  }
+
+  let generationId: String?
+  let status: Status
 }
 
 enum MockStepOutcome: String, Decodable, Sendable {
@@ -117,13 +119,33 @@ struct ExamAPI {
     }
   }
 
-  /// `afterWriting` on the start that follows a questions run, so the server never asks for more.
-  func startMock(
-    token: String, goalId: String, shape: MockShape, acceptFewer: Bool, afterWriting: Bool = false
-  ) async throws -> MockStartOutcome {
-    let body = Components.Schemas.AnytimeMockInput(
-      shape: .init(value1: Self.body(shape)), acceptFewer: acceptFewer,
-      afterWriting: afterWriting ? true : nil)
+  /// Only reads: it never starts a run.
+  func mockWriting(token: String, goalId: String, planItemId: String?) async throws -> MockWriting {
+    try await clients.perform(token: token) { client in
+      switch try await client.getMockWriting(
+        path: .init(goalId: goalId), query: .init(planItemId: planItemId))
+      {
+      case .ok(let response):
+        let writing = try response.body.json
+
+        let status: MockWriting.Status =
+          switch writing.status {
+          case .writing: .writing
+          case .starting: .starting
+          case .none: .none
+          }
+
+        return MockWriting(generationId: writing.generationId, status: status)
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  /// Only from a learner's tap.
+  func startMock(token: String, goalId: String, shape: MockShape) async throws -> MockStartOutcome {
+    let body = Components.Schemas.AnytimeMockInput(shape: .init(value1: Self.body(shape)))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let started: Components.Schemas.AnytimeMock
@@ -132,10 +154,6 @@ struct ExamAPI {
       case .ok(let response): started = try response.body.json
       case .created(let response): started = try response.body.json
       case .code402: return .plusRequired
-      case .unprocessableContent(let response):
-        let code = try? response.body.json.error.code
-        if code == "NOT_ENOUGH_QUESTIONS" { return .notEnoughQuestions }
-        throw APIError.unavailable
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
@@ -145,47 +163,8 @@ struct ExamAPI {
       case .started, .running:
         guard let id = started.id else { throw APIError.unavailable }
         return .started(id: id)
-      case .needsQuestions:
-        return .needsQuestions
-      case .short:
-        return .short(
-          examQuestions: started.examQuestions ?? 0, limit: started.limit,
-          availableAt: started.availableAt, minutes: started.minutes ?? 0,
-          questions: started.questions ?? 0)
-      }
-    }
-  }
-
-  /// Only from a learner's tap: a run may write the questions.
-  func requestMockQuestions(token: String, goalId: String, shape: MockShape) async throws
-    -> MockQuestionsStart
-  {
-    let body = Components.Schemas.MockQuestionsInput(shape: .init(value1: Self.body(shape)))
-
-    return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
-      let generation: Components.Schemas.MockQuestionsGeneration
-
-      switch try await client.createMockQuestionsGeneration(
-        path: .init(goalId: goalId), body: .json(body))
-      {
-      case .ok(let response): generation = try response.body.json
-      case .accepted(let response): generation = try response.body.json
-      case .tooManyRequests(let response):
-        return try refused(voiceRefusal(status: 429, error: try? response.body.json))
-      case .forbidden(let response):
-        return try refused(voiceRefusal(status: 403, error: try? response.body.json))
-      case .code402(let response):
-        return try refused(voiceRefusal(status: 402, error: try? response.body.json))
-      case .unauthorized: throw APIError.unauthorized
-      default: throw APIError.unavailable
-      }
-
-      switch generation.status {
-      case .ready: return .ready
-      case .preparing: return .preparing
-      case .generating:
-        guard let generationId = generation.generationId else { throw APIError.unavailable }
-        return .writing(generationId: generationId)
+      case .preparing:
+        return .preparing
       }
     }
   }
@@ -200,22 +179,6 @@ struct ExamAPI {
     } catch {
       throw apiError(from: error)
     }
-  }
-
-  /// A refusal without a help limit is a failure.
-  private func refused(_ refusal: VoiceRefusal) throws -> MockQuestionsStart {
-    guard let limit = refusal.limit else { throw APIError.unavailable }
-    return .refused(limit)
-  }
-
-  /// A run that ends before the questions are ready fails the wait.
-  func waitForQuestions(token: String, generationId: String) async throws {
-    for try await event in clients.generationEvents(id: generationId, token: token)
-    where event.step == "mockQuestionsReady" && event.status == "completed" {
-      return
-    }
-
-    throw APIError.unavailable
   }
 
   func mock(token: String, blockId: String) async throws -> MockView? {

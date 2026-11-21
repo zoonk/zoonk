@@ -1,7 +1,8 @@
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import { prepareListeningRecordings } from "../listening/listening-sets-workflow";
-import { type PlacementItemsWritten, preparePlacementItems } from "./placement-items";
+import { preparePartSet } from "../listening/steps/listening-sets-steps";
+import { voiceListeningRecording } from "../listening/voice-listening-recording";
+import { type PlacementItemsWritten } from "./placement-items";
 import { prepareSkillExamFormatItems } from "./steps/exam-format-items-step";
 import { loadMockWritingSkillsStep } from "./steps/mock-question-steps";
 
@@ -12,97 +13,120 @@ function countItemWrites(results: readonly PromiseSettledResult<number>[]): Plac
   };
 }
 
-function sumWritten(results: readonly PlacementItemsWritten[]): PlacementItemsWritten {
-  return results.reduce(
-    (total, result) => ({
-      failed: total.failed + result.failed,
-      written: total.written + result.written,
-    }),
-    { failed: 0, written: 0 },
-  );
-}
-
-export async function writeMockQuestions({
-  analytics,
-  goalId,
-  later,
-  quickFormat,
-  workflowRunId,
-  writes,
-}: MockQuestionWrites & {
+type WriteContext = {
   analytics?: ContentAnalytics;
   goalId: string;
   later: boolean;
   workflowRunId: string;
-}): Promise<PlacementItemsWritten> {
-  const quick = writes.flatMap((write) =>
-    write.format.writer.kind === "quick" ? [{ choice: write.format.writer.choice, write }] : [],
-  );
+};
 
-  const items = writes.flatMap((write) =>
-    write.format.writer.kind === "item"
-      ? [{ answerFormat: write.format.writer.answerFormat, write }]
-      : [],
-  );
+function getAnswerFormat(
+  write: MockQuestionWrites["writes"][number],
+  defaultFormat: MockQuestionWrites["quickFormat"],
+) {
+  const { writer } = write.format;
 
-  const skillIds = [...new Set(items.flatMap(({ write }) => write.skillIds))];
-  const skills = skillIds.length > 0 ? await loadMockWritingSkillsStep({ goalId, skillIds }) : [];
+  if (writer.kind === "shortAnswer") {
+    return { entry: null, format: "typed", options: null, select: null } as const;
+  }
 
-  const [quickWritten, itemResults] = await Promise.all([
-    Promise.all(
-      quick.map(({ choice, write }) =>
-        preparePlacementItems({
-          analytics,
-          choice: choice ? { ...choice, style: write.format.style } : undefined,
-          exceptAnswered: true,
-          formats: [choice?.kind ?? quickFormat],
-          goalId,
-          later,
-          quickCount: write.questionsPerSkill,
-          quickNeeded: write.target,
-          skillIds: write.skillIds,
-          workflowRunId,
-        }),
-      ),
-    ).then(sumWritten),
-    Promise.allSettled(
-      items.flatMap(({ answerFormat, write }) =>
-        skills
-          .filter((skill) => write.skillIds.includes(skill.id))
-          .map((skill) =>
-            prepareSkillExamFormatItems({
-              analytics,
-              count: write.questionsPerSkill,
-              pick: { answerFormat, skill, style: write.format.style },
-              wait: later ? "later" : "learner",
-              workflowRunId,
-            }),
-          ),
-      ),
-    ),
-  ]);
+  if (writer.kind === "item") {
+    return writer.answerFormat;
+  }
 
-  const itemsWritten = countItemWrites(itemResults);
+  if ((writer.choice?.kind ?? defaultFormat) === "trueFalse") {
+    return { entry: null, format: "trueFalse", options: null, select: null } as const;
+  }
 
   return {
-    failed: quickWritten.failed + itemsWritten.failed,
-    written: quickWritten.written + itemsWritten.written,
-  };
+    entry: null,
+    format: "multipleChoice",
+    options: writer.choice?.options ?? null,
+    select: 1,
+  } as const;
+}
+
+const QUESTIONS_PER_BATCH = 10;
+
+/* oxlint-disable no-await-in-loop -- Each skill batch compares against the preceding batch saved to the bank. */
+async function writeSkillBatches({
+  analytics,
+  goalId,
+  later,
+  quickFormat,
+  skillId,
+  workflowRunId,
+  writes,
+}: MockQuestionWrites & WriteContext & { skillId: string }) {
+  let written = 0;
+
+  const targets = writes.flatMap((write) => {
+    const answerFormat = getAnswerFormat(write, quickFormat);
+    return write.skillIds.includes(skillId) ? [{ answerFormat, write }] : [];
+  });
+
+  for (const { answerFormat, write } of targets) {
+    for (let remaining = write.questionsPerSkill; remaining > 0; remaining -= QUESTIONS_PER_BATCH) {
+      const [skill] = await loadMockWritingSkillsStep({ goalId, skillIds: [skillId] });
+
+      if (!skill) {
+        return written;
+      }
+
+      written += await prepareSkillExamFormatItems({
+        analytics,
+        count: Math.min(remaining, QUESTIONS_PER_BATCH),
+        mock: skill,
+        pick: { answerFormat, skill, style: write.format.style },
+        wait: later ? "later" : "learner",
+        workflowRunId,
+      });
+    }
+  }
+
+  return written;
+}
+
+/* oxlint-enable no-await-in-loop */
+
+export async function writeMockQuestions(
+  input: MockQuestionWrites & WriteContext,
+): Promise<PlacementItemsWritten> {
+  const skills = new Set(input.writes.flatMap((write) => write.skillIds));
+
+  const results = await Promise.allSettled(
+    [...skills].map((skillId) => writeSkillBatches({ ...input, skillId })),
+  );
+
+  return countItemWrites(results);
 }
 
 export async function prepareMockRecordings({
-  analytics,
   goalId,
+  recordings,
+  later,
   workflowRunId,
 }: {
-  analytics?: ContentAnalytics;
   goalId: string;
+  recordings: NonNullable<MockQuestionWrites["recordings"]>;
+  later: boolean;
   workflowRunId: string;
-}): Promise<number> {
-  const { voiced } = await prepareListeningRecordings(
-    { analytics, goalId, wait: "learner" },
-    workflowRunId,
-  );
+}) {
+  const wait = later ? "later" : "learner";
 
-  return voiced;
+  /* oxlint-disable no-await-in-loop -- The next part can reuse an unvoiced set until this part voices it. */
+  for (const part of recordings.parts) {
+    const setId = await preparePartSet({
+      exam: recordings.exam,
+      mockGoalId: goalId,
+      part,
+      wait,
+      workflowRunId,
+    });
+
+    if (setId) {
+      await voiceListeningRecording({ setId, wait, workflowRunId });
+    }
+  }
+  /* oxlint-enable no-await-in-loop */
 }
