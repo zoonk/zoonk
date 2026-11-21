@@ -111,7 +111,9 @@ function RowLines({
 
   return (
     <>
-      {showSubject && subject && <span className={ROW_LINE_CLASS}>{subject}</span>}
+      {(showSubject || block.subjectExtra) && subject && (
+        <span className={ROW_LINE_CLASS}>{subject}</span>
+      )}
       {!isFinished(block) && line && <span className={ROW_LINE_CLASS}>{line}</span>}
 
       {isNext && block.canTestOut && block.chapterId && (
