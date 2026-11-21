@@ -13,13 +13,15 @@ export type TimeToCoverAnswer =
 export function readTimeToCover(time: PlanTimeToCover): TimeToCoverAnswer {
   const { suggested } = time;
 
-  if (!suggested) {
+  if (suggested?.kind === "everything") {
+    return { kind: "covers", minutes: suggested.minutes };
+  }
+
+  if (!suggested || suggested.reachedShare === null) {
     return { kind: "none" };
   }
 
-  return suggested.kind === "everything"
-    ? { kind: "covers", minutes: suggested.minutes }
-    : { kind: "focus", minutes: suggested.minutes, reachedShare: suggested.reachedShare };
+  return { kind: "focus", minutes: suggested.minutes, reachedShare: suggested.reachedShare };
 }
 
 export function useTimeToCover() {

@@ -46,7 +46,7 @@ const planSnapshotSchema = z.object({
   phases: z.unknown(),
   sourceSkillIds: z.array(z.string()),
   state: z.object({ goal: planStateSchema.shape.goal, graph: z.unknown(), settings: z.unknown() }),
-  summary: z.unknown(),
+  summary: planSummarySchema.nullable(),
   testFocus: z.array(z.string()).nullable().optional(),
   todaySession: daySessionSnapshotSchema.nullable(),
 });
@@ -132,7 +132,7 @@ export function parsePlanSnapshot(value: unknown): PlanSnapshot | null {
     return null;
   }
 
-  const { items, phases, state, summary, ...plan } = parsed.data;
+  const { items, phases, state, ...plan } = parsed.data;
 
   return {
     ...plan,
@@ -148,7 +148,6 @@ export function parsePlanSnapshot(value: unknown): PlanSnapshot | null {
       graph: parsePlanGraph(state.graph),
       settings: parsePlanSettings(state.settings),
     },
-    summary: planSummarySchema.safeParse(summary).data ?? null,
   };
 }
 

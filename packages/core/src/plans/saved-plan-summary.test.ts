@@ -29,7 +29,7 @@ const summary: PlanSummary = {
     fullCourseEndDate: null,
   },
   basis,
-  schemaVersion: 5,
+  schemaVersion: 4,
   selected: {
     bases: null,
     coverage: null,

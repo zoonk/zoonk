@@ -95,7 +95,7 @@ function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line:
             values: shown,
           });
     case "share":
-      return <ReachedWords date={date} exam={exam} value={line.share} />;
+      return line.share !== null && <ReachedWords date={date} exam={exam} value={line.share} />;
     case "pastDate":
       return t({
         description:

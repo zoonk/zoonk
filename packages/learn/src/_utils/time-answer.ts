@@ -9,8 +9,11 @@ export type TimeLine =
   | { kind: "noDays" }
   | { kind: "noFinish" }
   | { kind: "pastDate" }
-  /** `share` is what the time reaches: 1 when every topic is in, though not everything. */
-  | { kind: "share"; share: number }
+  /**
+   * `share` is what the time reaches: 1 when every topic is in, though not everything. Null when the
+   * answer doesn't say.
+   */
+  | { kind: "share"; share: number | null }
   | { kind: "working" };
 
 export type LineAdvice = Pick<PlanTimeAdvice, "coveredShare" | "endDate" | "reachedShare">;
@@ -109,7 +112,7 @@ function getDatedLine({
   if (advice) {
     return (advice.coveredShare ?? 0) >= 1
       ? { kind: "everything" }
-      : { kind: "share", share: advice.reachedShare ?? 0 };
+      : { kind: "share", share: advice.reachedShare };
   }
 
   if (!found) {

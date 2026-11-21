@@ -47,7 +47,7 @@ async function postedPlan({
       timeZone: "UTC",
       userId,
     },
-    schemaVersion: 5,
+    schemaVersion: 4,
     selected: {
       bases: null,
       coverage: {

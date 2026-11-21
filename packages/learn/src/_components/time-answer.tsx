@@ -68,7 +68,7 @@ export function TimeAnswer({
   const space = useSentenceSpace();
   const failed = FAILED_KINDS.has(line.kind);
   const offer = failed ? null : getOffer({ found, line, minutes });
-  const full = getEverythingTakes(found);
+  const full = line.kind === "share" && line.share === null ? undefined : getEverythingTakes(found);
 
   return (
     <div className="flex min-h-15 flex-col gap-2 sm:min-h-10">

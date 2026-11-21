@@ -73,9 +73,11 @@ const suggestedTimeSchema = z
       .number()
       .min(0)
       .max(1)
+      .nullable()
+      .default(null)
       .meta({
         description:
-          "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise.",
+          "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null from a server that doesn't measure it.",
       }),
     split: daySplitSchema.meta({
       description:
@@ -138,9 +140,10 @@ export const planTimeAdviceSchema = z
       .min(0)
       .max(1)
       .nullable()
+      .default(null)
       .meta({
         description:
-          "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a date or while not ready.",
+          "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare. Always 1 when every topic is reached, and at most 0.99 otherwise. Null without a date, while not ready, or from a server that doesn't measure it.",
       }),
     readingNotice: readingNoticeSchema,
     ready: readySchema,

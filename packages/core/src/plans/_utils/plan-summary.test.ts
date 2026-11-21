@@ -54,7 +54,7 @@ const summary: PlanSummary = {
     timeZone: "America/Sao_Paulo",
     userId: plan.userId,
   },
-  schemaVersion: 5,
+  schemaVersion: 4,
   selected: {
     bases: null,
     coverage,
@@ -74,6 +74,26 @@ const summary: PlanSummary = {
 describe(readPlanSummary, () => {
   it("describes the plan version it was posted with, whatever happened since", () => {
     expect(readPlanSummary({ plan, value: summary })).toStrictEqual(summary);
+  });
+
+  it("reads a summary saved before plans measured what they reach, with all it had", () => {
+    const { reachedShare: _feasibilityReach, ...feasibility } = summary.advice.feasibility;
+    const { reachedShare: _coverageReach, ...savedCoverage } = coverage;
+
+    const savedBefore = {
+      ...summary,
+      advice: { ...summary.advice, feasibility },
+      selected: { ...summary.selected, coverage: savedCoverage },
+    };
+
+    const read = readPlanSummary({ plan, value: savedBefore });
+
+    expect(read).toStrictEqual({
+      ...summary,
+      selected: { ...summary.selected, coverage: { ...coverage, reachedShare: null } },
+    });
+
+    expect(readSavedFeasibility(read)).toMatchObject({ coveredShare: 0.5, reachedShare: null });
   });
 
   it.each([{ id: "plan-b" }, { userId: "learner-b" }, { version: 8 }])(

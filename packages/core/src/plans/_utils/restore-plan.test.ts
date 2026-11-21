@@ -1,7 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { isJsonObject } from "@zoonk/utils/json";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { keepPaceOwn } from "../_test-utils/keep-pace-own";
@@ -9,7 +8,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../_test-utils/plan-li
 import { createGoalPlan } from "../create-goal-plan";
 import { markPlanWrite } from "./mark-plan-write";
 import { loadPlanContext } from "./plan-context";
-import { parsePlanSnapshot, savePlanSnapshot } from "./plan-snapshot";
+import { savePlanSnapshot } from "./plan-snapshot";
 import { planSummarySchema, readPlanSummary } from "./plan-summary";
 import { loadPlanSnapshot, restorePlan } from "./restore-plan";
 
@@ -69,23 +68,6 @@ describe(restorePlan, () => {
     await prisma.$transaction((tx) =>
       savePlanSnapshot({ changeId: change.id, context: before, tx }),
     );
-
-    const stored = await prisma.planChangeSnapshot.findUniqueOrThrow({
-      where: { changeId: change.id },
-    });
-
-    if (!isJsonObject(stored.plan) || !isJsonObject(stored.plan.summary)) {
-      throw new Error("Expected a saved plan snapshot with a summary");
-    }
-
-    const oldSummary = { ...stored.plan.summary, schemaVersion: 4 };
-    const restoredLayout = parsePlanSnapshot({ ...stored.plan, summary: oldSummary });
-
-    expect(restoredLayout?.items.map(({ id }) => id)).toStrictEqual(
-      before.items.map(({ id }) => id),
-    );
-
-    expect(restoredLayout?.summary).toBeNull();
 
     const lesson = before.items.find((item) => item.kind === "lesson" && item.status === "todo");
 

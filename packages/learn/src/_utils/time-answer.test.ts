@@ -1,3 +1,4 @@
+import { planTimeAdviceSchema, planTimeToCoverSchema } from "@zoonk/core/plans/time-advice-contract";
 import { describe, expect, it } from "vitest";
 import {
   LINE,
@@ -155,5 +156,27 @@ describe("a line for a time whose coverage is already known", () => {
         minutes: 120,
       }),
     ).toStrictEqual({ kind: "share", share: 1 });
+  });
+});
+
+describe("an answer from an API that doesn't say what a time reaches", () => {
+  const { reachedShare: _advised, ...advice } = adviceAt({ coveredShare: 0.3 });
+  const { suggested } = focusAt(805);
+  const { reachedShare: _suggested, ...focus } = suggested ?? {};
+
+  it("reads, and says nothing about what the time reaches", () => {
+    const older = planTimeAdviceSchema.parse(advice);
+    const found = planTimeToCoverSchema.parse(foundTime({ ...focusAt(805), suggested: null }));
+    const olderFound = planTimeToCoverSchema.parse({ ...found, suggested: focus });
+
+    expect(getTimeLine({ ...LINE, advice: older, minutes: 15 })).toStrictEqual({
+      kind: "share",
+      share: null,
+    });
+
+    expect(getTimeLine({ ...LINE, found: olderFound, minutes: 240 })).toStrictEqual({
+      kind: "share",
+      share: null,
+    });
   });
 });

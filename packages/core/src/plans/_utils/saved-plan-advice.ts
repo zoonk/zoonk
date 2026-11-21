@@ -15,6 +15,7 @@ export function readSavedFeasibility(summary: PlanSummary | null): PlanView["fea
   }
 
   const coveredShare = coverage.coveredShare ?? Number(coverage.coreFits);
+  const { reachedShare } = coverage;
 
   return {
     ...saved,
@@ -23,7 +24,7 @@ export function readSavedFeasibility(summary: PlanSummary | null): PlanView["fea
       ...coverage,
       coveredShare,
       // Reach is measured when the plan is built; lessons done since only add depth.
-      reachedShare: Math.max(coverage.reachedShare, coveredShare),
+      reachedShare: reachedShare === null ? null : Math.max(reachedShare, coveredShare),
     }),
     fits: coverage.fits,
     timeCovers: coverage.fits || saved.timeCovers,

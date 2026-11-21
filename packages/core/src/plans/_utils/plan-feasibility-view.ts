@@ -1,6 +1,6 @@
 import { type PlanView } from "../plan-view-contract";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
-import { type PlanFeasibility, type TimeCoverage } from "../planner/plan-feasibility";
+import { type PlanFeasibility } from "../planner/plan-feasibility";
 import { type SelectedCoverage } from "./selected-summary-contract";
 
 export type ShownFeasibility = Pick<
@@ -27,10 +27,17 @@ export function toShownCoverage({
   coveredShare,
   fits,
   reachedShare,
-}: Omit<TimeCoverage, "coreFits"> & { fits: boolean }) {
+}: {
+  coveredShare: number;
+  fits: boolean;
+  reachedShare: number | null;
+}) {
   return {
     coveredShare: toShownShare({ coveredShare, fits }),
-    reachedShare: toShownShare({ coveredShare: reachedShare, fits: reachedShare === 1 }),
+    reachedShare:
+      reachedShare === null
+        ? null
+        : toShownShare({ coveredShare: reachedShare, fits: reachedShare === 1 }),
   };
 }
 
@@ -64,9 +71,7 @@ export function toFeasibilityView(
 
   return {
     coreFits,
-    ...(reachedShare === null
-      ? { coveredShare, reachedShare: null }
-      : toShownCoverage({ coveredShare, fits, reachedShare })),
+    ...toShownCoverage({ coveredShare, fits, reachedShare }),
     deadline: feasibility.deadline ? toIsoDate(feasibility.deadline) : null,
     deepensMostAsked: feasibility.deepensMostAsked,
     fits: feasibility.fits,

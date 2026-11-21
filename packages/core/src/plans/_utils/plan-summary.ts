@@ -10,7 +10,7 @@ import {
   selectedSummarySchema,
 } from "./selected-summary-contract";
 
-const PLAN_SUMMARY_SCHEMA_VERSION = 5;
+const PLAN_SUMMARY_SCHEMA_VERSION = 4;
 
 const planSummaryBasisSchema = z
   .object({
@@ -34,7 +34,7 @@ export const planSummarySchema = z
         deepensMostAsked: z.boolean(),
         fits: z.boolean(),
         measure: z.enum(["exam", "goal"]),
-        reachedShare: z.number().nullable(),
+        reachedShare: z.number().nullable().default(null),
         timeCovers: z.boolean(),
       }),
       fitOffer: z
