@@ -26,6 +26,18 @@ const SHORT_DRAFT = {
   timeZone: "UTC",
 };
 
+function fillWritingAllowance({ localDate, userId }: { localDate: Date; userId: string }) {
+  return prisma.writingAdmission.createMany({
+    data: Array.from({ length: DAILY_EXTRA_WRITES }, () => ({
+      extra: true,
+      id: randomUUID(),
+      itemIds: [],
+      localDate,
+      userId,
+    })),
+  });
+}
+
 async function createEssayBlock(userId: string) {
   const [blueprint, skill] = await Promise.all([
     examBlueprintFixture({
@@ -227,10 +239,13 @@ test.describe("Essays API", () => {
       const today = toUTCMidnight(new Date());
       const yesterday = new Date(today.getTime() - MS_PER_DAY);
 
-      await prisma.writingAdmission.update({
-        data: { localDate: yesterday },
-        where: { id: admissionId },
-      });
+      await Promise.all([
+        prisma.writingAdmission.update({
+          data: { localDate: yesterday },
+          where: { id: admissionId },
+        }),
+        fillWritingAllowance({ localDate: today, userId: learner.userId }),
+      ]);
 
       const submit = () =>
         learner.api
@@ -260,14 +275,16 @@ test.describe("Essays API", () => {
       expect(await readEssay()).toMatchObject({
         draft: null,
         drafts: [{ attemptId: attempts[0]?.id, grade, text: SHORT_DRAFT.text }],
-        gradesLeft: DAILY_EXTRA_WRITES,
+        gradesLeft: 0,
       });
 
       await expect(
-        prisma.writingAdmission.findMany({ where: { userId: learner.userId } }),
-      ).resolves.toMatchObject([
-        { extra: true, id: admissionId, itemIds: [itemId], localDate: yesterday },
-      ]);
+        prisma.writingAdmission.findUnique({ where: { id: admissionId } }),
+      ).resolves.toMatchObject({ extra: true, itemIds: [itemId], localDate: yesterday });
+
+      await expect(
+        prisma.writingAdmission.count({ where: { userId: learner.userId } }),
+      ).resolves.toBe(DAILY_EXTRA_WRITES + 1);
     } finally {
       await Promise.all([learner.api.dispose(), other.api.dispose()]);
     }
@@ -280,15 +297,7 @@ test.describe("Essays API", () => {
       const { blockId, path } = await createEssayBlock(userId);
       const today = toUTCMidnight(new Date());
 
-      await prisma.writingAdmission.createMany({
-        data: Array.from({ length: DAILY_EXTRA_WRITES }, () => ({
-          extra: true,
-          id: randomUUID(),
-          itemIds: [],
-          localDate: today,
-          userId,
-        })),
-      });
+      await fillWritingAllowance({ localDate: today, userId });
 
       const refusal = await readBody({
         response: await api.post(`${path}/starts`, { data: {} }),
