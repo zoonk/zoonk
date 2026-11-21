@@ -46,7 +46,7 @@ enum MockPlanOfferOutcome: Equatable, Sendable {
 }
 
 enum EssaySubmission: Equatable, Sendable {
-  case graded(WritingAnswer)
+  case graded(WritingResult)
   case blockNotActive
 }
 

@@ -204,6 +204,9 @@ final class WritingDraftTests: XCTestCase {
     XCTAssertEqual(submitted, ["00000000-0000-4000-8000-0000000000a1"])
     XCTAssertEqual(writer.mode, .result)
     XCTAssertNil(writer.latest?.grade.points)
+    XCTAssertEqual(
+      writer.latest?.attemptId, "3674d948-e89d-8489-851c-fd3687fcb325",
+      "The saved answer a rewrite starts from is read back")
     XCTAssertNil(KeptWriting.read(blockId), "What was sent leaves this device")
   }
 
@@ -216,7 +219,7 @@ final class WritingDraftTests: XCTestCase {
 
   private static let baseURL = URL(string: "https://api.zoonk.test")!
 
-  static func essay(blockId: String) -> String {
+  nonisolated static func essay(blockId: String) -> String {
     """
     {"blockId":"\(blockId)","context":null,"drafts":[],\
     "draft":{"admissionId":"00000000-0000-4000-8000-0000000000a1","revision":1,"text":"Started."},\
@@ -274,8 +277,17 @@ private actor DraftTransport: ClientTransport {
       submittedAdmissions.append(try JSONDecoder().decode(Submit.self, from: data).admissionId)
       return json(
         .ok,
-        #"{"attemptId":"3674d948-e89d-8489-851c-fd3687fcb325","submittedAt":"2026-11-20T12:00:00.000Z","text":"My answer.","grade":\#(WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))}"#
+        WritingLinesTests.levels(ignoredFrom: nil, errors: "[]")
       )
+    case "getEssay":
+      let drafts =
+        submittedAdmissions.isEmpty
+        ? "[]"
+        : #"[{"attemptId":"3674d948-e89d-8489-851c-fd3687fcb325","submittedAt":"2026-11-20T12:00:00.000Z","text":"My answer.","grade":\#(WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))}]"#
+      return json(
+        .ok,
+        WritingDraftTests.essay(blockId: "01a1fac7-1f8c-7827-b3b7-6f5f50afc190")
+          .replacingOccurrences(of: #""drafts":[]"#, with: #""drafts":\#(drafts)"#))
     default:
       return (HTTPResponse(status: .notFound), nil)
     }

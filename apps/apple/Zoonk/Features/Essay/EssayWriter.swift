@@ -157,20 +157,16 @@ final class EssayWriter {
     }
 
     switch result {
-    case .done(.graded(let answer)):
+    case .done(.graded(let grade)):
       status = .idle
       failures = 0
       typed = nil
       typingSince = nil
       KeptWriting.clear(blockId)
-      answers.insert(answer, at: 0)
+      answers.insert(.init(attemptId: "", grade: grade, submittedAt: .now, text: text), at: 0)
       mode = .result
-      essay.update { essay in
-        var essay = essay
-        essay.drafts.insert(answer, at: 0)
-        essay.draft = nil
-        return essay
-      }
+      // The grade shows at once; the block read again names the saved answer a rewrite starts from.
+      await readAnswers()
     case .done(.blockNotActive):
       fail()
       // The block was finished or skipped elsewhere; a fresh read shows it closed.
@@ -190,11 +186,29 @@ final class EssayWriter {
 
   /// A tap on "Rewrite" is a start, admitted here; past the day's extra grades it's refused before
   /// a word is written.
+  private func readAnswers() async {
+    essay.invalidate()
+    await essay.refresh()
+
+    if let drafts = essay.value?.drafts, !drafts.isEmpty {
+      answers = drafts
+    }
+  }
+
   func rewrite() async {
-    guard let latest, !isRewriting else { return }
+    guard !isRewriting else { return }
 
     isRewriting = true
     defer { isRewriting = false }
+
+    if latest?.attemptId.isEmpty == true {
+      await readAnswers()
+    }
+
+    guard let latest, !latest.attemptId.isEmpty else {
+      failures += 1
+      return
+    }
 
     switch await store.startWriting(blockId: blockId, previousAttemptId: latest.attemptId) {
     case .done(.ready(let id)):
