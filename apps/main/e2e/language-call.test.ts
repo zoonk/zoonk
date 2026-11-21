@@ -410,10 +410,12 @@ test.describe("Language practice in the plan", () => {
       })
       .toMatchObject({
         levelTest: { answers: [{ answerIndex: 0, id: "reading-A2-0" }] },
-        skillLevels: { listening: "A2", reading: expect.any(String) },
+        skillLevels: { reading: expect.any(String) },
       });
 
+    // A skill the learner answered nothing in gets no level.
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(saved.details).not.toHaveProperty("skillLevels.listening");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
   });
 });
