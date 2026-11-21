@@ -157,14 +157,16 @@ export function TaskModelRunBar({
   const needsEval =
     hasEveryOutput && summary.scored + summary.unscoredImages.length < outputStatus.totalOutputs;
 
-  const generate = hasEveryOutput ? (
-    <SubmitButton formAction={generateOutputsAction} key="generate" size="lg" variant="outline">
-      Generate outputs
-    </SubmitButton>
-  ) : (
+  const generateIsMain = !hasEveryOutput || (summary.unscoredImages.length > 0 && !needsEval);
+
+  const generate = generateIsMain ? (
     <FormMainButton enter="off" formAction={generateOutputsAction} key="generate">
       Generate outputs
     </FormMainButton>
+  ) : (
+    <SubmitButton formAction={generateOutputsAction} key="generate" size="lg" variant="outline">
+      Generate outputs
+    </SubmitButton>
   );
 
   const score = needsEval ? (
@@ -193,7 +195,7 @@ export function TaskModelRunBar({
 
       <BottomBar>
         <BottomBarActions>
-          {hasEveryOutput ? [generate, score] : [score, generate]}
+          {generateIsMain ? [score, generate] : [generate, score]}
         </BottomBarActions>
       </BottomBar>
     </form>
