@@ -3,7 +3,7 @@ import { type TransactionClient } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type ContentFixMediaNeed, clipMediaKey } from "../../media-schema";
-import { wordDistractorProblem } from "../word-distractors";
+import { translationDistractorEffects } from "../word-distractors";
 import {
   type ScreenList,
   type ScreenMediaLink,
@@ -95,23 +95,22 @@ function declarationRomanization({
   return row ? row.romanization : (entry.romanization ?? null);
 }
 
-function checkDistractors({
+export function distractorEffects({
   list,
-  problems,
+  wordRefs,
   words,
 }: {
   list: ScreenList;
-  problems: string[];
+  wordRefs: Map<string, string>;
   words: ScreenSnapshot["words"];
 }) {
-  for (const [index, entry] of (list.words ?? []).entries()) {
-    const problem =
-      entry.distractors && wordDistractorProblem({ distractors: entry.distractors, words });
+  return (list.words ?? []).flatMap((entry) => {
+    const wordId = wordRefs.get("id" in entry ? entry.id : entry.key);
 
-    if (problem) {
-      problems.push(`words[${String(index)}].distractors: ${problem}`);
-    }
-  }
+    return entry.distractors && wordId
+      ? translationDistractorEffects({ distractors: entry.distractors, wordId, words })
+      : [];
+  });
 }
 
 export async function resolveVocabulary(
@@ -228,8 +227,6 @@ export async function resolveVocabulary(
         },
       ];
     }) ?? before.words;
-
-  checkDistractors({ list, problems, words });
 
   const sentences =
     list.sentences?.flatMap((entry, index): ScreenSnapshot["sentences"] => {

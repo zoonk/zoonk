@@ -720,25 +720,53 @@ describe("word and sentence fixes", () => {
     expect(fix.changes).toHaveLength(13);
   });
 
-  it("refuses a lesson word's distractors that are the lesson's translations", async () => {
+  it("flags a lesson word's distractors that are the lesson's translations and still reverts them", async () => {
     const { lesson, word } = await languageLessonFixture();
+    const id = { lessonId: lesson.id, wordId: word.id };
+
+    await prisma.lessonWord.update({
+      data: { distractors: ["aluguel"] },
+      where: { lessonId_wordId: id },
+    });
+
     await signInProposer();
 
-    await expect(
-      proposeContentFix({
-        changes: [
-          {
-            id: { lessonId: lesson.id, wordId: word.id },
-            model: "LessonWord",
-            set: { distractors: ["deposit", "renda"], translation: "renda" },
-          },
-        ],
-        reason: "Clearer options.",
-      }),
-    ).resolves.toMatchObject({
-      message: expect.stringContaining('distractors: "renda"'),
-      status: "invalid",
+    const fix = await proposeFix({
+      changes: [
+        {
+          id,
+          model: "LessonWord",
+          set: { distractors: ["deposit", "renda"], translation: "renda" },
+        },
+      ],
+      reason: "Clearer options.",
     });
+
+    expect(fix.effects).toContainEqual({
+      kind: "distractorsLikeTranslations",
+      texts: ["renda"],
+      wordId: word.id,
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    const inverse = await revertFix({ fixId: fix.id, reason: "Put the options back." });
+
+    if (inverse.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${JSON.stringify(inverse)}`);
+    }
+
+    await expect(approve({ fixId: inverse.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.lessonWord.findUniqueOrThrow({ where: { lessonId_wordId: id } }),
+    ).resolves.toMatchObject({ distractors: ["aluguel"], translation: "aluguel" });
   });
 
   it("fixes one lesson's rows of a word and a sentence by their key", async () => {

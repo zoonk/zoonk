@@ -30,6 +30,7 @@ import {
   revertInAdmin,
   signInApprover,
   signInProposer,
+  skilledLanguageLesson,
 } from "./_test-utils/content-fix-steps";
 import { mockVoice } from "./_test-utils/mock-fix-voice";
 import {
@@ -415,7 +416,7 @@ describe("publishing one reviewed lesson screen version", () => {
   });
 
   it("publishes two Vietnamese tones with their recordings, translations and existing map ideas", async () => {
-    const { lesson, steps, word, sentence } = await languageLessonFixture({
+    const { lesson, steps, word, sentence } = await skilledLanguageLesson({
       language: "en",
       wordText: "ma",
       wordTranslation: "ghost",
@@ -696,39 +697,53 @@ describe("publishing one reviewed lesson screen version", () => {
     ]);
   });
 
-  it("refuses word distractors that are the lesson's translations", async () => {
+  it("refuses an added question without a skill and flags distractors that are the lesson's translations", async () => {
     const { lesson, steps, word } = await languageLessonFixture();
     await signInProposer();
 
-    await expect(
-      proposeContentFix(
-        {
-          changes: [
-            change(
-              lesson.id,
-              [...steps.map(({ id }) => ({ id })), { kind: "translation", word: "deposit" }],
+    const input = {
+      changes: [
+        change(
+          lesson.id,
+          [...steps.map(({ id }) => ({ id })), { kind: "translation", word: "deposit" }],
+          {
+            words: [
+              { distractors: ["deposit", "aluguel"], id: word.id },
               {
-                words: [
-                  { distractors: ["deposit", "aluguel"], id: word.id },
-                  {
-                    distractors: ["debit", "Depósito", "conta"],
-                    key: "deposit",
-                    translation: "depósito",
-                    word: "deposit",
-                  },
-                ],
+                distractors: ["debit", "Depósito", "conta"],
+                key: "deposit",
+                translation: "depósito",
+                word: "deposit",
               },
-            ),
-          ],
-          reason,
-        },
-        { check: true },
-      ),
-    ).resolves.toMatchObject({
-      message: expect.stringMatching(
-        /words\[0\]\.distractors: "aluguel".*\n.*words\[1\]\.distractors: "Depósito"/u,
-      ),
+            ],
+          },
+        ),
+      ],
+      reason,
+    };
+
+    await expect(proposeContentFix(input, { check: true })).resolves.toMatchObject({
+      message: expect.stringContaining(`screens[${String(steps.length)}].skillId`),
       status: "invalid",
+    });
+
+    const skill = await skillFixture();
+    await prisma.lessonSkill.create({ data: { lessonId: lesson.id, skillId: skill.id } });
+
+    await expect(proposeContentFix(input, { check: true })).resolves.toMatchObject({
+      fixes: [
+        {
+          effects: expect.arrayContaining([
+            { kind: "distractorsLikeTranslations", texts: ["aluguel"], wordId: word.id },
+            {
+              kind: "distractorsLikeTranslations",
+              texts: ["Depósito"],
+              wordId: expect.any(String),
+            },
+          ]),
+        },
+      ],
+      status: "checked",
     });
   });
 
@@ -792,7 +807,7 @@ describe("publishing one reviewed lesson screen version", () => {
   });
 
   it("finishes the old version when its only graded screen was excused before any answer was saved", async () => {
-    const { lesson, word, steps } = await languageLessonFixture();
+    const { lesson, word, steps } = await skilledLanguageLesson();
     const translation = steps.find((screen) => screen.kind === "translation");
 
     if (!translation) {
