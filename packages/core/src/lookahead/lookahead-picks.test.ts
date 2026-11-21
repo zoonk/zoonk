@@ -71,6 +71,31 @@ const TYPED_CONTENT = {
   sampleAnswer: "The rule.",
 };
 
+function pairsContent(count: number) {
+  return {
+    pairs: Array.from({ length: count }, (_, index) => ({ left: `L${index}`, right: `R${index}` })),
+    question: "Match each case to its rule.",
+    reason: "Each case follows its rule.",
+  };
+}
+
+const ORDER_CONTENT = {
+  question: "Put the steps in order.",
+  reason: "Each step needs the one before.",
+  steps: ["First", "Second", "Third", "Fourth"],
+};
+
+const SELECT_ALL_CONTENT = { ...choiceContent(5), select: "all" };
+
+/** Three low-guess tap questions, one of each shape, which with a quick one let a skill be skipped. */
+function tapFixtures(attrs: { examBlueprintId?: string; retiredAt?: Date; skillId: string }) {
+  return Promise.all([
+    itemFixture({ ...attrs, content: pairsContent(4), format: "matchPairs" }),
+    itemFixture({ ...attrs, content: ORDER_CONTENT, format: "order" }),
+    itemFixture({ ...attrs, content: SELECT_ALL_CONTENT }),
+  ]);
+}
+
 async function examGoalWithSkills({ count, structure }: { count: number; structure: object }) {
   const user = await userFixture();
 
@@ -290,7 +315,7 @@ describe(pickPlacementItemSkills, () => {
     ]);
   });
 
-  it("confirms a right pick with more quick questions, and only a language goal in writing", async () => {
+  it("confirms a right pick with three tap questions, never more quick ones, for every goal", async () => {
     const [user, shortAnswers, cebraspe, skill] = await Promise.all([
       userFixture(),
       examBlueprintFixture({ structure: examStructure(["multipleChoice", "shortAnswer"]) }),
@@ -312,16 +337,16 @@ describe(pickPlacementItemSkills, () => {
     );
 
     expect(
-      picks.map((pick) => [pick.quickFormat, pick.confirmingCount, pick.skills[0]?.needsTyped]),
+      picks.map((pick) => [pick.quickFormat, pick.confirmingCount, pick.skills[0]?.tapsNeeded]),
     ).toStrictEqual([
-      ["multipleChoice", 1, false],
-      ["trueFalse", 2, false],
-      ["multipleChoice", 1, false],
-      ["multipleChoice", 0, true],
+      ["multipleChoice", 0, 3],
+      ["trueFalse", 0, 3],
+      ["multipleChoice", 0, 3],
+      ["multipleChoice", 0, 3],
     ]);
   });
 
-  it("writes placement's confirming questions for a skill with only one quick question", async () => {
+  it("writes placement's tap questions for a skill with only a quick question, but not for practice", async () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
     const goal = await goalFixture({ userId: user.id });
 
@@ -332,8 +357,57 @@ describe(pickPlacementItemSkills, () => {
       pickPlacementItemSkills({ goalId: goal.id, skillIds: [skill.id] }),
     ]);
 
-    expect(placement.skills.map((picked) => picked.id)).toStrictEqual([skill.id]);
+    expect(placement.skills).toMatchObject([{ id: skill.id, needsQuick: false, tapsNeeded: 3 }]);
     expect(practice).toMatchObject({ confirmingCount: 0, skills: [] });
+  });
+
+  it("counts only low-guess tap questions toward the three a skill needs", async () => {
+    const [user, covered, short] = await Promise.all([
+      userFixture(),
+      skillFixture(),
+      skillFixture(),
+    ]);
+
+    const goal = await goalFixture({ userId: user.id });
+
+    await Promise.all([
+      itemFixture({ skillId: covered.id }),
+      tapFixtures({ skillId: covered.id }),
+      itemFixture({ skillId: short.id }),
+      itemFixture({ content: pairsContent(3), format: "matchPairs", skillId: short.id }),
+      itemFixture({ content: { ...choiceContent(4), select: "all" }, skillId: short.id }),
+      itemFixture({ content: TRUE_FALSE_CONTENT, format: "trueFalse", skillId: short.id }),
+      itemFixture({ content: TYPED_CONTENT, format: "typed", skillId: short.id }),
+      itemFixture({ content: ORDER_CONTENT, format: "order", skillId: short.id }),
+    ]);
+
+    const picks = await pickPlacementItemSkills({
+      forPlacement: true,
+      goalId: goal.id,
+      skillIds: [covered.id, short.id],
+    });
+
+    expect(picks.skills).toMatchObject([{ id: short.id, needsQuick: false, tapsNeeded: 2 }]);
+  });
+
+  it("writes only tap questions when a caller asks for taps, past the ones the learner answered", async () => {
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+    const goal = await goalFixture({ userId: user.id });
+    const [pairs] = await tapFixtures({ skillId: skill.id });
+
+    await attemptFixture({ itemId: pairs.id, skillId: skill.id, userId: user.id });
+
+    await expect(
+      pickPlacementItemSkills({
+        exceptAnswered: true,
+        formats: ["tap"],
+        goalId: goal.id,
+        skillIds: [skill.id],
+      }),
+    ).resolves.toMatchObject({
+      confirmingCount: 0,
+      skills: [{ id: skill.id, needsQuick: false, tapsNeeded: 1 }],
+    });
   });
 
   it("records when placement's questions for the goal's plan were written", async () => {
@@ -524,26 +598,17 @@ describe(pickPlacementItemSkills, () => {
     });
 
     const [skillId = ""] = skillIds;
+    const exam = { examBlueprintId: blueprint.id, skillId };
 
     await Promise.all([
-      itemFixture({
-        content: choiceContent(5),
-        examBlueprintId: blueprint.id,
-        retiredAt: new Date(),
-        skillId,
-      }),
-      itemFixture({ content: choiceContent(5), examBlueprintId: blueprint.id, skillId }),
-      itemFixture({
-        content: TYPED_CONTENT,
-        examBlueprintId: blueprint.id,
-        format: "typed",
-        skillId,
-      }),
+      itemFixture({ ...exam, content: choiceContent(5), retiredAt: new Date() }),
+      tapFixtures({ ...exam, retiredAt: new Date() }),
+      itemFixture({ ...exam, content: ORDER_CONTENT, format: "order" }),
     ]);
 
     await expect(
       pickPlacementItemSkills({ forPlacement: true, goalId: goal.id, skillIds }),
-    ).resolves.toMatchObject({ skills: [{ id: skillId, needsTyped: false }] });
+    ).resolves.toMatchObject({ skills: [{ id: skillId, needsQuick: true, tapsNeeded: 2 }] });
   });
 
   it("keeps an exam's new questions out of the cases its learners meet in the skill's general ones", async () => {
@@ -603,7 +668,7 @@ describe(pickPlacementItemSkills, () => {
 
     await expect(pickPlacementItemSkills({ goalId: goal.id, skillIds })).resolves.toMatchObject({
       quickFormat: "multipleChoice",
-      skills: [{ id: fourOptions, needsTyped: false }],
+      skills: [{ id: fourOptions, tapsNeeded: 0 }],
     });
   });
 
@@ -695,7 +760,7 @@ describe(pickPlacementItemSkills, () => {
       pickPlacementItemSkills({ formats: ["multipleChoice"], goalId: goal.id, skillIds }),
     ).resolves.toMatchObject({
       quickFormat: "multipleChoice",
-      skills: [{ id: skillId, needsTyped: false }],
+      skills: [{ id: skillId, needsQuick: true, tapsNeeded: 0 }],
     });
   });
 

@@ -51,8 +51,8 @@ function graphSkill(area: string, skillId: string) {
 function writePlacementQuestions() {
   vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
     taskResult({
-      skills: params.skills.map(() => ({
-        quick: Array.from({ length: params.quickCount }, (_, index) => ({
+      skills: params.skills.map((skill) => ({
+        quick: Array.from({ length: skill.quickCount }, (_, index) => ({
           context: null,
           difficulty: "medium" as const,
           fixedOrder: false,
@@ -70,7 +70,13 @@ function writePlacementQuestions() {
           question: `Onde se formam os ribossomos? (${index})`,
           visual: null,
         })),
-        typed: [],
+        taps: Array.from({ length: skill.tapCount }, (_, index) => ({
+          difficulty: "medium" as const,
+          format: "order" as const,
+          question: `Ordene a síntese de proteínas. (${index})`,
+          reason: "Cada etapa depende da anterior.",
+          steps: ["Transcrição", "Saída do RNA", "Tradução", "Dobramento"],
+        })),
       })),
     }),
   );
@@ -627,8 +633,6 @@ describe(sessionPreparationWorkflow, () => {
 
     vi.mocked(requestClaimQuestionsFor).mockResolvedValueOnce({
       analytics: { distinctId: user.id, goalId: goal.id, platform: null },
-      format: "multipleChoice",
-      questionsPerSkill: 3,
       skillIds: [nucleus.id],
       status: "start",
     });
@@ -637,15 +641,12 @@ describe(sessionPreparationWorkflow, () => {
 
     expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        quickCount: 3,
-        quickFormat: "multipleChoice",
-        skills: [expect.objectContaining({ name: nucleus.name })],
-        typedCount: 0,
+        skills: [expect.objectContaining({ name: nucleus.name, quickCount: 0, tapCount: 3 })],
       }),
     );
 
     await expect(
-      prisma.item.count({ where: { format: "multipleChoice", skillId: nucleus.id } }),
+      prisma.item.count({ where: { format: "order", skillId: nucleus.id } }),
     ).resolves.toBe(3);
   });
 
@@ -670,21 +671,39 @@ describe(sessionPreparationWorkflow, () => {
         },
       }),
       itemFixture({ skillId: reading.id }),
-      itemFixture({ skillId: reading.id }),
+      ...["Ler", "Inferir", "Concluir"].map((step) =>
+        itemFixture({
+          content: {
+            question: `Ordene a leitura. (${step})`,
+            reason: "Cada etapa depende da anterior.",
+            steps: ["Ler o título", "Ler o texto", step, "Responder"],
+          },
+          format: "order",
+          skillId: reading.id,
+        }),
+      ),
     ]);
 
     writePlacementQuestions();
 
     await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
 
-    expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        serviceTier: "flex",
-        skills: [expect.objectContaining({ name: english.name })],
-      }),
-    );
+    expect(vi.mocked(generatePlacementItems).mock.calls).toStrictEqual([
+      [
+        expect.objectContaining({
+          serviceTier: "flex",
+          skills: [expect.objectContaining({ name: english.name, quickCount: 1, tapCount: 0 })],
+        }),
+      ],
+      [
+        expect.objectContaining({
+          serviceTier: "flex",
+          skills: [expect.objectContaining({ name: english.name, quickCount: 0, tapCount: 3 })],
+        }),
+      ],
+    ]);
 
-    await expect(prisma.item.count({ where: { skillId: english.id } })).resolves.toBe(2);
+    await expect(prisma.item.count({ where: { skillId: english.id } })).resolves.toBe(4);
 
     vi.mocked(generatePlacementItems).mockClear();
 
