@@ -129,13 +129,15 @@ function mergeCourseRequests(requests: readonly CourseOutlineNeed[]): CourseOutl
 export async function listPlanOutlines({
   days,
   goalId,
+  skillIds,
 }: {
   days: number;
   goalId: string;
+  skillIds?: string[];
 }): Promise<PlanOutline[]> {
   const [extensions, needs, soon, firstSkillId] = await Promise.all([
-    listSkillExtensionsStep({ days, goalId }),
-    listPlanOutlineNeedsStep({ days, goalId }),
+    listSkillExtensionsStep({ days, goalId, skillIds }),
+    listPlanOutlineNeedsStep({ days, goalId, skillIds }),
     listSoonStandInCourseIdsStep({ days: OUTLINE_SOON_DAYS, goalId }),
     readPlanFirstSkillStep(goalId),
   ]);
@@ -159,6 +161,7 @@ export async function startPlanOutline({
   outline: PlanOutline;
   started: string[];
 }) {
-  await start(courseOutlineWorkflow, [{ ...outline, analytics, forGuest }]);
+  const run = await start(courseOutlineWorkflow, [{ ...outline, analytics, forGuest }]);
   started.push(outline.courseId);
+  return run.runId;
 }

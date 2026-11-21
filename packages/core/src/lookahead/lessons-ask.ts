@@ -3,7 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
-import { afterPlanInputWrite, withPlanRetry } from "../plans/plan-conflict";
+import { unlessPlanConflict, withPlanRetry } from "../plans/plan-conflict";
 import {
   hasOutliningCourses,
   loadDayStandInCourseIds,
@@ -145,9 +145,9 @@ export async function endLessonsAsk({
   }
 
   if (dayCourseIds.length > 0) {
-    await afterPlanInputWrite(() => withPlanRetry(() => replanWaitingGoal(goalId)));
+    await unlessPlanConflict(() => withPlanRetry(() => replanWaitingGoal(goalId)));
   }
 
   await clearLessonsAsk({ askedAt, goalId });
-  await afterPlanInputWrite(() => followWrittenLessons({ askedAt: null, goalId }));
+  await unlessPlanConflict(() => followWrittenLessons({ askedAt: null, goalId }));
 }

@@ -65,6 +65,16 @@ describe(withDayState, () => {
     );
   });
 
+  it("asks for the rest of a started day's lessons nobody is outlining, instead of waiting on nobody", () => {
+    const finished = {
+      blocks: [{ position: 0, status: "completed" as const }],
+      nextPosition: null,
+    };
+
+    expect(dayState(day({ ...finished, lessonsToPrepare: true }))).toBe("prepare");
+    expect(dayState(day({ ...finished, lessonsComing: true }))).toBe("waiting");
+  });
+
   it("has nothing new on a study day without blocks", () => {
     expect(dayState(day({ blocks: [], emptyDay: "nothingNew", nextPosition: null }))).toBe("ahead");
   });

@@ -48,7 +48,7 @@ async function createGoal(request: NextRequest) {
     return first ? goalRefusedError(first.decision) : errors.internal();
   }
 
-  const { generations, research } = await startGoalWork(result.goals);
+  const { generations, research } = await startGoalWork(result.goals, result.saved);
 
   return NextResponse.json(
     {

@@ -291,6 +291,15 @@ export const EXCEPTIONS: AlignmentException[] = [
     scenario: "/plan/matematica-e-suas-tecnologias",
   },
   {
+    configuration: "laptop keys",
+    issue: 2944,
+    piece: "page",
+    reason:
+      "An out-of-plan subject's facts line wraps in the meter's column on the Plan, on main too",
+    relation: "lone-word",
+    scenario: "/plan",
+  },
+  {
     configuration: "laptop keys pt",
     issue: 2952,
     piece: "page",

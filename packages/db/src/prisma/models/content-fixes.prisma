@@ -64,11 +64,8 @@ model ContentFix {
   approvalExpiresAt DateTime?        @map("approval_expires_at")
   /// Set until all proposal media is ready.
   mediaOwedAt       DateTime?        @map("voice_owed_at")
-  /// Required once released.
-  media             Json?
-  /// Unused.
-  voice             Json?            @ignore
-  createdAt         DateTime         @default(now()) @map("created_at")
+  media             Json
+  createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at")
 
   @@index([status, createdAt])
