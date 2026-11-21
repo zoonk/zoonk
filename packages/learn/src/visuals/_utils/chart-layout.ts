@@ -4,8 +4,7 @@ import {
   type NumericDomain,
   createLinearScale,
   fittingTickIndices,
-  niceDomain,
-  niceTicks,
+  getChartValueAxis,
 } from "@zoonk/utils/plot-scale";
 import {
   type CategoryLabelLayout,
@@ -30,7 +29,6 @@ const NAME_GAP = 4;
 const ROW_GAP = 12;
 const ROWS_TOP = 2;
 const MAX_VALUE_SHARE = 1 / 3;
-const TICK_COUNT = 4;
 
 type Tick = { label: string; value: number };
 
@@ -69,27 +67,6 @@ export function fitsLabel(label: string, room: number): boolean {
 /** Upright bars share their category's band, so each series thins them; past this they're slivers. */
 function fitsBarsSideBySide({ band, seriesCount }: { band: number; seriesCount: number }): boolean {
   return (band * GROUP_SHARE) / seriesCount - BAR_GAP >= MIN_BAR_WIDTH;
-}
-
-function getValueAxis({
-  formatTick,
-  visual,
-}: {
-  formatTick: (tick: number) => string;
-  visual: ChartVisual;
-}): ValueAxis {
-  const values = visual.series.flatMap((series) => series.values);
-  const anchors = visual.axisStart === null ? values : [...values, visual.axisStart];
-  const nice = niceDomain(anchors, { includeZero: visual.chart === "bar" });
-
-  const domain = visual.axisStart === null ? nice : ([visual.axisStart, nice[1]] as const);
-  const wholeNumbers = values.every((value) => Number.isInteger(value));
-
-  const ticks = niceTicks(domain, TICK_COUNT)
-    .filter((tick) => !wholeNumbers || Number.isInteger(tick))
-    .map((value) => ({ label: formatTick(value), value }));
-
-  return { domain, ticks, values };
 }
 
 function getWidestLabel(labels: string[]): number {
@@ -230,7 +207,14 @@ export function getLayout({
   visual: ChartVisual;
   width: number;
 }): ColumnLayout | RowLayout {
-  const axis = getValueAxis({ formatTick, visual });
+  const { domain, ticks, values } = getChartValueAxis(visual);
+
+  const axis = {
+    domain,
+    ticks: ticks.map((value) => ({ label: formatTick(value), value })),
+    values,
+  };
+
   const left = Math.max(PADDING.left, getWidestLabel(axis.ticks.map((tick) => tick.label)));
   const plotWidth = Math.max(width - left - PADDING.right, 1);
   const band = plotWidth / visual.categories.length;

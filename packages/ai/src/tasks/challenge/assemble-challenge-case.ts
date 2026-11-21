@@ -55,7 +55,15 @@ export function assembleChallengeCase({
       return [assembleChoice({ meters, planned, written })];
     });
 
-    return [{ choices, id: decision.id, messages: scripted.messages, prompt: scripted.prompt }];
+    return [
+      {
+        choices,
+        id: decision.id,
+        messages: scripted.messages,
+        prompt: scripted.prompt,
+        visual: null,
+      },
+    ];
   });
 
   const endings = plan.endings.flatMap((ending) => {

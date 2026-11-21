@@ -98,6 +98,39 @@ export function niceDomain(
   return rounded.every((bound) => Number.isFinite(bound)) ? rounded : [low, high];
 }
 
+export function getChartValueAxis(chart: {
+  axisStart: number | null;
+  chart: "bar" | "line";
+  series: readonly { values: readonly number[] }[];
+}) {
+  const values = chart.series.flatMap((series) => series.values);
+  const anchors = chart.axisStart === null ? values : [...values, chart.axisStart];
+  const nice = niceDomain(anchors, { includeZero: chart.chart === "bar" });
+  const domain: NumericDomain = chart.axisStart === null ? nice : [chart.axisStart, nice[1]];
+  const wholeNumbers = values.every((value) => Number.isInteger(value));
+  const ticks = niceTicks(domain).filter((tick) => !wholeNumbers || Number.isInteger(tick));
+
+  return { domain, ticks, values };
+}
+
+function getPlotAxis(values: number[]) {
+  const domain = niceDomain(values, { includeZero: false });
+
+  return { domain, ticks: niceTicks(domain) };
+}
+
+export function getPlotAxes(plot: {
+  references: readonly { y: number }[];
+  series: readonly { points: readonly { x: number; y: number }[] }[];
+}) {
+  const points = plot.series.flatMap((series) => series.points);
+
+  return {
+    x: getPlotAxis(points.map((point) => point.x)),
+    y: getPlotAxis([...points.map((point) => point.y), ...plot.references.map(({ y }) => y)]),
+  };
+}
+
 const TICK_LABEL_GAP = 4;
 
 export function fittingTickIndices(

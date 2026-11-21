@@ -1,5 +1,6 @@
 import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { describe, expect, it } from "vitest";
+import { type PlotVisual, safeParseStepContent } from "../steps/contract/step-contract";
 import { checkWrittenChallenge } from "./challenge-case-content";
 
 type WrittenCase = ReturnType<typeof writtenChallengeCaseFixture>;
@@ -22,6 +23,48 @@ function choiceIdsByNode(written: WrittenCase): string[][] {
 }
 
 describe(checkWrittenChallenge, () => {
+  it("round-trips a decision's plot and leaves other decisions without a visual", () => {
+    const written = writtenChallengeCaseFixture();
+
+    const visual: PlotVisual = {
+      kind: "plot",
+      references: [{ label: "Limit", y: 12 }],
+      series: [
+        {
+          mark: "lineWithPoints",
+          name: "Line A",
+          points: [
+            { label: null, x: 1, y: 8 },
+            { label: "Peak", x: 6, y: 11 },
+          ],
+        },
+      ],
+      source: null,
+      title: "Pressure over time",
+      xLabel: "Time",
+      xUnit: "s",
+      yLabel: "Pressure",
+      yUnit: "kPa",
+    };
+
+    const { content } = checkWrittenChallenge({
+      variant: "work",
+      written: {
+        ...written,
+        nodes: written.nodes.map((node) =>
+          node.id === written.startNodeId ? { ...node, visual } : node,
+        ),
+      },
+    });
+
+    const payload = JSON.stringify(content);
+    const restored = safeParseStepContent("challenge", JSON.parse(payload));
+
+    expect(restored.success && restored.data.nodes.map((node) => node.visual)).toStrictEqual(
+      written.nodes.map((node) => (node.id === written.startNodeId ? visual : undefined)),
+    );
+  });
+
   it("doesn't keep the strongest choice first in every decision", () => {
     const written = withStrongestFirst(writtenChallengeCaseFixture());
     const { content } = checkWrittenChallenge({ variant: "work", written });

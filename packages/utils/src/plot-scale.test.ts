@@ -3,6 +3,8 @@ import {
   createLinearScale,
   fittingTickIndices,
   fittingTicks,
+  getChartValueAxis,
+  getPlotAxes,
   niceDomain,
   niceTicks,
 } from "./plot-scale";
@@ -53,6 +55,38 @@ describe(niceDomain, () => {
     expect(niceDomain([Number.NaN, 4])).toStrictEqual([0, 4]);
     expect(niceDomain([])).toStrictEqual([0, 1]);
     expect(niceDomain([], { includeZero: false })).toStrictEqual([0, 1]);
+  });
+});
+
+describe(getChartValueAxis, () => {
+  it("honors an explicit axis start and filters fractional ticks for whole-number values", () => {
+    expect(
+      getChartValueAxis({ axisStart: 9, chart: "line", series: [{ values: [9, 10, 11] }] }),
+    ).toStrictEqual({ domain: [9, 11], ticks: [9, 10, 11], values: [9, 10, 11] });
+  });
+});
+
+describe(getPlotAxes, () => {
+  it("uses numeric x spacing and includes references only in the y domain", () => {
+    const { x, y } = getPlotAxes({
+      references: [{ y: 40 }],
+      series: [
+        {
+          points: [
+            { x: 10, y: 27 },
+            { x: 11, y: 25 },
+            { x: 20, y: 30 },
+          ],
+        },
+      ],
+    });
+
+    expect(x).toStrictEqual({ domain: [10, 20], ticks: [10, 12.5, 15, 17.5, 20] });
+    expect(y).toStrictEqual({ domain: [25, 40], ticks: [25, 30, 35, 40] });
+
+    const scale = createLinearScale({ domain: x.domain, range: [0, 100] });
+
+    expect(scale.toPixel(11)).toBe(10);
   });
 });
 

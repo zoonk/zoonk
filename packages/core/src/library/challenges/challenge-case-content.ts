@@ -69,6 +69,7 @@ function toChallengeContent({
       id: node.id,
       messages: node.messages,
       prompt: node.prompt,
+      visual: optional(node.visual),
     })),
     panels: written.panels.map((panel) => toPanel(panel)),
     setting: written.setting,

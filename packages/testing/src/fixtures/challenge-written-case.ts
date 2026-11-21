@@ -38,6 +38,7 @@ export function writtenChallengeCaseFixture() {
             ? { label: choice.timeJump.label, panel: writtenPanel(choice.timeJump.panel) }
             : null,
       })),
+      visual: null,
     })),
     panels: content.panels.map((panel) => writtenPanel(panel)),
     summary: [
