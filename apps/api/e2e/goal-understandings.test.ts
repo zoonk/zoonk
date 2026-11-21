@@ -8,6 +8,7 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
+import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
@@ -154,6 +155,51 @@ test.describe("Goal understandings API", () => {
     expect(run.status()).toBe(200);
 
     await api.dispose();
+  });
+
+  test("keeps the learner's own material with the draft and leaves out what isn't theirs", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "understanding-material" }),
+      createBearerLearner({ baseURL, prefix: "understanding-material-other" }),
+    ]);
+
+    const [notes, theirs] = await Promise.all([
+      sourceFixture({ kind: "upload", title: "" }),
+      sourceFixture({ kind: "upload", title: "Their notes" }),
+    ]);
+
+    await Promise.all([
+      learnerSourceFixture({ sourceId: notes.id, userId }),
+      learnerSourceFixture({ sourceId: theirs.id, userId: other.userId }),
+    ]);
+
+    const goal = `test on Friday ${randomUUID()}`;
+
+    const response = await api.post("/v1/goal-understandings", {
+      data: { goal, language: "en", materialIntent: "exam", sourceIds: [theirs.id, notes.id] },
+    });
+
+    const draft = await readBody({ response, schema: onboardingDraftViewSchema, status: 202 });
+
+    expect(draft).toMatchObject({
+      materialIntent: "exam",
+      sources: [{ id: notes.id, title: "" }],
+      status: "understanding",
+    });
+
+    await expect(
+      readBody({
+        response: await api.get(`/v1/goal-understandings/${draft.id}`),
+        schema: onboardingDraftViewSchema,
+      }),
+    ).resolves.toMatchObject({ materialIntent: "exam", sources: [{ id: notes.id }] });
+
+    const intentAlone = await api.post("/v1/goal-understandings", {
+      data: { goal, language: "en", materialIntent: "exam" },
+    });
+
+    expect(intentAlone.status()).toBe(400);
+    await Promise.all([api.dispose(), other.api.dispose()]);
   });
 
   test("starts a draft's run again after it failed", async () => {
