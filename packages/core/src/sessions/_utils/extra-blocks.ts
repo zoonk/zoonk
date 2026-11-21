@@ -121,6 +121,12 @@ export async function buildExtraLessons({
   planItemIds?: readonly string[];
   session: ExtraDay;
 }): Promise<PlannedBlock[]> {
+  const { goalId } = session;
+
+  if (!goalId) {
+    return [];
+  }
+
   const done = getLessonsDoneToday(session);
 
   const [items, plan] = await Promise.all([
@@ -129,14 +135,12 @@ export async function buildExtraLessons({
       take: EXTRA_LESSON_WINDOW + done.size,
       where: {
         kind: { in: [...LEARN_KINDS] },
-        plan: { goalId: session.goalId ?? "" },
+        plan: { goalId },
         status: "todo",
         ...(planItemIds && { id: { in: [...planItemIds] } }),
       },
     }),
-    session.goalId
-      ? prisma.plan.findUnique({ select: { settings: true }, where: { goalId: session.goalId } })
-      : null,
+    prisma.plan.findUnique({ select: { settings: true }, where: { goalId } }),
   ]);
 
   const lessons = await loadPlanLessons({
