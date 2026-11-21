@@ -720,6 +720,27 @@ describe("word and sentence fixes", () => {
     expect(fix.changes).toHaveLength(13);
   });
 
+  it("refuses a lesson word's distractors that are the lesson's translations", async () => {
+    const { lesson, word } = await languageLessonFixture();
+    await signInProposer();
+
+    await expect(
+      proposeContentFix({
+        changes: [
+          {
+            id: { lessonId: lesson.id, wordId: word.id },
+            model: "LessonWord",
+            set: { distractors: ["deposit", "renda"], translation: "renda" },
+          },
+        ],
+        reason: "Clearer options.",
+      }),
+    ).resolves.toMatchObject({
+      message: expect.stringContaining('distractors: "renda"'),
+      status: "invalid",
+    });
+  });
+
   it("fixes one lesson's rows of a word and a sentence by their key", async () => {
     const { lesson, sentence, steps, word } = await languageLessonFixture();
     const spoken = spokenStep(steps);

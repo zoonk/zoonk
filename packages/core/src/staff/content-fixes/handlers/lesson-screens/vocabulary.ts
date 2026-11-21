@@ -3,6 +3,7 @@ import { type TransactionClient } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type ContentFixMediaNeed, clipMediaKey } from "../../media-schema";
+import { wordDistractorProblem } from "../word-distractors";
 import {
   type ScreenList,
   type ScreenMediaLink,
@@ -92,6 +93,25 @@ function declarationRomanization({
   }
 
   return row ? row.romanization : (entry.romanization ?? null);
+}
+
+function checkDistractors({
+  list,
+  problems,
+  words,
+}: {
+  list: ScreenList;
+  problems: string[];
+  words: ScreenSnapshot["words"];
+}) {
+  for (const [index, entry] of (list.words ?? []).entries()) {
+    const problem =
+      entry.distractors && wordDistractorProblem({ distractors: entry.distractors, words });
+
+    if (problem) {
+      problems.push(`words[${String(index)}].distractors: ${problem}`);
+    }
+  }
 }
 
 export async function resolveVocabulary(
@@ -208,6 +228,8 @@ export async function resolveVocabulary(
         },
       ];
     }) ?? before.words;
+
+  checkDistractors({ list, problems, words });
 
   const sentences =
     list.sentences?.flatMap((entry, index): ScreenSnapshot["sentences"] => {

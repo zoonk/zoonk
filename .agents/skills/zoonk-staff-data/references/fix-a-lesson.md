@@ -29,10 +29,11 @@ Copy `plan` from `staff lesson`, change only what's wrong, and send the whole pl
 
 - **`version`** is the one you read. If the lesson changed since, the check says which version to expect: read it again.
 - **`screens`** is the final ordered list. `{ "id" }` keeps a screen as it is. Adding `content` (the whole screen), `variants`, `citation`, `mediaAssetId` or `idea` to it edits it. `{ "kind", … }` adds one. A screen you leave out is removed.
-- **Words and sentences.** `vocabulary` and `translation` screens take `word`; `reading` and `listening` take `sentence`, and so may a `spokenAnswer`. The value is a lesson word's or sentence's id, or a `key` you declare. Leave `words` out to keep them as they are; send it and it's the final list: `{ "id" }` keeps a row, `{ "id", "translation"?, "distractors"?, "note"? }` edits it, and `{ "key", "word", "translation", "distractors", "note"?, "romanization"? }` declares one. A declared sentence is `{ "key", "sentence", "translation", "explanation", "distractors", "translationDistractors", "otherSentenceOrders", "otherTranslationOrders", "romanization"? }`; the orders are the other word orders that are also right, which you review yourself (`[]` when there are none), and a new translation for a kept sentence needs its `otherTranslationOrders` too. Every row needs a screen and every word or sentence screen needs its row. Declared text that exists is reused with its audio and romanization. New text is recorded at proposal and can include a romanization. A spelling fix for every lesson is a `Word` or `Sentence` `set`.
+- **Words and sentences.** `vocabulary` and `translation` screens take `word`; `reading` and `listening` take `sentence`, and so may a `spokenAnswer`. The value is a lesson word's or sentence's id, or a `key` you declare. Leave `words` out to keep them as they are; send it and it's the final list: `{ "id" }` keeps a row, `{ "id", "translation"?, "distractors"?, "note"? }` edits it, and `{ "key", "word", "translation", "distractors", "note"?, "romanization"? }` declares one. A declared sentence is `{ "key", "sentence", "translation", "explanation", "distractors", "translationDistractors", "otherSentenceOrders", "otherTranslationOrders", "romanization"? }`; the orders are the other word orders that are also right, which you review yourself (`[]` when there are none), and a new translation for a kept sentence needs its `otherTranslationOrders` too. A word's `distractors` are the wrong options on its translation screen, so they're words in the word's own language that a learner could confuse with it (by sound, spelling or meaning), never a translation; the check refuses one of the lesson's translations. Every row needs a screen and every word or sentence screen needs its row. Declared text that exists is reused with its audio and romanization. New text is recorded at proposal and can include a romanization. A spelling fix for every lesson is a `Word` or `Sentence` `set`.
 - **Map ideas.** A screen's `idea` is an index in the final ideas list (`null` clears it). Leave `ideas` out to keep them; send it and it's the final list: `{ "from": 2 }` keeps idea 2, `{ "from": 2, "text", "label" }` rewords it, and `{ "text", "label" }` adds one, with an icon drawn at proposal. Kept screens follow their idea wherever it moves.
 - **Pictures.** `picture: { "prompt", "alt" }` on a screen draws a new one at proposal; `mediaAssetId` reuses one that exists.
-- **A numeric check:** `{ "kind": "check", "skillId", "numeric": { "context", "question", "math", "correctReason" } }`. The question shows each `math` variable as `{name}`, each common mistake becomes a wrong option, and the screen's content comes from it. It also adds the question to practice.
+- **Skills.** An added screen trains the `skillId` it names, which must be linked to the lesson; without one it trains the lesson's first skill. Name one when the lesson has several.
+- **A numeric check:** `{ "kind": "check", "numeric": { "context", "question", "math", "correctReason" } }`. The question shows each `math` variable as `{name}`, each common mistake becomes a wrong option, and the screen's content comes from it. It also adds the question to practice.
 - A question that quotes an earlier screen keeps quoting it when it moves; one whose quoted screen you removed is refused.
 
 ## Check, then propose
@@ -65,15 +66,10 @@ Approving a `setScreens` publishes a new version of the lesson's screens. Learne
   ],
   "words": [
     { "id": "<ma word id>" },
-    {
-      "key": "ma-mom",
-      "word": "má",
-      "translation": "mom",
-      "distractors": ["ghost", "but", "rice"]
-    },
-    { "key": "ma-but", "word": "mà", "translation": "but", "distractors": ["ghost", "mom", "and"] }
+    { "key": "ma-mom", "word": "má", "translation": "mom", "distractors": ["mả", "mã", "mạ"] },
+    { "key": "ma-but", "word": "mà", "translation": "but", "distractors": ["mả", "mã", "mạ"] }
   ]
 }
 ```
 
-The `idea` indexes are the ones `staff lesson` printed for those ideas.
+The distractors are the other tones of `ma` that the lesson doesn't teach, so a learner has to hear the tone to answer. The `idea` indexes are the ones `staff lesson` printed for those ideas.

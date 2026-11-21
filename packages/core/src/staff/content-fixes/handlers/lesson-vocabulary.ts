@@ -9,6 +9,7 @@ import {
   idSchema,
   setFieldsSchema,
 } from "./fix-handler";
+import { wordDistractorProblem } from "./word-distractors";
 
 type LessonRowModel = "LessonSentence" | "LessonWord";
 
@@ -75,6 +76,32 @@ async function loadLessonRow(
   });
 }
 
+async function lessonWordProblem(
+  db: TransactionClient,
+  { id, lessonId, set }: { id: string; lessonId: string; set: Record<string, Json> },
+): Promise<string | null> {
+  const { distractors, translation } = z.strictObject(FIELDS.LessonWord).partial().parse(set);
+
+  if (!distractors) {
+    return null;
+  }
+
+  const links = await db.lessonWord.findMany({
+    select: { translation: true, word: { select: { word: true } }, wordId: true },
+    where: { lessonId },
+  });
+
+  const problem = wordDistractorProblem({
+    distractors,
+    words: links.map((link) => ({
+      translation: link.wordId === id ? (translation ?? link.translation) : link.translation,
+      word: link.word.word,
+    })),
+  });
+
+  return problem && `distractors: ${problem}`;
+}
+
 async function resolveLessonRow<Model extends LessonRowModel>(
   db: TransactionClient,
   {
@@ -103,6 +130,13 @@ async function resolveLessonRow<Model extends LessonRowModel>(
 
   if (lesson) {
     return refuse(lesson);
+  }
+
+  const problem =
+    model === "LessonWord" ? await lessonWordProblem(db, { id, lessonId, set }) : null;
+
+  if (problem) {
+    return refuse(problem);
   }
 
   const fields = changedFields(

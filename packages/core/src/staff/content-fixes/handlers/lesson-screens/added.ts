@@ -29,16 +29,16 @@ function prepareNumeric({
   if (entry.numeric) {
     const result = toMathCheckContent({ input: entry.numeric, language: lesson.language });
 
-    if (!result.ok || entry.kind !== "check" || !entry.skillId || entry.content) {
+    if (!result.ok || entry.kind !== "check" || !screen.skillId || entry.content) {
       problems.push(
-        `${path}.numeric: supply a check with a linked skill and valid numeric question. ${result.ok ? "Its content is derived from numeric." : result.problems.join(" ")}`,
+        `${path}.numeric: supply a check with a valid numeric question, in a lesson with a linked skill. ${result.ok ? "Its content is derived from numeric." : result.problems.join(" ")}`,
       );
     } else {
       const question = toScreenQuestion(result.item);
 
       if (question) {
         screen.itemId = allocatedScreen?.itemId ?? randomUUID();
-        newItems.push({ id: screen.itemId, question, skillId: entry.skillId });
+        newItems.push({ id: screen.itemId, question, skillId: screen.skillId });
         screen.content = z.record(z.string(), z.json()).parse(result.content);
       }
     }
