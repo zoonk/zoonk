@@ -435,6 +435,27 @@ final class WritingDraftTests: XCTestCase {
       .saved)
   }
 
+  func testAFirstDraftKeptHereNeverGoesOverARewriteStartedElsewhere() async {
+    KeptWriting.keep(
+      .init(admissionId: Self.admission, base: 9, text: "The first answer."), blockId: blockId)
+    let server = WritingServer(draft: .init(revision: 0, text: ""))
+    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: server))
+    let store = ExamStore(api: api, cache: AppCache(session: .preview(account: .writingTest)))
+    let view = try! decode(
+      EssayView.self,
+      Self.essay(blockId: blockId, draft: "null", drafts: "[]")
+        .replacingOccurrences(
+          of: #"{"blockId""#,
+          with: #"{"admissionId":"00000000-0000-4000-8000-0000000000a2","blockId""#))
+    let writer = EssayWriter(store: store, view: view, admissionId: nil)
+
+    await writer.flush()
+
+    XCTAssertEqual(writer.text, "")
+    let saves = await server.saves
+    XCTAssertEqual(saves.count, 0, "Closing saves nothing of the first answer")
+  }
+
   func testADraftSavedElsewhereStopsSavingUntilTheLearnerPicks() async {
     let server = WritingServer(draft: .init(revision: 3, text: "Saved on the phone."))
     let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")

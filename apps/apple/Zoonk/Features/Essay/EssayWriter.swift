@@ -70,7 +70,7 @@ final class EssayWriter {
     blockId = view.blockId
     essay = store.essay(blockId: view.blockId)
     answers = view.drafts
-    let admissionId = view.draft?.admissionId ?? admissionId
+    let admissionId = view.admissionId ?? view.draft?.admissionId ?? admissionId
     self.admissionId = admissionId
     revision = view.draft?.revision ?? 0
     savedText = view.draft?.text ?? ""

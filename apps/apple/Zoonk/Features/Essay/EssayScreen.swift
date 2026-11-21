@@ -227,7 +227,7 @@ private struct EssayContent: View {
       WritingRefusedView(
         task: .init(
           title: WritingLabels.taskTitle(
-            unit: essay.writing.unit, task: nil, fallback: essay.writing.title)
+            unit: essay.writing.unit, task: essay.writingTask, fallback: essay.writing.title)
             ?? essay.writing.title,
           minutes: essay.pacing.minutes),
         isBusy: finishing.isRunning, onContinue: finish)
