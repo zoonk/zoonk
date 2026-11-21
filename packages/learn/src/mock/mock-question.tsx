@@ -29,6 +29,7 @@ function MockNumberAnswer({ question }: { question: MockQuestion }) {
   return (
     <NumericAnswerField
       entry={question.entry}
+      grouping={false}
       locked={locked}
       maximumFractionDigits={NUMBER_DIGITS}
       onChange={(value) => runner.write(value === null ? null : { number: value })}

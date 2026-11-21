@@ -15,6 +15,7 @@ export type SectionMoves = {
   reviewing: boolean;
 };
 
+/** @internal Tests reach the rules directly; the runner goes through `getCurrentSectionMoves`. */
 export function getSectionMoves({
   answered,
   changed,

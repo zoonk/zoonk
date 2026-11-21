@@ -139,6 +139,7 @@ function UnitAddon({
 function useNumericText({
   defaultText,
   entry,
+  grouping,
   locale,
   locked,
   maximumFractionDigits,
@@ -146,6 +147,7 @@ function useNumericText({
 }: {
   defaultText: string;
   entry: NumericEntry | null;
+  grouping?: boolean;
   locale: string;
   locked: boolean;
   maximumFractionDigits?: number;
@@ -158,7 +160,7 @@ function useNumericText({
 
     return value === null
       ? ""
-      : formatLocalizedNumber({ grouping: false, locale, maximumFractionDigits, value });
+      : formatLocalizedNumber({ grouping, locale, maximumFractionDigits, value });
   }
 
   const written = formattedValue();
@@ -179,6 +181,7 @@ function useNumericText({
 export function NumericAnswerField({
   defaultText = "",
   entry = null,
+  grouping,
   locked,
   labelledBy,
   maximumFractionDigits,
@@ -190,6 +193,7 @@ export function NumericAnswerField({
 }: {
   defaultText?: string;
   entry?: NumericEntry | null;
+  grouping?: boolean;
   locked: boolean;
   labelledBy?: string;
   maximumFractionDigits?: number;
@@ -206,6 +210,7 @@ export function NumericAnswerField({
   const [text, setText] = useNumericText({
     defaultText,
     entry,
+    grouping,
     locale,
     locked,
     maximumFractionDigits,
