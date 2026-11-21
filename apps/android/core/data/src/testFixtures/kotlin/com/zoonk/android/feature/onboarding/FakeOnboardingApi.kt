@@ -506,7 +506,7 @@ class FakeOnboardingApi : OnboardingApi {
 fun suggestionFor(
     recommended: Long?,
     focus: Long?,
-    reachedShare: Double = 1.0,
+    reachedShare: Double? = 1.0,
 ): PlanTimeToCoverSuggested? =
     when {
         recommended != null && recommended <= MOST_SUGGESTED -> suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended)
@@ -517,7 +517,7 @@ fun suggestionFor(
 fun suggestion(
     kind: PlanTimeToCoverSuggested.Kind,
     minutes: Long,
-    reachedShare: Double = 1.0,
+    reachedShare: Double? = 1.0,
 ) = PlanTimeToCoverSuggested(
     coveredShare = if (kind == PlanTimeToCoverSuggested.Kind.EVERYTHING) 1.0 else 0.6,
     everyTopic = reachedShare == 1.0,
@@ -531,7 +531,7 @@ fun coverOf(
     recommended: Long?,
     ready: Boolean = true,
     focus: Long? = null,
-    reachedShare: Double = 1.0,
+    reachedShare: Double? = 1.0,
 ) = PlanTimeToCover(
     fittingDate = null,
     most = null,

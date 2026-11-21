@@ -484,6 +484,17 @@ class OnboardingScreenshots {
                         },
                     )
                 },
+                "setup-schedule-no-reach" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = {
+                                setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08")
+                            }
+                            cover = { coverOf(recommended = 805, focus = 240, reachedShare = null) }
+                            advice = { adviceOf(0.6, reachedShare = null) }
+                        },
+                    )
+                },
                 "setup-schedule-undated" to {
                     Setup(
                         FakeOnboardingApi().apply {
