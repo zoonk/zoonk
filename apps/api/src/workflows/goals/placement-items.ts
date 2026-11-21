@@ -1,6 +1,5 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
-import { isTapWorthStoring } from "@zoonk/core/lookahead/placement-item-skills";
 import { type ContentAnalytics, toContentAnalytics } from "../_shared/content-analytics";
 import { checkItemKeysStep } from "./steps/item-keys-step";
 import {
@@ -69,7 +68,7 @@ async function preparePlacementBatch(
   );
 
   const taps: SkillItem[] = written.items.flatMap((items, skill) =>
-    items.taps.filter((item) => isTapWorthStoring(item)).map((item) => ({ item, skill })),
+    items.taps.map((item) => ({ item, skill })),
   );
 
   const selectAll = taps.filter(({ item }) => item.format === "multipleChoice");

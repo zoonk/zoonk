@@ -11,6 +11,7 @@ import {
   type PlacementItemFormat,
   type PlacementItemPick,
   type PlacementItemPicks,
+  isTapWorthStoring,
   pickPlacementItemSkills,
 } from "@zoonk/core/lookahead/placement-item-skills";
 import { isGoalInPlacementWeek } from "@zoonk/core/lookahead/placement-week";
@@ -213,7 +214,12 @@ export async function writePlacementBatchStep({
     targetLanguage: first.targetLanguage,
   });
 
-  return { items: data.skills, provenance };
+  const items = data.skills.map(({ quick, taps }) => ({
+    quick,
+    taps: taps.filter((item) => isTapWorthStoring(item)),
+  }));
+
+  return { items, provenance };
 }
 
 /** The ids of the skills that got any question stored. */
