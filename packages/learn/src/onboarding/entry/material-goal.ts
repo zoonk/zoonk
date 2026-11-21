@@ -9,7 +9,7 @@ import { type MaterialIntent } from "./material-intent";
 type DraftMaterial = Pick<OnboardingDraftView, "materialIntent" | "sources">;
 
 /** "Ask questions" starts no goal, so only the other choices go with the material. */
-export function toSentMaterial({
+function toSentMaterial({
   attached,
   intent,
 }: {

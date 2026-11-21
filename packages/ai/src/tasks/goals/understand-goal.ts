@@ -64,7 +64,7 @@ const schema = z.object({
   studyTimeNote: z.string().nullable(),
 }) satisfies z.ZodType<RawGoalUnderstanding>;
 
-export type GoalMaterial = {
+type GoalMaterial = {
   /** What the learner chose to do with it; null when they didn't say. */
   intent: "exam" | "understand" | null;
   /** The learner's files, links or pasted text: whole when short, one line per page when long. */

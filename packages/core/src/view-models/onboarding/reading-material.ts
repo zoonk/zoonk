@@ -4,8 +4,12 @@ import {
   toSourcePages,
 } from "../../library/sources/material-pages";
 
-/** How much of the learner's material the goal's reading sees, shared by every file. */
-export const READING_MATERIAL_CHARACTERS = 6000;
+/**
+ * How much of the learner's material the goal's reading sees, shared by every file. In the
+ * understand-goal eval, 3,000 named pasted notes just past it by their first lines only, while
+ * 6,000 read them whole at the same p50.
+ */
+const READING_MATERIAL_CHARACTERS = 6000;
 
 /**
  * Each source gets an even share, so a long file can't crowd out a short note; one longer than its
