@@ -1,7 +1,7 @@
+import { SidewaysScroll } from "@zoonk/ui/components/sideways-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
-import { SidewaysScroll } from "../_components/sideways-scroll";
 import { BreakPoint, breaksBetween, withBreakPoints, withWordBreakPoints } from "./code-breaks";
 import { type CodeTokenKind } from "./code-languages";
 import { type CodeToken, codeLineText, highlightCode } from "./highlight-code";
@@ -14,9 +14,6 @@ const CODE_TEXT = "font-mono text-block [tab-size:4]";
 
 /** Code with a field in it: below 16px, iOS zooms in when the field takes focus. */
 export const CODE_FIELD_TEXT = "font-mono text-base leading-7 sm:text-sm sm:leading-6 [tab-size:4]";
-
-/** Code's scroll buttons show on touch screens too, since a program rarely looks cut off. */
-export const CODE_SCROLL_SIGN = "[&>button]:pointer-coarse:inline-flex";
 
 const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
   builtin: "text-viz-secondary-text",
@@ -207,9 +204,10 @@ export function CodeFrame({
   };
 
   return (
-    <div
+    <SidewaysScroll
       className={cn(
-        "has-[[data-slot=sideways-scroll]:focus-visible]:ring-ring/50 @container rounded-lg has-[[data-slot=sideways-scroll]:focus-visible]:ring-[3px]",
+        "@container [--scroll-fade-x-inset:var(--code-gutter)]",
+        field ? CODE_FIELD_TEXT : CODE_TEXT,
         variant === "inset" && "-mx-2 pl-2",
         variant === "panel" &&
           "bg-muted text-foreground rounded-xl pl-3 font-normal tracking-normal not-italic",
@@ -217,28 +215,20 @@ export function CodeFrame({
       )}
       data-variant={variant}
       dir="ltr"
+      label={label}
       style={style}
       translate="no"
     >
-      <SidewaysScroll
+      <div
         className={cn(
-          field ? CODE_FIELD_TEXT : CODE_TEXT,
-          "[--scroll-fade-x-inset:var(--code-gutter)]",
+          "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] @min-[30rem]:w-max",
+          variant === "inset" ? "pr-2 pb-1" : "py-2.5 pr-3",
         )}
-        label={label}
-        role="group"
+        data-slot="code-lines"
       >
-        <div
-          className={cn(
-            "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] @min-[30rem]:w-max",
-            variant === "inset" ? "pr-2 pb-1" : "py-2.5 pr-3",
-          )}
-          data-slot="code-lines"
-        >
-          {children}
-        </div>
-      </SidewaysScroll>
-    </div>
+        {children}
+      </div>
+    </SidewaysScroll>
   );
 }
 
