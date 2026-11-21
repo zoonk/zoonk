@@ -10,7 +10,7 @@ import { ArrangeWordsInteraction } from "./arrange-words";
 import { PromptAudioButton } from "./prompt-audio-button";
 import { QuestionText } from "./question-text";
 
-function AudioPrompt({ audio, wayOuts }: { audio: PromptAudio; wayOuts: React.ReactNode }) {
+function AudioPrompt({ audio, wayOuts }: { audio: PromptAudio | null; wayOuts: React.ReactNode }) {
   const t = useExtracted();
 
   return (
@@ -18,9 +18,11 @@ function AudioPrompt({ audio, wayOuts }: { audio: PromptAudio; wayOuts: React.Re
       <QuestionText>{t("What do you hear?")}</QuestionText>
 
       <div className="flex flex-wrap gap-2 empty:hidden">
-        <SoundInBar>
-          <PromptAudioButton audio={audio} variant="icon" />
-        </SoundInBar>
+        {audio && (
+          <SoundInBar>
+            <PromptAudioButton audio={audio} variant="icon" />
+          </SoundInBar>
+        )}
         {wayOuts}
       </div>
     </div>
@@ -74,7 +76,7 @@ export function ListeningStep({
       selectedAnswer={selectedAnswer}
       wordBankOptions={step.wordBankOptions}
     >
-      {audio ? (
+      {audio || step.sentence.readsItself ? (
         <AudioPrompt audio={audio} wayOuts={wayOuts} />
       ) : (
         <TextPrompt sentence={step.sentence.sentence} wayOuts={wayOuts} />

@@ -69402,6 +69402,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -69427,6 +69430,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -69797,6 +69801,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -69822,6 +69829,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -70184,6 +70192,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -70209,6 +70220,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -70535,6 +70547,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -70560,6 +70575,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -70913,6 +70929,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -70938,6 +70957,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -71317,6 +71337,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -71342,6 +71365,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -71668,6 +71692,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -71693,6 +71720,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -72019,6 +72047,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -72044,6 +72075,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -73563,6 +73595,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -73588,6 +73623,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -73958,6 +73994,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -73983,6 +74022,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -74345,6 +74385,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -74370,6 +74413,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -74696,6 +74740,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -74721,6 +74768,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75074,6 +75122,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75099,6 +75150,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75478,6 +75530,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75503,6 +75558,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -75829,6 +75885,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -75854,6 +75913,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",
@@ -76180,6 +76240,9 @@
                               }
                             }
                           },
+                          "readsItself": {
+                            "type": "boolean"
+                          },
                           "romanization": {
                             "nullable": true,
                             "type": "string"
@@ -76205,6 +76268,7 @@
                           "ordersPending",
                           "otherSentenceOrders",
                           "otherTranslationOrders",
+                          "readsItself",
                           "romanization",
                           "sentence",
                           "translation",

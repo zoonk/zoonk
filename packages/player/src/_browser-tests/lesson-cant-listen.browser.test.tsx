@@ -76,6 +76,29 @@ describe("a learner who can't listen now", () => {
       .not.toBeInTheDocument();
   });
 
+  it("moves past a sentence that is its own answer instead of showing it", async () => {
+    countPlays();
+    const step = listeningStep();
+    const sentence = step.exercise.sentence;
+
+    if (!sentence) {
+      throw new Error("The listening step has no sentence");
+    }
+
+    openLesson({
+      ...step,
+      exercise: {
+        ...step.exercise,
+        sentence: { ...sentence, readsItself: true, translation: sentence.sentence },
+      },
+    });
+
+    await page.getByRole("button", { name: "I can't listen now" }).click();
+
+    await expect.element(page.getByText("What do you hear?")).not.toBeInTheDocument();
+    await expect.element(page.getByText("How much is the rent?")).not.toBeInTheDocument();
+  });
+
   it("reads a listening sentence instead of hearing it, for the rest of the day", async () => {
     const plays = countPlays();
     const first = openLesson(listeningStep());
