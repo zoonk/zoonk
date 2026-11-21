@@ -519,9 +519,10 @@
       --viz-accent: var(--color-teal-200);
       --viz-highlight: var(--color-amber-200);
       --viz-secondary: var(--color-fuchsia-200);
-      --viz-accent-text: var(--color-teal-50);
-      --viz-highlight-text: var(--color-amber-50);
-      --viz-secondary-text: var(--color-fuchsia-50);
+      /* AAA on the gray `muted` leaves room for color only from yellow to cyan: each takes its hue's most. */
+      --viz-accent-text: oklch(0.96 0.055 185);
+      --viz-highlight-text: oklch(0.965 0.085 102);
+      --viz-secondary-text: oklch(0.97 0.025 325);
       --viz-series-4: oklch(0.76 0.16 145);
       --viz-series-5: oklch(0.68 0.03 260);
       --viz-series-6: oklch(0.6 0.14 40);
