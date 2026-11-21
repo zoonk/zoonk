@@ -3,7 +3,7 @@ import XCTest
 
 @testable import Zoonk
 
-/// What VoiceOver reads from a plot, and review renders of plots on phones, written only on demand:
+/// What VoiceOver reads from a plot, and review renders of plots and charts on phones, written only on demand:
 /// `TEST_RUNNER_ZOONK_SHOTS=<folder> make -C apps/apple test ONLY_TESTING=ZoonkTests/LessonPlotRenderTests`.
 /// No goldens: people and agents look at them.
 @MainActor
@@ -32,7 +32,7 @@ final class LessonPlotRenderTests: XCTestCase {
     for (name, json) in Self.cases {
       let visual = try Self.visual(json)
 
-      for width in [360.0, 390.0] {
+      for width in [320.0, 360.0, 390.0] {
         for (text, size) in [("default", DynamicTypeSize.large), ("largest", .accessibility5)] {
           for dark in [false, true] {
             let file = "ios-\(name)-\(Int(width))-\(dark ? "dark" : "light")-\(text).png"
@@ -86,6 +86,21 @@ final class LessonPlotRenderTests: XCTestCase {
        "yLabel": "\(y)", "yUnit": \(encode(yUnit)), "source": null,
        "series": [{"name": "\(y)", "mark": "\(mark)", "points": [\(shown.joined(separator: ","))]}],
        "references": [\(lines.joined(separator: ","))]}
+      """
+  }
+
+  private static func chart(
+    title: String, category: String, categories: [String], value: String, unit: String?,
+    values: [Double], kind: String = "bar", axisStart: Double? = nil
+  ) -> String {
+    let quote = { (text: String) in "\"\(text)\"" }
+
+    return """
+      {"kind": "chart", "chart": "\(kind)", "title": "\(title)", "categoryLabel": "\(category)",
+       "valueLabel": "\(value)", "unit": \(unit.map(quote) ?? "null"),
+       "axisStart": \(axisStart.map { "\($0)" } ?? "null"),
+       "categories": [\(categories.map(quote).joined(separator: ","))],
+       "series": [{"name": "\(value)", "values": \(values)}], "source": null}
       """
   }
 
@@ -158,6 +173,37 @@ final class LessonPlotRenderTests: XCTestCase {
           (4_666, 84.5, "Japan"), (1_514, 72.8, "Brazil"), (1_265, 74.4, "Mexico"),
           (57, 67.2, "India"),
         ])
+    ),
+    (
+      "chart-unit-km",
+      chart(
+        title: "Distance run this week", category: "Runner", categories: ["Ana", "Bruno", "Carla"],
+        value: "Distance", unit: "km", values: [35, 42, 28])
+    ),
+    (
+      "chart-unit-long",
+      chart(
+        title: "Time to sort mail", category: "Desk", categories: ["Desk A", "Desk B", "Desk C"],
+        value: "Sorting time", unit: "hours per 1,000 letters", values: [3.5, 2.8, 4.1])
+    ),
+    (
+      "chart-money-brl",
+      chart(
+        title: "Hourly pay", category: "Month", categories: ["Jan", "Feb", "Mar"], value: "Pay",
+        unit: "R$ per hour", values: [12.5, 14, 15.75])
+    ),
+    (
+      "chart-money-usd",
+      chart(
+        title: "Monthly price by plan", category: "Plan", categories: ["Basic", "Plus", "Team"],
+        value: "Price", unit: "USD", values: [4.99, 9.99, 24])
+    ),
+    (
+      "chart-cropped-line",
+      chart(
+        title: "Visitors per day", category: "Day", categories: ["Mon", "Tue", "Wed"],
+        value: "Visitors", unit: "visits", values: [10_050, 10_200, 10_380], kind: "line",
+        axisStart: 10_000)
     ),
   ]
 }

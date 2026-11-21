@@ -173,28 +173,29 @@ private struct LessonChartFormat {
 
   let chart: LessonChart
   let width: (TypeStyle, String) -> Double
+  let valueCaption: String
+  private let currency: String?
   private let tickLabels: [Double: String]
 
   init(chart: LessonChart, width: @escaping (TypeStyle, String) -> Double) {
     let ticks = LessonChartScale(chart).ticks
+    let unit = LessonChartUnit.place(chart.unit, valueLabel: chart.valueLabel)
 
     self.chart = chart
     self.width = width
+    valueCaption = unit.valueLabel
+    currency = unit.currency
     tickLabels = Dictionary(
-      zip(ticks, LessonPlotTicks.format(ticks, locale: .courseLanguage)),
+      zip(ticks, LessonPlotTicks.format(ticks, unit: unit.currency, locale: .courseLanguage)),
       uniquingKeysWith: { first, _ in first })
   }
 
-  var valueCaption: String {
-    chart.unit.map { "\(chart.valueLabel) (\($0))" } ?? chart.valueLabel
-  }
-
   func tick(_ value: Double) -> String {
-    tickLabels[value] ?? ActivityNumberFormat.format(value)
+    tickLabels[value] ?? ActivityNumberFormat.format(value, unit: currency)
   }
 
   func value(_ value: Double) -> String {
-    ActivityNumberFormat.format(value)
+    ActivityNumberFormat.format(value, unit: currency)
   }
 
   func spoken(_ value: Double) -> String {

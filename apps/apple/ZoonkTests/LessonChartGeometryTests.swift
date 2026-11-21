@@ -128,6 +128,26 @@ final class LessonChartGeometryTests: XCTestCase {
       ["10,000", "10,025", "10,050"])
   }
 
+  func testAChartNamesItsUnitOnceBesideTheValueLabelAndKeepsACurrencyOnEachNumber() {
+    let place = LessonChartUnit.place
+
+    XCTAssertEqual(
+      place("km", "Distance"), LessonChartUnit(currency: nil, valueLabel: "Distance (km)"))
+    XCTAssertEqual(
+      place("hours per 1,000 letters", "Sorting time"),
+      LessonChartUnit(currency: nil, valueLabel: "Sorting time (hours per 1,000 letters)"))
+    XCTAssertEqual(place("R$", "Price"), LessonChartUnit(currency: "BRL", valueLabel: "Price"))
+    XCTAssertEqual(
+      place("R$ per hour", "Pay"), LessonChartUnit(currency: "BRL", valueLabel: "Pay (per hour)"))
+    XCTAssertEqual(place(nil, "Letters"), LessonChartUnit(currency: nil, valueLabel: "Letters"))
+  }
+
+  func testMoneyTicksKeepTheirCurrency() {
+    XCTAssertEqual(
+      LessonPlotTicks.format([0, 5, 10], unit: "BRL", locale: Locale(identifier: "en_US")),
+      ["R$0", "R$5", "R$10"])
+  }
+
   func testYearsOnTheXAxisHaveNoThousandsSeparator() {
     XCTAssertEqual(
       LessonPlotTicks.format([1960, 1980], xAxis: true, locale: Locale(identifier: "en_US")),

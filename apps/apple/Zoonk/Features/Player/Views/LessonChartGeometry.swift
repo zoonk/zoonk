@@ -89,6 +89,23 @@ struct LessonPlotScale {
   }
 }
 
+/// Core's `placeChartUnit`: money keeps its currency on each number, since only the currency's own
+/// format shows cents. Any other unit, and the rest of a money unit ("per hour"), is shown once
+/// beside the value label.
+struct LessonChartUnit: Equatable {
+  let currency: String?
+  let valueLabel: String
+
+  static func place(_ unit: String?, valueLabel: String) -> LessonChartUnit {
+    let money = ActivityNumberFormat.money(unit)
+    let labelUnit = money?.rest ?? unit ?? ""
+
+    return LessonChartUnit(
+      currency: money?.currency,
+      valueLabel: labelUnit.isEmpty ? valueLabel : "\(valueLabel) (\(labelUnit))")
+  }
+}
+
 /// Main's `formatTicks`: as many decimals as the step between ticks needs, and large numbers
 /// shortened ("12.5K") only where every shortened tick stays exact, so no two ticks print the same.
 /// The x axis groups digits only in large numbers, so years don't read as "2,024".
@@ -101,7 +118,9 @@ enum LessonPlotTicks {
     values.contains { abs($0) >= compactFrom }
   }
 
-  static func format(_ ticks: [Double], xAxis: Bool = false, locale: Locale) -> [String] {
+  static func format(
+    _ ticks: [Double], xAxis: Bool = false, unit: String? = nil, locale: Locale
+  ) -> [String] {
     let first = ticks.first ?? 0
     let large = isLarge(ticks)
     let digits =
@@ -109,10 +128,12 @@ enum LessonPlotTicks {
 
     if large {
       let short = ticks.map {
-        ActivityNumberFormat.format($0, digits: compactDigits, compact: true, locale: locale)
+        ActivityNumberFormat.format(
+          $0, unit: unit, digits: compactDigits, compact: true, locale: locale)
       }
       let exact = ticks.map {
-        ActivityNumberFormat.format($0, digits: maxDigits, compact: true, locale: locale)
+        ActivityNumberFormat.format(
+          $0, unit: unit, digits: maxDigits, compact: true, locale: locale)
       }
 
       if short == exact {
@@ -121,7 +142,8 @@ enum LessonPlotTicks {
     }
 
     return ticks.map {
-      ActivityNumberFormat.format($0, digits: digits, grouping: !xAxis || large, locale: locale)
+      ActivityNumberFormat.format(
+        $0, unit: unit, digits: digits, grouping: !xAxis || large, locale: locale)
     }
   }
 
