@@ -32,7 +32,8 @@ final class HeldSlotTests: XCTestCase {
   func testACallOpeningKeepsEndCallInPlace() async throws {
     let router = AppRouter()
     for tier in [LearnerTier.plus, .free] {
-      try await checkOpening(action: "Call again", anchor: "End call") { date in
+      try await checkOpening(action: "Call again", anchor: "End call", waitForExpiry: true) {
+        date in
         DroppedCallView(
           dropped: DroppedCall(reason: .limit, retry: nil),
           limit: .usedUp(tier: tier, availableAt: date),
@@ -43,7 +44,8 @@ final class HeldSlotTests: XCTestCase {
   }
 
   private func checkOpening(
-    action: String, anchor: String, @ViewBuilder content: @escaping (Date) -> some View
+    action: String, anchor: String, waitForExpiry: Bool = false,
+    @ViewBuilder content: @escaping (Date) -> some View
   ) async throws {
     try await readsWhatVoiceOverReads()
     let opening = Opening()
@@ -64,8 +66,11 @@ final class HeldSlotTests: XCTestCase {
     try await waitForTestCondition("The gated screen did not appear") {
       element(anchor) != nil && !actionIsEnabled()
     }
+    if waitForExpiry { opening.date = .now.addingTimeInterval(1.5) }
+    try await waitForLayout(in: window)
+    _ = window.snapshotView(afterScreenUpdates: true)
     let before = try XCTUnwrap(element(anchor)).accessibilityFrame
-    opening.date = .now.addingTimeInterval(-3600)
+    if !waitForExpiry { opening.date = .now.addingTimeInterval(-3600) }
     try await waitForTestCondition("The action did not open") { actionIsEnabled() }
     XCTAssertEqual(try XCTUnwrap(element(anchor)).accessibilityFrame, before, anchor)
   }
