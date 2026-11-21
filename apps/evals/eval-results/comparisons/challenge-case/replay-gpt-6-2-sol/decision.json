@@ -109,8 +109,7 @@
       "ownerCompared": 0
     }
   ],
-  "reason": "Your blind read can settle the unresolved cases.",
-  "reasonCode": "owner_blind_read_required",
+  "reason": "Some unresolved cases are awaiting qualified model reads.",
   "rows": [
     {
       "attempted": 14,
