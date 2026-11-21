@@ -37,7 +37,7 @@ import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.player.model.ActivityStepContent
-import com.zoonk.android.feature.player.steps.GhostAction
+import com.zoonk.android.feature.player.steps.StepWayOut
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -344,7 +344,7 @@ private fun SoundAsText(
     if (props.isLocked || props.phase != ActivityPhase.Answering) return
 
     if (props.cantListen || !isSoundUnavailable) {
-        GhostAction(
+        StepWayOut(
             if (props.cantListen) R.drawable.ic_hearing else R.drawable.ic_hearing_disabled,
             stringResource(if (props.cantListen) R.string.activities_music_can_listen_now else R.string.activities_music_cant_listen_now),
         ) { props.onCantListenChange(!props.cantListen) }

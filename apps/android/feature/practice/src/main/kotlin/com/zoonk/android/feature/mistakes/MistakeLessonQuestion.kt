@@ -15,6 +15,7 @@ import com.zoonk.android.feature.player.LocalLessonSpeech
 import com.zoonk.android.feature.player.ResultNext
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.screen
+import com.zoonk.android.feature.player.language.PromptAudioBarButton
 import com.zoonk.android.feature.player.language.PromptAudioEffect
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
@@ -152,6 +153,7 @@ internal fun MistakeLessonQuestion(
                             )
                         }
                     }
+                    language.prompt?.let { PromptAudioBarButton(task.step, actions, it) }
                     if (records) {
                         SpokenRecordAction(task.step, actions, width)
                     } else {

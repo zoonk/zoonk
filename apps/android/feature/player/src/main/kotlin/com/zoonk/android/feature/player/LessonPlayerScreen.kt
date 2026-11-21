@@ -105,9 +105,8 @@ import com.zoonk.android.feature.player.engine.round
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.language.LessonLanguage
 import com.zoonk.android.feature.player.language.PromptAudio
+import com.zoonk.android.feature.player.language.PromptAudioBarButton
 import com.zoonk.android.feature.player.language.PromptAudioEffect
-import com.zoonk.android.feature.player.language.PromptAudioIconButton
-import com.zoonk.android.feature.player.language.promptAudioUrl
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
@@ -918,8 +917,6 @@ private fun ActionBar(
     ask: @Composable () -> Unit,
 ) {
     val primary = screen.primary ?: return
-    // Listening plays its sentence from its own button on the screen.
-    val promptUrl = screen.step?.takeIf { it.isReadStep }?.let { promptAudioUrl(it, actions.cantListen) }
 
     // Drawn while it can't go back too, so the bar's buttons keep their places from screen to screen.
     val back: @Composable () -> Unit = {
@@ -943,8 +940,8 @@ private fun ActionBar(
     Column(verticalArrangement = Arrangement.spacedBy(BAR_GAP)) {
         if (dontKnowAbove) giveUp(Modifier.fillMaxWidth())
         TaskActions(back) { width ->
-            if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
             if (dontKnow && !dontKnowAbove) giveUp(Modifier)
+            if (step != null && prompt != null) PromptAudioBarButton(step, actions, prompt)
             if (records && step != null) {
                 SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
             } else {

@@ -15,14 +15,12 @@
   "player_language_move_later": "eed37151e17ce82c167821a81d35959897cabc1731e91d59209cacd0541097aa",
   "player_language_not_a_pair": "488ea61c4865002106f7c4577ca082031d0b40e41cf2b0d8ac95111bf58dbaf6",
   "player_language_pick_words": "2a26c739c71ed697f9df86a7d10aa9a43992d7562265bef321193e757e03386d",
-  "player_language_play": "5817ff193944438f2928f2dfe012cbcbcbde50987a9db6441532ce8d73f24419",
   "player_language_play_pronunciation": "33987a7189616287d0d61aa147c6f1c951304b03e5ce1b060b46312407ae2cc6",
   "player_language_position": "017b74201d3515e0280c18cfcc18f187919e5ed8dc39e7d0bcf18ed1fac69df7",
   "player_language_pronunciation_tip": "193068a0551f686b6e4c1a2fa1ec07b50b3cdfba44d4e11a6839ab1d1bd15ef2",
   "player_language_remove": "77a2f49959e44123e666859dc17722ef7885fc30b647ef137993dbe66f921bf3",
   "player_language_selected": "e3ba94f5b64e93c61e731e0b0f13402ec7b632773be5c45f903c724fd7206f62",
   "player_language_show_translation": "64645a0d78cbeffca74a4edee91850e06740ff5c0983ef63c04900895e9dc529",
-  "player_language_stop": "3fbf37aa6a890051173ab52a22d1fd18b27cea9ce7350d1c4aa600f0064a70db",
   "player_language_translate": "2d49da0762273ef0168bb5e9ae6fec48a362820c082d27120250bcb3bf430095",
   "player_language_usage": "6697946811b88532d302b59e5711136ad5067f21389b98e420be7ee044fc9ddd",
   "player_language_vocabulary": "ffbcb9bfcd18c3471c1ae6d23a2ef7b79c0f7e4494f4e3883431be5700ef715a",
@@ -37,9 +35,6 @@
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
     <string name="player_language_which_means_this">Quale ha questo significato?</string>
     <string name="player_language_what_do_you_hear">Cosa senti?</string>
-    <string name="player_language_play">Riproduci</string>
-    <!-- Button that stops the sentence playing, a short label like a media player's Stop. -->
-    <string name="player_language_stop">Interrompi</string>
     <string name="player_language_play_pronunciation">Riproduci la pronuncia</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
     <string name="player_language_vocabulary">Lessico: %1$s</string>

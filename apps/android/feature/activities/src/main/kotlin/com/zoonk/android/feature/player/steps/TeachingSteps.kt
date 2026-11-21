@@ -98,8 +98,11 @@ import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LessonSummaryIdeas
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
@@ -656,7 +659,7 @@ internal fun SpokenAnswerView(
     if (listening != null) {
         val typesInstead = remember(actions) { ListeningTurnsToTyping(actions) }
         val canTalkNow: (@Composable () -> Unit)? =
-            if (locked) null else ({ GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) } })
+            if (locked) null else ({ StepWayOut(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) } })
         LanguageStepView(listening, answer, state.results[step.id], locked, language, typesInstead, part, canTalkNow)
         return
     }
@@ -690,13 +693,12 @@ internal fun SpokenAnswerView(
 
             if (!locked) {
                 if (types) {
-                    GhostAction(
+                    StepWayOut(
                         R.drawable.ic_mic,
                         stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
                     ) { switchTo(false) }
                 } else {
-                    val icon = if (content.listening != null && !actions.cantListen) R.drawable.ic_headphones else R.drawable.ic_keyboard
-                    GhostAction(icon, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+                    StepWayOut(R.drawable.ic_mic_off, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
                 }
             }
         }
@@ -848,19 +850,18 @@ internal fun ExplainFirstButton(
     actions: StepActions,
 ) {
     if (screen.canExplainFirst) {
-        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), onClick = actions::explainFirst)
+        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), actions::explainFirst)
     }
 }
 
-/** Main's ghost actions line their icon up with the column's text, unless they follow another control on its row ([edge] null). */
+/** Main's ghost actions line their icon up with the column's text. */
 @Composable
 internal fun GhostAction(
     icon: Int,
     label: String,
-    edge: ButtonEdge? = ButtonEdge.Start,
     onClick: () -> Unit,
 ) {
-    GhostAction(label, onClick, edge = edge) { Icon(painterResource(icon), contentDescription = null) }
+    GhostAction(label, onClick) { Icon(painterResource(icon), contentDescription = null) }
 }
 
 @Composable
@@ -868,17 +869,26 @@ internal fun GhostAction(
     label: String,
     onClick: () -> Unit,
     color: Color = Color.Unspecified,
-    edge: ButtonEdge? = ButtonEdge.Start,
     leading: (@Composable () -> Unit)?,
 ) {
     TextButton(
         onClick = onClick,
-        edge = edge,
+        edge = ButtonEdge.Start,
         colors = ButtonDefaults.textButtonColors(contentColor = color),
     ) {
         leading?.let { Box(Modifier.padding(end = 8.dp)) { it() } }
         Text(label)
     }
+}
+
+/** A screen's way around what it asks ("I can't talk now", "I can't listen now"), as main's `StepWayOut`, under what it's about. */
+@Composable
+internal fun StepWayOut(
+    icon: Int,
+    label: String,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(onClick = onClick, size = ButtonSize.Large, leadingIcon = { ButtonIcon(icon) }) { Text(label) }
 }
 
 data class ChoiceOption(

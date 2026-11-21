@@ -1,13 +1,10 @@
 package com.zoonk.android.feature.player.language
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -29,11 +26,12 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.withoutFailure
+import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.listeningInstead
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
-import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.ui.components.OutlinedIconButton
 
 /**
@@ -76,11 +74,6 @@ fun rememberPromptAudio(
     val autoplayed = rememberSaveable { mutableStateOf<String?>(null) }
     return PromptAudio(audio, autoplayed)
 }
-
-fun promptAudioUrl(
-    step: LessonStep,
-    cantListen: Boolean,
-): String? = (step.content as? StepContent.Language)?.let { promptAudioUrl(it, cantListen) }
 
 fun promptAudioUrl(
     language: StepContent.Language,
@@ -129,17 +122,26 @@ internal fun shownPromptUrl(
 ): String? =
     when (val content = step.content) {
         is StepContent.SpokenAnswer -> content.listeningInstead(cantTalk, cantListen)?.let { promptAudioUrl(it, cantListen) }
-        else -> promptAudioUrl(step, cantListen)
+        is StepContent.Language -> promptAudioUrl(content, cantListen)
+        else -> null
     }
 
+/**
+ * The bar's sound, between back and the main action: the word or letter a reading screen shows, or the sentence a listening
+ * screen asks about, which stays quiet once the learner can't listen. Listening says on its screen when its sentence didn't
+ * play, with that note's Try again.
+ */
 @Composable
-fun PromptAudioIconButton(
-    url: String,
+fun PromptAudioBarButton(
+    step: LessonStep,
+    actions: StepActions,
     prompt: PromptAudio,
 ) {
-    val label = pronunciationLabel(prompt.state)
+    val url = shownPromptUrl(step, actions.cantTalk, actions.cantListen) ?: return
+    val state = if (step.isReadStep) prompt.state else prompt.state.withoutFailure()
+    val label = pronunciationLabel(state)
     OutlinedIconButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
-        SpeechStatusIcon(prompt.state) { PlayIcon() }
+        SpeechStatusIcon(state) { PlayIcon() }
     }
 }
 
@@ -157,22 +159,6 @@ internal fun PromptAudioInlineButton(
         colors = IconButtonDefaults.iconButtonColors(contentColor = color),
     ) {
         SpeechStatusIcon(prompt.state) { PlayIcon() }
-    }
-}
-
-/** Listening's own button, beside "What do you hear?". */
-@Composable
-internal fun PromptAudioButton(
-    url: String,
-    prompt: PromptAudio,
-) {
-    val state = prompt.state.withoutFailure()
-    val playing = state == SpeechState.Playing
-    val label = pronunciationLabel(state)
-    OutlinedButton(onClick = { prompt.toggle(url) }, modifier = Modifier.semantics { contentDescription = label }) {
-        SpeechStatusIcon(state) { PlayIcon() }
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(stringResource(if (playing) R.string.player_language_stop else R.string.player_language_play))
     }
 }
 

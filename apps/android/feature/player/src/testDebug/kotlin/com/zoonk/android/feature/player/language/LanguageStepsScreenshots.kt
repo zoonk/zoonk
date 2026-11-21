@@ -176,6 +176,12 @@ class LanguageStepsScreenshots {
         screens.map { (name, steps) -> Triple(name, steps, emptyArray<LessonAction>()) } +
             listOf(
                 Triple("listening-cant-listen", listOf(listening("s", audioUrl = "https://blob.test/s.mp3")), emptyArray()),
+                Triple(
+                    "listening-right",
+                    listOf(listening("s", audioUrl = "https://blob.test/s.mp3")),
+                    checked(LessonAnswer.Listening(listOf("I", "see", "a", "cat.")), true, "Veo means I see."),
+                ),
+                Triple("spoken", listOf(spokenWithListening), emptyArray()),
                 Triple("spoken-heard-instead", listOf(spokenWithListening), emptyArray()),
                 Triple("spoken-cant-talk-or-listen", listOf(spokenWithListening), emptyArray()),
                 Triple(
