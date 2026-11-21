@@ -7,9 +7,9 @@ import * as logger from "@zoonk/utils/logger";
 import { describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { getWorld } from "workflow/runtime";
-import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
+import { examNoticePlansWorkflow } from "./exam-notice-plans-workflow";
 
-describe(dailySweepsWorkflow, () => {
+describe(examNoticePlansWorkflow, () => {
   it("retries a failed goal, logs its failure and repairs the next goal", async () => {
     const [blueprint, firstUser, secondUser, official, outside] = await Promise.all([
       examBlueprintFixture({
@@ -62,8 +62,8 @@ describe(dailySweepsWorkflow, () => {
     const log = vi.spyOn(logger, "logError");
 
     try {
-      const run = await start(dailySweepsWorkflow, [{ executionId: crypto.randomUUID() }]);
-      await expect(run.returnValue).resolves.toMatchObject({ status: "swept" });
+      const run = await start(examNoticePlansWorkflow, [{ examBlueprintId: blueprint.id }]);
+      await expect(run.returnValue).resolves.toBeUndefined();
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: blocked.id } }),

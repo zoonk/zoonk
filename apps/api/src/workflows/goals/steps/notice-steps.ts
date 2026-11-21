@@ -90,9 +90,9 @@ export async function repairNoticePlanStep(
 }
 
 export async function logNoticeRepairFailureStep(failure: {
-  blueprintId?: string;
+  blueprintId: string;
   error: string;
-  goalId?: string;
+  goalId: string;
 }): Promise<void> {
   "use step";
 

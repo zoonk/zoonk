@@ -5,10 +5,7 @@ import { repeatUntil } from "../_shared/repeat-until";
 import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
-import {
-  listNoticeRepairBlueprintsStep,
-  logNoticeRepairFailureStep,
-} from "../goals/steps/notice-steps";
+import { listNoticeRepairBlueprintsStep } from "../goals/steps/notice-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
 import {
   getLevelTestBankCheckToken,
@@ -21,7 +18,10 @@ import {
 import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
 import { startOwedMindMapRedraws } from "../mind-maps/start-owed-mind-map-redraws";
 import { updateCoursesBehind } from "../products/product-releases";
-import { updateExamNoticePlans } from "../research/read-exam-blueprint";
+import {
+  examNoticePlansWorkflow,
+  getExamNoticePlansToken,
+} from "../research/exam-notice-plans-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
   checkLevelTestAnswersStep,
@@ -163,31 +163,22 @@ async function rewriteFlaggedContent(): Promise<boolean> {
   return true;
 }
 
-async function pruneNoticeGraphs(): Promise<void> {
+/** A notice's reading repairs its plans as it lands; this catches the ones that repair missed. */
+async function startExamNoticeRepairs(): Promise<void> {
   let after: string | null = null;
 
   do {
     // oxlint-disable-next-line no-await-in-loop -- Each page starts after the last blueprint.
     const ids = await listNoticeRepairBlueprintsStep(after);
 
-    // oxlint-disable-next-line no-await-in-loop -- Finish the page before loading more work.
-    const outcomes = await Promise.allSettled(
-      ids.map((examBlueprintId) =>
-        updateExamNoticePlans({
-          examBlueprintId,
-          exceptGoalId: null,
-          movesExamDays: false,
-          noticeId: null,
-        }),
-      ),
-    );
-
-    // oxlint-disable-next-line no-await-in-loop -- Report failures before advancing the page.
+    // oxlint-disable-next-line no-await-in-loop -- Start the page before loading more work.
     await Promise.all(
-      outcomes.flatMap((outcome, index) =>
-        outcome.status === "rejected"
-          ? [logNoticeRepairFailureStep({ blueprintId: ids[index], error: String(outcome.reason) })]
-          : [],
+      ids.map((examBlueprintId) =>
+        startOnce(
+          examNoticePlansWorkflow,
+          [{ examBlueprintId }],
+          getExamNoticePlansToken(examBlueprintId),
+        ),
       ),
     );
 
@@ -213,8 +204,6 @@ async function sweep(): Promise<SweepCounts> {
     levelTestAnswers,
     sentenceOrders,
     skillLevels,
-    ,
-    noticeRepair,
   ] = await Promise.allSettled([
     checkFreshness(),
     deleteGuests(),
@@ -234,12 +223,8 @@ async function sweep(): Promise<SweepCounts> {
     writeOwedSentenceOrders(),
     tagOwedSkillLevels(),
     startOwedMindMapRedraws(),
-    pruneNoticeGraphs(),
+    startExamNoticeRepairs(),
   ]);
-
-  if (noticeRepair.status === "rejected") {
-    await logNoticeRepairFailureStep({ error: String(noticeRepair.reason) });
-  }
 
   return {
     accessRecordsPurged: access.status === "fulfilled" ? access.value.recordsPurged : 0,
