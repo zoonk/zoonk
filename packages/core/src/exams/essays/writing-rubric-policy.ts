@@ -1,4 +1,3 @@
-import { getWritingGrader } from "@zoonk/ai/tasks/grading/grade-essay";
 import { ENEM_WRITING_MAX, hasEnemCompetences } from "./_utils/enem-writing";
 import { passedWritingEvaluations } from "./_utils/writing-rubric-evaluations";
 import { getWritingRounding, getWritingRubricFingerprint } from "./_utils/writing-task-basis";
@@ -44,16 +43,17 @@ export function getWritingArithmetic(
 
   const passed = passedWritingEvaluations[getWritingRubricFingerprint(basis)];
 
-  if (!passed || !supportsWritingArithmetic(grading, passed.arithmetic)) {
+  if (
+    !passed ||
+    passed.kind !== kind ||
+    !supportsWritingArithmetic(grading, passed.arithmetic) ||
+    (observed &&
+      (passed.model !== observed.model || passed.promptRevision !== observed.promptVersion))
+  ) {
     return null;
   }
 
-  const current = getWritingGrader(kind);
-
-  const matches = ({ model, promptVersion }: typeof current) =>
-    passed.model === model && passed.promptRevision === promptVersion;
-
-  return matches(current) && (!observed || matches(observed)) ? passed.arithmetic : null;
+  return passed.arithmetic;
 }
 
 export function isNumericWritingRubric(basis: Basis): boolean {

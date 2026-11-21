@@ -507,6 +507,7 @@ describe("writing grades", () => {
       [fingerprint]: {
         arithmetic: { rounding: null, zeroRules: [] },
         corpus: "fixture",
+        kind: "points",
         model: grader.model,
         promptRevision: grader.promptVersion,
       },
@@ -521,6 +522,13 @@ describe("writing grades", () => {
       provider.mockResolvedValueOnce({
         data: evidence,
         provenance: { ...provenance, model: "fallback" },
+      });
+
+      await expect(gradeWriting(input)).resolves.toMatchObject({ kind: "levels" });
+
+      provider.mockResolvedValueOnce({
+        data: evidence,
+        provenance: { ...provenance, promptVersion: "old" },
       });
 
       await expect(gradeWriting(input)).resolves.toMatchObject({ kind: "levels" });

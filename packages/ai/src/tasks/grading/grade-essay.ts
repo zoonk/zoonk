@@ -113,6 +113,7 @@ function getWritingSystemPrompt(kind: WritingEvidenceParams["scoringBasis"]["kin
   return `${rubricPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 }
 
+/** @internal Used by Core tests to check which grader passed each rubric evaluation. */
 export function getWritingGrader(kind: WritingEvidenceParams["scoringBasis"]["kind"]) {
   return {
     model: defaultModel,
