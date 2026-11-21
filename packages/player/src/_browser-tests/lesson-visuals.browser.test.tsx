@@ -313,6 +313,35 @@ describe("lesson visuals", () => {
     );
   });
 
+  it("names a chart's unit once beside its value label, not on each number", async () => {
+    const distance: LessonVisual = { ...lettersChart, title: "Distância", unit: "km" };
+    renderLessonPlayer({ lesson: buildLesson([check({ visual: distance })]) });
+
+    const chart = page.getByRole("figure", { name: distance.title });
+    await expect.element(chart.getByText("Ofícios (km)")).toBeVisible();
+
+    const labels = [...chart.element().querySelectorAll("svg text")].map(
+      (text) => text.textContent,
+    );
+
+    expect(labels).toStrictEqual(expect.arrayContaining(["0", "35"]));
+    expect(labels.filter((label) => label?.includes("km"))).toStrictEqual([]);
+  });
+
+  it("keeps a currency on each number, with the rest of its unit beside the value label", async () => {
+    const pay: LessonVisual = { ...lettersChart, title: "Salário", unit: "R$ por hora" };
+    renderLessonPlayer({ lesson: buildLesson([check({ visual: pay })]) });
+
+    const chart = page.getByRole("figure", { name: pay.title });
+    await expect.element(chart.getByText("Ofícios (por hora)")).toBeVisible();
+
+    const labels = [...chart.element().querySelectorAll("svg text")].map(
+      (text) => text.textContent,
+    );
+
+    expect(labels).toStrictEqual(expect.arrayContaining(["R$35"]));
+  });
+
   it("starts a chart's axis where a screen about a cropped axis says", async () => {
     const cropped: LessonVisual = {
       ...lettersChart,

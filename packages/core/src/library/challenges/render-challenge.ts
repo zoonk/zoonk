@@ -1,6 +1,11 @@
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
-import { withUnit } from "@zoonk/utils/math-answer";
-import { formatTicks, getChartValueAxis, getPlotAxes } from "@zoonk/utils/plot-scale";
+import { formatMoney } from "@zoonk/utils/math-answer";
+import {
+  type TickFormat,
+  formatTicks,
+  getChartValueAxis,
+  getPlotAxes,
+} from "@zoonk/utils/plot-scale";
 import { type ChallengeContent } from "../steps/contract/challenge-content";
 import { placeChartUnit } from "../steps/contract/chart-unit";
 import {
@@ -120,24 +125,24 @@ function formatPlot(visual: PlotVisual): string[] {
 
 function formatCategoryChart(visual: ChartVisual): string[] {
   const { ticks } = getChartValueAxis(visual);
-  const { numberUnit } = placeChartUnit(visual);
+  const { currency, valueLabel } = placeChartUnit(visual);
   const mark = visual.chart === "bar" ? "bar" : "lineWithPoints";
 
-  const tickLabels = formatTicks({
-    axis: "y",
-    format: (value, options) =>
-      withUnit(formatLocalizedNumber({ ...options, locale: "en", value }), numberUnit),
-    ticks,
-  });
+  const print = (value: number, options: Partial<TickFormat> = {}) =>
+    currency
+      ? formatMoney({ ...options, currency, locale: "en", value })
+      : formatLocalizedNumber({ ...options, locale: "en", value });
+
+  const tickLabels = formatTicks({ axis: "y", format: print, ticks });
 
   return [
     `  Category axis: ${visual.categoryLabel}`,
-    `  Value axis: ${axisLabel(visual.valueLabel, visual.unit)}`,
+    `  Value axis: ${valueLabel}`,
     `  Categories: ${visual.categories.join(", ")}`,
     `  Value tick labels (at most these): ${quoteTicks(tickLabels)}`,
     ...visual.series.map(({ name, values }) => {
       const points = values.map((value, index) => `${visual.categories[index]} = ${value}`);
-      const labels = values.map((value) => withUnit(String(value), numberUnit ?? undefined));
+      const labels = values.map((value) => print(value));
 
       return `  Series "${name}" (${mark}): ${points.join(", ")}. Value labels when they fit: ${labels.join(", ")}`;
     }),

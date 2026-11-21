@@ -97,8 +97,37 @@ describe("challenge review rendering", () => {
       summary: [],
     });
 
-    expect(rendered.text).toContain('Value tick labels (at most these): "9%" "10%" "11%"');
-    expect(rendered.text).toContain("Value labels when they fit: 9%, 11%");
+    expect(rendered.text).toContain("Value axis: Fill rate (%)");
+    expect(rendered.text).toContain('Value tick labels (at most these): "9" "10" "11"');
+    expect(rendered.text).toContain("Value labels when they fit: 9, 11");
+  });
+
+  it("keeps a category chart's currency on each number and the rest of its unit in the title", () => {
+    const base = challengeCaseFixture();
+
+    const rendered = renderChallengeMap({
+      ...base,
+      nodes: base.nodes.map((node) => ({
+        ...node,
+        visual: {
+          axisStart: 0,
+          categories: ["Before", "After"],
+          categoryLabel: "Plan",
+          chart: "bar",
+          kind: "chart",
+          series: [{ name: "Pay", values: [12.5, 20] }],
+          source: null,
+          title: "Hourly pay",
+          unit: "R$ per hour",
+          valueLabel: "Pay",
+        },
+      })),
+      summary: [],
+    });
+
+    expect(rendered.text).toContain("Value axis: Pay (per hour)");
+    expect(rendered.text).toContain('"R$20"');
+    expect(rendered.text).toContain("Value labels when they fit: R$12.50, R$20");
   });
 
   it("prints a category chart's tick labels the way a learner's screen does", () => {

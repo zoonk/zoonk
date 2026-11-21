@@ -2,30 +2,39 @@ import { describe, expect, it } from "vitest";
 import { placeChartUnit } from "./chart-unit";
 
 describe(placeChartUnit, () => {
-  it("keeps a short unit after each number", () => {
+  it("shows a unit once, beside the value label, and not on each number", () => {
     expect(placeChartUnit({ unit: "km", valueLabel: "Distance" })).toStrictEqual({
-      numberUnit: "km",
-      valueLabel: "Distance",
+      currency: null,
+      valueLabel: "Distance (km)",
+    });
+
+    expect(
+      placeChartUnit({ unit: "hours per 1,000 parts", valueLabel: "Processing time" }),
+    ).toStrictEqual({ currency: null, valueLabel: "Processing time (hours per 1,000 parts)" });
+  });
+
+  it("keeps a currency on each number, so its cents still show", () => {
+    expect(placeChartUnit({ unit: "R$", valueLabel: "Price" })).toStrictEqual({
+      currency: "BRL",
+      valueLabel: "Price",
     });
   });
 
-  it("shows a long unit once, beside the value label", () => {
-    // The unit cut to "hours per 1," in #2512, now kept whole.
-    expect(
-      placeChartUnit({ unit: "hours per 1,000 parts", valueLabel: "Processing time" }),
-    ).toStrictEqual({ numberUnit: null, valueLabel: "Processing time (hours per 1,000 parts)" });
-  });
-
-  it("keeps a long money unit's currency on each number, so its cents still show", () => {
+  it("shows the rest of a money unit beside the value label", () => {
     expect(placeChartUnit({ unit: "USD per response", valueLabel: "Cost" })).toStrictEqual({
-      numberUnit: "USD",
+      currency: "USD",
       valueLabel: "Cost (per response)",
+    });
+
+    expect(placeChartUnit({ unit: "R$ per hour", valueLabel: "Pay" })).toStrictEqual({
+      currency: "BRL",
+      valueLabel: "Pay (per hour)",
     });
   });
 
   it("leaves plain counts without a unit", () => {
     expect(placeChartUnit({ unit: null, valueLabel: "Letters" })).toStrictEqual({
-      numberUnit: null,
+      currency: null,
       valueLabel: "Letters",
     });
   });
