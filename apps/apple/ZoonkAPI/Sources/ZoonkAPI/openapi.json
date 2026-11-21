@@ -43345,6 +43345,10 @@
             "minimum": 0,
             "exclusiveMinimum": true
           },
+          "distinctLines": {
+            "type": "boolean",
+            "description": "Whether only one question in the written test has this stated line limit"
+          },
           "number": {
             "type": "integer",
             "minimum": 0,
@@ -43363,6 +43367,7 @@
         "required": [
           "lines",
           "points",
+          "distinctLines",
           "number",
           "total"
         ],
@@ -101038,6 +101043,10 @@
                 "properties": {
                   "description": {
                     "type": "string"
+                  },
+                  "distinctLines": {
+                    "type": "boolean",
+                    "description": "Whether only one question in the written test has this stated line limit"
                   },
                   "lines": {
                     "nullable": true,

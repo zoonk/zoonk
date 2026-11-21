@@ -12,6 +12,9 @@ const points = z.number().positive().nullable();
 export const writingUnitSchema = z.enum(["drill", "answer"]);
 
 const writingTaskPosition = {
+  distinctLines: z
+    .boolean()
+    .describe("Whether only one question in the written test has this stated line limit"),
   number: z.int().positive().describe("The first question number for this task in notice order"),
   total: z
     .int()
@@ -87,6 +90,7 @@ export const writingStartSchema = z
       task: z
         .object({
           description: z.string(),
+          distinctLines: writingTaskPosition.distinctLines.optional(),
           lines,
           minutes: z.int().positive(),
           number: writingTaskPosition.number.optional(),

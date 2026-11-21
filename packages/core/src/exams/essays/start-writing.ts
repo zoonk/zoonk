@@ -65,7 +65,11 @@ function summarizeTask({
         description: task.description,
         lines: task.lines,
         minutes: estimatedMinutes,
-        ...(task.number && { number: task.number, total: task.total }),
+        ...(task.number && {
+          distinctLines: task.distinctLines,
+          number: task.number,
+          total: task.total,
+        }),
         points: task.points,
         taskKey: task.key,
         unit,

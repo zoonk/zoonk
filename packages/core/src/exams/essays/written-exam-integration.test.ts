@@ -160,8 +160,8 @@ describe("CGU written exam preparation", () => {
 
   it("names a refused extra task before issuing its prompt and marks it unavailable on read", async () => {
     const { goal, user } = await setup();
-    const short = { lines: 30, number: 1, points: 30, total: 2 };
-    const long = { lines: 60, number: 2, points: 70, total: 2 };
+    const short = { distinctLines: true, lines: 30, number: 1, points: 30, total: 2 };
+    const long = { distinctLines: true, lines: 60, number: 2, points: 70, total: 2 };
 
     await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
       status: "ready",
@@ -226,6 +226,7 @@ describe("CGU written exam preparation", () => {
       status: "limitReached",
       task: {
         description: "Long question",
+        distinctLines: true,
         lines: 60,
         minutes: 140,
         number: 2,
@@ -289,7 +290,8 @@ describe("CGU written exam preparation", () => {
 
     written.tasks = [
       { count: 2, description: "Two audit questions", key: "audit", lines: 30, points: 15 },
-      { count: 1, description: "A policy question", key: "policy", lines: 30, points: 30 },
+      { count: 1, description: "A policy question", key: "policy", lines: 40, points: 30 },
+      { count: 1, description: "A budget question", key: "budget", lines: 40, points: 40 },
       { count: 1, description: "An open response", key: "open" },
     ];
 
@@ -300,13 +302,29 @@ describe("CGU written exam preparation", () => {
         writtenPractice: {
           subjects: [
             {
-              questions: 4,
+              questions: 5,
               writeActions: [
-                { taskKey: "audit", writingTask: { lines: 30, number: 1, points: 15, total: 4 } },
-                { taskKey: "policy", writingTask: { lines: 30, number: 3, points: 30, total: 4 } },
+                {
+                  taskKey: "audit",
+                  writingTask: { distinctLines: false, lines: 30, number: 1, points: 15, total: 5 },
+                },
+                {
+                  taskKey: "policy",
+                  writingTask: { distinctLines: false, lines: 40, number: 3, points: 30, total: 5 },
+                },
+                {
+                  taskKey: "budget",
+                  writingTask: { distinctLines: false, lines: 40, number: 4, points: 40, total: 5 },
+                },
                 {
                   taskKey: "open",
-                  writingTask: { lines: null, number: 4, points: null, total: 4 },
+                  writingTask: {
+                    distinctLines: false,
+                    lines: null,
+                    number: 5,
+                    points: null,
+                    total: 5,
+                  },
                 },
               ],
             },
