@@ -328,6 +328,12 @@
     <!-- A focus the learner's Focus test answers suggest: %1$s lists up to three exam subjects. -->
     <string name="plan_change_focus_test">Your Focus test suggests more time for %1$s.</string>
     <string name="plan_change_follows_guide">Your plan follows the exam\'s official guide.</string>
+    <!-- Today\'s notice after the plan followed the exam\'s public notice (Brazil\'s "edital") by itself and dropped what the notice doesn\'t list. -->
+    <string name="plan_change_now_follows_notice">Your plan now follows the official guide</string>
+    <!-- Today\'s notice after the plan followed the exam\'s official guide by itself and dropped what the guide doesn\'t list. -->
+    <string name="plan_change_now_follows_guide">Your plan now follows the official guide</string>
+    <!-- %1$s lists the subjects and topics that left the plan, such as "Portuguese, Logic and English" or "Portuguese, Logic and 2 more". -->
+    <string name="plan_change_out_of_plan">Out of your plan: %1$s</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="plan_change_likely_date">The exam\'s likely date is now %1$s.</string>
     <string name="plan_change_notice_says">The official exam date is %1$s. Use it?</string>
@@ -353,7 +359,6 @@
     <string name="plan_change_date_moved">Date moved to %1$s.</string>
     <string name="plan_change_phase_dates_moved">Your phase dates moved.</string>
     <string name="plan_change_fit_lessons">Lessons added to your plan.</string>
-    <!-- Exam strategy: optional lessons on how to take the exam, such as using its time limit and when to leave an item blank. -->
     <string name="plan_change_extras_added">Exam strategy added to your plan.</string>
     <string name="plan_change_exam_choice">%1$s: %2$s.</string>
     <string name="plan_change_no_deadline">Your plan has no end date.</string>
@@ -661,7 +666,6 @@
     <string name="plan_couldnt_check_changes">We couldn\'t check what changes.</string>
     <string name="plan_apply">Change my plan</string>
     <string name="plan_add_to_my_plan">Add to plan</string>
-    <!-- Offers to add optional lessons on how to take the exam, such as using its time limit and when to leave an item blank. -->
     <string name="plan_extra_offer_title">Study exam strategy too?</string>
     <string name="plan_not_now">Not now</string>
     <string name="plan_suggestion_previous">Previous</string>
@@ -829,12 +833,6 @@
     <string name="plan_ask_aim">Study up to %1$s?</string>
     <string name="plan_ask_fit_lessons">Add the lessons that fit your time?</string>
     <string name="plan_ask_change">Change your plan?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
-    <string name="plan_ask_follow_guide">Follow the exam\'s official guide?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_on">Follow the exam\'s official guide, with the exam on %1$s?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_around">Follow the exam\'s official guide, with the exam around %1$s?</string>
     <string name="plan_change_official_date">The official exam date is %1$s.</string>
     <string name="plan_change_estimate_updated">Your plan changed to match the time your lessons take.</string>
     <string name="plan_change_from_test">Your test answers changed your plan.</string>
