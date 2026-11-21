@@ -72,6 +72,7 @@ export async function saveBlueprintStep({
   identity,
   notDownloaded,
   reading: unchecked,
+  reread,
   sourceId,
 }: {
   analytics: ResearchAnalytics;
@@ -80,6 +81,7 @@ export async function saveBlueprintStep({
   identity: ExamIdentity;
   notDownloaded: string[];
   reading: BlueprintReading;
+  reread?: boolean;
   sourceId: string;
 }): Promise<{
   created: boolean;
@@ -99,6 +101,7 @@ export async function saveBlueprintStep({
     notDownloaded,
     notice,
     provenance: reading.provenance,
+    reread,
     sourceId,
   });
 

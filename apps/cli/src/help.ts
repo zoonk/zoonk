@@ -1,7 +1,7 @@
 export const HELP = `Usage: pnpm zoonk <command> [--api <url>]
 
 Account
-  login                                    Log in through your browser (once per machine)
+  login [--repair-writing]                 Log in through your browser. Request permission to apply writing repairs with --repair-writing.
   logout                                   End this machine's login
   whoami                                   Show who is logged in
 

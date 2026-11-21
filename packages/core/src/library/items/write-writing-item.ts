@@ -22,6 +22,7 @@ import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toProvenanceData } from "../_utils/library-rows";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { readBlueprintContent } from "../exams/save-exam-blueprint";
+import { fitsWrittenSitting } from "../exams/written-grading";
 import { createSkill } from "../skills/create-skill";
 import { readWritingPool } from "./writing-prompt-pool";
 
@@ -42,6 +43,10 @@ export type WritingSupplyInput = Omit<WritingRequest, "count"> & {
 };
 
 export async function loadWritingSupply(input: WritingSupplyInput) {
+  if (!fitsWrittenSitting(input.count)) {
+    return null;
+  }
+
   const { goalId, userId } = input;
 
   const goal = await prisma.goal.findFirst({

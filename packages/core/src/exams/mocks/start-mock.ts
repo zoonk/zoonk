@@ -32,9 +32,10 @@ export type StartMockResult =
         | "notFound"
         | "plusRequired"
         | "ready"
+        | "signUpRequired"
         | "unauthorized";
     }
-  | { request: StartWritingRequest; status: "writing" };
+  | { requests: StartWritingRequest[]; status: "writing" };
 
 async function startScheduledBlock({
   block,
@@ -118,11 +119,14 @@ async function startNewScheduledMock({
   const fullKind = identity?.fullLength ? "full" : "half";
   const kind = payload.checkpoint?.written ? "written" : fullKind;
   const shape = { day: identity?.day ?? null, kind } as const;
-  const writingInput = goal ? { goalId: goal.id, shape, structure, userId } : null;
+  const writingInput = goal ? { goal, goalId: goal.id, shape, structure, userId } : null;
   const supply = writingInput && (await findMockWriting(writingInput));
 
-  if (supply?.status === "missing" && supply.requests[0] && goal) {
-    return { request: { ...supply.requests[0], goalId: goal.id, userId }, status: "writing" };
+  if (supply?.status === "missing" && goal) {
+    return {
+      requests: supply.requests.map((request) => ({ ...request, goalId: goal.id, userId })),
+      status: "writing",
+    };
   }
 
   const started = await startScheduledBlock({ block, input });
@@ -169,9 +173,9 @@ async function persistScheduledMock({
 
   const writing = writingInput && (await findMockWriting({ ...writingInput, tx }));
 
-  if (writing?.status === "missing" && writing.requests[0] && goal) {
+  if (writing?.status === "missing" && goal) {
     return unchanged({
-      request: { ...writing.requests[0], goalId: goal.id, userId },
+      requests: writing.requests.map((request) => ({ ...request, goalId: goal.id, userId })),
       status: "writing",
     });
   }
@@ -217,13 +221,13 @@ async function persistScheduledMock({
         date: now,
         timeZone: getAnswerTimeZone({ goal, timeZone: input.timeZone }),
       }),
-      owner: { mockId: created.id },
+      owner: { mock: created },
       tx,
       userId,
     });
 
     if (admitted.status !== "ready") {
-      throw new Error("A scheduled writing sitting must be admitted.");
+      return unchanged({ status: "signUpRequired" as const });
     }
   }
 

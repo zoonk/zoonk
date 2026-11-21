@@ -24,6 +24,7 @@ import {
 import { type BlueprintChange, mergeBlueprintContent, movesExamDays } from "./blueprint-diff";
 import { carryConfirmedGaps } from "./confirmed-gaps";
 import { type ExamIdentity, buildExamIdentityKey, findExamBlueprintByKey } from "./exam-identity";
+import { withoutImplausibleWrittenCounts } from "./written-grading";
 import { withWrittenTaskKeys } from "./written-tasks";
 
 export type BlueprintNotice = { message: string; provenance: LibraryProvenance };
@@ -36,6 +37,7 @@ export type SaveExamBlueprintInput = {
   sourceId: string;
   provenance: LibraryProvenance;
   notice?: BlueprintNotice | null;
+  reread?: boolean;
   /** Addresses of the notice's required documents this reading couldn't download. */
   notDownloaded?: string[];
 };
@@ -70,7 +72,9 @@ const EMPTY_CONTENT: BlueprintContent = {
 export function readBlueprintContent(blueprint: ExamBlueprint): BlueprintContent {
   return {
     edition: examEditionSchema.safeParse(blueprint.edition).data ?? EMPTY_CONTENT.edition,
-    structure: examStructureSchema.safeParse(blueprint.structure).data ?? EMPTY_CONTENT.structure,
+    structure: withoutImplausibleWrittenCounts(
+      examStructureSchema.safeParse(blueprint.structure).data ?? EMPTY_CONTENT.structure,
+    ),
     topicFrequency: topicFrequencySchema.safeParse(blueprint.topicFrequency).data ?? [],
   };
 }
@@ -95,7 +99,7 @@ export function toDateColumns(content: Pick<BlueprintContent, "edition">) {
 function toContentColumns(content: BlueprintContent) {
   return {
     edition: content.edition,
-    structure: content.structure,
+    structure: withoutImplausibleWrittenCounts(content.structure),
     topicFrequency: content.topicFrequency,
     ...toDateColumns(content),
   };
@@ -200,6 +204,7 @@ async function updateBlueprint({
   input: SaveExamBlueprintInput;
 }): Promise<SavedExamBlueprint> {
   const read = readBlueprintContent(current);
+
   const carried = carryConfirmedGaps({ next: input.content, stored: read });
 
   const sourceIds = await listReadDocuments({
@@ -232,6 +237,7 @@ async function updateBlueprint({
         ...toContentColumns(content),
         board,
         sourceId: input.sourceId,
+        ...(input.reread && { noticeRereadSource: content.edition.sourceHash ?? input.sourceId }),
         ...(changes.length > 0 ? toProvenanceData(input.provenance) : {}),
       },
       where: { id: current.id },

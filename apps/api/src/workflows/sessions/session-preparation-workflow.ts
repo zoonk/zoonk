@@ -250,12 +250,12 @@ async function prepareLessons({
     return { status: "alreadyRunning" };
   }
 
-  await Promise.all([
+  await startAll([
     prepareWriting(input),
-    preparation.personalized ? personalizeLessons({ analytics, input, preparation }) : null,
-    writeLanguageCalls({ goalId: input.goalId, userId: input.userId }).catch(() => null),
-    writeClaimQuestions({ analytics, input }).catch(() => null),
-    writePlacementWeekQuestions({ analytics, input }).catch(() => null),
+    ...(preparation.personalized ? [personalizeLessons({ analytics, input, preparation })] : []),
+    writeLanguageCalls({ goalId: input.goalId, userId: input.userId }),
+    writeClaimQuestions({ analytics, input }),
+    writePlacementWeekQuestions({ analytics, input }),
   ]);
 
   return {

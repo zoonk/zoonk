@@ -1,9 +1,9 @@
+import "server-only";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
 import { practicesShortAnswers } from "../../library/exams/short-answers";
-import "server-only";
 import { getGoalField } from "../../library/items/item-field";
 import {
   type AlphabetIntro,

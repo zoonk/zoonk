@@ -14,7 +14,7 @@ export type ApiRequest =
 
 export type Command =
   | { name: "help" }
-  | { name: "login" }
+  | { name: "login"; writingRepair?: true }
   | { name: "logout" }
   | { name: "request"; note?: Note; request: ApiRequest; shape?: OutputShape };
 
@@ -30,6 +30,7 @@ type Options = {
   offset?: string;
   order?: string;
   reason?: string;
+  "repair-writing"?: boolean;
   where?: string[];
 };
 
@@ -102,7 +103,17 @@ function post(path: string, body: Record<string, unknown>, shape?: OutputShape):
 }
 
 const COMMANDS = new Map<string, CommandSpec>([
-  ["login", { arguments: 0, build: () => ({ name: "login" }), options: [] }],
+  [
+    "login",
+    {
+      arguments: 0,
+      build: (_args, options) => ({
+        name: "login",
+        ...(options["repair-writing"] && { writingRepair: true as const }),
+      }),
+      options: ["repair-writing"],
+    },
+  ],
   ["logout", { arguments: 0, build: () => ({ name: "logout" }), options: [] }],
   [
     "whoami",
@@ -305,6 +316,7 @@ function parseCommandLine(argv: string[]) {
         offset: { type: "string" },
         order: { type: "string" },
         reason: { type: "string" },
+        "repair-writing": { type: "boolean" },
         where: { multiple: true, type: "string" },
       },
     });

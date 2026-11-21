@@ -128,11 +128,18 @@ export async function saveMockAnswer({
     return { status: "locked" };
   }
 
-  const draft = {
-    answer: input.answer ?? DbNull,
-    durationMs: input.durationMs,
-    flagged: input.flagged,
-  };
+  const durationMs = section.essays.includes(input.itemId)
+    ? Math.min(
+        input.durationMs,
+        Math.max(
+          0,
+          Math.min(Date.now(), getSectionDeadline(mock).getTime()) -
+            mock.sectionStartedAt.getTime(),
+        ),
+      )
+    : input.durationMs;
+
+  const draft = { answer: input.answer ?? DbNull, durationMs, flagged: input.flagged };
 
   return writeLearnerChange<SaveMockAnswerResult>({ userId: found.owned.userId }, async (tx) => {
     const current = await tx.mockExam.findUnique({
@@ -158,7 +165,7 @@ export async function saveMockAnswer({
     if (
       saved &&
       isDeepStrictEqual(saved.answer, input.answer ?? null) &&
-      saved.durationMs === input.durationMs &&
+      saved.durationMs === durationMs &&
       saved.flagged === input.flagged
     ) {
       return unchanged({ status: "saved" });

@@ -97,6 +97,7 @@ describe(repairWrittenGoal, () => {
       }),
     ]);
 
+    const actor = { clientId: "zoonk-cli", userId: crypto.randomUUID() };
     const request = { goalId: goal.id, userId: user.id };
     await expect(repairWrittenGoal({ ...request, apply: false })).resolves.toBe(1);
 
@@ -104,8 +105,8 @@ describe(repairWrittenGoal, () => {
       status: "testedOut",
     });
 
-    await expect(repairWrittenGoal({ ...request, apply: true })).resolves.toBe(1);
-    await expect(repairWrittenGoal({ ...request, apply: true })).resolves.toBe(0);
+    await expect(repairWrittenGoal({ ...request, actor, apply: true })).resolves.toBe(1);
+    await expect(repairWrittenGoal({ ...request, actor, apply: true })).resolves.toBe(0);
 
     await expect(
       prisma.learnerSkill.findUnique({ where: { id: learnerSkill.id } }),

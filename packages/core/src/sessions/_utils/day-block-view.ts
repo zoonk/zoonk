@@ -48,22 +48,25 @@ function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["che
   return checkpoint ? studyCheckpointSchema.parse(checkpoint) : null;
 }
 
-function getWritingAvailability({
+function getWritingFields({
   block,
   payload,
 }: {
   block: DayBlockInput;
   payload: ReturnType<typeof readBlockPayload>;
-}): DayBlockView["writingAvailability"] {
-  if (!payload.writing) {
-    return;
+}): Pick<DayBlockView, "writingAvailability" | "writingUnit"> {
+  const { writing } = payload;
+
+  if (!writing) {
+    return { writingAvailability: undefined };
   }
 
+  const continuing =
+    writing.admissionId && (block.status === "active" || block.status === "pending");
+
   return {
-    status:
-      payload.writing.admissionId && (block.status === "active" || block.status === "pending")
-        ? "continue"
-        : "available",
+    writingAvailability: { status: continuing ? "continue" : "available" },
+    writingUnit: writing.unit,
   };
 }
 
@@ -139,6 +142,6 @@ export function toDayBlockView({
     topics: payload.topics,
     waitReason: getStoredBlockWait({ block, blocks }),
     weakest: payload.weakest,
-    writingAvailability: getWritingAvailability({ block, payload }),
+    ...getWritingFields({ block, payload }),
   };
 }

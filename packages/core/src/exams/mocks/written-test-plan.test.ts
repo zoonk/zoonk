@@ -4,7 +4,7 @@ import { CGU } from "./_test-utils/cgu-written";
 import { planOptionMock } from "./mock-option-plan";
 import { listMockOptions } from "./mock-options";
 import { type MockCandidate, outlineMock } from "./mock-plan";
-import { planWrittenTest } from "./written-test-plan";
+import { outlineWrittenPrompts, planWrittenTest } from "./written-test-plan";
 import { pickWrittenTestDays } from "./written-test-schedule";
 
 const EARLIEST = "2026-11-02";
@@ -88,6 +88,29 @@ describe("written mock options", () => {
 
       expect(plan.minutes).toBe(option.minutes);
     }
+  });
+
+  it("drops an implausible saved count across the sitting's written parts", () => {
+    const section = CGU.mock?.sections.find(({ kind }) => kind === "written");
+
+    const structure: ExamStructure = {
+      ...CGU,
+      mock:
+        (CGU.mock &&
+          section && {
+            ...CGU.mock,
+            sections: ["First", "Second"].map((name) => ({
+              ...section,
+              name,
+              tasks: [{ count: 13, description: name, key: name }],
+            })),
+          }) ||
+        null,
+    };
+
+    const prompts = outlineWrittenPrompts({ day: null, structure });
+    expect(prompts).toHaveLength(2);
+    expect(prompts.map(({ taskKey }) => taskKey)).not.toContain("First");
   });
 
   it("requires one distinct prompt per slot on the chosen exam day", () => {

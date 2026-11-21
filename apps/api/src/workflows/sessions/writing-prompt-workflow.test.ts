@@ -68,14 +68,15 @@ async function setup() {
 
 describe(writingPromptWorkflow, () => {
   it("shares the exam and task claim between advance preparation, a block and a mock", async () => {
-    const { blueprint, input } = await setup();
-    const token = `writing-prompt:${blueprint.id}:policy`;
+    const { input } = await setup();
+    let token: string | undefined;
     let launches = 0;
 
     getStartMock().mockImplementation(async (_workflow, _args, options) => {
+      token ??= options?.experimental_hook?.token;
       expect(options?.experimental_hook?.token).toBe(token);
 
-      if (launches > 0) {
+      if (token && launches > 0) {
         throw new HookConflictError(token, "holder");
       }
 
@@ -91,7 +92,7 @@ describe(writingPromptWorkflow, () => {
     const requests = await Promise.all([
       ensureWritingPrompts({ ...input, wait: "later" }),
       ensureWritingPrompts(input),
-      ensureWritingPrompts({ ...input, count: 2 }),
+      ensureWritingPrompts(input),
     ]);
 
     expect(requests).toStrictEqual(
@@ -127,17 +128,12 @@ describe(writingPromptWorkflow, () => {
       ).resolves.toMatchObject({ spentMicros: 10_000 });
 
       await expect(ensureWritingPrompts(input)).resolves.toStrictEqual({ status: "ready" });
-
-      await expect(ensureWritingPrompts({ ...input, count: 2 })).resolves.toStrictEqual({
-        runId: "holder",
-        status: "writing",
-      });
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("claims a specialty's prompt apart from another specialty's", async () => {
+  it("keeps learners, writing units and drill skills on separate runs", async () => {
     const citation = { passage: "Each candidate picks one specialty.", sourceId: "notice" };
 
     const specialty = (name: string) => ({
@@ -212,15 +208,15 @@ describe(writingPromptWorkflow, () => {
       return { runId: crypto.randomUUID() } as never;
     });
 
-    await ensureWritingPrompts(await learner("Audit"));
+    const audit = await learner("Audit");
+    await ensureWritingPrompts(audit);
     await ensureWritingPrompts(await learner("Systems"));
     await ensureWritingPrompts(await learner("Audit"));
+    await ensureWritingPrompts({ ...audit, skillId: crypto.randomUUID(), unit: "drill" });
+    await ensureWritingPrompts({ ...audit, skillId: crypto.randomUUID(), unit: "drill" });
 
-    expect(tokens).toStrictEqual([
-      `writing-prompt:${blueprint.id}:case:Audit`,
-      `writing-prompt:${blueprint.id}:case:Systems`,
-      `writing-prompt:${blueprint.id}:case:Audit`,
-    ]);
+    expect(tokens).toHaveLength(5);
+    expect(new Set(tokens).size).toBe(5);
   });
 
   it("replays the committed guest reservation after the workflow missed its acknowledgment", async () => {
