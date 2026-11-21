@@ -1,5 +1,8 @@
 const MIN_STAND_IN_LESSONS = 4;
 
+/** The most lessons one chapter written ahead for a topic holds. */
+export const CHAPTER_LESSONS = 10;
+
 export function countStandInLessons({
   lessons,
   outlined = false,

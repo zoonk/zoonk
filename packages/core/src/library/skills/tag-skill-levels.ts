@@ -2,6 +2,7 @@ import "server-only";
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { classifySkillLevels } from "@zoonk/ai/tasks/language/skill-levels";
 import { type CourseLevel, prisma, sql } from "@zoonk/db";
+import { chunk } from "@zoonk/utils/chunk";
 import { BAND_LEVELS } from "../../language/levels/skill-level-rules";
 
 type Analytics = Parameters<typeof classifySkillLevels>[0]["analytics"];
@@ -28,12 +29,6 @@ export type SkillLevelBatch = { skillIds: string[]; targetLanguage: string };
 
 type ClaimedSkill = { description: string; id: string; level: CourseLevel; name: string };
 
-function chunk<T>(items: readonly T[]): T[][] {
-  return Array.from({ length: Math.ceil(items.length / SKILLS_PER_CALL) }, (_, index) =>
-    items.slice(index * SKILLS_PER_CALL, (index + 1) * SKILLS_PER_CALL),
-  );
-}
-
 /**
  * Internal workflow bridge: the skills among `skillIds` still owing a level, one call's worth each.
  * Two graph keys can resolve to one skill, and one run's claims admit it in every batch it's in.
@@ -51,7 +46,8 @@ export async function findSkillLevelBatches(
   const inOrder = [...new Set(skillIds)].filter((id) => languageOf.has(id));
 
   return [...Map.groupBy(inOrder, (id) => languageOf.get(id) ?? "")].flatMap(
-    ([targetLanguage, ids]) => chunk(ids).map((batch) => ({ skillIds: batch, targetLanguage })),
+    ([targetLanguage, ids]) =>
+      chunk(ids, SKILLS_PER_CALL).map((batch) => ({ skillIds: batch, targetLanguage })),
   );
 }
 
