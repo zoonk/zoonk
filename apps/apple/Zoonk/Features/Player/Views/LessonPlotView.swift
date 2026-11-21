@@ -16,20 +16,27 @@ struct LessonPlotView: View {
     Self.label.uiFont(textSize, legibility: legibility).pointSize / 12
   }
 
+  /// The drawing writes digits tabular, each as wide as a zero.
   private func textWidth(_ style: TypeStyle) -> (String) -> Double {
     let (textScale, textSize, legibility) = (textScale, textSize, legibility)
-    return { style.width(of: $0, dynamicTypeSize: textSize, legibility: legibility) / textScale }
+    return {
+      style.width(
+        of: $0.replacing(/\d/, with: "0"), dynamicTypeSize: textSize, legibility: legibility)
+        / textScale
+    }
   }
 
-  private func drawingFont(_ style: TypeStyle, scale: Double) -> Font {
+  /// A style at 12 points; the drawing scales it with everything else.
+  private func drawingFont(_ style: TypeStyle) -> UIFont {
     let font = style.uiFont(textSize, legibility: legibility)
-    return Font(font.withSize(font.pointSize * scale / textScale))
+    return font.withSize(font.pointSize / textScale)
   }
 
   var body: some View {
-    let textWidth = textWidth(Self.pointLabel)
-    let scale = LessonPlotLayout.scale(plot, text: textScale, width: width, textWidth: textWidth)
-    let layout = LessonPlotLayout(plot, width: width / scale, textWidth: textWidth)
+    let measure = LessonPlotLayout.Measure(
+      text: textWidth(Self.label), name: textWidth(Self.pointLabel))
+    let scale = LessonPlotLayout.scale(plot, text: textScale, width: width, measure: measure)
+    let layout = LessonPlotLayout(plot, width: width / scale, measure: measure)
 
     VStack(alignment: .leading, spacing: 12) {
       Text(plot.title)
@@ -64,31 +71,36 @@ struct LessonPlotView: View {
     }
   }
 
+  /// Drawn at 12-point text and scaled whole, text, lines and points together, as main's drawing.
   private func drawing(_ layout: LessonPlotLayout, scale: Double) -> some View {
-    let label = drawingFont(Self.label, scale: scale).monospacedDigit()
-    let named = drawingFont(Self.pointLabel, scale: scale)
-    let tickWidth = textWidth(Self.label)
+    let label = Font(drawingFont(Self.label)).monospacedDigit()
+    let named = drawingFont(Self.pointLabel).monospacedDigits
     let plot = plot
 
     return Canvas { context, _ in
-      let at = { (x: Double, y: Double) in CGPoint(x: x * scale, y: y * scale) }
+      context.scaleBy(x: scale, y: scale)
+
       let rule = { (y: Double) in
         Path { path in
-          path.move(to: at(layout.left, y))
-          path.addLine(to: at(layout.plotRight, y))
+          path.move(to: CGPoint(x: layout.left, y: y))
+          path.addLine(to: CGPoint(x: layout.plotRight, y: y))
         }
       }
       let resolver = context
-      let text = { (string: String, font: Font, color: Color) in
-        resolver.resolve(Text(verbatim: string).font(font).foregroundStyle(color))
+      let text = { (string: String) in
+        resolver.resolve(Text(verbatim: string).font(label).foregroundStyle(.mutedForeground))
       }
 
       for tick in layout.yTicks {
         let y = layout.y(tick.value)
-        context.stroke(rule(y), with: .color(.vizGrid), lineWidth: 1)
+
+        if tick.line {
+          context.stroke(rule(y), with: .color(.vizGrid), lineWidth: 1)
+        }
+
         context.draw(
-          text(tick.label, label, .mutedForeground),
-          at: at(layout.left - LessonPlotLayout.labelGap, y), anchor: .trailing)
+          text(tick.label), at: CGPoint(x: layout.left - LessonPlotLayout.labelGap, y: y),
+          anchor: .trailing)
       }
 
       for reference in layout.references {
@@ -98,15 +110,13 @@ struct LessonPlotView: View {
 
         for (index, line) in reference.lines.enumerated() {
           let y = reference.top + LessonPlotLayout.lineHeight * (Double(index) + 0.5)
-          context.draw(
-            text(line, label, .mutedForeground),
-            at: at(layout.referenceLeft, y), anchor: .leading)
+          context.draw(text(line), at: CGPoint(x: reference.x, y: y), anchor: .leading)
         }
       }
 
       for (index, series) in plot.series.enumerated() {
         let mark = LessonSeriesMark(index)
-        let points = layout.series[index].map { at($0.x, $0.y) }
+        let points = layout.series[index].map { CGPoint(x: $0.x, y: $0.y) }
 
         if series.mark != .points, points.count > 1 {
           context.stroke(
@@ -118,32 +128,23 @@ struct LessonPlotView: View {
           index: pointIndex, mark: series.mark, pointCount: points.count,
           seriesCount: plot.series.count)
         {
-          mark.drawPoint(at: point, scale: scale, in: context)
+          mark.drawPoint(at: point, scale: 1, in: context)
         }
       }
 
       for item in layout.labels {
-        let anchor: UnitPoint =
-          switch item.anchor {
-          case .start: .leading
-          case .middle: .center
-          case .end: .trailing
-          }
-        context.draw(
-          text(item.text, named, Color(.foreground)), at: at(item.x, item.y), anchor: anchor)
+        context.drawName(item, font: named)
       }
 
       for tick in layout.xTicks {
-        let number = text(tick.label, label, .mutedForeground)
+        let number = text(tick.label)
         let size = number.measure(in: CGSize(width: Double.infinity, height: .infinity))
-        let baseline = at(
-          layout.tickCenter(tick, textWidth: tickWidth(tick.label)),
-          layout.plotBottom + LessonPlotLayout.tickOffset)
+        let baseline = layout.plotBottom + LessonPlotLayout.tickOffset
         context.draw(
           number,
           in: CGRect(
             origin: CGPoint(
-              x: baseline.x - size.width / 2, y: baseline.y - number.firstBaseline(in: size)),
+              x: tick.center - size.width / 2, y: baseline - number.firstBaseline(in: size)),
             size: size))
       }
     }
@@ -203,8 +204,9 @@ struct LessonPlotView: View {
   @ViewBuilder
   private func spoken(_ layout: LessonPlotLayout) -> some View {
     let scale = LessonPlotScale(plot)
+    let groupsX = LessonPlotTicks.isLarge(plot.series.flatMap(\.points).map(\.x))
     let x = { (value: Double) in
-      ActivityNumberFormat.format(value, unit: plot.xUnit, grouping: layout.groupsX)
+      ActivityNumberFormat.format(value, unit: plot.xUnit, grouping: groupsX)
     }
     let y = { (value: Double) in ActivityNumberFormat.format(value, unit: plot.yUnit) }
     let (left, right) = (x(scale.x.domain.lowerBound), x(scale.x.domain.upperBound))
@@ -250,6 +252,52 @@ private struct LessonPlotDescriptor: AXChartDescriptorRepresentable {
           name: series.name, isContinuous: series.mark != .points,
           dataPoints: series.points.map { AXDataPoint(x: $0.x, y: $0.y, label: $0.label) })
       })
+  }
+}
+
+extension GraphicsContext {
+  /// A point's name on a halo in the card's color, so it stays readable where it crosses a line.
+  fileprivate func drawName(_ label: LessonPlotLayout.Label, font: UIFont) {
+    let card = UIColor(cgColor: Color.card.resolve(in: environment).cgColor)
+    let ink = UIColor(cgColor: Color(.foreground).resolve(in: environment).cgColor)
+    let halo = NSAttributedString(
+      string: label.text,
+      attributes: [
+        .font: font, .strokeColor: card,
+        .strokeWidth: LessonPlotLayout.haloWidth / font.pointSize * 100,
+      ])
+    let fill = NSAttributedString(
+      string: label.text, attributes: [.font: font, .foregroundColor: ink])
+    let size = fill.size()
+    let start =
+      switch label.anchor {
+      case .start: label.x
+      case .middle: label.x - size.width / 2
+      case .end: label.x - size.width
+      }
+    let origin = CGPoint(x: start, y: label.y - size.height / 2)
+
+    withCGContext { context in
+      UIGraphicsPushContext(context)
+      context.setLineJoin(.round)
+      halo.draw(at: origin)
+      fill.draw(at: origin)
+      UIGraphicsPopContext()
+    }
+  }
+}
+
+extension UIFont {
+  fileprivate var monospacedDigits: UIFont {
+    UIFont(
+      descriptor: fontDescriptor.addingAttributes([
+        .featureSettings: [
+          [
+            UIFontDescriptor.FeatureKey.type: kNumberSpacingType,
+            .selector: kMonospacedNumbersSelector,
+          ]
+        ]
+      ]), size: 0)
   }
 }
 

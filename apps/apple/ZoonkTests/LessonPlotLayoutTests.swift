@@ -5,7 +5,11 @@ import XCTest
 
 final class LessonPlotLayoutTests: XCTestCase {
   private let plotWidthOnAPhone = 324.0
-  private let textWidth = { (text: String) in Double(text.count) * 6.5 }
+  private let smallPhoneCard = 296.0
+  private let textWidth = { (text: String) in Double(text.count) * 6.6 }
+  private var measure: LessonPlotLayout.Measure { .init(text: textWidth, name: textWidth) }
+
+  private func labelWidth(_ text: String) -> Double { textWidth(text) + LessonPlotLayout.labelGap }
 
   func testPointsSpaceByTheirXValueAndKeepRepeatedX() throws {
     let line = layout(
@@ -64,79 +68,166 @@ final class LessonPlotLayoutTests: XCTestCase {
     XCTAssertEqual(crowded.labels.map(\.text), names.indices.map { "\($0 + 1)" })
   }
 
-  func testReferenceNamesSitPastThePlotStackedApartAndAboveTheXAxisNumbers() throws {
+  func testReferenceNamesSitPastThePlotsRightEdgeWithoutOverlapping() throws {
     let control = layout(try controlPlot())
-    let tops = control.references.map(\.top)
+    let references = control.references
 
+    XCTAssertEqual(references.map(\.label), ["Upper limit", "Target", "Lower limit"])
     XCTAssertLessThanOrEqual(
-      control.referenceLeft + textWidth("Upper limit"), plotWidthOnAPhone)
-    XCTAssertEqual(tops.count, 3)
-    XCTAssertGreaterThanOrEqual(tops[1] - tops[0], 14)
-    XCTAssertGreaterThanOrEqual(tops[2] - tops[1], 14)
+      control.plotRight + LessonPlotLayout.labelGap + labelWidth("Upper limit"),
+      plotWidthOnAPhone + LessonPlotLayout.labelGap)
+    XCTAssertEqual(references[0].y, control.y(503))
+    XCTAssertGreaterThanOrEqual(references[1].top - references[0].top, 14)
+    XCTAssertGreaterThanOrEqual(references[2].top - references[1].top, 14)
+  }
 
-    let close = layout(try controlPlot(references: [("Alarm", 497.1), ("Lower limit", 497)]))
-    XCTAssertGreaterThanOrEqual(close.references[1].top - close.references[0].top, 14)
-    XCTAssertLessThanOrEqual(close.references[1].top + 14, close.plotBottom)
+  func testTheNamesColumnIsAsWideAsItsWidestWrappedLine() throws {
+    let fine = layout(try fineScan(), width: 300)
 
-    let narrow = layout(try controlPlot(), width: 127)
-    let last = try XCTUnwrap(narrow.references.last)
-    XCTAssertGreaterThan(last.lines.count, 1)
-    XCTAssertLessThanOrEqual(last.top + Double(last.lines.count) * 14, narrow.plotBottom)
+    XCTAssertEqual(fine.references[0].lines, ["Needed", "tonight"])
+    XCTAssertEqual(
+      fine.plotRight, 300 - LessonPlotLayout.referenceInset - labelWidth("tonight"), accuracy: 0.01)
+  }
+
+  func testLinesTooCloseToNameApartAreNumberedEachLevelWithItsLine() throws {
+    let close = layout(
+      try controlPlot(references: [
+        ("Upper limit", 501), ("Upper warning limit", 500.6), ("Target", 500),
+      ]))
+
+    XCTAssertEqual(
+      close.key,
+      [
+        .init(marker: "1", label: "Upper limit"), .init(marker: "2", label: "Upper warning limit"),
+        .init(marker: "3", label: "Target"),
+      ])
+    for reference in close.references {
+      XCTAssertEqual(reference.top + 7, reference.y, accuracy: 0.01)
+    }
+    XCTAssertGreaterThan(close.references[1].x, close.references[0].x)
+    XCTAssertGreaterThan(close.references[1].x, close.references[2].x)
+  }
+
+  func testLinesWhoseNamesCantFitBesideTheNarrowestPlotAreNumbered() throws {
+    let german = layout(try controlPlot(references: [("Temperaturgrenze", 502)]), width: 220)
+
+    XCTAssertEqual(german.key, [.init(marker: "1", label: "Temperaturgrenze")])
+    XCTAssertEqual(german.references[0].lines, ["1"])
+    XCTAssertGreaterThanOrEqual(german.plotRight - german.left, LessonPlotLayout.minPlotWidth)
+  }
+
+  func testTheKeysNumbersContinueFromTheLinesToThePoints() throws {
+    let sites = layout(
+      try plot(
+        series: [
+          series(
+            "points",
+            ["North", "South", "East"].enumerated().map {
+              (5 + Double($0.offset) * 0.05, 850 + Double($0.offset), "\($0.element) warehouse")
+            })
+        ],
+        references: [("Temperaturgrenze", 900)]),
+      width: 200)
+
+    XCTAssertEqual(sites.key.map(\.marker), ["1", "2", "3", "4"])
+    XCTAssertEqual(sites.labels.map(\.text), ["2", "3", "4"])
   }
 
   func testAPointOnThePlotsRightEdgeKeepsClearOfTheReferenceNames() throws {
-    let control = layout(try controlPlot())
-    let last = try XCTUnwrap(control.series[0].last)
+    for width in [plotWidthOnAPhone, 200] {
+      let control = layout(try controlPlot(), width: width)
+      let last = try XCTUnwrap(control.series[0].last)
 
-    XCTAssertEqual(last.x, control.plotRight)
-    XCTAssertGreaterThanOrEqual(control.referenceLeft - (last.x + LessonPlotLayout.dotRadius), 4)
-  }
-
-  func testTheXAxisFirstNumberStaysClearOfTheYAxisNumbers() throws {
-    let control = layout(try controlPlot())
-    let first = try XCTUnwrap(control.xTicks.first)
-    let lowest = try XCTUnwrap(control.yTicks.first)
-    let center = control.tickCenter(first, textWidth: textWidth(first.label))
-
-    XCTAssertEqual(control.y(lowest.value), control.plotBottom)
-    XCTAssertGreaterThanOrEqual(
-      center - textWidth(first.label) / 2 - (control.left - LessonPlotLayout.labelGap),
-      LessonPlotLayout.labelGap)
-  }
-
-  func testANarrowGutterNeverBreaksAReferenceNameInsideAWord() throws {
-    let narrow = layout(try controlPlot(), width: 100)
-    let words = Set(["Upper", "limit", "Target", "Lower"])
-
-    for line in narrow.references.flatMap(\.lines) {
-      XCTAssertTrue(line.split(separator: " ").allSatisfy { words.contains(String($0)) }, line)
+      XCTAssertEqual(last.x, control.plotRight)
+      for reference in control.references {
+        XCTAssertGreaterThan(
+          reference.x - control.plotRight,
+          LessonPlotLayout.dotRadius + LessonPlotLayout.labelGap / 2)
+      }
     }
   }
 
-  func testAtTheLargestTextSizeTheXAxisKeepsItsNumbersAndThePointItsName() throws {
-    let largest = TypeStyle.meta.uiFont(.accessibility5, legibility: nil).pointSize / 12
-    let hours = [500.4, 499.1, 501.2, 500.8, 502.9, 503.6, 504.8, 506.3]
-    let drift = try plot(
-      series: [
-        series(
-          "lineWithPoints",
-          hours.enumerated().map {
-            (Double($0.offset + 1), $0.element, $0.offset == hours.count - 1 ? "Hour 8" : nil)
-          })
-      ],
-      references: [("Upper limit", 506), ("Target", 500), ("Lower limit", 494)])
-    let scale = LessonPlotLayout.scale(
-      drift, text: largest, width: plotWidthOnAPhone, textWidth: textWidth)
-    let capped = layout(drift, width: plotWidthOnAPhone / scale)
+  func testASinglePointSitsInTheMiddleOfThePlot() throws {
+    let single = layout(try plot(series: [series("points", (3, 952, "Peak"))]))
+    let dot = single.series[0][0]
 
-    XCTAssertLessThan(scale, largest)
+    XCTAssertEqual(dot.x, (single.left + single.plotRight) / 2, accuracy: 0.01)
+    XCTAssertEqual(dot.y, (LessonPlotLayout.top + single.plotBottom) / 2, accuracy: 0.01)
+  }
+
+  func testTheXAxisSpansFromTheFirstDayToTheLast() throws {
+    let control = layout(try controlPlot())
+
+    XCTAssertEqual(control.scale.x.domain, 1...10)
+    XCTAssertEqual(control.series[0][0].x, control.left)
+    XCTAssertEqual(control.xTicks.map(\.label), ["2", "4", "6", "8", "10"])
+  }
+
+  func testEveryXNumberSitsUnderItsValueAndOneThatWouldReachTheCornerIsLeftOut() throws {
+    let thousands = layout(
+      try plot(
+        series: [series("line", [1000, 1500, 2000].map { ($0, 500, nil) })],
+        references: [("Upper limit", 503), ("Target", 500), ("Lower limit", 497)]))
+    let x = { (value: Double) in
+      thousands.left
+        + (value - 1000) / 1000 * (thousands.plotRight - thousands.left)
+    }
+
+    for tick in thousands.xTicks {
+      XCTAssertEqual(tick.center, x(tick.value), accuracy: 0.001)
+    }
+    XCTAssertEqual(thousands.xTicks.map(\.value), [1200, 1400, 1600, 1800, 2000])
+  }
+
+  func testTicksThatDifferPrintAsDifferentNumbers() throws {
+    let visitors = layout(
+      try plot(series: [series("points", [10_000, 10_150, 10_400].map { ($0, $0, nil) })]))
+
+    XCTAssertEqual(Set(visitors.yTicks.map(\.label)).count, visitors.yTicks.count)
+    XCTAssertEqual(Set(visitors.xTicks.map(\.label)).count, visitors.xTicks.count)
+  }
+
+  func testNoGridlineRunsUnderAReferenceLine() throws {
+    let control = layout(try controlPlot())
+    let target = try XCTUnwrap(control.yTicks.first { $0.value == 500 })
+
+    XCTAssertEqual(target.label, "500")
+    XCTAssertFalse(target.line)
+    XCTAssertEqual(control.yTicks.filter(\.line).count, control.yTicks.count - 1)
+  }
+
+  func testCrowdedXNumbersThinOutOnANarrowPhone() throws {
+    let wide = layout(try controlPlot())
+    let wideText = { (text: String) in Double(text.count) * 20 }
+    let narrow = LessonPlotLayout(
+      try controlPlot(), width: 254, measure: .init(text: wideText, name: wideText),
+      locale: Locale(identifier: "en_US"))
+
+    XCTAssertGreaterThan(wide.xTicks.count, narrow.xTicks.count)
+  }
+
+  func testTheDrawingsTextStopsGrowingWhereThePlotWouldPassItsFloor() throws {
+    let fine = try fineScan()
+    let scale = LessonPlotLayout.scale(
+      fine, text: 2, width: smallPhoneCard, measure: measure, locale: Locale(identifier: "en_US"))
+    let capped = layout(fine, width: smallPhoneCard / scale)
+
+    XCTAssertGreaterThan(scale, 1)
+    XCTAssertLessThan(scale, 2)
     XCTAssertGreaterThanOrEqual(
-      capped.plotRight - capped.left, LessonPlotLayout.minPlotWidth - 0.001)
+      capped.plotRight - capped.left, LessonPlotLayout.minPlotWidth - 0.01)
     XCTAssertEqual(capped.key, [])
-    XCTAssertEqual(capped.labels.map(\.text), ["Hour 8"])
-    XCTAssertGreaterThanOrEqual(capped.xTicks.count, 3)
+    XCTAssertEqual(capped.references[0].lines, ["Needed", "tonight"])
+  }
+
+  func testTheDrawingsTextFollowsTheReadersSizeWhereThePlotKeepsItsRoomAndNeverShrinks() throws {
+    let fine = try fineScan()
+    let english = Locale(identifier: "en_US")
+
     XCTAssertEqual(
-      LessonPlotLayout.scale(drift, text: 1, width: plotWidthOnAPhone, textWidth: textWidth), 1)
+      LessonPlotLayout.scale(fine, text: 2, width: 640, measure: measure, locale: english), 2)
+    XCTAssertEqual(
+      LessonPlotLayout.scale(fine, text: 1, width: 100, measure: measure, locale: english), 1)
   }
 
   func testAPlotWithoutReferencesUsesTheFullWidth() throws {
@@ -155,7 +246,7 @@ final class LessonPlotLayoutTests: XCTestCase {
 
   private func layout(_ plot: LessonPlot, width: Double? = nil) -> LessonPlotLayout {
     LessonPlotLayout(
-      plot, width: width ?? plotWidthOnAPhone, textWidth: textWidth,
+      plot, width: width ?? plotWidthOnAPhone, measure: measure,
       locale: Locale(identifier: "en_US"))
   }
 
@@ -185,6 +276,16 @@ final class LessonPlotLayoutTests: XCTestCase {
       "name": "Series", "mark": mark,
       "points": points.map { ["x": $0.0, "y": $0.1, "label": $0.2 ?? NSNull()] as [String: Any] },
     ]
+  }
+
+  private func fineScan() throws -> LessonPlot {
+    let points: [(Double, Double, String?)] = [
+      (1.5, 880, nil), (2, 930, nil), (2.25, 968, nil), (2.5, 992, nil), (2.75, 975, nil),
+      (3, 952, nil), (3.25, 925, nil), (3.5, 905, nil), (4, 893, nil), (4.5, 890, nil),
+    ]
+
+    return try plot(
+      series: [series("lineWithPoints", points)], references: [("Needed tonight", 960)])
   }
 
   private func controlPlot(references: [(String, Double)]? = nil) throws -> LessonPlot {

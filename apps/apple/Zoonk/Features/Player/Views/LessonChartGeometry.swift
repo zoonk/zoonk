@@ -27,11 +27,11 @@ struct LessonPlotScale {
     let domain: ClosedRange<Double>
     let ticks: [Double]
 
-    init(_ values: [Double]) {
+    init(domain: ClosedRange<Double>, ticks: [Double], values: [Double]) {
       let wholeNumbers = values.allSatisfy { $0 == $0.rounded() }
 
-      domain = ChartsMath.niceDomain(values, includesZero: false)
-      ticks = ChartsAxis.ticks(domain).filter { !wholeNumbers || $0 == $0.rounded() }
+      self.domain = domain
+      self.ticks = ticks.filter { !wholeNumbers || $0 == $0.rounded() }
     }
   }
 
@@ -40,9 +40,100 @@ struct LessonPlotScale {
 
   init(_ plot: LessonPlot) {
     let points = plot.series.flatMap(\.points)
+    let xs = points.map(\.x).filter(\.isFinite)
+    let ys = points.map(\.y) + plot.references.map(\.y)
+    let yDomain = ChartsMath.niceDomain(ys, includesZero: false)
 
-    x = Axis(points.map(\.x))
-    y = Axis(points.map(\.y) + plot.references.map(\.y))
+    x = Self.xAxis(xs)
+    y = Axis(domain: yDomain, ticks: ChartsAxis.ticks(yDomain), values: ys)
+  }
+
+  /// The x axis spans the data and no further, so the points fill the plot; its round ticks sit
+  /// inside it. One x value sits in the middle.
+  private static func xAxis(_ values: [Double]) -> Axis {
+    guard let low = values.min(), let high = values.max() else {
+      return Axis(domain: 0...1, ticks: [0, 1], values: [])
+    }
+
+    let domain = low == high ? ChartsMath.padFlat(low) : low...high
+    let step = nearestStep(domain.upperBound - domain.lowerBound)
+
+    return Axis(domain: domain, ticks: ticks(within: domain, step: step), values: values)
+  }
+
+  /// The round step nearest a quarter of `span` on a log scale, so ticks fill a span without running
+  /// past it.
+  private static func nearestStep(_ span: Double) -> Double {
+    let rough = span / 4
+    let magnitude = pow(10, log10(rough).rounded(.down))
+    let factors = [10.0, 5, 2, 1]
+    let factor =
+      factors.indices.first { index in
+        rough / magnitude
+          >= (factors[index] * factors[min(index + 1, factors.count - 1)]).squareRoot()
+      }.map { factors[$0] } ?? 1
+
+    return factor * magnitude
+  }
+
+  private static func ticks(within domain: ClosedRange<Double>, step: Double) -> [Double] {
+    guard step.isFinite, step > 0 else {
+      return []
+    }
+
+    let first = ChartsMath.clean(domain.lowerBound / step).rounded(.up)
+    let last = ChartsMath.clean(domain.upperBound / step).rounded(.down)
+
+    return first > last
+      ? [] : stride(from: first, through: last, by: 1).map { ChartsMath.clean($0 * step) }
+  }
+}
+
+/// Main's `formatTicks`: as many decimals as the step between ticks needs, and large numbers
+/// shortened ("12.5K") only where every shortened tick stays exact, so no two ticks print the same.
+/// The x axis groups digits only in large numbers, so years don't read as "2,024".
+enum LessonPlotTicks {
+  private static let compactFrom = 10_000.0
+  private static let compactDigits = 2
+  private static let maxDigits = 20
+
+  static func isLarge(_ values: [Double]) -> Bool {
+    values.contains { abs($0) >= compactFrom }
+  }
+
+  static func format(_ ticks: [Double], xAxis: Bool = false, locale: Locale) -> [String] {
+    let first = ticks.first ?? 0
+    let large = isLarge(ticks)
+    let digits =
+      ticks.count > 1 ? decimals(ticks[1] - first) : ActivityNumberFormat.fractionDigits(first)
+
+    if large {
+      let short = ticks.map {
+        ActivityNumberFormat.format($0, digits: compactDigits, compact: true, locale: locale)
+      }
+      let exact = ticks.map {
+        ActivityNumberFormat.format($0, digits: maxDigits, compact: true, locale: locale)
+      }
+
+      if short == exact {
+        return short
+      }
+    }
+
+    return ticks.map {
+      ActivityNumberFormat.format($0, digits: digits, grouping: !xAxis || large, locale: locale)
+    }
+  }
+
+  /// The decimals the step's shortest form has: 0.25 has two, 2.5e-7 has eight.
+  private static func decimals(_ step: Double) -> Int {
+    let parts = "\(abs(ChartsMath.clean(step)))".lowercased().split(separator: "e")
+    let exponent = parts.count > 1 ? Int(parts[1]) ?? 0 : 0
+    let fraction = parts.first?.split(separator: ".").dropFirst().first.map {
+      String($0.reversed().drop { $0 == "0" })
+    }
+
+    return min(max((fraction?.count ?? 0) - exponent, 0), maxDigits)
   }
 }
 

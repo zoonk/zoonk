@@ -1,12 +1,11 @@
 import Foundation
 
-/// In points for 12-point labels; a larger text size scales the whole drawing by `scale`, and
-/// `textWidth` measures a label at the text size.
+/// Main's `plot-layout`, in points for 12-point labels; a larger text size scales the whole drawing by
+/// `scale`. `text` measures a label at 12 points, and `name` a point's name, drawn in medium weight.
 struct LessonPlotLayout {
   static let height = 208.0
-  /// The plot area the web keeps at its largest text on a small phone, 128 wide, without reference
-  /// lines.
-  static let minPlotWidth = 128 - minLeft - right
+  /// The narrowest plot area that still keeps its x numbers and its points' names readable.
+  static let minPlotWidth = 72.0
   static let top = 22.0
   static let bottom = 26.0
   static let minLeft = 48.0
@@ -15,24 +14,60 @@ struct LessonPlotLayout {
   static let lineHeight = 14.0
   static let tickOffset = 16.0
   static let dotRadius = 4.5
-  private static let referenceGap = dotRadius + labelGap
+  static let haloWidth = 3.0
+  static let referenceInset = dotRadius + labelGap
   private static let labelOffset = dotRadius + 3
   private static let clearance = 1.0
   private static let maxKeyMarkerLength = 2
   private static let maxGutterShare = 0.3
   private static let referenceSpacing = 2.0
-  private static let compactFrom = 10_000.0
+  private static let maxNameShift = lineHeight / 2
+  private static let cornerClearance = 2.0
+  private static let gridSnap = 1.0
 
+  struct Measure {
+    let text: (String) -> Double
+    let name: (String) -> Double
+
+    func labelWidth(_ label: String) -> Double { text(label) + LessonPlotLayout.labelGap }
+  }
+
+  /// `line` is off where a reference line runs on it, so the line keeps its dashes.
   struct Tick {
     let label: String
     let value: Double
+    var line = true
   }
 
-  /// `top` is its first line's top.
+  struct PlacedTick {
+    let label: String
+    let value: Double
+    let center: Double
+  }
+
+  /// `top` is its first line's top and `x` where its text starts; a numbered line's name is in the key.
   struct Reference {
+    let label: String
     let lines: [String]
     let top: Double
+    let x: Double
     let y: Double
+  }
+
+  private struct PlannedMark {
+    let label: String
+    let lines: [String]
+    var top: Double
+    let y: Double
+    let offset: Double
+
+    var height: Double { Double(lines.count) * LessonPlotLayout.lineHeight }
+  }
+
+  private struct ReferencePlan {
+    let key: [KeyEntry]
+    let marks: [PlannedMark]
+    let width: Double
   }
 
   enum Anchor { case start, middle, end }
@@ -61,60 +96,37 @@ struct LessonPlotLayout {
 
   let left: Double
   let plotRight: Double
-  let referenceLeft: Double
   let plotBottom: Double
-  let xTicks: [Tick]
+  let xTicks: [PlacedTick]
   let yTicks: [Tick]
   let series: [[Pixel]]
   let references: [Reference]
   let labels: [Label]
   let key: [KeyEntry]
-  /// Only large x numbers group their digits, so years don't read as "2,024".
-  let groupsX: Bool
-
-  private let scale: LessonPlotScale
-  private let width: Double
+  let scale: LessonPlotScale
 
   init(
-    _ plot: LessonPlot, width: Double, textWidth: @escaping (String) -> Double,
-    locale: Locale = .courseLanguage
+    _ plot: LessonPlot, width: Double, measure: Measure, locale: Locale = .courseLanguage
   ) {
     let scale = LessonPlotScale(plot)
-    let points = plot.series.flatMap(\.points)
-    let compactX = Self.isLarge(points.map(\.x))
-    let labelWidth = { (text: String) in textWidth(text) + Self.labelGap }
-    let gutters = Gutters(plot, scale: scale, textWidth: textWidth, locale: locale)
-    let (left, yTicks) = (gutters.left, gutters.yTicks)
-    let room = gutters.room(width)
-
-    let plotRight = max(width - room - gutters.gap, left + 1)
+    let gutters = Gutters(plot, scale: scale, measure: measure, locale: locale)
+    let left = gutters.left
     let plotBottom = Self.height - Self.bottom
-    let toPoint = { (x: Double, y: Double) in
-      Pixel(
-        x: Self.position(x, domain: scale.x.domain, range: left...plotRight),
-        y: Self.position(y, domain: scale.y.domain, range: Self.top...plotBottom, flipped: true))
+    let toY = { (y: Double) in
+      Self.position(y, domain: scale.y.domain, range: Self.top...plotBottom, flipped: true)
     }
+    let plan = Self.planReferences(
+      plot.references, left: left, width: width, measure: measure, y: toY)
+    let plotRight = max(width - plan.width, left + 1)
+    let toX = { (x: Double) in Self.position(x, domain: scale.x.domain, range: left...plotRight) }
 
     self.scale = scale
-    self.width = width
-    self.groupsX = compactX
     self.left = left
     self.plotRight = plotRight
-    self.referenceLeft = plotRight + Self.referenceGap
     self.plotBottom = plotBottom
-    self.yTicks = yTicks
 
-    let series = plot.series.map { $0.points.map { toPoint($0.x, $0.y) } }
+    let series = plot.series.map { $0.points.map { Pixel(x: toX($0.x), y: toY($0.y)) } }
     self.series = series
-
-    let referenceMarks = plot.references.map { reference in
-      let lines = Self.wrap(reference.label, room: room, labelWidth: labelWidth)
-      let y = toPoint(scale.x.domain.lowerBound, reference.y).y
-
-      return Reference(lines: lines, top: y - Double(lines.count) * Self.lineHeight / 2, y: y)
-    }
-    let references = Self.stack(referenceMarks, bottom: plotBottom)
-    self.references = references
 
     let marks = plot.series.map(\.mark)
     let dots = series.enumerated().flatMap { seriesIndex, points in
@@ -127,9 +139,7 @@ struct LessonPlotLayout {
     let lines = series.enumerated().flatMap { index, points in
       marks[index] == .points ? [] : Array(zip(points, points.dropFirst()))
     }
-    let rules = references.map {
-      (Pixel(x: left, y: $0.y), Pixel(x: plotRight, y: $0.y))
-    }
+    let rules = plan.marks.map { (Pixel(x: left, y: $0.y), Pixel(x: plotRight, y: $0.y)) }
     let named = plot.series.enumerated().flatMap { seriesIndex, item in
       item.points.enumerated().compactMap { index, point in
         point.label.map { (dot: series[seriesIndex][index], text: $0) }
@@ -139,56 +149,58 @@ struct LessonPlotLayout {
     let placed = Self.pointLabels(
       named: named,
       scene: Scene(
-        bounds: Box(left: left, top: 0, right: room > 0 ? plotRight : width, bottom: plotBottom),
+        bounds: Box(
+          left: left, top: 0, right: plan.marks.isEmpty ? width : plotRight, bottom: plotBottom),
         dots: dots, segments: lines + rules),
-      textWidth: textWidth)
+      textWidth: measure.name, firstMarker: plan.key.count + 1)
     labels = placed.labels
-    key = placed.key
+    key = plan.key + placed.key
 
-    let xTicks = scale.x.ticks.map {
+    references = plan.marks.map {
+      Reference(
+        label: $0.label, lines: $0.lines, top: $0.top,
+        x: plotRight + Self.referenceInset + $0.offset, y: $0.y)
+    }
+    yTicks = gutters.yTicks.map { tick in
       Tick(
-        label: ActivityNumberFormat.format(
-          $0, grouping: compactX, compact: compactX, locale: locale), value: $0)
+        label: tick.label, value: tick.value,
+        line: plan.marks.allSatisfy { abs($0.y - toY(tick.value)) >= Self.gridSnap })
     }
-    let frames = xTicks.map { tick in
-      let half = labelWidth(tick.label) / 2
-      let center = Self.tickCenter(
-        toPoint(tick.value, scale.y.domain.lowerBound).x, half: half, left: left, width: width)
-      return (left: center - half, right: center + half)
+
+    // Each number sits centered under its value. The first or last one is left out when it would
+    // reach the y axis's numbers or past the drawing's edge, and the rest thin out evenly when they
+    // would touch.
+    let xLabels = LessonPlotTicks.format(scale.x.ticks, xAxis: true, locale: locale)
+    let xPlaced = zip(scale.x.ticks, xLabels).map { value, label in
+      PlacedTick(label: label, value: value, center: toX(value))
+    }.filter { tick in
+      let half = measure.text(tick.label) / 2
+      return tick.center - half >= left - Self.labelGap + Self.cornerClearance
+        && tick.center + half <= width
     }
-    self.xTicks = LessonChartTicks.labeled(frames, gap: 0).map { xTicks[$0] }
+    let frames = xPlaced.map { tick in
+      let half = measure.text(tick.label) / 2
+      return (left: tick.center - half, right: tick.center + half)
+    }
+    xTicks = LessonChartTicks.labeled(frames, gap: Self.labelGap).map { xPlaced[$0] }
   }
 
-  /// Grows with the text until the plot area would get narrower than `minPlotWidth`, where the x
-  /// axis would lose its numbers and the points their names; the text around the drawing keeps
-  /// growing.
+  /// The drawing's text grows with the reader's text size until the plot area would get narrower
+  /// than `minPlotWidth`, counting reference names wrapped as narrow as their widest word; the text
+  /// around the drawing keeps growing.
   static func scale(
-    _ plot: LessonPlot, text: Double, width: Double, textWidth: (String) -> Double,
+    _ plot: LessonPlot, text: Double, width: Double, measure: Measure,
     locale: Locale = .courseLanguage
   ) -> Double {
-    let gutters = Gutters(plot, scale: LessonPlotScale(plot), textWidth: textWidth, locale: locale)
-    let fixed = gutters.left + gutters.gap + minPlotWidth
-    // The reference names take a share of the width, down to their widest word.
+    let gutters = Gutters(plot, scale: LessonPlotScale(plot), measure: measure, locale: locale)
+    let named = !plot.references.isEmpty
+    let fixed = gutters.left + (named ? referenceInset : right) + minPlotWidth
     let minWidth =
-      gutters.longest == 0
-      ? fixed
-      : min(
-        fixed + gutters.longest,
-        max(fixed / (1 - maxGutterShare), fixed + gutters.widestWord))
+      named
+      ? min(fixed + gutters.longest, max(fixed / (1 - maxGutterShare), fixed + gutters.widestWord))
+      : fixed
 
     return min(text, max(width / minWidth, 1))
-  }
-
-  func tickCenter(_ tick: Tick, textWidth: Double) -> Double {
-    Self.tickCenter(
-      Self.position(tick.value, domain: scale.x.domain, range: left...plotRight),
-      half: (textWidth + Self.labelGap) / 2, left: left, width: width)
-  }
-
-  /// Past the y axis's numbers and inside the drawing, so the corner where the axes meet never
-  /// crowds.
-  private static func tickCenter(_ x: Double, half: Double, left: Double, width: Double) -> Double {
-    max(min(x, width - half), left + half)
   }
 
   func y(_ value: Double) -> Double {
@@ -212,35 +224,98 @@ struct LessonPlotLayout {
     let longest: Double
     let widestWord: Double
 
-    init(
-      _ plot: LessonPlot, scale: LessonPlotScale, textWidth: (String) -> Double, locale: Locale
-    ) {
-      func labelWidth(_ text: String) -> Double { textWidth(text) + LessonPlotLayout.labelGap }
-      let compactY = LessonPlotLayout.isLarge(
-        plot.series.flatMap(\.points).map(\.y) + plot.references.map(\.y))
+    init(_ plot: LessonPlot, scale: LessonPlotScale, measure: Measure, locale: Locale) {
+      let names = plot.references.map(\.label)
 
-      yTicks = scale.y.ticks.map {
-        Tick(
-          label: ActivityNumberFormat.format($0, compact: compactY, locale: locale), value: $0)
+      yTicks = zip(scale.y.ticks, LessonPlotTicks.format(scale.y.ticks, locale: locale)).map {
+        Tick(label: $1, value: $0)
       }
-      left = max(LessonPlotLayout.minLeft, yTicks.map { labelWidth($0.label) }.max() ?? 0)
-      longest = plot.references.map { labelWidth($0.label) }.max() ?? 0
-      widestWord =
-        plot.references.flatMap { $0.label.split(separator: " ") }.map {
-          labelWidth(String($0))
-        }.max() ?? 0
-    }
-
-    var gap: Double { longest > 0 ? LessonPlotLayout.referenceGap : LessonPlotLayout.right }
-
-    /// Wrapped to a share of the width, but never narrower than the widest word.
-    func room(_ width: Double) -> Double {
-      min(longest, max(width * LessonPlotLayout.maxGutterShare, widestWord))
+      left = max(LessonPlotLayout.minLeft, yTicks.map { measure.labelWidth($0.label) }.max() ?? 0)
+      longest = names.map(measure.labelWidth).max() ?? 0
+      widestWord = LessonPlotLayout.widestWord(names, labelWidth: measure.labelWidth)
     }
   }
 
-  private static func isLarge(_ values: [Double]) -> Bool {
-    (values.map(abs).max() ?? 0) >= compactFrom
+  private static func widestWord(_ labels: [String], labelWidth: (String) -> Double) -> Double {
+    labels.flatMap(LessonChartNames.pieces).map { labelWidth($0.trimmed) }.max() ?? 0
+  }
+
+  private static func planReferences(
+    _ references: [LessonPlot.Reference], left: Double, width: Double, measure: Measure,
+    y: (Double) -> Double
+  ) -> ReferencePlan {
+    guard !references.isEmpty else {
+      return ReferencePlan(key: [], marks: [], width: right)
+    }
+
+    let available = width - left - referenceInset - minPlotWidth
+
+    return nameReferences(references, available: available, width: width, measure: measure, y: y)
+      ?? numberReferences(references, measure: measure, y: y)
+  }
+
+  /// Names sit past the plot's right edge, level with their lines and clear of a point drawn on
+  /// that edge. A name wraps to a share of the width, never inside a word and never taking the plot
+  /// below its narrowest; it can't be named there when even its widest word doesn't fit, or when
+  /// names stacked apart would sit off their lines by more than half a line.
+  private static func nameReferences(
+    _ references: [LessonPlot.Reference], available: Double, width: Double, measure: Measure,
+    y: (Double) -> Double
+  ) -> ReferencePlan? {
+    let names = references.map(\.label)
+    let widestWord = widestWord(names, labelWidth: measure.labelWidth)
+
+    guard widestWord <= available else {
+      return nil
+    }
+
+    let longest = names.map(measure.labelWidth).max() ?? 0
+    let room = min(longest, max(width * maxGutterShare, widestWord), available)
+    let marks = references.map { reference in
+      let lines = wrap(reference.label, room: room, labelWidth: measure.labelWidth)
+      let lineY = y(reference.y)
+
+      return PlannedMark(
+        label: reference.label, lines: lines,
+        top: lineY - Double(lines.count) * lineHeight / 2, y: lineY, offset: 0)
+    }
+    let stacked = stack(marks, bottom: height - bottom)
+
+    guard stacked.allSatisfy({ abs($0.top + $0.height / 2 - $0.y) <= maxNameShift }) else {
+      return nil
+    }
+
+    let widestLine = stacked.flatMap(\.lines).map(measure.labelWidth).max() ?? 0
+
+    return ReferencePlan(key: [], marks: stacked, width: referenceInset + widestLine)
+  }
+
+  /// Each line carries a number, from the top line down, level with its line; numbers of lines
+  /// closer than a line of text sit side by side instead of stacking off their lines.
+  private static func numberReferences(
+    _ references: [LessonPlot.Reference], measure: Measure, y: (Double) -> Double
+  ) -> ReferencePlan {
+    let markerWidth = measure.labelWidth(String(references.count))
+    var columns: [Double] = []
+    let sorted = references.map { (label: $0.label, y: y($0.y)) }.sorted { $0.y < $1.y }
+    let marks = sorted.enumerated().map { index, reference in
+      let column =
+        columns.firstIndex { reference.y - $0 >= lineHeight } ?? columns.count
+
+      if column == columns.count {
+        columns.append(reference.y)
+      } else {
+        columns[column] = reference.y
+      }
+
+      return PlannedMark(
+        label: reference.label, lines: [String(index + 1)], top: reference.y - lineHeight / 2,
+        y: reference.y, offset: Double(column) * markerWidth)
+    }
+
+    return ReferencePlan(
+      key: marks.map { KeyEntry(marker: $0.lines[0], label: $0.label) }, marks: marks,
+      width: referenceInset + Double(columns.count) * markerWidth)
   }
 
   private static func position(
@@ -278,16 +353,20 @@ struct LessonPlotLayout {
     return lines.map(\.trimmed).filter { !$0.isEmpty }
   }
 
-  private static func stack(_ marks: [Reference], bottom: Double) -> [Reference] {
-    let height = { (mark: Reference) in Double(mark.lines.count) * lineHeight }
-    let stacked = marks.sorted { $0.y < $1.y }.reduce(into: [Reference]()) { stacked, mark in
-      let floor = stacked.last.map { $0.top + height($0) + referenceSpacing } ?? 0
-      stacked.append(Reference(lines: mark.lines, top: max(mark.top, floor), y: mark.y))
+  private static func stack(_ marks: [PlannedMark], bottom: Double) -> [PlannedMark] {
+    let stacked = marks.sorted { $0.y < $1.y }.reduce(into: [PlannedMark]()) { stacked, mark in
+      var mark = mark
+      mark.top = max(mark.top, stacked.last.map { $0.top + $0.height + referenceSpacing } ?? 0)
+      stacked.append(mark)
     }
-    let overflow = stacked.last.map { $0.top + height($0) - bottom } ?? 0
+    let overflow = stacked.last.map { $0.top + $0.height - bottom } ?? 0
 
     return overflow > 0
-      ? stacked.map { Reference(lines: $0.lines, top: $0.top - overflow, y: $0.y) } : stacked
+      ? stacked.map {
+        var mark = $0
+        mark.top -= overflow
+        return mark
+      } : stacked
   }
 
   struct Scene {
@@ -297,10 +376,12 @@ struct LessonPlotLayout {
   }
 
   /// Every labeled point keeps its name: beside its dot where there's room, and when one can't fit
-  /// without covering another dot or name, every name moves to a numbered key and the dots carry the
-  /// numbers. Names as short as a number gain nothing from a key, so they stay put.
+  /// without covering another dot or name, every name moves to a numbered key counting from
+  /// `firstMarker`, and the dots carry the numbers. Names as short as a number gain nothing from a
+  /// key, so they stay put.
   static func pointLabels(
-    named: [(dot: Pixel, text: String)], scene: Scene, textWidth: (String) -> Double
+    named: [(dot: Pixel, text: String)], scene: Scene, textWidth: (String) -> Double,
+    firstMarker: Int = 1
   ) -> (labels: [Label], key: [KeyEntry]) {
     let direct = place(named, scene: scene, textWidth: textWidth)
 
@@ -309,7 +390,7 @@ struct LessonPlotLayout {
     }
 
     let key = named.enumerated().map {
-      KeyEntry(marker: "\($0.offset + 1)", label: $0.element.text)
+      KeyEntry(marker: "\(firstMarker + $0.offset)", label: $0.element.text)
     }
     let markers = named.enumerated().map { (dot: $0.element.dot, text: key[$0.offset].marker) }
 
