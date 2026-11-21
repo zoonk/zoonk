@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -287,6 +288,8 @@ private fun ReviewAnswer(
     val shape = RoundedCornerShape(ZoonkRadius.option)
     val statement = entry.format == MockExamReviewInner.Format.TRUE_FALSE && (answer == "true" || answer == "false")
     val isTrue = answer == "true"
+    // Its mark is unspoken, so a screen reader hears whose answer it is.
+    val yours = stringResource(R.string.answer_tag_your_answer)
 
     Row(
         Modifier
@@ -295,7 +298,7 @@ private fun ReviewAnswer(
             .background(tone.container)
             .border(tone.border, shape)
             .padding(horizontal = 14.dp, vertical = 14.dp)
-            .semantics(mergeDescendants = true) {},
+            .semantics(mergeDescendants = true) { if (!right) stateDescription = yours },
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
