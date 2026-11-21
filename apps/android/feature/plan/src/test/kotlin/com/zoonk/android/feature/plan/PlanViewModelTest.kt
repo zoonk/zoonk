@@ -349,6 +349,19 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun aLaterDaysOfferThePlanAlreadyHoldsReadsThePlanAgainInsteadOfSayingItStaysAsItIs() =
+        runTest {
+            val plan = shown(FIT_PLAN)
+            api.preview = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = true, unchanged = true)
+
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+
+            assertEquals(2, api.plans)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            assertTrue(api.changes.isEmpty())
+        }
+
+    @Test
     fun aFitCheckForAChangedPlanAddsNothing() =
         runTest {
             val plan = shown(FIT_PLAN)
