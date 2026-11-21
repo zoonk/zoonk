@@ -591,11 +591,37 @@ describe(proposeNoticeChange, () => {
     ]);
   });
 
-  it("hides a waiting legacy graph proposal and replaces it with the exam-day question", async () => {
-    const { goal } = await plannedExam({
+  it("lands a waiting legacy graph before replacing it with the exam-day question", async () => {
+    const library = await planLibraryFixture({
+      skills: [
+        { area: "Finance", lessons: 1 },
+        { area: "Logic", lessons: 1 },
+      ],
+    });
+
+    const [finance, logic] = library.graph.skills;
+
+    if (!finance || !logic) {
+      throw new Error("Expected Finance and Logic");
+    }
+
+    const { blueprint, goal } = await plannedExam({
       days: ["2020-11-08"],
+      graph: library.graph,
       targetDate: "2020-12-20",
       year: 2020,
+    });
+
+    await prisma.examBlueprint.update({
+      data: {
+        structure: {
+          formats: [],
+          mock: null,
+          rules: [],
+          subjects: [{ citation, name: "Finance", questions: 1, topics: ["Budgets"], weight: 1 }],
+        },
+      },
+      where: { id: blueprint.id },
     });
 
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -609,6 +635,7 @@ describe(proposeNoticeChange, () => {
           lessonsAdded: 0,
           lessonsRemoved: 1,
         },
+        noticeGraph: { ...library.graph, skills: [{ ...finance, topics: ["Budgets"] }] },
         operations: [{ kind: "followNotice" }],
         source: NOTICE_SOURCE,
       },
@@ -635,6 +662,12 @@ describe(proposeNoticeChange, () => {
       { status: "replaced" },
     );
 
+    const updated = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(parsePlanGraph(updated.graph).skills).toMatchObject([
+      { skillId: finance.skillId, topics: ["Budgets"] },
+    ]);
+
     await expect(findProposals(goal.id)).resolves.toMatchObject([
       {
         payload: {
@@ -644,8 +677,9 @@ describe(proposeNoticeChange, () => {
     ]);
 
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-      operations: [{ kind: "setNoticeDate" }],
-      status: "proposed",
+      effect: { noticeRemoved: ["Logic"] },
+      kind: "noticeChanged",
+      status: "applied",
     });
   });
 

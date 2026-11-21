@@ -64,11 +64,13 @@ async function settleNoticeGraph({
   droppedSkillIds = [],
   goalId,
   graph,
+  legacy = false,
 }: {
   blueprintId: string;
   droppedSkillIds?: readonly string[];
   goalId: string;
   graph?: PlanGraph;
+  legacy?: boolean;
 }): Promise<boolean> {
   const context = await loadPlanAtToken(goalId);
 
@@ -93,8 +95,11 @@ async function settleNoticeGraph({
 
   const current = context.state.graph;
 
+  const reading =
+    graph && legacy ? followNoticeGraph({ graph, state: context.state }).graph : graph;
+
   const checked = await prunePlanNoticeGraph({
-    graph: graph ?? current,
+    graph: reading ?? current,
     protectedIds,
     subjects: toExamOutline(blueprint).subjects,
   });
@@ -107,9 +112,10 @@ async function settleNoticeGraph({
     return false;
   }
 
-  const state = graph
-    ? followNoticeGraph({ droppedIds: dropped, graph: checked.graph, state: context.state })
-    : { ...context.state, graph: checked.graph };
+  const state =
+    graph && !legacy
+      ? followNoticeGraph({ droppedIds: dropped, graph: checked.graph, state: context.state })
+      : { ...context.state, graph: checked.graph };
 
   const computed = await computePlan({ context, mode: "forced", state });
 
