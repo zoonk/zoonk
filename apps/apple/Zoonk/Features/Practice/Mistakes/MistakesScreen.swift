@@ -426,6 +426,12 @@ struct MistakeAnswerRow: View {
       text: isLiteral ? RichInline(text: AttributedString(text)) : LessonRichText.typeset(text),
       action: nil
     )
+    .accessibilityValue(
+      isRight
+        ? Text(verbatim: "")
+        : Text(
+          "Your answer", tableName: "Practice",
+          comment: "VoiceOver value of the learner's wrong answer shown after the fact."))
   }
 }
 
