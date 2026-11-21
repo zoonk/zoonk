@@ -11,6 +11,7 @@ import {
   releaseClaim,
   storeBank,
 } from "./_utils/level-test-bank";
+import { levelTestWrittenExtrasSchema } from "./level-test-contract";
 
 export type { LevelTestBankLevel } from "./_utils/level-test-bank";
 
@@ -23,14 +24,19 @@ export type LevelTestBankClaim =
  * `claimed` run writes the pair's bank, and it ends with `storeLevelTestBank` or
  * `releaseLevelTestBankClaim`.
  */
-export async function claimLevelTestBank(pair: LanguagePair): Promise<LevelTestBankClaim> {
+export async function claimLevelTestBank(
+  pair: LanguagePair,
+  upgrade = false,
+): Promise<LevelTestBankClaim> {
   const row = await findBankRow(pair);
 
-  if (readBank(row)) {
+  const bank = readBank(row);
+
+  if (bank && (!upgrade || bank.confirmations !== undefined)) {
     return { status: "ready" };
   }
 
-  const claim = await claimBank({ pair, row });
+  const claim = await claimBank({ pair, row, upgrade: Boolean(bank) });
   return claim ? { claimId: claim.claimId, status: "claimed" } : { status: "running" };
 }
 
@@ -51,7 +57,7 @@ export async function writeLevelTestBankLevel({
     targetLanguage: pair.targetLanguage,
   });
 
-  return { provenance, questions: data.questions, speaking: data.speaking };
+  return { ...levelTestWrittenExtrasSchema.parse(data), provenance, questions: data.questions };
 }
 
 /** System workflow capability: `lost` when a newer run took the claim over, so its bank stays. */

@@ -1,6 +1,7 @@
 import "server-only";
 import { type CourseLevel, type Goal, prisma } from "@zoonk/db";
 import { type ExamPicks } from "../../exams/choices/exam-choices";
+import { loadCurrentLanguageLevel } from "../../language/levels/current-language-level";
 import { loadSkillEvidence } from "../../learner/_utils/load-skill-claims";
 import { listClaimed } from "../../learner/_utils/skill-claims";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
@@ -95,7 +96,13 @@ export async function loadPlannerInputs({
   examPicks?: ExamPicks;
   goal: Pick<
     Goal,
-    "details" | "examBlueprintId" | "id" | "kind" | "planRevealedAt" | "primaryCourseId"
+    | "details"
+    | "examBlueprintId"
+    | "id"
+    | "kind"
+    | "planRevealedAt"
+    | "primaryCourseId"
+    | "targetLanguage"
   >;
   graph: PlanGraph;
   targetDate: Date | null;
@@ -104,16 +111,25 @@ export async function loadPlannerInputs({
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const isExam = goal.kind === "exam";
 
-  const [lessons, prerequisites, readiness, exam, evidence, bands, startLessonId] =
-    await Promise.all([
-      loadGoalPlannerLessons({ goal, graph, userId }),
-      loadSkillPrerequisites(skillIds),
-      loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
-      loadExamFacts({ goal, graph, picks: examPicks }),
-      loadSkillEvidence({ goalId: goal.id, skillIds, userId }),
-      isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
-      findWrittenStartLessonId(goal),
-    ]);
+  const [
+    lessons,
+    prerequisites,
+    readiness,
+    exam,
+    evidence,
+    bands,
+    startLessonId,
+    currentLanguageLevel,
+  ] = await Promise.all([
+    loadGoalPlannerLessons({ goal, graph, userId }),
+    loadSkillPrerequisites(skillIds),
+    loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
+    loadExamFacts({ goal, graph, picks: examPicks }),
+    loadSkillEvidence({ goalId: goal.id, skillIds, userId }),
+    isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
+    findWrittenStartLessonId(goal),
+    loadCurrentLanguageLevel({ ...goal, userId }),
+  ]);
 
   const { answeredWrong, claims, known: knownSkillIds } = evidence;
   const missedSkillIds = listClaimed({ claim: "gap", claims });
@@ -126,9 +142,14 @@ export async function loadPlannerInputs({
   return {
     answeredWrongSkillIds: new Set([...answeredWrong].toSorted()),
     bands,
+    currentLanguageLevel,
     knownSkillIds: new Set([...knownSkillIds].toSorted()),
     lessons,
-    levelFloor: getLevelFloor(getOwnLevel({ goal })),
+    levelFloor: getLevelFloor(
+      getOwnLevel({
+        goal: currentLanguageLevel ? { details: { level: currentLanguageLevel } } : goal,
+      }),
+    ),
     missedSkillIds: new Set([...missedSkillIds].toSorted()),
     prerequisites: new Map([...prerequisites].toSorted(([a], [b]) => a.localeCompare(b))),
     readiness,

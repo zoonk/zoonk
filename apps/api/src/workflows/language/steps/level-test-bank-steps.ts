@@ -35,10 +35,13 @@ function toBankAnalytics({ analytics, workflowRunId }: BankAnalytics) {
   return { distinctId: analytics?.distinctId, goalId: analytics?.goalId, traceId: workflowRunId };
 }
 
-export async function claimLevelTestBankStep(pair: LanguagePair): Promise<LevelTestBankClaim> {
+export async function claimLevelTestBankStep(
+  pair: LanguagePair,
+  upgrade?: true,
+): Promise<LevelTestBankClaim> {
   "use step";
 
-  return claimLevelTestBank(pair);
+  return upgrade ? claimLevelTestBank(pair, true) : claimLevelTestBank(pair);
 }
 
 export async function writeLevelTestBankLevelStep({

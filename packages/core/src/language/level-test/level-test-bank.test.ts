@@ -55,9 +55,14 @@ function mockAudio() {
   vi.mocked(generateLanguageAudio).mockResolvedValue(voicedAudio());
 }
 
+function modernWrittenLevel(input: Parameters<typeof writtenLevel>[0]) {
+  const written = writtenLevel(input);
+  return { ...written, data: { ...written.data, confirmations: [] } };
+}
+
 function mockWriter(passage: string) {
   vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
-    writtenLevel({ level, passage }),
+    modernWrittenLevel({ level, passage }),
   );
 }
 
@@ -65,7 +70,7 @@ function pendingWriter() {
   const { promise, resolve } = Promise.withResolvers<string>();
 
   vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
-    writtenLevel({ level, passage: await promise }),
+    modernWrittenLevel({ level, passage: await promise }),
   );
 
   return { finish: (passage: string) => resolve(passage) };
@@ -273,6 +278,46 @@ describe("writing a pair's question bank ahead", () => {
         },
       ]),
     );
+  });
+
+  it("upgrades a recent legacy bank once while keeping its existing questions readable", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+    const legacy = uncheckedBank("Legacy");
+
+    await prisma.languageLevelTest.create({
+      data: { ...pair, content: legacy, model: "test", promptVersion: "test", runId: "legacy" },
+    });
+
+    await expect(claimLevelTestBank(pair)).resolves.toStrictEqual({ status: "ready" });
+
+    const claims = await Promise.all([
+      claimLevelTestBank(pair, true),
+      claimLevelTestBank(pair, true),
+    ]);
+
+    const claimed = claims.find((claim) => claim.status === "claimed");
+
+    if (claimed?.status !== "claimed") {
+      throw new Error("Expected one writer to claim the legacy bank");
+    }
+
+    expect(claims.map(({ status }) => status).toSorted()).toStrictEqual(["claimed", "running"]);
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
+      test: { next: { question: { passage: expect.stringContaining("Legacy") } }, status: "ready" },
+    });
+
+    mockWriter("Upgrade");
+    const level = await writeLevelTestBankLevel({ level: "C1", pair });
+
+    await expect(
+      storeLevelTestBank({ claimId: claimed.claimId, levels: [level], pair }),
+    ).resolves.toBe("written");
+
+    const row = await findRow(pair);
+    const upgraded = levelTestBankSchema.parse(row.content);
+    expect(upgraded.questions.slice(0, legacy.questions.length)).toStrictEqual(legacy.questions);
+    await expect(claimLevelTestBank(pair, true)).resolves.toStrictEqual({ status: "ready" });
   });
 
   it("leaves the pair to the run already writing it", async () => {

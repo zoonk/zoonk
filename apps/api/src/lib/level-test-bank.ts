@@ -10,13 +10,15 @@ import {
 export async function startLevelTestBank({
   analytics,
   pair,
+  upgrade,
 }: {
   analytics?: ContentAnalytics;
   pair: LevelTestBankInput["pair"];
+  upgrade?: true;
 }): Promise<{ generationId: string }> {
   const generationId = await startOnce(
     levelTestBankWorkflow,
-    [{ analytics, pair }],
+    [{ analytics, pair, ...(upgrade && { upgrade }) }],
     getLevelTestBankToken(pair),
   );
 
