@@ -34,6 +34,7 @@ export type MockDraft = {
 };
 
 export type MockCurrentSection = {
+  changedItemIds: string[];
   changesLeft: number | null;
   deadline: string;
   drafts: MockDraft[];

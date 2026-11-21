@@ -10,6 +10,7 @@ import { changingFactsTask } from "./changing-facts/task";
 import { checkCitedFactsTask } from "./check-cited-facts/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
 import { checkLevelTestQuestionsTask } from "./check-level-test-questions/task";
+import { checkSentenceOrdersTask } from "./check-sentence-orders/task";
 import { checkWordPronunciationTask } from "./check-word-pronunciation/task";
 import { citeMaterialTask } from "./cite-material/task";
 import { compareReleaseLessonsTask } from "./compare-release-lessons/task";
@@ -231,6 +232,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       languageLessonCheckTask,
       languageLessonFixTask,
       languageSentenceOrdersTask,
+      checkSentenceOrdersTask,
       alphabetLessonTask,
       alphabetLessonFixTask,
       levelTestBankTask,

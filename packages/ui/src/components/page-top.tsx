@@ -53,6 +53,54 @@ function BackLink({
 }
 
 /**
+ * The bar's row: the way back at the start, the actions at the end and, between them, what the
+ * whole screen shares (a step counter), up to 6rem wide (8rem from `sm`), which it fills. The middle
+ * is centered while both ends leave it room and narrows when they don't, so a long translated label
+ * never covers it. Too narrow to read, it's left to screen readers, as a native bar drops its title.
+ */
+function PageTopRow({
+  actions,
+  back,
+  className,
+  middle,
+}: {
+  actions?: React.ReactNode;
+  back?: React.ReactNode;
+  className?: string;
+  middle?: React.ReactNode;
+}) {
+  return (
+    <div className={cn("flex min-h-11 flex-wrap items-center gap-x-3 gap-y-2", className)}>
+      <div
+        className={cn(
+          "flex grow basis-0 items-center gap-3",
+          middle ? "min-w-max" : "min-w-(--bar-start-min,0px)",
+        )}
+        data-slot="page-top-start"
+      >
+        {back}
+      </div>
+
+      {middle && (
+        <div className="@container pointer-events-none flex max-w-24 min-w-0 grow basis-0 sm:max-w-32">
+          <div className="flex w-full @max-[2.5rem]:sr-only">{middle}</div>
+        </div>
+      )}
+
+      <div
+        className={cn(
+          "ms-auto flex shrink-0 items-center justify-end gap-2",
+          middle && "grow basis-0",
+        )}
+        data-slot="page-top-end"
+      >
+        {actions}
+      </div>
+    </div>
+  );
+}
+
+/**
  * The bar over a page's title: its way back at the start, its actions at the end. With the header
  * under it (`PAGE_HEADER_CLASS`) it owns all the room above the title: its row is the frame's first
  * row, 12px from the top, and the title sits under it. It sticks while the page scrolls and reaches
@@ -90,27 +138,7 @@ function PageTopBar({
       data-slot="page-top-bar"
       ref={ref}
     >
-      <div className="relative flex min-h-11 flex-wrap items-center gap-x-3 gap-y-2">
-        <div
-          className="flex min-w-(--bar-start-min,0px) grow basis-0 items-center gap-3"
-          data-slot="page-top-start"
-        >
-          {back}
-        </div>
-
-        {middle && (
-          <div className="pointer-events-none absolute top-5.5 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            {middle}
-          </div>
-        )}
-
-        <div
-          className="ms-auto flex shrink-0 items-center justify-end gap-2"
-          data-slot="page-top-end"
-        >
-          {actions}
-        </div>
-      </div>
+      <PageTopRow actions={actions} back={back} middle={middle} />
     </div>
   );
 }
@@ -161,4 +189,4 @@ function PageTitle({
   );
 }
 
-export { BackLink, PageTitle, PageTop, PageTopBar };
+export { BackLink, PageTitle, PageTop, PageTopBar, PageTopRow };

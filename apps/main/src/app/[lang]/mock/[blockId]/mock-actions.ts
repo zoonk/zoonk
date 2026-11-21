@@ -32,8 +32,14 @@ async function readMock(blockId: string): Promise<MockView | null> {
   return result.status === "ready" ? result.mock : null;
 }
 
-/** Never says whether the answer is right. */
-export async function saveMockAnswerAction(blockId: unknown, answer: unknown): Promise<boolean> {
+/**
+ * Never says whether the answer is right. Null when signed out or signed in as someone else, so the
+ * answer stays on the device and goes again once its owner is back.
+ */
+export async function saveMockAnswerAction(
+  blockId: unknown,
+  answer: unknown,
+): Promise<boolean | null> {
   const id = blockIdSchema.safeParse(blockId);
   const input = mockAnswerInputSchema.safeParse(answer);
 
@@ -42,6 +48,11 @@ export async function saveMockAnswerAction(blockId: unknown, answer: unknown): P
   }
 
   const result = await saveMockAnswer({ blockId: id.data, input: input.data });
+
+  if (result.status === "unauthorized" || result.status === "notFound") {
+    return null;
+  }
+
   return result.status === "saved";
 }
 
