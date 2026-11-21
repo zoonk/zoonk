@@ -9,6 +9,13 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ESSAY_FIELD_CLASS } from "../essay/essay-labels";
 
+/**
+ * The field holds focus for the whole answer, so its focus is a soft line, as the lesson's question
+ * composer draws it; the usual ring returns with more contrast.
+ */
+const WRITING_FOCUS_CLASS =
+  "focus-visible:border-foreground/35 focus-visible:ring-0 contrast-more:focus-visible:border-ring contrast-more:focus-visible:ring-[3px]";
+
 /** "about 23 of 30 lines": the count stays in view under the field, and what's past the limit says so. */
 export function WritingLineCount({
   id,
@@ -35,21 +42,27 @@ export function WritingLineCount({
     text,
   });
 
-  const over = estimatedLines > writing.lines;
+  const over = estimatedLines - writing.lines;
 
   return (
     <p
       aria-live="polite"
       className={cn(
         "font-mono text-xs tabular-nums",
-        over ? "text-warning-text" : "text-muted-foreground",
+        over > 0 ? "text-warning-text" : "text-muted-foreground",
       )}
       id={id}
     >
-      {over
-        ? t("about {used} of {lines} lines · the board won't read past line {lines}", {
-            lines: String(writing.lines),
-            used: String(estimatedLines),
+      {over > 0
+        ? t({
+            description:
+              "The approximate line count of a written answer past its limit; the lines past it are ones the exam board won't read.",
+            message: "about {used} of {lines} lines · {over} won't be read",
+            values: {
+              lines: String(writing.lines),
+              over: String(over),
+              used: String(estimatedLines),
+            },
           })
         : t("about {used} of {lines} lines", {
             lines: String(writing.lines),
@@ -80,7 +93,7 @@ export function WritingEditor({
       </label>
       <Textarea
         aria-describedby={`${id}-count`}
-        className={cn(ESSAY_FIELD_CLASS, "field-sizing-fixed min-h-0 flex-1")}
+        className={cn(ESSAY_FIELD_CLASS, WRITING_FOCUS_CLASS, "field-sizing-fixed min-h-0 flex-1")}
         id={id}
         onChange={(event) => onChange(event.target.value)}
         spellCheck={false}
