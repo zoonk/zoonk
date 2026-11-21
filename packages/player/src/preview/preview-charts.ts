@@ -18,7 +18,7 @@ export const chartEntries: PreviewEntry[] = [
     screen: (id) =>
       explanationStep(
         {
-          text: "The scan measured five spots, 1 mm apart. **C** counts highest, but the real peak could sit anywhere between **B** and **D**.",
+          text: "The scan measured five spots along the detector. **C** counts highest, but the real peak could sit anywhere between **B** and **D**.",
           title: "Look between the points",
           visual: DETECTOR_SCAN_PLOT,
         },
