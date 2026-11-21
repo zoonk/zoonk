@@ -204,7 +204,7 @@ extension StudyBlock {
   }
 
   /// The row's one short line on Today's list: the subject, or what a challenge or review is.
-  var label: String? {
+  func label(document: ExamDocument) -> String? {
     if waitReason != nil {
       return String(
         localized: "After today's lessons", table: "Today",
@@ -229,8 +229,7 @@ extension StudyBlock {
           comment: "A practice block's questions")
     }
 
-    // Today doesn't know which document an exam has; an exam's notice is by far the usual one.
-    return subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: .notice) }
+    return subjectExtra.map { examExtraLabel(hasNotice: $0 == .notice, document: document) }
       ?? subject
   }
 }

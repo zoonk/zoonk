@@ -7422,6 +7422,38 @@
         }
       }
     },
+    "%lld of %lld lessons" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%1$lld of %arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%1$lld of %arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld of %lld lessons done" : {
       "comment" : "Spoken on a started chapter, before its title",
       "localizations" : {
@@ -19084,6 +19116,8 @@
         }
       }
     },
+    "Exam strategy added to your plan." : {},
+    "Exam strategy isn't in your plan." : {},
     "Examples only" : {
       "comment" : "A tool learned with examples",
       "localizations" : {
@@ -30811,9 +30845,7 @@
         }
       }
     },
-    "Study exam strategy too?" : {
-      "comment" : "Offers the exam's optional strategy lessons, which fit the learner's time"
-    },
+    "Study exam strategy too?" : {},
     "Study longer each day or pick a later date." : {
       "comment" : "Under the Plan's notice when the plan has more lessons than days left",
       "localizations" : {
@@ -31528,6 +31560,7 @@
         }
       }
     },
+    "Take exam strategy out of your plan?" : {},
     "Take the test and skip the chapter" : {
       "comment" : "What the chapter's test-out does",
       "localizations" : {

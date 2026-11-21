@@ -624,9 +624,7 @@ struct PlanSuggestionSection: View {
   }
 
   private var extraTitle: Text {
-    Text(
-      "Study exam strategy too?", tableName: "Plan",
-      comment: "Offers the exam's optional strategy lessons, which fit the learner's time")
+    Text("Study exam strategy too?", tableName: "Plan")
   }
 
   /// "15 lessons · Not in the official guide".

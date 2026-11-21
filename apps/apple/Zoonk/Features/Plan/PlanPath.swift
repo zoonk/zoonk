@@ -776,8 +776,9 @@ struct SyllabusSubjectRow: View {
   private static let questionsFrom: CGFloat = 672
 
   var body: some View {
-    // The exam doesn't test its optional study, so its row counts lessons instead of preparation.
-    let share = isExam && !subject.isExtra ? (subject.preparation ?? 0) : subject.lessonShare
+    let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
+    // The exam doesn't test its optional study, so its row counts lessons where others measure.
+    let measured = subject.notPlannedReason == nil && !subject.isExtra
     let isWide = !isStacked && width >= Self.barBesideFrom
 
     // The bar is part of the row's words, so the share centers on the row with the chevron the
@@ -794,7 +795,7 @@ struct SyllabusSubjectRow: View {
               .frame(width: 104, alignment: .trailing)
           }
 
-          if subject.notPlannedReason == nil {
+          if measured {
             Meter(value: share, fill: .success)
               .frame(width: min(max(width * 0.3, 112), 224))
               .accessibilityHidden(true)
@@ -804,34 +805,24 @@ struct SyllabusSubjectRow: View {
         VStack(alignment: .leading, spacing: 6) {
           name
 
-          if subject.notPlannedReason == nil {
+          if measured {
             Meter(value: share, fill: .success)
               .accessibilityHidden(true)
           }
         }
       }
     } value: {
-      Group {
-        if subject.isExtra {
-          Text(
-            "\(subject.lessonsDone) of \(subject.lessonsTotal)", tableName: "Plan",
-            comment: "Lessons done of the exam's optional study, which the exam doesn't test"
-          )
-          .accessibilityLabel(
-            Text(
-              "\(subject.lessonsDone) of \(subject.lessonsTotal) lessons done", tableName: "Plan"))
-        } else {
-          Text(share, format: .percent.precision(.fractionLength(0)))
-        }
+      if !subject.isExtra {
+        // As wide as the widest share, so every subject's bar ends on one edge.
+        Text(share, format: .percent.precision(.fractionLength(0)))
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+          .frame(
+            minWidth: TypeStyle.data.width(
+              of: 1.0.formatted(.percent.precision(.fractionLength(0))),
+              dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
+            alignment: .trailing)
       }
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
-      // As wide as the widest share, so every subject's bar ends on one edge.
-      .frame(
-        minWidth: TypeStyle.data.width(
-          of: 1.0.formatted(.percent.precision(.fractionLength(0))),
-          dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
-        alignment: .trailing)
     }
     .onGeometryChange(for: CGFloat.self) {
       $0.size.width
@@ -852,6 +843,12 @@ struct SyllabusSubjectRow: View {
         .layoutPart(.label, text: Text(subject.shortName))
 
       AlsoInExams(exams: sharedExams)
+
+      if subject.isExtra {
+        Text("\(subject.lessonsDone) of \(subject.lessonsTotal) lessons", tableName: "Plan")
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
 
       if subject.notPlannedReason != nil {
         planOutsideReason(subject.notPlannedReason)

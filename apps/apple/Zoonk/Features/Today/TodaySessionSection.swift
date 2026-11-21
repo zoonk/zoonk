@@ -489,7 +489,9 @@ struct BlockRow: View {
       )
     }
 
-    return lineOverride ?? (showsDetail ? block.detail : block.label)
+    return lineOverride
+      ?? (showsDetail
+        ? block.detail : block.label(document: view?.goal.examDocument ?? .notice))
   }
 
   private var status: Text {
