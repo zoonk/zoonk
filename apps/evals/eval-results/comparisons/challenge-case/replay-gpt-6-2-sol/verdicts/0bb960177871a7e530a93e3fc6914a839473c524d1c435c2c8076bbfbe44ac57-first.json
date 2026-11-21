@@ -1,0 +1,198 @@
+{
+  "attempt": "first",
+  "costUsd": 0.01027649,
+  "failures": [
+    "Verdict does not cover the sealed criteria or outputs.",
+    "Missed the control bank defect."
+  ],
+  "packetId": "0bb960177871a7e530a93e3fc6914a839473c524d1c435c2c8076bbfbe44ac57",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are the same work case about judging a checkout A/B test, with the same team, decisions and mission, so the realism is equal.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The decision tree, meters, replies and time jump are identical in both outputs, so the choices carry the same weight.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The same three team members with the same roles, and the AI assistant is used the same way in both.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The debrief notes and practice lines are the same in both outputs.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give the same correct figures; the z-test and p-value in B and the p-value of about 0.005 in A check out against the counts.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "The learner is a beginner, but B uses hypothesis-test notation and formulas that are never explained, while A explains the same ideas in plain words with the right depth.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "A",
+            "reason": "A explains chance, sample size and p-values in everyday words; B opens with unexplained symbols and a formula, so a non-specialist would stop reading.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The opening message uses unexplained notation and test names (H₀, a two-proportion z-test, α, binomial sampling variance) before any plain idea is given, which a beginner cannot follow.",
+            "criterion": "plainLanguage",
+            "learnerCost": "A beginner who has never studied statistics stops at the first message and cannot follow why the gap might be chance.",
+            "location": {
+              "detail": "Opening data message",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The sample-size reply gives a formula with unexplained symbols (z, β, Δ, p₁, p₂) to a beginner, with no plain explanation of what it means.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The learner sees a formula they cannot use or explain, so the sample-size skill is lost.",
+            "location": {
+              "detail": "AI reply in the ask-ai choice",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The summary uses jargon (H₀, pre-specified α, type I error rate, ex ante) that a beginner would need explained before it is useful.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The closing takeaways do not stick because the key terms are unexplained.",
+            "location": {
+              "detail": "Summary list, first and second sentences",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": null,
+        "pairId": "7a278eb7-e363-48c3-b516-e8d124dc5c80"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both are the same kind of research work case, with a realistic lab handoff and a real choice about the next delay to test.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both offer several choices with real trade-offs between handoff reliability and bench capacity.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both have a lab physicist, a run coordinator and an AI assistant who is used sensibly.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both give specific notes that praise the strategy and name what to do instead.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "A",
+            "reason": "B's fitted-curve estimate of about 250 counts at 13 ns sits above the measured dots on both sides (230 at 12 ns, 240 at 14 ns), while A's readings and arithmetic are consistent with its panels.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are at the right beginner depth for plot reading, with terms like the truncated axis explained in the panels.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use short, everyday wording for the crop, the guide and the tick intervals.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The fitted-curve estimate at 13 ns is given as halfway between 240 and 260, i.e. about 250 counts. But 13 ns lies between the measured dots at 12 ns (230) and 14 ns (240), so a smooth guide through the dots would not sit at 250 there. The estimate is inconsistent with the measured points it is meant to follow.",
+            "criterion": "accuracy",
+            "learnerCost": "The learner reports a curve height that the measured dots do not support, and later steps build on that wrong estimate.",
+            "location": {
+              "detail": "Metric 'Curve at 13 ns' in the fitted curve panel",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's numbers and curve readings are consistent with the measured dots, while B's curve estimate contradicts them, so A teaches the reader the correct plot values."
+        },
+        "pairId": "c6083a6f-df50-4727-a02c-4d1b39a21ea0"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so realism is the same.",
+            "criterion": "realism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the decisions are the same.",
+            "criterion": "decisions"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the team is the same.",
+            "criterion": "team"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the debrief is the same.",
+            "criterion": "debrief"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so accuracy is the same.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so depth is the same.",
+            "criterion": "depth"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so plain language is the same.",
+            "criterion": "plainLanguage"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "d811d2f3-8ed7-4204-bd6e-1c7410d8ebd0"
+      }
+    ]
+  }
+}

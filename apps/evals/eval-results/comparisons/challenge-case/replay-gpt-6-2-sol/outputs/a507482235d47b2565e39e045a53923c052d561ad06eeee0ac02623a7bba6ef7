@@ -1,0 +1,535 @@
+{
+  "deadline": "{{lead}} locks the run queue at 3:30 p.m.",
+  "endings": [
+    {
+      "id": "trial",
+      "outcome": "The queue lists a trial at 150 ns, marked as the guide's estimate for reaching 1,000 counts/s. The detector still has to measure the rate there."
+    },
+    {
+      "id": "sides",
+      "outcome": "The queue lists 140 ns and 160 ns for readings on either side of the guide's crossing. The crossing itself isn't booked."
+    },
+    {
+      "id": "repeat",
+      "outcome": "The queue lists a repeat at 140 ns so the lab can compare it with the earlier reading. The guide's target crossing remains untested."
+    }
+  ],
+  "meters": [
+    {
+      "id": "handoff",
+      "label": "Reliability of the scan handoff",
+      "start": 42,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Room for other bench work",
+      "start": 76,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Write a handoff note from the detector scan and **choose the next delay to test near 1,000 counts/s**. Counts are detections recorded by the instrument.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": 18
+            },
+            {
+              "meter": "capacity",
+              "change": -8
+            }
+          ],
+          "id": "mark-tick",
+          "next": "compare",
+          "notes": [
+            {
+              "skill": "intervals",
+              "kind": "good",
+              "text": "You subtracted neighboring delay labels, then counted equal gaps from a known tick to recover the cut-off label.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "lab",
+              "text": "120 ns minus 100 ns gives 20 ns per gap. The right dot sits two gaps past 100 ns, at 140 ns."
+            },
+            {
+              "from": "lead",
+              "text": "I'll wait for the shared console while you mark it. With the label on the crop, the next shift can check it right there."
+            }
+          ],
+          "text": "Use the printed ticks to work out the delay and write it under the right dot.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": 7
+            },
+            {
+              "meter": "capacity",
+              "change": 6
+            }
+          ],
+          "id": "circle-dot",
+          "next": "compare",
+          "notes": [
+            {
+              "skill": "plot",
+              "kind": "good",
+              "text": "You pointed to a measured dot without assigning it a delay from the worksheet.",
+              "example": null
+            },
+            {
+              "skill": "plot",
+              "kind": "improve",
+              "text": "Name the scales and their units so the next shift knows what the crop shows. Include the dot's delay so the note can stand on its own.",
+              "example": "“The bottom scale shows delay in ns; the side scale shows detections in counts/s.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "lead",
+              "text": "That keeps the console free, and I can spot the reading right away with the crop open."
+            },
+            {
+              "from": "lab",
+              "text": "The circle tells me which dot you mean, but if I need its delay, I still have to open the scan and read across the bottom."
+            }
+          ],
+          "text": "Circle the right dot and refer to it as the right-hand reading in the attached crop.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 8
+            }
+          ],
+          "id": "use-plan",
+          "next": "compare",
+          "notes": [
+            {
+              "skill": "intervals",
+              "kind": "improve",
+              "text": "Use the spacing between the printed delay labels to fill in the missing tick instead of copying the planned setting.",
+              "example": "Subtract 100 ns from 120 ns, then count two equal gaps to the right of 100 ns."
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "lead",
+              "text": "130 ns is easy to find in the worksheet, and we don't have to tie up the console."
+            },
+            {
+              "from": "lab",
+              "text": "That label doesn't line up with the dot on the delay scale. The worksheet says what we planned, not what the detector scan shows."
+            }
+          ],
+          "text": "Use the worksheet's delay to label the right-hand reading so it matches the run plan.",
+          "timeJump": null
+        }
+      ],
+      "id": "label",
+      "messages": [
+        {
+          "from": "lab",
+          "text": "I can attach the crop to the handoff, but the label under the right dot got cut off. How should we refer to that reading?"
+        },
+        {
+          "from": "lead",
+          "text": "I've got the worksheet open. If we use the delay listed there, the next shift can search for it and I can keep the queue moving."
+        }
+      ],
+      "prompt": "How do you identify the right-hand reading in the handoff?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": -9
+            },
+            {
+              "meter": "capacity",
+              "change": 6
+            }
+          ],
+          "id": "use-heights",
+          "next": "queue",
+          "notes": [
+            {
+              "skill": "truncated",
+              "kind": "improve",
+              "text": "The crop starts at 900 counts/s, so twice the height above the bottom doesn't mean twice the rate. Read the numbered ticks to compare the rates.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "lead",
+              "text": "That's quick to put in the note, but on its own it sounds like the count rate doubled."
+            },
+            {
+              "from": "lab",
+              "text": "The right dot is twice as far above the bottom as the left. But the bottom starts at 900 counts/s, not zero."
+            }
+          ],
+          "text": "Write a quick comparison: the right-hand reading looks about twice as high as the left.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": 8
+            },
+            {
+              "meter": "capacity",
+              "change": 4
+            }
+          ],
+          "id": "report-threshold",
+          "next": "queue",
+          "notes": [
+            {
+              "skill": "points",
+              "kind": "good",
+              "text": "You used the measured dots to answer whether the target had been reached without guessing how much the rate changed.",
+              "example": null
+            },
+            {
+              "skill": "points",
+              "kind": "improve",
+              "text": "Add the count rate at each dot and the difference so the next shift can see how much the rate rose without reopening the scan.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "lead",
+              "text": "Neither measured dot reaches 1,000 counts/s. That's a short enough line to send as is."
+            },
+            {
+              "from": "lab",
+              "text": "That answers the target question. If the next shift wants to know how much the rate rose, they'll still need the scan."
+            }
+          ],
+          "text": "Put a short status line in the handoff saying whether either measured dot reached the target.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": 16
+            },
+            {
+              "meter": "capacity",
+              "change": -6
+            }
+          ],
+          "id": "check-dots",
+          "next": "queue",
+          "notes": [
+            {
+              "skill": "points",
+              "kind": "good",
+              "text": "You checked both count rates against the numbered ticks and used the difference between the readings to describe the change.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "From 900 counts/s, two gaps of 20 counts/s give 940 counts/s on the left and four give 980 counts/s on the right. That's a rise of 40 counts/s; neither dot reaches 1,000 counts/s."
+            },
+            {
+              "from": "lead",
+              "text": "I'll hold the queue entry while you check those numbers against the crop. With both rates in the note, I won't have to open the scan to see what changed."
+            }
+          ],
+          "text": "Have {{ai}} read both rates and subtract them, then check the numbers against the crop.",
+          "timeJump": null
+        }
+      ],
+      "id": "compare",
+      "messages": [
+        {
+          "from": "lab",
+          "text": "The handoff still needs a line about how the count rate changed from the left dot to the right."
+        },
+        {
+          "from": "lead",
+          "text": "The right dot looks a lot higher at a glance. Can we put that in a quick line people can read without opening the crop?"
+        }
+      ],
+      "prompt": "What do you put in the note about the two readings?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": -6
+            },
+            {
+              "meter": "capacity",
+              "change": 3
+            }
+          ],
+          "id": "repeat-dot",
+          "next": "repeat",
+          "notes": [
+            {
+              "skill": "curve",
+              "kind": "improve",
+              "text": "A repeat checks the earlier reading, but it leaves the target crossing untested. For a trial near the target, follow the target across to the guide and then down to the delay scale.",
+              "example": null
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "lead",
+              "text": "That gives us a repeat without adding a new delay to the queue. We'll use the slot at 140 ns, so we won't find out what happens at the crossing."
+            }
+          ],
+          "text": "Repeat the reading at 140 ns so we can compare it directly with the earlier one.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": 13
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "test-crossing",
+          "next": "trial",
+          "notes": [
+            {
+              "skill": "between",
+              "kind": "good",
+              "text": "You used the halfway position between 140 ns and 160 ns to estimate a delay that wasn't printed on a tick.",
+              "example": null
+            },
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You used the guide to choose a trial at 150 ns without writing down 1,000 counts/s as a measured result.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "lab",
+              "text": "Reading down from the crossing puts it about halfway across that gap: about 150 ns for 1,000 counts/s. That's where we'll test, not a rate we've measured there."
+            },
+            {
+              "from": "lead",
+              "text": "That uses just one slot. If the guide is off, this run won't give us readings on either side."
+            }
+          ],
+          "text": "Book a trial at 150 ns and mark it in the note as the guide's estimate.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "handoff",
+              "change": 8
+            },
+            {
+              "meter": "capacity",
+              "change": -14
+            }
+          ],
+          "id": "book-sides",
+          "next": "sides",
+          "notes": [
+            {
+              "skill": "curve",
+              "kind": "good",
+              "text": "You used the guide to pick settings on opposite sides of its crossing, where fresh measurements can help check the estimate.",
+              "example": null
+            },
+            {
+              "skill": "between",
+              "kind": "improve",
+              "text": "Booking the ticks on either side takes more bench time and leaves the crossing untested. For a direct trial, estimate where the crossing falls within the gap.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "lab",
+              "text": "Fresh readings at 140 ns and 160 ns will help if the guide is off. We still won't have a reading at the crossing itself."
+            },
+            {
+              "from": "lead",
+              "text": "I'll set aside a slot for each. That leaves less room for the rest of the bench work."
+            }
+          ],
+          "text": "Book readings at 140 ns and 160 ns to see what happens on either side of the crossing.",
+          "timeJump": null
+        }
+      ],
+      "id": "queue",
+      "messages": [
+        {
+          "from": "lab",
+          "text": "The planner's smooth guide is a line that shows how the rate might change. It crosses 1,000 counts/s about halfway between the 140 ns and 160 ns ticks."
+        },
+        {
+          "from": "lab",
+          "text": "There's no measured dot at the crossing or at 160 ns. I'd like fresh readings on both sides in case the guide is off."
+        },
+        {
+          "from": "lead",
+          "text": "The planner offers 140 ns as the closest setting we've already measured. Each setting we book needs a fresh reading, so I want to leave room for the other bench work."
+        }
+      ],
+      "prompt": "What do you put in the run queue?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Delay scan: horizontal crop",
+      "metrics": [
+        {
+          "label": "Neighboring delay labels",
+          "value": "100 ns and 120 ns",
+          "note": "The tick gaps are evenly spaced."
+        },
+        {
+          "label": "Left dot",
+          "value": "100 ns",
+          "note": null
+        },
+        {
+          "label": "Right dot",
+          "value": "two tick gaps to its right",
+          "note": "The label under the right dot is outside the crop."
+        },
+        {
+          "label": "Pre-run plan: right-hand reading",
+          "value": "130 ns",
+          "note": null
+        }
+      ],
+      "note": "Delay is measured in ns, short for nanoseconds."
+    },
+    {
+      "title": "Delay scan: vertical crop",
+      "metrics": [
+        {
+          "label": "Bottom tick",
+          "value": "900 counts/s",
+          "note": null
+        },
+        {
+          "label": "Next tick up",
+          "value": "920 counts/s",
+          "note": "The tick gaps are evenly spaced."
+        },
+        {
+          "label": "Dot positions above the bottom",
+          "value": "two gaps left; four gaps right",
+          "note": "These are measured dots."
+        },
+        {
+          "label": "Next-test target",
+          "value": "1,000 counts/s",
+          "note": null
+        }
+      ],
+      "note": null
+    }
+  ],
+  "setting": "Afternoon at Ternglass Photon Lab",
+  "skills": [
+    {
+      "id": "plot",
+      "name": "Read an experimental plot",
+      "practice": "Take a detector plot and write one sentence naming what each axis measures and the unit it uses."
+    },
+    {
+      "id": "between",
+      "name": "Estimate between axis ticks",
+      "practice": "Pick a mark between two labeled ticks and estimate its value from how far it sits across the gap."
+    },
+    {
+      "id": "points",
+      "name": "Read plotted data points",
+      "practice": "Pick two measured dots and write down the horizontal and vertical readings for each."
+    },
+    {
+      "id": "curve",
+      "name": "Estimate from a plotted curve",
+      "practice": "Find where a smooth guide reaches a target and write a sentence that labels the reading as an estimate."
+    },
+    {
+      "id": "truncated",
+      "name": "Read a truncated axis",
+      "practice": "Read two dots on a plot whose vertical axis starts above zero and compare their values using the tick labels instead of their heights above the bottom."
+    },
+    {
+      "id": "intervals",
+      "name": "Interpret axis intervals",
+      "practice": "Subtract the values on neighboring tick labels, then use that step to fill in one missing tick label."
+    }
+  ],
+  "startNodeId": "label",
+  "summary": [
+    "On an evenly spaced scale, the difference between neighboring tick labels tells you the value of each gap.",
+    "When a plot starts above zero, compare the readings on the numbered scale rather than the dots' heights above the bottom.",
+    "A value read from a smooth guide is an estimate, not a measurement."
+  ],
+  "team": [
+    {
+      "id": "lab",
+      "role": "Experimental physicist",
+      "expertise": "She knows how the scan display separates measured dots from the smooth guide and wants the handoff to preserve that difference.",
+      "ai": false
+    },
+    {
+      "id": "lead",
+      "role": "Run coordinator",
+      "expertise": "He needs a delay to put in the queue and wants to leave room for the lab's other measurements.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Reads tick positions and checks arithmetic when you ask, but does not choose or authorize a run.",
+      "ai": true
+    }
+  ],
+  "title": "Which delay should the photon lab test next?"
+}

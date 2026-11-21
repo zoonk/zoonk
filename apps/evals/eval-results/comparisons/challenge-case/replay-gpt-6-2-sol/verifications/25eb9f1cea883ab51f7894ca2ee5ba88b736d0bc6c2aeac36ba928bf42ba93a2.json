@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-quantum-what-if",
+        "claimId": "06374b9c66d5b1d2",
+        "criterion": "accuracy",
+        "observationId": "4c825179643ed78630eb783f07265c5c146e14bc0e094fb01e0e63b876e000ba.first.0d632f0d-7769-40ad-891b-0250953cf363.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0019295,
+    "id": "25eb9f1cea883ab51f7894ca2ee5ba88b736d0bc6c2aeac36ba928bf42ba93a2",
+    "packet": [
+      {
+        "A": {
+          "blob": "92dc278b451999e633b45b54164b7a25afcbd07154fc6595af9d73f672877022",
+          "format": "text"
+        },
+        "B": {
+          "blob": "b3c8759f8f7482113865a9c2e0f99d471c12c8aa4243dc446f9e1e6d718b60f0",
+          "format": "text"
+        },
+        "claim": "The scene says that at high brightness the device cannot follow individual arrivals. This teaches a false rule: brightness changes how many arrivals come per time, not whether single arrivals can be seen. It conflicts with the packet idea the case is teaching.",
+        "claimId": "06374b9c66d5b1d2",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "b988a3da3693b6f6213e55ba521a8a447e0a2b6a20b9f1a7714bba1d1900038f",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3b8fb6a2871d25ac10cd210f03e8693c3749b2155d3b8f950a38b131ac5ed952",
+          "format": "json"
+        },
+        "location": {
+          "detail": "ending outcome for the waves ending",
+          "kind": "quote"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "37fc9032b6a781173784f6a7122068f733fcac82c532eae18b6210bac0ff8cfb",
+          "format": "text"
+        },
+        "B": {
+          "blob": "3375a362652438876dc7a7431cd23cf24ae94b22bf29028cf27db1b58e16d782",
+          "format": "text"
+        },
+        "claim": "O gerente explica a margem usando o termo 'EBITDA' sem dizer o que é.",
+        "claimId": "d7f7870e02b6af4a",
+        "criterion": "plainLanguage",
+        "expectations": {
+          "blob": "171010d4e2a0036178435c6f8ae5757f41e989e20c181c5191d544211b2e7105",
+          "format": "text"
+        },
+        "input": {
+          "blob": "90ce05c2dad0821ab0f55c288900f5f0d04531efec59bc63a15bbaee6b05cca4",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "06374b9c66d5b1d2",
+          "finding": "doesn't hold",
+          "reason": "A diz que, naquele brilho forte, o aparelho não permite acompanhar chegadas separadamente; isso descreve uma limitação do aparelho, não uma regra de que a luz deixa de chegar em pacotes. B não faz essa afirmação sobre brilho forte."
+        },
+        {
+          "claimId": "d7f7870e02b6af4a",
+          "finding": "doesn't hold",
+          "reason": "Não há uso de “EBITDA” em A. A margem é explicada como a sobra após o custo dividida pelo preço de venda; B também não usa esse termo."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

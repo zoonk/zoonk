@@ -15,6 +15,13 @@ export const coverageCheckTask: Task<
   generate: checkCoverage,
   id: "coverage-check",
   name: "Coverage check",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code adds missing skills and exam weights to the graph",
+    reason: "A gap in an exam's graph reaches every learner of the exam",
+    waits: "A learner waits on a goal's curriculum; exam repairs run in the background",
+  },
   score: scoreCoverageCheck,
   testCases: TEST_CASES,
 };

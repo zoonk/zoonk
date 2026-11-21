@@ -1,0 +1,17 @@
+{
+  "caseId": "pt-quantum-what-if",
+  "challenger": {
+    "costUsd": 0.07886,
+    "durationMs": 80809.80599999998,
+    "hash": "d477508c93e24ed3ff91adecd3b012e67b843697086e9ad08d0ab3cb3138e92f",
+    "userPromptHash": "c2cafd516470c1c57946ed7b9348ed6d8ccf1a940634ed31d23b95ca584cc0e7"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.08712660000000001,
+    "durationMs": 139919.079375,
+    "hash": "750cbf99cfce9b53a22ae0a9b17e818d9ffb0a4882dce592427a5f6d2b14de86",
+    "userPromptHash": "c2cafd516470c1c57946ed7b9348ed6d8ccf1a940634ed31d23b95ca584cc0e7"
+  },
+  "run": 2
+}

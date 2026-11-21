@@ -1,0 +1,324 @@
+{
+  "screens": [
+    {
+      "kind": "hookText",
+      "text": "Two vials hold tiny crystals of the same material, cadmium selenide. Under a UV lamp, the 2 nm crystals glow blue and the 6 nm crystals glow red. How can size alone set the color of the light?",
+      "image": {
+        "prompt": "A row of five small glass vials on a dark lab bench under UV light, each glowing a different color from blue on the left through green, yellow and orange to red on the right. Each vial has a small label with the crystal diameter: 2 nm, 3 nm, 4 nm, 5 nm, 6 nm.",
+        "alt": "Five glowing vials in a row, from blue at 2 nm through green, yellow and orange to red at 6 nm."
+      },
+      "visual": null
+    },
+    {
+      "kind": "explanation",
+      "title": "A box with infinite walls",
+      "text": "Inside a box from $x = 0$ to $x = L$, the particle feels no force: $V = 0$. Outside, $V = \\infty$, so it can never be there and $\\psi = 0$. Because $\\psi$ must be continuous, it has to reach zero at both walls: $\\psi(0) = 0$ and $\\psi(L) = 0$, like a guitar string pinned at both ends. These are the **boundary conditions**.",
+      "exampleLineIdea": null,
+      "image": {
+        "prompt": "Physics diagram of a potential well: a flat horizontal floor labeled V = 0 running from x = 0 to x = L, with two infinitely tall vertical walls at each end. Outside the walls the label ψ = 0. Two dots mark pinned points at x = 0 and x = L on the floor. Clean white background, dark lines.",
+        "alt": "A flat floor from 0 to L between two infinitely tall walls, with ψ = 0 outside and dots pinning the wave at both walls."
+      },
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "explanation",
+      "title": "The wave inside the box",
+      "text": "Inside, with $V = 0$, the Schrödinger equation becomes $-\\frac{\\hbar^2}{2m}\\psi'' = E\\psi$, or $\\psi'' = -k^2\\psi$ with $k = \\sqrt{2mE}/\\hbar$. Its solutions oscillate like a vibrating string: $\\psi(x) = A\\sin kx + B\\cos kx$. Here $k$ is the **wavenumber**, $2\\pi$ divided by the wavelength.",
+      "exampleLineIdea": null,
+      "image": null,
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "check",
+      "context": "Inside the box, $\\psi(x) = A\\sin kx + B\\cos kx$.",
+      "question": "What does the condition $\\psi(0) = 0$ do to this wave?",
+      "options": [
+        {
+          "text": "It forces $B = 0$, so only the sine term survives.",
+          "isCorrect": true,
+          "reason": "At $x = 0$, $\\sin 0 = 0$ but $\\cos 0 = 1$, so $\\psi(0) = B$. Setting that to zero forces $B = 0$.",
+          "picture": null
+        },
+        {
+          "text": "It forces $A = 0$, so the cosine survives because it's largest at 0.",
+          "isCorrect": false,
+          "reason": "Being largest at 0 is exactly the cosine's problem: $\\cos 0 = 1$ makes $\\psi(0) = B$, which must be zero. So $B = 0$ and the cosine is the term that goes.",
+          "picture": null
+        },
+        {
+          "text": "It forces $k = 0$, so the wave is a constant.",
+          "isCorrect": false,
+          "reason": "With $k = 0$ you'd still have $\\psi(0) = B$, which must vanish, leaving $\\psi = 0$ everywhere. The condition fixes $B$, not $k$.",
+          "picture": null
+        },
+        {
+          "text": "Nothing yet, since both terms are already zero at $x = 0$.",
+          "isCorrect": false,
+          "reason": "Only the sine is zero at $x = 0$. The cosine equals 1 there, so the condition pins down $B$.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 2,
+        "quote": "Because $\\psi$ must be continuous, it has to reach zero at both walls: $\\psi(0) = 0$ and $\\psi(L) = 0$, like a guitar string pinned at both ends."
+      }
+    },
+    {
+      "kind": "workedExample",
+      "title": "Pinning the far wall",
+      "problem": "With $B = 0$, the wave is $\\psi = A\\sin kx$. Apply $\\psi(L) = 0$ and find which energies the particle can have.",
+      "steps": [
+        {
+          "text": "At $x = L$ the wave must vanish. $A$ can't be zero, or there would be no particle at all, so the sine itself must be zero.",
+          "math": "A\\sin kL = 0 \\;\\Rightarrow\\; \\sin kL = 0"
+        },
+        {
+          "text": "Sine is zero only at whole multiples of $\\pi$, so $kL$ must be one of them. Only these evenly spaced wavenumbers fit.",
+          "math": "k_n = \\frac{n\\pi}{L}"
+        },
+        {
+          "text": "If $n = 0$, then $k = 0$ and $\\psi$ is zero everywhere, so there's no particle. A negative $n$ only flips the sign of $\\psi$, which is the same state. That leaves $n = 1, 2, 3, \\dots$",
+          "math": "n = 1, 2, 3, \\dots"
+        },
+        {
+          "text": "Solve $k = \\sqrt{2mE}/\\hbar$ for the energy and put in each allowed $k_n$.",
+          "math": "E_n = \\frac{\\hbar^2 k_n^2}{2m} = \\frac{n^2\\pi^2\\hbar^2}{2mL^2}"
+        },
+        {
+          "text": "Since $\\hbar = h/2\\pi$, the factor $\\pi^2\\hbar^2$ becomes $h^2/4$.",
+          "math": "E_n = \\frac{n^2 h^2}{8mL^2}"
+        }
+      ],
+      "result": "Only energies $E_n = n^2h^2/(8mL^2)$ are allowed, so energy comes in steps that shrink as $1/L^2$ when the box widens. The lowest, $E_1$, is never zero. This is called the **zero-point energy**.",
+      "image": {
+        "prompt": "A clean derivation column on white: lines reading A sin kL = 0, then sin kL = 0 highlighted in a yellow box, then k_n = nπ/L. Below it, a horizontal k axis with evenly spaced dots labeled π/L, 2π/L, 3π/L, 4π/L.",
+        "alt": "A short derivation with sin kL = 0 highlighted, above a k axis with evenly spaced dots at π/L, 2π/L, 3π/L and 4π/L."
+      },
+      "visual": null
+    },
+    {
+      "kind": "check",
+      "context": "Owen says the lowest state of the box is $n = 0$: then $k = 0$, so $E = 0$ and the particle simply sits still.",
+      "question": "What's wrong with Owen's claim?",
+      "options": [
+        {
+          "text": "With $n = 0$, $\\psi$ is zero everywhere, so there's no particle. The lowest state is $n = 1$, with $E_1 > 0$.",
+          "isCorrect": true,
+          "reason": "$\\sin(0 \\cdot x) = 0$ for every $x$, so the state describes nothing. The real ground state is $n = 1$, and its energy is above zero.",
+          "picture": null
+        },
+        {
+          "text": "Nothing. $n = 0$ is the ground state, and its energy is zero.",
+          "isCorrect": false,
+          "reason": "A zero-energy particle at rest sounds natural from classical physics. But $n = 0$ makes $\\psi$ vanish everywhere, so it isn't a state, and the trapped particle always keeps $E_1 > 0$.",
+          "picture": null
+        },
+        {
+          "text": "$n = 0$ is the same state as $n = 1$ with its sign flipped.",
+          "isCorrect": false,
+          "reason": "A sign flip relates $n$ and $-n$, not $0$ and $1$. The state $n = 0$ is dropped because its wave is zero everywhere.",
+          "picture": null
+        },
+        {
+          "text": "$n = 0$ is allowed, but its energy turns out negative.",
+          "isCorrect": false,
+          "reason": "$E_n = n^2h^2/(8mL^2)$ can't be negative. $n = 0$ is dropped because its wave vanishes, not because of its energy.",
+          "picture": null
+        }
+      ],
+      "image": null,
+      "visual": null,
+      "basis": {
+        "screen": 5,
+        "quote": "If $n = 0$, then $k = 0$ and $\\psi$ is zero everywhere, so there's no particle."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Standing waves in the box",
+      "text": "The particle must be somewhere in the box, so $\\int_0^L |\\psi|^2\\,dx = 1$. That fixes $A = \\sqrt{2/L}$: $\\psi_n(x) = \\sqrt{2/L}\\,\\sin(n\\pi x/L)$. Each $\\psi_n$ fits $n$ half-wavelengths into $L$, so it crosses zero $n - 1$ times inside. Those points are **nodes**. Energies climb as $n^2$: $E_1, 4E_1, 9E_1, 16E_1$.",
+      "exampleLineIdea": null,
+      "image": {
+        "prompt": "Energy ladder diagram inside a box from 0 to L: four horizontal rungs spaced unevenly, labeled E_1, 4E_1, 9E_1, 16E_1 from bottom to top. On each rung a sine wave: one half-wave on E_1, two on 4E_1, three on 9E_1, four on 16E_1, with small dots marking the interior zero crossings.",
+        "alt": "Four energy rungs at E_1, 4E_1, 9E_1 and 16E_1, each with a wave of one to four half-waves and its interior nodes dotted."
+      },
+      "visual": null,
+      "explore": null
+    },
+    {
+      "kind": "activity",
+      "template": "formulaModel",
+      "content": "{\"template\":\"formulaModel\",\"prompt\":\"Step n from 1 to 6 and watch how the wave, its probability and its energy change.\",\"fields\":{\"title\":\"Particle in a box\",\"variables\":[{\"name\":\"n\",\"label\":\"Quantum number n\",\"min\":1,\"max\":6,\"step\":1,\"initial\":1},{\"name\":\"x\",\"label\":\"Position x/L\",\"min\":0,\"max\":1,\"step\":0.01,\"initial\":0.5}],\"outputs\":[{\"id\":\"psi\",\"label\":\"ψ_n(x) × √L\",\"formula\":\"sqrt(2)*sin(n*pi*x)\"},{\"id\":\"prob\",\"label\":\"|ψ_n(x)|² × L\",\"formula\":\"2*sin(n*pi*x)^2\"},{\"id\":\"ratio\",\"label\":\"E_n / E_1\",\"formula\":\"n^2\"}],\"plot\":{\"x\":\"x\",\"y\":\"psi\"}},\"check\":{\"kind\":\"choice\",\"question\":\"Count the nodes of ψ_4 inside the box, and compare E_3 with E_1. Which is right?\",\"options\":[{\"id\":\"a\",\"text\":\"ψ_4 has 3 nodes, and E_3 = 9E_1.\",\"isCorrect\":true,\"reason\":\"ψ_4 fits four half-waves, which meet at 3 interior points. Energy grows as n², so E_3 = 3² E_1 = 9E_1.\"},{\"id\":\"b\",\"text\":\"ψ_4 has 4 nodes, and E_3 = 9E_1.\",\"isCorrect\":false,\"reason\":\"The energy is right, but the zeros at the walls don't count as interior nodes. Four half-waves meet at only 3 points inside.\"},{\"id\":\"c\",\"text\":\"ψ_4 has 3 nodes, and E_3 = 3E_1.\",\"isCorrect\":false,\"reason\":\"The node count is right, but energy grows as n², not n. So E_3 = 9E_1.\"},{\"id\":\"d\",\"text\":\"ψ_4 has 5 nodes, and E_3 = 3E_1.\",\"isCorrect\":false,\"reason\":\"Counting both walls gives 5 zeros, but only 3 sit inside. And energy grows as n², so E_3 = 9E_1.\"}]}}"
+    },
+    {
+      "kind": "workedExample",
+      "title": "An electron in a 1 nm box",
+      "problem": "An electron is trapped in a box with $L = 1.0$ nm. Find $E_1$ and $E_2$, and the wavelength of the photon it emits when it drops from $n = 2$ to $n = 1$.",
+      "steps": [
+        {
+          "text": "Put Planck's constant, the electron's mass and $L = 1.0 \\times 10^{-9}$ m into the formula with $n = 1$.",
+          "math": "E_1 = \\frac{(6.626\\times10^{-34})^2}{8\\,(9.109\\times10^{-31})(1.0\\times10^{-9})^2} \\approx 6.0\\times10^{-20}\\ \\text{J}"
+        },
+        {
+          "text": "Divide by the charge of an electron to convert joules to electronvolts.",
+          "math": "E_1 \\approx \\frac{6.0\\times10^{-20}}{1.602\\times10^{-19}} \\approx 0.38\\ \\text{eV}"
+        },
+        {
+          "text": "The next level is $n = 2$, and energy grows as $n^2$, so it's four times higher.",
+          "math": "E_2 = 4E_1 \\approx 1.50\\ \\text{eV}"
+        },
+        {
+          "text": "The photon carries away the gap between the two levels.",
+          "math": "\\Delta E = E_2 - E_1 = 3E_1 \\approx 1.13\\ \\text{eV}"
+        },
+        {
+          "text": "Turn that energy into a wavelength with $\\lambda = hc/\\Delta E$, using $hc \\approx 1240$ eV·nm.",
+          "math": "\\lambda \\approx \\frac{1240\\ \\text{eV·nm}}{1.13\\ \\text{eV}} \\approx 1100\\ \\text{nm}"
+        }
+      ],
+      "result": "$E_1 \\approx 0.38$ eV and $E_2 \\approx 1.50$ eV, and the photon has $\\lambda \\approx 1100$ nm: just past red, in the near infrared.",
+      "image": null,
+      "visual": null
+    },
+    {
+      "kind": "mathCheck",
+      "context": "An electron in a box with $L = {L0}$ nm has $E_1 \\approx {E0}$ eV. Now the same electron is squeezed into a narrower box with $L = {L}$ nm.",
+      "question": "What is $E_1$ in the narrower box, in eV?",
+      "math": {
+        "variables": [
+          {
+            "name": "E0",
+            "value": 0.38,
+            "min": 0.38,
+            "max": 0.38,
+            "step": 0.01,
+            "unit": "eV"
+          },
+          {
+            "name": "L0",
+            "value": 1,
+            "min": 1,
+            "max": 1,
+            "step": 0.1,
+            "unit": "nm"
+          },
+          {
+            "name": "L",
+            "value": 0.5,
+            "min": 0.25,
+            "max": 0.8,
+            "step": 0.05,
+            "unit": "nm"
+          }
+        ],
+        "solution": "round(E0 * (L0 / L)^2, 2)",
+        "answer": 1.52,
+        "unit": "eV",
+        "tolerance": {
+          "kind": "absolute",
+          "value": 0.005
+        },
+        "steps": [
+          {
+            "text": "Energy goes as $1/L^2$, so first find how many times narrower the box is: {result}.",
+            "expression": "L0 / L"
+          },
+          {
+            "text": "Square that ratio to get the energy factor: {result}.",
+            "expression": "(L0 / L)^2"
+          },
+          {
+            "text": "Multiply the old energy by that factor: $E_1 \\approx$ {result} eV.",
+            "expression": "round(E0 * (L0 / L)^2, 2)"
+          }
+        ],
+        "commonMistakes": [
+          {
+            "expression": "round(E0 * L0 / L, 2)",
+            "misconception": "Scaling energy as 1/L",
+            "reason": "You divided by the width once, but $E_n = n^2h^2/(8mL^2)$ has $L$ squared, so the ratio must be squared too."
+          },
+          {
+            "expression": "round(E0 * L / L0, 2)",
+            "misconception": "Scaling energy in proportion to L",
+            "reason": "You made the energy drop as the box shrinks. Confinement works the other way: a narrower box raises the energy."
+          },
+          {
+            "expression": "round(E0 * (L / L0)^2, 2)",
+            "misconception": "Scaling energy as L squared",
+            "reason": "You squared the ratio but flipped it. Energy goes as $1/L^2$, so a narrower box multiplies it by $(L_0/L)^2$."
+          }
+        ]
+      },
+      "correctReason": "Energy goes as $1/L^2$, so going from {L0} nm to {L} nm multiplies {E0} eV by $({L0}/{L})^2$.",
+      "image": null,
+      "basis": {
+        "screen": 5,
+        "quote": "Only energies $E_n = n^2h^2/(8mL^2)$ are allowed, so energy comes in steps that shrink as $1/L^2$ when the box widens."
+      }
+    },
+    {
+      "kind": "check",
+      "context": "QLED TVs make their red and green light with tiny cadmium selenide crystals. Model each crystal as a particle in a box, so its confinement energy goes as $1/L^2$. A 6 nm crystal glows red.",
+      "question": "How does the confinement energy of a 3 nm crystal compare, and what happens to its color?",
+      "options": [
+        {
+          "text": "It's 4 times larger, so its photons carry more energy and the light is bluer.",
+          "isCorrect": true,
+          "reason": "Halving $L$ multiplies $1/L^2$ by $2^2 = 4$. Wider level gaps mean higher-energy photons, which have shorter, bluer wavelengths.",
+          "picture": null
+        },
+        {
+          "text": "It's 2 times larger, so its photons carry more energy and the light is bluer.",
+          "isCorrect": false,
+          "reason": "The color shift is right, but the energy goes as $1/L^2$, not $1/L$. Halving $L$ gives a factor of 4.",
+          "picture": null
+        },
+        {
+          "text": "It's 4 times larger, so the light shifts further toward red.",
+          "isCorrect": false,
+          "reason": "The factor is right, but more energy per photon means a shorter wavelength, $\\lambda = hc/\\Delta E$. That's bluer, not redder.",
+          "picture": null
+        },
+        {
+          "text": "It's the same, because both crystals are made of the same material.",
+          "isCorrect": false,
+          "reason": "Same material, but the box size sets the levels. Confinement energy goes as $1/L^2$, so a smaller crystal has wider gaps.",
+          "picture": null
+        }
+      ],
+      "image": {
+        "prompt": "Two energy ladders side by side on white, drawn to the same scale. Left, labeled 6 nm: closely spaced rungs with a red downward arrow between the two lowest. Right, labeled 3 nm: rungs four times farther apart with a longer blue downward arrow between the two lowest.",
+        "alt": "Two energy ladders: the 6 nm one has close rungs and a short red arrow; the 3 nm one has wider gaps and a long blue arrow.",
+        "parts": null
+      },
+      "visual": null,
+      "basis": null
+    }
+  ],
+  "summary": {
+    "ideas": [
+      {
+        "label": "Boundary conditions",
+        "text": "The infinite walls force $\\psi(0) = 0$ and $\\psi(L) = 0$, which keeps only the sine and allows only wavenumbers $k_n = n\\pi/L$."
+      },
+      {
+        "label": "Energy levels E_n",
+        "text": "A particle in a box can only have energies $E_n = n^2h^2/(8mL^2)$, which grow as $n^2$ and shrink as $1/L^2$ when the box widens."
+      },
+      {
+        "label": "Zero-point energy",
+        "text": "The lowest state of the box is $n = 1$ with $E_1 > 0$, because $n = 0$ would make $\\psi$ zero everywhere."
+      },
+      {
+        "label": "Standing waves and nodes",
+        "text": "Each state $\\psi_n = \\sqrt{2/L}\\,\\sin(n\\pi x/L)$ fits $n$ half-wavelengths into the box and has $n - 1$ nodes inside."
+      }
+    ],
+    "shape": "hub"
+  }
+}

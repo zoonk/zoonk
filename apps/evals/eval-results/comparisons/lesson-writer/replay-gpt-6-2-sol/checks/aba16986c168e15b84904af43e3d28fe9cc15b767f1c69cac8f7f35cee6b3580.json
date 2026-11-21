@@ -1,0 +1,10 @@
+{
+  "caseId": "en-ux-goals-spot-ai",
+  "costUsd": 0,
+  "name": "code checks",
+  "passed": 6,
+  "problems": [],
+  "run": 1,
+  "side": "incumbent",
+  "total": 6
+}

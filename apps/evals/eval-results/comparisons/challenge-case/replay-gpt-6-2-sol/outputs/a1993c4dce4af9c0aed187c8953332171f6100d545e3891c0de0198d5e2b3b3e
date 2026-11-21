@@ -1,0 +1,583 @@
+{
+  "deadline": "Friday's email copy lock with {{email}}.",
+  "endings": [
+    {
+      "id": "tested-switch",
+      "outcome": "{{email}} locks the new wording. The handoff says instruction opens were 20% with the old button and 26% with the new one, and the gap cleared the agreed check; it makes no claim about completed pickups."
+    },
+    {
+      "id": "precision-hold",
+      "outcome": "{{email}} locks the old wording for Friday and requests a tighter estimate. The observed gain of 6 percentage points cleared the agreed check, but the change doesn’t make this template."
+    },
+    {
+      "id": "evidence-hold",
+      "outcome": "{{email}} locks the old wording. The handoff says there wasn’t enough evidence to switch, not that the buttons work equally well."
+    },
+    {
+      "id": "judgment-switch",
+      "outcome": "{{email}} locks the new wording as a copy choice. The template changes, but the team can’t report that the test confirmed a lift."
+    }
+  ],
+  "meters": [
+    {
+      "id": "support",
+      "label": "Evidence behind the recommendation",
+      "start": 35,
+      "goodWhen": "high"
+    },
+    {
+      "id": "capacity",
+      "label": "Room for other email work",
+      "start": 70,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "Use a fair comparison to **recommend which button goes in the Friday pickup email template**. The test measures whether shoppers open their pickup instructions, not whether they pick up their orders.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 20
+            },
+            {
+              "meter": "capacity",
+              "change": -19
+            }
+          ],
+          "id": "book-full",
+          "next": "full",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You booked the group size planned to give a 6-percentage-point lift a reasonable chance of being spotted, and set the end date before seeing the results.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "research",
+              "text": "Booked for Friday. This gives our hypothesis test a better shot at telling the lift we planned for from a gap that could show up by chance."
+            },
+            {
+              "from": "email",
+              "text": "Got it. I’ll leave those shoppers off the list for my other test."
+            }
+          ],
+          "text": "Book 800 per button for the full comparison and set the readout for Friday.",
+          "timeJump": {
+            "label": "Four days later",
+            "panel": {
+              "title": "Four days later",
+              "metrics": [
+                {
+                  "label": "Old button",
+                  "value": "20%",
+                  "note": "160 of 800 opened the instructions."
+                },
+                {
+                  "label": "New button",
+                  "value": "26%",
+                  "note": "208 of 800 opened the instructions."
+                },
+                {
+                  "label": "Gap in open rates",
+                  "value": "6 percentage points",
+                  "note": null
+                }
+              ],
+              "note": "The full comparison is ready before copy lock."
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 8
+            },
+            {
+              "meter": "capacity",
+              "change": 14
+            }
+          ],
+          "id": "book-pilot",
+          "next": "pilot",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You booked the smaller run for a concrete reason: it gave the team a Tuesday read and freed shoppers for the other test.",
+              "example": null
+            },
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "Use the short run for an early signal. If you need a reasonable chance of spotting the planned lift by Friday, book the full group up front, while those shoppers are still available.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "email",
+              "text": "Tuesday it is. I can use the rest of the list for the other test."
+            },
+            {
+              "from": "research",
+              "text": "We can still do a hypothesis test: check how often a gap like ours could show up by chance if the buttons work equally well. With fewer shoppers, a real lift is easier to miss."
+            }
+          ],
+          "text": "Book 200 per button for a Tuesday read and release the remaining shoppers.",
+          "timeJump": {
+            "label": "One day later",
+            "panel": {
+              "title": "One day later",
+              "metrics": [
+                {
+                  "label": "Old button",
+                  "value": "20%",
+                  "note": "40 of 200 opened the instructions."
+                },
+                {
+                  "label": "New button",
+                  "value": "26%",
+                  "note": "52 of 200 opened the instructions."
+                },
+                {
+                  "label": "Gap in open rates",
+                  "value": "6 percentage points",
+                  "note": null
+                }
+              ],
+              "note": "The short run is ready."
+            }
+          }
+        }
+      ],
+      "id": "book",
+      "messages": [
+        {
+          "from": "research",
+          "text": "Both versions are ready to send. I need the shopper count and the stop date on the calendar before either goes out."
+        },
+        {
+          "from": "email",
+          "text": "I’d take the Tuesday read. The other email test could use those shoppers, and I’d have time to draft before the Friday rush."
+        }
+      ],
+      "prompt": "How many shoppers do you book, and when do you end the run?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 4
+            },
+            {
+              "meter": "capacity",
+              "change": 6
+            }
+          ],
+          "id": "forward-gap",
+          "next": "unresolved",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The rates describe what happened, but matching the planning lift doesn’t tell you how unusual the gap is. Run the agreed chance check on the actual counts to see whether it clears the cutoff.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "email",
+              "text": "Thanks, that gives me a line for the draft. I can say the new button led, but I still don’t know whether the gap clears our rule."
+            }
+          ],
+          "text": "Send the open rates as a quick read so {{email}} can start the copy note.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 16
+            },
+            {
+              "meter": "capacity",
+              "change": -8
+            }
+          ],
+          "id": "check-full",
+          "next": "supported",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You asked for the counts as well as the result. That let the team verify the inputs and use the agreed 5% cutoff instead of treating the planning lift as a pass mark.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "I used 160 of 800 opens for the old button and 208 of 800 for the new one. If the real rates were equal, a gap this big or bigger in either direction would show up in about 0.4% of tests like this."
+            },
+            {
+              "from": "research",
+              "text": "I took a minute out of copy prep to match those counts to the readout. That’s below our 5% cutoff, so the gap clears the check."
+            }
+          ],
+          "text": "Ask {{ai}} to run the agreed chance check and show the shopper counts it used.",
+          "timeJump": null
+        }
+      ],
+      "id": "full",
+      "messages": [
+        {
+          "from": "research",
+          "text": "The full comparison is in, and the new wording got more shoppers to open the instructions."
+        },
+        {
+          "from": "email",
+          "text": "The gap is 6 percentage points, right where we planned. I could put that in the copy note and get back to the template."
+        }
+      ],
+      "prompt": "What do you do with the full readout?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 3
+            },
+            {
+              "meter": "capacity",
+              "change": 6
+            }
+          ],
+          "id": "log-pilot",
+          "next": "unresolved",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "You recorded which button led, but the size of the gap alone doesn’t tell you much about chance in a short run. Check the counts against the agreed cutoff so the team knows what the early read can support.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "email",
+              "text": "I’ve logged the lead and can get back to the other test. My note says which button was ahead, not how easily that gap could happen by chance."
+            }
+          ],
+          "text": "Send the gap as an early read for Friday and get back to the other test.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 12
+            },
+            {
+              "meter": "capacity",
+              "change": -8
+            }
+          ],
+          "id": "check-pilot",
+          "next": "unresolved",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You checked how often a gap this big could show up by chance in the short run. The result was above the cutoff, which means the run didn’t settle the question, not that the buttons work equally well.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "I used 40 of 200 opens for the old button and 52 of 200 for the new one. If the real rates were equal, a gap this big or bigger in either direction would show up in about 15.4% of tests like this."
+            },
+            {
+              "from": "research",
+              "text": "I used some of the time we freed up to check those counts. That’s above our 5% cutoff, so the short run didn’t settle it; it didn’t show the buttons are tied, either."
+            }
+          ],
+          "text": "Ask {{ai}} to run the agreed check on the short-run counts and compare it with the cutoff.",
+          "timeJump": null
+        }
+      ],
+      "id": "pilot",
+      "messages": [
+        {
+          "from": "research",
+          "text": "The short run is in, and the new button is ahead on opens. The rest of the shoppers are booked for the other test."
+        },
+        {
+          "from": "email",
+          "text": "A lead of 6 percentage points is what we were looking for. Can I put that in the draft while I’ve got it open?"
+        }
+      ],
+      "prompt": "What do you do with the short-run readout?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "capacity",
+              "change": -8
+            }
+          ],
+          "id": "wait-for-size",
+          "next": "precision-hold",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You treated the measured lift as an estimate rather than a number the email team could count on next time.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Separate the copy decision from the request for a tighter estimate. The evidence already supports trying this easy-to-undo wording change, even if the next send won’t show the same lift.",
+              "example": "“I’d switch the wording for Friday. More shoppers opened the instructions in the test, but we don’t know how big the lift will be next time.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "email",
+              "text": "I’ll lock the old wording and put in a request for another test. A tighter estimate would help with the next send, but we’re giving up this slot for a change that already cleared our rule."
+            }
+          ],
+          "text": "Keep the old wording for Friday and ask for a better estimate of the lift before switching.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 10
+            },
+            {
+              "meter": "capacity",
+              "change": -5
+            }
+          ],
+          "id": "recommend-new",
+          "next": "tested-switch",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You used the evidence to recommend the new wording without turning the lift in instruction opens into a forecast or a claim about completed pickups.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "email",
+              "text": "I’ll use the slot for the new wording. I can say more shoppers opened the instructions in the test, but I’ll leave out any promise about the next send or about pickups."
+            }
+          ],
+          "text": "Use the new wording and report the lift in instruction opens as what we saw in this test.",
+          "timeJump": null
+        }
+      ],
+      "id": "supported",
+      "messages": [
+        {
+          "from": "research",
+          "text": "The new button got more opens and the result cleared our check."
+        },
+        {
+          "from": "email",
+          "text": "I’d like a number I can reuse when we talk about the next send. I can keep the old wording at this lock if we want a tighter estimate."
+        }
+      ],
+      "prompt": "What do you recommend for the Friday template?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": -10
+            },
+            {
+              "meter": "capacity",
+              "change": 4
+            }
+          ],
+          "id": "editorial-switch",
+          "next": "judgment-switch",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "Calling it an editorial choice is honest, but using the observed lead to break the tie still lets an unsettled result drive the change. Keep the old wording if you’re making the call by the agreed test rule.",
+              "example": "“The new button led in the test, but we don’t have enough evidence to switch for Friday.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "email",
+              "text": "I can close out the copy now and mark it as an editorial call. We’re still betting on a lead that might just be chance, so I can’t report a lift."
+            }
+          ],
+          "text": "Use the new wording as a copy choice and let its lead in the readout break the tie.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "support",
+              "change": 7
+            }
+          ],
+          "id": "keep-old",
+          "next": "evidence-hold",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You gave {{email}} a clear decision for Friday without claiming the new button won or that the old button works just as well.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "email",
+              "text": "I’ll lock the old wording. We’re passing on a change that might help, but the note won’t make it sound like the buttons are tied."
+            }
+          ],
+          "text": "Keep the old wording for Friday and say the test hasn’t given us enough evidence to switch.",
+          "timeJump": null
+        }
+      ],
+      "id": "unresolved",
+      "messages": [
+        {
+          "from": "email",
+          "text": "I still need a button for Friday. I like the new wording, and it’s easy to swap back if we change our minds."
+        },
+        {
+          "from": "research",
+          "text": "What do you want the handoff to say about the test?"
+        }
+      ],
+      "prompt": "What button do you recommend for Friday, and how do you explain the call?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Pickup email test brief",
+      "metrics": [
+        {
+          "label": "Past open rate",
+          "value": "20%",
+          "note": "Share who opened their pickup instructions with the old button."
+        },
+        {
+          "label": "Lift used for planning",
+          "value": "6 percentage points",
+          "note": null
+        },
+        {
+          "label": "Chance of spotting that lift",
+          "value": "About 80%",
+          "note": "Planning goal if the lift is real."
+        },
+        {
+          "label": "Chance-check cutoff",
+          "value": "5%",
+          "note": "Counts gaps in either direction."
+        }
+      ],
+      "note": "Shoppers are assigned at random and count once. Only the button wording changes. The switch rule calls for a higher open rate and a result below the cutoff; the wording is easy to change back."
+    },
+    {
+      "title": "Traffic booking",
+      "metrics": [
+        {
+          "label": "Full comparison",
+          "value": "800 per button",
+          "note": "Results Friday before copy lock."
+        },
+        {
+          "label": "Short run",
+          "value": "200 per button",
+          "note": "Results Tuesday; remaining shoppers go to another test."
+        }
+      ],
+      "note": "Book on Monday before the emails go out."
+    }
+  ],
+  "setting": "Monday at Alder Cart",
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Tell a real difference from chance",
+      "practice": "For one test with a gap and a chance-check cutoff, decide whether the gap clears the cutoff and explain why."
+    },
+    {
+      "id": "sample",
+      "name": "Choose a sample size",
+      "practice": "Given two possible group sizes, explain which you would book to spot a worthwhile lift and when you would use the smaller group instead."
+    },
+    {
+      "id": "explain",
+      "name": "Explain a test result",
+      "practice": "Rewrite one test result for an email lead, saying what changed, what remains uncertain, and what you recommend."
+    }
+  ],
+  "startNodeId": "book",
+  "summary": [
+    "Choose the group size based on the lift you want a reasonable chance of spotting.",
+    "A chance check asks how often a gap at least as large as the one you saw would show up if there were no real difference.",
+    "Evidence that a change helps doesn’t tell you exactly how much it will help next time."
+  ],
+  "team": [
+    {
+      "id": "research",
+      "role": "Experiment analyst",
+      "expertise": "She builds the sample plans and wants the team to agree on when to stop before seeing any results.",
+      "ai": false
+    },
+    {
+      "id": "email",
+      "role": "Email lead",
+      "expertise": "He owns the template and wants to free shoppers for another email test without losing the Friday copy slot.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI assistant",
+      "expertise": "Runs the agreed chance check on request and shows which counts went into it; people make the rollout call.",
+      "ai": true
+    }
+  ],
+  "title": "Should the pickup email get a new button?"
+}

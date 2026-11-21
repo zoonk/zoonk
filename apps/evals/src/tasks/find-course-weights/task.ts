@@ -72,6 +72,13 @@ export const findCourseWeightsTask: Task<
   id: "find-course-weights",
   latencyBudget: { p50: 25, p95: 40 },
   name: "Find course weights",
+  priorities: {
+    distribution: "shared",
+    first: "quality",
+    reads: "Code records an exam's per-course weights for a goal",
+    reason: "Made-up weights mislead planning; stored weights are reused",
+    waits: "Code doesn't say",
+  },
   score: scoreCourseWeights,
   testCases: TEST_CASES,
 };

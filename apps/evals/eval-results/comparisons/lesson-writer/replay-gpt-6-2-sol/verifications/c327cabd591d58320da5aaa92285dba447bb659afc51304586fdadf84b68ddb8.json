@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-python-range-beginner",
+        "claimId": "b7f6c07569bab797",
+        "criterion": "accuracy",
+        "observationId": "d0a7d05e344a1af17904a4111d9c99a375caee5cbb5044a8903f73f2158342b7.first.805ae95d-a1bb-4d70-bbb9-439470d84711.0",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0022101499999999997,
+    "id": "c327cabd591d58320da5aaa92285dba447bb659afc51304586fdadf84b68ddb8",
+    "packet": [
+      {
+        "A": {
+          "blob": "4e67d095cec03a09469218be89cbd6dabafe6c66a170201efe07d887dc8e5377",
+          "format": "text"
+        },
+        "B": {
+          "blob": "0d5eb95e7dc7706d85432a9952901b6854bef112063de950a2fe5678d58bf1a1",
+          "format": "text"
+        },
+        "claim": "Both screen 2 (\"You always get stop minus start numbers\") and summary idea 3 (\"range() always gives stop minus start numbers\") state a false universal rule: it fails whenever range() counts down or uses a step other than 1, including screen 5's own range(10, 0, -1) where stop minus start is −10 instead of 10.",
+        "claimId": "b7f6c07569bab797",
+        "criterion": "accuracy",
+        "expectations": {
+          "blob": "b62b9ec879dc0e322eafdedc1cdf07692273dc072c79322e0d5c2a5af41670af",
+          "format": "text"
+        },
+        "input": {
+          "blob": "cf4ae41e751791e9472e3537fd4edad6f20c0aa13100797943d71efec6479def",
+          "format": "json"
+        },
+        "location": {
+          "detail": "screen 2 and summary idea 3",
+          "kind": "range"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "801f29debc2906f6a05501b2dc6a63f8fd83223532e07f6fc6e1237d01608e4c",
+          "format": "text"
+        },
+        "B": {
+          "blob": "cec205886ea79eb400d1a79f8a25c2df0d226d0c362917c1473b8cf3f11d585f",
+          "format": "text"
+        },
+        "claim": "Screen 5 introduces the term 'additive inverse' without explaining it.",
+        "claimId": "c34cd1ccc3e4ec3a",
+        "criterion": "clarity",
+        "expectations": {
+          "blob": "e190e9a7fa2596a84aa6612670c862dbbcf4d6da72efc6380caba19996b64036",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6c77ca9076af4610e9cc8095552ad06316859944b0943a3c2e1a5d1a07a22dff",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "b7f6c07569bab797",
+          "finding": "holds",
+          "reason": "Output B's screen 2 says \"You always get stop minus start numbers\" and summary idea 3 says \"range() always gives stop minus start numbers\". The rule is false for a negative step: range(10, 0, -1) prints 10 numbers, while stop minus start is -10, as the claim says. The claim is true of B and not of A, which contains neither sentence."
+        },
+        {
+          "claimId": "c34cd1ccc3e4ec3a",
+          "finding": "doesn't hold",
+          "reason": "The term \"additive inverse\" appears in neither output. Screen 5 of output A is a mathCheck and screen 5 of output B is also a mathCheck, so neither introduces the term at all."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

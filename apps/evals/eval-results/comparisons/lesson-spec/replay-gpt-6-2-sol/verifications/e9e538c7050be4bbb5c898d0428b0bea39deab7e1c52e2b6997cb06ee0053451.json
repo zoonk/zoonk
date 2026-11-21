@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-mapa-imperio-romano",
+        "claimId": "64f481335308e08e",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "e2123c26177fcb5d58b2ea3444f2181977a2dafb778ed14d0d1f09fa14512129.second.1a5d1cdb-43b9-4b39-a6fb-9d380e6caef5.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0019223999999999999,
+    "id": "e9e538c7050be4bbb5c898d0428b0bea39deab7e1c52e2b6997cb06ee0053451",
+    "packet": [
+      {
+        "A": {
+          "blob": "9bfe25c3d597a4a0603d9559ddfdb332ea000adb07a056c1f4d38a231c9e5c5d",
+          "format": "text"
+        },
+        "B": {
+          "blob": "27048c69db0f07205b295880f25056e1ac238dd437554462d90e882ed26efb46",
+          "format": "text"
+        },
+        "claim": "The check asks which team works outside Roman rule in 117 CE, but its picture shows London and Inverness with no Roman border drawn, so the answer cannot be read from the picture.",
+        "claimId": "64f481335308e08e",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "9f85471e06fe5e54cf42319005000e430f49b10ef344865829daed20c849f940",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6b1e640eeda1dcc69e4efb30ebff393dbb458337b8542728e8cc9c17040057bf",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Qual equipe trabalha num lugar que ficava fora do domínio romano em 117 d.C.?",
+          "kind": "quote"
+        },
+        "output": "B"
+      },
+      {
+        "A": {
+          "blob": "9b3bad9093df7c4a0d8fbefdf1a654f6af2cabbb57cf7f35af88ca0fc629cbca",
+          "format": "text"
+        },
+        "B": {
+          "blob": "17b996868cc68d812c2c0977cbf6a74bef1fc839f1a0458e44590417fe85de74",
+          "format": "text"
+        },
+        "claim": "The worked example on the hourly wage rising from $20 to $23 divides by $23 and reports a 13% increase.",
+        "claimId": "674eddc3b69ef6cf",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "e45cb01af39dbd0b54a1fa1323253091e3b616c86036f03a39949e6259d271b9",
+          "format": "text"
+        },
+        "input": {
+          "blob": "052fcd71d50eac45e016d75a7be87f80d33df62b3531889f95395966cf9c3309",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "64f481335308e08e",
+          "finding": "holds",
+          "reason": "A figura de B marca Londres e Inverness, mas não mostra a fronteira romana; portanto, ela sozinha não permite identificar qual local ficava fora do domínio. O texto do check informa a resposta, mas isso não torna a resposta legível na figura."
+        },
+        {
+          "claimId": "674eddc3b69ef6cf",
+          "finding": "doesn't hold",
+          "reason": "Em A e B, o exemplo calcula a diferença de $3 dividida pelo valor inicial de $20 (3 ÷ 20 = 0,15) e relata aumento de 15%. Nenhum dos dois divide por $23 nem relata 13%."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

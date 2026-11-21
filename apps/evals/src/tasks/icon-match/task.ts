@@ -31,6 +31,13 @@ export const iconMatchTask: Task<
   generate: matchLessonIcons,
   id: "icon-match",
   name: "Icon match",
+  priorities: {
+    distribution: "shared",
+    first: "cost",
+    reads: "Code picks a library icon or marks one to draw",
+    reason: "Code checks the answer; the cheapest at minimal reasoning",
+    waits: "Set by the caller, in lesson marking",
+  },
   score: scoreIconMatch,
   testCases: TEST_CASES,
 };

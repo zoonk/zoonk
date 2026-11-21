@@ -345,6 +345,34 @@ describe(generateSkillGraph, () => {
     );
   });
 
+  it("retains the opening frame prompt when a graph falls back to a whole draft", async () => {
+    vi.mocked(streamText).mockReset();
+
+    vi.mocked(streamText).mockImplementation(
+      ({ prompt }) =>
+        (typeof prompt === "string" && prompt.includes("SECTION: frame")
+          ? answer({ ...FRAME, sections: [] })
+          : answer(WHOLE_GRAPH)) as never,
+    );
+
+    const result = await generateSkillGraph({
+      examBlueprint: NOTICE,
+      goal: "Passar no concurso",
+      goalKind: "exam",
+      language: "pt",
+    });
+
+    const [first] = sentPrompts();
+
+    expect(first?.prompt).toContain("SECTION: frame");
+
+    expect(result).toMatchObject({
+      initialPrompt: { systemPrompt: first?.instructions, userPrompt: first?.prompt },
+    });
+
+    expect(result.userPrompt).not.toBe(first?.prompt);
+  });
+
   it("keeps a graph whose phase is titled like one of its skills instead of drafting it again", async () => {
     vi.mocked(streamText).mockReset();
 

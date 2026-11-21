@@ -1,0 +1,451 @@
+{
+  "deadline": "Rollout decision with {{web}} on Friday at 3:00 p.m.",
+  "endings": [
+    {
+      "id": "supported-switch",
+      "outcome": "{{web}} approves the switch and keeps the current banner ready to restore. The chance number of about 0.5% is below the 5% cutoff, so the brief says the test supports a gain and reports the rise from 20% to 25% as a result, not a forecast."
+    },
+    {
+      "id": "held-for-precision",
+      "outcome": "The chance number of about 0.5% is below the 5% cutoff, so Friday’s test supports a gain. {{web}} gives up this rollout slot, keeps the current banner, and queues a larger test to get a better estimate of the gain."
+    },
+    {
+      "id": "noisy-switch",
+      "outcome": "{{web}} puts the new banner in the slot based on the observed gain of 5 percentage points and can still switch back. With a chance number of about 23%, above the 5% cutoff, the pilot didn’t give clear evidence that the new banner works better."
+    },
+    {
+      "id": "inconclusive-hold",
+      "outcome": "{{web}} keeps the current banner and saves the results as a pilot. The brief records the observed gain of 5 percentage points without naming a winner, since about 23% is above the 5% cutoff."
+    }
+  ],
+  "meters": [
+    {
+      "id": "risk",
+      "label": "Risk of a wrong rollout call",
+      "start": 56,
+      "goodWhen": "low"
+    },
+    {
+      "id": "flex",
+      "label": "Room for other web work",
+      "start": 68,
+      "goodWhen": "high"
+    }
+  ],
+  "mission": "You help track email signups for the store’s website. Plan a fair comparison of the current and new banners, then give {{web}} a **rollout recommendation** the web team can act on.",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -24
+            },
+            {
+              "meter": "flex",
+              "change": -22
+            }
+          ],
+          "id": "size-and-book",
+          "next": "full-read",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You used the agreed test goals to set the visitor count, then booked the slot that could supply it. The calendar didn’t decide what gain the test was set up to spot.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "ai",
+              "text": "About 1,100 visitors per banner. I used the 20% signup rate, the 5 percentage point gain, the 5% cutoff for gaps in either direction, and the 80% goal for spotting that gain if it’s real."
+            },
+            {
+              "from": "web",
+              "text": "Friday fits that count, so I’ll lock it in. That means less traffic for the next promo, and I won’t see results until Friday."
+            }
+          ],
+          "text": "Have {{ai}} check the visitor count against our test goals and book the slot that fits.",
+          "timeJump": {
+            "label": "Friday morning",
+            "panel": {
+              "title": "Friday morning test results",
+              "metrics": [
+                {
+                  "label": "Count from the planning check",
+                  "value": "About 1,100 visitors per banner",
+                  "note": null
+                },
+                {
+                  "label": "Current banner signups",
+                  "value": "220 out of 1,100",
+                  "note": "20% signed up."
+                },
+                {
+                  "label": "New banner signups",
+                  "value": "275 out of 1,100",
+                  "note": "25% signed up, a gain of 5 percentage points."
+                },
+                {
+                  "label": "Chance number",
+                  "value": "About 0.5%",
+                  "note": "If the banners worked equally well, a gap at least this large in either direction would show up this often in tests like Friday’s."
+                }
+              ],
+              "note": null
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 8
+            },
+            {
+              "meter": "flex",
+              "change": 16
+            }
+          ],
+          "id": "book-pilot",
+          "next": "pilot-read",
+          "notes": [
+            {
+              "skill": "sample",
+              "kind": "good",
+              "text": "You fixed the pilot’s visitor count before seeing any signups and kept the next promotion’s traffic free.",
+              "example": null
+            },
+            {
+              "skill": "sample",
+              "kind": "improve",
+              "text": "The Tuesday slot set the count. For a test meant to guide the rollout, check how many visitors you need to spot the target gain before committing to a slot.",
+              "example": null
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "web",
+              "text": "Tuesday’s booked at 200 visitors per banner. That gets us a quick look and leaves the next promo’s traffic alone."
+            },
+            {
+              "from": "analytics",
+              "text": "That’s a useful first look. We’re stopping at the count the slot gives us, though, so a promising gap may not be enough for the rollout call."
+            }
+          ],
+          "text": "Book Tuesday for a short trial and set the count at 200 visitors per banner.",
+          "timeJump": {
+            "label": "Tuesday morning",
+            "panel": {
+              "title": "Tuesday morning pilot results",
+              "metrics": [
+                {
+                  "label": "Current banner signups",
+                  "value": "40 out of 200",
+                  "note": "20% signed up."
+                },
+                {
+                  "label": "New banner signups",
+                  "value": "50 out of 200",
+                  "note": "25% signed up, a gain of 5 percentage points."
+                },
+                {
+                  "label": "Chance number",
+                  "value": "About 23%",
+                  "note": "If the banners worked equally well, a gap at least this large in either direction would show up this often in tests like Tuesday’s."
+                }
+              ],
+              "note": null
+            }
+          }
+        }
+      ],
+      "id": "book",
+      "messages": [
+        {
+          "from": "analytics",
+          "text": "Both banners are ready. I just need the visitor count for each so I can lock the plan."
+        },
+        {
+          "from": "web",
+          "text": "I’d take Tuesday. We’d have something better than opinions about the designs, and I wouldn’t have to move traffic off the next promo."
+        }
+      ],
+      "prompt": "What do you put on the traffic calendar?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "flex",
+              "change": -15
+            }
+          ],
+          "id": "wait-for-size",
+          "next": "held-for-precision",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You didn’t treat the low chance number as proof that the true gain reaches the target.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "improve",
+              "text": "You gave up the slot to answer a stricter question than the rollout rule asks. Separate what the test supports from what the team still doesn’t know.",
+              "example": "“The test supports a gain, and the gap we saw meets our target. We can switch without promising a gain that large.”"
+            }
+          ],
+          "quality": "fair",
+          "replies": [
+            {
+              "from": "analytics",
+              "text": "The hypothesis test asks how often a gap this big or bigger would show up either way if the banners worked equally well. About 0.5% is below 5%, which supports a gain but doesn’t pin down its size."
+            },
+            {
+              "from": "web",
+              "text": "I’ll keep the current banner and queue a larger test. We’ll give up this slot and set aside more traffic to answer a question the rollout rule doesn’t require us to settle."
+            }
+          ],
+          "text": "Keep the current banner and run a larger test to see whether the gain really reaches our target.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -16
+            },
+            {
+              "meter": "flex",
+              "change": -6
+            }
+          ],
+          "id": "recommend-switch",
+          "next": "supported-switch",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "good",
+              "text": "You used the chance number below the cutoff as evidence that the new banner helps, without treating it as proof of a gain of 5 percentage points.",
+              "example": null
+            },
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You gave the web team a clear next step and kept the gain from the test separate from what the team might see after the switch.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "analytics",
+              "text": "Hypothesis testing starts with ‘What if the banners worked equally well?’ A gap at least this big either way would show up about 0.5% of the time, below 5%: evidence of a gain, not its exact size."
+            },
+            {
+              "from": "web",
+              "text": "The gain we saw meets the target, so I’ll approve the switch. We’ll keep the current banner ready to put back."
+            }
+          ],
+          "text": "Switch with the old banner ready to restore. The new one did better, but we don’t know by exactly how much.",
+          "timeJump": null
+        }
+      ],
+      "id": "full-read",
+      "messages": [
+        {
+          "from": "analytics",
+          "text": "We hit our planned count. If the next promo team is going to quote this, I’d love to know whether they can count on a gain of 5 percentage points."
+        },
+        {
+          "from": "web",
+          "text": "I’m putting together the 3:00 p.m. brief. What should I tell the team about the banner slot?"
+        }
+      ],
+      "prompt": "What do you recommend to {{web}}?"
+    },
+    {
+      "choices": [
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": 20
+            },
+            {
+              "meter": "flex",
+              "change": 8
+            }
+          ],
+          "id": "use-observed-gain",
+          "next": "noisy-switch",
+          "notes": [
+            {
+              "skill": "chance",
+              "kind": "improve",
+              "text": "The pilot hit the signup target, but its chance number was above the cutoff. Check both before using the observed gain to make the rollout call.",
+              "example": "“If the banners really worked equally well, a gap at least this large in either direction would show up about 23% of the time, above our 5% cutoff.”"
+            }
+          ],
+          "quality": "weak",
+          "replies": [
+            {
+              "from": "web",
+              "text": "I’ll go ahead with the switch based on the gain we saw. We won’t need another traffic slot to make the call, and I can put the old banner back."
+            },
+            {
+              "from": "analytics",
+              "text": "For this hypothesis test, assume the banners work equally well: a gap at least this big either way shows up about 23% of the time. That’s above 5%, so hitting the target didn’t settle it."
+            }
+          ],
+          "text": "Put the new banner in the slot. It hit our target in the pilot, and we can switch back.",
+          "timeJump": null
+        },
+        {
+          "effects": [
+            {
+              "meter": "risk",
+              "change": -19
+            }
+          ],
+          "id": "report-pilot-only",
+          "next": "inconclusive-hold",
+          "notes": [
+            {
+              "skill": "explain",
+              "kind": "good",
+              "text": "You told the web team which banner did better in the pilot without calling it the winner or saying the banners were tied.",
+              "example": null
+            }
+          ],
+          "quality": "strong",
+          "replies": [
+            {
+              "from": "analytics",
+              "text": "This hypothesis test asks what gaps we’d see if both banners worked equally well. A gap this big or bigger either way shows up about 23% of the time, above 5%, so we can’t call a winner."
+            },
+            {
+              "from": "web",
+              "text": "I’ll leave the current banner up for this slot. The new one might help, but I’ll save these numbers as pilot results, not as a reason to switch."
+            }
+          ],
+          "text": "Keep the current banner in the slot. The pilot favored the new one, but it didn’t settle which works better.",
+          "timeJump": null
+        }
+      ],
+      "id": "pilot-read",
+      "messages": [
+        {
+          "from": "web",
+          "text": "The new banner hit the target with actual visitors. I’ve got the switch ready, and if we don’t like what we see, we can put the old one back."
+        },
+        {
+          "from": "analytics",
+          "text": "The pilot report is in. I’ve got room for a line on what we’re doing with the result."
+        }
+      ],
+      "prompt": "What do you tell {{web}} about the pilot and the banner slot?"
+    }
+  ],
+  "panels": [
+    {
+      "title": "Signup test plan",
+      "metrics": [
+        {
+          "label": "Recent signup rate",
+          "value": "20%",
+          "note": "Current banner."
+        },
+        {
+          "label": "Gain worth spotting",
+          "value": "5 percentage points",
+          "note": "Measured against the current banner."
+        },
+        {
+          "label": "False alarm cutoff",
+          "value": "5%",
+          "note": "Counts gaps in either direction."
+        },
+        {
+          "label": "Detection goal",
+          "value": "80%",
+          "note": "Chance of spotting the target gain if it’s real."
+        }
+      ],
+      "note": "Visitors are assigned at random. Each visitor counts once."
+    },
+    {
+      "title": "Website traffic calendar",
+      "metrics": [
+        {
+          "label": "Tuesday slot",
+          "value": "200 visitors per banner",
+          "note": "Traffic is booked for another promotion afterward."
+        },
+        {
+          "label": "Friday slot",
+          "value": "1,100 visitors per banner",
+          "note": "Uses traffic that the next promotion could take."
+        },
+        {
+          "label": "Friday rollout decision",
+          "value": "3:00 p.m.",
+          "note": "A switch can be reversed."
+        }
+      ],
+      "note": "Rollout rule: evidence of a gain, with an observed gain at least as large as the target."
+    }
+  ],
+  "setting": "Monday at Alder Finch Market",
+  "skills": [
+    {
+      "id": "chance",
+      "name": "Tell a real difference from chance",
+      "practice": "Take a test report and compare its chance number with the cutoff in one sentence that starts with ‘If the banners really worked equally well…’"
+    },
+    {
+      "id": "sample",
+      "name": "Choose a sample size",
+      "practice": "Use a sample-size calculator to see how the visitor count changes when you ask a test to spot a smaller gain."
+    },
+    {
+      "id": "explain",
+      "name": "Explain a test result",
+      "practice": "Write a message to a web manager that gives the observed gap, how much to trust it, and what to do next."
+    }
+  ],
+  "startNodeId": "book",
+  "summary": [
+    "The smaller the gain you want to spot, the more visitors you need if the other test goals stay the same.",
+    "A chance number above the cutoff leaves the result inconclusive; it doesn’t show that the options work equally well.",
+    "Evidence of a gain doesn’t prove the true gain is as large as the one you saw."
+  ],
+  "team": [
+    {
+      "id": "analytics",
+      "role": "Analytics lead",
+      "expertise": "She sets the test rules up front so a promising result doesn’t change how the team judges it.",
+      "ai": false
+    },
+    {
+      "id": "web",
+      "role": "Web manager",
+      "expertise": "He owns the banner slot and wants to free up website traffic for the next promotion.",
+      "ai": false
+    },
+    {
+      "id": "ai",
+      "role": "AI calculation tool",
+      "expertise": "Checks the planned visitor count and shows which assumptions went into the calculation.",
+      "ai": true
+    }
+  ],
+  "title": "Should the new signup banner go live?"
+}

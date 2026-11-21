@@ -18,6 +18,14 @@ export const gradeEssayTask: Task<GradeEssayParams, EssayGrade, GradeEssayExpect
   },
   id: "grade-essay",
   name: "Grade essay",
+  priorities: {
+    distribution: "private",
+    first: "quality",
+    reads: "A learner reads their grade and feedback",
+    reason:
+      "A wrong grade misleads the learner about where they stand; it must also come back in seconds",
+    waits: "A learner waits on the grade",
+  },
   score: scoreEssayGrade,
   testCases: TEST_CASES,
 };

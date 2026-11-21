@@ -670,6 +670,14 @@
     scrollbar-gutter: stable;
   }
 
+  /*
+   * What focus, a link's anchor or a form's missing field scrolls to stops above the pinned bottom
+   * bar (its 44px action and the room over and under it), never behind it.
+   */
+  :root:has([data-slot="bottom-bar"]) {
+    scroll-padding-bottom: calc(2.75rem + 3 * var(--spacing-frame) + var(--page-safe-bottom));
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

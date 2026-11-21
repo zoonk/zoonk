@@ -1,0 +1,92 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "visual-pt-partes-da-flor",
+        "claimId": "27d29fd979a3e886",
+        "criterion": "activitiesAndVisuals",
+        "observationId": "97d65dda3ce751bc486b8123807086a342f96bee518e879178617ccabeef1500.first.a8b2e4d0-9ca5-4d4c-bf89-ca5c8b620ec8.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0032545499999999997,
+    "id": "873f71461ed66eda837e43bfda215a179ee2b8ce3baf21ea97bcdbfbfb1a605e",
+    "packet": [
+      {
+        "A": {
+          "blob": "e9c195cd4cfcf1245a5b70e3e1c8d10b7fd64583f5fc1488f30ebf794310c5d2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c49242b04173fba2dfe289dfa1b7d876d48181eb3fad215f37565dd457b4ac12",
+          "format": "text"
+        },
+        "claim": "A aplicação diz que o aluguel de R$ 900,00 deixa de ser pago no mês sem produção.",
+        "claimId": "165129e848220d15",
+        "criterion": "screenPlan",
+        "expectations": {
+          "blob": "befcb46c767557aec89d277181a60c097c461e6c95e72a65ffbea3d1a6f1fbb8",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a7a16360105db4ddc3fa833ad7579e653087a51dbb4a9c47ced643e2346882ec",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Across the explanation",
+          "kind": "whole"
+        },
+        "output": "A"
+      },
+      {
+        "A": {
+          "blob": "2135040d4559f8786a4ae28f350f2b3aa4400316d273dbf3a4ed962793eb1653",
+          "format": "text"
+        },
+        "B": {
+          "blob": "2efe01467da1ffa9ee4eb0ef950e4c5a044dc10397874177aed854267063224e",
+          "format": "text"
+        },
+        "claim": "A pergunta sobre onde a flor produz pólen não mostra a flor com partes numeradas e ainda dá a resposta ao indicar os estames.",
+        "claimId": "27d29fd979a3e886",
+        "criterion": "activitiesAndVisuals",
+        "expectations": {
+          "blob": "4123e033214a5db609e86e049db2733250bee2e4a099b37a554804baf1298740",
+          "format": "text"
+        },
+        "input": {
+          "blob": "cc079301480b5f4c04098375f98511e493c5afd12bf3cc732509021f5c378888",
+          "format": "json"
+        },
+        "location": {
+          "detail": "Você vê grãos de pólen na ponta do pistilo de uma flor de laranjeira. Se quiser descobrir onde essa flor produz pólen, procure nos estames; a resposta tentadora é a ponta do pistilo, onde os grãos foram encontrados.",
+          "kind": "quote"
+        },
+        "output": "A"
+      }
+    ],
+    "passed": true,
+    "protocolHash": "7b11bfee9f0feb0a47145f27b797165c1589a23206eb0762d48660431d760328",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "165129e848220d15",
+          "finding": "doesn't hold",
+          "reason": "Output A says the opposite: the explanation states that the monthly rent is fixed and 'continua devido mesmo sem fazer nenhum bolo', and the guess screen gives 'O valor inteiro' as the answer, so the app never says the R$ 900,00 rent stops being paid."
+        },
+        {
+          "claimId": "27d29fd979a3e886",
+          "finding": "holds",
+          "reason": "The check about orange-tree pollen, in output A, has visualKind 'none' and no numbered flower, although it asks where the flower produces pollen, which the expectations say needs a numbered diagram. It also answers the question in its text by saying 'procure nos estames', so the claim is accurate for output A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}
