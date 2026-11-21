@@ -2,7 +2,7 @@ import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
-import { createWrittenExamDay } from "./written-exam-fixtures";
+import { POINTS_GRADE, createWrittenExamDay } from "./written-exam-fixtures";
 
 const MAX_ESSAY_CHARACTERS = 48_000;
 
@@ -25,6 +25,25 @@ async function savedDraftText(blockId: string): Promise<string | null> {
     typeof writing.draft.text === "string"
     ? writing.draft.text
     : null;
+}
+
+async function admissionOf(blockId: string): Promise<string> {
+  const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
+  const payload: unknown = block.payload;
+
+  if (
+    typeof payload === "object" &&
+    payload !== null &&
+    "writing" in payload &&
+    typeof payload.writing === "object" &&
+    payload.writing !== null &&
+    "admissionId" in payload.writing &&
+    typeof payload.writing.admissionId === "string"
+  ) {
+    return payload.writing.admissionId;
+  }
+
+  throw new Error("Expected an admitted writing block");
 }
 
 function isDraftSave(page: Page, status: (code: number) => boolean) {
@@ -168,6 +187,99 @@ test.describe("Written answer drafts", () => {
     }
   });
 
+  test("closing the tab right after typing saves the last edit", async ({ browser }) => {
+    const day = await createWrittenExamDay();
+    const page = await openAs(browser, day.user);
+    const context = page.context();
+
+    try {
+      const field = await openEditor(page);
+      await field.fill("Typed just before closing the tab");
+      await page.close({ runBeforeUnload: true });
+
+      await expect
+        .poll(() => savedDraftText(day.blockId))
+        .toBe("Typed just before closing the tab");
+    } finally {
+      await context.close();
+    }
+  });
+
+  test("text typed offline is saved when the connection is back, with no new keystroke", async ({
+    browser,
+  }) => {
+    const day = await createWrittenExamDay();
+    const page = await openAs(browser, day.user);
+    const notSaved = page.getByText("Not saved yet. It's kept on this device.");
+
+    try {
+      const field = await openEditor(page);
+      await page.context().setOffline(true);
+      await field.fill("Typed on the train");
+      await expect(notSaved).toBeVisible();
+
+      await page.context().setOffline(false);
+      await expect.poll(() => savedDraftText(day.blockId)).toBe("Typed on the train");
+      await expect(notSaved).toBeHidden();
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a grade replayed for the text sent first says so, and keeps the edits made since", async ({
+    browser,
+  }) => {
+    const day = await createWrittenExamDay();
+    const page = await openAs(browser, day.user);
+
+    try {
+      const field = await openEditor(page);
+      await field.fill("The version sent first");
+      let sends = 0;
+
+      // The first send's answer is lost. Grading it for real costs a model call, so the second
+      // send gets what the server replays for an admission it already graded: the first text's.
+      await page.route("**/submissions", async (route) => {
+        sends += 1;
+
+        if (sends === 1) {
+          await route.abort();
+          return;
+        }
+
+        await route.fulfill({
+          json: {
+            attemptId: crypto.randomUUID(),
+            grade: POINTS_GRADE,
+            submittedAt: new Date().toISOString(),
+            text: "The version sent first",
+          },
+        });
+      });
+
+      await page.getByRole("button", { name: "Grade answer" }).click();
+      await expect(page.getByText(/That didn't go through/u)).toBeVisible();
+
+      await field.fill("The version sent first, then edited");
+      await page.getByRole("button", { name: "Grade answer" }).click();
+
+      await expect(
+        page.getByText(
+          "This grade is for the version you sent first. Your changes are kept for your rewrite.",
+        ),
+      ).toBeVisible();
+
+      const kept = await page.evaluate(
+        (key) => localStorage.getItem(key),
+        `writing:${day.blockId}`,
+      );
+
+      expect(kept).toContain("The version sent first, then edited");
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("the field takes no edits while grading, and no more than the server accepts", async ({
     browser,
   }) => {
@@ -210,11 +322,12 @@ test.describe("Written answer drafts", () => {
 
     try {
       await openEditor(page);
+      const admissionId = await admissionOf(day.blockId);
 
-      await page.evaluate(
-        ({ key, text }) => localStorage.setItem(key, JSON.stringify({ base: 0, text })),
-        { key: `writing:${day.blockId}`, text: "a".repeat(MAX_ESSAY_CHARACTERS + 10) },
-      );
+      await page.evaluate(({ key, kept }) => localStorage.setItem(key, JSON.stringify(kept)), {
+        kept: { admissionId, base: 0, text: "a".repeat(MAX_ESSAY_CHARACTERS + 10) },
+        key: `writing:${day.blockId}`,
+      });
 
       await page.reload();
       await page.getByRole("button", { exact: true, name: "Continue" }).click();

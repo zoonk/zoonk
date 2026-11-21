@@ -77,12 +77,7 @@ export function WriteScreen({
     }
 
     setStatus("idle");
-
-    // A send whose answer was lost was graded as first sent: what's on screen now stays kept.
-    if (result.text === text) {
-      draft.clear();
-    }
-
+    draft.graded(result.text);
     onGraded(result);
   }
 

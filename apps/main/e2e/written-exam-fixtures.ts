@@ -160,6 +160,41 @@ const GRADED_TEXT =
 
 const ERROR_QUOTE = "The Constitution of 1988 establish two kinds of control.";
 
+/** A 30-line answer graded with points, with one language error. */
+export const POINTS_GRADE = {
+  content: { high: 19, low: 17 },
+  criteria: CRITERIA.map(({ id, text }) => ({
+    comment: `Comment on ${text}.`,
+    id,
+    level: "partial",
+    name: text,
+    quote: null,
+  })),
+  decimals: 0,
+  deduction: { high: 0.4, low: 0.3 },
+  errors: [
+    {
+      correction: "The Constitution of 1988 establishes two kinds of control.",
+      kind: "grammar",
+      quote: ERROR_QUOTE,
+      start: 0,
+    },
+  ],
+  ignoredFrom: null,
+  kind: "points",
+  max: 30,
+  nextStep: {
+    criterionId: "a2",
+    example: null,
+    quote: null,
+    text: "Name two powers of the Court.",
+  },
+  progress: null,
+  rows: CRITERIA.map(({ id, points }) => ({ earned: points / 2, id, max: points })),
+  total: { high: 18.7, low: 16.6 },
+  zeroReason: null,
+};
+
 /** The day's first answer, graded with points, admitted and saved as the grader would. */
 export async function addGradedAnswer({
   blockId,
@@ -180,40 +215,6 @@ export async function addGradedAnswer({
     ...(isJsonObject(block.payload) ? block.payload : {}),
     itemIds: [itemId],
     writing: { admissionId, draft: null, taskKey: "short", unit: "answer" },
-  };
-
-  const grade = {
-    content: { high: 19, low: 17 },
-    criteria: CRITERIA.map(({ id, text }) => ({
-      comment: `Comment on ${text}.`,
-      id,
-      level: "partial",
-      name: text,
-      quote: null,
-    })),
-    decimals: 0,
-    deduction: { high: 0.4, low: 0.3 },
-    errors: [
-      {
-        correction: "The Constitution of 1988 establishes two kinds of control.",
-        kind: "grammar",
-        quote: ERROR_QUOTE,
-        start: 0,
-      },
-    ],
-    ignoredFrom: null,
-    kind: "points",
-    max: 30,
-    nextStep: {
-      criterionId: "a2",
-      example: null,
-      quote: null,
-      text: "Name two powers of the Court.",
-    },
-    progress: null,
-    rows: CRITERIA.map(({ id, points }) => ({ earned: points / 2, id, max: points })),
-    total: { high: 18.7, low: 16.6 },
-    zeroReason: null,
   };
 
   await Promise.all([
@@ -238,7 +239,7 @@ export async function addGradedAnswer({
           timed: false,
           version: "firstDraft",
         },
-        grade,
+        grade: POINTS_GRADE,
         text: GRADED_TEXT,
       },
       durationMs: 600_000,
