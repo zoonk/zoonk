@@ -204,8 +204,8 @@ struct LessonCompletionView: View {
   /// The chapter test's line, the one thing about what's next the end shows: Continue opens it.
   @ViewBuilder
   private var testOut: some View {
-    if let chapterID = block?.testChapterID {
-      TestOutLine {
+    if let block, let chapterID = block.testChapterID {
+      TestOutLine(isNextChapter: block.testOutOffer == nil) {
         router.dismissTask()
         router.open(.testOut(chapterId: chapterID))
       }

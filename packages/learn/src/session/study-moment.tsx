@@ -165,7 +165,10 @@ export function StudyMoment({
         <DayMoment buddy={buddy} {...dayMoment} />
 
         {testChapterId && onStartTestOut && (
-          <TestOutStartLink onStart={() => onStartTestOut(testChapterId)} />
+          <TestOutStartLink
+            nextChapter={!moment.testOutOffer}
+            onStart={() => onStartTestOut(testChapterId)}
+          />
         )}
       </TaskBody>
 

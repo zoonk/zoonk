@@ -799,6 +799,11 @@ msgid "The test didn't open. Try again."
 msgstr "Il test non si è aperto. Riprova."
 
 #: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "Conosci già il prossimo capitolo?"
+
+#: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"
 msgid "Already know this chapter?"
 msgstr "Conosci già questo capitolo?"

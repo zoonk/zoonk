@@ -799,6 +799,11 @@ msgid "The test didn't open. Try again."
 msgstr "테스트가 열리지 않았어요. 다시 시도해 보세요."
 
 #: src/_components/test-out-start-link.tsx
+msgctxt "HGduWo"
+msgid "Already know the next chapter?"
+msgstr "다음 챕터를 이미 알고 있나요?"
+
+#: src/_components/test-out-start-link.tsx
 msgctxt "M-RtUs"
 msgid "Already know this chapter?"
 msgstr "이 챕터 내용을 이미 알고 있나요?"
