@@ -380,6 +380,7 @@ msgid "Take a short break, then try again."
 msgstr "잠깐 쉬었다가 다시 시도해 보세요."
 
 #: src/_components/help-limit-notice.tsx
+#: src/speech/record-note.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "무료 계정이 필요해요"
@@ -3298,7 +3299,6 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "처리하지 못했어요. 쓴 글은 그대로 남아 있어요. 잠시 후 다시 시도해 보세요."
 
 #: src/essay/essay-status-line.tsx
-#: src/speech/record-note.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "계속 이용하려면 무료 계정을 만드세요."

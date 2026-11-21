@@ -380,6 +380,7 @@ msgid "Take a short break, then try again."
 msgstr "少し休んでから、もう一度お試しください。"
 
 #: src/_components/help-limit-notice.tsx
+#: src/speech/record-note.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "無料アカウントが必要です"
@@ -3298,7 +3299,6 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。"
 
 #: src/essay/essay-status-line.tsx
-#: src/speech/record-note.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "続けるには、無料アカウントを作成してください。"

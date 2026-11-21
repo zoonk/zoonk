@@ -380,6 +380,7 @@ msgid "Take a short break, then try again."
 msgstr "Kısa bir ara ver, sonra tekrar dene."
 
 #: src/_components/help-limit-notice.tsx
+#: src/speech/record-note.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "Bunun için ücretsiz bir hesap gerekiyor"
@@ -3298,7 +3299,6 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene."
 
 #: src/essay/essay-status-line.tsx
-#: src/speech/record-note.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "Devam etmek için ücretsiz bir hesap oluştur."

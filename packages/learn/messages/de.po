@@ -380,6 +380,7 @@ msgid "Take a short break, then try again."
 msgstr "Mach eine kurze Pause und versuch es dann noch einmal."
 
 #: src/_components/help-limit-notice.tsx
+#: src/speech/record-note.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
 msgstr "Dafür brauchst du ein kostenloses Konto"
@@ -3298,7 +3299,6 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "Das hat nicht geklappt. Dein Text ist noch da. Versuch es gleich noch einmal."
 
 #: src/essay/essay-status-line.tsx
-#: src/speech/record-note.tsx
 msgctxt "aFV0Wu"
 msgid "Create your free account to continue."
 msgstr "Erstelle dein kostenloses Konto, um weiterzumachen."

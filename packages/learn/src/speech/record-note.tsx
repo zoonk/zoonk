@@ -54,7 +54,7 @@ export function useRecordNote({
   if (problem === "signUpRequired") {
     return (
       <div className="flex flex-col items-start gap-2 lg:items-end">
-        <p className="text-muted-foreground">{t("Create your free account to continue.")}</p>
+        <p className="text-muted-foreground">{t("This needs a free account")}</p>
         <CreateAccountLink />
       </div>
     );
