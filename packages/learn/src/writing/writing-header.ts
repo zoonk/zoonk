@@ -1,6 +1,9 @@
 "use client";
 
-import { type WritingPrompt } from "@zoonk/core/exams/essays/writing-contract";
+import {
+  type WritingPrompt,
+  type WritingTaskSummary,
+} from "@zoonk/core/exams/essays/writing-contract";
 import { useExtracted } from "next-intl";
 import { type StudyBlock } from "../session/session-types";
 import { useGradingReturnsLine } from "./writing-labels";
@@ -9,48 +12,16 @@ type WritingUnit = WritingPrompt["unit"];
 
 type WritingAvailability = NonNullable<StudyBlock["writingAvailability"]>;
 
-/**
- * Where a task sits in the exam's written test, as the server says it before any question is
- * assigned. `distinctLines`: no other task of the test has its line limit.
- */
-export type WritingTaskPlace = {
-  distinctLines: boolean;
-  lines: number | null;
-  number: number;
-  points: number | null;
-  total: number;
-};
+/** Where a task sits in the exam's written test, as the server says it before any question is assigned. */
+export type WritingTaskPlace = NonNullable<StudyBlock["writingTask"]>;
 
-/**
- * A view's `writingTask`, read where the contract doesn't carry it yet (blocks, refused starts):
- * null when it's missing or not that shape, and the block's own title names the task then.
- */
-export function readTaskPlace(view: object): WritingTaskPlace | null {
-  const place = "writingTask" in view ? view.writingTask : null;
+/** A refused start names its task's place in flat fields: null when the server didn't send it. */
+export function getRefusedTaskPlace(task: WritingTaskSummary): WritingTaskPlace | null {
+  const { distinctLines, lines, number, points, total } = task;
 
-  if (typeof place !== "object" || place === null) {
-    return null;
-  }
-
-  const read = (key: string) => {
-    const value: unknown = key in place ? Reflect.get(place, key) : null;
-    return typeof value === "number" ? value : null;
-  };
-
-  const number = read("number");
-  const total = read("total");
-
-  if (number === null || total === null) {
-    return null;
-  }
-
-  return {
-    distinctLines: Reflect.get(place, "distinctLines") === true,
-    lines: read("lines"),
-    number,
-    points: read("points"),
-    total,
-  };
+  return number === undefined || total === undefined
+    ? null
+    : { distinctLines: distinctLines ?? false, lines, number, points, total };
 }
 
 /**
@@ -104,6 +75,44 @@ export function useWritingTaskTitle() {
     }
 
     return title ?? t("Writing practice");
+  };
+}
+
+/**
+ * A task named where it labels something rather than asks for it, such as its points on the
+ * written test's page: "The 30-line question", "Question 2", or the notice's name without its place.
+ */
+export function useWritingTaskName() {
+  const t = useExtracted();
+
+  return function writingTaskName({
+    task,
+    title,
+  }: {
+    task?: WritingTaskPlace | null;
+    title: string;
+  }): string {
+    if (task?.distinctLines && task.lines) {
+      return t({
+        description:
+          "One question of an exam's written test, named by its line limit, such as 30 lines.",
+        message: "The {lines}-line question",
+        values: { lines: String(task.lines) },
+      });
+    }
+
+    if (task && task.total > 1) {
+      return t({
+        description:
+          "One question of an exam's written test whose questions share a line limit, named by its place in the test.",
+        message: "Question {number}",
+        values: { number: String(task.number) },
+      });
+    }
+
+    return task
+      ? t({ description: "The only question of an exam's written test.", message: "The question" })
+      : title;
   };
 }
 

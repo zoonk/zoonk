@@ -8,6 +8,7 @@ import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { EnterButton, EnterLink } from "../_components/enter-button";
 import { useFormatDuration } from "../_utils/time-format";
 import { ChooseOnToday } from "../writing/writing-choice";
+import { useWritingTaskName } from "../writing/writing-header";
 import { useGradingReturnsLine } from "../writing/writing-labels";
 import { type WrittenSubject } from "./subject-written-score";
 
@@ -39,7 +40,7 @@ type WriteAction = NonNullable<WrittenSubject["writeActions"]>[number];
  */
 function getPendingChoice(
   written: WrittenSubject,
-): { all: boolean; groups: string[]; task?: string } | null {
+): { all: boolean; groups: string[]; task?: WriteAction } | null {
   const actions = written.writeActions ?? [];
 
   if (actions.length === 0) {
@@ -57,10 +58,7 @@ function getPendingChoice(
   const waiting = actions.filter(({ availability }) => availability.status === "needsChoice");
   const [only] = waiting;
 
-  const task =
-    waiting.length === 1 && only
-      ? written.points.tasks.find(({ key }) => key === only.taskKey)?.name
-      : undefined;
+  const task = waiting.length === 1 ? only : undefined;
 
   return groups.length > 0 ? { all, groups: [...new Set(groups)], task } : null;
 }
@@ -94,6 +92,7 @@ export function WriteBottomBar({
 }) {
   const t = useExtracted();
   const gradingReturns = useGradingReturnsLine();
+  const taskName = useWritingTaskName();
   const [busy, setBusy] = useState(false);
   const actions = written.writeActions ?? [];
   const unfinished = actions.find((action) => action.availability.status === "continue");
@@ -115,9 +114,17 @@ export function WriteBottomBar({
   }
 
   const choice = getPendingChoice(written);
+  const waiting = choice?.task;
+
+  const waitingName =
+    waiting &&
+    taskName({
+      task: waiting.writingTask,
+      title: written.points.tasks.find(({ key }) => key === waiting.taskKey)?.name ?? "",
+    });
 
   const choiceNote = choice && (
-    <ChooseOnToday choiceGroups={choice.groups} task={choice.all ? undefined : choice.task} />
+    <ChooseOnToday choiceGroups={choice.groups} task={choice.all ? undefined : waitingName} />
   );
 
   if (choice?.all) {

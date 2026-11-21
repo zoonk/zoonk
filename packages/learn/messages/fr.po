@@ -8425,8 +8425,10 @@ msgctxt "InkuxH"
 msgid "After this mock exam"
 msgstr "Après cet examen blanc"
 
+#. One question of an exam's written test whose questions share a line limit, named by its place in the test.
 #: src/mock/mock-review.tsx
 #: src/mock/use-question-cell-label.ts
+#: src/writing/writing-header.ts
 msgctxt "kQXPCE"
 msgid "Question {number}"
 msgstr "Question {number}"
@@ -13720,6 +13722,18 @@ msgstr ""
 msgctxt "Jo0iJd"
 msgid "Writing practice"
 msgstr "Entraînement à l’écriture"
+
+#. One question of an exam's written test, named by its line limit, such as 30 lines.
+#: src/writing/writing-header.ts
+msgctxt "VKYO0K"
+msgid "The {lines}-line question"
+msgstr ""
+
+#. The only question of an exam's written test.
+#: src/writing/writing-header.ts
+msgctxt "qUDRXP"
+msgid "The question"
+msgstr ""
 
 #: src/writing/writing-header.ts
 msgctxt "0cmsKD"

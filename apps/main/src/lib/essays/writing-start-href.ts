@@ -2,7 +2,7 @@ import { type WritingStartAnswer } from "@zoonk/learn/writing";
 import {
   type WritingStartState,
   type WritingTaskPlace,
-  readTaskPlace,
+  getRefusedTaskPlace,
 } from "@zoonk/learn/writing/start";
 
 const WRITING_START_PARAM = "writing";
@@ -19,14 +19,15 @@ const DRILL = "drill";
 type Search = Record<string, string | string[] | undefined>;
 
 /** The task's place in the written test, as "number.total.lines.distinct", so the refusal names it. */
-function placeParams(task: object): string[][] {
-  const place = readTaskPlace(task);
+function placeParams(task: Parameters<typeof getRefusedTaskPlace>[0]): string[][] {
+  const place = getRefusedTaskPlace(task);
 
   if (!place) {
     return [];
   }
 
   const { distinctLines, lines, number, total } = place;
+
   return [[PLACE_PARAM, [number, total, lines ?? 0, distinctLines ? 1 : 0].join(".")]];
 }
 

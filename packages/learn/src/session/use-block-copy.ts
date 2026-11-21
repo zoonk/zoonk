@@ -2,7 +2,7 @@
 
 import { useExtracted, useFormatter } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
-import { readTaskPlace, useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
+import { useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
 import { getPracticeFocus } from "./practice-focus";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
@@ -23,6 +23,7 @@ type BlockCopyInput = Pick<
   | "topics"
   | "weakest"
   | "writingAvailability"
+  | "writingTask"
   | "writingUnit"
 >;
 
@@ -94,11 +95,7 @@ export function useBlockTitle() {
     }
 
     if (block.kind === "produce") {
-      return writingTitle({
-        task: readTaskPlace(block),
-        title: block.title,
-        unit: block.writingUnit,
-      });
+      return writingTitle({ task: block.writingTask, title: block.title, unit: block.writingUnit });
     }
 
     if (block.mistakesOnly) {

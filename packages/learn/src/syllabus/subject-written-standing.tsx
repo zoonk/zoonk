@@ -10,6 +10,7 @@ import {
   PointsReadout,
   getMinimumShare,
 } from "../writing/points-readout";
+import { useWritingTaskName } from "../writing/writing-header";
 import { useFormatPointsRange } from "../writing/writing-labels";
 import { type WrittenSubject } from "./subject-written-score";
 
@@ -81,6 +82,7 @@ function PointsScale({ written }: { written: WrittenSubject }) {
   const formatScore = useFormatScore();
   const formatRange = useFormatPointsRange();
   const minimumLine = useMinimumLine();
+  const taskName = useWritingTaskName();
   const { max, minimum, range, tasks } = written.points;
   const decimals = written.points.decimals ?? written.decimals;
 
@@ -104,7 +106,9 @@ function PointsScale({ written }: { written: WrittenSubject }) {
       <StepRows>
         {tasks.map((task) => (
           <StepRow key={task.key}>
-            <span className="min-w-0 flex-1">{task.name}</span>
+            <span className="min-w-0 flex-1">
+              {taskName({ task: task.writingTask, title: task.name })}
+            </span>
             <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
               {task.range && task.max !== null
                 ? t("{range} of {max}", {
