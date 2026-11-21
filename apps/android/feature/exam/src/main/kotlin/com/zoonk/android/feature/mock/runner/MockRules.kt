@@ -104,10 +104,13 @@ fun sectionPlace(
     questions: List<MockQuestion>,
 ): SectionPlace? {
     val question = questions.getOrNull(position) ?: return null
-    if (question.essay) return null
+    // Written questions sit apart from an objective section's count, unless the section is all written (a written test).
+    val writtenTest = questions.all { it.essay }
+    val counted = { it: MockQuestion -> !it.essay || writtenTest }
+    if (!counted(question)) return null
     return SectionPlace(
-        number = questions.take(position + 1).count { !it.essay },
-        total = questions.count { !it.essay },
+        number = questions.take(position + 1).count(counted),
+        total = questions.count(counted),
     )
 }
 

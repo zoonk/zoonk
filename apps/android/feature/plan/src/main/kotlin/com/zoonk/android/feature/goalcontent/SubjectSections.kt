@@ -262,8 +262,9 @@ internal fun ColumnScope.SubjectAside(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     today: LocalDate,
+    written: Boolean = false,
 ) {
-    if (subject.notPlannedReason == null || subject.preparation != null) {
+    if (!written && (subject.notPlannedReason == null || subject.preparation != null)) {
         AsideSection(
             stringResource(if (subject.preparation == null) R.string.goalcontent_coverage else R.string.goalcontent_preparation),
         ) { SubjectCoverage(subject) }

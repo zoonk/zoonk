@@ -15,8 +15,10 @@
     <string name="mock_chooser_objective_only">Shorter, objective questions only</string>
     <!-- The option that takes both tests of an exam of two tests. -->
     <string name="mock_chooser_both_tests">Both tests</string>
-    <!-- The written test is graded as it starts, and the day's extra grades for written answers are used. -->
-    <string name="mock_chooser_grades_used">No more grading today. Start the written test tomorrow.</string>
+    <!-- While a mock exam's written test questions are written for the learner. -->
+    <string name="mock_chooser_writing_written">Writing your questions…</string>
+    <string name="mock_chooser_writing_written_detail">Questions like the ones on your exam. Your mock exam starts here when they\'re ready.</string>
+    <string name="mock_chooser_writing_written_failed">We couldn\'t write your questions</string>
     <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
     <string name="mock_chooser_all_tests">All %1$d tests</string>
     <!-- An option for one exam day, on an exam held over several days. -->

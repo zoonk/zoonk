@@ -17,9 +17,13 @@ import com.zoonk.api.models.MockQuestionsInput
 import com.zoonk.api.models.MockShape
 import com.zoonk.api.models.WrittenTestShape
 import kotlinx.coroutines.delay
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import java.time.Instant
+import java.time.LocalDate
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaInstant
@@ -46,8 +50,15 @@ sealed interface MockStartOutcome {
 
     data object PlusRequired : MockStartOutcome
 
-    /** A written test is admitted as it starts, and the day's extra grades are used: it starts tomorrow. */
-    data object GradesUsed : MockStartOutcome
+    /** A written test is admitted as it starts, and the day's extra grades are used: it starts on [returnsOn], tomorrow when unsaid. */
+    data class GradesUsed(
+        val returnsOn: LocalDate? = null,
+    ) : MockStartOutcome
+
+    /** The written test's questions depend on an exam choice the learner hasn't made yet. */
+    data class NeedsChoice(
+        val choiceGroups: List<String>,
+    ) : MockStartOutcome
 }
 
 sealed interface QuestionWriting {
@@ -64,8 +75,15 @@ sealed interface QuestionWriting {
 
     data object PlusRequired : QuestionWriting
 
-    /** A written test's questions would be graded as it starts, and today's extra grading is used: it returns tomorrow. */
-    data object GradesUsed : QuestionWriting
+    /** A written test's questions would be graded as it starts, and today's extra grading is used: it returns on [returnsOn]. */
+    data class GradesUsed(
+        val returnsOn: LocalDate? = null,
+    ) : QuestionWriting
+
+    /** The written test's questions depend on an exam choice the learner hasn't made yet. */
+    data class NeedsChoice(
+        val choiceGroups: List<String>,
+    ) : QuestionWriting
 }
 
 /**
@@ -122,7 +140,12 @@ class LiveMockStartApi(
 }
 
 /** The day's extra writing allowance, rather than a plan's usage cap, says when it returns. */
-private fun JsonElement?.hasReturnsOn(): Boolean = (this as? JsonObject)?.containsKey("returnsOn") == true
+private fun JsonElement?.returnsOn(): LocalDate? =
+    ((this as? JsonObject)?.get("returnsOn") as? JsonPrimitive)?.contentOrNull?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+
+/** The exam choices a written test waits for, as `EXAM_CHOICE_REQUIRED` names them. */
+private fun JsonElement?.choiceGroups(): List<String> =
+    ((this as? JsonObject)?.get("choiceGroups") as? JsonArray)?.mapNotNull { (it as? JsonPrimitive)?.contentOrNull }.orEmpty()
 
 /** The written test is a shape of its own on the wire; every other option names its kind, day and subject. */
 private fun MockShape.input(): AnytimeMockInputShape =
@@ -155,7 +178,8 @@ class MockStarter(
                     when {
                         e.code == PLUS_REQUIRED -> MockStartOutcome.PlusRequired
                         e.code == NOT_ENOUGH_QUESTIONS -> MockStartOutcome.NotEnoughQuestions
-                        e.status == TOO_MANY_REQUESTS && e.code == null -> MockStartOutcome.GradesUsed
+                        e.code == EXAM_CHOICE_REQUIRED -> MockStartOutcome.NeedsChoice(e.details.choiceGroups())
+                        e.status == TOO_MANY_REQUESTS && e.code == null -> MockStartOutcome.GradesUsed()
                         else -> throw e
                     }
                 }
@@ -187,8 +211,12 @@ class MockStarter(
                         ?: QuestionWriting.Ready
                 } catch (e: ApiException) {
                     when {
-                        e.code == USAGE_LIMIT_REACHED && e.details.hasReturnsOn() -> {
-                            QuestionWriting.GradesUsed
+                        e.code == USAGE_LIMIT_REACHED && e.details.returnsOn() != null -> {
+                            QuestionWriting.GradesUsed(e.details.returnsOn())
+                        }
+
+                        e.code == EXAM_CHOICE_REQUIRED -> {
+                            QuestionWriting.NeedsChoice(e.details.choiceGroups())
                         }
 
                         else -> {
@@ -227,6 +255,7 @@ class MockStarter(
         const val PLUS_REQUIRED = "PLUS_REQUIRED"
         const val NOT_ENOUGH_QUESTIONS = "NOT_ENOUGH_QUESTIONS"
         const val USAGE_LIMIT_REACHED = "USAGE_LIMIT_REACHED"
+        const val EXAM_CHOICE_REQUIRED = "EXAM_CHOICE_REQUIRED"
 
         /** Its body is `{status: "limitReached", returnsOn}`, not an error's. */
         const val TOO_MANY_REQUESTS = 429

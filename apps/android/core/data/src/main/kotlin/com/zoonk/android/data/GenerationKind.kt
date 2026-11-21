@@ -421,16 +421,8 @@ enum class GenerationKind(
         label = R.string.generation_writing_prompt,
         phases =
             listOf(
-                GenerationPhase(
-                    "question",
-                    45,
-                    R.string.generation_writing_prompt_question,
-                    listOf(
-                        R.string.generation_writing_prompt_line_1,
-                        R.string.generation_writing_prompt_line_2,
-                        R.string.generation_writing_prompt_line_3,
-                    ),
-                ),
+                // One model call: its wait shows no steps (`IndeterminateWait`), so this names the run only.
+                GenerationPhase("question", 45, R.string.generation_writing_prompt, emptyList()),
             ),
         steps =
             mapOf(

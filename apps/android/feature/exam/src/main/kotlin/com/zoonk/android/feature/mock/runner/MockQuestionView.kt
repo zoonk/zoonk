@@ -315,13 +315,13 @@ internal fun QuestionCell(
     val current = index == run.position
     val enabled = run.moves.canOpen(index)
     val shape = RoundedCornerShape(10.dp)
+    // A written test's questions are numbered, so two of them don't look the same.
+    val writtenNumber = sectionPlace(index, run.questions)?.takeIf { question.essay && it.total > 1 }?.number
     val number =
-        if (question.essay) {
-            stringResource(
-                R.string.mock_written_part,
-            )
-        } else {
-            stringResource(R.string.mock_question_number, question.number)
+        when {
+            writtenNumber != null -> stringResource(R.string.mock_question_number, writtenNumber)
+            question.essay -> stringResource(R.string.mock_written_part)
+            else -> stringResource(R.string.mock_question_number, question.number)
         }
     // Flagged is read in the key's words, as the web's cell is.
     val name = if (flagged) stringResource(R.string.mock_cell_flagged, number) else number
@@ -367,7 +367,7 @@ internal fun QuestionCell(
                 .indication(interactions, ripple()),
             contentAlignment = Alignment.Center,
         ) {
-            CellLabel(question, answered || current, flagged && !answered)
+            CellLabel(question, writtenNumber, answered || current, flagged && !answered)
             if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
             if (current) {
                 Box(
@@ -392,14 +392,15 @@ internal fun FlagGlyph(modifier: Modifier = Modifier) {
 @Composable
 private fun CellLabel(
     question: MockQuestion,
+    writtenNumber: Int?,
     strong: Boolean,
     flagged: Boolean,
 ) {
-    if (question.essay) {
+    if (question.essay && writtenNumber == null) {
         Icon(painterResource(R.drawable.ic_border_color), contentDescription = null, modifier = Modifier.size(16.dp))
     } else {
         Text(
-            question.number.toString(),
+            (writtenNumber ?: question.number).toString(),
             color =
                 when {
                     flagged -> MaterialTheme.zoonk.warningText

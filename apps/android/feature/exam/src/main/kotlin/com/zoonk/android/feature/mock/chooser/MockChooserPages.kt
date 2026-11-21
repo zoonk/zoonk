@@ -58,12 +58,17 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.writing.ChooseOnToday
+import com.zoonk.android.feature.writing.choiceLine
+import com.zoonk.android.feature.writing.gradingReturnsLine
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.HeldSlot
+import com.zoonk.android.ui.components.IndeterminateWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OpeningDay
@@ -87,7 +92,9 @@ import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
+import com.zoonk.api.models.MockOptionSectionsInner
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerAvailability
 
 @Composable
 internal fun PracticeChooser(
@@ -112,8 +119,10 @@ internal fun PracticeChooser(
     val leads = { it: MockOption ->
         if (tests > 1) it.kind != MockOption.Kind.HALF && it.kind != MockOption.Kind.AREA else it.kind != MockOption.Kind.AREA
     }
-    val examChoices = practiceChoices(view.options.filter(leads), severalDays, tests)
-    val subjectChoices = practiceChoices(view.options.filterNot(leads), severalDays, tests, objectiveTitled = tests > 1)
+    val examChoices = practiceChoices(view.options.filter(leads), severalDays, tests, status = shown)
+    val subjectChoices = practiceChoices(view.options.filterNot(leads), severalDays, tests, objectiveTitled = tests > 1, status = shown)
+    val blocked = option?.let { rowLimit(it, shown) } != null
+    val pickedChoice = option?.let { pendingChoice(it, shown) }
     val examTitle =
         if (tests >
             1
@@ -130,7 +139,7 @@ internal fun PracticeChooser(
     val mainAction = {
         if (gated) {
             navigator.open(AppRoute.Subscription)
-        } else if (option != null && !busy) {
+        } else if (option != null && !busy && !blocked) {
             onStart()
             if (open) viewModel.start(option.shape, option.key) else viewModel.tryLocked()
         }
@@ -145,7 +154,7 @@ internal fun PracticeChooser(
                 busy = busy,
                 onClick = mainAction,
                 modifier = modifier.focus(replacementFocus),
-                enabled = option != null,
+                enabled = option != null && !blocked,
             ) { Text(stringResource(R.string.mock_chooser_start)) }
         }
     }
@@ -156,9 +165,14 @@ internal fun PracticeChooser(
         note =
             when {
                 gated -> ({ MockGate() })
+
                 shown is ChooserStatus.Refused -> ({ Refusal(shown, navigator) })
+
                 shown is ChooserStatus.Failed -> ({ StartFailed(shown) })
-                shown == ChooserStatus.GradesUsed -> ({ GradesUsed() })
+
+                // What the picked option needs first: its row already says why it can't start.
+                pickedChoice != null -> ({ ChooseOnToday(pickedChoice, onChoose = { navigator.showRoot(AppTab.Today) }) })
+
                 else -> null
             },
         bar = { TaskActions { main -> action(main) } },
@@ -260,17 +274,31 @@ internal fun MockWriting(
     writtenTestRun: String? = null,
 ) {
     writtenTestRun?.let { TrackShown(AnalyticsEvent.WritingPromptWaitViewed(it, AnalyticsEvent.WritingSurface.Mock)) }
+    val titleModifier = (titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier).semantics { heading() }
     BeforeFold { beforeFold ->
         Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
+            if (writtenTestRun != null) {
+                // The written test's questions are one model call: the wait says what's coming, with no steps it doesn't have.
+                IndeterminateWait(
+                    title = stringResource(R.string.mock_chooser_writing_written),
+                    description = stringResource(R.string.mock_chooser_writing_written_detail),
+                    failedTitle = stringResource(R.string.mock_chooser_writing_written_failed),
+                    run = run,
+                    onRetry = onRetry,
+                    modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
+                    titleModifier = titleModifier,
+                )
+                return@Box
+            }
             GenerationWait(
-                kind = if (writtenTestRun != null) GenerationKind.WritingPrompt else GenerationKind.MockQuestions,
+                kind = GenerationKind.MockQuestions,
                 run = run,
                 onRetry = onRetry,
                 modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
             ) {
                 Text(
                     stringResource(R.string.mock_chooser_preparing),
-                    (titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier).semantics { heading() },
+                    titleModifier,
                     style = MaterialTheme.typography.headlineSmall,
                 )
                 Text(
@@ -329,14 +357,32 @@ private fun StartFailed(failed: ChooserStatus.Failed) {
     )
 }
 
+private fun MockOption.hasWrittenTest(): Boolean =
+    kind == MockOption.Kind.WRITTEN || sections.orEmpty().any { it.kind == MockOptionSectionsInner.Kind.WRITTEN }
+
+/** The exam choices a mock's written test waits for, from the options or from a refused start. */
+private fun pendingChoice(
+    option: MockOption,
+    status: ChooserStatus,
+): List<String>? =
+    (listOf(option.availability) + option.sections.orEmpty().map { it.availability })
+        .firstOrNull { it?.status == WrittenPracticeSubjectsInnerAvailability.Status.NEEDS_CHOICE }
+        ?.choiceGroups
+        ?: (status as? ChooserStatus.NeedsChoice)?.choiceGroups?.takeIf { option.hasWrittenTest() }
+
+/** Why an option can't start now, said on its own row the way Today says it. */
 @Composable
-private fun GradesUsed() {
-    Text(
-        stringResource(R.string.mock_chooser_grades_used),
-        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+private fun rowLimit(
+    option: MockOption,
+    status: ChooserStatus,
+): String? {
+    val groups = pendingChoice(option, status)
+    val used = status as? ChooserStatus.GradesUsed
+    return when {
+        groups != null -> choiceLine(groups)
+        used != null && option.hasWrittenTest() -> gradingReturnsLine(used.returnsOn)
+        else -> null
+    }
 }
 
 /** Enter runs [action] once per press, as main's screen keys do, and is spent whether held or not. */
@@ -371,6 +417,8 @@ internal data class RowChoice(
     val label: String,
     val description: String?,
     val trailing: String,
+    /** Why the choice can't be taken now, under its description. */
+    val note: String? = null,
 )
 
 @Composable
@@ -380,6 +428,7 @@ private fun practiceChoices(
     tests: Int,
     /** The group's title already says its options hold objective questions only. */
     objectiveTitled: Boolean = false,
+    status: ChooserStatus = ChooserStatus.Choosing,
 ): List<RowChoice> =
     options.map {
         RowChoice(
@@ -387,6 +436,7 @@ private fun practiceChoices(
             label = mockOptionName(it, severalDays, tests),
             description = if (objectiveTitled) null else mockOptionDetail(it, severalDays),
             trailing = mockOptionSize(it),
+            note = rowLimit(it, status),
         )
     }
 
@@ -449,6 +499,14 @@ private fun ChoiceRowContent(
             choice.description?.let {
                 Text(
                     it,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            choice.note?.let {
+                Text(
+                    it,
+                    Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )

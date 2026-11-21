@@ -28,17 +28,24 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.util.Locale
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.pow
 
 /**
  * A range of points, one number when both ends round alike ("29.8", never "29.79–29.8"), and both
- * ends with the same decimals ("12.0–17.5", never "12–17.5").
+ * ends with the same decimals ("12.0–17.5", never "12–17.5"): the scale's own [decimals] when the
+ * server sends them, else what the values need. A [headline] rounds its low end down and its high
+ * end up, so it never claims more than its parts.
  */
 @Composable
 fun pointsRange(
     low: Double,
     high: Double,
+    decimals: Int? = null,
+    headline: Boolean = false,
 ): String {
-    val (from, to) = rangeEnds(low, high, currentLocale())
+    val (from, to) = rangeEnds(low, high, decimals, headline, currentLocale())
     return if (from == to) from else stringResource(R.string.essay_range, from, to)
 }
 
@@ -47,8 +54,9 @@ fun pointsRange(
 fun deductionRange(
     low: Double,
     high: Double,
+    decimals: Int? = null,
 ): String {
-    val (from, to) = rangeEnds(low, high, currentLocale())
+    val (from, to) = rangeEnds(low, high, decimals, headline = false, currentLocale())
     return when {
         high <= 0 -> from
         from == to -> stringResource(R.string.essay_minus, from)
@@ -59,17 +67,43 @@ fun deductionRange(
 private fun rangeEnds(
     low: Double,
     high: Double,
+    scaleDecimals: Int?,
+    headline: Boolean,
     locale: Locale,
 ): Pair<String, String> {
-    val decimals = if (listOf(low, high).any { Math.round(it * TENTHS) % TENTHS != 0L }) 1 else 0
-    return formatNumber(low, locale, maximumFractionDigits = decimals, minimumFractionDigits = decimals) to
-        formatNumber(high, locale, maximumFractionDigits = decimals, minimumFractionDigits = decimals)
+    val decimals = scaleDecimals ?: if (listOf(low, high).any { Math.round(it * TENTHS) % TENTHS != 0L }) 1 else 0
+    val step = 10.0.pow(decimals)
+    // 0.3 × 10 is 3.0000000000000004 in floating point, which must still round to 3; zero stays zero, never "−0".
+    val shownLow = if (headline) floor(low * step + FLOAT_SLACK) / step + 0.0 else low
+    val shownHigh = if (headline) ceil(high * step - FLOAT_SLACK) / step + 0.0 else high
+    return formatNumber(shownLow, locale, maximumFractionDigits = decimals, minimumFractionDigits = decimals) to
+        formatNumber(shownHigh, locale, maximumFractionDigits = decimals, minimumFractionDigits = decimals)
 }
 
+/** A score on its scale: exactly [decimals] digits when the scale says, else up to one. */
 fun formatPoints(
     value: Double,
     locale: Locale,
-): String = formatNumber(value, locale, maximumFractionDigits = 1)
+    decimals: Int? = null,
+): String =
+    formatNumber(
+        value,
+        locale,
+        maximumFractionDigits = decimals ?: 1,
+        minimumFractionDigits = decimals ?: 0,
+    )
+
+/** Where a minimum falls on a scale, as a share of it: a percent as is, points against [max]. */
+fun minimumShare(
+    percent: Boolean,
+    value: Double,
+    max: Double?,
+): Double? =
+    when {
+        percent -> value / PERCENT
+        max != null && max > 0 -> value / max
+        else -> null
+    }?.coerceIn(0.0, 1.0)
 
 /** A block's one number: the range large, its scale small beside it ("54–61 of 100"). */
 @Composable
@@ -78,6 +112,7 @@ fun PointsReadout(
     high: Double,
     max: Double,
     modifier: Modifier = Modifier,
+    decimals: Int? = null,
 ) {
     // The range keeps its dash at the number's size; only the scale beside it is small.
     val large =
@@ -90,7 +125,7 @@ fun PointsReadout(
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-    val range = pointsRange(low, high)
+    val range = pointsRange(low, high, decimals, headline = true)
     val ofMax = stringResource(R.string.essay_of_max, formatPoints(max, currentLocale()))
     Text(
         buildAnnotatedString {
@@ -105,7 +140,7 @@ fun PointsReadout(
 
 /**
  * The range on its scale: what it surely reaches solid, what it may reach lighter, and the rest as
- * track; [minimum] stands over it as a tick. With no [low] and [high] it's a dashed outline, so an
+ * track; [minimumShare] stands over it as a tick. With no [low] and [high] it's a dashed outline, so an
  * unmeasured part never reads as zero.
  */
 @Composable
@@ -114,7 +149,7 @@ fun RangeMeter(
     high: Double?,
     max: Double,
     modifier: Modifier = Modifier,
-    minimum: Double? = null,
+    minimumShare: Double? = null,
 ) {
     if (low == null || high == null || max <= 0) {
         Box(
@@ -137,8 +172,8 @@ fun RangeMeter(
 
     BoxWithConstraints(modifier.fillMaxWidth().height(TICK_HEIGHT), contentAlignment = Alignment.CenterStart) {
         MeterParts(parts)
-        minimum?.let {
-            val at = maxWidth * (it / max).toFloat().coerceIn(0f, 1f)
+        minimumShare?.let {
+            val at = maxWidth * it.toFloat().coerceIn(0f, 1f)
             Box(
                 Modifier
                     .offset(x = at - TICK_WIDTH / 2)
@@ -150,20 +185,30 @@ fun RangeMeter(
     }
 }
 
-/** "17–19 of 30" at a row's end, or what stands for it while it isn't measured. */
+/** "17–19 of 30" at a row's end, or what stands for it while it isn't measured, or is graded by level. */
 @Composable
 fun PointsValue(
     low: Double?,
     high: Double?,
     max: Double?,
     modifier: Modifier = Modifier,
+    decimals: Int? = null,
+    levels: Boolean = false,
 ) {
     val measured = low != null && high != null && max != null
     Text(
-        if (low != null && high != null && max != null) {
-            stringResource(R.string.essay_points_of, pointsRange(low, high), formatPoints(max, currentLocale()))
-        } else {
-            stringResource(R.string.essay_not_measured)
+        when {
+            low != null && high != null && max != null -> {
+                stringResource(R.string.essay_points_of, pointsRange(low, high, decimals), formatPoints(max, currentLocale()))
+            }
+
+            levels -> {
+                stringResource(R.string.essay_graded_by_level)
+            }
+
+            else -> {
+                stringResource(R.string.essay_not_measured)
+            }
         },
         modifier,
         color = if (measured) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -172,6 +217,8 @@ fun PointsValue(
 }
 
 private const val TENTHS = 10
+private const val PERCENT = 100.0
+private const val FLOAT_SLACK = 1e-9
 private val METER_HEIGHT = 6.dp
 private val TICK_HEIGHT = 14.dp
 private val TICK_WIDTH = 2.dp

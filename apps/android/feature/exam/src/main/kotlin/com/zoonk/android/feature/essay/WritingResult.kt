@@ -42,6 +42,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -51,10 +52,12 @@ import com.zoonk.android.feature.writing.PointsReadout
 import com.zoonk.android.feature.writing.RangeMeter
 import com.zoonk.android.feature.writing.deductionRange
 import com.zoonk.android.feature.writing.formatPoints
+import com.zoonk.android.feature.writing.minimumShare
 import com.zoonk.android.feature.writing.pointsRange
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.MeterPart
+import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
@@ -64,7 +67,10 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.WritingPromptOutput
+import com.zoonk.api.models.WritingRangeOutput
+import com.zoonk.api.models.WritingResultOutputOneOf1
 import com.zoonk.api.models.WritingResultOutputOneOfCriteriaInner
 
 /**
@@ -78,15 +84,17 @@ internal fun WritingResultView(
     text: String,
     eyebrow: String? = null,
 ) {
+    val step = remember(grade, text) { grade.nextStep(text) }
     Column(verticalArrangement = Arrangement.spacedBy(40.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-            eyebrow?.let { Eyebrow(it) }
+            // A heading, not a chip: one chip sits over a title, and the next step has its own.
+            eyebrow?.let { SectionHeader(it) }
             grade.points?.let { PointsHeader(it, grade, prompt, text) }
             WritingProgress(grade)
-            WritingNextStep(grade, headingFirst = grade.points == null)
+            WritingNextStep(step, prompt.lines?.toInt(), headingFirst = grade.points == null)
         }
         WritingCriteria(grade, prompt)
-        WritingMarkedText(grade, prompt.lines?.toInt(), text)
+        WritingMarkedText(grade, (step as? NextStep.Criterion)?.quote, prompt.lines?.toInt(), text)
     }
 }
 
@@ -100,33 +108,38 @@ private fun PointsHeader(
 ) {
     val errorCount = grade.errors.size
     val lines = grade.estimatedLines ?: countWritingLines(text, prompt.charactersPerLine.toInt(), prompt.lines?.toInt()).estimated
-    val partMinimum = prompt.partMinimum?.let { part -> minimumShare(part.minimum.unit.value, part.minimum.value, part.max) }
+    val partMinimum = prompt.partMinimum?.let { part -> minimumShare(part.minimum.unit.value == "percent", part.minimum.value, part.max) }
+    val decimals = points.decimals
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                stringResource(R.string.essay_your_answer),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium,
-            )
-            PointsReadout(points.total.low, points.total.high, points.max)
-        }
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            RangeMeter(points.total.low, points.total.high, points.max, minimum = partMinimum?.let { it * points.max })
-            prompt.partMinimum?.let { part -> partMinimumLine(part.minimum.unit.value, part.minimum.value, part.max) }?.let { line ->
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Eyebrow(stringResource(R.string.essay_your_answer))
+            Column(
+                Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                PointsReadout(points.total.low, points.total.high, points.max, decimals = decimals)
                 Text(
-                    line,
+                    stringResource(R.string.essay_estimated_score),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            RangeMeter(points.total.low, points.total.high, points.max, minimumShare = partMinimum)
+            partMinimum?.let { MinimumLegend(stringResource(R.string.essay_part_minimum, formatPercent(it, currentLocale()))) }
         }
         val zero = points.zeroReason
         if (zero != null) {
             Text(zero, style = MaterialTheme.typography.bodyLarge)
         } else {
             Column {
-                PartRow(stringResource(R.string.essay_content), detail = null, value = pointsRange(points.content.low, points.content.high))
+                PartRow(
+                    stringResource(R.string.essay_content),
+                    detail = null,
+                    value = pointsRange(points.content.low, points.content.high, decimals),
+                )
                 HorizontalDivider()
                 PartRow(
                     stringResource(R.string.essay_language_errors),
@@ -136,32 +149,28 @@ private fun PointsHeader(
                             prompt.lines?.let { limit -> stringResource(R.string.essay_lines_used, lines, limit.toInt()) }
                                 ?: pluralStringResource(R.plurals.essay_about_lines, lines, lines),
                         ),
-                    value = deductionRange(points.deduction.low, points.deduction.high),
+                    value = deductionRange(points.deduction.low, points.deduction.high, decimals),
                 )
             }
         }
     }
 }
 
-/** The written test's minimum as a share of its points, drawn at the same share of this question's. */
-private fun minimumShare(
-    unit: String,
-    value: Double,
-    max: Double?,
-): Double? =
-    when {
-        unit == "percent" -> value / PERCENT
-        max != null && max > 0 -> value / max
-        else -> null
-    }?.coerceIn(0.0, 1.0)
-
-/** Named as the written test's, never as this question's: CGU asks half the points on the sum of both questions. */
+/** The tick's legend under a meter, marked as the tick is. */
 @Composable
-private fun partMinimumLine(
-    unit: String,
-    value: Double,
-    max: Double?,
-): String? = minimumShare(unit, value, max)?.let { stringResource(R.string.essay_part_minimum, formatPercent(it, currentLocale())) }
+private fun MinimumLegend(text: String) {
+    Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Box(
+            Modifier
+                .padding(vertical = 2.dp)
+                .width(2.dp)
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(1.dp))
+                .background(MaterialTheme.colorScheme.onSurface),
+        )
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+    }
+}
 
 @Composable
 private fun PartRow(
@@ -178,7 +187,7 @@ private fun PartRow(
             Text(name, style = MaterialTheme.typography.bodyMedium)
             detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
         }
-        Text(value, style = MaterialTheme.typography.labelMedium.withTabularFigures())
+        Text(value, style = MaterialTheme.zoonkType.data)
     }
 }
 
@@ -206,39 +215,54 @@ private fun WritingProgress(grade: WritingGrade) {
     }
 }
 
-/** The one thing to work on, the same card for every rubric's result; it's the step's heading when no total leads. */
+/**
+ * The one thing to work on, the same card for every rubric's result; it's the step's heading when
+ * no total leads. Every criterion complete and every line read: no chip says there's a next step.
+ */
 @Composable
 private fun WritingNextStep(
-    grade: WritingGrade,
+    step: NextStep,
+    lines: Int?,
     headingFirst: Boolean,
 ) {
-    val nextStep = grade.nextStep
     val heading = if (headingFirst) Modifier.stepHeading() else Modifier
+    val (title, text) =
+        when (step) {
+            NextStep.Done -> {
+                stringResource(R.string.essay_nothing_left) to stringResource(R.string.essay_full_marks)
+            }
+
+            NextStep.Limit -> {
+                if (lines != null) {
+                    stringResource(R.string.essay_limit_title, lines) to stringResource(R.string.essay_limit_text, lines)
+                } else {
+                    stringResource(R.string.essay_limit_title_any) to stringResource(R.string.essay_limit_text_any)
+                }
+            }
+
+            is NextStep.Zero -> {
+                zeroStep(step.zeroKind) ?: (
+                    stringResource(R.string.essay_zero_title) to step.text.ifEmpty { stringResource(R.string.essay_zero_text) }
+                )
+            }
+
+            is NextStep.Criterion -> {
+                (step.title ?: stringResource(R.string.essay_what_to_rewrite)) to step.text
+            }
+        }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Eyebrow(stringResource(R.string.essay_next_step))
-            Text(
-                nextStep?.let {
-                    grade.criteria.firstOrNull { it.id == nextStep.criterionId }?.name
-                        ?: stringResource(R.string.essay_what_to_rewrite)
-                }
-                    ?: stringResource(R.string.essay_nothing_left),
-                heading.semantics { heading() },
-                style = MaterialTheme.typography.headlineSmall,
-            )
+            if (step != NextStep.Done) Eyebrow(stringResource(R.string.essay_next_step))
+            Text(title, heading.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
         }
-        if (nextStep == null) {
-            Text(
-                stringResource(R.string.essay_full_marks),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+        if (step == NextStep.Done) {
+            Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             return
         }
-        nextStep.quote?.let { QuotedLine(it, MaterialTheme.zoonk.warning) }
-        Text(nextStep.text, style = MaterialTheme.typography.bodyLarge)
-        nextStep.example?.let {
+        (step as? NextStep.Criterion)?.quote?.let { QuotedLine(it, MaterialTheme.zoonk.warning) }
+        Text(text, style = MaterialTheme.typography.bodyLarge)
+        (step as? NextStep.Criterion)?.example?.let {
             Text(
                 stringResource(R.string.essay_for_example, it),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -247,6 +271,39 @@ private fun WritingNextStep(
         }
     }
 }
+
+/** A zeroed answer's next step, by the rule it broke: the notice's rule shows above it, so this says what to do. */
+@Composable
+private fun zeroStep(kind: WritingResultOutputOneOf1.ZeroKind?): Pair<String, String>? =
+    when (kind) {
+        WritingResultOutputOneOf1.ZeroKind.BLANK -> {
+            stringResource(R.string.essay_zero_blank_title) to stringResource(R.string.essay_zero_blank_text)
+        }
+
+        WritingResultOutputOneOf1.ZeroKind.OFF_TOPIC -> {
+            stringResource(R.string.essay_zero_title) to stringResource(R.string.essay_zero_off_topic_text)
+        }
+
+        WritingResultOutputOneOf1.ZeroKind.WRONG_FORM -> {
+            stringResource(R.string.essay_zero_wrong_form_title) to stringResource(R.string.essay_zero_wrong_form_text)
+        }
+
+        WritingResultOutputOneOf1.ZeroKind.TOO_FEW_LINES -> {
+            stringResource(R.string.essay_zero_too_few_lines_title) to stringResource(R.string.essay_zero_too_few_lines_text)
+        }
+
+        WritingResultOutputOneOf1.ZeroKind.COPIED_SUPPORT -> {
+            stringResource(R.string.essay_zero_copied_support_title) to stringResource(R.string.essay_zero_copied_support_text)
+        }
+
+        WritingResultOutputOneOf1.ZeroKind.IDENTIFICATION -> {
+            stringResource(R.string.essay_zero_identification_title) to stringResource(R.string.essay_zero_identification_text)
+        }
+
+        null -> {
+            null
+        }
+    }
 
 @Composable
 private fun QuotedLine(
@@ -278,6 +335,25 @@ private val WritingResultOutputOneOfCriteriaInner.Level.cells: Int
             WritingResultOutputOneOfCriteriaInner.Level.PARTIAL -> 2
             WritingResultOutputOneOfCriteriaInner.Level.MISSING -> 0
         }
+
+/** A criterion's points: what's sure in full, what the range leaves open in light. */
+@Composable
+private fun RowMeter(
+    range: WritingRangeOutput,
+    max: Double,
+) {
+    val ink = MaterialTheme.colorScheme.onSurface
+    val low = if (max > 0) (range.low / max).toFloat().coerceIn(0f, 1f) else 0f
+    val high = if (max > 0) (range.high / max).toFloat().coerceIn(low, 1f) else 0f
+    MeterParts(
+        listOfNotNull(
+            MeterPart(MeterPart.Fill.Solid(ink), low).takeIf { low > 0f },
+            MeterPart(MeterPart.Fill.Solid(ink.copy(alpha = OPEN_ALPHA)), high - low).takeIf { high > low },
+            MeterPart(MeterPart.Fill.Track, 1f - high).takeIf { high < 1f },
+        ),
+        Modifier.width(64.dp),
+    )
+}
 
 /** A level as four small cells, so it reads at a glance and never by color alone: its name stands beside it. */
 @Composable
@@ -330,11 +406,18 @@ private fun WritingCriteria(
                 ) {
                     Text(criterion.name, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                     if (row != null) {
-                        Meter((if (row.max > 0) row.earned / row.max else 0.0).toFloat(), Modifier.width(64.dp))
+                        val decimals = row.decimals?.toInt() ?: grade.points.decimals
+                        val range = row.range ?: WritingRangeOutput(high = row.earned, low = row.earned)
+                        RowMeter(range, row.max)
                         Text(
-                            stringResource(R.string.essay_score_of, formatPoints(row.earned, locale), formatPoints(row.max, locale)),
+                            stringResource(
+                                R.string.essay_score_of,
+                                pointsRange(range.low, range.high, decimals),
+                                formatPoints(row.max, locale, decimals),
+                            ),
                             Modifier.sizeIn(minWidth = 64.dp),
-                            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.zoonkType.data,
                         )
                     } else {
                         LevelCells(criterion.level)
@@ -376,10 +459,11 @@ private fun WritingCriteria(
     }
 }
 
-/** The learner's text as sent, each language error marked and numbered, and what the board wouldn't read set apart. */
+/** The learner's text as sent, each language error marked and numbered, and what graders wouldn't read set apart. */
 @Composable
 private fun WritingMarkedText(
     grade: WritingGrade,
+    stepQuote: String?,
     lines: Int?,
     text: String,
 ) {
@@ -400,8 +484,8 @@ private fun WritingMarkedText(
         )
     val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) }
     val marked =
-        remember(grade, text, errorStyle, stepStyle, ignoredStyle) {
-            markText(grade, text, errorStyle, stepStyle, ignoredStyle, numberStyle)
+        remember(grade, stepQuote, text, errorStyle, stepStyle, ignoredStyle) {
+            markText(grade, stepQuote, text, errorStyle, stepStyle, ignoredStyle, numberStyle)
         }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -474,13 +558,13 @@ private class MarkedText(
  */
 private fun markText(
     grade: WritingGrade,
+    stepQuote: String?,
     text: String,
     errorStyle: SpanStyle,
     stepStyle: SpanStyle,
     ignoredStyle: SpanStyle,
     numberStyle: SpanStyle,
 ): MarkedText {
-    val stepQuote = grade.nextStep?.quote?.takeIf { it.isNotEmpty() }
     val stepRange = stepQuote?.let { quote -> text.indexOf(quote).takeIf { it >= 0 }?.let { it until it + quote.length } }
     val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) } ?: text.length
     val errors = grade.errors.map { it.start.toInt().coerceIn(0, text.length) until minOf(text.length, it.start.toInt() + it.quote.length) }
@@ -527,5 +611,5 @@ private fun wordStart(
 }
 
 private const val LEVEL_CELLS = 4
-private const val PERCENT = 100.0
 private const val ERROR_TINT = 0.1f
+private const val OPEN_ALPHA = 0.3f

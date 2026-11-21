@@ -17,8 +17,10 @@ import java.util.UUID
 
 /** Before the question exists: it's being written, its writing failed, or the day's extra grades are used. */
 sealed interface WritingStartState {
+    /** [drill]: the run writes a short exercise after a lesson, so its wait says so. */
     data class Writing(
         val generationId: String,
+        val drill: Boolean = false,
     ) : WritingStartState
 
     data object Failed : WritingStartState
@@ -42,13 +44,14 @@ sealed interface WritingStartState {
 class WritingStartViewModel(
     private val blockId: UUID,
     initial: WritingBefore,
+    private val drill: Boolean,
     private val store: EssayStore,
     source: GenerationSource,
 ) : ViewModel() {
     private val mutableState =
         MutableStateFlow(
             when (initial) {
-                is WritingBefore.Writing -> WritingStartState.Writing(initial.generationId)
+                is WritingBefore.Writing -> WritingStartState.Writing(initial.generationId, drill)
                 WritingBefore.Failed -> WritingStartState.Failed
                 WritingBefore.Removed -> WritingStartState.Removed
                 WritingBefore.LimitReached -> WritingStartState.LimitReached()
@@ -99,7 +102,7 @@ class WritingStartViewModel(
         mutableAsking.value = false
         when (answer) {
             is WritingStartAnswer.Writing -> {
-                mutableState.value = WritingStartState.Writing(answer.generationId)
+                mutableState.value = WritingStartState.Writing(answer.generationId, answer.drill || drill)
                 follow(answer.generationId)
             }
 

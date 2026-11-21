@@ -29,6 +29,7 @@ import com.zoonk.android.feature.writing.PointsReadout
 import com.zoonk.android.feature.writing.PointsValue
 import com.zoonk.android.feature.writing.RangeMeter
 import com.zoonk.android.feature.writing.formatPoints
+import com.zoonk.android.feature.writing.minimumShare
 import com.zoonk.android.feature.writing.pointsRange
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.format.currentLocale
@@ -36,10 +37,13 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.SyllabusSubject
+import com.zoonk.api.models.WrittenPartPoints
 import com.zoonk.api.models.WrittenPartPointsMinimum
 import com.zoonk.api.models.WrittenPractice
 import com.zoonk.api.models.WrittenPracticeSubjectsInner
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerAnswersInner
 import kotlinx.datetime.toJavaLocalDate
 import java.util.UUID
 
@@ -76,16 +80,24 @@ internal fun LazyListScope.subjectWritten(
             val locale = currentLocale()
             Column {
                 written.answers.forEachIndexed { index, answer ->
-                    if (index > 0) HorizontalDivider()
+                    if (index > 0) HorizontalDivider(Modifier.padding(horizontal = PAGE_PADDING))
                     val lines = answer.lines?.toInt()
                     val estimated = answer.estimatedLines?.toInt()
                     val versions = answer.versions.toInt()
+                    val criteria = answer.criteria?.takeIf { answer.range == null }
                     ListRow(
                         headline = { Text(answer.title) },
                         onClick = { openAnswer(answer.attemptId) },
                         supporting = {
+                            // A levels answer's result is its own line: as a trailing value it would squeeze the title on a phone.
+                            criteria?.let {
+                                Text(stringResource(R.string.essay_criteria_complete, it.complete.toInt(), it.total.toInt()))
+                            }
                             Text(
                                 factsLine(
+                                    stringResource(R.string.essay_short_exercise).takeIf {
+                                        answer.unit == WrittenPracticeSubjectsInnerAnswersInner.Unit.DRILL
+                                    },
                                     when {
                                         estimated != null && lines != null -> stringResource(R.string.essay_lines_used, estimated, lines)
                                         estimated != null -> pluralStringResource(R.plurals.essay_about_lines, estimated, estimated)
@@ -106,8 +118,8 @@ internal fun LazyListScope.subjectWritten(
                             answer.range?.let {
                                 {
                                     Text(
-                                        pointsRange(it.low, it.high),
-                                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                                        pointsRange(it.low, it.high, answer.decimals?.toInt()),
+                                        style = MaterialTheme.zoonkType.data,
                                     )
                                 }
                             },
@@ -118,22 +130,62 @@ internal fun LazyListScope.subjectWritten(
     }
 }
 
-/** The part's estimated points, its own minimum, and each question's share of them. */
+/**
+ * Whether the part can be estimated in points. A server from before `scale` says so by having
+ * measured something in points; otherwise answers are graded by level.
+ */
+private fun WrittenPracticeSubjectsInner.inPoints(): Boolean =
+    scale?.let { it == WrittenPracticeSubjectsInner.Scale.POINTS } ?: (points.range != null || answers.any { it.range != null })
+
+/** "Minimum to pass: 50 of 100", or its share of the points. */
+@Composable
+private fun minimumLine(points: WrittenPartPoints): String? {
+    val minimum = points.minimum ?: return null
+    val locale = currentLocale()
+    val max = points.max
+    return when {
+        minimum.unit == WrittenPartPointsMinimum.Unit.PERCENT -> {
+            stringResource(R.string.goalcontent_written_minimum_share, formatPercent(minimum.value / PERCENT, locale))
+        }
+
+        max != null -> {
+            stringResource(R.string.goalcontent_written_minimum_of, formatPoints(minimum.value, locale), formatPoints(max, locale))
+        }
+
+        else -> {
+            stringResource(R.string.goalcontent_written_minimum, formatPoints(minimum.value, locale))
+        }
+    }
+}
+
+/**
+ * Where the learner stands on the written part: its estimated points, its own minimum and each
+ * question's share of them; or, while no points estimate exists for it, how its answers are graded.
+ */
 @Composable
 private fun WrittenPoints(written: WrittenPracticeSubjectsInner) {
     val points = written.points
+    val minimumLine = minimumLine(points)
+
+    if (!written.inPoints()) {
+        Column(
+            Modifier.padding(horizontal = PAGE_PADDING).padding(top = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                stringResource(R.string.goalcontent_written_levels),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            minimumLine?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+        }
+        return
+    }
+
     val max = points.max
     val range = points.range
-    val minimum =
-        points.minimum?.let {
-            if (it.unit == WrittenPartPointsMinimum.Unit.PERCENT &&
-                max != null
-            ) {
-                it.value / PERCENT * max
-            } else {
-                it.value
-            }
-        }
+    val decimals = (points.decimals ?: written.decimals)?.toInt()
+    val share = points.minimum?.let { minimumShare(it.unit == WrittenPartPointsMinimum.Unit.PERCENT, it.value, max) }
 
     Column(
         Modifier.padding(horizontal = PAGE_PADDING).padding(top = 20.dp),
@@ -146,22 +198,13 @@ private fun WrittenPoints(written: WrittenPracticeSubjectsInner) {
                 style = MaterialTheme.typography.bodyMedium,
             )
             if (range != null && max != null) {
-                PointsReadout(range.low, range.high, max)
+                PointsReadout(range.low, range.high, max, decimals = decimals)
             } else {
                 Text(stringResource(R.string.essay_not_measured), style = MaterialTheme.typography.titleLarge)
             }
-            max?.let { RangeMeter(range?.low, range?.high, it, minimum = minimum) }
-            points.minimum?.let {
-                val locale = currentLocale()
-                Text(
-                    if (it.unit == WrittenPartPointsMinimum.Unit.PERCENT) {
-                        stringResource(R.string.goalcontent_written_minimum_share, formatPercent(it.value / PERCENT, locale))
-                    } else {
-                        stringResource(R.string.goalcontent_written_minimum, formatPoints(it.value, locale))
-                    },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
+            max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = share) }
+            minimumLine?.let {
+                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
             }
         }
         Column {
@@ -173,7 +216,7 @@ private fun WrittenPoints(written: WrittenPracticeSubjectsInner) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(task.name, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-                    PointsValue(task.range?.low, task.range?.high, task.max)
+                    PointsValue(task.range?.low, task.range?.high, task.max, decimals = decimals)
                 }
             }
         }

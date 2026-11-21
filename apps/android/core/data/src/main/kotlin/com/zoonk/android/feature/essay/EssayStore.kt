@@ -24,6 +24,8 @@ import com.zoonk.api.models.WritingDraft
 import com.zoonk.api.models.WritingResultOutput
 import com.zoonk.api.models.WritingStart
 import com.zoonk.api.models.WritingStartInput
+import com.zoonk.api.models.WritingStartOneOf1
+import com.zoonk.api.models.WritingStartOneOf2Task
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerializationException
 import retrofit2.Response
@@ -35,8 +37,10 @@ sealed interface WritingStartAnswer {
         val admissionId: UUID,
     ) : WritingStartAnswer
 
+    /** [drill]: the run writes a short exercise, not a whole answer's question. */
     data class Writing(
         val generationId: String,
+        val drill: Boolean = false,
     ) : WritingStartAnswer
 
     /** [task] is what's left for tomorrow, when the refusal names it. */
@@ -56,6 +60,8 @@ sealed interface WritingStartAnswer {
 data class RefusedTask(
     val description: String,
     val minutes: Int,
+    val lines: Int? = null,
+    val drill: Boolean = false,
 )
 
 /** A draft save: kept, refused because another device saved first (with the draft it saved), or the block is closed. */
@@ -216,11 +222,16 @@ private fun WritingStart.toAnswer(): WritingStartAnswer =
         }
 
         is WritingStart.WritingStartOneOf1Value -> {
-            WritingStartAnswer.Writing(value.runId)
+            WritingStartAnswer.Writing(value.runId, drill = value.unit == WritingStartOneOf1.Unit.DRILL)
         }
 
         is WritingStart.WritingStartOneOf2Value -> {
-            WritingStartAnswer.LimitReached(value.returnsOn, value.task?.let { RefusedTask(it.description, it.minutes.toInt()) })
+            WritingStartAnswer.LimitReached(
+                value.returnsOn,
+                value.task?.let {
+                    RefusedTask(it.description, it.minutes.toInt(), it.lines?.toInt(), drill = it.unit == WritingStartOneOf2Task.Unit.DRILL)
+                },
+            )
         }
     }
 
@@ -301,6 +312,8 @@ suspend fun EssayApi.startRoute(
         writing = if (answer == null) WRITING_FAILED else answer.routeValue(),
         taskDescription = task?.description,
         taskMinutes = task?.minutes,
+        taskLines = task?.lines,
+        drill = (answer as? WritingStartAnswer.Writing)?.drill ?: task?.drill ?: false,
     )
 }
 
