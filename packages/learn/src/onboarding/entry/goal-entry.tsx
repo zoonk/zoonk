@@ -22,6 +22,7 @@ import { useGoalFieldAction } from "./goal-field";
 import { GoalErrorAlert } from "./goal-outcomes";
 
 export function GoalEntry({
+  attachDisabled = false,
   attachOpen,
   attachRef,
   attachment,
@@ -34,6 +35,7 @@ export function GoalEntry({
   onSubmit,
   signUpHref,
 }: {
+  attachDisabled?: boolean;
   attachOpen?: boolean;
   attachRef?: React.Ref<HTMLButtonElement>;
   attachment?: React.ReactNode;
@@ -83,7 +85,10 @@ export function GoalEntry({
             aria-expanded={attachOpen}
             aria-label={t("Study your own material")}
             className="text-muted-foreground me-auto shrink-0 @xl:ms-0 @xl:me-0"
+            disabled={attachDisabled}
             edge="start"
+            // Keeps focus when the last material that fits closes the panel it was in.
+            focusableWhenDisabled
             onClick={onAttach}
             ref={attachRef}
             size="icon-lg"

@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_GOAL_SOURCES } from "@zoonk/core/goals/goal-input-limits";
 import { Button } from "@zoonk/ui/components/button";
 import { FileTextIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -161,6 +162,7 @@ function AttachableGoalEntry({
 
   return (
     <GoalEntry
+      attachDisabled={attached.length >= MAX_GOAL_SOURCES}
       attachOpen={open}
       attachRef={toggle}
       attachment={
