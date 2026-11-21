@@ -359,7 +359,9 @@ private struct MockChooser: View {
         localized:
           "No more grading today. You can start the written test on \(PlanDate.longDay(returnsOn, today: PlanDate.today())).",
         table: "Mock",
-        comment: "The written test refused before it starts: the day's extra grades are used until that day")
+        comment:
+          "The written test refused before it starts: the day's extra grades are used until that day"
+      )
     case .notEnoughQuestions?:
       String(
         localized: "Not enough questions for this one yet. Pick another.", table: "Mock",

@@ -163,18 +163,14 @@ extension StudyBlock {
       comment: "A short list of topics and how many more")
   }
 
-  /// A written task's row says when it waits for tomorrow, or that its draft is kept.
+  /// A written task's row says when it waits for tomorrow.
   private var writingDetail: String? {
     switch writingAvailability {
     case .tomorrow:
       String(
         localized: "Back tomorrow: no more grading today", table: "Today",
         comment: "A written task that waits for tomorrow's grades")
-    case .continue:
-      String(
-        localized: "Your draft is saved", table: "Today",
-        comment: "A written task with a saved, unsent draft")
-    case .available, nil:
+    case .available, .continue, nil:
       nil
     }
   }

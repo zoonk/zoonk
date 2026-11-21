@@ -88,7 +88,7 @@ private struct WritingPointsSection: View {
 
         LabeledContent {
           Text(verbatim: WritingLabels.deduction(points.deduction))
-          .typeStyle(.data)
+            .typeStyle(.data)
         } label: {
           VStack(alignment: .leading, spacing: 2) {
             Text("Language errors", tableName: "Essay", comment: "Points taken off for language")
@@ -198,15 +198,15 @@ private struct WritingNextStepSection: View {
   let chip: String?
 
   var body: some View {
-    Section {
-      VStack(alignment: .leading, spacing: 10) {
-        if let chip {
-          Chip(Text(chip))
-        }
+    if let next = grade.nextStep {
+      Section {
+        VStack(alignment: .leading, spacing: 10) {
+          if let chip {
+            Chip(Text(chip))
+          }
 
-        Chip(Text("Next step", tableName: "Essay", comment: "The one thing to work on next"))
+          Chip(Text("Next step", tableName: "Essay", comment: "The one thing to work on next"))
 
-        if let next = grade.nextStep {
           Text(
             grade.nextStepCriterion?.name
               ?? String(
@@ -226,17 +226,9 @@ private struct WritingNextStepSection: View {
               .typeStyle(.body)
               .foregroundStyle(.mutedForeground)
           }
-        } else {
-          Text("Nothing left to work on", tableName: "Essay", comment: "Full marks")
-            .typeStyle(.stepHeading)
-          Text(
-            "Every criterion has full marks in this estimate.", tableName: "Essay",
-            comment: "Full marks on every criterion"
-          )
-          .foregroundStyle(.mutedForeground)
         }
+        .padding(.vertical, 4)
       }
-      .padding(.vertical, 4)
     }
   }
 }

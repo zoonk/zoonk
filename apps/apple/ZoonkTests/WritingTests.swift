@@ -91,6 +91,29 @@ final class WritingLinesTests: XCTestCase {
 
 /// Every result is one shape: levels carry no numbers; points carry ranges.
 final class WritingResultDecodingTests: XCTestCase {
+  func testWrittenSubjectCanHaveADifferentNameFromItsScoringPart() throws {
+    let practice = try decode(
+      GoalPlan.WrittenPractice.self,
+      """
+      {
+        "cadence":"weekly","parts":["Written test"],"subjects":[{
+          "answers":[],"trend":[],"points":{"name":"Written test","max":100,"tasks":[]}
+        }]
+      }
+      """)
+    let subject = try decode(
+      SyllabusSubject.self,
+      """
+      {
+        "areas":["Writing"],"chapters":[],"group":"Written test","key":"writing","lessonsDone":0,
+        "lessonsKnown":0,"lessonsTotal":1,"name":"Writing","sharedWith":[],"shortName":"Writing",
+        "source":"notice","topics":[]
+      }
+      """)
+
+    XCTAssertEqual(practice.subject(for: subject)?.points.name, "Written test")
+  }
+
   func testALevelsResultHasNoTotal() throws {
     let grade = try decode(
       WritingResult.self, WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))
