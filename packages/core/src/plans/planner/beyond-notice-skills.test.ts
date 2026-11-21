@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { chooseBases } from "./base-choices";
+import { findBeyondNoticeSkillIds } from "./beyond-notice-skills";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
@@ -136,6 +137,34 @@ describe("an exam subject with a skill beyond the notice", () => {
     expect(count("formats")).toBeLessThan(26);
     expect(count("formats")).toBeGreaterThanOrEqual(9);
     expect(count("metadata")).toBe(9);
+  });
+
+  it("cuts a base from an unlisted area first even when its old graph has no topic field", () => {
+    const input = tiInput({ days: 20, minutes: 35 });
+
+    const graph = {
+      ...input.graph,
+      skills: input.graph.skills.map((item) =>
+        item.skillId === "formats"
+          ? skill("formats", { area: "File management", lessons: 26, weight: 2 })
+          : item,
+      ),
+    };
+
+    expect(findBeyondNoticeSkillIds(graph)).toStrictEqual(new Set(["formats"]));
+
+    const items = lessonsOf(
+      {
+        ...input,
+        graph,
+        settings: { ...input.settings, baseChoices: [{ choice: "deep", skillId: "formats" }] },
+        topicLevels: [{ level: "low", subject: "TI", topic: "7.1 Conceitos de dados" }],
+      },
+      ["formats", "metadata"],
+    );
+
+    expect(items.filter((item) => item.skillId === "formats").length).toBeLessThan(26);
+    expect(items.filter((item) => item.skillId === "metadata")).toHaveLength(9);
   });
 
   it("keeps the selected essential base whole before the topic that builds on it", () => {

@@ -18,10 +18,13 @@ export function findBeyondNoticeSkillIds(graph: PlanGraph): Set<string> {
         (skill) =>
           skill.extra ||
           (!hasTopics(skill) &&
-            !(skill.outlined && skill.topics === undefined) &&
             !skill.outcome &&
-            (listed.has(getSkillArea({ graph, skill })) ||
-              (listed.size > 0 && skill.topics?.length === 0))),
+            listed.size > 0 &&
+            !(
+              skill.outlined &&
+              skill.topics === undefined &&
+              listed.has(getSkillArea({ graph, skill }))
+            )),
       )
       .map((skill) => skill.skillId),
   );
