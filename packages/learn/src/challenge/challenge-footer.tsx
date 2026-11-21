@@ -229,19 +229,8 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
         };
       }
 
-      if (challenge.access === "preparing" || start.problem === "preparing") {
-        return {
-          actions: <KeepStudyingLink />,
-          line: (
-            <MockPreparingWords
-              title={t({
-                description:
-                  "Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them.",
-                message: "Your mock exam is being prepared",
-              })}
-            />
-          ),
-        };
+      if (isPreparing({ challenge, start })) {
+        return { actions: <KeepStudyingLink />, line: null };
       }
 
       if (challenge.status === "ready" && writingLimit) {
@@ -281,16 +270,44 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 }
 
+type ScreenState = Pick<ReturnType<typeof useChallengeScreen>, "challenge" | "start">;
+
+function isPreparing({ challenge, start }: ScreenState) {
+  return (
+    start.problem !== "plusRequired" &&
+    (challenge.status === "ready" || challenge.status === "started") &&
+    !challenge.waitReason &&
+    (challenge.access === "preparing" || start.problem === "preparing")
+  );
+}
+
+function usePreparingNote(): React.ReactNode {
+  const t = useExtracted();
+  const screen = useChallengeScreen();
+
+  return isPreparing(screen) ? (
+    <MockPreparingWords
+      title={t({
+        description:
+          "Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them.",
+        message: "Your mock exam is being prepared",
+      })}
+    />
+  ) : null;
+}
+
 export function useChallengeFooterNote(): React.ReactNode {
   const { challenge } = useChallengeScreen();
+  const preparing = usePreparingNote();
   const startProblem = useStartProblem();
   const moveFailed = useMoveFailed();
   const startShows = challenge.status === "ready" && challenge.waitReason === null;
-  const start = startShows ? startProblem : null;
+  const start = startShows && !preparing ? startProblem : null;
 
   return (
-    (start || moveFailed) && (
+    (preparing || start || moveFailed) && (
       <>
+        {preparing}
         {start}
         {moveFailed}
       </>
