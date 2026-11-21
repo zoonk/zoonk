@@ -123,23 +123,21 @@ export async function buildExtraLessons({
 }): Promise<PlannedBlock[]> {
   const done = getLessonsDoneToday(session);
 
-  const items = await prisma.planItem.findMany({
-    orderBy: { position: "asc" },
-    take: EXTRA_LESSON_WINDOW + done.size,
-    where: {
-      kind: { in: [...LEARN_KINDS] },
-      plan: { goalId: session.goalId ?? "" },
-      status: "todo",
-      ...(planItemIds && { id: { in: [...planItemIds] } }),
-    },
-  });
-
-  const plan = session.goalId
-    ? await prisma.plan.findUnique({
-        select: { settings: true },
-        where: { goalId: session.goalId },
-      })
-    : null;
+  const [items, plan] = await Promise.all([
+    prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      take: EXTRA_LESSON_WINDOW + done.size,
+      where: {
+        kind: { in: [...LEARN_KINDS] },
+        plan: { goalId: session.goalId ?? "" },
+        status: "todo",
+        ...(planItemIds && { id: { in: [...planItemIds] } }),
+      },
+    }),
+    session.goalId
+      ? prisma.plan.findUnique({ select: { settings: true }, where: { goalId: session.goalId } })
+      : null,
+  ]);
 
   const lessons = await loadPlanLessons({
     items: items.filter((item) => !item.lessonId || !done.has(item.lessonId)),
@@ -175,15 +173,16 @@ export async function buildExtraLessons({
   }));
 }
 
+/** Practice is the fallback, so the goal's skills are read only when no lesson is left. */
 export async function planExtraBlocks({
   minutes,
+  readSkillIds,
   session,
-  skillIds,
   userId,
 }: {
   minutes: number;
+  readSkillIds: () => Promise<string[]>;
   session: ExtraDay;
-  skillIds: string[];
   userId: string;
 }): Promise<ExtraBlocks | null> {
   const [lesson, ...lessons] = await buildExtraLessons({ minutes, session });
@@ -192,17 +191,26 @@ export async function planExtraBlocks({
     return [lesson, ...lessons];
   }
 
-  const practice = await buildExtraPractice({ minutes, session, skillIds, userId });
+  const practice = await buildExtraPractice({
+    minutes,
+    session,
+    skillIds: await readSkillIds(),
+    userId,
+  });
+
   return practice ? [practice] : null;
 }
 
 /** Offer more time only after checking it has actual work to add; expose those lessons before the tap. */
 export async function withExtraStudyCheck({
   extraTime,
+  readSkillIds,
   session,
   userId,
 }: {
   extraTime: ExtraTime;
+  /** A GET passes its request-cached goal plan; without it, the skills are read fresh. */
+  readSkillIds?: () => Promise<string[]>;
   session: ExtraDay;
   userId: string;
 }): Promise<ExtraTime> {
@@ -210,9 +218,14 @@ export async function withExtraStudyCheck({
     return extraTime;
   }
 
-  const skillIds = session.goalId ? await loadGoalSkillIds(session.goalId) : [];
+  const { goalId } = session;
 
-  const planned = await planExtraBlocks({ minutes: extraTime.minutes, session, skillIds, userId });
+  const planned = await planExtraBlocks({
+    minutes: extraTime.minutes,
+    readSkillIds: readSkillIds ?? (async () => (goalId ? loadGoalSkillIds(goalId) : [])),
+    session,
+    userId,
+  });
 
   if (!planned) {
     return { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" };

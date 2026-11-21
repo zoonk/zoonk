@@ -5,10 +5,12 @@ import { io } from "next/cache";
 import { loadUnshownCertificates } from "../certificates/_utils/unshown-certificates";
 import { type OwnedCertificateFacts } from "../certificates/certificate-contract";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { readActiveSubscription } from "../learner/facts/subscription";
+import { readGoalPlan } from "../learner/_utils/read-goal-plan";
+import { readPreparationInputs } from "../learner/facts/preparation-inputs";
 import { loadCeremony } from "../milestones/load-ceremony";
 import { findReminderOffer } from "../reminders/_utils/reminder-offer";
 import { type ReminderOffer } from "../reminders/study-reminder-contract";
+import { readGoalLessons } from "../view-models/syllabus/_utils/load-goal-lessons";
 import { measureSessionState } from "./_utils/capture-snapshot";
 import { isCurrentSession } from "./_utils/current-session";
 import { withExtraStudyCheck } from "./_utils/extra-blocks";
@@ -107,20 +109,38 @@ async function measureSummaryState({
   userId: string;
 }): Promise<SessionState> {
   const end = session.status === "completed" ? readSessionEnd(session.endSnapshot) : null;
+  const { goal } = session;
 
   return (
     end ??
     measureSessionState({
       goalId: session.goalId,
       now: new Date(),
-      readSubscription: readActiveSubscription,
+      ...(goal && {
+        reads: {
+          lessons: () => readGoalLessons({ goal, userId }),
+          preparation: () => readPreparationInputs(userId, goal.id),
+        },
+      }),
       timeZone,
       userId,
     })
   );
 }
 
-/** Requires ownership; completed sessions replay saved end state while stopped sessions reflect current progress. */
+async function readGoalSkillIds(goalId: string | null): Promise<string[]> {
+  if (!goalId) {
+    return [];
+  }
+
+  const plan = await readGoalPlan(goalId);
+  return plan.skills.map((skill) => skill.id);
+}
+
+/**
+ * Requires ownership; completed sessions replay saved end state while stopped sessions reflect
+ * current progress. Each part starts once the parts it needs are loaded.
+ */
 export async function getStudySessionSummary({
   input,
   sessionId,
@@ -140,37 +160,39 @@ export async function getStudySessionSummary({
   const { session, userId } = owned;
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
   const snapshot = readSessionSnapshot(session.startSnapshot);
-
-  const [answers, after, missions, mistakesSaved, seconds] = await Promise.all([
-    loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
-    measureSummaryState({ session, timeZone, userId }),
-    getDayMissions({
-      session,
-      timeZone,
-      ...(isCurrentSession({ now: new Date(), session, timeZone }) && { through: new Date() }),
-    }),
-    prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
-    sumSessionSeconds(prisma, { sessionId, userId }),
-  ]);
-
-  const moves = snapshot ? getMovedSkills({ current: after.skillStates, snapshot }) : [];
-  const newSkillIds = moves.filter((move) => move.from === "new").map((move) => move.skillId);
-  const names = await loadSkillNames(moves.map((move) => move.skillId));
-  const nameOf = (skillId: string) => names.find((skill) => skill.id === skillId);
-
-  const view = toStudySessionView({
-    answers,
-    current: isCurrentSession({ now: new Date(), session, timeZone }),
-    dayMinutes: session.plannedMinutes,
-    examAccess: { includesMockExams: true },
-    missions,
-    session,
-    week: EMPTY_WEEK,
-  });
-
+  const current = isCurrentSession({ now: new Date(), session, timeZone });
   const netScoredItemIds = getNetScoredItemIds(session.blocks);
 
+  const answersRead = loadSessionAnswers({ blocks: session.blocks, sessionId, userId });
+  const afterRead = measureSummaryState({ session, timeZone, userId });
+
+  const movesRead = afterRead.then((after) =>
+    snapshot ? getMovedSkills({ current: after.skillStates, snapshot }) : [],
+  );
+
+  const viewRead = Promise.all([
+    answersRead,
+    getDayMissions({ session, timeZone, ...(current && { through: new Date() }) }),
+  ]).then(([answers, missions]) =>
+    toStudySessionView({
+      answers,
+      current,
+      dayMinutes: session.plannedMinutes,
+      examAccess: { includesMockExams: true },
+      missions,
+      session,
+      week: EMPTY_WEEK,
+    }),
+  );
+
   const [
+    answers,
+    after,
+    view,
+    moves,
+    names,
+    mistakesSaved,
+    seconds,
     comesBack,
     capsulesSealed,
     buddyAte,
@@ -181,19 +203,35 @@ export async function getStudySessionSummary({
     netScore,
     reminderOffer,
   ] = await Promise.all([
-    loadComesBack({ answers, session, timeZone, userId }),
+    answersRead,
+    afterRead,
+    viewRead,
+    movesRead,
+    movesRead.then((list) => loadSkillNames(list.map((move) => move.skillId))),
+    prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
+    sumSessionSeconds(prisma, { sessionId, userId }),
+    answersRead.then((list) => loadComesBack({ answers: list, session, timeZone, userId })),
     loadSealedCapsules({ session, timeZone, userId }),
-    loadBuddyMeal({ answers, newIdeas: newSkillIds.length, session, userId }),
+    answersRead.then((list) => loadBuddyMeal({ answers: list, session, userId })),
     loadCeremony(userId),
     loadUnshownCertificates(userId),
     loadTomorrow({ session }),
-    withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
+    viewRead.then((loaded) =>
+      withExtraStudyCheck({
+        extraTime: loaded.extraTime,
+        readSkillIds: () => readGoalSkillIds(session.goalId),
+        session,
+        userId,
+      }),
+    ),
     netScoredItemIds.length > 0
       ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
       : null,
     findReminderOffer({ goalStudyTime: session.goal?.studyTime ?? null, userId }),
   ]);
 
+  const newSkillIds = moves.filter((move) => move.from === "new").map((move) => move.skillId);
+  const nameOf = (skillId: string) => names.find((skill) => skill.id === skillId);
   const correct = answers.filter((answer) => answer.isCorrect).length;
   const scored = scoreAnswers({ answers });
 
@@ -204,7 +242,7 @@ export async function getStudySessionSummary({
       belt: snapshot ? getBeltChange(snapshot.brainPower, after.brainPower) : null,
       bestStreak: scored.topStreak,
       brainPower: view.brainPower,
-      buddyAte,
+      buddyAte: { ...buddyAte, newIdeas: newSkillIds.length },
       capsulesSealed,
       ceremony,
       certificates,
