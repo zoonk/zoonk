@@ -45,14 +45,13 @@ function MockPreparingWords({ title }: { title: string }) {
   );
 }
 
-function useTimeLeft({ run, value }: { run: GenerationRun; value: number }): string {
+function useTimeLeft({ seconds, value }: { seconds: number; value: number }): string {
   const t = useExtracted();
   const duration = useFormatDuration();
-  const { phases } = getPhaseProgress({ definition: getGenerationKind("mockPaper"), run });
-  const seconds = (sumOf(phases.map((phase) => phase.seconds)) * (100 - value)) / 100;
+  const left = (seconds * (100 - value)) / 100;
 
   return t("About {time} left", {
-    time: duration(Math.max(1, Math.ceil(seconds / SECONDS_PER_MINUTE))),
+    time: duration(Math.max(1, Math.ceil(left / SECONDS_PER_MINUTE))),
   });
 }
 
@@ -61,9 +60,9 @@ function MockWritingProgress({ run, title }: { run: GenerationRun; title: string
   const copy = useGenerationCopy("mockPaper");
   const step = useGenerationStepLabel({ kind: "mockPaper", run });
   const value = useGenerationProgress({ kind: "mockPaper", run });
-  const timeLeft = useTimeLeft({ run, value });
   const progress = getPhaseProgress({ definition: getGenerationKind("mockPaper"), run });
-  const done = progress.progress === 100;
+  const weights = progress.phases.map((phase) => phase.seconds);
+  const timeLeft = useTimeLeft({ seconds: sumOf(weights), value });
 
   return (
     <div className="flex min-w-0 flex-col gap-1.5" data-slot="mock-writing">
@@ -74,11 +73,11 @@ function MockWritingProgress({ run, title }: { run: GenerationRun; title: string
         locale={locale}
         statuses={progress.phases.map((phase) => phase.status)}
         value={value}
-        weights={progress.phases.map((phase) => phase.seconds)}
+        weights={weights}
       />
 
       <p className="text-muted-foreground text-sm">
-        {done ? step : [step, timeLeft].filter(Boolean).join(FACT_SEPARATOR)}
+        {progress.progress === 100 ? step : [step, timeLeft].filter(Boolean).join(FACT_SEPARATOR)}
       </p>
 
       <GenerationTimelineStatus>{step}</GenerationTimelineStatus>
