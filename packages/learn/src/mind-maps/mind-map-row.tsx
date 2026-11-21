@@ -43,8 +43,8 @@ function isMaking(shown: MindMapShown): boolean {
 }
 
 /**
- * The row's mark is the list's own small one, so its title starts where the rows beside it start:
- * a chapter's summary, a lesson end's "Up next". A map's picture leads only on the Mind maps page,
+ * The row's mark is the list's own small one, so its title starts where the rows beside it start
+ * on a chapter's summary. A map's picture leads only on the Mind maps page,
  * where every row is a map (`MindMapSlot`).
  */
 function RowLeading({ shown }: { shown: MindMapShown }) {
@@ -180,7 +180,7 @@ export function MindMapRowView({
     return null;
   }
 
-  // A lesson's end shows one row over "Up next", so its text starts at the row's top as that row's does.
+  // A lesson's end shows this one row on its own.
   const alone = place === "finish";
   // The Mind maps page lists many chapters without a map: their names and actions, nothing more.
   const compact = place === "library";

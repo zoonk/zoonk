@@ -19,7 +19,7 @@ import { type SessionQueueRow } from "./session-queue-rows";
 import { useBlockTitle } from "./use-block-copy";
 
 /** One block as a list row; the next one is highlighted. */
-export function BlockRow({ block, state }: SessionQueueRow) {
+function BlockRow({ block, state }: SessionQueueRow) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const blockTitle = useBlockTitle();
