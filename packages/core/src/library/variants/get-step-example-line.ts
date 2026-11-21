@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { claimAssist } from "../../entitlements/claim-usage";
+import { claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { getSession } from "../../users/get-session";
 import { canViewLibraryRow } from "../_utils/library-visibility";
@@ -39,9 +39,11 @@ function writeLessonLinesOnce(input: LessonLinesInput): Promise<LessonLines> {
     return pending;
   }
 
-  const started = writeLessonLines({ ...input, claim: claimAssist, wait: "learner" }).finally(() =>
-    writing.delete(key),
-  );
+  const started = writeLessonLines({
+    ...input,
+    claim: (targetId) => claimUsage({ kind: "assist", targetId }),
+    wait: "learner",
+  }).finally(() => writing.delete(key));
 
   writing.set(key, started);
   return started;

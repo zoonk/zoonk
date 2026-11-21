@@ -1,5 +1,4 @@
 import "server-only";
-import { createHash } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { claimUsageFor } from "../../entitlements/claim-usage";
 import { readCurrentLessonVersion } from "../lessons/lesson-versions";
@@ -10,11 +9,9 @@ import {
   loadLessonOfStep,
   loadSlotScreens,
   pickExampleLineFacts,
+  toExampleLineClaimTarget,
   writeLessonLines,
 } from "./_utils/lesson-example-lines";
-
-const UUID_HEX_DIGITS = 32;
-const UUID_GROUPS = /^(?<time>.{8})(?<mid>.{4})(?<high>.{4})(?<clock>.{4})(?<node>.{12})$/u;
 
 export type PickedExampleLineFacts = { contextKey: string; facts: ExampleLineFact[] };
 
@@ -35,27 +32,6 @@ async function needsLines({
 
   const { missing } = await findMissingScreens({ context, lessonId, userId, version });
   return missing.length > 0;
-}
-
-/** A retry of the same lesson, version and context finds this claim and isn't charged again. */
-function toClaimTarget({
-  contextKey,
-  lessonId,
-  userId,
-  version,
-}: {
-  contextKey: string;
-  lessonId: string;
-  userId: string;
-  version: number;
-}): string {
-  const hex = createHash("sha256")
-    .update(`example-lines:${userId}:${lessonId}:${version}:${contextKey}`)
-    .digest("hex");
-
-  return hex
-    .slice(0, UUID_HEX_DIGITS)
-    .replace(UUID_GROUPS, "$<time>-$<mid>-$<high>-$<clock>-$<node>");
 }
 
 /**
@@ -90,15 +66,36 @@ export async function listExampleLineLessons({
   return candidates.filter((_, index) => needed[index]);
 }
 
-/** Internal workflow bridge: the pick names no lesson, so one serves every lesson of a run. */
+/**
+ * Internal workflow bridge: the pick names no lesson, so one serves every lesson of a run. It's
+ * admitted by the first lesson's claim, which that lesson's write then finds already made.
+ */
 export async function pickExampleLineFactsFor({
+  firstLessonId,
   userId,
 }: {
+  firstLessonId: string;
   userId: string;
 }): Promise<PickedExampleLineFacts | null> {
-  const context = await loadExampleLineContext({ userId });
+  const [context, version] = await Promise.all([
+    loadExampleLineContext({ userId }),
+    readCurrentLessonVersion(firstLessonId),
+  ]);
 
-  if (!context) {
+  if (!context || version === null) {
+    return null;
+  }
+
+  const targetId = toExampleLineClaimTarget({
+    contextKey: context.key,
+    lessonId: firstLessonId,
+    userId,
+    version,
+  });
+
+  const usage = await claimUsageFor({ kind: "assist", targetId, userId });
+
+  if (usage.status !== "allowed") {
     return null;
   }
 
@@ -137,10 +134,8 @@ export async function writeLessonExampleLines({
     return "skipped";
   }
 
-  const targetId = toClaimTarget({ contextKey: context.key, lessonId, userId, version });
-
   const result = await writeLessonLines({
-    claim: () => claimUsageFor({ kind: "assist", targetId, userId }),
+    claim: (targetId) => claimUsageFor({ kind: "assist", targetId, userId }),
     context,
     country: lesson.country,
     facts: picked.facts,

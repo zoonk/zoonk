@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { type CallWait } from "@zoonk/ai/provider-options";
 import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { MemoryCategory, type StepExampleLine, prisma } from "@zoonk/db";
@@ -28,6 +29,8 @@ export type LessonLinesInput = {
 };
 
 const EARLIER_LINE_LIMIT = 8;
+const UUID_HEX_DIGITS = 32;
+const UUID_GROUPS = /^(?<time>.{8})(?<mid>.{4})(?<high>.{4})(?<clock>.{4})(?<node>.{12})$/u;
 
 /**
  * Names no lesson topic: a topic pulls the check toward facts about that subject, so a developer's
@@ -35,6 +38,30 @@ const EARLIER_LINE_LIMIT = 8;
  */
 const EXAMPLE_LINE_NEED =
   "Write a personal example that shows a lesson's idea in a familiar part of the learner's life: their work, routine, home, hobbies or the sports and interests they follow";
+
+/**
+ * One claim per learner, lesson version and context: written ahead or asked for in the lesson, a
+ * second write of the same lines is never charged again.
+ */
+export function toExampleLineClaimTarget({
+  contextKey,
+  lessonId,
+  userId,
+  version,
+}: {
+  contextKey: string;
+  lessonId: string;
+  userId: string;
+  version: number;
+}): string {
+  const hex = createHash("sha256")
+    .update(`example-lines:${userId}:${lessonId}:${version}:${contextKey}`)
+    .digest("hex");
+
+  return hex
+    .slice(0, UUID_HEX_DIGITS)
+    .replace(UUID_GROUPS, "$<time>-$<mid>-$<high>-$<clock>-$<node>");
+}
 
 function getSlot(content: unknown) {
   const parsed = safeParseStepContent("explanation", content);
@@ -164,7 +191,7 @@ export async function writeLessonLines({
   version,
   wait,
 }: LessonLinesInput & {
-  claim: () => Promise<UsageDecision>;
+  claim: (targetId: string) => Promise<UsageDecision>;
   /** Picked after the claim when absent, so a refused claim spends nothing. */
   facts?: ExampleLineFact[];
   wait: CallWait;
@@ -180,7 +207,9 @@ export async function writeLessonLines({
     return { canRequest: false, lines: current, status: "ready" };
   }
 
-  const usage = await claim();
+  const usage = await claim(
+    toExampleLineClaimTarget({ contextKey: context.key, lessonId, userId, version }),
+  );
 
   if (usage.status !== "allowed") {
     return usage;

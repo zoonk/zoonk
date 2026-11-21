@@ -15,6 +15,7 @@ export async function listExampleLineLessonsStep(input: {
 }
 
 export async function pickExampleLineFactsStep(input: {
+  firstLessonId: string;
   userId: string;
 }): Promise<PickedExampleLineFacts | null> {
   "use step";

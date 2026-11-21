@@ -5,10 +5,11 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { getStepExampleLine } from "./get-step-example-line";
+import { getStepExampleLine, requestStepExampleLine } from "./get-step-example-line";
 import {
   listExampleLineLessons,
   pickExampleLineFactsFor,
@@ -67,7 +68,11 @@ describe(listExampleLineLessons, () => {
       slotLesson(),
     ]);
 
-    const picked = await pickExampleLineFactsFor({ userId: learner.id });
+    const picked = await pickExampleLineFactsFor({
+      firstLessonId: done.lesson.id,
+      userId: learner.id,
+    });
+
     mockLines(["Already written."]);
 
     await writeLessonExampleLines({
@@ -92,11 +97,14 @@ describe(listExampleLineLessons, () => {
       listExampleLineLessons({ lessonIds: [lesson.id], userId: learner.id }),
     ).resolves.toStrictEqual([]);
 
-    await expect(pickExampleLineFactsFor({ userId: learner.id })).resolves.toBeNull();
+    await expect(
+      pickExampleLineFactsFor({ firstLessonId: lesson.id, userId: learner.id }),
+    ).resolves.toBeNull();
   });
 
   it("lets a failed relevance check fail the pick, so the step retries instead of using the newest facts", async () => {
     const learner = await userFixture();
+    const { lesson } = await slotLesson();
 
     await Promise.all(
       Array.from({ length: 11 }, (_, index) =>
@@ -106,7 +114,27 @@ describe(listExampleLineLessons, () => {
 
     vi.mocked(selectRelevantMemoryFacts).mockRejectedValueOnce(new Error("relevance down"));
 
-    await expect(pickExampleLineFactsFor({ userId: learner.id })).rejects.toThrow("relevance down");
+    await expect(
+      pickExampleLineFactsFor({ firstLessonId: lesson.id, userId: learner.id }),
+    ).rejects.toThrow("relevance down");
+  });
+
+  it("picks nothing, and runs no relevance check, for a learner out of help", async () => {
+    const learner = await userFixture();
+    const { lesson } = await slotLesson();
+
+    await Promise.all([
+      usageRecordsFixture({ count: 100, kind: "assist", userId: learner.id }),
+      ...Array.from({ length: 11 }, (_, index) =>
+        memoryFactFixture({ category: "routine", statement: `Hobby ${index}`, userId: learner.id }),
+      ),
+    ]);
+
+    await expect(
+      pickExampleLineFactsFor({ firstLessonId: lesson.id, userId: learner.id }),
+    ).resolves.toBeNull();
+
+    expect(selectRelevantMemoryFacts).not.toHaveBeenCalled();
   });
 });
 
@@ -114,7 +142,7 @@ describe(writeLessonExampleLines, () => {
   it("writes ahead at the background tier, then serves the line when the lesson opens", async () => {
     const learner = await learnerWhoCooks();
     const { lesson, step } = await slotLesson();
-    const picked = await pickExampleLineFactsFor({ userId: learner.id });
+    const picked = await pickExampleLineFactsFor({ firstLessonId: lesson.id, userId: learner.id });
     mockLines(["While the pasta water boils, you keep chopping."]);
 
     await expect(
@@ -134,10 +162,10 @@ describe(writeLessonExampleLines, () => {
     );
   });
 
-  it("charges a retry of the same lesson and context once", async () => {
+  it("charges the pick, a retry and the lesson's own request for the same lines once", async () => {
     const learner = await learnerWhoCooks();
-    const { lesson } = await slotLesson();
-    const picked = await pickExampleLineFactsFor({ userId: learner.id });
+    const { lesson, step } = await slotLesson();
+    const picked = await pickExampleLineFactsFor({ firstLessonId: lesson.id, userId: learner.id });
 
     mockLines(["A line."]);
     await writeLessonExampleLines({ lessonId: lesson.id, picked: picked!, userId: learner.id });
@@ -145,6 +173,11 @@ describe(writeLessonExampleLines, () => {
 
     mockLines(["A line again."]);
     await writeLessonExampleLines({ lessonId: lesson.id, picked: picked!, userId: learner.id });
+    await prisma.stepExampleLine.deleteMany({ where: { userId: learner.id } });
+
+    mockSession(learner.id);
+    mockLines(["A line asked for in the lesson."]);
+    await requestStepExampleLine({ stepId: step.id });
 
     await expect(
       prisma.usageRecord.count({ where: { kind: "assist", userId: learner.id } }),
@@ -154,7 +187,7 @@ describe(writeLessonExampleLines, () => {
   it("writes nothing when what the learner shared changed after the pick", async () => {
     const learner = await learnerWhoCooks();
     const { lesson } = await slotLesson();
-    const picked = await pickExampleLineFactsFor({ userId: learner.id });
+    const picked = await pickExampleLineFactsFor({ firstLessonId: lesson.id, userId: learner.id });
 
     await memoryFactFixture({
       category: "background",

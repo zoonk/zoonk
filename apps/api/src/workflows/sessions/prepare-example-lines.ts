@@ -14,11 +14,13 @@ export async function prepareExampleLines({
 }): Promise<void> {
   const lessons = await listExampleLineLessonsStep({ lessonIds, userId });
 
-  if (lessons.length === 0) {
+  const [firstLessonId] = lessons;
+
+  if (!firstLessonId) {
     return;
   }
 
-  const picked = await pickExampleLineFactsStep({ userId });
+  const picked = await pickExampleLineFactsStep({ firstLessonId, userId });
 
   if (!picked) {
     return;
