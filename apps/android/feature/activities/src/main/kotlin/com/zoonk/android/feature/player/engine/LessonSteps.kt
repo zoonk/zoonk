@@ -33,12 +33,19 @@ val LessonStep.isReadStep: Boolean
 
 val LessonStep.isLanguageStep: Boolean get() = content is StepContent.Language
 
-internal fun StepContent.SpokenAnswer.listeningInstead(cantTalk: Boolean): StepContent.Language? =
-    listening?.takeIf { cantTalk }?.let { StepContent.Language(StepKind.Listening, it, wordHints = null) }
+private fun StepContent.SpokenAnswer.asListening(): StepContent.Language? =
+    listening?.let { StepContent.Language(StepKind.Listening, it, wordHints = null) }
+
+/** A learner who can't talk today hears the spoken screen's sentence instead, unless they can't listen either: then they type it. */
+internal fun StepContent.SpokenAnswer.listeningInstead(
+    cantTalk: Boolean,
+    cantListen: Boolean,
+): StepContent.Language? = asListening()?.takeIf { cantTalk && !cantListen }
 
 fun LessonStep.asAnswered(answer: LessonAnswer?): LessonStep =
     (content as? StepContent.SpokenAnswer)
-        ?.listeningInstead(answer is LessonAnswer.Listening)
+        ?.takeIf { answer is LessonAnswer.Listening }
+        ?.asListening()
         ?.let { copy(content = it) } ?: this
 
 val LessonStep.canSelfCorrect: Boolean get() = isLanguageStep && kind in SELF_CORRECT_KINDS

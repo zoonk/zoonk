@@ -12,12 +12,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.scaffold.LocalNoteAtEnd
 
 /** Main's `GateWords`: what stopped, and at most one line under it. */
 @Composable
@@ -26,9 +28,18 @@ fun GateWords(
     line: String?,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        title?.let { Text(it, style = MaterialTheme.typography.titleSmall) }
-        line?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+    val end = LocalNoteAtEnd.current
+    val align = if (end) TextAlign.End else TextAlign.Start
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp), horizontalAlignment = if (end) Alignment.End else Alignment.Start) {
+        title?.let { Text(it, textAlign = align, style = MaterialTheme.typography.titleSmall) }
+        line?.let {
+            Text(
+                it,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = align,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 }
 
@@ -89,7 +100,7 @@ internal fun GateLayout(
     Column(
         modifier.semantics { liveRegion = LiveRegionMode.Polite },
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = if (LocalNoteAtEnd.current) Alignment.End else Alignment.Start,
     ) {
         if (wordsGated == null) GateWords(title, line) else HeldSlot(gated = wordsGated) { GateWords(title, line) }
         buttons?.let {

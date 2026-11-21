@@ -1,8 +1,14 @@
 package com.zoonk.android.feature.player
 
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
@@ -59,5 +65,56 @@ class TodayChoices(
 
     private companion object {
         const val KEY = "player.todayChoices"
+    }
+}
+
+/**
+ * An open screen's "I can't talk now" and "I can't listen now", read once from [choices] as it opens.
+ * Until [isRead], the screen plays no sound on its own, so a sentence the learner chose not to hear
+ * stays quiet.
+ */
+@Stable
+class DayChoices(
+    private val choices: TodayChoices,
+) {
+    private var talkDay by mutableStateOf<LocalDate?>(null)
+    private var listenDay by mutableStateOf<LocalDate?>(null)
+
+    var isRead by mutableStateOf(false)
+        private set
+
+    val cantTalk: Boolean get() = talkDay == choices.today()
+
+    val cantListen: Boolean get() = listenDay == choices.today()
+
+    /** A learner without a session has chosen nothing. */
+    fun read(
+        session: AuthenticatedSession?,
+        scope: CoroutineScope,
+    ) {
+        isRead = false
+        scope.launch {
+            talkDay = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
+            listenDay = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
+            isRead = true
+        }
+    }
+
+    fun setCantTalk(
+        chosen: Boolean,
+        session: AuthenticatedSession?,
+        scope: CoroutineScope,
+    ) {
+        talkDay = choices.today().takeIf { chosen }
+        session?.let { scope.launch { choices.set(it, TodayChoice.CantTalk, chosen) } }
+    }
+
+    fun setCantListen(
+        chosen: Boolean,
+        session: AuthenticatedSession?,
+        scope: CoroutineScope,
+    ) {
+        listenDay = choices.today().takeIf { chosen }
+        session?.let { scope.launch { choices.set(it, TodayChoice.CantListen, chosen) } }
     }
 }

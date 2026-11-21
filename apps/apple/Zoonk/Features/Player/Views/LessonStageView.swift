@@ -7,7 +7,8 @@ struct LessonStageView: View {
   @Environment(\.spokenAnswerRecording) private var recording
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var isCheckSlow = false
-  /// A spoken answer's Record button is the bar's main action, where Check is on other steps.
+  /// A spoken answer's Record button is the bar's main action, where Check is on other steps, with
+  /// what to do with it right over the bar.
   @State private var recordInBar = RecordInBar()
 
   let store: LessonPlayerStore
@@ -19,7 +20,7 @@ struct LessonStageView: View {
   }
 
   private static let verdictId = "verdict"
-  private static let checkNoteId = "check-note"
+  private static let selfCorrectId = "self-correct"
   private static let turnId = "turn"
   private static let screenId = "screen"
 
@@ -45,18 +46,28 @@ struct LessonStageView: View {
     AccessibilityNotification.Announcement(announcement).post()
   }
 
-  private func visit(_ step: LessonStep) -> String {
-    "\(step.id)/\(state.rounds[step.id] ?? 0)"
-  }
-
-  /// Main's `ListeningInstead`: a spoken screen answered by listening is a listening screen.
-  private func shownPrompt(_ step: LessonStep) -> ShownPrompt {
-    guard case .spokenAnswer(_, let listening?) = step.content else {
-      return ShownPrompt(stepId: step.id, url: step.promptAudio)
+  /// A check that failed or runs slow, in the bar's note over the button that sent it; on a spoken
+  /// screen it takes the recording's line's place while it shows.
+  private var checkNote: BarNote? {
+    if state.checkFailed {
+      return BarNote(
+        LocalizedStringResource(
+          "We couldn't check your answer this time. Try again.", table: "Player",
+          comment: "The server couldn't grade a written or spoken answer"))
     }
 
-    let mode = store.spokenAnswerMode(canListen: true, canSpeak: recording.input != nil)
-    return ShownPrompt(stepId: step.id, url: mode == .listen ? listening.promptAudio : nil)
+    if isCheckSlow, state.phase == .checking {
+      return BarNote(
+        LocalizedStringResource(
+          "Still checking. This is taking longer than usual.", table: "Player",
+          comment: "Grading the answer is taking longer than usual"), tone: .status)
+    }
+
+    return nil
+  }
+
+  private func visit(_ step: LessonStep) -> String {
+    "\(step.id)/\(state.rounds[step.id] ?? 0)"
   }
 
   private func recapView(_ recap: LessonRecap, on step: LessonStep) -> some View {
@@ -73,6 +84,14 @@ struct LessonStageView: View {
 
   var body: some View {
     if let step = state.currentStep {
+      let spokenMode = step.spokenAnswerMode(
+        canSpeak: recording.input != nil, cantTalk: store.cantTalkToday,
+        cantListen: store.cantListenToday, micBlocked: store.isMicBlocked,
+        lockedAnswer: state.phase == .playing ? nil : state.currentAnswer,
+        heard: state.currentResult?.heard)
+      let prompt = ShownPrompt(
+        stepId: step.id,
+        url: step.shownPromptAudio(spokenMode: spokenMode, cantListen: store.cantListenToday))
       // A reader, so a wide screen never shows the one-column version first.
       GeometryReader { proxy in
         let space = PaneSpace(proxy)
@@ -89,7 +108,7 @@ struct LessonStageView: View {
         let teachesKnowledge = store.lesson?.targetLanguage == nil
         let offersDidntGetIt = store.lesson?.offersDidntGetIt(on: step) == true
         let opensWithMap = step.opensLesson && map != nil
-        let place = step.checkAddedPlace(isOneColumn: spread == nil)
+        let place = step.checkAddedPlace(isOneColumn: spread == nil, spokenMode: spokenMode)
         let isWithBank = place != .underScreen
         let bankAtBottom = place == .aboveBank
         let added = LessonCheckAdded(
@@ -163,10 +182,10 @@ struct LessonStageView: View {
                 }
               }
 
-              LessonCheckNote(
-                state: state, isSlow: isCheckSlow, showsSelfCorrect: !isWithBank
-              )
-              .id(Self.checkNoteId)
+              if !isWithBank, state.notice == .selfCorrect {
+                SelfCorrectLine()
+                  .id(Self.selfCorrectId)
+              }
 
               if !isWithBank {
                 added
@@ -195,11 +214,9 @@ struct LessonStageView: View {
                 announceVerdict()
               }
             }
-            .onChange(of: state.notice == .selfCorrect || state.checkFailed || isCheckSlow) {
-              _, hasNote in
-              if hasNote {
-                let isNoteWithBank = isWithBank && state.notice == .selfCorrect
-                scroll.scrollTo(isNoteWithBank ? Self.verdictId : Self.checkNoteId, anchor: .bottom)
+            .onChange(of: state.notice == .selfCorrect) { _, isShown in
+              if isShown {
+                scroll.scrollTo(isWithBank ? Self.verdictId : Self.selfCorrectId, anchor: .bottom)
               }
             }
             // A worked example's newest step is its last. A challenge's turn is its newest
@@ -221,9 +238,10 @@ struct LessonStageView: View {
               }
             }
           }
-          .bottomBar {
+          .bottomBar(note: checkNote ?? recordInBar.note) {
             LessonActionBar(
-              store: store, state: state, step: step, showsOwnAsk: offersHelp || offersDidntGetIt)
+              store: store, state: state, step: step, promptAudio: prompt.url,
+              showsOwnAsk: offersHelp || offersDidntGetIt)
           }
           .environment(recordInBar)
           // The hinge is the trailing page's safe area, so its content and the action bar stay
@@ -260,7 +278,7 @@ struct LessonStageView: View {
       // as another screen would be, so its canvas starts over too.
       .id(visit(step))
       .announcesBuddyOffer(.misses, isShown: state.struggleOffer != nil && !step.showsOwnResult)
-      .onChange(of: shownPrompt(step), initial: true) { _, shown in
+      .onChange(of: prompt, initial: true) { _, shown in
         store.promptAudio.enter(prompt: shown.url, audio: audio)
       }
       .task(id: step.id) {
@@ -268,16 +286,7 @@ struct LessonStageView: View {
           await store.loadExampleLine(stepId: step.id)
         }
       }
-      // Here rather than on the note, which would add a gap to the page while it's empty.
-      .task(id: state.phase == .checking) {
-        isCheckSlow = false
-
-        if state.phase == .checking {
-          try? await Task.sleep(for: LessonGrading.slowCheck)
-          isCheckSlow = !Task.isCancelled
-        }
-      }
-      .announcesStatus(isCheckSlow && state.phase == .checking ? LessonCheckNote.slowLine : nil)
+      .slowCheck(state.phase == .checking, isSlow: $isCheckSlow)
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
       .sensoryFeedback(trigger: state.countedVerdict(step.id)) {
@@ -384,39 +393,6 @@ private struct SelfCorrectLine: View {
   }
 }
 
-private struct LessonCheckNote: View {
-  let state: LessonPlayerState
-  let isSlow: Bool
-  let showsSelfCorrect: Bool
-
-  var body: some View {
-    if showsSelfCorrect, state.notice == .selfCorrect {
-      SelfCorrectLine()
-    }
-
-    if state.checkFailed {
-      FailureLine(
-        message: LocalizedStringResource(
-          "We couldn't check your answer this time. Try again.", table: "Player",
-          comment: "The server couldn't grade a written or spoken answer")
-      )
-      .typeStyle(.note)
-    }
-
-    if isSlow, state.phase == .checking {
-      Text(Self.slowLine)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-    }
-  }
-
-  static var slowLine: String {
-    String(
-      localized: "Still checking. This is taking longer than usual.", table: "Player",
-      comment: "Grading the answer is taking longer than usual")
-  }
-}
-
 extension LessonPlayerState.Notice {
   var line: String {
     switch self {
@@ -455,6 +431,7 @@ struct LessonActionBar: View {
   let state: LessonPlayerState
   /// Nil on the lesson map, which is read like a screen.
   let step: LessonStep?
+  var promptAudio: URL? = nil
   var showsOwnAsk = false
 
   @Environment(\.activityRenderers) private var activityRenderers
@@ -473,8 +450,8 @@ struct LessonActionBar: View {
       }
       .disabled(!state.canGoBack || recordInBar?.isChecking == true)
 
-      if let step, step.isRead {
-        LessonAudioButton(url: step.promptAudio, style: .bar)
+      if let promptAudio {
+        LessonAudioButton(url: promptAudio, style: .bar)
       }
 
       if showsDontKnow {
@@ -702,8 +679,10 @@ extension LessonStep {
   /// Where what a check adds goes. One column gives the turn spare height and its word bank waits
   /// at the bottom, so the feedback takes the room above the bank and the bank holds still under the
   /// thumb; a spread puts it under the bank; a screen without a bank has it under the screen.
-  func checkAddedPlace(isOneColumn: Bool) -> CheckAddedPlace {
-    guard hasWordBank else {
+  func checkAddedPlace(
+    isOneColumn: Bool, spokenMode: SpokenAnswerMode? = nil
+  ) -> CheckAddedPlace {
+    guard hasWordBank || spokenMode == .listen else {
       return .underScreen
     }
 

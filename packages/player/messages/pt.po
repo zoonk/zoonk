@@ -1309,16 +1309,6 @@ msgctxt "b0QQkx"
 msgid "The sound plays: {notes}"
 msgstr "O som toca: {notes}"
 
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "xAzh1Y"
-msgid "I can listen now"
-msgstr "Posso ouvir agora"
-
-#: src/activities/keyboard-fretboard/sound-as-text.tsx
-msgctxt "K8wsFm"
-msgid "I can't listen now"
-msgstr "Não posso ouvir agora"
-
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "6KJB-Z"
 msgid "Spot {number}: empty"
@@ -2817,6 +2807,16 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Escolha palavras para montar sua resposta"
 
+#: src/components/cant-listen-switch.tsx
+msgctxt "xAzh1Y"
+msgid "I can listen now"
+msgstr "Posso ouvir agora"
+
+#: src/components/cant-listen-switch.tsx
+msgctxt "K8wsFm"
+msgid "I can't listen now"
+msgstr "Não posso ouvir agora"
+
 #. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
 #: src/components/enter-hint.tsx
 msgctxt "3W8LgY"
@@ -3409,16 +3409,6 @@ msgid "Writing is off for today."
 msgstr "Perguntas de escrita desativadas por hoje."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "N9yMCQ"
-msgid "We couldn't check your answer this time. Try again."
-msgstr "Não conseguimos conferir sua resposta desta vez. Tente de novo."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "dw3XKv"
-msgid "Still checking. This is taking longer than usual."
-msgstr "Ainda estamos conferindo. Está demorando mais que o normal."
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
 msgid "Listen again"
 msgstr "Ouvir de novo"
@@ -3549,18 +3539,6 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Escreva sua resposta"
 
-#. “Record” is the label of the button that starts the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Toque em Gravar e fale em voz alta"
-
-#. “Stop” is the label of the button that ends the recording.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "CzQFwa"
-msgid "Listening… Tap Stop to check."
-msgstr "Ouvindo… Toque em Parar para conferir."
-
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
@@ -3581,11 +3559,6 @@ msgstr "Posso falar agora"
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "Prefiro falar"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "pjy2sy"
-msgid "Type what you'd say"
-msgstr "Digite o que você falaria"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "eUqe2x"

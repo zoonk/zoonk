@@ -54,11 +54,13 @@ import com.zoonk.android.feature.player.steps.ChoiceOption
 import com.zoonk.android.feature.player.steps.ChoiceOptions
 import com.zoonk.android.feature.player.steps.ContextText
 import com.zoonk.android.feature.player.steps.DescribedPicture
+import com.zoonk.android.feature.player.steps.GhostAction
 import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.feature.player.steps.QuestionText
 import com.zoonk.android.feature.player.steps.ReadScene
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -95,8 +97,8 @@ class LessonLanguage internal constructor(
 fun rememberLessonLanguage(
     learner: String,
     target: String?,
+    speech: SpeechPlayer? = LocalLessonSpeech.current,
 ): LessonLanguage {
-    val speech = LocalLessonSpeech.current
     val languages = remember(learner, target) { LessonLanguages(learner, target) }
     val prompt = speech?.let { rememberPromptAudio(it, languages.target) }
     return remember(languages, prompt, speech) { LessonLanguage(languages, prompt, speech) }
@@ -112,13 +114,20 @@ fun LanguageStepView(
     language: LessonLanguage,
     actions: StepActions,
     part: StepPart,
+    /** Another way around a listening screen, under "I can't listen now" ("I can talk now"). */
+    wayOut: (@Composable () -> Unit)? = null,
 ) {
     val languages = language.languages
     val prompt = language.prompt
     val speech = language.speech
     val exercise = remember(content.exercise) { content.exercise.toExercise() }
     val select = { answer: LessonAnswer? -> if (!locked) actions.select(answer) }
-    val sound: (@Composable () -> Unit)? = prompt?.let { promptAudioUrl(content)?.let { url -> { PromptAudioInlineButton(url, prompt) } } }
+    val sound: (@Composable () -> Unit)? =
+        prompt?.let {
+            promptAudioUrl(content, actions.cantListen)?.let { url ->
+                { PromptAudioInlineButton(url, prompt) }
+            }
+        }
 
     when (content.kind) {
         StepKind.Alphabet -> {
@@ -183,12 +192,20 @@ fun LanguageStepView(
 
         StepKind.Listening -> {
             exercise.sentence?.let { sentence ->
+                val url = listeningAudioUrl(sentence, actions.cantListen)
+                val offersWayOut = !locked && sentence.audioUrl != null
                 val listen = @Composable {
-                    val url = sentence.audioUrl
                     if (url != null && prompt != null) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Eyebrow(stringResource(R.string.player_language_what_do_you_hear), icon = R.drawable.ic_hearing)
-                            PromptAudioButton(url, prompt)
+                            QuestionText(stringResource(R.string.player_language_what_do_you_hear))
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                itemVerticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                PromptAudioButton(url, prompt)
+                                if (offersWayOut) CantListenAction(actions, edge = null)
+                            }
                             // Without its sound the screen still works: it shows the sentence to translate.
                             if (prompt.state is SpeechState.Failed) {
                                 SpeechFailedNote(
@@ -199,11 +216,14 @@ fun LanguageStepView(
                                     text = stripWrappingQuotes(sentence.sentence),
                                 )
                             }
+                            wayOut?.invoke()
                         }
                     } else {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Eyebrow(stringResource(R.string.player_language_translate), icon = R.drawable.ic_translate)
                             QuestionText(stripWrappingQuotes(sentence.sentence))
+                            if (offersWayOut) CantListenAction(actions)
+                            wayOut?.invoke()
                         }
                     }
                 }
@@ -235,6 +255,23 @@ fun LanguageStepView(
 
         else -> {}
     }
+}
+
+/**
+ * Beside what it's about, as a speaking screen has "I can't talk now", away from the word bank, where it would read as one
+ * more word: for the rest of the day, sentences to hear are read instead; the words placed so far stay.
+ */
+@Composable
+private fun CantListenAction(
+    actions: StepActions,
+    edge: ButtonEdge? = ButtonEdge.Start,
+) {
+    val cantListen = actions.cantListen
+    GhostAction(
+        if (cantListen) R.drawable.ic_hearing else R.drawable.ic_hearing_disabled,
+        stringResource(if (cantListen) R.string.player_can_listen_now else R.string.player_cant_listen_now),
+        edge,
+    ) { actions.setCantListen(!cantListen) }
 }
 
 /**

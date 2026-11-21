@@ -127,6 +127,7 @@ import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
+import com.zoonk.android.feature.player.steps.lessonBarNote
 import com.zoonk.android.feature.player.steps.offersDontKnow
 import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.player.steps.rememberScreenWork
@@ -262,7 +263,8 @@ fun LessonPlayer(
         if (shownStep != null) viewModel.firstSceneVisible()
         onPauseOrDispose {}
     }
-    language.prompt?.let { PromptAudioEffect(shownStep, viewModel.cantTalk, it) }
+    val promptStep = shownStep?.takeIf { viewModel.todayChoicesRead }
+    language.prompt?.let { PromptAudioEffect(promptStep, viewModel.cantTalk, viewModel.cantListen, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) {
         viewModel.resume()
@@ -475,6 +477,7 @@ fun LessonPlayer(
                         null
                     }
                 },
+            note = state?.takeIf { screen?.primary != null }?.let { lessonBarNote(screen?.step, it, actions) },
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if (state == null || screen == null) {
@@ -916,7 +919,7 @@ private fun ActionBar(
 ) {
     val primary = screen.primary ?: return
     // Listening plays its sentence from its own button on the screen.
-    val promptUrl = screen.step?.takeIf { it.isReadStep }?.let { promptAudioUrl(it) }
+    val promptUrl = screen.step?.takeIf { it.isReadStep }?.let { promptAudioUrl(it, actions.cantListen) }
 
     // Drawn while it can't go back too, so the bar's buttons keep their places from screen to screen.
     val back: @Composable () -> Unit = {

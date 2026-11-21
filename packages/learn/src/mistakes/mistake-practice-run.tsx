@@ -3,6 +3,8 @@
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { useCheckNote } from "../_components/check-note";
+import { MainActionSlotProvider, usePlacedMainActionNote } from "../_components/main-action-slot";
 import { QuestionActions } from "../_components/question-actions";
 import { AnswersSaveError } from "../_components/save-error";
 import { TaskClose } from "../_components/task-close";
@@ -84,6 +86,32 @@ function QuestionMenu({ run }: { run: Run }) {
   );
 }
 
+/** A failed save says so on the bar itself, with its Try again, so the note over the bar stays quiet. */
+function PracticeBar({
+  askButton,
+  run,
+  step,
+}: {
+  askButton: React.ReactNode;
+  run: Run;
+  step: NonNullable<Run["step"]>;
+}) {
+  const { phase } = run.state;
+  const checkNote = useCheckNote({ checking: phase.kind === "checking" });
+  const placedNote = usePlacedMainActionNote();
+
+  return (
+    <TaskActionBar note={phase.kind === "answerFailed" ? null : (checkNote ?? placedNote)}>
+      {phase.kind === "answerFailed" && (
+        <AnswersSaveError failures={run.state.failures} onRetry={run.retry} />
+      )}
+      <QuestionActions>
+        <PracticeStepActions ask={askButton} run={run} step={step} />
+      </QuestionActions>
+    </TaskActionBar>
+  );
+}
+
 function PracticeBody({
   askButton,
   backHref,
@@ -128,7 +156,7 @@ function PracticeBody({
   }
 
   return (
-    <>
+    <MainActionSlotProvider>
       <TaskBody>
         <PracticeStepView
           lessonHref={lessonHref}
@@ -139,17 +167,8 @@ function PracticeBody({
         />
       </TaskBody>
 
-      {phase.kind !== "idea" && (
-        <TaskActionBar>
-          {phase.kind === "answerFailed" && (
-            <AnswersSaveError failures={run.state.failures} onRetry={run.retry} />
-          )}
-          <QuestionActions>
-            <PracticeStepActions ask={askButton} run={run} step={run.step} />
-          </QuestionActions>
-        </TaskActionBar>
-      )}
-    </>
+      {phase.kind !== "idea" && <PracticeBar askButton={askButton} run={run} step={run.step} />}
+    </MainActionSlotProvider>
   );
 }
 

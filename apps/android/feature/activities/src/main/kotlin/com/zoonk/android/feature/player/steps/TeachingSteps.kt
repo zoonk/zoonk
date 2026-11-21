@@ -71,12 +71,15 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.audio.VoiceAnswerButton
-import com.zoonk.android.feature.audio.VoiceAnswerLine
+import com.zoonk.android.feature.audio.VoiceAnswerLimit
 import com.zoonk.android.feature.audio.VoiceAnswerModel
+import com.zoonk.android.feature.audio.checkNote
+import com.zoonk.android.feature.audio.recordNote
 import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
+import com.zoonk.android.feature.player.engine.asAnswered
 import com.zoonk.android.feature.player.engine.isExploredPictureLost
 import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.listeningInstead
@@ -115,12 +118,8 @@ import com.zoonk.android.ui.richtext.typesetMath
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
 
 private const val MAX_TYPED_ANSWER_LENGTH = 1000
-
-private val SLOW_CHECK = 15.seconds
 
 /** A whole number in the learner's digits. */
 @Composable
@@ -644,21 +643,26 @@ internal fun SpokenAnswerView(
         voice.blocked = false
         actions.setCantTalk(cantTalk)
     }
-    val listening = content.listeningInstead(if (locked) answer is LessonAnswer.Listening else actions.cantTalk)
+    val listening =
+        if (locked) {
+            step
+                .asAnswered(
+                    answer,
+                ).content as? StepContent.Language
+        } else {
+            content.listeningInstead(actions.cantTalk, actions.cantListen)
+        }
 
     if (listening != null) {
-        LanguageStepView(listening, answer, state.results[step.id], locked, language, actions, part)
-        if (part.showsTurn && !locked) GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
+        val typesInstead = remember(actions) { ListeningTurnsToTyping(actions) }
+        val canTalkNow: (@Composable () -> Unit)? =
+            if (locked) null else ({ GhostAction(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) } })
+        LanguageStepView(listening, answer, state.results[step.id], locked, language, typesInstead, part, canTalkNow)
         return
     }
 
     QuestionScene {
-        if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                QuestionText(spoken.prompt)
-                TargetText(spoken)
-            }
-        }
+        if (part.showsScreen) TargetText(spoken)
 
         if (part.showsTurn) {
             when {
@@ -680,7 +684,7 @@ internal fun SpokenAnswerView(
                 }
 
                 !locked || state.phase == LessonPhase.Checking -> {
-                    VoiceAnswerLine(voice, navigator)
+                    VoiceAnswerLimit(voice, navigator)
                 }
             }
 
@@ -691,11 +695,21 @@ internal fun SpokenAnswerView(
                         stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
                     ) { switchTo(false) }
                 } else {
-                    val icon = if (content.listening != null) R.drawable.ic_headphones else R.drawable.ic_keyboard
+                    val icon = if (content.listening != null && !actions.cantListen) R.drawable.ic_headphones else R.drawable.ic_keyboard
                     GhostAction(icon, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
                 }
             }
         }
+    }
+}
+
+/** A spoken screen heard instead turns to typing once the learner can't listen either, so the words placed so far go. */
+private class ListeningTurnsToTyping(
+    private val actions: StepActions,
+) : StepActions by actions {
+    override fun setCantListen(chosen: Boolean) {
+        actions.select(null)
+        actions.setCantListen(chosen)
     }
 }
 
@@ -729,6 +743,23 @@ fun offersDontKnow(
     return state.phase == LessonPhase.Playing && !screen.canExplainFirst && !isNumberAnswer(typed.acceptedAnswers)
 }
 
+/**
+ * The lesson bar's note while the learner answers: on a spoken screen, the line over [SpokenRecordAction]; on any other, a check
+ * that failed or is taking long. Null once the answer is checked.
+ */
+@Composable
+fun lessonBarNote(
+    step: LessonStep?,
+    state: LessonPlayerState,
+    actions: StepActions,
+): (@Composable () -> Unit)? {
+    val answering = state.phase == LessonPhase.Playing || state.phase == LessonPhase.Checking
+    if (step == null || !answering) return null
+    if (recordsInBar(step, actions)) return recordNote(spokenVoice(step, actions))
+    // A check that names its own problem (no words heard, a limit) says it where the learner answers.
+    return checkNote(checking = state.phase == LessonPhase.Checking, failed = state.checkFailed && state.checkIssue == null)
+}
+
 /** Whether [SpokenRecordAction] takes the bar's main action on this screen now. */
 @Composable
 fun recordsInBar(
@@ -743,6 +774,7 @@ private fun TargetText(spoken: SpokenAnswerStepContent) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             text = spoken.targetText,
+            modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.headlineSmall.copy(localeList = LocaleList(spoken.language)),
         )
         listOfNotNull(spoken.romanization, translation).forEach {
@@ -800,30 +832,12 @@ private fun AnswerHint(
     state: LessonPlayerState,
     isNumber: Boolean,
 ) {
-    var slow by remember { mutableStateOf(false) }
-    val checking = state.phase == LessonPhase.Checking
     val hasKeyboard = LocalConfiguration.current.keyboard != Configuration.KEYBOARD_NOKEYS
-
-    LaunchedEffect(checking) {
-        slow = false
-        if (checking) {
-            delay(SLOW_CHECK)
-            slow = true
-        }
-    }
-
-    val (text, isError) =
-        when {
-            state.checkFailed -> stringResource(R.string.player_check_failed) to true
-            checking && slow -> stringResource(R.string.player_still_checking) to false
-            !isNumber && state.phase == LessonPhase.Playing && hasKeyboard -> stringResource(R.string.player_enter_hint) to false
-            else -> return
-        }
+    if (isNumber || state.phase != LessonPhase.Playing || !hasKeyboard) return
 
     Text(
-        text = text,
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        text = stringResource(R.string.player_enter_hint),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall,
     )
 }
@@ -834,18 +848,19 @@ internal fun ExplainFirstButton(
     actions: StepActions,
 ) {
     if (screen.canExplainFirst) {
-        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), actions::explainFirst)
+        GhostAction(R.drawable.ic_menu_book, stringResource(R.string.player_explain_first), onClick = actions::explainFirst)
     }
 }
 
-/** Main's ghost actions line their icon up with the column's text. */
+/** Main's ghost actions line their icon up with the column's text, unless they follow another control on its row ([edge] null). */
 @Composable
 internal fun GhostAction(
     icon: Int,
     label: String,
+    edge: ButtonEdge? = ButtonEdge.Start,
     onClick: () -> Unit,
 ) {
-    GhostAction(label, onClick) { Icon(painterResource(icon), contentDescription = null) }
+    GhostAction(label, onClick, edge = edge) { Icon(painterResource(icon), contentDescription = null) }
 }
 
 @Composable
@@ -853,11 +868,12 @@ internal fun GhostAction(
     label: String,
     onClick: () -> Unit,
     color: Color = Color.Unspecified,
+    edge: ButtonEdge? = ButtonEdge.Start,
     leading: (@Composable () -> Unit)?,
 ) {
     TextButton(
         onClick = onClick,
-        edge = ButtonEdge.Start,
+        edge = edge,
         colors = ButtonDefaults.textButtonColors(contentColor = color),
     ) {
         leading?.let { Box(Modifier.padding(end = 8.dp)) { it() } }

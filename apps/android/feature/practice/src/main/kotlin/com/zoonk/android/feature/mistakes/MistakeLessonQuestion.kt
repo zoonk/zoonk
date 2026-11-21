@@ -3,12 +3,6 @@ package com.zoonk.android.feature.mistakes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -19,15 +13,16 @@ import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.player.LessonStepResultView
 import com.zoonk.android.feature.player.LocalLessonSpeech
 import com.zoonk.android.feature.player.ResultNext
-import com.zoonk.android.feature.player.TodayChoice
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.screen
+import com.zoonk.android.feature.player.language.PromptAudioEffect
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
+import com.zoonk.android.feature.player.steps.lessonBarNote
 import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.practice.DrillStage
 import com.zoonk.android.feature.practice.RunFrame
@@ -46,7 +41,6 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun MistakeSegments(state: PracticeState) {
@@ -74,16 +68,6 @@ internal fun MistakeLessonQuestion(
     navigator: AppNavigator,
 ) {
     val lesson = state.lesson ?: return
-    var cannotTalk by rememberSaveable { mutableStateOf(false) }
-    var cannotListen by rememberSaveable { mutableStateOf(false) }
-    val identity = app.sessions.current
-    val scope = rememberCoroutineScope()
-    LaunchedEffect(identity) {
-        if (identity != null) {
-            cannotTalk = app.todayChoices.isChosen(identity, TodayChoice.CantTalk)
-            cannotListen = app.todayChoices.isChosen(identity, TodayChoice.CantListen)
-        }
-    }
     val screen = lesson.screen()
     val actions =
         object : StepActions {
@@ -103,19 +87,13 @@ internal fun MistakeLessonQuestion(
 
             override fun explainFirst() = Unit
 
-            override val cantTalk get() = cannotTalk
+            override val cantTalk get() = viewModel.cantTalk
 
-            override fun setCantTalk(chosen: Boolean) {
-                cannotTalk = chosen
-                identity?.let { scope.launch { app.todayChoices.set(it, TodayChoice.CantTalk, chosen) } }
-            }
+            override fun setCantTalk(chosen: Boolean) = viewModel.setCantTalk(chosen)
 
-            override val cantListen get() = cannotListen
+            override val cantListen get() = viewModel.cantListen
 
-            override fun setCantListen(chosen: Boolean) {
-                cannotListen = chosen
-                identity?.let { scope.launch { app.todayChoices.set(it, TodayChoice.CantListen, chosen) } }
-            }
+            override fun setCantListen(chosen: Boolean) = viewModel.setCantListen(chosen)
 
             override suspend fun gradeSpoken(
                 stepId: String,
@@ -130,6 +108,9 @@ internal fun MistakeLessonQuestion(
     val primary = screen.primary
     val primaryLabel = if (checked || primary?.isCheck == false) R.string.practice_continue else R.string.practice_check
     val records = !checked && lesson.phase != LessonPhase.Checking && recordsInBar(task.step, actions)
+    val language = rememberLessonLanguage(task.language, task.targetLanguage, app.speech)
+    val promptStep = task.step.takeIf { viewModel.todayChoicesRead && !ideas }
+    language.prompt?.let { PromptAudioEffect(promptStep, viewModel.cantTalk, viewModel.cantListen, it) }
     RunFrame(
         title = stringResource(R.string.mistakes_practice_title),
         question = null,
@@ -139,6 +120,7 @@ internal fun MistakeLessonQuestion(
         mainAction = actions::runPrimary,
         report = null,
         progress = { MistakeSegments(state) },
+        note = if (ideas || checked) null else lessonBarNote(task.step, lesson, actions),
         actions = {
             if (ideas) {
                 DrillStartButton(viewModel::startDrill)
@@ -200,7 +182,6 @@ internal fun MistakeLessonQuestion(
         },
     ) { part, _, _ ->
         CompositionLocalProvider(LocalLessonSpeech provides app.speech) {
-            val language = rememberLessonLanguage(task.language, task.targetLanguage)
             if (ideas) {
                 if (part.showsScreen) DrillIdeas(task.drill, onOpenLesson = null)
                 return@CompositionLocalProvider

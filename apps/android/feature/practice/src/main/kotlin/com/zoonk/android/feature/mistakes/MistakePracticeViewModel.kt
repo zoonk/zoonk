@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.SessionSource
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
+import com.zoonk.android.feature.player.DayChoices
+import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.continueChallenge
@@ -114,12 +117,29 @@ enum class PracticeEndNote { Missed, MissedAndUnreached, Unreached }
 class MistakePracticeViewModel(
     private val key: PracticeKey,
     private val store: MistakesStore,
+    choices: TodayChoices,
+    private val sessions: SessionSource,
     private val saved: SavedStateHandle,
     private val now: () -> Long = SystemClock::elapsedRealtime,
 ) : ViewModel(),
     RunControls {
     private val mutableState = MutableStateFlow<PracticeState?>(null)
     val state: StateFlow<PracticeState?> = mutableState.asStateFlow()
+
+    private val day = DayChoices(choices)
+
+    /** "I can't talk now", the same for the rest of the day as in lessons. */
+    val cantTalk: Boolean get() = day.cantTalk
+
+    fun setCantTalk(chosen: Boolean) = day.setCantTalk(chosen, sessions.current, viewModelScope)
+
+    /** "I can't listen now", the same for the rest of the day as in lessons. */
+    val cantListen: Boolean get() = day.cantListen
+
+    fun setCantListen(chosen: Boolean) = day.setCantListen(chosen, sessions.current, viewModelScope)
+
+    /** Until the learner's choices for the day are read, a question plays no sound on its own. */
+    val todayChoicesRead: Boolean get() = day.isRead
 
     val practice get() = store.practices[key]
 
@@ -140,6 +160,7 @@ class MistakePracticeViewModel(
     /** Only from a read made since the last answer: a kept one may hold mistakes that now wait for tomorrow. */
     fun begin(practice: MistakePractice) {
         if (mutableState.value != null || this.practice.freshState.value !is LoadState.Loaded) return
+        day.read(sessions.current, viewModelScope)
         val read = practice.toQuestions()
         val lesson = restoreLesson(read, 0)
         val phase = if (lessonSent != null) RunPhase.AnswerFailed else RunPhase.Answering

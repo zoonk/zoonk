@@ -243,6 +243,19 @@ export function languageStep(
   };
 }
 
+export function spokenSentenceStep(options: StepOptions = {}): PlayableSpokenAnswerStep {
+  return {
+    ...spokenAnswerStep(options),
+    content: parseStepContent("spokenAnswer", {
+      language: "en",
+      prompt: "Pergunte quanto é o aluguel.",
+      targetText: "How much is the rent?",
+      translation: "Quanto é o aluguel?",
+    }),
+    listening: languageStep("listening").exercise,
+  };
+}
+
 export const lettersChart: ChartVisual = {
   axisStart: null,
   categories: ["Maio", "Junho", "Julho"],
