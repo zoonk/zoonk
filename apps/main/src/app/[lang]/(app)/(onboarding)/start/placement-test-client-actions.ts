@@ -1,3 +1,4 @@
+import { decidePlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { type PlacementTestActions } from "@zoonk/learn/placement-test/actions";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import {
@@ -15,5 +16,6 @@ export function getPlacementTestActions(goalId: string): PlacementTestActions {
     get: () => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
     start: (length) =>
       startPlacementSittingAction({ goalId, length, timeZone: getLocalTimeZone() }),
+    undo: (changeId) => decidePlanChangeAction(goalId, { changeId, status: "undone" }),
   };
 }

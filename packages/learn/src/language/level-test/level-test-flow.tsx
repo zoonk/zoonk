@@ -4,12 +4,13 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { useExtracted } from "next-intl";
 import { type OnboardingActions } from "../../onboarding/onboarding-actions";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
+import { PlacementDone } from "../../onboarding/steps/placement-screens";
 import { PlacementWaiting } from "../../onboarding/steps/placement-waiting";
 import { StepLoadFailed, StepLoading } from "../../onboarding/steps/step-parts";
 import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
 import { LevelTestPreparing } from "./level-test-preparing";
 import { LevelResult, TestOutResult } from "./level-test-results";
-import { TestStep } from "./level-test-step";
+import { TestStep, useLevelTestAudio } from "./level-test-step";
 import { type LanguagePlanTestActions, useLanguagePlanTest } from "./use-language-plan-test";
 
 export type { LanguagePlanTestActions } from "./use-language-plan-test";
@@ -17,6 +18,7 @@ export type { LanguagePlanTestActions } from "./use-language-plan-test";
 export function LanguagePlanTestFlow({
   actions,
   onDone,
+  onboarding = false,
   readWarmUp,
   targetLanguage,
   testOutFirst = false,
@@ -27,6 +29,7 @@ export function LanguagePlanTestFlow({
   actions: LanguagePlanTestActions;
   /** Goes back to the plan, read again; false when it didn't. */
   onDone: () => Promise<boolean>;
+  onboarding?: boolean;
   readWarmUp: OnboardingActions["readWarmUp"];
   targetLanguage: string;
   /** Opened from a lesson's offer to test out of a level, so that choice comes picked. */
@@ -37,8 +40,18 @@ export function LanguagePlanTestFlow({
   wholeCourseMinutes: number;
 }) {
   const t = useExtracted();
-  const test = useLanguagePlanTest({ actions, onDone });
+  const test = useLanguagePlanTest({ actions, onDone, onboarding });
   const { failed, phase, pressed } = test;
+
+  const audioPending = useLevelTestAudio({
+    onRead: (view) => {
+      if (phase.kind === "test") {
+        test.onView(phase.attemptId)(view);
+      }
+    },
+    read: actions.get,
+    test: phase.kind === "test" ? phase.test : null,
+  });
 
   switch (phase.kind) {
     case "loading":
@@ -60,7 +73,7 @@ export function LanguagePlanTestFlow({
     case "waiting":
       return (
         <LevelTestPreparing
-          fromPlan
+          fromPlan={!onboarding}
           onSkip={test.onLeave}
           run={test.bankRun}
           skipping={pressed === "other"}
@@ -74,12 +87,20 @@ export function LanguagePlanTestFlow({
             answer: (input) => actions.answer({ ...input, attemptId: phase.attemptId }),
             speak: actions.speak,
           }}
-          audioPending={false}
+          audioPending={audioPending}
           next={phase.test.next}
           onStop={() => test.onStop(phase.attemptId, phase.test.length ?? "quick")}
           onView={test.onView(phase.attemptId)}
           progress={phase.test.answered / phase.test.total}
           targetLanguage={targetLanguage}
+        />
+      );
+    case "finish":
+      return (
+        <PlacementDone
+          failed={failed}
+          onContinue={() => test.onStop(phase.attemptId, phase.length)}
+          pending={test.isPending}
         />
       );
     case "result":
@@ -90,10 +111,12 @@ export function LanguagePlanTestFlow({
           onDone={test.onDone}
           onTestOut={test.onTestOut}
           onWalkTopics={test.onWalkTopics}
+          onboarding={onboarding}
           pressed={pressed}
           result={phase.result}
           targetLanguage={targetLanguage}
-          testOutLevel={testOutLevel}
+          testOutLevel={onboarding ? null : phase.nextTestOutLevel}
+          onUndo={actions.undo}
         />
       );
     case "testOut":
@@ -130,7 +153,14 @@ export function LanguagePlanTestFlow({
         />
       );
     case "testOutResult":
-      return <TestOutResult onDone={test.onDone} pressed={pressed} view={phase.view} />;
+      return (
+        <TestOutResult
+          onDone={test.onDone}
+          onUndo={actions.undo}
+          pressed={pressed}
+          view={phase.view}
+        />
+      );
     default:
       return phase satisfies never;
   }

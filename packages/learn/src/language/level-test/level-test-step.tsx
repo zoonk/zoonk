@@ -3,6 +3,7 @@
 import {
   type LanguageLevelTestView,
   type LevelTestAnswerInput,
+  type LevelTestLength,
 } from "@zoonk/core/language/level-test/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
@@ -68,27 +69,42 @@ function hasQuestion(
   return next.kind === "question" || next.kind === "confirmation";
 }
 
-function getPendingAudioQuestion(phase: Phase): string | null {
-  if (phase.kind !== "test" || !hasQuestion(phase.test.next)) {
-    return null;
-  }
+export function useLevelTestAudio({
+  onRead,
+  read,
+  test,
+}: {
+  onRead: (view: ReadyTest) => void;
+  read: () => Promise<LanguageLevelTestView | null>;
+  test: ReadyTest | null;
+}) {
+  const next = test?.next;
+  const question = next && hasQuestion(next) ? next.question : null;
 
-  const { question } = phase.test.next;
-  return question.audioPending ? question.id : null;
-}
+  const poll = usePoll({
+    active: Boolean(question?.audioPending),
+    intervalMs: POLL_MS,
+    key: question?.id,
+    onPoll: async (signal) => {
+      const view = await read();
 
-function withReadAudio({ phase, view }: { phase: Phase; view: LanguageLevelTestView }): Phase {
-  if (
-    phase.kind !== "test" ||
-    !hasQuestion(phase.test.next) ||
-    view.status !== "ready" ||
-    !hasQuestion(view.next) ||
-    view.next.question.id !== phase.test.next.question.id
-  ) {
-    return phase;
-  }
+      if (!view) {
+        throw new Error("The level test couldn't be read");
+      }
 
-  return { kind: "test", test: { ...phase.test, next: view.next } };
+      if (
+        !signal.aborted &&
+        view.status === "ready" &&
+        hasQuestion(view.next) &&
+        view.next.question.id === question?.id
+      ) {
+        onRead(view);
+      }
+    },
+    startNow: false,
+  });
+
+  return poll.status === "polling";
 }
 
 export function LanguageLevelTestStep({
@@ -97,6 +113,8 @@ export function LanguageLevelTestStep({
   goalId,
   onDone,
   onFinishFailed,
+  onWholeCourse,
+  wholeCourseMinutes,
 }: {
   actions: LanguageLevelTestActions;
   goal: { language: string; targetLanguage: string };
@@ -105,6 +123,8 @@ export function LanguageLevelTestStep({
   onDone: () => Promise<boolean>;
   /** Says a finish that never reached the server, until the learner's next try. */
   onFinishFailed: (failed: boolean) => void;
+  onWholeCourse: () => Promise<boolean>;
+  wholeCourseMinutes: number;
 }) {
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [levels, setLevels] = useState<ReadyTest["levels"]>([]);
@@ -154,27 +174,21 @@ export function LanguageLevelTestStep({
     },
   });
 
-  const audioQuestion = getPendingAudioQuestion(phase);
-
-  const audioPoll = usePoll({
-    active: audioQuestion !== null,
-    intervalMs: POLL_MS,
-    key: audioQuestion ?? undefined,
-    onPoll: async () => {
-      const view = await actions.get();
-
-      if (!view) {
-        throw new Error("The level test couldn't be read");
-      }
-
-      setPhase((current) => withReadAudio({ phase: current, view }));
-    },
-    startNow: false,
+  const audioPending = useLevelTestAudio({
+    onRead: (view) => setPhase({ kind: "test", test: view }),
+    read: actions.get,
+    test: phase.kind === "test" ? phase.test : null,
   });
 
-  const begin = () =>
+  const begin = (length: LevelTestLength = "quick") =>
     startStarting(async () => {
       onFinishFailed(false);
+
+      if (length === "wholeCourse") {
+        onFinishFailed(!(await onWholeCourse().catch(() => false)));
+        return;
+      }
+
       rememberStepStart({ goalId, step: "levelTest" });
       setBank(INITIAL_BANK_WAIT);
 
@@ -226,6 +240,7 @@ export function LanguageLevelTestStep({
           goal={goal}
           onScratch={finish}
           onStart={begin}
+          wholeCourseMinutes={wholeCourseMinutes}
           onSwitch={actions.switchLanguage}
           pending={isPending}
           showAlphabetNote={phase.showAlphabetNote}
@@ -255,7 +270,7 @@ export function LanguageLevelTestStep({
       return (
         <TestStep
           actions={actions}
-          audioPending={audioPoll.status === "polling"}
+          audioPending={audioPending}
           next={phase.test.next}
           onStop={stop}
           onView={show}

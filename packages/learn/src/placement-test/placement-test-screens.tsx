@@ -16,6 +16,7 @@ import {
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
 import { TestOutcome } from "../onboarding/test-outcome";
+import { type ResultUndo, useResultUndo } from "../questions/undo-button";
 import { type PlacementLength } from "./placement-test-actions";
 import { type PlacementPressed } from "./use-placement-test";
 
@@ -36,16 +37,20 @@ function useMinutesLeft() {
 type TestChoice = PlacementLength | "testOut";
 
 export function PlacementLengthChoice({
+  children,
   failed,
   initialChoice = "quick",
+  onSkip,
   onStart,
   onTestOut,
   pressed,
   testOutLevel = null,
   wholeCourseMinutes,
 }: {
+  children?: React.ReactNode;
   failed: boolean;
   initialChoice?: TestChoice;
+  onSkip?: () => void;
   onStart: (length: PlacementLength) => void;
   onTestOut?: () => void;
   pressed: PlacementPressed;
@@ -70,7 +75,20 @@ export function PlacementLengthChoice({
     <OnboardingColumn
       bar={
         <OnboardingActions failed={failed}>
-          <OnboardingPrimaryButton busy={pressed === "main"} onClick={start}>
+          {onSkip && (
+            <OnboardingSecondaryButton
+              busy={pressed === "other"}
+              disabled={pressed === "main"}
+              onClick={onSkip}
+            >
+              {t("Skip")}
+            </OnboardingSecondaryButton>
+          )}
+          <OnboardingPrimaryButton
+            busy={pressed === "main"}
+            disabled={pressed === "other"}
+            onClick={start}
+          >
             {t("Start")}
           </OnboardingPrimaryButton>
         </OnboardingActions>
@@ -90,20 +108,24 @@ export function PlacementLengthChoice({
             }),
             value: "quick",
           },
-          {
-            description: t({
-              description:
-                "{time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.",
-              message: "About {time}, in parts",
-              values: { time: formatDuration(wholeCourseMinutes) },
-            }),
-            label: t({
-              description:
-                "The long placement test: it checks every topic still ahead in the course.",
-              message: "Whole course",
-            }),
-            value: "wholeCourse",
-          },
+          ...(wholeCourseMinutes > 0
+            ? [
+                {
+                  description: t({
+                    description:
+                      "{time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.",
+                    message: "About {time}, in parts",
+                    values: { time: formatDuration(wholeCourseMinutes) },
+                  }),
+                  label: t({
+                    description:
+                      "The long placement test: it checks every topic still ahead in the course.",
+                    message: "Whole course",
+                  }),
+                  value: "wholeCourse" as const,
+                },
+              ]
+            : []),
           ...(testOutLevel && onTestOut
             ? [
                 {
@@ -126,6 +148,7 @@ export function PlacementLengthChoice({
       <p className="text-muted-foreground text-sm text-pretty">
         {t("Stop any time. What you pass stays skipped.")}
       </p>
+      {children}
     </OnboardingColumn>
   );
 }
@@ -147,40 +170,48 @@ export function PlacementBetweenParts({
   failed,
   lessonsSkipped,
   minutesLeft,
+  onContinueOnboarding,
   onFinishForToday,
   onKeepGoing,
   pressed,
+  undo,
 }: {
   failed: boolean;
   /** Null when the learner came back to a test whose part closed earlier. */
   lessonsSkipped: number | null;
   minutesLeft: number;
+  onContinueOnboarding?: () => void;
   onFinishForToday: () => void;
-  onKeepGoing: () => void;
+  onKeepGoing?: () => void;
   pressed: PlacementPressed;
+  undo: ResultUndo;
 }) {
   const t = useExtracted();
   const skippedTitle = useSkippedTitle();
   const left = useMinutesLeft();
+  const { button, pending, undone } = useResultUndo(undo);
 
   return (
     <OnboardingColumn
       bar={
         <OnboardingActions failed={failed}>
-          <OnboardingSecondaryButton
-            busy={pressed === "other"}
-            disabled={pressed === "main"}
-            onClick={onFinishForToday}
-          >
-            {t("Finish for today")}
-          </OnboardingSecondaryButton>
+          {button(pressed !== null)}
+          {!onContinueOnboarding && (
+            <OnboardingSecondaryButton
+              busy={pressed === "other"}
+              disabled={pending || pressed === "main"}
+              onClick={onFinishForToday}
+            >
+              {t("Finish for today")}
+            </OnboardingSecondaryButton>
+          )}
           <OnboardingPrimaryButton
             autoFocus
             busy={pressed === "main"}
-            disabled={pressed === "other"}
-            onClick={onKeepGoing}
+            disabled={pending || pressed === "other"}
+            onClick={onContinueOnboarding ?? onKeepGoing}
           >
-            {t("Keep going")}
+            {onContinueOnboarding ? t("Continue") : t("Keep going")}
           </OnboardingPrimaryButton>
         </OnboardingActions>
       }
@@ -191,6 +222,12 @@ export function PlacementBetweenParts({
         </OnboardingTitle>
         <OnboardingDescription>{left(minutesLeft)}</OnboardingDescription>
       </OnboardingHeading>
+      {undone && <p role="status">{t("The lessons are back in your plan.")}</p>}
+      {onContinueOnboarding && (
+        <p className="text-muted-foreground text-sm text-pretty">
+          {t("You can finish the test from Plan.")}
+        </p>
+      )}
     </OnboardingColumn>
   );
 }
@@ -201,41 +238,50 @@ export function PlacementResult({
   lessonsSkipped,
   nextTopic,
   onDone,
+  onboarding = false,
   pressed,
+  undo,
 }: {
   failed: boolean;
   length: PlacementLength;
   lessonsSkipped: number;
   nextTopic: string | null;
   onDone: () => void;
+  onboarding?: boolean;
   pressed: PlacementPressed;
+  undo: ResultUndo;
 }) {
   const t = useExtracted();
   const skippedTitle = useSkippedTitle();
+  const { button, pending, undone } = useResultUndo(undo);
 
   return (
     <TestOutcome
       busy={pressed === "main"}
-      continueLabel={t("Done")}
+      continueLabel={onboarding ? t("Continue") : t("Done")}
+      disabled={pending}
       failed={failed}
       lead={
-        <OnboardingDescription>
-          {lessonsSkipped > 0
-            ? t("You already know them. They stay in your practice.")
-            : t("Your plan stays as it is.")}
+        <OnboardingDescription role="status">
+          {undone && t("The lessons are back in your plan.")}
+          {!undone &&
+            (lessonsSkipped > 0
+              ? t("You already know them. They stay in your practice.")
+              : t("Your plan stays as it is."))}
         </OnboardingDescription>
       }
       onContinue={onDone}
+      other={button(pressed !== null)}
       title={skippedTitle(lessonsSkipped)}
     >
-      {nextTopic && (
+      {nextTopic && !undone && (
         <Surface className="flex flex-col gap-1 p-4">
           <Eyebrow className="self-start">{t("Up next")}</Eyebrow>
           <p className="font-medium">{nextTopic}</p>
         </Surface>
       )}
 
-      {length === "quick" && (
+      {length === "quick" && !onboarding && (
         <p className="text-muted-foreground text-sm text-pretty">
           {t("The whole-course test can skip more.")}
         </p>

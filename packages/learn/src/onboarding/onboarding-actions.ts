@@ -24,6 +24,8 @@ import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { type FocusTestActions } from "../focus-test/focus-test-actions";
 import { type LanguageLevelTestActions } from "../language/level-test/level-test-step";
+import { type LanguagePlanTestActions } from "../language/level-test/use-language-plan-test";
+import { type PlacementTestActions } from "../placement-test/placement-test-actions";
 import { type ItemPictureData } from "../questions/item-picture";
 import { type OptionSelect } from "../questions/pick-rule";
 
@@ -180,6 +182,7 @@ export type OnboardingActions = {
   finishPlacement: (input: { fromScratch: boolean; goalId: string }) => Promise<boolean>;
   focusTest: (goalId: string) => FocusTestActions;
   getPlacement: (goalId: string) => Promise<PlacementOutcome>;
+  getPlacementMinutes: (goalId: string) => Promise<number>;
   getPlan: (goalId: string) => Promise<PlanOutcome>;
   /** `studyDays` count Sunday as 0. Null when it couldn't be read. */
   getTimeAdvice: (
@@ -197,6 +200,11 @@ export type OnboardingActions = {
     itemId: string;
   }) => Promise<PlacementOutcome>;
   languageLevelTest: (goalId: string) => LanguageLevelTestActions;
+  languagePlanTest: (input: {
+    goalId: string;
+    walkTopics: () => Promise<boolean>;
+  }) => LanguagePlanTestActions;
+  placementTest: (goalId: string) => PlacementTestActions;
   askMaterial: (input: {
     language: string;
     question: string;

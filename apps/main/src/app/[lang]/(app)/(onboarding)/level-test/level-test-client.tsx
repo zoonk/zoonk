@@ -1,65 +1,12 @@
 "use client";
 
-import {
-  answerLevelTestAction,
-  speakLevelTestAction,
-  startLevelTestBankAction,
-} from "@/app/[lang]/(app)/(onboarding)/start/language-level-test-actions";
+import { getLanguagePlanTestActions } from "@/app/[lang]/(app)/(onboarding)/start/language-plan-test-client-actions";
 import { readWarmUpAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { useRouter } from "@/i18n/navigation";
-import {
-  type LanguagePlanTestActions,
-  LanguagePlanTestFlow,
-} from "@zoonk/learn/language/level-test-flow";
+import { LanguagePlanTestFlow } from "@zoonk/learn/language/level-test-flow";
 import { OnboardingFrame } from "@zoonk/learn/onboarding/frame";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import {
-  answerLevelTestOutAction,
-  finishLevelTestAttemptAction,
-  finishLevelTestOutAction,
-  getLevelTestAttemptAction,
-  getLevelTestOutAction,
-  startLevelTestAttemptAction,
-  startLevelTestOutAction,
-  walkLevelTestTopicsAction,
-} from "./level-test-plan-actions";
-
-function getActions({
-  goalId,
-  walked,
-}: {
-  goalId: string;
-  walked: () => void;
-}): LanguagePlanTestActions {
-  return {
-    answer: (input) => answerLevelTestAction(goalId, input),
-    finish: (attemptId) => finishLevelTestAttemptAction(goalId, attemptId),
-    get: () => getLevelTestAttemptAction(goalId),
-    prepare: () => startLevelTestBankAction(goalId),
-    speak: (audio) => {
-      const form = new FormData();
-      form.set("audio", audio);
-      return speakLevelTestAction(goalId, form);
-    },
-    start: (length) => startLevelTestAttemptAction(goalId, length),
-    testOut: {
-      answer: (input) =>
-        answerLevelTestOutAction(goalId, { ...input, timeZone: getLocalTimeZone() }),
-      finish: (attemptId) => finishLevelTestOutAction(goalId, attemptId),
-      get: (attemptId) => getLevelTestOutAction(goalId, attemptId),
-      start: (level) => startLevelTestOutAction(goalId, level),
-    },
-    walkTopics: async () => {
-      const opened = await walkLevelTestTopicsAction(goalId, getLocalTimeZone());
-
-      if (opened) {
-        walked();
-      }
-
-      return opened;
-    },
-  };
-}
+import { walkLevelTestTopicsAction } from "./level-test-plan-actions";
 
 export function LevelTestClient({
   goalId,
@@ -87,7 +34,18 @@ export function LevelTestClient({
   return (
     <OnboardingFrame>
       <LanguagePlanTestFlow
-        actions={getActions({ goalId, walked: () => router.push("/placement-test") })}
+        actions={getLanguagePlanTestActions({
+          goalId,
+          walkTopics: async () => {
+            const opened = await walkLevelTestTopicsAction(goalId, getLocalTimeZone());
+
+            if (opened) {
+              router.push("/placement-test");
+            }
+
+            return opened;
+          },
+        })}
         onDone={leave}
         readWarmUp={readWarmUpAction}
         targetLanguage={targetLanguage}

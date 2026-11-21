@@ -1,23 +1,15 @@
 "use client";
 
-import {
-  LEVEL_TEST_MINUTES,
-  type LanguageLevelTestView,
-} from "@zoonk/core/language/level-test/contract";
+import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
-import { useFormatDuration } from "../../_utils/time-format";
 import { useLanguageNameInSentence } from "../../_utils/use-language-name";
-import {
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingHeading,
-  OnboardingTitle,
-} from "../../onboarding/onboarding-frame";
-import { TestOutcome, TestStartActions } from "../../onboarding/test-outcome";
+import { TestOutcome } from "../../onboarding/test-outcome";
+import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
+import { getPlacementPressed } from "../../placement-test/use-placement-test";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -58,46 +50,27 @@ export function TestIntro({
   pending,
   showAlphabetNote,
   starting,
+  wholeCourseMinutes,
 }: {
   goal: { language: string; targetLanguage: string };
   onScratch: () => void;
-  onStart: () => void;
+  onStart: React.ComponentProps<typeof PlacementLengthChoice>["onStart"];
   onSwitch: (language: string) => void;
   pending: boolean;
   showAlphabetNote: boolean;
   starting: boolean;
+  wholeCourseMinutes: number;
 }) {
   const t = useExtracted();
-  const locale = useAppLocale();
-  const formatDuration = useFormatDuration();
-
-  const target = getLanguageNameInSentence({
-    targetLanguage: goal.targetLanguage,
-    userLanguage: locale,
-  });
 
   return (
-    <OnboardingColumn
-      bar={
-        <TestStartActions
-          onScratch={onScratch}
-          onStart={onStart}
-          pending={pending}
-          starting={starting}
-        />
-      }
+    <PlacementLengthChoice
+      failed={false}
+      onSkip={onScratch}
+      onStart={onStart}
+      pressed={getPlacementPressed({ pending, starting })}
+      wholeCourseMinutes={wholeCourseMinutes}
     >
-      <OnboardingHeading>
-        <OnboardingTitle>
-          {t("Find your level in {language}", { language: target })}
-        </OnboardingTitle>
-        <OnboardingDescription>
-          {t("About {time} of reading and listening, so your plan starts at your level.", {
-            time: formatDuration(LEVEL_TEST_MINUTES),
-          })}
-        </OnboardingDescription>
-      </OnboardingHeading>
-
       {showAlphabetNote && (
         <p className="text-muted-foreground text-sm text-pretty">
           {t("New to its alphabet? Skip the test. Your first lesson teaches you to read it.")}
@@ -105,7 +78,7 @@ export function TestIntro({
       )}
 
       <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
-    </OnboardingColumn>
+    </PlacementLengthChoice>
   );
 }
 

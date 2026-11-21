@@ -29,8 +29,15 @@ export type PlacementTestPhase =
    * A whole-course test between two parts. `lessonsSkipped` is the part that just closed, or null
    * when the learner came back to a test whose part closed earlier.
    */
-  | { attempt: PlacementAttemptView; kind: "between"; lessonsSkipped: number | null }
   | {
+      attempt: PlacementAttemptView;
+      changeId: string | null;
+      kind: "between";
+      lessonsSkipped: number | null;
+    }
+  | {
+      attemptId: string;
+      changeId: string | null;
       kind: "result";
       length: PlacementAttemptView["length"];
       lessonsSkipped: number;
@@ -59,7 +66,7 @@ export function toPlacementTestPhase(outcome: PlacementOutcome): PlacementTestPh
   }
 
   if (attempt.partComplete) {
-    return { attempt, kind: "between", lessonsSkipped: null };
+    return { attempt, changeId: null, kind: "between", lessonsSkipped: null };
   }
 
   if (outcome.status !== "ready") {
@@ -83,17 +90,26 @@ export function toPlacementTestPhase(outcome: PlacementOutcome): PlacementTestPh
 
 /** A closed part goes on to the next one when the test has more; otherwise it's the result. */
 export function toFinishedPhase({
+  attemptId,
   finished,
   length,
 }: {
+  attemptId: string;
   finished: Finished;
   length: PlacementAttemptView["length"];
 }): PlacementTestPhase {
   if (finished.attempt) {
-    return { attempt: finished.attempt, kind: "between", lessonsSkipped: finished.lessonsSkipped };
+    return {
+      attempt: finished.attempt,
+      changeId: finished.changeId,
+      kind: "between",
+      lessonsSkipped: finished.lessonsSkipped,
+    };
   }
 
   return {
+    attemptId,
+    changeId: finished.changeId,
     kind: "result",
     length,
     lessonsSkipped: finished.result?.lessonsSkipped ?? finished.lessonsSkipped,

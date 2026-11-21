@@ -238,11 +238,21 @@ export async function finishPlacementPartAction({
 
   return {
     attempt: completion.attempt ?? null,
-    lessonsSkipped: completion.partLessonsSkipped ?? 0,
+    changeId: completion.changeId,
+    lessonsSkipped: completion.lessonsSkipped,
     nextTopic: plan.status === "ready" ? findNextTopic(plan.plan) : null,
     result: completion.result ?? null,
     status: "finished",
   };
+}
+
+export async function getPlacementMinutesAction(goalId: string): Promise<number> {
+  if (!isUuid(goalId)) {
+    return 0;
+  }
+
+  const result = await getGoalPlan(goalId);
+  return result.status === "ready" ? (result.plan.placementTest?.estimatedMinutes ?? 0) : 0;
 }
 
 export async function getPlanAction(goalId: string): Promise<PlanOutcome> {

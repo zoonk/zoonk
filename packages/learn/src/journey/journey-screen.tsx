@@ -25,6 +25,7 @@ import { PlanRebuildNotice } from "../plan/plan-rebuild-notice";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
 import { PlanSuggestionProvider, PlanSuggestionSlot } from "../plan/plan-suggestion";
 import { type PlanEnd } from "../plan/plan-suggestion-context";
+import { PlanTestedOutChange } from "../plan/tested-out-change-card";
 import { PageWithAside } from "../shell/learn-shell";
 import { SyllabusSection, hasSyllabusSection } from "../syllabus/syllabus-section";
 import { type SyllabusSectionView } from "../syllabus/syllabus-section-view";
@@ -169,6 +170,7 @@ function JourneyBody({
           </PlanHeader>
 
           <PlanRebuildNotice />
+          <PlanTestedOutChange />
 
           {!paused && (
             <>

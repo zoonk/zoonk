@@ -19,6 +19,20 @@ const FAILED: PlacementOutcome = { status: "failed" };
 /** The button a save started from, which shows it's busy while the other waits. */
 export type PlacementPressed = "main" | "other" | null;
 
+export function getPlacementPressed({
+  pending,
+  starting,
+}: {
+  pending: boolean;
+  starting: boolean;
+}): PlacementPressed {
+  if (starting) {
+    return "main";
+  }
+
+  return pending ? "other" : null;
+}
+
 /** A save that failed counts on the question it came from, where its retry is. */
 function countFailure({
   current,
@@ -35,10 +49,12 @@ function countFailure({
 export function usePlacementTest({
   actions,
   onDone,
+  onOnboardingDone,
 }: {
   actions: PlacementTestActions;
   /** Goes back to the plan, read again; false when it didn't. */
   onDone: () => Promise<boolean>;
+  onOnboardingDone?: (attemptId: string) => Promise<boolean>;
 }) {
   const [phase, setPhase] = useState<PlacementTestPhase>({ kind: "loading" });
   const [failed, setFailed] = useState(false);
@@ -60,7 +76,7 @@ export function usePlacementTest({
       return true;
     }
 
-    setPhase(toFinishedPhase({ finished, length: attempt.length }));
+    setPhase(toFinishedPhase({ attemptId: attempt.id, finished, length: attempt.length }));
     return true;
   };
 
@@ -83,7 +99,29 @@ export function usePlacementTest({
   };
 
   const reopen = useReadOnOpen({
-    onRead: (outcome) => setPhase(toPlacementTestPhase(outcome ?? FAILED)),
+    onRead: (outcome) => {
+      const next = toPlacementTestPhase(outcome ?? FAILED);
+
+      if (
+        onOnboardingDone &&
+        next.kind === "choose" &&
+        outcome?.status === "ready" &&
+        outcome.result
+      ) {
+        setPhase({
+          attemptId: outcome.result.attemptId,
+          changeId: null,
+          kind: "result",
+          length: "wholeCourse",
+          lessonsSkipped: outcome.result.lessonsSkipped,
+          nextTopic: null,
+        });
+
+        return;
+      }
+
+      setPhase(next);
+    },
     read: actions.get,
   });
 
@@ -153,7 +191,8 @@ export function usePlacementTest({
     },
     failed,
     isPending,
-    onDone: () => save("main", () => onDone().catch(() => false)),
+    onDone: (attemptId: string) =>
+      save("main", () => (onOnboardingDone ? onOnboardingDone(attemptId) : onDone())),
     /** Closes a part the learner came back to after its questions ran out. */
     onFinishPart: (attempt: { id: string; length: PlacementLength; part: number }) =>
       save("main", () => close(attempt)),

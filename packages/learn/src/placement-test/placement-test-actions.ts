@@ -14,6 +14,7 @@ export type PlacementLength = PlacementAttemptView["length"];
 export type PlacementPartOutcome =
   | {
       attempt: PlacementAttemptView | null;
+      changeId: string | null;
       lessonsSkipped: number;
       /** The topic the plan goes on with; null when none is left. */
       nextTopic: string | null;
@@ -36,4 +37,5 @@ export type PlacementTestActions = {
   get: () => Promise<PlacementOutcome>;
   /** Opens a test of this length, or the next part of the open one; asked again, it returns it. */
   start: (length: PlacementLength) => Promise<PlacementOutcome>;
+  undo: (changeId: string) => Promise<boolean>;
 };

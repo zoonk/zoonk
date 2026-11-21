@@ -21,6 +21,7 @@ import {
   useMainActionVariant,
 } from "../_components/suggestion";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
+import { TestedOutChangeCard } from "../plan/tested-out-change-card";
 import { useAppliedLine, useOfficialDateLine } from "../plan/use-change-sentence";
 import { getChangeMark } from "./today-change-mark";
 import {
@@ -278,11 +279,37 @@ function PlanChangeNotice({
  * (`asksAboutAutomaticChange`).
  */
 export function TodayPlanChange() {
-  const { today } = useTodayScreen();
+  const { actions, today } = useTodayScreen();
+  const dateKind = useTodayDateKind();
   const { current: change, hold, showNext, swapped } = useShownChange(today.planChange);
 
   if (!change) {
     return null;
+  }
+
+  if (change.kind === "testedOut" && change.status === "applied" && change.canUndo) {
+    return (
+      <TestedOutChangeCard
+        change={change}
+        dateKind={dateKind}
+        key={change.id}
+        onUndo={async (changeId) => {
+          hold(true);
+
+          const saved = await actions
+            .decidePlanChange({ changeId, status: "undone" })
+            .catch(() => null);
+
+          const undone = saved !== "stale" && saved?.status === "undone";
+
+          if (!undone) {
+            hold(false);
+          }
+
+          return undone;
+        }}
+      />
+    );
   }
 
   if (change.kind === "missedDays" && change.behind) {

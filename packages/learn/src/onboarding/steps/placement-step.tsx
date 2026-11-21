@@ -5,6 +5,8 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useRef, useState, useTransition } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
+import { PlacementLengthChoice } from "../../placement-test/placement-test-screens";
+import { getPlacementPressed } from "../../placement-test/use-placement-test";
 import {
   type OnboardingActions,
   type PlacementAnswer,
@@ -12,7 +14,7 @@ import {
   type PlacementQuestion,
 } from "../onboarding-actions";
 import { PlacementQuestionScreen } from "./placement-question";
-import { PlacementDone, PlacementIntro, PlacementUnavailable } from "./placement-screens";
+import { PlacementDone, PlacementUnavailable } from "./placement-screens";
 import { PlacementWaiting } from "./placement-waiting";
 import { StepLoadFailed, StepLoading } from "./step-parts";
 import { rememberStepStart, wasStepStarted } from "./step-started";
@@ -153,9 +155,10 @@ export function PlacementStep({
   goalId,
   onDone,
   onFinishFailed,
+  onWholeCourse,
   run,
   subject,
-  testMinutes,
+  wholeCourseMinutes,
 }: {
   actions: OnboardingActions;
   goalId: string;
@@ -163,9 +166,10 @@ export function PlacementStep({
   onDone: () => Promise<boolean>;
   /** Says a finish that didn't save, until the learner's next try. */
   onFinishFailed: (failed: boolean) => void;
+  onWholeCourse: () => Promise<boolean>;
   run: GenerationRun | null;
   subject: string;
-  testMinutes: number;
+  wholeCourseMinutes: number;
 }) {
   const { countAnswer, phase, reopen, setPhase, showReady, start } = useResumedPlacement({
     actions,
@@ -178,7 +182,6 @@ export function PlacementStep({
   const [isPending, startTransition] = useTransition();
   const [isStarting, startStarting] = useTransition();
 
-  // Finishing is one save to the learner: it goes through once the step's save does too.
   const saveFinish = async (fromScratch: boolean): Promise<boolean> => {
     const { data: finished } = await safeAsync(() =>
       actions.finishPlacement({ fromScratch, goalId }),
@@ -266,16 +269,22 @@ export function PlacementStep({
       return <StepLoadFailed onRetry={reopen} />;
     case "intro":
       return (
-        <PlacementIntro
-          onScratch={() => finish(true)}
-          onStart={() => {
+        <PlacementLengthChoice
+          failed={false}
+          onSkip={() => finish(true)}
+          onStart={(length) => {
             onFinishFailed(false);
-            startStarting(start);
+
+            startStarting(async () => {
+              if (length === "quick") {
+                await safeAsync(start);
+              } else {
+                onFinishFailed(!(await onWholeCourse().catch(() => false)));
+              }
+            });
           }}
-          pending={isPending}
-          starting={isStarting}
-          subject={subject}
-          testMinutes={testMinutes}
+          pressed={getPlacementPressed({ pending: isPending, starting: isStarting })}
+          wholeCourseMinutes={wholeCourseMinutes}
         />
       );
     case "waiting":

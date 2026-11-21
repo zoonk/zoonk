@@ -36,7 +36,9 @@ type TestOutAnswer = PlacementAnswer;
 export type LanguagePlanTestActions = Pick<LanguageLevelTestActions, "prepare" | "speak"> & {
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
   /** Null when it wasn't saved. */
-  finish: (attemptId: string) => Promise<{ result: LevelTestResult | null } | null>;
+  finish: (
+    attemptId: string,
+  ) => Promise<{ nextTestOutLevel: string | null; result: LevelTestResult | null } | null>;
   /** Read-only: the test as it stands, an open attempt included. */
   get: () => Promise<LanguageLevelTestView | null>;
   start: (length: LevelTestLength) => Promise<LanguageLevelTestView | null>;
@@ -52,6 +54,7 @@ export type LanguagePlanTestActions = Pick<LanguageLevelTestActions, "prepare" |
     get: (attemptId: string) => Promise<TestOutView | null>;
     start: (level: string) => Promise<TestOutView | null>;
   };
+  undo: (changeId: string) => Promise<boolean>;
   /** Opens the whole-course test's walk through the course's topics; false when it didn't. */
   walkTopics: () => Promise<boolean>;
 };
@@ -59,26 +62,50 @@ export type LanguagePlanTestActions = Pick<LanguageLevelTestActions, "prepare" |
 type Phase =
   | { kind: "choose" | "loadFailed" | "loading" }
   | { attemptId: string; kind: "waiting" }
+  | { attemptId: string; kind: "finish"; length: LevelTestLength }
   | { attemptId: string; kind: "test"; test: ReadyTest }
-  | { kind: "result"; length: LevelTestLength; result: LevelTestResult | null }
+  | {
+      kind: "result";
+      length: LevelTestLength;
+      nextTestOutLevel: string | null;
+      result: LevelTestResult | null;
+    }
   | { failures: number; kind: "testOut"; question: PlacementQuestion; view: TestOutView }
   | { kind: "testOutResult"; view: TestOutView }
   /** A test-out whose questions are still being written. */
   | { attemptId: string; kind: "testOutWaiting" };
 
 /** A page load goes on with an open test; otherwise the learner chooses one. */
-function toOpenedPhase(view: LanguageLevelTestView | null): Phase {
+function toOpenedPhase(view: LanguageLevelTestView | null, onboarding: boolean): Phase {
   if (!view) {
     return { kind: "loadFailed" };
   }
 
-  if (!view.attemptId || view.length === undefined || view.result) {
+  const ownResult =
+    view.attemptId && view.result?.attemptId === view.attemptId ? view.result : null;
+
+  if (onboarding && ownResult) {
+    return {
+      kind: "result",
+      length: view.length ?? "wholeCourse",
+      nextTestOutLevel: null,
+      result: ownResult,
+    };
+  }
+
+  if (!view.attemptId || view.length === undefined || ownResult) {
     return { kind: "choose" };
   }
 
-  return view.status === "ready"
-    ? { attemptId: view.attemptId, kind: "test", test: view }
-    : { attemptId: view.attemptId, kind: "waiting" };
+  if (view.status === "preparing") {
+    return { attemptId: view.attemptId, kind: "waiting" };
+  }
+
+  if (view.next.kind === "done") {
+    return { attemptId: view.attemptId, kind: "finish", length: view.length };
+  }
+
+  return { attemptId: view.attemptId, kind: "test", test: view };
 }
 
 const TAP_FORMATS: readonly PlacementQuestion["format"][] = [
@@ -112,9 +139,11 @@ function toTestOutPhase(view: TestOutView): Phase {
 export function useLanguagePlanTest({
   actions,
   onDone,
+  onboarding,
 }: {
   actions: LanguagePlanTestActions;
   onDone: () => Promise<boolean>;
+  onboarding: boolean;
 }) {
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [failed, setFailed] = useState(false);
@@ -125,18 +154,20 @@ export function useLanguagePlanTest({
   const [arrived, setArrived] = useState<TestOutView | null>(null);
 
   const reopen = useReadOnOpen({
-    onRead: (view) => setPhase(toOpenedPhase(view)),
+    onRead: (view) => setPhase(toOpenedPhase(view, onboarding)),
     read: actions.get,
   });
 
   const finish = async (attemptId: string, length: LevelTestLength) => {
-    const finished = await actions.finish(attemptId);
+    const finished = await actions.finish(attemptId).catch(() => null);
 
     if (!finished) {
+      setPhase({ attemptId, kind: "finish", length });
+      setFailed(true);
       return false;
     }
 
-    setPhase({ kind: "result", length, result: finished.result });
+    setPhase({ kind: "result", length, ...finished });
     return true;
   };
 

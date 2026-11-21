@@ -79,6 +79,7 @@ describe(toPlacementTestPhase, () => {
 
     expect(toPlacementTestPhase(ready(closed, null))).toStrictEqual({
       attempt: closed,
+      changeId: null,
       kind: "between",
       lessonsSkipped: null,
     });
@@ -91,8 +92,10 @@ describe(toFinishedPhase, () => {
 
     expect(
       toFinishedPhase({
+        attemptId: ATTEMPT.id,
         finished: {
           attempt: next,
+          changeId: QUESTION.skillId,
           lessonsSkipped: 6,
           nextTopic: null,
           result: null,
@@ -100,14 +103,21 @@ describe(toFinishedPhase, () => {
         },
         length: "wholeCourse",
       }),
-    ).toStrictEqual({ attempt: next, kind: "between", lessonsSkipped: 6 });
+    ).toStrictEqual({
+      attempt: next,
+      changeId: QUESTION.skillId,
+      kind: "between",
+      lessonsSkipped: 6,
+    });
   });
 
   it("the last part shows the whole test's result", () => {
     expect(
       toFinishedPhase({
+        attemptId: ATTEMPT.id,
         finished: {
           attempt: null,
+          changeId: QUESTION.skillId,
           lessonsSkipped: 2,
           nextTopic: "Compound interest",
           result: {
@@ -120,6 +130,8 @@ describe(toFinishedPhase, () => {
         length: "wholeCourse",
       }),
     ).toStrictEqual({
+      attemptId: ATTEMPT.id,
+      changeId: QUESTION.skillId,
       kind: "result",
       length: "wholeCourse",
       lessonsSkipped: 9,

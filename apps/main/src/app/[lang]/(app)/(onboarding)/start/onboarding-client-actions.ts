@@ -23,18 +23,21 @@ import {
   speakLevelTestAction,
   startLevelTestBankAction,
 } from "./language-level-test-actions";
+import { getLanguagePlanTestActions } from "./language-plan-test-client-actions";
 import {
   answerOnboardingAction,
   answerPlacementAction,
   createOnboardingGoalsAction,
   finishPlacementAction,
   getPlacementAction,
+  getPlacementMinutesAction,
   getPlanAction,
   joinWaitlistAction,
   readWarmUpAction,
   startOverAction,
 } from "./onboarding-actions";
 import { changeOnboardingAimAction, readFirstLessonAction } from "./onboarding-aim-actions";
+import { getPlacementTestActions } from "./placement-test-client-actions";
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
 import { markPlanRevealedAction } from "./plan-reveal-action";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
@@ -67,6 +70,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
     (await finishPlacementAction({ ...input, timeZone: getLocalTimeZone() })) !== null,
   focusTest: getFocusTestActions,
   getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
+  getPlacementMinutes: getPlacementMinutesAction,
   getPlan: getPlanAction,
   getTimeAdvice: getGoalTimeAdvice,
   joinWaitlist: joinWaitlistAction,
@@ -86,7 +90,9 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
       }
     },
   }),
+  languagePlanTest: getLanguagePlanTestActions,
   markPlanRevealed: markPlanRevealedAction,
+  placementTest: getPlacementTestActions,
   readFirstLesson: readFirstLessonAction,
   readWarmUp: readWarmUpAction,
   startOver: startOverAction,

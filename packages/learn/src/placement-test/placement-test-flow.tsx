@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { type GenerationRun } from "../generation/generation-run";
 import { type OnboardingActions } from "../onboarding/onboarding-actions";
 import { PlacementQuestionScreen } from "../onboarding/steps/placement-question";
 import { PlacementDone } from "../onboarding/steps/placement-screens";
@@ -17,21 +18,25 @@ import { usePlacementTest } from "./use-placement-test";
 export function PlacementTestFlow({
   actions,
   onDone,
+  onOnboardingDone,
   readWarmUp,
+  run = null,
   subject,
   wholeCourseMinutes,
 }: {
   actions: PlacementTestActions;
   /** Goes back to the plan, read again; false when it didn't. */
   onDone: () => Promise<boolean>;
+  onOnboardingDone?: (attemptId: string) => Promise<boolean>;
   readWarmUp: OnboardingActions["readWarmUp"];
+  run?: GenerationRun | null;
   /** The goal's name, over each question. */
   subject: string;
   /** The whole-course test's length before it starts. */
   wholeCourseMinutes: number;
 }) {
   const t = useExtracted();
-  const test = usePlacementTest({ actions, onDone });
+  const test = usePlacementTest({ actions, onDone, onOnboardingDone });
   const { failed, phase, pressed } = test;
 
   switch (phase.kind) {
@@ -57,7 +62,7 @@ export function PlacementTestFlow({
           poll={test.poll}
           questionsReady={test.questionsReady}
           readWarmUp={readWarmUp}
-          run={null}
+          run={run}
           skip={{ label: t("Not now"), note: null }}
           skipFailed={failed}
           skipping={pressed === "other"}
@@ -98,7 +103,9 @@ export function PlacementTestFlow({
           lessonsSkipped={phase.lessonsSkipped}
           minutesLeft={phase.attempt.estimatedMinutes}
           onFinishForToday={test.onLeave}
-          onKeepGoing={() => test.onKeepGoing(phase.attempt.length)}
+          onKeepGoing={onOnboardingDone ? undefined : () => test.onKeepGoing(phase.attempt.length)}
+          onContinueOnboarding={onOnboardingDone ? () => test.onDone(phase.attempt.id) : undefined}
+          undo={{ changeId: phase.changeId, onUndo: actions.undo }}
           pressed={pressed}
         />
       );
@@ -109,7 +116,9 @@ export function PlacementTestFlow({
           length={phase.length}
           lessonsSkipped={phase.lessonsSkipped}
           nextTopic={phase.nextTopic}
-          onDone={test.onDone}
+          onDone={() => test.onDone(phase.attemptId)}
+          onboarding={Boolean(onOnboardingDone)}
+          undo={{ changeId: phase.changeId, onUndo: actions.undo }}
           pressed={pressed}
         />
       );

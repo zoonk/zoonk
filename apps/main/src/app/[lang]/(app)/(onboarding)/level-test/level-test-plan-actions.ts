@@ -1,5 +1,6 @@
 "use server";
 
+import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
 import {
   type LanguageLevelTestView,
   type LevelTestResult,
@@ -9,6 +10,10 @@ import {
 import { finishLanguageLevelTest } from "@zoonk/core/language/level-test/finish";
 import { getLanguageLevelTest } from "@zoonk/core/language/level-test/get";
 import { startLanguageLevelTest } from "@zoonk/core/language/level-test/start";
+import {
+  readLevelTestAttempts,
+  readLevelTestSummary,
+} from "@zoonk/core/language/level-test/summary";
 import {
   type LanguageLevelTestOutResult,
   answerLanguageLevelTestOut,
@@ -45,13 +50,23 @@ export async function startLevelTestAttemptAction(
 export async function finishLevelTestAttemptAction(
   goalId: string,
   attemptId: string,
-): Promise<{ result: LevelTestResult | null } | null> {
+): Promise<{ nextTestOutLevel: string | null; result: LevelTestResult | null } | null> {
   if (!isUuid(goalId) || !isUuid(attemptId)) {
     return null;
   }
 
   const finished = await finishLanguageLevelTest(goalId, attemptId);
-  return finished.status === "ready" ? { result: finished.result ?? null } : null;
+
+  if (finished.status !== "ready") {
+    return null;
+  }
+
+  const owned = await getOwnedGoal(goalId);
+
+  const nextTestOutLevel =
+    owned.status === "ready" ? readLevelTestSummary(owned.goal).nextTestOutLevel : null;
+
+  return { nextTestOutLevel, result: finished.result ?? null };
 }
 
 /** The open attempt, when one is; read-only. */
@@ -62,7 +77,14 @@ export async function getLevelTestAttemptAction(
     return null;
   }
 
-  const result = await getLanguageLevelTest(goalId);
+  const owned = await getOwnedGoal(goalId);
+
+  if (owned.status !== "ready") {
+    return null;
+  }
+
+  const attemptId = readLevelTestAttempts(owned.goal).attempt?.attemptId;
+  const result = await getLanguageLevelTest(goalId, attemptId);
   return result.status === "ready" ? result.test : null;
 }
 
