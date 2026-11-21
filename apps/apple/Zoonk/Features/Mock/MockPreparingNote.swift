@@ -25,14 +25,15 @@ struct MockPreparingNote: View {
           return writing?.generationId
         },
         restart: { nil },
-        readResult: written
-      ) { run in
-        if run.failure == nil {
-          MockWritingProgress(title: title, wait: run.wait)
-        } else {
-          ComeBackWords(title: title)
+        readResult: written,
+        content: { run in
+          if run.failure == nil {
+            MockWritingProgress(title: title, wait: run.wait)
+          } else {
+            ComeBackWords(title: title)
+          }
         }
-      }
+      )
     }
   }
 }

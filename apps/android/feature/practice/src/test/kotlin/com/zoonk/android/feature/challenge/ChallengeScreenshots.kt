@@ -22,6 +22,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.feature.exam.FakeMockApi
+import com.zoonk.android.feature.exam.writingPaperApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -83,6 +84,7 @@ class ChallengeScreenshots {
         dark: Boolean = false,
         rightToLeft: Boolean = false,
         refused: Boolean = false,
+        mocks: FakeMockApi = FakeMockApi(null),
     ) {
         val challenge: Challenge = decodeFixture("challenge", *fields)
         val api =
@@ -144,7 +146,7 @@ class ChallengeScreenshots {
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val viewModel = ChallengeViewModel(challenge.planItemId, null, ChallengeStore(api, cache) { "UTC" }, source, SavedStateHandle(), MockStore(FakeMockApi(null), cache))
+        val viewModel = ChallengeViewModel(challenge.planItemId, null, ChallengeStore(api, cache) { "UTC" }, source, SavedStateHandle(), MockStore(mocks, cache))
         if (moved) viewModel.moveToMonday()
 
         rule.setContent {
@@ -213,6 +215,15 @@ class ChallengeScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneMock() = show("phone-mock", *mock)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneMockPreparing() = show("phone-mock-preparing", *mock, "access" to "preparing", mocks = writingPaperApi(null))
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneMockPreparingDark() =
+        show("phone-mock-preparing-dark-more-contrast", *mock, "access" to "preparing", mocks = writingPaperApi(null), dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
