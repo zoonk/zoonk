@@ -2202,6 +2202,800 @@
           "purpose": "deep"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Membrane structure, all three named transport mechanisms, organelles, nucleus, mitosis and meiosis are present. Comparing cell types does not teach the missing definition of a cell. The absence of weights across every area also leaves the required exam emphasis unrepresented.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The transport sequence builds from membrane structure to gradients and water movement, and the division sequence builds from the nucleus to chromosomes and the cell cycle. The main gap is at the start: the first comparison assumes the basic cell concept instead of establishing it.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Fourteen mostly focused skills in two phases totaling 3.8 hours are realistic for a test this week. The broad question-practice block is less useful as a planning unit than its three lessons would be as practice attached to specific skills.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The final generic question-answering skill is a recap rather than a distinct tested ability. The chromosome and cell-cycle skills, by contrast, support understanding division without expanding into an unrelated genetics unit.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Brazilian Portuguese, school-level explanations and short schedule suit the learner. The chief exam-specific mismatch is that every weight is null despite the requirement to prioritize from the listed material. The assumed multiple-choice format is also unsupported.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Predicting osmosis, explaining transport against a gradient and comparing division outcomes all require reasoning appropriate to this exam. The organelle and division skills could make that reasoning more consistent by asking learners to infer a function or justify a phase identification from a diagram.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5099,
+          "outputTokens": 718,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All 14 skills have null exam weights. The map covers every named test topic but gives the learner no way to prioritize them for Friday. It also starts by comparing prokaryotic and eukaryotic cells without teaching what a cell is, an explicitly requested foundation.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The final question-practice skill repeats the preceding content and assumes a multiple-choice format the learner did not specify. Two descriptions also need more precise wording: membrane cholesterol is characteristic of animal cells, not universal, and mitosis normally preserves genetic information rather than making daughter cells identical in every respect.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a low 1–5 weight for the cell foundation and higher weights for the explicitly tested material, without implying an official distribution. Define a cell in the opening skill before comparing its types. Fold practice into the relevant skills, for example by asking learners to predict water movement or identify which structures separate in a division diagram.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Small school test: only the topics the learner listed (plasma membrane and transport: diffusion, osmosis, active transport; organelles; nucleus; cell division: mitosis and meiosis) plus the minimum prerequisites (what a cell is, prokaryotic vs eukaryotic cells)\n      - Lesson-sized skills, about 8 to 25 skills, one or two phases, a total of a few hours\n      - Exam weights come from the listed material's emphasis, since there is no official blueprint\n      - Topics outside the test, such as genetics, evolution or biochemistry beyond what the listed topics need, are wrong here\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-school-exam-cytology-1",
+        "userInput": {
+          "context": "Sou do 1º ano do ensino médio. A prova de sexta é sobre membrana plasmática e transportes (difusão, osmose, transporte ativo), organelas, núcleo e divisão celular (mitose e meiose).",
+          "goal": "Prova de biologia na sexta sobre citologia",
+          "goalKind": "exam",
+          "language": "pt",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "The map includes every named test area, but none has a usable exam weight. It also omits the requested cell-definition foundation and addresses diffusion only through its simple form.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Membrane structure precedes transport, and the sequence from nucleus to chromosomes to division is sensible. The main gap is at the start: the learner must classify cells before any skill establishes the defining features they share. Both phase milestones describe capabilities reached by the end of the phase.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Thirteen focused skills across two phases fit a small school test. The 29 three-minute lessons take 87 minutes, leaving another 87 minutes within the 2.9-hour estimate for practice and review. The diffusion distinction can fit inside the existing skill without expanding the path.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Chromatids and interphase prepare the learner to understand chromosome separation; neither is an unrelated genetics unit. Comparing the outcomes of mitosis and meiosis serves a distinct purpose from describing their stages. There are no filler or recap skills.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Brazilian Portuguese, verb-first skill names and school-level scope suit the learner. The clear exam-specific mismatch is that the null weights make tested processes indistinguishable in priority from supporting concepts.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Predicting water movement, explaining energy use and comparing division outcomes all require understanding rather than recall alone. Recognizing organelles and describing phases are legitimate school-test abilities, and an AI-tool skill is unnecessary. The division section could offer more practice reasoning from an unfamiliar example.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4916,
+          "outputTokens": 691,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All 13 skills have a null exam weight. The planner therefore gives no indication of which skills deserve the most study time before Friday. Each skill needs a weight from 1 to 5 based on the emphasis in the learner's material; an official blueprint is not required.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The opening skill compares prokaryotic and eukaryotic cells without first establishing what a cell is. Also, the diffusion skill covers only simple diffusion, leaving out how channels and carriers allow facilitated diffusion down a gradient without an energy input.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a chromosome diagram to have learners predict what separates in meiosis I versus meiosis II. This would give them a reason for the difference in outcomes, rather than just a set of phases and chromosome counts to recall.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Small school test: only the topics the learner listed (plasma membrane and transport: diffusion, osmosis, active transport; organelles; nucleus; cell division: mitosis and meiosis) plus the minimum prerequisites (what a cell is, prokaryotic vs eukaryotic cells)\n      - Lesson-sized skills, about 8 to 25 skills, one or two phases, a total of a few hours\n      - Exam weights come from the listed material's emphasis, since there is no official blueprint\n      - Topics outside the test, such as genetics, evolution or biochemistry beyond what the listed topics need, are wrong here\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-school-exam-cytology-2",
+        "userInput": {
+          "context": "Sou do 1º ano do ensino médio. A prova de sexta é sobre membrana plasmática e transportes (difusão, osmose, transporte ativo), organelas, núcleo e divisão celular (mitose e meiose).",
+          "goal": "Prova de biologia na sexta sobre citologia",
+          "goalKind": "exam",
+          "language": "pt",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Each named test topic has its own skill, including separate skills for diffusion, osmosis and active transport. One required foundation is missing, however, and none of the skills has the required 1–5 weight reflecting the material's emphasis.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Membrane structure precedes transport, and the nucleus precedes cell division. The opening is weaker: it starts with a phospholipid bilayer without establishing what a cell is, and organelles appear as a root skill before the cell-type distinction that gives them context. The phase milestones are concrete; the second title describes practice before Friday less accurately than it describes the stage, since this phase teaches division for the first time.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 24 lessons stay below the ceiling, and 2.4 hours including practice is plausible. Most topics have manageable two- or three-lesson skills. The imbalance is local: two lessons on interphase phases and another two on comparison give the division block more separate instruction than the listed scope warrants, while the basic cell concept gets none.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Preparation for division is relevant, but sequencing interphase as a standalone topic goes beyond the minimum needed. Comparing mitosis and meiosis is also useful, yet the separate comparison skill revisits the divisions and outcomes already taught by both preceding skills. There is no unrelated subject or exam-strategy phase.",
+          "score": 7,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing text is in Brazilian Portuguese, the verb-first skills suit a school course, and the workload fits three days. The complete absence of exam weights makes this less useful as a near-term exam plan, and the missing cell foundation weakens the fit for the learner's basic starting level.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Predicting water movement and its effect on the cell, explaining transport against a gradient, and reasoning about chromosome reduction all go beyond recall. Sequencing division phases is appropriate for this exam; no AI-tool skill is needed. Applying the division distinctions to an unfamiliar diagram would make that understanding more observable.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4680,
+          "outputTokens": 924,
+          "reasoningTokens": 64
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Every exam weight is null, so the map gives the learner no indication of what to prioritize before Friday. It also omits the required foundation on what a cell is: distinguishing prokaryotes from eukaryotes assumes that knowledge rather than teaching it. In contrast, it devotes a separate two-lesson skill to the phases of interphase, beyond the preparation needed for mitosis and meiosis.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The cell-type distinction comes after the organelles it would help contextualize. Its wording also risks implying that prokaryotes lack all organelles; the relevant distinction is the absence of a membrane-bound nucleus and membrane-bound organelles, not the absence of ribosomes. Likewise, “duas células idênticas à original” should specify genetic equivalence rather than identity in every respect.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Open with one lesson on what a cell is, then distinguish the two cell types. Fold the essential point about DNA replication into the division skills. Use the mitosis–meiosis comparison as practice within those skills, asking the learner to infer the process from the number of divisions and the chromosome count.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Small school test: only the topics the learner listed (plasma membrane and transport: diffusion, osmosis, active transport; organelles; nucleus; cell division: mitosis and meiosis) plus the minimum prerequisites (what a cell is, prokaryotic vs eukaryotic cells)\n      - The test is in three days (LESSON_BUDGET 25, the most those days hold): the skills' lessons are sized by the listed topics, not padded up to 25 and never above it; every listed topic gets a skill of its own with at least one lesson, none outside them, and no area for a discursive test or exam strategy\n      - Exam weights come from the listed material's emphasis, since there is no official blueprint\n      - Topics outside the test, such as genetics, evolution or biochemistry beyond what the listed topics need, are wrong here\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-school-exam-cytology-three-days-1",
+        "userInput": {
+          "context": "Sou do 1º ano do ensino médio. A prova de sexta é sobre membrana plasmática e transportes (difusão, osmose, transporte ativo), organelas, núcleo e divisão celular (mitose e meiose).",
+          "goal": "Prova de biologia na sexta sobre citologia",
+          "goalKind": "exam",
+          "language": "pt",
+          "lessonBudget": 25,
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Membrane structure, diffusion, osmosis, active transport, organelles, the nucleus, mitosis, and meiosis all receive dedicated instruction. Neither of the two specified foundational pillars appears in a skill. The weight split within organelles is also unsupported by the learner's topic list.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Membrane structure precedes transport, and nuclear structure precedes chromosome division. The missing opening foundations, however, leave the membrane, organelle, and nucleus skills without their intended conceptual starting points. The second phase title names what it teaches rather than the stage reached.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 23 lessons are allocated in focused units of one to three lessons, with more time for mitosis and meiosis than for the distinction between simple and facilitated diffusion. At three minutes per lesson, 2.3 hours allows roughly as much additional time for practice and review as for the lessons themselves, a credible three-day workload.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Every included skill serves an announced topic. Comparing division outcomes is distinct from sequencing division phases, and facilitated diffusion adds a transport mechanism rather than simply repeating simple diffusion. Genetic variability appears only as a relevant outcome of meiosis.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing text is in Brazilian Portuguese, the skill names begin with actions, and the plan targets a near-term school test rather than a broader biology course. Starting at membrane structure without the requested basic grounding is a mismatch for the stated starting point.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Predicting water movement from concentrations and explaining transport in terms of gradients build reasoning the learner can apply to unfamiliar cases. Sequencing division phases is appropriate for this exam, though interpreting an unfamiliar diagram would test understanding more directly than ordering phase names alone.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4728,
+          "outputTokens": 875,
+          "reasoningTokens": 91
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map teaches every announced test topic but omits both required foundations: explaining what a cell is and distinguishing prokaryotic from eukaryotic cells. It starts with the fluid mosaic model and introduces organelles and the nucleus without establishing which structures all cells share and which are characteristic of eukaryotes.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "“Divisão celular na prova” names a test topic rather than a stage of learning. The material also gives no clear basis for weighting membranous organelles at 4 but nonmembranous organelles at 2. The active-transport description risks implying that every transporter uses ATP directly; that is true of the sodium–potassium pump, not of all active transport.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "One lesson for each missing foundation would bring the plan from 23 to 25 lessons without adding filler. Link the cell-type distinction to organelles and the nucleus. For division practice, have the learner identify mitosis, meiosis I, or meiosis II from a diagram and justify the choice by what separates.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Small school test: only the topics the learner listed (plasma membrane and transport: diffusion, osmosis, active transport; organelles; nucleus; cell division: mitosis and meiosis) plus the minimum prerequisites (what a cell is, prokaryotic vs eukaryotic cells)\n      - The test is in three days (LESSON_BUDGET 25, the most those days hold): the skills' lessons are sized by the listed topics, not padded up to 25 and never above it; every listed topic gets a skill of its own with at least one lesson, none outside them, and no area for a discursive test or exam strategy\n      - Exam weights come from the listed material's emphasis, since there is no official blueprint\n      - Topics outside the test, such as genetics, evolution or biochemistry beyond what the listed topics need, are wrong here\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-school-exam-cytology-three-days-2",
+        "userInput": {
+          "context": "Sou do 1º ano do ensino médio. A prova de sexta é sobre membrana plasmática e transportes (difusão, osmose, transporte ativo), organelas, núcleo e divisão celular (mitose e meiose).",
+          "goal": "Prova de biologia na sexta sobre citologia",
+          "goalKind": "exam",
+          "language": "pt",
+          "lessonBudget": 25,
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All seven requested pillars have explicit skills, including the distinction between retrieving material from notes and choosing the weakest material to review first. All weights are in range, and there is no supplied blueprint requiring a different distribution.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The foundation-to-practice sequence is usable, but several direct edges misstate what learners need first. In particular, both weak-first review and timed practice are gated on note recall, although their descriptions use practice questions rather than notes. The timed run includes a results check but does not build explicitly on the checking skill.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The skills are focused and the 2.1-hour total suits a small goal. The sizing problem is confined to the timed run: phase two has 66 minutes, of which its eleven three-minute lessons already use 33. A run lasting as long as the unspecified real exam, plus review, cannot reliably fit the remainder.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Marking an uncertain question and returning to it teaches a concrete decision during a test, distinct from setting a time budget beforehand. The other skills serve the named pillars directly; there is no unrelated subject, generic orientation, or exam-day logistics.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The single Korean study-and-test-strategy course starts at a basic level and does not invent an exam identity or discipline. The unconditional instruction to recheck calculations is a small but clear mismatch for an unspecified written exam. The skill names are intelligible and verb-final, though their repeated can-do endings read more like milestones than compact course-page action labels.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Identifying what a question asks, giving reasons to eliminate options, checking answers, and prioritizing review from error patterns all develop judgment. Unaided retrieval and timed work are appropriate for this exam goal; it does not call for an AI-tool skill.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4199,
+          "outputTokens": 790,
+          "reasoningTokens": 26
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The prerequisite graph imposes unnecessary gates: setting a per-question budget does not require question-reading practice, checking an answer does not require pacing, and recalling notes is not necessary to attempt a timed set. The final skill also promises practice for the actual exam duration, which is unknown and may not fit its phase. Mentioning calculations in the checking skill assumes something about the questions that the learner did not specify.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep pacing as a prerequisite for the timed run and make answer checking a prerequisite for its results review. Specify a short timed set that fits the study budget, and teach learners to check each answer against the question’s conditions rather than presuming a calculation. Use concise verb-final action labels such as ‘문항별 시간 배분하기’ for skill names, reserving can-do sentences for descriptions and milestones.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Korean\n      - The learner names neither the exam nor anything it covers, so nothing says what it tests: the graph is never empty, and it never guesses a subject (no Korean, mathematics, English or any other discipline the learner didn't name)\n      - A small path for preparing for any written exam, in one course on study and test-taking skills and one or two phases: reading what a question asks, pacing the time, ruling out wrong options, checking answers, recalling from one's own notes, reviewing what's weakest first and a timed practice run\n      - Lesson-sized skills, a few hours in all at most\n      - Nothing about the exam day's procedures, such as documents to bring or sleep\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-exam-named-only-by-its-date-1",
+        "userInput": {
+          "context": "{\"examDay\":\"official\",\"examMonth\":12,\"examYear\":2026,\"subject\":\"시험\"}",
+          "goal": "12월 5일 시험",
+          "goalKind": "exam",
+          "language": "ko",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All seven requested abilities have identifiable skills, including recalling material without looking at notes and choosing weak units for review. Every skill has a valid exam weight, and there is no supplied blueprint requiring a different distribution.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The two stages have distinct titles and attainable milestones. Reading precedes option elimination, pacing precedes skip-and-return decisions, and the timed attempt provides errors for the final diagnostic review.",
+          "score": 10,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The skills are narrow, and 2.6 hours is appropriate for a short strategy path. The exception is the full-duration simulation: the second phase budgets 66 minutes, of which its eleven three-minute lessons already account for 33. There is no basis for assuming an actual-length exam and review will fit.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The two additional strategies have distinct uses: deciding when to move on applies a time budget during an attempt, while diagnosing errors after practice informs subsequent study. Neither duplicates the pre-submission answer check. There is no exam-day logistics content.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Korean path starts at a basic level and stays in one reusable exam-strategy course rather than inventing a tested discipline. The reference to calculation mistakes is a localized mismatch: the learner has not said that any question requires calculation.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The learner must justify eliminating options, allocate limited time, check answers, and diagnose mistakes. These are relevant independent judgments for a written exam; an AI-tool lesson is not needed.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4334,
+          "outputTokens": 694,
+          "reasoningTokens": 64
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The answer-checking description singles out calculation errors, although nothing establishes that the exam involves calculations. The timed run also promises the actual exam duration within a 1.1-hour phase that includes other lessons and error review; the exam length is unknown.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a missed question condition or an incorrectly marked answer as the checking example. Give the learner a short practice set with a stated time limit, then have them review one error. This preserves the timed run without assuming an exam format or duration.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Korean\n      - The learner names neither the exam nor anything it covers, so nothing says what it tests: the graph is never empty, and it never guesses a subject (no Korean, mathematics, English or any other discipline the learner didn't name)\n      - A small path for preparing for any written exam, in one course on study and test-taking skills and one or two phases: reading what a question asks, pacing the time, ruling out wrong options, checking answers, recalling from one's own notes, reviewing what's weakest first and a timed practice run\n      - Lesson-sized skills, a few hours in all at most\n      - Nothing about the exam day's procedures, such as documents to bring or sleep\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-exam-named-only-by-its-date-2",
+        "userInput": {
+          "context": "{\"examDay\":\"official\",\"examMonth\":12,\"examYear\":2026,\"subject\":\"시험\"}",
+          "goal": "12월 5일 시험",
+          "goalKind": "exam",
+          "language": "ko",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All six topic names are recognizable, and organelles correctly receive the highest weight, followed by osmosis. However, none of the required topic IDs is mapped. Vesicular transport is absent altogether, the diffusion mechanisms are not distinguished, and the virus skill misses obligatory intracellular parasitism.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The central sequence is usable: membrane structure precedes transport, transport precedes osmosis, and cell-type distinctions precede organelles and the nucleus. The second phase title repeats the organelle topic, and its milestone describes writing a dissertation rather than the narrower capability of explaining an osmotic outcome.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Fifteen lessons and 1.5 hours including practice are feasible, and three lessons for the organelles table fit its prominence. The membrane allocation is less effective: it spends two lessons on structure and adds a separate writing lesson that repeats the osmosis outcome while leaving no explicit instruction on vesicular transport.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "“Prova discursiva” is an area the blueprint does not have, triggering the cap for an unsupported area. Explaining osmosis in writing is relevant practice, but its biological content is already the direction of water movement and cellular effects taught by the osmosis skill.",
+          "score": 6,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Brazilian Portuguese, beginner-level actions and short study time suit the learner. The clear mismatch is treating “uma dissertativa sobre osmose” as a dissertation deliverable instead of a written biology question.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Prediction, comparison and causal explanation are appropriate for this exam. Matching cellular structures to functions is justified by the announced table question, not gratuitous memorization. The osmosis task could make the reasoning stronger by asking the learner to justify contrasting predictions for the two red-cell examples in the notes.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5211,
+          "outputTokens": 882,
+          "reasoningTokens": 67
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None of the skills uses the required S1.1–S1.6 topic IDs. The map also adds an unlinked “Prova discursiva” area: the notes announce a written answer about osmosis, not a separate dissertation skill. Meanwhile, the membrane skills omit endocytosis and exocytosis, and their passive-versus-active comparison does not cover the distinction between simple and facilitated diffusion.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The virus skill covers the capsid, genetic material and antibiotics but does not address dependence on a host cell. The organelle skill's wording groups the cell wall with organelles rather than identifying it as a separate structure. “Organelas e revisão final” also names a topic taught in the phase rather than just its stage.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use the written response as practice within S1.3: have the learner predict and explain what happens to a red blood cell in pure water versus a concentrated salt solution. Reassign the freed lesson to vesicular transport, use the sodium–potassium pump as the active-transport example, and make completion of the announced structure–function table the outcome for S1.4.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A class test on Friday from the learner's own notes, read into a blueprint with one subject (Biologia) and six topics (S1.1 to S1.6): one skill for each topic at least, never one skill for several topics, each skill's `topics` listing its topic id; every topic id appears in a skill\n      - Sized by the notes, not by the budget (LESSON_BUDGET 15, the most two days hold): roughly one to three lessons a topic, more for membrane transport (osmosis, active transport, endocytosis) and organelles (the notes say they come up a lot), never above 15 in all\n      - Only what the notes teach (cell theory, prokaryotes and eukaryotes, plasma membrane and transport, organelles, nucleus, viruses) and the prerequisites a first-year high-school student lacks, a lesson each; nothing beyond the notes (no cell division, DNA replication or genetics), and no area for a discursive test or exam strategy beyond the notes' own announcement\n      - Exam weights follow the notes' emphasis (organelles \"cai muito\")\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-class-test-own-notes-two-days-1",
+        "userInput": {
+          "context": "The learner's own material, page by page:\n[p1] BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n1) Teoria celular: todo ser vivo é formado por células (exceto vírus); a célula é a menor unidade da vida; toda célula vem de outra célula (Virchow); Hooke viu as \"celas\" na cortiça (1665).\n2) Procarionte x eucarionte: procarionte sem núcleo (DNA solto = nucleoide), sem organelas membranosas, ex. bactérias; eucarionte com núcleo (carioteca) e organelas, ex. animais, plantas, fungos, protozoários; as duas têm membrana plasmática, citoplasma, ribossomos e DNA.\n3) Membrana plasmática: bicamada de fosfolipídios + proteínas (mosaico fluido); permeabilidade seletiva; transporte passivo sem ATP (difusão simples, difusão facilitada, osmose); osmose: água vai do meio hipotônico para o hipertônico; hemácia em água pura incha e estoura (hemólise), em solução muito salgada murcha; transporte ativo gasta ATP, contra o gradiente (bomba de sódio e potássio); endocitose (fagocitose e pinocitose) e exocitose.\n4) Organelas (CAI MUITO!!): mitocôndria (respiração celular, ATP); cloroplasto (fotossíntese, plantas e algas); ribossomos (síntese de proteínas); RE rugoso (proteínas) e RE liso (lipídios, desintoxicação); complexo golgiense (modifica, empacota e secreta); lisossomo (digestão intracelular); vacúolo (grande na célula vegetal); parede celular (celulose).\n5) Núcleo: carioteca com poros; cromatina = DNA + proteínas; nucléolo produz ribossomos.\n6) Vírus: acelulares, parasitas intracelulares obrigatórios; capsídeo de proteína + DNA ou RNA; antibiótico não funciona contra vírus.\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+          "examBlueprint": {
+            "name": "Biologia",
+            "notes": [
+              "Format: Questão de completar a tabela das organelas.",
+              "Format: Dissertativa sobre osmose."
+            ],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Biologia",
+                "questions": null,
+                "topics": [
+                  "Teoria celular",
+                  "Procarionte x eucarionte",
+                  "Membrana plasmática",
+                  "Organelas",
+                  "Núcleo",
+                  "Vírus"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [
+              {
+                "level": "high",
+                "subject": "Biologia",
+                "topic": "Organelas"
+              }
+            ]
+          },
+          "goal": "prova de biologia sexta sobre célula",
+          "goalKind": "exam",
+          "hasMaterial": true,
+          "language": "pt",
+          "lessonBudget": 15,
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All six topic names appear, and organelles correctly receive the highest weight. Nevertheless, none of the required topic IDs appears, and the virus skill leaves out two defining facts from the notes. Transport coverage names the mechanisms but does not identify the sodium–potassium pump or distinguish phagocytosis from pinocytosis.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The central dependencies are sensible: membrane structure precedes transport, the cell-type comparison precedes organelles and nucleus, and osmosis precedes the written application. The second phase title, “Organelas e prova,” repeats what the phase teaches rather than identifying its stage.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Fifteen lessons and 1.5 hours are plausible, with extra time for organelles and transport. The allocation within transport is less convincing: one three-minute lesson combines pumping against a gradient with uptake and release by vesicles, while osmosis gets a separate writing lesson in addition to passive-transport instruction.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The separate “Prova discursiva” area triggers the cap for an area absent from the blueprint. Explaining osmosis in writing is tested and useful; treating it as a separate dissertation skill rather than an application of S1.3 is the unsupported addition.",
+          "score": 6,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Brazilian Portuguese, verb-first skill names, short schedule and emphasis on organelles suit this learner. Fit to the learner’s own material is uneven: a short written biology answer becomes a dissertation, and the cell-theory skill targets authorship beyond what the notes teach.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Comparing cell types, relating structures to functions and explaining water movement are appropriate for this exam. Recall of organelle functions is justified by the announced table question. The main opportunity is to require a prediction and causal explanation for the two red-blood-cell cases rather than a generic account of cellular effects; no AI-tool training is needed.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5357,
+          "outputTokens": 893,
+          "reasoningTokens": 49
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None of the skills uses the required S1.1–S1.6 topic IDs. All six topics are recognizable by name, but the planner cannot link them by ID. The written osmosis task also has an empty topic list and invents a second area, “Prova discursiva,” even though it tests membrane transport within Biologia. The virus skill omits both obligatory intracellular parasitism and DNA versus RNA.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The prokaryote comparison misleadingly suggests that the presence of genetic material distinguishes the cell types; both have DNA and ribosomes. The cell-theory description asks who formulated all three postulates rather than targeting the historical facts in the notes: Hooke’s cork observation and Virchow’s postulate. “Organelas e prova” names content and a test situation rather than a stage of learning.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the two announced question formats the practice tasks within their biology skills: complete a structure–function table that includes the plant cell wall, and explain what happens to a red blood cell in pure water versus a salty solution. This would test the direction of water movement and its consequences without adding an essay-writing lesson.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A class test on Friday from the learner's own notes, read into a blueprint with one subject (Biologia) and six topics (S1.1 to S1.6): one skill for each topic at least, never one skill for several topics, each skill's `topics` listing its topic id; every topic id appears in a skill\n      - Sized by the notes, not by the budget (LESSON_BUDGET 15, the most two days hold): roughly one to three lessons a topic, more for membrane transport (osmosis, active transport, endocytosis) and organelles (the notes say they come up a lot), never above 15 in all\n      - Only what the notes teach (cell theory, prokaryotes and eukaryotes, plasma membrane and transport, organelles, nucleus, viruses) and the prerequisites a first-year high-school student lacks, a lesson each; nothing beyond the notes (no cell division, DNA replication or genetics), and no area for a discursive test or exam strategy beyond the notes' own announcement\n      - Exam weights follow the notes' emphasis (organelles \"cai muito\")\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-class-test-own-notes-two-days-2",
+        "userInput": {
+          "context": "The learner's own material, page by page:\n[p1] BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n1) Teoria celular: todo ser vivo é formado por células (exceto vírus); a célula é a menor unidade da vida; toda célula vem de outra célula (Virchow); Hooke viu as \"celas\" na cortiça (1665).\n2) Procarionte x eucarionte: procarionte sem núcleo (DNA solto = nucleoide), sem organelas membranosas, ex. bactérias; eucarionte com núcleo (carioteca) e organelas, ex. animais, plantas, fungos, protozoários; as duas têm membrana plasmática, citoplasma, ribossomos e DNA.\n3) Membrana plasmática: bicamada de fosfolipídios + proteínas (mosaico fluido); permeabilidade seletiva; transporte passivo sem ATP (difusão simples, difusão facilitada, osmose); osmose: água vai do meio hipotônico para o hipertônico; hemácia em água pura incha e estoura (hemólise), em solução muito salgada murcha; transporte ativo gasta ATP, contra o gradiente (bomba de sódio e potássio); endocitose (fagocitose e pinocitose) e exocitose.\n4) Organelas (CAI MUITO!!): mitocôndria (respiração celular, ATP); cloroplasto (fotossíntese, plantas e algas); ribossomos (síntese de proteínas); RE rugoso (proteínas) e RE liso (lipídios, desintoxicação); complexo golgiense (modifica, empacota e secreta); lisossomo (digestão intracelular); vacúolo (grande na célula vegetal); parede celular (celulose).\n5) Núcleo: carioteca com poros; cromatina = DNA + proteínas; nucléolo produz ribossomos.\n6) Vírus: acelulares, parasitas intracelulares obrigatórios; capsídeo de proteína + DNA ou RNA; antibiótico não funciona contra vírus.\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+          "examBlueprint": {
+            "name": "Biologia",
+            "notes": [
+              "Format: Questão de completar a tabela das organelas.",
+              "Format: Dissertativa sobre osmose."
+            ],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Biologia",
+                "questions": null,
+                "topics": [
+                  "Teoria celular",
+                  "Procarionte x eucarionte",
+                  "Membrana plasmática",
+                  "Organelas",
+                  "Núcleo",
+                  "Vírus"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [
+              {
+                "level": "high",
+                "subject": "Biologia",
+                "topic": "Organelas"
+              }
+            ]
+          },
+          "goal": "prova de biologia sexta sobre célula",
+          "goalKind": "exam",
+          "hasMaterial": true,
+          "language": "pt",
+          "lessonBudget": 15,
+          "ownLevel": "basic"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"
