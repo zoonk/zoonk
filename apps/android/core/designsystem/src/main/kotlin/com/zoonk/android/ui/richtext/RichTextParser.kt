@@ -24,9 +24,13 @@ sealed interface RichBlock {
         val lines: List<List<RichSegment>>,
     ) : RichBlock
 
+    /**
+     * A numbered list starts at its first item's number, as in CommonMark, so steps split by a code
+     * block number on; [start] is null for bullets.
+     */
     data class ListBlock(
         val items: List<List<RichSegment>>,
-        val ordered: Boolean,
+        val start: Int?,
     ) : RichBlock
 
     data class Table(
@@ -56,7 +60,7 @@ private const val SPACE = "[\\t\\n\\u000B\\f\\r \\u00A0\\u1680\\u2000-\\u200A\\u
 private val MATH_WHITESPACE = Regex(SPACE)
 private val PRICE_AFTER_SIGN = Regex("^$SPACE?[0-9]")
 private val UNORDERED_ITEM = Regex("^$SPACE*[-*•]$SPACE+(.+)$")
-private val ORDERED_ITEM = Regex("^$SPACE*[0-9]{1,3}[.)]$SPACE+(.+)$")
+private val ORDERED_ITEM = Regex("^$SPACE*([0-9]{1,3})[.)]$SPACE+(.+)$")
 private val LINE_BREAK = Regex("$SPACE*\\n$SPACE*")
 private val LINE_END = Regex("\\r?\\n")
 
@@ -211,7 +215,7 @@ private sealed interface Line {
 
     data class Item(
         val text: String,
-        val ordered: Boolean,
+        val number: Int?,
     ) : Line
 
     data class Text(
@@ -220,8 +224,8 @@ private sealed interface Line {
 }
 
 private fun classifyLine(line: String): Line {
-    UNORDERED_ITEM.find(line)?.let { return Line.Item(it.groupValues[1], ordered = false) }
-    ORDERED_ITEM.find(line)?.let { return Line.Item(it.groupValues[1], ordered = true) }
+    UNORDERED_ITEM.find(line)?.let { return Line.Item(it.groupValues[1], number = null) }
+    ORDERED_ITEM.find(line)?.let { return Line.Item(it.groupValues[2], number = it.groupValues[1].toInt()) }
     return line.trim().let { if (it.isEmpty()) Line.Blank else Line.Text(it) }
 }
 
@@ -240,10 +244,10 @@ private fun appendLine(
 
         is Line.Item -> {
             val inline = parseRichInline(line.text)
-            if (last is RichBlock.ListBlock && last.ordered == line.ordered && previous is Line.Item) {
+            if (last is RichBlock.ListBlock && (last.start == null) == (line.number == null) && previous is Line.Item) {
                 head + last.copy(items = last.items + listOf(inline))
             } else {
-                blocks + RichBlock.ListBlock(listOf(inline), line.ordered)
+                blocks + RichBlock.ListBlock(listOf(inline), line.number)
             }
         }
 
@@ -299,15 +303,7 @@ fun parseRichBlocks(text: String): List<RichBlock> = readBlocks(text.split(LINE_
 
 private val SPACE_SEGMENT = RichSegment(SegmentKind.Text, " ")
 
-private fun inlineCode(code: String): RichSegment =
-    RichSegment(
-        SegmentKind.Code,
-        code
-            .split("\n")
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
-            .joinToString(" "),
-    )
+private fun inlineCode(code: String): RichSegment = RichSegment(SegmentKind.Code, oneLineCode(code))
 
 /**
  * Text drawn on one line, such as a heading or an answer quoted in a sentence (main's

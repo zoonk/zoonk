@@ -63,6 +63,7 @@ import com.zoonk.android.ui.components.TagUnder
 import com.zoonk.android.ui.components.arrowKeyScroll
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.components.focusRing
+import com.zoonk.android.ui.richtext.oneLineCode
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ProvideLayoutDirection
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -454,7 +455,8 @@ fun CodeSnippet(
     val column = columnWidth(MaterialTheme.zoonkType.code)
 
     ProvideLayoutDirection(LayoutDirection.Ltr) {
-        Column(modifier.fillMaxWidth().then(TagUnder)) {
+        // Main's option names its code as the browser reads it: the lines on one line, unindented.
+        Column(modifier.fillMaxWidth().then(TagUnder).clearAndSetSemantics { text = AnnotatedString(oneLineCode(code)) }) {
             lines.forEach { tokens -> CodeLineText(tokens, wraps = true, hang = SNIPPET_HANG, marksRows = false, column = column) }
         }
     }

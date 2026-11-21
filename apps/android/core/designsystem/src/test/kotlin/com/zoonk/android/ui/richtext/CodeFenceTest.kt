@@ -39,6 +39,21 @@ class CodeFenceTest {
     }
 
     @Test
+    fun `reads a fence of tildes, which only tildes close, as CommonMark does`() {
+        assertEquals(
+            CodeFence("f(`a`);\n```", "js", start = 0, end = 4, closed = true),
+            readCodeFence(listOf("~~~js `x`", "f(`a`);", "```", "~~~~"), 0),
+        )
+        assertEquals(false, readCodeFence(listOf("```", "x", "~~~"), 0)?.closed)
+        assertNull(readCodeFence(listOf("~~", "x", "~~"), 0))
+    }
+
+    @Test
+    fun `takes the opening fence's indentation off its code, as CommonMark does`() {
+        assertEquals("if x:\n    y()\nz", readCodeFence(listOf("  ```py", "  if x:", "      y()", " z", "  ```"), 0)?.code)
+    }
+
+    @Test
     fun `reads inline code and an indented block as no fence`() {
         assertNull(readCodeFence(listOf("```x``` e mais"), 0))
         assertNull(readCodeFence(listOf("    ```", "x", "```"), 0))

@@ -95,10 +95,22 @@ class RichTextParserTest {
             blocks.map { it::class },
         )
         assertEquals(
-            RichBlock.ListBlock(listOf(listOf(text("where it's likely")), listOf(text("where it isn't"))), ordered = false),
+            RichBlock.ListBlock(listOf(listOf(text("where it's likely")), listOf(text("where it isn't"))), start = null),
             blocks[1],
         )
-        assertEquals(true, (blocks[2] as RichBlock.ListBlock).ordered)
+        assertEquals(1, (blocks[2] as RichBlock.ListBlock).start)
+    }
+
+    @Test
+    fun numbersAListsStepsOnAcrossACodeBlockBetweenThem() {
+        assertEquals(
+            listOf(
+                RichBlock.ListBlock(listOf(listOf(text("Install it:"))), start = 1),
+                RichBlock.Code("npm i zod", "bash"),
+                RichBlock.ListBlock(listOf(listOf(text("Run it.")), listOf(text("Done."))), start = 2),
+            ),
+            parseRichBlocks("1. Install it:\n   ```bash\n   npm i zod\n   ```\n2. Run it.\n3. Done."),
+        )
     }
 
     @Test
@@ -167,9 +179,9 @@ class RichTextParserTest {
                         listOf(text("A vote")),
                         listOf(text("A slice of the future")),
                     ),
-                    ordered = false,
+                    start = null,
                 ),
-                RichBlock.ListBlock(listOf(listOf(text("First")), listOf(text("Second"))), ordered = true),
+                RichBlock.ListBlock(listOf(listOf(text("First")), listOf(text("Second"))), start = 1),
                 RichBlock.Paragraph(listOf(listOf(text("It doesn't give you a guaranteed return.")))),
             ),
             parseRichBlocks(text),
@@ -287,7 +299,7 @@ class RichTextParserTest {
         assertEquals(blocks, markRichBlocks(blocks, "Another idea."))
         assertEquals(blocks, markRichBlocks(blocks, "A **bold idea."))
         assertEquals(
-            RichBlock.ListBlock(listOf(listOf(marked(Text, "One item"))), ordered = false),
+            RichBlock.ListBlock(listOf(listOf(marked(Text, "One item"))), start = null),
             markRichBlocks(blocks, "One item")[1],
         )
     }

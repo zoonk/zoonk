@@ -1,9 +1,10 @@
 package com.zoonk.android.ui.richtext
 
 /**
- * A CommonMark fenced code block written with backticks (main's `@zoonk/utils/code-fence`). The
- * opening fence's info string can't hold a backtick, so "```x```" stays inline code. `end` is the
- * line after the closing fence; a fence that never closes runs to the text's end.
+ * A CommonMark fenced code block (main's `@zoonk/utils/code-fence`), written with backticks or
+ * tildes and closed by a line of the same character at least as long. A backtick fence's info
+ * string can't hold a backtick, so "```x```" stays inline code. `end` is the line after the closing
+ * fence; a fence that never closes runs to the text's end.
  */
 data class CodeFence(
     val code: String,
@@ -13,8 +14,8 @@ data class CodeFence(
     val closed: Boolean,
 )
 
-private val OPENING_FENCE = Regex(" {0,3}(`{3,})([^`]*)")
-private val CLOSING_FENCE = Regex(" {0,3}(`{3,}) *")
+private val OPENING_FENCE = Regex("( {0,3})(`{3,}(?=[^`]*$)|~{3,})(.*)")
+private val CLOSING_FENCE = Regex(" {0,3}(`{3,}|~{3,}) *")
 private val WHITESPACE = Regex("\\s+")
 
 /** A fence's name for its language: its info string's first word, in lowercase. */
@@ -26,27 +27,30 @@ internal fun readLanguage(info: String): String? =
         .lowercase()
         .ifEmpty { null }
 
-/** Code lines stay exactly as written. */
+/** Code lines stay exactly as written, less the opening fence's own indentation. */
 fun readCodeFence(
     lines: List<String>,
     index: Int,
 ): CodeFence? {
     val opening = OPENING_FENCE.matchEntire(lines.getOrNull(index) ?: return null) ?: return null
-    val ticks = opening.groupValues[1].length
+    val indent = opening.groupValues[1].length
+    val fence = opening.groupValues[2]
+    // A fence is one character repeated, so a closing one as long or longer starts with the opening one.
     val close =
         (index + 1 until lines.size).firstOrNull { at ->
-            (
-                CLOSING_FENCE
-                    .matchEntire(lines[at])
-                    ?.groupValues
-                    ?.get(1)
-                    ?.length ?: 0
-            ) >= ticks
+            CLOSING_FENCE
+                .matchEntire(lines[at])
+                ?.groupValues
+                ?.get(1)
+                ?.startsWith(fence) == true
         }
 
     return CodeFence(
-        code = lines.subList(index + 1, close ?: lines.size).joinToString("\n"),
-        language = readLanguage(opening.groupValues[2]),
+        code =
+            lines.subList(index + 1, close ?: lines.size).joinToString("\n") { line ->
+                line.drop(minOf(indent, line.takeWhile { it == ' ' }.length))
+            },
+        language = readLanguage(opening.groupValues[3]),
         start = index,
         end = close?.plus(1) ?: lines.size,
         closed = close != null,
@@ -54,6 +58,14 @@ fun readCodeFence(
 }
 
 private val LINE_END = Regex("\\r?\\n")
+
+/** Code's lines on one line, each without its indentation, as main's one-line code reads it. */
+fun oneLineCode(code: String): String =
+    code
+        .split("\n")
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .joinToString(" ")
 
 /** A text that is one closed code block and nothing else, such as an answer option that is code. */
 fun readWholeCodeFence(text: String): CodeFence? {

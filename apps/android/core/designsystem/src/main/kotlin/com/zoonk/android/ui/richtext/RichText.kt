@@ -474,7 +474,7 @@ private fun RichList(
                 },
                 horizontalArrangement = Arrangement.spacedBy(MARKER_GAP),
             ) {
-                val marker = if (block.ordered) "${index + 1}." else "•"
+                val marker = block.start?.let { "${it + index}." } ?: "•"
 
                 Text(
                     text = marker,
@@ -482,7 +482,7 @@ private fun RichList(
                         Modifier
                             .widthIn(min = MARKER_WIDTH)
                             .alignByBaseline()
-                            .then(if (block.ordered) Modifier else Modifier.clearAndSetSemantics {}),
+                            .then(if (block.start != null) Modifier else Modifier.clearAndSetSemantics {}),
                     style = style.withTabularFigures(),
                     textAlign = layoutEnd(),
                 )
