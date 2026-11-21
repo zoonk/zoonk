@@ -14,7 +14,7 @@ export function DocHeader({ children, title }: React.PropsWithChildren<{ title: 
   return (
     <header className={cn(DOC_MEASURE, "flex flex-col gap-2 pb-8")}>
       <h1 className="text-title">{title}</h1>
-      <div className="text-muted-foreground text-reading leading-6 text-pretty">
+      <div className="text-muted-foreground text-reading leading-6">
         {typeof children === "string" ? renderCode(children) : children}
       </div>
     </header>
@@ -32,11 +32,7 @@ export function DocSection({
     <section className={cn("flex flex-col gap-4 pb-12", className)} id={id}>
       <div className={cn(DOC_MEASURE, "flex flex-col gap-1")}>
         <h2 className="text-section">{title}</h2>
-        {intro && (
-          <p className="text-muted-foreground text-sm leading-5.5 text-pretty">
-            {renderCode(intro)}
-          </p>
-        )}
+        {intro && <p className="text-muted-foreground text-sm leading-5.5">{renderCode(intro)}</p>}
       </div>
       {children}
     </section>

@@ -3067,10 +3067,11 @@ msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
 msgstr "{goals, plural, one {# objetivo} other {# objetivos}} · {lessons, plural, one {# lección} other {# lecciones}} al mes"
 
+#. Beside the numbers 1 to 4, one per week, in a picture of a month of study.
 #: src/components/pricing/plus-adds.tsx
-msgctxt "RdGReZ"
-msgid "Week {number, number}"
-msgstr "Semana {number, number}"
+msgctxt "g6-IGw"
+msgid "Weeks"
+msgstr "Semanas"
 
 #. Small label over a section that shows what a subscription adds.
 #: src/components/pricing/plus-adds.tsx

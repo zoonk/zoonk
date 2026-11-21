@@ -18,7 +18,7 @@ import { SWIPE_THROUGH } from "../lesson/use-swipe-navigation";
 import { type ChapterSlide, type LessonMindMap } from "./mind-map-deck";
 
 const COLUMN_CLASS = cn(TASK_COLUMN_CLASS, "flex flex-col gap-5 pt-4 pb-8");
-const NOTE_CLASS = "text-muted-foreground text-sm text-pretty";
+const NOTE_CLASS = "text-muted-foreground text-sm";
 
 /**
  * The map as big as the window lets it be while the whole map stays in view under the header, the

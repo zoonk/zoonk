@@ -16,7 +16,7 @@ type ContainerDescriptionProps = React.ComponentProps<"p">;
 export function ContainerDescription({ children, className }: ContainerDescriptionProps) {
   return (
     <p
-      className={cn("text-muted-foreground pt-1 text-sm text-pretty", className)}
+      className={cn("text-muted-foreground pt-1 text-sm", className)}
       data-slot="container-description"
     >
       {children}

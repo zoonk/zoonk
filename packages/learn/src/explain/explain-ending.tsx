@@ -89,7 +89,7 @@ function ExplainRecap({
               >
                 {index + 1}
               </span>
-              <span className="min-w-0 flex-1 text-sm leading-relaxed text-pretty">{sentence}</span>
+              <span className="min-w-0 flex-1 text-sm leading-relaxed">{sentence}</span>
             </li>
           ))}
         </ol>

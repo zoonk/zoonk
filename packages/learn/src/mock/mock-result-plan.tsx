@@ -119,7 +119,7 @@ function PlanChangeStatus({ change }: { change: PlanChange & { adapt: MockAdaptV
   return (
     <div className="text-muted-foreground flex flex-col gap-1 text-sm" role="status">
       {told.map(({ applied, line }) => (
-        <p className="flex items-start gap-2 text-pretty" key={line}>
+        <p className="flex items-start gap-2" key={line}>
           {applied && (
             <CircleCheckIcon
               aria-hidden="true"
@@ -208,11 +208,11 @@ export function MockPlanChange({
         >
           <div className="flex flex-col gap-1">
             {showTitle && (
-              <p className="text-sm text-pretty" id={titleId}>
+              <p className="text-sm" id={titleId}>
                 {copy.title}
               </p>
             )}
-            <p className="text-muted-foreground text-sm text-pretty">{copy.line}</p>
+            <p className="text-muted-foreground text-sm">{copy.line}</p>
           </div>
 
           {answers && (

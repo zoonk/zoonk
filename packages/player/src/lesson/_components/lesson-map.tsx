@@ -31,7 +31,7 @@ function IdeaContent({ idea, number }: { idea: MapIdea; number: number }) {
       </span>
       <span
         className={cn(
-          "mt-1.5 block text-sm leading-snug text-pretty",
+          "mt-1.5 block text-sm leading-snug",
           idea.label ? "text-muted-foreground" : "text-foreground",
         )}
       >

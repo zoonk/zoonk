@@ -83,15 +83,11 @@ function PrintedOutput({
   const t = useExtracted();
 
   if (run === null) {
-    return (
-      <p className="text-muted-foreground py-1 text-sm text-pretty">
-        {t("Run the code to see it")}
-      </p>
-    );
+    return <p className="text-muted-foreground py-1 text-sm">{t("Run the code to see it")}</p>;
   }
 
   if (run.output === "") {
-    return <p className="text-muted-foreground py-1 text-sm text-pretty">{t("Nothing printed")}</p>;
+    return <p className="text-muted-foreground py-1 text-sm">{t("Nothing printed")}</p>;
   }
 
   return (

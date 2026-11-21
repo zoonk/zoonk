@@ -20,7 +20,7 @@ export function Eyebrow({
   return (
     <p
       className={cn(
-        "inline-flex min-h-5.5 w-fit max-w-full items-start gap-1.5 rounded-sm px-2 py-0.75 text-xs font-medium text-pretty ring-1 ring-inset [&_svg]:size-3.5",
+        "inline-flex min-h-5.5 w-fit max-w-full items-start gap-1.5 rounded-sm px-2 py-0.75 text-xs font-medium ring-1 ring-inset [&_svg]:size-3.5",
         EYEBROW_TONE[tone],
         className,
       )}

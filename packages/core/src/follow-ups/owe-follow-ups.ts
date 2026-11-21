@@ -45,6 +45,8 @@ function getFollowUpKey(followUp: FollowUp): string {
     }
     case "voiceWord":
       return followUp.input.wordId;
+    case "updateLessonsShowing":
+      return followUp.input.id;
     case "writeSpeakingPaper":
       return followUp.input.mockId;
     case "reviewAlphabetLesson":

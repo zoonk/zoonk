@@ -24,7 +24,7 @@ export function PressDemo() {
         type="button"
       >
         <span className="text-muted-foreground font-mono">1</span>
-        <span className="text-pretty">Press and hold this wide option</span>
+        <span>Press and hold this wide option</span>
       </button>
     </div>
   );

@@ -68,7 +68,7 @@ function StartFailure() {
       data-slot={START_FAILURE_SLOT}
       role="alert"
     >
-      <p className="text-muted-foreground text-sm text-pretty">
+      <p className="text-muted-foreground text-sm">
         {t("We couldn't open the lesson. Try again, or log in to keep going.")}
       </p>
 

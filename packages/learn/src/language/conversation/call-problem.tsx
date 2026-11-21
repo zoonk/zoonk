@@ -23,7 +23,7 @@ type CallProblemKind = Exclude<LiveCallError, "dropped"> | "takenOver";
 function ProblemMessage({ text, title }: { text: string; title: string }) {
   return (
     <CallOffMessage title={title}>
-      <p className="text-muted-foreground text-base leading-relaxed text-pretty">{text}</p>
+      <p className="text-muted-foreground text-base leading-relaxed">{text}</p>
     </CallOffMessage>
   );
 }
@@ -235,7 +235,7 @@ export function CallEndedStatus({
         >
           <Spinner className="size-4" />
         </span>
-        <p className="flex min-w-0 flex-col text-pretty">
+        <p className="flex min-w-0 flex-col">
           <span className="text-sm leading-5 font-medium">{t("Call ended")}</span>
           <span className="text-muted-foreground text-compact leading-snug">
             <SavingLine grading={grading} />
@@ -247,7 +247,7 @@ export function CallEndedStatus({
 
   return (
     <>
-      <p className="text-sm text-pretty" role="alert">
+      <p className="text-sm" role="alert">
         {state === "closing"
           ? t("The call is still closing. Try again in a moment.")
           : t("We couldn't save the call.")}

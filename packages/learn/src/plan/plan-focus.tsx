@@ -158,7 +158,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
     <>
       <DrawerContent className="flex flex-col gap-5 pt-2">
         {unchanged && chosen.length > 0 && (
-          <p className="bg-muted/60 rounded-xl p-4 text-sm text-pretty" role="status">
+          <p className="bg-muted/60 rounded-xl p-4 text-sm" role="status">
             {unchanged === "alreadyIn"
               ? t("Nothing changed. All {areas} lessons are already in your plan.", {
                   areas: names,

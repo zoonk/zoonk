@@ -18,7 +18,7 @@ export type ArgumentPart = "evidence" | "reasoning";
 export function ArgumentText({ citation, text }: { citation?: string; text: string }) {
   if (citation === undefined) {
     return (
-      <span className="text-sm leading-snug text-pretty sm:text-base">
+      <span className="text-sm leading-snug sm:text-base">
         <LessonRichText text={text} />
       </span>
     );
@@ -26,7 +26,7 @@ export function ArgumentText({ citation, text }: { citation?: string; text: stri
 
   return (
     <span className="flex flex-col gap-1">
-      <q className="text-reading leading-snug text-pretty sm:text-base">
+      <q className="text-reading leading-snug sm:text-base">
         <LessonRichText text={text} />
       </q>
       <span className="text-muted-foreground text-xs">{citation}</span>
@@ -36,7 +36,7 @@ export function ArgumentText({ citation, text }: { citation?: string; text: stri
 
 export function ArgumentWhy({ text }: { text: string }) {
   return (
-    <p className="text-muted-foreground text-sm leading-snug text-pretty">
+    <p className="text-muted-foreground text-sm leading-snug">
       <LessonRichText text={text} />
     </p>
   );
