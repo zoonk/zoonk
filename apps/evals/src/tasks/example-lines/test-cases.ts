@@ -3,7 +3,7 @@ import { type GenerateExampleLinesParams } from "@zoonk/ai/tasks/variants/exampl
 
 type ExampleLinesInput = Omit<
   OptionalCountry<GenerateExampleLinesParams>,
-  "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback"
+  "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback" | "wait"
 > & { learnerHomeCountry?: string | null };
 
 const SHARED_EXPECTATIONS = `
@@ -36,7 +36,7 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   },
   {
     expectations:
-      "Write a concrete, non-null discount example using software work, with correct numbers. Use literal language, without idioms, metaphors or figures of speech.",
+      "The learner never said they buy software, so null is acceptable. A line, if written, is a concrete discount on software for their work, with correct numbers and stated as an example, in literal language without idioms, metaphors or figures of speech.",
     id: "en-plain-words-example",
     userInput: {
       facts: ["Works as: software engineer"],
@@ -46,6 +46,24 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
       screens: [
         {
           idea: "A discount on software used for work.",
+          text: "A 25% discount removes a quarter of the original price.",
+        },
+      ],
+    },
+  },
+
+  {
+    expectations:
+      "The learner pays for their own software tools, so the line MUST be non-null: a concrete discount on a tool they pay for, with correct numbers stated as an example, in literal language without idioms, metaphors or figures of speech.",
+    id: "en-plain-words-pays-for-tools",
+    userInput: {
+      facts: ["Works as a freelance software developer", "Pays for their own coding tools"],
+      goal: null,
+      language: "en",
+      plainWords: true,
+      screens: [
+        {
+          idea: "A discount on something the learner pays for.",
           text: "A 25% discount removes a quarter of the original price.",
         },
       ],
@@ -410,6 +428,102 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
         {
           idea: "A discount on something the learner buys.",
           text: "A 20% discount takes a fifth off the price. On a $50 item, that's $10 off: you pay $40.",
+        },
+      ],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - The lesson is about code and the learner writes code for a living, so a line set in their own software work (an app, API or service they build or maintain) only says the screen again: it scores at most 4, even when it's correct. EARLIER_LINES already did exactly that, and the line MUST NOT continue it
+      - A good line shows the same mechanism in another part of their life the facts name (cooking dinner, a Formula 1 race), in everyday words, and maps it exactly: only the waiting task stops until its result arrives, while everything else goes on. A parallel where everything stops, or where nothing waits, is wrong. Null is acceptable; a forced parallel is not
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-developer-coding-lesson-not-work",
+    userInput: {
+      earlierLines: [
+        "When you build a search page in a web app at work, you can focus the results heading without adding an extra Tab stop.",
+        "When you show comments in a web app at work, textContent displays outside text without running it.",
+      ],
+      facts: [
+        "Has built web applications since 2012",
+        "Leads a small engineering team",
+        "Knows cloud, APIs and software architecture well",
+        "Follows every Formula 1 race",
+        "Cooks dinner for the family on weekdays",
+      ],
+      goal: "Pass a public-sector IT exam",
+      language: "en",
+      screens: [
+        {
+          idea: "A list that loads in a web app the learner maintains at work.",
+          text: "Inside an async function, `await` pauses only that function until the Promise brings its result. In `const data = await load(); show(data);`, `show` waits for the data, but code outside keeps running.",
+        },
+      ],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The lesson is about Java and the learner has worked in software for years, so a line set in their own software work (a service, system or project they maintain) only says the screen again: it scores at most 4, even when it's correct
+      - A good line shows the same problem in another part of their life the facts name (a Formula 1 race, a running group), in everyday words, and maps it exactly: one side changes a value and the other keeps acting on the old one until the change is made visible to it. A line that only says an updated signal becomes visible, without someone still acting on the old one, misses the screen's point and scores at most 6 for accuracy. Null is acceptable; a forced parallel is not
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-developer-java-volatile-not-work",
+    userInput: {
+      facts: [
+        "Trabalha com software desde 2010, principalmente aplicações web",
+        "Acompanha Fórmula 1",
+        "Corre com um grupo aos domingos",
+        "Estuda italiano",
+      ],
+      goal: "Passar num concurso de desenvolvimento de sistemas",
+      language: "pt",
+      screens: [
+        {
+          idea: "Um sinal de cancelamento de uma tarefa em segundo plano, num serviço Java que a pessoa mantém no trabalho.",
+          text: "Sem sincronização, a thread do laço `while (!parar) {}` pode seguir usando um valor antigo de `parar`. Com `volatile boolean parar = false`, cada escrita no campo fica visível às leituras de outras threads. Esse modificador se chama **volatile**.",
+        },
+      ],
+    },
+  },
+  {
+    expectations: `
+      - The lesson is about web code and the learner only shared facts about their own work in that field, so every line MUST be null: a line set in their software or web work only says the screen again and scores at most 4
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-developer-only-work-facts-null",
+    userInput: {
+      facts: ["Works as a frontend developer", "Maintains a React design system at work"],
+      goal: null,
+      language: "en",
+      screens: [
+        {
+          idea: "A link or Submit button in a web system the learner uses at work.",
+          text: "Clicking a link makes the browser open another address on its own: that's a **default action**. Calling `e.preventDefault()` in the listener cancels that navigation, but the click still bubbles up through the elements that contain the link.",
+        },
+        {
+          idea: "A comment box in a web system the learner maintains at work.",
+          text: 'With `innerHTML`, an image tag with a broken address and `onerror="steal()"` runs `steal()` when it fails to load. With `textContent`, the same text shows up as plain text.',
+        },
+      ],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - The learner is a nurse learning to code, so their ward is a setting outside the lesson's subject: a line where the same step repeats for each patient, chart or dose on their round fits, and it maps the loop exactly (one action, once per item, until the list ends). A line about writing code at work is invented
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-nurse-coding-lesson-work-fits",
+    userInput: {
+      facts: ["Works as a nurse on a hospital ward", "Learning Python to automate reports"],
+      goal: "Write small Python scripts",
+      language: "en",
+      screens: [
+        {
+          idea: "The same step done once for each item in a list.",
+          text: "A `for` loop runs the same lines once for each item in a list. `for name in names: print(name)` prints every name, one per line, and stops after the last.",
         },
       ],
     },

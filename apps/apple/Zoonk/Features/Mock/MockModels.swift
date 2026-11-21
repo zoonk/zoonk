@@ -115,6 +115,7 @@ struct MockCurrent: Hashable, Decodable, Sendable {
     var setId: String
   }
 
+  var changedItemIds: [String]
   var changesLeft: Int?
   var deadline: Date
   var drafts: [MockDraft]
