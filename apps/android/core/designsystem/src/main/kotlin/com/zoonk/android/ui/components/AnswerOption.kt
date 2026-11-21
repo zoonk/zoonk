@@ -31,7 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.ParentDataModifier
+import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
@@ -40,6 +43,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -87,6 +91,20 @@ fun AnswerOption(
     val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null)
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
+    val shownTag: (@Composable () -> Unit)? =
+        tag ?: when {
+            result != null -> {
+                { AnswerTag(picked, result, guessed = guessed) }
+            }
+
+            picked && role != Role.Button -> {
+                { PickedTag(guessed) }
+            }
+
+            else -> {
+                null
+            }
+        }
 
     TagBesideOrUnder(
         modifier =
@@ -104,13 +122,9 @@ fun AnswerOption(
                     },
                 ).padding(horizontal = 16.dp, vertical = 13.dp),
         content = { ProvideTextStyle(optionStyle, content) },
-        tag =
-            tag ?: {
-                when {
-                    result != null -> AnswerTag(picked, result, guessed = guessed)
-                    picked && role != Role.Button -> PickedTag(guessed)
-                }
-            },
+        // An option the learner can pick holds the room of the tag a pick or a check brings, so nothing moves when it comes.
+        tag = shownTag ?: { if (role != Role.Button) Box(Modifier.alpha(0f).clearAndSetSemantics {}) { PickedTag(guessed) } },
+        tagReserved = shownTag == null,
         leading =
             if (key ==
                 AnswerKey.None
@@ -181,11 +195,20 @@ private fun NumberKey(
     }
 }
 
+/** Code as an option's words: its tag holds the edge, on its last line when that line leaves room and under it otherwise. */
+internal object CodeWords : ParentDataModifier {
+    override fun Density.modifyParentData(parentData: Any?): Any = this@CodeWords
+}
+
+/** Where code's last line ends, from its start. */
+internal val CodeLastLineEnd = VerticalAlignmentLine(::max)
+
 @Composable
 fun TagBesideOrUnder(
     modifier: Modifier,
     content: @Composable () -> Unit,
     tag: @Composable () -> Unit,
+    tagReserved: Boolean = false,
     leading: (@Composable () -> Unit)? = null,
     leadingAtTop: Boolean = false,
     readingContent: (@Composable () -> Unit)? = null,
@@ -229,12 +252,26 @@ fun TagBesideOrUnder(
         val tagWidth = tagPlaceable?.width ?: 0
         val tagHeight = tagPlaceable?.height ?: 0
         val besideWidth = max(0, contentWidth - gap - tagWidth)
+        // Code keeps its shape at the content's width, so its tag ends its last line at the edge while that line leaves
+        // room; code never wraps to make room.
+        val codePlaceable = text?.takeIf { it.parentData == CodeWords }?.measure(loose.copy(maxWidth = contentWidth))
+        val isCode = codePlaceable != null
         // Beside whenever the words' longest word fits there, so the options of one list never put it two ways.
-        val beside = tagPlaceable == null || text == null || text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth
-        val wordsWidth = if (beside && tagPlaceable != null) besideWidth else contentWidth
-        val wordsPlaceable = text?.measure(loose.copy(maxWidth = wordsWidth))
+        val beside =
+            tagPlaceable == null || text == null ||
+                if (codePlaceable != null) {
+                    (codePlaceable[CodeLastLineEnd].takeIf { it != AlignmentLine.Unspecified } ?: codePlaceable.width) <= besideWidth
+                } else {
+                    text.minIntrinsicWidth(constraints.maxHeight) <= besideWidth
+                }
+        // A tag that isn't there yet holds its room only under the words; beside them it would narrow every option for nothing.
+        val reservedBeside = tagReserved && beside
+        val wordsWidth = if (beside && tagPlaceable != null && !reservedBeside) besideWidth else contentWidth
+        val wordsPlaceable = codePlaceable ?: text?.measure(loose.copy(maxWidth = wordsWidth))
         val wordsHeight = wordsPlaceable?.height ?: 0
         val wordsBaseline = wordsPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
+        // Beside code, the tag sits on its last line, as it follows the last of an answer's words.
+        val tagLine = if (isCode) wordsPlaceable?.get(LastBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0 else wordsBaseline
         val keyBaseline = keyPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
         val keyY = if (keyBeside && !leadingAtTop) max(0, wordsBaseline - keyBaseline) else 0
         val contentY =
@@ -248,19 +285,30 @@ fun TagBesideOrUnder(
         val tagBaseline = tagPlaceable?.get(FirstBaseline)?.takeIf { it != AlignmentLine.Unspecified } ?: 0
         val tagY =
             if (beside) {
-                contentY + max(0, wordsBaseline - tagBaseline)
+                contentY + max(0, tagLine - tagBaseline)
             } else {
                 max(contentY + wordsHeight, if (tagAcross) keyBottom else 0) + gap / 2
             }
-        val height = max(max(wordsHeight + contentY, keyBottom), tagY + tagHeight)
+        val height = max(max(wordsHeight + contentY, keyBottom), if (reservedBeside) 0 else tagY + tagHeight)
 
         layout(width, max(height, constraints.minHeight)) {
             keyPlaceable?.placeRelative(0, keyY)
             wordsPlaceable?.placeRelative(contentX, contentY)
-            if (beside) {
-                tagPlaceable?.placeRelative(width - tagWidth, tagY)
-            } else {
-                tagPlaceable.placeRelative(if (tagAcross) 0 else contentX, tagY)
+            when {
+                reservedBeside -> {}
+
+                beside -> {
+                    tagPlaceable?.placeRelative(width - tagWidth, tagY)
+                }
+
+                // Under code, the tag keeps the edge it holds on code's last line.
+                isCode -> {
+                    tagPlaceable.placeRelative(width - tagWidth, tagY)
+                }
+
+                else -> {
+                    tagPlaceable.placeRelative(if (tagAcross) 0 else contentX, tagY)
+                }
             }
         }
     }

@@ -419,6 +419,7 @@ class TodayFlowTest {
         isToday: Boolean = false,
         kind: String = "study",
     ) = buildJsonObject {
+        put("completed", if (hitGoal) 1 else 0)
         put("date", date)
         put("goalMinutes", goal)
         put("hitGoal", hitGoal)
@@ -426,6 +427,7 @@ class TodayFlowTest {
         put("kind", kind)
         put("minutes", minutes)
         put("studied", minutes > 0)
+        put("total", if (hitGoal) 1 else 0)
     }
 
     private fun weeklyChallenge(date: String) =
@@ -545,7 +547,7 @@ class TodayFlowTest {
 
     @Test
     fun theUpNextRowSpinsAloneWhileKeepLearningWaits() {
-        show("state" to "done", "extraTime" to upNext())
+        show("state" to "done", "nextPosition" to null, "extraTime" to upNext())
 
         rule.onNodeWithText("Membranes").performClick()
         rule.waitForIdle()
@@ -557,7 +559,7 @@ class TodayFlowTest {
 
     @Test
     fun keepLearningSpinsAloneWhileTheUpNextRowWaits() {
-        show("state" to "done", "extraTime" to upNext())
+        show("state" to "done", "nextPosition" to null, "extraTime" to upNext())
 
         rule.onNodeWithText("Keep learning").performClick()
         rule.waitForIdle()
@@ -569,7 +571,7 @@ class TodayFlowTest {
 
     @Test
     fun theWaitingUpNextRowKeepsFocusWhileKeepLearningsRequestRuns() {
-        show("state" to "done", "extraTime" to upNext())
+        show("state" to "done", "nextPosition" to null, "extraTime" to upNext())
         val row = rule.onNodeWithText("Membranes")
         row.performSemanticsAction(SemanticsActions.RequestFocus)
         row.assertIsFocused()

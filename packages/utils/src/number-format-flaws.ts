@@ -1,6 +1,7 @@
+import { removeCode } from "./code-fence";
 import { isJsonObject } from "./json";
 import { getFormattingLocale } from "./locale";
-import { splitLinesAndCells } from "./markdown-table";
+import { readTextCells } from "./markdown-table";
 import { splitAtMath } from "./math-spans";
 
 /**
@@ -8,8 +9,6 @@ import { splitAtMath } from "./math-spans";
  * or an ID, and shorter numbers stay ungrouped in every language, so a year reads 2026.
  */
 const LONG_NUMBER = /(?<![\d.,\p{L}/-])[1-9]\d{4,}(?![\d\p{L}/-]|[.,]\d)/gu;
-
-const CODE = /```[\s\S]*?```|`[^`\n]+`/gu;
 
 /** A comma between digits, which KaTeX sets as a list ("0, 5") unless it's braced ("0{,}5"). */
 const BARE_COMMA = /\d,\d/u;
@@ -63,15 +62,13 @@ const LATEX_FIELD = "math";
 type TextParts = { math: string[]; prose: string };
 
 function splitText({ latex, text }: { latex: boolean; text: string }): TextParts {
-  const written = text.replaceAll(CODE, " ");
+  const written = removeCode(text);
 
   if (latex) {
     return { math: [written], prose: "" };
   }
 
-  const segments = splitLinesAndCells(written)
-    .flat()
-    .flatMap((cell) => splitAtMath(cell));
+  const segments = readTextCells(written).flatMap((cell) => splitAtMath(cell));
 
   return {
     math: segments.flatMap((segment) => (segment.kind === "text" ? [] : [segment.text])),

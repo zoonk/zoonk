@@ -162,10 +162,9 @@ struct QuestionTitle: View {
   var isHeading = true
 
   var body: some View {
-    LessonTextBlocks(text)
+    LessonTextBlocks(text, wordTraits: isHeading ? .isHeader : [])
       .typeStyle(.section)
       .foregroundStyle(isMuted ? .mutedForeground : .primary)
-      .accessibilityAddTraits(isHeading ? .isHeader : [])
   }
 }
 

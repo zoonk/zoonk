@@ -2,6 +2,7 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { type z } from "zod";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type studyBlockSchema } from "../block-view-contract";
+import { getPlayOrder, isDayBlock } from "../day-blocks";
 import { type DayState, withDayState } from "../day-state";
 import { type ExtraTime } from "../extra-time";
 import { type Mission } from "../missions";
@@ -77,19 +78,15 @@ export type SessionWeek = Pick<StudyWeek, "days" | "nextStudyDate">;
 /** For a session whose goal was deleted, and for summaries, which show no week. */
 export const EMPTY_WEEK: SessionWeek = { days: [], nextStudyDate: null };
 
-export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status">[]) {
+export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status" | "payload">[]) {
   return {
-    completed: blocks.filter((block) => block.status === "completed").length,
-    total: blocks.filter((block) => block.status !== "skipped").length,
+    completed: blocks.filter((block) => isDayBlock(block) && block.status === "completed").length,
+    total: blocks.filter((block) => isDayBlock(block) && block.status !== "skipped").length,
   };
 }
 
 export function getNextBlockId(blocks: readonly StudySessionBlock[]): string | null {
-  const next =
-    blocks.find((block) => block.status === "active") ??
-    blocks.find((block) => block.status === "pending");
-
-  return next?.id ?? null;
+  return getPlayOrder(blocks)[0]?.id ?? null;
 }
 
 /** Adds only persisted session and block ids to the shared display projection. */
@@ -112,23 +109,41 @@ export function toStudySessionView(
 
   const answeredItemIds = new Set(input.answers.flatMap((answer) => answer.itemId ?? []));
 
-  return withDayState({
-    ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
-    blocks:
-      input.blockViews ??
-      session.blocks.map((block) =>
-        toStudyBlockView({
-          answeredItemIds,
-          block,
-          blockedTestOutChapters,
-          blocks: session.blocks,
-          oftenTestedSkillIds,
-          ...blockSubjects.get(block.position),
-        }),
-      ),
-    id: session.id,
-    missions: input.missions,
-    nextBlockId: getNextBlockId(session.blocks),
-    status: session.status,
-  });
+  const remaining = getPlayOrder(session.blocks);
+
+  const ordered = [
+    ...session.blocks.filter((block) => block.status !== "active" && block.status !== "pending"),
+    ...remaining,
+  ];
+
+  const blockViews = new Map(input.blockViews?.map((block) => [block.id, block]));
+
+  return withDayState(
+    {
+      ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
+      blocks: ordered.flatMap((block) => {
+        const saved = blockViews.get(block.id);
+
+        if (input.blockViews) {
+          return saved ? [saved] : [];
+        }
+
+        return [
+          toStudyBlockView({
+            answeredItemIds,
+            block,
+            blockedTestOutChapters,
+            blocks: session.blocks,
+            oftenTestedSkillIds,
+            ...blockSubjects.get(block.position),
+          }),
+        ];
+      }),
+      id: session.id,
+      missions: input.missions,
+      nextBlockId: getNextBlockId(session.blocks),
+      status: session.status,
+    },
+    session.endedAt,
+  );
 }

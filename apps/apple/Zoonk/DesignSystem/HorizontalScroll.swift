@@ -1,8 +1,11 @@
 import SwiftUI
 
-/// Main's `ActivityHorizontalScroll`: what can be wider than its card scrolls sideways, and a cut
-/// edge fades out, so the learner sees there's more. Content narrower than the card fills it.
-struct ActivityHorizontalScroll<Content: View>: View {
+/// Main's `HorizontalScroll`: what can be wider than its room, such as a table or a program, scrolls
+/// sideways, and a cut edge fades out, so the learner sees there's more. Content narrower than the
+/// room fills it. The leading fade begins `leadingInset` in, past a column that stays put while the
+/// rest scrolls under it, such as a program's line numbers.
+struct HorizontalScroll<Content: View>: View {
+  var leadingInset: CGFloat = 0
   @ViewBuilder let content: Content
 
   @State private var visibleWidth: CGFloat = 0
@@ -13,7 +16,7 @@ struct ActivityHorizontalScroll<Content: View>: View {
     var trailing = false
   }
 
-  private static var fade: CGFloat { 40 }
+  private static var fade: CGFloat { 64 }
 
   var body: some View {
     ScrollView(.horizontal) {
@@ -36,6 +39,8 @@ struct ActivityHorizontalScroll<Content: View>: View {
     }
     .mask {
       HStack(spacing: 0) {
+        Rectangle()
+          .frame(width: cut.leading ? leadingInset : 0)
         LinearGradient(colors: [.clear, .black], startPoint: .leading, endPoint: .trailing)
           .frame(width: cut.leading ? Self.fade : 0)
         Rectangle()

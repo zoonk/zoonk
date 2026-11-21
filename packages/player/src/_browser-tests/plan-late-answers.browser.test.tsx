@@ -109,7 +109,26 @@ const PLAN: PlanView = {
   },
   tools: [],
   week: {
-    days: [{ date: "2026-11-16", items: [], minutes: 30, mockFunding: null, state: "today" }],
+    days: [
+      {
+        date: "2026-11-16",
+        items: [],
+        minutes: 30,
+        mockFunding: null,
+        state: "today",
+        study: {
+          completed: 0,
+          date: "2026-11-16",
+          goalMinutes: 30,
+          hitGoal: false,
+          isToday: true,
+          kind: "study",
+          minutes: 0,
+          studied: false,
+          total: 0,
+        },
+      },
+    ],
     endDate: "2026-11-22",
     startDate: "2026-11-16",
   },
@@ -542,7 +561,26 @@ const NEXT_DAY_PLAN: PlanView = {
   ...PLAN,
   week: {
     ...PLAN.week,
-    days: [{ date: "2026-11-17", items: [], minutes: 30, mockFunding: null, state: "today" }],
+    days: [
+      {
+        date: "2026-11-17",
+        items: [],
+        minutes: 30,
+        mockFunding: null,
+        state: "today",
+        study: {
+          completed: 0,
+          date: "2026-11-17",
+          goalMinutes: 30,
+          hitGoal: false,
+          isToday: true,
+          kind: "study",
+          minutes: 0,
+          studied: false,
+          total: 0,
+        },
+      },
+    ],
   },
 };
 

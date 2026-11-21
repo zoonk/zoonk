@@ -146,7 +146,7 @@ struct PianoKeyboard: View {
 
     Group {
       if onPress != nil {
-        ActivityHorizontalScroll {
+        HorizontalScroll {
           keys(
             width: max(width, CGFloat(whiteKeys.count) * narrowestWhiteKey),
             height: keyboardHeight)

@@ -395,7 +395,7 @@ private fun TodayDayStatus(
     when (model.state) {
         StudySession.State.DONE -> {
             val link =
-                if (model.keepLearning) {
+                if (model.action != TodayMainAction.Summary) {
                     statusLink(stringResource(R.string.today_see_summary)) {
                         actions.navigate(model.summaryRoute)
                     }

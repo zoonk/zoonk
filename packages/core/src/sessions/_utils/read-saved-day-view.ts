@@ -1,5 +1,5 @@
-import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
+import "server-only";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
 import { readDayMissionProgress } from "../../learner/facts/day-mission-progress";
 import { readLessonStates } from "../../learner/facts/lesson-states";
@@ -8,6 +8,7 @@ import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
+import { getPlayOrder } from "../day-blocks";
 import { withDayState } from "../day-state";
 import { type DayView, type UnstartedDayView } from "../day-view";
 import { getExtraTime } from "../extra-time";
@@ -86,7 +87,10 @@ export async function readSavedDayView({
 
   const savedViews = new Map(view.blocks.map((block) => [block.id, block]));
 
-  const blocks = refill.blocks.map((block) => {
+  const blocks = [
+    ...refill.blocks.filter((block) => block.status !== "active" && block.status !== "pending"),
+    ...getPlayOrder(refill.blocks),
+  ].map((block) => {
     const saved = block.id ? savedViews.get(block.id) : undefined;
 
     if (saved) {
@@ -103,9 +107,7 @@ export async function readSavedDayView({
     });
   });
 
-  const next =
-    blocks.find((block) => block.status === "active") ??
-    blocks.find((block) => block.status === "pending");
+  const next = getPlayOrder(refill.blocks)[0];
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 
@@ -138,7 +140,7 @@ export async function readSavedDayView({
       return target ? { ...rest, opens: { kind: "block", ref: toDayBlockRef(target) } } : rest;
     }),
     nextPosition: next?.position ?? null,
-    sessionBar: getSessionBar(blocks),
+    sessionBar: getSessionBar(refill.blocks),
     status: "unstarted",
   });
 }

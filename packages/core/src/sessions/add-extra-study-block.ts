@@ -51,8 +51,8 @@ export async function addExtraStudyBlock({
 
       const planned = await planExtraBlocks({
         minutes: extraTime.minutes,
+        readSkillIds: async () => skillIds,
         session,
-        skillIds,
         userId,
       });
 

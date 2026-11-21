@@ -244,12 +244,6 @@
     </plurals>
     <string name="plan_this_week">This week</string>
     <string name="plan_week_time">%1$s of %2$s</string>
-    <string name="plan_week_day">%1$s: %2$s</string>
-    <string name="plan_day_done">done</string>
-    <string name="plan_day_missed">not studied</string>
-    <string name="plan_day_rest">rest day</string>
-    <string name="plan_day_today">today</string>
-    <string name="plan_day_planned">planned</string>
 
     <string name="plan_preparation">Preparation</string>
     <string name="plan_progress">Progress</string>

@@ -110,8 +110,12 @@ export function TrueFalseQuestion({
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
   const [picked, setPicked] = useState<TrueFalseAnswer | null>(null);
   const locked = disabled || result !== null;
-  const hasTable = parseRichBlocks(statement).some((block) => block.kind === "table");
-  const canSwipe = !locked && !hasTable;
+
+  const scrollsSideways = parseRichBlocks(statement).some(
+    (block) => block.kind === "table" || block.kind === "code",
+  );
+
+  const canSwipe = !locked && !scrollsSideways;
   const options = allowBlank ? THREE_OPTIONS : TWO_OPTIONS;
   const shownPick = result?.answer ?? picked;
 
@@ -150,7 +154,7 @@ export function TrueFalseQuestion({
         className={cn(
           "bg-card ring-border flex w-full items-start rounded-xl p-5 text-left ring-1 select-none ring-inset",
           "motion-safe:transition-transform",
-          hasTable ? "touch-auto" : "touch-pan-y",
+          scrollsSideways ? "touch-auto" : "touch-pan-y",
           canSwipe && "cursor-grab active:cursor-grabbing",
         )}
         style={{

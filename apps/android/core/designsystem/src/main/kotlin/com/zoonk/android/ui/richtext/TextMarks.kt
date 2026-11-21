@@ -10,11 +10,13 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
+import com.zoonk.android.ui.theme.ZoonkRadius
 import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -23,7 +25,7 @@ import kotlin.math.sin
 
 /**
  * A mark drawn behind or under lesson text: the highlighter (a quoted sentence, a teaching screen's term), inline
- * code's rounded box, or a hand-drawn underline.
+ * code's chip, or a hand-drawn underline.
  */
 internal enum class TextMarkKind(
     val tag: String,
@@ -44,6 +46,43 @@ internal fun textMarks(text: AnnotatedString): List<TextMark> =
     TextMarkKind.entries.flatMap { kind ->
         text.getStringAnnotations(kind.tag, 0, text.length).map { TextMark(kind, it.start, it.end) }
     }
+
+/** Inline code is Geist Mono at this share of the text around it, as main's `text-[0.85em]`. */
+internal const val CODE_SIZE = 0.85f
+
+/** Main's chip: its padding beside the run, kept clear in the text, and above and below Geist Mono's own height. */
+private val CODE_PADDING = 4.sp
+private val CODE_PADDING_Y = 2.sp
+
+/** Geist Mono's ascent and descent, the height main's chip fills around a run. */
+private const val MONO_ASCENT = 1.005f
+private const val MONO_DESCENT = 0.295f
+
+/**
+ * [text] with a chip's padding kept between each inline code run and the characters beside it, as
+ * main's padding pushes them away. Android spreads a character's letter spacing half before and
+ * half after it, so a space beside a run takes the padding once, and the chip covers the half on
+ * the run's side, while anything else takes it twice, which keeps the chip clear of it.
+ */
+internal fun withCodeRoom(text: AnnotatedString): AnnotatedString {
+    val runs = text.getStringAnnotations(TextMarkKind.Code.tag, 0, text.length)
+    if (runs.isEmpty()) return text
+    val inCode = { index: Int -> runs.any { index >= it.start && index < it.end } }
+    val beside =
+        runs
+            .flatMap { listOf(it.start - 1, it.end) }
+            .filter { it in text.indices && text[it] != '\n' && !inCode(it) }
+            .distinct()
+
+    return AnnotatedString
+        .Builder(text)
+        .apply {
+            beside.forEach { index ->
+                val room = if (text[index].isWhitespace()) CODE_PADDING else CODE_PADDING * 2
+                addStyle(SpanStyle(letterSpacing = room), index, index + 1)
+            }
+        }.toAnnotatedString()
+}
 
 /** A mark's part on one line: its edges, its baseline, and whether the line reads right to left. */
 internal data class LineSpan(
@@ -90,13 +129,42 @@ internal fun DrawScope.drawTextMarks(
         val spans = layout.lineSpans(mark.start, mark.end)
         when (mark.kind) {
             TextMarkKind.Highlight -> spans.forEach { drawHighlight(it, em, highlight) }
-            TextMarkKind.Code -> spans.forEach { drawHighlight(it, em, code) }
+            TextMarkKind.Code -> drawCodeChip(spans, em, code)
             TextMarkKind.Underline -> drawUnderline(underlineStroke(spans, em), em, ink)
         }
     }
 }
 
-/** A box from the cap height to below the baseline, a little past the words, with soft corners: a marker stroke or code's ground. */
+/**
+ * Main's chip behind a run of inline code, on each line it covers: Geist Mono's height and a little
+ * more, with the padding [withCodeRoom] keeps at the run's start and end. Where the run splits, each
+ * piece ends flush, and no piece passes the column's edges.
+ */
+private fun DrawScope.drawCodeChip(
+    spans: List<LineSpan>,
+    em: Float,
+    color: Color,
+) {
+    val pad = CODE_PADDING.toPx()
+    val padY = CODE_PADDING_Y.toPx()
+    val code = em * CODE_SIZE
+
+    spans.forEachIndexed { index, span ->
+        val opens = if (index == 0) pad else 0f
+        val closes = if (index == spans.lastIndex) pad else 0f
+        val left = (span.left - if (span.rtl) closes else opens).coerceAtLeast(0f)
+        val right = (span.right + if (span.rtl) opens else closes).coerceAtMost(size.width)
+        val top = span.baseline - code * MONO_ASCENT - padY
+        drawRoundRect(
+            color = color,
+            topLeft = Offset(left, top),
+            size = Size(right - left, code * (MONO_ASCENT + MONO_DESCENT) + padY * 2),
+            cornerRadius = CornerRadius(ZoonkRadius.sm.toPx()),
+        )
+    }
+}
+
+/** A box from the cap height to below the baseline, a little past the words, with soft corners: a marker stroke. */
 private fun DrawScope.drawHighlight(
     span: LineSpan,
     em: Float,

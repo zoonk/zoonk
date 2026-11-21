@@ -28,7 +28,7 @@ final class TutorAnswerBlockTests: XCTestCase {
       blocks.map(\.kind),
       [
         .paragraph, .listItem(marker: "•"), .listItem(marker: "•"), .listItem(marker: "•"),
-        .listItem(marker: "1."), .listItem(marker: "2."), .heading, .code,
+        .listItem(marker: "1."), .listItem(marker: "2."), .heading, .code(language: nil),
       ])
     XCTAssertEqual(blocks.map(\.depth), [0, 0, 0, 1, 0, 0, 0, 0])
     XCTAssertEqual(
@@ -82,12 +82,30 @@ final class TutorAnswerBlockTests: XCTestCase {
     }
   }
 
+  func testAFencedBlockKeepsItsLanguageAndIndentationWhileItStreams() {
+    let streaming = TutorAnswerBlock.blocks(
+      of: "Run this:\n\n```Python3 example\nfor i in range(3):\n    print(i)", linksEnabled: false)
+
+    XCTAssertEqual(streaming.map(\.kind), [.paragraph, .code(language: "python3")])
+    XCTAssertEqual(
+      String(streaming[1].text.text.characters), "for i in range(3):\n    print(i)")
+
+    let finished = TutorAnswerBlock.blocks(
+      of: "Run this:\n\n```Python3 example\nfor i in range(3):\n    print(i)\n```\n\nIt counts.",
+      linksEnabled: false)
+
+    XCTAssertEqual(
+      finished.map(\.kind), [.paragraph, .code(language: "python3"), .paragraph])
+    XCTAssertEqual(
+      String(finished[1].text.text.characters), String(streaming[1].text.text.characters))
+  }
+
   @MainActor
   func testCodeShowsAFormulaAsWritten() {
     let blocks = TutorAnswerBlock.blocks(
       of: "Some code:\n\n    $$x^2$$", linksEnabled: false)
 
-    XCTAssertEqual(blocks.map(\.kind), [.paragraph, .code])
+    XCTAssertEqual(blocks.map(\.kind), [.paragraph, .code(language: nil)])
     XCTAssertEqual(String(blocks[1].text.text.characters), "$$x^2$$")
     XCTAssertEqual(TutorAnswerText.said(blocks, buddyName: nil), "Some code:\n$$x^2$$")
   }

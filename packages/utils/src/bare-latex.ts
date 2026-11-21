@@ -1,7 +1,7 @@
 import { parseInlineMarkupRanges } from "./inline-markup";
-import { splitLinesAndCells } from "./markdown-table";
-import { type MathSpan, findMathSpans, hideMath, toOneLine } from "./math-spans";
-import { type TextLayout } from "./text-flaws";
+import { mapTextCells, readTextCells } from "./markdown-table";
+import { type MathSpan, findMathSpans, hideMathAndCode, toOneLine } from "./math-spans";
+import { type TextLayout, keepsLines } from "./text-flaws";
 
 /**
  * A caret between two characters, a braced script, or one letter with a subscript (`C_A0=2`,
@@ -32,18 +32,6 @@ const PUNCTUATION_AFTER = /[.,;:!?%"'”’»*_]/u;
 const BRACKETS: Readonly<Record<string, string>> = { "(": ")", "[": "]" };
 
 type BareLatex = { end: number; latex: string | null; start: number; written: string };
-
-function hideMathAndCode(cell: string): string {
-  const withoutMath = hideMath(cell);
-
-  return parseInlineMarkupRanges(withoutMath)
-    .filter((range) => range.kind === "code")
-    .reduce(
-      (text, { end, start }) =>
-        `${text.slice(0, start)}${" ".repeat(end - start)}${text.slice(end)}`,
-      withoutMath,
-    );
-}
 
 function toLatex(written: string): string | null {
   const groups = NUMERIC_POWER.exec(written)?.groups;
@@ -152,9 +140,9 @@ function wrapLine(line: string): string {
   return hasSameMath(findMathSpans(wrapped), expected) ? wrapped : line;
 }
 
-/** The player reads block text line by line and each table cell on its own. */
+/** The player reads block text line by line and each table cell on its own, and never reads code as math. */
 function toLines({ layout, text }: { layout: TextLayout; text: string }): string[] {
-  return layout === "inline" ? [toOneLine(text)] : splitLinesAndCells(text).flat();
+  return keepsLines({ layout, text }) ? readTextCells(text) : [toOneLine(text)];
 }
 
 function describe({ latex, written }: Pick<BareLatex, "latex" | "written">): string {
@@ -184,13 +172,11 @@ export function findBareLatexText({
 
 /** An inline field comes back on one line, as the player shows it, only when something was wrapped. */
 export function wrapBareLatex({ layout, text }: { layout: TextLayout; text: string }): string {
-  if (layout === "inline") {
+  if (!keepsLines({ layout, text })) {
     const line = toOneLine(text);
     const wrapped = wrapLine(line);
     return wrapped === line ? text : wrapped;
   }
 
-  return splitLinesAndCells(text)
-    .map((cells) => cells.map((cell) => wrapLine(cell)).join("|"))
-    .join("\n");
+  return mapTextCells(text, wrapLine);
 }

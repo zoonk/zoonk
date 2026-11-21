@@ -4,9 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterButton, EnterLink } from "../_components/enter-button";
-import { ListGroup } from "../_components/list-group";
 import { MomentReadouts } from "../_components/moment-readouts";
-import { PageSectionTitle } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
@@ -20,29 +18,11 @@ import { MomentToday } from "./moment-today";
 import { pickDayMoment } from "./pick-day-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
-import {
-  BlockRow,
-  SessionQueueAsideContent,
-  SessionQueueSection,
-  useSessionQueueAside,
-} from "./session-queue";
+import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView } from "./session-types";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
-
-function NextBlock({ block }: { block: StudyBlock }) {
-  const t = useExtracted();
-
-  return (
-    <section className="without-aside:hidden flex flex-col gap-2" data-slot="study-moment-next">
-      <PageSectionTitle>{t("Up next")}</PageSectionTitle>
-      <ListGroup role="list">
-        <BlockRow block={block} state="next" />
-      </ListGroup>
-    </section>
-  );
-}
 
 /**
  * On a phone Continue keeps the bar's bottom row, where the last answer's Continue was, so a quick
@@ -184,15 +164,11 @@ export function StudyMoment({
 
         <DayMoment buddy={buddy} {...dayMoment} />
 
-        {nextBlock && (
-          <>
-            <SessionQueueSection aside={aside} />
-            {testChapterId && onStartTestOut && <NextBlock block={nextBlock} />}
-          </>
-        )}
-
         {testChapterId && onStartTestOut && (
-          <TestOutStartLink onStart={() => onStartTestOut(testChapterId)} />
+          <TestOutStartLink
+            nextChapter={!moment.testOutOffer}
+            onStart={() => onStartTestOut(testChapterId)}
+          />
         )}
       </TaskBody>
 

@@ -129,10 +129,14 @@ struct ItemSupportView: View {
   let context: String?
   let image: PracticeImage?
   let visual: PracticeVisual?
+  /// The mistakes notebook sets a missed question's situation back in the muted color.
+  var isMuted = false
 
   var body: some View {
     if let context {
-      LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
+      LessonTextBlocks(context)
+        .typeStyle(.reading)
+        .foregroundStyle(isMuted ? .mutedForeground : .primary)
     }
 
     if let image, let url = URL(string: image.url) {

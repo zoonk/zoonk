@@ -35,6 +35,18 @@ describe(canShowIcon, () => {
   it("keeps the icon when a pipe only appears in prose", () => {
     expect(canShowIcon(explanation("Choose A | B, whichever costs less."))).toBe(true);
   });
+
+  it("shows no icon beside a code block, which takes the text's width", () => {
+    const text = [
+      "The loop prints each name:",
+      "```python",
+      "for name in names:",
+      "    print(name)",
+      "```",
+    ];
+
+    expect(canShowIcon(explanation(text.join("\n")))).toBe(false);
+  });
 });
 
 describe(fitStepMarks, () => {

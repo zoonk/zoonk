@@ -109,6 +109,7 @@
   "today_step_counts_toward_mission": "2ac11f6e4bfc4a2a8404915d2515ad7c10737b403d39ce617fb92f302dbc1e2e",
   "today_step_done": "6acb02b7a7f790a2158b70d6dd97f3acbb3abfbe0cc5c7a91c087ced8400859f",
   "today_step_every_topic": "f898d35a15ff112b1df8fbba8a6066a6a1dbb14b546e33b12271b2c28dc3104d",
+  "today_step_extra": "aa32bcbb2680e68ba20f640daf53c2d6c08462f1a224ad8ecea0857768dc6a81",
   "today_step_next": "9fd5ad59e667efef0004d5ab6598973f36f61a535e9d8fe10cdea139021219ea",
   "today_step_often_tested": "22fc7f6f0da5481667bf8582b18e4841c36288175f84867beff2740beb8ec226",
   "today_step_open_failed": "8316fcab805abd2812587b6a6a7f0457312c7852fac37729ae25cec6ee060d20",
@@ -203,6 +204,8 @@
     <string name="today_step_done">Concluído</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Próximo passo</string>
+    <!-- Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress. -->
+    <string name="today_step_extra">Extra</string>
     <string name="today_step_skipped">Pulado</string>
     <string name="today_step_counts_toward_mission">Conta para uma missão</string>
     <string name="today_step_often_tested">Cai bastante em provas</string>

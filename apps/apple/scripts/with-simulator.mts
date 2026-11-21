@@ -4,6 +4,7 @@ import { findSimulatorAppCrashes } from "../../../scripts/dev/crash-reports.mts"
 import { applyCommandExit, runForegroundCommand } from "../../../scripts/dev/process.mts";
 import { BOOT_LIMIT, type Lease, POLL_MS, leaseSimulator, releaseLease } from "./leases.mts";
 import { type Simulator, getNewestSimulators, listSimulators } from "./simulators.mts";
+import { swiftPackagesArguments } from "./swift-packages.mts";
 
 const CLOSE_CRASH_ALERTS_SCRIPT = path.resolve(
   import.meta.dirname,
@@ -52,7 +53,7 @@ async function test({ args, command }: { args: string[]; command: string }) {
   try {
     applyCommandExit(
       await runForegroundCommand({
-        args: [...args, "-destination", `id=${lease.device.udid}`],
+        args: [...args, ...swiftPackagesArguments(), "-destination", `id=${lease.device.udid}`],
         command,
         currentDirectory: process.cwd(),
         environment: { ...process.env, ...turn?.environment },

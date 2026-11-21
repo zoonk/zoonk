@@ -1,6 +1,7 @@
 package com.zoonk.android.ui.richtext
 
 import com.zoonk.android.ui.richtext.SegmentKind.Bold
+import com.zoonk.android.ui.richtext.SegmentKind.Code
 import com.zoonk.android.ui.richtext.SegmentKind.DisplayMath
 import com.zoonk.android.ui.richtext.SegmentKind.Math
 import com.zoonk.android.ui.richtext.SegmentKind.Text
@@ -94,10 +95,22 @@ class RichTextParserTest {
             blocks.map { it::class },
         )
         assertEquals(
-            RichBlock.ListBlock(listOf(listOf(text("where it's likely")), listOf(text("where it isn't"))), ordered = false),
+            RichBlock.ListBlock(listOf(listOf(text("where it's likely")), listOf(text("where it isn't"))), start = null),
             blocks[1],
         )
-        assertEquals(true, (blocks[2] as RichBlock.ListBlock).ordered)
+        assertEquals(1, (blocks[2] as RichBlock.ListBlock).start)
+    }
+
+    @Test
+    fun numbersAListsStepsOnAcrossACodeBlockBetweenThem() {
+        assertEquals(
+            listOf(
+                RichBlock.ListBlock(listOf(listOf(text("Install it:"))), start = 1),
+                RichBlock.Code("npm i zod", "bash"),
+                RichBlock.ListBlock(listOf(listOf(text("Run it.")), listOf(text("Done."))), start = 2),
+            ),
+            parseRichBlocks("1. Install it:\n   ```bash\n   npm i zod\n   ```\n2. Run it.\n3. Done."),
+        )
     }
 
     @Test
@@ -166,9 +179,9 @@ class RichTextParserTest {
                         listOf(text("A vote")),
                         listOf(text("A slice of the future")),
                     ),
-                    ordered = false,
+                    start = null,
                 ),
-                RichBlock.ListBlock(listOf(listOf(text("First")), listOf(text("Second"))), ordered = true),
+                RichBlock.ListBlock(listOf(listOf(text("First")), listOf(text("Second"))), start = 1),
                 RichBlock.Paragraph(listOf(listOf(text("It doesn't give you a guaranteed return.")))),
             ),
             parseRichBlocks(text),
@@ -286,8 +299,64 @@ class RichTextParserTest {
         assertEquals(blocks, markRichBlocks(blocks, "Another idea."))
         assertEquals(blocks, markRichBlocks(blocks, "A **bold idea."))
         assertEquals(
-            RichBlock.ListBlock(listOf(listOf(marked(Text, "One item"))), ordered = false),
+            RichBlock.ListBlock(listOf(listOf(marked(Text, "One item"))), start = null),
             markRichBlocks(blocks, "One item")[1],
         )
+    }
+
+    @Test
+    fun keepsAFencedBlocksCodeExactlyAsWrittenWithItsLanguage() {
+        val code = "for i in range(3):\n    if i > 0:\n\n        print(i)  \nprint('fim')"
+
+        assertEquals(
+            listOf(
+                RichBlock.Paragraph(listOf(listOf(text("Veja este código:")))),
+                RichBlock.Code(code, "python"),
+                RichBlock.Paragraph(listOf(listOf(text("O que ele mostra?")))),
+            ),
+            parseRichBlocks("Veja este código:\n\n```python\n$code\n```\n\nO que ele mostra?"),
+        )
+    }
+
+    @Test
+    fun startsABlockRightUnderASentenceAndReadsMarkdownInsideItAsCode() {
+        assertEquals(
+            listOf(
+                RichBlock.Paragraph(listOf(listOf(text("Em")))),
+                RichBlock.Code("- **x** | \$y\$\n| a | b |\n|---|---|", null),
+                RichBlock.Paragraph(listOf(listOf(text("o valor muda.")))),
+            ),
+            parseRichBlocks("Em\n```\n- **x** | \$y\$\n| a | b |\n|---|---|\n```\no valor muda."),
+        )
+    }
+
+    @Test
+    fun runsABlockThatNeverClosesToTheEndOfTheText() {
+        assertEquals(
+            listOf(RichBlock.Paragraph(listOf(listOf(text("Run it:")))), RichBlock.Code("const a = 1;\n\nlog(a);", "js")),
+            parseRichBlocks("Run it:\n```js\nconst a = 1;\n\nlog(a);"),
+        )
+    }
+
+    @Test
+    fun neverMarksInsideCodeAndMarksTheSentenceAfterIt() {
+        val blocks = parseRichBlocks("```python\nprint('hi')\n```\nThe program prints hi.")
+
+        assertEquals(
+            listOf(
+                RichBlock.Code("print('hi')", "python"),
+                RichBlock.Paragraph(listOf(listOf(text("The program "), marked(Text, "prints hi"), text(".")))),
+            ),
+            markRichBlocks(blocks, "prints hi"),
+        )
+    }
+
+    @Test
+    fun readsACodeBlockAmongWordsAsOneRunOfInlineCode() {
+        assertEquals(
+            listOf(text("Use"), text(" "), RichSegment(Code, "for i in range(3): print(i)"), text(" "), text("to count.")),
+            parseRichLine("Use\n```python\nfor i in range(3):\n    print(i)\n```\nto count.", ::parseRichInline),
+        )
+        assertEquals(parseRichInline("Pick `x`."), parseRichLine("Pick `x`.", ::parseRichInline))
     }
 }

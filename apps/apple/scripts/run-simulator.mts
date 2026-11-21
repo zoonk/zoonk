@@ -10,6 +10,7 @@ import {
   readCommand,
   runCommand,
 } from "./simulators.mts";
+import { swiftPackagesArguments } from "./swift-packages.mts";
 
 const APP_SCHEME = "Zoonk";
 
@@ -50,6 +51,7 @@ function buildApp(device: Simulator) {
       `id=${device.udid}`,
       "-derivedDataPath",
       derivedDataPath,
+      ...swiftPackagesArguments(),
       "build",
     ],
     command: "xcodebuild",

@@ -1,6 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { RichTable } from "../_components/rich-table";
 import { useAppLocale } from "../_utils/locale";
+import { CodeBlock } from "../code/code-listing";
 import {
   type RichInlineSegment,
   RichInlineSegments,
@@ -26,6 +27,8 @@ function typesetBlock({ block, locale }: { block: RichBlock; locale: string }): 
   const each = (segments: RichInlineSegment[]) => typesetLessonText({ locale, segments });
 
   switch (block.kind) {
+    case "code":
+      return block;
     case "list":
       return { ...block, items: block.items.map((item) => each(item)) };
     case "table":
@@ -73,12 +76,20 @@ function RichBlockView({
     return <RichTableBlock block={block} />;
   }
 
+  if (block.kind === "code") {
+    return <CodeBlock code={block.code} language={block.language} />;
+  }
+
   if (block.kind === "list") {
-    const List = block.ordered ? "ol" : "ul";
+    const List = block.start === null ? "ul" : "ol";
 
     return (
       <List
-        className={cn("flex flex-col gap-1.5 ps-6", block.ordered ? "list-decimal" : "list-disc")}
+        className={cn(
+          "flex flex-col gap-1.5 ps-6",
+          block.start === null ? "list-disc" : "list-decimal",
+        )}
+        start={block.start ?? undefined}
       >
         {block.items.map((item, index) => {
           const key = `item-${index}`;

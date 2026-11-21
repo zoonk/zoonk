@@ -185,13 +185,8 @@
   "plan_date_estimate_spoken": "8252c831fba8ca789fdde2b4bfbfa29879b3ebf7f61d2079c70cab5b4fa2a4bd",
   "plan_date_range": "99a667755dd19b16dd930d9547ad636dc413d52fc1c9fac0d0bcae5cdd300ead",
   "plan_date_to_be_confirmed": "e624bd4835b6f0581a2c29f28e535a2ef19ba5071ede45c4c01c25a6e46aaae9",
-  "plan_day_done": "9996384ecb836599758ca77f5f2f1a14b5b848e4286878c9fbc64ca4de4679ec",
   "plan_day_is_here": "ef2a583468fdbe7c8eade907663654bdbccedf74cf3da23301cc5c45cf331a79",
-  "plan_day_missed": "1167c54eb53c3a8cec90d450f682cb355793c007f24d0e24bed5139133b74599",
-  "plan_day_planned": "78288645244220ab2ab036f5dfe2c6e595f9dd5ed5ca5868a610e8e04869d080",
   "plan_day_range": "1ee0a6df8b9716fdadc8482266833600a37e592c8865aa5f52d3646e75a42a23",
-  "plan_day_rest": "c4f05a03e2f30b20bb32419b01474e904e0adfaef5a58e646530915c1dbe8259",
-  "plan_day_today": "faa7e5c3610214af5cefeb5efff1ddff405250541886993b8489f5367c82a939",
   "plan_days_left": "05105f5181b4244c7a5b1467737accc372466aedfc16c5a246694ea206bd0521",
   "plan_days_left_estimate": "cbdd8feae56f2371f3f067403b3534ee54dbdcc77b6bba1606ec992886e41f0d",
   "plan_days_left_estimate_spoken": "175dc9da8acddbcfcb1d57d908a1e029a5af6db65e4580df457842f406f6d436",
@@ -519,7 +514,6 @@
   "plan_use_this_date": "4f384a07480f8bb7a9abb5016b994deee8eee25776d3b6584ac1b1eed8671038",
   "plan_use_time": "c868684aad3e62bb960636146a97c1062587535b51dc9ae98168d44ed595dbbb",
   "plan_wednesdays": "3375e98ee4bc319a614c612910babb4a6f6ea70062927df760083821c96ef70f",
-  "plan_week_day": "f1f632899baaaaef4d7a0b284b9060afa66a186e206fc4129e32ad3efe2cbcec",
   "plan_week_time": "e0f5010fc55c1d5dd49b0e3a01fe63b1ea0a9083a096ebc5cbc41d6c8ab0b7f1",
   "plan_weekly_challenges": "67f098c00dc59d821aa45767b1e8ca2ab4b0a19eacbce4b59b5a122b18d8b626",
   "plan_what_you_practice": "5046589509720517cc427b6da26d5adf77cf6c65620549e72c3252eb6ce1a9f1",
@@ -755,12 +749,6 @@
     </plurals>
     <string name="plan_this_week">이번 주</string>
     <string name="plan_week_time">%1$s / %2$s</string>
-    <string name="plan_week_day">%1$s: %2$s</string>
-    <string name="plan_day_done">완료</string>
-    <string name="plan_day_missed">학습 안 함</string>
-    <string name="plan_day_rest">쉬는 날</string>
-    <string name="plan_day_today">오늘</string>
-    <string name="plan_day_planned">학습 예정</string>
     <string name="plan_preparation">준비도</string>
     <string name="plan_progress">진도</string>
     <string name="plan_your_preparation">내 준비도</string>

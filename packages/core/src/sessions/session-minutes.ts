@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { readBlockPayload } from "./block-payload";
+import { isDayBlock } from "./day-blocks";
 
 export const sessionMinutesSchema = z
   .object({
@@ -15,14 +16,14 @@ export const sessionMinutesSchema = z
       .nonnegative()
       .meta({
         description:
-          "Personal estimated minutes of completed blocks. Study statistics report elapsed time separately.",
+          "Personal estimated minutes of completed day blocks, excluding extra work. Study statistics report elapsed time separately.",
       }),
     left: z
       .number()
       .nonnegative()
       .meta({
         description:
-          "Time left in the day's commitment. Completed lessons credit measured time within 0.5–2.5 times their raw estimate; skipped blocks credit nothing. Includes reserved lessons. Clients display this value without rebuilding it from blocks.",
+          "Time left in the day's commitment. Completed lessons credit measured time within 0.5–2.5 times their raw estimate; skipped blocks credit nothing. Includes reserved lessons. Excludes extra work.",
       }),
     planned: z
       .number()
@@ -30,7 +31,7 @@ export const sessionMinutesSchema = z
       .nonnegative()
       .meta({
         description:
-          "The day's total commitment, persisted at Start, including reserved lessons and accepted extra time.",
+          "The day's total commitment, persisted at Start, including reserved lessons and excluding extra work.",
       }),
   })
   .meta({ id: "StudySessionMinutes" });
@@ -60,7 +61,9 @@ function getUsedBlockMinutes(block: MinuteBlock): number {
 }
 
 export function getSessionUsedMinutes(blocks: readonly MinuteBlock[]): number {
-  return blocks.reduce((sum, block) => sum + getUsedBlockMinutes(block), 0);
+  return blocks
+    .filter((block) => isDayBlock(block))
+    .reduce((sum, block) => sum + getUsedBlockMinutes(block), 0);
 }
 
 export function getVisibleSessionTotal({
@@ -68,7 +71,7 @@ export function getVisibleSessionTotal({
   planned,
   visibleIds,
 }: {
-  blocks: readonly { id: string; estimatedMinutes: number | null }[];
+  blocks: readonly { id: string; estimatedMinutes: number | null; payload?: unknown }[];
   planned: number;
   visibleIds: ReadonlySet<string>;
 }): number {
@@ -76,22 +79,26 @@ export function getVisibleSessionTotal({
     0,
     planned -
       blocks
-        .filter((block) => !visibleIds.has(block.id))
+        .filter((block) => isDayBlock(block) && !visibleIds.has(block.id))
         .reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0),
   );
 }
 
 export function getSessionMinutes({
-  blocks,
+  blocks: allBlocks,
   dailyGoal,
+  endedAt,
   planned,
   reserved = false,
 }: {
   blocks: readonly MinuteBlock[];
   dailyGoal: number;
+  endedAt?: Date | null;
   planned: number;
   reserved?: boolean;
 }): SessionMinutes {
+  const blocks = allBlocks.filter((block) => isDayBlock(block));
+
   const unfinished = blocks.filter(
     (block) => block.status === "pending" || block.status === "active",
   );
@@ -107,7 +114,7 @@ export function getSessionMinutes({
       ),
     ),
     left:
-      unfinished.length === 0 && !reserved
+      endedAt || (unfinished.length === 0 && !reserved)
         ? 0
         : Math.max(
             0,
