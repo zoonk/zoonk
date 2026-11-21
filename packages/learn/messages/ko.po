@@ -222,7 +222,7 @@ msgstr "{time} (추천)"
 #: src/_components/daily-time-picker.tsx
 msgctxt "GUkMRc"
 msgid "{time} (covers everything)"
-msgstr ""
+msgstr "{time} (전부 학습)"
 
 #: src/_components/daily-time-picker.tsx
 #: src/plan/plan-properties.tsx
@@ -841,25 +841,25 @@ msgstr "테스트를 보고 단원 건너뛰기"
 #: src/_components/time-answer-lines.tsx
 msgctxt "x_hqfe"
 msgid "{dateKind, select, month {Covers the first lessons of every exam topic by {date}.} other {Covers the first lessons of every exam topic by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {모든 시험 주제의 초반 레슨을 {date}까지 모두 학습할 수 있어요.} other {모든 시험 주제의 초반 레슨을 {date}까지 모두 학습할 수 있어요.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
 msgctxt "60IVj8"
 msgid "{dateKind, select, month {Covers the first lessons of every part of your goal by {date}.} other {Covers the first lessons of every part of your goal by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {목표의 모든 영역에서 초반 레슨을 {date}까지 모두 학습할 수 있어요.} other {목표의 모든 영역에서 초반 레슨을 {date}까지 모두 학습할 수 있어요.}}"
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-lines.tsx
 msgctxt "w91BsT"
 msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.}}"
-msgstr ""
+msgstr "{dateKind, select, month {{date}까지 시험에서 자주 출제되는 주제부터 초반 레슨을 약 <b>{share}</b>만큼 다뤄요.} other {{date}까지 시험에서 자주 출제되는 주제부터 초반 레슨을 약 <b>{share}</b>만큼 다뤄요.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
 msgctxt "dq7Jay"
 msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your goal by {date}.} other {Covers the first lessons of about <b>{share}</b> of your goal by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {목표의 약 <b>{share}</b>에 해당하는 부분의 초반 레슨을 {date}까지 학습할 수 있어요.} other {목표의 약 <b>{share}</b>에 해당하는 부분의 초반 레슨을 {date}까지 학습할 수 있어요.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -926,6 +926,12 @@ msgctxt "OeOmHN"
 msgid "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}"
 msgstr "{dateKind, select, month {{date}까지 모든 내용을 다루기엔 시간이 부족해요.} other {{date}까지 모든 내용을 다루기엔 시간이 부족해요.}}"
 
+#. Under a sentence that already names the goal's date: the same words as "There isn't enough time to cover everything by {date}." without the date.
+#: src/_components/time-answer-texts.ts
+msgctxt "50_JZL"
+msgid "There isn't enough time to cover everything."
+msgstr "모든 내용을 다루기엔 시간이 부족해요."
+
 #: src/_components/time-answer-texts.ts
 msgctxt "DvdMdt"
 msgid "Covering everything takes about {time} a day."
@@ -939,22 +945,23 @@ msgstr "하루 {time} 동안 공부하면 최대 약 {share}까지 다룰 수 �
 #: src/_components/time-answer-texts.ts
 msgctxt "hU_Swh"
 msgid "{time} a day covers the first lessons of every exam topic"
-msgstr ""
+msgstr "하루 {time} 학습하면 모든 시험 주제의 초반 레슨을 학습할 수 있어요"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "Ikq_8g"
 msgid "{time} a day covers the first lessons of every part of your goal"
-msgstr ""
+msgstr "하루 {time} 학습하면 목표의 모든 영역에서 초반 레슨을 학습할 수 있어요"
 
+#. {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-texts.ts
 msgctxt "srT241"
 msgid "{time} a day covers the first lessons of about {share} of your exam, most-asked topics first"
-msgstr ""
+msgstr "하루 {time} 학습하면 시험에서 자주 출제되는 주제부터 초반 레슨을 약 {share}만큼 다뤄요"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "yQdkoS"
 msgid "{time} a day covers the first lessons of about {share} of your goal"
-msgstr ""
+msgstr "하루 {time} 학습하면 목표의 약 {share}에 해당하는 부분의 초반 레슨을 학습할 수 있어요"
 
 #. The title of a suggestion to change the daily study time. {time} is like "4 h".
 #: src/_components/time-answer-texts.ts
@@ -3950,7 +3957,7 @@ msgstr "이 과목들에 시간을 더 쓸까요?"
 #: src/focus-test/focus-test-proposal.tsx
 msgctxt "o00v_m"
 msgid "Picked from your answers and how much your exam asks about each."
-msgstr ""
+msgstr "내 답변과 시험에서 각 과목이 얼마나 다뤄지는지를 바탕으로 선정했어요."
 
 #: src/focus-test/focus-test-result.tsx
 msgctxt "s2lEZy"
@@ -13026,11 +13033,11 @@ msgctxt "QGcMHn"
 msgid "Skipped · your choice"
 msgstr "건너뜀 · 직접 선택했어요"
 
-#. Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first.
+#. Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as "Not in your plan · you took this subject out".
 #: src/syllabus/topic-note.tsx
 msgctxt "drQU7C"
 msgid "Not in your plan · other topics come first"
-msgstr ""
+msgstr "계획에 없어요 · 다른 주제를 먼저 학습해요"
 
 #. On a topic's row in the plan: its lessons aren't ready yet.
 #: src/syllabus/topic-note.tsx
@@ -13225,12 +13232,12 @@ msgstr "내 시험"
 #: src/today/today-falling-behind.tsx
 msgctxt "YSKHg7"
 msgid "Some lessons no longer fit before your exam."
-msgstr ""
+msgstr "시험 전까지 마치기 어려운 레슨이 생겼어요."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "QsiumC"
 msgid "Some lessons no longer fit before your date."
-msgstr ""
+msgstr "날짜 전까지 마치기 어려운 레슨이 생겼어요."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "sS7-IQ"

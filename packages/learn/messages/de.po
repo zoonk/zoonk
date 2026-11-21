@@ -222,7 +222,7 @@ msgstr "{time} (vorgeschlagen)"
 #: src/_components/daily-time-picker.tsx
 msgctxt "GUkMRc"
 msgid "{time} (covers everything)"
-msgstr ""
+msgstr "{time} (deckt alles ab)"
 
 #: src/_components/daily-time-picker.tsx
 #: src/plan/plan-properties.tsx
@@ -841,25 +841,25 @@ msgstr "Mach den Test und überspringe die Einheit"
 #: src/_components/time-answer-lines.tsx
 msgctxt "x_hqfe"
 msgid "{dateKind, select, month {Covers the first lessons of every exam topic by {date}.} other {Covers the first lessons of every exam topic by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {Deckt bis {date} die ersten Lektionen zu jedem Prüfungsthema ab.} other {Deckt bis {date} die ersten Lektionen zu jedem Prüfungsthema ab.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
 msgctxt "60IVj8"
 msgid "{dateKind, select, month {Covers the first lessons of every part of your goal by {date}.} other {Covers the first lessons of every part of your goal by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {Deckt bis {date} die ersten Lektionen in jedem Teil deines Ziels ab.} other {Deckt bis {date} die ersten Lektionen in jedem Teil deines Ziels ab.}}"
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-lines.tsx
 msgctxt "w91BsT"
 msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.}}"
-msgstr ""
+msgstr "{dateKind, select, month {Bis {date} deckst du mit den ersten Lektionen etwa <b>{share}</b> des Prüfungsstoffs ab, zuerst die am häufigsten abgefragten Themen.} other {Bis {date} deckst du mit den ersten Lektionen etwa <b>{share}</b> des Prüfungsstoffs ab, zuerst die am häufigsten abgefragten Themen.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
 msgctxt "dq7Jay"
 msgid "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your goal by {date}.} other {Covers the first lessons of about <b>{share}</b> of your goal by {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, month {Deckt bis {date} die ersten Lektionen in etwa <b>{share}</b> deines Ziels ab.} other {Deckt bis {date} die ersten Lektionen in etwa <b>{share}</b> deines Ziels ab.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
@@ -926,6 +926,12 @@ msgctxt "OeOmHN"
 msgid "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}"
 msgstr "{dateKind, select, month {Die Zeit reicht nicht aus, um bis {date} alles abzudecken.} other {Die Zeit reicht nicht aus, um bis zum {date} alles abzudecken.}}"
 
+#. Under a sentence that already names the goal's date: the same words as "There isn't enough time to cover everything by {date}." without the date.
+#: src/_components/time-answer-texts.ts
+msgctxt "50_JZL"
+msgid "There isn't enough time to cover everything."
+msgstr "Die Zeit reicht nicht aus, um alles abzudecken."
+
 #: src/_components/time-answer-texts.ts
 msgctxt "DvdMdt"
 msgid "Covering everything takes about {time} a day."
@@ -939,22 +945,23 @@ msgstr "Du kannst höchstens etwa {share} mit {time} täglicher Lernzeit abdecke
 #: src/_components/time-answer-texts.ts
 msgctxt "hU_Swh"
 msgid "{time} a day covers the first lessons of every exam topic"
-msgstr ""
+msgstr "Mit {time} pro Tag deckst du die ersten Lektionen zu jedem Prüfungsthema ab"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "Ikq_8g"
 msgid "{time} a day covers the first lessons of every part of your goal"
-msgstr ""
+msgstr "Mit {time} pro Tag deckst du die ersten Lektionen in jedem Teil deines Ziels ab"
 
+#. {share} is a share of the whole exam, by how much it asks, not a share of its topics.
 #: src/_components/time-answer-texts.ts
 msgctxt "srT241"
 msgid "{time} a day covers the first lessons of about {share} of your exam, most-asked topics first"
-msgstr ""
+msgstr "Mit {time} Lernzeit pro Tag deckst du mit den ersten Lektionen etwa {share} des Prüfungsstoffs ab, zuerst die am häufigsten abgefragten Themen"
 
 #: src/_components/time-answer-texts.ts
 msgctxt "yQdkoS"
 msgid "{time} a day covers the first lessons of about {share} of your goal"
-msgstr ""
+msgstr "Mit {time} pro Tag deckst du die ersten Lektionen in etwa {share} deines Ziels ab"
 
 #. The title of a suggestion to change the daily study time. {time} is like "4 h".
 #: src/_components/time-answer-texts.ts
@@ -3950,7 +3957,7 @@ msgstr "Diesen Fächern mehr Zeit geben?"
 #: src/focus-test/focus-test-proposal.tsx
 msgctxt "o00v_m"
 msgid "Picked from your answers and how much your exam asks about each."
-msgstr ""
+msgstr "Ausgewählt anhand deiner Antworten und danach, wie viele Fragen dazu in deiner Prüfung vorkommen."
 
 #: src/focus-test/focus-test-result.tsx
 msgctxt "s2lEZy"
@@ -13026,11 +13033,11 @@ msgctxt "QGcMHn"
 msgid "Skipped · your choice"
 msgstr "Übersprungen · deine Entscheidung"
 
-#. Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first.
+#. Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as "Not in your plan · you took this subject out".
 #: src/syllabus/topic-note.tsx
 msgctxt "drQU7C"
 msgid "Not in your plan · other topics come first"
-msgstr ""
+msgstr "Nicht in deinem Plan · andere Themen kommen zuerst"
 
 #. On a topic's row in the plan: its lessons aren't ready yet.
 #: src/syllabus/topic-note.tsx
@@ -13225,12 +13232,12 @@ msgstr "Deine Prüfung"
 #: src/today/today-falling-behind.tsx
 msgctxt "YSKHg7"
 msgid "Some lessons no longer fit before your exam."
-msgstr ""
+msgstr "Einige Lektionen passen nicht mehr vor deine Prüfung."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "QsiumC"
 msgid "Some lessons no longer fit before your date."
-msgstr ""
+msgstr "Einige Lektionen passen nicht mehr vor dein Datum."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "sS7-IQ"
