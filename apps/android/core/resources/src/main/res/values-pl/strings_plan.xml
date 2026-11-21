@@ -148,7 +148,7 @@
   "plan_change_skipped_and_back": "2781a570a0a9938692d0e54b397bac523952091a74328d0b2e96c919b732da8c",
   "plan_change_start_past_basics": "b19195af72907d93577929622956fc0fdd7f7aeca04375a947177103f01f85aa",
   "plan_change_such_as": "2ec187ca5e618216602c5e4452b0b5267ceceb39aafe6aad74f3e453929ab843",
-  "plan_change_tested_out": "c17f2456f4277fbe0a42bcdbd036e9992d30c5ed99f1287cf7415c685558d325",
+  "plan_change_tested_out": "e1382f53258daeb6bc65b428e275240172d2b3d7f49a51f8bf2813003a547bf4",
   "plan_change_today_changed": "25db008f4fdb8da8ee7e88c9799de0f45ba3bcad14c9837ec4f4f8974270dc2d",
   "plan_change_today_unchanged": "e8cf5021856ab45acd485e988272145417ff02a88f0bc1e2a6f8f7b75765ec4f",
   "plan_change_tool_have": "2b8f003a660d2778b3fdfa3518249798aabfb4c74cef7bd873bb74537ce8cc67",
@@ -975,10 +975,10 @@
     <string name="plan_system_phone">Tylko telefon</string>
     <string name="plan_change_missed_days">Twój plan został zmieniony, żeby nadrobić opuszczone dni.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Pominięto %d znaną ci lekcję.</item>
+        <item quantity="one">Pominięto %d lekcję, którą już znasz.</item>
         <item quantity="few">Pominięto %d lekcje, które już znasz.</item>
         <item quantity="many">Pominięto %d lekcji, które już znasz.</item>
-        <item quantity="other">Pominięto %d lekcji, które były ci już znane.</item>
+        <item quantity="other">Pominięto %d lekcji, które już znasz.</item>
     </plurals>
     <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
     <string name="plan_change_skipped_and_back">%1$s %2$s</string>

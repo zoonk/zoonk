@@ -6,7 +6,7 @@
   "testout_continue": "3cd74b462dc6f90461968b802612ab6eeef2e1a5fa3e6fa91842877cef128c16",
   "testout_intro_detail": "125fac85cd2cf6ace551ef305635ba990cf88e8a32c69b7e28e875216e9266e1",
   "testout_intro_title": "abc671b2b9457ec40d882f83f1805112649de7cdc8d4db8d1d6bde78bdefb57c",
-  "testout_lessons_back": "8b2be1774da3c2821e8cd0069c4c7c44f49509db280cad43234dcc9a8c33cdab",
+  "testout_lessons_back": "f7fe65f848439aca24f18572bf08600932e694dd4f71f30dfc34f0b4db25abff",
   "testout_lessons_left": "c149c9136ffb7f3dff070cd2347b1a27f88ea1ce75518d4d7d854ec6df75df55",
   "testout_lessons_off": "e75f86b424f725c4d9d1674ffc2c8092455eb52dc8782fd8d8f076beaf65c39e",
   "testout_not_passed": "04e00e700d2246bc94d40ec048921d7779592cdb0dfd676b03c1385da2b063b1",
@@ -49,7 +49,7 @@
         <item quantity="other">이미 아는 레슨 %d개를 계획에서 건너뛰어요.</item>
     </plurals>
     <plurals name="testout_lessons_back">
-        <item quantity="other">레슨이 계획에 다시 포함돼요.</item>
+        <item quantity="other">레슨이 계획에 다시 포함됐어요.</item>
     </plurals>
     <string name="testout_continue">계속하기</string>
 </resources>

@@ -148,7 +148,7 @@
   "plan_change_skipped_and_back": "02c5af96d5b9f60c0193de08fddc1e3249ced57b4870a5588a52b0e200db05c5",
   "plan_change_start_past_basics": "5e3495226b7c306ed2ebf5ea340c682b1a089492fe1bff6f0dfa0d5277c5c49f",
   "plan_change_such_as": "a76b8574b040f7bcf1f12333a35476176c391a025a83c90a31f40a2053a7cebf",
-  "plan_change_tested_out": "c464f626e6876ddb8f5f52306a9c80e16de271aa7d632c120d24884b5250835a",
+  "plan_change_tested_out": "30ccb2b140c29aff633a6b05a3638e25359d530c3274a4495d90395f7363ee58",
   "plan_change_today_changed": "6692392f3fd4d557ca22c27079350e329034754fbf3591951a41a1bfa8886ffa",
   "plan_change_today_unchanged": "d014ecc02f25dc81b5170475ba18988fbea147defb960e612e5dd6117b3d809b",
   "plan_change_tool_have": "7b88ee324d92bd90d4968f1a2204d6b6049701a05f758b64387b838b608716f9",
@@ -913,8 +913,8 @@
     <string name="plan_system_phone">Nur Smartphone</string>
     <string name="plan_change_missed_days">Dein Plan wurde angepasst, damit du die verpassten Tage nachholen kannst.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Übersprungen: %d Lektion, die du schon kennst.</item>
-        <item quantity="other">Übersprungen: %d Lektionen, die du schon kennst.</item>
+        <item quantity="one">%d Lektion ausgelassen, die du schon kennst.</item>
+        <item quantity="other">%d Lektionen ausgelassen, die du schon kennst.</item>
     </plurals>
     <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
     <string name="plan_change_skipped_and_back">%1$s %2$s</string>

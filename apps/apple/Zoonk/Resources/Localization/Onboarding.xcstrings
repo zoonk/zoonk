@@ -125,13 +125,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ übrig"
+            "value" : "Noch %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quedan %@"
+            "value" : "Tiempo restante: %@"
           }
         },
         "fr" : {
@@ -143,7 +143,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ rimanenti"
+            "value" : "Ancora %@"
           }
         },
         "ja" : {
@@ -167,7 +167,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faltam %@"
+            "value" : "Restam %@"
           }
         },
         "tr" : {
@@ -379,13 +379,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sigue en tu plan"
+            "value" : "%@ se mantiene en tu plan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ reste dans ton plan"
+            "value" : "Le niveau %@ reste dans ton plan"
           }
         },
         "it" : {
@@ -403,13 +403,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@이(가) 계획에 남아요"
+            "value" : "%@은 계획에 남아요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zostaje w planie"
+            "value" : "Poziom %@ zostaje w twoim planie"
           }
         },
         "pt" : {
@@ -936,7 +936,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld개 레슨"
+                  "value" : "레슨 %lld개"
                 }
               }
             }
@@ -960,7 +960,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld lekcja"
+                  "value" : "%lld lekcję"
                 }
               },
               "other" : {
@@ -1002,7 +1002,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tane ders"
+                  "value" : "%lld ders"
                 }
               }
             }
@@ -1019,13 +1019,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektion übersprungen"
+                  "value" : "%lld Lektion ausgelassen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektionen übersprungen"
+                  "value" : "%lld Lektionen ausgelassen"
                 }
               }
             }
@@ -1055,13 +1055,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld lección saltada"
+                  "value" : "Se saltó %lld lección"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld lecciones saltadas"
+                  "value" : "Se saltaron %lld lecciones"
                 }
               }
             }
@@ -1121,7 +1121,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld개 레슨 건너뜀"
+                  "value" : "건너뛴 레슨 %lld개"
                 }
               }
             }
@@ -1187,7 +1187,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tane ders atlandı"
+                  "value" : "%lld ders atlandı"
                 }
               }
             }
@@ -1325,25 +1325,25 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una prueba rápida puede saltarse las lecciones que ya conoces."
+            "value" : "Una prueba rápida puede saltar las lecciones que ya conoces."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un test rapide peut sauter les leçons que tu connais déjà."
+            "value" : "Un petit test peut te faire sauter les leçons que tu connais déjà."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un controllo rapido può saltare le lezioni che conosci già."
+            "value" : "Con un breve test puoi saltare le lezioni che conosci già."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "簡単なテストで、すでに知っているレッスンをスキップできます。"
+            "value" : "すでに知っているレッスンを、簡単なテストでスキップできます。"
           }
         },
         "ko" : {
@@ -1355,7 +1355,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Krótki test może pominąć lekcje, które już znasz."
+            "value" : "Szybki test pozwoli pominąć lekcje, które już znasz."
           }
         },
         "pt" : {
@@ -1367,7 +1367,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kısa bir test, zaten bildiğin dersleri atlayabilir."
+            "value" : "Kısa bir testle zaten bildiğin dersleri atlayabilirsin."
           }
         }
       }
@@ -1384,19 +1384,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una prueba corta puede saltarse %@ si ya lo conoces."
+            "value" : "Una prueba corta puede saltar %@ si ya lo sabes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un test rapide peut sauter %@ si tu le connais déjà."
+            "value" : "Un petit test peut te faire sauter le niveau %@ si tu le connais déjà."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un test breve può farti saltare %@ se lo conosci già."
+            "value" : "Con un breve test puoi saltare %@ se lo conosci già."
           }
         },
         "ja" : {
@@ -1408,25 +1408,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 알고 있다면 짧은 테스트로 %@을(를) 건너뛸 수 있어요."
+            "value" : "이미 아는 %@은 짧은 테스트로 건너뛸 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Krótki test może pominąć %@, jeśli masz ten poziom już za sobą."
+            "value" : "Krótki test pozwoli pominąć %@, jeśli już go znasz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um teste rápido pode pular %@ se você já souber esse nível."
+            "value" : "Um teste rápido pode pular %@ se você já souber esse conteúdo."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaten biliyorsan kısa bir test %@ seviyesini atlayabilir."
+            "value" : "Zaten biliyorsan kısa bir testle %@ düzeyini atlayabilirsin."
           }
         }
       }
@@ -1561,7 +1561,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quedan aproximadamente %@. Tus respuestas están guardadas."
+            "value" : "Queda aproximadamente %@. Tus respuestas están guardadas."
           }
         },
         "fr" : {
@@ -1573,7 +1573,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Manca circa %@. Le tue risposte sono salvate."
+            "value" : "Mancano circa %@. Le tue risposte sono salvate."
           }
         },
         "ja" : {
@@ -1597,7 +1597,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faltam cerca de %@. Suas respostas estão salvas."
+            "value" : "Falta cerca de %@. Suas respostas estão salvas."
           }
         },
         "tr" : {
@@ -1732,7 +1732,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etwa %@, aufgeteilt in Teile"
+            "value" : "Etwa %@, auf mehrere Teile verteilt"
           }
         },
         "es" : {
@@ -1756,13 +1756,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "約%@（複数回に分けて受けられます）"
+            "value" : "約%@、数回に分けて"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "약 %@, 여러 단계로 진행"
+            "value" : "약 %@, 여러 파트로 진행"
           }
         },
         "pl" : {
@@ -1780,7 +1780,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parçalara bölünmüş, yaklaşık %@"
+            "value" : "Yaklaşık %@, parçalara bölünmüş"
           }
         }
       }
@@ -3527,13 +3527,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내 수준 확인"
+            "value" : "내 레벨 확인하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprawdź mój poziom"
+            "value" : "Sprawdź swój poziom"
           }
         },
         "pt" : {
@@ -4726,7 +4726,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Test fortsetzen"
+            "value" : "Deinen Test fortsetzen"
           }
         },
         "es" : {
@@ -4756,7 +4756,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "테스트 계속하기"
+            "value" : "테스트 이어서 풀기"
           }
         },
         "pl" : {
@@ -4768,7 +4768,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar seu teste"
+            "value" : "Continue seu teste"
           }
         },
         "tr" : {
@@ -7470,31 +7470,31 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encuentra tu nivel y sáltate lo que ya sabes"
+            "value" : "Encontrar tu nivel y saltar lo que ya sabes"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trouve ton niveau et saute ce que tu connais déjà"
+            "value" : "Trouver ton niveau et sauter ce que tu connais"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scopri il tuo livello e salta ciò che già conosci"
+            "value" : "Trova il tuo livello e salta ciò che sai già"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レベルを診断して、知っている内容をスキップ"
+            "value" : "レベルを診断して、知っている内容をスキップする"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내 수준을 찾고 이미 아는 내용은 건너뛰기"
+            "value" : "레벨을 확인하고 아는 내용 건너뛰기"
           }
         },
         "pl" : {
@@ -7506,13 +7506,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descubra seu nível e pule o que você já sabe"
+            "value" : "Descubra seu nível e pule o que já sabe"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seviyeni bul, bildiklerini atla"
+            "value" : "Seviyeni öğren ve bildiklerini atla"
           }
         }
       }
@@ -7759,7 +7759,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für heute abschließen"
+            "value" : "Für heute beenden"
           }
         },
         "es" : {
@@ -7777,7 +7777,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finisci per oggi"
+            "value" : "Concludi per oggi"
           }
         },
         "ja" : {
@@ -7801,7 +7801,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminar por hoje"
+            "value" : "Concluir por hoje"
           }
         },
         "tr" : {
@@ -8998,7 +8998,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie viel möchtest du prüfen?"
+            "value" : "Wie viel möchtest du testen?"
           }
         },
         "es" : {
@@ -9010,13 +9010,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Que veux-tu vérifier ?"
+            "value" : "Qu’est-ce que tu veux vérifier ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quanto vuoi controllare?"
+            "value" : "Quanto vuoi verificare?"
           }
         },
         "ja" : {
@@ -9028,19 +9028,19 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "어느 정도까지 확인할까요?"
+            "value" : "어디까지 확인할까요?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jak dokładnie chcesz sprawdzić swój poziom?"
+            "value" : "Jak dużą część chcesz sprawdzić?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quanto você quer testar?"
+            "value" : "O que você quer avaliar?"
           }
         },
         "tr" : {
@@ -9883,13 +9883,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weiter"
+            "value" : "Weitermachen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar"
+            "value" : "Seguir"
           }
         },
         "fr" : {
@@ -9919,7 +9919,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dalej"
+            "value" : "Kontynuuj"
           }
         },
         "pt" : {
@@ -11299,13 +11299,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Keine Lektionen übersprungen"
+            "value" : "Keine Lektionen ausgelassen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se saltó ninguna lección"
+            "value" : "No se saltaron lecciones"
           }
         },
         "fr" : {
@@ -11335,7 +11335,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie pominięto żadnych lekcji"
+            "value" : "Nie pominięto żadnej lekcji"
           }
         },
         "pt" : {
@@ -11347,7 +11347,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hiç ders atlanmadı"
+            "value" : "Atlanan ders yok"
           }
         }
       }
@@ -11830,7 +11830,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht jetzt"
+            "value" : "Jetzt nicht"
           }
         },
         "es" : {
@@ -11878,7 +11878,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Şimdi değil"
+            "value" : "Sonraya bırak"
           }
         }
       }
@@ -12267,13 +12267,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lldパート目"
+            "value" : "第%lld部"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld단계"
+            "value" : "%lld파트"
           }
         },
         "pl" : {
@@ -12291,7 +12291,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld. bölüm"
+            "value" : "Bölüm %lld"
           }
         }
       }
@@ -14314,7 +14314,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kurztest"
+            "value" : "Kurz"
           }
         },
         "es" : {
@@ -14332,7 +14332,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rapido"
+            "value" : "Veloce"
           }
         },
         "ja" : {
@@ -14344,13 +14344,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "간단 테스트"
+            "value" : "짧게"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Krótki"
+            "value" : "Szybki"
           }
         },
         "pt" : {
@@ -14362,7 +14362,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hızlı"
+            "value" : "Kısa"
           }
         }
       }
@@ -16202,19 +16202,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überspringe %@, wenn du es schon kennst"
+            "value" : "%@ überspringen, wenn du es schon kennst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sáltate %@ si ya lo conoces"
+            "value" : "Saltar %@ si ya lo conoces"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saute %@ si tu le connais déjà"
+            "value" : "Sauter le niveau %@ si tu le connais déjà"
           }
         },
         "it" : {
@@ -16226,31 +16226,31 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すでに知っていれば%@をスキップ"
+            "value" : "すでに知っている%@をスキップする"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 알고 있다면 %@ 건너뛰기"
+            "value" : "이미 아는 %@ 건너뛰기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pomiń %@, jeśli masz ten poziom już za sobą"
+            "value" : "Pomiń %@, jeśli już go znasz"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pule %@ se você já souber"
+            "value" : "Pule %@ se você já souber esse conteúdo"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaten biliyorsan %@ seviyesini atla"
+            "value" : "Zaten biliyorsan %@ düzeyini atla"
           }
         }
       }
@@ -16261,19 +16261,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lektionen überspringen, die du schon kennst"
+            "value" : "Lektion überspringen, die du schon kennst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saltarte las lecciones que ya conoces"
+            "value" : "Saltar las lecciones que ya conoces"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saute les leçons que tu connais déjà"
+            "value" : "Sauter les leçons que tu connais déjà"
           }
         },
         "it" : {
@@ -16285,7 +16285,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "知っているレッスンをスキップ"
+            "value" : "すでに知っているレッスンをスキップする"
           }
         },
         "ko" : {
@@ -16303,7 +16303,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pule as aulas que você já conhece"
+            "value" : "Pule aulas que você já conhece"
           }
         },
         "tr" : {
@@ -18348,55 +18348,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Test zu %@"
+            "value" : "Mit Test %@ überspringen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hacer una prueba para saltarte %@"
+            "value" : "Hacer una prueba de %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Évaluer ton niveau en %@"
+            "value" : "Tester le niveau %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fai il test per saltare %@"
+            "value" : "Fai il test di %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@のレベル診断テスト"
+            "value" : "「%@」のレベル診断を受ける"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 레벨 테스트"
+            "value" : "%@ 건너뛰기 테스트"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprawdź, czy znasz już %@"
+            "value" : "Sprawdź, czy możesz pominąć %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faça um teste para pular %@"
+            "value" : "Pular %@ com um teste"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ seviyesini geçme testi"
+            "value" : "%@ düzeyini atlamak için teste gir"
           }
         }
       }
@@ -18407,19 +18407,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Test zu deinem Wissen"
+            "value" : "Wissen testen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprobar lo que ya sabes"
+            "value" : "Comprobar lo que sabes"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Évaluer tes acquis"
+            "value" : "Tester tes connaissances"
           }
         },
         "it" : {
@@ -18431,25 +18431,25 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "知っている内容をテスト"
+            "value" : "知っている内容をテストする"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 아는 내용 테스트"
+            "value" : "아는 내용 확인하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprawdź, co już znasz"
+            "value" : "Sprawdź swoją wiedzę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Testar o que você já sabe"
+            "value" : "Teste o que você já sabe"
           }
         },
         "tr" : {
@@ -19008,25 +19008,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La leçon est de nouveau dans ton plan."
+            "value" : "La leçon est de retour dans ton plan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La lezione è di nuovo nel tuo piano."
+            "value" : "La lezione è tornata nel tuo piano."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レッスンが学習計画に戻りました。"
+            "value" : "レッスンが学習計画に戻ります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레슨이 다시 계획에 포함됐어요."
+            "value" : "레슨이 계획에 다시 포함됐어요."
           }
         },
         "pl" : {
@@ -19044,7 +19044,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dersin yeniden planında."
+            "value" : "Ders planına geri döndü."
           }
         }
       }
@@ -19060,7 +19060,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las lecciones vuelven a estar en tu plan."
+            "value" : "Las lecciones volvieron a tu plan."
           }
         },
         "fr" : {
@@ -19072,19 +19072,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le lezioni sono di nuovo nel tuo piano."
+            "value" : "Le lezioni sono tornate nel tuo piano."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レッスンを学習計画に戻しました。"
+            "value" : "レッスンが学習計画に戻ります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레슨이 계획에 다시 추가됐어요."
+            "value" : "레슨이 계획에 다시 포함됐어요."
           }
         },
         "pl" : {
@@ -19102,7 +19102,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dersler yeniden planında."
+            "value" : "Dersler planına geri döndü."
           }
         }
       }
@@ -19466,49 +19466,49 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit dem Test für den ganzen Kurs kannst du noch mehr überspringen."
+            "value" : "Mit dem Test für den ganzen Kurs kannst du mehr Lektionen überspringen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La prueba de todo el curso puede saltarse más lecciones."
+            "value" : "La prueba del curso completo puede saltar más."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le test sur tout le cours peut en sauter davantage."
+            "value" : "Le test sur tout le cours peut te faire sauter plus de leçons."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il test dell’intero corso può farti saltare altre lezioni."
+            "value" : "Il test sull’intero corso può saltare più lezioni."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "コース全体のテストなら、さらに多くの内容をスキップできます。"
+            "value" : "コース全体のテストなら、さらに多くのレッスンをスキップできます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "전체 코스 테스트에서는 더 많은 내용을 건너뛸 수 있어요."
+            "value" : "코스 전체 테스트를 보면 더 많이 건너뛸 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Test z całego kursu może pominąć więcej lekcji."
+            "value" : "Test z całego kursu pozwala pominąć więcej."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O teste do curso completo pode pular mais aulas."
+            "value" : "O teste do curso inteiro pode pular mais aulas."
           }
         },
         "tr" : {
@@ -19537,31 +19537,31 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il n’y a pas encore assez de questions pour %@."
+            "value" : "Il n’y a pas encore assez de questions pour le niveau %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per ora non ci sono abbastanza domande per %@."
+            "value" : "Per %@ non ci sono ancora abbastanza domande."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を診断するには、まだ問題が足りません。"
+            "value" : "%@の問題はまだ十分にありません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "아직 %@ 레벨을 테스트할 문제가 충분하지 않아요."
+            "value" : "아직 %@ 문제는 충분하지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie ma jeszcze wystarczającej liczby pytań, by sprawdzić poziom %@."
+            "value" : "Na razie nie ma wystarczającej liczby pytań dla poziomu %@."
           }
         },
         "pt" : {
@@ -19573,7 +19573,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ seviyesi için henüz yeterli soru yok."
+            "value" : "Henüz %@ düzeyi için yeterli soru yok."
           }
         }
       }
@@ -19956,7 +19956,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das scheint dir leichtzufallen"
+            "value" : "Das sieht leicht für dich aus"
           }
         },
         "es" : {
@@ -19980,19 +19980,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "これは簡単そうですね"
+            "value" : "簡単そうですね"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 레슨은 쉬워 보여요"
+            "value" : "쉬워 보이네요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To wygląda na łatwe dla ciebie"
+            "value" : "Wygląda na to, że to dla ciebie łatwe"
           }
         },
         "pt" : {
@@ -20004,7 +20004,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu sana kolay geliyor"
+            "value" : "Bu sana kolay görünüyor"
           }
         }
       }
@@ -22197,7 +22197,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir haben %1$@ übersprungen: %2$@."
+            "value" : "Wir haben %1$@ ausgelassen: %2$@."
           }
         },
         "en" : {
@@ -22215,25 +22215,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous avons sauté %1$@ : %2$@."
+            "value" : "On a sauté %1$@ : %2$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abbiamo saltato %1$@: %2$@."
+            "value" : "Abbiamo saltato %2$@ per %1$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@をスキップしました：%2$@。"
+            "value" : "%1$@：%2$@をスキップしました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@을(를) 건너뛰었어요: 레슨 %2$@개."
+            "value" : "%1$@: %2$@ 건너뜀"
           }
         },
         "pl" : {
@@ -22251,7 +22251,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ seviyelerini atladık: %2$@."
+            "value" : "Atladığımız düzeyler: %1$@ · %2$@."
           }
         }
       }
@@ -23990,7 +23990,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cours complet"
+            "value" : "Tout le cours"
           }
         },
         "it" : {
@@ -24008,7 +24008,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "전체 코스"
+            "value" : "코스 전체"
           }
         },
         "pl" : {
@@ -24020,7 +24020,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curso completo"
+            "value" : "Curso inteiro"
           }
         },
         "tr" : {
@@ -24981,55 +24981,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kennst die Lektion schon. Sie bleibt in deinen Wiederholungen."
+            "value" : "Du kennst die Lektion schon. Sie bleibt Teil deiner Wiederholungen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya lo conoces. Se queda en tus repasos."
+            "value" : "Ya conocías la lección. Se queda en tus repasos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu le connais déjà. Il reste dans ton entraînement."
+            "value" : "Tu la connais déjà. Elle reste dans tes révisions."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo conosci già. Resta negli esercizi di ripasso."
+            "value" : "La conosci già. Resta nei tuoi ripassi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すでに知っている内容です。復習に残ります。"
+            "value" : "どれもすでに知っている内容です。練習でも引き続き復習できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 알고 있는 내용이에요. 복습 연습에 계속 포함돼요."
+            "value" : "이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te lekcje są ci już znane. Nadal będą się pojawiać w powtórkach."
+            "value" : "Już to znasz. Nadal będzie w twoich powtórkach."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já sabe. Essa aula continua nas suas revisões."
+            "value" : "Você já sabia dessa aula. Ela continua na sua prática."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bunu zaten biliyorsun. Tekrar çalışmalarında kalacak."
+            "value" : "Bunu zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder."
           }
         }
       }
@@ -25040,55 +25040,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kennst die Lektionen schon. Sie bleiben in deinen Wiederholungen."
+            "value" : "Du kennst die Lektionen schon. Sie bleiben Teil deiner Wiederholungen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya las conoces. Se quedan en tus repasos."
+            "value" : "Ya conocías las lecciones. Se quedan en tus repasos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu les connais déjà. Ils restent dans ton entraînement."
+            "value" : "Tu les connais déjà. Elles restent dans tes révisions."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le conosci già. Restano negli esercizi di ripasso."
+            "value" : "Le conosci già. Restano nei tuoi ripassi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すでに知っている内容です。復習に残ります。"
+            "value" : "どれもすでに知っている内容です。練習でも引き続き復習できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 알고 있는 내용이에요. 복습 연습에 계속 포함돼요."
+            "value" : "이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te lekcje są ci już znane. Nadal będą się pojawiać w powtórkach."
+            "value" : "Już je znasz. Nadal będą w twoich powtórkach."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já sabe. Essas aulas continuam nas suas revisões."
+            "value" : "Você já sabia dessas aulas. Elas continuam na sua prática."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bunları zaten biliyorsun. Tekrar çalışmalarında kalacaklar."
+            "value" : "Bunları zaten biliyorsun. Tekrar çalışmalarında kalmaya devam eder."
           }
         }
       }
@@ -26637,31 +26637,31 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Lektionen passen sich weiter an deine Antworten an."
+            "value" : "Deine Lektionen passen sich deinen Antworten an."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus lecciones se siguen ajustando mientras respondes."
+            "value" : "Tus lecciones se ajustan a medida que respondes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes leçons continuent de s’adapter à tes réponses."
+            "value" : "Tes leçons s’adaptent au fur et à mesure de tes réponses."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le tue lezioni continuano ad adattarsi alle tue risposte."
+            "value" : "Le tue lezioni si adattano man mano che rispondi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "答えるたびにレッスンが調整されます。"
+            "value" : "答えに合わせて、レッスンが調整されていきます。"
           }
         },
         "ko" : {
@@ -26673,19 +26673,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lekcje nadal dostosowują się do twoich odpowiedzi."
+            "value" : "Lekcje na bieżąco dostosowują się do twoich odpowiedzi."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas aulas continuam se ajustando conforme você responde."
+            "value" : "Suas aulas vão se ajustando conforme você responde."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cevaplarına göre derslerin ayarlanmaya devam ediyor."
+            "value" : "Cevap verdikçe derslerin ayarlanmaya devam ediyor."
           }
         }
       }
@@ -27233,13 +27233,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan se queda como está."
+            "value" : "Tu plan sigue igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan ne change pas."
+            "value" : "Ton plan reste tel qu’il est."
           }
         },
         "it" : {

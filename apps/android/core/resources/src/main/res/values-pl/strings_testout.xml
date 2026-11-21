@@ -6,7 +6,7 @@
   "testout_continue": "252ed225e3a947b8962c40f1c02d2098da9d89b2fea0421e72de8a4c18292a50",
   "testout_intro_detail": "89a56f28fceb1406e1b0400f56efc827048bb755f731e8953a3da4d5c7563479",
   "testout_intro_title": "78d9bdb66c0305fe8a9f5e73367e20ed6df26c273319ccb85bbb4a0489281fad",
-  "testout_lessons_back": "584ddc7bceb2ecafb0601dacce5031b478aeba70aef3207c1fa9ee5456510d78",
+  "testout_lessons_back": "59c295fe985b9f929962f55b166e2d3c4af79fe6058ae04ac9ab81bd12b682d6",
   "testout_lessons_left": "603b1ed8f7b18e079430f71ea1a06d4dd5289bb3aacd334be3b68e43d23dc441",
   "testout_lessons_off": "7daf394f3bb7ae5afccaf1c39eb8252d6ad06a3f6387d168984f8ffd5c6b9465",
   "testout_not_passed": "888134274886b6fad6f123a406927a7131ac2ced7a9300845829ba5554944022",
@@ -55,10 +55,10 @@
         <item quantity="other">Twój plan pomija %d lekcji z materiałem, który już znasz.</item>
     </plurals>
     <plurals name="testout_lessons_back">
-        <item quantity="one">Lekcja znów jest w planie.</item>
-        <item quantity="few">Lekcje znów są w planie.</item>
-        <item quantity="many">Lekcje znów są w planie.</item>
-        <item quantity="other">Lekcje znów są w planie.</item>
+        <item quantity="one">Lekcja wróciła do twojego planu.</item>
+        <item quantity="few">Lekcje wróciły do twojego planu.</item>
+        <item quantity="many">Lekcje wróciły do twojego planu.</item>
+        <item quantity="other">Lekcje wróciły do twojego planu.</item>
     </plurals>
     <string name="testout_continue">Kontynuuj</string>
 </resources>

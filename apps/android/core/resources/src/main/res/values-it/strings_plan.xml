@@ -148,7 +148,7 @@
   "plan_change_skipped_and_back": "ef7165b94e09896563ad9a240be0040ca3607186de3e0a8c7ff227307c23ed3a",
   "plan_change_start_past_basics": "1c2b690d38f506bd97bce349ca170637b0299a8520cc7745c21d26e3d5b45c33",
   "plan_change_such_as": "e7659c2a2a057bf44cb1f522b00e140e1b1b62e99d4b72cef95384139cedb17f",
-  "plan_change_tested_out": "84255136f92dc709a4c82fd528928362be061dfdd841fd6e51aa76e758265acf",
+  "plan_change_tested_out": "1c0a32813fc21267b81527143ee6fbdc779cefa57ef51d81a6e5329ac06a83b3",
   "plan_change_today_changed": "8ca1f799de387be8d05db2026e03711e16a78eea2f8b67b6e8732339c51d6f7f",
   "plan_change_today_unchanged": "9f9be2ced8b796331ce3e72cf945ebd4fa8717a87804419a99e2c1e8acd9bd42",
   "plan_change_tool_have": "1d585e8aaa1a6f075962f312f5cb181907d8d63ac9c02fbe748b2e134b591a2f",
@@ -944,9 +944,9 @@
     <string name="plan_system_phone">Solo telefono</string>
     <string name="plan_change_missed_days">Il tuo piano è cambiato per recuperare i giorni che hai perso.</string>
     <plurals name="plan_change_tested_out">
-        <item quantity="one">Saltata %d lezione che già conoscevi.</item>
-        <item quantity="many">Saltate %d lezioni che già conoscevi.</item>
-        <item quantity="other">Saltate %d lezioni che già conoscevi.</item>
+        <item quantity="one">Saltata %d lezione che conosci già.</item>
+        <item quantity="many">Saltate %d lezioni che conosci già.</item>
+        <item quantity="other">Saltate %d lezioni che conosci già.</item>
     </plurals>
     <!-- One day's plan change: %1$s says the lessons it skipped, %2$s the topics that came back. -->
     <string name="plan_change_skipped_and_back">%1$s %2$s</string>

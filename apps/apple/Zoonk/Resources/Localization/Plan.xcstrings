@@ -965,55 +965,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sind wieder in deinem Plan: Du hast Fragen dazu falsch beantwortet."
+            "value" : "%@ sind zurück in deinem Plan: Du hast dazu Fragen falsch beantwortet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ volvieron a tu plan porque te equivocaste en algunas preguntas."
+            "value" : "Volvimos a incluir %@ en tu plan: te equivocaste en preguntas sobre esos temas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sont de nouveau dans ton plan : tu as raté des questions à leur sujet."
+            "value" : "Ton plan comprend à nouveau %@ : tu as répondu incorrectement à des questions sur ces sujets."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sono di nuovo nel tuo piano: hai sbagliato alcune domande su questi argomenti."
+            "value" : "Il piano include di nuovo %@: hai sbagliato alcune domande su questi argomenti."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が学習計画に戻りました。問題を間違えたためです。"
+            "value" : "間違えた問題があったため、%@を学習計画に戻しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@이(가) 계획에 다시 포함됐어요. 관련 문제를 틀렸어요."
+            "value" : "%@ 관련 문제를 틀려서 이 주제를 계획에 다시 넣었어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wracają do twojego planu, bo nie udało ci się odpowiedzieć na pytania z tych tematów."
+            "value" : "%@ wracają do twojego planu: w odpowiedziach na pytania z tych tematów były błędy."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ voltaram para o seu plano porque você errou perguntas sobre esses tópicos."
+            "value" : "%@ voltaram ao seu plano porque você errou perguntas sobre esses tópicos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, yanlış cevapların nedeniyle yeniden planında."
+            "value" : "%@ yeniden planında: bu konularla ilgili soruları yanlış cevapladın."
           }
         }
       }
@@ -1449,7 +1449,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ aus %2$@ sind wieder in deinem Plan: Du hast Fragen dazu falsch beantwortet."
+            "value" : "%1$@ aus %2$@ sind zurück in deinem Plan: Du hast dazu Fragen falsch beantwortet."
           }
         },
         "en" : {
@@ -1461,19 +1461,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ de %2$@ volvieron a tu plan porque te equivocaste en algunas preguntas."
+            "value" : "Volvimos a incluir %1$@ de %2$@ en tu plan: te equivocaste en preguntas sobre ellos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ de %2$@ sont de nouveau dans ton plan : tu as raté des questions à leur sujet."
+            "value" : "%1$@ de %2$@ sont de retour dans ton plan : tu as répondu incorrectement à des questions sur ces sujets."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ di %2$@ sono di nuovo nel tuo piano: hai sbagliato alcune domande su questi argomenti."
+            "value" : "Abbiamo reinserito %1$@ di %2$@ nel tuo piano: hai sbagliato alcune domande su questi argomenti."
           }
         },
         "ja" : {
@@ -1485,7 +1485,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%2$@의 %1$@개 주제가 계획에 다시 포함됐어요. 관련 문제를 틀렸어요."
+            "value" : "%1$@가 계획에 다시 포함됐어요. %2$@에서 관련 문제를 틀렸기 때문이에요."
           }
         },
         "pl" : {
@@ -1497,13 +1497,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ de %2$@ voltaram para o seu plano porque você errou perguntas sobre esses tópicos."
+            "value" : "%1$@ de %2$@ voltaram ao seu plano porque você errou perguntas sobre eles."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yanlış cevapların nedeniyle %2$@ konusundan %1$@ yeniden planında."
+            "value" : "%1$@ (%2$@) yeniden planında: bu konulardaki soruları yanlış yanıtladın."
           }
         }
       }
@@ -1573,55 +1573,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ist wieder in deinem Plan: Du hast eine Frage dazu falsch beantwortet."
+            "value" : "%@ ist zurück in deinem Plan: Du hast dazu eine Frage falsch beantwortet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ volvió a tu plan porque te equivocaste en una pregunta."
+            "value" : "Volvimos a incluir %@ en tu plan: te equivocaste en una pregunta sobre ese tema."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ est de nouveau dans ton plan : tu as raté une question à son sujet."
+            "value" : "Ton plan comprend à nouveau %@ : tu as répondu incorrectement à une question sur ce sujet."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ è di nuovo nel tuo piano: hai sbagliato una domanda su questo argomento."
+            "value" : "Il piano include di nuovo %@: hai sbagliato una domanda su questo argomento."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が学習計画に戻りました。問題を間違えたためです。"
+            "value" : "間違えた問題があったため、%@を学習計画に戻しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@이(가) 계획에 다시 포함됐어요. 관련 문제를 틀렸어요."
+            "value" : "%@ 관련 문제를 틀려서 이 주제를 계획에 다시 넣었어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wraca do twojego planu, bo nie udało ci się odpowiedzieć na pytanie z tego tematu."
+            "value" : "%@ wraca do twojego planu: w odpowiedzi na pytanie z tego tematu był błąd."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ voltou para o seu plano porque você errou uma pergunta sobre esse tópico."
+            "value" : "%@ voltou ao seu plano porque você errou uma pergunta sobre esse tópico."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, yanlış cevabın nedeniyle yeniden planında."
+            "value" : "%@ yeniden planında: bu konuyla ilgili bir soruyu yanlış cevapladın."
           }
         }
       }
@@ -8445,13 +8445,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld otra materia"
+                  "value" : "%lld materia más"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld otras materias"
+                  "value" : "%lld materias más"
                 }
               }
             }
@@ -8463,13 +8463,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld autre matière"
+                  "value" : "%lld autre sujet"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld autres matières"
+                  "value" : "%lld autres sujets"
                 }
               }
             }
@@ -8511,7 +8511,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld개 다른 과목"
+                  "value" : "그 외 %lld개 과목"
                 }
               }
             }
@@ -8571,13 +8571,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld başka konu"
+                  "value" : "%lld branş daha"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tane başka konu"
+                  "value" : "%lld branş daha"
                 }
               }
             }
@@ -30310,13 +30310,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Übersprungen: %lld Lektion, die du schon kennst."
+                  "value" : "%lld Lektion ausgelassen, die du schon kennst."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Übersprungen: %lld Lektionen, die du schon kennst."
+                  "value" : "%lld Lektionen ausgelassen, die du schon kennst."
                 }
               }
             }
@@ -30346,13 +30346,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Saltamos %lld lección que ya conocías."
+                  "value" : "Se saltó %lld lección que ya conoces."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Saltamos %lld lecciones que ya conocías."
+                  "value" : "Se saltaron %lld lecciones que ya conoces."
                 }
               }
             }
@@ -30364,13 +30364,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu as sauté %lld leçon que tu connais déjà."
+                  "value" : "%lld leçon que tu connais déjà a été sautée."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu as sauté %lld leçons que tu connais déjà."
+                  "value" : "%lld leçons que tu connais déjà ont été sautées."
                 }
               }
             }
@@ -30382,13 +30382,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Hai saltato %lld lezione che conosci già."
+                  "value" : "Saltata %lld lezione che conosci già."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Hai saltato %lld lezioni che conosci già."
+                  "value" : "Saltate %lld lezioni che conosci già."
                 }
               }
             }
@@ -30412,7 +30412,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "이미 아는 레슨 %lld개를 건너뛰었어요."
+                  "value" : "이미 아는 레슨 %lld개 건너뜀"
                 }
               }
             }
@@ -30424,25 +30424,25 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Pominięto %lld znane ci lekcje."
+                  "value" : "Pominięto %lld lekcje, które już znasz."
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Pominięto %lld znanych ci lekcji."
+                  "value" : "Pominięto %lld lekcji, które już znasz."
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Pominięto %lld znaną ci lekcję."
+                  "value" : "Pominięto %lld lekcję, którą już znasz."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Pominięto %lld znanych ci lekcji."
+                  "value" : "Pominięto %lld lekcji, które już znasz."
                 }
               }
             }
@@ -30454,13 +30454,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Você pulou %lld aula que já conhecia."
+                  "value" : "%lld aula que você já conhece foi pulada."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Você pulou %lld aulas que já conhecia."
+                  "value" : "%lld aulas que você já conhece foram puladas."
                 }
               }
             }
@@ -30478,7 +30478,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Zaten bildiğin %lld tane ders atlandı."
+                  "value" : "Zaten bildiğin %lld ders atlandı."
                 }
               }
             }

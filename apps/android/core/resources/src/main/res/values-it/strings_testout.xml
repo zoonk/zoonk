@@ -6,7 +6,7 @@
   "testout_continue": "05cf1e1efcd9ea6cbc023810a845caeb6efaacf9e38132bcfeb2b085978ebebd",
   "testout_intro_detail": "cd92744828c917d6208891301e609bdafaa1f3bbce7d3d155aff3bd48d70b23b",
   "testout_intro_title": "e97656287e6db58d6c8b075a52c71e443b433a4027f94a7e94346eff333957be",
-  "testout_lessons_back": "35ca4ea30e4b6ed2ccdb2a7d0f1362084055ea9f63bb319069fde3727b9f3341",
+  "testout_lessons_back": "620b5189e4d40f032a83fa4265e00496504d032f3dd34af0fe75850892a19cc8",
   "testout_lessons_left": "b7c4dc361b986e0a881477042bbce266be2f0f79e95dc6bb2e5c3e6588076d9b",
   "testout_lessons_off": "85048f6a336110938e980924b30f3ee8b1bb26a0044db77f287462a36ca3329c",
   "testout_not_passed": "d8f0474b00b6f0a6f2e09ba946437f77ca4bf60bc915b9a45be03b30ab20e17e",
@@ -53,9 +53,9 @@
         <item quantity="other">Il tuo piano salta %d lezioni su ciò che sai già.</item>
     </plurals>
     <plurals name="testout_lessons_back">
-        <item quantity="one">La lezione è di nuovo nel tuo piano.</item>
-        <item quantity="many">Le lezioni sono di nuovo nel tuo piano.</item>
-        <item quantity="other">Le lezioni sono di nuovo nel tuo piano.</item>
+        <item quantity="one">La lezione è tornata nel tuo piano.</item>
+        <item quantity="many">Le lezioni sono tornate nel tuo piano.</item>
+        <item quantity="other">Le lezioni sono tornate nel tuo piano.</item>
     </plurals>
     <string name="testout_continue">Continua</string>
 </resources>
