@@ -165,7 +165,7 @@ describe("entitlement lapse keeps a free way forward", () => {
       { status: "pending" },
     );
 
-    expect(renewed.today.session.dayProgress.lead).toBe("complete");
+    expect(renewed.today.session.state).toBe("done");
   });
 
   it("two concurrent Opens append once with conservative freshness and a replay leaves state unchanged", async () => {
