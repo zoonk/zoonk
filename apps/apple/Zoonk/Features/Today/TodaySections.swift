@@ -399,6 +399,10 @@ struct TodayPlanChangeSection: View {
         } icon: {
           SuggestionMark(kind: .symbol("calendar.badge.clock"))
         }
+        .accessibilityRepresentation {
+          missedDaysTitle
+            .accessibilityAddTraits(.isHeader)
+        }
 
         Text(behindSentence(behind))
           .typeStyle(.note)
@@ -431,6 +435,7 @@ struct TodayPlanChangeSection: View {
     let choices = MissedDaysChoices(
       canFocus: behind.canFocus, isReturn: view.session.freshStart == .welcomeBack)
 
+    // Sharing a row with the main action, which takes the room they leave, their words stay whole.
     PlanOtherOptions {
       ForEach(choices.others, id: \.self) { option in
         Button {
@@ -441,6 +446,7 @@ struct TodayPlanChangeSection: View {
       }
     }
     .buttonStyle(.outline)
+    .layoutPriority(1)
 
     Button {
       answer(.seen)
@@ -451,6 +457,7 @@ struct TodayPlanChangeSection: View {
     }
     .buttonStyle(.outline)
     .disabled(isSaving)
+    .layoutPriority(1)
 
     if let lead = choices.lead {
       Button {
