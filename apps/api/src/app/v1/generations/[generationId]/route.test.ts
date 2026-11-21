@@ -9,7 +9,7 @@ describe("GET /v1/generations/{generationId}", () => {
     mockRunRecord.mockResolvedValueOnce({
       status: "completed",
       workflowName:
-        "workflow//./src/workflows/sessions/writing-prompt-workflow//writingPromptWorkflow",
+        "workflow//./src/workflows/sessions/writing-prompt-workflow//writingDrillWorkflow",
     });
 
     const response = await getGeneration(
@@ -24,6 +24,7 @@ describe("GET /v1/generations/{generationId}", () => {
       id: generationId,
       kind: "writingPrompt",
       status: "completed",
+      unit: "drill",
     });
   });
 });

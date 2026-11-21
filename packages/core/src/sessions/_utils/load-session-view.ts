@@ -129,7 +129,7 @@ export async function loadStudySessionView({
   const { answers } = blockViews;
 
   const visibleBlocks = withoutLockedPhaseChallenges({
-    blocks: storedSession.blocks,
+    blocks: blockViews.displayBlocks,
     phaseChallengesRequired: storedSession.goal?.kind !== "language" || viewer?.tier === "plus",
   });
 

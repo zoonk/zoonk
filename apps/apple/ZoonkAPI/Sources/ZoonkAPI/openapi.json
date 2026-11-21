@@ -2053,7 +2053,7 @@
             }
           },
           "409": {
-            "description": "It isn't in today's session, it's already finished, a phase challenge waits for earlier work (error code EARLIER_FIRST, with details.reason `lessons` or `challenge`; complete or skip that work, then start again), or the bank holds too few questions for it (error code QUESTIONS_NEEDED: POST /challenges/{planItemId}/generations writes them; follow the run until it ends, whether every call succeeded or not, then start it again with `afterWriting`).",
+            "description": "It isn't in today's session, it's already finished, a phase challenge waits for earlier work (error code EARLIER_FIRST, with details.reason `lessons` or `challenge`; complete or skip that work, then start again), or the bank holds too few questions for it (error code QUESTIONS_NEEDED: POST /challenges/{planItemId}/generations writes them; follow the run until it ends, whether every call succeeded or not, then start it again with `afterWriting`). A written test requiring an exam choice answers `EXAM_CHOICE_REQUIRED` with `details.choiceGroups`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -20331,7 +20331,7 @@
             }
           },
           "409": {
-            "description": "The goal is paused",
+            "description": "The goal is paused, or the written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -20504,6 +20504,16 @@
           },
           "404": {
             "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -21046,7 +21056,7 @@
             }
           },
           "409": {
-            "description": "The mock or its block already finished, or the mock expired",
+            "description": "The mock or its block finished, the mock expired, or the written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -26423,7 +26433,7 @@
             }
           },
           "409": {
-            "description": "Conflict",
+            "description": "The writing block or rewrite is unavailable. The error includes the writing unit in `details.unit`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -43706,6 +43716,14 @@
               "cancelled"
             ],
             "description": "A run that stopped without ending (no progress for 30 minutes, as after a crash) reads `failed`: start the work again, and the new run takes its place."
+          },
+          "unit": {
+            "description": "The unit a writing prompt generation prepares",
+            "type": "string",
+            "enum": [
+              "drill",
+              "answer"
+            ]
           }
         },
         "required": [
@@ -86516,6 +86534,13 @@
                       "title": {
                         "type": "string"
                       },
+                      "unit": {
+                        "type": "string",
+                        "enum": [
+                          "drill",
+                          "answer"
+                        ]
+                      },
                       "versions": {
                         "type": "integer",
                         "minimum": 0,
@@ -86534,6 +86559,30 @@
                     ],
                     "additionalProperties": false
                   }
+                },
+                "availability": {
+                  "type": "object",
+                  "properties": {
+                    "choiceGroups": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "The notice names of the exam choices this writing depends on"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "needsChoice"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "choiceGroups",
+                    "status"
+                  ],
+                  "additionalProperties": false
                 },
                 "minutes": {
                   "nullable": true,
@@ -86635,6 +86684,30 @@
                             },
                             "required": [
                               "returnsOn",
+                              "status"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "choiceGroups": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "description": "The notice names of the exam choices this writing depends on"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "needsChoice"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "choiceGroups",
                               "status"
                             ],
                             "additionalProperties": false
@@ -91653,6 +91726,30 @@
             },
             "description": "The notice's subjects it asks, in its words"
           },
+          "availability": {
+            "type": "object",
+            "properties": {
+              "choiceGroups": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The notice names of the exam choices this writing depends on"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "needsChoice"
+                ]
+              }
+            },
+            "required": [
+              "choiceGroups",
+              "status"
+            ],
+            "additionalProperties": false
+          },
           "covers": {
             "nullable": true,
             "description": "The exam day's sections it sits, by the notice's names (Listening, Reading), when it leaves one out that isn't a written part (IELTS's Speaking). Null when it sits every such section, and for a subject's mock",
@@ -91701,6 +91798,30 @@
             "items": {
               "type": "object",
               "properties": {
+                "availability": {
+                  "type": "object",
+                  "properties": {
+                    "choiceGroups": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "The notice names of the exam choices this writing depends on"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "needsChoice"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "choiceGroups",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                },
                 "kind": {
                   "type": "string",
                   "enum": [
@@ -100721,6 +100842,13 @@
                 "enum": [
                   "writing"
                 ]
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "drill",
+                  "answer"
+                ]
               }
             },
             "required": [
@@ -100790,6 +100918,13 @@
                   "unit"
                 ],
                 "additionalProperties": false
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "drill",
+                  "answer"
+                ]
               }
             },
             "required": [

@@ -1,5 +1,11 @@
 import "server-only";
-import { type Goal, type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type ExamBlueprint,
+  type Goal,
+  type StudySessionBlock,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -19,45 +25,44 @@ import {
   admitWriting,
   readWritingExtraLimit,
 } from "./writing-admission";
-import { type WritingTaskSummary } from "./writing-contract";
 import { findWritingPrompts } from "./writing-supply";
 
-async function describeRefusedTask({
-  block,
-  examBlueprintId,
-  tx,
+function findCurrentTask({
+  blueprint,
+  taskKey,
   userId,
-  writing,
 }: {
-  block: { estimatedMinutes: number | null };
-  examBlueprintId: string | null;
-  tx: TransactionClient;
+  blueprint: ExamBlueprint | null;
+  taskKey: string;
   userId: string;
-  writing: { taskKey: string; unit: WritingTaskSummary["unit"] };
-}): Promise<WritingTaskSummary | undefined> {
-  if (!examBlueprintId || !block.estimatedMinutes) {
-    return undefined;
+}) {
+  if (!blueprint || (blueprint.ownerId !== userId && blueprint.visibility !== "public")) {
+    return;
   }
 
-  const blueprint = await tx.examBlueprint.findFirst({
-    where: { OR: [{ ownerId: userId }, { visibility: "public" }], id: examBlueprintId },
-  });
+  return listPracticeWritingTasks({
+    classTest: Boolean(blueprint.ownerId),
+    structure: readBlueprintContent(blueprint).structure,
+  }).find(({ key }) => key === taskKey);
+}
 
-  const task =
-    blueprint &&
-    listPracticeWritingTasks({
-      classTest: Boolean(blueprint.ownerId),
-      structure: readBlueprintContent(blueprint).structure,
-    }).find(({ key }) => key === writing.taskKey);
-
-  return task
+function summarizeTask({
+  estimatedMinutes,
+  task,
+  unit,
+}: {
+  estimatedMinutes: number | null;
+  task: ReturnType<typeof findCurrentTask>;
+  unit: NonNullable<BlockPayload["writing"]>["unit"];
+}) {
+  return task && estimatedMinutes
     ? {
         description: task.description,
         lines: task.lines,
-        minutes: block.estimatedMinutes,
+        minutes: estimatedMinutes,
         points: task.points,
         taskKey: task.key,
-        unit: writing.unit,
+        unit,
       }
     : undefined;
 }
@@ -72,7 +77,7 @@ async function findFirstWriting({
   writing,
 }: {
   block: StudySessionBlock;
-  goal: Goal;
+  goal: Goal & { examBlueprint: ExamBlueprint | null };
   localDate: Date;
   payload: BlockPayload;
   tx: TransactionClient;
@@ -162,10 +167,10 @@ export async function startWriting({
           : null;
 
       if (
-        block.status === "skipped" ||
+        (block.status === "skipped" && writing.admissionId) ||
         getStoredBlockWait({ block, blocks: earlier ? [earlier] : [] })
       ) {
-        return { status: "blockNotActive" as const };
+        return { status: "blockNotActive" as const, unit: writing.unit };
       }
 
       if (!previousAttemptId && writing.admissionId) {
@@ -174,10 +179,26 @@ export async function startWriting({
           admitted: false,
           sessionId: block.sessionId,
           status: "ready" as const,
+          unit: writing.unit,
         };
       }
 
-      const goal = await tx.goal.findUniqueOrThrow({ where: { id: block.session.goalId } });
+      const goal = await tx.goal.findUniqueOrThrow({
+        include: { examBlueprint: true },
+        where: { id: block.session.goalId },
+      });
+
+      const task = previousAttemptId
+        ? undefined
+        : findCurrentTask({ blueprint: goal.examBlueprint, taskKey: writing.taskKey, userId });
+
+      if (!previousAttemptId && !task) {
+        return { status: "taskRemoved" as const, unit: writing.unit };
+      }
+
+      if (block.status === "skipped") {
+        return { status: "blockNotActive" as const, unit: writing.unit };
+      }
 
       const localDate = getDateInTimeZone({
         date: new Date(),
@@ -195,16 +216,14 @@ export async function startWriting({
           })
         : await findFirstWriting({ block, goal, localDate, payload, tx, userId, writing });
 
-      if (!previousAttemptId && admission.status === "limitReached") {
-        const task = await describeRefusedTask({
-          block,
-          examBlueprintId: goal.examBlueprintId,
-          tx,
-          userId,
-          writing,
+      if (admission.status === "limitReached") {
+        const summary = summarizeTask({
+          estimatedMinutes: block.estimatedMinutes,
+          task,
+          unit: writing.unit,
         });
 
-        return { ...admission, ...(task && { task }) };
+        return { ...admission, ...(summary && { task: summary }), unit: writing.unit };
       }
 
       return admission.status === "ready"
@@ -212,13 +231,14 @@ export async function startWriting({
             ...admission,
             admitted: admission.admissionId !== writing.admissionId,
             sessionId: block.sessionId,
+            unit: writing.unit,
           }
         : admission;
     }),
   );
 
   if (error instanceof InvalidWritingRewriteError) {
-    return { status: "invalidRewrite" as const };
+    return { status: "invalidRewrite" as const, unit: error.unit };
   }
 
   if (error) {
@@ -236,7 +256,7 @@ export async function startWriting({
   const opened = await startStudyBlock({ blockId, input: {}, sessionId: started.sessionId });
 
   if (opened.status !== "ready" && opened.status !== "blockFinished") {
-    return { status: "blockNotActive" as const };
+    return { status: "blockNotActive" as const, unit: started.unit };
   }
 
   return { admissionId: started.admissionId, status: "ready" as const };

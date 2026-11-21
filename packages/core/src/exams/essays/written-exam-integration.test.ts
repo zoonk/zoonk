@@ -4,15 +4,18 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
+import { buildExamIdentityKey } from "../../library/exams/exam-identity";
+import { readBlueprintContent, saveExamBlueprint } from "../../library/exams/save-exam-blueprint";
 import { getWritingPromptId, writeWritingItem } from "../../library/items/write-writing-item";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
 import { getStudySession } from "../../sessions/get-study-session";
+import { openStudyBlock } from "../../sessions/open-block";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { CGU } from "../mocks/_test-utils/cgu-written";
 import { pickWrittenTestDays } from "../mocks/written-test-schedule";
@@ -200,6 +203,7 @@ describe("CGU written exam preparation", () => {
         taskKey: "long",
         unit: "answer",
       },
+      unit: "answer",
     });
 
     await expect(getEssay({ blockId })).resolves.toStrictEqual({ status: "notFound" });
@@ -312,6 +316,20 @@ describe("CGU written exam preparation", () => {
 
     const skillRow = { userSkill: { skillId: writing.id, userId: user.id } };
     await expect(prisma.learnerSkill.findUnique({ where: skillRow })).resolves.toBeNull();
+
+    const withoutShort = readBlueprintContent(blueprint).structure;
+    const written = withoutShort.mock?.sections.find(({ kind }) => kind === "written");
+
+    if (!written?.tasks) {
+      throw new Error("Expected written tasks");
+    }
+
+    written.tasks = written.tasks.filter(({ key }) => key !== "short");
+
+    await prisma.examBlueprint.update({
+      data: { structure: withoutShort },
+      where: { id: blueprint.id },
+    });
 
     vi.setSystemTime(new Date(NOW.getTime() + 2 * DAY_MS));
 
@@ -428,6 +446,70 @@ describe("CGU written exam preparation", () => {
     await expect(prisma.learnerSkill.findUnique({ where: skillRow })).resolves.toMatchObject({
       state: "solid",
     });
+  });
+
+  it("drops an unissued task from the day and Continue after the notice is read again", async () => {
+    const { blueprint, goal } = await setup();
+    const { block, sessionId } = await openWritingDay(goal.id);
+    const content = readBlueprintContent(blueprint);
+    const written = content.structure.mock?.sections.find(({ kind }) => kind === "written");
+
+    if (!written?.tasks) {
+      throw new Error("Expected written tasks");
+    }
+
+    const identity = { ...blueprint, country: "BR", role: blueprint.id };
+
+    const [source] = await Promise.all([
+      sourceFixture(),
+      prisma.examBlueprint.update({
+        data: { identityKey: buildExamIdentityKey(identity), role: identity.role },
+        where: { id: blueprint.id },
+      }),
+    ]);
+
+    written.tasks = written.tasks.filter(({ key }) => key !== "short");
+
+    const reread = await saveExamBlueprint({
+      content: { ...content, edition: { ...content.edition, sourceHash: source.contentHash } },
+      identity,
+      provenance: {
+        generatedAt: NOW.toISOString(),
+        model: "fixture",
+        promptVersion: "fixture",
+        runId: "fixture",
+      },
+      reread: true,
+      sourceId: source.id,
+    });
+
+    expect(reread.blueprint.id).toBe(blueprint.id);
+
+    const day = await getStudySession({ input: {}, sessionId });
+
+    if (day.status !== "ready") {
+      throw new Error(day.status);
+    }
+
+    const [next] = day.session.blocks;
+    expect(day.session.blocks).toMatchObject([{ title: "Long question" }]);
+    expect(day.session.nextBlockId).toBe(next?.id);
+    expect(next?.id).not.toBe(block.id);
+
+    await expect(
+      openStudyBlock({ target: { expectedBlockId: block.id, kind: "next", sessionId } }),
+    ).resolves.toMatchObject({ opening: { blockId: next?.id, kind: "essay" } });
+
+    await expect(startWriting({ blockId: block.id })).resolves.toMatchObject({
+      status: "taskRemoved",
+      unit: "answer",
+    });
+
+    await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
+
+    await expect(
+      prisma.studySessionBlock.findUnique({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "skipped" });
   });
 
   it("writes a new prompt when the only unseen prompt uses superseded points", async () => {

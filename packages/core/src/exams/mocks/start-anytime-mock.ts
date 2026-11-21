@@ -2,13 +2,19 @@ import "server-only";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { type WritingNeedsChoice } from "../essays/writing-contract";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
-import { loadAnytimeMockSetup, resolveAnytimeOption } from "./_utils/anytime-mock-setup";
+import {
+  findRunningAnytimeMock,
+  loadAnytimeMockSetup,
+  resolveAnytimeOption,
+} from "./_utils/anytime-mock-setup";
 import { type CreateAnytimeMockResult, createAnytimeMock } from "./_utils/create-anytime-mock";
 import { findMockQuestionsCap } from "./_utils/mock-question-writes";
 import { type AnytimeMockInput } from "./mock-contract";
 
 export type StartAnytimeMockResult =
+  | WritingNeedsChoice
   | CreateAnytimeMockResult
   | {
       status:
@@ -54,6 +60,11 @@ export async function startAnytimeMock({
   }
 
   const option = resolveAnytimeOption({ choice: input, setup });
+
+  if (option?.availability) {
+    const running = await findRunningAnytimeMock({ goalId, userId });
+    return running ? { id: running.id, status: "running" } : option.availability;
+  }
 
   const asksNothing = option?.questions === 0 && option.written.length === 0;
 

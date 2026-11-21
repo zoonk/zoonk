@@ -1,3 +1,4 @@
+import { type WritingNeedsChoice } from "@zoonk/core/exams/essays/writing-contract";
 import { createErrorResponse, errors, httpStatus } from "./api-errors";
 import { signUpRequiredError } from "./lesson-player-errors";
 import { studySessionErrorCodes } from "./study-session-errors";
@@ -144,7 +145,16 @@ const REFUSALS = {
   },
 } as const;
 
-export function examError(result: ExamRefusal) {
+export function examError(result: ExamRefusal | WritingNeedsChoice) {
+  if (result.status === "needsChoice") {
+    return createErrorResponse({
+      code: "EXAM_CHOICE_REQUIRED",
+      details: { choiceGroups: result.choiceGroups },
+      message: "Choose the exam options required for this written test",
+      status: httpStatus.conflict,
+    });
+  }
+
   if (result.status === "unauthorized") {
     return errors.unauthorized();
   }

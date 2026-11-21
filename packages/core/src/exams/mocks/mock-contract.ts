@@ -12,6 +12,7 @@ import { type TrueFalseLabels } from "../../library/exams/true-false-labels";
 import { type MilestoneView, type MissionMomentView } from "../../sessions/completion-contract";
 import { type Reached } from "../../sessions/reached";
 import { type EssayView } from "../essays/essay-contract";
+import { type WritingNeedsChoice, writingNeedsChoiceSchema } from "../essays/writing-contract";
 import { type ExamDocument } from "../exam-document";
 import { type ExamMockSummary } from "../view/exam-view-contract";
 import {
@@ -282,6 +283,7 @@ export type AnytimeMockInput = Omit<z.infer<typeof anytimeMockInputSchema>, "sha
 
 export const mockOptionSectionsSchema = z.array(
   z.object({
+    availability: writingNeedsChoiceSchema.optional(),
     kind: z.enum(["objective", "written", "listening", "speaking", "practical"]),
     minutes: z.int().positive().nullable(),
     name: z.string(),
@@ -292,6 +294,7 @@ export const mockOptionSectionsSchema = z.array(
 
 export type MockOptionView = MockShape & {
   areas: string[];
+  availability?: WritingNeedsChoice;
   sections?: z.infer<typeof mockOptionSectionsSchema>;
   covers: string[] | null;
   estimatedMinutes: number;

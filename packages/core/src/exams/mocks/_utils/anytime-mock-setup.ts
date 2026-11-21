@@ -6,6 +6,7 @@ import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
+import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { readExamPicks } from "../../choices/exam-choices";
@@ -22,6 +23,7 @@ import { loadSkillAreas } from "./mock-candidates";
 import { loadListeningCandidates } from "./mock-listening";
 import { loadMockPace } from "./mock-pace";
 import { loadBankTypedParts } from "./mock-typed-parts";
+import { withMockWritingAvailability } from "./mock-writing-choices";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
 import { readMockSizeSource, readMockStructure, readUnpickedChoices } from "./read-mock-structure";
 
@@ -81,7 +83,11 @@ export async function loadAnytimeMockSetup(
 
   const buildable = await canBuildMock({ blueprint, skillIds: [...areas.keys()] });
 
-  const structure = blueprint ? readMockStructure({ blueprint, picks }) : null;
+  const notice = blueprint ? readBlueprintContent(blueprint).structure : null;
+
+  const structure = blueprint
+    ? readMockStructure({ blueprint, includePendingWriting: true, picks })
+    : null;
 
   const { recordings, unvoiced } = await loadListeningCandidates({
     goalId: goal.id,
@@ -105,7 +111,7 @@ export async function loadAnytimeMockSetup(
           structure,
           typed,
           unpicked: readUnpickedChoices({ blueprint, picks }),
-        })
+        }).map((option) => withMockWritingAvailability({ option, picks, structure: notice }))
       : [],
     sizeSource: readMockSizeSource(blueprint),
     speaking: speaking !== null,

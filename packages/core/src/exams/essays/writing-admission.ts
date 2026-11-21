@@ -6,12 +6,19 @@ import { ESSAY_GRADE_COST_MICROS } from "../../entitlements/limits";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { addDays, toIsoDate } from "../../plans/planner/plan-calendar";
 import { readBlockPayload } from "../../sessions/block-payload";
-import { writtenAnswerSchema } from "./writing-contract";
+import { type WritingPrompt, writtenAnswerSchema } from "./writing-contract";
 
 const DAILY_EXTRA_WRITES = 6;
 
 export class InvalidWritingRewriteError extends Error {
   override name = "InvalidWritingRewriteError";
+
+  readonly unit: WritingPrompt["unit"];
+
+  constructor(unit: WritingPrompt["unit"]) {
+    super("Rewriting requires the block's latest saved answer.");
+    this.unit = unit;
+  }
 }
 
 type WritingOwner = { blockId: string; previousAttemptId?: string } | { mockId: string };
@@ -151,7 +158,7 @@ function blockAdmission({
         answered.data.conditions.admissionId !== writing.admissionId ||
         itemId !== payload.itemIds[0]
       ) {
-        throw new InvalidWritingRewriteError("Rewriting requires the block's latest saved answer.");
+        throw new InvalidWritingRewriteError(writing.unit);
       }
     },
     currentId: writing.admissionId,

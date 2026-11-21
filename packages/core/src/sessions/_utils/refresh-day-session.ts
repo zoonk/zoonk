@@ -7,7 +7,7 @@ import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
-import { ONE_PER_DAY, hasSameContent } from "./day-block-content";
+import { ONE_PER_DAY, hasSameBlocks, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
@@ -24,7 +24,10 @@ export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
 
 function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
-  return blocks.filter((block) => block.status !== "pending" || readBlockPayload(block).extra);
+  return blocks.filter((block) => {
+    const { extra, writing } = readBlockPayload(block);
+    return block.status !== "pending" || extra || Boolean(writing?.admissionId || writing?.draft);
+  });
 }
 
 /** Preserve opened practice's share only after study begins; unstarted days rebuild whole. */
@@ -152,22 +155,6 @@ export async function planRestOfDayWithPlan({
     plan: await dayPlan,
     plannedMinutes: Math.ceil(getSessionUsedMinutes(kept) + plannedMinutes),
   };
-}
-
-export function hasSameBlocks({
-  locked,
-  read,
-}: {
-  locked: readonly StudySessionBlock[];
-  read: readonly StudySessionBlock[];
-}): boolean {
-  return (
-    read.length === locked.length &&
-    read.every((block, index) => {
-      const current = locked[index];
-      return current?.id === block.id && current.status === block.status;
-    })
-  );
 }
 
 /** Preserve the session id and started work; a concurrent block start leaves the queue unchanged. */

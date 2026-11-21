@@ -172,6 +172,49 @@ describe(writingPromptWorkflow, () => {
     }
   });
 
+  it("returns the drill unit while its prompt is being written", async () => {
+    const {
+      input: { goalId, userId },
+    } = await setup();
+
+    const session = await studySessionFixture({ goalId, userId });
+
+    const block = await studySessionBlockFixture({
+      kind: "produce",
+      payload: {
+        skillIds: [crypto.randomUUID()],
+        writing: { admissionId: null, draft: null, taskKey: "policy", unit: "drill" },
+      },
+      sessionId: session.id,
+    });
+
+    mockSession(userId);
+    const runId = "writing-drill";
+    getStartMock().mockResolvedValueOnce({ runId } as never);
+
+    const response = await startWriting(
+      new Request(`http://localhost/v1/essays/${block.id}/starts`, {
+        body: "{}",
+        headers: { "content-type": "application/json" },
+        method: "POST",
+      }),
+      { params: Promise.resolve({ blockId: block.id }) },
+    );
+
+    expect(response.status).toBe(202);
+    expect(response.headers.get("Location")).toBe(`/v1/generations/${runId}`);
+
+    await expect(response.json()).resolves.toStrictEqual({
+      runId,
+      status: "writing",
+      unit: "drill",
+    });
+
+    const workflow = getStartMock().mock.calls[0]?.[0];
+    expect(typeof workflow === "function" && workflow.name).toBe("writingDrillWorkflow");
+    expect(writeWritingPrompt).not.toHaveBeenCalled();
+  });
+
   it("returns a conflict without generating for a pending block whose task was removed", async () => {
     const {
       input: { goalId, userId },
@@ -197,6 +240,11 @@ describe(writingPromptWorkflow, () => {
     );
 
     expect(response.status).toBe(409);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { details: { unit: "answer" } },
+    });
+
     expect(getStartMock()).not.toHaveBeenCalled();
     expect(writeWritingPrompt).not.toHaveBeenCalled();
     await expect(prisma.writingAdmission.count({ where: { userId } })).resolves.toBe(0);

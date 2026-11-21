@@ -12,6 +12,7 @@ import { loadExtraWritingAvailability } from "./_utils/extra-writing-availabilit
 import { readLessonScreens } from "./_utils/lesson-screens";
 import { openSessionBlock, openingResult } from "./_utils/open-session-block";
 import { followSavedDay } from "./_utils/refresh-study-day-selection";
+import { findRemovedWritingBlocks } from "./_utils/removed-writing-blocks";
 import { type StudyBlockView, getNextBlock, toStudyBlockView } from "./_utils/session-view";
 import {
   STUDY_SESSION_INCLUDE,
@@ -40,16 +41,19 @@ type OpenedSession =
   | { status: "goalNotActive" | "retryable" };
 
 async function loadOpenedBlockViews({
-  blocks,
   now,
+  session,
   timeZone,
   userId,
 }: {
-  blocks: StudySessionRow["blocks"];
+  session: Pick<StudySessionRow, "blocks" | "goal">;
   now: Date;
   timeZone: string;
   userId: string;
 }) {
+  const removed = await findRemovedWritingBlocks({ fresh: true, session });
+  const blocks = session.blocks.filter(({ id }) => !removed.has(id));
+
   const withWritingAvailability = await loadExtraWritingAvailability({
     blocks,
     now,
@@ -98,10 +102,15 @@ async function openSavedSession({
     phaseChallengesRequired: required,
   });
 
-  const visibleViews = await loadOpenedBlockViews({ blocks: visible, now, timeZone, userId });
+  const visibleViews = await loadOpenedBlockViews({
+    now,
+    session: { ...refilled, blocks: visible },
+    timeZone,
+    userId,
+  });
 
   const target = targetBlockId
-    ? visible.find((block) => block.id === targetBlockId)
+    ? visibleViews.find((block) => block.id === targetBlockId)
     : getNextBlock(visibleViews);
 
   // Queue reconciliation only appends work, so existing work does not wait for it. Entitlement replacement still runs before target selection.
@@ -116,11 +125,14 @@ async function openSavedSession({
     selected === refilled
       ? visibleViews
       : await loadOpenedBlockViews({
-          blocks: withoutLockedPhaseChallenges({
-            blocks: selected.blocks,
-            phaseChallengesRequired: required,
-          }),
           now,
+          session: {
+            ...selected,
+            blocks: withoutLockedPhaseChallenges({
+              blocks: selected.blocks,
+              phaseChallengesRequired: required,
+            }),
+          },
           timeZone,
           userId,
         });

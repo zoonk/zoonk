@@ -1,6 +1,6 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import { readExamPicks, toChosenStructure } from "../../../exams/choices/exam-choices";
+import { readExamPicks } from "../../../exams/choices/exam-choices";
 import { loadClaimEvents } from "../../../learner/_utils/load-skill-claims";
 import {
   type LibrarySource,
@@ -168,9 +168,7 @@ export async function loadSyllabusInput(
       goal: { ...goal, timezone: goal.timezone ?? null },
       graph,
       settings: parsePlanSettings(plan.settings),
-      structure: knownBlueprint
-        ? toChosenStructure({ picks, structure: readBlueprintContent(knownBlueprint).structure })
-        : null,
+      structure: knownBlueprint ? readBlueprintContent(knownBlueprint).structure : null,
     }),
   ]);
 

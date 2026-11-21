@@ -8,6 +8,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
@@ -19,6 +20,7 @@ import { getMockOptions } from "./get-mock-options";
 import { gradeMockEssays } from "./grade-mock-essays";
 import { mockAnswerInputSchema } from "./mock-answer-contract";
 import { type MockShape, mockConditionsSchema } from "./mock-contract";
+import { requestMockQuestions } from "./request-mock-questions";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { startMock } from "./start-mock";
@@ -46,10 +48,10 @@ const EVIDENCE = {
 
 const PART_MINIMUM = { max: 100, minimum: { unit: "points", value: 50 } } as const;
 
-async function setup({ plus = true, shortOnly = false } = {}) {
+async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
   const [user, blueprint, control, writing] = await Promise.all([
     userFixture(),
-    examBlueprintFixture({ structure: CGU }),
+    examBlueprintFixture({ structure }),
     skillFixture(),
     skillFixture(),
   ]);
@@ -217,6 +219,74 @@ describe("written mock sittings", () => {
     await expect(prisma.writingAdmission.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
+  it("keeps both notice questions visible and refuses a written test that needs a specialty", async () => {
+    const structure: ExamStructure = structuredClone(CGU);
+    const written = structure.mock?.sections.find(({ kind }) => kind === "written");
+    const control = structure.subjects[0];
+
+    if (!written?.tasks?.[0] || !written.tasks[1] || !control) {
+      throw new Error("Expected the two-question notice");
+    }
+
+    written.tasks[0].subjects = ["Control"];
+    written.tasks[1].subjects = ["Systems", "Accounting"];
+
+    structure.subjects.push(
+      { ...control, choiceGroup: "Specialty", name: "Systems", questions: null },
+      { ...control, choiceGroup: "Specialty", name: "Accounting", questions: null },
+    );
+
+    const { goal, user } = await setup({ structure });
+    const availability = { choiceGroups: ["Specialty"], status: "needsChoice" };
+
+    await expect(getSyllabusView({ goalId: goal.id })).resolves.toMatchObject({
+      syllabus: {
+        writtenPractice: {
+          subjects: [
+            {
+              availability,
+              minutes: 210,
+              questions: 2,
+              writeActions: [
+                { availability: { status: "available" }, taskKey: "short" },
+                { availability, taskKey: "long" },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const options = await getMockOptions({ goalId: goal.id });
+
+    if (options.status !== "ready") {
+      throw new Error(options.status);
+    }
+
+    expect(options.view.options.find(({ kind }) => kind === "written")).toMatchObject({
+      availability,
+      minutes: 210,
+      sections: [{ availability, questions: 2 }],
+    });
+
+    expect(options.view.options.find(({ kind }) => kind === "full")).toMatchObject({
+      availability,
+      minutes: 510,
+      sections: [{ questions: 170 }, { availability, questions: 2 }],
+    });
+
+    await expect(
+      Promise.all(
+        [FULL, WRITTEN].flatMap((shape) => [
+          startAnytimeMock({ goalId: goal.id, input: { acceptFewer: true, shape } }),
+          requestMockQuestions({ goalId: goal.id, input: { shape } }),
+        ]),
+      ),
+    ).resolves.toStrictEqual([availability, availability, availability, availability]);
+
+    await expect(prisma.writingAdmission.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("cannot be started by a learner without Plus", async () => {
     const { goal, user } = await setup({ plus: false });
 
@@ -357,6 +427,7 @@ describe("written mock sittings", () => {
                   range: null,
                   taskKey: "short",
                   title: "Topic for short",
+                  unit: "answer",
                   versions: 1,
                 },
               ],

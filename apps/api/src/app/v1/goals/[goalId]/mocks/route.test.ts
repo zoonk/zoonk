@@ -113,4 +113,63 @@ describe("the written mock API", () => {
     expect(ensureMockWritingPrompts).toHaveBeenCalledOnce();
     await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
+
+  it("returns the waiting choice on the written option and refuses both start and generation", async () => {
+    const structure = structuredClone(CGU);
+    const written = structure.mock?.sections.find(({ kind }) => kind === "written");
+    const subject = structure.subjects[0];
+
+    if (!written?.tasks?.[0] || !subject) {
+      throw new Error("Expected the written test");
+    }
+
+    written.tasks[0].subjects = ["Systems", "Accounting"];
+
+    structure.subjects.push(
+      { ...subject, choiceGroup: "Specialty", name: "Systems", questions: null },
+      { ...subject, choiceGroup: "Specialty", name: "Accounting", questions: null },
+    );
+
+    const [user, blueprint] = await Promise.all([
+      userFixture(),
+      examBlueprintFixture({ structure }),
+    ]);
+
+    const [goal] = await Promise.all([
+      goalFixture({ examBlueprintId: blueprint.id, kind: "exam", userId: user.id }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const list = await listMocks(
+      new Request(`http://localhost/v1/goals/${goal.id}/mocks`),
+      context(goal.id),
+    );
+
+    const data = mockOptionsResponseSchema.parse(await list.json());
+
+    expect(data.options.find(({ kind }) => kind === "written")).toMatchObject({
+      availability: { choiceGroups: ["Specialty"], status: "needsChoice" },
+      minutes: 210,
+      sections: [{ questions: 2 }],
+    });
+
+    const responses = await Promise.all([
+      startMock(request(goal.id), context(goal.id)),
+      generate(request(goal.id, "/generations"), context(goal.id)),
+    ]);
+
+    expect(responses.map(({ status }) => status)).toStrictEqual([409, 409]);
+
+    await expect(Promise.all(responses.map((response) => response.json()))).resolves.toMatchObject(
+      Array.from({ length: 2 }, () => ({
+        error: { code: "EXAM_CHOICE_REQUIRED", details: { choiceGroups: ["Specialty"] } },
+      })),
+    );
+
+    expect(ensureMockWritingPrompts).not.toHaveBeenCalled();
+  });
 });

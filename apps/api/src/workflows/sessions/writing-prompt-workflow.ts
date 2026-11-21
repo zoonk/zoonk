@@ -54,6 +54,16 @@ async function trackFailureStep() {
 export async function writingPromptWorkflow(run: WritingPromptRun) {
   "use workflow";
 
+  return writePrompt(run);
+}
+
+async function writingDrillWorkflow(run: WritingPromptRun) {
+  "use workflow";
+
+  return writePrompt(run);
+}
+
+async function writePrompt(run: WritingPromptRun) {
   const { workflowRunId } = getWorkflowMetadata();
 
   try {
@@ -119,7 +129,8 @@ export async function ensureWritingPrompts(
     poolToken,
   ]);
 
-  const runId = await startOnce(writingPromptWorkflow, [{ input, poolToken }], runToken);
+  const workflow = input.unit === "drill" ? writingDrillWorkflow : writingPromptWorkflow;
+  const runId = await startOnce(workflow, [{ input, poolToken }], runToken);
 
   const current = await loadWritingSupply(input);
   return !current || current.missing === 0 ? { status: "ready" } : { runId, status: "writing" };

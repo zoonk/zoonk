@@ -2,12 +2,13 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { withPlanRetry } from "../../plans/plan-conflict";
 import { appendLandedLessons } from "./append-landed-lessons";
+import { findRemovedWritingBlocks } from "./removed-writing-blocks";
 import { selectDayPlan } from "./selected-day-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
  * What Open and Continue do to a saved day: take the plan's selection once the plan changed since
- * the day was saved. Only appends to the shown queue.
+ * the day was saved and drop unissued writing the notice removed.
  */
 export async function followSavedDay({
   session,
@@ -22,13 +23,21 @@ export async function followSavedDay({
       where: { id: session.id },
     });
 
-    const selection = current.goal
-      ? await selectDayPlan({ goal: current.goal, now: new Date(), timeZone, useFreshSaved: true })
-      : null;
+    const [selection, removed] = await Promise.all([
+      current.goal
+        ? selectDayPlan({ goal: current.goal, now: new Date(), timeZone, useFreshSaved: true })
+        : null,
+      findRemovedWritingBlocks({ fresh: true, session: current }),
+    ]);
+
+    const dropped = current.blocks.filter(
+      ({ id, status }) => removed.has(id) && status !== "skipped",
+    );
 
     if (
       !selection ||
-      (!selection.computed &&
+      (dropped.length === 0 &&
+        !selection.computed &&
         !selection.inputKeyUpdate &&
         current.planVersion === selection.context.plan.version)
     ) {
@@ -36,6 +45,7 @@ export async function followSavedDay({
     }
 
     return appendLandedLessons({
+      dropped,
       goal: selection.context.goal,
       selection,
       session: current,

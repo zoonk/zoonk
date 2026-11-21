@@ -8,7 +8,7 @@ export const MAX_ESSAY_CHARACTERS = 48_000;
 const taskKey = z.string().min(1);
 const lines = z.int().positive().nullable();
 const points = z.number().positive().nullable();
-const unit = z.enum(["drill", "answer"]);
+export const writingUnitSchema = z.enum(["drill", "answer"]);
 
 export const writingPromptSchema = z
   .object({
@@ -26,7 +26,7 @@ export const writingPromptSchema = z
     points,
     taskKey,
     title: z.string().min(1),
-    unit,
+    unit: writingUnitSchema,
   })
   .meta({ id: "WritingPrompt" });
 
@@ -63,7 +63,11 @@ export const writingStartInputSchema = z
 export const writingStartSchema = z
   .discriminatedUnion("status", [
     z.object({ admissionId: uuidSchema(), status: z.literal("ready") }),
-    z.object({ runId: z.string(), status: z.literal("writing") }),
+    z.object({
+      runId: z.string(),
+      status: z.literal("writing"),
+      unit: writingUnitSchema.optional(),
+    }),
     z.object({
       returnsOn: z.iso.date(),
       status: z.literal("limitReached"),
@@ -74,10 +78,11 @@ export const writingStartSchema = z
           minutes: z.int().positive(),
           points,
           taskKey,
-          unit,
+          unit: writingUnitSchema,
         })
         .optional()
         .describe("The writing task and its estimated practice time in minutes"),
+      unit: writingUnitSchema.optional(),
     }),
   ])
   .meta({ id: "WritingStart" });
@@ -93,13 +98,23 @@ export const writingBlockSchema = z.object({
   admissionId: uuidSchema().nullable(),
   draft: writingDraftSchema.omit({ admissionId: true }).nullable(),
   taskKey,
-  unit,
+  unit: writingUnitSchema,
 });
 
 export const writingAvailabilitySchema = z.discriminatedUnion("status", [
   z.object({ status: z.enum(["available", "continue"]) }),
   z.object({ returnsOn: z.iso.date(), status: z.literal("tomorrow") }),
 ]);
+
+export const writingNeedsChoiceSchema = z.object({
+  choiceGroups: z
+    .array(z.string())
+    .min(1)
+    .describe("The notice names of the exam choices this writing depends on"),
+  status: z.literal("needsChoice"),
+});
+
+export type WritingNeedsChoice = z.infer<typeof writingNeedsChoiceSchema>;
 
 const writingConditionsSchema = z.object({
   admissionId: uuidSchema(),
@@ -189,6 +204,7 @@ export type WritingPrompt = z.infer<typeof writingPromptSchema>;
 export type WritingPacing = z.infer<typeof writingPacingSchema>;
 
 export type WritingConditions = z.infer<typeof writingConditionsSchema>;
+
 export type WritingTaskSummary = NonNullable<
   Extract<z.infer<typeof writingStartSchema>, { status: "limitReached" }>["task"]
 >;

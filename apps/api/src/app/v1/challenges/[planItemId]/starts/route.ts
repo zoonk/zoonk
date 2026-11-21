@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { examError } from "@/lib/exam-errors";
 import { signUpRequiredError } from "@/lib/lesson-player-errors";
 import { challengePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
@@ -20,6 +21,10 @@ async function startChallengeRoute(
 
   if (result.status === "ready") {
     return NextResponse.json(result.destination);
+  }
+
+  if (result.status === "needsChoice") {
+    return examError(result);
   }
 
   if (result.status === "signUpRequired") {

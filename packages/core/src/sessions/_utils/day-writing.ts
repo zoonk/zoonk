@@ -52,6 +52,8 @@ export function getDayWriting({
       }))
     : [];
 
+  const taskKeys = new Set(tasks.map(({ taskKey }) => taskKey));
+
   const writtenTest: PlannedCheckpoint | null =
     scheduledWriting && includesMockExams
       ? {
@@ -73,7 +75,9 @@ export function getDayWriting({
 
   return {
     continuingWritingMinutes: allocated?.tasks.length === 0 ? allocated.minutes : 0,
-    produces: schedule ? (allocated?.tasks ?? []) : undefined,
+    produces: schedule
+      ? (allocated?.tasks.filter(({ taskKey }) => taskKeys.has(taskKey)) ?? [])
+      : undefined,
     reserveDrill: (lesson: PlannedLesson) =>
       reserveWritingDrill(lesson, pickWritingDrill({ lesson, tasks })),
     scheduledWriting,

@@ -4,10 +4,13 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { admitWriting } from "../essays/writing-admission";
+import { type WritingNeedsChoice } from "../essays/writing-contract";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
 import { buildMockConditions } from "./_utils/mock-conditions";
+import { getMockWritingAvailability } from "./_utils/mock-writing-choices";
 import { findMockWriting } from "./_utils/mock-writing-supply";
 import { type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
 import { type MockConditions, type MockTimeZoneInput } from "./mock-contract";
@@ -23,6 +26,7 @@ type StartWritingRequest = {
 };
 
 export type StartMockResult =
+  | WritingNeedsChoice
   | {
       status:
         | "blockFinished"
@@ -119,6 +123,18 @@ async function startNewScheduledMock({
   const fullKind = identity?.fullLength ? "full" : "half";
   const kind = payload.checkpoint?.written ? "written" : fullKind;
   const shape = { day: identity?.day ?? null, kind } as const;
+  const { blueprint, picks } = owned;
+
+  const availability = getMockWritingAvailability({
+    picks,
+    shape,
+    structure: blueprint ? readBlueprintContent(blueprint).structure : null,
+  });
+
+  if (availability) {
+    return availability;
+  }
+
   const writingInput = goal ? { goal, goalId: goal.id, shape, structure, userId } : null;
   const supply = writingInput && (await findMockWriting(writingInput));
 

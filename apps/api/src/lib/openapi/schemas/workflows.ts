@@ -1,3 +1,4 @@
+import { writingUnitSchema } from "@zoonk/core/exams/essays/writing-contract";
 import { WRITING_PROMPT_KIND, WRITING_PROMPT_STEPS } from "@zoonk/core/library/generation/steps";
 import { z } from "zod";
 
@@ -25,6 +26,7 @@ export const generationResourceSchema = z
         description:
           "A run that stopped without ending (no progress for 30 minutes, as after a crash) reads `failed`: start the work again, and the new run takes its place.",
       }),
+    unit: writingUnitSchema.optional().describe("The unit a writing prompt generation prepares"),
   })
   .meta({ id: "Generation" });
 

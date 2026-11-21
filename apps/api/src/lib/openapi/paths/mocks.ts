@@ -81,7 +81,11 @@ export const mockPaths = {
         ...commonErrors,
         "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
         "403": forbiddenResponse,
-        "409": { ...conflictResponse, description: "The goal is paused" },
+        "409": {
+          ...conflictResponse,
+          description:
+            "The goal is paused, or the written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
+        },
         "422": {
           ...unprocessableEntityResponse,
           description: "Not an exam, not one of its mocks, or too few questions for one",
@@ -128,6 +132,11 @@ export const mockPaths = {
         ...commonErrors,
         "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
         "403": forbiddenResponse,
+        "409": {
+          ...conflictResponse,
+          description:
+            "The written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
+        },
         "422": unprocessableEntityResponse,
         "429": tooManyRequestsResponse,
       },
@@ -244,7 +253,8 @@ export const mockPaths = {
         "403": forbiddenResponse,
         "409": {
           ...conflictResponse,
-          description: "The mock or its block already finished, or the mock expired",
+          description:
+            "The mock or its block finished, the mock expired, or the written test requires an exam choice (`EXAM_CHOICE_REQUIRED`, with `details.choiceGroups`)",
         },
         "422": unprocessableEntityResponse,
       },

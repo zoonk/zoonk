@@ -132,9 +132,11 @@ function countChosenParts({
 }
 
 export function toChosenStructure({
+  includePendingWriting = false,
   picks,
   structure: whole,
 }: {
+  includePendingWriting?: boolean;
   picks: ExamPicks;
   structure: ExamStructure;
 }): ExamStructure {
@@ -155,14 +157,15 @@ export function toChosenStructure({
         return [section];
       }
 
-      const tasks = section.tasks.filter(
-        ({ description, subjects }) =>
-          getWritingScope({
-            picks,
-            structure: whole,
-            task: { description, section: section.name, subjects: subjects ?? null },
-          }).available,
-      );
+      const tasks = section.tasks.filter(({ description, subjects }) => {
+        const scope = getWritingScope({
+          picks,
+          structure: whole,
+          task: { description, section: section.name, subjects: subjects ?? null },
+        });
+
+        return scope.available || (includePendingWriting && scope.missingChoices.length > 0);
+      });
 
       return tasks.length > 0 ? [{ ...section, tasks }] : [];
     }),

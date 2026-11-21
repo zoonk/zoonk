@@ -7,6 +7,12 @@ import { WRITING_PROMPT_KIND } from "@zoonk/core/library/generation/steps";
 import { NextResponse } from "next/server";
 import { parseWorkflowName } from "workflow/observability";
 
+const WRITING_UNITS = new Map<string, "answer" | "drill">([
+  ["writingBatchWorkflow", "answer"],
+  ["writingDrillWorkflow", "drill"],
+  ["writingPromptWorkflow", "answer"],
+]);
+
 async function getGeneration(
   _request: Request,
   context: { params: Promise<{ generationId: string }> },
@@ -21,12 +27,11 @@ async function getGeneration(
 
   const name = parseWorkflowName(run.workflowName)?.functionName;
 
-  const kind =
-    name === "writingPromptWorkflow" || name === "writingBatchWorkflow"
-      ? WRITING_PROMPT_KIND
-      : undefined;
+  const unit = name ? WRITING_UNITS.get(name) : undefined;
 
-  return NextResponse.json({ id: path.generationId, kind, status: run.status });
+  const kind = unit ? WRITING_PROMPT_KIND : undefined;
+
+  return NextResponse.json({ id: path.generationId, kind, status: run.status, unit });
 }
 
 export const GET = withApiErrorBoundary(getGeneration);

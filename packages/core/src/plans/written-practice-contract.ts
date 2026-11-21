@@ -1,6 +1,11 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { writingAvailabilitySchema, writingRangeSchema } from "../exams/essays/writing-contract";
+import {
+  writingAvailabilitySchema,
+  writingNeedsChoiceSchema,
+  writingRangeSchema,
+  writingUnitSchema,
+} from "../exams/essays/writing-contract";
 import { writtenPartPointsSchema } from "../exams/scoring/written-points-contract";
 import { WRITTEN_CADENCES } from "./planner/plan-state";
 
@@ -14,9 +19,11 @@ const writtenSubjectSchema = z.object({
       range: writingRangeSchema.nullable(),
       taskKey: z.string(),
       title: z.string(),
+      unit: writingUnitSchema.optional(),
       versions: z.int().positive(),
     }),
   ),
+  availability: writingNeedsChoiceSchema.optional(),
   minutes: z.int().positive().nullable().optional(),
   points: writtenPartPointsSchema,
   questions: z.int().positive().optional(),
@@ -32,7 +39,10 @@ const writtenSubjectSchema = z.object({
   writeActions: z
     .array(
       z.object({
-        availability: writingAvailabilitySchema,
+        availability: z.discriminatedUnion("status", [
+          ...writingAvailabilitySchema.options,
+          writingNeedsChoiceSchema,
+        ]),
         blockId: uuidSchema()
           .optional()
           .describe("An unfinished extra writing block for this task"),

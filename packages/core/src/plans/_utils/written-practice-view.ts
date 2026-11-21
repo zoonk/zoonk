@@ -2,8 +2,9 @@ import { type Goal, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { namesMatch } from "../../exams/_utils/name-match";
+import { toChosenStructure } from "../../exams/choices/exam-choices";
 import { unfinishedExtraWritingWhere } from "../../exams/essays/_utils/extra-writing-blocks";
-import { getWritingScope } from "../../exams/essays/_utils/writing-scope";
+import { getWritingScope, writingNeedsChoice } from "../../exams/essays/_utils/writing-scope";
 import { projectWrittenParts } from "../../exams/estimates/written-projection";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readExtraWritingLimit } from "../../learner/facts/extra-writing";
@@ -89,6 +90,7 @@ function toHistory(samples: readonly WrittenSample[]) {
           : null,
       taskKey: first.prompt.taskKey,
       title: first.prompt.title,
+      unit: first.prompt.unit,
       versions: versions.size,
     }));
 }
@@ -183,7 +185,11 @@ export async function loadWrittenPracticeView({
   goal: Pick<Goal, "id" | "timezone" | "userId">;
   structure: ExamStructure | null;
 }): Promise<WrittenPractice | null> {
-  const tasks = listWrittenTasks({ structure });
+  const chosen = structure
+    ? toChosenStructure({ includePendingWriting: true, picks: settings, structure })
+    : null;
+
+  const tasks = listWrittenTasks({ structure: chosen });
 
   const base = getWrittenPracticeView({
     goal,
@@ -192,22 +198,22 @@ export async function loadWrittenPracticeView({
     settings,
   });
 
-  if (!base || tasks.length === 0) {
+  if (!base || !structure || tasks.length === 0) {
     return base;
   }
 
-  const writable = tasks.filter(
-    (task) => structure && getWritingScope({ picks: settings, structure, task }).available,
+  const scopes = new Map(
+    tasks.map((task) => [task.key, getWritingScope({ picks: settings, structure, task })]),
   );
 
-  const writableKeys = new Set(writable.map(({ key }) => key));
+  const writable = tasks.filter(({ key }) => scopes.get(key)?.available);
 
   const [samples, writeAction] = await Promise.all([
     readWrittenSamples({ goalId: goal.id, userId: goal.userId }),
     writable.length > 0 ? loadWriteActions({ goal, tasks: writable }) : null,
   ]);
 
-  const points = projectWrittenParts({ samples, structure });
+  const points = projectWrittenParts({ samples, structure: chosen });
   const byTask = new Map(tasks.map((task) => [task.key, task.section]));
 
   return {
@@ -224,6 +230,9 @@ export async function loadWrittenPracticeView({
 
       return {
         answers: toHistory(own),
+        availability: writingNeedsChoice(
+          ownTasks.flatMap(({ key }) => scopes.get(key)?.missingChoices ?? []),
+        ),
         minutes: ownTasks[0]?.minutes ?? null,
         points: part,
         questions: ownTasks.reduce((sum, task) => sum + task.count, 0),
@@ -255,9 +264,19 @@ export async function loadWrittenPracticeView({
               presentationShare: presentationShare(sample),
             };
           }),
-        writeActions: writeAction
-          ? ownTasks.filter(({ key }) => writableKeys.has(key)).map((task) => writeAction(task))
-          : [],
+        writeActions: ownTasks.flatMap<
+          NonNullable<NonNullable<WrittenPractice["subjects"]>[number]["writeActions"]>[number]
+        >((task) => {
+          const scope = scopes.get(task.key);
+          const availability = writingNeedsChoice(scope?.missingChoices ?? []);
+
+          if (availability) {
+            return [{ availability, taskKey: task.key }];
+          }
+
+          const action = scope?.available && writeAction?.(task);
+          return action ? [action] : [];
+        }),
       };
     }),
   };

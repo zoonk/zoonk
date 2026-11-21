@@ -76,7 +76,11 @@ export const writingPracticePaths = {
           description: "The requested prompt is being written",
         },
         "403": forbiddenResponse,
-        "409": conflictResponse,
+        "409": {
+          ...conflictResponse,
+          description:
+            "The writing block or rewrite is unavailable. The error includes the writing unit in `details.unit`.",
+        },
         "429": {
           content: { "application/json": { schema: writingStartSchema } },
           description: "The day this extra writing allowance returns",

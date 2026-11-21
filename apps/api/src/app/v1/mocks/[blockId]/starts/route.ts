@@ -35,7 +35,7 @@ async function postStart(
   }
 
   if (result.status !== "ready") {
-    return examError({ status: result.status });
+    return examError(result.status === "needsChoice" ? result : { status: result.status });
   }
 
   return new Response(null, { status: NO_CONTENT });

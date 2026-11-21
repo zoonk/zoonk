@@ -12,6 +12,7 @@ import {
   getPlacementQuickFormat,
 } from "../../learner/placement/placement-quick-format";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { type WritingNeedsChoice } from "../essays/writing-contract";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
 import {
   listMissingRecordings,
@@ -25,6 +26,7 @@ import { type MockFormatShortfall } from "./mock-shortfall";
 
 /** On `start`, the caller must dispatch generation; `preparing` requires polling until the skill map exists. */
 export type MockQuestionsRequest =
+  | WritingNeedsChoice
   | { status: "preparing" }
   | { returnsOn: string; status: "limitReached" }
   | { status: "ready" }
@@ -89,6 +91,10 @@ export async function requestMockQuestions({
   }
 
   const option = resolveAnytimeOption({ choice: input, setup });
+
+  if (option?.availability) {
+    return option.availability;
+  }
 
   if (!option) {
     return { status: "invalidOption" };

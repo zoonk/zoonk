@@ -276,7 +276,7 @@ describe("writing receipts and drafts", () => {
       startWriting({ blockId: block.id, previousAttemptId: rewritten.id }),
     ).resolves.toMatchObject({ status: "ready" });
 
-    await expect(rewrite()).resolves.toStrictEqual({ status: "invalidRewrite" });
+    await expect(rewrite()).resolves.toStrictEqual({ status: "invalidRewrite", unit: "answer" });
 
     await expect(
       prisma.writingAdmission.count({ where: { extra: true, userId: user.id } }),

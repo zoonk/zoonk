@@ -1,5 +1,6 @@
 import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
+import { writingNeedsChoiceSchema } from "@zoonk/core/exams/essays/writing-contract";
 import {
   type MockOptionView,
   type MockOptionsView,
@@ -25,6 +26,7 @@ const estimatedMinutesSchema = z
 const mockOptionSchema = mockShapeSchema
   .extend({
     areas: z.array(z.string()).meta({ description: "The notice's subjects it asks, in its words" }),
+    availability: writingNeedsChoiceSchema.optional(),
     covers: z
       .array(z.string())
       .nullable()

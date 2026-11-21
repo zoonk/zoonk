@@ -3,6 +3,7 @@ import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 import { namesMatch } from "../../_utils/name-match";
 import { findChosenOptions, listChoiceGroups } from "../../choices/choice-groups";
 import { type ExamPicks } from "../../choices/exam-choices";
+import { type WritingNeedsChoice } from "../writing-contract";
 
 type Subject = ExamStructure["subjects"][number];
 
@@ -17,7 +18,17 @@ export type WritingChoice = { group: string; subject: string };
  * `choices` are the learner's options the task's questions can depend on: a prompt is shared only
  * by learners with the same options. `subjects` are the subjects its questions may be on.
  */
-export type WritingScope = { available: boolean; choices: WritingChoice[]; subjects: Subject[] };
+export type WritingScope = {
+  available: boolean;
+  choices: WritingChoice[];
+  missingChoices: string[];
+  subjects: Subject[];
+};
+
+export function writingNeedsChoice(groups: Iterable<string>): WritingNeedsChoice | undefined {
+  const choiceGroups = [...new Set(groups)];
+  return choiceGroups.length > 0 ? { choiceGroups, status: "needsChoice" } : undefined;
+}
 
 /** A blueprint read before its tasks recorded their subjects: the subjects named like the task. */
 function findNamedSubjects({ structure, task }: { structure: ExamStructure; task: Task }) {
@@ -65,11 +76,15 @@ export function getWritingScope({
     (subject) => !options.has(subject.name) || chosen.has(subject.name),
   );
 
+  const missing = relevant
+    .filter(({ name }) => !choices.some(({ group }) => group === name))
+    .map(({ name }) => name);
+
   const available = linked
     ? subjects.length > 0 || (candidates.length === 0 && groups.length === 0)
-    : relevant.every(({ name }) => choices.some(({ group }) => group === name));
+    : missing.length === 0;
 
-  return { available, choices, subjects };
+  return { available, choices, missingChoices: available ? [] : missing, subjects };
 }
 
 export function toChosenSubjects(choices: readonly WritingChoice[]): string[] {

@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type TransactionClient } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, type TransactionClient } from "@zoonk/db";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { readExamPicks } from "../choices/exam-choices";
 import { readEssayContent } from "./_utils/essay-content";
@@ -62,7 +62,9 @@ export async function findWritingPrompts({
     : { itemIds, status: "ready" };
 }
 
-type WritingGoal = Pick<Goal, "examBlueprintId" | "id" | "kind" | "language" | "userId">;
+type WritingGoal = Pick<Goal, "examBlueprintId" | "id" | "kind" | "language" | "userId"> & {
+  examBlueprint?: ExamBlueprint | null;
+};
 
 async function loadWritingContext({
   goal,
@@ -86,7 +88,11 @@ async function loadWritingContext({
     return null;
   }
 
-  const examBlueprint = await tx.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } });
+  const examBlueprint =
+    goal.examBlueprint === undefined
+      ? await tx.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+      : goal.examBlueprint;
+
   const plan = await tx.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } });
 
   return { examBlueprint, language: goal.language, plan };
