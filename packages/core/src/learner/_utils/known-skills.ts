@@ -4,7 +4,6 @@ import { settleFinishedChapters } from "../../mind-maps/finished-chapters";
 import { announceSharedTestOuts } from "../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
-import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { type FinishedChapter } from "../../sessions/completion-contract";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
@@ -72,7 +71,6 @@ export async function markPlanItemsTestedOut({
   items,
   knownSkillIds,
   now,
-  pastBasicsAreas = [],
   placedSkills = [],
   testedOutAt,
   timeZone,
@@ -94,7 +92,6 @@ export async function markPlanItemsTestedOut({
   knownSkillIds: ReadonlySet<string>;
   /** When the plan is planned again from: `testedOutAt`, unless a retry kept an earlier one. */
   now?: Date;
-  pastBasicsAreas?: readonly string[];
   placedSkills?: readonly LeftOutSkill[];
   testedOutAt: Date;
   timeZone: string;
@@ -102,7 +99,6 @@ export async function markPlanItemsTestedOut({
   changeId: string | null;
   finishedChapters: FinishedChapter[];
   lessonsSkipped: number;
-  pastBasicsAdded: string[];
   planItemIds: string[];
   planVersion: number | null;
 }> {
@@ -118,11 +114,11 @@ export async function markPlanItemsTestedOut({
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
   if (!goal) {
-    return { ...empty, pastBasicsAdded: [] };
+    return empty;
   }
 
   const written =
-    knownSkillIds.size > 0 || leftOut.length > 0 || pastBasicsAreas.length > 0
+    knownSkillIds.size > 0 || leftOut.length > 0
       ? await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
           const changed = await testOutKnownPlanItems(tx, {
             goalId,
@@ -133,31 +129,6 @@ export async function markPlanItemsTestedOut({
             timeZone,
           });
 
-          const plan =
-            !extraWrites &&
-            (followToday || ids.length > 0 || leftOut.length > 0) &&
-            pastBasicsAreas.length > 0
-              ? await tx.plan.findUnique({ where: { goalId } })
-              : null;
-
-          const settings = parsePlanSettings(plan?.settings);
-
-          const pastBasicsAdded = plan
-            ? pastBasicsAreas.filter((area) => !settings.pastBasicsAreas.includes(area))
-            : [];
-
-          if (plan && pastBasicsAdded.length > 0) {
-            await tx.plan.update({
-              data: {
-                settings: {
-                  ...settings,
-                  pastBasicsAreas: [...settings.pastBasicsAreas, ...pastBasicsAdded],
-                },
-              },
-              where: { id: plan.id },
-            });
-          }
-
           const finished = finishesChapters
             ? await settleFinishedChapters(tx, {
                 planItemIds: [...changed.itemIds, ...changed.sharedItemIds, ...changed.standInIds],
@@ -165,22 +136,17 @@ export async function markPlanItemsTestedOut({
               })
             : [];
 
-          const result = {
-            finishedChapters: finished,
-            pastBasicsAdded,
-            standInIds: changed.standInIds,
-          };
+          const result = { finishedChapters: finished, standInIds: changed.standInIds };
 
           return changed.itemIds.length === 0 &&
             changed.sharedItemIds.length === 0 &&
-            changed.standInIds.length === 0 &&
-            pastBasicsAdded.length === 0
+            changed.standInIds.length === 0
             ? unchanged(result)
             : result;
         })
-      : { finishedChapters: [], pastBasicsAdded: [], standInIds: [] };
+      : { finishedChapters: [], standInIds: [] };
 
-  const { finishedChapters, pastBasicsAdded: addedBasics, standInIds } = written;
+  const { finishedChapters, standInIds } = written;
 
   const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];
@@ -193,7 +159,7 @@ export async function markPlanItemsTestedOut({
   });
 
   if (announced.length === 0) {
-    return { ...empty, finishedChapters, pastBasicsAdded: addedBasics };
+    return { ...empty, finishedChapters };
   }
 
   const announce = () =>
@@ -203,8 +169,6 @@ export async function markPlanItemsTestedOut({
       goalId,
       livingPlanDay,
       now: now ?? testedOutAt,
-      pastBasicsAdded: addedBasics,
-      pastBasicsAreas: extraWrites ? pastBasicsAreas : [],
       planItemIds: announced,
       skipBlocks: false,
       timeZone,
@@ -216,7 +180,6 @@ export async function markPlanItemsTestedOut({
     changeId: announcement?.changeId ?? null,
     finishedChapters,
     lessonsSkipped: announcement?.lessonsSkipped ?? planItemIds.length,
-    pastBasicsAdded: addedBasics,
     planItemIds,
     planVersion: announcement?.planVersion ?? null,
   };

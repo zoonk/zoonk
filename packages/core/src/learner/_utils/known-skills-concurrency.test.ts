@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
-import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
@@ -10,6 +9,7 @@ import { isPlanSetupTaskOwed } from "../../plans/_utils/plan-setup-tasks";
 import * as announcement from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { runPlanSetupTask } from "../../plans/plan-setup";
+import { placementItemBank } from "../_test-utils/placement-tap-items";
 import * as knownSkills from "./known-skills";
 
 const TODAY = "2020-09-28";
@@ -35,10 +35,13 @@ async function placedGoal() {
   );
 
   const skillId = library.skills[0]?.id ?? "";
-  const item = await itemFixture({ content: choiceItemContent(), skillId });
-  await attemptFixture({ isCorrect: true, itemId: item.id, skillId, userId: user.id });
-  const confirmation = await itemFixture({ content: choiceItemContent(), skillId });
-  await attemptFixture({ isCorrect: true, itemId: confirmation.id, skillId, userId: user.id });
+  const [bank] = await placementItemBank([skillId]);
+
+  await Promise.all(
+    bank!.map(({ answer, item }) =>
+      attemptFixture({ answer, itemId: item.id, skillId, userId: user.id }),
+    ),
+  );
 
   mockSession(user.id);
   await createGoalPlan({ goalId: goal.id, graph: library.graph });

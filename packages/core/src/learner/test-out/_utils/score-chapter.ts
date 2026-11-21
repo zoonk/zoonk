@@ -1,8 +1,10 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { getAskedItemFilter } from "../../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { loadConfirmedSkills } from "../../_utils/load-skill-claims";
+import { loadSeenPlacementItems } from "../../placement/_utils/placement-evidence";
 import {
   type PlacementItem,
   gradePlacementAnswer,
@@ -11,7 +13,7 @@ import {
 import { recordLearnerAnswer } from "../../record-learner-answer";
 import { type ChapterTestOutInput } from "../test-out-contract";
 import { pickTestOutSkills, scoreTestOut } from "../test-out-rules";
-import { type getChapterSkills, loadSkillItems } from "./chapter-items";
+import { type getChapterSkills } from "./chapter-items";
 
 type TestOutAnswer = ChapterTestOutInput["answers"][number];
 
@@ -27,19 +29,25 @@ function firstAnswerPerItem(answers: readonly TestOutAnswer[]): TestOutAnswer[] 
 
 async function gradeAnswers({
   answers,
-  chapterSkillIds,
+  examBlueprintId,
+  sampled,
 }: {
   answers: readonly TestOutAnswer[];
-  chapterSkillIds: readonly string[];
+  examBlueprintId: string | null;
+  sampled: readonly string[];
 }): Promise<GradedAnswer[] | null> {
   const rows = await prisma.item.findMany({
     include: ITEM_IMAGE_INCLUDE,
-    where: { id: { in: answers.map((answer) => answer.itemId) } },
+    where: {
+      id: { in: answers.map((answer) => answer.itemId) },
+      skillId: { in: [...sampled] },
+      ...getAskedItemFilter({ examBlueprintId }),
+    },
   });
 
   const graded = answers.map((answer) => {
     const row = rows.find((candidate) => candidate.id === answer.itemId);
-    const item = row && chapterSkillIds.includes(row.skillId) ? parsePlacementItem(row) : null;
+    const item = row ? parsePlacementItem(row) : null;
 
     return item ? { answer, ...gradePlacementAnswer({ answer: answer.answer, item }), item } : null;
   });
@@ -101,27 +109,18 @@ export async function scoreChapter({
   const goalId = goal.id;
   const sampled = pickTestOutSkills(chapterSkills).map((skill) => skill.id);
 
-  const items = await loadSkillItems({
-    examBlueprintId: goal.examBlueprintId,
-    skillIds: sampled,
-    userId,
-  });
-
-  const available = new Set(items.map((item) => item.id));
   const submitted = firstAnswerPerItem(input.answers);
 
-  if (submitted.some((answer) => !available.has(answer.itemId))) {
-    return null;
-  }
-
-  const graded = await gradeAnswers({ answers: submitted, chapterSkillIds: sampled });
+  const [graded, seen] = await Promise.all([
+    gradeAnswers({ answers: submitted, examBlueprintId: goal.examBlueprintId, sampled }),
+    loadSeenPlacementItems({ itemIds: submitted.map((answer) => answer.itemId), userId }),
+  ]);
 
   if (!graded) {
     return null;
   }
 
   const localDate = getDateInTimeZone({ date: answeredAt, timeZone });
-  const seen = new Set(items.filter((item) => item.seen).map((item) => item.id));
   const fresh = graded.filter(({ item }) => !seen.has(item.id));
 
   await recordAnswers({ answeredAt, graded: fresh, timeZone, userId });

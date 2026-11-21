@@ -8,11 +8,6 @@ import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import {
-  getListeningPastBasicsEffect,
-  withPastBasicsAreas,
-  withoutPastBasicsAreas,
-} from "./_utils/level-listening-starts";
-import {
   listChangeTopics,
   loadLivingPlanBatch,
   mergeChangeTopics,
@@ -34,8 +29,6 @@ export async function announceTestedOutItems({
   livingPlanDay,
   mergeWithUnseen = true,
   now,
-  pastBasicsAdded = [],
-  pastBasicsAreas = [],
   planItemIds,
   skipBlocks = false,
   timeZone,
@@ -50,8 +43,6 @@ export async function announceTestedOutItems({
   livingPlanDay?: string;
   mergeWithUnseen?: boolean;
   now: Date;
-  pastBasicsAdded?: readonly string[];
-  pastBasicsAreas?: readonly string[];
   planItemIds: readonly string[];
   /** Shared notices save every goal's undo snapshot before pending blocks are skipped. */
   skipBlocks?: boolean;
@@ -64,20 +55,11 @@ export async function announceTestedOutItems({
   const skipped = new Set(planItemIds);
 
   return withPlanRetry(async () => {
-    const loaded = await loadPlanAtToken(goalId, { now, timeZone });
+    const context = await loadPlanAtToken(goalId, { now, timeZone });
 
-    if (!loaded || !isPlanReady(loaded)) {
+    if (!context || !isPlanReady(context)) {
       return null;
     }
-
-    const startsAdded = pastBasicsAdded.filter((area) =>
-      loaded.state.settings.pastBasicsAreas.includes(area),
-    );
-
-    const context = {
-      ...loaded,
-      state: withoutPastBasicsAreas({ areas: startsAdded, state: loaded.state }),
-    };
 
     const lessonsSkipped = countLessons(context.items.filter((item) => skipped.has(item.id)));
 
@@ -88,8 +70,6 @@ export async function announceTestedOutItems({
     if (
       existing &&
       !extraWrites &&
-      pastBasicsAreas.length === 0 &&
-      startsAdded.length === 0 &&
       planItemIds.every((id) => existing.payload.planItemIds.includes(id))
     ) {
       if (skipBlocks) {
@@ -113,12 +93,7 @@ export async function announceTestedOutItems({
       }
     };
 
-    const computed = await computePlan({
-      context,
-      mode: "forced",
-      now,
-      state: withPastBasicsAreas({ areas: pastBasicsAreas, state: loaded.state }),
-    });
+    const computed = await computePlan({ context, mode: "forced", now });
 
     const skippedTopics = livingPlanDay
       ? listChangeTopics({
@@ -135,10 +110,6 @@ export async function announceTestedOutItems({
       ...computed.effect,
       ...(skippedTopics && {
         topicsLeftOut: mergeChangeTopics(computed.effect.topicsLeftOut, skippedTopics),
-      }),
-      ...getListeningPastBasicsEffect({
-        areas: [...pastBasicsAreas, ...startsAdded],
-        state: context.state,
       }),
     };
 

@@ -14,6 +14,7 @@ import { getMock } from "../../exams/mocks/get-mock";
 import { saveMockAnswer } from "../../exams/mocks/save-mock-answer";
 import { submitMockSection } from "../../exams/mocks/submit-mock-section";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
+import { placementItemBank } from "../../learner/_test-utils/placement-tap-items";
 import { getChapterTestOut } from "../../learner/test-out/get-chapter-test-out";
 import { submitChapterTestOut } from "../../learner/test-out/submit-chapter-test-out";
 import { answerStudyQuestion } from "../../sessions/answer-study-question";
@@ -305,20 +306,27 @@ describe("a question whose picture is removed after a failed check", () => {
   it("grades a test-out the learner answered while it had the picture", async () => {
     const user = await userFixture();
 
-    const [{ chapters, goal }, asset] = await Promise.all([
-      learnerGoalFixture({ itemsPerSkill: 1, phases: [4, 2], userId: user.id }),
+    const [{ chapters, goal, skills }, asset] = await Promise.all([
+      learnerGoalFixture({ itemsPerSkill: 0, phases: [4, 2], userId: user.id }),
       mediaAssetFixture(),
     ]);
+
+    const bank = await placementItemBank(skills.slice(0, 4).map((skill) => skill.id));
+    const answers = new Map(bank.flat().map(({ answer, item }) => [item.id, answer]));
+
+    await prisma.item.update({
+      data: { content: picturedContent(), mediaAssetId: asset.id },
+      where: { id: bank[0]![0]!.item.id },
+    });
 
     mockSession(user.id);
     const chapterId = chapters[0]?.id ?? "";
     const testOut = await getChapterTestOut({ chapterId, goalId: goal.id });
     const asked = testOut.status === "ready" ? testOut.testOut.questions : [];
 
-    await prisma.item.update({
-      data: { content: picturedContent(), mediaAssetId: asset.id },
-      where: { id: asked[0]?.itemId },
-    });
+    expect(asked.find((question) => question.itemId === bank[0]![0]!.item.id)?.image?.url).toBe(
+      asset.url,
+    );
 
     await removeImageAsset({ assetId: asset.id });
 
@@ -328,14 +336,14 @@ describe("a question whose picture is removed after a failed check", () => {
         goalId: goal.id,
         input: {
           answers: asked.map((question) => ({
-            answer: RIGHT,
+            answer: answers.get(question.itemId)!,
             durationMs: 4000,
             itemId: question.itemId,
           })),
           requestId: randomUUID(),
         },
       }),
-    ).resolves.toMatchObject({ outcome: { correct: 4, total: 4 }, status: "ready" });
+    ).resolves.toMatchObject({ outcome: { correct: 16, total: 16 }, status: "ready" });
   });
 });
 

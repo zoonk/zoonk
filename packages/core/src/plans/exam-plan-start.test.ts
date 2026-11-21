@@ -9,6 +9,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
 import { answerPlacementQuestion } from "../learner/placement/answer-placement-question";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
@@ -18,7 +19,6 @@ import { createGoalPlan } from "./create-goal-plan";
 /** A Monday in 2020, before the learning events other tests write, six weeks before the exam. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TODAY = "2020-09-28";
-const RIGHT = { selectedIndex: 0 };
 const LESSONS_PER_SKILL = 12;
 
 async function setup() {
@@ -43,12 +43,8 @@ async function setup() {
     userId: user.id,
   });
 
-  const [items] = await Promise.all([
-    Promise.all(
-      [1, 2].map(() =>
-        itemFixture({ content: choiceItemContent(), skillId: foundation?.id ?? "" }),
-      ),
-    ),
+  const [[bank]] = await Promise.all([
+    placementItemBank([foundation!.id]),
     skillPrerequisiteFixture({ prerequisiteId: foundation?.id ?? "", skillId: rewrite?.id ?? "" }),
   ]);
 
@@ -60,7 +56,7 @@ async function setup() {
     timeZone: "UTC",
   });
 
-  return { goal, items, library, plan };
+  return { bank: bank!, goal, library, plan };
 }
 
 async function outlineSkills(skillIds: readonly string[]) {
@@ -98,16 +94,16 @@ describe("an exam plan after placement", () => {
   });
 
   it("keeps what placement showed the learner knows out once its lessons are outlined, and mixes the exam's areas from day 1", async () => {
-    const { goal, items, library, plan } = await setup();
+    const { bank, goal, library, plan } = await setup();
     const [foundation, rewrite] = library.skills;
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await Promise.all(
-      items.map((item) =>
+      bank.map(({ answer, item }) =>
         answerPlacementQuestion({
           goalId: goal.id,
-          input: { answer: RIGHT, durationMs: 4000, itemId: item.id, timeZone: "UTC" },
+          input: { answer, durationMs: 4000, itemId: item.id, timeZone: "UTC" },
         }),
       ),
     );

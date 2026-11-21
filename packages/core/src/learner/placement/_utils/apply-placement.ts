@@ -3,7 +3,6 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
-import { listPlacementListeningAreas } from "../../../plans/_utils/load-listening-starts";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "../../../plans/_utils/plan-setup-tasks";
 import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../../_utils/known-skills";
@@ -24,7 +23,7 @@ async function loadPlacement({
   timeZone?: string;
   userId: string;
   tx?: TransactionClient;
-}): Promise<{ goalPlan: GoalPlan; pastBasicsAreas: string[]; state: PlacementState }> {
+}): Promise<{ goalPlan: GoalPlan; state: PlacementState }> {
   const goalPlan = plan ?? (await loadPlacementPlan(goalId, tx));
 
   const loaded = await loadPlacementState({
@@ -48,15 +47,7 @@ async function loadPlacement({
     knownSkillIds: loaded.knownSkillIds.filter((skillId) => confirmed.has(skillId)),
   };
 
-  const pastBasicsAreas = await listPlacementListeningAreas({
-    goalId,
-    knownSkillIds: state.knownSkillIds,
-    skills: goalPlan.skills,
-    tx,
-    userId,
-  });
-
-  return { goalPlan, pastBasicsAreas, state };
+  return { goalPlan, state };
 }
 
 /** Announces skipped items with an undo; changeId is null when nothing can be announced yet. */
@@ -85,27 +76,13 @@ export async function applyPlacement({
   testedOutAt?: Date;
   timeZone: string;
   userId: string;
-}): Promise<{
-  changeId: string | null;
-  pastBasicsAreas: string[];
-  state: PlacementState;
-  testedOutPlanItemIds: string[];
-}> {
-  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({
-    goalId,
-    plan,
-    timeZone,
-    userId,
-  });
+}): Promise<{ changeId: string | null; state: PlacementState; testedOutPlanItemIds: string[] }> {
+  const { goalPlan, state } = await loadPlacement({ goalId, plan, timeZone, userId });
 
   await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
 
   // A question inside today's session keeps the rest of the day as the learner was shown it.
-  const {
-    changeId,
-    pastBasicsAdded,
-    planItemIds: testedOutPlanItemIds,
-  } = await markPlanItemsTestedOut({
+  const { changeId, planItemIds: testedOutPlanItemIds } = await markPlanItemsTestedOut({
     announceAlso,
     extraWrites,
     followToday,
@@ -114,7 +91,6 @@ export async function applyPlacement({
     knownSkillIds: new Set(state.knownSkillIds),
     livingPlanDay,
     now,
-    pastBasicsAreas,
     placedSkills: goalPlan.skills,
     testedOutAt,
     timeZone,
@@ -122,7 +98,7 @@ export async function applyPlacement({
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
-  return { changeId, pastBasicsAreas: pastBasicsAdded, state, testedOutPlanItemIds };
+  return { changeId, state, testedOutPlanItemIds };
 }
 
 /** A learner who declined placement and later started the Focus test has answers to apply. */
