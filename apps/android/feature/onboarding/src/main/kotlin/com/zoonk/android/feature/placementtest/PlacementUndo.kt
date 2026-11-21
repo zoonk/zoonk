@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,8 +30,9 @@ internal fun PlacementUndo(
     if (changeId == null) return
     val vm = viewModel(key = "placement-undo:$goalId:$changeId") { PlacementUndoViewModel(plans, goalId, changeId) }
     VisitOf(vm.visit)
-    if (vm.undone) {
-        Note(stringResource(R.string.placementtest_undo_restored))
+    val restoredLessons = vm.restoredLessons
+    if (restoredLessons != null) {
+        Note(pluralStringResource(R.plurals.testout_lessons_back, restoredLessons))
     } else {
         TextButton(busy = vm.saving, enabled = enabled && !vm.saving, onClick = vm::undo) {
             Text(stringResource(R.string.plan_undo))
@@ -50,19 +52,19 @@ private class PlacementUndoViewModel(
     var saving by mutableStateOf(false)
         private set
 
-    var undone by mutableStateOf(false)
+    var restoredLessons by mutableStateOf<Int?>(null)
         private set
 
     val failed get() = failure.value != null
 
     fun undo() {
-        if (saving || undone) return
+        if (saving || restoredLessons != null) return
         saving = true
         failure.clear()
         val asked = visit.number
         viewModelScope.launch {
-            when (plans.undo(goalId, changeId)) {
-                is MutationResult.Done -> undone = true
+            when (val result = plans.undo(goalId, changeId)) {
+                is MutationResult.Done -> restoredLessons = result.value.lessonsSkipped.toInt()
                 is MutationResult.Failed -> failure.send(asked, Unit)
                 MutationResult.Obsolete -> Unit
             }

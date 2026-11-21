@@ -30,6 +30,9 @@
         <item quantity="one">Your plan skips %d lesson you already know.</item>
         <item quantity="other">Your plan skips %d lessons you already know.</item>
     </plurals>
-    <string name="testout_lessons_back">The lessons are back in your plan.</string>
+    <plurals name="testout_lessons_back">
+        <item quantity="one">The lesson is back in your plan.</item>
+        <item quantity="other">The lessons are back in your plan.</item>
+    </plurals>
     <string name="testout_continue">Continue</string>
 </resources>

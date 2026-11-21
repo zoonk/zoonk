@@ -323,7 +323,7 @@ internal fun ColumnScope.TestOutResult(
         lead =
             when {
                 test.total == 0L -> stringResource(R.string.placementtest_test_out_unavailable, level)
-                lessons > 0 -> stringResource(R.string.placementtest_known)
+                lessons > 0 -> pluralStringResource(R.plurals.placementtest_known, lessons)
                 else -> stringResource(R.string.placementtest_keeps_adjusting)
             },
         action = stringResource(R.string.placementtest_done),

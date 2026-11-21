@@ -136,7 +136,7 @@ class PlacementTestScreenshots(
     @Test
     fun resultQuick() =
         shoot("result-quick") {
-            PlacementResult(PlacementLength.QUICK, lessonsSkipped = 4, nextTopic = "Contracts", onDone = {}, undo = { Undo() })
+            PlacementResult(PlacementLength.QUICK, lessonsSkipped = 1, nextTopic = "Contracts", onDone = {}, undo = { Undo() })
         }
 
     @Test

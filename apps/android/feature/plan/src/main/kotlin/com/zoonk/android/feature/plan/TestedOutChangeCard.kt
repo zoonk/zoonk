@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonIcon
@@ -33,7 +34,7 @@ fun TestedOutChangeCard(
         answered = restored,
         card = {
             if (restored) {
-                SuggestionResult(stringResource(R.string.placementtest_undo_restored))
+                SuggestionResult(pluralStringResource(R.plurals.testout_lessons_back, change.lessonsSkipped.toInt()))
             } else {
                 SuggestionHeader(title)
                 PlanEffectDiff(change.effect, dateKind = dateKind, summary = false)
