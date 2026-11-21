@@ -3814,6 +3814,7 @@ msgid "See my result"
 msgstr "Sonucumu gör"
 
 #: src/focus-test/use-focus-test-texts.ts
+#: src/generation/indeterminate-wait.tsx
 msgctxt "q1WWIr"
 msgid "In progress"
 msgstr "Devam ediliyor"
@@ -4415,26 +4416,6 @@ msgid "Writing your question"
 msgstr ""
 
 #: src/generation/use-generation-copy.ts
-msgctxt "A-XHEK"
-msgid "Writing a question like your exam's"
-msgstr ""
-
-#: src/generation/use-generation-copy.ts
-msgctxt "wbqmxC"
-msgid "Choosing the topic…"
-msgstr ""
-
-#: src/generation/use-generation-copy.ts
-msgctxt "Xtb_S_"
-msgid "Writing the support text…"
-msgstr ""
-
-#: src/generation/use-generation-copy.ts
-msgctxt "XssWee"
-msgid "Checking it against the exam's criteria…"
-msgstr ""
-
-#: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
 msgid "Adding a setup lesson"
 msgstr "Kurulum dersi ekliyoruz"
@@ -4889,7 +4870,8 @@ msgstr "{count, plural, one {Son deneme sınavına göre} other {Son # deneme s�
 #: src/journey/preparation/preparation-details.tsx
 #: src/journey/preparation/written-projection.tsx
 #: src/mock/mock-result-view.tsx
-#: src/syllabus/subject-written-score.tsx
+#: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-written-standing.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "Psgvhk"
 msgid "Estimated score"
@@ -5006,30 +4988,35 @@ msgstr "İlk haftalık meydan okumana katıl"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
-#: src/syllabus/subject-written-score.tsx
+#: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
 msgstr "{range} / {max}"
 
 #: src/journey/preparation/written-projection.tsx
-#: src/syllabus/subject-written-score.tsx
+msgctxt "RfVIN3"
+msgid "Graded by level"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+#: src/syllabus/subject-written-standing.tsx
 msgctxt "dau4p7"
 msgid "Not measured yet"
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "5Ty5D6"
-msgid "Above the {minimum} points it asks for"
+msgctxt "uOG8dr"
+msgid "Above the {minimum} points needed"
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "ofINne"
-msgid "{points} points below the {minimum} it asks for"
+msgctxt "qjfXcf"
+msgid "{points} points short of the {minimum} needed"
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "zFi3gB"
-msgid "Close to the {minimum} points it asks for"
+msgctxt "vUZHcz"
+msgid "Close to the {minimum} points needed"
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
@@ -5045,6 +5032,16 @@ msgstr ""
 #: src/journey/preparation/written-projection.tsx
 msgctxt "doYQpO"
 msgid "Below the minimum to pass"
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "P8eo6O"
+msgid "{part}, half your final score, isn't measured yet."
+msgstr ""
+
+#: src/journey/preparation/written-projection.tsx
+msgctxt "Km7c1e"
+msgid "{part}, {share} of your final score, isn't measured yet."
 msgstr ""
 
 #: src/journey/preparation/written-projection.tsx
@@ -7697,16 +7694,6 @@ msgid "Your last mock exam"
 msgstr "Son deneme sınavın"
 
 #: src/mock/mock-chooser-page.tsx
-msgctxt "Wkboq2"
-msgid "No more grading today. The written test is back tomorrow."
-msgstr ""
-
-#: src/mock/mock-chooser-page.tsx
-msgctxt "Fb4qO3"
-msgid "No more grading today. The written test is back on {date}."
-msgstr ""
-
-#: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
 msgid "Not enough questions for this one yet. Pick another."
 msgstr "Bunun için henüz yeterli soru yok. Başka birini seç."
@@ -7715,6 +7702,16 @@ msgstr "Bunun için henüz yeterli soru yok. Başka birini seç."
 msgctxt "njHHu_"
 msgid "We couldn't start the mock exam. Try again."
 msgstr "Deneme sınavını başlatamadık. Tekrar dene."
+
+#: src/mock/mock-chooser-page.tsx
+msgctxt "QsctwF"
+msgid "Questions like the ones on your exam. Your mock exam starts here when they're ready."
+msgstr ""
+
+#: src/mock/mock-chooser-page.tsx
+msgctxt "AmTABH"
+msgid "Writing your questions…"
+msgstr ""
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qFtRJW"
@@ -8041,6 +8038,11 @@ msgid "Leave blank"
 msgstr "Boş bırak"
 
 #: src/mock/mock-question.tsx
+msgctxt "IbIchk"
+msgid "Question {number} of {total}"
+msgstr "Soru {number} / {total}"
+
+#: src/mock/mock-question.tsx
 msgctxt "VqcJmC"
 msgid "Written part · {area}"
 msgstr "Yazılı bölüm · {area}"
@@ -8056,11 +8058,6 @@ msgstr "Yazılı bölüm"
 msgctxt "cPym2K"
 msgid "Question {number} of {total} · {area}"
 msgstr "Soru {number} / {total} · {area}"
-
-#: src/mock/mock-question.tsx
-msgctxt "IbIchk"
-msgid "Question {number} of {total}"
-msgstr "Soru {number} / {total}"
 
 #: src/mock/mock-result-answers.tsx
 #: src/mock/mock-review.tsx
@@ -12474,22 +12471,6 @@ msgid "Mixed practice"
 msgstr "Karma alıştırma"
 
 #: src/session/use-block-copy.ts
-#: src/syllabus/subject-write-bar.tsx
-msgctxt "bL2guL"
-msgid "Back tomorrow: no more grading today"
-msgstr ""
-
-#: src/session/use-block-copy.ts
-msgctxt "0cmsKD"
-msgid "Your draft is saved"
-msgstr ""
-
-#: src/session/use-block-copy.ts
-msgctxt "uE8joa"
-msgid "Use what you just learned"
-msgstr ""
-
-#: src/session/use-block-copy.ts
 msgctxt "87izcS"
 msgid "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}"
 msgstr "{count, plural, other {En çok zorlandığın konulardan # soru}}"
@@ -12719,6 +12700,12 @@ msgid "Next date"
 msgstr "Sonraki tarih"
 
 #: src/syllabus/subject-aside.tsx
+#: src/syllabus/subject-written-standing.tsx
+msgctxt "z50pCl"
+msgid "Grading"
+msgstr ""
+
+#: src/syllabus/subject-aside.tsx
 msgctxt "jSqwdW"
 msgid "Coverage"
 msgstr "Kapsam"
@@ -12852,16 +12839,6 @@ msgid "{share} of the score"
 msgstr ""
 
 #: src/syllabus/subject-written-score.tsx
-msgctxt "QRfeh-"
-msgid "Minimum to pass: {share} of the points"
-msgstr ""
-
-#: src/syllabus/subject-written-score.tsx
-msgctxt "B96Fmq"
-msgid "Minimum to pass: {minimum}"
-msgstr ""
-
-#: src/syllabus/subject-written-score.tsx
 msgctxt "Ycseyb"
 msgid "{count, plural, one {last answer} other {last # answers}}"
 msgstr ""
@@ -12909,6 +12886,12 @@ msgctxt "sKcJTn"
 msgid "about {used} of {lines} lines"
 msgstr ""
 
+#. A past written answer graded by level: how many of its criteria were fully met, out of all of them.
+#: src/syllabus/subject-written-score.tsx
+msgctxt "SPW5wO"
+msgid "{complete} of {total} criteria complete"
+msgstr ""
+
 #: src/syllabus/subject-written-score.tsx
 msgctxt "a0Vmlb"
 msgid "{count, plural, one {# version} other {# versions}}"
@@ -12917,6 +12900,26 @@ msgstr ""
 #: src/syllabus/subject-written-score.tsx
 msgctxt "5m07cc"
 msgid "Your answers"
+msgstr ""
+
+#: src/syllabus/subject-written-standing.tsx
+msgctxt "QRfeh-"
+msgid "Minimum to pass: {share} of the points"
+msgstr ""
+
+#: src/syllabus/subject-written-standing.tsx
+msgctxt "B96Fmq"
+msgid "Minimum to pass: {minimum}"
+msgstr ""
+
+#: src/syllabus/subject-written-standing.tsx
+msgctxt "76yuN2"
+msgid "Minimum to pass: {minimum} of {max}"
+msgstr ""
+
+#: src/syllabus/subject-written-standing.tsx
+msgctxt "ieVB-d"
+msgid "Your answers are graded by level. A points estimate isn't available for this test yet."
 msgstr ""
 
 #: src/syllabus/syllabus-chapter-row.tsx
@@ -13655,7 +13658,23 @@ msgctxt "j8q20J"
 msgid "of {max}"
 msgstr ""
 
-#. The approximate line count of a written answer past its limit; the lines past it are ones the exam board won't read.
+#. Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices.
+#: src/writing/writing-choice.tsx
+msgctxt "JsmQZC"
+msgid "Depends on your choice of {groups}"
+msgstr ""
+
+#: src/writing/writing-choice.tsx
+msgctxt "C3wT9_"
+msgid "Choose on Today"
+msgstr ""
+
+#: src/writing/writing-editor.tsx
+msgctxt "a2NxUG"
+msgid "0 of {lines} lines"
+msgstr ""
+
+#. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
 #: src/writing/writing-editor.tsx
 msgctxt "6omgAR"
 msgid "about {used} of {lines} lines · {over} won't be read"
@@ -13667,6 +13686,12 @@ msgctxt "k2IfPK"
 msgid "Short writing exercise"
 msgstr ""
 
+#. A whole answer of an exam's written test, named by its line limit, such as 30 lines.
+#: src/writing/writing-header.ts
+msgctxt "Ys6nu8"
+msgid "Write the {lines}-line question"
+msgstr ""
+
 #: src/writing/writing-header.ts
 #: src/writing/writing-start.tsx
 msgctxt "Jo0iJd"
@@ -13674,6 +13699,18 @@ msgid "Writing practice"
 msgstr "Yazma alıştırması"
 
 #: src/writing/writing-header.ts
+msgctxt "0cmsKD"
+msgid "Your draft is saved"
+msgstr ""
+
+#. Under a short writing exercise after a lesson: what it's for.
+#: src/writing/writing-header.ts
+msgctxt "mKxwIN"
+msgid "To use what you just learned"
+msgstr ""
+
+#: src/writing/writing-header.ts
+#: src/writing/writing-start.tsx
 msgctxt "neJLv4"
 msgid "Written answer"
 msgstr ""
@@ -13702,15 +13739,25 @@ msgctxt "DkkVJF"
 msgid "Missing"
 msgstr ""
 
+#: src/writing/writing-labels.ts
+msgctxt "bL2guL"
+msgid "Back tomorrow: no more grading today"
+msgstr ""
+
+#: src/writing/writing-labels.ts
+msgctxt "cvptXL"
+msgid "Back on {date}: no more grading today"
+msgstr ""
+
 #: src/writing/writing-next-step.tsx
 msgctxt "BQrBD9"
 msgid "Nothing left to work on"
 msgstr "Üzerinde çalışılacak bir şey kalmadı"
 
 #: src/writing/writing-next-step.tsx
-msgctxt "J_Pd5R"
-msgid "Every criterion has full marks in this estimate."
-msgstr "Bu tahmine göre her ölçütten tam puan aldın."
+msgctxt "xpK1rU"
+msgid "Every criterion is complete."
+msgstr ""
 
 #: src/writing/writing-next-step.tsx
 msgctxt "HiVJjN"
@@ -13788,6 +13835,32 @@ msgid "You'll have more tomorrow."
 msgstr ""
 
 #: src/writing/writing-result.tsx
+msgctxt "QYZhu-"
+msgid "Graders stop at line {lines}, so the rest isn't read."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "UIwidi"
+msgid "Graders stop at the line limit, so the rest isn't read."
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "rxvcLB"
+msgid "Fit it in {lines} lines"
+msgstr ""
+
+#: src/writing/writing-result.tsx
+msgctxt "EEutpJ"
+msgid "Fit it in the line limit"
+msgstr ""
+
+#. The next step of a written answer that scored zero, for example for being off the topic.
+#: src/writing/writing-result.tsx
+msgctxt "rY8RUj"
+msgid "Answer the question asked"
+msgstr ""
+
+#: src/writing/writing-result.tsx
 msgctxt "TvkYzM"
 msgid "What to rewrite"
 msgstr "Yeniden yazılacak kısım"
@@ -13853,23 +13926,33 @@ msgid "Rewrite"
 msgstr "Yeniden yaz"
 
 #: src/writing/writing-start.tsx
-msgctxt "vlT3zF"
-msgid "The exam notice changed. Nothing was counted."
+msgctxt "mmyp7Y"
+msgid "Your exam notice changed, so it's out of your plan. Nothing was graded."
 msgstr ""
 
 #: src/writing/writing-start.tsx
-msgctxt "kJEao3"
-msgid "This task is no longer on your exam"
+msgctxt "oZMZx-"
+msgid "This question is no longer on your exam"
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "y4dgHy"
+msgid "A short exercise on what you just learned. It opens here when it's ready."
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "CzL4pW"
+msgid "Writing your exercise…"
+msgstr ""
+
+#: src/writing/writing-start.tsx
+msgctxt "0zf91l"
+msgid "A new question like the ones on your exam. It opens here when it's ready."
 msgstr ""
 
 #: src/writing/writing-start.tsx
 msgctxt "xj8ORz"
 msgid "Writing your question…"
-msgstr ""
-
-#: src/writing/writing-start.tsx
-msgctxt "_zs7ro"
-msgid "A new question, like the ones on your exam. It opens here when it's ready."
 msgstr ""
 
 #: src/writing/writing-start.tsx
@@ -13883,13 +13966,13 @@ msgid "Nothing was lost. Try again in a moment."
 msgstr ""
 
 #: src/writing/writing-text.tsx
-msgctxt "LRemim"
-msgid "Past line {lines}: the board won't read from here"
+msgctxt "-QTlEJ"
+msgid "Past line {lines}: graders stop reading here"
 msgstr ""
 
 #: src/writing/writing-text.tsx
-msgctxt "cGktPJ"
-msgid "Past the limit: the board won't read from here"
+msgctxt "ecaPI4"
+msgid "Past the limit: graders stop reading here"
 msgstr ""
 
 #: src/writing/writing-text.tsx
