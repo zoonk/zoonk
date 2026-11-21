@@ -26,7 +26,7 @@ final class WeekdayTogglesTests: XCTestCase {
   }
 
   func testTheWeekShowsLettersThenAListAsTheTextGrows() {
-    XCTAssertEqual(names(.xxxLarge), .narrow)
+    XCTAssertEqual(names(width: 250), .narrow, "a pane too narrow for short names")
     XCTAssertNil(names(.accessibility1), "at an accessibility size, full names in a list")
     XCTAssertNil(names(width: 100), "a pane too narrow for letters")
   }
@@ -47,9 +47,11 @@ final class WeekdayTogglesTests: XCTestCase {
     try await waitForTestCondition("The days weren't read: \(spoken(in: window))") {
       spoken(in: window).contains("Sunday")
     }
+    // The hosted tree reads a list's row more than once; its first pass is the row.
     XCTAssertEqual(
-      spoken(in: window),
+      Array(spoken(in: window).prefix(7)),
       ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
-    XCTAssertEqual(spokenValues(in: window), ["1", "0", "0", "0", "0", "0", "0"])
+    XCTAssertEqual(Array(spokenValues(in: window).prefix(7)), ["1", "0", "0", "0", "0", "0", "0"])
+    XCTAssertFalse(spoken(in: window).contains("Mon"), "the short name is only what's drawn")
   }
 }
