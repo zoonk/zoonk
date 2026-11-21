@@ -212,7 +212,7 @@ function CriterionComments({ grade }: { grade: Grade }) {
               {criterion.quote}
             </blockquote>
           )}
-          <p className="text-pretty">{criterion.comment}</p>
+          <p>{criterion.comment}</p>
         </li>
       ))}
     </ul>

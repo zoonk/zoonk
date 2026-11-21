@@ -3,8 +3,9 @@ import { type BuildPlanInput } from "../planner/build-plan";
 import { withoutPlannedLessons } from "../planner/core-first";
 import { findLanding } from "../planner/landed-lessons";
 import { getMissedMockRescueDays } from "../planner/mock-rescue-input";
+import { isStandIn } from "../planner/plan-item-rules";
 import { type PlannedItem, getItemKey } from "../planner/plan-items";
-import { type PlannerLesson } from "../planner/plan-units";
+import { type PlannerLesson, getStandInLessons } from "../planner/plan-units";
 
 const KEYED_FIELDS = {
   announcements: true,
@@ -55,6 +56,15 @@ const PLANNED_FIELDS = new Set(
   Object.entries(KEYED_FIELDS).flatMap(([field, keyed]) => (keyed === true ? [field] : [])),
 );
 
+/** Plans saved before the planner dropped such a stand-in still hold one, and only a build removes it. */
+function holdsSpentStandIn(input: BuildPlanInput): boolean {
+  const standIns = getStandInLessons({ lessons: input.lessons, skills: input.graph.skills });
+
+  return input.items.some(
+    (item) => item.status === "todo" && isStandIn(item) && standIns.get(item.skillId ?? "") === 0,
+  );
+}
+
 export function shouldSkipPlanBuild({
   input,
   savedKey,
@@ -69,7 +79,8 @@ export function shouldSkipPlanBuild({
     getPlanInputsKey({
       input,
       items: input.items.map((item) => ({ key: getItemKey(item), status: item.status })),
-    }) === savedKey
+    }) === savedKey &&
+    !holdsSpentStandIn(input)
   );
 }
 

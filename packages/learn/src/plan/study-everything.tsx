@@ -81,7 +81,7 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
   return (
     <>
       <DrawerContent className="flex flex-col gap-3 pt-2">
-        {finish && <p className="font-medium text-pretty">{finish}</p>}
+        {finish && <p className="font-medium">{finish}</p>}
         {end.checking && (
           <p className="text-muted-foreground text-sm" role="status">
             {t("Checking what changes…")}

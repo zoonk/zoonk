@@ -598,13 +598,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Bu işlem normalden uzun sürüyor. Kendiliğinden açılacak, tekrar dokunmana gerek yok."
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Sola kaydır"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "Sağa kaydır"
@@ -1326,7 +1324,6 @@ msgstr "Merhaba! Ben {name}, yapay zekâ destekli ders arkadaşın. Ne öğrenme
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Önceki sorular"
@@ -7785,11 +7782,6 @@ msgid "{unsure, plural, one {# not sure} other {# not sure}}"
 msgstr "{unsure, plural, other {Emin olmadığın # cevap}}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "Sonraki sorulara git"
-
-#: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -13089,6 +13081,7 @@ msgstr "{minutes} dk. çalış"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "Dersleri hazırla"
@@ -13121,12 +13114,6 @@ msgid "What changed"
 msgstr "Neler değişti"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "Şimdi hazırla"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Sıradaki derslerin"
@@ -13137,12 +13124,6 @@ msgstr "Sıradaki derslerin"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "Henüz hazır değil"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "Her zamankinden uzun sürüyor"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13183,16 +13164,6 @@ msgstr "Çalışmak istersen sıradaki derslerin aşağıda."
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "Dinlenme gününün tadını çıkar!"
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "Bugünkü dersleri hazırlamamız normalden uzun sürüyor."
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "Birkaç dakika sonra tekrar gel."
 
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"

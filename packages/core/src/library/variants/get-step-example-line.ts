@@ -1,18 +1,17 @@
 import "server-only";
-import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
-import { MemoryCategory, type StepExampleLine, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { claimAssist } from "../../entitlements/claim-usage";
+import { claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
-import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { markMemoryFactsUsed } from "../../memory/_utils/mark-facts-used";
-import { findMemoryForTask } from "../../memory/get-memory-for-task";
 import { getSession } from "../../users/get-session";
-import { toProvenanceData } from "../_utils/library-rows";
 import { canViewLibraryRow } from "../_utils/library-visibility";
-import { getLessonCountry } from "../content-country";
-import { safeParseStepContent } from "../steps/contract/step-contract";
-import { type ExampleLineContext, loadExampleLineContext } from "./_utils/example-line-context";
+import { loadExampleLineContext } from "./_utils/example-line-context";
+import {
+  type LessonLines,
+  type LessonLinesInput,
+  loadLessonOfStep,
+  writeLessonLines,
+} from "./_utils/lesson-example-lines";
 
 type StepExampleLineResult =
   | { status: "unauthorized" }
@@ -20,198 +19,16 @@ type StepExampleLineResult =
   | RefusedUsage
   | { canRequest: boolean; line: string | null; status: "ready" };
 
-type LessonLines =
-  | { status: "unauthorized" }
-  | RefusedUsage
-  | { canRequest: boolean; lines: StepExampleLine[]; status: "ready" };
-
-type LessonLinesInput = {
-  country: string | null;
-  context: ExampleLineContext;
-  language: string;
-  lessonId: string;
-  lessonTitle: string;
-  userId: string;
-  version: number;
-};
-
-const EARLIER_LINE_LIMIT = 8;
-
 const writing = new Map<string, Promise<LessonLines>>();
 
-function getSlot(content: unknown) {
-  const parsed = safeParseStepContent("explanation", content);
-
-  return parsed.success && parsed.data.exampleLineSlot
-    ? { idea: parsed.data.exampleLineSlot.idea, text: parsed.data.text }
-    : undefined;
-}
-
 async function findExplanation(stepId: string) {
-  const step = await prisma.step.findUnique({
-    include: {
-      lesson: {
-        select: {
-          homeChapter: { select: { homeCourse: { select: { country: true } } } },
-          language: true,
-          ownerId: true,
-          title: true,
-          visibility: true,
-        },
-      },
-      skill: { select: { country: true } },
-    },
-    where: { id: stepId },
-  });
+  const step = await loadLessonOfStep(stepId);
 
   if (step?.kind !== "explanation" || !(await canViewLibraryRow(step.lesson))) {
     return null;
   }
 
-  return {
-    country: getLessonCountry({ course: step.lesson.homeChapter?.homeCourse, skill: step.skill }),
-    hasSlot: Boolean(getSlot(step.content)),
-    language: step.lesson.language,
-    lessonId: step.lessonId,
-    lessonTitle: step.lesson.title,
-    version: step.version,
-  };
-}
-
-async function loadSlotScreens({ lessonId, version }: { lessonId: string; version: number }) {
-  const steps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { content: true, id: true },
-    where: { kind: "explanation", lessonId, version },
-  });
-
-  return steps.flatMap((step) => {
-    const slot = getSlot(step.content);
-    return slot ? [{ id: step.id, ...slot }] : [];
-  });
-}
-
-async function loadCurrentLines({
-  contextKey,
-  stepIds,
-  userId,
-}: {
-  contextKey: string;
-  stepIds: string[];
-  userId: string;
-}): Promise<StepExampleLine[]> {
-  return prisma.stepExampleLine.findMany({
-    where: { contextKey, stepId: { in: stepIds }, userId },
-  });
-}
-
-async function loadEarlierLines({
-  lessonId,
-  userId,
-}: {
-  lessonId: string;
-  userId: string;
-}): Promise<string[]> {
-  const rows = await prisma.stepExampleLine.findMany({
-    orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
-    select: { text: true },
-    take: EARLIER_LINE_LIMIT,
-    where: { step: { lessonId: { not: lessonId } }, text: { not: null }, userId },
-  });
-
-  return rows.flatMap((row) => row.text ?? []);
-}
-
-async function writeLessonLines({
-  country,
-  context,
-  language,
-  lessonId,
-  lessonTitle,
-  userId,
-  version,
-}: LessonLinesInput): Promise<LessonLines> {
-  const screens = await loadSlotScreens({ lessonId, version });
-  const stepIds = screens.map((screen) => screen.id);
-  const current = await loadCurrentLines({ contextKey: context.key, stepIds, userId });
-  const missing = screens.filter((screen) => !current.some((row) => row.stepId === screen.id));
-
-  if (missing.length === 0) {
-    return { canRequest: false, lines: current, status: "ready" };
-  }
-
-  const usage = await claimAssist();
-
-  if (usage.status !== "allowed") {
-    return usage;
-  }
-
-  const picked = await findMemoryForTask({
-    analytics: { contentScope: "personal", distinctId: userId },
-    candidateIds: context.facts.map((fact) => fact.id),
-    categories: Object.values(MemoryCategory),
-    need: `Example lines for the lesson "${lessonTitle}": ${missing.map((screen) => screen.idea).join("; ")}`,
-    userId,
-  });
-
-  const { data, provenance } = await generateExampleLines({
-    analytics: { contentScope: "personal", distinctId: userId },
-    country,
-    earlierLines: [
-      ...current.flatMap((row) => row.text ?? []),
-      ...(await loadEarlierLines({ lessonId, userId })),
-    ],
-    facts: picked.map((fact) => fact.statement),
-    goal: context.goal,
-    language,
-    learnerHomeCountry: context.learnerHomeCountry,
-    plainWords: context.plainWords,
-    screens: missing.map(({ idea, text }) => ({ idea, text })),
-  });
-
-  const missingIds = missing.map((screen) => screen.id);
-
-  return writeLearnerChange<LessonLines>({ userId }, async (tx) => {
-    const fresh = await loadExampleLineContext({ client: tx, userId });
-
-    if (fresh?.key !== context.key) {
-      return unchanged({ canRequest: fresh !== null, lines: [], status: "ready" });
-    }
-
-    await markMemoryFactsUsed({
-      client: tx,
-      ids: picked.map((fact) => fact.id),
-      now: new Date(),
-      userId,
-    });
-
-    const removed = await tx.stepExampleLine.deleteMany({
-      where: { contextKey: { not: context.key }, stepId: { in: missingIds }, userId },
-    });
-
-    const created = await tx.stepExampleLine.createMany({
-      data: missing.map((screen, index) => ({
-        ...toProvenanceData(provenance),
-        contextKey: context.key,
-        stepId: screen.id,
-        text: data.lines[index] ?? null,
-        userId,
-      })),
-      skipDuplicates: true,
-    });
-
-    const lines = await tx.stepExampleLine.findMany({
-      where: { contextKey: context.key, stepId: { in: stepIds }, userId },
-    });
-
-    const result = { canRequest: false, lines, status: "ready" as const };
-
-    if (removed.count === 0 && created.count === 0) {
-      return unchanged(result);
-    }
-
-    return result;
-  });
+  return step;
 }
 
 function writeLessonLinesOnce(input: LessonLinesInput): Promise<LessonLines> {
@@ -222,7 +39,12 @@ function writeLessonLinesOnce(input: LessonLinesInput): Promise<LessonLines> {
     return pending;
   }
 
-  const started = writeLessonLines(input).finally(() => writing.delete(key));
+  const started = writeLessonLines({
+    ...input,
+    claim: (targetId) => claimUsage({ kind: "assist", targetId }),
+    wait: "learner",
+  }).finally(() => writing.delete(key));
+
   writing.set(key, started);
   return started;
 }
@@ -284,7 +106,6 @@ async function resolveStepExampleLine({
     country: screen.country,
     language: screen.language,
     lessonId: screen.lessonId,
-    lessonTitle: screen.lessonTitle,
     userId,
     version: screen.version,
   });

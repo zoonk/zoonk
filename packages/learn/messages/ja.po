@@ -598,13 +598,11 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "いつもより時間がかかっています。自動で開くので、もう一度タップしなくても大丈夫です。"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "左にスクロールする"
 
 #: src/_components/page-tabs.tsx
-#: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
 msgstr "右にスクロールする"
@@ -1326,7 +1324,6 @@ msgstr "こんにちは！学習の相棒としてお手伝いするAIの{name}�
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
-#: src/mock/mock-answer-sheet.tsx
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "以前の質問"
@@ -7785,11 +7782,6 @@ msgid "{unsure, plural, one {# not sure} other {# not sure}}"
 msgstr "{unsure, plural, other {自信なし：#問}}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "7SPhv2"
-msgid "Later questions"
-msgstr "後の問題"
-
-#: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -13089,6 +13081,7 @@ msgstr "{minutes}分練習する"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "レッスンを用意する"
@@ -13121,12 +13114,6 @@ msgid "What changed"
 msgstr "変更内容"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "今すぐ準備する"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "次のレッスン"
@@ -13137,12 +13124,6 @@ msgstr "次のレッスン"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "まだ準備ができていません"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "いつもより時間がかかっています"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13183,16 +13164,6 @@ msgstr "学習したいときは、下にある次のレッスンに進めます
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "お休みを楽しんでください！"
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "今日のレッスンの作成に、いつもより時間がかかっています。"
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "数分後にまた見に来てください。"
 
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"

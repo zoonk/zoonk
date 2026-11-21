@@ -15,9 +15,7 @@ type ByEar = { onPlay: (() => void) | null };
 export function KeyboardFretboardInstruction() {
   const t = useExtracted();
 
-  return (
-    <p className="text-muted-foreground text-sm text-pretty">{t("Play the sound, then pick.")}</p>
-  );
+  return <p className="text-muted-foreground text-sm">{t("Play the sound, then pick.")}</p>;
 }
 
 export function KeyboardHalfStepHint({
@@ -30,7 +28,7 @@ export function KeyboardHalfStepHint({
   const t = useExtracted();
 
   return changesOneHalfStep(start, target) ? (
-    <p className="text-muted-foreground text-sm text-pretty">
+    <p className="text-muted-foreground text-sm">
       {t("A half step is the distance to the next key, counting black keys.")}
     </p>
   ) : null;

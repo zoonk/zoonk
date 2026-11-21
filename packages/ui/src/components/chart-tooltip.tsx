@@ -40,7 +40,7 @@ export function ChartTooltipValue({ className, ...props }: ComponentProps<"p">) 
 export function ChartTooltipNote({ className, ...props }: ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-muted-foreground max-w-56 text-xs text-pretty", className)}
+      className={cn("text-muted-foreground max-w-56 text-xs", className)}
       data-slot="chart-tooltip-note"
       {...props}
     />

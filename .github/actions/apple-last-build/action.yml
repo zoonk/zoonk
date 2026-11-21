@@ -1,0 +1,64 @@
+name: Restore the last Apple build
+description: >-
+  Restores the Swift packages and the last build main saved, so xcodebuild recompiles only what
+  changed since instead of the whole app and its packages.
+
+inputs:
+  build:
+    description: The build to restore, `device` for `make build` or `simulator` for `make test`.
+    required: true
+
+outputs:
+  packages-key:
+    description: The key to save the Swift packages under.
+    value: ${{ steps.packages.outputs.cache-primary-key }}
+  packages-hit:
+    description: "`true` when the packages were restored from that exact key."
+    value: ${{ steps.packages.outputs.cache-hit }}
+  build-key:
+    description: The key to save this commit's build under.
+    value: ${{ steps.build.outputs.cache-primary-key }}
+  build-hit:
+    description: "`true` when this commit's own build was restored."
+    value: ${{ steps.build.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version-file: package.json
+
+    - name: Identify Xcode toolchain
+      id: xcode
+      shell: bash
+      run: |
+        set -o pipefail
+        xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
+
+    # Only main saves these caches. A pull request's own entries serve only its later runs, and in
+    # the repository's shared cache storage they evict main's, which every pull request restores.
+    - name: Restore Swift packages
+      id: packages
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: ${{ runner.temp }}/apple-source-packages
+        # Frozen resolution needs a cache containing this lockfile's revisions.
+        key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
+
+    # Each commit on main saves its build, and the newest one is restored. A new Xcode, new package
+    # versions or a change to how CI builds start from an empty build instead, which also keeps
+    # leftovers of removed code from piling up.
+    - name: Restore the last build
+      id: build
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: apps/apple/DerivedData/Make
+        key: ${{ runner.os }}-${{ runner.arch }}-apple-${{ inputs.build }}-build-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/**/Package.resolved', '.github/workflows/apple.yml', '.github/actions/apple-last-build/**') }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-${{ runner.arch }}-apple-${{ inputs.build }}-build-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/**/Package.resolved', '.github/workflows/apple.yml', '.github/actions/apple-last-build/**') }}-
+
+    - name: Make the checkout match the restored build
+      shell: bash
+      run: node apps/apple/scripts/reuse-build.mts

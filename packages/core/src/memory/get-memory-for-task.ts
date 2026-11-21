@@ -136,11 +136,15 @@ export async function findMemoryForTask(request: MemoryTaskRequest): Promise<Mem
   return selected.data;
 }
 
+/** `findMemoryForTask` for a workflow step: a failed relevance check throws so the step retries. */
+export async function findMemoryForStep(request: MemoryTaskRequest): Promise<MemoryFactForTask[]> {
+  const lookup = await lookUpMemory(request);
+  return "facts" in lookup ? lookup.facts : selectRelevantFacts(lookup.search);
+}
+
 /** `getMemoryForTask` for a workflow step: a failed relevance check throws so the step retries. */
 export async function selectMemoryForTask(
   request: MemoryTaskRequest,
 ): Promise<MemoryFactForTask[]> {
-  const lookup = await lookUpMemory(request);
-  const facts = "facts" in lookup ? lookup.facts : await selectRelevantFacts(lookup.search);
-  return markUsed({ facts, userId: request.userId });
+  return markUsed({ facts: await findMemoryForStep(request), userId: request.userId });
 }

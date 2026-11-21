@@ -1,6 +1,5 @@
 import { type ClassificationSummary } from "@/lib/classification-metrics";
 import { formatPercent } from "@/lib/format";
-import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { CELL_CLASS } from "@/lib/table-classes";
 import {
   Table,
@@ -23,7 +22,7 @@ const NUMBER_CELL = cn(CELL_CLASS, NUMBER_COLUMN);
 
 function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
   return (
-    <Table scrollLabels={SCROLL_LABELS}>
+    <Table scrollLabel="Table">
       <TableHeader>
         <TableRow>
           <TableHead>Expected label</TableHead>
@@ -55,7 +54,7 @@ function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
 
 function ConfusionMatrix({ summary }: { summary: ClassificationSummary }) {
   return (
-    <Table scrollLabels={SCROLL_LABELS}>
+    <Table scrollLabel="Table">
       <TableHeader>
         <TableRow>
           <TableHead>

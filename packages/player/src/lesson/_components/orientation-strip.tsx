@@ -38,7 +38,7 @@ export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
             })}
           </Eyebrow>
           {idea.label && (
-            <p className="text-foreground text-base leading-snug font-semibold text-pretty wrap-break-word">
+            <p className="text-foreground text-base leading-snug font-semibold wrap-break-word">
               {idea.label}
             </p>
           )}

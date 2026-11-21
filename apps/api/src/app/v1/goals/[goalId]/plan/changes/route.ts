@@ -1,7 +1,7 @@
 import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { planChangeInvalid } from "@/lib/plan-errors";
+import { planChangeInvalid, planChangedWhileSaving } from "@/lib/plan-errors";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { changeGoalPlan } from "@zoonk/core/plans/change";
 import { planChangeInputSchema } from "@zoonk/core/plans/contract";
@@ -20,6 +20,10 @@ async function createChange(
 
   if (result.status === "invalid") {
     return planChangeInvalid(result);
+  }
+
+  if (result.status === "conflict") {
+    return planChangedWhileSaving();
   }
 
   if (result.status === "unchanged") {

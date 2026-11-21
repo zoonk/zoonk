@@ -49,10 +49,18 @@ async function WeekLabels() {
   const t = await getExtracted();
 
   return (
-    <div aria-hidden="true" className={cn(MONTH_ROW_CLASS, "-mb-2")}>
-      <div className={cn(WEEKS_CLASS, "text-muted-foreground col-start-2 text-xs")}>
+    <div aria-hidden="true" className={cn(MONTH_ROW_CLASS, "text-muted-foreground -mb-2 text-xs")}>
+      <span className="whitespace-nowrap">
+        {t({
+          description: "Beside the numbers 1 to 4, one per week, in a picture of a month of study.",
+          message: "Weeks",
+        })}
+      </span>
+      <div className={WEEKS_CLASS}>
         {WEEKS.map((week) => (
-          <span key={week}>{t("Week {number, number}", { number: week + 1 })}</span>
+          <span className="tabular-nums" key={week}>
+            {week + 1}
+          </span>
         ))}
       </div>
     </div>

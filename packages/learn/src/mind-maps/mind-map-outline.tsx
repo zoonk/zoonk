@@ -16,15 +16,12 @@ const POINTS_CLASS = "text-muted-foreground text-reading flex list-disc flex-col
 
 /** The things the map sets side by side, a column each, their points row by row. */
 function Comparison({ comparison }: { comparison: NonNullable<Outline["comparison"]> }) {
-  const t = useExtracted();
   const rows = Math.max(...comparison.columns.map((column) => column.points.length));
 
   return (
     <section className="flex flex-col gap-3">
       <h3 className="text-base font-semibold text-balance">{comparison.title}</h3>
-      <Table
-        scrollLabels={{ box: comparison.title, left: t("Scroll left"), right: t("Scroll right") }}
-      >
+      <Table scrollLabel={comparison.title}>
         <TableHeader>
           <TableRow>
             {comparison.columns.map((column) => (
@@ -68,7 +65,7 @@ export function MindMapOutline({
     <div className={cn("flex flex-col gap-8", className)} data-slot="mind-map-outline">
       <div className="flex flex-col gap-1">
         {titled && <h2 className="text-lg font-semibold text-balance">{outline.title}</h2>}
-        <p className="text-reading text-pretty">{outline.centralIdea}</p>
+        <p className="text-reading">{outline.centralIdea}</p>
       </div>
 
       <ol className="flex flex-col gap-8">
@@ -83,7 +80,7 @@ export function MindMapOutline({
               </span>
               {branch.title}
             </h3>
-            <p className="text-reading text-pretty">{branch.explanation}</p>
+            <p className="text-reading">{branch.explanation}</p>
             {branch.points.length > 0 && (
               <ul className={POINTS_CLASS}>
                 {branch.points.map((point) => (
@@ -97,7 +94,7 @@ export function MindMapOutline({
 
       {outline.comparison && <Comparison comparison={outline.comparison} />}
 
-      <p className="text-reading border-t pt-6 text-pretty">
+      <p className="text-reading border-t pt-6">
         <span className="font-semibold">{t("In short:")}</span> {outline.summary}
       </p>
     </div>

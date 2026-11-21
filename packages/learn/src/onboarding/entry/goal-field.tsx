@@ -120,7 +120,7 @@ export function GoalFieldExample({ children, id }: { children: React.ReactNode; 
         aria-hidden="true"
         className={cn(
           GOAL_FIELD_TEXT_CLASS,
-          "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none col-start-1 row-start-1 min-w-0 text-pretty select-none",
+          "text-muted-foreground contrast-more:text-foreground/60 pointer-events-none col-start-1 row-start-1 min-w-0 select-none",
           "group-has-[textarea:not(:placeholder-shown)]/goal:invisible",
         )}
         data-slot="goal-example"
@@ -175,7 +175,7 @@ export function GoalFieldText({
       autoComplete="off"
       className={cn(
         GOAL_FIELD_TEXT_CLASS,
-        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-pretty outline-none",
+        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none",
         className,
       )}
       enterKeyHint="go"

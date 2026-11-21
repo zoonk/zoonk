@@ -36,7 +36,7 @@ export function useTestOutAside({
         <StepRows>
           <StepRow>
             <BookOpenIcon aria-hidden="true" />
-            <span className="min-w-0 flex-1 font-medium text-pretty">{chapterTitle}</span>
+            <span className="min-w-0 flex-1 font-medium">{chapterTitle}</span>
             {lessonsLeft !== null && lessonsLeft > 0 && (
               <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
                 {t("{count, plural, one {# lesson left} other {# lessons left}}", {
@@ -47,7 +47,7 @@ export function useTestOutAside({
           </StepRow>
         </StepRows>
 
-        <p className="text-muted-foreground text-compact leading-5 text-pretty">{rule}</p>
+        <p className="text-muted-foreground text-compact leading-5">{rule}</p>
       </>
     ),
     label: t("What a pass skips"),

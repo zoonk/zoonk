@@ -22,17 +22,24 @@ type SkillSpec = {
 };
 
 export async function planLibraryFixture({
+  chapterPerSkill = false,
   phases = ["Basics"],
   skills,
 }: {
+  /** Groups each skill's lessons in a chapter of its own instead of one chapter per phase. */
+  chapterPerSkill?: boolean;
   phases?: string[];
   skills: SkillSpec[];
 }) {
   // Plans teach a title once, so two libraries in one test need lesson titles of their own.
   const [libraryId] = crypto.randomUUID().split("-");
 
+  const chapterNames = chapterPerSkill ? skills.map((_, index) => `Skill ${index + 1}`) : phases;
+
   const chapters = await Promise.all(
-    phases.map((name, index) => libraryChapterFixture({ title: `${name} chapter ${index + 1}` })),
+    chapterNames.map((name, index) =>
+      libraryChapterFixture({ title: `${name} chapter ${index + 1}` }),
+    ),
   );
 
   const created: Skill[] = await Promise.all(
@@ -44,7 +51,7 @@ export async function planLibraryFixture({
   const lessons = await Promise.all(
     skills.flatMap((spec, skillIndex) =>
       Array.from({ length: spec.lessons }, async (_, lessonIndex) => {
-        const chapter = chapters[spec.phase ?? 0];
+        const chapter = chapters[chapterPerSkill ? skillIndex : (spec.phase ?? 0)];
 
         const lesson = await libraryLessonFixture({
           estimatedMinutes: 3,
