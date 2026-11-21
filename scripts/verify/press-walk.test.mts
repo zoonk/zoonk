@@ -60,12 +60,13 @@ function pageFixture({
     evaluate(probe: unknown) {
       return probes.get(probe);
     },
+    frames: () => [],
     async screenshot({ path }: { path: string }) {
       await screenshot(path);
     },
   };
 
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The browser stub only implements the walk's two Page methods.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The browser stub only implements the Page methods the walk and its screenshots use.
   return page as unknown as Page;
 }
 

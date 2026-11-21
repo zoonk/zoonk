@@ -132,7 +132,7 @@ data class MockRun(
 
 /**
  * Main's `useMockRunner` and `useMockDrafts`: one question at a time, answers saved in order as
- * they're given (typed ones after a pause), the time spent on each, flags, the section's moves and
+ * they're given (typed ones after a pause), the time spent on each, the ones marked not sure, the section's moves and
  * its clocks, and the steps that hand in, end a break, start speaking or grade it. Nothing here
  * says whether an answer is right.
  */
@@ -217,12 +217,12 @@ class MockRunnerViewModel(
             }
     }
 
-    fun toggleFlag() {
+    fun toggleUnsure() {
         val question = run.value.question ?: return
         unsavedText = null
         saveText()
         val draft = withTimeSpent(question.itemId)
-        persist(draft.copy(flagged = !draft.flagged))
+        persist(draft.copy(unsure = !draft.unsure))
     }
 
     fun go(target: Int) = move(target, timedOut = false)

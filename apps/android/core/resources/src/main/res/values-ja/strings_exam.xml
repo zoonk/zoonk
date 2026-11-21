@@ -5,9 +5,9 @@
   "exam_add_result": "fcdecff54c941961bc3c029307ff718009395a76f200f82af7d734ea79ca0857",
   "exam_add_result_detail": "9338e6edc85d504c02a3c14543e2330b31d36497842c29ffa75331f2b75f6c34",
   "exam_by_subject": "76c09be827a8b2a9a67ada0c0df108c95240bd7aaebc8672bb479fb76ed09151",
-  "exam_calibration": "74f2bac407acf44c70bf128dbb22ba1f239d619f44ae486220dfca47b7fb5360",
-  "exam_calibration_blank_unsure": "a3934c208d6649ed73e67f271385e2ae428ce41a5f29fe82c22505506021061e",
-  "exam_calibration_keep_answering": "b0dec138876a71fef319cf56227e80b9977a896638f453037063bef9bb8354bb",
+  "exam_calibration": "783aef6390a6548bd880568a26162a07c663867da6da3fda62c26653993500fc",
+  "exam_calibration_blank_unsure": "77490579a38584ed1fbc5e713d2fb0fa346c0ba21c727ba950d78364c40e5839",
+  "exam_calibration_keep_answering": "bfd9feda4165af955e54c4b8ecd2a1b2f0e335b5c1d6e893bb173d6ee3fd6ef8",
   "exam_calibration_right": "6b1c894de74f80004a74d041c33604833baba828f90418dcc3c76adbaf075e39",
   "exam_checklist_black_pen": "9666b7eae9d2f089a9e733f7f43c62dd7acdb4baeb226ee289982894826e642e",
   "exam_checklist_count": "533d40ca1ace755186a64e19152a75d797e37cb551e64f0a117fb9d54c76c646",
@@ -218,13 +218,13 @@
     <string name="exam_rule_irt">簡単な問題での間違いは、難しい問題での間違いよりも得点に響くので、簡単な問題から解きましょう。</string>
     <string name="exam_rule_raw_title">正解1問につき1点</string>
     <string name="exam_rule_raw">すべての問題に回答しましょう。</string>
-    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">模試では、見直しを付けなかった問題は%1$s、付けた問題は%2$sでした。</string>
+    <!-- How the learner did in mock exams on the answers they were sure of and on those they marked "Not sure". %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">模試では、自信があった答えは%1$s、自信なしにした答えは%2$sです。</string>
     <plurals name="exam_calibration_right">
         <item quantity="other">%1$d問正解（全%2$d問）</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">見直しを付けた問題は、減点が加点を上回っています。空欄にしてください。</string>
-    <string name="exam_calibration_keep_answering">見直しを付けた問題も得点につながっています。引き続き回答してください。</string>
+    <string name="exam_calibration_blank_unsure">自信がないときは、空欄にしておきましょう。正解して得られる点より、間違えたときに失う点のほうが多いからです。</string>
+    <string name="exam_calibration_keep_answering">自信がなくても答えましょう。正解すれば点がもらえます。</string>
     <string name="exam_to_pass">合格ライン</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">試験の資料どおり、%1$sで記載しています。</string>

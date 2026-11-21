@@ -33,7 +33,7 @@ function Calibration() {
     <>
       <ListRowDescription className="text-foreground">
         {t(
-          "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged.",
+          "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when sure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when not sure.",
           {
             sureAnswered: String(calibration.sure.answered),
             sureRight: calibration.sure.right,
@@ -44,12 +44,12 @@ function Calibration() {
       </ListRowDescription>
       {calibration.advice === "blankUnsure" && (
         <ListRowDescription>
-          {t("Your flagged answers cost more than they earn: leave those blank.")}
+          {t("When you're not sure, leave it blank: those answers cost more than they earn.")}
         </ListRowDescription>
       )}
       {calibration.advice === "keepAnswering" && (
         <ListRowDescription>
-          {t("Your flagged answers still earn points: keep answering them.")}
+          {t("When you're not sure, still answer: those answers earn points.")}
         </ListRowDescription>
       )}
     </>

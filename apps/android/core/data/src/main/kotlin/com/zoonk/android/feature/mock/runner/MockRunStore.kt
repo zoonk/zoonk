@@ -130,7 +130,7 @@ class LiveMockRunApi(
                     MockAnswerInput(
                         draft.answer?.recode<Answer, MockAnswer>(),
                         draft.durationMs,
-                        draft.flagged,
+                        draft.unsure,
                         UUID.fromString(draft.itemId),
                     ),
                 )

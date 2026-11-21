@@ -1,20 +1,10 @@
-import { CodeSnippet } from "@zoonk/learn/code";
-import { useAppLocale } from "@zoonk/learn/locale";
-import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
-import { markRichInline, parseRichInline, parseRichLine } from "@zoonk/learn/rich-text/parser";
-import { typesetNumbers, typesetProse } from "@zoonk/learn/rich-text/typography";
 import { readWholeCodeFence } from "@zoonk/utils/code-fence";
 import { toOneLine } from "@zoonk/utils/math-spans";
-
-function typeset({
-  locale,
-  segments,
-}: {
-  locale: string;
-  segments: RichInlineSegment[];
-}): RichInlineSegment[] {
-  return typesetProse({ locale, segments, typeset: (text) => typesetNumbers({ locale, text }) });
-}
+import { useAppLocale } from "../_utils/locale";
+import { CodeSnippet } from "../code/code-listing";
+import { RichInlineSegments } from "./rich-inline-segments";
+import { typesetLessonText } from "./rich-text-blocks";
+import { markRichInline, parseRichInline, parseRichLine } from "./rich-text-parser";
 
 type LessonRichLineProps = { literalNumbers?: boolean; mark?: string | null; text: string };
 
@@ -25,7 +15,9 @@ export function LessonRichLine({ literalNumbers = false, mark, text }: LessonRic
   const segments = mark ? markRichInline(parsed, mark) : parsed;
 
   return (
-    <RichInlineSegments segments={literalNumbers ? segments : typeset({ locale, segments })} />
+    <RichInlineSegments
+      segments={literalNumbers ? segments : typesetLessonText({ locale, segments })}
+    />
   );
 }
 

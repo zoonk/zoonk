@@ -221,7 +221,7 @@ extension View {
 }
 
 /// Main's toned outline (`border-warning text-warning-text`), for a toggle whose on state is a
-/// warning, such as a mock exam's flagged question.
+/// warning, such as a mock exam question the learner isn't sure of.
 enum ButtonTone {
   case neutral
   case warning

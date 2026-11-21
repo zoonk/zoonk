@@ -19,12 +19,14 @@ const DRILL = [
     feedback: "Quando começou.",
     options: ["since", "for", "from"],
     sentence: "I've lived here ___ 2020.",
+    translation: "Moro aqui desde 2020.",
   },
   {
     answer: "for",
     feedback: "Quanto tempo.",
     options: ["since", "for", "from"],
     sentence: "I've lived here ___ six years.",
+    translation: "Moro aqui há seis anos.",
   },
 ];
 
@@ -91,12 +93,20 @@ function mockPatternFound(data = PATTERN_OUTPUT) {
   });
 }
 
-function createDrillPattern({ goalId, userId }: { goalId: string; userId: string }) {
+function createDrillPattern({
+  drill = DRILL,
+  goalId,
+  userId,
+}: {
+  drill?: Omit<(typeof DRILL)[number], "translation">[];
+  goalId: string;
+  userId: string;
+}) {
   return prisma.mistakePattern.create({
     data: {
       content: {
         contrast: PATTERN_OUTPUT.contrast,
-        drill: DRILL,
+        drill,
         examples: [],
         rule: PATTERN_OUTPUT.rule,
       },
@@ -261,6 +271,19 @@ describe("mistake patterns", () => {
 
     await expect(getMistakePattern(pattern.id)).resolves.toMatchObject({
       pattern: { practiced: true },
+    });
+  });
+
+  it("reads a drill saved before translations with none", async () => {
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const drill = DRILL.map(({ translation: _translation, ...question }) => question);
+    const pattern = await createDrillPattern({ drill, goalId: goal.id, userId: user.id });
+
+    await expect(getMistakePattern(pattern.id)).resolves.toMatchObject({
+      pattern: { drill: drill.map((question) => ({ ...question, translation: "" })) },
+      status: "ready",
     });
   });
 

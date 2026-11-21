@@ -1,11 +1,11 @@
 "use client";
 
 import { type QuestionTutor, type TutorItem } from "@zoonk/learn/question-tutor";
+import { LessonRichLine } from "@zoonk/learn/rich-text/lesson";
 import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { useExtracted } from "next-intl";
 import { useMemo } from "react";
-import { LessonRichLine } from "../lesson/_components/lesson-rich-text";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { type LessonQuestionNavigation } from "./lesson-question-navigation";
