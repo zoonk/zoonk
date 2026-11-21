@@ -519,13 +519,14 @@ struct PlanSuggestionSection: View {
     case .fitLessons:
       if let offer = context.plan.fitOffer {
         PlanOfferSlot(
-          context: context, item: item, offer: offer, title: fitTitle(offer), actions: offers)
+          context: context, item: item, offer: offer, title: { fitTitle(offer, today: $0) },
+          actions: offers)
       }
     case .extraLessons:
       if let offer = context.plan.extraOffer {
         PlanOfferSlot(
-          context: context, item: item, offer: offer, title: extraTitle,
-          facts: extraFacts(offer), actions: offers)
+          context: context, item: item, offer: offer, title: { _ in extraTitle },
+          facts: { extraFacts(offer, today: $0) }, actions: offers)
       }
     case .coverage(let text):
       PlanCoverageSlot(context: context, title: text, actions: offers)
@@ -582,7 +583,11 @@ struct PlanSuggestionSection: View {
     case .pastDate:
       (Text(planPastDateTitle(isExam: context.goal.kind == .exam)), .symbol("calendar.badge.clock"))
     case .fitLessons:
-      (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), .sparkle)
+      (
+        context.plan.fitOffer.map {
+          fitTitle($0, today: context.slotCheck(item).repriced?.preview.effect)
+        } ?? Text(verbatim: ""), .sparkle
+      )
     case .extraLessons:
       (extraTitle, .sparkle)
     case .coverage(let text):
@@ -612,10 +617,10 @@ struct PlanSuggestionSection: View {
           "Asks which option of an exam's choice, like its foreign language, the learner takes")
   }
 
-  private func fitTitle(_ offer: GoalPlan.Offer) -> Text {
-    guard offer.fits, let covers = planCoversEverythingText(context.plan) else {
+  private func fitTitle(_ offer: GoalPlan.Offer, today: PlanEffect?) -> Text {
+    guard today == nil, offer.fits, let covers = planCoversEverythingText(context.plan) else {
       return Text(
-        "You have time for \(offer.effect.lessonsAdded) more lessons", tableName: "Plan",
+        "You have time for \((today ?? offer.effect).lessonsAdded) more lessons", tableName: "Plan",
         comment: "Title of the offer that brings into the plan more lessons the learner's time fits"
       )
     }
@@ -628,9 +633,11 @@ struct PlanSuggestionSection: View {
   }
 
   /// "15 lessons · Not in the official guide".
-  private func extraFacts(_ offer: GoalPlan.Offer) -> [String] {
+  private func extraFacts(_ offer: GoalPlan.Offer, today: PlanEffect?) -> [String] {
     [
-      String(localized: "\(offer.lessons ?? offer.effect.lessonsAdded) lessons", table: "Plan"),
+      String(
+        localized: "\(today?.lessonsAdded ?? offer.lessons ?? offer.effect.lessonsAdded) lessons",
+        table: "Plan"),
       context.plan.extraLabel,
     ]
   }

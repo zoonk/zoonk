@@ -589,9 +589,10 @@ struct PlanOfferSlot: View {
   let context: PlanContext
   let item: PlanSlotItem
   let offer: GoalPlan.Offer
-  let title: Text
-  /// Facts under the title, which then say what the change does until today's numbers differ.
-  var facts: [String] = []
+  /// Its title for today's effect once a check found other numbers, nil until then.
+  let title: (_ today: PlanEffect?) -> Text
+  /// Facts under the title, which then say what the change does, for today's effect as `title`.
+  var facts: (_ today: PlanEffect?) -> [String] = { _ in [] }
   let actions: PlanSlotActions
 
   private var check: PlanSlotCheck {
@@ -600,8 +601,9 @@ struct PlanOfferSlot: View {
 
   var body: some View {
     let repriced = check.repriced?.preview
+    let facts = facts(repriced?.effect)
 
-    PlanSlotCard(title: title, mark: .sparkle, description: nil) {
+    PlanSlotCard(title: title(repriced?.effect), mark: .sparkle, description: nil) {
       if !facts.isEmpty {
         FactSegments(facts)
           .typeStyle(.note)

@@ -637,15 +637,12 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   }
 
   /// Main's `groupSubjects`: the subjects with no group first, so none reads as part of the group
-  /// above it, then the notice's groups in its order, then the optional study; a plan's modules
-  /// are one group.
+  /// above it, then the notice's groups in its order or one run of modules, then the optional study.
   var subjectGroups: [SubjectGroup] {
-    guard kind == "notice" else {
-      return [SubjectGroup(extra: false, name: nil, subjects: subjects)]
-    }
+    let modules = kind != "notice"
 
     func key(_ subject: SyllabusSubject) -> String? {
-      subject.isExtra ? nil : (subject.group ?? "")
+      subject.isExtra ? nil : modules ? "" : (subject.group ?? "")
     }
 
     var keys: [String?] = []
