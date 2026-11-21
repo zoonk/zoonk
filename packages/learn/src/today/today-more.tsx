@@ -17,7 +17,7 @@ import { ExtraTimeButton } from "../session/extra-time-button";
 import { useTodayScreen } from "./today-context";
 import { EarlierLessons } from "./today-earlier-lessons";
 import { getChallengeEventKind, useWeekdayLabel } from "./today-week-challenge";
-import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
+import { useDayState, useHasNextBlock, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
 function MoreTime() {
   const t = useExtracted();
@@ -91,6 +91,7 @@ export function TodayMore({ className }: { className?: string }) {
   const state = useDayState();
   const pastDate = useTodayPastDate();
   const keepLearning = useUpNextLessons().length > 0;
+  const hasNext = useHasNextBlock();
 
   if (pastDate || keepLearning) {
     return null;
@@ -107,7 +108,7 @@ export function TodayMore({ className }: { className?: string }) {
 
   return (
     <div className={cn("flex flex-col gap-3 empty:hidden", className)} data-slot="today-more">
-      {state === "done" && <MoreTime />}
+      {state === "done" && !hasNext && <MoreTime />}
       {(state === "underway" || state === "done") && <EarlierLessons />}
     </div>
   );

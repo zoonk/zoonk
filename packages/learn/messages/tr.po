@@ -1008,6 +1008,63 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Bu kez kontrol edilmedi"
 
+#: src/_components/week-row.tsx
+#: src/generation/generation-wait.tsx
+msgctxt "B7ijKz"
+msgid "done"
+msgstr "tamamlandı"
+
+#: src/_components/week-row.tsx
+msgctxt "F8phHs"
+msgid "studied"
+msgstr "çalışıldı"
+
+#: src/_components/week-row.tsx
+msgctxt "uMBOLl"
+msgid "exam day"
+msgstr "sınav günü"
+
+#: src/_components/week-row.tsx
+msgctxt "WcEyrI"
+msgid "end date"
+msgstr "bitiş tarihi"
+
+#: src/_components/week-row.tsx
+msgctxt "KQR6jo"
+msgid "before your plan"
+msgstr "planının başlangıcından önce"
+
+#: src/_components/week-row.tsx
+msgctxt "1RBuve"
+msgid "after your exam"
+msgstr "sınavından sonra"
+
+#: src/_components/week-row.tsx
+msgctxt "coog-B"
+msgid "after your end date"
+msgstr "bitiş tarihinden sonra"
+
+#: src/_components/week-row.tsx
+msgctxt "1sq74z"
+msgid "rest day"
+msgstr "dinlenme günü"
+
+#: src/_components/week-row.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "bugün"
+
+#: src/_components/week-row.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "sl8z6d"
+msgid "planned"
+msgstr "planlandı"
+
+#: src/_components/week-row.tsx
+msgctxt "LeNKyW"
+msgid "not studied"
+msgstr "çalışılmadı"
+
 #: src/_components/weekend-time.tsx
 msgctxt "ZmtzBe"
 msgid "Weekend time"
@@ -4222,13 +4279,6 @@ msgid "in progress"
 msgstr "hazırlanıyor"
 
 #: src/generation/generation-wait.tsx
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "B7ijKz"
-msgid "done"
-msgstr "tamamlandı"
-
-#: src/generation/generation-wait.tsx
 msgctxt "tc4dTE"
 msgid "stopped here"
 msgstr "burada kesildi"
@@ -5250,31 +5300,6 @@ msgstr "Bitiş"
 msgctxt "pwcc1H"
 msgid "exam"
 msgstr "sınav"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "LeNKyW"
-msgid "not studied"
-msgstr "çalışılmadı"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "1sq74z"
-msgid "rest day"
-msgstr "dinlenme günü"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "kkpP2k"
-msgid "today"
-msgstr "bugün"
-
-#: src/journey/schedule-details.tsx
-#: src/today/today-segment-popover.tsx
-#: src/today/today-week-day.tsx
-msgctxt "sl8z6d"
-msgid "planned"
-msgstr "planlandı"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -13074,6 +13099,12 @@ msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "Hazırlıyoruz…"
 
+#. Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress.
+#: src/today/today-block-row.tsx
+msgctxt "pE58D7"
+msgid "Extra"
+msgstr "Ekstra"
+
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
 msgid "What changed"
@@ -13427,36 +13458,6 @@ msgstr "haftalık meydan okuma"
 msgctxt "J3eMtx"
 msgid "every topic"
 msgstr "tüm konular"
-
-#: src/today/today-week-day.tsx
-msgctxt "F8phHs"
-msgid "studied"
-msgstr "çalışıldı"
-
-#: src/today/today-week-day.tsx
-msgctxt "uMBOLl"
-msgid "exam day"
-msgstr "sınav günü"
-
-#: src/today/today-week-day.tsx
-msgctxt "WcEyrI"
-msgid "end date"
-msgstr "bitiş tarihi"
-
-#: src/today/today-week-day.tsx
-msgctxt "KQR6jo"
-msgid "before your plan"
-msgstr "planının başlangıcından önce"
-
-#: src/today/today-week-day.tsx
-msgctxt "1RBuve"
-msgid "after your exam"
-msgstr "sınavından sonra"
-
-#: src/today/today-week-day.tsx
-msgctxt "coog-B"
-msgid "after your end date"
-msgstr "bitiş tarihinden sonra"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
