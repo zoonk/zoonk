@@ -49,7 +49,7 @@ function BuddyRows({
     <section aria-labelledby={titleId} className="flex flex-col gap-1">
       <PageSectionTitle id={titleId}>{name}</PageSectionTitle>
 
-      <p className="text-muted-foreground text-xs text-pretty">{growth}</p>
+      <p className="text-muted-foreground text-xs">{growth}</p>
 
       <ListGroup>
         <ListRowLink href={hrefs.memory}>

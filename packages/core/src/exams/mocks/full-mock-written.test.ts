@@ -189,6 +189,56 @@ describe("written mock sittings", () => {
     vi.mocked(gradeWritingEvidence).mockReset();
   });
 
+  it("keeps a newer device's written answer when an offline edit arrives later", async () => {
+    const { goal, short } = await setup();
+    const id = await start(goal.id, WRITTEN);
+    const firstDevice = crypto.randomUUID();
+    const secondDevice = crypto.randomUUID();
+    const draft = { durationMs: 0, flagged: false, itemId: short.id };
+
+    await expect(
+      saveMockAnswer({
+        blockId: id,
+        input: {
+          ...draft,
+          answer: { text: "First answer" },
+          edit: { order: 0, writer: firstDevice },
+        },
+      }),
+    ).resolves.toStrictEqual({ status: "saved" });
+
+    const initial = await view(id);
+    const base = initial.current?.drafts[0]?.revision;
+    expect(base).toBeDefined();
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 5000));
+
+    await expect(
+      saveMockAnswer({
+        blockId: id,
+        input: {
+          ...draft,
+          answer: { text: "Another device's answer" },
+          edit: { base, order: 0, writer: secondDevice },
+        },
+      }),
+    ).resolves.toStrictEqual({ status: "saved" });
+
+    await expect(
+      saveMockAnswer({
+        blockId: id,
+        input: {
+          ...draft,
+          answer: { text: "Offline edit" },
+          edit: { order: 1, writer: firstDevice },
+        },
+      }),
+    ).resolves.toStrictEqual({ status: "staleAnswer" });
+
+    await expect(view(id)).resolves.toMatchObject({
+      current: { drafts: [{ answer: { text: "Another device's answer" } }] },
+    });
+  });
+
   it("advertises CGU before prompts exist and refuses a partial full or written sitting even with acceptFewer", async () => {
     const { goal, user } = await setup({ shortOnly: true });
     const options = await getMockOptions({ goalId: goal.id });

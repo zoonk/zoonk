@@ -227,7 +227,7 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
           <LineMarker>
             <BeltIndicator aria-hidden color={nextBelt.key} label={nextBelt.label} size="sm" />
           </LineMarker>
-          <span className="text-pretty">
+          <span>
             {t.rich({
               description:
                 "{next} is a belt's name, such as \"Yellow belt\". {count} is a belt's last level, 10.",

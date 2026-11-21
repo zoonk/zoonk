@@ -170,7 +170,7 @@ export function CauseEffectChainActivity({
         <p
           aria-hidden={isChecked}
           aria-live="polite"
-          className={cn("text-muted-foreground text-sm text-pretty", isChecked && "invisible")}
+          className={cn("text-muted-foreground text-sm", isChecked && "invisible")}
         >
           {notice || t("Pick a cause, then pick what it led to.")}
         </p>

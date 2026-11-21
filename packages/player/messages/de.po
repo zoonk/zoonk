@@ -129,16 +129,6 @@ msgctxt "8RsqoE"
 msgid "No guess yet"
 msgstr "Noch keine Schätzung"
 
-#: src/activities/_components/activity-horizontal-scroll.tsx
-msgctxt "jzFcrt"
-msgid "Scroll left"
-msgstr "Nach links scrollen"
-
-#: src/activities/_components/activity-horizontal-scroll.tsx
-msgctxt "-lsh8v"
-msgid "Scroll right"
-msgstr "Nach rechts scrollen"
-
 #: src/activities/_components/activity-model-sliders.tsx
 msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
@@ -153,6 +143,16 @@ msgstr "{output}: {value}, {note}."
 msgctxt "dB2ZYO"
 msgid "{output}: {value}."
 msgstr "{output}: {value}."
+
+#: src/activities/_components/activity-snippet-bar.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Nach links scrollen"
+
+#: src/activities/_components/activity-snippet-bar.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Nach rechts scrollen"
 
 #: src/activities/_components/activity-sortable-list.tsx
 msgctxt "TkDZ5b"

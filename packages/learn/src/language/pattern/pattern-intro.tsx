@@ -35,7 +35,7 @@ function RuleExample({ example, rule }: { example: PatternExample | undefined; r
           ]}
         />
       )}
-      <p className="text-reading leading-relaxed text-pretty">{rule}</p>
+      <p className="text-reading leading-relaxed">{rule}</p>
     </section>
   );
 }
@@ -61,7 +61,7 @@ export function PatternRule({ pattern }: { pattern: MistakePatternView }) {
   return (
     <div className="flex flex-col gap-3">
       <ContrastRows contrast={pattern.contrast} />
-      <p className="text-compact leading-relaxed text-pretty">{pattern.rule}</p>
+      <p className="text-compact leading-relaxed">{pattern.rule}</p>
     </div>
   );
 }
@@ -123,7 +123,7 @@ export function PatternIntro({ pattern }: { pattern: MistakePatternView }) {
     <>
       <header className="flex flex-col gap-2">
         <PageTitle className="text-balance">{pattern.title}</PageTitle>
-        <p className="text-muted-foreground text-pretty">
+        <p className="text-muted-foreground">
           {t(
             "{count, plural, =0 {It came up in your recent answers.} one {It came up once in your recent answers.} other {It came up # times in your recent answers.}}",
             { count: pattern.occurrences },
@@ -144,12 +144,12 @@ export function TyposNote({ pattern }: { pattern: MistakePatternView }) {
   return (
     <header className="flex flex-col gap-2">
       <PageTitle>{t("Just typos")}</PageTitle>
-      <p className="text-muted-foreground text-pretty">
+      <p className="text-muted-foreground">
         {t(
           "Your recent mistakes were typos, not a rule you're missing. There's nothing to practice.",
         )}
       </p>
-      {pattern.rule && <p className="mt-2 text-pretty">{pattern.rule}</p>}
+      {pattern.rule && <p className="mt-2">{pattern.rule}</p>}
     </header>
   );
 }

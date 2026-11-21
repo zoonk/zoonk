@@ -78,7 +78,7 @@ export function DuelOver() {
   }
 
   return (
-    <p className="text-foreground text-reading leading-6 text-pretty" role="status">
+    <p className="text-foreground text-reading leading-6" role="status">
       {decision ? <DecisionLine decision={decision} /> : t("Every question is answered.")}
     </p>
   );

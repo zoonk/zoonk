@@ -52,7 +52,7 @@ export function CheckpointCallPreparing({
     >
       <header className="flex flex-col gap-2">
         <h1 className="text-title text-balance">{unitTitle}</h1>
-        <p className="text-muted-foreground text-pretty">
+        <p className="text-muted-foreground">
           {t("A short voice call with an AI character, about this unit.")}
         </p>
         <CallStartNote call={call} failed={t("The call didn't start. Try again in a moment.")} />

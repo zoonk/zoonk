@@ -66,10 +66,9 @@ function CourseMap({
               )}
             >
               <span
-                className={cn(
-                  "text-pretty",
-                  group === here ? "text-foreground font-semibold" : "text-muted-foreground",
-                )}
+                className={
+                  group === here ? "text-foreground font-semibold" : "text-muted-foreground"
+                }
               >
                 {group.label}
               </span>
@@ -183,12 +182,10 @@ export async function ChapterStrip({
                 </span>
 
                 {isHere ? (
-                  <span className="text-reading leading-snug font-semibold text-pretty">
-                    {item.title}
-                  </span>
+                  <span className="text-reading leading-snug font-semibold">{item.title}</span>
                 ) : (
                   <Link
-                    className="hover:text-foreground focus-visible:ring-ring/50 hit-area text-reading relative self-start rounded-md leading-snug font-medium text-pretty outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
+                    className="hover:text-foreground focus-visible:ring-ring/50 hit-area text-reading relative self-start rounded-md leading-snug font-medium outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
                     href={getChapterHref({ ...params, chapterSlug: item.slug })}
                     prefetch
                   >

@@ -8,7 +8,6 @@ final class ExamStore {
   @ObservationIgnored let cache: AppCache
   @ObservationIgnored private var exams: [String: Resource<ExamView>] = [:]
   @ObservationIgnored private var options: [String: Resource<MockOptions>] = [:]
-  @ObservationIgnored private var mocks: [String: Resource<MockView>] = [:]
   @ObservationIgnored private var essays: [String: Resource<EssayView>] = [:]
   @ObservationIgnored private var attempts: [String: Resource<WritingAttempt>] = [:]
   @ObservationIgnored private let saves: LearnerSaves
@@ -53,21 +52,14 @@ final class ExamStore {
     return list
   }
 
-  /// It changes only by the learner's steps in it, which read it again themselves, so no other
-  /// write revalidates it.
+  /// Each opening reads the mock again, as main's page does, so a runner never starts from a read
+  /// older than its saves.
   func mock(blockId: String) -> Resource<MockView> {
-    if let mock = mocks[blockId] {
-      return mock
-    }
-
     let api = api
-    let mock: Resource<MockView> = cache.resource(audience: .signedIn) { session in
+    return cache.resource(audience: .signedIn) { session in
       guard let session else { return nil }
       return try await api.mock(token: session.bearerToken, blockId: blockId)
     }
-
-    mocks[blockId] = mock
-    return mock
   }
 
   func essay(blockId: String) -> Resource<EssayView> {

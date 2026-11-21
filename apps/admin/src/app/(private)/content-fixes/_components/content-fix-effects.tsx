@@ -113,6 +113,8 @@ function describeEffect({
       return `${countOf({ count: effect.stepIds.length, many: "speaking screens take", one: "speaking screen takes" })} the new sentence too.`;
     case "sentenceOrdersOwed":
       return `The other word orders accepted as right in ${countOf({ count: effect.lessonIds.length, many: "lessons", one: "lesson" })} are cleared and written again right after approval. Until they're written, those sentence screens wait.`;
+    case "distractorsLikeTranslations":
+      return `${effect.texts.map((text) => `“${text}”`).join(", ")} ${effect.texts.length === 1 ? "is" : "are"} also how this lesson translates a word. The wrong options on a word's translation screen should be words in the language being learned: check ${effect.texts.length === 1 ? "it is one" : "they are"}.`;
     case "pronunciationsKept":
       return `The word's text changes, but ${countOf({ count: effect.count, many: "pronunciation guides stay", one: "pronunciation guide stays" })} as they are. Check they still match.`;
     default:
@@ -177,9 +179,13 @@ function planLines(changes: ContentFixDetail["changes"]): Line[] {
   });
 }
 
-/** A change to what counts as right, which staff should look at before approving. */
+/** What staff should look at before approving: a change to what counts as right, or a doubtful option. */
 function isWarning(effect: ContentFixDetail["effects"][number]): boolean {
-  return effect.kind === "answerKeyChanged" || effect.kind === "itemReplaced";
+  return (
+    effect.kind === "answerKeyChanged" ||
+    effect.kind === "itemReplaced" ||
+    effect.kind === "distractorsLikeTranslations"
+  );
 }
 
 function effectLines(fix: Pick<ContentFixDetail, "changes" | "effects" | "rowLabels">): Line[] {

@@ -115,7 +115,7 @@ export function SupportBody(
   return (
     <>
       {props.prechecked && (
-        <p className="text-muted-foreground -mt-2 text-sm text-pretty">
+        <p className="text-muted-foreground -mt-2 text-sm">
           {t("We checked what often helps with what you picked. Change anything you like.")}
         </p>
       )}

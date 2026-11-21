@@ -120,6 +120,12 @@ export const mockViewResponseSchema = z
     checklist: z.array(z.enum(EXAM_DAY_CHECKLIST)),
     current: z
       .object({
+        changedItemIds: z
+          .array(uuidSchema())
+          .meta({
+            description:
+              "In a forward-only section's review: the questions whose answer the review already changed. Each may change again without using another of `changesLeft`; empty otherwise",
+          }),
         changesLeft: z
           .number()
           .int()
@@ -136,6 +142,7 @@ export const mockViewResponseSchema = z
             durationMs: z.number().int(),
             flagged: z.boolean(),
             itemId: uuidSchema(),
+            revision: uuidSchema().optional(),
           }),
         ),
         kind: z
