@@ -325,7 +325,6 @@
     <string name="mock_result_review">Questions à réviser</string>
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">Tu n’as pas répondu.</string>
-    <string name="mock_result_written_part">Partie écrite · %1$d sur %2$d</string>
     <string name="mock_result_too_short">Trop courte pour être évaluée</string>
     <string name="mock_result_grading">Évaluation selon le barème de l’examen. Cela peut prendre jusqu’à 30 secondes.</string>
     <string name="mock_result_grading_slow">Évaluation toujours en cours. Ça prend plus de temps que d’habitude.</string>

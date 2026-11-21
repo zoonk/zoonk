@@ -325,7 +325,6 @@
     <string name="mock_result_review">Questões para revisar</string>
     <string name="mock_result_question">Questão %1$d</string>
     <string name="mock_result_left_blank">Você deixou em branco.</string>
-    <string name="mock_result_written_part">Parte escrita · %1$d de %2$d</string>
     <string name="mock_result_too_short">Curta demais para corrigir</string>
     <string name="mock_result_grading">Corrigindo com os critérios da prova. Isso pode levar até 30 s.</string>
     <string name="mock_result_grading_slow">Ainda estamos corrigindo. Está demorando mais que o normal.</string>

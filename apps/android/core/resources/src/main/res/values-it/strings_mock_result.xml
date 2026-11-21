@@ -325,7 +325,6 @@
     <string name="mock_result_review">Domande da rivedere</string>
     <string name="mock_result_question">Domanda %1$d</string>
     <string name="mock_result_left_blank">Non hai risposto.</string>
-    <string name="mock_result_written_part">Parte scritta · %1$d su %2$d</string>
     <string name="mock_result_too_short">Troppo breve per essere valutato</string>
     <string name="mock_result_grading">Stiamo valutando il tema secondo i criteri dell’esame. Possono volerci fino a 30 secondi.</string>
     <string name="mock_result_grading_slow">Stiamo ancora valutando il testo. Ci stiamo mettendo più del solito.</string>

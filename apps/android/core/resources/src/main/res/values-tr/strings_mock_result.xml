@@ -309,7 +309,6 @@
     <string name="mock_result_review">Gözden geçirilecek sorular</string>
     <string name="mock_result_question">Soru %1$d</string>
     <string name="mock_result_left_blank">Boş bıraktın.</string>
-    <string name="mock_result_written_part">Yazılı bölüm · %1$d / %2$d</string>
     <string name="mock_result_too_short">Not verilemeyecek kadar kısa</string>
     <string name="mock_result_grading">Sınavın değerlendirme ölçütlerine göre not veriyoruz. 30 saniyeye kadar sürebilir.</string>
     <string name="mock_result_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>

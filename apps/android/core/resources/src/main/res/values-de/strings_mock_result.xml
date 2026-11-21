@@ -309,7 +309,6 @@
     <string name="mock_result_review">Fragen zum Wiederholen</string>
     <string name="mock_result_question">Frage %1$d</string>
     <string name="mock_result_left_blank">Du hast die Frage unbeantwortet gelassen.</string>
-    <string name="mock_result_written_part">Schriftlicher Teil · %1$d von %2$d</string>
     <string name="mock_result_too_short">Zu kurz zum Bewerten</string>
     <string name="mock_result_grading">Wir bewerten deine Antwort anhand der Bewertungskriterien der Prüfung. Das kann bis zu 30 Sekunden dauern.</string>
     <string name="mock_result_grading_slow">Wir bewerten noch. Das dauert länger als sonst.</string>

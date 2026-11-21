@@ -341,7 +341,6 @@
     <string name="mock_result_review">Pytania do przejrzenia</string>
     <string name="mock_result_question">Pytanie %1$d</string>
     <string name="mock_result_left_blank">Nie udzielono odpowiedzi.</string>
-    <string name="mock_result_written_part">Część pisemna · %1$d z %2$d</string>
     <string name="mock_result_too_short">Za krótkie do oceny</string>
     <string name="mock_result_grading">Oceniamy według kryteriów egzaminu. Może to potrwać do 30 sek.</string>
     <string name="mock_result_grading_slow">Nadal oceniamy. Trwa to dłużej niż zwykle.</string>

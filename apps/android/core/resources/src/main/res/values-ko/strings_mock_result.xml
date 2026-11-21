@@ -293,7 +293,6 @@
     <string name="mock_result_review">다시 볼 문제</string>
     <string name="mock_result_question">%1$d번 문제</string>
     <string name="mock_result_left_blank">답하지 않았어요.</string>
-    <string name="mock_result_written_part">필기 파트 · %1$d / %2$d</string>
     <string name="mock_result_too_short">채점하기에는 너무 짧아요</string>
     <string name="mock_result_grading">시험의 평가 기준에 따라 채점하고 있어요. 최대 30초가 걸릴 수 있어요.</string>
     <string name="mock_result_grading_slow">아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>

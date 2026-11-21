@@ -293,7 +293,6 @@
     <string name="mock_result_review">見直す問題</string>
     <string name="mock_result_question">第%1$d問</string>
     <string name="mock_result_left_blank">未回答でした。</string>
-    <string name="mock_result_written_part">筆記パート · %1$d／%2$d</string>
     <string name="mock_result_too_short">採点するには短すぎます</string>
     <string name="mock_result_grading">試験の評価基準に沿って採点しています。最大30秒かかります。</string>
     <string name="mock_result_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>
