@@ -1,13 +1,33 @@
+import { type StudyPortion } from "./interval-study-minutes";
+import { fromIsoDate } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanDay, type ScheduledUnit } from "./schedule-units";
 
 export type Held = { date: Date; index: number; minutes: number };
+
+export type DayTime = { date: Date; minutes: number };
 
 export function sumByDay(units: readonly { date: Date; minutes: number }[]): Map<number, number> {
   return units.reduce(
     (sums, unit) =>
       sums.set(unit.date.getTime(), (sums.get(unit.date.getTime()) ?? 0) + unit.minutes),
     new Map<number, number>(),
+  );
+}
+
+/** A unit that runs over several days takes its time on each of them. */
+export function sumByPortionDay(
+  units: readonly { date: Date; minutes: number; studyPortions?: readonly StudyPortion[] }[],
+): Map<number, number> {
+  return sumByDay(
+    units.flatMap((unit) =>
+      unit.studyPortions && unit.studyPortions.length > 0
+        ? unit.studyPortions.map((portion) => ({
+            date: fromIsoDate(portion.date),
+            minutes: portion.lessonMinutes,
+          }))
+        : [unit],
+    ),
   );
 }
 
@@ -92,4 +112,33 @@ export function listHeldFrom({
 
 export function findHeld(held: readonly Held[], at: number): Held | undefined {
   return held.find((_, index) => sumMinutes(held.slice(0, index + 1)) > at + PLAN_EPSILON);
+}
+
+/** Like the schedule, work starts in the first room it finds and goes on into the next. */
+export function takeRoom({
+  days,
+  from,
+  minutes,
+  room,
+}: {
+  days: readonly PlanDay[];
+  from: Date;
+  minutes: number;
+  room: (date: Date) => number;
+}): DayTime[] {
+  const { left, taken } = days.reduce<{ left: number; taken: DayTime[] }>(
+    (state, { date }) => {
+      const free = date < from || state.left <= PLAN_EPSILON ? 0 : room(date);
+
+      if (free <= PLAN_EPSILON) {
+        return state;
+      }
+
+      const used = Math.min(state.left, free);
+      return { left: state.left - used, taken: [...state.taken, { date, minutes: used }] };
+    },
+    { left: minutes, taken: [] },
+  );
+
+  return left <= PLAN_EPSILON ? taken : [];
 }

@@ -1,5 +1,15 @@
 import { type BuildPlanInput } from "./build-plan";
-import { type Held, findHeld, listHeldFrom, listHeldTime, sumByDay, sumMinutes } from "./held-time";
+import {
+  type DayTime,
+  type Held,
+  findHeld,
+  listHeldFrom,
+  listHeldTime,
+  sumByDay,
+  sumByPortionDay,
+  sumMinutes,
+  takeRoom,
+} from "./held-time";
 import { getOneDayStudy } from "./interval-study-minutes";
 import { getBaseDays, getLastKeptLessonDays, getStandInDays } from "./landed-days";
 import { type LandedUnits, withoutWrittenStandIns } from "./landed-lessons";
@@ -50,56 +60,39 @@ function toPlaced({
   date,
   layout,
   part,
+  portions,
   unit,
 }: {
   anchor: number;
   date: Date;
   layout: Layout;
   part: ScheduledUnit | undefined;
+  portions: readonly DayTime[];
   unit: QueueUnit;
 }): Placed {
-  const shape = layout.dayOn(date)?.shape;
+  const studyPortions = portions.flatMap((portion) => {
+    const day = portion.date.getTime();
+    const share = layout.dayOn(portion.date)?.shape.share ?? 1;
 
-  layout.taken.set(date.getTime(), (layout.taken.get(date.getTime()) ?? 0) + unit.minutes);
+    layout.taken.set(day, (layout.taken.get(day) ?? 0) + portion.minutes);
+
+    return getOneDayStudy({ date: portion.date, lessonMinutes: portion.minutes, share })
+      .studyPortions;
+  });
 
   return {
     anchor,
     unit: {
       ...unit,
       date,
-      phase: shape?.phase ?? part?.phase ?? unit.phase,
-      ...getOneDayStudy({ date, lessonMinutes: unit.minutes, share: shape?.share ?? 1 }),
+      phase: layout.dayOn(date)?.shape.phase ?? part?.phase ?? unit.phase,
+      studyMinutes: studyPortions.reduce((total, portion) => total + portion.minutes, 0),
+      studyPortions,
     },
   };
 }
 
-function findRoom({
-  after,
-  layout,
-  slot,
-  unit,
-}: {
-  after: Date | null;
-  layout: Layout;
-  slot: Held;
-  unit: QueueUnit;
-}): Date | undefined {
-  const from = after && after > slot.date ? after : slot.date;
-
-  const hasRoom = (date: Date) => {
-    const limit = layout.limitOn(date);
-    const used = layout.usedOn(date);
-
-    return (
-      used + unit.minutes <= limit + PLAN_EPSILON ||
-      (used <= PLAN_EPSILON && limit > PLAN_EPSILON && unit.minutes > limit)
-    );
-  };
-
-  return layout.days.find(({ date }) => date >= from && hasRoom(date))?.date;
-}
-
-function findDay({
+function findPortions({
   after,
   first,
   floor,
@@ -115,13 +108,18 @@ function findDay({
   layout: Layout;
   slot: Held;
   unit: QueueUnit;
-}): Date | undefined {
+}): DayTime[] {
   if (index === 0) {
     const day = first && first < slot.date ? first : slot.date;
-    return floor && floor > day ? floor : day;
+    return [{ date: floor && floor > day ? floor : day, minutes: unit.minutes }];
   }
 
-  return findRoom({ after, layout, slot, unit });
+  return takeRoom({
+    days: layout.days,
+    from: after && after > slot.date ? after : slot.date,
+    minutes: unit.minutes,
+    room: (date) => layout.limitOn(date) - layout.usedOn(date),
+  });
 }
 
 function placeSkill({
@@ -156,7 +154,11 @@ function placeSkill({
     (state, unit, index) => {
       const slot = findHeld(held, index * perLesson) ?? held.at(-1);
 
-      const date = slot && findDay({ after: state.after, first, floor, index, layout, slot, unit });
+      const portions = slot
+        ? findPortions({ after: state.after, first, floor, index, layout, slot, unit })
+        : [];
+
+      const date = portions.at(-1)?.date;
 
       if (!slot || !date) {
         return { ...state, leftOut: [...state.leftOut, unit] };
@@ -168,7 +170,7 @@ function placeSkill({
       return {
         ...state,
         after: date,
-        placed: [...state.placed, toPlaced({ anchor, date, layout, part, unit })],
+        placed: [...state.placed, toPlaced({ anchor, date, layout, part, portions, unit })],
       };
     },
     { after: null, leftOut: [], placed: [] },
@@ -185,6 +187,7 @@ function placeSkill({
           date: piece.date,
           layout,
           part: layout.laid[piece.index],
+          portions: [piece],
           unit: { ...rest, minutes: piece.minutes },
         }),
       )
@@ -242,7 +245,7 @@ export function putLandedLessons({
     ? [...kept, ...laid.filter((unit) => isUnwrittenLesson(unit) && !isPart(unit))]
     : laid.filter((unit) => !isPart(unit));
 
-  const other = sumByDay(others);
+  const other = sumByPortionDay(others);
   const otherOn = (date: Date) => other.get(date.getTime()) ?? 0;
   const claimed = new Map<number, number>();
   const lastDays = getLastKeptLessonDays({ input, keeps: kept !== null });

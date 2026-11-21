@@ -10,6 +10,7 @@ import { getPlanFeasibility } from "./plan-feasibility";
 import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES, type PlannerLesson } from "./plan-units";
+import { listSelectedItemFacts } from "./selected-item-facts";
 
 const TODAY = fromIsoDate("2026-09-28");
 
@@ -968,6 +969,43 @@ describe("exam plans", () => {
       fromIsoDate("2026-10-02").getTime(),
     );
   });
+
+  it("keeps alternating subjects after this week when an automatic run can't keep the week as it was", () => {
+    const input = planInput({
+      goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2027-03-01") },
+      graph: {
+        phases: [{ milestone: null, name: "Everything" }],
+        skills: ["math", "law", "reading"].map((skillId, index) =>
+          skill(skillId, { area: skillId, lessons: 30, weight: 3 - index }),
+        ),
+      },
+      lessons: [],
+      settings: parsePlanSettings({
+        startDate: toIsoDate(TODAY),
+        weekdayMinutes: [0, 30, 30, 30, 30, 30, 0],
+      }),
+    });
+
+    const behind = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      mode: "automatic",
+      today: fromIsoDate("2026-10-02"),
+    });
+
+    const weeks = Map.groupBy(
+      [...situationMinutesByDay(behind)].filter(
+        ([date]) => date >= "2026-10-12" && date < "2026-10-26",
+      ),
+      ([date]) => (date < "2026-10-19" ? "first" : "second"),
+    );
+
+    expect(
+      [...weeks.values()].map(
+        (days) => new Set(days.flatMap(([, minutes]) => [...minutes.keys()])),
+      ),
+    ).toStrictEqual([new Set(["math", "law", "reading"]), new Set(["math", "law", "reading"])]);
+  });
 });
 
 type DatedPhase = { endDate: string | null; startDate: string | null };
@@ -1143,6 +1181,30 @@ function situationMinutesByDay(built: BuiltPlan): Map<string, Map<string, number
   }, new Map<string, Map<string, number>>());
 }
 
+/** The phase's last situation ends alone, so the turns are measured before its last weeks. */
+function longestTurn(built: BuiltPlan): number {
+  const leaders = [...situationMinutesByDay(built)]
+    .toSorted(([a], [b]) => a.localeCompare(b))
+    .filter(([date]) => date < "2027-02-01")
+    .map(
+      ([, minutes]) => [...minutes].reduce((most, entry) => (entry[1] > most[1] ? entry : most))[0],
+    );
+
+  return leaders.reduce(
+    (run, leader, index) => {
+      const length = leader === leaders[index - 1] ? run.length + 1 : 1;
+      return { length, most: Math.max(run.most, length) };
+    },
+    { length: 0, most: 0 },
+  ).most;
+}
+
+function lessonDates(built: BuiltPlan) {
+  return built.items.flatMap((item) =>
+    item.lessonId && item.scheduledFor ? [[item.lessonId, item.scheduledFor] as const] : [],
+  );
+}
+
 function todoLessonItems(built: BuiltPlan) {
   return built.items.filter((item) => item.kind === "lesson" && item.status === "todo");
 }
@@ -1239,33 +1301,15 @@ describe("language plans", () => {
   }
 
   it("takes turns between three situations instead of teaching one for weeks", () => {
-    const days = [...situationMinutesByDay(buildPlan(situations(40)))].toSorted(([a], [b]) =>
-      a.localeCompare(b),
-    );
+    const built = buildPlan(situations(40));
 
-    const firstWeek = days.filter(([date]) => date < "2026-10-05");
+    const firstWeek = [...situationMinutesByDay(built)].filter(([date]) => date < "2026-10-05");
 
     expect(new Set(firstWeek.flatMap(([, minutes]) => [...minutes.keys()]))).toStrictEqual(
       new Set(["order", "work", "plans"]),
     );
 
-    // The phase's last situation ends alone, so the turns are measured before its last weeks.
-    const leaders = days
-      .filter(([date]) => date < "2027-02-01")
-      .map(
-        ([, minutes]) =>
-          [...minutes].reduce((most, entry) => (entry[1] > most[1] ? entry : most))[0],
-      );
-
-    const longestRun = leaders.reduce(
-      (run, leader, index) => {
-        const length = leader === leaders[index - 1] ? run.length + 1 : 1;
-        return { length, most: Math.max(run.most, length) };
-      },
-      { length: 0, most: 0 },
-    );
-
-    expect(longestRun.most).toBeLessThanOrEqual(2);
+    expect(longestTurn(built)).toBeLessThanOrEqual(2);
   });
 
   it("keeps its turns when the learner opens another situation's lesson first", () => {
@@ -1312,6 +1356,91 @@ describe("language plans", () => {
     );
 
     expect(studied.keys).toStrictEqual(planned.slice(0, 16));
+  });
+
+  it("keeps taking turns after this week when an automatic run can't keep the week as it was", () => {
+    const input = situations(40);
+
+    const behind = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      mode: "automatic",
+      today: fromIsoDate("2026-10-01"),
+    });
+
+    expect(longestTurn(behind)).toBeLessThanOrEqual(2);
+  });
+
+  it("practices only after the last lessons of situations an automatic run kept this week", () => {
+    const base = situations(20);
+
+    const input = {
+      ...base,
+      goal: { ...base.goal, targetDate: fromIsoDate("2027-04-01") },
+      graph: { ...base.graph, skills: base.graph.skills.slice(0, 3) },
+    };
+
+    const behind = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      mode: "automatic",
+      today: fromIsoDate("2026-10-01"),
+    });
+
+    const lastLesson = [...behind.lessonDayMinutes.values()]
+      .flatMap((days) => [...days.keys()])
+      .toSorted()
+      .at(-1);
+
+    expect(
+      behind.items.filter(
+        (item) =>
+          item.kind === "review" && toIsoDate(item.scheduledFor ?? TODAY) <= (lastLesson ?? ""),
+      ),
+    ).toStrictEqual([]);
+  });
+
+  it("gives a situation's unwritten lessons no time this week once its first chapter is written", () => {
+    const input = situations(40);
+
+    const written = buildPlan({
+      ...input,
+      items: saveWithFacts(input),
+      lessons: ["order", "work", "plans"].flatMap((skillId) => writtenLessons(skillId, 1, 10)),
+      mode: "automatic",
+    });
+
+    expect([...situationMinutesByDay(written)].some(([date]) => date < "2026-10-05")).toBeTruthy();
+
+    expect(
+      ["skill:order", "skill:work", "skill:plans"].flatMap((key) =>
+        [...(written.lessonDayMinutes.get(key)?.keys() ?? [])].filter(
+          (date) => date < "2026-10-05",
+        ),
+      ),
+    ).toStrictEqual([]);
+  });
+
+  it("puts a situation's newly written lessons within a week of where a full re-plan would", () => {
+    const input = situations(40);
+
+    const written = {
+      ...input,
+      items: saveWithFacts(input),
+      lessons: writtenLessons("order", 1, 10),
+      mode: "automatic" as const,
+    };
+
+    const kept = new Map(lessonDates(buildPlan(written)));
+    const replanned = lessonDates(buildPlan({ ...written, mode: "forced" }));
+
+    expect([...kept.keys()].toSorted()).toStrictEqual(replanned.map(([id]) => id).toSorted());
+
+    expect(
+      replanned.filter(
+        ([lessonId, date]) => Math.abs(daysBetween(date, kept.get(lessonId) ?? date)) > 7,
+      ),
+    ).toStrictEqual([]);
   });
 });
 
@@ -1978,6 +2107,16 @@ function store(
     id: item.id ?? item.key,
     position,
     status: done.has(item.key) ? "done" : item.status,
+  }));
+}
+
+function saveWithFacts(input: BuildPlanInput): ExistingPlanItem[] {
+  const built = buildPlan(input);
+  const facts = listSelectedItemFacts({ built, input });
+
+  return store(built).map((item) => ({
+    ...item,
+    facts: { ...facts.get(item.key), schemaVersion: 1 },
   }));
 }
 

@@ -239,3 +239,62 @@ describe("this week's saved teaching", () => {
     expect(laid.restSchedule.units[0]?.date).toStrictEqual(start);
   });
 });
+
+function queueLesson(attrs: Partial<QueueUnit> & Pick<QueueUnit, "key">): QueueUnit {
+  return {
+    area: "Basics",
+    chapterId: null,
+    kind: "lesson",
+    lessonId: null,
+    minutes: 10,
+    phase: 0,
+    skillId: null,
+    title: attrs.key,
+    ...attrs,
+  };
+}
+
+describe(layOutAfterThisWeek, () => {
+  it("keeps only the share of a stand-in saved this week and lays out the rest after it", () => {
+    const start = fromIsoDate("2026-10-19");
+
+    const days: PlanDay[] = [14, 15, 16, 19, 20, 21, 22].map((day) => ({
+      date: fromIsoDate(`2026-10-${day}`),
+      shape: { events: [], minutes: 10, open: true, phase: null, share: 1 },
+    }));
+
+    const standIn = queueLesson({ key: "skill:a", lessons: 4, minutes: 40, skillId: "a" });
+
+    const laid = layOutAfterThisWeek({
+      days,
+      kept: [{ date: fromIsoDate("2026-10-14"), key: standIn.key, later: 0.75, share: 0.25 }],
+      layOut: ({ days: open, units }) => ({
+        carriedSchedule: { units: [] },
+        restSchedule: {
+          units: units
+            .flatMap((unit) =>
+              Array.from({ length: unit.minutes / 10 }, () => ({ ...unit, minutes: 10 })),
+            )
+            .map((part, index) => {
+              const date = open[index]?.date ?? start;
+
+              return {
+                ...part,
+                date,
+                studyMinutes: 10,
+                studyPortions: [{ date: toIsoDate(date), lessonMinutes: 10, minutes: 10 }],
+              };
+            }),
+        },
+      }),
+      start,
+      units: [queueLesson({ key: "lesson:b", lessonId: "b", skillId: "b" }), standIn],
+    });
+
+    const later = laid.restSchedule.units.filter((unit) => unit.key === standIn.key);
+
+    expect(laid.keptParts.map((unit) => toIsoDate(unit.date))).toStrictEqual(["2026-10-15"]);
+    expect(later.every((unit) => unit.date >= start)).toBe(true);
+    expect(later.reduce((total, unit) => total + unit.minutes, 0)).toBe(30);
+  });
+});

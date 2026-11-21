@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type BuildPlanInput, buildPlan } from "./build-plan";
+import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import { putLandedLessons } from "./landed-placement";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
@@ -327,6 +327,18 @@ function lessonsAndChallenges(plan: { items: readonly PlannedItem[] }) {
   return others(plan).filter(([key]) => !key?.startsWith("checkpoint:"));
 }
 
+/** A lesson can run over two days, so a day's time is what each lesson spends on it. */
+function busiestDay(plan: Pick<BuiltPlan, "lessonDayMinutes">) {
+  const perDay = [...plan.lessonDayMinutes.values()]
+    .flatMap((byDay) => [...byDay])
+    .reduce(
+      (totals, [date, minutes]) => totals.set(date, (totals.get(date) ?? 0) + minutes),
+      new Map<string, number>(),
+    );
+
+  return Math.max(...perDay.values());
+}
+
 function busiest(plan: { items: readonly PlannedItem[] }) {
   const perDay = Map.groupBy(
     plan.items.filter((entry) => entry.kind === "lesson" && entry.lessonId),
@@ -391,7 +403,7 @@ describe.each([false, true])(
       });
 
       expect(lessonsAndChallenges(next)).toStrictEqual(lessonsAndChallenges(first));
-      expect(busiest(next)).toBeLessThanOrEqual(learn.goal.dailyMinutes);
+      expect(busiestDay(next)).toBeLessThanOrEqual(learn.goal.dailyMinutes);
     });
   },
 );

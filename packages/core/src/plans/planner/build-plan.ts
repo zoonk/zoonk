@@ -15,6 +15,7 @@ import {
   setAsideLeftWork,
   splitExistingItems,
   toKeptItem,
+  withoutLandedDays,
 } from "./kept-items";
 import { listStrainedEnds } from "./kept-phase-ends";
 import {
@@ -48,7 +49,7 @@ import { resolvePlannedMocks, settlePlannedMocks } from "./planned-mocks";
 import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
 import { listDroppedSkills, summarizePlan } from "./summarize-plan";
-import { getPendingOrder, listStillSetAside } from "./this-week-items";
+import { getLastKeptDay, getPendingOrder, listStillSetAside } from "./this-week-items";
 import { markKeptLessons } from "./whole-boss";
 
 /**
@@ -214,8 +215,8 @@ function planGoal({
       queue: { focused, prerequisites, ranks, rates, values },
       start,
       thisWeek: listThisWeekWork({
+        end: getLastKeptDay({ input, keepsRest }),
         frozen: [...frozen, ...landedStandIns],
-        landed: [],
         units: unitsByKey,
       }),
       units: unplaced,
@@ -265,6 +266,7 @@ function planGoal({
   const landedBySkill = Map.groupBy(outlined, (unit) => unit.skillId ?? "");
 
   const units = joinStandIns([...schedule.units, ...(afterExam?.units ?? [])]);
+  const keptDays = withoutLandedDays({ days: keptPortions, landed: landedStandIns });
 
   const stillAside = listStillSetAside({ items: setAsideBefore, placed: units });
 
@@ -284,9 +286,8 @@ function planGoal({
   });
 
   const dropped = afterExam?.dropped ?? schedule.dropped;
-  const planDays = funded.days;
 
-  const challengeDays = [...planDays, ...listAfterExamDays(afterExam)].filter(
+  const challengeDays = [...funded.days, ...listAfterExamDays(afterExam)].filter(
     (day) => day.date >= start,
   );
 
@@ -322,11 +323,11 @@ function planGoal({
     endsBeforeLessons: listEndsBeforeLessons({ given, items, laidOut, phaseEnds, skillLessons }),
     items,
     keptKeys: new Set([...kept, ...setAside].map((item) => item.key)),
-    ...listLessonDays(units, keptPortions),
+    ...listLessonDays(units, keptDays),
     mockFunding: mocks.mockFunding,
     mocks,
     order: toLaidOutOrder(restSchedule),
-    planDays,
+    planDays: funded.days,
     skillMinutes: getLandingSkillMinutes({
       dropped: [...dropped, ...listKeptStandInCuts({ frozen, units: unitsByKey })],
       kept: queue.filter((unit) => finishedKeys.has(unit.key)),
@@ -334,7 +335,7 @@ function planGoal({
       pending: unplaced,
     }),
     spill,
-    strainedEnds: listStrainedEnds({ days: planDays, ends: phaseEnds, units: laidOut }),
-    ...listBossDayFacts({ days: challengeDays, input, kept: keptPortions, units }),
+    strainedEnds: listStrainedEnds({ days: funded.days, ends: phaseEnds, units: laidOut }),
+    ...listBossDayFacts({ days: challengeDays, input, kept: keptDays, units }),
   };
 }

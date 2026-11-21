@@ -1,5 +1,7 @@
+import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type BuildPlanInput } from "./build-plan";
 import { getKeptMinutes } from "./kept-minutes";
+import { toIsoDate } from "./plan-calendar";
 import { LEARN_KINDS, isStandIn } from "./plan-item-rules";
 import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
 import { type ExamWindow } from "./plan-phases";
@@ -142,7 +144,8 @@ export function countKeptLessons(kept: readonly KeptLessons[]): Map<string, numb
   );
 }
 
-export type KeptPiece = { date: Date; key: string; saved: boolean; share: number };
+/** `share` of the unit stays where it was saved, from `date`; `later` is laid out after the kept days. */
+export type KeptPiece = { date: Date; key: string; later: number; share: number };
 
 function getKeptShare({
   item,
@@ -155,30 +158,54 @@ function getKeptShare({
   return item.lessonId === null && item.lessons && total ? Math.min(1, item.lessons / total) : 1;
 }
 
+/** An item saved this week can teach past it, as a stand-in split into lessons does. */
+function getShareUntil({ end, item }: { end: Date | null; item: ExistingPlanItem }): number {
+  const days = readSelectedItemFacts(item.facts)?.days ?? [];
+  const last = end && toIsoDate(end);
+  const total = days.reduce((sum, day) => sum + day[2], 0);
+  const until = days.reduce((sum, [date, , raw]) => (!last || date <= last ? sum + raw : sum), 0);
+
+  return total > 0 ? until / total : 1;
+}
+
 export function listThisWeekWork({
+  end,
   frozen,
-  landed,
   units,
 }: {
+  end: Date | null;
   frozen: readonly ExistingPlanItem[];
-  landed: readonly { date: Date; key: string }[];
   units: ReadonlyMap<string, QueueUnit>;
 }): KeptPiece[] {
-  return [
-    ...frozen.flatMap((item) =>
-      item.scheduledFor
-        ? [
-            {
-              date: item.scheduledFor,
-              key: getItemKey(item),
-              saved: true,
-              share: getKeptShare({ item, units }),
-            },
-          ]
-        : [],
-    ),
-    ...landed.map((unit) => ({ date: unit.date, key: unit.key, saved: false, share: 1 })),
-  ];
+  return frozen.flatMap((item) => {
+    if (!item.scheduledFor) {
+      return [];
+    }
+
+    const kept = getKeptShare({ item, units });
+    const thisWeek = getShareUntil({ end, item });
+
+    return [
+      {
+        date: item.scheduledFor,
+        key: getItemKey(item),
+        later: kept * (1 - thisWeek),
+        share: kept * thisWeek,
+      },
+    ];
+  });
+}
+
+/** The lessons that landed in a stand-in's place carry their own days. */
+export function withoutLandedDays<T>({
+  days,
+  landed,
+}: {
+  days: ReadonlyMap<string, T>;
+  landed: readonly ExistingPlanItem[];
+}): Map<string, T> {
+  const keys = new Set(landed.map((item) => getItemKey(item)));
+  return new Map([...days].filter(([key]) => !keys.has(key)));
 }
 
 export function listKeptStandInCuts({

@@ -4,6 +4,7 @@ import { type StudyPortion, listIntervalPortions } from "./interval-study-minute
 import { type KeptPiece } from "./kept-items";
 import { toIsoDate } from "./plan-calendar";
 import { isStandInUnit } from "./plan-item-rules";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, getCumulativeCapacity } from "./schedule-units";
 
@@ -114,6 +115,65 @@ function listLaidPortions(own: readonly ScheduledUnit[]): Map<string, StudyPorti
   );
 }
 
+function listLaterPart({
+  kept,
+  thisWeek,
+  unit,
+}: {
+  kept: readonly KeptPiece[];
+  thisWeek: ReadonlySet<string>;
+  unit: QueueUnit;
+}): QueueUnit[] {
+  if (!thisWeek.has(unit.key)) {
+    return [unit];
+  }
+
+  const later = kept.find((piece) => piece.key === unit.key)?.later ?? 0;
+  const minutes = unit.minutes * later;
+
+  if (minutes <= PLAN_EPSILON) {
+    return [];
+  }
+
+  return [
+    {
+      ...unit,
+      minutes,
+      ...(unit.lessons !== undefined && { lessons: Math.max(1, Math.round(unit.lessons * later)) }),
+    },
+  ];
+}
+
+function listKeptParts({
+  kept,
+  own,
+}: {
+  kept: readonly KeptPiece[];
+  own: readonly ScheduledUnit[];
+}): ScheduledUnit[] {
+  const totals = Map.groupBy(own, (unit) => unit.key);
+  const taken = new Map<string, number>();
+
+  return own.filter((unit) => {
+    const share = kept.find((piece) => piece.key === unit.key)?.share ?? 1;
+    const total = (totals.get(unit.key) ?? []).reduce((sum, part) => sum + part.minutes, 0);
+    const before = taken.get(unit.key) ?? 0;
+
+    taken.set(unit.key, before + unit.minutes);
+    return before < total * share - PLAN_EPSILON;
+  });
+}
+
+function joinPortions(
+  kept: ReadonlyMap<string, StudyPortion[]>,
+  later: ReadonlyMap<string, StudyPortion[]>,
+): Map<string, StudyPortion[]> {
+  return [...later].reduce(
+    (all, [key, portions]) => all.set(key, [...(all.get(key) ?? []), ...portions]),
+    new Map(kept),
+  );
+}
+
 function getSpillEnd({ days, minutes }: { days: readonly PlanDay[]; minutes: number }) {
   if (minutes <= 0) {
     return null;
@@ -142,14 +202,12 @@ export function layOutAfterThisWeek<T extends LaidOut>({
   spill: number;
 } {
   const thisWeek = new Set(kept.map((piece) => piece.key));
-  const saved = new Set(kept.flatMap((piece) => (piece.saved ? [piece.key] : [])));
   const first = layOut({ days, units });
   const scheduled = [...first.carriedSchedule.units, ...first.restSchedule.units];
   const own = scheduled.filter((unit) => thisWeek.has(unit.key));
 
   const begins = own.filter(
-    (unit, index) =>
-      saved.has(unit.key) && own.findIndex((part) => part.key === unit.key) === index,
+    (unit, index) => own.findIndex((part) => part.key === unit.key) === index,
   );
 
   const keepsThisWeek =
@@ -186,14 +244,28 @@ export function layOutAfterThisWeek<T extends LaidOut>({
   const after = days.filter((day) => day.date >= start);
   const spill = getTimePastThisWeek({ days, kept, start, units });
 
+  const laid = layOut({
+    days: reserveCarriedTime({ days: after, minutes: spill }),
+    units: units.flatMap((unit) => listLaterPart({ kept, thisWeek, unit })),
+  });
+
+  const laterParts = [...laid.carriedSchedule.units, ...laid.restSchedule.units].filter((unit) =>
+    thisWeek.has(unit.key),
+  );
+
+  const ends = [
+    getSpillEnd({ days: after, minutes: spill }),
+    ...laterParts.map((unit) => unit.date),
+  ].flatMap((date) => (date ? [date.getTime()] : []));
+
   return {
-    ...layOut({
-      days: reserveCarriedTime({ days: after, minutes: spill }),
-      units: units.filter((unit) => !thisWeek.has(unit.key)),
-    }),
-    keptParts: own,
-    keptPortions: listKeptPortions({ days, kept, units }),
-    keptUntil: getSpillEnd({ days: after, minutes: spill }),
+    ...laid,
+    keptParts: listKeptParts({ kept, own }),
+    keptPortions: joinPortions(
+      listKeptPortions({ days, kept, units }),
+      listLaidPortions(laterParts),
+    ),
+    keptUntil: ends.length > 0 ? new Date(Math.max(...ends)) : null,
     spill,
   };
 }
