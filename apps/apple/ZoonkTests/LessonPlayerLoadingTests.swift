@@ -996,8 +996,10 @@ final class LessonPlayerLoadingTests: XCTestCase {
     await store.load()
 
     let requests = await transport.requests
-    XCTAssertEqual(Set(requests.dropLast()), ["check lost-reply", "check miss"])
-    XCTAssertEqual(requests.last, "start", "the run starts once they went, whatever happened")
+    let start = try XCTUnwrap(requests.firstIndex(of: "start"))
+    XCTAssertEqual(
+      Set(requests[..<start]), ["check lost-reply", "check miss"],
+      "the run starts once they went, whatever happened; the miss goes again after it")
     XCTAssertEqual(store.held, [miss, retry], "a screen stops at its first failure")
     XCTAssertEqual(kept.read(), [miss, retry])
     XCTAssertEqual(someoneElses.read(), [theirs])
