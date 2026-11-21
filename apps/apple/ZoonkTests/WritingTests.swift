@@ -265,15 +265,30 @@ final class WritingResultDecodingTests: XCTestCase {
     XCTAssertEqual(
       WritingLabels.roundedOutward(.init(high: 0.3, low: 0.3), decimals: 1),
       .init(high: 0.3, low: 0.3))
-    XCTAssertEqual(WritingLabels.range(.init(high: 26.8, low: 22.8), decimals: 0), "22–27")
-    XCTAssertEqual(WritingLabels.range(.init(high: 27, low: 24), decimals: 1), "24.0–27.0")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 26.2, low: 22.8), decimals: 0, headline: true), "22–27")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 27, low: 24), decimals: 1, headline: true), "24.0–27.0")
   }
 
-  func testEveryRangeRoundsOutwardAndItsScaleKeepsItsDecimals() {
-    XCTAssertEqual(WritingLabels.range(.init(high: 1.34, low: 1.26), decimals: 1), "1.2–1.4")
+  func testEveryOtherRangeRoundsEachEndToTheNearestAtItsScalesDecimals() {
+    XCTAssertEqual(WritingLabels.range(.init(high: 26.2, low: 22.8), decimals: 0), "23–26")
+    XCTAssertEqual(WritingLabels.range(.init(high: 1.34, low: 1.26), decimals: 1), "1.3")
     XCTAssertEqual(
       WritingLabels.range(.init(high: 1.25, low: 1.25), of: 1.25, decimals: 2), "1.25 of 1.25")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 18.6, low: 18.1)), "18–19",
+      "A scale the server sends no decimals for is whole points")
+  }
+
+  func testAZeroReadsZeroAndADeductionNeverReadsMinusZero() {
     XCTAssertEqual(WritingLabels.range(.init(high: 0, low: 0), of: 9.5, decimals: 1), "0 of 9.5")
+    XCTAssertEqual(WritingLabels.range(.init(high: 0.04, low: 0), decimals: 1), "0")
+    XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.3)), "−0.3 to −0.6")
+    XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.6)), "−0.6")
+    XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0)), "0 to −0.6")
+    XCTAssertEqual(WritingLabels.deduction(.init(high: 0.04, low: 0)), "0")
+    XCTAssertEqual(WritingLabels.deduction(.init(high: 2, low: 1)), "−1.0 to −2.0")
   }
 
   func testAMinimumInPercentIsSaidInThePartsPoints() throws {
@@ -587,6 +602,30 @@ final class WritingDraftTests: XCTestCase {
     XCTAssertNil(writer.editsAfterGrading)
   }
 
+  func testAnAnswerChangedSinceTheGradedVersionOutlivesTheAppBeingKilled() async {
+    let server = WritingServer(draft: .init(revision: 1, text: "Started."), losesFirstGrade: true)
+    let first = makeWriter(server, draftRevision: 1, draftText: "Started.")
+
+    first.write("A")
+    await first.send()
+    first.write("A, improved")
+    await first.send()
+    XCTAssertEqual(first.editsAfterGrading, "A, improved")
+
+    // The app is killed: the next launch reads the block again and has only this device's copy.
+    let store = Self.store(server)
+    let essay = store.essay(blockId: blockId)
+    await essay.refresh()
+    let reopened = EssayWriter(store: store, view: essay.value!, admissionId: nil)
+
+    XCTAssertEqual(reopened.mode, .result)
+    XCTAssertEqual(reopened.latest?.text, "A")
+    XCTAssertEqual(reopened.editsAfterGrading, "A, improved")
+
+    await reopened.rewrite()
+    XCTAssertEqual(reopened.text, "A, improved", "Rewrite starts from the changed answer")
+  }
+
   func testTheFieldStopsAtTheLongestAnswerTheServerTakes() {
     let server = WritingServer(draft: .init(revision: 1, text: "Started."))
     let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
@@ -619,8 +658,6 @@ final class WritingDraftTests: XCTestCase {
   private func makeWriter(_ server: WritingServer, draftRevision: Int, draftText: String)
     -> EssayWriter
   {
-    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: server))
-    let store = ExamStore(api: api, cache: AppCache(session: .preview(account: .writingTest)))
     let view = try! decode(
       EssayView.self,
       Self.essay(
@@ -628,7 +665,12 @@ final class WritingDraftTests: XCTestCase {
         draft:
           #"{"admissionId":"\#(Self.admission)","revision":\#(draftRevision),"text":"\#(draftText)"}"#,
         drafts: "[]"))
-    return EssayWriter(store: store, view: view, admissionId: nil)
+    return EssayWriter(store: Self.store(server), view: view, admissionId: nil)
+  }
+
+  private static func store(_ server: WritingServer) -> ExamStore {
+    let api = ExamAPI(clients: APIClientFactory(baseURL: baseURL, transport: server))
+    return ExamStore(api: api, cache: AppCache(session: .preview(account: .writingTest)))
   }
 
   private static let baseURL = URL(string: "https://api.zoonk.test")!
@@ -668,6 +710,7 @@ private actor WritingServer: ClientTransport {
   private(set) var saves: [Save] = []
   private(set) var submitted: [Submit] = []
   private var graded: String?
+  private var admission = "00000000-0000-4000-8000-0000000000a1"
   private var holdsSaves: Bool
   private var holdsGrading: Bool
   private var losesFirstAnswer: Bool
@@ -776,9 +819,13 @@ private actor WritingServer: ClientTransport {
         HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
         HTTPBody(
           WritingDraftTests.essay(
-            blockId: "01a1fac7-1f8c-7827-b3b7-6f5f50afc190", draft: current, drafts: drafts))
+            blockId: "01a1fac7-1f8c-7827-b3b7-6f5f50afc190", draft: current, drafts: drafts
+          )
+          .replacingOccurrences(
+            of: #"{"blockId""#, with: #"{"admissionId":"\#(admission)","blockId""#))
       )
     case "startWriting":
+      admission = "00000000-0000-4000-8000-0000000000a2"
       graded = nil
       draft = Draft(revision: 0, text: "")
       return (

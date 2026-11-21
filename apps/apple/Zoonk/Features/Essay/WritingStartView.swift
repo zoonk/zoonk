@@ -1,14 +1,19 @@
 import SwiftUI
 
-/// Before the question exists: it's being written, its writing failed, or the day's extra grades
-/// are used. Asking again is always the learner's tap, or the run they started ending.
+/// Before the question exists: it's being written, its writing failed, the day's extra grades are
+/// used, or nothing was asked yet on this visit (`start` is nil: a link or a screen opened again,
+/// which shows the task and starts nothing). Asking is always the learner's tap here, or the run
+/// their tap started ending; how it answered lives only as long as this visit.
 struct WritingStartView: View {
   @Environment(ExamStore.self) private var store
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
 
   let blockId: String
-  let start: WritingStart
+  let start: WritingStart?
+  /// The task as the day lists it, for a block nothing was asked for yet on this visit.
+  var task: WritingRefusedView.Task?
+  var unasked: WritingPrompt.Unit?
   let onReady: (WritingStart) -> Void
 
   @State private var asking = VisitRequest<WritingStart>()
@@ -16,17 +21,19 @@ struct WritingStartView: View {
   /// What's being written, kept once a wait names it so its failure still does.
   @State private var unit: WritingPrompt.Unit?
 
-  private var shown: WritingStart { asking.outcome ?? start }
+  private var shown: WritingStart? { asking.outcome ?? start }
 
   private var shownUnit: WritingPrompt.Unit? {
     if case .writing(_, let unit?) = shown { return unit }
     if case .writing(_, let unit?) = start { return unit }
-    return unit
+    return unit ?? unasked
   }
 
   var body: some View {
     Group {
       switch shown {
+      case nil:
+        unaskedPage
       case .limitReached(_, let task):
         WritingRefusedView(
           task: task.map {
@@ -41,10 +48,7 @@ struct WritingStartView: View {
       case .unavailable:
         unavailable
       case .signUpRequired:
-        ZoonkList {
-          Section { LimitNotice(limit: .signUpRequired) }
-        }
-        .lonePage()
+        signUp
       case .failed, .ready:
         failed
       }
@@ -93,6 +97,47 @@ struct WritingStartView: View {
       }
 
       follow(generationId)
+    }
+  }
+
+  /// Nothing asked yet on this visit: the task and its time, and "Write" asks for it.
+  private var unaskedPage: some View {
+    ZoonkList {
+      Section {
+        PageHeader(
+          Text(task?.title ?? WritingLabels.header(unasked)),
+          supporting: task?.minutes.map {
+            Text("About \(studyDuration(minutes: $0))", tableName: "Essay")
+          }
+        ) {
+          EmptyView()
+        }
+      }
+    }
+    .lonePage()
+    .bottomBar {
+      BusyButton(isBusy: asking.isRunning) {
+        ask()
+      } label: {
+        Text("Write", tableName: "Essay", comment: "Starts writing the answer")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
+    }
+  }
+
+  /// A guest's question needs an account first: signing up is the way on, never a retry.
+  private var signUp: some View {
+    ZoonkList {
+      Section {
+        PageHeader(Text(HelpLimit.signUpRequired.sentence()))
+      }
+    }
+    .lonePage()
+    .bottomBar {
+      LimitWayOn(limit: .signUpRequired)
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
     }
   }
 
