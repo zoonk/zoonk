@@ -386,7 +386,6 @@ describe("a class test days away", () => {
     const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mock.id } });
     const payload = readBlockPayload(block);
 
-    expect(new Set(payload.skillIds)).toStrictEqual(new Set(skillIds));
     expect(payload.itemIds).toStrictEqual([]);
 
     await expect(startMock({ blockId: mock.id, input: {} })).resolves.toStrictEqual({
@@ -400,6 +399,7 @@ describe("a class test days away", () => {
     });
 
     expect(new Set(asked.map((item) => item.skillId))).toStrictEqual(new Set(skillIds));
+    expect(new Set(payload.skillIds)).toStrictEqual(new Set(skillIds));
   });
 
   it("gives the day before a full review sized to the day on the free plan: its short mock comes with Plus", async () => {

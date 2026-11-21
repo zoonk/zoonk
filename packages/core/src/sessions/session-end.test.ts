@@ -270,7 +270,6 @@ describe("ending a session", () => {
       ["settleSessionDay", first?.id],
       ["refreshStudyDay", today.session.id],
       ["settleSessionPlan", today.session.id],
-      ["prepareMockSupply", goal.id],
     ]);
 
     vi.setSystemTime(SESSION_NOW.getTime() + 60_000);
