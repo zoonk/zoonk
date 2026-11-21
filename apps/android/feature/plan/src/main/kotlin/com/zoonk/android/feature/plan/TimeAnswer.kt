@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +57,7 @@ fun TimeAnswer(
     line: TimeLine,
     minutes: Int?,
     takes: EverythingTakes?,
-    offer: Int?,
+    offer: TimeOffer?,
     onRetry: () -> Unit,
     onUseOffer: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -94,14 +95,18 @@ fun TimeAnswer(
                 },
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
-                buildAnnotatedString {
-                    append(lineWords)
-                    shared?.let { append(spaceAfterSentence(lineWords.text) + it) }
-                },
-                color = muted,
-                style = style,
-            )
+            Box {
+                Text(
+                    buildAnnotatedString {
+                        append(lineWords)
+                        shared?.let { append(spaceAfterSentence(lineWords.text) + it) }
+                    },
+                    color = muted,
+                    style = style,
+                )
+                // On a goal with a date, the line keeps the room of the longest one, so a shorter one moves nothing.
+                date?.let { Text(reachedWords(it, exam, LONGEST_SHARE, today), Modifier.hiddenIf(true), style = style) }
+            }
             // A time that covers everything needs no such line, but keeps its room so picking it moves nothing.
             takesWords?.let { Text(it, Modifier.hiddenIf(line is TimeLine.Everything), color = muted, style = style) }
             when {
@@ -112,15 +117,18 @@ fun TimeAnswer(
                 }
 
                 offered != null && offerAsButton -> {
-                    OutlinedButton(onClick = { onUseOffer(offered) }) { Text(offerLabel(offered)) }
+                    OutlinedButton(onClick = { onUseOffer(offered.minutes) }, Modifier.hiddenIf(!offered.shown)) {
+                        Text(offerLabel(offered.minutes))
+                    }
                 }
 
                 offered != null -> {
                     TextButton(
-                        onClick = { onUseOffer(offered) },
+                        onClick = { onUseOffer(offered.minutes) },
+                        modifier = Modifier.hiddenIf(!offered.shown),
                         edge = ButtonEdge.Start,
                     ) {
-                        Text(offerLabel(offered))
+                        Text(offerLabel(offered.minutes))
                     }
                 }
             }
@@ -313,3 +321,6 @@ private fun lineWords(
 }
 
 private const val UPDATING_ALPHA = 0.5f
+
+/** The share in the longest sentence a dated goal's time gets, whose room every other one keeps. */
+private const val LONGEST_SHARE = 0.99
