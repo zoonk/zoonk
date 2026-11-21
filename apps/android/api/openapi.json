@@ -6272,7 +6272,7 @@
         "tags": [
           "Language"
         ],
-        "description": "The three-minute level test: reading and listening questions that adapt to the answers, then one sentence out loud. `preparing` while the language pair's questions are written: only the pair's first learner waits, about `expectedSeconds` from `startedAt`; ask again every few seconds. With `startedAt` null nothing is writing them (the run started with the goal failed): POST /goals/{goalId}/language-level-test/generations when the learner starts the test or taps to try again. Read-only: showing the test never writes the questions.",
+        "description": "The next step in a language level test. Without an attempt id, reads onboarding progress. A preparing test waits for the shared bank to be written.",
         "operationId": "getLanguageLevelTest",
         "summary": "Get the language level test",
         "parameters": [
@@ -6287,11 +6287,124 @@
             },
             "required": true,
             "description": "Goal ID"
+          },
+          {
+            "in": "query",
+            "name": "attemptId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "The test's next step",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageLevelTest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/language-level-test/attempts": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "Language"
+        ],
+        "description": "Opens a Quick or Whole course test and schedules missing questions. An attempt already open is returned with its saved progress.",
+        "operationId": "startLanguageLevelTest",
+        "summary": "Open a language level test",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartLanguageLevelTestInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The open test",
             "content": {
               "application/json": {
                 "schema": {
@@ -6584,7 +6697,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Ends the test whenever the learner wants. The answers so far set a level for each skill, which the plan and every call use.",
+        "description": "Records the assessed skill ranges and applies any confirmed lesson skips. Without an attempt id, finishes the onboarding test.",
         "operationId": "finishLanguageLevelTest",
         "summary": "Finish the language level test",
         "parameters": [
@@ -6601,6 +6714,15 @@
             "description": "Goal ID"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinishLanguageLevelTestInput"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "The levels by skill",
@@ -6688,7 +6810,8 @@
         "tags": [
           "Language"
         ],
-        "description": "The test's sentence out loud, checked word by word for whether a listener would understand it (an accent never counts against it) to set the speaking level. The audio is never kept.",
+        "deprecated": true,
+        "description": "Retired operation for recordings from older versions of the level test.",
         "operationId": "answerLanguageLevelTestOutLoud",
         "summary": "Say the level test's sentence",
         "parameters": [
@@ -6798,6 +6921,416 @@
           },
           "429": {
             "description": "`SLOW_DOWN`: try again after `Retry-After`; or a Plus learner reached today's AI budget (`USAGE_LIMIT_REACHED`), back tomorrow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/language-level-test/test-outs": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "Language"
+        ],
+        "operationId": "getLanguageLevelTestOut",
+        "summary": "Get the language level test-out",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "query",
+            "name": "attemptId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The saved test-out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageLevelTestOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "Language"
+        ],
+        "operationId": "startLanguageLevelTestOut",
+        "summary": "Open a language level test-out",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartLanguageLevelTestOutInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The open test-out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageLevelTestOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/language-level-test/test-outs/answers": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "Language"
+        ],
+        "operationId": "answerLanguageLevelTestOut",
+        "summary": "Answer a language level test-out question",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LanguageLevelTestOutAnswerInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "What comes next",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageLevelTestOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/language-level-test/test-outs/completions": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "Language"
+        ],
+        "operationId": "finishLanguageLevelTestOut",
+        "summary": "Finish a language level test-out",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LanguageLevelTestOutFinishInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The finished test-out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageLevelTestOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
             "content": {
               "application/json": {
                 "schema": {
@@ -27177,6 +27710,22 @@
         ],
         "additionalProperties": false
       },
+      "StartLanguageLevelTestInput": {
+        "type": "object",
+        "properties": {
+          "length": {
+            "type": "string",
+            "enum": [
+              "quick",
+              "wholeCourse"
+            ]
+          }
+        },
+        "required": [
+          "length"
+        ],
+        "additionalProperties": false
+      },
       "LanguageLevelTestAnswerInput": {
         "type": "object",
         "properties": {
@@ -27187,6 +27736,20 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 3
+          },
+          "answerIndices": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "attemptId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "durationMs": {
             "description": "Milliseconds from showing the question to the answer, which count toward the learner's study time; anything over an hour counts as an hour",
@@ -27208,6 +27771,17 @@
         ],
         "additionalProperties": false
       },
+      "FinishLanguageLevelTestInput": {
+        "type": "object",
+        "properties": {
+          "attemptId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "additionalProperties": false
+      },
       "LanguageLevelTestSpokenAnswerRequest": {
         "type": "object",
         "properties": {
@@ -27221,6 +27795,183 @@
         "required": [
           "audio"
         ]
+      },
+      "StartLanguageLevelTestOutInput": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "B2",
+              "C1",
+              "C2"
+            ]
+          }
+        },
+        "required": [
+          "level"
+        ],
+        "additionalProperties": false
+      },
+      "LanguageLevelTestOutAnswerInput": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChoiceAnswer"
+              },
+              {
+                "$ref": "#/components/schemas/MatchAnswer"
+              },
+              {
+                "$ref": "#/components/schemas/OrderAnswer"
+              }
+            ]
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Milliseconds from showing the question to the answer; anything over an hour counts as an hour"
+          },
+          "itemId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "timeZone": {
+            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+            "type": "string"
+          },
+          "attemptId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "answer",
+          "durationMs",
+          "itemId",
+          "attemptId"
+        ],
+        "additionalProperties": false
+      },
+      "ChoiceAnswer": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "selectedIndex": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "selectedIndex"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "selectedIndexes": {
+                "minItems": 1,
+                "maxItems": 8,
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "description": "The options picked, in any order, as indexes into `options`"
+              }
+            },
+            "required": [
+              "selectedIndexes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "isTrue": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "isTrue"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dontKnow": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              }
+            },
+            "required": [
+              "dontKnow"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "MatchAnswer": {
+        "type": "object",
+        "properties": {
+          "matches": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "For each left entry, the index of the right entry it was matched to"
+          }
+        },
+        "required": [
+          "matches"
+        ],
+        "additionalProperties": false
+      },
+      "OrderAnswer": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "An ordering question's answer: the indexes of its shown steps (`options`), in the order the learner put them"
+          }
+        },
+        "required": [
+          "order"
+        ],
+        "additionalProperties": false
+      },
+      "LanguageLevelTestOutFinishInput": {
+        "type": "object",
+        "properties": {
+          "attemptId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "attemptId"
+        ],
+        "additionalProperties": false
       },
       "MistakePatternPracticeInput": {
         "type": "object",
@@ -29527,71 +30278,6 @@
         ],
         "additionalProperties": false
       },
-      "ChoiceAnswer": {
-        "anyOf": [
-          {
-            "type": "object",
-            "properties": {
-              "selectedIndex": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "selectedIndex"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "selectedIndexes": {
-                "minItems": 1,
-                "maxItems": 8,
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "description": "The options picked, in any order, as indexes into `options`"
-              }
-            },
-            "required": [
-              "selectedIndexes"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "isTrue": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "isTrue"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "dontKnow": {
-                "type": "boolean",
-                "enum": [
-                  true
-                ]
-              }
-            },
-            "required": [
-              "dontKnow"
-            ],
-            "additionalProperties": false
-          }
-        ]
-      },
       "FocusTestControlsInput": {
         "type": "object",
         "properties": {
@@ -31068,24 +31754,6 @@
           }
         ]
       },
-      "MatchAnswer": {
-        "type": "object",
-        "properties": {
-          "matches": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 9007199254740991
-            },
-            "description": "For each left entry, the index of the right entry it was matched to"
-          }
-        },
-        "required": [
-          "matches"
-        ],
-        "additionalProperties": false
-      },
       "NumberAnswer": {
         "type": "object",
         "properties": {
@@ -31110,24 +31778,6 @@
         },
         "required": [
           "text"
-        ],
-        "additionalProperties": false
-      },
-      "OrderAnswer": {
-        "type": "object",
-        "properties": {
-          "order": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 9007199254740991
-            },
-            "description": "An ordering question's answer: the indexes of its shown steps (`options`), in the order the learner put them"
-          }
-        },
-        "required": [
-          "order"
         ],
         "additionalProperties": false
       },
@@ -43773,6 +44423,105 @@
           {
             "type": "object",
             "properties": {
+              "attemptId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "length": {
+                "type": "string",
+                "enum": [
+                  "quick",
+                  "wholeCourse"
+                ]
+              },
+              "result": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "attemptId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "finishedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                  },
+                  "levelsSkipped": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "A1",
+                        "A2",
+                        "B1",
+                        "B2",
+                        "C1",
+                        "C2"
+                      ]
+                    }
+                  },
+                  "ranges": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "high": {
+                          "type": "string",
+                          "enum": [
+                            "A1",
+                            "A2",
+                            "B1",
+                            "B2",
+                            "C1",
+                            "C2"
+                          ]
+                        },
+                        "low": {
+                          "type": "string",
+                          "enum": [
+                            "A1",
+                            "A2",
+                            "B1",
+                            "B2",
+                            "C1",
+                            "C2"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "high",
+                        "low"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "wholeCourseReady": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ]
+                  }
+                },
+                "required": [
+                  "attemptId",
+                  "finishedAt",
+                  "levelsSkipped",
+                  "ranges"
+                ],
+                "additionalProperties": false
+              },
+              "testOutLevel": {
+                "type": "string",
+                "enum": [
+                  "B2",
+                  "C1",
+                  "C2"
+                ]
+              },
               "expectedSeconds": {
                 "type": "integer",
                 "minimum": 1,
@@ -43807,6 +44556,105 @@
           {
             "type": "object",
             "properties": {
+              "attemptId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "length": {
+                "type": "string",
+                "enum": [
+                  "quick",
+                  "wholeCourse"
+                ]
+              },
+              "result": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "attemptId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "finishedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                  },
+                  "levelsSkipped": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "A1",
+                        "A2",
+                        "B1",
+                        "B2",
+                        "C1",
+                        "C2"
+                      ]
+                    }
+                  },
+                  "ranges": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "high": {
+                          "type": "string",
+                          "enum": [
+                            "A1",
+                            "A2",
+                            "B1",
+                            "B2",
+                            "C1",
+                            "C2"
+                          ]
+                        },
+                        "low": {
+                          "type": "string",
+                          "enum": [
+                            "A1",
+                            "A2",
+                            "B1",
+                            "B2",
+                            "C1",
+                            "C2"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "high",
+                        "low"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "wholeCourseReady": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ]
+                  }
+                },
+                "required": [
+                  "attemptId",
+                  "finishedAt",
+                  "levelsSkipped",
+                  "ranges"
+                ],
+                "additionalProperties": false
+              },
+              "testOutLevel": {
+                "type": "string",
+                "enum": [
+                  "B2",
+                  "C1",
+                  "C2"
+                ]
+              },
               "answered": {
                 "type": "integer",
                 "minimum": 0,
@@ -43846,7 +44694,7 @@
                   ],
                   "additionalProperties": false
                 },
-                "description": "The levels so far. Speaking has one only after the sentence out loud; writing, which the test can't ask, has none until lessons' typed answers give it one"
+                "description": "Scores from assessed skills; speaking is present for older tests that assessed it"
               },
               "next": {
                 "oneOf": [
@@ -43857,6 +44705,110 @@
                         "type": "string",
                         "enum": [
                           "question"
+                        ]
+                      },
+                      "question": {
+                        "type": "object",
+                        "properties": {
+                          "audio": {
+                            "nullable": true,
+                            "description": "For listening, the message's recording; null while it's being made (audioPending) or when it couldn't be: then ask for it with POST /speech-clips when the learner plays it",
+                            "type": "object",
+                            "properties": {
+                              "durationMs": {
+                                "nullable": true,
+                                "description": "How long the clip plays, when known",
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "language": {
+                                "type": "string"
+                              },
+                              "url": {
+                                "type": "string",
+                                "format": "uri",
+                                "description": "The MP3 file to play: a shared clip's public file, or a personal one's file route, which only its learner can read"
+                              }
+                            },
+                            "required": [
+                              "durationMs",
+                              "id",
+                              "language",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "audioPending": {
+                            "type": "boolean",
+                            "description": "The listening message's recording is still being made: read the test again in a few seconds"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string",
+                            "enum": [
+                              "A1",
+                              "A2",
+                              "B1",
+                              "B2",
+                              "C1",
+                              "C2"
+                            ]
+                          },
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "passage": {
+                            "type": "string",
+                            "description": "For listening, the message the app reads aloud"
+                          },
+                          "question": {
+                            "type": "string"
+                          },
+                          "skill": {
+                            "type": "string",
+                            "enum": [
+                              "reading",
+                              "listening"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "audio",
+                          "audioPending",
+                          "id",
+                          "level",
+                          "options",
+                          "passage",
+                          "question",
+                          "skill"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "question"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "confirmation"
                         ]
                       },
                       "question": {
@@ -44032,7 +44984,7 @@
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 9007199254740991,
-                "description": "Questions and sentences the test asks at most"
+                "description": "Maximum scored questions, excluding any level confirmation"
               }
             },
             "required": [
@@ -44106,7 +45058,85 @@
               ],
               "additionalProperties": false
             },
-            "description": "Each tested skill's starting level. Speaking has one only when the sentence was said out loud; writing has none, since the test asks nothing written"
+            "description": "Scores from assessed skills; speaking is present for older tests that assessed it"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "attemptId": {
+                "nullable": true,
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "finishedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              "levelsSkipped": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "A1",
+                    "A2",
+                    "B1",
+                    "B2",
+                    "C1",
+                    "C2"
+                  ]
+                }
+              },
+              "ranges": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "high": {
+                      "type": "string",
+                      "enum": [
+                        "A1",
+                        "A2",
+                        "B1",
+                        "B2",
+                        "C1",
+                        "C2"
+                      ]
+                    },
+                    "low": {
+                      "type": "string",
+                      "enum": [
+                        "A1",
+                        "A2",
+                        "B1",
+                        "B2",
+                        "C1",
+                        "C2"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "high",
+                    "low"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "wholeCourseReady": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              }
+            },
+            "required": [
+              "attemptId",
+              "finishedAt",
+              "levelsSkipped",
+              "ranges"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
@@ -44172,6 +45202,183 @@
         "required": [
           "heard",
           "test"
+        ],
+        "additionalProperties": false
+      },
+      "LanguageLevelTestOut": {
+        "type": "object",
+        "properties": {
+          "answered": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "attemptId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "B2",
+              "C1",
+              "C2"
+            ]
+          },
+          "next": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "context": {
+                "nullable": true,
+                "type": "string"
+              },
+              "format": {
+                "type": "string",
+                "enum": [
+                  "multipleChoice",
+                  "trueFalse",
+                  "matchPairs",
+                  "numeric",
+                  "order",
+                  "typed"
+                ],
+                "description": "numeric: a math problem, answered with a number. Its numbers are drawn for this block, so they stay the same on every visit and change in the next block that asks it. order: put `options` in order, answered with `order`. typed: a short answer (a word, a number, a term), answered with `text`"
+              },
+              "image": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/QuestionImage"
+                  }
+                ]
+              },
+              "itemId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "left": {
+                "nullable": true,
+                "description": "Match pairs: the left column",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "options": {
+                "nullable": true,
+                "description": "Multiple choice: the options. Order: the steps, shuffled",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "question": {
+                "type": "string"
+              },
+              "right": {
+                "nullable": true,
+                "description": "Match pairs: the right column",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "select": {
+                "nullable": true,
+                "description": "Multiple choice: how many options to pick; null otherwise",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/QuestionSelect"
+                  }
+                ]
+              },
+              "set": {
+                "nullable": true,
+                "description": "The passage, case, chart or recording the question shares with the set's other questions, which the block asks back to back; null for a question on its own",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ItemSet"
+                  }
+                ]
+              },
+              "skillId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "visual": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LessonVisual"
+                  }
+                ]
+              },
+              "skill": {
+                "type": "string",
+                "enum": [
+                  "reading",
+                  "listening"
+                ]
+              }
+            },
+            "required": [
+              "context",
+              "format",
+              "image",
+              "itemId",
+              "left",
+              "options",
+              "question",
+              "right",
+              "select",
+              "set",
+              "skillId",
+              "visual",
+              "skill"
+            ],
+            "additionalProperties": false
+          },
+          "result": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "finishedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              "topicsSkipped": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              }
+            },
+            "required": [
+              "finishedAt",
+              "topicsSkipped"
+            ],
+            "additionalProperties": false
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "answered",
+          "attemptId",
+          "level",
+          "next",
+          "result",
+          "total"
         ],
         "additionalProperties": false
       },

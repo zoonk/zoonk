@@ -5,11 +5,17 @@ import {
   type GenerateLevelTestBankParams,
   type GenerateLevelTestBankSchema,
 } from "@zoonk/ai/tasks/language/level-test-bank";
-import { type LanguageLevelTest, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import {
+  type LanguageLevelTest,
+  type TransactionClient,
+  isPrismaUniqueConstraintError,
+  prisma,
+} from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import {
   type LevelTestBank,
+  type LevelTestConfirmation,
   type LevelTestQuestion,
   levelTestBankSchema,
 } from "../level-test-contract";
@@ -32,8 +38,8 @@ export function readBank(row: Pick<LanguageLevelTest, "content"> | null): LevelT
   return bank.success && bank.data.questions.length > 0 ? bank.data : null;
 }
 
-export function findBankRow(pair: LanguagePair) {
-  return prisma.languageLevelTest.findUnique({ where: { languagePair: pair } });
+export function findBankRow(pair: LanguagePair, db: TransactionClient = prisma) {
+  return db.languageLevelTest.findUnique({ where: { languagePair: pair } });
 }
 
 /**
@@ -78,18 +84,42 @@ export async function keepBankQuestions({
 export type LevelTestBankLevel = {
   provenance: TaskProvenance;
   questions: GenerateLevelTestBankSchema["questions"];
-  speaking: GenerateLevelTestBankSchema["speaking"][number];
+  confirmations?: Omit<LevelTestConfirmation, "id">[];
+  speaking?: LevelTestBank["speaking"][number];
 };
 
-function toStoredQuestions(questions: LevelTestBankLevel["questions"]) {
+function withQuestionIds<T extends Pick<LevelTestQuestion, "level" | "skill">>({
+  questions,
+  prefix,
+}: {
+  questions: T[];
+  prefix: string;
+}) {
   const counts = new Map<string, number>();
 
   return questions.map((question) => {
-    const key = `${question.skill}-${question.level}`;
+    const key = `${prefix}${question.skill}-${question.level}`;
     const index = counts.get(key) ?? 0;
     counts.set(key, index + 1);
     return { ...question, id: `${key}-${index}` };
   });
+}
+
+async function lockClaimedBank({
+  claimId,
+  db,
+  pair,
+}: {
+  claimId: string;
+  db: TransactionClient;
+  pair: LanguagePair;
+}) {
+  const [row] = await db.$queryRaw<Pick<LanguageLevelTest, "content">[]>`
+    SELECT content FROM language_level_tests
+    WHERE language = ${pair.language} AND target_language = ${pair.targetLanguage} AND run_id = ${claimId}
+    FOR UPDATE`;
+
+  return row ?? null;
 }
 
 /** False when a newer run took the claim over, so its bank stays. */
@@ -102,31 +132,55 @@ export async function storeBank({
   levels: readonly LevelTestBankLevel[];
   pair: LanguagePair;
 }): Promise<boolean> {
-  const questions = toStoredQuestions(levels.flatMap((level) => level.questions));
+  return prisma.$transaction(async (db) => {
+    const row = await lockClaimedBank({ claimId, db, pair });
 
-  if (questions.length === 0) {
-    throw new Error("No placement question passed its check");
-  }
+    if (!row) {
+      return false;
+    }
 
-  const speaking = levels.map((level) => level.speaking);
-  const provenance = combineTaskProvenance(levels.map((level) => level.provenance));
+    const current = readBank(row);
 
-  const { count } = await prisma.languageLevelTest.updateMany({
-    data: {
-      checkedAt: new Date(),
-      content: { questions, speaking },
-      ...toProvenanceData(provenance),
-    },
-    where: { ...pair, runId: claimId },
+    const questions = withQuestionIds({
+      prefix: current ? "v2-" : "",
+      questions: levels.flatMap((level) => level.questions),
+    });
+
+    if (questions.length === 0) {
+      throw new Error("No placement question passed its check");
+    }
+
+    const confirmations = withQuestionIds({
+      prefix: "confirmation-",
+      questions: levels.flatMap((level) => level.confirmations ?? []),
+    });
+
+    const speaking =
+      current?.speaking ?? levels.flatMap(({ speaking: sentence }) => sentence ?? []);
+
+    const provenance = combineTaskProvenance(levels.map((level) => level.provenance));
+
+    const { count } = await db.languageLevelTest.updateMany({
+      data: {
+        checkedAt: new Date(),
+        content: {
+          ...(levels.some((level) => level.confirmations !== undefined) && { confirmations }),
+          questions: [...(current?.questions ?? []), ...questions],
+          speaking,
+        },
+        ...toProvenanceData(provenance),
+      },
+      where: { ...pair, runId: claimId },
+    });
+
+    return count > 0;
   });
-
-  return count > 0;
 }
 
 export async function releaseClaim({ claimId, pair }: { claimId: string; pair: LanguagePair }) {
   await prisma.languageLevelTest.updateMany({
     data: { generatedAt: new Date(0) },
-    where: { ...pair, model: "", runId: claimId },
+    where: { ...pair, runId: claimId },
   });
 }
 
@@ -136,7 +190,7 @@ export async function claimBank({
   row,
 }: {
   pair: LanguagePair;
-  row: Pick<LanguageLevelTest, "generatedAt"> | null;
+  row: Pick<LanguageLevelTest, "generatedAt" | "runId"> | null;
 }): Promise<{ claimId: string; startedAt: Date } | null> {
   const claimId = crypto.randomUUID();
   const startedAt = new Date();
@@ -144,7 +198,11 @@ export async function claimBank({
   if (row) {
     const { count } = await prisma.languageLevelTest.updateMany({
       data: { generatedAt: startedAt, runId: claimId },
-      where: { ...pair, generatedAt: { lt: new Date(Date.now() - STALE_CLAIM_MS) }, model: "" },
+      where: {
+        ...pair,
+        generatedAt: { lt: new Date(Date.now() - STALE_CLAIM_MS) },
+        runId: row.runId,
+      },
     });
 
     return count > 0 ? { claimId, startedAt } : null;
@@ -172,11 +230,14 @@ export async function claimBank({
   }
 }
 
-export async function loadLevelTestBank(pair: LanguagePair): Promise<LevelTestBankState> {
+export async function loadLevelTestBank(
+  pair: LanguagePair,
+  requireConfirmations = false,
+): Promise<LevelTestBankState> {
   const row = await findBankRow(pair);
   const bank = readBank(row);
 
-  if (bank && row) {
+  if (bank && row && (!requireConfirmations || bank.confirmations !== undefined)) {
     return { bank, id: row.id, runId: row.runId, status: "ready", writtenAt: row.generatedAt };
   }
 

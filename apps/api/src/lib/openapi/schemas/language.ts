@@ -1,10 +1,15 @@
-import { languageLevelTestViewSchema } from "@zoonk/core/language/level-test/contract";
+import {
+  languageLevelTestViewSchema,
+  levelTestOutLevelSchema,
+  levelTestResultSchema,
+} from "@zoonk/core/language/level-test/contract";
 import { spokenAnswerFieldsSchema } from "@zoonk/core/library/language/spoken-answer-contract";
 import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
 import { LiveCallEndReason } from "@zoonk/db/live-call-enums";
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { studyBlockQuestionSchema } from "./study-block-question";
 
 /** Only documents the multipart form: the route reads its fields with `spokenAnswerFieldsSchema`. */
 export const spokenAnswerRequestSchema = spokenAnswerFieldsSchema
@@ -104,8 +109,9 @@ export const languageLevelTestResultSchema = z
       )
       .meta({
         description:
-          "Each tested skill's starting level. Speaking has one only when the sentence was said out loud; writing has none, since the test asks nothing written",
+          "Scores from assessed skills; speaking is present for older tests that assessed it",
       }),
+    result: levelTestResultSchema.optional(),
   })
   .meta({ id: "LanguageLevelTestResult" });
 
@@ -137,3 +143,32 @@ export const goalMistakePatternSchema = z
       }),
   })
   .meta({ id: "GoalMistakePattern" });
+
+export const languageLevelTestOutViewSchema = z
+  .object({
+    answered: z.int().nonnegative(),
+    attemptId: uuidSchema(),
+    level: levelTestOutLevelSchema,
+    next: studyBlockQuestionSchema
+      .pick({
+        context: true,
+        format: true,
+        image: true,
+        itemId: true,
+        left: true,
+        options: true,
+        question: true,
+        right: true,
+        select: true,
+        set: true,
+        skillId: true,
+        visual: true,
+      })
+      .extend({ skill: z.enum(["reading", "listening"]) })
+      .nullable(),
+    result: z
+      .object({ finishedAt: z.iso.datetime(), topicsSkipped: z.array(uuidSchema()) })
+      .nullable(),
+    total: z.int().nonnegative(),
+  })
+  .meta({ id: "LanguageLevelTestOut" });

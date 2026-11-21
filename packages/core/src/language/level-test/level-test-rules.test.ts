@@ -1,14 +1,9 @@
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
 import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
-import {
-  LEVEL_TEST_TOTAL,
-  getLevelTestScores,
-  getNextLevelTestStep,
-  toLevelLabels,
-} from "./level-test-rules";
+import { getLevelTestScores, getNextLevelTestStep, toLevelLabels } from "./level-test-rules";
 
-const TEST_LEVELS = CEFR_LEVELS.slice(0, 5);
+const TEST_LEVELS = CEFR_LEVELS;
 const A2 = 1;
 
 const bank: LevelTestBank = {
@@ -38,10 +33,10 @@ function progress(answers: Answer[] = []) {
 }
 
 describe("level estimates", () => {
-  it("keeps the level the learner gave until they answer", () => {
+  it("omits every unassessed skill", () => {
     const scores = getLevelTestScores({ bank, progress: progress(), start: A2 });
 
-    expect(scores).toStrictEqual({ listening: A2, reading: A2 });
+    expect(scores).toStrictEqual({});
   });
 
   it("has no speaking level until a sentence is said out loud", () => {
@@ -88,7 +83,7 @@ describe("level estimates", () => {
       { answerIndex: null, correct: null, id: "listening-A2-0", skipped: true },
     ]);
 
-    expect(getLevelTestScores({ bank, progress: skipped, start: A2 }).listening).toBe(A2);
+    expect(getLevelTestScores({ bank, progress: skipped, start: A2 }).listening).toBeUndefined();
 
     expect(getNextLevelTestStep({ bank, progress: skipped, start: A2 })).toMatchObject({
       question: { skill: "reading" },
@@ -137,47 +132,16 @@ describe(getNextLevelTestStep, () => {
     expect(step).toMatchObject({ kind: "question", question: { level: "B1", skill: "reading" } });
   });
 
-  it("asks for one sentence out loud after the questions, then ends", () => {
+  it("finishes after five Quick questions in each skill without asking for speech", () => {
     const answers = ["reading", "listening"].flatMap((skill) =>
-      ["A2", "B1", "B2"].map((level) => ({
+      ["A2", "B1", "B2", "C1", "C2"].map((level) => ({
         answerIndex: 0,
         correct: true,
         id: `${skill}-${level}-0`,
       })),
     );
 
-    const speaking = getNextLevelTestStep({ bank, progress: progress(answers), start: A2 });
-    expect(speaking.kind).toBe("speaking");
-
-    const done = getNextLevelTestStep({
-      bank,
-      progress: { answers, speaking: { level: "B2", score: 1 } },
-      start: A2,
-    });
-
+    const done = getNextLevelTestStep({ bank, progress: progress(answers), start: A2 });
     expect(done.kind).toBe("done");
-    expect(answers.length + 1).toBe(LEVEL_TEST_TOTAL);
-  });
-});
-
-describe(getLevelTestScores, () => {
-  it("reads speaking from the sentence and gives writing no level, since nothing tested it", () => {
-    const scores = getLevelTestScores({
-      bank,
-      progress: {
-        answers: [
-          { answerIndex: 0, correct: true, id: "reading-B1-0" },
-          { answerIndex: 0, correct: true, id: "reading-B2-0" },
-          { answerIndex: 1, correct: false, id: "listening-A2-0" },
-        ],
-        speaking: { level: "A2", score: 0.5 },
-      },
-      start: A2,
-    });
-
-    expect(scores.reading).toBeGreaterThan(scores.listening);
-    expect(scores.speaking).toBe(0.5);
-    expect(toLevelLabels(scores).speaking).toBe("A1+");
-    expect(toLevelLabels(scores)).not.toHaveProperty("writing");
   });
 });

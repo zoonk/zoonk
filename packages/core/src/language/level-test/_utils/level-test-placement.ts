@@ -1,198 +1,151 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
-import {
-  lockLearner,
-  lockLearnerPlans,
-  markLockedPlanInputsChanged,
-} from "@zoonk/db/learner-writes";
+import { type Goal, type TransactionClient } from "@zoonk/db";
+import { type CefrLevel } from "@zoonk/utils/cefr";
 import { safeAsync } from "@zoonk/utils/error";
-import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
-import { getLearnerModelCacheTag } from "../../../cache/tags";
-import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
-import { markSkillsKnown } from "../../../learner/_utils/known-skills";
-import { testOutKnownPlanItems } from "../../../learner/_utils/test-out-known-plan-items";
+import { awardCourseCertificates } from "../../../certificates/_utils/award-course-certificate";
+import { awardLanguageLevelCertificates } from "../../../certificates/_utils/award-language-certificates";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
-import { loadPlacement } from "../../../learner/placement/_utils/apply-placement";
-import { announceSharedTestOuts } from "../../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../../plans/announce-tested-out-items";
 import { isPlanConflictError } from "../../../plans/plan-conflict";
-import { skipTestedOutBlocks } from "../../../sessions/_utils/skip-tested-out-blocks";
-import { readGoalDetails } from "../../_utils/language-goal";
 import { type LevelTestProgress } from "../level-test-contract";
-import { readLevelTestProgress } from "./level-test-state";
+import { getBand } from "../level-test-rules";
+import {
+  canWriteLevelTest,
+  levelTestDetailsWithProgress,
+  readLevelTestProgress,
+} from "./level-test-state";
 
 type ResultPlacement = NonNullable<LevelTestProgress["placement"]>;
-
-type PlaceOutcome = { placedNow: boolean; placement: ResultPlacement } | null;
 
 class PlacementAnnouncedError extends Error {
   override name = "PlacementAnnouncedError";
 }
 
-async function lockGoal(tx: TransactionClient, goalId: string): Promise<Goal | null> {
-  await tx.$queryRaw`SELECT id FROM goals WHERE id = ${goalId}::uuid FOR UPDATE`;
-  return tx.goal.findUnique({ where: { id: goalId } });
-}
-
-async function savePlacement(
-  tx: TransactionClient,
-  { goal, placement }: { goal: Goal; placement: ResultPlacement },
-) {
-  const levelTest = { ...readLevelTestProgress(goal), placement };
-
-  await tx.goal.update({
-    data: { details: { ...readGoalDetails(goal), levelTest } },
-    where: { id: goal.id },
-  });
-}
-
-export async function placeLevelTestResult({
+export async function skipConfirmedLanguageLessons({
+  through,
   goalId,
-  timeZone,
-  userId,
+  now,
+  topicIds,
+  tx,
 }: {
+  through: CefrLevel | null;
+  topicIds?: ReadonlySet<string>;
   goalId: string;
-  timeZone: string;
-  userId: string;
-}): Promise<PlaceOutcome> {
-  const now = new Date();
-
-  const outcome = await prisma.$transaction(async (tx) => {
-    const planIds = await lockLearnerPlans(tx, { userIds: [userId] });
-    await lockLearner(tx, { userId });
-    const goal = await lockGoal(tx, goalId);
-    const current = goal ? readLevelTestProgress(goal).placement : undefined;
-
-    if (!goal || !current || current.placed) {
-      return current ? { placedNow: false, placement: current } : null;
-    }
-
-    const { goalPlan, pastBasicsAreas, state } = await loadPlacement({ goalId, tx, userId });
-
-    if (state.knownSkillIds.length > 0) {
-      await markLockedPlanInputsChanged(tx, { planIds });
-    }
-
-    await markSkillsKnown({
-      knownAt: now,
-      skillIds: state.knownSkillIds,
-      timeZone,
-      transaction: tx,
-      userId,
-    });
-
-    const { itemIds, sharedItemIds, standInIds } = await testOutKnownPlanItems(tx, {
-      goalId,
-      items: goalPlan.items,
-      knownSkillIds: new Set(state.knownSkillIds),
-      placedSkills: goalPlan.skills,
-      testedOutAt: now,
-      timeZone,
-    });
-
-    const unannounced = [
-      ...new Set([...current.unannounced, ...itemIds, ...standInIds, ...sharedItemIds]),
-    ];
-
-    const placement = {
-      pastBasicsAreas:
-        unannounced.length > 0
-          ? [...new Set([...current.pastBasicsAreas, ...pastBasicsAreas])]
-          : [],
-      placed: true,
-      unannounced,
-    };
-
-    await savePlacement(tx, { goal, placement });
-    await owePlanStartLessons({ db: tx, goalId, userId });
-    return { placedNow: true, placement };
-  });
-
-  if (outcome?.placedNow) {
-    revalidateCacheTags([getLearnerModelCacheTag(userId)]);
+  now: Date;
+  tx: TransactionClient;
+}): Promise<string[]> {
+  if (!through || topicIds?.size === 0) {
+    return [];
   }
 
-  return outcome;
+  const items = await tx.planItem.findMany({
+    select: {
+      id: true,
+      lesson: {
+        select: { skills: { select: { skill: { select: { cefrLevel: true, id: true } } } } },
+      },
+    },
+    where: { kind: "lesson", plan: { goalId }, status: "todo" },
+  });
+
+  const ids = items.flatMap(({ id, lesson }) => {
+    const topics = lesson?.skills ?? [];
+
+    return topics.length > 0 &&
+      topics.every(
+        ({ skill }) =>
+          skill.cefrLevel !== null &&
+          getBand(skill.cefrLevel) <= getBand(through) &&
+          (topicIds === undefined || topicIds.has(skill.id)),
+      )
+      ? [id]
+      : [];
+  });
+
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const finished = await tx.planItem.updateManyAndReturn({
+    data: { completedAt: now, status: "testedOut" },
+    select: { id: true, kind: true, phase: true, planId: true },
+    where: { id: { in: ids }, status: "todo" },
+  });
+
+  await awardLanguageLevelCertificates(tx, { finished });
+  await awardCourseCertificates(tx, { finished });
+
+  return finished.map(({ id }) => id);
 }
 
-async function clearAnnounced(
-  tx: TransactionClient,
-  { announced, goalId }: { announced: ResultPlacement; goalId: string },
-): Promise<boolean> {
-  const goal = await lockGoal(tx, goalId);
-  const current = goal ? readLevelTestProgress(goal).placement : undefined;
+async function clearAnnounced({
+  attemptId,
+  goalId,
+  placement,
+  tx,
+}: {
+  attemptId?: string;
+  goalId: string;
+  placement: ResultPlacement;
+  tx: TransactionClient;
+}): Promise<boolean> {
+  const goal = await tx.goal.findUnique({ where: { id: goalId } });
+  const progress = goal && readLevelTestProgress(goal, attemptId);
 
   if (
     !goal ||
-    !current ||
-    !isDeepStrictEqual(
-      [current.unannounced, current.pastBasicsAreas],
-      [announced.unannounced, announced.pastBasicsAreas],
-    )
+    !progress?.placement ||
+    !canWriteLevelTest(goal, progress) ||
+    !isDeepStrictEqual(progress.placement, placement)
   ) {
     return false;
   }
 
-  await savePlacement(tx, {
-    goal,
-    placement: { ...current, pastBasicsAreas: [], unannounced: [] },
+  const details = levelTestDetailsWithProgress(goal, {
+    ...progress,
+    placement: { ...placement, pastBasicsAreas: [], unannounced: [] },
   });
 
+  await tx.goal.update({ data: { details }, where: { id: goalId } });
   return true;
 }
 
 export async function announceLevelTestPlacement({
-  goalId,
+  goal,
   placement,
+  attemptId,
   timeZone,
-  userId,
 }: {
-  goalId: string;
+  attemptId?: string;
+  goal: Pick<Goal, "id" | "userId">;
   placement: ResultPlacement;
   timeZone: string;
-  userId: string;
 }) {
-  if (placement.unannounced.length === 0) {
+  const { id: goalId, userId } = goal;
+  const { unannounced } = placement;
+
+  if (unannounced.length === 0) {
     return;
   }
-
-  const skipped = await prisma.planItem.findMany({
-    select: { completedAt: true, id: true, plan: { select: { goalId: true } } },
-    where: { id: { in: placement.unannounced }, plan: { goal: { userId } }, status: "testedOut" },
-  });
-
-  const instants = new Set(skipped.flatMap((item) => item.completedAt?.getTime() ?? []));
-
-  await Promise.all(
-    [...instants].map((instant) =>
-      announceSharedTestOuts({ goalId, now: new Date(), testedOutAt: new Date(instant), userId }),
-    ),
-  );
-
-  const planItemIds = skipped.filter((item) => item.plan.goalId === goalId).map((item) => item.id);
 
   const { data, error } = await safeAsync(() =>
     announceTestedOutItems({
       extraWrites: async (tx) => {
-        if (!(await clearAnnounced(tx, { announced: placement, goalId }))) {
+        if (!(await clearAnnounced({ attemptId, goalId, placement, tx }))) {
           throw new PlacementAnnouncedError();
         }
       },
+      followToday: false,
       goalId,
       now: new Date(),
-      pastBasicsAreas: placement.pastBasicsAreas,
-      planItemIds,
+      planItemIds: unannounced,
+      skipBlocks: false,
       timeZone,
     }),
   );
 
-  if (error instanceof PlacementAnnouncedError || data) {
-    return;
-  }
-
-  if (isPlanConflictError(error)) {
-    await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds });
+  if (error instanceof PlacementAnnouncedError || isPlanConflictError(error) || data) {
     return;
   }
 
@@ -201,6 +154,6 @@ export async function announceLevelTestPlacement({
   }
 
   await writeLearnerChange({ userId }, async (tx) =>
-    (await clearAnnounced(tx, { announced: placement, goalId })) ? null : unchanged(null),
+    (await clearAnnounced({ attemptId, goalId, placement, tx })) ? null : unchanged(null),
   );
 }

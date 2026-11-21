@@ -11,6 +11,7 @@ import {
   releaseClaim,
   storeBank,
 } from "./_utils/level-test-bank";
+import { levelTestConfirmationsInputSchema } from "./level-test-contract";
 
 export type { LevelTestBankLevel } from "./_utils/level-test-bank";
 
@@ -26,7 +27,7 @@ export type LevelTestBankClaim =
 export async function claimLevelTestBank(pair: LanguagePair): Promise<LevelTestBankClaim> {
   const row = await findBankRow(pair);
 
-  if (readBank(row)) {
+  if (readBank(row)?.confirmations !== undefined) {
     return { status: "ready" };
   }
 
@@ -51,7 +52,14 @@ export async function writeLevelTestBankLevel({
     targetLanguage: pair.targetLanguage,
   });
 
-  return { provenance, questions: data.questions, speaking: data.speaking };
+  return {
+    ...("confirmations" in data && {
+      confirmations: levelTestConfirmationsInputSchema.parse(data.confirmations),
+    }),
+    ...("speaking" in data && { speaking: data.speaking }),
+    provenance,
+    questions: data.questions,
+  };
 }
 
 /** System workflow capability: `lost` when a newer run took the claim over, so its bank stays. */

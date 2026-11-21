@@ -55,9 +55,14 @@ function mockAudio() {
   vi.mocked(generateLanguageAudio).mockResolvedValue(voicedAudio());
 }
 
+function modernWrittenLevel(input: Parameters<typeof writtenLevel>[0]) {
+  const written = writtenLevel(input);
+  return { ...written, data: { ...written.data, confirmations: [] } };
+}
+
 function mockWriter(passage: string) {
   vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
-    writtenLevel({ level, passage }),
+    modernWrittenLevel({ level, passage }),
   );
 }
 
@@ -65,7 +70,7 @@ function pendingWriter() {
   const { promise, resolve } = Promise.withResolvers<string>();
 
   vi.mocked(generateLevelTestBankLevel).mockImplementation(async ({ level }) =>
-    writtenLevel({ level, passage: await promise }),
+    modernWrittenLevel({ level, passage: await promise }),
   );
 
   return { finish: (passage: string) => resolve(passage) };
