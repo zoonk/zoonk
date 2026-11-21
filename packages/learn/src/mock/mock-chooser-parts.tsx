@@ -19,4 +19,6 @@ export type MockChooserStatus =
   | { kind: "writing"; run: GenerationRun }
   | MockShortStatus
   | { kind: "failed"; reason: "failed" | "notEnoughQuestions" }
-  | { kind: "refused"; limit: HelpLimit };
+  | { kind: "refused"; limit: HelpLimit }
+  /** Today's extra writing is used, so a mock with the written test waits for that day. */
+  | { kind: "writingUsedUp"; returnsOn: string };

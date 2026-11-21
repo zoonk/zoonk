@@ -14,6 +14,7 @@ import { EnterButton } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page } from "../_components/page";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
+import { daysBetween, useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
@@ -51,6 +52,20 @@ export function ChooserLayout({
   );
 }
 
+/** Said as the practice refusal says it: no more grading today, and the day it's back. */
+function useWritingUsedUpText() {
+  const t = useExtracted();
+  const today = useIsoToday();
+  const formatDate = useFormatIsoDate();
+
+  return (returnsOn: string): string =>
+    daysBetween(today, returnsOn) <= 1
+      ? t("No more grading today. The written test is back tomorrow.")
+      : t("No more grading today. The written test is back on {date}.", {
+          date: formatDate(returnsOn, "sentence"),
+        });
+}
+
 function useFailureText() {
   const t = useExtracted();
 
@@ -76,6 +91,7 @@ function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
   const t = useExtracted();
   const routes = useLearnRoutes();
   const failureText = useFailureText();
+  const writingUsedUpText = useWritingUsedUpText();
 
   if (gated) {
     return (
@@ -99,6 +115,14 @@ function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
           routes={routes}
         />
       </div>
+    );
+  }
+
+  if (status.kind === "writingUsedUp") {
+    return (
+      <p className="text-muted-foreground text-sm text-pretty" role="alert">
+        {writingUsedUpText(status.returnsOn)}
+      </p>
     );
   }
 

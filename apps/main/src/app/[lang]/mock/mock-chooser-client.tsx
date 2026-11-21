@@ -205,6 +205,11 @@ function MockChooserVisit({
       return;
     }
 
+    if (result.status === "writingUsedUp") {
+      setStatus({ kind: "writingUsedUp", returnsOn: result.returnsOn });
+      return;
+    }
+
     if (result.status === "failed") {
       setStatus({ kind: "failed", reason: "failed" });
       return;
