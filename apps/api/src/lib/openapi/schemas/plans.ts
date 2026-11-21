@@ -10,7 +10,7 @@ import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
 import { planNumbersSchema } from "@zoonk/core/plans/numbers-contract";
 import { type OwnLevelChange } from "@zoonk/core/plans/own-level-contract";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "@zoonk/core/plans/tools-contract";
-import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type PlanView, planPlacementTestSchema } from "@zoonk/core/plans/view-contract";
 import { writtenPracticeSchema } from "@zoonk/core/plans/written-practice-contract";
 import { GoalKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -159,9 +159,9 @@ export const planResponseSchema = z
       .nullable()
       .meta({ description: "The level the learner gave; null when they didn't say" }),
     phases: z.array(planPhaseSchema),
+    placementTest: planPlacementTestSchema.nullable().optional(),
     planId: uuidSchema(),
     ready: z.boolean().meta({ description: "False while the planner is building the plan" }),
-
     schedule: z.object({
       dailyMinutes: z.int(),
       dailyTimes: dailyTimesSchema,

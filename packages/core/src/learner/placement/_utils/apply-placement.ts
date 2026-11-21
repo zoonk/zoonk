@@ -7,6 +7,7 @@ import { listPlacementListeningAreas } from "../../../plans/_utils/load-listenin
 import { endPlanSetupTask, endPlanSetupTaskWith } from "../../../plans/_utils/plan-setup-tasks";
 import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../../_utils/known-skills";
+import { loadConfirmedSkills } from "../../_utils/load-skill-claims";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { isFocusTestStarted } from "../focus-test-state";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
@@ -23,7 +24,14 @@ export async function loadPlacement({
   tx?: TransactionClient;
 }): Promise<{ goalPlan: GoalPlan; pastBasicsAreas: string[]; state: PlacementState }> {
   const goalPlan = plan ?? (await loadPlacementPlan(goalId, tx));
-  const state = await loadPlacementState({ goalId, plan: goalPlan, tx, userId });
+
+  const state = await loadPlacementState({
+    goalId,
+    ignoreAttempt: true,
+    plan: goalPlan,
+    tx,
+    userId,
+  });
 
   const pastBasicsAreas = await listPlacementListeningAreas({
     goalId,
@@ -40,7 +48,7 @@ export async function loadPlacement({
 export async function applyPlacement({
   announceAlso,
   extraWrites,
-  followToday = true,
+  followToday = false,
   goalId,
   now,
   plan,
@@ -68,7 +76,16 @@ export async function applyPlacement({
 }> {
   const { goalPlan, pastBasicsAreas, state } = await loadPlacement({ goalId, plan, userId });
 
-  await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
+  const confirmed = await loadConfirmedSkills({
+    goalId,
+    skillIds: state.knownSkillIds,
+    timeZone,
+    userId,
+  });
+
+  const knownSkillIds = state.knownSkillIds.filter((skillId) => confirmed.has(skillId));
+
+  await markSkillsKnown({ knownAt: now, skillIds: knownSkillIds, timeZone, userId });
 
   // A question inside today's session keeps the rest of the day as the learner was shown it.
   const {
@@ -81,7 +98,7 @@ export async function applyPlacement({
     followToday,
     goalId,
     items: goalPlan.items,
-    knownSkillIds: new Set(state.knownSkillIds),
+    knownSkillIds: confirmed,
     now,
     pastBasicsAreas,
     placedSkills: goalPlan.skills,
@@ -91,7 +108,12 @@ export async function applyPlacement({
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
-  return { changeId, pastBasicsAreas: pastBasicsAdded, state, testedOutPlanItemIds };
+  return {
+    changeId,
+    pastBasicsAreas: pastBasicsAdded,
+    state: { ...state, knownSkillIds },
+    testedOutPlanItemIds,
+  };
 }
 
 /** A learner who declined placement and later started the Focus test has answers to apply. */

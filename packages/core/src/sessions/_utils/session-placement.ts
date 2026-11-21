@@ -3,7 +3,8 @@ import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
-import { type ClaimEvent } from "../../learner/_utils/skill-claims";
+import { loadSkippedRecheckSkills } from "../../learner/_utils/load-skill-claims";
+import { type ClaimEvent, listSkippedRechecks } from "../../learner/_utils/skill-claims";
 import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
 import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
 import { readSessionQuestions } from "../../learner/placement/focus-test-summary";
@@ -98,11 +99,28 @@ export async function loadSessionPlacement({
 }): Promise<string[]> {
   const { finalStretchStart, graph, skills, structure } = plan;
 
-  if (
-    !asksPlacement(context) ||
-    skills.length === 0 ||
-    placesNothing({ context, finalStretchStart, isReviewDay })
-  ) {
+  if (skills.length === 0) {
+    return [];
+  }
+
+  const skillIds = skills.filter((skill) => !skill.removed).map((skill) => skill.id);
+
+  const recheckOnly =
+    !asksPlacement(context) || placesNothing({ context, finalStretchStart, isReviewDay });
+
+  const recheckSkillIds = context.readClaims
+    ? listSkippedRechecks({
+        events: await context.readClaims(skillIds),
+        localDate: context.localDate,
+      })
+    : await loadSkippedRecheckSkills({
+        goalId: context.goal.id,
+        localDate: context.localDate,
+        skillIds,
+        userId: context.userId,
+      });
+
+  if (recheckOnly && recheckSkillIds.size === 0) {
     return [];
   }
 
@@ -117,6 +135,8 @@ export async function loadSessionPlacement({
     limit: SESSION_PLACEMENT_QUESTIONS,
     listeningSkillIds: plan.listeningSkillIds,
     quickFormat: getPlacementQuickFormat(structure),
+    recheckOnly,
+    recheckSkillIds,
     skills,
     test:
       context.goal.kind === "exam"

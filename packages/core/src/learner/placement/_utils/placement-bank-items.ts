@@ -8,7 +8,8 @@ import {
 } from "../../../library/exams/exam-choice-format";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
-import { PLACEMENT_ITEM_FORMATS, preferExamItems } from "./placement-items";
+import { isLowGuessTap } from "../../_utils/placement-guess-rate";
+import { PLACEMENT_ITEM_FORMATS, isPlacementItem, preferExamItems } from "./placement-items";
 
 async function loadChoiceFormats(
   examBlueprintId: string | null,
@@ -25,14 +26,11 @@ async function loadChoiceFormats(
 export async function loadPlacementItems({
   examBlueprintId,
   skillIds,
-  typed,
   writingSkillIds,
   tx = prisma,
 }: {
   examBlueprintId: string | null;
   skillIds: string[];
-  /** The goal confirms a right quick answer in writing (`confirmsInWriting`). */
-  typed: boolean;
   /** Skills whose placement questions the goal's run is still writing. */
   writingSkillIds?: ReadonlySet<string>;
   tx?: TransactionClient;
@@ -51,7 +49,7 @@ export async function loadPlacementItems({
           skillId: true,
         },
         where: {
-          format: { in: PLACEMENT_ITEM_FORMATS.filter((format) => typed || format !== "typed") },
+          format: { in: [...PLACEMENT_ITEM_FORMATS] },
           skillId: { in: skillIds },
           ...getItemAudienceFilter({ examBlueprintId }),
         },
@@ -59,9 +57,9 @@ export async function loadPlacementItems({
     () => loadChoiceFormats(examBlueprintId, tx),
   );
 
-  const fitting = items
-    .filter((item) => fitsExamChoice({ choices, item }))
-    .map(({ content: _content, ...item }) => item);
+  const fitting = items.filter(
+    (item) => isPlacementItem(item) && (isLowGuessTap(item) || fitsExamChoice({ choices, item })),
+  );
 
   return preferExamItems({ examBlueprintId, items: fitting, writingSkillIds });
 }

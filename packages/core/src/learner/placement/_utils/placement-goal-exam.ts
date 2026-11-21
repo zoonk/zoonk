@@ -13,10 +13,11 @@ import {
   parsePlanGraph,
   parsePlanSettings,
 } from "../../../plans/planner/plan-state";
-import { getKnownSubjects, getOwnLevel, isLevelMeasured } from "../placement-contract";
+import { getKnownSubjects, getOwnLevel } from "../placement-contract";
 import { isOwnMaterialTest } from "../placement-material";
-import { confirmsInWriting, getPlacementQuickFormat } from "../placement-quick-format";
+import { getPlacementQuickFormat } from "../placement-quick-format";
 import { toTestSetup } from "./focus-test-setup";
+import { readPlacementAttempt } from "./placement-attempt-record";
 
 function getChosenAreaShares({
   graph,
@@ -57,10 +58,9 @@ export async function loadGoalExam(goalId: string, tx: TransactionClient) {
     goalCreatedAt: goal?.createdAt ?? null,
     goalLevel: goal ? getOwnLevel({ goal }) : null,
     knownAreas: goal ? getKnownSubjects(goal) : [],
-    measuredLevel: goal && isLevelMeasured(goal) ? getOwnLevel({ goal }) : null,
+    placement: goal ? readPlacementAttempt(goal) : null,
     quickFormat: getPlacementQuickFormat(structure ?? notice),
     test: goal && plan ? toTestSetup({ goal, graph, plan, settings, structure }) : null,
     trueFalseLabels: getTrueFalseLabels(structure ?? notice),
-    typed: goal ? confirmsInWriting(goal) : false,
   };
 }

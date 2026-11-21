@@ -21,6 +21,7 @@ import {
   goalPathParamsSchema,
 } from "../schemas/paths";
 import {
+  conflictResponse,
   guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
@@ -48,7 +49,7 @@ export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out": {
     get: {
       description:
-        "One question per sampled skill of the chapter, unseen questions first. Nothing is stored until the answers are submitted.",
+        "Four unseen questions per sampled topic. Nothing is stored until the answers are submitted.",
       operationId: "getChapterTestOut",
       requestParams: { path: goalChapterPathParamsSchema },
       responses: {
@@ -69,7 +70,7 @@ export const placementPaths = {
     },
     post: {
       description:
-        "Grades the test-out. Passing (at least four answers, every sampled skill answered, 80% right) marks the skills answered 80% right known and tests out the plan items that teach only known skills. The same test sent again (its `requestId`) returns what it recorded without grading, counting or celebrating it again.",
+        "Grades the test-out. One correct quick choice and three correct low-guess tap answers confirm each topic. Only lessons teaching confirmed topics are skipped. The same test sent again (its `requestId`) returns what it recorded without grading, counting or celebrating it again.",
       operationId: "submitChapterTestOut",
       requestBody: {
         content: { "application/json": { schema: chapterTestOutInputSchema } },
@@ -97,7 +98,7 @@ export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out/generations": {
     post: {
       description:
-        "Gets a chapter's test-out ready when the learner asks for it (never on a screen view). `ready` when it has a question for every skill it samples. Otherwise a run writes a few multiple-choice questions for each skill without one (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "Gets a chapter's test-out ready when the learner asks for it (never on a screen view). `ready` when it has a question for every skill it samples. Otherwise a run writes missing tap questions for the sampled skills (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
       operationId: "createChapterTestOutGeneration",
       requestParams: { path: goalChapterPathParamsSchema },
       responses: {
@@ -225,6 +226,7 @@ export const placementPaths = {
           content: { "application/json": { schema: placementCompletionResponseSchema } },
           description: "Where each phase and area starts",
         },
+        "409": conflictResponse,
         "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -235,7 +237,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/sittings": {
     post: {
       description:
-        "Starts or continues an exam goal's Focus test: opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for a goal that isn't an exam.",
+        "Starts or resumes a learn goal’s placement attempt with length quick or wholeCourse. For an exam goal, opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for an unsupported goal or a learn goal without a length.",
       operationId: "createPlacementSitting",
       requestBody: {
         content: { "application/json": { schema: placementSittingInputSchema } },
@@ -246,11 +248,11 @@ export const placementPaths = {
         ...learnerErrors,
         "200": {
           content: { "application/json": { schema: placementResponseSchema } },
-          description: "The placement with its open sitting",
+          description: "The placement with its open attempt or sitting",
         },
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Start a Focus test sitting",
+      summary: "Start a placement test or Focus test sitting",
       tags: ["Learner"],
     },
   },

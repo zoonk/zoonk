@@ -151,13 +151,14 @@ async function findUnseenSkip({
 
 export async function announceTestedOutItems({
   extraWrites,
-  followToday = true,
+  followToday = false,
   goalId,
+  mergeWithUnseen = true,
   now,
   pastBasicsAdded = [],
   pastBasicsAreas = [],
   planItemIds,
-  skipBlocks = true,
+  skipBlocks = false,
   timeZone,
 }: {
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
@@ -167,6 +168,7 @@ export async function announceTestedOutItems({
    */
   followToday?: boolean;
   goalId: string;
+  mergeWithUnseen?: boolean;
   now: Date;
   pastBasicsAdded?: readonly string[];
   pastBasicsAreas?: readonly string[];
@@ -199,8 +201,8 @@ export async function announceTestedOutItems({
 
     const lessonsSkipped = countLessons(context.items.filter((item) => skipped.has(item.id)));
 
-    const unseen = await findUnseenSkip({ context, now });
-    const recorded = unseen && parsePlanChangePayload(unseen.payload);
+    const latest = await findUnseenSkip({ context, now });
+    const recorded = latest && parsePlanChangePayload(latest.payload);
 
     if (
       recorded &&
@@ -214,11 +216,13 @@ export async function announceTestedOutItems({
       }
 
       if (followToday) {
-        await followPlanToday({ changeId: unseen.change.id, context });
+        await followPlanToday({ changeId: latest.change.id, context });
       }
 
-      return { changeId: unseen.change.id, lessonsSkipped, planVersion: context.plan.version };
+      return { changeId: latest.change.id, lessonsSkipped, planVersion: context.plan.version };
     }
+
+    const unseen = mergeWithUnseen ? latest : null;
 
     const computed = await computePlan({
       context,

@@ -1,3 +1,4 @@
+import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { learnerAccessError, noFromScratchError } from "@/lib/learner-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
@@ -19,6 +20,10 @@ async function completePlacement(
 
   if (result.status === "unavailable") {
     return noFromScratchError();
+  }
+
+  if (result.status === "staleAttempt") {
+    return errors.conflict("This placement attempt is no longer open");
   }
 
   if (result.status !== "ready") {

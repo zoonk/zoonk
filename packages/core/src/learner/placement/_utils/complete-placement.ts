@@ -12,17 +12,21 @@ import { type SittingOffer } from "../focus-test-view";
 import { type AreaStart, type PhaseStart } from "../placement-steps";
 import { applyPlacement } from "./apply-placement";
 import { type PlacementState } from "./load-placement-state";
+import { type PlacementAttemptView, type PlacementResult } from "./placement-attempt-record";
 import { settleFocusTest } from "./settle-focus-test";
 import { type ClosedSitting, closeTestSitting } from "./test-sitting";
 
 export type PlacementCompletion = {
   areas: AreaStart[];
+  attempt?: PlacementAttemptView | null;
   /** False when the plan has no skills. */
   complete: boolean;
   /** An exam goal's test after this finish, with its result; null for other goals. */
   focusTest: FocusTestView | null;
   knownSkillIds: string[];
+  partLessonsSkipped?: number;
   phases: PhaseStart[];
+  result?: PlacementResult | null;
   testedOutPlanItemIds: string[];
 };
 
@@ -81,7 +85,7 @@ export async function completePlacement({
 
   const applied = await applyPlacement({ goalId, now, plan, timeZone, userId });
 
-  if (!applied.changeId) {
+  if (!applied.changeId && (!goal.planRevealedAt || tested)) {
     await replanAfterPlacement({ goalId, now, pastBasicsAreas: applied.pastBasicsAreas, timeZone });
   }
 

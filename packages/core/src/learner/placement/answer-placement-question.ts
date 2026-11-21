@@ -6,11 +6,8 @@ import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getAskedItemFilter } from "../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
-import { gradeChoiceAnswer } from "../_utils/choice-items";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
-import { gradeTypedItemAnswer } from "../_utils/typed-grading";
-import { type TypedItem, toTypedSnapshot } from "../_utils/typed-items";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import {
   type LearnerAnswer,
@@ -19,7 +16,12 @@ import {
 } from "../record-learner-answer";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
-import { type PlacementItem, parsePlacementItem } from "./_utils/placement-items";
+import { readPlacementAttempt } from "./_utils/placement-attempt-record";
+import {
+  type PlacementItem,
+  gradePlacementAnswer,
+  parsePlacementItem,
+} from "./_utils/placement-items";
 import { saveTestSummary } from "./_utils/test-sitting";
 import { readFocusTestRecord } from "./focus-test-state";
 import { type PlacementAnswerInput, getOwnLevel } from "./placement-contract";
@@ -29,8 +31,6 @@ export type PlacementAnswerResult =
   | { status: "invalidItem" }
   | { status: "notFound" }
   | { status: "unauthorized" };
-
-type PlacementAnswer = PlacementAnswerInput["answer"];
 
 /** A question already asked stays answerable after re-planning removes its skill, provided it remains visible and exam-eligible. */
 async function findGoalItem({
@@ -54,95 +54,83 @@ async function findGoalItem({
   return item ? parsePlacementItem(item) : null;
 }
 
-async function gradeTyped({
-  answer,
-  item,
-  practicedLanguage,
-  userId,
-}: {
-  answer: PlacementAnswer;
-  item: TypedItem;
-  practicedLanguage: string | null;
-  userId: string;
-}) {
-  if ("dontKnow" in answer) {
-    return { isCorrect: false, snapshot: toTypedSnapshot({ explanation: null, item, text: null }) };
-  }
-
-  if (!("text" in answer)) {
-    return null;
-  }
-
-  const verdict = await gradeTypedItemAnswer({
-    item,
-    practicedLanguage,
-    text: answer.text,
-    userId,
-  });
-
-  return {
-    isCorrect: verdict.isCorrect,
-    snapshot: toTypedSnapshot({ explanation: verdict.feedback, item, text: answer.text }),
-  };
-}
-
-function gradeAnswer({
-  answer,
-  item,
-  practicedLanguage,
-  userId,
-}: {
-  answer: PlacementAnswer;
-  item: PlacementItem;
-  practicedLanguage: string | null;
-  userId: string;
-}) {
-  if (item.format === "typed") {
-    return gradeTyped({ answer, item, practicedLanguage, userId });
-  }
-
-  return "text" in answer ? null : gradeChoiceAnswer({ answer, item });
-}
-
 /**
  * A question placement asked outside a session is answered once: a repeated send, such as a retry
  * after a lost response, records and counts nothing again.
  */
 async function recordPlacementAnswer({
+  attemptId,
   goalId,
   input,
+  part,
 }: {
+  attemptId?: string;
   goalId: string;
   input: LearnerAnswer;
-}): Promise<boolean> {
+  part?: number;
+}): Promise<{ recorded: boolean; isCorrect: boolean } | null> {
   const { itemId, userId } = input;
 
-  const events = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
-    const answered = await tx.attempt.findFirst({
-      select: { id: true },
-      where: { ...SITTING_ANSWER_FILTER, itemId, userId },
-    });
+  const saved = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
+    const { attempt } = readPlacementAttempt(goal);
+    const focusTestId = readFocusTestRecord(goal)?.sitting?.id ?? null;
 
-    if (answered) {
+    if (
+      attemptId &&
+      (!attempt || attempt.id !== attemptId || attempt.partComplete || (part ?? 1) !== attempt.part)
+    ) {
       return unchanged(null);
     }
 
-    const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
-    const focusTestId = readFocusTestRecord(goal)?.sitting?.id ?? null;
+    const answered = await tx.attempt.findFirst({
+      select: { isCorrect: true },
+      where: {
+        ...SITTING_ANSWER_FILTER,
+        ...(attemptId ? { focusTestId: attemptId } : {}),
+        itemId,
+        userId,
+      },
+    });
 
-    const { events: recorded } = await persistLearnerAnswer({
-      input: { ...input, focusTestId },
+    if (answered) {
+      return unchanged({ events: null, isCorrect: answered.isCorrect });
+    }
+
+    if (attemptId) {
+      const plan = await loadPlacementPlan(goalId, tx);
+
+      const state = await loadPlacementWithSummary({
+        goalId,
+        plan,
+        timeZone: input.timeZone,
+        today: getDateInTimeZone({ date: new Date(), timeZone: input.timeZone }),
+        tx,
+        userId,
+      });
+
+      if (state.state.next?.itemId !== itemId) {
+        return unchanged(null);
+      }
+    }
+
+    const { events } = await persistLearnerAnswer({
+      input: {
+        ...input,
+        answer: attemptId ? { ...input.answer, placementPending: true } : input.answer,
+        focusTestId: attemptId ?? focusTestId,
+      },
       transaction: tx,
     });
 
-    return recorded;
+    return { events, isCorrect: input.graded.isCorrect };
   });
 
-  if (events) {
-    publishLearnerAnswer({ events, userId });
+  if (saved?.events) {
+    publishLearnerAnswer({ events: saved.events, userId });
   }
 
-  return events !== null;
+  return saved ? { isCorrect: saved.isCorrect, recorded: saved.events !== null } : null;
 }
 
 /** Records diagnostics without adding notebook mistakes; dontKnow is a valid answer. */
@@ -168,27 +156,20 @@ export async function answerPlacementQuestion({
     }),
   ]);
 
-  const graded = item
-    ? await gradeAnswer({
-        answer: input.answer,
-        item,
-        practicedLanguage: owned.goal.targetLanguage,
-        userId: owned.userId,
-      })
-    : null;
-
-  if (!item || graded === null) {
+  if (!item) {
     return { status: "invalidItem" };
   }
 
-  const { isCorrect, snapshot } = graded;
+  const graded = gradePlacementAnswer({ answer: input.answer, item });
+  const { snapshot } = graded;
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
 
-  const recorded = await recordPlacementAnswer({
+  const saved = await recordPlacementAnswer({
+    attemptId: input.attemptId,
     goalId,
     input: {
       answer: input.answer,
-      graded: { durationMs: input.durationMs, isCorrect },
+      graded: { durationMs: input.durationMs, isCorrect: graded.isCorrect },
       isPlacement: true,
       itemId: item.id,
       language: item.language,
@@ -198,10 +179,18 @@ export async function answerPlacementQuestion({
       timeZone,
       userId: owned.userId,
     },
+    part: input.part,
   });
+
+  if (!saved) {
+    return { status: "invalidItem" };
+  }
+
+  const { isCorrect, recorded } = saved;
 
   const read = {
     goalId,
+    ignoreAttempt: !input.attemptId,
     ownLevel: getOwnLevel({ goal: owned.goal, level: input.level }),
     timeZone,
     today: getDateInTimeZone({ date: new Date(), timeZone }),

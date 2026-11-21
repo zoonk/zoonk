@@ -18,6 +18,7 @@ const ATTEMPT_EVIDENCE_SELECT = {
   answer: true,
   answeredAt: true,
   durationMs: true,
+  focusTestId: true,
   id: true,
   isCorrect: true,
   isPlacement: true,
@@ -35,6 +36,7 @@ type AttemptRow = {
   id: string;
   answeredAt: Date;
   durationMs: number;
+  focusTestId: string | null;
   isCorrect: boolean;
   isPlacement: boolean;
   item: { content: unknown; format: ItemFormat } | null;
@@ -56,7 +58,7 @@ function getOutcome(
   return isJsonObject(attempt.answer) && attempt.answer.dontKnow === true ? "dontKnow" : "wrong";
 }
 
-function toEvidence(attempt: AttemptRow): PlacementEvidence | null {
+export function toPlacementEvidence(attempt: AttemptRow): PlacementEvidence | null {
   if (!attempt.skillId) {
     return null;
   }
@@ -116,7 +118,7 @@ export async function loadAnsweredTestItems({
 }): Promise<Set<string | null>> {
   const answered = await tx.attempt.groupBy({
     by: ["itemId"],
-    where: { ...COVERAGE_ANSWER_FILTER, itemId: { in: itemIds }, userId },
+    where: { itemId: { in: itemIds }, userId },
   });
 
   return new Set(answered.map((attempt) => attempt.itemId));
@@ -174,21 +176,35 @@ export async function loadEvidence({
 
   const evidence: PlacementEvidence[] = [];
   const placementAnswers: PlacementEvidence[] = [];
+  const confirmationAnswers: PlacementEvidence[] = [];
 
   for (const attempt of chronological) {
-    const answer = toEvidence(attempt);
+    const answer = toPlacementEvidence(attempt);
 
     if (answer) {
       evidence.push(answer);
 
-      if (isPlacementAnswer(attempt)) {
-        placementAnswers.push(answer);
+      const answerData = isJsonObject(attempt.answer) ? attempt.answer : {};
+
+      if (
+        attempt.itemId !== null &&
+        attempt.stepId === null &&
+        attempt.mockExamId === null &&
+        !("practiceMistakeId" in answerData) &&
+        answerData.placementPending !== true
+      ) {
+        confirmationAnswers.push(answer);
+
+        if (isPlacementAnswer(attempt)) {
+          placementAnswers.push(answer);
+        }
       }
     }
   }
 
   return {
     attempts: chronological,
+    confirmationAnswers,
     evidence,
     placementAnswers,
     seenItemIds: new Set(chronological.map((attempt) => attempt.itemId)),

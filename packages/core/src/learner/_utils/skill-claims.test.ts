@@ -5,6 +5,7 @@ import {
   isSkillConfirmed,
   listAnsweredWrong,
   listKnownSkills,
+  listSkippedRechecks,
   listTakenToKnow,
   readSkillClaims,
 } from "./skill-claims";
@@ -65,9 +66,19 @@ describe(readSkillClaims, () => {
     expect(claims.get("organelles")).toBe("gap");
   });
 
-  it("makes a confirmed claim a gap when practice misses it before the learner studied it", () => {
-    const claims = readSkillClaims([claim(1), practice(2, true), practice(3, false)]);
-    expect(claims.get("organelles")).toBe("gap");
+  it("keeps a skipped topic through a practice miss until its later tap recheck fails", () => {
+    const events = [claim(1), practice(2, true), { ...practice(3, false), localDate: day(0) }];
+    expect(listKnownSkills({ events })).toStrictEqual(new Set(["organelles"]));
+    expect(listSkippedRechecks({ events, localDate: day(0) })).toStrictEqual(new Set());
+
+    expect(listSkippedRechecks({ events, localDate: day(1) })).toStrictEqual(
+      new Set(["organelles"]),
+    );
+
+    const rechecked = { ...test(4, false), localDate: day(1), recheck: true };
+    const checked = [...events, rechecked];
+    expect(listKnownSkills({ events: checked })).toStrictEqual(new Set());
+    expect(listSkippedRechecks({ events: checked, localDate: day(1) })).toStrictEqual(new Set());
   });
 
   it("keeps a missed test answer a gap until a right test answer claims the skill again", () => {

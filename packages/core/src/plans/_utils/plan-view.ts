@@ -34,6 +34,7 @@ import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath, readPlanToday } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
+import { readPlanPlacementTest } from "./plan-placement-test";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
 import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
@@ -295,6 +296,7 @@ export async function buildPlanView({
       taughtSkillIds,
       today,
     }),
+    placementTest: readPlanPlacementTest(context),
     planId: context.plan.id,
     ready: isPlanReady(savedContext),
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),

@@ -16,7 +16,9 @@ type SkillEvidence = OwnAnswer | { undoneOn: Date };
 
 export type ClaimEvent = { at: Date; skillId: string } & (
   | { kind: "claim" | "studied" | "undone"; localDate?: Date }
-  | ({ kind: "practice" | "test"; isCorrect: boolean } & Partial<Omit<OwnAnswer, "isCorrect">>)
+  | ({ kind: "practice" | "test"; isCorrect: boolean; recheck?: boolean } & Partial<
+      Omit<OwnAnswer, "isCorrect">
+    >)
 );
 
 function canConfirm(answer: OwnAnswer) {
@@ -69,6 +71,7 @@ type ClaimState = {
   answers: SkillEvidence[];
   claim: SkillClaim | undefined;
   claimed: boolean;
+  pendingRecheck: Date | null;
   studied: boolean;
 };
 
@@ -84,6 +87,7 @@ function nextClaim({ current, event }: { current: ClaimState; event: ClaimEvent 
       ...current,
       answers: [...current.answers, { undoneOn: event.localDate ?? event.at }],
       claimed: false,
+      pendingRecheck: null,
     };
   }
 
@@ -92,6 +96,27 @@ function nextClaim({ current, event }: { current: ClaimState; event: ClaimEvent 
       ...current.answers,
       { ...event, format: event.format ?? "multipleChoice", itemId: event.itemId ?? null },
     ];
+
+    if (event.recheck) {
+      return {
+        ...current,
+        answers,
+        claim: event.isCorrect ? "confirmed" : "gap",
+        claimed: current.claimed && event.isCorrect,
+        pendingRecheck: null,
+      };
+    }
+
+    if (current.claimed && !studied && !event.isCorrect) {
+      return {
+        ...current,
+        answers,
+        pendingRecheck:
+          event.kind === "practice"
+            ? (current.pendingRecheck ?? event.localDate ?? event.at)
+            : current.pendingRecheck,
+      };
+    }
 
     return { ...current, answers, claim: getAnswerClaim({ claim, event, studied }) };
   }
@@ -138,6 +163,7 @@ function readClaimStates(events: readonly ClaimEvent[]) {
         answers: [],
         claim: undefined,
         claimed: false,
+        pendingRecheck: null,
         since: event.at,
         studied: false,
       };
@@ -147,6 +173,28 @@ function readClaimStates(events: readonly ClaimEvent[]) {
 
       return all.set(event.skillId, { ...next, since });
     }, new Map<string, ClaimState & { since: Date }>());
+}
+
+export function listSkippedRechecks({
+  events,
+  localDate,
+}: {
+  events: readonly ClaimEvent[];
+  localDate: Date;
+}): Set<string> {
+  return new Set(
+    [...readClaimStates(events)].flatMap(([skillId, state]) =>
+      state.pendingRecheck && state.pendingRecheck < localDate ? [skillId] : [],
+    ),
+  );
+}
+
+export function listConfirmedSkills(events: readonly ClaimEvent[]): Set<string> {
+  return new Set(
+    [...readClaimStates(events)].flatMap(([skillId, state]) =>
+      isSkillConfirmed({ answers: state.answers }) ? [skillId] : [],
+    ),
+  );
 }
 
 export function listTakenToKnow(events: readonly ClaimEvent[]): Set<string> {

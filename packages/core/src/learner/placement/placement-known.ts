@@ -43,38 +43,10 @@ export function listKnownSkillIds({
   return skillIds.filter((skillId) =>
     isSkillConfirmed({
       answers: evidence
-        .filter(
-          (answer) =>
-            answer.skillId === skillId && (answer.outcome !== "correct" || eligible.has(answer)),
-        )
+        .filter((answer) => answer.skillId === skillId && eligible.has(answer))
         .map((answer) => toOwnAnswer(answer)),
     }),
   );
-}
-
-/** Use only measured levels, never self-reported ones; a skill's own miss still overrides the level. */
-export function listKnownByMeasuredLevel({
-  evidence,
-  level,
-  skills,
-}: {
-  evidence: readonly PlacementEvidence[];
-  level: OwnLevel | null;
-  skills: readonly PlacementSkill[];
-}): string[] {
-  if (!level) {
-    return [];
-  }
-
-  const priors = getPlacementPriors({ ownLevel: level, skills });
-
-  return skills
-    .filter(
-      (skill) =>
-        getSkillPlacementStatus(priors.get(skill.id)) === "known" &&
-        !hasMiss({ evidence, skillId: skill.id }),
-    )
-    .map((skill) => skill.id);
 }
 
 function listPointedAt({
@@ -119,9 +91,13 @@ export function readSkillStatuses({
   const pointedAt = answeredOnly ? new Set<string>() : listPointedAt({ evidence, skills });
 
   const statusOf = (skillId: string): SkillPlacementStatus => {
+    if (confirmed.has(skillId)) {
+      return "known";
+    }
+
     const decided = [ownBeliefs, beliefs]
       .map((skillBeliefs) => getSkillPlacementStatus(skillBeliefs.get(skillId)))
-      .find((status) => status === "unknown" || (status === "known" && confirmed.has(skillId)));
+      .find((status) => status === "unknown");
 
     if (decided) {
       return decided;

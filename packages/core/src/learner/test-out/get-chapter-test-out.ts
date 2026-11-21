@@ -3,16 +3,19 @@ import { type Goal, prisma } from "@zoonk/db";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
 import { loadExamStructure } from "../../sessions/_utils/exam-structure";
-import { type QuestionView, parseChoiceItem, toQuestionView } from "../_utils/choice-items";
 import { findOwnedGoal } from "../_utils/owned-goal";
+import { isLowGuessTap, isQuickChoice } from "../_utils/placement-guess-rate";
 import { type SavedPlan, readSavedPlan } from "../facts/saved-plan";
-import { pickPlacementItem } from "../placement/placement-item-choice";
+import {
+  type PlacementQuestionView,
+  parsePlacementItem,
+  toPlacementQuestionView,
+} from "../placement/_utils/placement-items";
 import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   TEST_OUT_PASS_MARK,
-  getQuestionsPerSkill,
-  getTestOutQuestionCount,
+  TEST_OUT_QUESTIONS_PER_SKILL,
   pickTestOutSkills,
 } from "./test-out-rules";
 
@@ -24,7 +27,7 @@ type ChapterTestOut = {
   needsItems: string[];
   passMark: number;
   /** Empty until every sampled skill has its required share of questions. */
-  questions: QuestionView[];
+  questions: PlacementQuestionView[];
   /** How many questions each sampled skill needs: several when the chapter has few skills. */
   questionsPerSkill: number;
   trueFalseLabels: TrueFalseLabels;
@@ -37,25 +40,19 @@ export type ChapterTestOutResult =
   | { status: "unauthorized" };
 
 function pickSkillItems({
-  count,
   items,
   skillId,
 }: {
-  count: number;
   items: Awaited<ReturnType<typeof loadSkillItems>>;
   skillId: string;
 }): string[] {
-  const picked = Array.from({ length: count }).reduce<string[]>((ids) => {
-    const left = items.filter((item) => !ids.includes(item.id));
-    const next = pickPlacementItem({ confirming: false, items: left, skillId });
-    return next ? [...ids, next.id] : ids;
-  }, []);
+  const unseen = items.filter((item) => item.skillId === skillId && !item.seen);
+  const quick = unseen.find((item) => isQuickChoice(item));
+  const lowGuess = unseen.filter((item) => isLowGuessTap(item));
 
-  const seen = items
-    .filter((item) => item.skillId === skillId && !picked.includes(item.id))
-    .map((item) => item.id);
-
-  return [...picked, ...seen].slice(0, count);
+  return quick
+    ? [quick, ...lowGuess.slice(0, TEST_OUT_QUESTIONS_PER_SKILL - 1)].map((item) => item.id)
+    : [];
 }
 
 function interleave(picks: readonly { itemIds: string[] }[]): string[] {
@@ -94,9 +91,7 @@ export async function loadChapterTestOut({
 
   const sampled = pickTestOutSkills(chapterSkills);
 
-  const count = Math.max(sampled.length, getTestOutQuestionCount(skippable));
-
-  const questionsPerSkill = getQuestionsPerSkill({ questions: count, skills: sampled.length });
+  const questionsPerSkill = TEST_OUT_QUESTIONS_PER_SKILL;
 
   const [items, structure, chapter] = await Promise.all([
     loadSkillItems({
@@ -113,7 +108,7 @@ export async function loadChapterTestOut({
   }
 
   const picks = sampled.map((skill) => ({
-    itemIds: pickSkillItems({ count: questionsPerSkill, items, skillId: skill.id }),
+    itemIds: pickSkillItems({ items, skillId: skill.id }),
     skillId: skill.id,
   }));
 
@@ -121,7 +116,7 @@ export async function loadChapterTestOut({
     .filter((pick) => pick.itemIds.length < questionsPerSkill)
     .map((pick) => pick.skillId);
 
-  const pickedIds = needsItems.length > 0 ? [] : interleave(picks).slice(0, count);
+  const pickedIds = needsItems.length > 0 ? [] : interleave(picks);
 
   const rows = await prisma.item.findMany({
     include: ITEM_IMAGE_INCLUDE,
@@ -130,9 +125,9 @@ export async function loadChapterTestOut({
 
   const questions = pickedIds
     .map((id) => rows.find((row) => row.id === id))
-    .map((row) => (row ? parseChoiceItem(row) : null))
+    .map((row) => (row ? parsePlacementItem(row) : null))
     .filter((item) => item !== null)
-    .map((item) => toQuestionView(item));
+    .map((item) => toPlacementQuestionView(item));
 
   return {
     status: "ready",

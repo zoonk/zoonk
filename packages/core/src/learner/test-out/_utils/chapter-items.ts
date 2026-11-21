@@ -1,8 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { getItemAudienceFilter } from "../../../library/items/item-field";
-import { GRADABLE_ITEM_FORMATS } from "../../_utils/choice-items";
 import { type GoalSkillNode } from "../../_utils/goal-skill-graph";
+import { loadPlacementItems } from "../../placement/_utils/placement-bank-items";
 import { type TestOutPlan } from "./test-out-plan";
 
 /** Returns skills in plan order; a shared skill can be tested from any chapter teaching it. */
@@ -48,15 +47,7 @@ export async function loadSkillItems({
   skillIds: readonly string[];
   userId: string;
 }) {
-  const items = await prisma.item.findMany({
-    orderBy: { id: "asc" },
-    select: { format: true, id: true, skillId: true },
-    where: {
-      format: { in: [...GRADABLE_ITEM_FORMATS] },
-      skillId: { in: [...skillIds] },
-      ...getItemAudienceFilter({ examBlueprintId }),
-    },
-  });
+  const items = await loadPlacementItems({ examBlueprintId, skillIds: [...skillIds] });
 
   const answered = await prisma.attempt.groupBy({
     by: ["itemId"],

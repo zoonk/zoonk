@@ -1,3 +1,4 @@
+import { isLowGuessTap } from "../../_utils/placement-guess-rate";
 import { getTargetDifficulty } from "../placement-difficulty";
 import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
 import { type PlacementQuickFormat } from "../placement-quick-format";
@@ -5,32 +6,35 @@ import { chooseNextPlacementSkill } from "../placement-steps";
 
 type SkillChoice = Omit<Parameters<typeof chooseNextPlacementSkill>[0], "askableSkillIds">;
 
-/** Preparing skills retain their walk position, but an available quick question may fill the wait; typed confirmation never does. */
 function chooseNextSkill({
   askableSkillIds,
   choice,
+  confirmingSkillId,
   preparingSkillIds,
   quickSkillIds,
 }: {
   askableSkillIds: ReadonlySet<string>;
   choice: SkillChoice;
+  confirmingSkillId: string | undefined;
   preparingSkillIds: ReadonlySet<string>;
-  /** Skills with an unseen question in the goal's quick format. */
   quickSkillIds: ReadonlySet<string>;
 }): string | null {
-  const walkSkillId = chooseNextPlacementSkill({
+  if (confirmingSkillId) {
+    return confirmingSkillId;
+  }
+
+  const next = chooseNextPlacementSkill({
     ...choice,
     askableSkillIds: new Set([...askableSkillIds, ...preparingSkillIds]),
   });
 
-  if (walkSkillId === null || askableSkillIds.has(walkSkillId)) {
-    return walkSkillId;
+  if (next === null || askableSkillIds.has(next)) {
+    return next;
   }
 
   const lastSkillId = choice.evidence.at(-1)?.skillId;
-  const ready = [...quickSkillIds].filter((skillId) => skillId !== lastSkillId);
-
-  return chooseNextPlacementSkill({ ...choice, askableSkillIds: new Set(ready) }) ?? walkSkillId;
+  const ready = new Set([...quickSkillIds].filter((skillId) => skillId !== lastSkillId));
+  return chooseNextPlacementSkill({ ...choice, askableSkillIds: ready }) ?? next;
 }
 
 /** The question to ask next: the item when one is ready, or its skill while it's still being written. */
@@ -51,9 +55,20 @@ export function findNextQuestion({
   const unseen = items.filter((item) => !item.seen);
   const askableSkillIds = new Set(unseen.map((item) => item.skillId));
 
+  const last = evidence.at(-1);
+
+  const confirmingSkillId =
+    last?.outcome === "correct" &&
+    choice.statuses.get(last.skillId) !== "known" &&
+    skills.some((skill) => skill.id === last.skillId) &&
+    unseen.some((item) => item.skillId === last.skillId && isLowGuessTap(item))
+      ? last.skillId
+      : undefined;
+
   const skillId = chooseNextSkill({
     askableSkillIds,
     choice,
+    confirmingSkillId,
     preparingSkillIds,
     quickSkillIds: new Set(
       unseen.filter((item) => item.format === quickFormat).map((item) => item.skillId),

@@ -5,7 +5,6 @@ import { announceSharedTestOuts } from "../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { afterPlanInputWrite } from "../../plans/plan-conflict";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { skipTestedOutBlocks } from "../../sessions/_utils/skip-tested-out-blocks";
 import { type FinishedChapter } from "../../sessions/completion-contract";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
@@ -67,7 +66,7 @@ export async function markPlanItemsTestedOut({
   announceAlso = [],
   extraWrites,
   finishesChapters = false,
-  followToday = true,
+  followToday = false,
   goalId,
   items,
   knownSkillIds,
@@ -166,6 +165,7 @@ export async function markPlanItemsTestedOut({
 
           const result = {
             finishedChapters: finished,
+            itemIds: changed.itemIds,
             pastBasicsAdded,
             standInIds: changed.standInIds,
           };
@@ -177,11 +177,11 @@ export async function markPlanItemsTestedOut({
             ? unchanged(result)
             : result;
         })
-      : { finishedChapters: [], pastBasicsAdded: [], standInIds: [] };
+      : { finishedChapters: [], itemIds: [], pastBasicsAdded: [], standInIds: [] };
 
   const { finishedChapters, pastBasicsAdded: addedBasics, standInIds } = written;
 
-  const planItemIds = [...ids, ...standInIds];
+  const planItemIds = [...written.itemIds, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];
 
   await announceSharedTestOuts({
@@ -204,14 +204,11 @@ export async function markPlanItemsTestedOut({
       pastBasicsAdded: addedBasics,
       pastBasicsAreas: extraWrites ? pastBasicsAreas : [],
       planItemIds: announced,
+      skipBlocks: false,
       timeZone,
     });
 
   const announcement = extraWrites ? await announce() : await afterPlanInputWrite(announce);
-
-  if (!announcement) {
-    await skipTestedOutBlocks({ goalId, notStarted: true, planItemIds: announced });
-  }
 
   return {
     changeId: announcement?.changeId ?? null,

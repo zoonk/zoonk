@@ -548,7 +548,13 @@ describe(getScratchPhaseStarts, () => {
 describe(pickPlacementItem, () => {
   const items = [
     { format: "multipleChoice" as const, id: "mc", seen: false, skillId: "c" },
-    { format: "typed" as const, id: "typed", seen: false, skillId: "c" },
+    {
+      content: { steps: ["a", "b", "c", "d"] },
+      format: "order" as const,
+      id: "order",
+      seen: false,
+      skillId: "c",
+    },
     { format: "trueFalse" as const, id: "seen", seen: true, skillId: "c" },
   ];
 
@@ -557,7 +563,7 @@ describe(pickPlacementItem, () => {
   });
 
   it("confirms a right answer with a question that is hard to guess", () => {
-    expect(pickPlacementItem({ confirming: true, items, skillId: "c" })?.id).toBe("typed");
+    expect(pickPlacementItem({ confirming: true, items, skillId: "c" })?.id).toBe("order");
   });
 
   it("picks the question closest to the difficulty the learner is ready for", () => {
