@@ -82,6 +82,14 @@ function toStatus({ option, outcome }: { option: MockOptionView; outcome: MockSt
     return { kind: "writingUsedUp", returnsOn: outcome.returnsOn } as const;
   }
 
+  if (outcome.status === "signUpRequired") {
+    return { kind: "refused", limit: { status: "signUpRequired" } } as const;
+  }
+
+  if (outcome.status === "needsChoice") {
+    return { choiceGroups: outcome.choiceGroups, kind: "needsChoice" } as const;
+  }
+
   return outcome.status === "notEnoughQuestions"
     ? ({ kind: "failed", reason: "notEnoughQuestions" } as const)
     : ({ kind: "failed", reason: "failed" } as const);
@@ -105,7 +113,9 @@ function WritingMock({
 
   useWritingWaitViewed({ generationId: writtenQuestions ? generationId : null, surface: "mock" });
 
-  return <MockChooserScreen {...screen} status={{ kind: "writing", run }} />;
+  return (
+    <MockChooserScreen {...screen} status={{ kind: "writing", run, written: writtenQuestions }} />
+  );
 }
 
 type Writing = { generationId: string; option: MockOptionView; writtenQuestions: boolean };
@@ -211,6 +221,11 @@ function MockChooserVisit({
 
     if (result.status === "writingUsedUp") {
       setStatus({ kind: "writingUsedUp", returnsOn: result.returnsOn });
+      return;
+    }
+
+    if (result.status === "needsChoice") {
+      setStatus({ choiceGroups: result.choiceGroups, kind: "needsChoice" });
       return;
     }
 

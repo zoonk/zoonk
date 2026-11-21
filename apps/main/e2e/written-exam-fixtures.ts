@@ -15,6 +15,10 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { CRITERIA, GRADING, STRUCTURE, task } from "./written-exam-blueprint";
 
 export const SHORT_TITLE = "Internal and external control";
+const SHORT_OTHER_TITLE = "Accountability of public agents";
+
+/** The bank holds two 30-line prompts, and a start may admit either. */
+export const SHORT_TITLES = new RegExp(`^(${SHORT_TITLE}|${SHORT_OTHER_TITLE})$`, "u");
 const DAILY_EXTRA_WRITES = 6;
 const DAYS_TO_EXAM = 23;
 
@@ -100,7 +104,7 @@ export async function createWrittenExamDay({
     ? await Promise.all(
         [
           { key: "short" as const, title: SHORT_TITLE },
-          { key: "short" as const, title: "Accountability of public agents" },
+          { key: "short" as const, title: SHORT_OTHER_TITLE },
           { key: "long" as const, title: "Risk-based audit planning" },
         ].map(({ key, title }) =>
           itemFixture({
@@ -258,8 +262,8 @@ export async function addWritingDrill({
 }: {
   sessionId: string;
   skillId: string;
-}) {
-  await studySessionBlockFixture({
+}): Promise<string> {
+  const block = await studySessionBlockFixture({
     estimatedMinutes: 8,
     kind: "produce",
     payload: {
@@ -273,6 +277,8 @@ export async function addWritingDrill({
     sessionId,
     status: "pending",
   });
+
+  return block.id;
 }
 
 /** Every extra grade of the day used, as six rewrites or "Write now" starts would. */

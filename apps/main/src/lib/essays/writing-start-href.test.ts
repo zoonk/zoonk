@@ -27,7 +27,7 @@ describe(getWritingHref, () => {
 
     expect(readHref(href)).toStrictEqual({
       status: "limitReached",
-      task: { minutes: 140, title: "The 60-line question", unit: "answer" },
+      task: { minutes: 140, title: "The 60-line question", unit: "answer", writingTask: null },
     });
   });
 
@@ -50,8 +50,32 @@ describe(getWritingHref, () => {
 
     expect(readHref(href)).toStrictEqual({
       status: "limitReached",
-      task: { minutes: 8, title: "The 30-line question", unit: "drill" },
+      task: { minutes: 8, title: "The 30-line question", unit: "drill", writingTask: null },
     });
+  });
+
+  it("a refused task keeps its place in the written test, so the page names it the same way", () => {
+    const task = {
+      description: "Questão discursiva 2, de até 30 linhas",
+      distinctLines: false,
+      lines: 30,
+      minutes: 70,
+      number: 2,
+      points: 30,
+      taskKey: "second",
+      total: 2,
+      unit: "answer" as const,
+    };
+
+    // The address carries what names the task: its place, not its points.
+    const writingTask = { distinctLines: false, lines: 30, number: 2, total: 2 };
+
+    const href = getWritingHref({
+      answer: { returnsOn: "2026-11-21", status: "limitReached", task },
+      blockId: BLOCK_ID,
+    });
+
+    expect(readHref(href)).toMatchObject({ task: { writingTask } });
   });
 
   it("a refusal without its task lists none", () => {
@@ -69,10 +93,16 @@ describe(getWritingHref, () => {
       blockId: BLOCK_ID,
     });
 
+    const drill = getWritingHref({
+      answer: { generationId: "wrun_2", status: "writing", unit: "drill" },
+      blockId: BLOCK_ID,
+    });
+
     const failed = getWritingHref({ answer: { status: "failed" }, blockId: BLOCK_ID });
     const removed = getWritingHref({ answer: { status: "taskRemoved" }, blockId: BLOCK_ID });
 
-    expect(readHref(writing)).toStrictEqual({ generationId: "wrun_1" });
+    expect(readHref(writing)).toStrictEqual({ generationId: "wrun_1", unit: "answer" });
+    expect(readHref(drill)).toStrictEqual({ generationId: "wrun_2", unit: "drill" });
     expect(readHref(failed)).toStrictEqual({ status: "failed" });
     expect(readHref(removed)).toStrictEqual({ status: "taskRemoved" });
 

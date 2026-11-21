@@ -14,9 +14,9 @@ import { EnterButton } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page } from "../_components/page";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
-import { daysBetween, useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
+import { IndeterminateWait } from "../generation/indeterminate-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
@@ -52,20 +52,6 @@ export function ChooserLayout({
   );
 }
 
-/** Said as the practice refusal says it: no more grading today, and the day it's back. */
-function useWritingUsedUpText() {
-  const t = useExtracted();
-  const today = useIsoToday();
-  const formatDate = useFormatIsoDate();
-
-  return (returnsOn: string): string =>
-    daysBetween(today, returnsOn) <= 1
-      ? t("No more grading today. The written test is back tomorrow.")
-      : t("No more grading today. The written test is back on {date}.", {
-          date: formatDate(returnsOn, "sentence"),
-        });
-}
-
 function useFailureText() {
   const t = useExtracted();
 
@@ -91,7 +77,6 @@ function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
   const t = useExtracted();
   const routes = useLearnRoutes();
   const failureText = useFailureText();
-  const writingUsedUpText = useWritingUsedUpText();
 
   if (gated) {
     return (
@@ -118,14 +103,6 @@ function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
     );
   }
 
-  if (status.kind === "writingUsedUp") {
-    return (
-      <p className="text-muted-foreground text-sm text-pretty" role="alert">
-        {writingUsedUpText(status.returnsOn)}
-      </p>
-    );
-  }
-
   if (status.kind === "failed") {
     return (
       <p className="text-destructive-text text-sm text-pretty" role="alert">
@@ -144,15 +121,21 @@ export function ChooserBar({
   busy,
   disabled,
   gated,
+  note,
   onStart,
   status,
-}: ChooserBarProps & { disabled: boolean; onStart: () => void }) {
+}: ChooserBarProps & {
+  disabled: boolean;
+  /** What the picked option needs first, when no refusal says more. */
+  note?: ReactNode;
+  onStart: () => void;
+}) {
   const t = useExtracted();
   const mounted = useIsMounted();
-  const note = useChooserNote({ busy, gated, status });
+  const refusal = useChooserNote({ busy, gated, status });
 
   return (
-    <BottomBar note={note}>
+    <BottomBar note={refusal ?? note}>
       {gated ? (
         <SubscribeMainAction />
       ) : (
@@ -172,8 +155,31 @@ export function ChooserBar({
   );
 }
 
-export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }) {
+export function MockWriting({
+  bar,
+  run,
+  written = false,
+}: {
+  bar: ReactNode;
+  run: GenerationRun;
+  written?: boolean;
+}) {
   const t = useExtracted();
+
+  if (written) {
+    return (
+      <ChooserLayout bar={bar}>
+        <IndeterminateWait
+          description={t(
+            "Questions like the ones on your exam. Your mock exam starts here when they're ready.",
+          )}
+          failedTitle={t("We couldn't write your questions")}
+          run={run}
+          title={t("Writing your questions…")}
+        />
+      </ChooserLayout>
+    );
+  }
 
   return (
     <ChooserLayout bar={bar}>

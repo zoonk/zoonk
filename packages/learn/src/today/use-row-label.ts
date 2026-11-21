@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { type DayStep } from "../session/session-types";
 import { practisesTopics } from "../session/use-block-copy";
+import { useWritingLine } from "../writing/writing-header";
 
 /**
  * A row's one line under its title: what a lesson belongs to, what practice is on, or how long a
@@ -10,8 +11,14 @@ import { practisesTopics } from "../session/use-block-copy";
  */
 export function useStepLabel({ includeSubject = true } = {}) {
   const t = useExtracted();
+  const writingLine = useWritingLine();
 
   return function stepLabel(block: DayStep): string | null {
+    // A refused start is the one thing to know before tapping it, even while lessons come first.
+    if (block.writingAvailability?.status === "tomorrow") {
+      return writingLine(block);
+    }
+
     if (block.waitReason) {
       return t("After today's lessons");
     }
@@ -33,6 +40,6 @@ export function useStepLabel({ includeSubject = true } = {}) {
       return t("Every topic");
     }
 
-    return includeSubject ? block.subject : null;
+    return writingLine(block) ?? (includeSubject ? block.subject : null);
   };
 }

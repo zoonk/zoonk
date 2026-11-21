@@ -17,6 +17,8 @@ export type RowChoice<Value extends string> = {
   description?: string;
   label: string;
   mark?: string;
+  /** Why the choice can't be taken now, under its description. */
+  note?: string;
   trailing?: React.ReactNode;
   value: Value;
 };
@@ -93,6 +95,7 @@ export function ChoiceRows<Value extends string>({
             <ListRowContent>
               <ChoiceTitle choice={choice} markRoom={markRoom} />
               {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
+              {choice.note && <ListRowDescription>{choice.note}</ListRowDescription>}
             </ListRowContent>
 
             {choice.trailing && <ListRowTrailing>{choice.trailing}</ListRowTrailing>}

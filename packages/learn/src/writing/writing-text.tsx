@@ -65,7 +65,7 @@ function isErrorEnd(pieces: Piece[], index: number): boolean {
   return piece?.error !== null && pieces[index + 1]?.error !== piece?.error;
 }
 
-/** The learner's text as sent, with each language error marked and numbered, and what the board wouldn't read set apart. */
+/** The learner's text as sent, with each language error marked and numbered, and what graders wouldn't read set apart. */
 export function WritingMarkedText({
   grade,
   lines,
@@ -100,10 +100,8 @@ export function WritingMarkedText({
               {startsIgnored && (
                 <span className="text-warning-text my-2 block font-mono text-xs" role="note">
                   {lines
-                    ? t("Past line {lines}: the board won't read from here", {
-                        lines: String(lines),
-                      })
-                    : t("Past the limit: the board won't read from here")}
+                    ? t("Past line {lines}: graders stop reading here", { lines: String(lines) })
+                    : t("Past the limit: graders stop reading here")}
                 </span>
               )}
               <span
