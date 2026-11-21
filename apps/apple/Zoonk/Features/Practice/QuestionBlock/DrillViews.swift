@@ -169,7 +169,9 @@ struct FixedMistakesNote: View {
         } else {
           Text(
             "\(count) mistakes fixed. They leave your notebook.", tableName: "Practice",
-            comment: "\"Your notebook\" is the learner's Mistakes notebook.")
+            comment:
+              "\"Your notebook\" is the learner's Mistakes notebook. Shown only for 2 or more; one mistake shows \"Mistake fixed. It leaves your notebook.\" instead."
+          )
         }
       }
     }
