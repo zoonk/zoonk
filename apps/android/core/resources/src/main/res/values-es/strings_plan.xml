@@ -443,7 +443,7 @@
   "plan_time_covers_everything_by_month": "65b099345fffbe648801d28a1b3e6310e19d6a3f68df7ffe5bff966c001bc693",
   "plan_time_covers_exam_all": "abbb2751be784e29e8a995f0e74f30135ca4b08e31a02b137db6e6159c72adcc",
   "plan_time_covers_exam_all_month": "199f79740fa4ea19770b178e87bb80eb9587fe268cac7b1d3b771cde66826cd8",
-  "plan_time_covers_first_lessons_exam": "ac83c00d57428a998f50770f2be83253bebcafb3a391dc8a321e5a8c05843d28",
+  "plan_time_covers_first_lessons_exam": "a79d65bf9de4f821354e245f390d42d20feb567d5c018a86f62bdf5dd1a2eb65",
   "plan_time_covers_first_lessons_goal": "56498a1a366f46ab51b6219e22a08ab13b849e517ffe981df77eec0543e59da0",
   "plan_time_covers_goal_all": "d54f80a4104dfa4ab9f733a7c9a03df0dba4aebd553c55874484cd15dd5391fc",
   "plan_time_covers_goal_all_month": "504696ab616af237de5f7bcf10e331240070912e7cc283b9768cea0e90e39377",
@@ -455,8 +455,8 @@
   "plan_time_first_lessons_every_exam_topic_month": "f616d39ea745f8f3c7c93b5550cca793f849033169f255b4e6e5ad75ab97d100",
   "plan_time_first_lessons_every_goal_part": "d7d33fee6f0ea3a9198caa2ea5062dd0db93851bb29ebacf5ad27859f7c5c1d9",
   "plan_time_first_lessons_every_goal_part_month": "c9410d6672cb4a94f0f7a8504be46a3dd90269d78b533612aed95c9f82d30641",
-  "plan_time_first_lessons_share_exam": "3e4953049603fc3ce789a7d7a161605a4139a966ae0ca64ec61d045213bab295",
-  "plan_time_first_lessons_share_exam_month": "9a36548f29a1d28d6b0035db7d9678af2359a2d5da2db7001ffd0e35bcab9061",
+  "plan_time_first_lessons_share_exam": "7b5cd83b61dfa4cfc0d9104730d7fa9a199474ee4d7218700dc6a6b934f1edc1",
+  "plan_time_first_lessons_share_exam_month": "c3e7c62572dabd199679b9fbde441e2676625acd2d084eb1868d4b01115b08ef",
   "plan_time_first_lessons_share_goal": "9d56d1fb730f7803a4a39849f974fb634b05d2179e6019bb88e64f154a7e63ba",
   "plan_time_first_lessons_share_goal_month": "9b512217375102ef0a3799a23dfe1c3b6a727f2b66ce37e1c9902c3b710614d5",
   "plan_time_no_days": "e868f88387b02e9c4ca1746d062e384a81241a377df58e06e1b1b627a620347b",
@@ -1139,10 +1139,10 @@
     <string name="plan_time_first_lessons_every_goal_part">Cubre las primeras lecciones de cada parte de tu objetivo para %1$s.</string>
     <!-- Under a daily time that starts every part of the goal but doesn't cover everything. %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_first_lessons_every_goal_part_month">Cubre las primeras lecciones de cada parte de tu objetivo para %1$s.</string>
-    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a day, such as "May 5". The topics asked most often come first. -->
-    <string name="plan_time_first_lessons_share_exam">Cubre las primeras lecciones de aproximadamente %1$s de tu examen para %2$s, empezando por los temas más preguntados.</string>
-    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a month and year, such as "May 2027". The topics asked most often come first. -->
-    <string name="plan_time_first_lessons_share_exam_month">Cubre las primeras lecciones de aproximadamente %1$s de tu examen para %2$s, empezando por los temas más preguntados.</string>
+    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a day, such as "May 5". The percentage is a share of the whole exam, by how much it asks, not a share of its topics. -->
+    <string name="plan_time_first_lessons_share_exam">Cubre las primeras lecciones de aproximadamente %1$s de tu examen para %2$s.</string>
+    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a month and year, such as "May 2027". The percentage is a share of the whole exam, by how much it asks, not a share of its topics. -->
+    <string name="plan_time_first_lessons_share_exam_month">Cubre las primeras lecciones de aproximadamente %1$s de tu examen para %2$s.</string>
     <!-- Under a daily time that starts only some parts of the goal. %1$s is a percentage of the goal, such as "60%"; %2$s is a day, such as "May 5". -->
     <string name="plan_time_first_lessons_share_goal">Cubre las primeras lecciones de aproximadamente %1$s de tu objetivo para %2$s.</string>
     <!-- Under a daily time that starts only some parts of the goal. %1$s is a percentage of the goal, such as "60%"; %2$s is a month and year, such as "May 2027". -->
@@ -1185,7 +1185,8 @@
     <string name="plan_time_covers_everything_by_month">Con tu tiempo de estudio, cubres todo para %1$s</string>
     <string name="plan_time_covers_every_exam_topic">%1$s al día cubre las primeras lecciones de cada tema del examen</string>
     <string name="plan_time_covers_every_goal_part">%1$s al día cubre las primeras lecciones de cada parte de tu objetivo</string>
-    <string name="plan_time_covers_first_lessons_exam">%1$s al día cubre las primeras lecciones de aproximadamente %2$s de tu examen, empezando por los temas más preguntados</string>
+    <!-- {share} is a share of the whole exam, by how much it asks, not a share of its topics. -->
+    <string name="plan_time_covers_first_lessons_exam">%1$s al día cubre las primeras lecciones de aproximadamente %2$s de tu examen</string>
     <string name="plan_time_covers_first_lessons_goal">%1$s al día cubre las primeras lecciones de aproximadamente %2$s de tu objetivo</string>
     <string name="plan_covered_not_enough">Con %1$s al día no te alcanza para cubrir tu objetivo.</string>
     <string name="plan_finding">Calculando el tiempo…</string>
