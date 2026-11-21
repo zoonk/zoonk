@@ -9,7 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.CollectionInfo
+import androidx.compose.ui.semantics.CollectionItemInfo
+import androidx.compose.ui.semantics.collectionInfo
+import androidx.compose.ui.semantics.collectionItemInfo
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -23,13 +27,18 @@ fun LessonSummaryIdeas(
 ) {
     val locale = currentLocale()
 
-    Column(modifier) {
+    Column(modifier.semantics { collectionInfo = CollectionInfo(rowCount = ideas.size, columnCount = 1) }) {
         ideas.forEachIndexed { index, idea ->
             if (index > 0) HorizontalDivider()
-            Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                Modifier
+                    .semantics(mergeDescendants = true) {
+                        collectionItemInfo = CollectionItemInfo(rowIndex = index, rowSpan = 1, columnIndex = 0, columnSpan = 1)
+                    }.padding(vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 Text(
                     text = formatNumber((index + 1).toDouble(), locale),
-                    modifier = Modifier.clearAndSetSemantics {},
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
                 )
