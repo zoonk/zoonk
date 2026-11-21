@@ -26,7 +26,11 @@ export function useTimeAnswerTexts() {
               "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}",
             values: goalDate(date),
           })
-        : t("There isn't enough time to cover everything.");
+        : t({
+            description:
+              "Under a sentence that already names the goal's date: the same words as \"There isn't enough time to cover everything by {date}.\" without the date.",
+            message: "There isn't enough time to cover everything.",
+          });
     }
 
     const time = formatDuration(full.minutes);
@@ -60,10 +64,13 @@ export function useTimeAnswerTexts() {
     const values = { share: formatShare(value), time };
 
     return exam
-      ? t(
-          "{time} a day covers the first lessons of about {share} of your exam, most-asked topics first",
+      ? t({
+          description:
+            "{share} is a share of the whole exam, by how much it asks, not a share of its topics.",
+          message:
+            "{time} a day covers the first lessons of about {share} of your exam, most-asked topics first",
           values,
-        )
+        })
       : t("{time} a day covers the first lessons of about {share} of your goal", values);
   };
 

@@ -58,7 +58,7 @@ function ReachedWords({ date, exam, value }: { date: GoalDate; exam: boolean; va
   return exam
     ? t.rich({
         description:
-          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {share} is a share of the whole exam, by how much it asks, not a share of its topics.',
         message:
           "{dateKind, select, month {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.} other {Covers the first lessons of about <b>{share}</b> of your exam by {date}, most-asked topics first.}}",
         values,
