@@ -61,6 +61,22 @@ struct SentGoal {
   var material: [AttachedSource] = []
   var intent: MaterialIntent?
 
+  /// "Ask questions" starts no goal, so only the other choices go with the material.
+  var sentMaterial: SentMaterial {
+    guard !material.isEmpty else {
+      return SentMaterial()
+    }
+
+    let intent: SentMaterial.Intent? =
+      switch self.intent {
+      case .exam: .exam
+      case .understand: .understand
+      case .questions, nil: nil
+      }
+
+    return SentMaterial(sourceIDs: material.map(\.id), intent: intent)
+  }
+
   var start: GoalStart {
     let withMaterial = material.isEmpty ? nil : intent
 
@@ -88,6 +104,32 @@ struct SentGoal {
         localized: "Understand my material: \(titles)", table: "Onboarding",
         comment: "A goal to understand the learner's material: its titles")
   }
+}
+
+extension SentGoal {
+  /// The draft keeps the material it was sent with, so editing it brings that back, even on a
+  /// draft opened again later.
+  init(draft: OnboardingDraft) {
+    let intent: MaterialIntent? =
+      switch draft.materialIntent {
+      case .exam: .exam
+      case .understand: .understand
+      case nil: nil
+      }
+
+    self.init(
+      words: draft.prompt,
+      material: draft.sources.map { AttachedSource(id: $0.id, title: $0.title) },
+      intent: intent)
+  }
+}
+
+/// What a goal is sent with; the draft keeps it, and gives it to the goal "Looks right" makes.
+struct SentMaterial: Equatable, Sendable {
+  typealias Intent = Components.Schemas.GoalUnderstandingInput.MaterialIntentPayload
+
+  var sourceIDs: [String]?
+  var intent: Intent?
 }
 
 enum GoalStart: Equatable {

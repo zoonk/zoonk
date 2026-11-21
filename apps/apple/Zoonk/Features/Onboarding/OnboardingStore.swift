@@ -54,10 +54,10 @@ final class OnboardingStore {
   }
 
   /// The new draft's id, once its card has been read, so the card opens on it.
-  func understand(goal: String) async throws -> String {
+  func understand(goal: String, material: SentMaterial) async throws -> String {
     try await ensureSession()
     let created = try await cache.onboardingWrite { [api] identity in
-      try await api.understand(goal: goal, token: identity.bearerToken)
+      try await api.understand(goal: goal, material: material, token: identity.bearerToken)
     }
 
     resume.invalidate()
@@ -198,7 +198,6 @@ final class OnboardingStore {
     _ goals: [Components.Schemas.GoalDraftOutput],
     from draftID: String,
     schedule: Components.Schemas.GoalUnderstanding.Case1Payload.SchedulePayload,
-    sourceIDs: [String],
     timeZone: String
   ) async throws -> String {
     try await create(
@@ -206,7 +205,6 @@ final class OnboardingStore {
       .init(
         dailyMinutes: schedule.dailyMinutes,
         goals: try goals.map { try PracticeJSON.recode($0) },
-        sourceIds: sourceIDs.isEmpty ? nil : sourceIDs,
         studyDays: schedule.studyDays,
         studyTime: schedule.studyTime,
         timeZone: timeZone))

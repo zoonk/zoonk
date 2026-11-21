@@ -185,6 +185,28 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(creates, 1)
   }
 
+  /// A draft opened again later still has the material it was sent with, so new words on it start
+  /// with that material.
+  func testNewWordsOnAReopenedDraftStartWithItsMaterial() async throws {
+    var reopened = Self.draft(prompt: "test on Friday", goalsLeft: 2)
+    reopened.materialIntent = .exam
+    reopened.sources = [.init(id: Self.sourceID, title: "Cell cycle notes")]
+    let server = DraftServer(reopened)
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+
+    var edited = SentGoal(draft: try XCTUnwrap(card.value))
+    edited.words = "biology test on Friday"
+    _ = try await store.understand(goal: edited.words, material: edited.sentMaterial)
+    let starts = await server.starts
+    let start = try XCTUnwrap(starts.first)
+
+    XCTAssertEqual(start.goal, "biology test on Friday")
+    XCTAssertEqual(start.sourceIds, [Self.sourceID])
+    XCTAssertEqual(start.materialIntent, .exam)
+  }
+
   private func makeStore(transport: some ClientTransport) -> OnboardingStore {
     let session = SessionStore.preview(account: .onboardingStoreTest)
     return OnboardingStore(
@@ -197,12 +219,15 @@ final class OnboardingStoreTests: XCTestCase {
 
   private static let goalID = "00000000-0000-4000-8000-0000000000a1"
 
+  private static let sourceID = "00000000-0000-4000-8000-0000000000c1"
+
   private static func draft(prompt: String, goalsLeft: Int, goalID: String? = nil)
     -> OnboardingDraft
   {
     OnboardingDraft(
-      activeGoalsLeft: goalsLeft, generationId: nil, goalId: goalID, id: draftID, prompt: prompt,
-      status: .failed, timeZone: "America/Sao_Paulo", understanding: nil)
+      activeGoalsLeft: goalsLeft, generationId: nil, goalId: goalID, id: draftID,
+      materialIntent: nil, prompt: prompt, sources: [], status: .failed,
+      timeZone: "America/Sao_Paulo", understanding: nil)
   }
 
   private func makeStore(event: String) -> OnboardingStore {
@@ -266,6 +291,7 @@ actor DraftServer: ClientTransport {
   private var readsAfterEdit = 0
   private(set) var creates = 0
   private(set) var reads = 0
+  private(set) var starts: [Components.Schemas.GoalUnderstandingInput] = []
   private var createAnswer = CreateAnswer.created
   private var holdsCreate = false
   private var heldCreate: TestContinuation<Void>?
@@ -315,6 +341,18 @@ actor DraftServer: ClientTransport {
         HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
         HTTPBody(
           #"{"generations":[],"goals":[\#(createdGoal)],"refused":[],"research":[]}"#)
+      )
+    }
+
+    if operationID == "createGoalUnderstanding", let body {
+      starts.append(
+        try JSONDecoder().decode(
+          Components.Schemas.GoalUnderstandingInput.self,
+          from: try await Data(collecting: body, upTo: .max)))
+
+      return (
+        HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
+        HTTPBody(try JSONEncoder().encode(served))
       )
     }
 

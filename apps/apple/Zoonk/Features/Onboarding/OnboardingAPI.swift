@@ -356,13 +356,17 @@ enum WaitlistOutcome: Equatable {
 struct OnboardingAPI: Sendable {
   let clients: APIClientFactory
 
-  func understand(goal: String, token: String) async throws -> OnboardingDraft {
+  func understand(goal: String, material: SentMaterial, token: String) async throws
+    -> OnboardingDraft
+  {
     let output = try await clients.perform(token: token) { client in
       try await client.createGoalUnderstanding(
         body: .json(
           .init(
             goal: goal,
             language: Self.language,
+            materialIntent: material.intent,
+            sourceIds: material.sourceIDs,
             timeZone: TimeZone.current.identifier)))
     }
 

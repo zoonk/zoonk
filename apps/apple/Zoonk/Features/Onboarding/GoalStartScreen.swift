@@ -223,12 +223,13 @@ private struct GoalStartFlow: View {
           materialDraft.leave()
         }
 
-        // Back from the draft: its words wait in the box, and nothing still being sent shows up.
+        // Back from the draft: its words and material wait in the box, and nothing still being sent
+        // shows up.
         if path.isEmpty {
           sending?.cancel()
 
-          if case .draft(let id, _) = draft, let prompt = onboarding.draft(id: id).value?.prompt {
-            words = prompt
+          if let shown = shownDraft {
+            edit(SentGoal(draft: shown))
           }
 
           draft = nil
@@ -254,13 +255,19 @@ private struct GoalStartFlow: View {
   }
 
   private var offersExplanation: Bool {
-    guard case .draft(let id, _) = draft,
-      case .case2? = onboarding.draft(id: id).value?.understanding?.value1
-    else {
+    guard case .case2? = shownDraft?.understanding?.value1 else {
       return false
     }
 
     return true
+  }
+
+  private var shownDraft: OnboardingDraft? {
+    guard case .draft(let id, _) = draft else {
+      return nil
+    }
+
+    return onboarding.draft(id: id).value
   }
 
   @ViewBuilder
@@ -272,10 +279,9 @@ private struct GoalStartFlow: View {
       DraftView(
         card: onboarding.draft(id: id),
         sentHere: sentHere,
-        onRewrite: send,
+        onRewrite: rewrite,
         onBack: { path = [] },
-        onGoal: { goalID = $0 },
-        sourceIDs: material.map(\.id))
+        onGoal: { goalID = $0 })
     case nil:
       EmptyView()
     }
@@ -290,7 +296,23 @@ private struct GoalStartFlow: View {
     }
   }
 
+  private func edit(_ goal: SentGoal) {
+    words = goal.words
+    material = goal.material
+    intent = goal.intent
+  }
+
+  /// New words on a draft go with the material it was sent with.
+  private func rewrite(_ words: String) {
+    if let shown = shownDraft {
+      edit(SentGoal(draft: shown))
+    }
+
+    send(words)
+  }
+
   private func send(_ goal: String) {
+    let sent = SentGoal(words: goal, material: material, intent: intent).sentMaterial
     let attempt = UUID().uuidString.lowercased()
     attemptID = attempt
     UsageAnalytics.track(
@@ -306,7 +328,7 @@ private struct GoalStartFlow: View {
 
     sending = Task {
       do {
-        let id = try await onboarding.understand(goal: goal)
+        let id = try await onboarding.understand(goal: goal, material: sent)
         // A late reply still links an attempt the learner left.
         UsageAnalytics.track(
           .onboardingProgressed(.attemptLinked(attemptID: attempt, onboardingID: id), at: .now))
@@ -339,7 +361,6 @@ struct DraftView: View {
   let onRewrite: (String) -> Void
   let onBack: () -> Void
   let onGoal: (String) -> Void
-  let sourceIDs: [String]
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var retryError: GoalError?
@@ -407,8 +428,7 @@ struct DraftView: View {
     case .understood:
       ReadDraftView(
         card: card, draft: draft, creation: creation, sentHere: sentHere, onRewrite: onRewrite,
-        onBack: onBack,
-        onCreated: onGoal, sourceIDs: sourceIDs)
+        onBack: onBack, onCreated: onGoal)
     }
   }
 

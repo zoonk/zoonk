@@ -72,7 +72,6 @@ struct ReadDraftView: View {
   let onRewrite: (String) -> Void
   let onBack: () -> Void
   let onCreated: (String) -> Void
-  var sourceIDs: [String] = []
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
@@ -97,8 +96,7 @@ struct ReadDraftView: View {
         create {
           try await onboarding.createGoals(
             understood.startableGoals(left: draft.activeGoalsLeft).map(\.draft.value1),
-            from: draft.id, schedule: understood.schedule, sourceIDs: sourceIDs,
-            timeZone: draft.timeZone)
+            from: draft.id, schedule: understood.schedule, timeZone: draft.timeZone)
         } then: {
           onCreated($0)
         }
