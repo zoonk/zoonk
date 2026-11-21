@@ -506,7 +506,11 @@ class MindMapsOfferTest {
 
         waitFor("3 more chapters")
         compose.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
-        compose.onNodeWithText("3 more chapters").requestFocus().assertIsFocused().performKeyInput { pressKey(Key.Enter) }
+        compose
+            .onNodeWithText("3 more chapters")
+            .requestFocus()
+            .assertIsFocused()
+            .performKeyInput { pressKey(Key.Enter) }
         waitFor("Chapter 6")
         compose.onNodeWithText("Show fewer chapters").performKeyInput { pressKey(Key.Tab) }
 
