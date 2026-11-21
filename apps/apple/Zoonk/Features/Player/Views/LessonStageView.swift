@@ -9,7 +9,7 @@ struct LessonStageView: View {
   @State private var isCheckSlow = false
   /// A spoken answer's Record button is the bar's main action, where Check is on other steps, with
   /// what to do with it right over the bar.
-  @State private var recordInBar = RecordInBar(showsNote: true)
+  @State private var recordInBar = RecordInBar()
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -20,7 +20,7 @@ struct LessonStageView: View {
   }
 
   private static let verdictId = "verdict"
-  private static let checkNoteId = "check-note"
+  private static let selfCorrectId = "self-correct"
   private static let turnId = "turn"
   private static let screenId = "screen"
 
@@ -44,6 +44,26 @@ struct LessonStageView: View {
       String(localized: LessonVerdict.of(result, step: step).title))
     announcement.accessibilitySpeechAnnouncementPriority = .high
     AccessibilityNotification.Announcement(announcement).post()
+  }
+
+  /// A check that failed or runs slow, in the bar's note over the button that sent it; on a spoken
+  /// screen it takes the recording's line's place while it shows.
+  private var checkNote: BarNote? {
+    if state.checkFailed {
+      return BarNote(
+        LocalizedStringResource(
+          "We couldn't check your answer this time. Try again.", table: "Player",
+          comment: "The server couldn't grade a written or spoken answer"))
+    }
+
+    if isCheckSlow, state.phase == .checking {
+      return BarNote(
+        LocalizedStringResource(
+          "Still checking. This is taking longer than usual.", table: "Player",
+          comment: "Grading the answer is taking longer than usual"), tone: .status)
+    }
+
+    return nil
   }
 
   private func visit(_ step: LessonStep) -> String {
@@ -164,10 +184,10 @@ struct LessonStageView: View {
                 }
               }
 
-              LessonCheckNote(
-                state: state, isSlow: isCheckSlow, showsSelfCorrect: !isWithBank
-              )
-              .id(Self.checkNoteId)
+              if !isWithBank, state.notice == .selfCorrect {
+                SelfCorrectLine()
+                  .id(Self.selfCorrectId)
+              }
 
               if !isWithBank {
                 added
@@ -196,11 +216,9 @@ struct LessonStageView: View {
                 announceVerdict()
               }
             }
-            .onChange(of: state.notice == .selfCorrect || state.checkFailed || isCheckSlow) {
-              _, hasNote in
-              if hasNote {
-                let isNoteWithBank = isWithBank && state.notice == .selfCorrect
-                scroll.scrollTo(isNoteWithBank ? Self.verdictId : Self.checkNoteId, anchor: .bottom)
+            .onChange(of: state.notice == .selfCorrect) { _, isShown in
+              if isShown {
+                scroll.scrollTo(isWithBank ? Self.verdictId : Self.selfCorrectId, anchor: .bottom)
               }
             }
             // A worked example's newest step is its last. A challenge's turn is its newest
@@ -222,7 +240,7 @@ struct LessonStageView: View {
               }
             }
           }
-          .bottomBar(note: recordInBar.note) {
+          .bottomBar(note: checkNote ?? recordInBar.note) {
             LessonActionBar(
               store: store, state: state, step: step, showsOwnAsk: offersHelp || offersDidntGetIt)
           }
@@ -269,16 +287,7 @@ struct LessonStageView: View {
           await store.loadExampleLine(stepId: step.id)
         }
       }
-      // Here rather than on the note, which would add a gap to the page while it's empty.
-      .task(id: state.phase == .checking) {
-        isCheckSlow = false
-
-        if state.phase == .checking {
-          try? await Task.sleep(for: LessonGrading.slowCheck)
-          isCheckSlow = !Task.isCancelled
-        }
-      }
-      .announcesStatus(isCheckSlow && state.phase == .checking ? LessonCheckNote.slowLine : nil)
+      .slowCheck(state.phase == .checking, isSlow: $isCheckSlow)
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
       .sensoryFeedback(trigger: state.countedVerdict(step.id)) {
@@ -382,39 +391,6 @@ private struct SelfCorrectLine: View {
     }
     .typeStyle(.body.weight(.medium))
     .foregroundStyle(.destructiveText)
-  }
-}
-
-private struct LessonCheckNote: View {
-  let state: LessonPlayerState
-  let isSlow: Bool
-  let showsSelfCorrect: Bool
-
-  var body: some View {
-    if showsSelfCorrect, state.notice == .selfCorrect {
-      SelfCorrectLine()
-    }
-
-    if state.checkFailed {
-      FailureLine(
-        message: LocalizedStringResource(
-          "We couldn't check your answer this time. Try again.", table: "Player",
-          comment: "The server couldn't grade a written or spoken answer")
-      )
-      .typeStyle(.note)
-    }
-
-    if isSlow, state.phase == .checking {
-      Text(Self.slowLine)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-    }
-  }
-
-  static var slowLine: String {
-    String(
-      localized: "Still checking. This is taking longer than usual.", table: "Player",
-      comment: "Grading the answer is taking longer than usual")
   }
 }
 

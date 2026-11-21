@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// Records an answer from the screen's bottom bar: Record is the bar's main action and the line
+/// about it (`RecordNote`) sits right over it, so the step draws only a limit here.
 struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(RecordInBar.self) private var bar: RecordInBar?
@@ -11,8 +13,8 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
   let grade: @MainActor (VoiceServices, VoiceRecording) async -> GradeOutcome<Grade>
   let onGraded: @MainActor (Grade) -> Void
-  /// A microphone that's off hands over to the screen's other way to answer instead of showing how
-  /// to turn it on.
+  /// A microphone that's off hands over to the screen's other way to answer; without one, the bar
+  /// says how to turn it on and the screen's other way on (Skip) stays.
   var onBlocked: (() -> Void)?
   var onCheckingChanged: ((Bool) -> Void)?
 
@@ -23,129 +25,60 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   }
 
   var body: some View {
-    if recorder.isDenied, onBlocked == nil {
-      MicrophoneOffView(
-        description: Text(
-          "Turn on the microphone for Zoonk in Settings to answer out loud.", tableName: "Voice",
-          comment: "How to turn the microphone back on to record a spoken answer")
-      ) {}
-    } else {
-      VStack(alignment: .leading, spacing: 12) {
-        if bar == nil {
-          RecordButton(recorder: recorder, isDisabled: checking) {
-            Task { await record() }
-          }
-          .controlSize(.large)
-        }
-
-        status
-      }
-      .recordsInBar(bar, recorder: recorder, isChecking: checking, line: line) {
-        Task { await record() }
-      }
-      .announcesStatus(announcement)
-      .onChange(of: checking) { _, value in onCheckingChanged?(value) }
-      .onDisappear {
-        recorder.cancel()
-        grading?.cancel()
-      }
-      .task(id: checking) {
-        isSlow = false
-
-        if checking {
-          try? await Task.sleep(for: LessonGrading.slowCheck)
-          isSlow = !Task.isCancelled
-        }
+    VStack(alignment: .leading) {
+      if case .limit(let limit) = issue, !recorder.isRecording {
+        LimitNotice(limit: limit)
       }
     }
-  }
-
-  @ViewBuilder
-  private var status: some View {
-    if case .limit(let limit) = issue, !recorder.isRecording {
-      LimitNotice(limit: limit)
-    } else if bar?.showsNote != true, let hint {
-      if issue == .failed, !recorder.isRecording {
-        FailureLine(message: hint)
-          .typeStyle(.note)
-      } else {
-        Text(hint)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .accessibilityAddTraits(.updatesFrequently)
-      }
+    .recordsInBar(
+      bar, recorder: recorder, isChecking: checking, note: note, canRecord: !isOff
+    ) {
+      Task { await record() }
     }
+    .announcesStatus(announcement)
+    .onChange(of: checking) { _, value in onCheckingChanged?(value) }
+    .onDisappear {
+      recorder.cancel()
+      grading?.cancel()
+    }
+    .slowCheck(checking, isSlow: $isSlow)
   }
 
-  /// The line for a bar that draws it over its Record, with the tone that reads it out as
-  /// `announcement` does here.
-  private var line: RecorderLine? {
-    guard let hint else {
-      return nil
+  private var isOff: Bool {
+    recorder.isDenied && onBlocked == nil
+  }
+
+  private var note: RecordNote? {
+    if isOff {
+      return .microphoneOff(
+        String(
+          localized: "Turn on the microphone for Zoonk in Settings to answer out loud.",
+          table: "Voice", comment: "How to turn the microphone back on to record a spoken answer"))
     }
 
     if recorder.isRecording {
-      return RecorderLine(text: hint, tone: .hint)
+      return .recording
     }
 
     if checking {
-      return RecorderLine(text: hint, tone: .status)
+      return isSlow ? .slow : nil
     }
 
     switch issue {
+    case .noSpeech: return .noSpeech
+    case .failed: return .failed
     case .limit: return nil
-    case .noSpeech: return RecorderLine(text: hint, tone: .waiting)
-    case .failed: return RecorderLine(text: hint, tone: .failure)
-    case nil: return RecorderLine(text: hint, tone: .hint)
+    case nil: return .ready
     }
   }
 
   /// Silent while recording: VoiceOver's speech would end up in the take.
   private var announcement: String? {
-    if recorder.isRecording {
+    guard !recorder.isRecording, case .limit(let limit) = issue else {
       return nil
     }
 
-    if case .limit(let limit) = issue {
-      return limit.words().said
-    }
-
-    // A failure is a `FailureLine`, which reads itself out, and a bar reads its own line.
-    return bar?.showsNote != true && (checking || issue == .noSpeech) ? hint : nil
-  }
-
-  private var hint: String? {
-    if recorder.isRecording {
-      return String(
-        localized: "Listening… Tap Stop to check.", table: "Voice",
-        comment: "Shown while the learner records an answer")
-    }
-
-    if checking, isSlow {
-      return String(
-        localized: "Still checking. This is taking longer than usual.", table: "Voice",
-        comment: "Grading a spoken answer is taking longer than usual")
-    }
-
-    if checking {
-      return String(
-        localized: "Checking…", table: "Voice", comment: "Shown while a spoken answer is graded")
-    }
-
-    switch issue {
-    case .noSpeech:
-      return String(
-        localized: "We couldn't hear any words. Try again.", table: "Voice",
-        comment: "A recording had no words in it")
-    case .failed:
-      return String(
-        localized: "We couldn't check your answer this time. Try again.", table: "Voice",
-        comment: "Grading a spoken answer failed")
-    case .limit, nil:
-      return String(
-        localized: "Tap Record and say it out loud", table: "Voice",
-        comment: "Asks the learner to record their answer")
-    }
+    return limit.words().said
   }
 
   private func record() async {

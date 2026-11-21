@@ -8,8 +8,8 @@ extension View {
   /// 8pt apart in one row, the main action last (or followed only by a task's Ask) and taking the
   /// room the others leave; when they don't fit one row, or at an accessibility text size, they
   /// stack, each as wide as the bar. On a wide bar the row sits at the bar's end, the main action at
-  /// its own width instead. Its one line (`note`) floats over the screen just
-  /// above the bar, so the bar and its buttons never move when it shows.
+  /// its own width instead. Its one line (`note`) floats over the screen just above the buttons,
+  /// under the bar's hairline, so the bar and its buttons never move when it shows.
   func bottomBar<Actions: View>(
     note: BarNote? = nil, @ViewBuilder _ actions: () -> Actions
   ) -> some View {
@@ -99,24 +99,45 @@ private struct BottomBar<Actions: View>: View {
     } action: {
       width = $0
     }
-    .barColumn(column, listMargins: listMargins, isTask: isTask)
+    .modifier(BarColumn(column: column, listMargins: listMargins, isTask: isTask))
     .background(ListMarginsReader { listMargins = $0 })
-    .keepsOffFold()
     // Main's bar: the page's background from its hairline to the screen's edge. The system's edge
     // effect alone leaves a list's section header sharp under the buttons, drawn above it.
     .background {
       Color(.background)
-        .overlay(alignment: .top) { Divider() }
+        .overlay(alignment: .top) {
+          if note == nil {
+            Divider()
+          }
+        }
         .ignoresSafeArea(edges: .bottom)
     }
-    .floatingAbove {
+    .floatingNote(
+      note, isWide: isWide,
+      column: BarColumn(
+        column: column, listMargins: listMargins, isTask: isTask, includesVertical: false))
+  }
+}
+
+extension View {
+  /// A bar's `note`, floating right over its buttons with the bar's hairline above it, in the
+  /// column the bar's buttons are (`column`): from its start on a narrow bar, and at a wide bar's
+  /// end, over the main action, as main's.
+  func floatingNote(_ note: BarNote?, isWide: Bool, column: some ViewModifier) -> some View {
+    floatingAbove {
       if let note {
         note
           .typeStyle(.body)
-          .frame(maxWidth: .infinity)
-          .padding(.horizontal, 16)
-          .padding(.vertical, 8)
-          .background(.background)
+          .multilineTextAlignment(isWide ? .trailing : .leading)
+          .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .leading)
+          .modifier(column)
+          // The bar's own room over its buttons, so the note sits as far from its hairline as the
+          // buttons sit from the note.
+          .scenePadding(.top)
+          .background {
+            Color(.background)
+              .overlay(alignment: .top) { Divider() }
+          }
       }
     }
   }
@@ -164,9 +185,8 @@ struct BarNote: View {
     /// A failure the screen is still working through, such as an answer being sent again: drawn as
     /// a failure, read as a status.
     case waiting
-    /// What the bar's main action does now, such as "Tap Record", drawn as a status but not read as
-    /// it changes: it changes as that action is used, and VoiceOver's speech would end up in a
-    /// recording.
+    /// Drawn as a status but not read as it shows, such as the line while the learner records:
+    /// VoiceOver's speech would end up in the recording.
     case hint
   }
 
@@ -222,46 +242,61 @@ struct BarNote: View {
         .disabled(!action.isEnabled)
       }
     }
-    .multilineTextAlignment(action == nil ? .center : .leading)
   }
 }
 
-extension View {
-  /// The bar lines up with the screen's one readable column, such as a list's 768pt one on iPad,
-  /// so its buttons end where the rows do; without one it keeps main's 680pt task column.
+/// The bar lines up with the screen's one readable column, such as a list's 768pt one on iPad,
+/// so its buttons end where the rows do; without one it keeps main's 680pt task column. Its note
+/// takes the same column without the room over and under the buttons (`includesVertical`).
+private struct BarColumn: ViewModifier {
+  let column: ColumnMargins?
+  let listMargins: NSDirectionalEdgeInsets?
+  let isTask: Bool
+  var includesVertical = true
+
+  func body(content: Content) -> some View {
+    placed(content)
+      .keepsOffFold()
+  }
+
   @ViewBuilder
-  fileprivate func barColumn(
-    _ column: ColumnMargins?, listMargins: NSDirectionalEdgeInsets?, isTask: Bool
-  ) -> some View {
+  private func placed(_ content: Content) -> some View {
+    let vertical: Edge.Set = includesVertical ? .vertical : []
+
     if let column {
       // A list's rows sit in the system's margins inside its column (20pt on a wide phone), not
       // the scene's padding (16pt).
       if let listMargins {
-        padding(.leading, column.leading + listMargins.leading)
+        content
+          .padding(.leading, column.leading + listMargins.leading)
           .padding(.trailing, column.trailing + listMargins.trailing)
-          .scenePadding(.vertical)
+          .scenePadding(vertical)
       } else {
-        padding(.leading, column.leading)
+        content
+          .padding(.leading, column.leading)
           .padding(.trailing, column.trailing)
-          .scenePadding()
+          .scenePadding(vertical.union(.horizontal))
       }
     } else if isTask {
-      taskColumn()
+      content.taskColumn(edges: vertical.union(.horizontal))
     } else {
       // A page without a list, such as an empty state, keeps the page's column, where its list
       // would end.
-      padding(.leading, listMargins?.leading ?? 16)
+      content
+        .padding(.leading, listMargins?.leading ?? 16)
         .padding(.trailing, listMargins?.trailing ?? 16)
         .pageColumnFrame()
-        .scenePadding(.vertical)
+        .scenePadding(vertical)
     }
   }
+}
 
+extension View {
   /// Main's task column: at most 680pt wide, centered on the screen, inside the scene's margins.
-  func taskColumn(alignment: Alignment = .center) -> some View {
+  func taskColumn(alignment: Alignment = .center, edges: Edge.Set = .all) -> some View {
     frame(maxWidth: 680, alignment: alignment)
       .frame(maxWidth: .infinity)
-      .scenePadding()
+      .scenePadding(edges)
   }
 }
 

@@ -25,6 +25,8 @@ struct MistakeLessonQuestionView: View {
   @State private var sentDontKnow = false
   @State private var sentTimedOut = false
   @State private var speechChecking = false
+  /// A spoken question's Record takes Check's place in the bar, as in the lesson.
+  @State private var recordInBar = RecordInBar()
   @State private var showsSaveReport = false
   @State private var pressedWithFocus: PracticeFocus?
   @State private var grade: MistakePracticeGrade?
@@ -89,7 +91,7 @@ struct MistakeLessonQuestionView: View {
   }
 
   var body: some View {
-    PracticeTaskLayout(segments: segments, index: index) {
+    PracticeTaskLayout(segments: segments, index: index, note: recordInBar.note) {
       if showsIdea, let lesson = entry.drill.lesson {
         DrillIdeaView(drill: entry.drill, lesson: lesson)
       } else {
@@ -158,11 +160,15 @@ struct MistakeLessonQuestionView: View {
                 "Continue", table: "Practice", comment: "Moves on after a grade."),
               icon: .forward, isDisabled: !challengeCanContinue(challenge)
             ) { state.continueLesson() }
+          } else if let record = recordInBar.button, !speechChecking {
+            record
+              .practiceMainAction()
           } else {
             PracticeMainButton(
               title: LocalizedStringResource(
                 "Check", table: "Practice", comment: "Sends the answer to be graded."),
-              icon: .check, isBusy: state.phase == .checking, isDisabled: !canCheck
+              icon: .check, isBusy: state.phase == .checking || speechChecking,
+              isDisabled: !canCheck
             ) {
               press(.check)
               Task { await send() }
@@ -183,6 +189,7 @@ struct MistakeLessonQuestionView: View {
       }
     }
     .environment(work)
+    .environment(recordInBar)
     .announcesStatus(announcement)
     .onChange(of: grade) { _, grade in
       if grade != nil, pressedWithFocus != nil {

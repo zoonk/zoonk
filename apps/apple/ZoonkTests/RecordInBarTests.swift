@@ -7,9 +7,9 @@ import XCTest
 @MainActor
 final class RecordInBarTests: XCTestCase {
   /// Grading a spoken answer ends its check and moves on in one update, which removes the step: the
-  /// next step's main action mustn't stay busy, nor its note say "Checking…".
+  /// next step's main action mustn't stay busy, nor its note say the check is slow.
   func testAStepRemovedAsItsCheckEndsLeavesTheBarFree() async throws {
-    let bar = RecordInBar(showsNote: true)
+    let bar = RecordInBar()
     let step = SpokenStep()
 
     try show(SpokenStepHost(step: step, bar: bar))
@@ -18,7 +18,7 @@ final class RecordInBarTests: XCTestCase {
     step.isChecking = true
     try await waitForTestCondition("The bar did not become busy") { bar.isChecking }
     XCTAssertTrue(bar.isChecking)
-    XCTAssertEqual(bar.line?.text, "Checking…")
+    XCTAssertEqual(bar.line, .slow)
 
     step.isChecking = false
     step.isShown = false
@@ -48,7 +48,7 @@ private struct SpokenStepHost: View {
       Text(verbatim: "Say it out loud")
         .recordsInBar(
           bar, recorder: step.recorder, isChecking: step.isChecking,
-          line: step.isChecking ? RecorderLine(text: "Checking…", tone: .status) : nil, start: {})
+          note: step.isChecking ? .slow : .ready, start: {})
     }
   }
 }
