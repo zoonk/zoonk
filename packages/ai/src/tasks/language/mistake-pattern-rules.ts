@@ -5,7 +5,13 @@ const MIN_PATTERN_MISTAKES = 2;
 
 const BLANK_PATTERN = /_+/gu;
 
-type DrillQuestion = { sentence: string; answer: string; options: string[]; feedback: string };
+type DrillQuestion = {
+  sentence: string;
+  answer: string;
+  translation: string;
+  options: string[];
+  feedback: string;
+};
 
 export type MistakePattern = {
   kind: "pattern" | "typos" | "none";

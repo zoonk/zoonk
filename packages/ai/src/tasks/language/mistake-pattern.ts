@@ -29,6 +29,7 @@ const schema = z.object({
     z.object({
       sentence: z.string(),
       answer: z.string(),
+      translation: z.string(),
       options: z.array(z.string()).min(MIN_DRILL_OPTIONS),
       feedback: z.string(),
     }),

@@ -11,6 +11,7 @@ function drillQuestion(overrides: Partial<MistakePattern["drill"][number]> = {})
     feedback: "Use since with a starting point.",
     options: ["since", "for", "from"],
     sentence: "I've lived here ___ 2020.",
+    translation: "Moro aqui desde 2020.",
     ...overrides,
   };
 }

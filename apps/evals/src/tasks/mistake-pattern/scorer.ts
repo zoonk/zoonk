@@ -29,28 +29,47 @@ function checkMistakeNumbers({
   return found >= minFound && unlabeled <= MAX_UNLABELED_MISTAKES;
 }
 
+/** A learner reading the app in another language reads each sentence's translation under it. */
+function hasExpectedTranslation({
+  question,
+  translated,
+}: {
+  question: FindMistakePatternSchema["drill"][number];
+  translated: boolean;
+}): boolean {
+  return translated ? question.translation.trim() !== "" : question.translation === "";
+}
+
 function checkDrill({
   expected,
   output,
+  translated,
 }: {
   expected: MistakePatternExpected;
   output: FindMistakePatternSchema;
+  translated: boolean;
 }): boolean {
   if (expected.kind !== "pattern") {
     return output.drill.length === 0;
   }
 
   return (
-    output.drill.length > 0 && output.drill.every((question) => isWellFormedDrillQuestion(question))
+    output.drill.length > 0 &&
+    output.drill.every(
+      (question) =>
+        isWellFormedDrillQuestion(question) && hasExpectedTranslation({ question, translated }),
+    )
   );
 }
 
 function checkMistakePattern({
   expected,
   output,
+  translated,
 }: {
   expected: MistakePatternExpected;
   output: string;
+  translated: boolean;
 }): CodeCheckResult {
   const parsed = JSON.parse(output) as FindMistakePatternSchema;
 
@@ -64,10 +83,10 @@ function checkMistakePattern({
       problem: `Mistake numbers [${parsed.mistakeNumbers.join(", ")}] don't match the labeled [${expected.mistakeNumbers.join(", ")}].`,
     },
     {
-      passed: checkDrill({ expected, output: parsed }),
+      passed: checkDrill({ expected, output: parsed, translated }),
       problem:
         expected.kind === "pattern"
-          ? `The drill has ${parsed.drill.length} questions or a malformed one.`
+          ? `The drill has ${parsed.drill.length} questions, a malformed one or a missing or extra translation.`
           : "A drill was written without a pattern.",
     },
   ];
@@ -87,8 +106,10 @@ export const scoreMistakePattern: TaskScorer<MistakePatternExpected> = ({ output
     throw new Error(`Test case ${testCase.id} needs a labeled kind.`);
   }
 
+  const translated = testCase.userInput.learnerLanguage !== testCase.userInput.targetLanguage;
+
   return scoreWithCodeChecks({
-    check: (value) => checkMistakePattern({ expected, output: value }),
+    check: (value) => checkMistakePattern({ expected, output: value, translated }),
     output,
     scoreCategories: MISTAKE_PATTERN_SCORE_CATEGORIES,
     testCase,

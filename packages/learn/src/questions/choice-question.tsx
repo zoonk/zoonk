@@ -138,7 +138,7 @@ function ChoiceGrade({ feedback }: { feedback: ChoiceFeedback }) {
 
 /**
  * For several picks (`select`), the host gets an answer only once as many as it asks are picked,
- * null before.
+ * null before. `translation` is the question in the learner's language, read under it.
  */
 export function ChoiceQuestion({
   disabled = false,
@@ -146,6 +146,7 @@ export function ChoiceQuestion({
   onSelect,
   question,
   selected,
+  translation,
   trueFalseLabels = "trueFalse",
 }: {
   disabled?: boolean;
@@ -153,6 +154,7 @@ export function ChoiceQuestion({
   onSelect: (answer: ChoiceAnswer | null) => void;
   question: ChoiceQuestionView;
   selected: ChoiceAnswer | null;
+  translation?: string;
   trueFalseLabels?: TrueFalseLabels;
 }) {
   const options = useOptions({ question, trueFalseLabels });
@@ -185,7 +187,10 @@ export function ChoiceQuestion({
   return (
     <div className="flex flex-col gap-4">
       <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <QuestionTitle tabIndex={-1} text={question.question} />
+      <div className="flex flex-col gap-1">
+        <QuestionTitle tabIndex={-1} text={question.question} />
+        {translation && <p className="text-muted-foreground">{translation}</p>}
+      </div>
 
       {isMultiPick(select) && <PickRule select={select} />}
 
