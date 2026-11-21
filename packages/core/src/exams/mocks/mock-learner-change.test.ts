@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -22,22 +23,25 @@ import { findOwnedMock } from "./_utils/owned-mock";
 import { settleAnytimeMock } from "./_utils/settle-anytime-mock";
 import { endMockBreak } from "./end-mock-break";
 import { finishMock } from "./finish-mock";
-import { mockConditionsSchema } from "./mock-contract";
+import { type MockConditions, mockConditionsSchema } from "./mock-contract";
+import { saveMockAnswer } from "./save-mock-answer";
 import { startMock } from "./start-mock";
 import { submitMockSection } from "./submit-mock-section";
 
-async function sittingFixture() {
-  const user = await userFixture();
+const EMPTY_SECTION = {
+  breakAfterMinutes: 10,
+  essays: [],
+  itemIds: [],
+  minutes: 20,
+  name: null,
+  questions: 0,
+  routing: null,
+};
 
-  const section = {
-    breakAfterMinutes: 10,
-    essays: [],
-    itemIds: [],
-    minutes: 20,
-    name: null,
-    questions: 0,
-    routing: null,
-  };
+type SittingSection = Partial<MockConditions["sections"][number]>;
+
+async function sittingFixture(sections: SittingSection[] = [{}, {}]) {
+  const user = await userFixture();
 
   const conditions = mockConditionsSchema.parse({
     day: null,
@@ -47,7 +51,7 @@ async function sittingFixture() {
     purpose: "practice",
     reused: 0,
     scoring: "raw",
-    sections: [section, section],
+    sections: sections.map((section) => ({ ...EMPTY_SECTION, ...section })),
     shape: null,
     startTime: null,
     timeZone: null,
@@ -61,6 +65,51 @@ async function sittingFixture() {
 
   mockSession(user.id);
   return { mock, user };
+}
+
+async function choiceItems(count: number): Promise<string[]> {
+  const skill = await skillFixture();
+  const content = choiceItemContent();
+
+  const items = await Promise.all(
+    Array.from({ length: count }, () =>
+      itemFixture({
+        content: {
+          ...content,
+          options: [...content.options, { ...content.options[1], text: "Another wrong answer" }],
+        },
+        skillId: skill.id,
+      }),
+    ),
+  );
+
+  return items.map((item) => item.id);
+}
+
+function pick({ itemId, mockId, index }: { index: number; itemId: string; mockId: string }) {
+  return saveMockAnswer({
+    blockId: mockId,
+    input: { answer: { selectedIndex: index }, durationMs: 5000, flagged: false, itemId },
+  });
+}
+
+async function inLockOrder<T>(userId: string, requests: (() => Promise<T>)[]): Promise<T[]> {
+  const held = holdLearnerLock({ userId });
+  const pid = await held.pid;
+  const started: Promise<T>[] = [];
+
+  try {
+    for (const request of requests) {
+      started.push(request());
+      // oxlint-disable-next-line no-await-in-loop -- Each request queues for the lock after the one before it.
+      await waitForBlockedStatement(pid, LEARNER_LOCK, started.length);
+    }
+  } finally {
+    held.release();
+    await held.done;
+  }
+
+  return Promise.all(started);
 }
 
 async function ownedSitting(id: string) {
@@ -360,5 +409,88 @@ describe("mock writes under the learner's lock", () => {
     await expect(finishMock({ blockId: mock.id, input: {} })).resolves.toStrictEqual({
       status: "finished",
     });
+  });
+
+  it("refuses a save that reaches the lock after its section was handed in", async () => {
+    const [first = "", second = ""] = await choiceItems(2);
+
+    const { mock, user } = await sittingFixture([
+      { itemIds: [first], questions: 1 },
+      { itemIds: [second], questions: 1 },
+    ]);
+
+    const [handIn, save] = await inLockOrder<{ status: string }>(user.id, [
+      () => submitMockSection({ blockId: mock.id, input: {}, section: 0 }),
+      () => pick({ index: 0, itemId: first, mockId: mock.id }),
+    ]);
+
+    expect(handIn).toStrictEqual({ status: "next" });
+    expect(save).toStrictEqual({ status: "notRunning" });
+    await expect(prisma.mockExamAnswer.count({ where: { mockExamId: mock.id } })).resolves.toBe(0);
+  });
+
+  it("charges one answer change when two saves change the same review question at once", async () => {
+    const itemIds = await choiceItems(2);
+    const [first = ""] = itemIds;
+
+    const { mock, user } = await sittingFixture([
+      {
+        itemIds,
+        navigation: { answerChanges: 2, forwardOnly: true, itemSeconds: null, mustAnswer: true },
+        questions: itemIds.length,
+      },
+    ]);
+
+    for (const itemId of itemIds) {
+      // oxlint-disable-next-line no-await-in-loop -- A forward-only section is answered in order.
+      await pick({ index: 0, itemId, mockId: mock.id });
+    }
+
+    const saves = await inLockOrder(user.id, [
+      () => pick({ index: 1, itemId: first, mockId: mock.id }),
+      () => pick({ index: 2, itemId: first, mockId: mock.id }),
+    ]);
+
+    expect(saves).toStrictEqual([{ status: "saved" }, { status: "saved" }]);
+
+    await expect(
+      prisma.mockExamAnswer.findUniqueOrThrow({
+        where: { mockItem: { itemId: first, mockExamId: mock.id } },
+      }),
+    ).resolves.toMatchObject({ answer: { selectedIndex: 2 }, changes: 1 });
+  });
+
+  it("routes the next module from an answer saved just before the hand-in", async () => {
+    const [first = "", easier = "", harder = ""] = await choiceItems(3);
+
+    const { mock, user } = await sittingFixture([
+      { itemIds: [first], questions: 1 },
+      { questions: 1, routing: { easier: [easier], harder: [harder] } },
+    ]);
+
+    await inLockOrder<{ status: string }>(user.id, [
+      () => pick({ index: 0, itemId: first, mockId: mock.id }),
+      () => submitMockSection({ blockId: mock.id, input: {}, section: 0 }),
+    ]);
+
+    const stored = await prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } });
+
+    expect(mockConditionsSchema.parse(stored.conditions).sections[1]?.itemIds).toStrictEqual([
+      harder,
+    ]);
+  });
+
+  it("grades an answer saved just before the final hand-in", async () => {
+    const [first = ""] = await choiceItems(1);
+    const { mock, user } = await sittingFixture([{ itemIds: [first], questions: 1 }]);
+
+    await inLockOrder<{ status: string }>(user.id, [
+      () => pick({ index: 0, itemId: first, mockId: mock.id }),
+      () => finishMock({ blockId: mock.id, input: {} }),
+    ]);
+
+    await expect(
+      prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } }),
+    ).resolves.toMatchObject({ result: { correct: 1 }, status: "finished" });
   });
 });

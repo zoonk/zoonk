@@ -1,9 +1,14 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { DbNull, prisma } from "@zoonk/db";
+import { DbNull, type TransactionClient } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { judgeForwardOnlySave } from "./_utils/mock-navigation";
-import { findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
+import {
+  type MockSitting,
+  findMockSitting,
+  findOwnedMock,
+  getSectionDeadline,
+} from "./_utils/owned-mock";
 import { type MockAnswerInput } from "./mock-answer-contract";
 import { type MockConditions } from "./mock-contract";
 
@@ -24,9 +29,11 @@ export type SaveMockAnswerResult = {
 async function fitsSection({
   input,
   section,
+  tx,
 }: {
   input: MockAnswerInput;
   section: MockConditions["sections"][number] | undefined;
+  tx: TransactionClient;
 }): Promise<boolean> {
   const isText = input.answer !== null && "text" in input.answer;
 
@@ -42,41 +49,63 @@ async function fitsSection({
     return true;
   }
 
-  const item = await prisma.item.findUnique({
-    select: { format: true },
-    where: { id: input.itemId },
-  });
+  const item = await tx.item.findUnique({ select: { format: true }, where: { id: input.itemId } });
 
   return item?.format === "typed";
 }
 
-async function judgeMove({
+function judgeMove({
   input,
-  mockId,
+  mock,
   section,
 }: {
   input: MockAnswerInput;
-  mockId: string;
+  mock: MockSitting;
   section: MockConditions["sections"][number];
-}): Promise<{ changed: boolean; status: "locked" | "saved" }> {
+}): { changed: boolean; status: "locked" | "saved" } {
   if (!section.navigation?.forwardOnly) {
     return { changed: false, status: "saved" };
   }
-
-  const rows = await prisma.mockExamAnswer.findMany({
-    select: { answer: true, changes: true, itemId: true },
-    where: { itemId: { in: section.itemIds }, mockExamId: mockId },
-  });
 
   return judgeForwardOnlySave({
     answer: input.answer,
     itemId: input.itemId,
     itemIds: section.itemIds,
     navigation: section.navigation,
-    rows,
+    rows: mock.answers.filter((row) => section.itemIds.includes(row.itemId)),
   });
 }
 
+async function judgeSave({
+  input,
+  mock,
+  tx,
+}: {
+  input: MockAnswerInput;
+  mock: MockSitting | null;
+  tx: TransactionClient;
+}): Promise<
+  | { changed: boolean; status: "saved" }
+  | { status: Exclude<SaveMockAnswerResult["status"], "saved"> }
+> {
+  if (mock?.status !== "active" || mock.sectionStartedAt.getTime() > Date.now()) {
+    return { status: "notRunning" };
+  }
+
+  const section = mock.conditions.sections[mock.sectionIndex];
+
+  if (!section || !(await fitsSection({ input, section, tx }))) {
+    return { status: "invalidItem" };
+  }
+
+  if (Date.now() > getSectionDeadline(mock).getTime() + DEADLINE_GRACE_MS) {
+    return { status: "timeUp" };
+  }
+
+  return judgeMove({ input, mock, section });
+}
+
+/** Judges the save against the sitting read under the learner's lock, which hand-ins take too. */
 export async function saveMockAnswer({
   blockId,
   input,
@@ -90,41 +119,21 @@ export async function saveMockAnswer({
     return found;
   }
 
-  const { mock } = found.owned;
+  const mockId = found.owned.mock?.id;
 
-  if (mock?.status !== "active") {
+  if (!mockId) {
     return { status: "notRunning" };
   }
 
-  if (mock.sectionStartedAt.getTime() > Date.now()) {
-    return { status: "notRunning" };
-  }
+  return writeLearnerChange<SaveMockAnswerResult>({ userId: found.owned.userId }, async (tx) => {
+    const mock = await findMockSitting(tx, mockId);
+    const judged = await judgeSave({ input, mock, tx });
 
-  const section = mock.conditions.sections[mock.sectionIndex];
+    if (judged.status !== "saved") {
+      return unchanged({ status: judged.status });
+    }
 
-  if (!section || !(await fitsSection({ input, section }))) {
-    return { status: "invalidItem" };
-  }
-
-  if (Date.now() > getSectionDeadline(mock).getTime() + DEADLINE_GRACE_MS) {
-    return { status: "timeUp" };
-  }
-
-  const move = await judgeMove({ input, mockId: mock.id, section });
-
-  if (move.status === "locked") {
-    return { status: "locked" };
-  }
-
-  const draft = {
-    answer: input.answer ?? DbNull,
-    durationMs: input.durationMs,
-    flagged: input.flagged,
-  };
-
-  await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {
-    const where = { mockItem: { itemId: input.itemId, mockExamId: mock.id } };
-    const saved = await tx.mockExamAnswer.findUnique({ where });
+    const saved = mock?.answers.find((row) => row.itemId === input.itemId);
 
     if (
       saved &&
@@ -132,15 +141,21 @@ export async function saveMockAnswer({
       saved.durationMs === input.durationMs &&
       saved.flagged === input.flagged
     ) {
-      return unchanged(saved);
+      return unchanged({ status: "saved" });
     }
 
-    return tx.mockExamAnswer.upsert({
-      create: { ...draft, itemId: input.itemId, mockExamId: mock.id },
-      update: { ...draft, ...(move.changed ? { changes: { increment: 1 } } : {}) },
-      where,
-    });
-  });
+    const draft = {
+      answer: input.answer ?? DbNull,
+      durationMs: input.durationMs,
+      flagged: input.flagged,
+    };
 
-  return { status: "saved" };
+    await tx.mockExamAnswer.upsert({
+      create: { ...draft, itemId: input.itemId, mockExamId: mockId },
+      update: { ...draft, ...(judged.changed ? { changes: { increment: 1 } } : {}) },
+      where: { mockItem: { itemId: input.itemId, mockExamId: mockId } },
+    });
+
+    return { status: "saved" };
+  });
 }

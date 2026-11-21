@@ -5,7 +5,12 @@ import { safeAsync } from "@zoonk/utils/error";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { type MockConditions } from "../mock-contract";
 import { completeMock } from "./complete-mock";
-import { type MockSitting, type OwnedMock, findMockSitting } from "./owned-mock";
+import {
+  type MockSitting,
+  type OwnedMock,
+  findMockSitting,
+  getSectionDeadline,
+} from "./owned-mock";
 
 /**
  * Far longer than a hand-in takes, so an older claim belongs to a request that died. If one still
@@ -17,16 +22,26 @@ const CLAIM_POLL_MS = 250;
 
 type ClaimedMock = MockSitting & { handInClaimedAt: Date };
 
-async function claimHandIn({
-  conditions,
-  current,
+export function withSectionTimeout({
   mock,
+  now,
 }: {
-  conditions: MockConditions;
-  current: MockSitting;
   mock: MockSitting;
-}): Promise<ClaimedMock | null> {
-  const handedIn = conditions.sections.length;
+  now: Date;
+}): MockConditions {
+  const { conditions, sectionIndex } = mock;
+
+  const timedOut =
+    sectionIndex < conditions.sections.length &&
+    now.getTime() >= getSectionDeadline(mock).getTime();
+
+  return timedOut
+    ? { ...conditions, timedOutSections: [...conditions.timedOutSections, sectionIndex] }
+    : conditions;
+}
+
+async function claimHandIn(current: MockSitting): Promise<ClaimedMock | null> {
+  const handedIn = current.conditions.sections.length;
   const now = new Date();
 
   if (current.sectionIndex >= handedIn) {
@@ -37,7 +52,7 @@ async function claimHandIn({
           { handInClaimedAt: null },
           { handInClaimedAt: { lt: new Date(now.getTime() - HAND_IN_LEASE_MS) } },
         ],
-        id: mock.id,
+        id: current.id,
         status: "active",
       },
     });
@@ -45,18 +60,22 @@ async function claimHandIn({
     return count > 0 ? { ...current, handInClaimedAt: now } : null;
   }
 
-  const count = await writeLearnerChange({ userId: mock.userId }, async (tx) => {
-    const updated = await tx.mockExam.updateMany({
+  return writeLearnerChange({ userId: current.userId }, async (tx) => {
+    const locked = await findMockSitting(tx, current.id);
+
+    if (locked?.status !== "active" || locked.sectionIndex !== current.sectionIndex) {
+      return unchanged(null);
+    }
+
+    const conditions = withSectionTimeout({ mock: locked, now });
+
+    await tx.mockExam.update({
       data: { conditions, handInClaimedAt: now, sectionIndex: handedIn },
-      where: { id: mock.id, sectionIndex: mock.sectionIndex, status: "active" },
+      where: { id: locked.id },
     });
 
-    return updated.count > 0 ? updated.count : unchanged(updated.count);
+    return { ...locked, conditions, handInClaimedAt: now, sectionIndex: handedIn };
   });
-
-  return count > 0
-    ? { ...current, conditions, handInClaimedAt: now, sectionIndex: handedIn }
-    : null;
 }
 
 /**
@@ -64,12 +83,10 @@ async function claimHandIn({
  * connection. A failed finish may commit some answers; retrying records only the remaining ones.
  */
 export async function endMock({
-  conditions,
   mock,
   owned,
   timeZone,
 }: {
-  conditions: MockConditions;
   mock: MockSitting;
   owned: OwnedMock;
   timeZone: string;
@@ -83,17 +100,17 @@ export async function endMock({
   }
 
   if (
-    current.sectionIndex < conditions.sections.length &&
+    current.sectionIndex < current.conditions.sections.length &&
     current.sectionIndex !== mock.sectionIndex
   ) {
     return "notRunning";
   }
 
-  const claimed = await claimHandIn({ conditions, current, mock });
+  const claimed = await claimHandIn(current);
 
   if (!claimed) {
     await wait(CLAIM_POLL_MS);
-    return endMock({ conditions, mock, owned, timeZone });
+    return endMock({ mock, owned, timeZone });
   }
 
   const { error } = await safeAsync(() => completeMock({ mock: claimed, owned, timeZone }));
