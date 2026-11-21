@@ -8,6 +8,65 @@ import { verifiedWritingZero } from "./writing-zero";
 type Basis = z.infer<typeof writtenItemSchema>;
 type Feedback = Omit<Extract<WritingResult, { kind: "levels" }>, "kind">;
 
+const QUOTE_PUNCTUATION = new Map(
+  ["'‘’‚‛", '"“”„‟', "-‐‑‒–—―﹘﹣－"].flatMap((group) =>
+    Array.from(group, (part) => [part, group.slice(0, 1)] as const),
+  ),
+);
+
+function comparableQuotePart(part: string): string {
+  if (/^\p{White_Space}/u.test(part)) {
+    return " ";
+  }
+
+  return QUOTE_PUNCTUATION.get(part) ?? part.toLowerCase();
+}
+
+function comparableQuote(text: string) {
+  const offsets = [0];
+
+  const value = Array.from(text.matchAll(/\p{White_Space}+|./gsu), ({ 0: part, index }) => {
+    const comparable = comparableQuotePart(part);
+    offsets[offsets.length + comparable.length - 1] = index + part.length;
+    return comparable;
+  }).join("");
+
+  return { offsets, value };
+}
+
+/** Only unique matches are eligible, and their offsets refer to the original UTF-16 text. */
+export function createWritingQuoteLookup(text: string) {
+  const { offsets, value } = comparableQuote(text);
+
+  return function findQuote(quote: string | null) {
+    if (!quote || !/\P{White_Space}/u.test(quote.trim())) {
+      return null;
+    }
+
+    const candidate = comparableQuote(quote).value;
+    const matches: { end: number; start: number }[] = [];
+
+    for (
+      let index = value.indexOf(candidate);
+      index !== -1;
+      index = value.indexOf(candidate, index + 1)
+    ) {
+      const start = offsets[index];
+      const end = offsets[index + candidate.length];
+
+      if (start !== undefined && end !== undefined) {
+        if (matches.length > 0) {
+          return null;
+        }
+
+        matches.push({ end, start });
+      }
+    }
+
+    return matches[0] ?? null;
+  };
+}
+
 function exactStart(text: string, quote: string | null): number | null {
   if (!quote?.trim()) {
     return null;
@@ -15,10 +74,6 @@ function exactStart(text: string, quote: string | null): number | null {
 
   const start = text.indexOf(quote);
   return start !== -1 && !text.includes(quote, start + 1) ? start : null;
-}
-
-function exactQuote(text: string, quote: string | null): string | null {
-  return quote && exactStart(text, quote) !== null ? quote : null;
 }
 
 function verifyErrors(eligible: string, errors: WritingEvidence["errors"]): Feedback["errors"] {
@@ -62,17 +117,22 @@ export function buildWritingFeedback({
   previousNextSteps: readonly string[];
 }): Feedback {
   const byId = new Map(evidence.criteria.map((criterion) => [criterion.id, criterion]));
+  const findQuote = createWritingQuoteLookup(eligible);
+
+  const passage = (quote: string | null) => {
+    const span = findQuote(quote);
+    return span && eligible.slice(span.start, span.end);
+  };
 
   const criteria = basis.criteria.map(({ id, name }): Feedback["criteria"][number] => {
     const assessed = byId.get(id);
-    const quote = exactQuote(eligible, assessed?.quote ?? null);
 
     return {
       comment: assessed?.comment ?? "",
       id,
       level: assessed?.level ?? "missing",
       name,
-      quote,
+      quote: passage(assessed?.quote ?? null),
     };
   });
 
@@ -81,7 +141,7 @@ export function buildWritingFeedback({
 
   const nextStep =
     next && target && target.level !== "complete" && next.text.trim()
-      ? { ...next, quote: exactQuote(eligible, next.quote) }
+      ? { ...next, quote: passage(next.quote) }
       : null;
 
   const prior = new Set(previousNextSteps);
@@ -134,6 +194,7 @@ function scoreRows({
 }) {
   const byAspect = Map.groupBy(evidence.aspects, ({ aspectIndex }) => aspectIndex);
   const byCriterion = Map.groupBy([...basis.aspects.entries()], ([, aspect]) => aspect.criterionId);
+  const findQuote = createWritingQuoteLookup(eligible);
 
   return basis.grading.criteria.flatMap(({ id, points }) => {
     const aspects = byCriterion.get(id);
@@ -161,9 +222,7 @@ function scoreRows({
 
       const [report] = reports;
 
-      return report?.earned &&
-        report.criterionId === id &&
-        exactStart(eligible, report.quote) !== null
+      return report?.earned && report.criterionId === id && findQuote(report.quote)
         ? addPoints(sum, aspect.points ?? 0)
         : sum;
     }, 0);
