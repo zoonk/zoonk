@@ -1,11 +1,11 @@
-import { pruneSharedExamGraph } from "@zoonk/core/library/curriculum/exam-graph-repair";
+import { prepareNoticeGraphRepair } from "@zoonk/core/library/curriculum/exam-graph-repair";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import {
   listNoticeGoals,
   listNoticeRepairBlueprints,
   proposeNoticeChange,
-  retireWaitingNoticeGraph,
+  repairNoticePlan,
 } from "@zoonk/core/plans/notice-change";
 import { applyNoticeGraph } from "@zoonk/core/plans/notice-graph";
 import { claimNoticeLanding, endNoticeWait } from "@zoonk/core/plans/notice-wait";
@@ -81,31 +81,22 @@ export async function listNoticeGoalsStep(input: {
   return listNoticeGoals(input);
 }
 
-export async function updateNoticePlansStep({
-  blueprintId,
-  goalIds,
-  movesExamDays,
-  noticeId,
-}: {
-  blueprintId: string;
-  goalIds: string[];
-  movesExamDays: boolean;
-  noticeId: string | null;
+export async function repairNoticePlanStep(
+  input: Parameters<typeof repairNoticePlan>[0],
+): Promise<void> {
+  "use step";
+
+  await repairNoticePlan(input);
+}
+
+export async function logNoticeRepairFailureStep(failure: {
+  blueprintId?: string;
+  error: string;
+  goalId?: string;
 }): Promise<void> {
   "use step";
 
-  for (const goalId of goalIds) {
-    // oxlint-disable-next-line no-await-in-loop -- Each re-plans a goal; one at a time spares the database.
-    await applyNoticeGraph({ blueprintId, goalId });
-
-    if (movesExamDays) {
-      // oxlint-disable-next-line no-await-in-loop -- The date proposal reads the graph after it settles.
-      await proposeNoticeChange({ goalId, noticeId });
-    } else {
-      // oxlint-disable-next-line no-await-in-loop -- Replace any old graph proposal after settling the plan.
-      await retireWaitingNoticeGraph(goalId);
-    }
-  }
+  logError("[notice] Could not repair an exam graph:", failure);
 }
 
 export async function listNoticeRepairBlueprintsStep(after: string | null): Promise<string[]> {
@@ -114,8 +105,8 @@ export async function listNoticeRepairBlueprintsStep(after: string | null): Prom
   return listNoticeRepairBlueprints(after);
 }
 
-export async function pruneSharedExamGraphStep(blueprintId: string): Promise<boolean> {
+export async function prepareNoticeGraphRepairStep(blueprintId: string) {
   "use step";
 
-  return pruneSharedExamGraph(blueprintId);
+  return prepareNoticeGraphRepair(blueprintId);
 }

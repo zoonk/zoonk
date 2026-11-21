@@ -8,12 +8,12 @@ import { findOutsideNoticeSkills } from "./prune-notice-skills";
 export async function prunePlanNoticeGraph({
   db = prisma,
   graph,
-  protectedIds,
+  loadProtectedIds,
   subjects,
 }: {
   db?: TransactionClient;
   graph: PlanGraph;
-  protectedIds?: ReadonlySet<string>;
+  loadProtectedIds?: () => Promise<ReadonlySet<string>>;
   subjects: Parameters<typeof findOutsideNoticeSkills>[0]["subjects"];
 }): Promise<{ graph: PlanGraph; dropped: string[] }> {
   const skills = [...graph.skills, ...(graph.optionSkills ?? [])].filter((skill) => !skill.extra);
@@ -24,12 +24,17 @@ export async function prunePlanNoticeGraph({
 
   const keyed = skills.map((skill) => ({ ...skill, id: skill.skillId }));
 
-  if (findOutsideNoticeSkills({ protectedIds, skills: keyed, subjects }).length === 0) {
+  if (findOutsideNoticeSkills({ skills: keyed, subjects }).length === 0) {
     return { dropped: [], graph };
   }
 
   const ids = skills.map((skill) => skill.skillId);
-  const survivorOf = await loadSkillSurvivors(ids, db);
+
+  const [survivorOf, protectedIds] = await Promise.all([
+    loadSkillSurvivors(ids, db),
+    loadProtectedIds?.(),
+  ]);
+
   const copies = Map.groupBy(ids, (id) => survivorOf(id));
   const prerequisites = await loadSkillPrerequisites([...copies.keys()], db);
 

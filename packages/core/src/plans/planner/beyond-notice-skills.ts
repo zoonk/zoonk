@@ -7,24 +7,33 @@ function hasTopics(skill: PlanGraphSkill): boolean {
   return (skill.topics ?? []).length > 0;
 }
 
-export function findBeyondNoticeSkillIds(graph: PlanGraph): Set<string> {
+export function findBeyondNoticeSkillIds({
+  graph,
+  prerequisites,
+}: {
+  graph: PlanGraph;
+  prerequisites?: ReadonlyMap<string, readonly string[]>;
+}): Set<string> {
   const listed = new Set(
-    graph.skills.filter((skill) => hasTopics(skill)).map((skill) => getSkillArea({ graph, skill })),
+    graph.skills.filter(hasTopics).map((skill) => getSkillArea({ graph, skill })),
   );
 
-  return new Set(
-    graph.skills
-      .filter(
-        (skill) =>
-          skill.extra ||
-          (!hasTopics(skill) &&
-            !(skill.outlined && skill.topics === undefined) &&
-            !skill.outcome &&
-            (listed.has(getSkillArea({ graph, skill })) ||
-              (listed.size > 0 && skill.topics?.length === 0))),
-      )
-      .map((skill) => skill.skillId),
-  );
+  const bases = new Set(prerequisites ? [...prerequisites.values()].flat() : []);
+
+  const isBeyond = (skill: PlanGraphSkill) => {
+    if (skill.extra) {
+      return true;
+    }
+
+    if (listed.size === 0 || skill.outcome || hasTopics(skill)) {
+      return false;
+    }
+
+    const named = listed.has(getSkillArea({ graph, skill }));
+    return skill.topics?.length === 0 || (named ? !skill.outlined : bases.has(skill.skillId));
+  };
+
+  return new Set(graph.skills.filter(isBeyond).map((skill) => skill.skillId));
 }
 
 export function findBeyondNoticeBases({

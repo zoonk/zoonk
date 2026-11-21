@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { loadNoticeDay } from "../exams/_utils/notice-day";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { proposeChange } from "./_utils/apply-plan-change";
@@ -8,10 +9,12 @@ import { type PlanContext } from "./_utils/plan-context";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "./_utils/plan-setup-tasks";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { revalidatePlanTags } from "./_utils/replan";
+import { applyNoticeGraph } from "./apply-notice-graph";
 import { NOTICE_SOURCE } from "./plan-change-contract";
 import { withPlanRetry } from "./plan-conflict";
 import { type NoticeDay } from "./plan-view-contract";
 import { toIsoDate } from "./planner/plan-calendar";
+import { planGraphSchema } from "./planner/plan-state";
 
 const NOTICE_GOALS_PAGE = 50;
 
@@ -122,18 +125,67 @@ async function proposeForGoal({
   return proposed.status === "proposed" ? "proposed" : "none";
 }
 
-export function proposeNoticeChange(request: NoticeChangeRequest): Promise<NoticeChangeOutcome> {
+async function loadWaitingNoticeGraph(goalId: string) {
+  const waiting = await prisma.planChange.findFirst({
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    select: { payload: true, plan: { select: { goal: { select: { examBlueprintId: true } } } } },
+    where: {
+      AND: { payload: noticeGraphPayload },
+      payload: { equals: NOTICE_SOURCE, path: ["source"] },
+      plan: { goalId },
+      status: "proposed",
+    },
+  });
+
+  if (!waiting) {
+    return null;
+  }
+
+  const { payload, plan } = waiting;
+  const graph = isJsonObject(payload) ? planGraphSchema.safeParse(payload.noticeGraph).data : null;
+
+  return { blueprintId: plan.goal.examBlueprintId, graph };
+}
+
+export async function proposeNoticeChange(
+  request: NoticeChangeRequest,
+): Promise<NoticeChangeOutcome> {
+  const waiting = await loadWaitingNoticeGraph(request.goalId);
+
+  if (waiting?.blueprintId && waiting.graph?.skills.length) {
+    await applyNoticeGraph({
+      blueprintId: waiting.blueprintId,
+      goalId: request.goalId,
+      graph: waiting.graph,
+      legacy: true,
+    });
+  }
+
   return withPlanRetry(() => proposeForGoal(request));
 }
 
-export async function retireWaitingNoticeGraph(goalId: string): Promise<void> {
-  const waiting = await prisma.planChange.findFirst({
-    select: { id: true },
-    where: { payload: noticeGraphPayload, plan: { goalId }, status: "proposed" },
-  });
+export async function repairNoticePlan({
+  blueprintId,
+  goalId,
+  movesExamDays,
+  notice,
+  noticeId,
+}: Pick<NoticeChangeRequest, "goalId" | "noticeId"> & {
+  blueprintId: string;
+  movesExamDays: boolean;
+  notice: NonNullable<Parameters<typeof applyNoticeGraph>[0]["notice"]>;
+}): Promise<void> {
+  const waiting = await loadWaitingNoticeGraph(goalId);
 
-  if (waiting) {
-    await proposeNoticeChange({ goalId });
+  const graph =
+    waiting?.blueprintId === blueprintId && waiting.graph?.skills.length
+      ? waiting.graph
+      : undefined;
+
+  await applyNoticeGraph({ blueprintId, goalId, graph, legacy: Boolean(graph), notice });
+
+  if (movesExamDays || waiting) {
+    await proposeForGoal({ goalId, noticeId });
   }
 }
 
