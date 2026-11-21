@@ -218,6 +218,7 @@ function OutputColumn({
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <p className="text-sm font-medium">{label}</p>
+      <FailedChecks checks={failedChecks} />
 
       {imageIndex === -1 ? (
         <div className="rounded-xl border p-4">
@@ -230,8 +231,6 @@ function OutputColumn({
       ) : (
         <OutputImage images={images} index={imageIndex} />
       )}
-
-      <FailedChecks checks={failedChecks} />
 
       {observations.length > 0 && (
         <div className="flex flex-col pt-3">
