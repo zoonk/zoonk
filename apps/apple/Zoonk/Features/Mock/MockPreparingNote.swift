@@ -35,7 +35,7 @@ struct MockPreparingNote: View {
             MockWritingProgress(title: title, wait: run.wait)
               .measuresWait(
                 surface: surface, contentKind: "mockPaper",
-                isActive: !run.wait.isDone && !run.ended,
+                isActive: run.id != nil && !run.wait.isDone && !run.ended,
                 goalID: goalID)
           } else {
             ComeBackWords(title: title)

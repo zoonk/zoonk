@@ -68,7 +68,7 @@ fun MockPreparingNote(
     if (idle || run.status == GenerationRun.Status.Failed) {
         GateWords(title = title, line = stringResource(R.string.mock_preparing_line))
     } else {
-        if (run.status != GenerationRun.Status.Ready) TrackVisibleWait(surface, "mockPaper", goalId)
+        if (run.status == GenerationRun.Status.Following) TrackVisibleWait(surface, "mockPaper", goalId)
         MockWritingProgress(title, run)
     }
 }

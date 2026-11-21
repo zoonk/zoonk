@@ -76,7 +76,7 @@ function MockWritingProgress({
 
   useVisibleWait({
     contentKind: "mockPaper",
-    enabled: run.status === "waiting" || run.status === "following",
+    enabled: run.status === "following",
     goalId,
     surface,
     track,
