@@ -84,7 +84,8 @@ describe("a learner who can't listen now", () => {
     openLesson(spokenStepWithListening());
 
     await page.getByRole("button", { name: "I can't talk now" }).click();
-    await expect.element(page.getByRole("group", { name: "Word bank" })).toBeVisible();
+    const bank = page.getByRole("group", { name: "Word bank" });
+    await bank.getByRole("button", { name: /^quanto$/iu }).click();
 
     await page.getByRole("button", { name: "I can't listen now" }).click();
     await expect.element(page.getByRole("textbox")).toBeVisible();

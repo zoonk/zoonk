@@ -2810,12 +2810,12 @@ msgstr "Wybierz słowa, aby ułożyć odpowiedź"
 #: src/components/cant-listen-switch.tsx
 msgctxt "xAzh1Y"
 msgid "I can listen now"
-msgstr "Wróć do słuchania"
+msgstr "Mogę teraz słuchać"
 
 #: src/components/cant-listen-switch.tsx
 msgctxt "K8wsFm"
 msgid "I can't listen now"
-msgstr "Pokaż zapis dźwięków"
+msgstr "Nie mogę teraz słuchać"
 
 #. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
 #: src/components/enter-hint.tsx

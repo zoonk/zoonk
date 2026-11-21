@@ -203,6 +203,7 @@ function ListeningInstead({
     <PlayerAudioProvider audioUrl={step.listening.sentence?.audioUrl ?? null}>
       <ExerciseStepView
         {...props}
+        onCantListenChange={() => props.onAnswer(null)}
         step={toListeningStep({ listening: step.listening, step })}
         wayOut={wayOut}
       />

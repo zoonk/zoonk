@@ -55,20 +55,27 @@ function useDefinesWords(): boolean {
 function ListeningWayOuts({
   canListen,
   children,
+  onCantListenChange,
   wayOut,
 }: {
   canListen: boolean;
   children: React.ReactNode;
+  onCantListenChange?: () => void;
   wayOut: React.ReactNode;
 }) {
   const [cantListen, setCantListen] = useTodayChoice(CANT_LISTEN_TODAY);
+
+  const change = (next: boolean) => {
+    onCantListenChange?.();
+    setCantListen(next);
+  };
 
   return (
     <div className={cn("flex flex-col", FILL_SCREEN_CLASS)}>
       {children}
 
       <PlayerContentFrame className="flex flex-col gap-3 pb-6 empty:hidden">
-        {canListen && <CantListenSwitch cantListen={cantListen} onChange={setCantListen} />}
+        {canListen && <CantListenSwitch cantListen={cantListen} onChange={change} />}
         {wayOut}
       </PlayerContentFrame>
     </div>
@@ -80,11 +87,13 @@ export function ExerciseStepView({
   isLocked,
   onAnswer,
   result,
+  onCantListenChange,
   step,
   wayOut,
 }: LessonStepViewProps<PlayableLanguageStep> & {
   /** Another way around the step, shown under "I can't listen now" ("I can talk now"). */
   wayOut?: React.ReactNode;
+  onCantListenChange?: () => void;
 }) {
   const { exercise } = step;
   const selectedAnswer = toSelectedAnswer(answer);
@@ -124,6 +133,7 @@ export function ExerciseStepView({
       return (
         <ListeningWayOuts
           canListen={!isLocked && getPlayerStepAudioUrl(exercise) !== null}
+          onCantListenChange={onCantListenChange}
           wayOut={wayOut}
         >
           <ListeningStep {...shared} isLocked={isLocked} result={stepResult} />
