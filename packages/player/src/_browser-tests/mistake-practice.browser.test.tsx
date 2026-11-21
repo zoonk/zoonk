@@ -86,8 +86,10 @@ describe("exact lesson mistake practice", () => {
         .toBeVisible();
 
       const after = bank.element().getBoundingClientRect();
+      const bar = document.querySelector("[data-slot=bottom-bar]")!.getBoundingClientRect();
       expect(verdict.element().getBoundingClientRect().bottom).toBeLessThanOrEqual(after.top);
       expect(after.bottom).toBe(before.bottom);
+      expect(bar.top - after.bottom).toBe(24);
     });
   });
 
