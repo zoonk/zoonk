@@ -62,12 +62,12 @@ function addTime(total: DayMinutes, time: readonly [string, number][], sign = 1)
 }
 
 function listPlacedTime(
-  placed: readonly Pick<ScheduledUnit, "studyPortions" | "teachingShare">[],
+  placed: readonly Pick<ScheduledUnit, "studyPortions">[],
 ): [string, number][] {
-  return placed.flatMap(({ studyPortions, teachingShare = 1 }) =>
-    (studyPortions ?? []).map(({ date, lessonMinutes }): [string, number] => [
+  return placed.flatMap(({ studyPortions }) =>
+    (studyPortions ?? []).map(({ date, drillMinutes = 0, lessonMinutes }): [string, number] => [
       date,
-      lessonMinutes / teachingShare,
+      lessonMinutes + drillMinutes,
     ]),
   );
 }

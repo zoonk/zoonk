@@ -71,7 +71,12 @@ export function listIntervalPortions({
   });
 }
 
-export type StudyPortion = { date: string; lessonMinutes: number; minutes: number };
+export type StudyPortion = {
+  date: string;
+  drillMinutes?: number;
+  lessonMinutes: number;
+  minutes: number;
+};
 
 export function getUnitStudy({
   cumulative,
@@ -119,14 +124,17 @@ export function getUnitStudy({
       ? [...covered, { date: toIsoDate(dueDate), lessonMinutes: overflow, minutes: uncovered }]
       : covered;
 
+  const teachingShare = unit.teachingShare ?? 1;
+
   return {
     studyMinutes: studyPortions.reduce((total, portion) => total + portion.minutes, 0),
     studyPortions:
-      unit.teachingShare === undefined
+      teachingShare === 1
         ? studyPortions
         : studyPortions.map((portion) => ({
             ...portion,
-            lessonMinutes: portion.lessonMinutes * (unit.teachingShare ?? 1),
+            drillMinutes: portion.lessonMinutes * (1 - teachingShare),
+            lessonMinutes: portion.lessonMinutes * teachingShare,
           })),
   };
 }
