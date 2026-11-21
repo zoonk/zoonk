@@ -3,6 +3,7 @@ import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 import {
   SHORT_TITLE,
+  SHORT_TITLES,
   addGradedAnswer,
   addWritingDrill,
   createWrittenExamDay,
@@ -22,7 +23,7 @@ test.describe("Written exam practice", () => {
       await page.goto("/today");
       await page.getByRole("button", { name: "Start" }).click();
       await expect(page).toHaveURL(new RegExp(`/essay/${day.blockId}`, "u"));
-      await expect(page.getByRole("heading", { level: 1, name: SHORT_TITLE })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: SHORT_TITLES })).toBeVisible();
 
       await page.getByRole("button", { exact: true, name: "Write" }).click();
       const field = page.getByLabel("Your answer");
@@ -149,7 +150,7 @@ test.describe("Written exam practice", () => {
       await page.getByRole("radio", { name: /^Written test/u }).click();
       await page.getByRole("button", { name: "Start" }).click();
       await expect(page).toHaveURL(/\/mock\/[0-9a-f-]{36}/u);
-      await expect(page.getByText(/^about 0 of (?<lines>30|60) lines$/u)).toBeVisible();
+      await expect(page.getByText(/^0 of (?<lines>30|60) lines$/u)).toBeVisible();
     } finally {
       await Promise.all([waiting.context().close(), page.context().close()]);
     }
@@ -171,23 +172,32 @@ test.describe("Written exam practice", () => {
     }
   });
 
-  test("a task the exam's notice dropped says so before any writing, and leads back to Today", async ({
+  test("a task the exam's notice dropped leaves Today, and an old link to its start says so with nothing admitted", async ({
     browser,
   }) => {
-    const day = await createWrittenExamDay({ prompts: false, taskKey: "retired" });
+    const day = await createWrittenExamDay({ taskKey: "retired" });
+    const drillId = await addWritingDrill({ sessionId: day.sessionId, skillId: day.skillId });
     const page = await openAs(browser, day.user);
 
     try {
       await page.goto("/today");
-      await page.getByRole("button", { name: "Start" }).click();
+      await expect(page.getByText("Short writing exercise").first()).toBeVisible();
+      await expect(page.getByText("The 30-line question")).toBeHidden();
+
+      // An address a start answered before the notice was read again: trying it again is a start.
+      await page.goto(`/essay/${day.blockId}?writing=failed`);
+      await page.getByRole("button", { name: "Try again" }).click();
 
       await expect(
-        page.getByRole("heading", { level: 1, name: "This task is no longer on your exam" }),
+        page.getByRole("heading", { level: 1, name: "This question is no longer on your exam" }),
       ).toBeVisible();
+
+      expect(await prisma.writingAdmission.count({ where: { userId: day.user.id } })).toBe(0);
 
       await page.getByRole("link", { exact: true, name: "Today" }).click();
       await expect(page).toHaveURL(/\/today/u);
-      expect(await prisma.writingAdmission.count({ where: { userId: day.user.id } })).toBe(0);
+      await page.getByRole("button", { name: "Start" }).click();
+      await expect(page).toHaveURL(new RegExp(`/essay/${drillId}`, "u"));
     } finally {
       await page.context().close();
     }
@@ -205,10 +215,9 @@ test.describe("Written exam practice", () => {
       await page.getByRole("radio", { name: /^Written test/u }).click();
       await page.getByRole("button", { name: "Start" }).click();
 
-      await expect(
-        page.getByText("No more grading today. The written test is back tomorrow."),
-      ).toBeVisible();
-
+      // Under each option with the written test, the way Today says it, and Start waits for another pick.
+      await expect(page.getByText("Back tomorrow: no more grading today")).toHaveCount(2);
+      await expect(page.getByRole("button", { name: "Start" })).toBeDisabled();
       await expect(page).toHaveURL(/\/mock\/new/u);
     } finally {
       await page.context().close();
