@@ -38,20 +38,7 @@ private struct WritingPointsSection: View {
         Chip(Text("Your answer", tableName: "Essay", comment: "Over a written answer's score"))
 
         VStack(alignment: .leading, spacing: 2) {
-          HStack(alignment: .lastTextBaseline, spacing: 6) {
-            Text(
-              verbatim: WritingLabels.range(points.total, decimals: points.decimals)
-            )
-            .typeStyle(.momentReadout)
-            .monospacedDigit()
-            Text(
-              "of \(WritingLabels.points(points.max, decimals: points.decimals))",
-              tableName: "Essay",
-              comment: "After a score: the question's total, like 'of 30'"
-            )
-            .typeStyle(.body)
-            .foregroundStyle(.mutedForeground)
-          }
+          PointsReadout(range: points.total, max: points.max, decimals: points.decimals)
           Text("Estimated score", tableName: "Essay", comment: "Under a written answer's range")
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
@@ -89,7 +76,7 @@ private struct WritingPointsSection: View {
         }
 
         LabeledContent {
-          Text(verbatim: WritingLabels.deduction(points.deduction, decimals: 1))
+          Text(verbatim: WritingLabels.deduction(points.deduction))
             .typeStyle(.data)
             .foregroundStyle(Color(.foreground))
         } label: {

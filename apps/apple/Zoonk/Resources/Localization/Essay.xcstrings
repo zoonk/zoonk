@@ -302,6 +302,9 @@
       "comment" : "An answer with no language errors"
     },
     "0 of %lld lines" : {},
+    "0 to −%@" : {
+      "comment" : "Points language errors take off an answer, from none to some, like '0 to −0.6'"
+    },
     "A detail" : {
       "comment" : "ENEM proposal element",
       "localizations" : {
@@ -363,6 +366,7 @@
     },
     "A new question like the ones on your exam. It opens here when it's ready." : {},
     "A short exercise on what you just learned. It opens here when it's ready." : {},
+    "About %@" : {},
     "about %@" : {
       "comment" : "An estimated time to write an answer"
     },

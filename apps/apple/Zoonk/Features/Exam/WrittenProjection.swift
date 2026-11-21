@@ -178,7 +178,7 @@ struct PointsReadout: View {
 
   var body: some View {
     HStack(alignment: .lastTextBaseline, spacing: 6) {
-      Text(verbatim: WritingLabels.range(range, decimals: decimals))
+      Text(verbatim: WritingLabels.range(range, decimals: decimals, headline: true))
         .typeStyle(.momentReadout)
         .monospacedDigit()
       Text(
