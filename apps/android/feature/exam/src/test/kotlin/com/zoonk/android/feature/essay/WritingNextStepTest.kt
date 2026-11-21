@@ -25,9 +25,12 @@ class WritingNextStepTest {
     @Test
     fun theGradersTitleLeadsAndAQuoteShowsOnlyWhenItIsInTheText() {
         val step = result(LEVELS_RESULT).toGrade().nextStep(ANSWER_TEXT) as NextStep.Criterion
-        // No title from older graders: the criterion's name stands in.
-        assertEquals("The TCU's powers", step.title)
+        assertEquals("Name two of the TCU's powers", step.title)
         assertEquals("exercised by Congress with the help of the TCU", step.quote)
+
+        // No title from older graders: the criterion's name stands in.
+        val older = result(LEVELS_RESULT.replace(""""title":"Name two of the TCU's powers",""", "")).toGrade()
+        assertEquals("The TCU's powers", (older.nextStep(ANSWER_TEXT) as NextStep.Criterion).title)
 
         val elsewhere = result(LEVELS_RESULT).toGrade().nextStep("A text that quotes nothing.") as NextStep.Criterion
         assertEquals(null, elsewhere.quote)
