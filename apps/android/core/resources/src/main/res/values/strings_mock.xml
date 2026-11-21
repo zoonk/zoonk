@@ -70,6 +70,13 @@
     </plurals>
     <string name="mock_every_answered">Every question is answered.</string>
     <string name="mock_essay_blank">The essay is blank.</string>
+    <!-- Before handing in a mock exam with both an objective and a written test: its one written question has no answer. -->
+    <string name="mock_written_question_blank">The written question is blank.</string>
+    <!-- Before handing in a mock exam with both an objective and a written test: how many of its written questions have no answer. -->
+    <plurals name="mock_written_questions_blank">
+        <item quantity="one">%d written question is blank.</item>
+        <item quantity="other">%d written questions are blank.</item>
+    </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">%d essay is blank.</item>
         <item quantity="other">%d essays are blank.</item>

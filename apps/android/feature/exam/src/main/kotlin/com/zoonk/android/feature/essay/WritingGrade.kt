@@ -75,9 +75,13 @@ private fun WritingGrade.isComplete(): Boolean =
  * nothing else is. A quote shows only when it's in [text], where it's underlined. Older saved
  * answers have no `kind` or `title`, so the same rules read them.
  */
+/** The answer broke a rule that scores it zero, whatever its criteria say. */
+val WritingGrade.zeroed: Boolean
+    get() = nextStep?.kind == WritingResultOutputOneOfNextStep.Kind.ZERO || points?.zeroReason != null
+
 fun WritingGrade.nextStep(text: String): NextStep {
     val step = nextStep
-    if (step?.kind == WritingResultOutputOneOfNextStep.Kind.ZERO || points?.zeroReason != null) {
+    if (zeroed) {
         return NextStep.Zero(step?.text.orEmpty(), points?.zeroKind)
     }
     if (step?.kind == WritingResultOutputOneOfNextStep.Kind.LIMIT || (ignoredFrom != null && isComplete())) return NextStep.Limit

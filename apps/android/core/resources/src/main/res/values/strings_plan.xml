@@ -858,9 +858,9 @@
     <!-- On the projected score: the exam's written test is below its own minimum. -->
     <string name="plan_written_below_minimum">Below the minimum to pass</string>
     <!-- %1$s names the written test, such as "Written test"; %2$s is its minimum points. -->
-    <string name="plan_written_asks_for">%1$s asks for %2$s points, whatever your other scores.</string>
+    <string name="plan_written_asks_for">%1$s needs %2$s points, whatever your other scores.</string>
     <!-- %1$s names the written test, such as "Written test"; %2$s is its minimum as a share, such as "50%". -->
-    <string name="plan_written_asks_for_share">%1$s asks for %2$s of its points, whatever your other scores.</string>
+    <string name="plan_written_asks_for_share">%1$s needs %2$s of its points, whatever your other scores.</string>
     <!-- %1$s names the exam's written test, such as "Written test". -->
     <string name="plan_written_not_measured">%1$s isn\'t measured yet.</string>
     <!-- %1$s names the exam's written test, such as "Written test", which is half the final score. -->

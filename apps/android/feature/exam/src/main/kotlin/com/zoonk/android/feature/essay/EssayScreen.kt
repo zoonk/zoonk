@@ -100,8 +100,8 @@ import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.scaffold.taskAsideBeside
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.Essay
 import com.zoonk.api.models.WritingPromptOutput
 import kotlinx.coroutines.delay
@@ -551,7 +551,7 @@ internal fun WritingLineCount(
     modifier: Modifier = Modifier,
 ) {
     val limit = writing.lines?.toInt()
-    val style = MaterialTheme.typography.labelMedium.withTabularFigures()
+    val style = MaterialTheme.zoonkType.data
     if (limit == null) {
         val words =
             com.zoonk.android.feature.player.language
@@ -741,7 +741,7 @@ internal fun WritingRefused(
                                 {
                                     Text(
                                         formatMinutes(minutes, currentLocale()),
-                                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                                        style = MaterialTheme.zoonkType.data,
                                     )
                                 }
                             } else {

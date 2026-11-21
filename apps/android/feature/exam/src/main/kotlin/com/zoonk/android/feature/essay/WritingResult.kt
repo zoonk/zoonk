@@ -194,9 +194,10 @@ private fun PartRow(
     }
 }
 
-/** What a rewrite changed, by criterion: only after a second version. */
+/** What a rewrite changed, by criterion: only after a second version, and never a zeroed one's, which no criterion explains. */
 @Composable
 private fun WritingProgress(grade: WritingGrade) {
+    if (grade.zeroed) return
     val fixed = grade.progress?.fixed.orEmpty()
     val persists = grade.progress?.persists.orEmpty()
     if (fixed.isEmpty() && persists.isEmpty()) return
@@ -427,6 +428,7 @@ private fun WritingCriteria(
                         Text(
                             level,
                             Modifier.sizeIn(minWidth = 64.dp),
+                            textAlign = TextAlign.End,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall,
                         )

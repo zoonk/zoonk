@@ -38,8 +38,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -47,6 +49,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.essay.MAX_WRITING_CHARACTERS
 import com.zoonk.android.feature.essay.WritingLineCount
+import com.zoonk.android.feature.essay.WritingQuestionBody
 import com.zoonk.android.feature.player.language.countWords
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemLine
@@ -96,10 +99,17 @@ internal fun MockQuestionCard(
     val previous = run.questions.getOrNull(run.position - 1)
     val set = question.question.set
 
+    val writing = question.writing.takeIf { question.essay }
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         if (set != null && set.listening == null) ItemSetText(set, continued = previous?.question?.set?.id == set.id)
-        ItemSupport(question.question)
-        QuestionTitle(question.question.question)
+        if (writing != null) {
+            // A written test's question reads as a practice question does: its topic, then the support text and what to write.
+            Text(writing.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            WritingQuestionBody(question.question.context, question.question.question)
+        } else {
+            ItemSupport(question.question)
+            QuestionTitle(question.question.question)
+        }
         AnswerInput(viewModel, run, question)
     }
 }

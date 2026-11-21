@@ -100,7 +100,7 @@
     <!-- Over a written answer's result, when an earlier send was graded before the learner changed the text. -->
     <string name="essay_graded_earlier_version">This grade is for the version you sent first. Your changes are kept: rewrite to continue from them.</string>
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
-    <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
+    <string name="essay_grading">Reading your answer against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
     <!-- While a new written question is written for the learner. -->
     <string name="essay_writing_question">Writing your question…</string>

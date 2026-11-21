@@ -38,7 +38,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatPercent
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.WrittenPartPoints
@@ -286,7 +285,7 @@ private fun WrittenTrend(written: WrittenPracticeSubjectsInner) {
                     last,
                     Modifier.sizeIn(minWidth = 64.dp),
                     textAlign = TextAlign.End,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                    style = MaterialTheme.zoonkType.data,
                 )
             }
         }

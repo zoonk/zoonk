@@ -42,7 +42,7 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.WritingPacing
 import com.zoonk.api.models.WritingPromptOutput
 
@@ -185,7 +185,7 @@ private fun WritingCriteriaList(writing: WritingPromptOutput) {
                 ) {
                     Text(criterion.name, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                     criterion.points?.let {
-                        Text(formatPoints(it, locale), style = MaterialTheme.typography.labelMedium.withTabularFigures())
+                        Text(formatPoints(it, locale), style = MaterialTheme.zoonkType.data)
                     }
                 }
             }

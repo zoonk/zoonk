@@ -27,6 +27,7 @@ import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import java.util.Locale
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -209,7 +210,7 @@ fun PointsValue(
         },
         modifier,
         color = if (measured) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-        style = if (measured) MaterialTheme.typography.labelMedium.withTabularFigures() else MaterialTheme.typography.bodySmall,
+        style = if (measured) MaterialTheme.zoonkType.data else MaterialTheme.typography.bodySmall,
     )
 }
 

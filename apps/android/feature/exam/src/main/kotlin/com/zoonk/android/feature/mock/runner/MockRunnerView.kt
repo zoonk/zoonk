@@ -89,6 +89,7 @@ import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamSectionsInner
 import kotlin.time.Duration.Companion.seconds
@@ -504,11 +505,17 @@ private fun HandInDialog(
                 ""
             }
         }
+    // An ENEM essay is an essay; any other written answer is a question, and only a written test's own questions go uncounted above.
+    val enem = run.view.essayRubric == MockExam.EssayRubric.ENEM
+    val blankEssays = counts.blankEssays
     val essays =
         when {
-            counts.blankEssays == 1 -> stringResource(R.string.mock_essay_blank)
-            counts.blankEssays > 1 -> pluralStringResource(R.plurals.mock_essays_blank, counts.blankEssays, counts.blankEssays)
-            else -> ""
+            blankEssays == 0 -> ""
+            enem && blankEssays == 1 -> stringResource(R.string.mock_essay_blank)
+            enem -> pluralStringResource(R.plurals.mock_essays_blank, blankEssays, blankEssays)
+            counts.total == counts.essays -> pluralStringResource(R.plurals.mock_left_blank_only, blankEssays, blankEssays)
+            blankEssays == 1 -> stringResource(R.string.mock_written_question_blank)
+            else -> pluralStringResource(R.plurals.mock_written_questions_blank, blankEssays, blankEssays)
         }
 
     AlertDialog(
