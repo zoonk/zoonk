@@ -96,12 +96,14 @@ export function WritingPromptWait({ run, unit }: { run: GenerationRun; unit?: Wr
   return unit === "drill" ? (
     <IndeterminateWait
       description={t("A short exercise on what you just learned. It opens here when it's ready.")}
+      failedTitle={t("We couldn't write your exercise")}
       run={run}
       title={t("Writing your exercise…")}
     />
   ) : (
     <IndeterminateWait
       description={t("A new question like the ones on your exam. It opens here when it's ready.")}
+      failedTitle={t("We couldn't write your question")}
       run={run}
       title={t("Writing your question…")}
     />

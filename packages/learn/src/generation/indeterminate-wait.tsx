@@ -16,23 +16,29 @@ import { type GenerationRun } from "./generation-run";
 export function IndeterminateWait({
   barHasMainAction,
   description,
+  failedTitle,
   run,
   title,
 }: {
   barHasMainAction?: boolean;
   description: string;
+  /** Said once the run stopped for good, so the title never claims work that isn't happening. */
+  failedTitle: string;
   run: GenerationRun;
   title: string;
 }) {
   const t = useExtracted();
   const failure = run.status === "failed" ? (run.failure ?? "generation") : null;
+  const stopped = failure !== null && failure !== "connection";
 
   return (
     <div className="flex flex-col gap-6" data-slot="indeterminate-wait">
       <div className="flex flex-col gap-3">
         {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
-        <GenerationTimelineTitle render={<h1 />}>{title}</GenerationTimelineTitle>
-        <GenerationTimelineDescription>{description}</GenerationTimelineDescription>
+        <GenerationTimelineTitle render={<h1 />}>
+          {stopped ? failedTitle : title}
+        </GenerationTimelineTitle>
+        {!stopped && <GenerationTimelineDescription>{description}</GenerationTimelineDescription>}
       </div>
 
       {failure ? (

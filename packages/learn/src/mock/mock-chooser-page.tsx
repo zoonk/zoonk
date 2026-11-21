@@ -173,6 +173,7 @@ export function MockWriting({
           description={t(
             "Questions like the ones on your exam. Your mock exam starts here when they're ready.",
           )}
+          failedTitle={t("We couldn't write your questions")}
           run={run}
           title={t("Writing your questions…")}
         />
