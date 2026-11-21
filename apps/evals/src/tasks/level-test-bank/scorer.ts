@@ -1,15 +1,14 @@
 import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
+import { type LevelTestQuestion } from "@zoonk/ai/tasks/language/level-test-bank";
 import {
-  type GenerateLevelTestBankSchema,
+  LEVEL_TEST_LEVELS,
   LEVEL_TEST_PASSAGE_WORDS,
-} from "@zoonk/ai/tasks/language/level-test-bank";
+  LEVEL_TEST_SKILLS,
+} from "@zoonk/ai/tasks/language/level-test-levels";
 import { LEVEL_TEST_BANK_SCORE_CATEGORIES } from "./score-categories";
 
-type LevelTestQuestion = GenerateLevelTestBankSchema["questions"][number];
-
-const TEST_LEVELS: LevelTestQuestion["level"][] = ["A1", "A2", "B1", "B2", "C1"];
-const SKILLS: LevelTestQuestion["skill"][] = ["reading", "listening"];
+type LevelTestBankQuestions = { questions: LevelTestQuestion[] };
 const OPTIONS_PER_QUESTION = 4;
 
 function countWords(text: string): number {
@@ -39,7 +38,7 @@ function getGroupProblems({
   level,
   skill,
 }: {
-  bank: GenerateLevelTestBankSchema;
+  bank: LevelTestBankQuestions;
   level: LevelTestQuestion["level"];
   skill: LevelTestQuestion["skill"];
 }): string[] {
@@ -53,21 +52,12 @@ function getGroupProblems({
   ];
 }
 
-function getSpeakingProblems(bank: GenerateLevelTestBankSchema): string[] {
-  return TEST_LEVELS.filter(
-    (level) =>
-      bank.speaking.filter((item) => item.level === level && item.sentence.trim()).length !== 1,
-  ).map((level) => `${level} doesn't have exactly one sentence to say.`);
-}
-
 export const checkLevelTestBank: TaskCodeChecks = ({ output }) => {
-  const bank = JSON.parse(output) as GenerateLevelTestBankSchema;
+  const bank = JSON.parse(output) as LevelTestBankQuestions;
 
-  const groups = TEST_LEVELS.flatMap((level) =>
-    SKILLS.map((skill) => getGroupProblems({ bank, level, skill })),
+  const parts = LEVEL_TEST_LEVELS.flatMap((level) =>
+    LEVEL_TEST_SKILLS.map((skill) => getGroupProblems({ bank, level, skill })),
   );
-
-  const parts = [...groups, getSpeakingProblems(bank)];
 
   return {
     judgedOutput: output,

@@ -93,6 +93,7 @@
     "./tasks/language/language-sentence-orders": "./src/tasks/language/language-sentence-orders.ts",
     "./tasks/language/alphabet-lesson": "./src/tasks/language/alphabet-lesson.ts",
     "./tasks/language/level-test-bank": "./src/tasks/language/level-test-bank.ts",
+    "./tasks/language/level-test-confirmations": "./src/tasks/language/level-test-confirmations.ts",
     "./tasks/language/level-test-levels": "./src/tasks/language/level-test-levels.ts",
     "./tasks/language/live-call-creation": "./src/tasks/language/live-call-creation.ts",
     "./tasks/language/live-call-provider": "./src/tasks/language/_utils/live-call-provider.ts",

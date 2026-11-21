@@ -5,7 +5,7 @@ import { taskResult } from "./recorded-outputs";
 
 type WrittenLevel = Awaited<ReturnType<typeof generateLevelTestBankLevel>>;
 
-/** Two reading and two listening questions keyed on their first option, all on "<passage> <level>". */
+/** Two reading and two listening questions keyed on their first option, and a select-all confirmation per skill, all on "<passage> <level>". */
 export function writtenLevel({
   level,
   passage,
@@ -14,6 +14,14 @@ export function writtenLevel({
   passage: string;
 }): WrittenLevel {
   return taskResult({
+    confirmations: (["reading", "listening"] as const).map((skill) => ({
+      answerIndices: [0, 1],
+      level,
+      options: ["a", "b", "c", "d", "e"],
+      passage: `${passage} ${level}`,
+      question: "O que é verdade?",
+      skill,
+    })),
     questions: (["reading", "listening"] as const).flatMap((skill) =>
       [0, 1].map(() => ({
         answerIndex: 0,
@@ -24,7 +32,6 @@ export function writtenLevel({
         skill,
       })),
     ),
-    speaking: { level, sentence: `Say ${level}`, translation: "Diga" },
   });
 }
 
