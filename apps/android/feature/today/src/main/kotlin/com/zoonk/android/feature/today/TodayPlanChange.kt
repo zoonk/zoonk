@@ -231,7 +231,7 @@ private fun FallingBehindNotice(
         },
     ) {
         SuggestionHeader(title)
-        PlanEffectDiff(change.effect, dateKind = today.goal.dateKind, summary = false)
+        PlanEffectDiff(change.effect, dateKind = today.goal.dateKind)
 
         if (result != null) {
             SuggestionResult(result)
