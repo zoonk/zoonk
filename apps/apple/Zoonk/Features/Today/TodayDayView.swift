@@ -275,7 +275,8 @@ struct TodayDayView: View {
 
   /// A proposal still waits for an answer, in the sheet its line opens.
   private var asksPlanChange: Bool {
-    store.shownPlanChange(in: view).map { $0.decision == nil } ?? false
+    store.shownPlanChange(in: view).map { $0.decision == nil && $0.change.status == "proposed" }
+      ?? false
   }
 
   @ViewBuilder

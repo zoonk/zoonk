@@ -576,13 +576,19 @@ final class OnboardingStore {
     }
   }
 
-  func finishLanguageTest(goalID: String, attemptID: String) async throws -> PlacementTestResult? {
-    try await cache.onboardingWrite(
+  func finishLanguageTest(goalID: String, attemptID: String?) async throws -> PlacementTestResult? {
+    let result = try await cache.onboardingWrite(
       invalidating: [.goals, .learnerModel, .learningProfile, .userProgress]
     ) { [api] identity in
       try await api.finishLanguageTest(
         goalID: goalID, attemptID: attemptID, token: identity.bearerToken)
     }
+
+    if attemptID == nil {
+      onboarding(goalID: goalID).invalidate()
+    }
+
+    return result
   }
 
   func levelTestOut(goalID: String, attemptID: String) async throws -> LevelTestOut {
@@ -616,16 +622,6 @@ final class OnboardingStore {
       try await api.finishLevelTestOut(
         goalID: goalID, attemptID: attemptID, token: identity.bearerToken)
     }
-  }
-
-  func finishLevelTest(goalID: String) async throws {
-    try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
-      [api] identity in
-      try await api.finishLevelTest(goalID: goalID, token: identity.bearerToken)
-    }
-
-    // The finish writes the tested level into the goal, which the plan so far shows beside the result.
-    onboarding(goalID: goalID).invalidate()
   }
 
   /// A goal made from a draft's card. A create the server answered changes the draft only if it made

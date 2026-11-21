@@ -144,7 +144,7 @@ enum PlanChangeWords {
   }
 
   /// What a test or a day's checks took out of the plan.
-  private static func skippedSentence(_ lessons: Int) -> String {
+  static func skippedSentence(_ lessons: Int) -> String {
     String(
       localized: "Skipped \(lessons) lessons you already know.", table: "Plan",
       comment: "One day's plan change: how many lessons the learner's answers took out of the plan")

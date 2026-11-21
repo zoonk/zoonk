@@ -207,6 +207,7 @@ private struct PlanContent: View {
   @State private var slotAnswer: PlanSlotAnswer?
   @State private var slotChecks = PlanSlotChecks()
   @State private var alphabetSkip = VisitRequest<Bool>()
+  @State private var testedOutUndo = VisitRequest<TestedOutUndo>()
   @State private var rebuildRetry = VisitRequest<Bool>()
   /// The new plan arrived while the learner watched; gone on the next visit.
   @State private var rebuildReady = false
@@ -265,6 +266,7 @@ private struct PlanContent: View {
 
             VStack(alignment: .leading, spacing: 32) {
               PlanNumbersSection(context: context, syllabus: syllabus, timeShownBeside: true)
+              testedOutChange
               PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
               PlanSettingsSection(context: context)
               PlanMoreSection(goal: goal)
@@ -278,6 +280,7 @@ private struct PlanContent: View {
           header(context, structure: structure)
           rebuildNotice
           PlanNumbersSection(context: context, syllabus: syllabus)
+          testedOutChange
           PlanSuggestionSection(context: context, answer: $slotAnswer)
           structureSections(context: context, structure: structure, namesChoices: true)
           // The plan's settings are main's wide side column; a phone reaches them from Adjust plan.
@@ -312,7 +315,35 @@ private struct PlanContent: View {
       slotAnswer = nil
       alphabetSkip.leave()
       rebuildRetry.leave()
+      testedOutUndo.leave()
       slotChecks.leave()
+    }
+  }
+
+  private struct TestedOutUndo {
+    let id: String
+    let restored: Bool
+  }
+
+  @ViewBuilder private var testedOutChange: some View {
+    if let change = plan.changes?.first(where: { $0.kind == "testedOut" }),
+      change.canUndo || change.status == "undone"
+    {
+      let outcome = testedOutUndo.outcome.flatMap { $0.id == change.id ? $0.restored : nil }
+
+      TestedOutChangeCard(
+        change: change, today: plan.today, isUndone: outcome == true,
+        isSaving: testedOutUndo.isRunning, failed: outcome == false
+      ) {
+        testedOutUndo.run {
+          switch await store.undo(goalId: goal.id, changeId: change.id) {
+          case .done(let saved): TestedOutUndo(id: change.id, restored: saved?.status == "undone")
+          case .failed: TestedOutUndo(id: change.id, restored: false)
+          case .obsolete: nil
+          }
+        }
+      }
+      .id(change.id)
     }
   }
 

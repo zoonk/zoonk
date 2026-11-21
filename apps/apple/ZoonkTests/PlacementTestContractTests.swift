@@ -54,9 +54,11 @@ final class PlacementTestContractTests: XCTestCase {
       #"""
       {"answered":4,"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba","level":"B2","next":null,
        "preparing":false,"total":4,
-       "result":{"finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":6,"topicsSkipped":[]}}
+       "result":{"changeId":"c367d72f-4d87-408a-ba10-6bbcddca31ba",
+                 "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":6,"topicsSkipped":[]}}
       """#, as: Components.Schemas.LanguageLevelTestOut.self, then: LevelTestOut.self)
 
+    XCTAssertEqual(testOut.result?.changeId, "c367d72f-4d87-408a-ba10-6bbcddca31ba")
     XCTAssertEqual(testOut.result?.lessonsSkipped, 6)
     XCTAssertEqual(testOut.result?.finishedAt, finishedAt)
   }

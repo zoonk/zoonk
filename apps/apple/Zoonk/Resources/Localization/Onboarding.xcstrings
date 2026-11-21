@@ -11017,6 +11017,9 @@
         }
       }
     },
+    "Part %lld" : {
+      "comment" : "Over a whole-course test's question: which of its parts this is"
+    },
     "Pass a certificate" : {
       "comment" : "A reason to learn a language",
       "localizations" : {
@@ -17321,6 +17324,10 @@
         }
       }
     },
+    "The lesson is back in your plan." : {
+    },
+    "The lessons are back in your plan." : {
+    },
     "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes." : {
       "comment" : "While the last edition of an exam's documents is read",
       "localizations" : {
@@ -18821,6 +18828,8 @@
           }
         }
       }
+    },
+    "Undo" : {
     },
     "until the exam" : {
       "comment" : "Under the days left before the exam on the plan's reveal",
@@ -22853,8 +22862,9 @@
         }
       }
     },
+    "You already know it. It stays in your practice." : {
+    },
     "You already know them. They stay in your practice." : {
-      "comment" : "Under how many lessons a test skipped"
     },
     "You can change all of this later." : {
       "comment" : "Under an understood goal",
@@ -22914,6 +22924,8 @@
           }
         }
       }
+    },
+    "You can finish the test from Plan." : {
     },
     "You can start with the basics of music today: reading notes, rhythm and training your ear." : {
       "comment" : "Why playing an instrument is a waitlist for now",

@@ -30,6 +30,8 @@ struct LevelRange: Decodable, Hashable, Sendable {
 /// The last finished test, which stays readable while another is open. A language course's also
 /// has each skill's range and the levels it skipped.
 struct PlacementTestResult: Decodable, Equatable, Sendable {
+  var attemptId: String?
+  var changeId: String?
   let finishedAt: Date
   let lessonsSkipped: Int
   var levelsSkipped: [String]?
@@ -44,6 +46,8 @@ struct PlacementTestResult: Decodable, Equatable, Sendable {
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
+    attemptId = try container.decodeIfPresent(String.self, forKey: .attemptId)
+    changeId = try container.decodeIfPresent(String.self, forKey: .changeId)
     finishedAt = try container.decode(Date.self, forKey: .finishedAt)
     lessonsSkipped = try container.decodeIfPresent(Int.self, forKey: .lessonsSkipped) ?? 0
     levelsSkipped = try container.decodeIfPresent([String].self, forKey: .levelsSkipped)
@@ -52,7 +56,7 @@ struct PlacementTestResult: Decodable, Equatable, Sendable {
   }
 
   private enum CodingKeys: String, CodingKey {
-    case finishedAt, lessonsSkipped, levelsSkipped, ranges, wholeCourseReady
+    case attemptId, changeId, finishedAt, lessonsSkipped, levelsSkipped, ranges, wholeCourseReady
   }
 
   struct SkillRange: Hashable, Sendable {

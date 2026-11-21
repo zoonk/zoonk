@@ -50,11 +50,14 @@ final class PlacementTestPhaseTests: XCTestCase {
 
   func testTheLastPartShowsTheWholeTestsResult() {
     let result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 40)
-    let end = PlacementPartEnd(attempt: nil, lessonsSkipped: 12, result: result)
+    let end = PlacementPartEnd(
+      attempt: nil, lessonsSkipped: 12, changeId: "change-2", result: result)
 
     XCTAssertEqual(
-      PlacementTestPhase(finished: end, length: .wholeCourse),
-      .result(length: .wholeCourse, lessonsSkipped: 40))
+      PlacementTestPhase(finished: end, length: .wholeCourse, attemptId: "a1"),
+      .result(
+        length: .wholeCourse, lessonsSkipped: 40, attemptId: "a1",
+        changeId: "change-2", changeLessons: 12))
   }
 
   private func attempt(part: Int = 1, partComplete: Bool = false) -> PlacementAttempt {

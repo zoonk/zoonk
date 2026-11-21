@@ -5,6 +5,7 @@ import Foundation
 struct PlacementPartEnd: Equatable, Sendable {
   let attempt: PlacementAttempt?
   let lessonsSkipped: Int
+  var changeId: String?
   let result: PlacementTestResult?
 }
 
@@ -17,6 +18,7 @@ enum PlacementPartOutcome: Equatable, Sendable {
 /// A language level's short test: a few questions at that level, in reading and listening.
 struct LevelTestOut: Decodable, Equatable, Sendable {
   struct Result: Decodable, Equatable, Sendable {
+    let changeId: String?
     let finishedAt: Date
     let lessonsSkipped: Int
   }
@@ -60,7 +62,8 @@ private struct PlacementPartBody: Encodable {
 
 private struct PlacementPartCompletion: Decodable {
   let attempt: PlacementAttempt?
-  let partLessonsSkipped: Int?
+  let changeId: String?
+  let lessonsSkipped: Int
   let result: PlacementTestResult?
 }
 
@@ -111,7 +114,8 @@ extension OnboardingAPI {
         try response.body.json, as: PlacementPartCompletion.self)
       return .finished(
         PlacementPartEnd(
-          attempt: completion.attempt, lessonsSkipped: completion.partLessonsSkipped ?? 0,
+          attempt: completion.attempt, lessonsSkipped: completion.lessonsSkipped,
+          changeId: completion.changeId,
           result: completion.result))
     case .conflict:
       return .stale
@@ -167,7 +171,7 @@ extension OnboardingAPI {
   {
     let output = try await clients.perform(token: token) { client in
       try await client.finishLanguageLevelTest(
-        path: .init(goalId: goalID), body: .json(.init(attemptId: attemptID)))
+        path: .init(goalId: goalID), body: attemptID.map { .json(.init(attemptId: $0)) })
     }
 
     switch output {

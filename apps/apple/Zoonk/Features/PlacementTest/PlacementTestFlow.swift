@@ -12,9 +12,13 @@ struct PlacementTestFlow: View {
   /// The topic the plan goes on with, read once a test is over.
   let nextTopic: () -> String?
   /// Goes back to the plan.
+  var initialPlacement: GoalPlacement?
+  var onOnboardingDone: ((String) async throws -> Void)?
   let onDone: () async throws -> Void
 
   @Environment(OnboardingStore.self) private var store
+  @Environment(PlanStore.self) private var plans
+  @State private var undoRequest = VisitRequest<Bool>()
   @State private var opening: Resource<GoalPlacement>?
   /// Where the learner's saves and the wait took the test; until then it shows the opening read.
   @State private var reached: PlacementTestPhase?
@@ -36,16 +40,22 @@ struct PlacementTestFlow: View {
         test(opening)
           .loads(opening, refreshable: false)
           .id(ObjectIdentifier(opening))
+      } else if let initialPlacement {
+        testContent
+          .onAppear {
+            if reached == nil {
+              reached = phase(for: initialPlacement)
+            }
+          }
       } else {
         StepLoading()
+          .onAppear { opening = store.openingPlacement(goalID: goalID) }
       }
     }
-    .onAppear {
-      if opening == nil {
-        opening = store.openingPlacement(goalID: goalID)
-      }
+    .onDisappear {
+      tasks.cancel()
+      undoRequest.leave()
     }
-    .onDisappear { tasks.cancel() }
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "placement-test-question", reportType: .saveFailure),
@@ -53,7 +63,11 @@ struct PlacementTestFlow: View {
   }
 
   private var phase: PlacementTestPhase {
-    reached ?? opening?.value.map(PlacementTestPhase.init) ?? .loading
+    reached ?? (initialPlacement ?? opening?.value).map { phase(for: $0) } ?? .loading
+  }
+
+  private func phase(for placement: GoalPlacement) -> PlacementTestPhase {
+    PlacementTestPhase(placement, onboarding: onOnboardingDone != nil)
   }
 
   @ViewBuilder
@@ -61,14 +75,18 @@ struct PlacementTestFlow: View {
     if reached == nil, case .failed(let error) = opening.state {
       PracticeLoadFailureView(error: error) { Task { await opening.refresh() } }
     } else {
-      WaitHold(
-        surface: .placementWait, isReady: !phase.isWaiting,
-        announcement: PlacementWaitScreen.questionsReady
-      ) { stage in
-        switch stage {
-        case .waiting(let holding): waiting(holding: holding)
-        case .ready: ready
-        }
+      testContent
+    }
+  }
+
+  private var testContent: some View {
+    WaitHold(
+      surface: .placementWait, isReady: !phase.isWaiting,
+      announcement: PlacementWaitScreen.questionsReady
+    ) { stage in
+      switch stage {
+      case .waiting(let holding): waiting(holding: holding)
+      case .ready: ready
       }
     }
   }
@@ -97,23 +115,45 @@ struct PlacementTestFlow: View {
       ) {
         save(.main) { try await close(attempt) }
       }
-    case .between(let attempt, let lessonsSkipped):
+    case .between(let attempt, let lessonsSkipped, let changeId):
+      let onboarding = onOnboardingDone != nil
+      let undo = undo(changeId: changeId, lessons: lessonsSkipped ?? 0)
       PlacementBetweenParts(
-        lessonsSkipped: lessonsSkipped, minutesLeft: attempt.estimatedMinutes, pressed: pressed,
-        failed: failed
-      ) {
-        save(.main) { try await start(attempt.length) }
-      } onFinishForToday: {
-        save(.other) { try await goOnUnlessLeft(onDone) }
-      }
-    case .result(let length, let lessonsSkipped):
+        lessonsSkipped: lessonsSkipped, minutesLeft: attempt.estimatedMinutes,
+        pressed: undoRequest.isRunning ? .other : pressed,
+        failed: failed,
+        onKeepGoing: {
+          save(.main) {
+            if let onOnboardingDone {
+              try await goOnUnlessLeft { try await onOnboardingDone(attempt.id) }
+            } else {
+              try await start(attempt.length)
+            }
+          }
+        }, undo: undo, onboarding: onboarding,
+        onFinishForToday: onboarding ? nil : { save(.other) { try await goOnUnlessLeft(onDone) } })
+    case .result(let length, let lessonsSkipped, let attemptId, let changeId, let changeLessons):
+      let undo = undo(changeId: changeId, lessons: changeLessons)
       PlacementTestResultView(
         length: length, lessonsSkipped: lessonsSkipped, nextTopic: nextTopic(),
-        isSaving: pressed != nil, failed: failed
+        isSaving: pressed != nil || undoRequest.isRunning, failed: failed,
+        undo: undo, onboarding: onOnboardingDone != nil
       ) {
-        save(.main) { try await goOnUnlessLeft(onDone) }
+        save(.main) {
+          if let onOnboardingDone, let attemptId {
+            try await goOnUnlessLeft { try await onOnboardingDone(attemptId) }
+          } else {
+            try await goOnUnlessLeft(onDone)
+          }
+        }
       }
     }
+  }
+
+  private func undo(changeId: String?, lessons: Int) -> PlacementResultUndo? {
+    PlacementResultUndo(
+      goalId: goalID, changeId: changeId, lessons: lessons, request: undoRequest,
+      plans: plans, disabled: pressed != nil)
   }
 
   private func question(_ asked: PlacementTestQuestion) -> some View {
@@ -155,7 +195,7 @@ struct PlacementTestFlow: View {
 
   /// A button's save: it spins, the other waits, and a save that fails stays on screen to try again.
   private func save(_ button: FocusTestPress, _ action: @escaping () async throws -> Void) {
-    guard pressed == nil, !isAnswering else {
+    guard pressed == nil, !isAnswering, !undoRequest.isRunning else {
       return
     }
 
@@ -181,7 +221,7 @@ struct PlacementTestFlow: View {
 
   /// A part that's over closes in the same save; if that fails, its screen holds the retry.
   private func show(_ placement: GoalPlacement) async throws {
-    let next = PlacementTestPhase(placement)
+    let next = phase(for: placement)
 
     guard case .partOver(let attempt) = next else {
       reached = next
@@ -200,9 +240,10 @@ struct PlacementTestFlow: View {
   private func close(_ attempt: PlacementAttempt) async throws {
     switch try await store.finishPlacementPart(goalID: goalID, attempt: attempt) {
     case .finished(let end):
-      reached = PlacementTestPhase(finished: end, length: attempt.length)
+      undoRequest.leave()
+      reached = PlacementTestPhase(finished: end, length: attempt.length, attemptId: attempt.id)
     case .stale:
-      reached = PlacementTestPhase(try await store.placement(goalID: goalID))
+      reached = phase(for: try await store.placement(goalID: goalID))
     }
   }
 

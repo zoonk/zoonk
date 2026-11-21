@@ -5,9 +5,11 @@ import SwiftUI
 struct PlacementStep: View {
   let view: GoalOnboarding
   let subject: String
-  let onDone: () async throws -> Void
+  let onDone: (String?) async throws -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(PlanStore.self) private var plans
+  @State private var topics: GoalPlacement?
   @State private var opening: Resource<GoalPlacement>?
   /// Where the learner's taps and the wait took the step; until then it shows the opening read.
   @State private var reached: Phase?
@@ -71,7 +73,15 @@ struct PlacementStep: View {
 
   var body: some View {
     Group {
-      if let opening {
+      if let placement = topics ?? opening?.value, placement.resumesOnboardingTopics {
+        PlacementTestFlow(
+          goalID: view.goal.id, subject: subject,
+          wholeCourseMinutes: wholeCourseMinutes, nextTopic: { nil },
+          initialPlacement: placement, onOnboardingDone: { try await onDone($0) }
+        ) {
+          try await onDone(nil)
+        }
+      } else if let opening {
         steps(opening)
           .loads(opening, refreshable: false)
       } else {
@@ -83,12 +93,17 @@ struct PlacementStep: View {
         opening = onboarding.openingPlacement(goalID: view.goal.id)
       }
     }
+    .loads(plan, refreshable: false)
     .onDisappear { tasks.cancel() }
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
       isReport: true)
   }
+
+  private var plan: Resource<PlanRead> { plans.plan(goalId: view.goal.id) }
+
+  private var wholeCourseMinutes: Int { plan.value?.plan.placementTest?.estimatedMinutes ?? 0 }
 
   private var phase: Phase {
     reached ?? opening?.value.map { $0.started ? Phase($0) : .intro } ?? .loading
@@ -159,28 +174,33 @@ struct PlacementStep: View {
   }
 
   private var intro: some View {
-    ZoonkList {
-      StepHeader(
-        subject: subject,
-        title: Text(
-          "Skip what you already know", tableName: "Onboarding",
-          comment: "Title of the short test's start"),
-        description: Text(
-          "A short test finds the lessons you don't need.", tableName: "Onboarding",
-          comment: "What the short test is"))
-    }
-    .bottomBar(note: finishFailed && !isSaving ? BarNote(testSaveFailure) : nil) {
-      StepButtons(
-        continueLabel: Text(
-          "Start", tableName: "Onboarding", comment: "Starts the short test's questions")
-      ) {
-        Task { await start() }
-      } onSkip: {
-        finish(fromScratch: true)
-      }
-    }
-    .onboardingColumn()
-    .environment(\.isSavingAnswer, isStarting || isSaving)
+    PlacementLengthChoice(
+      wholeCourseMinutes: wholeCourseMinutes, isSaving: isStarting || isSaving,
+      failed: finishFailed, onSkip: { finish(fromScratch: true) },
+      onStart: { choice in
+        guard !isStarting, !isSaving, case .length(let length) = choice else { return }
+
+        if length == .quick {
+          tasks.run { await start() }
+        } else {
+          isStarting = true
+          finishFailed = false
+
+          tasks.run {
+            defer { isStarting = false }
+
+            do {
+              let placement = try await onboarding.startPlacementTest(
+                goalID: view.goal.id, length: length)
+              guard placement.resumesOnboardingTopics else { throw APIError.unavailable }
+              topics = placement
+            } catch is CancellationError {
+            } catch {
+              finishFailed = true
+            }
+          }
+        }
+      })
   }
 
   private func waiting(holding: WaitHolding?) -> some View {
@@ -343,7 +363,7 @@ struct PlacementStep: View {
   /// Finishing is one save to the learner: it goes through once the step's save does too.
   private func finishAndGoOn(fromScratch: Bool) async throws {
     try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
-    try await goOnUnlessLeft(onDone)
+    try await goOnUnlessLeft { try await onDone(nil) }
   }
 }
 

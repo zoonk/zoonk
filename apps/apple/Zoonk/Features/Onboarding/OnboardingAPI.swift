@@ -890,21 +890,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  func finishLevelTest(goalID: String, token: String) async throws {
-    let output = try await clients.perform(token: token) { client in
-      try await client.finishLanguageLevelTest(path: .init(goalId: goalID))
-    }
-
-    switch output {
-    case .ok:
-      return
-    case .unauthorized:
-      throw APIError.unauthorized
-    default:
-      throw APIError.unavailable
-    }
-  }
-
   func prepareLessons(goalID: String, token: String) async throws {
     let output = try await clients.perform(token: token) { client in
       try await client.createGoalLessonPreparation(path: .init(goalId: goalID))
