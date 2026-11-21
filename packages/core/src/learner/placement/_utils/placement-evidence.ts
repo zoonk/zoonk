@@ -21,7 +21,7 @@ const ATTEMPT_EVIDENCE_SELECT = {
   id: true,
   isCorrect: true,
   isPlacement: true,
-  item: { select: { format: true } },
+  item: { select: { content: true, format: true } },
   itemId: true,
   localDate: true,
   mockExamId: true,
@@ -37,7 +37,7 @@ type AttemptRow = {
   durationMs: number;
   isCorrect: boolean;
   isPlacement: boolean;
-  item: { format: ItemFormat } | null;
+  item: { content: unknown; format: ItemFormat } | null;
   itemId: string | null;
   localDate: Date;
   mockExamId: string | null;
@@ -62,14 +62,13 @@ function toEvidence(attempt: AttemptRow): PlacementEvidence | null {
   }
 
   return {
+    content: attempt.item?.content,
     format: attempt.item?.format ?? "multipleChoice",
+    itemId: attempt.itemId,
+    localDate: attempt.localDate,
     outcome: getOutcome(attempt),
     skillId: attempt.skillId,
   };
-}
-
-function toEvidenceList(attempts: readonly AttemptRow[]): PlacementEvidence[] {
-  return attempts.map((attempt) => toEvidence(attempt)).filter((item) => item !== null);
 }
 
 export type TestSkillAnswers = {
@@ -173,10 +172,25 @@ export async function loadEvidence({
     ...testAnswers.filter((attempt) => !recentIds.has(attempt.id)),
   ].toSorted((a, b) => a.answeredAt.getTime() - b.answeredAt.getTime() || a.id.localeCompare(b.id));
 
+  const evidence: PlacementEvidence[] = [];
+  const placementAnswers: PlacementEvidence[] = [];
+
+  for (const attempt of chronological) {
+    const answer = toEvidence(attempt);
+
+    if (answer) {
+      evidence.push(answer);
+
+      if (isPlacementAnswer(attempt)) {
+        placementAnswers.push(answer);
+      }
+    }
+  }
+
   return {
     attempts: chronological,
-    evidence: toEvidenceList(chronological),
-    placementAnswers: toEvidenceList(chronological.filter((attempt) => isPlacementAnswer(attempt))),
+    evidence,
+    placementAnswers,
     seenItemIds: new Set(chronological.map((attempt) => attempt.itemId)),
     sittingOutcomes: sittingAnswers.toReversed().map((attempt) => getOutcome(attempt)),
     testSkills,
