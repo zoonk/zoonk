@@ -8,7 +8,9 @@ import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
 import { useFormatScore } from "../../essay/essay-labels";
 import { useWriteNow } from "../../learn-context";
-import { PointsMeter, PointsReadout, getMinimumShare } from "../../writing/points-readout";
+import { getMinimumPoints, getMinimumShare } from "../../writing/minimum-points";
+import { PointsMeter, PointsReadout } from "../../writing/points-readout";
+import { useWritingTaskName } from "../../writing/writing-header";
 import { useFormatPointsRange } from "../../writing/writing-labels";
 
 type Range = { high: number; low: number };
@@ -77,14 +79,46 @@ function ScoreRow({
   );
 }
 
+/** Each question's share of a part with several, so one measured question shows before the rest. */
+function TaskRows({ part }: { part: Part }) {
+  const t = useExtracted();
+  const formatRange = useFormatPointsRange();
+  const formatScore = useFormatScore();
+  const taskName = useWritingTaskName();
+
+  if (part.tasks.length < 2) {
+    return null;
+  }
+
+  return (
+    <ul className="flex flex-col gap-1">
+      {part.tasks.map((task) => (
+        <li className="flex items-baseline justify-between gap-4 text-xs" key={task.key}>
+          <span className="text-muted-foreground min-w-0">
+            {taskName({ task: task.writingTask, title: task.name })}
+          </span>
+          <span className="font-mono tabular-nums">
+            {task.range && task.max !== null
+              ? t("{range} of {max}", {
+                  max: formatScore(task.max),
+                  range: formatRange(task.range, { decimals: part.decimals ?? 0 }),
+                })
+              : t("Not measured yet")}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /** Said against the part's own minimum, never the objective's: 50 of 100 on the sum of its answers. */
 function Standing({ part }: { part: Part }) {
   const t = useExtracted();
   const formatScore = useFormatScore();
   const formatRange = useFormatPointsRange();
-  const minimum = part.minimum?.value;
+  const minimum = part.minimum && getMinimumPoints({ max: part.max, minimum: part.minimum });
 
-  if (minimum === undefined || !part.range || part.standing === "unmeasured" || !part.standing) {
+  if (minimum === null || !part.range || part.standing === "unmeasured" || !part.standing) {
     return null;
   }
 
@@ -125,24 +159,25 @@ function useHeadline(projection: WrittenProjection) {
   const formatScore = useFormatScore();
 
   const minimumDetail = ({
+    max,
     minimum,
-    part,
-  }: {
-    minimum: NonNullable<WrittenProjection["parts"][number]["minimum"]>;
-    part: string;
-  }) =>
-    minimum.unit === "percent"
-      ? t("{part} asks for {share} of its points, whatever your other scores.", {
-          part,
+    name,
+  }: Pick<Part, "max" | "name"> & { minimum: NonNullable<Part["minimum"]> }) => {
+    const points = getMinimumPoints({ max, minimum });
+
+    return points === null
+      ? t("{part} needs {share} of its points, whatever your other scores.", {
+          part: name,
           share: format.number(minimum.value / PERCENT, {
             maximumFractionDigits: 0,
             style: "percent",
           }),
         })
-      : t("{part} asks for {minimum} points, whatever your other scores.", {
-          minimum: formatScore(minimum.value),
-          part,
+      : t("{part} needs {minimum} points, whatever your other scores.", {
+          minimum: formatScore(points),
+          part: name,
         });
+  };
 
   const below = projection.parts.find(({ standing }) => standing === "below");
 
@@ -154,7 +189,7 @@ function useHeadline(projection: WrittenProjection) {
   // A part's name comes from the notice, so it opens a sentence rather than sitting inside one.
   if (below) {
     return {
-      detail: below.minimum && minimumDetail({ minimum: below.minimum, part: below.name }),
+      detail: below.minimum && minimumDetail({ ...below, minimum: below.minimum }),
       title: t("Below the minimum to pass"),
     };
   }
@@ -183,7 +218,7 @@ function useHeadline(projection: WrittenProjection) {
   };
 }
 
-function WriteAction({ goalId }: { goalId: string }) {
+function WriteAction({ goalId, taskKey }: { goalId: string; taskKey?: string }) {
   const t = useExtracted();
   const writeNow = useWriteNow();
   const [busy, setBusy] = useState(false);
@@ -198,7 +233,7 @@ function WriteAction({ goalId }: { goalId: string }) {
       className="w-full"
       onClick={async () => {
         setBusy(true);
-        const opened = await writeNow({ goalId });
+        const opened = await writeNow({ goalId, taskKey });
 
         if (!opened) {
           setBusy(false);
@@ -227,6 +262,10 @@ export function WrittenProjectionScore({
   const t = useExtracted();
   const headline = useHeadline(projection);
   const needsWriting = projection.parts.some((part) => !part.range || part.standing === "below");
+
+  const unmeasuredTask = projection.parts
+    .flatMap(({ tasks }) => tasks)
+    .find(({ range }) => range === null);
 
   return (
     <section className="flex flex-col gap-3" data-slot="written-projection">
@@ -261,12 +300,13 @@ export function WrittenProjectionScore({
             name={part.name}
             range={part.range}
           >
+            {getPartScale(part) === "points" && <TaskRows part={part} />}
             <Standing part={part} />
           </ScoreRow>
         ))}
       </div>
 
-      {needsWriting && <WriteAction goalId={goalId} />}
+      {needsWriting && <WriteAction goalId={goalId} taskKey={unmeasuredTask?.key} />}
     </section>
   );
 }

@@ -1,6 +1,9 @@
 "use client";
 
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
+import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 
@@ -18,7 +21,39 @@ export function useChoiceLine() {
     });
 }
 
-/** Today asks the exam's open choices ("which one will you take?"), so a written task waiting for one leads there. */
+/** The sentence under a written task that waits for an exam choice, naming the task when others don't wait. */
+export function useChoiceSentence() {
+  const t = useExtracted();
+  const format = useFormatter();
+  const choiceLine = useChoiceLine();
+
+  return ({ choiceGroups, task }: { choiceGroups: readonly string[]; task?: string }) =>
+    task
+      ? t({
+          description:
+            'Under a written test where one question waits for an exam choice the learner hasn\'t made. {task} is the question, such as "The 60-line question"; {groups} names the choices.',
+          message: "{task} depends on your choice of {groups}",
+          values: { groups: format.list(choiceGroups, { type: "conjunction" }), task },
+        })
+      : choiceLine(choiceGroups);
+}
+
+/** Today asks the exam's open choices ("which one will you take?"): the way there, as a bar's main action. */
+export function ChooseOnTodayLink() {
+  const t = useExtracted();
+  const routes = useLearnRoutes();
+
+  return (
+    <EnterLink className={DETAIL_PRIMARY_CLASS} href={routes.today} size="lg">
+      {t("Choose on Today")}
+    </EnterLink>
+  );
+}
+
+/**
+ * A note over a bar whose main action still works: which task waits for a choice, and the way to
+ * Today's question as a small button beside it.
+ */
 export function ChooseOnToday({
   choiceGroups,
   task,
@@ -28,31 +63,17 @@ export function ChooseOnToday({
   task?: string;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
   const routes = useLearnRoutes();
-  const choiceLine = useChoiceLine();
-
-  const line = task
-    ? t({
-        description:
-          'Under a written test where one question waits for an exam choice the learner hasn\'t made. {task} is the question, such as "The 60-line question"; {groups} names the choices.',
-        message: "{task} depends on your choice of {groups}",
-        values: { groups: format.list(choiceGroups, { type: "conjunction" }), task },
-      })
-    : choiceLine(choiceGroups);
+  const sentence = useChoiceSentence();
 
   return (
-    <p
-      className="text-muted-foreground flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-pretty"
-      role="status"
-    >
-      <span>{line}</span>
-      <LearnLink
-        className="text-foreground font-medium underline underline-offset-4"
-        href={routes.today}
-      >
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 lg:justify-end" role="status">
+      <p className="text-muted-foreground text-sm text-pretty">
+        {sentence({ choiceGroups, task })}
+      </p>
+      <LearnLink className={buttonVariants({ size: "sm", variant: "outline" })} href={routes.today}>
         {t("Choose on Today")}
       </LearnLink>
-    </p>
+    </div>
   );
 }

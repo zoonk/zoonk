@@ -4,12 +4,8 @@ import { useExtracted, useFormatter } from "next-intl";
 import { PageSection } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useFormatScore } from "../essay/essay-labels";
-import {
-  MinimumLegend,
-  PointsMeter,
-  PointsReadout,
-  getMinimumShare,
-} from "../writing/points-readout";
+import { getMinimumShare } from "../writing/minimum-points";
+import { MinimumLegend, PointsMeter, PointsReadout } from "../writing/points-readout";
 import { useWritingTaskName } from "../writing/writing-header";
 import { useFormatPointsRange } from "../writing/writing-labels";
 import { type WrittenSubject } from "./subject-written-score";

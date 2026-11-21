@@ -52,10 +52,10 @@ export function fixedDecimals(decimals: number) {
 
 /**
  * A range of points, one number when both ends round alike ("29.8", never "29.79–29.8"), and both
- * ends with the same decimals ("12.0–17.5", never "12–17.5"): the scale's own (`decimals`) when the
- * server sends them, else what the values need. A deduction carries its minus on each end, the
- * smaller first: "−0.3 to −0.6". A `headline` rounds its low end down and its high end up, so it
- * never claims more than its parts.
+ * ends with the scale's decimals ("12.0–17.5", never "12–17.5"), which the server sends with it; a
+ * scale it sends none for is whole points. A deduction carries its minus on each end, the smaller
+ * first: "−0.3 to −0.6". A `headline` rounds its low end down and its high end up, so it never
+ * claims more than its parts.
  */
 export function useFormatPointsRange() {
   const format = useFormatter();
@@ -64,14 +64,11 @@ export function useFormatPointsRange() {
   return (
     { high, low }: Range,
     {
-      decimals: scaleDecimals,
+      decimals = 0,
       deduction = false,
       headline = false,
-    }: { decimals?: number; deduction?: boolean; headline?: boolean } = {},
+    }: { decimals: number | undefined; deduction?: boolean; headline?: boolean },
   ): string => {
-    const decimals =
-      scaleDecimals ?? ([low, high].some((value) => Math.round(value * 10) % 10 !== 0) ? 1 : 0);
-
     const options = fixedDecimals(decimals);
 
     const end = (value: number) => {
