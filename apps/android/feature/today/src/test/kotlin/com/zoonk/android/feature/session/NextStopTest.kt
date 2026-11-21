@@ -6,6 +6,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -37,6 +40,7 @@ import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -49,6 +53,8 @@ import java.util.UUID
 class NextStopTest {
     @get:Rule
     val rule = createComposeRule()
+
+    private lateinit var inputMode: InputModeManager
 
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val signIn = FakeSession(ana)
@@ -115,6 +121,7 @@ class NextStopTest {
 
         rule.setContent {
             ZoonkTheme {
+                inputMode = LocalInputModeManager.current
                 key(drawn) {
                     NextStop(
                         viewModel = viewModel,
@@ -146,6 +153,7 @@ class NextStopTest {
     @Test
     fun aLessonWrittenWhileTheLearnerWaitedIsOfferedNotOpened() {
         show()
+        rule.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
         writeTheLesson()
 
         assertEquals(0, api.targets.size)

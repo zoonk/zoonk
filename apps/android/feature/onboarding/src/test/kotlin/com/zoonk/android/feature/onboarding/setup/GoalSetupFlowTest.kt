@@ -96,7 +96,8 @@ class GoalSetupFlowTest {
         to: String,
     ) {
         rule.onNodeWithContentDescription("Time a day, $from").performScrollTo().performClick()
-        rule.onNodeWithText(to).performClick()
+        rule.onNodeWithText(to).performScrollTo().assertIsDisplayed().performClick()
+        rule.onNodeWithContentDescription("Time a day, $to").assertExists()
         // A new time asks the plan once the picks settle.
         rule.mainClock.advanceTimeBy(1_000)
     }
