@@ -1,13 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { getSuggestedTime } from "./suggested-time";
 
-const AT_FOUR_HOURS = { coreFits: false, coveredShare: 0.3214 };
+const AT_FOUR_HOURS = { coreFits: false, coveredShare: 0.3214, reachedShare: 0.607 };
 
 describe(getSuggestedTime, () => {
   it("suggests the time that covers everything, up to four hours a day", () => {
     expect(
       getSuggestedTime({ coverageAt: () => AT_FOUR_HOURS, everything: 240, most: null }),
-    ).toStrictEqual({ coveredShare: 1, everyTopic: true, kind: "everything", minutes: 240 });
+    ).toStrictEqual({
+      coveredShare: 1,
+      everyTopic: true,
+      kind: "everything",
+      minutes: 240,
+      reachedShare: 1,
+    });
   });
 
   it.each([805, null])(
@@ -29,6 +35,7 @@ describe(getSuggestedTime, () => {
         everyTopic: false,
         kind: "focus",
         minutes: 240,
+        reachedShare: 0.61,
       });
 
       expect(asked).toStrictEqual([240]);
@@ -37,7 +44,7 @@ describe(getSuggestedTime, () => {
 
   it("suggests the least time that covers as much as any does when part never fits", () => {
     const suggested = getSuggestedTime({
-      coverageAt: () => ({ coreFits: true, coveredShare: 0.99 }),
+      coverageAt: () => ({ coreFits: true, coveredShare: 0.99, reachedShare: 1 }),
       everything: null,
       most: { coveredShare: 0.99, minutes: 180 },
     });
@@ -47,18 +54,22 @@ describe(getSuggestedTime, () => {
       everyTopic: true,
       kind: "focus",
       minutes: 180,
+      reachedShare: 1,
     });
   });
 
-  it("never shows a suggestion that falls short as covering everything", () => {
-    expect(
-      getSuggestedTime({
-        coverageAt: () => ({ coreFits: true, coveredShare: 0.996 }),
-        everything: 300,
-        most: null,
-      }),
-    ).toMatchObject({ coveredShare: 0.99, kind: "focus", minutes: 240 });
-  });
+  it.each([0.996, 1])(
+    "never shows a focus with depth coverage %f as everything",
+    (coveredShare) => {
+      expect(
+        getSuggestedTime({
+          coverageAt: () => ({ coreFits: true, coveredShare, reachedShare: 1 }),
+          everything: 300,
+          most: null,
+        }),
+      ).toMatchObject({ coveredShare: 0.99, kind: "focus", minutes: 240 });
+    },
+  );
 
   it("keeps to four hours when covering the most possible takes longer", () => {
     expect(

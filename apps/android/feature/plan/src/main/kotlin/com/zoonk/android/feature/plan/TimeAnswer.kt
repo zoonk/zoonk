@@ -2,7 +2,6 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +26,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatPercent
-import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.format.spaceAfterSentence
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
@@ -46,9 +44,9 @@ data class DaySplit(
 )
 
 /**
- * Main's `TimeAnswer`, shared by onboarding's time question and the Plan's time a day: what
- * covering everything takes, what the time shown covers, and the other time to use, in one polite
- * live region. While [updating], the last answer stays in place, dimmed, and is read as busy.
+ * Main's `TimeAnswer`, shared by onboarding's time question and the Plan's time a day: what the
+ * time shown covers, what covering everything takes, and the time that covers it to use, in one
+ * polite live region. While [updating], the last answer stays in place, dimmed, and is read as busy.
  */
 @Composable
 fun TimeAnswer(
@@ -56,17 +54,15 @@ fun TimeAnswer(
     exam: Boolean,
     line: TimeLine,
     minutes: Int?,
-    note: FullTimeNote?,
-    offer: TimeOffer?,
+    takes: EverythingTakes?,
+    offer: Int?,
     onRetry: () -> Unit,
     onUseOffer: (Int) -> Unit,
     modifier: Modifier = Modifier,
     finding: Boolean = false,
-    offerAsButton: Boolean = false,
     split: DaySplit? = null,
     updating: Boolean = false,
     today: LocalDate = LocalDate.now(),
-    action: (@Composable () -> Unit)? = null,
     aim: String? = null,
 ) {
     val failed = line == TimeLine.AskFailed || line == TimeLine.FindFailed
@@ -75,76 +71,51 @@ fun TimeAnswer(
     val busyWords = stringResource(R.string.plan_working_out_coverage)
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val style = MaterialTheme.typography.bodyMedium
-    val noteWords = noteWords(date, note, today)
     val lineWords = lineWords(date, exam, line, minutes, today, aim)
-    val tooLong = stringResource(R.string.plan_time_too_long).takeIf { note == FullTimeNote.TooLong }
-    val shared = split?.let { splitWords(it) }
-
-    Column(modifier.heightIn(min = 48.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(
-            Modifier
-                .alpha(if (updating) UPDATING_ALPHA else 1f)
-                .semantics {
-                    liveRegion = LiveRegionMode.Polite
-                    if (busy) stateDescription = busyWords
-                },
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            noteWords?.let { Text(it, color = muted, style = style) }
-            Text(
-                buildAnnotatedString {
-                    append(lineWords)
-                    tooLong?.let { append(spaceAfterSentence(lineWords.text) + it) }
-                    shared?.let { append(spaceAfterSentence(tooLong ?: lineWords.text) + it) }
-                },
-                color = muted,
-                style = style,
-            )
-            when {
-                failed -> {
-                    TextButton(onClick = onRetry, edge = ButtonEdge.Start) {
-                        Text(stringResource(R.string.plan_try_again))
-                    }
-                }
-
-                offered != null && offerAsButton -> {
-                    OutlinedButton(onClick = { onUseOffer(offered.minutes) }) { Text(offerLabel(offered)) }
-                }
-
-                offered != null -> {
-                    TextButton(
-                        onClick = { onUseOffer(offered.minutes) },
-                        edge = ButtonEdge.Start,
-                    ) {
-                        Text(offerLabel(offered))
-                    }
-                }
+    // The sentence above already names the date, so "not enough time" doesn't repeat it.
+    val takesWords =
+        date?.takeUnless { line is TimeLine.Everything || (line is TimeLine.Share && line.reachedShare == null) }?.let { shown ->
+            takes?.let {
+                if (it.full == null) stringResource(R.string.plan_time_none_by_then) else everythingTakesText(shown, it.full, today)
             }
         }
-        action?.invoke()
+    val shared = split?.let { splitWords(it) }
+
+    Column(
+        modifier
+            .alpha(if (updating) UPDATING_ALPHA else 1f)
+            .semantics {
+                liveRegion = LiveRegionMode.Polite
+                if (busy) stateDescription = busyWords
+            },
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            buildAnnotatedString {
+                append(lineWords)
+                shared?.let { append(spaceAfterSentence(lineWords.text) + it) }
+            },
+            color = muted,
+            style = style,
+        )
+        takesWords?.let { Text(it, color = muted, style = style) }
+        when {
+            failed -> {
+                TextButton(onClick = onRetry, edge = ButtonEdge.Start) {
+                    Text(stringResource(R.string.plan_try_again))
+                }
+            }
+
+            offered != null -> {
+                OutlinedButton(onClick = { onUseOffer(offered) }) { Text(offerLabel(offered)) }
+            }
+        }
     }
 }
 
 @Composable
-private fun noteWords(
-    date: GoalDate?,
-    note: FullTimeNote?,
-    today: LocalDate,
-): String? {
-    if (date == null || note !is FullTimeNote.Takes) return null
-    val takes = everythingTakesText(date, note.full, today)
-    return if (note.moreDays) joinSentences(takes, stringResource(R.string.plan_time_more_days)) else takes
-}
-
-@Composable
-private fun offerLabel(offer: TimeOffer): String {
-    val time = formatMinutes(offer.minutes, currentLocale())
-    return when (offer.kind) {
-        OfferKind.Everything -> stringResource(R.string.plan_time_use_to_cover_everything, time)
-        OfferKind.Focus -> stringResource(R.string.plan_time_use_suggested, time)
-        OfferKind.Full -> stringResource(R.string.plan_use_time, time)
-    }
-}
+private fun offerLabel(minutes: Int): String =
+    stringResource(R.string.plan_use_to_cover_everything, formatMinutes(minutes, currentLocale()))
 
 @Composable
 private fun splitWords(split: DaySplit): String {
@@ -179,43 +150,43 @@ internal fun everythingTakesText(
         }
 
         else -> {
-            stringResource(
-                R.string.plan_time_takes_most,
-                formatPercent(full.coveredShare, locale),
-                formatMinutes(full.minutes, locale),
-            )
+            stringResource(R.string.plan_time_covers_most_any_time, formatMinutes(full.minutes, locale))
         }
     }
 }
 
+/**
+ * Main's share line under a time picker that doesn't cover everything: the share of the goal whose first lessons it
+ * reaches, standing out, or that it reaches every topic.
+ */
 @Composable
-internal fun shareText(
+private fun reachedWords(
     date: GoalDate,
     exam: Boolean,
-    share: Double,
-    today: LocalDate,
-): String =
-    stringResource(
-        when {
-            exam && date.namedMonth -> R.string.plan_time_share_exam_month
-            exam -> R.string.plan_time_share_exam
-            date.namedMonth -> R.string.plan_time_share_goal_month
-            else -> R.string.plan_time_share_goal
-        },
-        formatPercent(share, currentLocale()),
-        goalDateText(date, today),
-    )
-
-/** Main's share line under a time picker, its share standing out. */
-@Composable
-private fun shareWords(
-    date: GoalDate,
-    exam: Boolean,
-    share: Double,
+    reachedShare: Double,
     today: LocalDate,
 ): AnnotatedString {
-    val text = shareText(date, exam, share, today)
-    val percent = formatPercent(share, currentLocale())
+    val shown = goalDateText(date, today)
+    val month = date.namedMonth
+    if (reachedShare >= 1) {
+        val words =
+            when {
+                exam && month -> R.string.plan_time_first_lessons_every_exam_topic_month
+                exam -> R.string.plan_time_first_lessons_every_exam_topic
+                month -> R.string.plan_time_first_lessons_every_goal_part_month
+                else -> R.string.plan_time_first_lessons_every_goal_part
+            }
+        return AnnotatedString(stringResource(words, shown))
+    }
+    val percent = formatPercent(reachedShare, currentLocale())
+    val words =
+        when {
+            exam && month -> R.string.plan_time_first_lessons_share_exam_month
+            exam -> R.string.plan_time_first_lessons_share_exam
+            month -> R.string.plan_time_first_lessons_share_goal_month
+            else -> R.string.plan_time_first_lessons_share_goal
+        }
+    val text = stringResource(words, percent, shown)
     val start = text.indexOf(percent)
 
     return buildAnnotatedString {
@@ -229,13 +200,17 @@ private fun shareWords(
 internal fun timeCoversText(
     exam: Boolean,
     minutes: Int,
-    share: Double,
+    reachedShare: Double,
 ): String {
     val locale = currentLocale()
+    val time = formatMinutes(minutes, locale)
+    if (reachedShare >= 1) {
+        return stringResource(if (exam) R.string.plan_time_covers_every_exam_topic else R.string.plan_time_covers_every_goal_part, time)
+    }
     return stringResource(
-        if (exam) R.string.plan_time_covers_share_exam else R.string.plan_time_covers_share_goal,
-        formatMinutes(minutes, locale),
-        formatPercent(share, locale),
+        if (exam) R.string.plan_time_covers_first_lessons_exam else R.string.plan_time_covers_first_lessons_goal,
+        time,
+        formatPercent(reachedShare, locale),
     )
 }
 
@@ -257,10 +232,8 @@ private fun lineWords(
                 val month = date.namedMonth
                 stringResource(
                     when {
-                        line.suggested && exam && month -> R.string.plan_time_takes_exam_all_month
-                        line.suggested && exam -> R.string.plan_time_takes_exam_all
-                        line.suggested && month -> R.string.plan_time_takes_goal_all_month
-                        line.suggested -> R.string.plan_time_takes_goal_all
+                        !line.whole && month -> R.string.plan_time_covers_plan_all_month
+                        !line.whole -> R.string.plan_time_covers_plan_all
                         exam && month -> R.string.plan_time_covers_exam_all_month
                         exam -> R.string.plan_time_covers_exam_all
                         month -> R.string.plan_time_covers_goal_all_month
@@ -270,14 +243,10 @@ private fun lineWords(
                 )
             }
 
-            is TimeLine.Focus -> {
-                date ?: return AnnotatedString("")
-                return shareWords(date, exam, line.coveredShare, today)
-            }
-
             is TimeLine.Share -> {
-                date ?: return AnnotatedString("")
-                return shareWords(date, exam, line.share, today)
+                val reached = line.reachedShare
+                if (date == null || reached == null) return AnnotatedString("")
+                return reachedWords(date, exam, reached, today)
             }
 
             TimeLine.PastDate -> {

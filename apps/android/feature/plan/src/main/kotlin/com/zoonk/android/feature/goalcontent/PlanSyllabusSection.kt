@@ -271,7 +271,7 @@ internal fun planOutsideReason(reason: String?): String =
             "pastBasics" -> R.string.plan_outside_past_basics
             "skippedBase" -> R.string.plan_outside_skipped_base
             "missing" -> R.string.today_coming_not_written
-            "time" -> R.string.plan_outside_time
+            "time" -> R.string.plan_outside_others_first
             else -> R.string.plan_not_in_your_plan
         },
     )

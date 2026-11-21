@@ -21,16 +21,11 @@ export function usePlanCoverage() {
   const { plan } = usePlanScreen();
   const { feasibility } = plan;
 
-  if (!feasibility?.deadline || feasibility.fits) {
+  if (!feasibility?.deadline || feasibility.fits || feasibility.reachedShare === null) {
     return null;
   }
 
-  return {
-    coreFits: feasibility.coreFits,
-    coveredShare: feasibility.coveredShare,
-    deepensMostAsked: feasibility.deepensMostAsked,
-    measure: feasibility.measure,
-  };
+  return { measure: feasibility.measure, reachedShare: feasibility.reachedShare };
 }
 
 export function useTimeEnough(): boolean {
@@ -47,12 +42,12 @@ export function useCoveredText() {
   const { plan } = usePlanScreen();
   const { dailyMinutes } = plan.schedule;
 
-  return ({ coveredShare, measure }: Pick<Coverage, "coveredShare" | "measure">): string =>
-    coveredShare < MIN_SHOWN_SHARE
+  return ({ measure, reachedShare }: Coverage): string =>
+    reachedShare < MIN_SHOWN_SHARE
       ? t("{time} a day isn't enough time to cover your goal.", {
           time: formatDuration(dailyMinutes),
         })
-      : texts.timeCovers({ exam: measure === "exam", minutes: dailyMinutes, value: coveredShare });
+      : texts.timeCovers({ exam: measure === "exam", minutes: dailyMinutes, value: reachedShare });
 }
 
 export function useCanMoveDate(): boolean {

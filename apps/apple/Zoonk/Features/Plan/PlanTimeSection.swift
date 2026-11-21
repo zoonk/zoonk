@@ -33,7 +33,7 @@ struct PlanTimeSection: View {
             plan.schedule.dailyTimes, with: current, marked.suggested, marked.full),
           id: \.self
         ) { minutes in
-          Text(TimeAnswer.choiceLabel(minutes, suggested: marked.suggested))
+          Text(TimeAnswer.choiceLabel(minutes, marked: marked))
             .tag(minutes)
         }
       } label: {
@@ -66,7 +66,8 @@ struct PlanTimeSection: View {
       let line = ScheduleTime.line(
         advice: TimeAdvice(
           coveredShare: feasibility.fits ? 1 : feasibility.coveredShare, endDate: nil,
-          focusSubjects: nil, fullCourseEndDate: nil, readingNotice: false, ready: true),
+          fullCourseEndDate: nil, readingNotice: false, ready: true,
+          reachedShare: feasibility.reachedShare),
         askFailed: false, dated: true, findFailed: false, found: found, hasDays: true,
         minutes: minutes)
 
@@ -81,43 +82,14 @@ struct PlanTimeSection: View {
           covers
             .foregroundStyle(.mutedForeground)
         } else {
-          let offer = ScheduleTime.offer(found: found, line: line, minutes: minutes)
-          let awaitsOffer =
-            offer == nil && !line.coversEverything
-            && [.idle, .loading].contains(time.freshState)
-
-          // Short of everything, a time that covers more is offered once it's worked out. Its room,
-          // the tallest any offer's words take here, is held for the visit, so nothing under it
-          // moves when the offer comes, nor when none does.
-          HeldSlot(gated: awaitsOffer) {
-            VStack(alignment: .leading, spacing: 8) {
-              TimeAnswer(
-                date: TimeAnswer.GoalDate(
-                  isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
-                exam: goal.kind == .exam, line: line, minutes: minutes, offer: offer
-              ) {
-                Task { await time.refresh() }
-              } onUseOffer: { minutes in
-                editor.run { await setMinutes(minutes) }
-              }
-
-              if awaitsOffer {
-                ZStack(alignment: .topLeading) {
-                  ForEach([ScheduleTime.Offer.Kind.everything, .more, .suggested], id: \.self) {
-                    kind in
-                    Button {
-                    } label: {
-                      TimeAnswer.offerLabel(
-                        ScheduleTime.Offer(kind: kind, minutes: longestOfferMinutes(minutes)))
-                    }
-                  }
-                }
-                .buttonStyle(.outline)
-                .controlSize(.small)
-                .hidden()
-                .accessibilityHidden(true)
-              }
-            }
+          TimeAnswer(
+            date: TimeAnswer.GoalDate(
+              isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
+            exam: goal.kind == .exam, found: found, line: line, minutes: minutes
+          ) {
+            Task { await time.refresh() }
+          } onUseOffer: { minutes in
+            editor.run { await setMinutes(minutes) }
           }
         }
       }
@@ -166,12 +138,6 @@ struct PlanTimeSection: View {
     }
     .buttonStyle(.outline)
     .controlSize(.small)
-  }
-
-  private func longestOfferMinutes(_ current: Int) -> Int {
-    (plan.schedule.dailyTimes + [current]).max {
-      planDurationText(minutes: Double($0)).count < planDurationText(minutes: Double($1)).count
-    } ?? current
   }
 
   private func setMinutes(_ minutes: Int) async {
@@ -269,8 +235,7 @@ func planCoversEverythingText(_ plan: GoalPlan) -> Text? {
         "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'")
 }
 
-/// Main's `useCoveredText`: how much of the goal its time covers by its date. Nil when it covers
-/// everything.
+/// Main's `useCoveredText`: what the goal's time reaches by its date. Nil when it covers everything.
 func planCoverageText(_ plan: GoalPlan) -> String? {
   guard let feasibility = plan.feasibility, feasibility.deadline != nil, !feasibility.fits else {
     return nil
@@ -278,7 +243,11 @@ func planCoverageText(_ plan: GoalPlan) -> String? {
 
   let schedule = plan.schedule
 
-  guard feasibility.coveredShare >= 0.005, schedule.targetDate != nil else {
+  guard let reached = feasibility.reachedShare else {
+    return nil
+  }
+
+  guard reached >= 0.005, schedule.targetDate != nil else {
     let time = planDurationText(minutes: Double(schedule.dailyMinutes))
 
     return String(
@@ -287,6 +256,6 @@ func planCoverageText(_ plan: GoalPlan) -> String? {
   }
 
   return planCoverageLine(
-    minutes: schedule.dailyMinutes, share: feasibility.coveredShare,
+    minutes: schedule.dailyMinutes, share: reached,
     exam: feasibility.measure == "exam")
 }

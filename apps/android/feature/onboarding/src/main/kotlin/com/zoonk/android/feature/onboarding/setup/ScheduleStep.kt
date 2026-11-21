@@ -23,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,7 +42,7 @@ import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.GoalDate
 import com.zoonk.android.feature.plan.TimeAnswer
 import com.zoonk.android.feature.plan.TimeLine
-import com.zoonk.android.feature.plan.fullTimeNote
+import com.zoonk.android.feature.plan.everythingTakesNote
 import com.zoonk.android.feature.plan.lineAdvice
 import com.zoonk.android.feature.plan.markedTimes
 import com.zoonk.android.feature.plan.timeLine
@@ -60,7 +59,6 @@ import com.zoonk.android.ui.components.missingDays
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
@@ -309,46 +307,6 @@ private fun ColumnScope.ScheduleTime(
                 full = marked.full,
                 stale = stale,
             )
-            TimeAnswer(
-                date = date,
-                exam = exam,
-                line = shown.line,
-                aim =
-                    LocalSetupAim.current.aim?.let { selected ->
-                        selected.aim?.value?.takeIf { value ->
-                            selected.choices.any {
-                                it.aim.value ==
-                                    value
-                            }
-                        }
-                    },
-                minutes = minutes,
-                note = fullTimeNote(shown.found, shown.line, studiesEveryDay = days.size == EVERY_DAY.size),
-                offer = timeOffer(shown.found, shown.line, minutes),
-                onRetry = if (findFailed) covering.restart else timeAdvice.restart,
-                onUseOffer = { choose(it, found) },
-                split =
-                    (
-                        daySplit(
-                            minutes,
-                            timeChoices,
-                            answers,
-                        ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
-                    ).takeIf { hasDays },
-                updating = shown.updating,
-                action = {
-                    Column {
-                        FocusLine(lastAdvice, updating = shown.updating)
-                        DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate)
-                    }
-                },
-            )
-        }
-
-        val short = shown.line is TimeLine.Share || shown.line is TimeLine.Focus
-        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
-            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
-            FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -366,26 +324,50 @@ private fun ColumnScope.ScheduleTime(
         }
 
         ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
+
+        DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate)
+
+        // It shows only under a time that doesn't cover everything, so it comes after every other input: showing it
+        // moves only the answer under it.
+        val short = shown.line is TimeLine.Share
+        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
+            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
+            FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
+        }
+
+        // What the time and days get changes length as they change, so it comes last, with nothing to tap under it.
+        TimeAnswer(
+            date = date,
+            exam = exam,
+            line = shown.line,
+            aim =
+                LocalSetupAim.current.aim?.let { selected ->
+                    selected.aim?.value?.takeIf { value ->
+                        selected.choices.any {
+                            it.aim.value ==
+                                value
+                        }
+                    }
+                },
+            minutes = minutes,
+            takes = everythingTakesNote(shown.found),
+            offer = timeOffer(shown.found, shown.line, minutes),
+            onRetry = if (findFailed) covering.restart else timeAdvice.restart,
+            onUseOffer = { choose(it, found) },
+            split =
+                (
+                    daySplit(
+                        minutes,
+                        timeChoices,
+                        answers,
+                    ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
+                ).takeIf { hasDays },
+            updating = shown.updating,
+        )
     }
 }
 
-/** Where a time that doesn't cover everything should go, for a learner whose Focus test has answers. */
-@Composable
-private fun FocusLine(
-    advice: PlanTimeAdvice?,
-    updating: Boolean,
-) {
-    val subjects = advice?.focusSubjects.orEmpty().map { it.shortName ?: it.name }
-    if (subjects.isEmpty()) return
-    Text(
-        stringResource(R.string.focustest_schedule_focus, formatList(subjects, currentLocale())),
-        modifier = Modifier.alpha(if (updating) UPDATING_ALPHA else 1f),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-/** Under the time's answer, its words lined up with the answer's. */
+/** Its words lined up with the column's, as the other inputs' labels are. */
 @Composable
 private fun DateLink(
     dated: Boolean,
@@ -485,5 +467,3 @@ private fun SwitchRow(
         Switch(checked = checked, onCheckedChange = null)
     }
 }
-
-private const val UPDATING_ALPHA = 0.5f

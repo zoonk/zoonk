@@ -228,18 +228,18 @@ struct TimeAdvice: PlanAnswer, Decodable {
   let coveredShare: Double?
   /// When a goal without a date finishes at this time; nil when the time can't hold it all.
   let endDate: String?
-  /// The subjects this time would give more of it, from the learner's Focus test answers.
-  let focusSubjects: [FocusTest.SubjectLabel]?
   /// For an exam studying everything: when everything ends at this time, once the plan holds it.
   let fullCourseEndDate: String?
   let readingNotice: Bool
   let ready: Bool
+  /// The share whose topics get at least their first lessons by the date: 1 when every topic is in.
+  /// Nil for a plan with nothing to cover by.
+  let reachedShare: Double?
 }
 
 /// When part of the goal never fits, whatever the time: the fewest minutes that cover as much as any
-/// time does, and that share.
+/// time does.
 struct MostCoverage: Decodable, Equatable, Sendable {
-  let coveredShare: Double
   let minutes: Int
 }
 
@@ -251,10 +251,11 @@ struct TimeToCover: PlanAnswer, Decodable {
       case focus
     }
 
-    let coveredShare: Double
-    let everyTopic: Bool
     let kind: Kind
     let minutes: Int
+    /// The share whose topics get at least their first lessons by the date: 1 when every topic is in.
+    /// Nil from a plan that hasn't measured it.
+    let reachedShare: Double?
     let split: DaySplit?
   }
 

@@ -68,7 +68,8 @@
     <string name="focustest_answer_more">Answer more questions</string>
     <!-- The test asks before changing a plan the learner already has. -->
     <string name="focustest_proposal_title">Give these subjects more time?</string>
-    <string name="focustest_proposal_description">Your time can\'t cover everything before your exam.</string>
+    <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
+    <string name="focustest_proposal_picked">Picked from your answers and how much your exam asks about each.</string>
     <string name="focustest_update_plan">Update my plan</string>
     <string name="focustest_proposal_applied">Your plan now gives these subjects more time.</string>
     <string name="focustest_proposal_declined">Your plan stays as it was.</string>
@@ -92,8 +93,6 @@
     <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
     <string name="focustest_paused_in_sessions">Paused in your sessions</string>
     <string name="focustest_take_test">Take the Focus test</string>
-    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
-    <string name="focustest_schedule_focus">With this time, we suggest giving %1$s more attention.</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">The Focus test shows what to study most.</string>
     <!-- %1$s is a duration, such as "15 min". -->

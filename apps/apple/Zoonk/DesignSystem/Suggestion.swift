@@ -79,6 +79,8 @@ struct SuggestionOpen<Content: View, Actions: View>: View {
   var note: BarNote?
   /// What opening it leads to, where "View" would say less, such as the exam card's.
   var label: Text?
+  /// Runs once the sheet is gone, so a choice made in it can open another sheet.
+  var onDismiss: (() -> Void)?
   @ViewBuilder let content: Content
   @ViewBuilder let actions: Actions
 
@@ -90,7 +92,7 @@ struct SuggestionOpen<Content: View, Actions: View>: View {
     SuggestionViewButton(label: label) {
       shown.wrappedValue = true
     }
-    .sheet(isPresented: shown) {
+    .sheet(isPresented: shown, onDismiss: onDismiss) {
       SuggestionSheet {
         SuggestionSheetBody(note: note) {
           content

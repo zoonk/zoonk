@@ -175,7 +175,7 @@ describe(getShownAnswer, () => {
       updating: false,
     });
 
-    const now = { found: foundTime(), line: { kind: "everything", suggested: true } } as const;
+    const now = { found: foundTime(), line: { kind: "everything", whole: true } } as const;
     expect(getShownAnswer({ last: settled, now })).toStrictEqual({ ...now, updating: false });
   });
 });

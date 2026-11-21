@@ -4,9 +4,9 @@
   "today_add_to_today": "cf9aaa52af17e96e19f1414baa8c5ab873b63f8c4e4c79ea030790ac6ba6a6de",
   "today_adjust_your_plan": "8a6b992de436036fc19ec91a785f56af5137b64a428372b8de48f2e29dd7a070",
   "today_already_know_chapter": "089829427d3604f0b73e4161674f5440b2be2629f30c37dab6aa3bfb5bed6e20",
-  "today_behind_exam": "3ba95d0c8360fa3b7fc9b5b7a59a7550751bed34eb348db421e452046d91b426",
-  "today_behind_goal": "72a476760dc037a2c6723c77c0255eb39298c3d830599eae7698a37e9e1d6276",
   "today_behind_kept": "9d49be3330e01372b1b4758ac6c489a379da6e58601159107043a34520958f93",
+  "today_behind_lessons_exam": "7c769d9f898a655fb3ea1b2c24087870e02518888bd87ca2890030b67876e925",
+  "today_behind_lessons_goal": "54ec2a38dbab1e46f691017d56b54eab26346fce3c1139b5f305441b777745d2",
   "today_building_plan_detail": "6e6b5dd647843e95ddcaf5c2f3727266eb5d3bbf3d2d8a52e3cb26ae820a08c5",
   "today_building_plan_goal": "2d40df567720f45a951a4b06e1292cfc3190ee3cc05ad2c9f7a19a5e212a728f",
   "today_choose_focus": "e149028297c8a18a4ae7355e053c19cf0282209f704cd1072c12b4cc9a12db70",
@@ -313,8 +313,8 @@
     <string name="today_plan_keep_mine">Kendi planımı koru</string>
     <string name="today_next_suggestion">Sonraki öneriye geç</string>
     <string name="today_notice_falling_behind">Plan değişikliği</string>
-    <string name="today_behind_exam">Günde %1$s ile artık sınavın %2$s kadarı planına sığıyor; önceden %3$s kadarı sığıyordu.</string>
-    <string name="today_behind_goal">Günde %1$s ile artık hedefinin %2$s kadarı planına sığıyor; önceden %3$s kadarı sığıyordu.</string>
+    <string name="today_behind_lessons_exam">Sınavına kadar bazı derslere artık zaman yetmiyor.</string>
+    <string name="today_behind_lessons_goal">Hedef tarihine kadar bazı derslere artık zaman yetmiyor.</string>
     <string name="today_more_time_a_day">Süre ekle</string>
     <string name="today_choose_focus">Neye odaklanacağını seç</string>
     <string name="today_study_everything">Bitiş tarihini kaldır</string>

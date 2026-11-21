@@ -974,9 +974,9 @@ func planOutsideReason(_ reason: String?) -> Text {
     Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
   case "time":
     Text(
-      "Not in your plan\u{00A0}· your time doesn't cover it", tableName: "Plan",
+      "Not in your plan\u{00A0}· other topics come first", tableName: "Plan",
       comment:
-        "Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it."
+        "Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as \"Not in your plan · you took this subject out\"."
     )
   default:
     Text("Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")

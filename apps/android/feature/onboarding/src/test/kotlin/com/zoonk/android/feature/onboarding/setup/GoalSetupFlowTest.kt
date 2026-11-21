@@ -399,7 +399,7 @@ class GoalSetupFlowTest {
         rule.onNodeWithText("Try again").performScrollTo().performClick()
         rule.waitForIdle()
 
-        rule.onNodeWithText("Covers about 60% of your exam topics", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Covers the first lessons of about 60% of your exam", substring = true).performScrollTo().assertIsDisplayed()
     }
 
     @Test

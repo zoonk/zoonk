@@ -3,17 +3,21 @@ import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/tim
 export type TimeLine =
   | { kind: "asking" }
   | { kind: "askFailed" }
-  | { kind: "everything" }
+  /** `whole` is false when the learner took part of the goal out, so everything is what they kept. */
+  | { kind: "everything"; whole: boolean }
   | { kind: "findFailed" }
   | { kind: "finish"; endDate: string }
-  | { coveredShare: number; kind: "focus" }
   | { kind: "noDays" }
   | { kind: "noFinish" }
   | { kind: "pastDate" }
-  | { kind: "share"; share: number }
+  /**
+   * `share` is what the time reaches: 1 when every topic is in, though not everything. Null when the
+   * answer doesn't say.
+   */
+  | { kind: "share"; share: number | null }
   | { kind: "working" };
 
-export type LineAdvice = Pick<PlanTimeAdvice, "coveredShare" | "endDate">;
+export type LineAdvice = Pick<PlanTimeAdvice, "coveredShare" | "endDate" | "reachedShare">;
 
 const BUSY_LINES = new Set<TimeLine["kind"]>(["asking", "working"]);
 
@@ -25,20 +29,20 @@ export function getSuggestedMinutes(found: PlanTimeToCover | null): number | nul
   return found?.suggested?.minutes ?? null;
 }
 
-export type FullTime = { coveredShare: number; everything: boolean; minutes: number };
+export type FullTime = { everything: boolean; minutes: number };
 
 /**
  * The time that covers the most: what covers everything, or as much as any time does when part
  * never fits. More time than this buys more practice, not more coverage.
  */
-export function getFullTime(found: PlanTimeToCover | null): FullTime | null {
+function getFullTime(found: PlanTimeToCover | null): FullTime | null {
   const minutes = found?.recommendedMinutes ?? null;
 
   if (minutes !== null) {
-    return { coveredShare: 1, everything: true, minutes };
+    return { everything: true, minutes };
   }
 
-  return found?.most ? { ...found.most, everything: false } : null;
+  return found?.most ? { everything: false, minutes: found.most.minutes } : null;
 }
 
 export function getMarkedTimes(found: PlanTimeToCover | null): {
@@ -52,26 +56,16 @@ export function getMarkedTimes(found: PlanTimeToCover | null): {
 }
 
 /**
- * Beside a focus suggestion, the longer time that covers more: what covers everything, as much as
- * any time does, or null when no day covers everything. Undefined when there's none to mention.
+ * On a focus suggestion, what covering everything takes: a time that covers it, as much as any time
+ * covers, or null when no time covers everything by the date. Undefined when there's none to say.
  */
-export function getLongerTime(found: PlanTimeToCover | null): FullTime | null | undefined {
-  const suggested = found?.suggested;
-
-  if (!suggested || suggested.kind !== "focus") {
-    return undefined;
-  }
-
-  const full = getFullTime(found);
-  return full && full.minutes <= suggested.minutes ? undefined : full;
+export function getEverythingTakes(found: PlanTimeToCover | null): FullTime | null | undefined {
+  return found?.suggested?.kind === "focus" ? getFullTime(found) : undefined;
 }
 
-/** `more`: the longest useful time where part of the goal never fits, whatever the time. */
-export type TimeOffer = { kind: "everything" | "more" | "suggested"; minutes: number };
-
 /**
- * The suggestion while another time is shown, unless that time covers everything anyway; on a
- * focus suggestion, the longest useful time.
+ * The time that covers everything, offered while a shorter time is shown, only when that time is
+ * the suggestion (so a realistic one). Null otherwise.
  */
 export function getOffer({
   found,
@@ -81,24 +75,19 @@ export function getOffer({
   found: PlanTimeToCover | null;
   line: TimeLine;
   minutes: number | null;
-}): TimeOffer | null {
-  const suggested = found?.suggested ?? null;
+}): number | null {
+  const suggested = found?.suggested;
 
-  if (!suggested) {
-    return null;
-  }
-
-  if (suggested.minutes !== minutes) {
-    const covered = suggested.kind === "everything" && line.kind === "everything";
-    const kind = suggested.kind === "everything" ? "everything" : "suggested";
-    return covered ? null : { kind, minutes: suggested.minutes };
-  }
-
-  const full = getFullTime(found);
-
-  return suggested.kind === "focus" && full && full.minutes > suggested.minutes
-    ? { kind: full.everything ? "everything" : "more", minutes: full.minutes }
+  return suggested?.kind === "everything" &&
+    suggested.minutes !== minutes &&
+    line.kind !== "everything"
+    ? suggested.minutes
     : null;
+}
+
+/** A share of 1 or none says nothing was taken out; any other means the learner took part out. */
+function getEverythingLine(reachedShare: number | null): TimeLine {
+  return { kind: "everything", whole: reachedShare === null || reachedShare >= 1 };
 }
 
 function getDatedLine({
@@ -122,13 +111,14 @@ function getDatedLine({
 
   if (suggested?.minutes === minutes) {
     return suggested.kind === "everything"
-      ? { kind: "everything" }
-      : { coveredShare: suggested.coveredShare, kind: "focus" };
+      ? getEverythingLine(suggested.reachedShare)
+      : { kind: "share", share: suggested.reachedShare };
   }
 
   if (advice) {
-    const share = advice.coveredShare ?? 0;
-    return share >= 1 ? { kind: "everything" } : { kind: "share", share };
+    return (advice.coveredShare ?? 0) >= 1
+      ? getEverythingLine(advice.reachedShare)
+      : { kind: "share", share: advice.reachedShare };
   }
 
   if (!found) {

@@ -64,8 +64,11 @@ struct FocusTestCheckpoint: View {
           "Give these subjects more time?", tableName: "FocusTest",
           comment: "Title of the focus the Focus test proposes for a plan already there"),
         description: Text(
-          "Your time can't cover everything before your exam.", tableName: "FocusTest",
-          comment: "Why the Focus test proposes giving some subjects more time"))
+          "Picked from your answers and how much your exam asks about each.",
+          tableName: "FocusTest",
+          comment:
+            "How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has."
+        ))
 
       focusList
 

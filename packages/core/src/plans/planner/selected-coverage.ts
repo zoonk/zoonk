@@ -1,8 +1,9 @@
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
-import { hasEveryTopic } from "./feasibility-topics";
-import { getAreaFoundationIds, getSkillArea } from "./graph-areas";
+import { getSkillValue, measureDepth, measureReach } from "./coverage-measures";
+import { readTopicMembership } from "./feasibility-topics";
+import { getHarderStartSkillIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
@@ -33,6 +34,10 @@ function getExamWorth({
   return worth.some(([, value]) => value > 0) ? new Map(worth) : null;
 }
 
+function worthIn(worth: ReadonlyMap<string, number> | null, skill: ScopedSkill): number {
+  return worth ? (worth.get(skill.skillId) ?? 0) : skill.weight;
+}
+
 function listScope({
   examSubjects,
   input,
@@ -40,38 +45,36 @@ function listScope({
   examSubjects: readonly ExamSubjectShare[] | null;
   input: BuildPlanInput;
 }) {
-  const missed = input.missedSkillIds ?? new Set<string>();
   const skippedAreas = new Set(input.settings.skippedAreas);
 
   const choices = getBaseChoices({ bases: input.bases ?? [], choices: getKeptBaseChoices(input) });
 
-  const pastBasics = getAreaFoundationIds({
-    areas: new Set(input.settings.pastBasicsAreas),
-    graph: input.graph,
-    prerequisites: input.prerequisites,
-  });
+  const pastBasics = getHarderStartSkillIds(input);
 
-  const skills = input.graph.skills
+  const whole = input.graph.skills
     .map((skill) => ({
       area: getSkillArea({ graph: input.graph, skill }),
       skillId: skill.skillId,
       weight: skill.weight ?? 1,
     }))
-    .filter(
-      (skill) =>
-        !skippedAreas.has(skill.area) &&
-        choices.get(skill.skillId) !== "skip" &&
-        (!pastBasics.has(skill.skillId) || missed.has(skill.skillId)),
-    );
+    .filter((skill) => choices.get(skill.skillId) !== "skip" && !pastBasics.has(skill.skillId));
 
+  const skills = whole.filter((skill) => !skippedAreas.has(skill.area));
   const examWorth = examSubjects ? getExamWorth({ examSubjects, skills }) : null;
+
+  const wholeWorth =
+    examSubjects && examWorth ? getExamWorth({ examSubjects, skills: whole }) : null;
 
   return {
     measure: examWorth ? ("exam" as const) : ("goal" as const),
     skills: skills.map((skill) => ({
       skillId: skill.skillId,
-      worth: examWorth ? (examWorth.get(skill.skillId) ?? 0) : skill.weight,
+      wholeWorth: worthIn(wholeWorth, skill),
+      worth: worthIn(examWorth, skill),
     })),
+    takenOutWorth: whole
+      .filter((skill) => skippedAreas.has(skill.area))
+      .reduce((sum, skill) => sum + worthIn(wholeWorth, skill), 0),
   };
 }
 
@@ -218,14 +221,6 @@ export function getWholeShortfall({
   return [...lessonsLeft.values()].reduce((sum, minutes) => sum + minutes, standInsLeft);
 }
 
-export function getSkillValue(skill: SelectedSkill): number {
-  if (skill.state === "settled") {
-    return 1;
-  }
-
-  return skill.state === "unknown" ? 0 : Math.min(1, skill.coveredRaw / skill.requiredRaw);
-}
-
 export function getCoverage({
   built,
   deadline,
@@ -250,7 +245,15 @@ export function getCoverage({
   const lessons = listCoveredLessons({ built, deadline, raw });
   const standIns = listCoveredStandIns({ built, deadline });
 
-  const skills = scope.skills.map(({ skillId, worth }) => {
+  const isInPlan = readTopicMembership({
+    items: built.items.filter(
+      (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
+    ),
+    known: settled,
+    skills: input.graph.skills,
+  });
+
+  const measured = scope.skills.map(({ skillId, wholeWorth, worth }) => {
     const required = requirement.get(skillId);
     const lessonMinutes = [...(required?.lessons.values() ?? [])].reduce((a, b) => a + b, 0);
     const requiredRaw = lessonMinutes + (required?.standIn ?? 0);
@@ -260,45 +263,42 @@ export function getCoverage({
       Math.min(required?.standIn ?? 0, standIns.get(skillId) ?? 0);
 
     if (settled.has(skillId)) {
-      return { coveredRaw: requiredRaw, requiredRaw, skillId, state: "settled" as const, worth };
+      return {
+        coveredRaw: requiredRaw,
+        reached: true,
+        requiredRaw,
+        skillId,
+        state: "settled" as const,
+        wholeWorth,
+        worth,
+      };
     }
 
-    return {
+    const skill = {
       coveredRaw: Math.min(requiredRaw, coveredRaw),
       requiredRaw,
       skillId,
       state: requiredRaw > PLAN_EPSILON ? ("measured" as const) : ("unknown" as const),
       worth,
     };
+
+    return { ...skill, reached: isInPlan(skillId) || getSkillValue(skill) > 0, wholeWorth };
   });
 
-  const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
-  const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
+  const skills = measured.map(({ reached: _reached, wholeWorth: _wholeWorth, ...skill }) => skill);
 
-  const coreFits = hasEveryTopic({
-    built: {
-      ...built,
-      items: built.items.filter(
-        (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
-      ),
-    },
-    known: input.knownSkillIds ?? new Set(),
-    skills: input.graph.skills,
+  const { coreFits, reachedShare } = measureReach({
+    skills: measured,
+    takenOutWorth: scope.takenOutWorth,
   });
-
-  const whole = skills.every(
-    (skill) =>
-      skill.state === "settled" ||
-      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
-  );
 
   return {
     basis: "selected",
     coreFits,
-    coveredShare: total > 0 ? Math.min(1, Math.max(0, covered / total)) : null,
+    ...measureDepth({ coreFits, skills }),
     deadline,
-    fits: coreFits && total > 0 && whole,
     measure: scope.measure,
+    reachedShare,
     shortLessons: listShortLessons({ built, covered: lessons, requirement, skills }),
     skills,
     targetDate,

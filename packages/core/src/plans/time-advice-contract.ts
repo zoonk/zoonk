@@ -69,6 +69,16 @@ const suggestedTimeSchema = z
           "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, which doesn't cover everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything",
       }),
     minutes: z.int(),
+    reachedShare: z
+      .number()
+      .min(0)
+      .max(1)
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "Share whose topics these minutes reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null from a server that doesn't measure it.",
+      }),
     split: daySplitSchema.meta({
       description:
         "How these minutes split among the goals typed together, as saving the schedule splits them. Null for a goal typed alone, or when asked without studyDays",
@@ -125,6 +135,16 @@ export const planTimeAdviceSchema = z
       .describe(
         "The prospective actual schedule for the selected dailyMinutes and study week, studying everything when fullCourse is asked. Its coverage equals coveredShare; null while not ready.",
       ),
+    reachedShare: z
+      .number()
+      .min(0)
+      .max(1)
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "Share whose topics the requested time and study week reach by the date, including topics the learner already knows. Measured in whole percents using the same weights as coveredShare, over the whole exam or goal: a subject the learner took out counts as not reached. Always 1 when every topic of the exam or goal is reached, and at most 0.99 otherwise. Null without a date, while not ready, or from a server that doesn't measure it.",
+      }),
     readingNotice: readingNoticeSchema,
     ready: readySchema,
     targetDate: isoDateSchema.nullable().meta({ description: "The goal's date" }),

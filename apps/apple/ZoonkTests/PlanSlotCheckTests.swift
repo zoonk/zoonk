@@ -70,7 +70,7 @@ final class PlanSlotCheckTests: XCTestCase {
     let api = PlanAPIStub()
     await api.setSuggested(
       TimeToCover.Suggested(
-        coveredShare: 1, everyTopic: true, kind: .everything, minutes: 60, split: nil))
+        kind: .everything, minutes: 60, reachedShare: 1, split: nil))
     await api.setPreview(
       PlanChangePreview(
         effect: try fitOffer().effect, feasibility: nil, finishDate: nil, ready: true,

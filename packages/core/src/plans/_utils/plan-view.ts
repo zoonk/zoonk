@@ -245,6 +245,7 @@ export async function buildPlanView({
   });
 
   const fitOffer = status?.kind === "pastDate" ? null : (summary?.advice.fitOffer ?? null);
+  const feasibility = readSavedFeasibility({ skippedAreas: state.settings.skippedAreas, summary });
 
   return {
     access,
@@ -266,7 +267,7 @@ export async function buildPlanView({
     estimate: buildEstimateView({ context }),
     examChoices,
     examDocument: getExamDocument(goal),
-    feasibility: readSavedFeasibility(summary),
+    feasibility,
     fitOffer: fitOffer && {
       ...foldChangeAreas({ change: fitOffer, partAreas }),
       canApply: fresh !== null,
@@ -278,7 +279,7 @@ export async function buildPlanView({
         ? toLanguageAimView({ details: goal.details, targetLanguage: goal.targetLanguage })
         : null,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
-    numbers: summary ? buildSavedPlanNumbersView(context) : null,
+    numbers: summary ? buildSavedPlanNumbersView({ context, coverage: feasibility }) : null,
     ownLevel: getOwnLevel({ goal }),
     phases: buildPlanPath({
       access,

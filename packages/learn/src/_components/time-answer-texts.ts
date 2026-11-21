@@ -12,29 +12,40 @@ export function useTimeAnswerTexts() {
   const formatShare = useFormatShare();
   const goalDate = useGoalDateValues();
 
-  /** For a card with no picker above it, where nothing else says how long everything takes. */
-  const everythingTakes = ({ date, full }: { date: GoalDate; full: FullTime | null }) => {
+  /**
+   * What covering everything takes, said as a fact beside a suggestion that doesn't cover it.
+   * Without `date`, for a sentence above that already names it.
+   */
+  const everythingTakes = ({ date, full }: { date?: GoalDate; full: FullTime | null }) => {
     if (!full) {
-      return t({
-        description:
-          'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-        message:
-          "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}",
-        values: goalDate(date),
-      });
+      return date
+        ? t({
+            description:
+              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
+            message:
+              "{dateKind, select, month {There isn't enough time to cover everything by {date}.} other {There isn't enough time to cover everything by {date}.}}",
+            values: goalDate(date),
+          })
+        : t({
+            description:
+              "Under a sentence that already names the goal's date: the same words as \"There isn't enough time to cover everything by {date}.\" without the date.",
+            message: "There isn't enough time to cover everything.",
+          });
     }
 
     const time = formatDuration(full.minutes);
 
     return full.everything
       ? t("Covering everything takes about {time} a day.", { time })
-      : t("The most you can cover is about {share}, at {time} a day.", {
-          share: formatShare(full.coveredShare),
-          time,
+      : t({
+          description:
+            "When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more.",
+          message: "{time} a day covers as much as any time can.",
+          values: { time },
         });
   };
 
-  /** The same fact where no picker shows the time. */
+  /** What the time reaches, where no picker shows it: the first lessons of every topic or of a share. */
   const timeCovers = ({
     exam,
     minutes,
@@ -44,11 +55,24 @@ export function useTimeAnswerTexts() {
     minutes: number;
     value: number;
   }) => {
-    const values = { share: formatShare(value), time: formatDuration(minutes) };
+    const time = formatDuration(minutes);
+
+    if (value >= 1) {
+      return exam
+        ? t("{time} a day covers the first lessons of every exam topic", { time })
+        : t("{time} a day covers the first lessons of every part of your goal", { time });
+    }
+
+    const values = { share: formatShare(value), time };
 
     return exam
-      ? t("{time} a day covers about {share} of your exam topics", values)
-      : t("{time} a day covers about {share} of your goal", values);
+      ? t({
+          description:
+            "{share} is a share of the whole exam, by how much it asks, not a share of its topics.",
+          message: "{time} a day covers the first lessons of about {share} of your exam",
+          values,
+        })
+      : t("{time} a day covers the first lessons of about {share} of your goal", values);
   };
 
   return {

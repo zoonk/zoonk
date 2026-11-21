@@ -9,7 +9,7 @@ import {
   SuggestionLinkAction,
 } from "../_components/suggestion";
 import { useTimeAnswerTexts } from "../_components/time-answer";
-import { getLongerTime } from "../_utils/time-answer";
+import { getEverythingTakes } from "../_utils/time-answer";
 import { useSharedMark, useSharedState } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
@@ -98,13 +98,13 @@ function useCardLines({
   const failed = intent === "date" ? t("We couldn't check what changes.") : texts.failed;
   const retryText = state.status === "building" ? texts.building : failed;
 
-  const longer = getLongerTime(found);
+  const full = getEverythingTakes(found);
 
   const none =
-    found?.targetDate && longer !== undefined && !offer && !flags.noDate
+    found?.targetDate && full !== undefined && !offer && !flags.noDate
       ? answerTexts.everythingTakes({
           date: { isoDate: found.targetDate, namedMonth: found.targetDateNamedMonth },
-          full: longer,
+          full,
         })
       : null;
 

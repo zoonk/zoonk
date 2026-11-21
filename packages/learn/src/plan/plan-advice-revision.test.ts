@@ -13,6 +13,7 @@ function searchedPlan(planId: string) {
       deepensMostAsked: false,
       fits: false,
       measure: "goal" as const,
+      reachedShare: 1,
       timeCovers: false,
     },
     planId,

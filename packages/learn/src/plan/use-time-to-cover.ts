@@ -2,30 +2,26 @@
 
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useExtracted } from "next-intl";
-import { type FullTime, getFullTime } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { requestWithin } from "./request-within";
 
 export type TimeToCoverAnswer =
   | { kind: "covers"; minutes: number }
-  | { coveredShare: number; full: FullTime | null; kind: "focus"; minutes: number }
+  | { kind: "focus"; minutes: number; reachedShare: number }
   | { kind: "none" };
 
 export function readTimeToCover(time: PlanTimeToCover): TimeToCoverAnswer {
   const { suggested } = time;
 
-  if (!suggested) {
+  if (suggested?.kind === "everything") {
+    return { kind: "covers", minutes: suggested.minutes };
+  }
+
+  if (!suggested || suggested.reachedShare === null) {
     return { kind: "none" };
   }
 
-  return suggested.kind === "everything"
-    ? { kind: "covers", minutes: suggested.minutes }
-    : {
-        coveredShare: suggested.coveredShare,
-        full: getFullTime(time),
-        kind: "focus",
-        minutes: suggested.minutes,
-      };
+  return { kind: "focus", minutes: suggested.minutes, reachedShare: suggested.reachedShare };
 }
 
 export function useTimeToCover() {

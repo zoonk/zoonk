@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { planChangeInputSchema } from "../plan-contract";
+import { measureDepth } from "../planner/coverage-measures";
 import { toIsoDate } from "../planner/plan-calendar";
-import { PLAN_EPSILON } from "../planner/plan-precision";
-import { getSkillValue } from "../planner/selected-coverage";
 import { planEffectSchema } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import {
@@ -35,6 +34,7 @@ export const planSummarySchema = z
         deepensMostAsked: z.boolean(),
         fits: z.boolean(),
         measure: z.enum(["exam", "goal"]),
+        reachedShare: z.number().nullable().default(null),
         timeCovers: z.boolean(),
       }),
       fitOffer: z
@@ -132,19 +132,9 @@ function creditShortLessons({
       : skill;
   });
 
-  const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
-  const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
-
-  const whole = skills.every(
-    (skill) =>
-      skill.state === "settled" ||
-      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
-  );
-
   return {
     ...coverage,
-    coveredShare: total > 0 ? Math.min(1, Math.max(0, covered / total)) : null,
-    fits: coverage.coreFits && total > 0 && whole,
+    ...measureDepth({ coreFits: coverage.coreFits, skills }),
     shortLessons: coverage.shortLessons.filter((lesson) => !credited.has(lesson.lessonId)),
     skills,
   };

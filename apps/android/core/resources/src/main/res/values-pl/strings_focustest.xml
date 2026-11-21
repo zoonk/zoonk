@@ -38,7 +38,7 @@
   "focustest_practical_not_checked": "e63697abb6c2fb7c42aeacdfbd22d467087fe2f0021f8e014d71b7a2f9f4c722",
   "focustest_proposal_applied": "43e3c150f5a6868431f155bb524096b270a79e57c51b5a2e19ec2841c69e5dad",
   "focustest_proposal_declined": "7d28a58ced3e1b5b17f943480eeeb34e94fb53be82f39ff990f6a02eaa1d9fcf",
-  "focustest_proposal_description": "9b3bd842cac3b705fea3cb29686d4873d4ac892553583426a0e03e1445c26170",
+  "focustest_proposal_picked": "328485ee0c2176a3add70f816778f49a4985a0d4e979a7e15987141d74457d0d",
   "focustest_proposal_title": "f51404e16cb6541b5570404801cb69fb81ad43e96d95175f6845928b28ce0fd7",
   "focustest_proposal_undone": "cd0334f6caf223bba9b26b3522e81dd2bfd7005a3e06997637a36cad15aac03d",
   "focustest_question_number": "3bbd7084e285c1a32f006fcf5387483b96d11aaf5aacb442420280aa647a9135",
@@ -48,7 +48,6 @@
   "focustest_result_hand_picked": "95b6afadb088d56e297298cc0748228a650a31883f466517e9b21eeed537b339",
   "focustest_result_title": "02eda58b09c12a81e51dff29f876947f7ccfb2de1880ab6cfcd6353a6f591a64",
   "focustest_resume_title": "eb47c6bba05f4ea906e0b2711d122fd5979caaf7e194cc196355618e51274262",
-  "focustest_schedule_focus": "4c5afbd7c2ae3cd76a37f6273298184745b56ec113b92b2171a2dd6f06522b62",
   "focustest_see_all_subjects": "faf628fb7047d23c8bca0e51800f2155a2f475492dc78c0917f9181f5f9dcd53",
   "focustest_see_my_result": "9d7f0e6cffb8c4c681514bcdc12438dc992fec60f7e31d05762b5263d64d31f0",
   "focustest_see_your_result": "4414a36982c6991f53ea7ec43c6918b348f89bc7b44e41e9938433d46dc3aced",
@@ -146,7 +145,8 @@
     <string name="focustest_answer_more">Odpowiedz na więcej pytań</string>
     <!-- The test asks before changing a plan the learner already has. -->
     <string name="focustest_proposal_title">Przeznaczyć więcej czasu na te przedmioty?</string>
-    <string name="focustest_proposal_description">Nie wystarczy ci czasu na naukę całego materiału przed egzaminem.</string>
+    <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
+    <string name="focustest_proposal_picked">Wybrane na podstawie twoich odpowiedzi i tego, ile pytań z każdego przedmiotu jest na egzaminie.</string>
     <string name="focustest_update_plan">Zaktualizuj mój plan</string>
     <string name="focustest_proposal_applied">Twój plan przeznacza teraz więcej czasu na te przedmioty.</string>
     <string name="focustest_proposal_declined">Twój plan pozostaje bez zmian.</string>
@@ -172,8 +172,6 @@
     <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
     <string name="focustest_paused_in_sessions">Pytania podczas nauki wstrzymane</string>
     <string name="focustest_take_test">Rozwiąż Test priorytetów</string>
-    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
-    <string name="focustest_schedule_focus">Przy takim czasie nauki proponujemy poświęcić więcej uwagi przedmiotom: %1$s.</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Test priorytetów pokazuje, którym przedmiotom poświęcić najwięcej czasu.</string>
     <!-- %1$s is a duration, such as "15 min". -->

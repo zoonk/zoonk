@@ -449,7 +449,7 @@ final class PlanSlotOpeningTests: XCTestCase {
   /// A date the plan's time doesn't cover.
   private static let short = """
     {"coreFits": false, "coveredShare": 0.6, "deadline": "2027-06-01", "deepensMostAsked": false,
-     "fits": false, "measure": "goal", "timeCovers": false}
+     "fits": false, "measure": "goal", "reachedShare": 0.8, "timeCovers": false}
     """
 
   /// A plan whose date passed; a later one fits.
@@ -467,7 +467,7 @@ final class PlanSlotOpeningTests: XCTestCase {
     await api.setPlan(try goalPlanFixture(targetDate: "2027-06-01", feasibility: Self.short))
     await api.setSuggested(
       TimeToCover.Suggested(
-        coveredShare: 1, everyTopic: true, kind: .everything, minutes: 60, split: nil))
+        kind: .everything, minutes: 60, reachedShare: 1, split: nil))
     await api.setPreview(try Self.preview(lessons: 2))
     return api
   }

@@ -712,41 +712,62 @@ class PlanScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeOnTheSuggestion() = captureEditorTime("plan-editor-time-suggested", minutes = 240, share = 0.32)
+    fun editorTimeOnTheSuggestion() = captureEditorTime("plan-editor-time-suggested", minutes = 240, share = 0.32, reached = 0.71)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
-    fun editorTimeOnTheSuggestionDark() = captureEditorTime("plan-editor-time-suggested-dark", minutes = 240, share = 0.32, dark = true)
+    fun editorTimeOnTheSuggestionDark() =
+        captureEditorTime("plan-editor-time-suggested-dark", minutes = 240, share = 0.32, reached = 0.71, dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeOnTheFullTime() = captureEditorTime("plan-editor-time-full", minutes = 805, share = 1.0)
+    fun editorTimeOnTheSuggestionReachingEveryTopic() =
+        captureEditorTime("plan-editor-time-suggested-every-topic", minutes = 240, share = 0.32, reached = 1.0)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
-    fun editorTimeShort() = captureEditorTime("plan-editor-time-short", minutes = 90, share = 0.14)
+    fun editorTimeWhenNoTimeCoversEverything() =
+        captureEditorTime("plan-editor-time-none", minutes = 240, share = 0.32, reached = 0.71, recommended = null)
 
-    /** An exam whose whole syllabus takes 13 h 25 min a day, at [minutes] a day, with the time question's answer in. */
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorTimeOnTheFullTime() = captureEditorTime("plan-editor-time-full", minutes = 805, share = 1.0, reached = 1.0)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorTimeShort() = captureEditorTime("plan-editor-time-short", minutes = 90, share = 0.14, reached = 0.35)
+
+    /**
+     * An exam whose whole syllabus takes 13 h 25 min a day, at [minutes] a day, with the time question's answer in;
+     * [reached] is the share whose topics get their first lessons, at [minutes] and at the suggested 4 h alike;
+     * [recommended] null when no time covers everything.
+     */
     private fun captureEditorTime(
         name: String,
         minutes: Int,
         share: Double,
+        reached: Double,
         dark: Boolean = false,
+        recommended: Long? = 805,
     ) {
         val summary = learnerSummary(kind = "exam", title = "ENEM")
         val fits = share >= 1
         val plan =
             plan(
                 """
-                "feasibility":{"coreFits":false,"coveredShare":$share,"deadline":"2027-11-07","deepensMostAsked":false,"fits":$fits,
-                 "measure":"exam","timeCovers":$fits},
+                "feasibility":{"coreFits":${reached == 1.0},"coveredShare":$share,"deadline":"2027-11-07","deepensMostAsked":false,"fits":$fits,
+                 "measure":"exam","reachedShare":$reached,"timeCovers":$fits},
                 "schedule":{"dailyMinutes":$minutes,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":"2027-11-07",
                  "targetDateEstimated":false,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":$minutes,
                  "weekend":null,"weekendDays":[]},"weekdayMinutes":[0,$minutes,$minutes,$minutes,$minutes,$minutes,0]}
                 """.trimIndent(),
             )
         val page = PlanPageState(summary.goals.first(), plan, summary)
-        val found = TimeToCoverState.Answered(planAdviceRevision(plan), timeToCover(recommended = 805, focus = 240))
+        val found =
+            TimeToCoverState.Answered(
+                planAdviceRevision(plan),
+                timeToCover(recommended = recommended, focus = 240, reachedShare = reached),
+            )
         compose.setContent {
             ZoonkTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
@@ -786,7 +807,7 @@ class PlanScreenshots {
                 plan(
                     """
                     "feasibility":{"coreFits":true,"coveredShare":0.78,"deadline":"2027-11-07","deepensMostAsked":false,"fits":false,
-                     "measure":"exam","timeCovers":false},
+                     "measure":"exam","reachedShare":1.0,"timeCovers":false},
                     $EDITOR_CHOICES
                     """.trimIndent(),
                 ),
@@ -852,6 +873,10 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
     fun callsKnownPathLarge() = captureCallsPath("calls-known-path-large", "known")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun callsOutOfTimePathPhone() = captureCallsPath("calls-time-path-phone", "time")
 
     private fun captureCallsPath(
         name: String,

@@ -52,7 +52,7 @@ data class GoalDateMove(
 /**
  * Main's `PlanEffectDiff`: the one consequence a learner would notice about a plan change, and
  * every other change behind "All changes". [repriced] says the plan changed since the learner saw the card,
- * to answer again; [summary] false leaves the consequence to the screen's own sentence.
+ * to answer again.
  */
 @Composable
 fun PlanEffectDiff(
@@ -63,14 +63,12 @@ fun PlanEffectDiff(
     goalDate: GoalDateMove? = null,
     repriced: Boolean = false,
     said: EffectSaid? = null,
-    summary: Boolean = true,
 ) {
     val found = effect?.let { consequence(it, byDate, dateKind, goalDate) }
     val rows = effect?.let { changeRows(it, byDate, dateKind, goalDate) }.orEmpty()
     val repeatsTitle = said == EffectSaid.LessonsAdded && found?.key == ADDED && !namesAdded(effect)
-    val stated = if (summary) found else null
-    val saidWhole = stated != null && stated.whole && rows.singleOrNull()?.key == stated.key
-    val shown = if (summary && !repeatsTitle) found else null
+    val saidWhole = found != null && found.whole && rows.singleOrNull()?.key == found.key
+    val shown = if (repeatsTitle) null else found
     val hasMore = rows.isNotEmpty() && !saidWhole
 
     if (shown == null && !hasMore && !repriced) return

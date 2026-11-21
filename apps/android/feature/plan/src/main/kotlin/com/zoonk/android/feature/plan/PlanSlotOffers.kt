@@ -101,7 +101,7 @@ private fun everythingTakes(
 @Composable
 private fun answerOffer(
     page: PlanPageState,
-    covered: String,
+    covered: String?,
     intent: CoverageIntent,
     time: PlanTimeToCover,
 ): CoverageOffer? {
@@ -132,13 +132,13 @@ private fun answerOffer(
         is CoverageChange.Time -> {
             if (answer is TimeToCoverAnswer.Focus) {
                 CoverageOffer(
-                    description = listOf(timeCoversText(page.isExam, answer.minutes, answer.coveredShare)),
+                    description = listOfNotNull(answer.reachedShare?.let { timeCoversText(page.isExam, answer.minutes, it) }),
                     operations = change.operations,
                     title = stringResource(R.string.plan_time_suggest_title, formatMinutes(change.minutes, locale)),
                 )
             } else {
                 CoverageOffer(
-                    description = listOf(covered),
+                    description = listOfNotNull(covered),
                     operations = change.operations,
                     title = stringResource(R.string.plan_time_covers_everything, formatMinutes(change.minutes, locale)),
                 )
@@ -158,13 +158,13 @@ internal fun CoverageSuggestion(slot: Slot) {
     val edits = slot.edits
     val state = slot.state
     val coverage = planCoverage(plan)
-    val covered = coverage?.let { coveredText(plan, it) }.orEmpty()
+    val covered = coverage?.let { coveredText(plan, it) }
     val search = edits.timeToCover.forPlan(plan)
     val found = (search as? TimeToCoverState.Answered)?.time
     val course = fullCourse(page)
     val courseOffer = courseOffer(page)
     val offer = courseOffer ?: found?.takeIf { coverage != null }?.let { answerOffer(page, covered, state.intent, it) }
-    val title = offer?.title ?: covered
+    val title = offer?.title ?: covered ?: return
     val isGoal = !page.isExam
     val pending = search is TimeToCoverState.Pending
     val retry = search is TimeToCoverState.Failed || search is TimeToCoverState.Building

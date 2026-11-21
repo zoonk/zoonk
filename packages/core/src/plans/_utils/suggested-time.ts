@@ -1,7 +1,7 @@
 import { type MostCoverage } from "../planner/most-coverage";
 import { type TimeCoverage } from "../planner/plan-feasibility";
 import { type PlanSuggestedTime } from "../time-advice-contract";
-import { toShownShare } from "./plan-feasibility-view";
+import { toShownCoverage } from "./plan-feasibility-view";
 
 /**
  * Few people keep up more focused study than this a day, so a goal that needs more is suggested
@@ -19,15 +19,21 @@ export function getSuggestedTime({
   most: MostCoverage | null;
 }): Omit<PlanSuggestedTime, "split"> {
   if (everything !== null && everything <= LONGEST_SUGGESTED_MINUTES) {
-    return { coveredShare: 1, everyTopic: true, kind: "everything", minutes: everything };
+    return {
+      coveredShare: 1,
+      everyTopic: true,
+      kind: "everything",
+      minutes: everything,
+      reachedShare: 1,
+    };
   }
 
   const minutes = Math.min(most?.minutes ?? LONGEST_SUGGESTED_MINUTES, LONGEST_SUGGESTED_MINUTES);
-  const { coreFits, coveredShare } = coverageAt(minutes);
+  const coverage = coverageAt(minutes);
 
   return {
-    coveredShare: toShownShare({ coveredShare, fits: false }),
-    everyTopic: coreFits,
+    ...toShownCoverage({ ...coverage, fits: false }),
+    everyTopic: coverage.coreFits,
     kind: "focus",
     minutes,
   };

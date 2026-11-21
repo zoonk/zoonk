@@ -155,14 +155,10 @@ struct ScheduleQuestion: View {
           "How much time can you study each day?", tableName: "Onboarding",
           comment: "Onboarding question"))
 
-      // The answer leads: the time, then the one line on what it gets the learner.
       Section {
-        VStack(alignment: .leading, spacing: 12) {
-          timeMenu(shown)
-          timeAnswer(shown)
-        }
-        .keepsBeforeHinge()
-        .listRowBackground(Color.clear)
+        timeMenu(shown)
+          .keepsBeforeHinge()
+          .listRowBackground(Color.clear)
       }
       .locksWhileSaving()
 
@@ -180,6 +176,14 @@ struct ScheduleQuestion: View {
         dateLink(shown)
           .listRowBackground(Color.clear)
       }
+
+      // What the time covers comes last, after the days and the date that change it as much as the
+      // time does, so its length moves nothing the learner taps.
+      Section {
+        timeAnswer(shown)
+          .listRowBackground(Color.clear)
+      }
+      .locksWhileSaving()
     } buttons: {
       StepButtons(
         canContinue: ScheduleTime.canContinue(
@@ -316,7 +320,7 @@ struct ScheduleQuestion: View {
             timeChoices.map(\.minutes), with: minutes, marked.suggested, marked.full),
           id: \.self
         ) { time in
-          Text(TimeAnswer.choiceLabel(time, suggested: marked.suggested))
+          Text(TimeAnswer.choiceLabel(time, marked: marked))
             .tag(time)
         }
       } label: {
@@ -409,8 +413,8 @@ struct ScheduleQuestion: View {
     let answer = shown.answer
 
     return TimeAnswer(
-      date: goalDate(shown), exam: isExam, line: answer.line, minutes: shown.minutes,
-      offer: ScheduleTime.offer(found: answer.found, line: answer.line, minutes: shown.minutes),
+      date: goalDate(shown), exam: isExam, found: answer.found, line: answer.line,
+      minutes: shown.minutes,
       split: days.isEmpty
         ? nil
         : ScheduleTime.split(
@@ -465,14 +469,8 @@ struct ScheduleQuestion: View {
 
   private func weekSection(_ shown: Shown) -> some View {
     Section {
-      ForEach(ScheduleTime.mondayFirst, id: \.self) { day in
-        Toggle(
-          PlanDate.weekdayName(number: day, label: true),
-          isOn: Binding(
-            get: { days.contains(day) },
-            set: { on in
-              days = on ? (days + [day]).sorted() : days.filter { $0 != day }
-            }))
+      WeekdayToggles(isOn: { days.contains($0) }) { day, on in
+        days = on ? (days + [day]).sorted() : days.filter { $0 != day }
       }
 
       if studiesOnWeekends {

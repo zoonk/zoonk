@@ -355,7 +355,7 @@ describe(getPlanFeasibility, () => {
 
     const feasibility = getPlanFeasibility({ input });
 
-    expect(feasibility).toMatchObject({ coreFits: true, fits: false });
+    expect(feasibility).toMatchObject({ coreFits: true, fits: false, reachedShare: 1 });
     expect(feasibility.recommendedMinutes).toBeGreaterThan(30);
     expect(feasibility.skillFits.get("s2")).toBeGreaterThan(0);
   });
@@ -374,11 +374,13 @@ describe(getPlanFeasibility, () => {
     const times = [10, 60, 240];
 
     const planned = times.map((minutes) => {
-      const { coreFits, coveredShare } = getPlanFeasibility({
+      const { coreFits, coveredShare, reachedShare } = getPlanFeasibility({
         input: withDailyMinutes(input, minutes),
       });
 
-      return { coreFits, coveredShare };
+      expect(reachedShare === 1).toBe(coreFits);
+      expect(reachedShare).toBeGreaterThanOrEqual(coveredShare);
+      return { coreFits, coveredShare, reachedShare };
     });
 
     expect(times.map((minutes) => feasibility.coverageAt(minutes))).toStrictEqual(planned);

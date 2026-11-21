@@ -7,44 +7,37 @@ enum ScheduleTime {
     case asking
     case askFailed
     case everything
+    /// Everything the learner kept, with a subject they took out of the plan.
+    case everythingKept
     case findFailed
     case finish(endDate: String)
-    case focus(coveredShare: Double)
     case noDays
     case noFinish
     case pastDate
+    /// What the time reaches: 1 when every topic is in, though not everything.
     case share(Double)
+    /// A dated plan that hasn't measured what the time reaches says nothing about it.
+    case unmeasured
     case working
 
     var isBusy: Bool { self == .asking || self == .working }
 
-    var coversEverything: Bool {
-      if case .everything = self {
-        return true
-      }
-
-      return false
-    }
+    var coversEverything: Bool { self == .everything || self == .everythingKept }
   }
 
   /// The longest time worth studying: what covers everything, or as much as any time does when part
   /// never fits.
   struct FullTime: Equatable {
-    let coveredShare: Double
     let everything: Bool
     let minutes: Int
   }
 
-  struct Offer: Equatable {
-    enum Kind: Equatable {
-      case everything
-      /// The longest useful time, where part of the goal never fits whatever the time.
-      case more
-      case suggested
-    }
-
-    let kind: Kind
-    let minutes: Int
+  /// What covering everything takes, said beside a suggestion that doesn't cover it.
+  enum Everything: Equatable {
+    /// A time that covers it, or as much as any time covers.
+    case takes(FullTime)
+    /// No time covers everything by the date.
+    case neverFits
   }
 
   struct Answer: Equatable {
@@ -184,11 +177,11 @@ enum ScheduleTime {
 
   static func fullTime(_ found: TimeToCover?) -> FullTime? {
     if let minutes = found?.recommendedMinutes {
-      return FullTime(coveredShare: 1, everything: true, minutes: minutes)
+      return FullTime(everything: true, minutes: minutes)
     }
 
     return found?.most.map {
-      FullTime(coveredShare: $0.coveredShare, everything: false, minutes: $0.minutes)
+      FullTime(everything: false, minutes: $0.minutes)
     }
   }
 
@@ -200,28 +193,25 @@ enum ScheduleTime {
     )
   }
 
-  /// The suggestion while another time is shown, unless that time covers everything anyway; on a
-  /// focus suggestion, the longest useful time.
-  static func offer(found: TimeToCover?, line: Line, minutes: Int?) -> Offer? {
-    guard let suggested = found?.suggested else {
+  /// On a focus suggestion, what covering everything takes; nil when there's none to say.
+  static func everythingTakes(_ found: TimeToCover?) -> Everything? {
+    guard found?.suggested?.kind == .focus else {
       return nil
     }
 
-    if suggested.minutes != minutes {
-      let covered = suggested.kind == .everything && line.coversEverything
-      return covered
-        ? nil
-        : Offer(
-          kind: suggested.kind == .everything ? .everything : .suggested, minutes: suggested.minutes
-        )
-    }
+    return fullTime(found).map { .takes($0) } ?? .neverFits
+  }
 
-    guard suggested.kind == .focus, let full = fullTime(found), full.minutes > suggested.minutes
+  /// The time that covers everything, offered while a shorter time is shown, only when that time is
+  /// the suggestion (so a realistic one).
+  static func offer(found: TimeToCover?, line: Line, minutes: Int?) -> Int? {
+    guard let suggested = found?.suggested, suggested.kind == .everything,
+      suggested.minutes != minutes, !line.coversEverything
     else {
       return nil
     }
 
-    return Offer(kind: full.everything ? .everything : .more, minutes: full.minutes)
+    return suggested.minutes
   }
 
   static func line(
@@ -255,13 +245,13 @@ enum ScheduleTime {
 
     if let suggested = found?.suggested, suggested.minutes == minutes {
       return suggested.kind == .everything
-        ? .everything : .focus(coveredShare: suggested.coveredShare)
+        ? everything(reached: suggested.reachedShare) : reached(suggested.reachedShare)
     }
 
     // The plan's own time can say what it covers before the time question answers.
     if let advice {
-      let share = advice.coveredShare ?? 0
-      return share >= 1 ? .everything : .share(share)
+      return (advice.coveredShare ?? 0) >= 1
+        ? everything(reached: advice.reachedShare) : reached(advice.reachedShare)
     }
 
     guard found != nil else {
@@ -269,6 +259,15 @@ enum ScheduleTime {
     }
 
     return askFailed ? .askFailed : .asking
+  }
+
+  /// Covering everything while part of the goal isn't reached means a subject was taken out.
+  private static func everything(reached: Double?) -> Line {
+    (reached ?? 1) < 1 ? .everythingKept : .everything
+  }
+
+  private static func reached(_ share: Double?) -> Line {
+    share.map { .share($0) } ?? .unmeasured
   }
 
   /// The time picked needs the plan's own answer, except the one it suggested.

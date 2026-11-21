@@ -4,9 +4,9 @@
   "today_add_to_today": "a924616cb0ffd60e5a5c84ac80b29b031f6e4d11f8f169420a7ed5918d299d77",
   "today_adjust_your_plan": "031dac4df8604d3c3a795e38f0eaaf7c2149d550ea3494e613956c536c49a762",
   "today_already_know_chapter": "049a493b6b17ec3a19457c4ec33489f8f1d2206c0a87fe49f79a2a777604751f",
-  "today_behind_exam": "183e70c86c27a36f81bc69fd6a22527087a3144672d9ddd7d2f2518fab5b0ddd",
-  "today_behind_goal": "bdaf0e939de2386518cfc703a00de7f66b220b7e33f66f31ea449de58832a2e7",
   "today_behind_kept": "caafa18a86163247c6e3409c10ab47139574f383ecb3d4c0b852cd006103f271",
+  "today_behind_lessons_exam": "287c9be5c30e397e92b42705238b0f4c5d2a9bf5697230aacd6c3f7f7b2cdaba",
+  "today_behind_lessons_goal": "b686cfb8d2059a7426492e80af45930970f41bc9af51ee0e6748937975aef08f",
   "today_building_plan_detail": "fc5474ca385db1cde625850f82d496a695c7e112ea2ca2beeff7a01f86b78998",
   "today_building_plan_goal": "72880af68cd0bdf34230a3ea08b20605266bdf637e808435c3cd4a89dce874f8",
   "today_choose_focus": "4e8e8a0ead3da50a9121504da409f4e8ad69a79c76ddd4e53b990a60c9727bf2",
@@ -321,8 +321,8 @@
     <string name="today_plan_keep_mine">Mantener mi plan</string>
     <string name="today_next_suggestion">Ver la siguiente sugerencia</string>
     <string name="today_notice_falling_behind">Cambio en el plan</string>
-    <string name="today_behind_exam">Con %1$s al día, ahora cubres %2$s del examen; antes cubrías %3$s.</string>
-    <string name="today_behind_goal">Con %1$s al día, ahora cubres %2$s de tu objetivo; antes cubrías %3$s.</string>
+    <string name="today_behind_lessons_exam">Algunas lecciones ya no caben antes de tu examen.</string>
+    <string name="today_behind_lessons_goal">Algunas lecciones ya no caben antes de tu fecha.</string>
     <string name="today_more_time_a_day">Agregar tiempo</string>
     <string name="today_choose_focus">Elegir en qué enfocarte</string>
     <string name="today_study_everything">Quitar fecha de finalización</string>

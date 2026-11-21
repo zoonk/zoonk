@@ -506,21 +506,36 @@ class FakeOnboardingApi : OnboardingApi {
 fun suggestionFor(
     recommended: Long?,
     focus: Long?,
+    reachedShare: Double? = 1.0,
 ): PlanTimeToCoverSuggested? =
     when {
-        recommended != null && recommended <= MOST_SUGGESTED -> suggestion(PlanTimeToCoverSuggested.Kind.EVERYTHING, recommended)
-        focus != null -> suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, focus)
-        else -> null
+        recommended != null && recommended <= MOST_SUGGESTED -> {
+            suggestion(
+                PlanTimeToCoverSuggested.Kind.EVERYTHING,
+                recommended,
+                reachedShare,
+            )
+        }
+
+        focus != null -> {
+            suggestion(PlanTimeToCoverSuggested.Kind.FOCUS, focus, reachedShare)
+        }
+
+        else -> {
+            null
+        }
     }
 
 fun suggestion(
     kind: PlanTimeToCoverSuggested.Kind,
     minutes: Long,
+    reachedShare: Double? = 1.0,
 ) = PlanTimeToCoverSuggested(
     coveredShare = if (kind == PlanTimeToCoverSuggested.Kind.EVERYTHING) 1.0 else 0.6,
-    everyTopic = true,
+    everyTopic = reachedShare == 1.0,
     kind = kind,
     minutes = minutes,
+    reachedShare = reachedShare,
     split = null,
 )
 
@@ -528,12 +543,13 @@ fun coverOf(
     recommended: Long?,
     ready: Boolean = true,
     focus: Long? = null,
+    reachedShare: Double? = 1.0,
 ) = PlanTimeToCover(
     fittingDate = null,
     most = null,
     ready = ready,
     recommendedMinutes = recommended,
-    suggested = suggestionFor(recommended, focus).takeIf { ready },
+    suggested = suggestionFor(recommended, focus, reachedShare).takeIf { ready },
     targetDate = LocalDate(2030, 11, 8),
     targetDateNamedMonth = false,
 )
@@ -542,12 +558,14 @@ fun adviceOf(
     share: Double?,
     endDate: LocalDate? = null,
     targetDate: LocalDate? = LocalDate(2030, 11, 8),
+    reachedShare: Double? = share?.takeIf { targetDate != null },
 ) = PlanTimeAdvice(
     coveredShare = share,
     endDate = endDate,
     fullCourseEndDate = null,
     measure = if (targetDate != null) PlanTimeAdvice.Measure.EXAM else PlanTimeAdvice.Measure.GOAL,
     numbers = null,
+    reachedShare = reachedShare,
     ready = true,
     targetDate = targetDate,
     targetDateNamedMonth = false,
