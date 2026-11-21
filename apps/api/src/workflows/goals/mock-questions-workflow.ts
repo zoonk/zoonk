@@ -9,6 +9,7 @@ import {
   checkMockSupplyStep,
   listExamSupplyGoalsStep,
   listMockPrepWritesStep,
+  reportMockSupplyFailureStep,
 } from "./steps/mock-question-steps";
 
 type SupplyRequest = {
@@ -55,6 +56,14 @@ async function prepareSets({
     ),
   );
 
+  await Promise.all(
+    stored.flatMap((result) =>
+      result.status === "rejected"
+        ? [reportMockSupplyFailureStep({ error: result.reason, workflowRunId })]
+        : [],
+    ),
+  );
+
   return {
     addedSets: stored.some((result) => result.status === "fulfilled" && result.value),
     failed: stored.some((result) => result.status === "rejected"),
@@ -83,7 +92,8 @@ async function preparePaperSets({
     return await progress.step("writeMockTexts", () =>
       prepareSets({ goalId, supply, workflowRunId }),
     );
-  } catch {
+  } catch (error) {
+    await reportMockSupplyFailureStep({ error, workflowRunId });
     return { addedSets: false, failed: true };
   }
 }
@@ -119,8 +129,8 @@ async function writePaper({
 
     const { papers } = await listMockPrepWritesStep({ ...input, only: supply.key });
     written = !setsFailed && papers.length === 0;
-  } catch {
-    // Exhausted step retries leave only this paper short.
+  } catch (error) {
+    await reportMockSupplyFailureStep({ error, workflowRunId });
   }
 
   await progress.end(written ? "written" : "short");

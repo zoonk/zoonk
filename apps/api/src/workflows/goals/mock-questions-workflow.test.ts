@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, getWritable } from "workflow";
@@ -12,12 +13,15 @@ import {
   listMockPrepWritesStep,
 } from "./steps/mock-question-steps";
 
+vi.mock("@sentry/nextjs", () => ({ captureException: vi.fn(), flush: vi.fn() }));
+
 vi.mock("./mock-question-writes", () => ({
   prepareMockRecordings: vi.fn(),
   writeMockQuestions: vi.fn(),
 }));
 
-vi.mock("./steps/mock-question-steps", () => ({
+vi.mock(import("./steps/mock-question-steps"), async (importOriginal) => ({
+  ...(await importOriginal()),
   checkMockSupplyStep: vi.fn(),
   listExamSupplyGoalsStep: vi.fn(),
   listMockPrepWritesStep: vi.fn(),
@@ -132,7 +136,8 @@ describe(mockSupplyWorkflow, () => {
       writes === waited.writes ? [{} as never] : [],
     );
 
-    vi.mocked(prepareItemSet).mockRejectedValueOnce(new Error("The set writer gave up"));
+    const error = new Error("The set writer gave up");
+    vi.mocked(prepareItemSet).mockRejectedValueOnce(error);
 
     vi.mocked(writeMockQuestions)
       .mockReset()
@@ -145,6 +150,11 @@ describe(mockSupplyWorkflow, () => {
 
     expect(written).toStrictEqual([DAY_1, DAY_2]);
     expect(checkMockSupplyStep).toHaveBeenCalledWith(GOAL_ID, { priority: DAY_1 });
+
+    expect(captureException).toHaveBeenCalledExactlyOnceWith(error, {
+      tags: { "workflow.name": "mockSupplyWorkflow", "workflow.run_id": "test-run-id" },
+    });
+
     expect(streamedSteps(DAY_1).at(-1)).toBe("workflowError:error");
     expect(streamedSteps(DAY_2).at(-1)).toBe("mockPaperReady:completed");
   });
@@ -200,9 +210,12 @@ describe(mockSupplyWorkflow, () => {
 
     it("ends the wait when question writing fails", async () => {
       plan([paper(DAY_1, { later: false })]);
-      vi.mocked(writeMockQuestions).mockRejectedValueOnce(new Error("Provider unavailable"));
+      const error = new Error("Provider unavailable");
+      vi.mocked(writeMockQuestions).mockRejectedValueOnce(error);
 
       await mockSupplyWorkflow(waitedRequest());
+
+      expect(captureException).toHaveBeenCalledExactlyOnceWith(error, expect.any(Object));
 
       expect(streamedSteps(DAY_1)).toStrictEqual([
         "writeMockQuestions:started",

@@ -4,7 +4,10 @@ import { preparePartSet } from "../listening/steps/listening-sets-steps";
 import { voiceListeningRecording } from "../listening/voice-listening-recording";
 import { type PlacementItemsWritten } from "./placement-items";
 import { prepareSkillExamFormatItems } from "./steps/exam-format-items-step";
-import { loadMockWritingSkillsStep } from "./steps/mock-question-steps";
+import {
+  loadMockWritingSkillsStep,
+  reportMockSupplyFailureStep,
+} from "./steps/mock-question-steps";
 
 function countItemWrites(results: readonly PromiseSettledResult<number>[]): PlacementItemsWritten {
   return {
@@ -96,6 +99,19 @@ export async function writeMockQuestions(
 
   const results = await Promise.allSettled(
     [...skills].map((skillId) => writeSkillBatches({ ...input, skillId })),
+  );
+
+  await Promise.all(
+    results.flatMap((result) =>
+      result.status === "rejected"
+        ? [
+            reportMockSupplyFailureStep({
+              error: result.reason,
+              workflowRunId: input.workflowRunId,
+            }),
+          ]
+        : [],
+    ),
   );
 
   return countItemWrites(results);

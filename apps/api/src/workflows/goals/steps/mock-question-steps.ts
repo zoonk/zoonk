@@ -5,6 +5,7 @@ import {
   listMockPrepWrites,
   loadMockWritingSkills,
 } from "@zoonk/core/exams/mocks/prep";
+import { reportWorkflowFailure } from "../../_shared/report-failed-runs";
 
 export async function listMockPrepWritesStep(
   input: Parameters<typeof listMockPrepWrites>[0],
@@ -34,4 +35,21 @@ export async function listExamSupplyGoalsStep(input: Parameters<typeof listExamS
 export async function checkMockSupplyStep(...input: Parameters<typeof checkMockSupply>) {
   "use step";
   return checkMockSupply(...input);
+}
+
+export async function reportMockSupplyFailureStep({
+  error,
+  workflowRunId,
+}: {
+  error: unknown;
+  workflowRunId: string;
+}): Promise<void> {
+  "use step";
+
+  await reportWorkflowFailure({
+    error,
+    message: "[mockSupplyWorkflow] Preparing a mock paper failed:",
+    runId: workflowRunId,
+    workflowName: "mockSupplyWorkflow",
+  });
 }
