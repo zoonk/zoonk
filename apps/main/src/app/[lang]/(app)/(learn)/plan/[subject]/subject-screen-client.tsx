@@ -40,7 +40,8 @@ export function SubjectScreenClient({
   );
 
   const change = async (operations: LearnerPlanOperation[]) => {
-    const changed = (await changePlanAction(goalId, operations)) !== null;
+    const outcome = await changePlanAction(goalId, operations);
+    const changed = outcome !== null && outcome.status !== "refused";
 
     if (changed) {
       router.refresh();

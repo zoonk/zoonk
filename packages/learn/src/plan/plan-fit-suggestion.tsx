@@ -35,7 +35,7 @@ function usePlanOffer({ item, offer }: { item: SlotItem; offer: Offer }) {
   const t = useExtracted();
   const sentence = usePlanChangeSentence();
   const { plan } = usePlanScreen();
-  const { change, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange({ offer: true });
   const slot = usePlanSuggestionSlot();
   const { apply: applyPreview, isPending: isApplying } = useApplyPreview(item);
 
