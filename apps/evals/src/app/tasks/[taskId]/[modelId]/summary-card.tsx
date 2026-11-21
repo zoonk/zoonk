@@ -62,11 +62,20 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
 
       {summary.unscoredImages.length > 0 && (
         <div className="flex flex-col gap-1">
-          <CaseCount
-            caseIds={summary.unscoredImages}
-            count={summary.unscoredImages.length}
-            text={`Images without a score (${summary.unscoredImages.length})`}
-          />
+          <Fold title={`Images without a score (${summary.unscoredImages.length})`}>
+            <ul className="flex flex-col text-sm">
+              {summary.unscoredImages.map((caseId) => (
+                <li key={caseId}>
+                  <a
+                    className="block min-h-11 content-center break-all underline underline-offset-4"
+                    href={`#case-${encodeURIComponent(caseId)}`}
+                  >
+                    {caseId}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </Fold>
           <p className={`text-muted-foreground text-xs ${PROSE_MEASURE_CLASS}`}>
             {UNSCORED_IMAGES_NOTE} Generate outputs again to score them.
           </p>
