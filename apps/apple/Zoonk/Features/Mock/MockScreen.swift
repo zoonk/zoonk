@@ -25,7 +25,6 @@ struct MockScreen: View {
 
 private struct MockStage: View {
   @Environment(AppRouter.self) private var router
-  @Environment(SessionStore.self) private var session
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Bindable var run: MockRun
@@ -54,9 +53,6 @@ private struct MockStage: View {
         if previous != nil, previous != .finished, status == .finished {
           finishedHere = true
         }
-      }
-      .onChange(of: session.account?.user.id) {
-        run.restoreUnsentIfReady()
       }
       .onChange(of: scenePhase) { _, phase in
         if phase == .active {

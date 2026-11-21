@@ -49,12 +49,8 @@ final class MockRun {
 
   @ObservationIgnored private let store: ExamStore
   @ObservationIgnored private let blockId: String
-  @ObservationIgnored private let defaults: UserDefaults
   @ObservationIgnored private let now: () -> Date
-  @ObservationIgnored private let owner: SessionOwner
-  @ObservationIgnored private var unsent: UnsentMockDrafts?
-  @ObservationIgnored private var hasRestoredUnsent = false
-  @ObservationIgnored private var editedItemIds: Set<String> = []
+  @ObservationIgnored private let unsent: UnsentMockDrafts
   @ObservationIgnored private var adopted: String?
   @ObservationIgnored private var shown: (itemId: String, at: ContinuousClock.Instant)?
   @ObservationIgnored private var unsavedText: MockDraft?
@@ -69,34 +65,22 @@ final class MockRun {
   ) {
     self.store = store
     self.blockId = blockId
-    self.defaults = defaults
     self.now = now
     let mock = store.mock(blockId: blockId)
     self.mock = mock
-    let session = store.cache.session
-    let owner = SessionOwner(session: session.authenticatedSession)
-    self.owner = owner
-    self.unsent = session.account.map {
-      UnsentMockDrafts(learnerId: $0.user.id, blockId: blockId, defaults: defaults)
-    }
-    queue = MockDraftQueue { [store, owner] draft in
-      if let expected = owner.session, store.cache.session.authenticatedSession != expected {
-        return .stop
+    let unsent = UnsentMockDrafts(blockId: blockId, defaults: defaults)
+    self.unsent = unsent
+    // A save the session changed under didn't reach the server either: it stays kept and retried.
+    queue = MockDraftQueue { [store] draft in
+      switch await store.write({ api, token in
+        try await api.saveAnswer(token: token, blockId: blockId, draft: draft)
+      }) {
+      case .done(let stored):
+        unsent.drop(draft)
+        return stored ? .stored : .refused
+      case .failed, .obsolete:
+        return .unreachable
       }
-
-      return
-        switch await store.write({ api, token in
-          try await api.saveAnswer(token: token, blockId: blockId, draft: draft)
-        })
-      {
-      case .done(true): .stored
-      case .done(false): .refused
-      case .obsolete: .stop
-      case .failed: .unreachable
-      }
-    }
-    queue.onSettled = { [weak self] draft in
-      self?.resolveUnsent()?.drop(draft)
     }
   }
 
@@ -121,7 +105,10 @@ final class MockRun {
   var moves: MockSectionMoves {
     MockSectionMoves(
       answered: question.map { drafts[$0.itemId]?.isAnswered ?? false } ?? false,
-      changed: changed, changesLeft: current?.changesLeft,
+      changed: changed,
+      changesAllowed: current.flatMap { current in
+        current.changesLeft.map { $0 + current.changedItemIds.count }
+      },
       navigation: view?.currentSection?.navigation, position: position, reached: reached,
       total: questions.count)
   }
@@ -130,105 +117,47 @@ final class MockRun {
     let key = "\(view.status.rawValue):\(view.current?.section ?? -1)"
 
     guard key != adopted else {
-      restoreUnsentIfReady()
       return
     }
 
     adopted = key
-    hasRestoredUnsent = false
-    editedItemIds = []
-    textTask?.cancel()
-    textTask = nil
-    unsavedText = nil
     queue.forgetRefusals()
     shown = nil
-
-    let serverDrafts = Dictionary(
+    drafts = Dictionary(
       (view.current?.drafts ?? []).map { ($0.itemId, $0) }, uniquingKeysWith: { _, last in last })
-    initiallyStored = serverDrafts
-    drafts = serverDrafts
+    initiallyStored = drafts
     position = view.current?.resume ?? 0
     reached = position
-    changed = []
+    let questionIds = (view.current?.questions ?? []).map(\.itemId)
+    changed = (view.current?.changedItemIds ?? []).compactMap { questionIds.firstIndex(of: $0) }
     questionTimeUp = Self.hasExpiredFinalQuestion(view)
-    sectionTimeUp = view.current.map { $0.deadline <= now() } ?? false
-
-    restoreUnsent(for: view)
+    sectionTimeUp = view.current.map { $0.deadline <= .now } ?? false
+    restoreUnsent(view)
   }
 
-  /// Binds device storage once account validation finishes after a cold-launch deep link.
-  func restoreUnsentIfReady() {
-    guard let view else { return }
-    restoreUnsent(for: view)
-  }
+  /// Answers kept on the device go out again in the order they were made, counting a review's
+  /// changes as they did then.
+  private func restoreUnsent(_ view: MockView) {
+    guard view.status == .running, let current = view.current else {
+      if view.status == .finished || view.status == .expired {
+        unsent.clear()
+      }
 
-  private func restoreUnsent(for view: MockView) {
-    guard !hasRestoredUnsent, let unsent = resolveUnsent() else {
       return
     }
 
-    hasRestoredUnsent = true
+    let questionIds = current.questions.map(\.itemId)
 
-    if view.status == .finished || view.status == .expired {
-      unsent.clear()
-      return
-    }
-
-    guard view.status == .running else {
-      return
-    }
-
-    // Flush any edits made while account validation was still pending.
-    for draft in queue.pending {
-      unsent.keep(draft)
-    }
-
-    if let unsavedText {
-      unsent.keep(unsavedText)
-    }
-
-    let questionIds = Set((view.current?.questions ?? []).map(\.itemId))
-    let kept = unsent.restore(for: questionIds, matching: initiallyStored)
-      .filter { !editedItemIds.contains($0.itemId) }
-
-    guard !kept.isEmpty else {
-      return
-    }
-
-    for draft in kept {
+    for draft in unsent.restore(for: Set(questionIds), matching: initiallyStored) {
+      guard let index = questionIds.firstIndex(of: draft.itemId) else { continue }
+      reached = max(reached, index)
+      countChange(draft.itemId, at: index, to: draft.answer)
       drafts[draft.itemId] = draft
-    }
-
-    if view.currentSection?.navigation?.forwardOnly == true,
-      let questions = view.current?.questions
-    {
-      let indexByItem = Dictionary(
-        uniqueKeysWithValues: questions.enumerated().map { ($1.itemId, $0) })
-      var simulatedReached = initiallyStored.keys.compactMap { indexByItem[$0] }.max() ?? -1
-      var keptReached = -1
-
-      for draft in kept {
-        guard let index = indexByItem[draft.itemId] else { continue }
-        keptReached = max(keptReached, index)
-
-        if index >= simulatedReached {
-          simulatedReached = index
-        } else if simulatedReached == questions.count - 1,
-          initiallyStored[draft.itemId]?.answer != draft.answer,
-          !changed.contains(index)
-        {
-          changed.append(index)
-        }
-      }
-
-      if keptReached >= 0 {
-        position = max(position, keptReached)
-        reached = max(reached, keptReached)
-      }
-    }
-
-    for draft in kept {
       queue.add(draft)
+    }
+
+    if moves.forwardOnly {
+      position = reached
     }
   }
 
@@ -262,8 +191,7 @@ final class MockRun {
     draft.answer = answer
     drafts[question.itemId] = draft
     unsavedText = draft
-    editedItemIds.insert(draft.itemId)
-    resolveUnsent()?.keep(draft)
+    unsent.keep(draft)
     textTask?.cancel()
     textTask = Task { [weak self] in
       try? await Task.sleep(for: Self.textSaveDelay)
@@ -284,8 +212,6 @@ final class MockRun {
   /// In a forward-only section a question is saved as reached at once, so the ones before it stay
   /// behind the learner.
   func show(_ itemId: String) {
-    if let view { adopt(view) }
-    guard question?.itemId == itemId else { return }
     shown = (itemId, .now)
 
     if moves.forwardOnly, drafts[itemId] == nil {
@@ -328,17 +254,22 @@ final class MockRun {
     reached = max(reached, target)
   }
 
-  /// In a forward-only section's review, changing a left-behind answer uses one of its changes,
-  /// once per question.
   private func canAnswer(_ next: PracticeAnswer?) -> Bool {
     guard let question, !timeUp, moves.canChange(position) else { return false }
-    let saved = drafts[question.itemId]?.answer
+    countChange(question.itemId, at: position, to: next)
+    return true
+  }
 
-    if moves.reviewing, position < reached, saved != next, !changed.contains(position) {
-      changed.append(position)
+  /// In a forward-only section's review, changing a left-behind answer uses one of its changes,
+  /// once per question.
+  private func countChange(_ itemId: String, at index: Int, to next: PracticeAnswer?) {
+    guard moves.reviewing, index < reached, !changed.contains(index),
+      drafts[itemId]?.answer != next
+    else {
+      return
     }
 
-    return true
+    changed.append(index)
   }
 
   /// Runs a tap's step, which the run owns rather than the screen: a section handed in on purpose
@@ -436,7 +367,7 @@ final class MockRun {
     // Answers are saved first, then the step.
     let result: MutationResult<MockStepOutcome?>? = await within(timeout) {
       [queue, store] in
-      guard await queue.idle() else { return .obsolete }
+      await queue.idle()
       return await store.write { api, token in try await request(api, token, blockId) }
     }
 
@@ -517,28 +448,9 @@ final class MockRun {
     _ = await within(Self.leaveWait) { [queue] in await queue.idle() }
   }
 
-  private func resolveUnsent() -> UnsentMockDrafts? {
-    let session = store.cache.session
-
-    if owner.session == nil {
-      owner.session = session.authenticatedSession
-    }
-
-    guard owner.session != nil, owner.session == session.authenticatedSession else {
-      return nil
-    }
-
-    if unsent == nil, let learnerId = session.account?.user.id {
-      unsent = UnsentMockDrafts(learnerId: learnerId, blockId: blockId, defaults: defaults)
-    }
-
-    return unsent
-  }
-
   private func persist(_ draft: MockDraft) {
     drafts[draft.itemId] = draft
-    editedItemIds.insert(draft.itemId)
-    resolveUnsent()?.keep(draft)
+    unsent.keep(draft)
     queue.add(draft)
   }
 
@@ -594,14 +506,5 @@ func within<Value: Sendable>(
     let first = await group.next() ?? nil
     group.cancelAll()
     return first
-  }
-}
-
-@MainActor
-private final class SessionOwner {
-  var session: AuthenticatedSession?
-
-  init(session: AuthenticatedSession?) {
-    self.session = session
   }
 }
