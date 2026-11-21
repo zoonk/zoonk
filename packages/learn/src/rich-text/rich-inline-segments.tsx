@@ -76,14 +76,20 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
 type SegmentRun = { marked: boolean; segments: RichInlineSegment[]; start: number };
 
 function toRuns(segments: RichInlineSegment[]): SegmentRun[] {
-  return segments.reduce<SegmentRun[]>((runs, segment, index) => {
+  const runs: SegmentRun[] = [];
+
+  for (const [index, segment] of segments.entries()) {
     const marked = segment.marked === true;
     const last = runs.at(-1);
 
-    return last?.marked === marked
-      ? [...runs.slice(0, -1), { ...last, segments: [...last.segments, segment] }]
-      : [...runs, { marked, segments: [segment], start: index }];
-  }, []);
+    if (last?.marked === marked) {
+      last.segments.push(segment);
+    } else {
+      runs.push({ marked, segments: [segment], start: index });
+    }
+  }
+
+  return runs;
 }
 
 function SegmentViews({ segments, start }: { segments: RichInlineSegment[]; start: number }) {

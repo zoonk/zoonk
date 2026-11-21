@@ -135,17 +135,22 @@ function followNotice({ graph, state }: { graph: PlanGraph | null; state: PlanSt
 
   const noticeIds = new Set(graph.skills.map((skill) => skill.skillId));
   const current = state.graph.skills;
+  const skills = [...graph.skills];
 
-  const skills = current.reduce((list, skill, index) => {
+  current.forEach((skill, index) => {
     if (noticeIds.has(skill.skillId)) {
-      return list;
+      return;
     }
 
     const next = current.slice(index + 1).find((later) => noticeIds.has(later.skillId));
-    const at = next ? list.findIndex((item) => item.skillId === next.skillId) : -1;
+    const at = next ? skills.findIndex((item) => item.skillId === next.skillId) : -1;
 
-    return at === -1 ? [...list, skill] : [...list.slice(0, at), skill, ...list.slice(at)];
-  }, graph.skills);
+    if (at === -1) {
+      skills.push(skill);
+    } else {
+      skills.splice(at, 0, skill);
+    }
+  });
 
   return { ...state, graph: { phases: graph.phases, skills } };
 }

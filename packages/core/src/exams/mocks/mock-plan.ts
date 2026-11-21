@@ -9,8 +9,8 @@ import {
   sectionMinutes,
   toSectionRules,
 } from "./mock-day-sections";
-import { addFormatsWanted, getFormatQuotas, getSectionMix } from "./mock-format-mix";
-import { planListeningSection, planSpeakingSection } from "./mock-oral-sections";
+import { getFormatQuotas, getSectionMix } from "./mock-format-mix";
+import { planOralSection, planSpeakingSection } from "./mock-oral-sections";
 import { countReused } from "./mock-reuse";
 import { type MockRouting, isNextModule, toRouting } from "./mock-routing";
 import { mapAreasToSections } from "./mock-section-areas";
@@ -125,92 +125,74 @@ export function planMock({
 
   const byArea = areaSections !== null;
 
-  const planned = sections.reduce<{
-    formatsWanted: Record<string, number>;
-    plans: MockSectionPlan[];
-    used: Set<string>;
-  }>(
-    (state, section, index) => {
-      const wanted = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
-      const recordings = section.kind === "listening" ? listening.get(section.name ?? "") : null;
+  const formatsWanted: Record<string, number> = {};
+  const planned: MockSectionPlan[] = [];
+  const used = new Set([...listening.values()].flat().map((candidate) => candidate.itemId));
+  const fixedClock = clock !== undefined;
 
-      if (recordings) {
-        const plan = planListeningSection({ pace, pool: recordings, section, wanted });
+  sections.forEach((section, index) => {
+    const wanted = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
+    const oral = planOralSection({ fixedClock, listening, pace, section, wanted });
 
-        const timed =
-          clock === undefined
-            ? plan
-            : { ...plan, minutes: sectionMinutes({ pace, picked: wanted, section }) };
+    if (oral) {
+      planned.push(oral);
+      return;
+    }
 
-        return { ...state, plans: [...state.plans, timed] };
-      }
+    const previous = sections[index - 1]?.name ?? null;
+    const routed = adaptive && isNextModule({ current: section.name, previous });
+    const sectionParts = areaParts ?? listSectionParts({ section: section.name, structure });
+    const sectionMix = getSectionMix({ parts: sectionParts, structure });
+    const asked = new Set(sectionMix.map((format) => format.key));
 
-      if (section.kind === "speaking") {
-        return { ...state, plans: [...state.plans, planSpeakingSection(section)] };
-      }
+    const pool = orderBySubjectShares({
+      pool: sectionPool({ areaSections, candidates, section }).filter(
+        (candidate) =>
+          !used.has(candidate.itemId) && (!candidate.format || asked.has(candidate.format)),
+      ),
+      portion: routed ? share * 2 : share,
+      subjectShares: shares,
+      wanted: routed ? wanted * 2 : wanted,
+    });
 
-      const previous = sections[index - 1]?.name ?? null;
-      const routed = adaptive && isNextModule({ current: section.name, previous });
-      const sectionParts = areaParts ?? listSectionParts({ section: section.name, structure });
-      const sectionMix = getSectionMix({ parts: sectionParts, structure });
-      const asked = new Set(sectionMix.map((format) => format.key));
+    const routing = routed ? toRouting({ pool, wanted }) : null;
+    const quotas = getFormatQuotas({ mix: sectionMix, wanted: routed ? wanted * 2 : wanted });
+    const picked = routing ? [] : takeQuestions({ pool, quotas, wanted });
+    const reserved = routing ? [...routing.easier, ...routing.harder] : picked;
 
-      const pool = orderBySubjectShares({
-        pool: sectionPool({ areaSections, candidates, section }).filter(
-          (candidate) =>
-            !state.used.has(candidate.itemId) && (!candidate.format || asked.has(candidate.format)),
-        ),
-        portion: routed ? share * 2 : share,
-        subjectShares: shares,
-        wanted: routed ? wanted * 2 : wanted,
-      });
+    const questions = routing
+      ? Math.min(wanted, routing.easier.length, routing.harder.length)
+      : picked.length;
 
-      const routing = routed ? toRouting({ pool, wanted }) : null;
-      const quotas = getFormatQuotas({ mix: sectionMix, wanted: routed ? wanted * 2 : wanted });
-      const picked = routing ? [] : takeQuestions({ pool, quotas, wanted });
-      const reserved = routing ? [...routing.easier, ...routing.harder] : picked;
+    const plan: MockSectionPlan = {
+      ...toSectionRules(section),
+      essays: [],
+      itemIds: picked,
+      minutes: sectionMinutes({ pace, picked: fixedClock ? wanted : questions, section }),
+      name: getSectionName({ allSections, byArea, section }),
+      questions,
+      routing,
+    };
 
-      const questions = routing
-        ? Math.min(wanted, routing.easier.length, routing.harder.length)
-        : picked.length;
+    for (const [key, count] of quotas) {
+      formatsWanted[key] = (formatsWanted[key] ?? 0) + count;
+    }
 
-      const plan: MockSectionPlan = {
-        ...toSectionRules(section),
-        essays: [],
-        itemIds: picked,
-        minutes: sectionMinutes({
-          pace,
-          picked: clock === undefined ? questions : wanted,
-          section,
-        }),
-        name: getSectionName({ allSections, byArea, section }),
-        questions,
-        routing,
-      };
+    planned.push(plan);
 
-      const formatsWanted = addFormatsWanted({ quotas, wanted: state.formatsWanted });
+    for (const itemId of reserved) {
+      used.add(itemId);
+    }
+  });
 
-      return {
-        formatsWanted,
-        plans: [...state.plans, plan],
-        used: new Set([...state.used, ...reserved]),
-      };
-    },
-    {
-      formatsWanted: {},
-      plans: [],
-      used: new Set([...listening.values()].flat().map((candidate) => candidate.itemId)),
-    },
-  );
-
-  const written = withWrittenParts({ day, essays, fullLength, sections: planned.plans, structure });
+  const written = withWrittenParts({ day, essays, fullLength, sections: planned, structure });
 
   const asked = written.sections.filter((plan) => asksAnything(plan));
   const plans = clock === undefined ? asked : fitToClock({ clock, sections: asked });
 
   return {
     day,
-    formatsWanted: planned.formatsWanted,
+    formatsWanted,
     fullLength,
     minutes: clock ?? plans.reduce((sum, plan) => sum + plan.minutes, 0),
     reused: countReused({ candidates, sections: plans }),

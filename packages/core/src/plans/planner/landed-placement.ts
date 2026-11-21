@@ -148,31 +148,24 @@ function placeSkill({
     ? written.filter((_, index) => index * perLesson < total - PLAN_EPSILON)
     : written;
 
-  const { leftOut, placed } = lessons.reduce<{
-    after: Date | null;
-    leftOut: QueueUnit[];
-    placed: Placed[];
-  }>(
-    (state, unit, index) => {
-      const slot = findHeld(held, index * perLesson) ?? held.at(-1);
+  const leftOut: QueueUnit[] = [];
+  const placed: Placed[] = [];
 
-      const date = slot && findDay({ after: state.after, first, floor, index, layout, slot, unit });
+  lessons.forEach((unit, index) => {
+    const slot = findHeld(held, index * perLesson) ?? held.at(-1);
+    const after = placed.at(-1)?.unit.date ?? null;
+    const date = slot && findDay({ after, first, floor, index, layout, slot, unit });
 
-      if (!slot || !date) {
-        return { ...state, leftOut: [...state.leftOut, unit] };
-      }
+    if (!slot || !date) {
+      leftOut.push(unit);
+      return;
+    }
 
-      const part = layout.laid[slot.index];
-      const anchor = date > slot.date ? findAnchor({ date, laid: layout.laid }) : slot.index;
+    const part = layout.laid[slot.index];
+    const anchor = date > slot.date ? findAnchor({ date, laid: layout.laid }) : slot.index;
 
-      return {
-        ...state,
-        after: date,
-        placed: [...state.placed, toPlaced({ anchor, date, layout, part, unit })],
-      };
-    },
-    { after: null, leftOut: [], placed: [] },
-  );
+    placed.push(toPlaced({ anchor, date, layout, part, unit }));
+  });
 
   const rest = units.find((unit) => unit.lessonId === null);
   const from = lessons.length * perLesson;
