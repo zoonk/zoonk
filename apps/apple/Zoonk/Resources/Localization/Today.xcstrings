@@ -1267,6 +1267,29 @@
         }
       }
     },
+    "%lld more" : {
+      "comment" : "Ends the list of subjects that left the plan, counting the ones not named, as in “Língua Portuguesa, Raciocínio Lógico and 2 more”",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld more"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld more"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld more lessons" : {
       "localizations" : {
         "de" : {
@@ -6082,6 +6105,7 @@
         }
       }
     },
+    "Got it" : {},
     "Have a call" : {
       "comment" : "Mission: a practice call",
       "localizations" : {
@@ -7808,6 +7832,21 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tamam. Günlük çalışma süren değişmiyor."
+          }
+        }
+      }
+    },
+    "Out of your plan: %@" : {
+      "comment" : "The subjects and topics that left the plan when it followed the exam's official guide; the argument lists them"
+    },
+    "planFollowsNotice" : {
+      "comment" : "Title once the plan changed by itself to follow the exam's public notice, the document that lists its subjects",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your plan now follows the official guide"
           }
         }
       }
@@ -14457,6 +14496,9 @@
           }
         }
       }
+    },
+    "Your plan now follows the official guide" : {
+      "comment" : "Title once the plan changed by itself to follow the official guide of a language certificate"
     },
     "Your plan picks up from today, starting with the lessons planned for the days you paused." : {
       "comment" : "What resuming the paused goal moves",
