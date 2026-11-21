@@ -1,7 +1,9 @@
 import { speakingPaperViewSchema } from "@zoonk/core/language/exam-speaking/contract";
 import {
+  finishLanguageLevelTestInputSchema,
   languageLevelTestViewSchema,
   levelTestAnswerInputSchema,
+  startLanguageLevelTestInputSchema,
 } from "@zoonk/core/language/level-test/contract";
 import {
   mistakePatternPracticeInputSchema,
@@ -35,6 +37,7 @@ import {
   validationErrorResponse,
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
+import { languageLevelTestOutPaths } from "./language-level-test-outs";
 
 const readErrors = {
   "400": validationErrorResponse,
@@ -52,14 +55,32 @@ const levelTestPaths = {
     get: {
       ...common,
       description:
-        "The three-minute level test: reading and listening questions that adapt to the answers, then one sentence out loud. `preparing` while the language pair's questions are written: only the pair's first learner waits, about `expectedSeconds` from `startedAt`; ask again every few seconds. With `startedAt` null nothing is writing them (the run started with the goal failed): POST /goals/{goalId}/language-level-test/generations when the learner starts the test or taps to try again. Read-only: showing the test never writes the questions.",
+        "The next step in a language level test. Without an attempt id, reads onboarding progress. A preparing test waits for the shared bank to be written.",
       operationId: "getLanguageLevelTest",
-      requestParams: { path: goalPathParamsSchema },
+      requestParams: { path: goalPathParamsSchema, query: finishLanguageLevelTestInputSchema },
       responses: {
         "200": jsonResponse(languageLevelTestViewSchema, "The test's next step"),
         ...readErrors,
       },
       summary: "Get the language level test",
+    },
+  },
+  [`${levelTestPath}/attempts`]: {
+    post: {
+      ...common,
+      description:
+        "Opens a Quick or Whole course test and schedules missing questions. An attempt already open is returned with its saved progress.",
+      operationId: "startLanguageLevelTest",
+      requestBody: {
+        content: { "application/json": { schema: startLanguageLevelTestInputSchema } },
+        required: true,
+      },
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(languageLevelTestViewSchema, "The open test"),
+        ...readErrors,
+      },
+      summary: "Open a language level test",
     },
   },
   [`${levelTestPath}/generations`]: {
@@ -100,8 +121,11 @@ const levelTestPaths = {
     post: {
       ...common,
       description:
-        "Ends the test whenever the learner wants. The answers so far set a level for each skill, which the plan and every call use.",
+        "Records the assessed skill ranges and applies any confirmed lesson skips. Without an attempt id, finishes the onboarding test.",
       operationId: "finishLanguageLevelTest",
+      requestBody: {
+        content: { "application/json": { schema: finishLanguageLevelTestInputSchema } },
+      },
       requestParams: { path: goalPathParamsSchema },
       responses: {
         "200": jsonResponse(languageLevelTestResultSchema, "The levels by skill"),
@@ -114,8 +138,8 @@ const levelTestPaths = {
   [`${levelTestPath}/spoken-answers`]: {
     post: {
       ...common,
-      description:
-        "The test's sentence out loud, checked word by word for whether a listener would understand it (an accent never counts against it) to set the speaking level. The audio is never kept.",
+      deprecated: true,
+      description: "Retired operation for recordings from older versions of the level test.",
       operationId: "answerLanguageLevelTestOutLoud",
       requestBody: {
         content: { "multipart/form-data": { schema: levelTestSpokenAnswerRequestSchema } },
@@ -219,6 +243,7 @@ export const languageGoalPaths = {
     },
   },
   ...levelTestPaths,
+  ...languageLevelTestOutPaths,
   "/language-units/{chapterId}": {
     get: {
       ...common,

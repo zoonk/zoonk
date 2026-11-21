@@ -27,7 +27,7 @@ export async function listLevelTestPassagesToVoice(pair: LanguagePair): Promise<
 
   const passages = [
     ...new Set(
-      bank.questions
+      [...bank.questions, ...(bank.confirmations ?? [])]
         .filter((question) => question.skill === "listening")
         .map((question) => normalizeSpeechText(question.passage)),
     ),
