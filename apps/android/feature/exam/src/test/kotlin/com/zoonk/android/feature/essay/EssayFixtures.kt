@@ -45,8 +45,9 @@ private const val CRITERIA =
       "name":"Presentation and structure","quote":null}]"""
 
 private const val NEXT_STEP =
-    """{"criterionId":"a2","example":"The TCU judges the accounts of public administrators.",
-    "quote":"exercised by Congress with the help of the TCU","text":"Name two of the TCU's powers and the article that gives them."}"""
+    """{"criterionId":"a2","kind":"criterion","title":"Name two of the TCU's powers",
+    "example":"The TCU judges the accounts of public administrators.","quote":"exercised by Congress with the help of the TCU",
+    "text":"Say which article of the Constitution gives them, so the grader sees where they come from."}"""
 
 private const val ERRORS = """[{"correction":"There are two types","kind":"agreement","quote":"Exist two types","start":240}]"""
 
