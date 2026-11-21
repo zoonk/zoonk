@@ -16,6 +16,7 @@ import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activ
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { loadTestOutAnswers, saveTestOut } from "./_utils/level-test-out-state";
 import { skipConfirmedLanguageLessons } from "./_utils/level-test-placement";
+import { oweLevelTestNotice } from "./_utils/owe-level-test-notice";
 import {
   type LanguageLevelTestOutResult,
   getLanguageLevelTestOut,
@@ -27,30 +28,63 @@ class AlreadyAnnouncedError extends Error {
   override name = "AlreadyAnnouncedError";
 }
 
-function getPassedTopics({
-  answers,
+async function getPassedTopics({
   progress,
+  tx,
+  userId,
 }: {
-  answers: Awaited<ReturnType<typeof loadTestOutAnswers>>;
   progress: LevelTestOutProgress;
-}): Set<string> {
+  tx: TransactionClient;
+  userId: string;
+}): Promise<Set<string>> {
   const asked = Map.groupBy(progress.questions, ({ skill }) => skill);
+  const skillIds = [...new Set(progress.questions.map(({ skillId }) => skillId))];
+
+  const firstAnswers = await tx.attempt.findMany({
+    distinct: ["itemId"],
+    orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
+    select: {
+      focusTestId: true,
+      isCorrect: true,
+      item: { select: { content: true, format: true } },
+      itemId: true,
+      localDate: true,
+      skillId: true,
+    },
+    where: {
+      itemId: { not: null },
+      mockExamId: null,
+      skillId: { in: skillIds },
+      stepId: null,
+      userId,
+    },
+  });
 
   const passed = (["reading", "listening"] as const).flatMap((skill) => {
     const group = asked.get(skill);
+    const skillId = group?.[0]?.skillId;
     const ids = new Set(group?.map(({ id }) => id));
 
-    const evidence = answers.flatMap(({ isCorrect, item, itemId, localDate }) =>
-      item && itemId && ids.has(itemId) ? [{ ...item, isCorrect, itemId, localDate }] : [],
-    );
+    if (!skillId) {
+      return [];
+    }
 
-    return isSkillConfirmed({ answers: evidence }) ? [group?.[0]?.skillId] : [];
+    const evidence = firstAnswers.flatMap((answer) => {
+      const { focusTestId, isCorrect, item, itemId, localDate } = answer;
+      const isSample = focusTestId === progress.id && itemId && ids.has(itemId);
+
+      return item && itemId && answer.skillId === skillId && (isSample || !isCorrect)
+        ? [{ ...item, isCorrect, itemId, localDate }]
+        : [];
+    });
+
+    return isSkillConfirmed({ answers: evidence }) ? [skillId] : [];
   });
 
-  return new Set(passed.length === 2 ? passed.filter((id) => id !== undefined) : []);
+  return new Set(passed.length === 2 ? passed : []);
 }
 
-async function announceSkips({
+export async function announceLevelTestOutSkips({
   goalId,
   progress,
   timeZone,
@@ -62,7 +96,7 @@ async function announceSkips({
   const ids = progress.result?.unannounced ?? [];
 
   if (ids.length === 0) {
-    return;
+    return true;
   }
 
   async function clear(tx: TransactionClient) {
@@ -80,7 +114,7 @@ async function announceSkips({
     });
   }
 
-  const { error } = await safeAsync(() =>
+  const { data, error } = await safeAsync(() =>
     announceTestedOutItems({
       extraWrites: clear,
       followToday: false,
@@ -95,6 +129,8 @@ async function announceSkips({
   if (error && !(error instanceof AlreadyAnnouncedError) && !isPlanConflictError(error)) {
     throw error;
   }
+
+  return Boolean(data) || error instanceof AlreadyAnnouncedError;
 }
 
 export async function finishLanguageLevelTestOut({
@@ -134,7 +170,7 @@ export async function finishLanguageLevelTestOut({
 
       const answers = await loadTestOutAnswers({ progress: testOut, tx, userId });
       const now = new Date();
-      const topicIds = getPassedTopics({ answers, progress: testOut });
+      const topicIds = await getPassedTopics({ progress: testOut, tx, userId });
 
       const itemIds = await skipConfirmedLanguageLessons({
         goalId,
@@ -167,6 +203,7 @@ export async function finishLanguageLevelTestOut({
       }
 
       await saveTestOut({ goal: current, progress: finished, tx });
+      await oweLevelTestNotice({ db: tx, goalId, unannounced: itemIds, userId });
       return finished;
     },
   );
@@ -181,6 +218,6 @@ export async function finishLanguageLevelTestOut({
     getUserProgressCacheTag(userId),
   ]);
 
-  await announceSkips({ goalId, progress, timeZone });
+  await announceLevelTestOutSkips({ goalId, progress, timeZone });
   return getLanguageLevelTestOut({ attemptId, goalId });
 }

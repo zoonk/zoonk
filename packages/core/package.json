@@ -189,6 +189,7 @@
     "./language/exam-speaking/write": "./src/language/exam-speaking/write-exam-speaking.ts",
     "./language/aims": "./src/language/aims/language-aims.ts",
     "./language/aims/schemas": "./src/language/aims/language-aim-schemas.ts",
+    "./language/level-test/announce-pending": "./src/language/level-test/announce-pending-level-test-skips.ts",
     "./language/level-test/answer": "./src/language/level-test/answer-language-level-test.ts",
     "./language/level-test/check-answers": "./src/language/level-test/check-level-test-answers.ts",
     "./language/level-test/check-bank": "./src/language/level-test/check-level-test-bank.ts",

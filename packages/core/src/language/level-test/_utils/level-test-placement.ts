@@ -126,7 +126,7 @@ export async function announceLevelTestPlacement({
   const { unannounced } = placement;
 
   if (unannounced.length === 0) {
-    return;
+    return true;
   }
 
   const { data, error } = await safeAsync(() =>
@@ -145,8 +145,12 @@ export async function announceLevelTestPlacement({
     }),
   );
 
-  if (error instanceof PlacementAnnouncedError || isPlanConflictError(error) || data) {
-    return;
+  if (error instanceof PlacementAnnouncedError || data) {
+    return true;
+  }
+
+  if (isPlanConflictError(error)) {
+    return false;
   }
 
   if (error) {
@@ -156,4 +160,6 @@ export async function announceLevelTestPlacement({
   await writeLearnerChange({ userId }, async (tx) =>
     (await clearAnnounced({ attemptId, goalId, placement, tx })) ? null : unchanged(null),
   );
+
+  return true;
 }
