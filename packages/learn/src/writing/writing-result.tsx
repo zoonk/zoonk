@@ -112,9 +112,14 @@ function PointsHeader({
               <span className="text-muted-foreground text-xs">
                 {[
                   t("{count, plural, one {# error} other {# errors}}", { count: errors }),
-                  t("{count, plural, one {about # line} other {about # lines}}", {
-                    count: estimatedLines,
-                  }),
+                  prompt.lines === null
+                    ? t("{count, plural, one {about # line} other {about # lines}}", {
+                        count: estimatedLines,
+                      })
+                    : t("about {used} of {lines} lines", {
+                        lines: String(prompt.lines),
+                        used: String(estimatedLines),
+                      }),
                 ].join(" · ")}
               </span>
             </span>
