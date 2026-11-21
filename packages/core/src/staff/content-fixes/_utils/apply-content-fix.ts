@@ -25,7 +25,7 @@ import { type FixUnit } from "./resolved-change";
 import {
   applyVocabularyUnit,
   findLessonsShowing,
-  findLessonsTeaching,
+  findLessonsWritten,
   isVocabularyUnit,
 } from "./vocabulary-unit";
 
@@ -52,22 +52,27 @@ const UNIT_TABLES = {
 /**
  * Lessons are locked before their screens, as publishing a version does, and rows in table and id
  * order, so two approvals and a publication never wait on each other in a cycle. A word or
- * sentence fix also writes the screens and rows of every lesson that teaches it, so it locks those
- * lessons here too.
+ * sentence fix also writes other lessons' screens and rows, so it locks those lessons too, and its
+ * word or sentence row after them, as a fix to a lesson's screens that records its words does.
  */
 export async function lockFixRows(
   tx: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: FixUnit },
 ): Promise<void> {
-  if (unit.kind !== "course") {
+  const vocabulary = isVocabularyUnit(unit);
+
+  if (unit.kind !== "course" && !vocabulary) {
     await tx.$queryRaw`SELECT id FROM ${UNIT_TABLES[unit.kind]} WHERE id = ${unit.id}::uuid FOR NO KEY UPDATE`;
   }
 
   const rows = [
     ...changes.map((change) => findStoredHandler(change).lockRows(change)),
     ...(unit.kind === "course" ? [{ ids: [unit.id], table: UNIT_TABLES.course }] : []),
-    ...(isVocabularyUnit(unit)
-      ? [{ ids: await findLessonsTeaching(tx, unit), table: UNIT_TABLES.lesson }]
+    ...(vocabulary
+      ? [
+          { ids: await findLessonsWritten(tx, changes), table: UNIT_TABLES.lesson },
+          { ids: [unit.id], table: UNIT_TABLES[unit.kind] },
+        ]
       : []),
   ];
 

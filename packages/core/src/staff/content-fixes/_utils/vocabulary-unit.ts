@@ -20,34 +20,6 @@ function uniqueIds(rows: readonly { lessonId: string }[]): string[] {
   return [...new Set(rows.map((row) => row.lessonId))].toSorted();
 }
 
-async function findTeachingRows(
-  db: TransactionClient,
-  unit: VocabularyUnit,
-): Promise<{ lessonId: string }[]> {
-  const select = { lessonId: true } as const;
-
-  const [links, steps] = await (unit.kind === "sentence"
-    ? Promise.all([
-        db.lessonSentence.findMany({ select, where: { sentenceId: unit.id } }),
-        db.step.findMany({ select, where: { sentenceId: unit.id, ...CURRENT_STEPS } }),
-      ])
-    : Promise.all([
-        db.lessonWord.findMany({ select, where: { wordId: unit.id } }),
-        db.step.findMany({ select, where: { wordId: unit.id, ...CURRENT_STEPS } }),
-      ]));
-
-  return [...links, ...steps];
-}
-
-/** The lessons whose own rows and screens hold the word or sentence: the only ones a fix writes. */
-export async function findLessonsTeaching(
-  db: TransactionClient,
-  unit: VocabularyUnit,
-): Promise<string[]> {
-  const rows = await findTeachingRows(db, unit);
-  return uniqueIds(rows);
-}
-
 /**
  * Every lesson that shows the word or sentence: those that teach it and, for a word, those whose
  * tiles find it by its text. Each one's version moves when the row changes.
@@ -56,20 +28,29 @@ export async function findLessonsShowing(
   db: TransactionClient,
   unit: VocabularyUnit,
 ): Promise<string[]> {
-  const word =
-    unit.kind === "word"
-      ? await db.word.findUnique({
-          select: { targetLanguage: true, word: true },
-          where: { id: unit.id },
-        })
-      : null;
+  const select = { lessonId: true } as const;
 
-  const [teaching, tiles] = await Promise.all([
-    findTeachingRows(db, unit),
+  if (unit.kind === "sentence") {
+    const [links, steps] = await Promise.all([
+      db.lessonSentence.findMany({ select, where: { sentenceId: unit.id } }),
+      db.step.findMany({ select, where: { sentenceId: unit.id, ...CURRENT_STEPS } }),
+    ]);
+
+    return uniqueIds([...links, ...steps]);
+  }
+
+  const word = await db.word.findUnique({
+    select: { targetLanguage: true, word: true },
+    where: { id: unit.id },
+  });
+
+  const rows = await Promise.all([
+    db.lessonWord.findMany({ select, where: { wordId: unit.id } }),
+    db.step.findMany({ select, where: { wordId: unit.id, ...CURRENT_STEPS } }),
     word ? findLessonsWithWordTiles(db, word) : [],
   ]);
 
-  return uniqueIds([...teaching, ...tiles]);
+  return uniqueIds(rows.flat());
 }
 
 function changedFieldsOf(change: StoredChange): string[] {
@@ -166,6 +147,26 @@ async function findOwedOrders(db: TransactionClient, changes: readonly StoredCha
   });
 
   return { lessonIds: uniqueIds(rows), where };
+}
+
+/**
+ * The lessons whose screens or rows applying the changes writes, which approving locks first. A
+ * clip writes none, and one lesson's row writes only that lesson's.
+ */
+export async function findLessonsWritten(
+  db: TransactionClient,
+  changes: readonly StoredChange[],
+): Promise<string[]> {
+  const where = changes.flatMap((change) => screensWhere(change) ?? []);
+
+  const [screens, orders] = await Promise.all([
+    where.length === 0
+      ? []
+      : db.step.findMany({ select: { lessonId: true }, where: { OR: where } }),
+    findOwedOrders(db, changes),
+  ]);
+
+  return [...new Set([...screens.map((step) => step.lessonId), ...orders.lessonIds])];
 }
 
 async function keptPronunciations(
@@ -294,8 +295,8 @@ async function findApprover(tx: TransactionClient, fixId: string): Promise<strin
  * What a word or sentence fix writes besides its own rows, recomputed from the rows as fixed, so
  * applying a revert puts them back the same way: spoken screens copy the sentence again, word
  * orders are owed again, and answers written from the old screens go. It writes only the lessons
- * that teach it, which approving locks first. Every lesson showing it, which for a common word is
- * a large share of its language, moves its version after this commits, as owed work.
+ * `findLessonsWritten` finds, which approving locks first. Every lesson showing it, which for a
+ * common word is a large share of its language, moves its version after this commits, as owed work.
  */
 export async function applyVocabularyUnit(
   tx: TransactionClient,

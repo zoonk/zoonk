@@ -55,6 +55,29 @@ async function proposeVoiceAndApprove(input: unknown) {
   return { decision, fix };
 }
 
+/** Holds a lesson past an approval's 5 s transaction limit, so an approval that waits for it fails. */
+async function whileLessonHeld<Result>(lessonId: string, run: () => Promise<Result>) {
+  const released = Promise.withResolvers<null>();
+  const taken = Promise.withResolvers<null>();
+
+  const holding = prisma.$transaction(
+    async (tx) => {
+      await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lessonId}::uuid FOR UPDATE`;
+      taken.resolve(null);
+      await released.promise;
+    },
+    { timeout: 15_000 },
+  );
+
+  await taken.promise;
+  const running = run();
+  await Promise.race([running, sleep(6000)]);
+  released.resolve(null);
+
+  const [result] = await Promise.all([running, holding]);
+  return result;
+}
+
 /** Every default language lesson's reading tiles show "rent", so a word whose text changes needs its own. */
 function uniqueWordText() {
   return `rent${crypto.randomUUID().replaceAll("-", "")}`;
@@ -232,6 +255,24 @@ describe("word and sentence fixes", () => {
     expect(stored.mediaOwedAt).toBeNull();
     expect(generateLanguageAudio).toHaveBeenCalledTimes(3);
     await expect(optionsFor(fix.id)).resolves.toMatchObject({ status: "ready" });
+  });
+
+  it("re-records a clip without waiting on the lessons that teach the word", async () => {
+    const { lesson, word } = await languageLessonFixture({ wordText: uniqueWordText() });
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [{ id: word.id, model: "Word", revoice: true }],
+      reason: "The clip says another word.",
+    });
+
+    mockVoice();
+    await voiceContentFix({ fixId: fix.id });
+
+    const { key } = await signInApprover();
+    const decision = await whileLessonHeld(lesson.id, () => approve({ fixId: fix.id, key }));
+
+    expect(decision).toMatchObject({ fix: { status: "applied" } });
   });
 
   it("re-records a clip whose text is right", async () => {
@@ -552,26 +593,7 @@ describe("word and sentence fixes", () => {
     });
 
     const { key, user } = await signInApprover();
-    const holder = Promise.withResolvers<null>();
-    const taken = Promise.withResolvers<null>();
-
-    const holding = prisma.$transaction(
-      async (tx) => {
-        await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${other.lesson.id}::uuid FOR UPDATE`;
-        taken.resolve(null);
-        await holder.promise;
-      },
-      { timeout: 15_000 },
-    );
-
-    await taken.promise;
-    const approving = approve({ fixId: fix.id, key });
-
-    // Held past an approval's 5 s transaction limit, so an approval that waits for it fails.
-    await Promise.race([approving, sleep(6000)]);
-    holder.resolve(null);
-
-    const [decision] = await Promise.all([approving, holding]);
+    const decision = await whileLessonHeld(other.lesson.id, () => approve({ fixId: fix.id, key }));
 
     expect(decision).toMatchObject({ fix: { status: "applied" } });
 
