@@ -36,7 +36,6 @@
   "mock_result_grade_it": "adf9ea0b8b41a222bb16459f4c84d07184ca8035cb3cec1e3f43b33550bead0e",
   "mock_result_grading": "7c008e5f78230a42551f147a3a01c3557fb76615d9ce8cb6bb87399fe0ee23ff",
   "mock_result_grading_failed": "0d1269f1f24f7d8f317cc7863db46cfef9a01dd752bc0b52815dd9c46e4c5d68",
-  "mock_result_grading_limit": "655e8be301433de24cd8016b74eecfcc4eeec31eed75337da28aef8c6c68ea84",
   "mock_result_grading_slow": "16f9559d3add72cc5e5deac81f510aeac27250fadf21d267d88c33e70eed74c7",
   "mock_result_had_of": "c580409bc01c776b565be3b2d6f7914edeea58523aa3235d70f27dd084688870",
   "mock_result_insights": "bcb3254a2ef83ddd22602fe46d19c144d5c46794e0040d4105967e1219bd52b0",
@@ -107,7 +106,6 @@
   "mock_result_timing": "44bbb8b7b685ae18337955a14636cf2bed2ae21af29403dc7d07ed2e50614ea1",
   "mock_result_timing_area": "43d5554e9fccb1fa01ff44fd51d74d5c21849bf411dfcd2e51efe6cd0145adab",
   "mock_result_to_pass": "19575bdf8c4bf07719e99657be925bbc03713ecf42ba3cb28f9b880123d6631d",
-  "mock_result_too_short": "d4e73aef9569a128d2f5c34a71e2119ee9187427c5057a6317083a2c65eb30aa",
   "mock_result_topics_and_more": "301d5245b9b59dae00497206a767a43ab898712c25ae34cc253000a1370cb368",
   "mock_result_typed_estimate": "ddd63b8cefe36e1eaa9508629888280e162d1d26400531de3f33ce86d279465b",
   "mock_result_typed_no_estimate": "8adada02d41ef401b43892b7b9344fdff55f59dc712e6f1b318ce1f2c567fb5f",
@@ -120,7 +118,6 @@
   "mock_result_up": "0ad3c8cbbcf6be5b187ddfb317889e6efddcf13122a28d45e40e96d627e6199d",
   "mock_result_up_from": "33a7de792f4342e7c3b0c59a0586d3138f285adecb2c5fe58d87a0c8d232e2d2",
   "mock_result_work_on": "56e115e9d0735d3dddda239e2e0c5888e1f772b379add4d3714ba738a5a6115c",
-  "mock_result_written_part": "4ae25f7bc4ec1362be12f1f80f31fcdcdf473f41ddf4819540d8f011eea28e7f",
   "mock_result_wrong": "1bd7a6cbaf4af81b3f1dd94e955dbd89dfa29d10495d21a7b8f769cc5df10d88",
   "mock_result_your_plan": "bde7ec63472d415fcc146d077bd104df1b50866c9e14bbe0486a7aa0bd05f278",
   "mock_result_your_preparation": "da4302c70cb95512d75a5a32f9bb67d0e70dc117865cb7e8c6bb534fd0e42b2b"
@@ -293,12 +290,10 @@
     <string name="mock_result_review">다시 볼 문제</string>
     <string name="mock_result_question">%1$d번 문제</string>
     <string name="mock_result_left_blank">답하지 않았어요.</string>
-    <string name="mock_result_too_short">채점하기에는 너무 짧아요</string>
     <string name="mock_result_grading">시험의 평가 기준에 따라 채점하고 있어요. 최대 30초가 걸릴 수 있어요.</string>
     <string name="mock_result_grading_slow">아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
     <string name="mock_result_grading_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="mock_result_not_graded">아직 채점 전이에요.</string>
-    <string name="mock_result_grading_limit">오늘 에세이 채점 횟수를 다 썼어요. 내일 다시 시도해 보세요.</string>
     <string name="mock_result_grade_it">채점하기</string>
     <string name="mock_result_no_estimate">예상 점수 없음</string>
     <!-- %1$s is the estimated points, %2$s the paper's total. -->

@@ -21,7 +21,7 @@
   "session_block_weakest": "800791a9f39f6f6a52a48993a28abbba292597add8c32abd803fe45c2d3adfad",
   "session_block_weekly_challenge": "ec1586be9f1bd39b81aed0eeab687c10613e18aebc2dec18fec79576c631dd92",
   "session_block_what_you_know": "18d36f3a50e7473f4c70af5421894bcbfb67dca65c339b5c45b9356c462d1822",
-  "session_block_writing_practice": "b94c5974b1edaae1a9c9994e1c7e2cdfdc24a2482bedeb8e5d77e10cd4f6b42d",
+  "session_block_writing_draft_saved": "bc9489357d665d0505c59704343f744ba822d3b2e46150f8841a95925d09c242",
   "session_catch_up_to_go": "b10e52eccaaf1d164cc8da3d80779c3724b30a01e99068b93e083f42539dcfc5",
   "session_caught_up_today": "9cdf90629607b867f8b26d0c30f0b1a3c2014af780e32f2bad1669e25d6347db",
   "session_day_done": "7f0acbb75e619e49413ba679121a8797fcb0d731f91661267d1abc4e10155c5a",
@@ -100,7 +100,7 @@
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">すでに知っていること</string>
     <string name="session_block_new_lesson">新しいレッスン</string>
-    <string name="session_block_writing_practice">ライティング練習</string>
+    <string name="session_block_writing_draft_saved">下書きを保存しました</string>
     <string name="session_block_practice_mistakes">間違えたところの練習</string>
     <string name="session_block_bonus_practice">追加の練習</string>
     <string name="session_block_mixed_practice">総合練習</string>

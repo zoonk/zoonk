@@ -29,7 +29,6 @@
     <string name="generation_skills_line_1">Listing what your goal asks for…</string>
     <string name="generation_skills_line_2">Putting the skills in order…</string>
     <string name="generation_skills_line_3">Checking nothing important is missing…</string>
-    <!-- The wait while a written exam question is written for the learner. -->
     <string name="generation_writing_prompt">Writing your question</string>
     <!-- The wait while a typed goal is read. -->
     <string name="generation_understanding">Reading your goal</string>

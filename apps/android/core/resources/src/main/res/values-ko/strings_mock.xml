@@ -93,6 +93,7 @@
   "mock_words": "2789057cce340b7601e0721915cac98f9f3ffc79bdd8b30a5c5d841f36a4029c",
   "mock_written_part": "dd88d03af827d99b9d67544619aacbb005cc7678405f18e596ac81b2bfb662dd",
   "mock_written_part_area": "2657b965d01d5054a56c9b7857125c85e73df9d7f5e05c9950a47fb55fb33793",
+  "mock_written_questions_blank": "fb129c6148ce1f2b2f69487e7c9bfc5b739193ee469fb576d5208588cec7ecd7",
   "mock_your_essay": "dc9653cdc99a1f89ad2aa31911f41329ca900c4e7af8f22734ba98dc85b8041f"
 }
 -->
@@ -160,6 +161,10 @@
     </plurals>
     <string name="mock_every_answered">모든 문제에 답했어요.</string>
     <string name="mock_essay_blank">에세이 내용이 없어요.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <plurals name="mock_written_questions_blank">
+        <item quantity="other">서술형 문제 %d개에 답하지 않았어요</item>
+    </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="other">내용이 없는 에세이가 %d개예요.</item>
     </plurals>

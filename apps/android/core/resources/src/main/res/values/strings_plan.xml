@@ -855,23 +855,14 @@
     <string name="plan_call_not_in_plan">The call isn\'t in your plan</string>
     <string name="plan_outside_past_basics">Skipped · you already know the basics</string>
     <string name="plan_outside_skipped_base">Skipped · your choice</string>
-    <!-- On the projected score: the exam's written test is below its own minimum. -->
     <string name="plan_written_below_minimum">Below the minimum to pass</string>
-    <!-- %1$s names the written test, such as "Written test"; %2$s is its minimum points. -->
     <string name="plan_written_asks_for">%1$s needs %2$s points, whatever your other scores.</string>
-    <!-- %1$s names the written test, such as "Written test"; %2$s is its minimum as a share, such as "50%". -->
     <string name="plan_written_asks_for_share">%1$s needs %2$s of its points, whatever your other scores.</string>
-    <!-- %1$s names the exam's written test, such as "Written test". -->
     <string name="plan_written_not_measured">%1$s isn\'t measured yet.</string>
-    <!-- %1$s names the exam's written test, such as "Written test", which is half the final score. -->
     <string name="plan_written_not_measured_half">%1$s, half your final score, isn\'t measured yet.</string>
-    <!-- %1$s names the exam's written test, such as "Written test"; %2$s is its share of the final score, such as "40%". -->
     <string name="plan_written_not_measured_share">%1$s, %2$s of your final score, isn\'t measured yet.</string>
     <string name="plan_written_objective">Objective test</string>
-    <!-- %1$s is the written test's minimum points. -->
     <string name="plan_written_above_minimum">Above the %1$s points needed</string>
-    <!-- %1$s is how many points short, or a range of them; %2$s the written test's minimum points. -->
     <string name="plan_written_points_below">%1$s points short of the %2$s needed</string>
-    <!-- %1$s is the written test's minimum points. -->
     <string name="plan_written_close_to_minimum">Close to the %1$s points needed</string>
 </resources>

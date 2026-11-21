@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_chooser_all_tests": "446f5e7529c2a2800b13a844d08e5a920ffa3866e6f89351fcd709520bba437e",
+  "mock_chooser_both_tests": "97e4928f6b72953b85b8d74bd09923e0d295a07d256fd43bc35beca3caf47f70",
   "mock_chooser_day": "b9992d4c90acd9e43bcfdd06258b5bd8742e6748510727923ce6d989b36bd094",
   "mock_chooser_day_without": "588b35bf9ea0138ba23407e2e71a627ec5cfdf2490037a3d7978963cbe217f2e",
+  "mock_chooser_exam_tests": "5cd257c60a204bf6fab63fcf6496baa0e845005184ca5daaf7ae4ffe1cacd749",
   "mock_chooser_failed": "b4796a9ed1ef0dc0477e806daa3605dca6aa9835c8a3468589f544fdd3733187",
   "mock_chooser_full_exam": "5e4e5a0d4704e7dfbf6c3cf12bb311e6267956926e88cfc6fde9cb501d62ac9a",
   "mock_chooser_full_exam_without": "9b94f1c7291c3d1e85d44c2727ab75a44f6ae121b116dd89ce03a6df1019ef20",
@@ -12,6 +15,7 @@
   "mock_chooser_line": "bb3b6d0dfc2af895677b320b00bbc9c415e961a7add557fd0a24843c41350129",
   "mock_chooser_no_written_part": "722dc65da8c19b1012d4007f3a0873da98ca44de761dcb35cedeb3b1396b0dc4",
   "mock_chooser_not_enough": "a04f0794a8f7606c5d7799f2ea4fcc2c9ac72647ff97795f84c9f0e4e9adebde",
+  "mock_chooser_objective_only": "eb59ae0640bc731318da4ba750ad53d46db8a3118f9cb702f2bf3c47e2531225",
   "mock_chooser_one_subject": "7a32d5dafda1a1dae2d31075aab2e60e8066856c8f2faaab2336934bf80d7a81",
   "mock_chooser_option_size": "414b7a3f1cd1a67ce17fbc65599a8ae3d78bc1db45535420437e76201e2b216f",
   "mock_chooser_pick_another": "781bbc43525d4acd1ef9927f89801ebe480ece11448eaadbafb54ed88e4bc9a4",
@@ -28,7 +32,10 @@
   "mock_chooser_usually": "0111c64e95ba5812fa8d9fb9eec9f2717cae22c0894909dfb1b20c839aa3894f",
   "mock_chooser_writing": "a1938809b79b023d1c65cd41c210ff67deba556c818874fdf96e36da411fcd87",
   "mock_chooser_writing_questions": "8ee9439330dfda49aa36bc0b59448219facb524793f7a9667ac414f2e164fa9f",
-  "mock_chooser_writing_questions_line": "b0bcea8782c18fbf3bafe0bbd3c1f333b78b5ed51c0729b063d960339bc2b89c"
+  "mock_chooser_writing_questions_line": "b0bcea8782c18fbf3bafe0bbd3c1f333b78b5ed51c0729b063d960339bc2b89c",
+  "mock_chooser_writing_written": "d9b443c7f68ac307dad122f7d46b4fa8e82b6951bbe4f856f2c390d1e64e836c",
+  "mock_chooser_writing_written_detail": "a2fbbe00e530fc9ac993ecf7e9a3c45ff5fdc8bff5e55a2e0c01ba8c79df7a98",
+  "mock_chooser_writing_written_failed": "4c27fbb47d58a0690d1a7a28a7f95950898b207e6c968a506d0f80de10f71a56"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -38,6 +45,24 @@
     <string name="mock_chooser_one_subject">Una materia</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">El examen</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="one">Tu examen tiene %d prueba</item>
+        <item quantity="many">Tu examen tiene %d pruebas</item>
+        <item quantity="other">Tu examen tiene %d pruebas</item>
+    </plurals>
+    <string name="mock_chooser_objective_only">Solo preguntas más cortas y de opción múltiple</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">Ambas pruebas</string>
+    <string name="mock_chooser_writing_written">Preparando tus preguntas…</string>
+    <string name="mock_chooser_writing_written_detail">Preguntas como las de tu examen. Tu simulacro empieza aquí cuando estén listas.</string>
+    <string name="mock_chooser_writing_written_failed">No pudimos preparar tus preguntas</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="one">Todas las %1$d pruebas</item>
+        <item quantity="many">Todas las %1$d pruebas</item>
+        <item quantity="other">Todas las %1$d pruebas</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">Día %1$d</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

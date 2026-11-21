@@ -93,6 +93,7 @@
   "mock_words": "43cb4068a9544f3d72f790e638c502d1828d1b86e4806c87964d672de5bfac9a",
   "mock_written_part": "d196438ea20f94b45d2f9805f8c98fcbcccb3bcb5dd38dd8144a801edbe2c607",
   "mock_written_part_area": "776f3ec7232d13e89256437497dc23d49d65a49a112494e884770df52bc01bff",
+  "mock_written_questions_blank": "efcd531c197d09d60d6dc47b1c1e8be379e119f2322e3878472e9a39d8a6367f",
   "mock_your_essay": "04196ed6283cb810c4839e7f3f9ca3ed6688833c419018ed4366763340a9e9a9"
 }
 -->
@@ -256,4 +257,10 @@
     </plurals>
     <string name="mock_speaking_hand_in_done">Você concluiu todas as tarefas. Depois de entregar, não dá para fazer elas de novo neste simulado.</string>
     <string name="mock_keep_going">Continuar</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <plurals name="mock_written_questions_blank">
+        <item quantity="one">A questão discursiva está em branco.</item>
+        <item quantity="many">%d questões discursivas estão em branco.</item>
+        <item quantity="other">%d questões discursivas estão em branco.</item>
+    </plurals>
 </resources>

@@ -11,11 +11,9 @@
         <item quantity="one">Your exam has %d test</item>
         <item quantity="other">Your exam has %d tests</item>
     </plurals>
-    <!-- Over the shorter options of an exam of several tests, which leave its written part out. -->
     <string name="mock_chooser_objective_only">Shorter, objective questions only</string>
     <!-- The option that takes both tests of an exam of two tests. -->
     <string name="mock_chooser_both_tests">Both tests</string>
-    <!-- While a mock exam's written test questions are written for the learner. -->
     <string name="mock_chooser_writing_written">Writing your questions…</string>
     <string name="mock_chooser_writing_written_detail">Questions like the ones on your exam. Your mock exam starts here when they\'re ready.</string>
     <string name="mock_chooser_writing_written_failed">We couldn\'t write your questions</string>

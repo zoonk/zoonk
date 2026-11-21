@@ -93,6 +93,7 @@
   "mock_words": "9bd58c4117d1e040f106a9933c0febac60ad9395ed9acf89b78dd4ae526e393d",
   "mock_written_part": "9b5f77ac09eb3cee5926b9f04662514e38f6c7327a2694865fec56b6731df542",
   "mock_written_part_area": "b81bf0f873a17832f5bee8477d1b990232e570d1b92a63845c51b39479130cad",
+  "mock_written_questions_blank": "5b3d36a77695ccb6997878c8ac2029c552c8b1ca1dda554ae40b403c0473ad69",
   "mock_your_essay": "5412f327926c6ffbbeff8701778178cc0d1970a3a93722825c89239f0bc2b321"
 }
 -->
@@ -174,6 +175,12 @@
     </plurals>
     <string name="mock_every_answered">Toutes les questions ont une réponse.</string>
     <string name="mock_essay_blank">La rédaction est vide.</string>
+    <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
+    <plurals name="mock_written_questions_blank">
+        <item quantity="one">La question écrite est sans réponse.</item>
+        <item quantity="many">%d questions écrites sont sans réponse.</item>
+        <item quantity="other">%d questions écrites sont sans réponse.</item>
+    </plurals>
     <plurals name="mock_essays_blank">
         <item quantity="one">%d rédaction est vide.</item>
         <item quantity="many">%d rédactions sont vides.</item>

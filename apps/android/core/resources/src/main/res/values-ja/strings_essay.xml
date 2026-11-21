@@ -1,141 +1,295 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "essay_about_lines": "0bab9e889a920cb8d659b67919ee38ec2c7a410771c50887331eaf0ac6c5737c",
+  "essay_about_time": "2c77f6ee2749a1151c3fde1246b6fd411401b171bf4e93c6b564ea68aac3f9d4",
+  "essay_back_on": "856adbafb8ca883483c76789a3757295e158c6046b87a9585c1e5649883f5689",
   "essay_back_to_today": "08800daefd37f4afb780f5e35f21fddebb6e1ae719f1b6b6f971f5bd7339ce14",
+  "essay_back_tomorrow": "f5ab399b3492262d4a07ae3cc0e90b3d3f956c0fbc0ffbdefbe115c49a4e67e6",
+  "essay_choose_on_today": "73948ee5c244d2fa3e33417ab90cdd12b086ad012f559f20f35c69554413c7bd",
   "essay_comments": "d3eb1a202931265d7c92b4282f6476b1b0c9353a2e70d161061a57284721ba38",
-  "essay_criterion_addressing": "715178a160a183f31dbe242ef4828c4b5efc4baaa74ddafe00e22e6a83224610",
-  "essay_criterion_argument": "08005253d96bde999e21befe867b2cf0507de253a03a1e2b4fdd3f5b39d269d3",
-  "essay_criterion_closing": "2613b3052e14f15169834411bb19d0e70a4785cb2b2260c50d0ceaa4854d003b",
-  "essay_criterion_cohesion": "750da3d18da700dd2fbaf1cbf697d3d11dc32d09684a8739de7b790f7321b088",
-  "essay_criterion_facts": "30f63d8b959c656c80f9a21bd066b85b792ce17b91d2bd67cea77e0d189f3611",
-  "essay_criterion_formal_writing": "fc972d34b94d3421b52c17fa110c9e6a99f330157530d8e633fa51e3de065c7d",
-  "essay_criterion_intervention": "a98590fd284c23b55fa1337a43f95161bdbcd83018f9b5ffd6b1f37f4779ada4",
-  "essay_criterion_legal_basis": "5bb2d27befb2a4a3b3a43efdf8ca4988fd107cc0e5946cda68106b832a13fa80",
-  "essay_criterion_requests": "8d1ccacdb5e4da3f2b0e41d3bd2573431d9a319cf2d13ea49327bfdc41cea1c5",
-  "essay_criterion_topic": "5b767c2c64d13542714e91e7df64e8f1b8762f9e686dbf958979e824195399c8",
-  "essay_element_action": "22a34467c8644d76caa2564fb64e180d976132591cf192280ea967b9ebfe0292",
-  "essay_element_agent": "2027351d201b6ff3ab7a8bd8031fe440750e882148ae50169c30a0dda10d4769",
-  "essay_element_detail": "4c34e6e575244d6db69b17233f6178621bee074707a3c6f9620abff4b74fb923",
-  "essay_element_effect": "ec9d9ab62567dbf8236303a1cedb40e7914a09a7f27f1ad2efd27fc9109aedd9",
-  "essay_element_means": "426fb4edf750d4311c7feec4e2ce712b3103aca723d3db9be2be49f450c2b54e",
-  "essay_element_missing": "e29d235168b51e0c4437062a364318162708fdbb1192a4fb858394ea08e5b9d1",
-  "essay_element_present": "af4e82f4394c145549b7fc3dce1c34fc2e6a76190eaa470214496f83864ffa3c",
+  "essay_conflict_body": "2f0428c16af426bb0c554ad46a65b78af18ee19e2a4b8227aff2c24e1b819847",
+  "essay_conflict_keep": "5f050698af6159de7644f3ecc4f396ee1bc875a6de62acd688d0a4c2f4e72cd8",
+  "essay_conflict_title": "476faf8bfead263bc4adc0dd0e839ec876a735fd28eef306492bcb70d4fb485c",
+  "essay_conflict_use_other": "fcf8cd481ee05ec85b6dd64af521bc2c84c15597e2fef2fa4e16ba7243b630b5",
+  "essay_content": "2c5637c82f95010fadee013e1efe2ae6620ea490ef29300b7feba6a1ce518106",
+  "essay_continue": "26c989e69a5e5f5b3160ed00fa6030f0427c714631b142ffd570a022b6e710b7",
+  "essay_criteria": "53532df1eb1d4896e6094bdc6df9dce3570fed6c1915444f2b114347374debf1",
+  "essay_criteria_complete": "8086fd15141099311240633a2afb3cbec7a83b5492a90af0b66629f0e5f6912e",
+  "essay_criteria_from_notice": "83a8b6efe682e87fb3d35d6c38bc434760a72f64e03e3ce32c6761ac4adcf839",
+  "essay_criteria_from_notice_practice_key": "03a69a007ee31989d7c23de19f6793ed71ded59b5f89e2e2d405007fad80fa43",
+  "essay_depends_on_choice": "9d2906fce3b8ca0b8b529fa4d41e3fb86b67d3dabe6c4150b818aa7c58eabfda",
+  "essay_errors": "146cac22d674fdb717dcb6f154660e5f66605129dc9f58c05696c8721feb5557",
+  "essay_estimated_score": "1ed0850d416158ef65a9cf0c0181950dafb5ed7fd40131f19c319e2b95fb0107",
+  "essay_exercise_failed": "2b01dc2d857cb0d3abda5250ed60bca05bb458dbdc67da634dae08de283c0033",
   "essay_finish_failed": "b19dde046ab7a10b0b6a1cddf8a0bd7f3afe04d2a79840a50883dfd6f487b6da",
+  "essay_fixed": "4077cf30442054c33c30276a0e370b8f8fa33aeb728e9b3979c41f8f56d13893",
   "essay_for_example": "9fc4bdd101b4885d7b209e25c0c631d7b6e1ed13decd6f4db634fb7ce9eb24a0",
-  "essay_full_marks": "94b8f50e3c6c107fa114629e26440ac92cd52570c6d502a092c669db967b3e21",
+  "essay_from_notice": "29f745350613af0f8792efd0d2c7b64dc13d8a1a1a4b729f1aace24bdca0f215",
+  "essay_from_notice_practice_key": "2beedb9edfd281dfc4accdfc8d41d842d1fea78a423ba2fc2ff99aeecf26637e",
+  "essay_full_marks": "297326d78c2a976aa0f2ca36566630110f5fa74ec1f3ece68919d44cb3633dbe",
+  "essay_grade_answer": "4988e34c7c56aa06eaeb8a33eb79844643c96c7cdd0ce61cf4ebd277939e87c2",
   "essay_grade_rewrite": "0b710543e2d850970cbe522dad34ebee0be32b8655e089301989502e08dc2aaf",
-  "essay_grading": "7588371af0744e3cc2129b96705362218a878d5c7c4ebf33afbef02765414684",
+  "essay_graded_by_level": "b036cd3e341d2f5a4b08261f3636c414bd6f3d9e15eab404cb07e65113227233",
+  "essay_graded_earlier_version": "bc8da60776665224bbf235480219df8bded06edad299af08468c07e5d589815b",
+  "essay_grading": "6e3d5ae237b8798a518f76cae53ba54bcf272b0c7eef87f528a55a1b6fb25d04",
+  "essay_grading_criteria": "cc1caf1e3e648ebbf10f0e1d6f8553c08fa04cb3a2beff8f07b1230bfae3b9ad",
   "essay_grading_slow": "22b1485efcedcfe39e2c4b6d6cb957e236a5e06c9b7dc54749b92622418669d7",
+  "essay_judged_on": "1dec3f545123817906b003c8809dad515c529b2bcc5f92f34c06f62853287ddc",
   "essay_keep_writing": "bf22bf27cf32f08ae37cd730d1f6eeae538e1df81815ca856e1650ac794f73b6",
-  "essay_last_grade": "ea1b91abc672a2d8866d58f4519d9e68fe16349d0929dd97eea735c2b8b429f2",
-  "essay_leave_description": "2ba5ecea01ccecbea95ec85eadd0a4aa81d24699121eb2a1643c38ad820658b7",
-  "essay_leave_title": "f216b64c5823aca798ff425ed7414ab69cf534ecbae29fa3f395e7d7b0d83aa7",
-  "essay_limit_reached": "d5505b18c9a00da927b2e5543e3498b51a24b05aada1d792923f5ab9fa6f1815",
-  "essay_motivating_texts": "d554f1f651014b4eead6efce70726458965a2bb28390564f0eb093b2e16a011b",
+  "essay_language_errors": "b9eb56857210d14ccde45128812fec6b40a0d2fa81ba5046614ea10beb9bd591",
+  "essay_left_for_tomorrow": "454cd2bfb46c9089cda20aa1875ab47f815d406c3f0f29f99c6af12b7c4fbf79",
+  "essay_level_complete": "a409357539aa7929b73bd02d48b03aa490f5e198cf823558016e40421410f518",
+  "essay_level_missing": "d9083562a03840036052cc39c439d06adf196fe4be0e10f1d3f3d3e20720a622",
+  "essay_level_partial": "8848a6b3e30c9e76224a2decbb10823c38c9c1de924c894181fbd7dedfad879f",
+  "essay_level_strong": "4ae0dac8c9b357f8dabfe4c4746905d4cf6b58d527a52d89f4e219a9c9c78e89",
+  "essay_limit_text": "99a3b622f157a017871268cda5820fc422b2775c3a68fa888d5590e14b6649e5",
+  "essay_limit_text_any": "6e8697d03b0b1e3fb5c37f2e9d47cb462740bf018b4868e411efc684e2b5c6f3",
+  "essay_limit_title": "e65109bc2f62995a35be2ff571781e07eb5bde0a42d60c633486e267e841223d",
+  "essay_limit_title_any": "e47f312e69b34e5595be8791a4f6c0e4a3545c4224cd0aef9acd0cde30c53b9d",
+  "essay_lines_empty": "a87e184165e2b6706ae5163d43a1ef9f84617de83255314fa78ea03841ac0307",
+  "essay_lines_over": "3c8b5c82a5b207afcecf40953cb2ef0250fc21b1f03a9238ae8f62ac46b0f7fa",
+  "essay_lines_question": "7b484b9419b561d62ca10d9fa3e345e853ff0f8999c1f8383a78188389a4385c",
+  "essay_lines_used": "515543acb7eaf85227dae1f8e404f35bfb3bb55461a8cdfae073b5b12d7ba423",
+  "essay_minus": "ee0f5375ee112a6ea1f3ef7b35535eedf10321801f4cfeba36479709752e8856",
+  "essay_minus_range": "1098a00b9206b520100eb81a4a0361c9b8749e6010772d2a7a967a1bbf85078c",
+  "essay_more_tomorrow": "6e3c42751ffd9fb1904b52a63fbba3baf698c20fea62e86fe676c7037f4c4ae7",
   "essay_next_step": "59fef5bc255c8a8e5bd5dde690d8910f6e8e02e9db868f03f36cca82182b70d3",
-  "essay_next_step_named": "b3f7358e5c78220c3ca02c91fa6bfb00eba7b3a51c085daee474cb1802a5eaa0",
+  "essay_no_more_grading": "e1a118804343d1c8065d66b51ddfd2f6ed2cbee2a32222eb015863632078bedb",
+  "essay_no_points_in_notice": "5e53cf0b349889f52bb3d4aa998be9454e8317afca2b44aad5e43c73bd26b223",
+  "essay_not_measured": "abf001e3cced8700444ab6c10a3ec3ec3730e61c60ec85ebe03a78deec03856d",
+  "essay_not_saved": "93902eebd2b87e46ea77fb360bdfa870a4bf4a5323f0449534ffc6cba9127c4b",
   "essay_nothing_left": "a51dbc0d710985d6a2e9cf88c681e179060d843e4a2afebfcb2b0a1102a38ff3",
-  "essay_proposal_elements": "b0e6c64d577911fd609e86d28e335aa7f6cfdec14de894e25570e90c49eaa6aa",
+  "essay_nothing_lost": "9ef20ed93530071dc6e5f480449ec1558c473c3e07025ade473ed16301e43f28",
+  "essay_of_max": "f12d1ad2e06e683720fac4a585b0c9473e33c4334e80e4f9d81a55b278d992d8",
+  "essay_part_minimum": "c279833844589540a056daf24c00515a0cb482fca20f802b57e2262054f9d87a",
+  "essay_past_limit": "1bb26200aaeda46329f06f8189f0e295e20399f018335abbd1e70ea8e49accf6",
+  "essay_past_line": "0517999fe475de47931f7571e5cada5d091b015d6de2c9b8f7e96181a49fa349",
+  "essay_points": "cfd52f8436b365cd72fa2ee86a3d2fabd8057984a383ca1751d708d1a74d1372",
+  "essay_points_of": "74de6b45fab1d14d87a065be80d95d804d553e2d6a5c461bd23b56d54bde333d",
+  "essay_points_split": "b04f171879e988ce8686799338fdb3a9fa5795816912fb9f9222940af059268f",
+  "essay_question": "0c6c4c97c1955f877273066c2ec3ffb1e9e9fee5a82e8bbaab171a870710ddc6",
+  "essay_question_failed": "0f00c54282cd8d03aa902467812b86ffbaeddcba604708c87d18b41f5780d8b0",
+  "essay_question_number": "7a75afa8c4b1d1d25a49e714a9d5b37628b03796810ff79162b28281691a13ef",
   "essay_range": "a4ffabae5f64f69dcaa3b0f9a3d6da74d7e30713aec2c0879d3f236a300e2ff6",
+  "essay_removed": "7e6a68347d0a13449c2d5e03b331ef2d1031e99f08faedb05a38486494ce2f19",
+  "essay_removed_detail": "a3dfc9492b56beffeb28b031c35d51fe0652e9ffbecc124f801715e9a8fbb569",
   "essay_rewrite": "44068783e30a2ffd2da39567a9c1c751554d85e8a75bcc2d722c2ee8721da784",
   "essay_rewrite_label": "4654f71e580d3450e41fc907c12100df0293aeb48ff8e74586224f050681d2b6",
-  "essay_scale": "0bde6db6bf66866b978bc72127ad46f532d856fde6445bacfc6cf9d931094e43",
   "essay_score_of": "5ecd3430bfa212b660e7a02292e772773246c8c35aa3331e175fe05e78233261",
   "essay_see_comments": "fb08822e3f1e67e39f418fc3a1a92f4fc1ab708c1f65986cfe15356cf2b3b890",
-  "essay_see_grade": "6674663c4a920d6827269788aff0608dbf9cf7a7ecf8c0a54b6b7705c1e08dea",
-  "essay_send": "6c97245742a728114ba7ca0bc8cda92350677b26e02cb5877f3579297239f102",
   "essay_send_failed": "eab999a6d7f51d76ee55b50bff100c053362019d7ed6bed028b5fd5305422fe9",
+  "essay_short_exercise": "d3a293e64adae57861caadb790fb4cc9e1dfd2e9e723bc341dcf51a364cf7b3a",
+  "essay_short_exercise_detail": "93662255548447a1999650df0491e4443812f773d07245d1d3a3f545f4e84ada",
   "essay_skip_rewrite": "539fbb845e730a567ade28dcaa5547e89893dfa7847abfc9fa782829f88e1c53",
-  "essay_skipped": "220fac68806b898c9405950e022ac84016c6f7f3ed10557abcebedafd60ff3b1",
-  "essay_supporting_texts": "8d688c6a53df30f5ca5b96733c3ba7f39a9bd81ae2452ef8f74382bb8f5e92f7",
-  "essay_the_case": "9a10e9991739366cdf7955b2e0c37ed8fac83061f2b76a223201c6db8b3e8029",
-  "essay_title": "e681aef96c8c23d5f115b75af7d61e07850e9d5767f6312e93b8795b9b307d91",
-  "essay_title_ap": "c05271441500855ca1999754f37f00eee1003f6f0efe7ec7df54a34d6d2a5c05",
-  "essay_title_enem": "3a2894007a9cc5d6a42091fc1832db1ef28f500be6fc2b8c1dee43f926fa11e4",
-  "essay_too_short": "722a0eaac7b9f08fef4accd503a15dc9c88f8b2f7ea05199338cbc5ac69c464a",
-  "essay_too_short_detail": "951ed43ff9c82f9fd3380f555b964ea49dfa0acd2ff26915e197f9de81ad2a6e",
+  "essay_skipped": "5afc454df2dfef9f300908219c115ac9f9fa8c53e654bb75c9c31d0e9467ecf5",
+  "essay_start_about_time": "d27e3975b1a67a316bc87e9ef817703f6da9f7578b2e9eeb7f6282915ba0120d",
+  "essay_still_to_work_on": "49073e9cdf61d825223aebed11cd6c5127ae778d925f4abce75b75b4fb6b67ab",
+  "essay_support_text": "d53b36d26a136bbbaf70a79b58661a3d95c22978b531b604a91baf53563bd363",
+  "essay_task_depends_on_choice": "6ca8f0cddd322a3f9c39ca8b2fc0ab1f6147307ab6198a0801434997f16b0586",
+  "essay_the_question": "7bf2f512d8f2b622a9d12f3df5b7c0cc39c2f80ea112f6450df379f204cceef1",
+  "essay_try_again": "715e7d484c1767913d5c1158d7f5543f76a3dbba25a7bec500cc31656463eb01",
+  "essay_unsaved_body": "479238bb1c4ef6816626b7f49781409538feb637e45d352e5a4ec8140fc35444",
+  "essay_unsaved_title": "7b30ffa64d8e65fbe8db39e6c5fb7b4d09f0d1329cdddf8144be2dfef5d0ce0b",
+  "essay_up_to_lines": "8b72cfa90d3f48bad01a413d0318f03beb0ceae939f3fee3eea5bf2b2de25490",
   "essay_what_to_rewrite": "40d52ba5d4247b8617d012ff8202029bf189725a169b49c2de2114e8bd2f5751",
+  "essay_what_to_write": "c6a36cfbd489c9b70f65928904c3c09ed48add72af75449c5a52945974d1c2b6",
   "essay_words": "047b13f665de47401fbced1c4f7fddaaa5d790fc72fe2d0935c9c4ad71d478cc",
+  "essay_write": "0aead1092d6214e56eefa795527508d1b08e168dcdb452bc483e359a3b328c65",
+  "essay_write_lines_question": "967deb444be628c92a0c22c32e9f6ae91be5213eaeb45bb08a3b73e9d32f6e69",
+  "essay_write_question_number": "93c2136446428c11930e70ec3dbf01d1f96d283c7bee1a0ab0fe373fd4321c21",
+  "essay_write_the_question": "41b0de0af8e4c166a0c8597cce7a4c0880003f4ee595418a1d15b6e4256687cb",
+  "essay_writing_exercise": "82207c7b1133ad7f002d2a5c76824adfab10ca8fa4e3b607bb682cb3f46ab864",
+  "essay_writing_exercise_detail": "45fceb67e385d6fc2102bb168e6e70a9a81bba03f4edfae0e50a057ff9a3d910",
+  "essay_writing_practice": "6cc69267401c7246e9111322a968e4eb40c4283c7dfabffe41bd0faf4ba90fc8",
+  "essay_writing_question": "192d1cca5b2f134ccaa1878d53b1125159f0ff2b2154a043b19216f8b3ccf972",
+  "essay_writing_question_detail": "6f1c73f22440ff0c73c3f2674bcc2a1c334ec6415dd84885928699db0ce7b54b",
+  "essay_written_answer": "7069699ad9155a697b2f3d28ebb7cf2406337affe2591ad8f09129eb0fcae8f8",
+  "essay_you_wrote": "2985e167a463a8da38a66286e65b20c2eba24e7cd28d1c3b780d87898702c2ee",
   "essay_your_answer": "8d75c5c0bfb6a90c8ffff44e75d6009fe2a6cf70ffe5e21b49306d46ee299cdb",
-  "essay_your_essay": "134a99abf7c99917df0b89d4dda2459082ff6ab9856c87669e6d4dd9266f3c2d"
+  "essay_your_text": "0741229ac53703a02420d1c340e31c6c18c1b34ac6e23238cb406f91e23dea88",
+  "essay_zero_blank_text": "5833e17abb7f64664c618d1ca0e0f0d1f7ebffe7c5a952ca410f32d58729c329",
+  "essay_zero_blank_title": "8b7fb6cf3bd3b23c7da274f23126e2f887ed47cf3f001712a1b3d7840d22e143",
+  "essay_zero_copied_support_text": "190697df0e0d9b7aecf3dc40413c1506a805e7732e952ed0795c44dfc755e81d",
+  "essay_zero_copied_support_title": "ab522e1295cf517d5cffe3351cec45108bc3485c05fde7c5ce0ba3e625feb676",
+  "essay_zero_identification_text": "1fb80dc44026b736827929bce815216489cab14508196c49047c53069ba5e2ae",
+  "essay_zero_identification_title": "5912424805510f345cc6df889b85b6d11a919ee30a096c935006c006296b00a0",
+  "essay_zero_off_topic_text": "ed8774c7acc4ff88c94f5997eb255ca074dac17f19ccd46a9a148b70c02e5998",
+  "essay_zero_text": "f7dbf3417fbea39f984801a7d797649b5a34461b600c41a35a4c5a7e1d0574fa",
+  "essay_zero_title": "82ebb6edfcfa47a7abb2e883b64c5fed50c835cf74c373fa782c90e5d795ccf2",
+  "essay_zero_to_minus": "967289f886434d624242ede488cbbb6cdf19546e9c4700b873de3d4961cedbc9",
+  "essay_zero_too_few_lines_text": "d897f20e0a17827faa91e6cbda3e97ec709593eaab383bfb25991b9a9db8b224",
+  "essay_zero_too_few_lines_title": "d5e14853d8e8d7c9c8d1257498cfb90fa12685958da1d1529632267b40abe35d",
+  "essay_zero_wrong_form_text": "6d82045999c0f850a0b807ac0ce61d2c63fa629fa7b7e6cbe7c5fd0eadcf9afe",
+  "essay_zero_wrong_form_title": "54abaa8e36013af7c5b832c781a9c7d338c0d256e6cd8681acf0f8b441790b1e"
 }
 -->
 <resources>
-    <string name="essay_your_essay">小論文</string>
+    <string name="essay_writing_practice">小論文の練習</string>
+    <!-- A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer. -->
+    <string name="essay_short_exercise">短い記述練習</string>
+    <!-- Under a short writing exercise after a lesson: what it's for. -->
+    <string name="essay_short_exercise_detail">今学んだことを使うため</string>
+    <!-- A whole answer of an exam's written test, named by its line limit, such as 30 lines. -->
+    <string name="essay_write_lines_question">%1$d行問題を書く</string>
+    <!-- A whole answer of an exam's written test whose questions share a line limit, named by its place in the test. -->
+    <string name="essay_write_question_number">問題%1$dを書く</string>
+    <!-- The whole answer of an exam's written test that has one question. -->
+    <string name="essay_write_the_question">問題を書く</string>
+    <!-- One question of an exam's written test, named by its line limit, such as 30 lines. -->
+    <string name="essay_lines_question">%1$d行問題</string>
+    <string name="essay_question_number">第%1$d問</string>
+    <!-- The only question of an exam's written test. -->
+    <string name="essay_the_question">問題</string>
+    <string name="essay_back_tomorrow">明日また利用できます：今日はこれ以上採点できません</string>
+    <string name="essay_back_on">%1$sにまた利用できます：今日はこれ以上採点できません</string>
+    <!-- Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices. -->
+    <string name="essay_depends_on_choice">%1$sの選択によって異なります</string>
+    <!-- Under a written test where one question waits for an exam choice the learner hasn't made. {task} is the question, such as "The 60-line question"; {groups} names the choices. -->
+    <string name="essay_task_depends_on_choice">%1$sは%2$sの選択によって変わります</string>
+    <string name="essay_choose_on_today">今日の学習で選ぶ</string>
+    <string name="essay_graded_by_level">レベルで評価</string>
+    <string name="essay_estimated_score">推定スコア</string>
+    <string name="essay_written_answer">記述答案</string>
     <string name="essay_your_answer">選んだ答え</string>
     <!-- A score's range, such as "610–680". -->
     <string name="essay_range">%1$s〜%2$s</string>
-    <!-- %1$s is the essay's highest possible score. -->
-    <string name="essay_scale">推定スコア（0〜%1$s）</string>
-    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="essay_points_of">%1$s / %2$s</string>
+    <string name="essay_of_max">/ %1$s</string>
+    <!-- A criterion's score, such as "7.13 of 9.5". -->
     <string name="essay_score_of">%1$s / %2$s</string>
-    <string name="essay_criterion_formal_writing">フォーマルな文体</string>
-    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
-    <string name="essay_criterion_topic">テーマと知識の活用</string>
-    <string name="essay_criterion_argument">論の展開</string>
-    <string name="essay_criterion_cohesion">文章のつながり</string>
-    <string name="essay_criterion_intervention">解決策の提案</string>
-    <string name="essay_criterion_addressing">宛先と当事者</string>
-    <string name="essay_criterion_facts">事実関係</string>
-    <string name="essay_criterion_legal_basis">法的根拠</string>
-    <string name="essay_criterion_requests">請求内容</string>
-    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
-    <string name="essay_criterion_closing">末尾の記載と書式</string>
+    <string name="essay_not_measured">まだ測定されていません</string>
+    <plurals name="essay_up_to_lines">
+        <item quantity="other">最大%d行</item>
+    </plurals>
+    <string name="essay_points">%1$s点</string>
+    <string name="essay_about_time">%1$sほど</string>
+    <string name="essay_support_text">参考文</string>
+    <string name="essay_what_to_write">書く内容</string>
+    <string name="essay_grading_criteria">採点基準</string>
+    <string name="essay_points_split">%1$s点の配点内訳</string>
+    <string name="essay_judged_on">答案の評価基準</string>
+    <string name="essay_from_notice">試験要項に記載されています。</string>
+    <string name="essay_from_notice_practice_key">試験要項に記載されています。解答例は練習用にこちらで用意しています。</string>
+    <string name="essay_write">書く</string>
+    <string name="essay_start_about_time">約%1$s</string>
+    <string name="essay_continue">続ける</string>
+    <string name="essay_question">問題</string>
+    <string name="essay_rewrite_label">改善が必要な部分を書き直す</string>
+    <string name="essay_grade_answer">回答を採点する</string>
+    <string name="essay_grade_rewrite">書き直しを採点する</string>
+    <plurals name="essay_words">
+        <item quantity="other">%d語</item>
+    </plurals>
+    <!-- How many handwritten lines the typed answer would take, of the question's limit, such as "about 23 of 30 lines". -->
+    <plurals name="essay_lines_used">
+        <item quantity="other">全%2$d行中、約%1$d行</item>
+    </plurals>
+    <!-- An empty answer field's line count, against the question's limit. -->
+    <plurals name="essay_lines_empty">
+        <item quantity="other">%1$d行中0行</item>
+    </plurals>
+    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
+    <plurals name="essay_lines_over">
+        <item quantity="other">全%2$d行中、約%1$d行 · %3$d行は読まれません</item>
+    </plurals>
+    <string name="essay_conflict_title">別の端末で答案が変更されました</string>
+    <string name="essay_conflict_body">ここで書いている内容を残すか、別の端末の内容に切り替えられます。</string>
+    <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
+    <string name="essay_conflict_keep">この内容を残す</string>
+    <!-- A choice between two versions of one written answer: replace what's typed here with the version saved on another device. -->
+    <string name="essay_conflict_use_other">別の端末の内容を使う</string>
+    <string name="essay_graded_earlier_version">この採点結果は最初に送信した答案に対するものです。書き直し用に変更内容は保存されています。</string>
+    <string name="essay_not_saved">まだ保存されていません。この端末に保存されています。</string>
+    <string name="essay_unsaved_title">回答はまだ保存されていません</string>
+    <string name="essay_unsaved_body">この端末に保存されており、オンラインに戻ると同期されます。</string>
+    <string name="essay_keep_writing">書き続ける</string>
+    <string name="essay_send_failed">うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。</string>
+    <string name="essay_grading">各評価基準に沿って回答を確認しています。最大30秒かかります。</string>
+    <string name="essay_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>
+    <string name="essay_writing_question">問題を作成しています…</string>
+    <string name="essay_writing_question_detail">試験に出る問題に似た新しい問題です。準備ができると、ここに表示されます。</string>
+    <string name="essay_writing_exercise">練習問題を作成しています…</string>
+    <string name="essay_writing_exercise_detail">今学んだ内容の短い練習問題です。準備ができると、ここに表示されます。</string>
+    <string name="essay_exercise_failed">練習問題を作成できませんでした</string>
+    <string name="essay_question_failed">問題を作成できませんでした</string>
+    <string name="essay_nothing_lost">内容はすべて残っています。少し待ってから、もう一度試してください。</string>
+    <string name="essay_try_again">もう一度試す</string>
+    <string name="essay_removed">この問題は、もう試験に出ません</string>
+    <string name="essay_removed_detail">試験の要項が変更されたため、学習計画に含まれなくなりました。採点は行われていません。</string>
+    <string name="essay_no_more_grading">今日はこれ以上採点できません</string>
+    <string name="essay_more_tomorrow">明日また採点できます。</string>
+    <string name="essay_left_for_tomorrow">明日に残したタスク</string>
+    <string name="essay_part_minimum">筆記試験の合格に必要な点数：全体の%1$s</string>
+    <string name="essay_content">内容</string>
+    <string name="essay_language_errors">言語の誤り</string>
+    <plurals name="essay_errors">
+        <item quantity="other">%d件の誤り</item>
+    </plurals>
+    <plurals name="essay_about_lines">
+        <item quantity="other">約%d行</item>
+    </plurals>
+    <!-- Points taken away, such as "−0.35". -->
+    <string name="essay_minus">−%1$s</string>
+    <!-- Points language errors take away, as a range, such as "−0.3 to −0.6". -->
+    <string name="essay_minus_range">−%1$s〜−%2$s</string>
+    <!-- Points language errors may take away, from none, such as "0.0 to −0.4". -->
+    <string name="essay_zero_to_minus">%1$s〜−%2$s</string>
+    <string name="essay_fixed">改善した項目：%1$s</string>
+    <string name="essay_still_to_work_on">引き続き取り組む項目：%1$s</string>
     <string name="essay_next_step">次のステップ</string>
     <string name="essay_what_to_rewrite">書き直すところ</string>
     <string name="essay_for_example">例：%1$s</string>
     <string name="essay_nothing_left">直すところはありません</string>
-    <string name="essay_full_marks">今回の推定では、すべての評価項目が満点です。</string>
-    <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
-    <string name="essay_title">記述練習</string>
-    <string name="essay_title_ap">自由記述 · APの採点基準</string>
-    <string name="essay_title_enem">小論文 · ENEMの採点基準</string>
-    <string name="essay_supporting_texts">参考資料</string>
-    <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
-    <string name="essay_motivating_texts">参考文</string>
-    <!-- The legal case an OAB written exam answer is about. -->
-    <string name="essay_the_case">事案</string>
-    <!-- The grade of the learner's last essay draft. -->
-    <string name="essay_last_grade">前回の採点結果</string>
-    <string name="essay_rewrite_label">改善が必要な部分を書き直す</string>
-    <plurals name="essay_words">
-        <item quantity="other">%d語</item>
+    <string name="essay_full_marks">すべての基準を満たしています。</string>
+    <plurals name="essay_limit_title">
+        <item quantity="other">%1$d行に収める</item>
     </plurals>
-    <!-- On an essay the learner skipped, opened again from a link. -->
-    <string name="essay_skipped">この小論文はスキップしました。</string>
-    <string name="essay_back_to_today">今日</string>
-    <string name="essay_send_failed">うまくいきませんでした。文章はここに残っています。少し待ってからもう一度試してください。</string>
-    <string name="essay_limit_reached">今日の小論文の採点回数を使い切りました。文章はここに残るので、明日送信してください。</string>
-    <string name="essay_grading">各評価基準に沿って小論文を評価しています。最大30秒かかります。</string>
-    <string name="essay_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>
-    <string name="essay_skip_rewrite">スキップ</string>
-    <string name="essay_grade_rewrite">書き直しを採点する</string>
-    <string name="essay_send">小論文を採点する</string>
-    <string name="essay_leave_title">いったん中断しますか？</string>
-    <string name="essay_leave_description">文章はこの端末に保存され、戻ってきたときに再開できます。</string>
-    <string name="essay_keep_writing">書き続ける</string>
-    <!-- %1$s is the criterion to work on next, such as "Argument". -->
-    <string name="essay_next_step_named">次に取り組む項目：%1$s</string>
-    <string name="essay_see_grade">採点結果を見る</string>
-    <string name="essay_too_short">採点するには短すぎます</string>
-    <string name="essay_too_short_detail">小論文を最後まで書いてから、もう一度送信してください。</string>
-    <string name="essay_rewrite">書き直す</string>
-    <string name="essay_finish_failed">うまくいきませんでした。少し待ってからもう一度試してください。</string>
+    <string name="essay_limit_title_any">行数の上限に収める</string>
+    <string name="essay_limit_text">採点者は%1$d行目で読むのをやめるため、その先は読まれません。</string>
+    <string name="essay_limit_text_any">採点者は行数の上限で読むのをやめるため、その先は読まれません。</string>
+    <string name="essay_zero_title">質問に答える</string>
+    <string name="essay_zero_text">上のルールに従って書き直す。</string>
+    <string name="essay_zero_blank_title">回答を書く</string>
+    <string name="essay_zero_blank_text">問題で求められているポイントから書き始めましょう。</string>
+    <string name="essay_zero_off_topic_text">問題を読み直し、求められていることについて書きましょう。</string>
+    <!-- The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked. -->
+    <string name="essay_zero_wrong_form_title">指定された形式で書く</string>
+    <string name="essay_zero_wrong_form_text">問題で求められている文章の種類を確認し、その形式で書きましょう。</string>
+    <!-- The next step of a written answer zeroed for being shorter than the exam's minimum number of lines. -->
+    <string name="essay_zero_too_few_lines_title">最低限の長さに達する</string>
+    <string name="essay_zero_too_few_lines_text">問題で求められている各ポイントを、必要な長さに達するまで詳しく書きましょう。</string>
+    <string name="essay_zero_copied_support_title">自分の言葉で書く</string>
+    <string name="essay_zero_copied_support_text">参考文を出発点にして、自分の回答としてそのまま使わないようにしましょう。</string>
+    <string name="essay_zero_identification_title">自分だとわかる情報を入れない</string>
+    <string name="essay_zero_identification_text">回答に関係のない名前、署名、印を取り除きましょう。</string>
+    <!-- A past written answer graded by level: how many of its criteria were fully met, out of all of them. -->
+    <plurals name="essay_criteria_complete">
+        <item quantity="other">%2$d個の基準のうち%1$d個を達成</item>
+    </plurals>
+    <string name="essay_criteria">採点基準</string>
+    <!-- A criterion of a written answer fully met. -->
+    <string name="essay_level_complete">達成</string>
+    <!-- A criterion of a written answer mostly met. -->
+    <string name="essay_level_strong">良好</string>
+    <!-- A criterion of a written answer half met. -->
+    <string name="essay_level_partial">一部達成</string>
+    <!-- A criterion of a written answer not met. -->
+    <string name="essay_level_missing">未達</string>
+    <string name="essay_no_points_in_notice">試験要項には、各採点基準の配点が記載されていません。</string>
+    <string name="essay_criteria_from_notice">採点基準と配点は試験要項に記載されています。</string>
+    <string name="essay_criteria_from_notice_practice_key">採点基準と配点は試験要項に記載されています。解答例は練習用にこちらで用意しています。</string>
     <string name="essay_see_comments">コメントを見る</string>
     <string name="essay_comments">コメント</string>
-    <string name="essay_proposal_elements">提案の5つの要素</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->
-    <string name="essay_element_agent">誰が行うか</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: the action itself. -->
-    <string name="essay_element_action">何を行うか</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: how it's carried out. -->
-    <string name="essay_element_means">どのような方法で行うか</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: its purpose. -->
-    <string name="essay_element_effect">何のために行うか</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: a detail of one of the others. -->
-    <string name="essay_element_detail">具体的な説明</string>
-    <!-- Whether an element of the proposal is in the essay. -->
-    <string name="essay_element_present">記載あり</string>
-    <!-- Whether an element of the proposal is in the essay. -->
-    <string name="essay_element_missing">記載なし</string>
+    <string name="essay_your_text">テキスト</string>
+    <string name="essay_past_line">%1$d行目以降は採点者は読みません</string>
+    <string name="essay_past_limit">上限を超えた部分は採点者は読みません</string>
+    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
+    <string name="essay_you_wrote">「%1$s」と書きました · %2$s</string>
+    <!-- On a written task the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">このタスクをスキップしました。</string>
+    <string name="essay_back_to_today">今日</string>
+    <string name="essay_skip_rewrite">スキップ</string>
+    <string name="essay_rewrite">書き直す</string>
+    <string name="essay_finish_failed">うまくいきませんでした。少し待ってからもう一度試してください。</string>
 </resources>

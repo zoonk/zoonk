@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The header of a short writing exercise after a lesson, and the name of a writing task with no other name. -->
     <string name="essay_writing_practice">Writing practice</string>
     <!-- A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer. -->
     <string name="essay_short_exercise">Short writing exercise</string>
@@ -17,57 +16,40 @@
     <string name="essay_question_number">Question %1$d</string>
     <!-- The only question of an exam's written test. -->
     <string name="essay_the_question">The question</string>
-    <!-- Under a written task: the day's extra grades are used, so it waits for tomorrow. -->
     <string name="essay_back_tomorrow">Back tomorrow: no more grading today</string>
-    <!-- Under a written task: the day's extra grades are used, so it waits for a later day. %1$s is the date, such as "Nov 24". -->
     <string name="essay_back_on">Back on %1$s: no more grading today</string>
-    <!-- Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. %1$s names the choices. -->
+    <!-- Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices. -->
     <string name="essay_depends_on_choice">Depends on your choice of %1$s</string>
-    <!-- Under a written test where one question waits for an exam choice the learner hasn't made. %1$s is the question, such as "The 60-line question"; %2$s names the choices. -->
+    <!-- Under a written test where one question waits for an exam choice the learner hasn't made. {task} is the question, such as "The 60-line question"; {groups} names the choices. -->
     <string name="essay_task_depends_on_choice">%1$s depends on your choice of %2$s</string>
     <string name="essay_choose_on_today">Choose on Today</string>
-    <!-- A written test whose answers are graded by level, with no points estimate yet. -->
     <string name="essay_graded_by_level">Graded by level</string>
-    <!-- Under a written answer's score range. -->
     <string name="essay_estimated_score">Estimated score</string>
-    <!-- The header of a written exam task: a whole answer to one of the exam's written questions. -->
     <string name="essay_written_answer">Written answer</string>
     <string name="essay_your_answer">Your answer</string>
     <!-- A score's range, such as "610–680". -->
     <string name="essay_range">%1$s–%2$s</string>
-    <!-- A score on its scale, such as "16–19 of 30". %1$s is the score or its range, %2$s the most points. -->
     <string name="essay_points_of">%1$s of %2$s</string>
-    <!-- Beside a large score, its scale, such as "of 30" in "16–19 of 30". -->
     <string name="essay_of_max">of %1$s</string>
     <!-- A criterion's score, such as "7.13 of 9.5". -->
     <string name="essay_score_of">%1$s of %2$s</string>
-    <!-- A written question or test the learner hasn't answered yet, so it has no estimate. -->
     <string name="essay_not_measured">Not measured yet</string>
     <plurals name="essay_up_to_lines">
         <item quantity="one">Up to %d line</item>
         <item quantity="other">Up to %d lines</item>
     </plurals>
-    <!-- What a written question is worth. %1$s is a number, such as "30". -->
     <string name="essay_points">%1$s points</string>
-    <!-- An estimated time to write an answer. %1$s is a duration, such as "1 hr 10 min". -->
     <string name="essay_about_time">about %1$s</string>
-    <!-- A written question's text to read before writing. -->
     <string name="essay_support_text">Support text</string>
-    <!-- What a written question asks the learner to write. -->
     <string name="essay_what_to_write">What to write</string>
     <string name="essay_grading_criteria">Grading criteria</string>
-    <!-- %1$s is the question's points, such as "30". -->
     <string name="essay_points_split">How the %1$s points are split</string>
     <string name="essay_judged_on">What the answer is judged on</string>
-    <!-- Where a written question's grading criteria come from: the exam's official notice. -->
     <string name="essay_from_notice">From the exam notice.</string>
-    <!-- Under grading criteria taken from the exam's notice, applied with an answer key Zoonk wrote. -->
     <string name="essay_from_notice_practice_key">From the exam notice. The answer key is ours, for practice.</string>
     <string name="essay_write">Write</string>
     <string name="essay_start_about_time">About %1$s</string>
-    <!-- Goes on with a written answer the learner left unfinished. -->
     <string name="essay_continue">Continue</string>
-    <!-- Opens the written question over the answer being written. -->
     <string name="essay_question">Question</string>
     <string name="essay_rewrite_label">Rewrite what needs work</string>
     <string name="essay_grade_answer">Grade answer</string>
@@ -105,27 +87,20 @@
     <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
     <string name="essay_grading">Reading your answer against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
-    <!-- While a new written question is written for the learner. -->
     <string name="essay_writing_question">Writing your question…</string>
     <string name="essay_writing_question_detail">A new question like the ones on your exam. It opens here when it\'s ready.</string>
-    <!-- While a short writing exercise is written for the learner after a lesson. -->
     <string name="essay_writing_exercise">Writing your exercise…</string>
     <string name="essay_writing_exercise_detail">A short exercise on what you just learned. It opens here when it\'s ready.</string>
     <string name="essay_exercise_failed">We couldn\'t write your exercise</string>
     <string name="essay_question_failed">We couldn\'t write your question</string>
     <string name="essay_nothing_lost">Nothing was lost. Try again in a moment.</string>
     <string name="essay_try_again">Try again</string>
-    <!-- A written task the exam's notice no longer asks, after it was read again. -->
     <string name="essay_removed">This question is no longer on your exam</string>
     <string name="essay_removed_detail">Your exam notice changed, so it\'s out of your plan. Nothing was graded.</string>
-    <!-- The day's extra grades for written answers are used. -->
     <string name="essay_no_more_grading">No more grading today</string>
     <string name="essay_more_tomorrow">You\'ll have more tomorrow.</string>
-    <!-- A written task that waits for the next day. -->
     <string name="essay_left_for_tomorrow">Left for tomorrow</string>
-    <!-- Under a question's score: the written test's own minimum, on the sum of all its questions, never this question's. %1$s is a share, such as "50%". -->
     <string name="essay_part_minimum">Minimum to pass the written test: %1$s of the points</string>
-    <!-- The part of a written answer's score that its content earned. -->
     <string name="essay_content">Content</string>
     <string name="essay_language_errors">Language errors</string>
     <plurals name="essay_errors">
@@ -142,9 +117,7 @@
     <string name="essay_minus_range">−%1$s to −%2$s</string>
     <!-- Points language errors may take away, from none, such as "0.0 to −0.4". -->
     <string name="essay_zero_to_minus">%1$s to −%2$s</string>
-    <!-- After a rewrite: the criteria the learner fixed. %1$s lists them. -->
     <string name="essay_fixed">Fixed: %1$s</string>
-    <!-- After a rewrite: the criteria still to improve. %1$s lists them. -->
     <string name="essay_still_to_work_on">Still to work on: %1$s</string>
     <string name="essay_next_step">Next step</string>
     <string name="essay_what_to_rewrite">What to rewrite</string>
@@ -192,9 +165,7 @@
     <string name="essay_criteria_from_notice_practice_key">Criteria and points from the exam notice. The answer key is ours, for practice.</string>
     <string name="essay_see_comments">See comments</string>
     <string name="essay_comments">Comments</string>
-    <!-- The learner's answer as sent, with its errors marked. -->
     <string name="essay_your_text">Your text</string>
-    <!-- Where the answer passes the question's line limit; the exam's graders stop reading there. %1$d is the limit. -->
     <string name="essay_past_line">Past line %1$d: graders stop reading here</string>
     <string name="essay_past_limit">Past the limit: graders stop reading here</string>
     <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
