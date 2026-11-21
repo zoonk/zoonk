@@ -441,12 +441,12 @@
   "plan_time_covers_everything": "dfe5a47ee17f5996ad9fe06a9d652d869d3913df17994eac910eaae4c0131d69",
   "plan_time_covers_everything_by": "375517f4762eab61f82e6d82ae9355c07cf5175dc2d28df0b86142c942c53495",
   "plan_time_covers_everything_by_month": "07843b2bc86f988137f58f9b536f108c006c8e10621a85f43e451c6c2d49867b",
-  "plan_time_covers_exam_all": "bc8e1378b9c23bf775584637931bb979527f8d0880d9988645a024bc9cbb7631",
-  "plan_time_covers_exam_all_month": "b6dc3b229d28d7858f688e4a1ae1bded8346392bd5cf568d9e6b2e58f9db7c72",
+  "plan_time_covers_exam_all": "f875b977d739ac3a692f0e1fc7691b519b269bbef01c2f8c3c6817d9a35a72c9",
+  "plan_time_covers_exam_all_month": "387e9c6f2daff982a30e3f589e84f6c98c393879ad3fac886fc1371889ad757d",
   "plan_time_covers_first_lessons_exam": "4c9cacc3ce5feba2c492ff58e23283a2f6c90cfaa62e4282b7c67ac40f798d4d",
   "plan_time_covers_first_lessons_goal": "60ce893bc928aeacc8e6af80c0f350f6d1e51818851f75ce01648dcfcbf8535a",
-  "plan_time_covers_goal_all": "1c1735e8f0196fec9af2d43b62960109ce8986d4673dea6a3865c4b0f46c2092",
-  "plan_time_covers_goal_all_month": "48b8c587a8f95837155a559c1edb54f7fc97f4accf0483593f4041e6787b4473",
+  "plan_time_covers_goal_all": "f0b6953a81b44b7384e5dd0636f42b9763b2e640b67e10afdcc443b2dd653df2",
+  "plan_time_covers_goal_all_month": "fd89b2b980dec1957e659500abedfd1d983b06c002015113ef074cd7e6bf9478",
   "plan_time_covers_most_any_time": "282c87a8fdbc05069cfc1d4111e03411a02d8a812d29b41f65d9a3d1fde43dc2",
   "plan_time_covers_plan_all": "4beba75ab4f15aac84e972e1209897d6cd991c8d77b9370c3148d793837b35ce",
   "plan_time_covers_plan_all_month": "9e2fdf7bc5a2da1f86cc46022048e071ec24d71d69068992045e482e9bf9917e",
@@ -1156,13 +1156,13 @@
     <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
     <string name="plan_time_split_many">Este objetivo fica com %1$s por dia e seus outros objetivos com %2$s no total.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_exam_all">Dá para estudar todos os tópicos da sua prova até %1$s.</string>
+    <string name="plan_time_covers_exam_all">Cobre todos os tópicos da sua prova até %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_exam_all_month">Dá para estudar todos os tópicos da sua prova até %1$s.</string>
+    <string name="plan_time_covers_exam_all_month">Cobre todos os tópicos da sua prova até %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_goal_all">Dá para estudar todo o conteúdo do seu objetivo até %1$s.</string>
+    <string name="plan_time_covers_goal_all">Cobre todo o conteúdo do seu objetivo até %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_goal_all_month">Dá para estudar todo o conteúdo do seu objetivo até %1$s.</string>
+    <string name="plan_time_covers_goal_all_month">Cobre todo o conteúdo do seu objetivo até %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_plan_all">Cobre tudo o que está no seu plano até %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->

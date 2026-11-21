@@ -441,12 +441,12 @@
   "plan_time_covers_everything": "c51fd95211e08efab13f821cee24d1e236c8058b4d8fcc105b34c7b0860320f7",
   "plan_time_covers_everything_by": "649e09cb57c26efc4e09a2e4cced62489987a6eecabc3fc5605726149f39171f",
   "plan_time_covers_everything_by_month": "99edcaf9708e7058287d24299de97f6e2bf428507e4051b82f27b32498dfd031",
-  "plan_time_covers_exam_all": "9d30438a50c8e7102b13339562d5f7073179fd6ddae72df199e33d257e4585a1",
-  "plan_time_covers_exam_all_month": "81f74bb77e2ca7eabf060d08d426d2863f85131f40b81312ab3f857bb1678c8e",
+  "plan_time_covers_exam_all": "d73b4d435211218af33efea37eee57b1242f1c377267404c6ace9b134a0614d3",
+  "plan_time_covers_exam_all_month": "da42b943bce64f4321e3fcf9289400aec4fb1e981bea91da6d5b47547543c273",
   "plan_time_covers_first_lessons_exam": "ce6cba2cc9a78654b291cfdaa4a76a4740a0d5f55fe4617851771d5b4dd7476f",
   "plan_time_covers_first_lessons_goal": "e79859ca95d4d64ec2d1d153c984645736dbe391ab71784eecf003b3218c26e4",
-  "plan_time_covers_goal_all": "f62501511bfa3e523d0787309c5052552c157dacf75a0fdd0ff62ac97290b208",
-  "plan_time_covers_goal_all_month": "a2124c6f75d96b3828927656a6aa6873f74f2a54963ffa855fc42955ccb90b6b",
+  "plan_time_covers_goal_all": "6481c6c83995be22af70dd7b5f4bf195bf7b4bfbd6a9d04687aabbe8e90d210e",
+  "plan_time_covers_goal_all_month": "3792ac81d4afbb956389d0b8beaa291c5e0bb3e176a1d3942e5ac0b2a5d6bb07",
   "plan_time_covers_most_any_time": "7164ef49ec3cea6b538ab76e6ffc7499a7300bf71b72411cda2bb8a4134d5f8d",
   "plan_time_covers_plan_all": "aecc150d7430b840430ab8d79f63f312cd477a9c47cadccfd6638e8169dbe255",
   "plan_time_covers_plan_all_month": "d87b2e7577b66cb618c8c9bc858790593aba7048767ff7823628b068ede5cc1e",
@@ -1054,13 +1054,13 @@
     <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
     <string name="plan_time_split_many">하루에 이 목표는 %1$s, 다른 목표들은 합쳐서 %2$s씩 공부해요.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_exam_all">시험의 모든 주제를 %1$s까지 다뤄요.</string>
+    <string name="plan_time_covers_exam_all">%1$s까지 시험에 나오는 모든 주제를 다뤄요.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_exam_all_month">시험의 모든 주제를 %1$s까지 다뤄요.</string>
+    <string name="plan_time_covers_exam_all_month">%1$s까지 시험에 나오는 모든 주제를 다뤄요.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_goal_all">목표의 전체 범위를 %1$s까지 다뤄요.</string>
+    <string name="plan_time_covers_goal_all">%1$s까지 목표에 필요한 내용을 모두 다뤄요.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_goal_all_month">목표의 전체 범위를 %1$s까지 다뤄요.</string>
+    <string name="plan_time_covers_goal_all_month">%1$s까지 목표에 필요한 내용을 모두 다뤄요.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_plan_all">%1$s까지 계획에 있는 내용을 모두 다뤄요.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->

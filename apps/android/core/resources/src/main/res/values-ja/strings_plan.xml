@@ -441,12 +441,12 @@
   "plan_time_covers_everything": "ee5f3fc3b240ea25c15307290814c015c85fef7c3bc7421128f46b3f21533acc",
   "plan_time_covers_everything_by": "794c88837180a61dd92c24fe0c219108d3ca7581f6b433ad0699eecd87ad7b5c",
   "plan_time_covers_everything_by_month": "d0a14710121c2d89968c5a855e7dc1137df4a62c6d2f88d639aaed856244869d",
-  "plan_time_covers_exam_all": "c8aefd6268f06118db2ece2374da1c7880b6e0ccc61d226792988bbcf61a5eb7",
-  "plan_time_covers_exam_all_month": "1b4739af27443c6893b5e3865b3412734d753597ccbf7f95bdad92a806906e35",
+  "plan_time_covers_exam_all": "08da0166d48b639277748619e476f9bf0cd90bbc493158b8ccbb561d27699499",
+  "plan_time_covers_exam_all_month": "fd4e0f0fe34b4d035b1838d7c2482026f757f794c29d38d234239b93146efdad",
   "plan_time_covers_first_lessons_exam": "1d6866fe597c7c77d4e570c2d193a8ecb0b6b8d8f086d674bf17e46fcb4d8251",
   "plan_time_covers_first_lessons_goal": "25c63952c8d6d57d713ec629f106faf9f81701c958be6e95b5141ffbe77263cc",
-  "plan_time_covers_goal_all": "76656914ca6c135eb58e5cfee12f172b21e10bcc444acd883babe0838fe96e54",
-  "plan_time_covers_goal_all_month": "fa4507bf9121b22297f3d79bae5687f0a3f47cacc13e353378d77bfccd796c3a",
+  "plan_time_covers_goal_all": "3ca031f649e82108f3be6eb4831ce1d1a7105d34e573a49e12315eddd7bf8026",
+  "plan_time_covers_goal_all_month": "4b035916ebdebbac76a179333bffd57ef94929765f448f60cfad3767799db223",
   "plan_time_covers_most_any_time": "87899b914c2e54665a40d0ed6c0132dd7449063873db58a45c794b0eb839a95f",
   "plan_time_covers_plan_all": "b147253fdf67b313b109c0dfaea1bcfb48714d4c729bbff1b926f2036847d3f6",
   "plan_time_covers_plan_all_month": "0e8858ed4272ec6aac9b1672e49ee3e89369183e736faeb3c5fcadaaa22e2865",
@@ -1054,13 +1054,13 @@
     <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
     <string name="plan_time_split_many">1日の学習時間は、この目標が%1$s、ほかの目標が合わせて%2$sです。</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_exam_all">%1$sまでに試験の全トピックを学びます。</string>
+    <string name="plan_time_covers_exam_all">%1$sまでに試験の全トピックを学べます。</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_exam_all_month">%1$sまでに試験の全トピックを学びます。</string>
+    <string name="plan_time_covers_exam_all_month">%1$sまでに試験の全トピックを学べます。</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_goal_all">%1$sまでに目標に必要な内容をすべて学びます。</string>
+    <string name="plan_time_covers_goal_all">%1$sまでに目標の全範囲を学べます。</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_goal_all_month">%1$sまでに目標に必要な内容をすべて学びます。</string>
+    <string name="plan_time_covers_goal_all_month">%1$sまでに目標の全範囲を学べます。</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_plan_all">%1$sまでに学習計画の内容をすべて学べます。</string>
     <!-- %1$s is a month and year, such as "May 2027". -->

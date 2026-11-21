@@ -441,12 +441,12 @@
   "plan_time_covers_everything": "5b95dd15ac99a8dce63f1460fd681d63d95e66511ded22f74b5964dd4653ddcc",
   "plan_time_covers_everything_by": "11383f1a726fbffd5dd0f5a2d6f36a5d8b58df9940f7df3f475c2333af6d1dc1",
   "plan_time_covers_everything_by_month": "ea83e13c95b6948c838583b09accfcf72585be33eaa64a62cc3e2fe06ba00d3b",
-  "plan_time_covers_exam_all": "c20ee503cc49e01996e1adce012fe46e2337f5678817283f8bbebb0b782262e6",
-  "plan_time_covers_exam_all_month": "4c38957f0647520db256b26c413415ca92e9c4b900cc40297d70754a304d7443",
+  "plan_time_covers_exam_all": "a221c7195ea80f6cd866bb8f150a032b10c92c72e01a86da97e1ca43ec3a225f",
+  "plan_time_covers_exam_all_month": "4af2c95a191aedf40210755107d899d9fd4b55c91da61219555f86848d327516",
   "plan_time_covers_first_lessons_exam": "3724444aaaab36ad9f80bd4652548dbdca7169590c12703124dc9d3c2e67e5c3",
   "plan_time_covers_first_lessons_goal": "f45f51a10a6f1fe2cadc58076d68f82cc9343f5fbcf1e340e51db406c9ed2b0f",
-  "plan_time_covers_goal_all": "6bf896a0a4228b3016257c6d2fdc7dde236c8edeaabc18d5ca7d757bd36f79cf",
-  "plan_time_covers_goal_all_month": "a68bd23a04fc1e1fa250a99150b6d50821b5bc85f59fbd73d23d5894a2241a96",
+  "plan_time_covers_goal_all": "130310f54e0992b0e7efc2b166a27e68a7c0bd12daa7e420b58730e04402594d",
+  "plan_time_covers_goal_all_month": "0ffc3495bcaccee96300252cb7ca194095fe46f96aba20bd3da4045ea5f40744",
   "plan_time_covers_most_any_time": "7cffaf7a3153b289a30ced9fe22e5f0cddd2a1c6af14a3bf3412eb170d69da24",
   "plan_time_covers_plan_all": "ebbf7e89ab51bed5dba253e364beb3c2cca1b24bf792da21203a54c9207aea59",
   "plan_time_covers_plan_all_month": "c75d499db548010eb5c3a58058b28443607936208a9eda14e56692f5e44460ec",
@@ -1105,13 +1105,13 @@
     <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
     <string name="plan_time_split_many">Bu hedefe günde %1$s, diğer hedeflerine toplam %2$s ayrılır.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_exam_all">Sınavdaki tüm konuları %1$s tarihine kadar ele alır.</string>
+    <string name="plan_time_covers_exam_all">Tüm sınav konularını %1$s tarihine kadar tamamlar.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_exam_all_month">Sınavdaki tüm konuları %1$s tarihine kadar ele alır.</string>
+    <string name="plan_time_covers_exam_all_month">Tüm sınav konularını %1$s ayına kadar tamamlar.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_goal_all">Hedefindeki tüm konuları %1$s tarihine kadar ele alır.</string>
+    <string name="plan_time_covers_goal_all">Hedefindeki tüm konuları %1$s tarihine kadar tamamlar.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_goal_all_month">Hedefindeki tüm konuları %1$s tarihine kadar ele alır.</string>
+    <string name="plan_time_covers_goal_all_month">Hedefindeki tüm konuları %1$s ayına kadar tamamlar.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_plan_all">Planındaki her şeyi %1$s tarihine kadar tamamlar.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->

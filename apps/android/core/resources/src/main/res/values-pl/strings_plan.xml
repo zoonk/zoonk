@@ -441,12 +441,12 @@
   "plan_time_covers_everything": "2e33147b9ede5e57953da0dd8a0839d5ee7e8d1d5e24d980219f0b49c05b5743",
   "plan_time_covers_everything_by": "ca6888a5eca58135179fed2a80f43c732ceb918d1516952cae224574b6c09ba0",
   "plan_time_covers_everything_by_month": "23f6e0c683e219e748d5fee05b3bb013ce78d680e9b94c0e5744252b80e48458",
-  "plan_time_covers_exam_all": "96cd2b4754b559b5473e1ec244925a0ed50c01bce69513ea00c6684b6860815f",
-  "plan_time_covers_exam_all_month": "07fa6fe32e37055ae95f728ea7aa19a10c120d582f4961e8ddd25571ad39920d",
+  "plan_time_covers_exam_all": "e153d8a95c271ede85f227301d13c573ad84288e9fae526eef909312aecabada",
+  "plan_time_covers_exam_all_month": "81f8f7df350944fcaa65f9aafd0a21d2dbbc5dbb1a0a71479115f34d21b24321",
   "plan_time_covers_first_lessons_exam": "6c5f401dada62446ed23a8f1e8073acebe82bf988f28f49dbb3e437ae0526cef",
   "plan_time_covers_first_lessons_goal": "920cfdbe2bfa2d2f2ca611119aaca383c75c605fa1121cdbb0ab96fc80ae57bc",
-  "plan_time_covers_goal_all": "2c0fb56d13bafd22eeeb54e1823655716aa3fc46d9776475c74d5b496c8fff7e",
-  "plan_time_covers_goal_all_month": "3d5c26086d03e8304231ee76602a735d8b379dd65e6aaf745a52ec84bdc23ba7",
+  "plan_time_covers_goal_all": "f5eba9724ee441ac8e488685671daa55a91e317490dac5107c0c0c0e7da6e250",
+  "plan_time_covers_goal_all_month": "640a907a8d65052e43f9cb2f7ea528f672edba238ee6f0c171ed084a3951d67c",
   "plan_time_covers_most_any_time": "c16e9058f6eb17a0215512cb82b67d0c11cd7326ae82c0e87348462d89b33944",
   "plan_time_covers_plan_all": "dc130187706eb62c185eff70b4c39528ac798b2cb73d917645abbba169811942",
   "plan_time_covers_plan_all_month": "460bd787ae5143f3f82be11b6f052d3104eefd43f951c77b409006d0b24fdf4c",
@@ -1207,13 +1207,13 @@
     <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
     <string name="plan_time_split_many">Na ten cel przeznaczasz %1$s dziennie, a %2$s łącznie na pozostałe.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_exam_all">Plan do wybranego terminu (%1$s) obejmuje wszystkie tematy egzaminu.</string>
+    <string name="plan_time_covers_exam_all">Pozwala przerobić wszystkie tematy egzaminacyjne na czas. Termin: %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_exam_all_month">Plan do wybranego terminu (%1$s) obejmuje wszystkie tematy egzaminu.</string>
+    <string name="plan_time_covers_exam_all_month">Pozwala przerobić wszystkie tematy egzaminacyjne na czas. Termin: %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_covers_goal_all">Plan do wybranego terminu (%1$s) obejmuje cały materiał związany z twoim celem.</string>
+    <string name="plan_time_covers_goal_all">Pozwala na czas przerobić wszystko, co obejmuje twój cel. Termin: %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_goal_all_month">Plan do wybranego terminu (%1$s) obejmuje cały materiał związany z twoim celem.</string>
+    <string name="plan_time_covers_goal_all_month">Pozwala na czas przerobić wszystko, co obejmuje twój cel. Termin: %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_plan_all">Pozwala na czas przerobić wszystko, co jest w twoim planie. Termin: %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
