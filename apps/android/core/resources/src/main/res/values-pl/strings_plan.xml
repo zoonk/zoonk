@@ -30,9 +30,6 @@
   "plan_ask_exam_date_around": "d5b9e0b2ae13174ebbf345c076527551e0414b35d769ca6993d5ae9c4143087b",
   "plan_ask_fit_lessons": "a008a6bbdc961eee051c10660a8b52741f5a6847fc7b60a19a379bc04b82fac5",
   "plan_ask_focus": "159e831c1c68faebbc01b2eb41348ff33f805bd9d6207c60a2bc35b3d9029c09",
-  "plan_ask_follow_guide": "a8490221905597056fb192f963355f50113a3d993a6e9c6ad87afcad1c8ce6e0",
-  "plan_ask_follow_guide_around": "5278afbf49e362f96c79fdf1e88e342c7be0ceab9af2b7902c4ae6d9848892bb",
-  "plan_ask_follow_guide_on": "dd226a20558ee99aee225c9f7d2c83bd208277ffd0fdf5645074f9fc12d567af",
   "plan_ask_from_basics": "dd8064c2c1d17e9ee4e4896179519e93e515d816ee259ff713e22d37b462dc02",
   "plan_ask_harder": "a518c9b67b222ce54ddb26373a0e42efab57b53684f38fa90540a63973ce7efd",
   "plan_ask_keep_studying": "6094bda985f19612c995d00d7737b60f86199837bf36de9270dcb80104cc0c5a",
@@ -1475,12 +1472,6 @@
     <string name="plan_ask_aim">Uczyć się do poziomu: %1$s?</string>
     <string name="plan_ask_fit_lessons">Dodać lekcje, na które masz czas?</string>
     <string name="plan_ask_change">Zmienić plan?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
-    <string name="plan_ask_follow_guide">Oprzeć plan na oficjalnym informatorze egzaminacyjnym?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_on">Oprzeć plan na oficjalnym informatorze i przyjąć, że egzamin odbędzie się %1$s?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_around">Oprzeć plan na oficjalnym informatorze i przyjąć, że egzamin odbędzie się około %1$s?</string>
     <string name="plan_change_official_date">Oficjalny termin egzaminu: %1$s.</string>
     <string name="plan_change_estimate_updated">Twój plan dostosowano do tego, ile trwają lekcje.</string>
     <string name="plan_change_from_test">Twój plan zmieniono na podstawie twoich odpowiedzi w teście.</string>

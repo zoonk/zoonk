@@ -30,9 +30,6 @@
   "plan_ask_exam_date_around": "30f0c3991eafb064da2865a45aeeac63e9eccbdf3af54eaf44762db1aaddb948",
   "plan_ask_fit_lessons": "0e187c6e7e1e23b9fad8a15e05ea3215fed308dcd0348b11227ccdfe1ac56c48",
   "plan_ask_focus": "2cd78e7f01e30ac5cca0b4f4cb7f303fe9f60e5bb5df74777107c40f055490cf",
-  "plan_ask_follow_guide": "af951794f4cd288a40baeb49c6fafe0259b13756bb4b645c441fcaecca87b8fa",
-  "plan_ask_follow_guide_around": "fb100591b4f19540eddb32f86eb8390d88263ca72c7aaec8c1e790a84c6edbd8",
-  "plan_ask_follow_guide_on": "9d6314ca03d5d2301c8ede5fd67af8398bd11afc31a8569db21f3c8ab2249ef6",
   "plan_ask_from_basics": "e388016efd204cb00259fc2967f8806a01c9463cfc1601a86339b5c4917e9e91",
   "plan_ask_harder": "d9ee03c1dbb61149035958d133751df09ae3835570162a769964c70a3b5e8096",
   "plan_ask_keep_studying": "36cec14c4c83f95118bcfac397995486f1b77ce09b5608121f8bac23d71a8329",
@@ -1410,12 +1407,6 @@
     <string name="plan_ask_aim">Studiare fino al livello %1$s?</string>
     <string name="plan_ask_fit_lessons">Aggiungere le lezioni che rientrano nel tempo che hai a disposizione?</string>
     <string name="plan_ask_change">Vuoi cambiare il tuo piano?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
-    <string name="plan_ask_follow_guide">Vuoi seguire la guida ufficiale dell’esame?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_on">Vuoi seguire la guida ufficiale, con l’esame il giorno %1$s?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_around">Vuoi seguire la guida ufficiale, con l’esame intorno al giorno %1$s?</string>
     <string name="plan_change_official_date">La data ufficiale dell’esame è il %1$s.</string>
     <string name="plan_change_estimate_updated">Il tuo piano è stato adattato alla durata delle lezioni.</string>
     <string name="plan_change_from_test">Le tue risposte al test hanno modificato il tuo piano.</string>

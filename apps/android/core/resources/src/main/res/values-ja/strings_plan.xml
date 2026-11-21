@@ -30,9 +30,6 @@
   "plan_ask_exam_date_around": "6e18273ecfa4046a016290d2e101e58c23635b4a7bd32347ae791c16f35a909d",
   "plan_ask_fit_lessons": "41c7c759ab138946fabbd6933a3f78d5b6b6f69ee56a4cf14564948658a136db",
   "plan_ask_focus": "203ef5b7beb561ecd57966a1575fc1673280f03813d15e4f0977c8a8f73315dc",
-  "plan_ask_follow_guide": "e2ba4ec28bf69fff0a41f8b4172dc601d3c0fd8d2726e3f271f757fdbc0bd51a",
-  "plan_ask_follow_guide_around": "7e48375e4a8095b0bcdf35e24f0db63c693e20219e9565a14a5ccc993290f760",
-  "plan_ask_follow_guide_on": "dc4a6cc7077472ed0c4f52e3252d8a1d920a2a946f980ba9759ae044dba49851",
   "plan_ask_from_basics": "7b39e31583d72afabb19a414e6be4e58f818fdf2369dab9390e8ee239c85b962",
   "plan_ask_harder": "c57375c1b2ce2f772bae672e153c0cc37b01ebab98e573f352fd40c9ad64a315",
   "plan_ask_keep_studying": "e7a48d92f4ec91bd4baacaf35d691e02247451f83142da7e804616e4b1ef9090",
@@ -1280,12 +1277,6 @@
     <string name="plan_ask_aim">%1$sまで学びますか？</string>
     <string name="plan_ask_fit_lessons">時間内にできるレッスンを追加しますか？</string>
     <string name="plan_ask_change">学習計画を変更しますか？</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
-    <string name="plan_ask_follow_guide">試験の公式ガイドに沿った学習計画にしますか？</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_on">試験日を%1$sにして、公式ガイドに沿った学習計画にしますか？</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_around">試験日を%1$sごろにして、公式ガイドに沿った学習計画にしますか？</string>
     <string name="plan_change_official_date">正式な試験日は%1$sです。</string>
     <string name="plan_change_estimate_updated">レッスンにかかる時間に合わせて、学習計画を変更しました。</string>
     <string name="plan_change_from_test">テストの回答をもとに、学習計画を変更しました。</string>

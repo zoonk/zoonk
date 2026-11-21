@@ -30,9 +30,6 @@
   "plan_ask_exam_date_around": "6b0549403fedc21b14618babde71e487fc6a17e5a73054b9d76abfb12cfa1b10",
   "plan_ask_fit_lessons": "3854c8b8a3d619b7e0af953d9fefd7a46d176e8b6655036c77974585f961e5ac",
   "plan_ask_focus": "b87fb5f515633f6b8d76766aab32c67262f174b245800eef6b43dd9f8aaa0bf3",
-  "plan_ask_follow_guide": "d82ac3e20120e0539030e7606ac64f9b97fea9685f5231c34566cccfc66b7d03",
-  "plan_ask_follow_guide_around": "98add2b25a2253be130b9b07eadffd3c557941a1cd6c3cf8978ad1f80e1448dc",
-  "plan_ask_follow_guide_on": "5db66cd89de31a40867fc9dc656621138a9a17401e135dbd8f36c0a8ad69e455",
   "plan_ask_from_basics": "5fd63738a30064e77a4fe932b7f6bbe57b4ef329fec7dd804d9214adb2512d39",
   "plan_ask_harder": "abecdd72c67876efec07ff24c0b4c51563e657527d748a6674f91b3214ff6bef",
   "plan_ask_keep_studying": "fe2e122bc29f61d18e0cc0c66b77ec10170c7749820ba17f615b48df4da115f5",
@@ -1410,12 +1407,6 @@
     <string name="plan_ask_aim">Estudar até %1$s?</string>
     <string name="plan_ask_fit_lessons">Adicionar as aulas que cabem no seu tempo?</string>
     <string name="plan_ask_change">Mudar seu plano?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
-    <string name="plan_ask_follow_guide">Seguir o guia oficial da prova?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_on">Seguir o guia oficial da prova, com a prova em %1$s?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_around">Seguir o guia oficial da prova, com a prova por volta de %1$s?</string>
     <string name="plan_change_official_date">A data oficial da prova é %1$s.</string>
     <string name="plan_change_estimate_updated">Seu plano foi ajustado ao tempo que suas aulas levam.</string>
     <string name="plan_change_from_test">Suas respostas no teste mudaram seu plano.</string>

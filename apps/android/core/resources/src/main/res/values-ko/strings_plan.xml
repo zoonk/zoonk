@@ -30,9 +30,6 @@
   "plan_ask_exam_date_around": "6403201a4c486bd11904361bfe36ae4ff8e910d8f4623db5bab94525e87ca955",
   "plan_ask_fit_lessons": "a5a54e13224bf31942758529cb52470195a2424c20449b6009e3825802678f08",
   "plan_ask_focus": "50116dd9fe23632901159d068dd37fe5e32c34f878f87e83743b45d22ad27dfb",
-  "plan_ask_follow_guide": "3e4c3ddcfce609eb15c4cc48eb511f306f5bb990aaa3d3b7806c875d6b5550ce",
-  "plan_ask_follow_guide_around": "c5e9a9a84c47414127a1b545007b2269cf2de4c50bedb729d7eb4d654fb72255",
-  "plan_ask_follow_guide_on": "d75181d8570b949e592c29c3def8a51700078be3bc3f608d8671a23f1197517e",
   "plan_ask_from_basics": "f5399eb87de4b60ba8e66b5c9766548ef88fddb4ea3414e7e9c260e66c5fd309",
   "plan_ask_harder": "bbd5a1186f03230d67eb7ea9c384a06e25c82198e39cbaa1038ac70c3e6fa06c",
   "plan_ask_keep_studying": "96335c47c012bf188e667ebebc0d053a54f7000d2f81e6cb1f0e58184ca9006d",
@@ -1280,12 +1277,6 @@
     <string name="plan_ask_aim">%1$s까지 공부할까요?</string>
     <string name="plan_ask_fit_lessons">시간에 맞는 레슨을 추가할까요?</string>
     <string name="plan_ask_change">계획을 바꿀까요?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
-    <string name="plan_ask_follow_guide">시험 공식 안내서에 맞춰 계획을 세울까요?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_on">시험일은 %1$s로 하고 공식 안내서에 맞춰 계획을 세울까요?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_around">시험일은 %1$s쯤으로 하고 공식 안내서에 맞춰 계획을 세울까요?</string>
     <string name="plan_change_official_date">공식 시험일은 %1$s이에요.</string>
     <string name="plan_change_estimate_updated">레슨에 걸리는 시간에 맞춰 계획을 조정했어요.</string>
     <string name="plan_change_from_test">테스트에서 답한 내용에 따라 계획이 바뀌었어요.</string>

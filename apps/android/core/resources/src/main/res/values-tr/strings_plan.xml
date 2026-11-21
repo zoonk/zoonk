@@ -30,9 +30,6 @@
   "plan_ask_exam_date_around": "864a463dc9ad5fd49d80cbf3401da6bccbe3716f900e51617c77f48153e17897",
   "plan_ask_fit_lessons": "6b247a4fc6be9bcaf07c7a5a20aab3590c58fca97de30ffa4edc6ce8156d1d29",
   "plan_ask_focus": "d5e7e6b68e34717fa8662ccd81d977c54508fcb51a95c137bdfacf23485cb110",
-  "plan_ask_follow_guide": "d7155cf6c9a2a402a8e98ca5d64d0d096f943ae18ff38b4f86736e691c3525ee",
-  "plan_ask_follow_guide_around": "4dc6049d26e50e6d47e0ede9b9f6309d262cd27d4461f2c3e2e370026b241369",
-  "plan_ask_follow_guide_on": "02285d717769c9e21825503ed86839e9c3febd73ac07419b010f6c37ce8fd3e8",
   "plan_ask_from_basics": "95572a6aef125f43b171a21cbd5ea7c7e0fc75db366b08d0cb0316bb29ff72d8",
   "plan_ask_harder": "93869ac44da342f85fb9d755f0648c10e4154182c8b389cc34fdf7ae4a42ce0a",
   "plan_ask_keep_studying": "f265dce356d47e99622c35f972abe6371be66b1ede3df296adf07a2ed4f3b756",
@@ -1345,12 +1342,6 @@
     <string name="plan_ask_aim">%1$s düzeyine kadar çalışalım mı?</string>
     <string name="plan_ask_fit_lessons">Süreye uyan dersleri ekleyelim mi?</string>
     <string name="plan_ask_change">Planını değiştirelim mi?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. -->
-    <string name="plan_ask_follow_guide">Sınavın resmî kılavuzuna göre ilerleyelim mi?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_on">%1$s tarihindeki sınavın resmî kılavuzuna göre ilerleyelim mi?</string>
-    <!-- In the "notice" form the document is the exam\'s public notice (Brazil\'s "edital"); otherwise it is an official guide. {date} is a day, like "May 5". -->
-    <string name="plan_ask_follow_guide_around">%1$s civarında yapılacak sınavın resmî kılavuzuna göre ilerleyelim mi?</string>
     <string name="plan_change_official_date">Sınavın resmî tarihi %1$s.</string>
     <string name="plan_change_estimate_updated">Planın derslerinin süresine göre değiştirildi.</string>
     <string name="plan_change_from_test">Testte verdiğin cevaplar planını değiştirdi.</string>
