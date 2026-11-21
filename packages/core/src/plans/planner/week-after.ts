@@ -189,7 +189,14 @@ function getSpillEnd({ days, minutes }: { days: readonly PlanDay[]; minutes: num
   return (days[index] ?? days.at(-1))?.date ?? null;
 }
 
-export function layOutAfterThisWeek<T extends LaidOut>({
+type KeptWeek = {
+  keptPortions: Map<string, StudyPortion[]>;
+  keptUntil: Date | null;
+  spill: number;
+};
+
+/** A layout of every unit, when it leaves this week's items in this week. */
+function layOutWholeWeek<T extends LaidOut>({
   days,
   kept,
   layOut,
@@ -201,7 +208,7 @@ export function layOutAfterThisWeek<T extends LaidOut>({
   layOut: (laid: { days: readonly PlanDay[]; units: readonly QueueUnit[] }) => T;
   start: Date;
   units: readonly QueueUnit[];
-}): T & { keptPortions: Map<string, StudyPortion[]>; keptUntil: Date | null; spill: number } {
+}): (T & KeptWeek) | null {
   const thisWeek = new Set(kept.map((piece) => piece.key));
   const first = layOut({ days, units });
   const scheduled = [...first.carriedSchedule.units, ...first.restSchedule.units];
@@ -229,18 +236,47 @@ export function layOutAfterThisWeek<T extends LaidOut>({
     );
   });
 
-  if (keepsThisWeek && !invertsSkill) {
-    const parts = own.filter((unit) => isStandInUnit(unit));
-    const last = Math.max(...parts.map((unit) => unit.date.getTime()));
-
-    return {
-      ...first,
-      keptPortions: listLaidPortions(own),
-      keptUntil: parts.length > 0 ? new Date(last) : null,
-      spill: 0,
-    };
+  if (!keepsThisWeek || invertsSkill) {
+    return null;
   }
 
+  const parts = own.filter((unit) => isStandInUnit(unit));
+  const last = Math.max(...parts.map((unit) => unit.date.getTime()));
+
+  return {
+    ...first,
+    keptPortions: listLaidPortions(own),
+    keptUntil: parts.length > 0 ? new Date(last) : null,
+    spill: 0,
+  };
+}
+
+/**
+ * With `keepsSavedDays`, this week's items stay on the days they were saved on, whichever days a
+ * layout of `units` would give them.
+ */
+export function layOutAfterThisWeek<T extends LaidOut>({
+  days,
+  keepsSavedDays = false,
+  kept,
+  layOut,
+  start,
+  units,
+}: {
+  days: readonly PlanDay[];
+  keepsSavedDays?: boolean;
+  kept: readonly KeptPiece[];
+  layOut: (laid: { days: readonly PlanDay[]; units: readonly QueueUnit[] }) => T;
+  start: Date;
+  units: readonly QueueUnit[];
+}): T & KeptWeek {
+  const whole = keepsSavedDays ? null : layOutWholeWeek({ days, kept, layOut, start, units });
+
+  if (whole) {
+    return whole;
+  }
+
+  const thisWeek = new Set(kept.map((piece) => piece.key));
   const after = days.filter((day) => day.date >= start);
   const spill = getTimePastThisWeek({ days, kept, start, units });
 

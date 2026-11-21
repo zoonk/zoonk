@@ -190,6 +190,8 @@ function planGoal({
 
   const { carriedSchedule, keptPortions, keptUntil, restSchedule, spill, yielded } = createLayOut({
     input,
+    // A landing's lessons are placed outside the layout, so the week it lays out isn't the saved one.
+    keepsSavedDays: landedUnits !== null,
     kept: keptWork,
     learnedOrder,
     phaseEnds,

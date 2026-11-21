@@ -254,6 +254,29 @@ function queueLesson(attrs: Partial<QueueUnit> & Pick<QueueUnit, "key">): QueueU
   };
 }
 
+/** Lays the units out in order, ten minutes on each open day. */
+function tenMinutesADay(start: Date) {
+  return ({ days: open, units }: { days: readonly PlanDay[]; units: readonly QueueUnit[] }) => ({
+    carriedSchedule: { units: [] },
+    restSchedule: {
+      units: units
+        .flatMap((unit) =>
+          Array.from({ length: unit.minutes / 10 }, () => ({ ...unit, minutes: 10 })),
+        )
+        .map((part, index) => {
+          const date = open[index]?.date ?? start;
+
+          return {
+            ...part,
+            date,
+            studyMinutes: 10,
+            studyPortions: [{ date: toIsoDate(date), lessonMinutes: 10, minutes: 10 }],
+          };
+        }),
+    },
+  });
+}
+
 describe(layOutAfterThisWeek, () => {
   it("keeps only the share of a stand-in saved this week and lays out the rest after it", () => {
     const start = fromIsoDate("2026-10-19");
@@ -268,25 +291,7 @@ describe(layOutAfterThisWeek, () => {
     const laid = layOutAfterThisWeek({
       days,
       kept: [{ date: fromIsoDate("2026-10-14"), key: standIn.key, later: 0.75, share: 0.25 }],
-      layOut: ({ days: open, units }) => ({
-        carriedSchedule: { units: [] },
-        restSchedule: {
-          units: units
-            .flatMap((unit) =>
-              Array.from({ length: unit.minutes / 10 }, () => ({ ...unit, minutes: 10 })),
-            )
-            .map((part, index) => {
-              const date = open[index]?.date ?? start;
-
-              return {
-                ...part,
-                date,
-                studyMinutes: 10,
-                studyPortions: [{ date: toIsoDate(date), lessonMinutes: 10, minutes: 10 }],
-              };
-            }),
-        },
-      }),
+      layOut: tenMinutesADay(start),
       start,
       units: [queueLesson({ key: "lesson:b", lessonId: "b", skillId: "b" }), standIn],
     });
@@ -295,5 +300,29 @@ describe(layOutAfterThisWeek, () => {
 
     expect(later.every((unit) => unit.date >= start)).toBe(true);
     expect(later.reduce((total, unit) => total + unit.minutes, 0)).toBe(30);
+  });
+
+  it("keeps a stand-in on the day it was saved on, though the layout would split it over two", () => {
+    const start = fromIsoDate("2026-10-19");
+
+    const days: PlanDay[] = [14, 15, 16, 19].map((day) => ({
+      date: fromIsoDate(`2026-10-${day}`),
+      shape: { events: [], minutes: 20, open: true, phase: null, share: 1 },
+    }));
+
+    const standIn = queueLesson({ key: "skill:a", lessons: 2, minutes: 20, skillId: "a" });
+
+    const laid = layOutAfterThisWeek({
+      days,
+      keepsSavedDays: true,
+      kept: [{ date: fromIsoDate("2026-10-14"), key: standIn.key, later: 0, share: 1 }],
+      layOut: tenMinutesADay(start),
+      start,
+      units: [standIn],
+    });
+
+    expect(laid.keptPortions.get(standIn.key)).toStrictEqual([
+      { date: "2026-10-14", lessonMinutes: 20, minutes: 20 },
+    ]);
   });
 });
