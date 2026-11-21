@@ -153,17 +153,12 @@ function useLineFact() {
   };
 }
 
-/** A past answer's result on its row: its range with points, else how many criteria are complete. */
-function useAnswerResult() {
+/** A levels answer's result: how many criteria are complete. A points answer shows its range instead. */
+function useCriteriaResult() {
   const t = useExtracted();
-  const formatRange = useFormatPointsRange();
 
-  return function answerResult({ criteria, decimals, range }: WrittenAnswer): string | null {
-    if (range) {
-      return formatRange(range, { decimals });
-    }
-
-    return criteria
+  return function criteriaResult({ criteria, range }: WrittenAnswer): string | null {
+    return criteria && !range
       ? t({
           description:
             "A past written answer graded by level: how many of its criteria were fully met, out of all of them.",
@@ -179,13 +174,16 @@ function AnswerRow({ answer, href }: { answer: WrittenAnswer; href: string }) {
   const formatDate = useFormatIsoDate();
   const lineFact = useLineFact();
   const writingTitle = useWritingTaskTitle();
-  const result = useAnswerResult()(answer);
+  const formatRange = useFormatPointsRange();
+  const criteriaResult = useCriteriaResult()(answer);
 
   return (
     <ListRowLink href={href}>
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle>{answer.title}</ListRowTitle>
+          {/* Its own line: as a trailing value it would squeeze the title on a phone. */}
+          {criteriaResult && <ListRowDescription>{criteriaResult}</ListRowDescription>}
           <ListRowDescription>
             <FactSegments
               facts={[
@@ -200,7 +198,11 @@ function AnswerRow({ answer, href }: { answer: WrittenAnswer; href: string }) {
             />
           </ListRowDescription>
         </ListRowContent>
-        {result && <ListRowTrailing className="font-mono text-xs">{result}</ListRowTrailing>}
+        {answer.range && (
+          <ListRowTrailing className="font-mono text-xs">
+            {formatRange(answer.range, { decimals: answer.decimals })}
+          </ListRowTrailing>
+        )}
       </ListRowBody>
     </ListRowLink>
   );
