@@ -353,7 +353,7 @@ private class PlotGeometry(
         return lines + references.map { Offset(left, it.y) to Offset(plotRight, it.y) }
     }
 
-    /** Stacks names top to bottom so close lines don't overlap, then lifts them back inside the chart. */
+    /** Stacks names top to bottom so close lines don't overlap, then lifts them back above the x axis's numbers. */
     private fun stackReferences(marks: List<Pair<Float, TextLayoutResult>>): List<ReferenceMark> {
         val spacing = REFERENCE_SPACING * unit
         val stacked =
@@ -361,7 +361,7 @@ private class PlotGeometry(
                 val floor = placed.lastOrNull()?.let { it.top + it.label.size.height + spacing } ?: 0f
                 placed + ReferenceMark(lineY, label, max(lineY - label.size.height / 2f, floor))
             }
-        val overflow = stacked.lastOrNull()?.let { it.top + it.label.size.height - height } ?: 0f
+        val overflow = stacked.lastOrNull()?.let { it.top + it.label.size.height - bottom } ?: 0f
         return if (overflow > 0) stacked.map { ReferenceMark(it.y, it.label, it.top - overflow) } else stacked
     }
 }
