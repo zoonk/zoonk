@@ -14,7 +14,11 @@ import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
-import { applyWritingArithmetic, buildWritingFeedback } from "./_utils/writing-feedback";
+import {
+  applyWritingArithmetic,
+  buildWritingFeedback,
+  createWritingQuoteLookup,
+} from "./_utils/writing-feedback";
 import {
   getWritingRubricFingerprint,
   getWritingTaskBasis,
@@ -150,6 +154,90 @@ function assess(
 }
 
 describe("writing grades", () => {
+  it.each([
+    { quote: "Em ÁREAS rurais", written: "em áreas rurais" },
+    { quote: "A clear claim", written: "A clear\nclaim" },
+    { quote: "A clear claim", written: "A clear\r\n\r\nclaim" },
+    { quote: "A clear claim", written: "A\tclear\u00A0  claim" },
+    { quote: "\"Um caso\" - de 'teste'", written: "“Um caso” — de ‘teste’" },
+  ])("credits $quote and returns the learner's own passage", ({ quote, written }) => {
+    const prefix = "🙂 e\u0301:\t  ";
+    const text = `${prefix}${written}.`;
+
+    expect(createWritingQuoteLookup(text)(quote)).toStrictEqual({
+      end: prefix.length + written.length,
+      start: prefix.length,
+    });
+
+    const result = assess(
+      {
+        ...evidence,
+        aspects: [{ aspectIndex: 0, criterionId: "claim", earned: true, quote }],
+        criteria: [{ ...evidence.criteria[0]!, quote }],
+        nextStep: { criterionId: "claim", example: null, quote, text: "Explain the evidence." },
+      },
+      { text },
+    );
+
+    expect(result).toMatchObject({
+      criteria: [{ quote: written }],
+      nextStep: { quote: written },
+      rows: [{ earned: 0.3 }],
+    });
+  });
+
+  it.each([
+    { quote: "em áreas rurais", text: "Em áreas rurais e em áreas rurais." },
+    { quote: "A a", text: "A a A" },
+    { quote: "existe uma interação", text: "existindo uma interação" },
+    { quote: "haveram problemas", text: "houveram problemas" },
+    { quote: "em areas rurais", text: "em áreas rurais" },
+    { quote: "áreas rurais", text: "rurais áreas" },
+  ])("rejects the unsupported passage $quote in $text", ({ quote, text }) => {
+    const result = assess(
+      {
+        ...evidence,
+        aspects: [{ aspectIndex: 0, criterionId: "claim", earned: true, quote }],
+        criteria: [{ ...evidence.criteria[0]!, quote }],
+        nextStep: { criterionId: "claim", example: null, quote, text: "Explain the evidence." },
+      },
+      { text },
+    );
+
+    expect(result).toMatchObject({
+      criteria: [{ quote: null }],
+      nextStep: { quote: null },
+      rows: [{ earned: 0 }],
+    });
+  });
+
+  it("requires literal language errors and keeps their UTF-16 offsets", () => {
+    const text = "🙂 e\u0301: brasil tem areas e houveram\r\nproblemas com “aspas”.";
+
+    const result = assess(
+      {
+        ...evidence,
+        errors: [
+          { correction: "Brasil", kind: "capitalization", quote: "brasil" },
+          { correction: "áreas", kind: "spelling", quote: "areas" },
+          { correction: "Brasil tem", kind: "capitalization", quote: "BRASIL tem" },
+          { correction: "nas áreas", kind: "spelling", quote: "tem áreas" },
+          { correction: "houve problemas", kind: "grammar", quote: "haveram" },
+          { correction: "houve problemas", kind: "grammar", quote: "houveram problemas" },
+          { correction: "aspas", kind: "punctuation", quote: '"aspas"' },
+          { correction: "houve\r\nproblemas", kind: "grammar", quote: "houveram\r\nproblemas" },
+        ],
+      },
+      { text },
+    );
+
+    expect(result.errors.map(({ quote, start }) => ({ quote, start }))).toStrictEqual([
+      { quote: "brasil", start: 7 },
+      { quote: "areas", start: 18 },
+      { quote: "houveram\r\nproblemas", start: 26 },
+    ]);
+  });
+
   it("verifies quoted aspects and errors before calculating decimal points and rounding", () => {
     expect(assess(evidence)).toMatchObject({
       content: { high: 0.3, low: 0.3 },

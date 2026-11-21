@@ -5,6 +5,7 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
@@ -234,7 +235,8 @@ describe("written mock sittings", () => {
     ).resolves.toStrictEqual({ status: "needsQuestions" });
 
     const long = await prompt("long");
-    const id = await start(goal.id, WRITTEN);
+    const { overlaps, result: id } = await observeDatabaseQueries(() => start(goal.id, WRITTEN));
+    expect(overlaps).toStrictEqual([]);
 
     await expect(
       startAnytimeMock({ goalId: goal.id, input: { shape: WRITTEN } }),
@@ -502,9 +504,12 @@ describe("written mock sittings", () => {
       },
     });
 
-    await expect(startMock({ blockId: block.id, input: UTC })).resolves.toStrictEqual({
-      status: "ready",
-    });
+    const { overlaps, result } = await observeDatabaseQueries(() =>
+      startMock({ blockId: block.id, input: UTC }),
+    );
+
+    expect(result).toStrictEqual({ status: "ready" });
+    expect(overlaps).toStrictEqual([]);
 
     await expect(view(block.id)).resolves.toMatchObject({
       minutes: 210,

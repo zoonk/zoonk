@@ -7,6 +7,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
@@ -138,8 +139,12 @@ describe("writing receipts and drafts", () => {
         where: { day },
       });
 
-      const first = await startWriting({ blockId: block.id });
+      const { overlaps, result: first } = await observeDatabaseQueries(() =>
+        startWriting({ blockId: block.id }),
+      );
+
       expect(first).toMatchObject({ status: "ready" });
+      expect(overlaps).toStrictEqual([]);
       await expect(startWriting({ blockId: block.id })).resolves.toStrictEqual(first);
 
       await expect(prisma.guestSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({

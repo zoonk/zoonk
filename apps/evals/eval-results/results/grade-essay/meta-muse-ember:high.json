@@ -5770,19 +5770,19 @@
       },
       "steps": [
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 18/19. Credited 0,1,2,5,8,9,11; expected 0,1,2,4,5,8,9,11. False credit: none; missed: 4. Content 33 against 36–36 of 70. [next-step] Next step on content. [language] Feedback language: expected pt, detected pt. [quotes] 1 of 1 assessed criteria quote the answer exactly. [pass-side] Pass side at 37 for this answer: key fail, range fail. [range FAIL] Key 36–36; range 33–33; missed, width 0.000, midpoint error 3.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 19/19. Credited 0,1,2,4,5,8,9,11; expected 0,1,2,4,5,8,9,11. False credit: none; missed: none. Content 36 against 36–36 of 70. [next-step] Next step on content. [language] Feedback language: expected pt, detected pt. [quotes] 1 of 1 assessed criteria quote the answer exactly. [pass-side] Pass side at 37 for this answer: key fail, range fail. [range] Key 36–36; range 36–36; covered, width 0.000, midpoint error 0.000.",
           "kind": "majorErrors",
-          "score": 9.56
+          "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 18/19. Credited 0,1,2,5,8,9,11; expected 0,1,2,4,5,8,9,11. False credit: none; missed: 4. Content 33 against 36–36 of 70. [next-step] Next step on content. [language] Feedback language: expected pt, detected pt. [quotes] 1 of 1 assessed criteria quote the answer exactly. [pass-side] Pass side at 37 for this answer: key fail, range fail. [range FAIL] Key 36–36; range 33–33; missed, width 0.000, midpoint error 3.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 19/19. Credited 0,1,2,4,5,8,9,11; expected 0,1,2,4,5,8,9,11. False credit: none; missed: none. Content 36 against 36–36 of 70. [next-step] Next step on content. [language] Feedback language: expected pt, detected pt. [quotes] 1 of 1 assessed criteria quote the answer exactly. [pass-side] Pass side at 37 for this answer: key fail, range fail. [range] Key 36–36; range 36–36; covered, width 0.000, midpoint error 0.000.",
           "kind": "minorErrors",
-          "score": 9.56
+          "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 18/19. Credited 0,1,2,5,8,9,11; expected 0,1,2,4,5,8,9,11. False credit: none; missed: 4. Content 33 against 36–36 of 70. [next-step] Next step on content. [language] Feedback language: expected pt, detected pt. [quotes] 1 of 1 assessed criteria quote the answer exactly. [pass-side] Pass side at 37 for this answer: key fail, range fail. [range FAIL] Key 36–36; range 33–33; missed, width 0.000, midpoint error 3.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 19/19. Credited 0,1,2,4,5,8,9,11; expected 0,1,2,4,5,8,9,11. False credit: none; missed: none. Content 36 against 36–36 of 70. [next-step] Next step on content. [language] Feedback language: expected pt, detected pt. [quotes] 1 of 1 assessed criteria quote the answer exactly. [pass-side] Pass side at 37 for this answer: key fail, range fail. [range] Key 36–36; range 36–36; covered, width 0.000, midpoint error 0.000.",
           "kind": "potentialImprovements",
-          "score": 9.56
+          "score": 10
         }
       ],
       "testCase": {
@@ -9136,19 +9136,19 @@
     {
       "steps": [
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit FAIL] Aspect agreement 1/4. Credited none; expected 0,2,3. False credit: none; missed: 0,2,3. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes FAIL] 1 of 5 assessed criteria quote the answer exactly.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 4/4. Credited 0,2,3; expected 0,2,3. False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly.",
           "kind": "majorErrors",
-          "score": 8.86
+          "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit FAIL] Aspect agreement 1/4. Credited none; expected 0,2,3. False credit: none; missed: 0,2,3. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes FAIL] 1 of 5 assessed criteria quote the answer exactly.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 4/4. Credited 0,2,3; expected 0,2,3. False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly.",
           "kind": "minorErrors",
-          "score": 8.86
+          "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit FAIL] Aspect agreement 1/4. Credited none; expected 0,2,3. False credit: none; missed: 0,2,3. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes FAIL] 1 of 5 assessed criteria quote the answer exactly.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 4/4. Credited 0,2,3; expected 0,2,3. False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly.",
           "kind": "potentialImprovements",
-          "score": 8.86
+          "score": 10
         }
       ],
       "testCase": {
@@ -9324,17 +9324,17 @@
     {
       "steps": [
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 3/4. Credited 0,3; expected 0,2,3. False credit: none; missed: 2. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 4 of 5 assessed criteria quote the answer exactly.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 4/4. Credited 0,2,3; expected 0,2,3. False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 3/4. Credited 0,3; expected 0,2,3. False credit: none; missed: 2. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 4 of 5 assessed criteria quote the answer exactly.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 4/4. Credited 0,2,3; expected 0,2,3. False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 3/4. Credited 0,3; expected 0,2,3. False credit: none; missed: 2. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 4 of 5 assessed criteria quote the answer exactly.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [false-zero] Zero: expected false, got no zero. [credit] Aspect agreement 4/4. Credited 0,2,3; expected 0,2,3. False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -11010,17 +11010,17 @@
     {
       "steps": [
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0,2,3; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0,2,3; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0,2,3; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -11201,17 +11201,17 @@
     {
       "steps": [
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0,3; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0,3; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
+          "conclusion": "[false-errors] No unkeyed corrections. [traps] No accepted usage flagged. [true-zero] Zero: expected identification, got Identificação do participante no espaço destinado ao texto from \"Assinatura: Marília Ribeiro de Almeida\". [credit] Aspect agreement 2/2. Credited 0,3; expected 0 (either way: 2,3). False credit: none; missed: none. [next-step] Next step on c2. [language] Feedback language: expected pt, detected pt. [quotes] 5 of 5 assessed criteria quote the answer exactly. [range] Key 0–0; range 0–0; covered, width 0.000, midpoint error 0.000.",
           "kind": "potentialImprovements",
           "score": 10
         }

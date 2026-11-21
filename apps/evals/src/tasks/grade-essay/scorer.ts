@@ -1,6 +1,7 @@
 import { createFixedScore } from "@/lib/score";
 import { detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
+import { createWritingQuoteLookup } from "@zoonk/core/exams/essays/writing-feedback";
 import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
 import { type GradeWritingOutput } from "./task";
 import { type GradeWritingExpected, type GradeWritingInput } from "./test-cases";
@@ -120,7 +121,7 @@ function errorChecks({
   ];
 }
 
-/** Earned the way the arithmetic counts it: once, on its criterion, with an exact quote. */
+/** Earned the way the arithmetic counts it: once, on its criterion, with a verified quote. */
 function creditedAspects({
   input,
   output,
@@ -131,18 +132,16 @@ function creditedAspects({
   text: string;
 }) {
   const byIndex = Map.groupBy(output.evidence.aspects, (aspect) => aspect.aspectIndex);
+  const findQuote = createWritingQuoteLookup(text);
 
   return new Set(
     [...byIndex.entries()].flatMap(([index, reports]) => {
       const [report] = reports;
-      const quote = report?.quote ?? "";
-      const once = quote.trim() !== "" && text.indexOf(quote) === text.lastIndexOf(quote);
 
       return reports.length === 1 &&
         report?.earned &&
         input.basis.aspects[index]?.criterionId === report.criterionId &&
-        text.includes(quote) &&
-        once
+        findQuote(report.quote)
         ? [index]
         : [];
     }),
