@@ -102,6 +102,7 @@ async function setup({ plus = true, shortOnly = false, structure = CGU } = {}) {
           charactersPerLine: 55,
           criteria: [
             { id: "case", name: taskKey === "short" ? "Presentation" : "Application", points: 1 },
+            ...(taskKey === "short" ? [{ id: "rule", name: "Application", points: null }] : []),
           ],
           grading: CGU_WRITTEN_GRADING,
           keySource: "practiceKey",
@@ -371,6 +372,21 @@ describe("written mock sittings", () => {
 
     expect(gradeWritingEvidence).not.toHaveBeenCalled();
 
+    vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValueOnce({
+      data: {
+        ...EVIDENCE,
+        criteria: [
+          {
+            comment: "Applies the rule",
+            example: null,
+            id: "rule",
+            level: "complete",
+            quote: null,
+          },
+        ],
+      },
+    });
+
     await expect(gradeMockEssays({ blockId: id, input: UTC })).resolves.toStrictEqual({
       status: "graded",
     });
@@ -441,7 +457,7 @@ describe("written mock sittings", () => {
               points: { standing: "unmeasured" },
               questions: 2,
               share: 0.5,
-              trend: [{ contentShare: null, errors: 0, presentationShare: 0 }],
+              trend: [{ contentShare: 1, errors: 0, presentationShare: 0 }],
             },
           ],
         },

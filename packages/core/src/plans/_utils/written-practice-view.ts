@@ -1,5 +1,4 @@
 import { type Goal, prisma } from "@zoonk/db";
-import { normalizeString } from "@zoonk/utils/string";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { namesMatch } from "../../exams/_utils/name-match";
 import { toChosenStructure } from "../../exams/choices/exam-choices";
@@ -21,6 +20,7 @@ import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
 import { isShortExam } from "../planner/short-exam-plan";
 import { getEffectiveCadence, getFinalWeeksStart } from "../planner/written-cadence";
 import { type WrittenPractice } from "../written-practice-contract";
+import { getWrittenTrendShares } from "./written-trend-shares";
 
 function getPlanStart({ createdAt, settings }: { createdAt: Date; settings: PlanSettings }) {
   return settings.startDate ? fromIsoDate(settings.startDate) : fromIsoDate(toIsoDate(createdAt));
@@ -151,39 +151,6 @@ async function loadWriteActions({
   };
 }
 
-const PRESENTATION_WORD =
-  /(?:^|[^a-z])(?:presentation|structure|apresentacao|estrutura)(?:$|[^a-z])/u;
-
-const LEVEL_SHARE = { complete: 1, missing: 0, partial: 1 / 3, strong: 2 / 3 };
-
-function presentationShare({ answer: { grade }, numericEligible, prompt }: WrittenSample) {
-  const criteria = new Set(
-    prompt.criteria.flatMap(({ id, name }) =>
-      PRESENTATION_WORD.test(normalizeString(`${id} ${name}`)) ? [id] : [],
-    ),
-  );
-
-  if (numericEligible && grade.kind === "points") {
-    const rows = grade.rows.filter(({ id }) => criteria.has(id));
-    const max = rows.reduce((sum, row) => sum + row.max, 0);
-
-    const earned = rows.reduce(
-      (sum, row) => sum + (row.range ? (row.range.low + row.range.high) / 2 : row.earned),
-      0,
-    );
-
-    if (max > 0) {
-      return Math.min(1, Math.max(0, earned / max));
-    }
-  }
-
-  const levels = grade.criteria.filter(({ id }) => criteria.has(id));
-
-  return levels.length > 0
-    ? levels.reduce((sum, { level }) => sum + LEVEL_SHARE[level], 0) / levels.length
-    : null;
-}
-
 const TREND_SAMPLES = 4;
 
 export async function loadWrittenPracticeView({
@@ -266,19 +233,13 @@ export async function loadWrittenPracticeView({
               answer: { grade },
               localDate,
               numericEligible,
+              prompt,
             } = sample;
 
             return {
-              contentShare:
-                numericEligible && grade.kind === "points"
-                  ? Math.min(
-                      1,
-                      Math.max(0, (grade.content.low + grade.content.high) / (2 * grade.max)),
-                    )
-                  : null,
+              ...getWrittenTrendShares({ criteria: prompt.criteria, grade, numericEligible }),
               date: toIsoDate(localDate),
               errors: grade.errorCount,
-              presentationShare: presentationShare(sample),
             };
           }),
         writeActions: ownTasks.flatMap<
