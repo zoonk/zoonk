@@ -1,4 +1,5 @@
 import { type WrittenItemSet } from "@zoonk/ai/tasks/items/write-set";
+import { type ChartVisual, type PlotVisual } from "@zoonk/ai/tasks/visuals/schema";
 import { wrapBareLatex } from "@zoonk/utils/bare-latex";
 import { normalizeString, replaceEmDashes, segmentWords } from "@zoonk/utils/string";
 import { findPlaceholderText } from "@zoonk/utils/text-flaws";
@@ -53,19 +54,40 @@ function checkStimulus(set: WrittenItemSet): string[] {
     .filter((problem) => typeof problem === "string");
 }
 
+function getVisibleChartLabels(visual: ChartVisual | PlotVisual): (string | null)[] {
+  const legendNames = visual.series.length > 1 ? visual.series.map(({ name }) => name) : [];
+
+  if (visual.kind === "plot") {
+    return [
+      visual.title,
+      visual.xLabel,
+      visual.yLabel,
+      ...visual.references.map(({ label }) => label),
+      ...visual.series.flatMap(({ points }) => points.map(({ label }) => label)),
+      ...legendNames,
+    ];
+  }
+
+  return [
+    visual.title,
+    visual.categoryLabel,
+    visual.valueLabel,
+    ...visual.categories,
+    ...legendNames,
+    ...visual.categories.flatMap((category) => legendNames.map((name) => `${category}, ${name}`)),
+  ];
+}
+
 function hasEvidence({ evidence, set }: { evidence: string; set: WrittenItemSet }): boolean {
   const visual = set.visual;
   const quoted = normalizeEvidence(evidence);
 
-  if (visual?.kind === "plot") {
-    const labels = visual.series.flatMap((series) => [
-      series.name,
-      ...series.points.flatMap((point) => (point.label === null ? [] : [point.label])),
-    ]);
-
+  if (visual?.kind === "plot" || visual?.kind === "chart") {
     return (
       quoted.length > 0 &&
-      labels.some((label) => normalizeEvidence(repairQuotable(label)) === quoted)
+      getVisibleChartLabels(visual).some(
+        (label) => label !== null && normalizeEvidence(repairQuotable(label)) === quoted,
+      )
     );
   }
 
