@@ -25,22 +25,23 @@ enum MistakePatternKind {
 /// Half steps from A1 (0) to C2 (5). `startScore` is where the level test or the learner's own
 /// answer put them, and a full evidence window moves the level half a step at most.
 model LanguageSkillLevel {
-  id            String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId        String        @map("user_id") @db.Uuid
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  language      String        @db.VarChar(10)
-  skill         LanguageSkill
-  score         Float
-  startScore    Float         @map("start_score")
-  windowCorrect Int           @default(0) @map("window_correct")
-  windowTotal   Int           @default(0) @map("window_total")
+  id               String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId           String        @map("user_id") @db.Uuid
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language         String        @db.VarChar(10)
+  skill            LanguageSkill
+  score            Float
+  startScore       Float         @map("start_score")
+  windowCorrect    Int           @default(0) @map("window_correct")
+  windowTotal      Int           @default(0) @map("window_total")
+  livingPlanWindow Json?         @map("living_plan_window")
   /// A window can't lift the level more than half a step above it.
-  windowCeiling Float?        @map("window_ceiling")
+  windowCeiling    Float?        @map("window_ceiling")
   /// The first time evidence raised the score; never cleared. A level test leaves a raised skill
   /// alone.
-  raisedAt      DateTime?     @map("raised_at")
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
+  raisedAt         DateTime?     @map("raised_at")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @default(now()) @updatedAt @map("updated_at")
 
   @@unique([userId, language, skill], name: "userLanguageSkill")
   @@map("language_skill_levels")
@@ -160,19 +161,19 @@ model ConversationScenario {
 }
 
 model LanguageLevelTest {
-  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  id             String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   /// The learner's language.
-  language       String   @db.VarChar(10)
-  targetLanguage String   @map("target_language") @db.VarChar(10)
+  language       String    @db.VarChar(10)
+  targetLanguage String    @map("target_language") @db.VarChar(10)
   content        Json
   model          String
-  promptVersion  String   @map("prompt_version")
-  runId          String   @map("run_id")
-  generatedAt    DateTime @default(now()) @map("generated_at")
+  promptVersion  String    @map("prompt_version")
+  runId          String    @map("run_id")
+  generatedAt    DateTime  @default(now()) @map("generated_at")
   /// Set when its questions' check starts, so it runs once. Null on a bank stored before questions
   /// were checked, which the daily sweep checks.
   checkedAt      DateTime? @map("checked_at")
-  createdAt      DateTime @default(now()) @map("created_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
 
   @@unique([language, targetLanguage], name: "languagePair")
   @@map("language_level_tests")
