@@ -89,7 +89,16 @@ export async function openPlacementAttempt({
 
     await oweFollowUps({
       db: tx,
-      followUps: [{ input: { goalId, waitsForNotice: false }, kind: "preparePlacementItems" }],
+      followUps: [
+        {
+          input: {
+            goalId,
+            skillIds: skillIds.length > 0 ? skillIds : undefined,
+            waitsForNotice: false,
+          },
+          kind: "preparePlacementItems",
+        },
+      ],
       userId,
     });
   });

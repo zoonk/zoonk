@@ -4,6 +4,7 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it } from "vitest";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { PLAN_SHOWN, examTestGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
+import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
 import { loadAnsweredTestItems, loadEvidence } from "./_utils/placement-evidence";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
@@ -94,6 +95,8 @@ describe("a finished Focus test after later study", () => {
       subjects: [{ items: 3, name: "Math", questions: 10 }],
     });
 
+    const taps = await lowGuessTapItems(skills[0]!.id);
+    const tapAnswers = new Map(taps.map(({ answer, item }) => [item.id, answer]));
     const started = await startSitting(goal.id);
 
     const first = await answerPlacementQuestion({
@@ -101,18 +104,27 @@ describe("a finished Focus test after later study", () => {
       input: { answer: { selectedIndex: 0 }, durationMs: 10_000, itemId: started.next!.itemId },
     });
 
-    if (first.status !== "ready" || !first.placement.next) {
-      throw new Error("Expected a confirmation question");
-    }
+    await taps.reduce<Promise<typeof first>>(
+      (previous) =>
+        previous.then((result) => {
+          if (result.status !== "ready" || !result.placement.next) {
+            throw new Error("Expected a confirmation question");
+          }
 
-    await answerPlacementQuestion({
-      goalId: goal.id,
-      input: {
-        answer: { selectedIndex: 0 },
-        durationMs: 10_000,
-        itemId: first.placement.next.itemId,
-      },
-    });
+          const itemId = result.placement.next.itemId;
+          const answer = tapAnswers.get(itemId);
+
+          if (!answer) {
+            throw new Error("Expected a low-guess tap");
+          }
+
+          return answerPlacementQuestion({
+            goalId: goal.id,
+            input: { answer, durationMs: 10_000, itemId },
+          });
+        }),
+      Promise.resolve(first),
+    );
 
     await finishGoalPlacement({ goalId: goal.id, input: {} });
     const at = new Date(Date.now() + 60_000);

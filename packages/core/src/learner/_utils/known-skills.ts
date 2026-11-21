@@ -165,7 +165,6 @@ export async function markPlanItemsTestedOut({
 
           const result = {
             finishedChapters: finished,
-            itemIds: changed.itemIds,
             pastBasicsAdded,
             standInIds: changed.standInIds,
           };
@@ -177,11 +176,11 @@ export async function markPlanItemsTestedOut({
             ? unchanged(result)
             : result;
         })
-      : { finishedChapters: [], itemIds: [], pastBasicsAdded: [], standInIds: [] };
+      : { finishedChapters: [], pastBasicsAdded: [], standInIds: [] };
 
   const { finishedChapters, pastBasicsAdded: addedBasics, standInIds } = written;
 
-  const planItemIds = [...written.itemIds, ...standInIds];
+  const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];
 
   await announceSharedTestOuts({

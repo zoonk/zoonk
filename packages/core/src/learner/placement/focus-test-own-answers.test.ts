@@ -80,7 +80,7 @@ describe("test progress while a sitting stays open", () => {
     const placement = read.status === "ready" ? read.placement : null;
 
     expect(placement?.answered).toBe(oldAnswers.length);
-    expect(placement?.knownSkillIds).toHaveLength(1);
+    expect(placement?.knownSkillIds).toHaveLength(0);
 
     expect(
       placement?.focusTest?.subjects.map(({ asked, right }) => ({ asked, right })),

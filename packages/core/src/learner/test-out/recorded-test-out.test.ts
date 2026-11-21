@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -9,6 +8,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { NOTHING_REACHED } from "../../sessions/reached";
+import { placementItemBank } from "../_test-utils/placement-tap-items";
 import { getChapterTestOut } from "./get-chapter-test-out";
 import { getRecordedTestOut } from "./get-recorded-test-out";
 import { submitChapterTestOut } from "./submit-chapter-test-out";
@@ -46,14 +46,12 @@ async function setup() {
 
   const goal = await plannedGoal({ graph: library.graph, userId: user.id });
 
-  await Promise.all([
+  const [bank] = await Promise.all([
+    placementItemBank(library.skills.map((skill) => skill.id)),
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-    ...library.skills.flatMap((skill) =>
-      Array.from({ length: 4 }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
-      ),
-    ),
   ]);
+
+  const correct = new Map(bank.flat().map(({ answer, item }) => [item.id, answer]));
 
   mockSession(user.id);
 
@@ -81,7 +79,10 @@ async function setup() {
       goalId,
       input: {
         answers: (questions[chapter] ?? []).map((question, index) => ({
-          answer: { selectedIndex: index < wrong ? 1 : 0 },
+          answer:
+            index < wrong
+              ? { dontKnow: true }
+              : (correct.get(question.itemId) ?? { dontKnow: true }),
           durationMs: 5000,
           itemId: question.itemId,
         })),
@@ -177,7 +178,7 @@ describe("a chapter test-out sent and read back", () => {
     await expect(
       send({ chapter: 1, goalId: other.id, requestId, wrong: 2 }),
     ).resolves.toMatchObject({
-      outcome: { changeId: null, correct: 2, passed: false },
+      outcome: { changeId: null, correct: 0, passed: false },
       status: "ready",
     });
 
@@ -234,12 +235,12 @@ describe("a chapter test-out sent and read back", () => {
   });
 
   it("answers a retry with its receipt when a crash left the claim behind", async () => {
-    const { chapterId, goal, send, user } = await setup();
+    const { send, user } = await setup();
     const requestId = randomUUID();
     const first = await send({ requestId });
 
     await prisma.testSubmissionClaim.create({
-      data: { key: `${user.id}:${goal.id}:${chapterId}:${requestId}`, userId: user.id },
+      data: { key: `chapter-test-out:${user.id}`, userId: user.id },
     });
 
     await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));

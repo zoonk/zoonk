@@ -132,9 +132,9 @@ async function loadAnswerEvents({
       AND: [
         { answer: { equals: DbNull, path: ["placementPending"] } },
         { answer: { equals: DbNull, path: ["practiceMistakeId"] } },
+        { mockExamId: null },
       ],
       itemId: { not: null },
-      mockExamId: null,
       skillId: { in: [...skillIds] },
       stepId: null,
       userId,

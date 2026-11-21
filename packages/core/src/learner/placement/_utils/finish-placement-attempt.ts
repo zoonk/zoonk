@@ -4,6 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
 import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
+import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { announceSharedTestOuts } from "../../../plans/announce-shared-test-outs";
 import { announceTestedOutItems } from "../../../plans/announce-tested-out-items";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
@@ -84,13 +85,24 @@ export async function finishPlacementAttempt({
       });
 
       const testedOutPlanItemIds = [...changed.itemIds, ...changed.standInIds];
-      const lessonsSkipped = attempt.lessonsSkipped + testedOutPlanItemIds.length;
+
+      const partLessonsSkipped = countLessons(
+        testedOutPlanItemIds.length > 0
+          ? await tx.planItem.findMany({
+              select: { chapterId: true, kind: true, lessonId: true, lessons: true, skillId: true },
+              where: { id: { in: testedOutPlanItemIds } },
+            })
+          : [],
+      );
+
+      const lessonsSkipped = attempt.lessonsSkipped + partLessonsSkipped;
       const finishedAt = now.toISOString();
 
       const receipt = {
         attemptId,
         finishedAt,
         knownSkillIds: [...confirmed],
+        lessonsSkipped: partLessonsSkipped,
         part,
         testedOutPlanItemIds,
       };
@@ -146,7 +158,7 @@ export async function finishPlacementAttempt({
     complete: !state.attempt,
     focusTest: null,
     knownSkillIds: saved.knownSkillIds,
-    partLessonsSkipped: saved.testedOutPlanItemIds.length,
+    partLessonsSkipped: saved.lessonsSkipped,
     phases: state.phases,
     result: state.result,
     testedOutPlanItemIds: saved.testedOutPlanItemIds,

@@ -289,15 +289,16 @@ describe(getPhaseStarts, () => {
   });
 
   it("stops when every phase has a confident start, not after a set count", () => {
-    const { phases } = place([
-      answer("a", "correct"),
-      answer("a", "correct"),
-      answer("b", "correct"),
-      answer("b", "correct"),
-      answer("c", "correct", "typed"),
-      answer("e", "wrong"),
-      answer("d", "correct", "typed"),
+    const evidence = ["a", "b", "c", "d"].flatMap((skillId) => [
+      { ...answer(skillId, "correct"), itemId: `${skillId}-quick` },
+      ...[1, 2, 3].map((index) => ({
+        ...answer(skillId, "correct", "order"),
+        content: { steps: ["A", "B", "C", "D"] },
+        itemId: `${skillId}-order-${index}`,
+      })),
     ]);
+
+    const { phases } = place([...evidence, answer("e", "wrong")]);
 
     expect(phases).toStrictEqual([
       { confident: true, phase: 0, startSkillId: null },

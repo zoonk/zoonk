@@ -2,7 +2,7 @@ import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
-import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
+import { type GoalPlan, type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { loadSkippedRecheckSkills } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent, listSkippedRechecks } from "../../learner/_utils/skill-claims";
 import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
@@ -78,6 +78,29 @@ function placesNothing({
   );
 }
 
+async function readRechecks({
+  context,
+  skillIds,
+}: {
+  context: BuildContext;
+  skillIds: readonly string[];
+}): Promise<Set<string>> {
+  if (skillIds.length === 0) {
+    return new Set();
+  }
+
+  const { localDate, readClaims } = context;
+
+  return readClaims
+    ? listSkippedRechecks({ events: await readClaims(skillIds), localDate })
+    : loadSkippedRecheckSkills({
+        goalId: context.goal.id,
+        localDate,
+        skillIds,
+        userId: context.userId,
+      });
+}
+
 /** Excludes questions used elsewhere today and days with no remaining lessons to place. */
 export async function loadSessionPlacement({
   context,
@@ -89,6 +112,7 @@ export async function loadSessionPlacement({
   isReviewDay: boolean;
   plan: {
     finalStretchStart: Date | null;
+    goalPlan?: GoalPlan;
     graph: PlanGraph;
     listeningSkillIds: ReadonlySet<string>;
     settings: unknown;
@@ -103,22 +127,20 @@ export async function loadSessionPlacement({
     return [];
   }
 
-  const skillIds = skills.filter((skill) => !skill.removed).map((skill) => skill.id);
+  const skipped = new Set(
+    (plan.goalPlan?.items ?? []).flatMap((item) =>
+      item.status === "testedOut" ? item.skillIds : [],
+    ),
+  );
+
+  const skillIds = skills
+    .filter((skill) => !skill.removed && skipped.has(skill.id))
+    .map((skill) => skill.id);
 
   const recheckOnly =
     !asksPlacement(context) || placesNothing({ context, finalStretchStart, isReviewDay });
 
-  const recheckSkillIds = context.readClaims
-    ? listSkippedRechecks({
-        events: await context.readClaims(skillIds),
-        localDate: context.localDate,
-      })
-    : await loadSkippedRecheckSkills({
-        goalId: context.goal.id,
-        localDate: context.localDate,
-        skillIds,
-        userId: context.userId,
-      });
+  const recheckSkillIds = await readRechecks({ context, skillIds });
 
   if (recheckOnly && recheckSkillIds.size === 0) {
     return [];

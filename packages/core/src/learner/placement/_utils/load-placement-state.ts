@@ -186,6 +186,7 @@ async function loadLegacyPlacement({
     answeredOnly,
     answers: confirmationAnswers,
     evidence,
+    items,
     knownAreas,
     ownLevel,
     skills,

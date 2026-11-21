@@ -94,7 +94,12 @@ export function readAttemptQuestions({
   );
 
   const nextIn = (skillId: string) => {
-    const tried = bySkill.get(skillId) ?? [];
+    const history = bySkill.get(skillId) ?? [];
+
+    const tried = history.slice(
+      history.findLastIndex((answer) => answer.outcome !== "correct") + 1,
+    );
+
     const hasQuick = tried.some((answer) => answer.outcome === "correct" && isQuickChoice(answer));
 
     const suitable = (candidates.get(skillId) ?? []).filter((item) =>

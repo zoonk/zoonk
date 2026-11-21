@@ -1,6 +1,7 @@
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { getAnsweredQuestions } from "../../view-models/onboarding/onboarding-steps";
+import { readPlacementAttempt } from "./_utils/placement-attempt-record";
 import { isPlacementSkipped } from "./placement-contract";
 
 /** The key of `goal.details` only core writes, where an exam goal's Focus test keeps its state. */
@@ -83,5 +84,9 @@ export function isFocusTestStarted(goal: GoalDetails): boolean {
 
 /** Questions are written for a learner who skipped placement once they start the test. */
 export function wantsPlacementQuestions(goal: GoalDetails): boolean {
-  return !isPlacementSkipped(goal) || isFocusTestStarted(goal);
+  return (
+    !isPlacementSkipped(goal) ||
+    isFocusTestStarted(goal) ||
+    readPlacementAttempt(goal).attempt !== null
+  );
 }

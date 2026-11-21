@@ -37,28 +37,3 @@ export function getQuickFormatOrder(quickFormat: PlacementQuickFormat): readonly
     ? ["trueFalse", "multipleChoice"]
     : ["multipleChoice", "trueFalse"];
 }
-
-function getQuickRank({
-  format,
-  quickFormat,
-}: {
-  format: ItemFormat;
-  quickFormat: PlacementQuickFormat;
-}) {
-  const order = getQuickFormatOrder(quickFormat);
-  const index = order.indexOf(format);
-
-  return index === -1 ? order.length : index;
-}
-
-export function compareQuickFormat({
-  a,
-  b,
-  quickFormat,
-}: {
-  a: ItemFormat;
-  b: ItemFormat;
-  quickFormat: PlacementQuickFormat;
-}): number {
-  return getQuickRank({ format: a, quickFormat }) - getQuickRank({ format: b, quickFormat });
-}

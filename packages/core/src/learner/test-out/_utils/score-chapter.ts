@@ -2,8 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
-import { loadClaimEvents } from "../../_utils/load-skill-claims";
-import { listKnownSkills } from "../../_utils/skill-claims";
+import { loadConfirmedSkills } from "../../_utils/load-skill-claims";
 import {
   type PlacementItem,
   gradePlacementAnswer,
@@ -139,11 +138,12 @@ export async function scoreChapter({
     })),
   });
 
-  const eligible = listKnownSkills({
-    events: await loadClaimEvents({ goalId, skillIds: score.knownSkillIds, userId }),
+  const knownSkillIds = await loadConfirmedSkills({
+    goalId,
+    skillIds: score.knownSkillIds,
+    timeZone,
+    userId,
   });
-
-  const knownSkillIds = new Set(score.knownSkillIds.filter((skillId) => eligible.has(skillId)));
 
   return { graded: fresh, knownSkillIds, score };
 }

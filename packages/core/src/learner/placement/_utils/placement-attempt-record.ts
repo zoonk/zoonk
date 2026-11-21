@@ -1,4 +1,3 @@
-import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -17,6 +16,7 @@ export type PlacementResult = z.infer<typeof placementResultSchema>;
 const partReceiptSchema = z.object({
   finishedAt: z.iso.datetime(),
   knownSkillIds: z.array(uuidSchema()),
+  lessonsSkipped: z.number().int().nonnegative(),
   part: z.number().int().positive(),
   testedOutPlanItemIds: z.array(uuidSchema()),
 });
@@ -37,7 +37,7 @@ const recordSchema = z.object({
 export type PlacementAttempt = z.infer<typeof attemptSchema>;
 export type PlacementRecord = z.infer<typeof recordSchema>;
 
-export function readPlacementAttempt(goal: Pick<Goal, "details">): PlacementRecord {
+export function readPlacementAttempt(goal: { details: unknown }): PlacementRecord {
   const details = isJsonObject(goal.details) ? goal.details : {};
   const record = recordSchema.safeParse(details.placementTest);
   return record.data ?? { attempt: null, lastPart: null, result: null };

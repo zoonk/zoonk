@@ -15,23 +15,38 @@ import { type PlacementState, loadPlacementState } from "./load-placement-state"
 export async function loadPlacement({
   goalId,
   plan,
+  timeZone = "UTC",
   userId,
   tx = prisma,
 }: {
   goalId: string;
   plan?: GoalPlan;
+  timeZone?: string;
   userId: string;
   tx?: TransactionClient;
 }): Promise<{ goalPlan: GoalPlan; pastBasicsAreas: string[]; state: PlacementState }> {
   const goalPlan = plan ?? (await loadPlacementPlan(goalId, tx));
 
-  const state = await loadPlacementState({
+  const loaded = await loadPlacementState({
     goalId,
     ignoreAttempt: true,
     plan: goalPlan,
     tx,
     userId,
   });
+
+  const confirmed = await loadConfirmedSkills({
+    goalId,
+    skillIds: loaded.knownSkillIds,
+    timeZone,
+    tx,
+    userId,
+  });
+
+  const state = {
+    ...loaded,
+    knownSkillIds: loaded.knownSkillIds.filter((skillId) => confirmed.has(skillId)),
+  };
 
   const pastBasicsAreas = await listPlacementListeningAreas({
     goalId,
@@ -74,18 +89,14 @@ export async function applyPlacement({
   state: PlacementState;
   testedOutPlanItemIds: string[];
 }> {
-  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({ goalId, plan, userId });
-
-  const confirmed = await loadConfirmedSkills({
+  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({
     goalId,
-    skillIds: state.knownSkillIds,
+    plan,
     timeZone,
     userId,
   });
 
-  const knownSkillIds = state.knownSkillIds.filter((skillId) => confirmed.has(skillId));
-
-  await markSkillsKnown({ knownAt: now, skillIds: knownSkillIds, timeZone, userId });
+  await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
 
   // A question inside today's session keeps the rest of the day as the learner was shown it.
   const {
@@ -98,7 +109,7 @@ export async function applyPlacement({
     followToday,
     goalId,
     items: goalPlan.items,
-    knownSkillIds: confirmed,
+    knownSkillIds: new Set(state.knownSkillIds),
     now,
     pastBasicsAreas,
     placedSkills: goalPlan.skills,
@@ -108,12 +119,7 @@ export async function applyPlacement({
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
-  return {
-    changeId,
-    pastBasicsAreas: pastBasicsAdded,
-    state: { ...state, knownSkillIds },
-    testedOutPlanItemIds,
-  };
+  return { changeId, pastBasicsAreas: pastBasicsAdded, state, testedOutPlanItemIds };
 }
 
 /** A learner who declined placement and later started the Focus test has answers to apply. */

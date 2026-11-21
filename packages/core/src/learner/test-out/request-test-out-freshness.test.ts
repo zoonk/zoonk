@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { type getLessonSkillRows } from "../../library/_utils/shared-rows";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
+import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
 import { getChapterTestOut } from "./get-chapter-test-out";
 import { requestTestOutQuestions } from "./request-test-out-questions";
 
@@ -29,12 +30,13 @@ describe("test-out generation preconditions", () => {
   it("checks the current lesson skills even when its GET warmed an older shared entry", async () => {
     const user = await userFixture();
 
-    const { chapters, goal, planItems } = await learnerGoalFixture({
+    const { chapters, goal, planItems, skills } = await learnerGoalFixture({
       itemsPerSkill: 4,
       phases: [1],
       userId: user.id,
     });
 
+    await lowGuessTapItems(skills[0]!.id);
     const item = planItems[0]!;
     await prisma.planItem.update({ data: { skillId: null }, where: { id: item.id } });
     mockSession(user.id);

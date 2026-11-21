@@ -350,7 +350,7 @@ describe("an exam goal's Focus test", () => {
       subjects: [{ asked: 4, right: 4, state: "answered" }],
     });
 
-    expect(completion.testedOutPlanItemIds.length).toBeGreaterThan(0);
+    expect(completion.testedOutPlanItemIds).toHaveLength(0);
 
     expect(analytics.trackServerEvent).toHaveBeenCalledWith(
       expect.objectContaining({
