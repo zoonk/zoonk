@@ -1,7 +1,10 @@
 import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
 import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
-import { skipTestedOutBlocks } from "../sessions/_utils/skip-tested-out-blocks";
+import {
+  keepOpenSessionSelection,
+  skipTestedOutBlocks,
+} from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
 import { followPlanToday } from "./_utils/follow-plan-today";
@@ -224,6 +227,14 @@ export async function announceTestedOutItems({
 
     const unseen = mergeWithUnseen ? latest : null;
 
+    const save = async (tx: TransactionClient) => {
+      await extraWrites?.(tx);
+
+      if (!followToday && !skipBlocks) {
+        await keepOpenSessionSelection(tx, { goalId, planVersion: context.plan.version + 1 });
+      }
+    };
+
     const computed = await computePlan({
       context,
       mode: "forced",
@@ -254,7 +265,7 @@ export async function announceTestedOutItems({
         computed,
         context,
         extraWrites: async (tx) => {
-          await extraWrites?.(tx);
+          await save(tx);
 
           // Only the skip as it was read: a "Got it" since makes this one news of its own.
           const { count } = await tx.planChange.updateMany({
@@ -308,7 +319,7 @@ export async function announceTestedOutItems({
           },
           computed,
           context,
-          extraWrites,
+          extraWrites: save,
         });
 
     if (skipBlocks) {

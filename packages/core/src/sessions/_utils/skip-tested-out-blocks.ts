@@ -121,3 +121,13 @@ export async function skipTestedOutBlocks({
     return skipped === 0 ? unchanged(null) : null;
   });
 }
+
+export async function keepOpenSessionSelection(
+  tx: TransactionClient,
+  { goalId, planVersion }: { goalId: string; planVersion: number },
+): Promise<void> {
+  await tx.studySession.updateMany({
+    data: { planVersion },
+    where: { goalId, status: { in: ["active", "planned"] } },
+  });
+}
