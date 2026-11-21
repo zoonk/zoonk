@@ -205,6 +205,7 @@ class EssayViewModelTest {
             viewModel.write("Typed offline.")
             advanceUntilIdle()
             assertEquals("Typed offline.", device.keptOnDisk()?.text)
+            assertEquals(true, viewModel.ui.value.saveFailed)
 
             device.api.saveError = null
             viewModel.onStop()
@@ -218,6 +219,7 @@ class EssayViewModelTest {
             )
             assertEquals(2, device.api.saved.size)
             assertNull(device.keptOnDisk())
+            assertEquals(false, viewModel.ui.value.saveFailed)
         }
 
     @Test
