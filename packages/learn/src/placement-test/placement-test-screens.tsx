@@ -19,7 +19,7 @@ import { TestOutcome } from "../onboarding/test-outcome";
 import { type PlacementLength } from "./placement-test-actions";
 import { type PlacementPressed } from "./use-placement-test";
 
-export const QUICK_TEST_MINUTES = 4;
+const QUICK_TEST_MINUTES = 4;
 
 function useMinutesLeft() {
   const t = useExtracted();
