@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Where code sits: `inset` flush in an activity's card, `panel` on its own muted panel, in text.
 enum CodeFrameVariant {
@@ -323,8 +324,10 @@ struct CodeListing: View {
   }
 }
 
-/// Main's `CodeBlock`: a fenced block in a lesson's or a question's text, in the ink color whatever
-/// the text around it, so a dimmed question's program stays readable.
+/// Main's `CodeBlock`: a fenced block in a lesson's, a question's or the buddy's text, in the ink
+/// color whatever the text around it, so a dimmed question's program stays readable. Its lines draw
+/// their indentation as room and their break points as zero-width spaces, so selecting one would
+/// copy neither as written: a long press copies the program instead, as the web's selection does.
 struct CodeBlock: View {
   let code: String
   let language: String?
@@ -332,6 +335,19 @@ struct CodeBlock: View {
   var body: some View {
     CodeListing(code: code, language: language, variant: .panel)
       .foregroundStyle(Color(.foreground))
+      .textSelection(.disabled)
+      .contentShape(.contextMenuPreview, .rect(cornerRadius: Radius.xl, style: .continuous))
+      .contextMenu {
+        Button {
+          UIPasteboard.general.string = code
+        } label: {
+          Label {
+            Text("Copy", tableName: "DesignSystem", comment: "Copies a block of program code")
+          } icon: {
+            Image(systemName: "doc.on.doc")
+          }
+        }
+      }
       .accessibilityElement(children: .contain)
       .accessibilityLabel(
         Text(
