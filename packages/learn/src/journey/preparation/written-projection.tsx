@@ -98,7 +98,12 @@ function TaskRows({ part }: { part: Part }) {
           <span className="text-muted-foreground min-w-0">
             {taskName({ task: task.writingTask, title: task.name })}
           </span>
-          <span className="font-mono tabular-nums">
+          <span
+            className={cn(
+              "font-mono tabular-nums",
+              !task.range && "text-muted-foreground font-sans",
+            )}
+          >
             {task.range && task.max !== null
               ? t("{range} of {max}", {
                   max: formatScore(task.max),
