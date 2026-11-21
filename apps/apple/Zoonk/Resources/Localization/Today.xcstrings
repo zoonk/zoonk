@@ -5608,6 +5608,9 @@
         }
       }
     },
+    "Extra" : {
+      "comment" : "Tags a row of today's study list the learner added after the day's list, which doesn't count toward the day's progress."
+    },
     "Finish “%@”" : {
       "comment" : "Mission: finish a chapter",
       "localizations" : {
