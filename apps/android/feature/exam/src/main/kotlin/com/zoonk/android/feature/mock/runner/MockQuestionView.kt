@@ -318,18 +318,20 @@ internal fun QuestionCell(
         }
     val name = if (unsure) stringResource(R.string.mock_cell_unsure, number) else number
     val states = if (answered) stringResource(R.string.mock_cell_answered) else ""
-    // The current one has a bar under its number and one marked not sure an amber tint with its bookmark, the web's:
-    // never a ring, except the amber one more contrast asks for.
+    // The current one has a bar under its number and every one marked not sure its bookmark; an answered one is
+    // filled, amber when marked, the web's: never a ring, except the amber one more contrast asks for. A blank one
+    // stays blank, so a mark never hides an answer still missing.
+    val amber = unsure && answered
     val moreContrast = LocalMoreContrast.current
     val border =
         when {
-            unsure && moreContrast -> MaterialTheme.zoonk.warning
-            unsure || answered -> Color.Transparent
+            amber && moreContrast -> MaterialTheme.zoonk.warning
+            answered -> Color.Transparent
             else -> MaterialTheme.colorScheme.outlineVariant
         }
     val fill =
         when {
-            unsure -> MaterialTheme.zoonk.warning.copy(alpha = UNSURE_TINT)
+            amber -> MaterialTheme.zoonk.warning.copy(alpha = UNSURE_TINT)
             answered -> MaterialTheme.zoonk.selectedTint
             else -> Color.Transparent
         }
@@ -355,11 +357,11 @@ internal fun QuestionCell(
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .clip(shape)
                 .background(fill)
-                .border(if (unsure) 2.dp else 1.dp, border, shape)
+                .border(if (amber) 2.dp else 1.dp, border, shape)
                 .indication(interactions, ripple()),
             contentAlignment = Alignment.Center,
         ) {
-            CellLabel(question, answered || current, unsure && !answered)
+            CellLabel(question, strong = answered || current)
             if (unsure) UnsureMark(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
             if (current) {
                 Box(
@@ -385,7 +387,6 @@ internal fun UnsureMark(modifier: Modifier = Modifier) {
 private fun CellLabel(
     question: MockQuestion,
     strong: Boolean,
-    unsure: Boolean,
 ) {
     if (question.essay) {
         Icon(painterResource(R.drawable.ic_border_color), contentDescription = null, modifier = Modifier.size(16.dp))
@@ -393,11 +394,7 @@ private fun CellLabel(
         Text(
             question.number.toString(),
             color =
-                when {
-                    unsure -> MaterialTheme.zoonk.warningText
-                    strong -> MaterialTheme.colorScheme.onSurface
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                },
+                if (strong) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             softWrap = false,
             style = MaterialTheme.typography.labelLarge.withTabularFigures(),
