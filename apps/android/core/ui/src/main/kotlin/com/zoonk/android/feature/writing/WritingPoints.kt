@@ -33,20 +33,18 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
 
-/**
- * A range of points in its scale's [decimals], both ends alike ("12.0–17.5", never "12–17.5"), its
- * low end rounded down and its high end up, so it never claims more than the grade has; one number
- * when both ends round alike.
- */
+/** A range of points in its scale's [decimals], with one number when both ends round alike. */
 @Composable
 fun pointsRange(
     low: Double,
     high: Double,
     decimals: Int,
+    headline: Boolean = false,
 ): String {
+    val locale = currentLocale()
     // A zeroed score is "0", never "0.0" or "0–0".
-    if (low == 0.0 && high == 0.0) return formatNumber(0.0, currentLocale())
-    val (from, to) = rangeEnds(low, high, decimals, currentLocale())
+    if (low == 0.0 && high == 0.0) return formatNumber(0.0, locale)
+    val (from, to) = rangeEnds(low, high, decimals, locale, headline)
     return if (from == to) from else stringResource(R.string.essay_range, from, to)
 }
 
@@ -55,25 +53,28 @@ fun pointsRange(
 fun deductionRange(
     low: Double,
     high: Double,
-    decimals: Int,
 ): String {
-    val (from, to) = rangeEnds(low, high, decimals, currentLocale())
-    val zero = formatPoints(0.0, currentLocale(), decimals)
+    val locale = currentLocale()
+    val from = formatPoints(low, locale, DEDUCTION_DECIMALS)
+    val to = formatPoints(high, locale, DEDUCTION_DECIMALS)
+    val zero = formatPoints(0.0, locale, DEDUCTION_DECIMALS)
     // Nothing taken away has no minus: never "−0".
     return when {
-        high <= 0 || to == zero -> formatNumber(0.0, currentLocale())
+        high <= 0 || to == zero -> formatNumber(0.0, locale)
         from == to -> stringResource(R.string.essay_minus, from)
         from == zero -> stringResource(R.string.essay_zero_to_minus, from, to)
         else -> stringResource(R.string.essay_minus_range, from, to)
     }
 }
 
-private fun rangeEnds(
+internal fun rangeEnds(
     low: Double,
     high: Double,
     decimals: Int,
     locale: Locale,
+    headline: Boolean,
 ): Pair<String, String> {
+    if (!headline) return formatPoints(low, locale, decimals) to formatPoints(high, locale, decimals)
     val step = 10.0.pow(decimals)
     // 0.3 × 10 is 3.0000000000000004 in floating point, which must still round to 3; zero stays zero, never "−0".
     val shownLow = floor(low * step + FLOAT_SLACK) / step + 0.0
@@ -126,7 +127,7 @@ fun PointsReadout(
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-    val range = pointsRange(low, high, decimals)
+    val range = pointsRange(low, high, decimals, headline = true)
     val ofMax = stringResource(R.string.essay_of_max, formatPoints(max, currentLocale(), decimals))
     Text(
         buildAnnotatedString {
@@ -218,6 +219,7 @@ fun PointsValue(
 }
 
 private const val MAX_FIXED_DECIMALS = 2
+private const val DEDUCTION_DECIMALS = 1
 private const val PERCENT = 100.0
 private const val FLOAT_SLACK = 1e-9
 private val METER_HEIGHT = 6.dp

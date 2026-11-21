@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.feature.writing.WritingTaskName
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
@@ -209,6 +210,20 @@ class EssayScreenshots {
     @Test
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")
     fun signUpRequired() = show("11d-sign-up-required") { _, _, _ -> WritingSignUp("Written answer", onCreateAccount = {}, onClose = {}) }
+
+    @Test
+    @Config(qualifiers = "w393dp-h851dp")
+    fun reopenedBeforeStart() =
+        show("03b-question-before-start") { _, _, _ ->
+            WritingAvailable(
+                header = "Written answer",
+                drill = false,
+                task = RefusedTask("A written question", 70, name = WritingTaskName(30, 1, 2, distinctLines = true)),
+                busy = false,
+                onWrite = {},
+                onClose = {},
+            )
+        }
 
     @Test
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")

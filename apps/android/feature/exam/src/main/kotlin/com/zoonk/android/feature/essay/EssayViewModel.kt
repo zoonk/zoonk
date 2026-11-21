@@ -214,13 +214,21 @@ class EssayViewModel(
                 }
             saveSoon?.cancel()
             saveLatest()
+            if (mutableUi.value.conflict != null) {
+                mutableUi.update { it.copy(send = WritingSend.Idle) }
+                return@launch
+            }
             val earlier = unanswered
             val request = sending.getOrPut(admissionId to text) { submission(admissionId, text, writingDuration()) }
             when (val result = withTimeoutOrNull(GRADING_TIMEOUT) { request.await() }) {
                 is MutationResult.Done -> {
                     unanswered = null
                     val recorded = if (earlier != null && earlier != text) recordedText(result.value) else null
-                    if (recorded != null && recorded != text) replayed(recorded, text, result.value) else graded(text, result.value)
+                    if (recorded != null && recorded != text) {
+                        replayed(admissionId, recorded, text, result.value)
+                    } else {
+                        graded(text, result.value)
+                    }
                 }
 
                 MutationResult.Obsolete -> {
@@ -315,18 +323,26 @@ class EssayViewModel(
             admission = essay.admissionId ?: draft?.admissionId
             revision = draft?.revision ?: 0
             savedText = draft?.text.orEmpty()
-            val start = chooseDraft(keptText.takeUnless { essay.closed }, draft, admission?.toString())
+            val recovery = keptText
+            val results = essay.drafts.map { GradedAnswer(it.grade, it.text, it.attemptId) }
+            val unsent =
+                recovery
+                    ?.takeIf {
+                        it.replayed && !essay.closed && it.admissionId == admission?.toString() && draft == null && results.isNotEmpty()
+                    }?.text
+            val start = chooseDraft(recovery?.takeUnless { essay.closed || it.replayed }, draft, admission?.toString())
             if (start is DraftStart.Kept) revision = start.base
-            if (start !is DraftStart.Saved) writingMs = keptText?.writingMs ?: 0
+            if (start !is DraftStart.Saved) writingMs = recovery?.writingMs ?: 0
             // A kept copy that's the saved draft, or another admission's, is gone, so it's never offered again; one
             // whose admission couldn't be asked stays for the next visit.
-            if (start is DraftStart.Saved && keptText != null && admission != null) kept?.remove()
-            val results = essay.drafts.map { GradedAnswer(it.grade, it.text, it.attemptId) }
+            if (start is DraftStart.Saved && recovery != null && admission != null && unsent == null) kept?.remove()
+            if (unsent != null) closeAdmission()
             val graded = start is DraftStart.Saved && start.text.isBlank() && results.isNotEmpty()
             mutableUi.update {
                 it.copy(
                     results = results,
                     text = start.text,
+                    unsent = unsent,
                     conflict = (start as? DraftStart.Conflict)?.saved,
                     mode = if (graded) WritingMode.Result else WritingMode.Question,
                     readClosed = essay.closed,
@@ -467,12 +483,15 @@ class EssayViewModel(
      * The first send was graded though its answer never came, so the server replayed that grade for
      * [recorded]: the result is that text's, and the changes the learner made since wait for a rewrite.
      */
-    private fun replayed(
+    private suspend fun replayed(
+        admissionId: UUID,
         recorded: String,
         changed: String,
         grade: WritingResultOutput,
     ) {
+        val recovery = KeptWriting(changed, revision, admissionId.toString(), replayed = true)
         closeAdmission()
+        kept?.save(recovery)
         mutableUi.update { ui ->
             val results = ui.results.orEmpty().filter { it.text != recorded }
             ui.copy(
@@ -485,8 +504,6 @@ class EssayViewModel(
                 switched = true,
             )
         }
-        // The admission is spent, so a copy kept under it would only reopen as a draft it can't grade.
-        scope.launch { kept?.remove() }
     }
 
     private fun closeAdmission() {
