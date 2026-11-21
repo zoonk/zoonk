@@ -125,31 +125,68 @@ final class ProfileDraftTests: XCTestCase {
     XCTAssertEqual(draft.typedTools, [])
   }
 
-  /// The field takes no more once the typed tools, joined as saving joins them, reach core's limit.
+  /// A name is added whole or not at all: what doesn't fit stays in the field, which takes no more
+  /// typing, and saving waits until it fits.
   func testTypedToolsStopAtTheFavoritesLimit() throws {
     var draft = ProfileDraft(tools(saved: ""))
 
     enter(String(repeating: "a", count: 50), into: &draft)
     draft.addTypedTools()
-    enter(String(repeating: "b", count: 100), into: &draft)
+    enter(String(repeating: "b", count: 68), into: &draft)
+    enter(String(repeating: "b", count: 69), into: &draft)
 
-    XCTAssertEqual(draft.text.count, 68)
+    XCTAssertEqual(draft.text.count, 68, "the field takes no more than one name can hold")
+
+    enter("Photoshop, " + String(repeating: "c", count: 60) + ", Excel; Tasy", into: &draft)
+
+    XCTAssertEqual(draft.typedTools, [String(repeating: "a", count: 50), "Photoshop"])
+    XCTAssertEqual(draft.picks, ["excel", "Tasy"])
+    XCTAssertEqual(
+      draft.text, String(repeating: "c", count: 60), "a name that doesn't fit stays whole")
+    XCTAssertFalse(draft.canAddTypedTools, "Add can't add what doesn't fit")
+    XCTAssertFalse(draft.isComplete, "saving would drop the name in the field")
+
+    draft.removeTypedTool("Photoshop")
+
+    XCTAssertTrue(draft.canAddTypedTools)
 
     draft.addTypedTools()
-    enter("c", into: &draft)
 
     XCTAssertEqual(draft.text, "")
-    XCTAssertEqual(draft.typedTools.joined(separator: ", ").count, ProfileDraft.favoritesLimit)
+    XCTAssertTrue(draft.isComplete)
+    XCTAssertEqual(draft.typedTools.joined(separator: ", ").count, 112)
+  }
 
-    enter(String(repeating: "d", count: 30) + ", e", into: &draft)
+  /// Core counts code points: "Café" with its accent as a second mark is five, though Swift sees
+  /// four characters, and an emoji is one, though JavaScript's length says two.
+  func testTheLimitCountsAsCoreCounts() throws {
+    var draft = ProfileDraft(tools(saved: ""))
 
-    XCTAssertEqual(draft.typedTools.count, 2, "a paste past the limit adds nothing")
+    enter(String(repeating: "a", count: 114), into: &draft)
+    draft.addTypedTools()
+    enter("Cafe\u{301}", into: &draft)
+
+    XCTAssertEqual(draft.text, "", "five code points don't fit the four left")
+
+    enter("Caf\u{e9}", into: &draft)
+
+    XCTAssertTrue(draft.canAddTypedTools)
+
+    var emoji = ProfileDraft(tools(saved: ""))
+
+    enter(String(repeating: "a", count: 117), into: &emoji)
+    emoji.addTypedTools()
+    enter("\u{1F3A8}", into: &emoji)
+    emoji.addTypedTools()
+
+    XCTAssertEqual(emoji.typedTools.last, "\u{1F3A8}")
   }
 
   /// What the field does as each word lands in it.
   private func enter(_ text: String, into draft: inout ProfileDraft) {
+    let old = draft.text
     draft.text = text
-    draft.settleToolText()
+    draft.settleToolText(from: old)
   }
 
   private func tools(saved text: String) -> ProfileQuestionView {

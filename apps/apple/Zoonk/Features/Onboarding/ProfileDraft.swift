@@ -105,33 +105,60 @@ struct ProfileDraft: Equatable {
     picks.append(id)
   }
 
-  /// Tools, once the field shows what was typed: a comma or a semicolon adds what's before it, and
-  /// the field keeps no more than the favorites' limit leaves room for. It runs after the field
-  /// shows the typed text, since a field whose value comes back unchanged keeps what it shows.
-  mutating func settleToolText() {
-    if text.contains(where: Self.separators.contains) {
+  /// Tools, once the field shows what was typed: a comma or a semicolon typed or pasted adds the
+  /// names before it, and the field takes no more once the name in it can't be added; deleting
+  /// always works. It runs after the field shows the typed text, since a field whose value comes
+  /// back unchanged keeps what it shows.
+  mutating func settleToolText(from old: String) {
+    let count = Self.characters(trimmed(text))
+
+    if Self.separatorCount(text) > Self.separatorCount(old) {
       addTypedTools()
-    } else if text.count > toolRoom {
-      text = String(text.prefix(toolRoom))
+    } else if count > Self.characters(trimmed(old)), count > toolRoom {
+      text = old
     }
   }
 
-  /// Tools: what's in the field becomes chips and the field empties. A name an offered chip has
-  /// picks that chip, and a name already added is left out.
+  /// Tools: what's in the field becomes chips. A name an offered chip has picks that chip, a name
+  /// already added is left out, and a name that would pass the favorites' limit stays in the field,
+  /// whole.
   mutating func addTypedTools() {
+    var left: [String] = []
+
     for name in Self.favorites(in: text) {
-      if let id = offeredTools[name.lowercased()] {
+      let key = name.lowercased()
+
+      if let id = offeredTools[key] {
         if !picks.contains(id) {
           picks.append(id)
         }
-      } else if !typedTools.contains(where: { $0.lowercased() == name.lowercased() }),
-        toolRoom > 0
-      {
-        typedTools.append(String(name.prefix(toolRoom)))
+      } else if !typedTools.contains(where: { $0.lowercased() == key }) {
+        if Self.characters((typedTools + [name]).joined(separator: ", "))
+          <= Self.favoritesLimit
+        {
+          typedTools.append(name)
+        } else {
+          left.append(name)
+        }
       }
     }
 
-    text = ""
+    text = left.joined(separator: ", ")
+  }
+
+  /// Tools: Add would change the field, so it's enabled; not for an empty field or names that
+  /// can't fit.
+  var canAddTypedTools: Bool {
+    var added = self
+    added.addTypedTools()
+    return added.text != Self.favorites(in: text).joined(separator: ", ")
+  }
+
+  /// Tools: a name that can't fit is still in the field, so saving would drop it.
+  private var holdsToolsThatDontFit: Bool {
+    var added = self
+    added.addTypedTools()
+    return !added.text.isEmpty
   }
 
   mutating func removeTypedTool(_ name: String) {
@@ -140,10 +167,18 @@ struct ProfileDraft: Equatable {
 
   /// What one more typed tool can hold, after the ones added and the ", " before it.
   private var toolRoom: Int {
-    max(
-      0,
-      Self.favoritesLimit
-        - (typedTools.isEmpty ? 0 : typedTools.joined(separator: ", ").count + 2))
+    Self.favoritesLimit
+      - (typedTools.isEmpty ? 0 : Self.characters(typedTools.joined(separator: ", ") + ", "))
+  }
+
+  /// Core's count of a text's length: Zod's `.max()` counts code points, so an emoji is one and an
+  /// accent typed as its own mark is another.
+  private static func characters(_ text: String) -> Int {
+    text.unicodeScalars.count
+  }
+
+  private static func separatorCount(_ text: String) -> Int {
+    text.count(where: separators.contains)
   }
 
   /// Core's `splitProfileFavorites`: favorites as saved text holds them, each once.
@@ -211,8 +246,13 @@ struct ProfileDraft: Equatable {
     }
   }
 
-  /// Another field needs its name, and Something else needs its words, while picked.
+  /// Another field needs its name, and Something else needs its words, while picked. A typed tool
+  /// that can't fit waits in its field until there's room.
   var isComplete: Bool {
+    if question == .tools {
+      return !holdsToolsThatDontFit
+    }
+
     guard picks.contains(Self.otherOption) else {
       return true
     }
