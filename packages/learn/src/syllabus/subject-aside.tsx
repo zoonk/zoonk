@@ -121,6 +121,11 @@ export function SubjectCoverage({
   );
 }
 
+/** Whether Details has a row to show: a written part with no question count, date or skipped lesson has none. */
+export function hasSubjectDetails(subject: SyllabusSubject): boolean {
+  return Boolean(subject.questions || subject.nextDate || subject.lessonsKnown > 0);
+}
+
 function SubjectDetails({
   questionsSource,
   subject,
@@ -194,13 +199,15 @@ export function SubjectAside({
         </DetailAsideSection>
       )}
 
-      <DetailAsideSection
-        className="hidden min-[72rem]:flex"
-        title={t("Details")}
-        titleId="subject-details-title"
-      >
-        <SubjectDetails questionsSource={questionsSource} subject={subject} />
-      </DetailAsideSection>
+      {hasSubjectDetails(subject) && (
+        <DetailAsideSection
+          className="hidden min-[72rem]:flex"
+          title={t("Details")}
+          titleId="subject-details-title"
+        >
+          <SubjectDetails questionsSource={questionsSource} subject={subject} />
+        </DetailAsideSection>
+      )}
     </>
   );
 }
