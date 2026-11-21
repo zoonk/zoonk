@@ -4,9 +4,9 @@
   "today_add_to_today": "2923e7d0503f01b22042bf049b31e494f72880f508f6afba45db6c4712b47179",
   "today_adjust_your_plan": "7388d7896f0ba317f52a4b11d4b9dee426c95c572e1798bb78b044f7bf51ad05",
   "today_already_know_chapter": "cc05bee1a285892704444dbe77e9ed54cd4ee6081600beaed4151745e14b35fe",
-  "today_behind_exam": "1bedfd73a216651e06626975627371ae6b580057fb4ba8f60dfbb4edce054b87",
-  "today_behind_goal": "4c6a21d50199dee2f6a21ece1d82122b693f1466c89e272bfd4ffee41d51f2d0",
   "today_behind_kept": "fc648c82a3489e8ea594bb41571004e5ed14432809b0e49ffadf79d74549dbb0",
+  "today_behind_lessons_exam": "df75572bb9438f5b1d12a1835d9d586713382bec03970c2c3acdcf6fc4cbce21",
+  "today_behind_lessons_goal": "b770af3f240a8e715de1e00394c55f16f7c61a54bc413220dab50a9d75ee5d0f",
   "today_building_plan_detail": "f226fb285b1f3bc736a8b4ca8108f40e1d670249206d8f34cb14ebcf2b3a0bd1",
   "today_building_plan_goal": "c044a03cfae6d4772777b0c19cb83fee4b1911eb2f03f0e9bd3db732f283ec96",
   "today_choose_focus": "59a54b468087e9adb1131c15b9ac6cc8a76918d1768c23291d199fb3e204b912",
@@ -311,8 +311,8 @@
     <string name="today_plan_keep_mine">내 계획 유지하기</string>
     <string name="today_next_suggestion">다음 제안</string>
     <string name="today_notice_falling_behind">계획 변경</string>
-    <string name="today_behind_exam">하루 %1$s으로 준비할 수 있는 시험 범위가 %2$s로 줄었어요. 이전에는 %3$s였어요.</string>
-    <string name="today_behind_goal">하루 %1$s으로 끝낼 수 있는 분량이 목표의 %2$s로 줄었어요. 이전에는 %3$s였어요.</string>
+    <string name="today_behind_lessons_exam">시험 전까지 마치기 어려운 레슨이 생겼어요.</string>
+    <string name="today_behind_lessons_goal">날짜 전까지 마치기 어려운 레슨이 생겼어요.</string>
     <string name="today_more_time_a_day">학습 시간 늘리기</string>
     <string name="today_choose_focus">집중할 과목 선택하기</string>
     <string name="today_study_everything">종료일 없애기</string>

@@ -843,7 +843,7 @@
     <string name="plan_end_none_set">None set</string>
     <string name="plan_estimated_finish">Estimated finish %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
-    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. -->
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as "Not in your plan · you took this subject out". -->
     <string name="plan_outside_others_first">Not in your plan · other topics come first</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">Not in your plan · you took this subject out</string>

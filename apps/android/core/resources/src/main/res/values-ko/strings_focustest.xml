@@ -38,7 +38,7 @@
   "focustest_practical_not_checked": "58ec21c9f0a1025d6b94554ebcdc563cec00f3612ba30ad88455838bd5e1af82",
   "focustest_proposal_applied": "3b1bccff0c77b154ba74062b003e9006d4f4214d2b934175d455a600b18bcfc4",
   "focustest_proposal_declined": "b5f1cfe0a99b24d145626388727d4f198be53de5e5b9d0adffd5ef21922e81e5",
-  "focustest_proposal_description": "0b8967a87d7aa534253bff77aaca3409d52c2bf5f7981b5a1c60c6d93442885a",
+  "focustest_proposal_picked": "ceedee5a3cf4abbf9bc5f42461064307036fe54eb9b878bcc04dc45eb2db1a80",
   "focustest_proposal_title": "108728104ebb644a314e283c49ea09e7c9ad50e202e264824baade4875426d36",
   "focustest_proposal_undone": "e5c8103393cf54a9420b398dd3949e4bd5c2befe8ff7530028c33914ec529811",
   "focustest_question_number": "96636433dd29419fb0e1d9acfad4c4b8cbe808066327072231b34db193382401",
@@ -48,7 +48,6 @@
   "focustest_result_hand_picked": "4848c97b59685d430f248c06691d2f582fd19c4a19519782ec24df45eea70287",
   "focustest_result_title": "bdb26143ad9cae8eadad35955aba91504ac9642c32baf9b8039f3c801866b5ae",
   "focustest_resume_title": "b282379bc0cc2dcaa76de733e1941880b7627cbd41afdc3674fca213a5584690",
-  "focustest_schedule_focus": "eeab21a3344b3146454409f6b75d50b98b2f4193689bb02268ff72c9d1c425ea",
   "focustest_see_all_subjects": "82b7554562ac0f683cc5afe1b292dc62671c19c4e598d8c5acfca4027f01bea7",
   "focustest_see_my_result": "250c9531634f14d4891d0fa7496ee60ef068dc54d00b3d24d38279882fb037e1",
   "focustest_see_your_result": "5dfb1926eea291f109f29d125d1f0ade32521c3ae3c74b6332e4f9a99119c71b",
@@ -137,7 +136,8 @@
     <string name="focustest_answer_more">문제 더 풀기</string>
     <!-- The test asks before changing a plan the learner already has. -->
     <string name="focustest_proposal_title">이 과목들에 시간을 더 쓸까요?</string>
-    <string name="focustest_proposal_description">시험 전까지 모든 내용을 공부할 시간이 부족해요.</string>
+    <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
+    <string name="focustest_proposal_picked">내 답변과 시험에서 각 과목이 얼마나 다뤄지는지를 바탕으로 선정했어요.</string>
     <string name="focustest_update_plan">내 계획 바꾸기</string>
     <string name="focustest_proposal_applied">계획에서 이 과목들에 시간을 더 배정했어요.</string>
     <string name="focustest_proposal_declined">계획은 그대로예요.</string>
@@ -160,8 +160,6 @@
     <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
     <string name="focustest_paused_in_sessions">학습 중 추가 문제 일시 중지됨</string>
     <string name="focustest_take_test">집중 진단 받기</string>
-    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
-    <string name="focustest_schedule_focus">학습 시간이 이 정도라면 %1$s에 더 집중하는 걸 추천해요.</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요.</string>
     <!-- %1$s is a duration, such as "15 min". -->

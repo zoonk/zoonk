@@ -4,9 +4,9 @@
   "today_add_to_today": "bc43729ec7171d05327409458093747d2c30e9e16a4d900eca1ba8a219c8ec55",
   "today_adjust_your_plan": "efe71285b1c033c4a2606d44c4fb284cccefd2904c2d1a38353a70b4fdc4cba1",
   "today_already_know_chapter": "82ec9bcd044d8a833c6428c35922d45e3d2fa61c80329464e5229fc1e348514e",
-  "today_behind_exam": "679420fb74c00237bed6998f271cbdad8f5c43cff9cdc46dec00e92e799bbd2e",
-  "today_behind_goal": "d8991513842cec84e3e47d82535f0263a19d004058487a3ab975030a0001a75f",
   "today_behind_kept": "3cb6fb9cdd063cd88882ebef61e8adcc097bf0f16f8a98b4d9ba2bbb6d9c71f6",
+  "today_behind_lessons_exam": "63f621022eca3d0980f82bc00e380fda3b04e4f6461f0730fd19b45f1a4fcb0c",
+  "today_behind_lessons_goal": "947371193215b2f1e075b9a3430660fc1c55ca85511cd1b86e97a49f6122d2fb",
   "today_building_plan_detail": "58529fc7ae0190a46ac3d62c3b8dbb5c09f85cd2833c0ddb83a8aa6d40c58201",
   "today_building_plan_goal": "9430e4a9f9fd21013b7160da654e0553c491d019912b703f037dde45058ab9eb",
   "today_choose_focus": "c34c6c17b4dc5cce7991c5e6ae54e03e0d9cdce5246802ecb799660bcfedaa74",
@@ -327,8 +327,8 @@
     <string name="today_plan_keep_mine">Mantieni il mio piano</string>
     <string name="today_next_suggestion">Vedi il prossimo suggerimento</string>
     <string name="today_notice_falling_behind">Modifica al piano</string>
-    <string name="today_behind_exam">Con %1$s al giorno ora puoi preparare una parte più piccola dell’esame: %2$s invece di %3$s.</string>
-    <string name="today_behind_goal">Con %1$s al giorno ora puoi completare una parte più piccola del tuo obiettivo: %2$s invece di %3$s.</string>
+    <string name="today_behind_lessons_exam">Alcune lezioni non rientrano più nel tempo che resta prima dell’esame.</string>
+    <string name="today_behind_lessons_goal">Alcune lezioni non rientrano più nel tempo che resta prima della data.</string>
     <string name="today_more_time_a_day">Aggiungi tempo</string>
     <string name="today_choose_focus">Scegli su cosa concentrarti</string>
     <string name="today_study_everything">Rimuovi la data di fine</string>

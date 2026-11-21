@@ -38,7 +38,7 @@
   "focustest_practical_not_checked": "7026ef33d002fbd547e7e1308717bb44344c4e3deb55bf7da66aff6b6ddad73e",
   "focustest_proposal_applied": "0acf6f6236c0d28409511ef26e400840c42d4135bd549a23665bf180ea89edde",
   "focustest_proposal_declined": "61864660fafe3edb907b26a0af2f0cdf3aae5e0aa6a9050b97f5464939fcdd3f",
-  "focustest_proposal_description": "0389dc01dabeedcf347c2328806915200a3fdb4e5cc536bf649984dd60099993",
+  "focustest_proposal_picked": "87405c0e7fa1e13189139a222851dd6366ec939b5645c662d387902d39aa4c96",
   "focustest_proposal_title": "fff719254f0ef76f0e5e4642cb15ff3dcdf7908aad0262283bfbbbd3ae2582ea",
   "focustest_proposal_undone": "37bf4edb797c137e76654902c7d25430c55d18c244f5f2b441637360bbca41ac",
   "focustest_question_number": "430afc8b240edd2f3bd19f9d12781f03dae6a6646110b311f84e5970eb7316fe",
@@ -48,7 +48,6 @@
   "focustest_result_hand_picked": "37e6354501a08d8cbe94c2cb2bee47beee668bbe1fd053729291f206fafef083",
   "focustest_result_title": "19dadb7d6114f8ed303d44b3005572e8f06011cc17d48af75c8df60eae8d58ef",
   "focustest_resume_title": "9faefbe0588455abf2a2a98dbcb61e80afa745ea66f2e451222784bb0e2b26d4",
-  "focustest_schedule_focus": "5972f49741ae89e264ab4d0912a670461a06f30620112e6c75cd0fcb23853465",
   "focustest_see_all_subjects": "059c22e9ac851d78d4729be76e5bbfda413c5493505d936f583e0438563deadf",
   "focustest_see_my_result": "2d088d20a6b3e1c4ce8ffa5386dc9a2dec59d269055edfe089f5f0d1e4762030",
   "focustest_see_your_result": "cb898c52b0fea4db6776aef3331fb8a09229f0c56f9202a07044c318a6c2a769",
@@ -143,7 +142,8 @@
     <string name="focustest_answer_more">Responder más preguntas</string>
     <!-- The test asks before changing a plan the learner already has. -->
     <string name="focustest_proposal_title">¿Dedicar más tiempo a estas materias?</string>
-    <string name="focustest_proposal_description">No te alcanza el tiempo para estudiar todo antes de tu examen.</string>
+    <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
+    <string name="focustest_proposal_picked">Se eligieron según tus respuestas y la cantidad de preguntas del examen sobre cada materia.</string>
     <string name="focustest_update_plan">Actualizar mi plan</string>
     <string name="focustest_proposal_applied">Ahora tu plan dedica más tiempo a estas materias.</string>
     <string name="focustest_proposal_declined">Tu plan sigue igual.</string>
@@ -168,8 +168,6 @@
     <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
     <string name="focustest_paused_in_sessions">En pausa en tus sesiones</string>
     <string name="focustest_take_test">Hacer la Prueba de enfoque</string>
-    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
-    <string name="focustest_schedule_focus">Con este tiempo, te sugerimos prestar más atención a %1$s.</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">La Prueba de enfoque te muestra qué estudiar más.</string>
     <!-- %1$s is a duration, such as "15 min". -->

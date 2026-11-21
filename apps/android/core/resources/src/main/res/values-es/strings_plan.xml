@@ -333,10 +333,10 @@
   "plan_not_yet": "9769e5a0fa1d2ec0d11445a66613fe1190346008f9fe970c057cb2794667b258",
   "plan_nothing_planned_until_resume": "8eb9c50ff3fd83820d54a27bc7c3abce00968f58d70fd196d56f048f4ff146e6",
   "plan_options": "c703bd1bf60cf761bff829d21d66567a1dccc97726c4a2dfd9dc0a13e29160f7",
+  "plan_outside_others_first": "b8cd01168d766c711eba7d83121f9f44a0905a24d7b4a34c4df31f8b9ad34ce6",
   "plan_outside_past_basics": "ebaded7dbed716aab09ea30ebe662c9cfae909087d48c6d3d8ecccbf3ace40c8",
   "plan_outside_skipped": "7796c65522705de39c906f5be28d81a2f492bf26888446e8f40e0b59dabbc744",
   "plan_outside_skipped_base": "96db8f07051c9b81d5c33f74017cbde2c23dc56962c157bc33c57274932f6351",
-  "plan_outside_time": "e0703c282e2f12fd211fb0d2e2d47749b42d002eaab4348b1dda53df7922081f",
   "plan_pace": "b96475041e050e0832366eb3f567441612d165d23fe301448701d4eba0a60187",
   "plan_pace_challenges_to_go": "ffe76d30d860fbe1b86335f101760f72e0af278ee40a88025b2119ffebf06918",
   "plan_pace_date_passed": "2fd52917df26c411f6e5b19c0e07219d716039d2fa58ac7566bee1e354175443",
@@ -436,40 +436,39 @@
   "plan_time_a_day": "72a2a6d39eecfe2750f941b9c72b73450b0cce7c10fb804b7d7f46e15c9af078",
   "plan_time_ask_failed": "4f1b93cd9c2703460c327f4ff5ca15010b8024e5dae993dac7eb59019a0ae45e",
   "plan_time_asking": "7b7c8ed74a2348eb97850c47ed84c187ade052290223fd5a474f6fb5bf78c29d",
+  "plan_time_covers_every_exam_topic": "d78a7fc9eb706b31a0240550025bfa32752c98c2f34359087318f010a9e72281",
+  "plan_time_covers_every_goal_part": "668893c9e8dbeab759bfa974dbb5bc8de8e1930157e8609c513f7125109a626e",
   "plan_time_covers_everything": "684b0dacbc24f921a16abadfdb3cbf9fdc6909618aefa349a4b03a93381bcfb7",
   "plan_time_covers_everything_by": "4a77feb0d927745651f8d118ce7a7a11f3b0e86f58dad4a7481e689057cfe528",
   "plan_time_covers_everything_by_month": "65b099345fffbe648801d28a1b3e6310e19d6a3f68df7ffe5bff966c001bc693",
   "plan_time_covers_exam_all": "abbb2751be784e29e8a995f0e74f30135ca4b08e31a02b137db6e6159c72adcc",
   "plan_time_covers_exam_all_month": "199f79740fa4ea19770b178e87bb80eb9587fe268cac7b1d3b771cde66826cd8",
+  "plan_time_covers_first_lessons_exam": "ac83c00d57428a998f50770f2be83253bebcafb3a391dc8a321e5a8c05843d28",
+  "plan_time_covers_first_lessons_goal": "56498a1a366f46ab51b6219e22a08ab13b849e517ffe981df77eec0543e59da0",
   "plan_time_covers_goal_all": "d54f80a4104dfa4ab9f733a7c9a03df0dba4aebd553c55874484cd15dd5391fc",
   "plan_time_covers_goal_all_month": "504696ab616af237de5f7bcf10e331240070912e7cc283b9768cea0e90e39377",
-  "plan_time_covers_share_exam": "456e6f866753eaf8696ba3b1cff23fb4a726dc13aef491554c3641a4f22f2c22",
-  "plan_time_covers_share_goal": "de172ee98a99bc6de211ee5039197eeb8a384fefd6d507af561762fe51f0ba19",
+  "plan_time_covers_most_any_time": "feaf3e5832dad84ea1afdb345ba0875734810015ae17e3ed3136504500691149",
   "plan_time_find_failed": "4ed66b145ba041015bff41615446919c9129ddab40cfdb4b55b1082fa2a017d2",
   "plan_time_finish_failed": "b03b670e77706934260626525dc50342b880785bc263dffa5c44becf4182442f",
   "plan_time_finish_unknown": "016abab300ec672a6b76ea05c4a0452a749f1483ab9524754b134102af40523c",
-  "plan_time_more_days": "423a902d00388fc2d8048d536ae52a52057de53b8710f661376965213e0b3876",
+  "plan_time_first_lessons_every_exam_topic": "0087a98535c0c582612f87cc90041dc99348adb9ab6ee69db0db822bec3d40a2",
+  "plan_time_first_lessons_every_exam_topic_month": "f616d39ea745f8f3c7c93b5550cca793f849033169f255b4e6e5ad75ab97d100",
+  "plan_time_first_lessons_every_goal_part": "d7d33fee6f0ea3a9198caa2ea5062dd0db93851bb29ebacf5ad27859f7c5c1d9",
+  "plan_time_first_lessons_every_goal_part_month": "c9410d6672cb4a94f0f7a8504be46a3dd90269d78b533612aed95c9f82d30641",
+  "plan_time_first_lessons_share_exam": "3e4953049603fc3ce789a7d7a161605a4139a966ae0ca64ec61d045213bab295",
+  "plan_time_first_lessons_share_exam_month": "9a36548f29a1d28d6b0035db7d9678af2359a2d5da2db7001ffd0e35bcab9061",
+  "plan_time_first_lessons_share_goal": "9d56d1fb730f7803a4a39849f974fb634b05d2179e6019bb88e64f154a7e63ba",
+  "plan_time_first_lessons_share_goal_month": "9b512217375102ef0a3799a23dfe1c3b6a727f2b66ce37e1c9902c3b710614d5",
   "plan_time_no_days": "e868f88387b02e9c4ca1746d062e384a81241a377df58e06e1b1b627a620347b",
-  "plan_time_none": "134155957f04449ba6bf17bb409e8d7d18b4149eb20c22f9fa7142ec74f89882",
+  "plan_time_none": "7194672fb70e508cd1cc0ea9837351b3b71446a4561e12c3636f3c6b596808e7",
+  "plan_time_none_by_then": "7d6665cddb8a9bde45701d158591ac1ec73c0deba380dbd4354a7433d54f54bb",
   "plan_time_none_month": "430c186264c0bfe907bfb81539921182a4f9b97e310b5e8f9f1fc5441f455ae6",
   "plan_time_past_date": "ddd26c1a6e39d35b1856f5ef7a9667897fca85268c28cd1bdf13882e1fd801b2",
   "plan_time_past_date_month": "3f26500d75fb68243a5565fe2baeaccc347634765f4a8048e7573368668bb3ed",
-  "plan_time_share_exam": "0aeb4d0897173ab81eba02a24f7562becd906a0267bf6fd5d430ea204d534526",
-  "plan_time_share_exam_month": "287d67fcd4f53de7c3d57ad6f8b93189f5d1302824ec1b150dbcf77054997029",
-  "plan_time_share_goal": "03f786b6921e64d2fbfb431bd7ac124f4584b595f13828768672afe29f8a6dc4",
-  "plan_time_share_goal_month": "a6445da2ed66e23b31b0e5c0a35f75457dd68e45f16b3f19d6fdc6afcbd417cc",
   "plan_time_split_many": "0482aff7a7debf35c7b887e0166097f287d4b4b0983f1e709270addb7f3cf80c",
   "plan_time_split_one": "c11b84586064bec5f9638faf6ec9b767a304e1d5bce9ddaeaaaca3f37d14defa",
   "plan_time_suggest_title": "800f51b5024bc080bbdc46d627b8a71f649833fa080a3a80da283199d5a21a70",
   "plan_time_takes_everything": "8140ddb329e3ae14a91a871ebad535d4306715f0e4d8ae57d60071e0039c06d3",
-  "plan_time_takes_exam_all": "f74302eb42f8c549b8842ab5b8bde5103254e3d380516eb974edaab6af2fe015",
-  "plan_time_takes_exam_all_month": "e4ac27e9562c8a1c556f70971835b2073b18c03464e5ff0e5b69acfb9fdacbb7",
-  "plan_time_takes_goal_all": "c1b2b6a5d0bb3c64eb5b5198f5e0abe1e94e421ac2fe1cd780ab29a09d9f3bc4",
-  "plan_time_takes_goal_all_month": "13a5fb483ce0fe2888c1653c3b8c1d7981938f852b907454edb074ec11f1ad12",
-  "plan_time_takes_most": "effcc07187c7e0ba40e80e9738698585fbdaba9a94c5129f9883675669154e54",
-  "plan_time_too_long": "655568c38c0de48861837e85980c16df97da387c4742ed0789b6cc73fe88a722",
-  "plan_time_use_suggested": "da3a02de574c576969fd783e0bd488b4c2d5eb3ac8fdda9403ff02f5efaed0a8",
-  "plan_time_use_to_cover_everything": "ad34d9b126a553a04ea0429641181f45c6ba7acf8918829e150d3ff5eaba18ee",
   "plan_time_weekends": "b6cafa7809212c1cddc29fb3691e4357f3231bcd6d26799f53d5befccfec6075",
   "plan_time_working": "092d9999981e6b0f366d44a2bee1d2f8a6a946f5f7f10e70665d0acdd43fac4a",
   "plan_title": "90d347473b45435ec4e1dede3999d3db4a434e7371b93042daef73954513cf70",
@@ -513,7 +512,7 @@
   "plan_updated": "f2d2a8f78e3dec4a48437e31ae7470fc6a87d4379fdd25519d98d054f1294282",
   "plan_updated_sentence": "8a7d4b8a09f09750a56dfe36fc216a3360908f3aa1331c6aa66c934d5dbda158",
   "plan_use_this_date": "f93eb533b4e60161ec1065d7921d0473012591130b89189f8115a6df9c7cf0ce",
-  "plan_use_time": "112bcc76f3e19fca36749b0f9108dfc9314446ccce53aff32639f0d58425895f",
+  "plan_use_to_cover_everything": "f30bda1e813053febb51a974c93e2e39cfd134f15f92fb1679adfbd49f97d20b",
   "plan_wednesdays": "1ed89107720510cad1f16711c7271eb8b083824c6ce3d6a01cc53a730ae7213b",
   "plan_week_day": "23a45fa721a9dadae32cb60baecf274ae6e6ff0e24a9e55c1829f65746964023",
   "plan_week_time": "1f3a177f6e01c098a719c4b660d077a3a2451e8f941bbfe5bd324dc437be0079",
@@ -1125,35 +1124,35 @@
     <string name="plan_cadence_biweekly_effect">La misma práctica en semanas alternas: menos repartida y en mayor cantidad cada vez.</string>
     <string name="plan_cadence_final_weeks_effect">Práctica menos espaciada, concentrada en las últimas semanas antes del examen.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_none">No hay tiempo suficiente para cubrir todo antes del %1$s.</string>
+    <string name="plan_time_none">No hay tiempo suficiente para cubrir todo antes de %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_none_month">No hay tiempo suficiente para cubrir todo antes de %1$s.</string>
+    <string name="plan_time_none_by_then">No hay tiempo suficiente para cubrir todo.</string>
     <string name="plan_time_takes_everything">Cubrir todo requiere aproximadamente %1$s al día.</string>
-    <string name="plan_time_takes_most">Lo máximo que puedes cubrir es aproximadamente %1$s, con %2$s al día.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <string name="plan_time_share_exam">Cubre aproximadamente el %1$s de los temas de tu examen para el %2$s.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_share_exam_month">Cubre aproximadamente el %1$s de los temas de tu examen para %2$s.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a day, such as "May 5". -->
-    <string name="plan_time_share_goal">Cubre aproximadamente el %1$s de tu objetivo para el %2$s.</string>
-    <!-- %1$s is a percentage, such as "60%"; %2$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_share_goal_month">Cubre aproximadamente el %1$s de tu objetivo para %2$s.</string>
-    <string name="plan_time_more_days">Tener más días de estudio ayudaría.</string>
+    <!-- When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more. -->
+    <string name="plan_time_covers_most_any_time">Con %1$s al día se cubre tanto como se puede.</string>
+    <!-- Under a daily time that starts every exam topic but doesn't cover everything: each topic's first lessons are in the plan. %1$s is a day, such as "May 5". -->
+    <string name="plan_time_first_lessons_every_exam_topic">Cubre las primeras lecciones de cada tema del examen para %1$s.</string>
+    <!-- Under a daily time that starts every exam topic but doesn't cover everything: each topic's first lessons are in the plan. %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_first_lessons_every_exam_topic_month">Cubre las primeras lecciones de cada tema del examen para %1$s.</string>
+    <!-- Under a daily time that starts every part of the goal but doesn't cover everything. %1$s is a day, such as "May 5". -->
+    <string name="plan_time_first_lessons_every_goal_part">Cubre las primeras lecciones de cada parte de tu objetivo para %1$s.</string>
+    <!-- Under a daily time that starts every part of the goal but doesn't cover everything. %1$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_first_lessons_every_goal_part_month">Cubre las primeras lecciones de cada parte de tu objetivo para %1$s.</string>
+    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a day, such as "May 5". The topics asked most often come first. -->
+    <string name="plan_time_first_lessons_share_exam">Cubre las primeras lecciones de aproximadamente %1$s de tu examen para %2$s, empezando por los temas más preguntados.</string>
+    <!-- Under a daily time that starts only some exam topics. %1$s is a percentage of the exam, such as "60%"; %2$s is a month and year, such as "May 2027". The topics asked most often come first. -->
+    <string name="plan_time_first_lessons_share_exam_month">Cubre las primeras lecciones de aproximadamente %1$s de tu examen para %2$s, empezando por los temas más preguntados.</string>
+    <!-- Under a daily time that starts only some parts of the goal. %1$s is a percentage of the goal, such as "60%"; %2$s is a day, such as "May 5". -->
+    <string name="plan_time_first_lessons_share_goal">Cubre las primeras lecciones de aproximadamente %1$s de tu objetivo para %2$s.</string>
+    <!-- Under a daily time that starts only some parts of the goal. %1$s is a percentage of the goal, such as "60%"; %2$s is a month and year, such as "May 2027". -->
+    <string name="plan_time_first_lessons_share_goal_month">Cubre las primeras lecciones de aproximadamente %1$s de tu objetivo para %2$s.</string>
     <!-- The title of a suggestion to change the daily study time. %1$s is a daily study time, such as "4 h". -->
     <string name="plan_time_suggest_title">Te sugerimos %1$s al día</string>
-    <string name="plan_time_too_long">Es un ritmo que la mayoría no puede mantener.</string>
     <!-- After the line about the time a day, when two goals were typed together. %1$s is this goal's time, %2$s the other goal's, such as "20 min". -->
     <string name="plan_time_split_one">Dedicas %1$s al día a este objetivo y %2$s a tu otro objetivo.</string>
     <!-- After the line about the time a day, when three or more goals were typed together. %1$s is this goal's time, %2$s the others' time together. -->
     <string name="plan_time_split_many">Dedicas %1$s al día a este objetivo y %2$s en total a tus otros objetivos.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_takes_exam_all">El tiempo necesario para cubrir todos los temas de tu examen para el %1$s.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_takes_exam_all_month">El tiempo necesario para cubrir todos los temas de tu examen para %1$s.</string>
-    <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_takes_goal_all">El tiempo necesario para cubrir todo el contenido de tu objetivo para el %1$s.</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_takes_goal_all_month">El tiempo necesario para cubrir todo el contenido de tu objetivo para %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_exam_all">Cubre todos los temas de tu examen para el %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
@@ -1175,10 +1174,7 @@
     <string name="plan_time_asking">Calculando qué puedes estudiar con %1$s al día…</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="plan_time_ask_failed">No pudimos calcular qué puedes estudiar con %1$s al día.</string>
-    <!-- A button under the time a day. %1$s is a daily study time, such as "45 min". Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
-    <string name="plan_time_use_to_cover_everything">Usar %1$s al día para cubrir todo</string>
-    <!-- A button under the time a day that goes back to the suggested time. %1$s is a daily study time, such as "4 h". -->
-    <string name="plan_time_use_suggested">Usar el tiempo sugerido de %1$s al día</string>
+    <string name="plan_use_to_cover_everything">Usar %1$s para cubrir todo</string>
     <string name="plan_working_out_coverage">Calculando qué puedes estudiar con el tiempo que tienes…</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="plan_finish_around">Terminas aproximadamente en %1$s.</string>
@@ -1187,10 +1183,10 @@
     <string name="plan_time_covers_everything_by">Con tu tiempo de estudio, cubres todo para el %1$s</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">Con tu tiempo de estudio, cubres todo para %1$s</string>
-    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
-    <string name="plan_time_covers_share_exam">Con %1$s al día cubres aproximadamente el %2$s de los temas de tu examen</string>
-    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
-    <string name="plan_time_covers_share_goal">Con %1$s al día cubres aproximadamente el %2$s de tu objetivo</string>
+    <string name="plan_time_covers_every_exam_topic">%1$s al día cubre las primeras lecciones de cada tema del examen</string>
+    <string name="plan_time_covers_every_goal_part">%1$s al día cubre las primeras lecciones de cada parte de tu objetivo</string>
+    <string name="plan_time_covers_first_lessons_exam">%1$s al día cubre las primeras lecciones de aproximadamente %2$s de tu examen, empezando por los temas más preguntados</string>
+    <string name="plan_time_covers_first_lessons_goal">%1$s al día cubre las primeras lecciones de aproximadamente %2$s de tu objetivo</string>
     <string name="plan_covered_not_enough">Con %1$s al día no te alcanza para cubrir tu objetivo.</string>
     <string name="plan_finding">Calculando el tiempo…</string>
     <string name="plan_try_again">Intentar de nuevo</string>
@@ -1199,8 +1195,6 @@
     <!-- %1$s is a daily study time, such as "30 min"; %2$s is a date, such as "November 8". -->
     <string name="plan_find_fitting_date">Con %1$s al día, tu plan cubre todo para el %2$s.</string>
     <string name="plan_find_no_date">No pudimos encontrar una fecha que permita cubrir todo.</string>
-    <!-- A button that changes the plan's daily time to the one just found. %1$s is a daily study time, such as "45 min". -->
-    <string name="plan_use_time">Usar %1$s al día</string>
     <string name="plan_move_date">Cambiar tu fecha para cubrir todo</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Cambiar tu fecha al %1$s</string>
@@ -1434,7 +1428,8 @@
     <string name="plan_end_none_set">Sin definir</string>
     <string name="plan_estimated_finish">Fin estimado %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
-    <string name="plan_outside_time">No está en tu plan · no te alcanza el tiempo</string>
+    <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as "Not in your plan · you took this subject out". -->
+    <string name="plan_outside_others_first">No está en tu plan · primero van otros temas</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">No está en tu plan · quitaste esta materia</string>
     <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->

@@ -25,7 +25,7 @@
   "citation_slide": "ccf23d4b9d32c136d0fcd467ce3e63a99f0aa0143cc28c39afb2a0ccaa093989",
   "citation_sources_chip": "95feeeffd8034e8ca76568e44260658eaefc4ba4ab3567990e48cfef0a1f1782",
   "close_sheet": "898abd7647e888b9017a67db1cd4d6c2f92bcd7f5938e7d2b935bd2c2c2b9b89",
-  "daily_time_covers_everything": "272000e05be671063fc3ddfd4e271d01d59be2f2149330b6648308452b59937a",
+  "daily_time_covers_everything": "914a469fece050b08d1081affdaf6fe4efd24c035d2f9e029a728eb52c8fbd4b",
   "daily_time_suggested": "9284cf40fb4d3545096ff9385c792fd7cdc524a61b219e064e102e035e420a71",
   "diff_line_spoken": "08ff92cf1c881e1ca729470a0829333fa8064c3e3340cb8cc68a11e08859ee2e",
   "disclosure_collapsed": "fcd7630ba4dc71efaab53d712b71e7b3497072e6c3f7bdfb54323dc86bab99ef",
@@ -167,6 +167,9 @@
     <string name="web_page_unavailable">Bu sayfayı açabilecek bir uygulama yok.</string>
     <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
     <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">Paneli kapat</string>
+    <string name="daily_time_suggested">%1$s (önerilen)</string>
+    <!-- A daily study time in a list of times: the one that covers the learner's whole goal by its date. {time} is like "10 h". -->
+    <string name="daily_time_covers_everything">%1$s (her şeyi kapsar)</string>
     <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
     <string name="citation_sources_chip">Kaynaklar · Son kontrol: %1$s</string>
     <string name="citation_checked_by">%1$s · Son kontrol: %2$s</string>

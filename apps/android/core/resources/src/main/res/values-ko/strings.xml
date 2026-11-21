@@ -25,8 +25,8 @@
   "citation_slide": "b652e51a549d27dc0b686763494d6fc9b01c118f1d7c480b9c0b35b0a9688c4d",
   "citation_sources_chip": "57c3ba52944ec2e3575b02273212bbfae2ee65e3c33a3f739423b3dcd6be1ccf",
   "close_sheet": "2226e0bb1dd73bd5f3492587f5d4f2cadd3546ebe1a6eae6515e2ffff8ea0418",
-  "daily_time_covers_everything": "962930ca47f22b017499e0f4f005204fd4e6e03d7e93edeed734f9273eff72eb",
-  "daily_time_suggested": "a8ce19659a1859cd55aa58f665179d900d4ded45a33b6a2b58eb70db50118ef9",
+  "daily_time_covers_everything": "49f4000c34aabfffdc770847c06de927487fbcbbc70f586cdce5678097677873",
+  "daily_time_suggested": "4c6e8233add2942858ec019bd50aba479510e99796d3ffc0afb9269e8417f19a",
   "diff_line_spoken": "f66f3dacd3e54539f78d1b11c26a47e16c8b32eb8beaa9c1958ff67f5ac38139",
   "disclosure_collapsed": "fa1bad44df758dfa625098ee66aee098f1952e1601d149bb16e36b7a94b449b6",
   "disclosure_expanded": "27af94e7a4369888430cbe0ef55a24057455dfaad9c6d8691aa91621de99a6a1",
@@ -167,6 +167,9 @@
     <string name="web_page_unavailable">이 페이지를 열 수 있는 앱이 없어요.</string>
     <!-- Replaces Compose's own string of this name, whose Portuguese and German read as closing a spreadsheet. TalkBack's label for the dimmed area behind a bottom sheet, which closes the sheet. "Sheet" means a panel that slides up from the bottom of the screen, not a spreadsheet or a sheet of paper. -->
     <string name="close_sheet" tools:override="true" tools:ignore="UnusedResources">하단 패널 닫기</string>
+    <string name="daily_time_suggested">%1$s (추천)</string>
+    <!-- A daily study time in a list of times: the one that covers the learner's whole goal by its date. {time} is like "10 h". -->
+    <string name="daily_time_covers_everything">%1$s (전부 학습)</string>
     <!-- When the sources were last checked: %1$s is a month and year, like "Oct 2026", never a day. -->
     <string name="citation_sources_chip">출처 · %1$s 확인</string>
     <string name="citation_checked_by">%1$s · %2$s 확인</string>
