@@ -1,6 +1,7 @@
 import { createFixedScore } from "@/lib/score";
 import { detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
+import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
 import { type GradeWritingOutput } from "./task";
 import { type GradeWritingExpected, type GradeWritingInput } from "./test-cases";
 
@@ -9,14 +10,12 @@ const SCORE_RANGE = 4;
 
 /** How far the content points may sit from the answer standard's, as a share of the maximum. */
 const CONTENT_TOLERANCE = 0.1;
-/** The CGU notice's written minimum is half the part's points. */
-const PASS_SHARE = 0.5;
 const MIN_QUOTED_SHARE = 0.6;
-const MIN_ERROR_RECALL = 0.5;
 const LEVEL_RANK = { complete: 3, missing: 0, partial: 1, strong: 2 } as const;
 
 type Check = { name: string; passed: boolean; detail: string };
-type Side = "fail" | "pass" | "uncertain";
+type Side = "fail" | "pass" | "straddle";
+type Range = { high: number; low: number };
 type Span = { start: number; end: number };
 
 function spansOf(text: string, anchors: readonly string[]): Span[] {
@@ -37,69 +36,100 @@ function overlaps(span: Span, spans: Span[]): boolean {
   return spans.some((other) => other.start < span.end && span.start < other.end);
 }
 
-function errorChecks({
+function changedSpan({ correction, quote, start }: GradeWritingOutput["result"]["errors"][number]) {
+  const prefix = quote.split("").findIndex((character, index) => character !== correction[index]);
+  const unchangedStart = prefix === -1 ? quote.length : prefix;
+  const suffixLimit = Math.min(quote.length, correction.length) - unchangedStart;
+
+  const unchangedEnd = Array.from({ length: suffixLimit }, (_, index) => index + 1).findIndex(
+    (distance) => quote.at(-distance) !== correction.at(-distance),
+  );
+
+  const end = quote.length - (unchangedEnd === -1 ? suffixLimit : unchangedEnd);
+
+  // An insertion has no width in the source. The character beside it locates the change.
+  const changeStart = end <= unchangedStart ? Math.max(0, unchangedStart - 1) : unchangedStart;
+  return { end: start + Math.max(changeStart + 1, end), start: start + changeStart };
+}
+
+function compareErrors({
   expected,
   output,
-  planted,
   text,
 }: {
   expected: GradeWritingExpected;
   output: GradeWritingOutput;
-  planted: boolean;
   text: string;
-}): Check[] {
+}) {
   const real = spansOf(text, expected.languageErrors);
   const traps = spansOf(text, expected.traps ?? []);
+  const reported = output.result.errors.map((error) => ({ ...error, span: changedSpan(error) }));
+  const matched = reported.map((error) => real.filter((span) => overlaps(error.span, [span])));
+  const found = new Set(matched.flatMap((spans) => (spans.length === 1 ? spans : [])));
+  const wrong = reported.filter((_, index) => matched[index]?.length !== 1);
 
-  const reported = output.result.errors.map((error) => ({
-    ...error,
-    span: { end: error.start + error.quote.length, start: error.start },
-  }));
+  return {
+    missed: real.filter((span) => !found.has(span)),
+    real,
+    trapped: wrong.filter((error) => overlaps(error.span, traps)),
+    wrong,
+  };
+}
 
-  const wrong = reported.filter((error) => !overlaps(error.span, real));
-  const trapped = wrong.filter((error) => overlaps(error.span, traps));
+function errorChecks({
+  errors,
+  text,
+}: {
+  errors: ReturnType<typeof compareErrors>;
+  text: string;
+}): Check[] {
+  const { missed, real, trapped, wrong } = errors;
 
-  const found = expected.languageErrors.filter((anchor) =>
-    reported.some((error) => overlaps(error.span, spansOf(text, [anchor]))),
-  );
+  const describe = (entries: typeof wrong) =>
+    entries
+      .map(({ correction, quote, start }) => `"${quote}" → "${correction}" @ ${start}`)
+      .join("; ");
 
-  const describe = (errors: typeof wrong) =>
-    errors.map((error) => `"${error.quote}" → "${error.correction}"`).join("; ");
-
-  const recall: Check[] =
-    planted && expected.languageErrors.length >= 2
-      ? [
-          {
-            detail: `Found ${found.length} of ${expected.languageErrors.length} real errors.`,
-            name: "error-recall",
-            passed: found.length >= expected.languageErrors.length * MIN_ERROR_RECALL,
-          },
-        ]
-      : [];
+  const missedText = missed.map(({ end, start }) => `"${text.slice(start, end)}" @ ${start}`);
+  const recall = `Found ${real.length - missed.length}/${real.length} keyed error occurrences.`;
 
   return [
     {
       detail:
-        wrong.length === 0
-          ? `No false errors (${reported.length} reported, ${found.length}/${expected.languageErrors.length} real found).`
-          : `False errors: ${describe(wrong)}.`,
+        wrong.length > 0 ? `Unkeyed corrections: ${describe(wrong)}.` : "No unkeyed corrections.",
       name: "false-errors",
       passed: wrong.length === 0,
     },
     {
       detail:
-        trapped.length === 0
-          ? "No accepted usage flagged."
-          : `Accepted usage flagged: ${describe(trapped)}.`,
+        trapped.length > 0
+          ? `Accepted usage flagged: ${describe(trapped)}.`
+          : "No accepted usage flagged.",
       name: "traps",
       passed: trapped.length === 0,
     },
-    ...recall,
+    ...(real.length > 0
+      ? [
+          {
+            detail: missed.length > 0 ? `${recall} Missed: ${missedText.join(", ")}.` : recall,
+            name: "error-recall",
+            passed: missed.length === 0,
+          },
+        ]
+      : []),
   ];
 }
 
 /** Earned the way the arithmetic counts it: once, on its criterion, with an exact quote. */
-function creditedAspects({ output, text }: { output: GradeWritingOutput; text: string }) {
+function creditedAspects({
+  input,
+  output,
+  text,
+}: {
+  input: GradeWritingInput;
+  output: GradeWritingOutput;
+  text: string;
+}) {
   const byIndex = Map.groupBy(output.evidence.aspects, (aspect) => aspect.aspectIndex);
 
   return new Set(
@@ -107,7 +137,14 @@ function creditedAspects({ output, text }: { output: GradeWritingOutput; text: s
       const [report] = reports;
       const quote = report?.quote ?? "";
       const once = quote.trim() !== "" && text.indexOf(quote) === text.lastIndexOf(quote);
-      return reports.length === 1 && report?.earned && text.includes(quote) && once ? [index] : [];
+
+      return reports.length === 1 &&
+        report?.earned &&
+        input.basis.aspects[index]?.criterionId === report.criterionId &&
+        text.includes(quote) &&
+        once
+        ? [index]
+        : [];
     }),
   );
 }
@@ -123,7 +160,7 @@ function creditChecks({
   output: GradeWritingOutput;
   text: string;
 }): Check[] {
-  const credited = creditedAspects({ output, text });
+  const credited = creditedAspects({ input, output, text });
   const uncertain = new Set(expected.uncertain);
   const earned = new Set(expected.earned);
 
@@ -134,7 +171,7 @@ function creditChecks({
   const falseCredit = indexes.filter((index) => credited.has(index) && !earned.has(index));
   const missed = indexes.filter((index) => !credited.has(index) && earned.has(index));
 
-  const detail = `Credited ${[...credited].toSorted((a, b) => a - b).join(",") || "none"}; expected ${expected.earned.join(",") || "none"}${uncertain.size > 0 ? ` (either way: ${[...uncertain].join(",")})` : ""}. False credit: ${falseCredit.join(",") || "none"}; missed: ${missed.join(",") || "none"}.`;
+  const detail = `Aspect agreement ${indexes.length - falseCredit.length - missed.length}/${indexes.length}. Credited ${[...credited].toSorted((a, b) => a - b).join(",") || "none"}; expected ${expected.earned.join(",") || "none"}${uncertain.size > 0 ? ` (either way: ${[...uncertain].join(",")})` : ""}. False credit: ${falseCredit.join(",") || "none"}; missed: ${missed.join(",") || "none"}.`;
 
   if (
     input.basis.points === null ||
@@ -160,76 +197,136 @@ function creditChecks({
   ];
 }
 
-function truthSide({
+function expectedScore({
   expected,
   input,
-  output,
+  errors,
 }: {
   expected: GradeWritingExpected;
   input: GradeWritingInput;
-  output: GradeWritingOutput;
-}): Side {
-  const { basis } = input;
-  const max = basis.points ?? 0;
-
-  const value = (indexes: number[]) =>
-    indexes.reduce((sum, i) => sum + (basis.aspects[i]?.points ?? 0), 0);
-
-  const factor = basis.grading.language?.factor ?? 0;
-  const lines = Math.max(1, Math.min(output.estimatedLines, basis.lines ?? output.estimatedLines));
-  const deduction = (factor * expected.languageErrors.length) / lines;
-
-  const totals = expected.zero
-    ? [0, 0]
-    : [value(expected.earned), value([...expected.earned, ...(expected.uncertain ?? [])])].map(
-        (content) => Math.max(0, content - deduction),
-      );
-
-  const threshold = max * PASS_SHARE;
-
-  if (totals.every((total) => total >= threshold)) {
-    return "pass";
-  }
-
-  return totals.every((total) => total < threshold) ? "fail" : "uncertain";
-}
-
-function predictedSide({
-  input,
-  output,
-}: {
-  input: GradeWritingInput;
-  output: GradeWritingOutput;
-}): Side | null {
-  const { result } = output;
-
-  if (result.kind !== "points") {
+  errors: number;
+}): Range | null {
+  if (!input.arithmetic) {
     return null;
   }
 
-  const threshold = (input.basis.points ?? 0) * PASS_SHARE;
+  if (expected.officialTotal !== undefined || expected.zero) {
+    const total = expected.officialTotal ?? 0;
+    return { high: total, low: total };
+  }
 
-  if (result.total.low >= threshold) {
+  if (input.basis.grading.kind === "enem") {
+    return null;
+  }
+
+  const { basis, text } = input;
+
+  const { estimatedLines } = countWritingLines({
+    charactersPerLine: basis.charactersPerLine,
+    limit: basis.lines,
+    text,
+  });
+
+  const lines = Math.max(1, Math.min(estimatedLines, basis.lines ?? estimatedLines));
+  const language = basis.grading.language;
+
+  const penalty =
+    ((language?.factor ?? 0) * errors) / (language?.method === "errorsPerLine" ? lines : 1);
+
+  const score = (indexes: number[]) => {
+    const content = indexes.reduce((sum, index) => sum + (basis.aspects[index]?.points ?? 0), 0);
+    return Math.max(0, Number(content.toPrecision(15)) - penalty);
+  };
+
+  return {
+    high: score([...expected.earned, ...(expected.uncertain ?? [])]),
+    low: score(expected.earned),
+  };
+}
+
+function sideOf(range: Range, threshold: number): Side {
+  if (range.low >= threshold) {
     return "pass";
   }
 
-  return result.total.high < threshold ? "fail" : "uncertain";
+  return range.high < threshold ? "fail" : "straddle";
+}
+
+function comparePassSide({
+  expected,
+  truth,
+  predicted,
+}: {
+  expected: GradeWritingExpected;
+  truth: Range | null;
+  predicted: Range | null;
+}) {
+  if (!expected.passBoundary || !truth) {
+    return null;
+  }
+
+  const { otherAnswers, sectionMinimum } = expected.passBoundary;
+  const threshold = Number((sectionMinimum - otherAnswers).toPrecision(15));
+
+  return {
+    expected: sideOf(truth, threshold),
+    predicted: predicted ? sideOf(predicted, threshold) : null,
+    threshold,
+  };
+}
+
+function scoreCoverage({ truth, predicted }: { truth: Range; predicted: Range | null }) {
+  if (!predicted) {
+    return null;
+  }
+
+  const midpoint = (predicted.high + predicted.low) / 2;
+  const overlapsTruth = predicted.low <= truth.high && predicted.high >= truth.low;
+  const coversTruth = predicted.low <= truth.low && predicted.high >= truth.high;
+
+  const status = overlapsTruth ? "overlaps" : "missed";
+
+  return {
+    midpointError:
+      truth.high === truth.low
+        ? Math.abs(midpoint - truth.low)
+        : Math.max(0, truth.low - midpoint, midpoint - truth.high),
+    status: coversTruth ? "covered" : status,
+    width: predicted.high - predicted.low,
+  };
 }
 
 function zeroCheck({
   expected,
+  input,
   output,
 }: {
   expected: GradeWritingExpected;
+  input: GradeWritingInput;
   output: GradeWritingOutput;
-}): Check {
-  const zeroed = output.result.kind === "points" && output.result.zeroReason !== null;
+}): Check[] {
+  if (!input.arithmetic) {
+    return [];
+  }
 
-  return {
-    detail: `Zero: expected ${String(expected.zero)}, got ${String(zeroed)} (rule ${String(output.evidence.zeroRuleIndex)}).`,
-    name: expected.zero ? "true-zero" : "false-zero",
-    passed: zeroed === expected.zero,
-  };
+  if (output.result.kind !== "points") {
+    return [{ detail: "The arithmetic returned levels.", name: "numeric-result", passed: false }];
+  }
+
+  const reason = output.result.zeroReason;
+  const rule = input.basis.grading.zeroing.find(({ text }) => text === reason);
+  const blank = rule?.kinds?.includes("blank") && input.text.trim() === "";
+  const detected = rule?.kinds?.includes("tooFewLines") ? "tooFewLines" : output.evidence.zeroKind;
+  const matchesKind = !expected.zeroKind || expected.zeroKind === (blank ? "blank" : detected);
+  const quote = output.evidence.zeroQuote;
+
+  return [
+    {
+      detail: `Zero: expected ${expected.zeroKind ?? String(expected.zero)}, got ${reason ?? "no zero"}${quote ? ` from "${quote}"` : ""}.`,
+      name: expected.zero ? "true-zero" : "false-zero",
+      passed: expected.zero === (reason !== null) && matchesKind,
+    },
+  ];
 }
 
 function feedbackChecks({
@@ -287,6 +384,89 @@ function feedbackChecks({
   ];
 }
 
+function competenceChecks({
+  expected,
+  result,
+}: {
+  expected: GradeWritingExpected;
+  result: GradeWritingOutput["result"];
+}): Check[] {
+  return Object.entries(expected.officialCompetences ?? {}).map(([id, official]) => {
+    const row = result.kind === "points" ? result.rows.find((entry) => entry.id === id) : null;
+    const band = row?.range;
+
+    return {
+      detail: `${id}: published ${official}, ${band ? `range ${band.low}–${band.high}` : "no range"}.`,
+      name: "competence",
+      passed: Boolean(band && band.low <= official && band.high >= official),
+    };
+  });
+}
+
+function totalCheck({
+  predicted,
+  truth,
+  range,
+}: {
+  predicted: Range | null;
+  truth: Range;
+  range: ReturnType<typeof scoreCoverage>;
+}): Check {
+  const shown = predicted ? `range ${predicted.low}–${predicted.high}` : "no range";
+
+  const metrics = range
+    ? `${range.status}, width ${range.width.toFixed(3)}, midpoint error ${range.midpointError.toFixed(3)}`
+    : "unavailable";
+
+  return {
+    detail: `Key ${truth.low}–${truth.high}; ${shown}; ${metrics}.`,
+    name: "range",
+    passed: Boolean(range && range.status !== "missed"),
+  };
+}
+
+function passCheck(pass: NonNullable<ReturnType<typeof comparePassSide>>): Check {
+  const opposite = pass.expected === "pass" ? "fail" : "pass";
+
+  return {
+    detail: `Pass side at ${pass.threshold} for this answer: key ${pass.expected}, range ${pass.predicted ?? "unavailable"}.`,
+    name: "pass-side",
+    passed:
+      pass.predicted !== null && (pass.expected === "straddle" || pass.predicted !== opposite),
+  };
+}
+
+function assessWritingGrade({
+  expected,
+  input,
+  output,
+}: {
+  expected: GradeWritingExpected;
+  input: GradeWritingInput;
+  output: GradeWritingOutput;
+}) {
+  const { result } = output;
+  const text = input.text.slice(0, result.ignoredFrom ?? input.text.length);
+  const errors = compareErrors({ expected, output, text });
+  const truth = expectedScore({ errors: errors.real.length, expected, input });
+  const predicted = result.kind === "points" ? result.total : null;
+  const pass = comparePassSide({ expected, predicted, truth });
+  const range = truth && scoreCoverage({ predicted, truth });
+  const zero = zeroCheck({ expected, input, output });
+
+  const checks = [
+    ...errorChecks({ errors, text }),
+    ...zero,
+    ...creditChecks({ expected, input, output, text }),
+    ...feedbackChecks({ expected, output }),
+    ...competenceChecks({ expected, result }),
+    ...(pass ? [passCheck(pass)] : []),
+    ...(truth ? [totalCheck({ predicted, range, truth })] : []),
+  ];
+
+  return { checks, pass };
+}
+
 export const scoreWritingGrade: TaskScorer<GradeWritingExpected> = ({ output, testCase }) => {
   const { expected } = testCase;
 
@@ -294,68 +474,24 @@ export const scoreWritingGrade: TaskScorer<GradeWritingExpected> = ({ output, te
     throw new Error(`Test case ${testCase.id} has no expected grade.`);
   }
 
-  const input = testCase.userInput as GradeWritingInput;
-  const graded = JSON.parse(output) as GradeWritingOutput;
-  const text = input.text.slice(0, graded.result.ignoredFrom ?? input.text.length);
-  const comparesPass = input.arithmetic && input.basis.grading.kind === "points";
-  const truth = comparesPass ? truthSide({ expected, input, output: graded }) : null;
-  const predicted = predictedSide({ input, output: graded });
-
-  const side: Check[] =
-    truth && truth !== "uncertain"
-      ? [
-          {
-            detail: `Pass side: standard ${truth}, grade ${predicted ?? "levels"}${graded.result.kind === "points" ? ` (${graded.result.total.low}–${graded.result.total.high} of ${graded.result.max})` : ""}.`,
-            name: "pass-side",
-            passed: predicted !== (truth === "pass" ? "fail" : "pass"),
-          },
-        ]
-      : [];
-
-  const publishedScore: Check[] =
-    expected.officialTotal === undefined
-      ? []
-      : [
-          {
-            detail:
-              graded.result.kind === "points"
-                ? `Published score ${expected.officialTotal}; practice range ${graded.result.total.low}–${graded.result.total.high}.`
-                : `Published score ${expected.officialTotal}; no practice range.`,
-            name: "official-score-coverage",
-            passed:
-              graded.result.kind === "points" &&
-              graded.result.total.low <= expected.officialTotal &&
-              graded.result.total.high >= expected.officialTotal,
-          },
-        ];
-
-  const checks = [
-    ...errorChecks({
-      expected,
-      output: graded,
-      planted: input.basis.grading.kind === "points",
-      text,
-    }),
-    zeroCheck({ expected, output: graded }),
-    ...creditChecks({ expected, input, output: graded, text }),
-    ...side,
-    ...publishedScore,
-    ...feedbackChecks({ expected, output: graded }),
-  ];
+  const { checks, pass } = assessWritingGrade({
+    expected,
+    input: testCase.userInput as GradeWritingInput,
+    output: JSON.parse(output) as GradeWritingOutput,
+  });
 
   const failed = checks.filter((check) => !check.passed);
 
   return {
     ...createFixedScore({
-      conclusion:
-        failed.length === 0
-          ? `All ${checks.length} checks passed. ${checks.map((check) => check.detail).join(" ")}`
-          : failed.map((check) => `[${check.name}] ${check.detail}`).join(" "),
+      conclusion: checks
+        .map((check) => `[${check.name}${check.passed ? "" : " FAIL"}] ${check.detail}`)
+        .join(" "),
       score:
         Math.round(
           (MIN_SCORE + (SCORE_RANGE * (checks.length - failed.length)) / checks.length) * 100,
         ) / 100,
     }),
-    ...(truth && predicted ? { classification: { expected: truth, predicted } } : {}),
+    ...(pass ? { classification: { expected: pass.expected, predicted: pass.predicted } } : {}),
   };
 };

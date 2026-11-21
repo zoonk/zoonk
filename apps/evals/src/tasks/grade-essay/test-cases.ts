@@ -3,10 +3,20 @@ import { type writtenItemSchema } from "@zoonk/core/exams/essays/writing-contrac
 import { type applyWritingArithmetic } from "@zoonk/core/exams/essays/writing-feedback";
 import { type z } from "zod";
 import { cguWritingGrading } from "../_fixtures/cgu-writing-grading";
-import { EN_ANSWERS, INEP_REDACOES, LEVELS_ANSWERS, POINTS_ANSWERS } from "./essays";
+import {
+  ENEM_ZERO_ANSWERS,
+  EN_ANSWERS,
+  GEMINI_ANSWERS,
+  INEP_REDACOES,
+  LEVELS_ANSWERS,
+  OPENAI_ANSWERS,
+  POINTS_ANSWERS,
+} from "./essays";
 
 type Basis = z.infer<typeof writtenItemSchema>;
 type Grading = Basis["grading"];
+type WritingCase = TestCase<GradeWritingExpected, GradeWritingInput>;
+type ZeroKind = NonNullable<Grading["zeroing"][number]["kinds"]>[number];
 type Arithmetic = Parameters<typeof applyWritingArithmetic>[0]["arithmetic"];
 
 export type GradeWritingInput = {
@@ -34,6 +44,16 @@ export type GradeWritingExpected = {
   minimumLevel?: "strong" | "complete";
   nextStepCriteria?: string[];
   officialTotal?: number;
+  officialCompetences?: Record<string, number>;
+  passBoundary?: { sectionMinimum: number; otherAnswers: number };
+  source?: {
+    board: string;
+    reference: string | null;
+    notice?: string;
+    author: string;
+    scoreReference?: string;
+  };
+  zeroKind?: ZeroKind;
   feedbackLanguage: "en" | "pt";
 };
 
@@ -80,6 +100,20 @@ function basis({
 }
 
 /** NQ1 and NQ2 as the CGU 2026 notice states them; no rounding, zero for fuga ao tema. */
+const CGU_NOTICE =
+  "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/90B861E07F72AFB1ECB1B3AE8974443779FFF17388907D1F7F5FDB621761295F.html";
+
+const MPO_STANDARD =
+  "https://cdn.cebraspe.org.br/concursos/mpo_24/arquivos/PADRO_DEFINITIVO_DE_RESPOSTA_CARGO_1_PROVA_DISCURSIVA_P4.PDF";
+
+const INEP_GUIDE =
+  "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf";
+
+const OAB_NOTICE = "https://oab.fgv.br/arq/649/604111_46%20eou.%20edital%20de%20abertura..pdf";
+
+const OAB_STANDARD =
+  "https://oab.fgv.br/arq/649/410537_OAB%2046%20-%20PADR%C3%83O%20DE%20RESPOSTA%20-%20B002%20-%20DIREITO%20CIVIL.pdf";
+
 const CEBRASPE_ARITHMETIC: Arithmetic = { rounding: null, zeroRules: [0] };
 
 /**
@@ -489,7 +523,7 @@ function heritage(text: string): GradeWritingInput {
   };
 }
 
-export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
+const EXISTING_CASES: WritingCase[] = [
   {
     expected: {
       earned: ALL_PLANO_REAL,
@@ -586,13 +620,12 @@ export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
     expected: {
       earned: [0, 1, 2, 3],
       feedbackLanguage: "pt",
-      languageErrors: ["e impedindo"],
+      languageErrors: ["exibido", "e impedindo"],
       minimumLevel: "strong",
-      officialTotal: 1000,
-      traps: ["de participarem"],
+      traps: ["de participarem", "foram negros"],
       zero: false,
     },
-    id: "enem-inep-1000-ana-clara-pt",
+    id: "enem-inep-ana-clara-pt",
     userInput: heritage(INEP_REDACOES.anaClaraPereira),
   },
   {
@@ -606,14 +639,11 @@ export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
         "razo",
         "Ministério da educação",
         "Immanuel Kant “O",
-        "tanto na série",
       ],
-      minimumLevel: "strong",
-      officialTotal: 1000,
       traps: ["impacta na problemática"],
       zero: false,
     },
-    id: "enem-inep-1000-camila-pt",
+    id: "enem-inep-camila-pt",
     userInput: heritage(INEP_REDACOES.camilaDeSaoTiagoSilva),
   },
   {
@@ -621,27 +651,30 @@ export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
       earned: [0, 1, 2, 3],
       feedbackLanguage: "pt",
       languageErrors: [
+        "herança da identidade",
         "Eugenista",
+        "quando é abordada",
         "jovens; disseminando",
+        "origens africanas e transformando",
+        "seu livro, “Pequeno",
         "livros., Nesse",
         "destinar",
-        "quando é abordada",
       ],
       minimumLevel: "strong",
-      officialTotal: 1000,
+      officialTotal: 980,
       traps: ["acreditava-se", "faz-se necessário", "evoluirmos"],
       zero: false,
     },
-    id: "enem-inep-1000-pedro-pt",
+    id: "enem-inep-pedro-pt",
     userInput: heritage(INEP_REDACOES.pedroRicardoAlvesFreitas),
   },
   {
     expected: {
-      earned: [2],
+      earned: [],
       feedbackLanguage: "pt",
       languageErrors: [],
-      uncertain: [1, 3],
       zero: true,
+      zeroKind: "offTopic",
     },
     id: "enem-off-topic-zero-pt",
     userInput: {
@@ -715,4 +748,466 @@ export const TEST_CASES: TestCase<GradeWritingExpected, GradeWritingInput>[] = [
       text: EN_ANSWERS.classTestPhotosynthesis,
     },
   },
+];
+
+function publishedCase({
+  id,
+  userInput,
+  source,
+  expected,
+}: {
+  id: string;
+  userInput: GradeWritingInput;
+  source: NonNullable<GradeWritingExpected["source"]>;
+  expected: Partial<Omit<GradeWritingExpected, "source">>;
+}): WritingCase {
+  return {
+    expected: {
+      earned: [],
+      feedbackLanguage: "pt",
+      languageErrors: [],
+      zero: false,
+      ...expected,
+      source,
+    },
+    id: `${id}-pt`,
+    language: "pt",
+    userInput,
+  };
+}
+
+const OPENAI_AUTHOR = "OpenAI GPT-6.2 Sol";
+const GEMINI_AUTHOR = "Google Gemini 3.5 Flash-Lite";
+
+function impactScenario(text: string): GradeWritingInput {
+  return {
+    ...impact(text),
+    context:
+      "O município criou um auxílio-transporte para combater a evasão escolar. A secretaria de educação precisa avaliar o impacto do programa.",
+    question: IMPACT_QUESTION.replace(
+      "acerca da avaliação de impacto de políticas públicas e de programas sociais",
+      "acerca da avaliação de impacto do auxílio-transporte descrito",
+    ),
+  };
+}
+
+function cguBoundary({
+  id,
+  userInput,
+  author,
+  otherAnswers,
+  expected,
+}: {
+  id: string;
+  userInput: GradeWritingInput;
+  author: string;
+  otherAnswers: number;
+  expected: Partial<GradeWritingExpected>;
+}) {
+  return publishedCase({
+    expected: { ...expected, passBoundary: { otherAnswers, sectionMinimum: 50 } },
+    id: `cgu-${id}`,
+    source: { author, board: "Cebraspe", notice: CGU_NOTICE, reference: MPO_STANDARD },
+    userInput,
+  });
+}
+
+const BOUNDARY_CASES = [
+  cguBoundary({
+    author: OPENAI_AUTHOR,
+    expected: {
+      earned: [0, 1, 3, 5],
+      traps: [
+        "onde os consumidores",
+        "anunciou limites, e os comerciantes",
+        "se mostrou reversível",
+        "assistiu ao retorno",
+      ],
+    },
+    id: "q30-openai-below",
+    otherAnswers: 33,
+    userInput: planoReal(OPENAI_ANSWERS.realBelow),
+  }),
+  cguBoundary({
+    author: OPENAI_AUTHOR,
+    expected: {
+      earned: [0, 1, 3, 4],
+      languageErrors: ["estratéjia", "ratificar a previsão", "As medidas foi decisivas"],
+      traps: ["até à política", "juros, e os consumidores", "estabelecimento onde"],
+    },
+    id: "q30-openai-above",
+    otherAnswers: 35,
+    userInput: planoReal(OPENAI_ANSWERS.realAbove),
+  }),
+  cguBoundary({
+    author: OPENAI_AUTHOR,
+    expected: {
+      earned: [0, 1, 2, 4, 5, 8, 9, 11],
+      traps: ["até à sua equipe", "chegada, e a refeição", "onde funcionam"],
+    },
+    id: "q60-openai-below",
+    otherAnswers: 13,
+    userInput: impactScenario(OPENAI_ANSWERS.impactBelow),
+  }),
+  cguBoundary({
+    author: OPENAI_AUTHOR,
+    expected: {
+      earned: [0, 1, 2, 3, 4, 9, 16, 17, 18],
+      traps: ["informou a sua equipe sobre", "conclusões à sua equipe", "bairros onde"],
+      uncertain: [7, 14, 15],
+    },
+    id: "q60-openai-above",
+    otherAnswers: 13,
+    userInput: impactScenario(OPENAI_ANSWERS.impactAbove),
+  }),
+  cguBoundary({
+    author: GEMINI_AUTHOR,
+    expected: {
+      earned: [0, 1, 3],
+      languageErrors: ["contidasse"],
+      traps: ["No que tange às", "utilizam-se de"],
+    },
+    id: "q30-gemini-below",
+    otherAnswers: 36,
+    userInput: planoReal(GEMINI_ANSWERS.shortBelow),
+  }),
+  cguBoundary({
+    author: GEMINI_AUTHOR,
+    expected: { earned: [0, 1, 2, 4, 6] },
+    id: "q30-gemini-above",
+    otherAnswers: 32,
+    userInput: planoReal(GEMINI_ANSWERS.shortAbove),
+  }),
+  cguBoundary({
+    author: GEMINI_AUTHOR,
+    expected: { earned: [0, 1, 2, 4, 5, 8, 9], uncertain: [10] },
+    id: "q60-gemini-below",
+    otherAnswers: 13,
+    userInput: impactScenario(GEMINI_ANSWERS.longBelow),
+  }),
+  cguBoundary({
+    author: GEMINI_AUTHOR,
+    expected: { earned: [0, 1, 2, 4, 5, 8, 9, 10, 11, 12] },
+    id: "q60-gemini-above",
+    otherAnswers: 8,
+    userInput: impactScenario(GEMINI_ANSWERS.longAbove),
+  }),
+];
+
+function publishedQuestion({
+  title,
+  taskKey,
+  kind,
+  lines,
+  sections,
+  citation,
+  question,
+  text,
+}: {
+  title: string;
+  taskKey: string;
+  kind: "points" | "oab";
+  lines: number;
+  sections: { id: string; name: string; aspects: [string, number][] }[];
+  citation: { passage: string; sourceId: string };
+  question: string;
+  text: string;
+}): GradeWritingInput {
+  const aspects = sections.flatMap((section) => points(section.aspects, section.id));
+
+  const criteria = sections.map(({ aspects: rows, id, name }) => ({
+    id,
+    name,
+    points: Number(rows.reduce((sum, [, value]) => sum + value, 0).toFixed(2)),
+  }));
+
+  const total = Number(criteria.reduce((sum, criterion) => sum + criterion.points, 0).toFixed(2));
+
+  return {
+    arithmetic: { rounding: null, zeroRules: [] },
+    basis: basis({
+      aspects,
+      criteria,
+      grading: {
+        criteria: criteria.map(({ id, name, points: value }) => ({
+          citation,
+          id,
+          points: value,
+          text: name,
+        })),
+        kind,
+        language: null,
+        rounding: null,
+        zeroing: [],
+      },
+      lines,
+      taskKey,
+      title,
+      total,
+    }),
+    context: null,
+    keyPoints: aspects.map((aspect) => aspect.description),
+    language: "pt",
+    question,
+    text,
+  };
+}
+
+const FGV_TJAM_CASE = publishedCase({
+  expected: { earned: [0, 1, 2, 3] },
+  id: "fgv-tjam-p2-q1-openai",
+  source: {
+    author: OPENAI_AUTHOR,
+    board: "FGV",
+    notice:
+      "https://conhecimento.fgv.br/sites/default/files/concursos/edital_tjam_juiz_2014_09_17_retificado.pdf",
+    reference: "https://conhecimento.fgv.br/sites/default/files/concursos/direito_civil_01_02.pdf",
+  },
+  userInput: publishedQuestion({
+    citation: {
+      passage: "11.4.1 Cada questão da prova escrita P2 valerá 0,4 (quatro décimos) pontos.",
+      sourceId: "tjam-2013-edital-001",
+    },
+    kind: "points",
+    lines: 15,
+    question:
+      "José deixou um seguro de vida em favor da filha menor, Marina. Sua mãe, Luísa, pede alvará para receber o capital em nome da filha. O Ministério Público pede que o dinheiro permaneça depositado em juízo até a maioridade, salvo necessidade comprovada. Examine a situação e apresente solução fundamentada.",
+    sections: [
+      {
+        // The published standard states no weights within the question. The full-credit case is invariant to this split.
+        aspects: [
+          ["A mãe exerce exclusivamente o poder familiar após a morte do pai", 0.1],
+          ["A mãe administra os bens da menor e pode receber o valor em nome dela", 0.1],
+          [
+            "A restrição proposta pelo MP não é necessária na ausência de risco concreto e o recebimento não excede a administração ordinária",
+            0.1,
+          ],
+          ["Expedir o alvará de levantamento", 0.1],
+        ],
+        id: "content",
+        name: "Conteúdo e fundamentação",
+      },
+    ],
+    taskKey: "tjam-2013-p2-q1",
+    text: OPENAI_ANSWERS.tjamInsurance,
+    title: "Seguro de vida em favor de menor",
+  }),
+});
+
+const OAB_SOURCE = {
+  author: OPENAI_AUTHOR,
+  board: "FGV",
+  notice: OAB_NOTICE,
+  reference: OAB_STANDARD,
+};
+
+const OAB_ITEM_CITATION = {
+  passage: "4.2.2. (…) cada questão terá o valor máximo de 1,25 (um e vinte e cinco) ponto.",
+  sourceId: "oab-46-edital",
+};
+
+const OAB_CASES = [
+  publishedCase({
+    expected: {
+      earned: [0, 1, 2, 4, 5, 6],
+      passBoundary: { otherAnswers: 4.9, sectionMinimum: 6 },
+    },
+    id: "oab-46-civil-q1-openai",
+    source: OAB_SOURCE,
+    userInput: publishedQuestion({
+      citation: OAB_ITEM_CITATION,
+      kind: "oab",
+      lines: 30,
+      question:
+        "Joaquim doou à filha Júlia um imóvel de R$ 1 milhão, sem dispensá-la da colação. Quando ele faleceu, deixou R$ 1,5 milhão e três filhas, Elena, Carla e Júlia. Júlia renunciou à herança e tem uma filha, Paula. A) Paula sucede por representação? Qual o efeito da renúncia sobre a partilha? B) A renúncia protege o imóvel de Júlia? Indique a medida cabível às irmãs.",
+      sections: [
+        {
+          aspects: [
+            ["Paula não sucede por representação de Júlia", 0.15],
+            ["Fundamenta a impossibilidade de representação no art. 1.811 do CC", 0.1],
+            ["O quinhão da renunciante acresce aos das irmãs, herdeiras da mesma classe", 0.3],
+            ["Fundamenta o acréscimo no art. 1.810 do CC", 0.1],
+          ],
+          id: "renunciation",
+          name: "Representação e acréscimo",
+        },
+        {
+          aspects: [
+            ["A renúncia não dispensa a colação da doação", 0.2],
+            ["Fundamenta a obrigação no art. 640 do CPC ou no art. 2.008 do CC", 0.1],
+            ["As irmãs devem requerer ao juízo do inventário a colação do valor do bem", 0.2],
+            ["Fundamenta a medida no art. 641 do CPC", 0.1],
+          ],
+          id: "collation",
+          name: "Colação do imóvel",
+        },
+      ],
+      taskKey: "oab-46-civil-q1",
+      text: OPENAI_ANSWERS.oabInheritance,
+      title: "Renúncia à herança e colação",
+    }),
+  }),
+  publishedCase({
+    expected: { earned: [0, 1, 2, 3], passBoundary: { otherAnswers: 4.9, sectionMinimum: 6 } },
+    id: "oab-46-civil-q2-openai",
+    source: OAB_SOURCE,
+    userInput: publishedQuestion({
+      citation: OAB_ITEM_CITATION,
+      kind: "oab",
+      lines: 30,
+      question:
+        "Paulo Dirceu, de 23 anos, quer retirar Dirceu de seu prenome. O pai, que também se chama Dirceu, abandonou a família quando Paulo era bebê. A) A exclusão é juridicamente possível? B) Paulo é obrigado a ajuizar ação para fazê-la? Fundamente.",
+      sections: [
+        {
+          aspects: [
+            ["É possível alterar o prenome após atingir a maioridade civil", 0.2],
+            ["Paulo deve requerer a alteração pessoalmente, sem motivação", 0.35],
+            ["Fundamenta a alteração no art. 56, caput, da Lei nº 6.015/1973", 0.1],
+          ],
+          id: "viability",
+          name: "Viabilidade e requisitos",
+        },
+        {
+          aspects: [
+            [
+              "É possível alterar o prenome sem motivação uma única vez pela via extrajudicial",
+              0.5,
+            ],
+            ["Fundamenta a via extrajudicial no art. 56, § 1º, da Lei nº 6.015/1973", 0.1],
+          ],
+          id: "route",
+          name: "Via extrajudicial",
+        },
+      ],
+      taskKey: "oab-46-civil-q2",
+      text: OPENAI_ANSWERS.oabGivenName,
+      title: "Alteração do prenome",
+    }),
+  }),
+];
+
+const ENEM_SOURCE = { author: OPENAI_AUTHOR, board: "Inep", reference: INEP_GUIDE };
+
+const ENEM_ZERO_RULES: Grading["zeroing"] = [
+  { kinds: ["blank"], text: "Folha de redação sem texto" },
+  { kinds: ["identification"], text: "Identificação do participante no espaço destinado ao texto" },
+  {
+    kinds: ["copiedSupport"],
+    maxLines: 7,
+    text: "Até sete linhas originais após desconsiderar as linhas copiadas dos textos de apoio",
+  },
+  { kinds: ["tooFewLines"], maxLines: 7, text: "Texto insuficiente: até sete linhas manuscritas" },
+  { kinds: ["offTopic"], text: "Fuga total ao tema" },
+  { kinds: ["wrongForm"], text: "Texto fora do tipo dissertativo-argumentativo" },
+].map((rule): Grading["zeroing"][number] => ({
+  ...rule,
+  citation: { passage: rule.text, sourceId: "inep-cartilha-2025-pp7-8" },
+  kinds: rule.kinds as ZeroKind[],
+}));
+
+function enemZeroCase({
+  id,
+  text,
+  zeroKind,
+  earned = [],
+  uncertain,
+}: {
+  id: string;
+  text: string;
+  zeroKind?: ZeroKind;
+  earned?: number[];
+  uncertain?: number[];
+}): WritingCase {
+  const task = enemBasis(
+    "Desafios para combater a desinformação sobre vacinas no Brasil",
+    "Desinformação sobre vacinas",
+  );
+
+  return publishedCase({
+    expected: { earned, uncertain, zero: zeroKind !== undefined, zeroKind },
+    id: `enem-${id}-openai`,
+    source: ENEM_SOURCE,
+    userInput: {
+      arithmetic: { rounding: null, zeroRules: ENEM_ZERO_RULES.map((_, index) => index) },
+      basis: { ...task, grading: { ...task.grading, zeroing: ENEM_ZERO_RULES }, lines: 30 },
+      context: ENEM_ZERO_ANSWERS.support,
+      keyPoints: [],
+      language: "pt",
+      question:
+        "Redija um texto dissertativo-argumentativo em português formal sobre os desafios para combater a desinformação sobre vacinas no Brasil. Apresente uma proposta de intervenção que respeite os direitos humanos.",
+      text,
+    },
+  });
+}
+
+const ENEM_ZERO_CASES = [
+  enemZeroCase({ earned: [0, 2, 3], id: "before-maximum", text: ENEM_ZERO_ANSWERS.almostFull }),
+  enemZeroCase({ id: "blank", text: "", zeroKind: "blank" }),
+  enemZeroCase({
+    earned: [0],
+    id: "seven-lines",
+    text: ENEM_ZERO_ANSWERS.original.split("\n").slice(0, 7).join("\n"),
+    uncertain: [2, 3],
+    zeroKind: "tooFewLines",
+  }),
+  enemZeroCase({
+    id: "copied-support",
+    text: ENEM_ZERO_ANSWERS.support,
+    uncertain: [0],
+    zeroKind: "copiedSupport",
+  }),
+  enemZeroCase({ id: "wrong-form", text: ENEM_ZERO_ANSWERS.wrongForm, zeroKind: "wrongForm" }),
+  enemZeroCase({
+    earned: [0],
+    id: "signature",
+    text: `${ENEM_ZERO_ANSWERS.original}\nAssinatura: Marília Ribeiro de Almeida`,
+    uncertain: [2, 3],
+    zeroKind: "identification",
+  }),
+  enemZeroCase({ id: "tangent", text: ENEM_ZERO_ANSWERS.tangent, uncertain: [2, 3] }),
+  enemZeroCase({
+    earned: [0],
+    id: "one-copied-line",
+    text: `${ENEM_ZERO_ANSWERS.support.split("\n")[0]}\n${ENEM_ZERO_ANSWERS.original}`,
+    uncertain: [2, 3],
+  }),
+  enemZeroCase({
+    earned: [0],
+    id: "eight-original-lines",
+    text: ENEM_ZERO_ANSWERS.original,
+    uncertain: [2, 3],
+  }),
+];
+
+function sourceForExisting(testCase: WritingCase): NonNullable<GradeWritingExpected["source"]> {
+  const author = "Anthropic Claude";
+
+  if (testCase.id.startsWith("cgu-")) {
+    return { author, board: "Cebraspe", notice: CGU_NOTICE, reference: MPO_STANDARD };
+  }
+
+  if (testCase.id.startsWith("enem-inep-")) {
+    return {
+      author: "Inep published candidate",
+      board: "Inep",
+      reference: INEP_GUIDE,
+      ...(testCase.id === "enem-inep-pedro-pt" && {
+        scoreReference:
+          "https://www.ce.gov.br/seduc/2025/02/11/aprovado-para-cursar-tres-graduacoes-cearense-ingressa-em-ciencia-de-dados-no-rj/",
+      }),
+    };
+  }
+
+  return { author, board: testCase.id.startsWith("enem-") ? "Inep" : "Practice", reference: null };
+}
+
+export const TEST_CASES: WritingCase[] = [
+  ...EXISTING_CASES.map((testCase) => ({
+    ...testCase,
+    expected: testCase.expected && { ...testCase.expected, source: sourceForExisting(testCase) },
+  })),
+  ...BOUNDARY_CASES,
+  FGV_TJAM_CASE,
+  ...OAB_CASES,
+  ...ENEM_ZERO_CASES,
 ];

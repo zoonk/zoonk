@@ -75,7 +75,7 @@ O Plano Real foi implantado em três etapas. A primeira promoveu o ajuste fiscal
 Assim, a estabilização dependeu principalmente da reforma monetária.`,
 };
 
-/** Redações that scored 1,000 in Enem 2024, transcribed with their slips in Inep's "A redação no Enem 2025: cartilha do(a) participante". */
+/** Redações from Enem 2024, transcribed with their slips in Inep's "A redação no Enem 2025: cartilha do(a) participante". */
 export const INEP_REDACOES = {
   anaClaraPereira: `O livro “Quarto de despejo”, de Carolina Maria de Jesus, retrata o cotidiano da própria autora — mulher negra e pobre —, que viveu na favela do Canindé, na década de 1960, em São Paulo. Conforme exibido na história de vida de Carolina e expandindo esse cenário para a realidade atual, infelizmente, ainda são perceptíveis desafios para a valorização da herança africana no Brasil. Assim, destacam-se o racismo estrutural e a negligência por parte da sociedade como aspectos dessa preocupante problemática em solo nacional.
 
@@ -154,4 +154,122 @@ export const EN_ANSWERS = {
 In the Calvin cycle, the plant uses the ATP and NADPH to fix carbon dioxide into sugar. And it does this whether or not light is hitting the leaf at that moment, as long as ATP and NADPH are available.
 
 If a plant is kept in the dark for a long time, it has to quickly use up its stored starch, because it can no longer make new sugar. Their growth then slows down.`,
+};
+
+export const OPENAI_ANSWERS = {
+  impactAbove: `A prefeitura instituiu o auxílio-transporte para diminuir a evasão escolar. Como os recursos de educação são limitados, a avaliação de impacto ajuda a verificar se a despesa justifica a renúncia a outros usos do orçamento. Seu propósito é dar transparência ao investimento e prestar contas à população sobre o que a intervenção entrega. A mera comprovação dos pagamentos demonstra que os recursos saíram do caixa, mas não esclarece se os estudantes passaram a permanecer na escola.
+
+A avaliação deve acompanhar o ciclo da iniciativa. Antes da implantação, ela ajuda a perguntar se o obstáculo de fato é o transporte; na execução, permite saber se o programa chega aos alunos; depois de concluída a intervenção, é possível investigar se ela produziu o resultado previsto. A escolha desses momentos tem consequências práticas. Se os gestores só procuram os registros quando o programa acaba, perdem a oportunidade de documentar a situação inicial das escolas.
+
+Antes de iniciar os pagamentos, a secretaria deve registrar a frequência e os abandonos já observados para estabelecer a referência de partida. Durante a execução, pode apurar a proporção de alunos beneficiados que continua matriculada, conservando o mesmo critério de registro. Após a conclusão, deve levantar a evasão final, documentando o período em que ela foi observada. Na prática, essa documentação ajuda a preparar a avaliação sem confundir a data de pagamento com a data de saída da escola.
+
+Importa, também, considerar as diferenças socioeconômicas. Em bairros onde o custo da passagem é elevado em relação à renda, uma ajuda de pequeno valor pode mudar a decisão familiar de manter o aluno matriculado. Em áreas com transporte coletivo barato, a mesma ajuda talvez faça menos diferença. A administração informou a sua equipe sobre essa hipótese, e o município preservou os registros dos bairros para que a informação pudesse ser examinada.
+
+Internamente, o estudo serve para planejar a aplicação das verbas e gerir os recursos. A secretaria pode levar as conclusões à sua equipe de planejamento para estimar as despesas do próximo orçamento, por exemplo, se os bairros com deslocamentos caros exigirem um volume maior de recursos. Convém registrar quais dados sustentam essa decisão, para que a proposta de orçamento possa ser explicada ao público.
+
+Em suma, avaliar o programa permite prestar contas de uma escolha orçamentária em condições que variam de uma localidade para outra. A avaliação precisa ser preparada ao longo da iniciativa e produzir evidências utilizáveis no planejamento municipal.`,
+  impactBelow: `O auxílio-transporte municipal foi concebido para combater a evasão escolar. Avaliar seu impacto é necessário porque a receita disponível não cobre todas as demandas de educação. Cada valor destinado ao deslocamento deixa de financiar outra ação, e a secretaria precisa justificar essa escolha. A avaliação também deve permitir a prestação de contas à população, mostrando se o dinheiro produziu mudança na permanência de estudantes e oferecendo elementos para o debate sobre a prioridade atribuída ao programa.
+
+O território pode alterar o resultado mesmo com desenho e valores iguais. Em uma zona urbana onde há linhas regulares, o auxílio pode cobrir a maior parte da viagem; em uma localidade rural, a renda é menor e a oferta de transporte é irregular. Ali, mesmo uma bolsa suficiente para pagar a passagem não resolve a ausência de serviço. A faixa etária também pesa: alunos mais jovens dependem com frequência de um adulto para acompanhá-los, enquanto adolescentes podem percorrer o trajeto sozinhos. Duas famílias com renda parecida podem, assim, ter necessidades diferentes.
+
+O efeito do auxílio ainda pode ser maior quando ele coincide com a oferta de merenda. Pagar a viagem facilita a chegada, e a refeição na escola reduz o gasto familiar com alimentação naquele dia. Os benefícios se complementam no incentivo à permanência. Isolar a discussão do transporte das demais políticas educacionais esconderia essa interação, pois a mesma contribuição financeira pode ter consequências distintas segundo a oferta de refeições.
+
+Os resultados têm uso interno para orientar decisões de planejamento e gestão. A secretaria pode levá-los até à sua equipe orçamentária para dimensionar o valor da bolsa no próximo plano. Em um prédio onde funcionam as equipes responsáveis pelas escolas rurais, o gestor pode reunir as estimativas de demanda e confrontá-las com os recursos cadastrados. Isso ajuda a escolher a alocação dos servidores e das verbas previstas, sobretudo onde a rede atende localidades de acesso mais difícil.
+
+As conclusões interessam ao Legislativo municipal, que pode usá-las para discutir a dotação orçamentária e examinar a justificativa para as despesas. Os órgãos de controle podem usar os mesmos resultados para avaliar se o uso do dinheiro público foi eficaz. Assim, avaliar o auxílio ajuda a justificar uma escolha feita com recursos escassos e a explicar por que o resultado varia conforme o território, a idade dos estudantes e a presença de outras políticas.`,
+  oabGivenName: `A) Sim. Por já ser maior de idade, Paulo pode retirar o segundo prenome, sem ter de provar o abandono. O próprio interessado deve formular o pedido sem motivação, na forma do art. 56, caput, da Lei nº 6.015/1973.
+
+B) Não precisa ajuizar ação. Pode fazer a mudança imotivada pela via extrajudicial uma única vez.`,
+  oabInheritance: `A) Paula não representa a mãe renunciante na sucessão de Joaquim, nos termos do art. 1.811 do Código Civil. A parte que caberia a Júlia acresce às de suas duas irmãs, que estão na mesma classe sucessória.
+
+B) A renúncia não dispensa Júlia de trazer à colação a doação já recebida, conforme o art. 2.008 do Código Civil. Elena e Carla devem pedir no inventário que o juízo determine a colação do valor do imóvel na partilha.`,
+  realAbove: `O Plano Real marcou uma inflexão no tratamento da inflação brasileira. Antes de sua implantação, planos como Cruzado e Bresser haviam fracassado porque não atacaram o déficit público. A persistência desse desequilíbrio tornava frágeis as tentativas de estabilização, ainda que os preços deixassem de subir durante algum tempo.
+
+O combate heterodoxo passava pelo controle direto dos preços, como o congelamento de tarifas e de preços no varejo. Já o combate ortodoxo agia por meio da atividade econômica. A alta da taxa de juros, por exemplo, encarecia o crédito, reduzia o consumo e arrefecia a demanda. Um comerciante podia constatar o efeito no estabelecimento onde vendia a prazo, quando os clientes deixavam de financiar novas compras. O governo podia recorrer até à política de juros, e os consumidores reagiam por meio de suas escolhas de compra.
+
+A avaliação da estratéjia exige distinguir o mecanismo de cada instrumento. Intervenções com efeitos superficiais não resolvem desequilíbrios duradouros. A equipe econômica teve de ratificar a previsão, ou seja, corrigir o erro na estimativa anterior. As medidas foi decisivas para expor o contraste entre as formas de atuação descritas. Em síntese, a leitura do período anterior ao Real mostra o limite de respostas que ignoravam as contas públicas. As medidas foi decisivas para revelar esse limite.`,
+  realBelow: `A estabilização brasileira exigia distinguir o desequilíbrio das contas públicas dos mecanismos pelos quais os preços subiam. Antes do Plano Real, sucessivos planos de estabilização fracassaram porque não enfrentaram o déficit público. Congelar preços por decreto, como ocorreu no Plano Cruzado, era um recurso heterodoxo: o governo intervinha diretamente no preço cobrado. Logo que a tabela se tornava inviável, os reajustes voltavam.
+
+No comércio, onde os consumidores sentiam de imediato a perda do poder de compra, a tabela podia interromper o aumento nominal por algum tempo. O governo anunciou limites, e os comerciantes tiveram de rever suas margens. A população assistiu ao retorno da inflação quando o congelamento deixou de corresponder aos custos. A medida se mostrou reversível, mesmo quando despertava expectativas favoráveis.
+
+Nesse contexto, a primeira etapa do Real procurou enfrentar o desequilíbrio fiscal por meio do Programa de Ação Imediata e do Fundo Social de Emergência. O alcance dessas iniciativas deve ser avaliado com atenção à sua execução. Assim, a experiência anterior mostrou que suspender temporariamente os reajustes não dispensava o enfrentamento do déficit que punha em risco a estabilização.`,
+  tjamInsurance: `Com a morte do pai, a mãe exerce sozinha o poder familiar, conforme o art. 1.631 do Código Civil, e administra os bens da filha menor por força do art. 1.689, II. Nessa condição, pode receber o capital em nome da beneficiária. Sem indício concreto de má gestão, cabe deferir o alvará. O recebimento integra a administração ordinária, sem exigir a demonstração de necessidade prevista no art. 1.691 para atos que ultrapassem esses limites. A retenção judicial nas condições propostas pelo Ministério Público restringiria indevidamente o exercício da administração.`,
+};
+
+export const ENEM_ZERO_ANSWERS = {
+  almostFull: `Em muitas cidades, os pais recebem notícias sobre
+vacinas pelo celular antes de poder conversar com
+um profissional da saúde. Quando a origem dessas
+mensagens é desconhecida, informações incorretas
+podem orientar a decisão de adiar uma dose. O
+problema exige acesso rápido a fontes confiáveis
+e meios para reconhecer as mensagens enganosas.
+Uma família pode encontrar no celular a alegação
+de que a vacina altera o desenvolvimento infantil.
+Mesmo quando o posto explica que a afirmação não
+conta com evidência, a correção pode demorar a
+chegar aos mesmos grupos. Quanto maior a demora,
+maior o risco de os responsáveis desistirem de
+procurar a unidade de saúde no dia agendado.
+Também pesa a dificuldade de verificar as fontes.
+Uma mensagem que imita um comunicado do governo
+pode parecer convincente se traz imagens comuns
+em campanhas oficiais. Ensinar a procurar a data
+e o endereço da publicação ajuda o leitor a
+comparar as informações antes de compartilhá-las.
+Por isso, as secretarias municipais de saúde
+devem manter um canal de mensagens que esclareça
+boatos sobre vacinação, com profissionais das
+unidades básicas respondendo às dúvidas no horário
+de atendimento. As equipes podem divulgar o número
+do canal nas escolas, junto de um guia breve com
+exemplos de mensagens enganosas. Com uma resposta
+disponível antes da consulta, mais famílias poderão
+decidir com base em informações verificadas.`,
+
+  original:
+    "Quando escutam um boato, muitos pais adiam a vacina.\nA demora põe em risco também quem não pode se vacinar.\nÉ preciso aproximar as fontes oficiais dessas famílias.\nParte dos postos só esclarece dúvidas presencialmente.\nQuem mora longe fica sem resposta quando precisa.\nA UBS deve abrir um canal para tirar dúvidas.\nA enfermeira responde no horário das consultas.\nAssim, os pais decidem com informações verificadas.",
+
+  support:
+    "A cobertura vacinal caiu em diversos municípios.\nEntre famílias com crianças pequenas, circulam boatos.\nAs equipes de saúde orientam os moradores.\nHá dados de vacinação na internet.\nHá vacinas nas unidades públicas de saúde.\nA escola também pode ajudar a divulgar informações.\nUma fonte confiável pode mudar a decisão da família.\nO diálogo deve considerar as dúvidas locais.",
+
+  tangent:
+    "A vacinação infantil evita que doenças se espalhem.\nEm bairros distantes, chegar ao posto leva muito tempo.\nQuando a linha de ônibus é irregular, a viagem demora.\nMuitos responsáveis não conseguem sair do trabalho cedo.\nPor isso, a prefeitura deve oferecer ônibus aos sábados.\nOs veículos podem partir das escolas de cada bairro.\nAssim, mais famílias poderão levar os filhos ao posto.\nCom o acesso facilitado, a cobertura vacinal pode subir.",
+
+  wrongForm:
+    "Você ouviu falar da vacina, minha menina?\nA vizinha espalhou um boato no quintal.\nA enfermeira bateu o portão no fim do dia,\ne chamou para conversar no posto municipal.\nA mãe pegou o cartão e abriu a janela,\no céu sobre a rua já não era azul.\nA menina pegou duas fitas amarelas\ne atravessou a praça em direção ao sul.",
+};
+
+// Paragraph breaks restored at transitions in the Gemini output.
+export const GEMINI_ANSWERS = {
+  longAbove: `A estruturação de um programa municipal de auxílio-transporte com o objetivo central de mitigar a evasão escolar demanda um processo avaliativo sistemático, cuja razão de ser reside na escassez crônica de recursos orçamentários. Nesse cenário, avalia-se primariamente para prestar contas à sociedade e aos órgãos competentes sobre a eficácia da política pública implementada.
+
+O sucesso da iniciativa é profundamente condicionado pelo contexto socioeconômico dos territórios atendidos, onde barreiras geográficas e vulnerabilidades locais afetam diretamente a frequência dos alunos. Do mesmo modo, as características do público-alvo, especialmente a idade dos estudantes, moldam a demanda por transporte e exigem critérios específicos no desenho operacional do programa.
+
+É fundamental reconhecer que a política de transporte não opera no vácuo, existindo uma forte interação com programas correlatos, como o fornecimento de merenda escolar, cuja complementação nutricional atua conjuntamente na retenção do aluno.
+
+Operacionalmente, o uso interno das evidências geradas serve para subsidiar o planejamento estratégico e a gestão cotidiana da secretaria, permitindo a otimização de rotas e a correção tempestiva de gargalos logísticos.
+
+Ademais, os achados da avaliação cumprem papel relevante no uso externo, fornecendo subsídios técnicos indispensáveis para o Legislativo e órgãos de controle na fiscalização da aplicação dos recursos, bem como para a comunidade acadêmica em pesquisas que analisam a replicação e a aplicação a políticas semelhantes em outros contextos.
+
+Concluindo, a avaliação rigorosa do auxílio-transporte transcende o mero controle gerencial, consolidando-se como ferramenta indispensável para a transparência democrática, o controle institucional e o aprimoramento contínuo de políticas públicas voltadas à permanência escolar.`,
+  longBelow: `A implementação de um programa municipal de auxílio-transporte voltado para a redução da evasão escolar exige o desenvolvimento de uma avaliação rigorosa, cuja justificativa primordial fundamenta-se na escassez de recursos públicos. Diante de orçamentos limitados, torna-se imprescindível avaliar para prestar contas à sociedade sobre o uso adequado do dinheiro público e a efetividade da política de mobilidade estudantil.
+
+O contexto socioeconômico dos territórios vulneráveis onde residem os alunos exerce forte influência sobre o sucesso da iniciativa, pois longas distâncias e precariedade viária intensificam o risco de abandono escolar. Além disso, as características do público-alvo, como a faixa etária dos estudantes, determinam necessidades específicas de deslocamento que devem ser consideradas no desenho do programa.
+
+A eficácia do auxílio-transporte também não ocorre isoladamente, sofrendo forte interação com outros programas sociais, a exemplo do fornecimento de merenda escolar, cuja presença sinérgica potencializa a permanência do aluno na escola.
+
+No âmbito da gestão, o uso interno dos resultados da avaliação mostra-se indispensável para gestores municipais planejarem e gerirem melhor os recursos logísticos, ajustando rotas e cadastros de beneficiários conforme as demandas reais identificadas.
+
+Concluindo, avaliar o programa de auxílio-transporte não constitui mera formalidade burocrática, mas um instrumento essencial para otimizar a alocação de recursos escassos em contextos territoriais complexos, assegurando que o apoio estatal chegue efetivamente aos estudantes em idade escolar vulneráveis à evasão, em perfeita articulação com as demais políticas educacionais do município.`,
+  shortAbove: `A compreensão da dinâmica inflacionária brasileira exige analisar o papel central do déficit público, visto que os planos econômicos anteriores ao Real ruíram essencialmente por não combaterem a raiz fiscal do problema. A insistência em ignorar o desequilíbrio das contas públicas impedia qualquer estabilização duradoura, cenário que se transformou após o Plano Real, quando o déficit passou a ser exposto de forma transparente, exigindo a adoção estrutural de superávits primários e a posterior consolidação institucional promovida pela Lei de Responsabilidade Fiscal.
+
+Para enfrentar esse quadro complexo, a política econômica dispõe de instrumentos ortodoxos, que afetam a atividade econômica de maneira indireta por meio da restrição da demanda agregada, a exemplo da elevação drástica da taxa de juros e do controle rigoroso da base monetária. Paralelamente, o combate à inflação inercial exigiu inovações institucionais de caráter singular, materializadas na criação da Unidade Real de Valor em março de 1994, que serviu como indexador neutro para realinhar os preços relativos e desindexar a economia antes do lançamento da nova moeda.
+
+Em conclusão, a articulação entre o saneamento das contas públicas, o manejo ortodoxo da política monetária e a neutralização da inércia inflacionária via URV constituiu a base sólida que finalmente garantiu a estabilidade de preços no Brasil, superando o fracasso histórico dos experimentos anteriores.`,
+  shortBelow: `A introdução deste tema requer compreender que a trajetória inflacionária brasileira anterior ao Plano Real esteve intrinsecamente ligada à incapacidade crônica dos governos em estancar o déficit público. Diversos planos de estabilização implementados na década de 1980 e no início de 1990 fracassaram porque atacavam apenas os sintomas superficiais da inflação inercial, negligenciando o desequilíbrio fiscal estrutural que realimentava o processo inflacionário de maneira persistente e contínua. Sem um ajuste fiscal rigoroso que contidasse os gastos públicos excessivos, as tentativas de estabilização econômica mostravam-se efêmeras, ruindo logo após o esgotamento dos artifícios iniciais de controle de preços.
+
+No que tange às ferramentas de combate à inflação, o instrumental heterodoxo diferencia-se por atuar diretamente sobre os preços nominais e os mecanismos de indexação da economia. As medidas heterodoxas utilizam-se de intervenções diretas do Estado, a exemplo do congelamento de preços, salários e tarifas públicas, buscando quebrar a memória inflacionária e a inércia que autoperpetuavam os reajustes.
+
+Concluindo, embora tais medidas pudessem gerar um alívio momentâneo no custo de vida da população, a ausência de sustentabilidade fiscal garantia o retorno tempestivo do processo inflacionário, evidenciando que choques de preços sem disciplina fiscal representam apenas soluções paliativas e inócuas a médio e longo prazos.`,
 };
