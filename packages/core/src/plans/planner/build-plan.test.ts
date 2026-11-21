@@ -1377,7 +1377,7 @@ describe("language plans", () => {
 
     const planned = todoLessonItems(buildPlan(input)).map((item) => item.key);
 
-    const studied = Array.from({ length: 16 }).reduce<{
+    const studied = Array.from({ length: 40 }).reduce<{
       items: ExistingPlanItem[];
       keys: string[];
     }>(
@@ -1395,7 +1395,7 @@ describe("language plans", () => {
       { items: [], keys: [] },
     );
 
-    expect(studied.keys).toStrictEqual(planned.slice(0, 16));
+    expect(studied.keys).toStrictEqual(planned.slice(0, 40));
   });
 
   it("keeps taking turns after this week when an automatic run can't keep the week as it was", () => {
