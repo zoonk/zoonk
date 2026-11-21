@@ -156,7 +156,9 @@ function useNumericText({
       return defaultText;
     }
 
-    return value === null ? "" : formatLocalizedNumber({ locale, maximumFractionDigits, value });
+    return value === null
+      ? ""
+      : formatLocalizedNumber({ grouping: false, locale, maximumFractionDigits, value });
   }
 
   const written = formattedValue();

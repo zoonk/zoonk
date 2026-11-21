@@ -128,12 +128,13 @@ export function replayKeptAnswers({ kept, view }: { kept: readonly MockDraft[]; 
 } {
   const questions = view.current?.questions ?? [];
   const stored = view.current?.drafts ?? [];
+  const navigation = view.sections.find((section) => section.status === "current")?.navigation;
   let changed: readonly number[] = getChargedPositions(view);
   let reached = view.current?.resume ?? 0;
 
   for (const draft of kept) {
     const position = questions.findIndex((question) => question.itemId === draft.itemId);
-    reached = Math.max(reached, position);
+    reached = navigation?.forwardOnly ? Math.max(reached, position) : reached;
 
     changed =
       getChangedAfterAnswer({
