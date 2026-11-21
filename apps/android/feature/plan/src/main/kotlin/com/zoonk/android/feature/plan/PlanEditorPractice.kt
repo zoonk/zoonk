@@ -83,7 +83,8 @@ internal fun WrittenCadenceChoice(
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         MenuSelect(
-            label = stringResource(R.string.plan_when_to_practice, joinList(practice.parts)),
+            // The parts' names come from the notice, so none is set mid-sentence in a language's own casing.
+            label = stringResource(R.string.plan_when_to_practice_writing),
             options = cadences,
             value = shown,
             optionLabel = { cadenceLabel(it) },

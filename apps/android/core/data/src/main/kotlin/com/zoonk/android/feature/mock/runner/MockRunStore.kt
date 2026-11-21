@@ -41,14 +41,6 @@ sealed interface PlayOutcome {
     data object UsedUp : PlayOutcome
 }
 
-/** Grading a finished mock's essays either graded every written one, or ran into today's limit first. */
-enum class EssayGradeOutcome { Graded, LimitReached }
-
-data class GradedEssays(
-    val mock: MockExam,
-    val limitReached: Boolean,
-)
-
 interface MockRunApi {
     /** Null once it's gone. */
     suspend fun mock(
@@ -92,11 +84,12 @@ interface MockRunApi {
         timeZone: String,
     )
 
+    /** The sitting's one admission covers every answer, so grading is never refused for the day. */
     suspend fun gradeEssays(
         session: AuthenticatedSession,
         blockId: String,
         timeZone: String,
-    ): EssayGradeOutcome
+    )
 
     suspend fun adapt(
         session: AuthenticatedSession,
@@ -190,13 +183,9 @@ class LiveMockRunApi(
         session: AuthenticatedSession,
         blockId: String,
         timeZone: String,
-    ): EssayGradeOutcome =
-        try {
-            perform { api.streamingClients(session).exams.gradeMockEssays(UUID.fromString(blockId), MockTimeZoneInput(timeZone)) }
-            EssayGradeOutcome.Graded
-        } catch (e: ApiException) {
-            if (e.code == ESSAY_LIMIT_REACHED) EssayGradeOutcome.LimitReached else throw e
-        }
+    ) {
+        perform { api.streamingClients(session).exams.gradeMockEssays(UUID.fromString(blockId), MockTimeZoneInput(timeZone)) }
+    }
 
     override suspend fun adapt(
         session: AuthenticatedSession,
@@ -219,7 +208,6 @@ class LiveMockRunApi(
         const val CONFLICT = 409
         val REFUSALS = setOf(400, CONFLICT, 422)
         const val PLAYS_USED = "MOCK_PLAYS_USED"
-        const val ESSAY_LIMIT_REACHED = "ESSAY_LIMIT_REACHED"
     }
 }
 
@@ -276,11 +264,11 @@ class MockRunStore(
 
     suspend fun finish(blockId: String): MutationResult<MockExam?> = step(blockId, FINISHING) { api.finish(it, blockId, timeZone()) }
 
-    /** Grading writes the essays' grades and records them as the learner's answers; a limit reached still shows those graded first. */
-    suspend fun gradeEssays(blockId: String): MutationResult<GradedEssays?> =
+    /** Grading writes the essays' grades and records them as the learner's answers. */
+    suspend fun gradeEssays(blockId: String): MutationResult<MockExam?> =
         cache.mutate(invalidating = setOf(DataDomain.LearnerModel)) { session ->
-            val outcome = api.gradeEssays(session, blockId, timeZone())
-            api.mock(session, blockId)?.let { GradedEssays(it, outcome == EssayGradeOutcome.LimitReached) }
+            api.gradeEssays(session, blockId, timeZone())
+            api.mock(session, blockId)
         }
 
     /** One of the result's plan offers, only on the learner's yes: it changes the plan as any plan edit does. */

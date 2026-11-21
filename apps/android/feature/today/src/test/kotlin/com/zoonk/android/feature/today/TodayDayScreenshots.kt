@@ -63,6 +63,10 @@ class TodayDayScreenshots {
     fun underwayPhone() = render("today-underway-phone", underway())
 
     @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun writtenPhone() = render("01-today", written())
+
+    @Test
     @Config(qualifiers = "w1280dp-h1000dp-land-xhdpi")
     fun underwayTablet() = render("today-underway-tablet", underway())
 
@@ -212,6 +216,52 @@ class TodayDayScreenshots {
         "estimatedMinutes" to 6,
         *fields,
     )
+
+    /** A written exam's day: the 30-line question among the lessons, with its real time, and a drill that waits for tomorrow. */
+    private fun written() =
+        Day(
+            day(
+                "underway",
+                listOf(
+                    block(
+                        0,
+                        "review",
+                        "status" to "completed",
+                        "estimatedMinutes" to 10,
+                        "questions" to 12,
+                        "subject" to "Public administration",
+                    ),
+                    block(
+                        1,
+                        "produce",
+                        "screen" to "essay",
+                        "title" to "Write the 30-line question",
+                        "subject" to "Written test",
+                        "estimatedMinutes" to 70,
+                    ),
+                    lesson(2, "Budget expenses by nature", "subject" to "Public finance"),
+                    lesson(3, "Kinds of government audit", "subject" to "Government auditing"),
+                    block(
+                        4,
+                        "produce",
+                        "screen" to "essay",
+                        "title" to "Answer in a 10-line paragraph",
+                        "subject" to "Written test",
+                        "estimatedMinutes" to 8,
+                        "writingUnit" to "drill",
+                        "writingAvailability" to
+                            buildJsonObject {
+                                put("status", "tomorrow")
+                                put("returnsOn", "2026-11-21")
+                            },
+                    ),
+                ),
+                next = 1,
+                left = 225,
+                done = 15,
+                dailyGoal = 240,
+            ),
+        )
 
     private fun underway() =
         Day(

@@ -415,6 +415,30 @@ enum class GenerationKind(
                 "writeSetupLessons" to StepPlace.Phase("write"),
             ),
     ),
+
+    /** The question a written task opens on (`apps/api/src/workflows/sessions/writing-prompt-workflow.ts`). */
+    WritingPrompt(
+        label = R.string.generation_writing_prompt,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "question",
+                    45,
+                    R.string.generation_writing_prompt_question,
+                    listOf(
+                        R.string.generation_writing_prompt_line_1,
+                        R.string.generation_writing_prompt_line_2,
+                        R.string.generation_writing_prompt_line_3,
+                    ),
+                ),
+            ),
+        steps =
+            mapOf(
+                "ready" to StepPlace.Done,
+                "signUpRequired" to StepPlace.Done,
+                "writeWritingPrompt" to StepPlace.Phase("question"),
+            ),
+    ),
     MockQuestions(
         label = R.string.mock_chooser_writing,
         phases =

@@ -545,7 +545,7 @@
     <string name="plan_tool_writing_setup_line_3">Adding a quick check that it works…</string>
     <string name="plan_tool_device">Your device</string>
     <string name="plan_what_you_practice">What you practice</string>
-    <string name="plan_when_to_practice">When to practice %1$s</string>
+    <string name="plan_when_to_practice_writing">When to practice writing</string>
     <string name="plan_cadence_weekly">Every week</string>
     <string name="plan_cadence_biweekly">Every other week</string>
     <string name="plan_cadence_final_weeks">Only the final weeks</string>
@@ -857,4 +857,19 @@
     <string name="plan_call_not_in_plan">The call isn\'t in your plan</string>
     <string name="plan_outside_past_basics">Skipped · you already know the basics</string>
     <string name="plan_outside_skipped_base">Skipped · your choice</string>
+    <!-- On the projected score: the exam's written test is below its own minimum. -->
+    <string name="plan_written_below_minimum">Below the minimum to pass</string>
+    <!-- %1$s names the written test, such as "Written test"; %2$s is its minimum points. -->
+    <string name="plan_written_asks_for">%1$s asks for %2$s points, whatever your other scores.</string>
+    <!-- %1$s names the written test, such as "Written test"; %2$s is its minimum as a share, such as "50%". -->
+    <string name="plan_written_asks_for_share">%1$s asks for %2$s of its points, whatever your other scores.</string>
+    <!-- %1$s names the exam's written test, such as "Written test". -->
+    <string name="plan_written_not_measured">%1$s isn\'t measured yet.</string>
+    <string name="plan_written_objective">Objective test</string>
+    <!-- %1$s is the written test's minimum points. -->
+    <string name="plan_written_above_minimum">Above the %1$s points it asks for</string>
+    <!-- %1$s is how many points short, or a range of them; %2$s the written test's minimum points. -->
+    <string name="plan_written_points_below">%1$s points below the %2$s it asks for</string>
+    <!-- %1$s is the written test's minimum points. -->
+    <string name="plan_written_close_to_minimum">Close to the %1$s points it asks for</string>
 </resources>

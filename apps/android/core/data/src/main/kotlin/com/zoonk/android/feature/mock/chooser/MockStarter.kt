@@ -10,10 +10,15 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.AnytimeMockInput
+import com.zoonk.api.models.AnytimeMockInputShape
+import com.zoonk.api.models.AnytimeMockInputShapeAnyOf
 import com.zoonk.api.models.MockQuestionsGeneration
 import com.zoonk.api.models.MockQuestionsInput
 import com.zoonk.api.models.MockShape
+import com.zoonk.api.models.WrittenTestShape
 import kotlinx.coroutines.delay
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import java.time.Instant
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
@@ -40,6 +45,9 @@ sealed interface MockStartOutcome {
     data object NotEnoughQuestions : MockStartOutcome
 
     data object PlusRequired : MockStartOutcome
+
+    /** A written test is admitted as it starts, and the day's extra grades are used: it starts tomorrow. */
+    data object GradesUsed : MockStartOutcome
 }
 
 sealed interface QuestionWriting {
@@ -55,6 +63,9 @@ sealed interface QuestionWriting {
     ) : QuestionWriting
 
     data object PlusRequired : QuestionWriting
+
+    /** A written test's questions would be graded as it starts, and today's extra grading is used: it returns tomorrow. */
+    data object GradesUsed : QuestionWriting
 }
 
 /**
@@ -91,7 +102,7 @@ class LiveMockStartApi(
         api.clients(session).exams.startAnytimeMock(
             goalId,
             AnytimeMockInput(
-                shape = shape,
+                shape = shape.input(),
                 acceptFewer = ask == MockStartAsk.AcceptFewer,
                 afterWriting = ask == MockStartAsk.AfterWriting,
             ),
@@ -105,10 +116,23 @@ class LiveMockStartApi(
     ) = perform {
         api.clients(session).exams.createMockQuestionsGeneration(
             goalId,
-            MockQuestionsInput(shape = shape),
+            MockQuestionsInput(shape = shape.input()),
         )
     }
 }
+
+/** The day's extra writing allowance, rather than a plan's usage cap, says when it returns. */
+private fun JsonElement?.hasReturnsOn(): Boolean = (this as? JsonObject)?.containsKey("returnsOn") == true
+
+/** The written test is a shape of its own on the wire; every other option names its kind, day and subject. */
+private fun MockShape.input(): AnytimeMockInputShape =
+    if (kind == MockShape.Kind.WRITTEN) {
+        AnytimeMockInputShape.WrittenTestShapeValue(WrittenTestShape(area = null, day = day, kind = WrittenTestShape.Kind.WRITTEN))
+    } else {
+        AnytimeMockInputShape.AnytimeMockInputShapeAnyOfValue(
+            AnytimeMockInputShapeAnyOf(area, day, AnytimeMockInputShapeAnyOf.Kind.entries.first { it.value == kind.value }),
+        )
+    }
 
 /**
  * Starts a mock taken any time, as main's chooser does: only from the learner's tap, since asking
@@ -128,9 +152,10 @@ class MockStarter(
                 try {
                     outcome(api.start(session, goalId, shape, ask))
                 } catch (e: ApiException) {
-                    when (e.code) {
-                        PLUS_REQUIRED -> MockStartOutcome.PlusRequired
-                        NOT_ENOUGH_QUESTIONS -> MockStartOutcome.NotEnoughQuestions
+                    when {
+                        e.code == PLUS_REQUIRED -> MockStartOutcome.PlusRequired
+                        e.code == NOT_ENOUGH_QUESTIONS -> MockStartOutcome.NotEnoughQuestions
+                        e.status == TOO_MANY_REQUESTS && e.code == null -> MockStartOutcome.GradesUsed
                         else -> throw e
                     }
                 }
@@ -161,7 +186,16 @@ class MockStarter(
                     )
                         ?: QuestionWriting.Ready
                 } catch (e: ApiException) {
-                    Limit.of(e)?.let(QuestionWriting::Refused) ?: if (e.code == PLUS_REQUIRED) QuestionWriting.PlusRequired else throw e
+                    when {
+                        e.code == USAGE_LIMIT_REACHED && e.details.hasReturnsOn() -> {
+                            QuestionWriting.GradesUsed
+                        }
+
+                        else -> {
+                            Limit.of(e)?.let(QuestionWriting::Refused)
+                                ?: if (e.code == PLUS_REQUIRED) QuestionWriting.PlusRequired else throw e
+                        }
+                    }
                 }
             }
         if ((result as? MutationResult.Done)?.value == QuestionWriting.PlusRequired) cache.invalidate(setOf(DataDomain.UserSubscription))
@@ -192,6 +226,10 @@ class MockStarter(
     private companion object {
         const val PLUS_REQUIRED = "PLUS_REQUIRED"
         const val NOT_ENOUGH_QUESTIONS = "NOT_ENOUGH_QUESTIONS"
+        const val USAGE_LIMIT_REACHED = "USAGE_LIMIT_REACHED"
+
+        /** Its body is `{status: "limitReached", returnsOn}`, not an error's. */
+        const val TOO_MANY_REQUESTS = 429
         const val PREPARING_TRIES = 60
         val PREPARING_RETRY = 3.seconds
     }

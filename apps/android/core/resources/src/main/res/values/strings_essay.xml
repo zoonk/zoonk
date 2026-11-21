@@ -1,81 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="essay_your_essay">Your essay</string>
+    <!-- The header of a written exam task that practices one writing move, such as a thesis or a paragraph. -->
+    <string name="essay_writing_drill">Writing drill</string>
+    <!-- The header of a written exam task: a whole answer to one of the exam's written questions. -->
+    <string name="essay_written_answer">Written answer</string>
     <string name="essay_your_answer">Your answer</string>
     <!-- A score's range, such as "610–680". -->
     <string name="essay_range">%1$s–%2$s</string>
-    <!-- %1$s is the essay's highest possible score. -->
-    <string name="essay_scale">Estimated score, from 0 to %1$s</string>
-    <!-- A criterion's score, such as "160 of 200". -->
+    <!-- A score on its scale, such as "16–19 of 30". %1$s is the score or its range, %2$s the most points. -->
+    <string name="essay_points_of">%1$s of %2$s</string>
+    <!-- Beside a large score, its scale, such as "of 30" in "16–19 of 30". -->
+    <string name="essay_of_max">of %1$s</string>
+    <!-- A criterion's score, such as "7.13 of 9.5". -->
     <string name="essay_score_of">%1$s of %2$s</string>
-    <string name="essay_criterion_formal_writing">Formal writing</string>
-    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
-    <string name="essay_criterion_topic">Topic and references</string>
-    <string name="essay_criterion_argument">Argument</string>
-    <string name="essay_criterion_cohesion">Cohesion</string>
-    <string name="essay_criterion_intervention">Intervention proposal</string>
-    <string name="essay_criterion_addressing">Addressing and parties</string>
-    <string name="essay_criterion_facts">Facts</string>
-    <string name="essay_criterion_legal_basis">Legal basis</string>
-    <string name="essay_criterion_requests">Requests</string>
-    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
-    <string name="essay_criterion_closing">Closing and form</string>
+    <!-- A written question or test the learner hasn't answered yet, so it has no estimate. -->
+    <string name="essay_not_measured">Not measured yet</string>
+    <plurals name="essay_up_to_lines">
+        <item quantity="one">Up to %d line</item>
+        <item quantity="other">Up to %d lines</item>
+    </plurals>
+    <!-- What a written question is worth. %1$s is a number, such as "30". -->
+    <string name="essay_points">%1$s points</string>
+    <!-- An estimated time to write an answer. %1$s is a duration, such as "1 hr 10 min". -->
+    <string name="essay_about_time">about %1$s</string>
+    <!-- A written question's text to read before writing. -->
+    <string name="essay_support_text">Support text</string>
+    <!-- What a written question asks the learner to write. -->
+    <string name="essay_what_to_write">What to write</string>
+    <string name="essay_grading_criteria">Grading criteria</string>
+    <!-- %1$s is the question's points, such as "30". -->
+    <string name="essay_points_split">How the %1$s points are split</string>
+    <string name="essay_judged_on">What the answer is judged on</string>
+    <!-- Where a written question's grading criteria come from: the exam's official notice. -->
+    <string name="essay_from_notice">From the exam notice.</string>
+    <!-- Under grading criteria taken from the exam's notice, applied with an answer key Zoonk wrote. -->
+    <string name="essay_from_notice_practice_key">From the exam notice. The answer key is ours, for practice.</string>
+    <string name="essay_write">Write</string>
+    <!-- Goes on with a written answer the learner left unfinished. -->
+    <string name="essay_continue">Continue</string>
+    <!-- Opens the written question over the answer being written. -->
+    <string name="essay_question">Question</string>
+    <string name="essay_rewrite_label">Rewrite what needs work</string>
+    <string name="essay_grade_answer">Grade answer</string>
+    <string name="essay_grade_rewrite">Grade rewrite</string>
+    <plurals name="essay_words">
+        <item quantity="one">%d word</item>
+        <item quantity="other">%d words</item>
+    </plurals>
+    <!-- How many handwritten lines the typed answer would take, of the question's limit, such as "about 23 of 30 lines". -->
+    <string name="essay_lines_used">about %1$d of %2$d lines</string>
+    <!-- The typed answer would take more handwritten lines than the question allows; the exam's graders stop reading at the limit. -->
+    <string name="essay_lines_over">about %1$d of %2$d lines · %3$d won\'t be read</string>
+    <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
+    <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
+    <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
+    <!-- While a new written question is written for the learner. -->
+    <string name="essay_writing_question">Writing your question…</string>
+    <string name="essay_writing_question_detail">A new question, like the ones on your exam. It opens here when it\'s ready.</string>
+    <string name="essay_question_failed">We couldn\'t write your question</string>
+    <string name="essay_nothing_lost">Nothing was lost. Try again in a moment.</string>
+    <string name="essay_try_again">Try again</string>
+    <!-- A written task the exam's notice no longer asks, after it was read again. -->
+    <string name="essay_removed">This task is no longer available</string>
+    <string name="essay_removed_detail">Your exam\'s notice changed, so it\'s out of your plan. Nothing was graded.</string>
+    <!-- The day's extra grades for written answers are used. -->
+    <string name="essay_no_more_grading">No more grading today</string>
+    <string name="essay_more_tomorrow">You\'ll have more tomorrow.</string>
+    <!-- A written task that waits for the next day. -->
+    <string name="essay_left_for_tomorrow">Left for tomorrow</string>
+    <!-- Under a question's score: the written test's own minimum, on the sum of all its questions, never this question's. %1$s is a share, such as "50%". -->
+    <string name="essay_part_minimum">Minimum to pass the written test: %1$s of the points</string>
+    <!-- The part of a written answer's score that its content earned. -->
+    <string name="essay_content">Content</string>
+    <string name="essay_language_errors">Language errors</string>
+    <plurals name="essay_errors">
+        <item quantity="one">%d error</item>
+        <item quantity="other">%d errors</item>
+    </plurals>
+    <plurals name="essay_about_lines">
+        <item quantity="one">about %d line</item>
+        <item quantity="other">about %d lines</item>
+    </plurals>
+    <!-- Points taken away, such as "−0.35". -->
+    <string name="essay_minus">−%1$s</string>
+    <!-- Points language errors take away, as a range, such as "−0.3 to −0.6". -->
+    <string name="essay_minus_range">−%1$s to −%2$s</string>
+    <!-- After a rewrite: the criteria the learner fixed. %1$s lists them. -->
+    <string name="essay_fixed">Fixed: %1$s</string>
+    <!-- After a rewrite: the criteria still to improve. %1$s lists them. -->
+    <string name="essay_still_to_work_on">Still to work on: %1$s</string>
     <string name="essay_next_step">Next step</string>
     <string name="essay_what_to_rewrite">What to rewrite</string>
     <string name="essay_for_example">For example: %1$s</string>
     <string name="essay_nothing_left">Nothing left to work on</string>
     <string name="essay_full_marks">Every criterion has full marks in this estimate.</string>
-    <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
-    <string name="essay_title">Writing practice</string>
-    <string name="essay_title_ap">Free response · AP scoring guidelines</string>
-    <string name="essay_title_enem">Essay · ENEM rubric</string>
-    <string name="essay_supporting_texts">Supporting texts</string>
-    <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
-    <string name="essay_motivating_texts">Motivating texts</string>
-    <!-- The legal case an OAB written exam answer is about. -->
-    <string name="essay_the_case">The case</string>
-    <!-- The grade of the learner's last essay draft. -->
-    <string name="essay_last_grade">Your last grade</string>
-    <string name="essay_rewrite_label">Rewrite what needs work</string>
-    <plurals name="essay_words">
-        <item quantity="one">%d word</item>
-        <item quantity="other">%d words</item>
-    </plurals>
-    <!-- On an essay the learner skipped, opened again from a link. -->
-    <string name="essay_skipped">You skipped this essay.</string>
-    <string name="essay_back_to_today">Today</string>
-    <string name="essay_send_failed">That didn\'t go through. Your text is still here. Try again in a moment.</string>
-    <string name="essay_limit_reached">You\'ve used today\'s essay grades. Your text stays here; send it tomorrow.</string>
-    <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
-    <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
-    <string name="essay_skip_rewrite">Skip</string>
-    <string name="essay_grade_rewrite">Grade rewrite</string>
-    <string name="essay_send">Grade essay</string>
-    <string name="essay_leave_title">Leave for now?</string>
-    <string name="essay_leave_description">Your text stays on this device, here when you come back.</string>
-    <string name="essay_keep_writing">Keep writing</string>
-    <!-- %1$s is the criterion to work on next, such as "Argument". -->
-    <string name="essay_next_step_named">Next step: %1$s</string>
-    <string name="essay_see_grade">See the grade</string>
-    <string name="essay_too_short">Too short to grade</string>
-    <string name="essay_too_short_detail">Write the whole essay, then send it again.</string>
-    <string name="essay_rewrite">Rewrite</string>
-    <string name="essay_finish_failed">That didn\'t go through. Try again in a moment.</string>
+    <string name="essay_criteria">Criteria</string>
+    <!-- A criterion of a written answer fully met. -->
+    <string name="essay_level_complete">Complete</string>
+    <!-- A criterion of a written answer mostly met. -->
+    <string name="essay_level_strong">Good</string>
+    <!-- A criterion of a written answer half met. -->
+    <string name="essay_level_partial">Partly</string>
+    <!-- A criterion of a written answer not met. -->
+    <string name="essay_level_missing">Missing</string>
+    <string name="essay_no_points_in_notice">The exam notice doesn\'t say how many points each criterion is worth.</string>
+    <string name="essay_criteria_from_notice">Criteria and points from the exam notice.</string>
+    <string name="essay_criteria_from_notice_practice_key">Criteria and points from the exam notice. The answer key is ours, for practice.</string>
     <string name="essay_see_comments">See comments</string>
     <string name="essay_comments">Comments</string>
-    <string name="essay_proposal_elements">The five elements of the proposal</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->
-    <string name="essay_element_agent">Who acts</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: the action itself. -->
-    <string name="essay_element_action">What they do</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: how it's carried out. -->
-    <string name="essay_element_means">By what means</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: its purpose. -->
-    <string name="essay_element_effect">To what end</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: a detail of one of the others. -->
-    <string name="essay_element_detail">A detail</string>
-    <!-- Whether an element of the proposal is in the essay. -->
-    <string name="essay_element_present">Present</string>
-    <!-- Whether an element of the proposal is in the essay. -->
-    <string name="essay_element_missing">Missing</string>
+    <!-- The learner's answer as sent, with its errors marked. -->
+    <string name="essay_your_text">Your text</string>
+    <!-- Where the answer passes the question's line limit; the exam's graders stop reading there. %1$d is the limit. -->
+    <string name="essay_past_line">Past line %1$d: the board won\'t read from here</string>
+    <string name="essay_past_limit">Past the limit: the board won\'t read from here</string>
+    <!-- Under a language error's correction. %1$s is what the learner wrote, %2$s the kind of error, such as "spelling". -->
+    <string name="essay_you_wrote">You wrote “%1$s” · %2$s</string>
+    <!-- On a written task the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">You skipped this task.</string>
+    <string name="essay_back_to_today">Today</string>
+    <string name="essay_skip_rewrite">Skip</string>
+    <string name="essay_rewrite">Rewrite</string>
+    <string name="essay_finish_failed">That didn\'t go through. Try again in a moment.</string>
 </resources>

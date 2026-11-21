@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.essay.WritingLineCount
 import com.zoonk.android.feature.player.language.countWords
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemLine
@@ -72,6 +73,7 @@ import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.MockExam
+import com.zoonk.api.models.WritingPromptOutput
 import kotlinx.coroutines.delay
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
@@ -110,7 +112,7 @@ private fun AnswerInput(
     val locked = run.pending || !run.moves.canChange(run.position)
 
     when {
-        question.essay -> EssayAnswer(viewModel, run, draft)
+        question.essay -> EssayAnswer(viewModel, run, draft, question.writing)
         question.question.format == QuestionFormat.Numeric -> NumberAnswer(viewModel, question, draft, locked)
         question.question.format == QuestionFormat.Typed -> WordAnswer(viewModel, draft, locked)
         question.question.select.isMulti -> Picks(viewModel, question, draft, locked)
@@ -244,6 +246,7 @@ private fun EssayAnswer(
     viewModel: MockRunnerViewModel,
     run: MockRun,
     draft: MockDraft?,
+    writing: WritingPromptOutput?,
 ) {
     val text = (draft?.answer as? Answer.Text)?.text.orEmpty()
     val words = countWords(text)
@@ -259,10 +262,14 @@ private fun EssayAnswer(
             ),
         // The field's own line, so TalkBack reads the count with the field, not on every word.
         supportingText = {
-            Text(
-                if (words > 0) pluralStringResource(R.plurals.mock_words, words, words) else "",
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-            )
+            if (writing != null) {
+                WritingLineCount(text, writing)
+            } else {
+                Text(
+                    if (words > 0) pluralStringResource(R.plurals.mock_words, words, words) else "",
+                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                )
+            }
         },
         minLines = ESSAY_LINES,
     )
@@ -438,7 +445,9 @@ internal fun ItemCountdown(
 }
 
 private const val NUMBER_DIGITS = 4
-private const val MAX_ESSAY_CHARACTERS = 12_000
+
+/** The API's longest written answer. */
+private const val MAX_ESSAY_CHARACTERS = 48_000
 private const val ESSAY_LINES = 10
 private val ESSAY_HEIGHT = 288.dp
 private const val MS_PER_SECOND = 1000L

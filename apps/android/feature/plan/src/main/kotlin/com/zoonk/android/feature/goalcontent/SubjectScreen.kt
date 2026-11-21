@@ -1,9 +1,14 @@
 package com.zoonk.android.feature.goalcontent
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,8 +18,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,6 +53,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
@@ -55,10 +66,13 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.StudyBlockWritingAvailability
+import com.zoonk.api.models.StudyBlockWritingAvailabilityOneOf
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.WrittenPractice
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerWriteActionsInner
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -87,6 +101,7 @@ fun SubjectScreen(
             menu = { ReportProblemMenu(report) },
             ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
             mindMaps = summary.value?.places?.mindMaps == true,
+            writeNow = rememberWriteNow(app, goal.id, navigator),
         )
     }
 }
@@ -101,6 +116,7 @@ internal fun SubjectContent(
     menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     mindMaps: Boolean = false,
+    writeNow: WriteNow? = null,
 ) {
     val back: () -> Unit = { navigator.back() }
     val state by syllabus.collectShown()
@@ -140,6 +156,9 @@ internal fun SubjectContent(
                             }
                         },
                         openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
+                        openAnswer = { navigator.open(AppRoute.WritingAnswer(it.toString())) },
+                        openEssay = { navigator.open(AppRoute.Essay(it.toString())) },
+                        writeNow = writeNow,
                     ),
             )
             FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
@@ -156,6 +175,11 @@ internal data class SubjectActions(
     val setCadence: (WrittenPractice.Cadence) -> Unit,
     val openFarTopic: ((SyllabusChapter) -> Unit)? = null,
     val openMindMaps: (() -> Unit)? = null,
+    val openAnswer: (UUID) -> Unit = {},
+    /** An unfinished written task the learner asked for. */
+    val openEssay: (UUID) -> Unit = {},
+    /** A written part's main action: writing, since its lessons are a small part of its time. */
+    val writeNow: WriteNow? = null,
 )
 
 internal data class SubjectWrites(
@@ -221,6 +245,8 @@ internal fun SubjectPage(
     menu: (@Composable () -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
 ) {
+    val written = writtenSubject(syllabus.writtenPractice, subject)
+    val writeNow = actions.writeNow.takeIf { written != null }
     DetailPage(
         title = subject.shortName,
         onBack = actions.back,
@@ -229,8 +255,12 @@ internal fun SubjectPage(
         ask = ask,
         menu = menu,
         action =
-            subject.nextChapterId?.let { next ->
-                { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }
+            if (writeNow != null && written != null) {
+                { modifier -> WriteButton(writeNow, written.writeActions.orEmpty(), actions.openEssay, modifier) }
+            } else {
+                subject.nextChapterId?.let { next ->
+                    { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }
+                }
             },
     ) { asideBeside ->
         if (!asideBeside && (subject.notPlannedReason == null || subject.preparation != null)) {
@@ -240,9 +270,11 @@ internal fun SubjectPage(
         }
 
         item(key = "not-planned", contentType = "notice") { NotPlannedNotice(subject, writes, actions) }
-        item(key = "written", contentType = "written") { SubjectWrittenPractice(syllabus, subject, writes, actions) }
+        written?.let { subjectWritten(it, actions.openAnswer) }
 
         subjectChapters(subject, today, actions)
+
+        item(key = "written", contentType = "written") { SubjectWrittenPractice(syllabus, subject, writes, actions) }
 
         if (subject.topics.isNotEmpty()) subjectTopics(syllabus, subject, actions)
 
@@ -323,6 +355,64 @@ internal fun knownLine(subject: SyllabusSubject): String? {
 
         else -> {
             null
+        }
+    }
+}
+
+/**
+ * A written part's main action is writing: an unfinished task opens where it was left, and once the
+ * day's grading is used for every task the bar says when it returns instead of offering a tap that
+ * would be refused.
+ */
+@Composable
+private fun WriteButton(
+    writeNow: WriteNow,
+    actions: List<WrittenPracticeSubjectsInnerWriteActionsInner>,
+    openEssay: (UUID) -> Unit,
+    modifier: Modifier,
+) {
+    val unfinished =
+        actions
+            .firstOrNull {
+                (it.availability as? StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOfValue)?.value?.status ==
+                    StudyBlockWritingAvailabilityOneOf.Status.CONTINUE
+            }?.blockId
+    val tomorrow =
+        actions.isNotEmpty() && actions.all { it.availability is StudyBlockWritingAvailability.StudyBlockWritingAvailabilityOneOf1Value }
+
+    if (unfinished != null) {
+        Button(onClick = { openEssay(unfinished) }, modifier = modifier, size = ButtonSize.Large) {
+            Text(stringResource(R.string.essay_continue))
+        }
+        return
+    }
+    if (tomorrow) {
+        Row(
+            modifier.heightIn(min = 48.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(painterResource(R.drawable.ic_schedule), null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                stringResource(R.string.goalcontent_written_more_tomorrow),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        return
+    }
+    // The bar's modifier sizes the action within the bar, so it goes on the outermost piece.
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (writeNow.failed) {
+            Text(
+                stringResource(R.string.essay_finish_failed),
+                Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        Button(onClick = { writeNow.write(null) }, modifier = Modifier.fillMaxWidth(), busy = writeNow.busy, size = ButtonSize.Large) {
+            Text(stringResource(R.string.essay_write))
         }
     }
 }

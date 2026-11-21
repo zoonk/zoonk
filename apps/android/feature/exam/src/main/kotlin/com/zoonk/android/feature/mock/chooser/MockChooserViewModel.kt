@@ -38,6 +38,9 @@ sealed interface ChooserStatus {
     data class Refused(
         val limit: Limit,
     ) : ChooserStatus
+
+    /** The written test would be graded as it starts, and today's extra grades are used. */
+    data object GradesUsed : ChooserStatus
 }
 
 /**
@@ -74,6 +77,9 @@ class MockChooserViewModel(
         )
 
     val status: StateFlow<ChooserStatus> = mutableStatus.asStateFlow()
+
+    /** The run writing the written test's questions, while that's what's being written, for its wait's words and its view event. */
+    val writtenTestRun: String? get() = generationId.takeIf { writing?.kind == MockShape.Kind.WRITTEN }
 
     /** Getting the mock ready, before it's written or opened. */
     val busy: StateFlow<Boolean> = mutableBusy.asStateFlow()
@@ -205,6 +211,10 @@ class MockChooserViewModel(
                 metTheLock()
             }
 
+            QuestionWriting.GradesUsed -> {
+                mutableStatus.value = ChooserStatus.GradesUsed
+            }
+
             null -> {
                 return
             }
@@ -234,6 +244,7 @@ class MockChooserViewModel(
                 MockStartOutcome.NotEnoughQuestions -> ChooserStatus.Failed(notEnoughQuestions = true)
                 MockStartOutcome.NeedsQuestions -> ChooserStatus.Failed(notEnoughQuestions = false)
                 MockStartOutcome.PlusRequired -> ChooserStatus.Choosing.also { metTheLock() }
+                MockStartOutcome.GradesUsed -> ChooserStatus.GradesUsed
             }
     }
 

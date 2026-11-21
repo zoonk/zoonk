@@ -90,6 +90,23 @@ private val spanishSubject =
      "topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}
     """.trimIndent()
 
+/** The written part's points over its two questions, how its answers move, and each answer. */
+private val writtenEssay =
+    """
+    {"points":{"name":"Essay","max":100,"minimum":{"unit":"points","value":50},"range":{"low":54,"high":61},"standing":"overlaps",
+      "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":17,"high":19}},
+       {"key":"long","name":"60-line question","max":70,"range":{"low":37,"high":42}}]},
+     "trend":[{"date":"2026-11-02","contentShare":0.48,"presentationShare":0.6,"errors":7},
+      {"date":"2026-11-08","contentShare":0.55,"presentationShare":0.7,"errors":5},
+      {"date":"2026-11-14","contentShare":0.6,"presentationShare":0.72,"errors":4},
+      {"date":"2026-11-19","contentShare":0.64,"presentationShare":0.75,"errors":3}],
+     "answers":[{"attemptId":"00000000-0000-4000-8000-0000000000c1","date":"2026-11-19","lines":30,"range":{"low":17,"high":19},
+       "taskKey":"short","title":"Transparency and access to information","versions":2},
+      {"attemptId":"00000000-0000-4000-8000-0000000000c2","date":"2026-11-14","lines":60,"range":{"low":37,"high":42},
+       "taskKey":"long","title":"Accountability of public managers","versions":1}],
+     "writeActions":[{"taskKey":"short","availability":{"status":"available"}}]}
+    """.trimIndent()
+
 private val essaySubject =
     """
     {"areas":["Essay"],"chapters":[${chapter(1, "Writing the argument", state = "current", done = 1, total = 3)}],"displayWeight":null,
@@ -116,7 +133,7 @@ fun examSyllabus(): Syllabus =
          "kind":"notice","knownTopicsReturn":"practice","lessons":{"done":8,"known":4,"total":45},"noticeUrl":null,"passMarks":null,
          "questionsSource":{"edition":"2024 edition","title":null,"url":"https://www.gov.br/inep"},
          "sharedExams":[],"subjects":[$spanishSubject,$essaySubject,$natureSubject,$studySkills],"topicCount":8,"topicsMapped":true,
-         "writtenPractice":{"cadence":"weekly","finalWeeksFrom":"2027-10-01","parts":["Essay"]}}
+         "writtenPractice":{"cadence":"weekly","finalWeeksFrom":"2027-10-01","parts":["Essay"],"subjects":[$writtenEssay]}}
         """.trimIndent(),
     )
 
