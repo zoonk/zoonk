@@ -139,6 +139,7 @@ fun LessonStepResultView(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
+            notes()
             return@FeedbackPanel
         }
 
