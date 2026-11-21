@@ -81,8 +81,9 @@ export function useMockOptionDetail() {
     const sessions = (option.sections ?? []).flatMap(({ session }) => (session ? [session] : []));
 
     // A test of an exam of several says when it happens, if the notice says; its name says the rest.
+    // The notice's own words for each session are labels, so they're listed apart, not set in a sentence.
     if ((option.sections?.length ?? 0) > 0 && option.kind !== "half") {
-      return format.list(sessions, { type: "conjunction" });
+      return sessions.join(" · ");
     }
 
     const subjects = severalDays && option.kind !== "area" ? option.areas : [];

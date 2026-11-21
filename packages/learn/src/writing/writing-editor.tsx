@@ -35,21 +35,27 @@ export function WritingLineCount({
     text,
   });
 
-  const over = estimatedLines > writing.lines;
+  const over = estimatedLines - writing.lines;
 
   return (
     <p
       aria-live="polite"
       className={cn(
         "font-mono text-xs tabular-nums",
-        over ? "text-warning-text" : "text-muted-foreground",
+        over > 0 ? "text-warning-text" : "text-muted-foreground",
       )}
       id={id}
     >
-      {over
-        ? t("about {used} of {lines} lines · the board won't read past line {lines}", {
-            lines: String(writing.lines),
-            used: String(estimatedLines),
+      {over > 0
+        ? t({
+            description:
+              "The approximate line count of a written answer past its limit; the lines past it are ones the exam board won't read.",
+            message: "about {used} of {lines} lines · {over} won't be read",
+            values: {
+              lines: String(writing.lines),
+              over: String(over),
+              used: String(estimatedLines),
+            },
           })
         : t("about {used} of {lines} lines", {
             lines: String(writing.lines),

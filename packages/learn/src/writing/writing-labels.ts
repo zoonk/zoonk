@@ -38,14 +38,18 @@ export function useLevelName() {
   };
 }
 
-/** A range of points, one number when both ends round alike: "29.8", never "29.79–29.8". */
+/**
+ * A range of points, one number when both ends round alike ("29.8", never "29.79–29.8"), and both
+ * ends with the same decimals ("12.0–17.5", never "12–17.5").
+ */
 export function useFormatPointsRange() {
   const format = useFormatter();
   const formatRange = useFormatRange();
 
-  return ({ high, low }: { high: number; low: number }): string =>
-    formatRange(
-      format.number(low, { maximumFractionDigits: 1 }),
-      format.number(high, { maximumFractionDigits: 1 }),
-    );
+  return ({ high, low }: { high: number; low: number }): string => {
+    const decimals = [low, high].some((value) => Math.round(value * 10) % 10 !== 0) ? 1 : 0;
+    const options = { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
+
+    return formatRange(format.number(low, options), format.number(high, options));
+  };
 }
