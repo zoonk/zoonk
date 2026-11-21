@@ -1,4 +1,12 @@
+import { withUnit } from "@zoonk/utils/math-answer";
+import { getChartValueAxis, getPlotAxes } from "@zoonk/utils/plot-scale";
 import { type ChallengeContent } from "../steps/contract/challenge-content";
+import { placeChartUnit } from "../steps/contract/chart-unit";
+import {
+  type ChallengeVisual,
+  type ChartVisual,
+  type PlotVisual,
+} from "../steps/contract/step-contract";
 import {
   type ChallengePath,
   type ChallengeStep as PathStep,
@@ -81,11 +89,63 @@ function formatChoice(choice: WrittenChoice): string {
   ].join("\n");
 }
 
+function axisLabel(label: string, unit: string | null): string {
+  return unit ? `${label} (${unit})` : label;
+}
+
+function formatPlot(visual: PlotVisual): string[] {
+  const axes = getPlotAxes(visual);
+
+  return [
+    `  X axis: ${axisLabel(visual.xLabel, visual.xUnit)}`,
+    `  Y axis: ${axisLabel(visual.yLabel, visual.yUnit)}`,
+    `  X ticks (at most these): ${axes.x.ticks.join(", ")}`,
+    `  Y ticks: ${axes.y.ticks.join(", ")}`,
+    ...visual.series.map(({ mark, name, points }) => {
+      const positions = points.map(
+        ({ label, x, y }) => `${label ? `"${label}" ` : ""}(${x}, ${y})`,
+      );
+
+      return `  Series "${name}" (${mark}): ${positions.join(", ")}`;
+    }),
+    ...visual.references.map(({ label, y }) => `  Horizontal reference "${label}": y = ${y}`),
+  ];
+}
+
+function formatCategoryChart(visual: ChartVisual): string[] {
+  const { ticks } = getChartValueAxis(visual);
+  const { numberUnit } = placeChartUnit(visual);
+  const mark = visual.chart === "bar" ? "bar" : "lineWithPoints";
+
+  return [
+    `  Category axis: ${visual.categoryLabel}`,
+    `  Value axis: ${axisLabel(visual.valueLabel, visual.unit)}`,
+    `  Categories: ${visual.categories.join(", ")}`,
+    `  Value ticks: ${ticks.join(", ")}`,
+    ...visual.series.map(({ name, values }) => {
+      const points = values.map((value, index) => `${visual.categories[index]} = ${value}`);
+      const labels = values.map((value) => withUnit(String(value), numberUnit ?? undefined));
+
+      return `  Series "${name}" (${mark}): ${points.join(", ")}. Value labels when they fit: ${labels.join(", ")}`;
+    }),
+  ];
+}
+
+function formatVisual(visual: ChallengeVisual): string[] {
+  return [
+    `  Chart: ${visual.title}`,
+    ...(visual.kind === "plot" ? formatPlot(visual) : formatCategoryChart(visual)),
+    ...(visual.source ? [`  Source: ${visual.source}`] : []),
+    "  Only the ticks, labels and marks are visible to the learner.",
+  ];
+}
+
 function formatDecision({ node, routes }: { node: WrittenNode; routes: string[] }): string {
   return [
     `## Decision "${node.id}"`,
     `Reached after: ${routes.join(" | ")}`,
     ...node.messages.map((message) => `  {{${message.from}}}: ${message.text}`),
+    ...(node.visual ? formatVisual(node.visual) : []),
     `  Prompt: ${node.prompt}`,
     ...node.choices.map((choice) => formatChoice(choice)),
   ].join("\n");

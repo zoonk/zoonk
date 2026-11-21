@@ -3,6 +3,7 @@ import { wrapBareLatex } from "@zoonk/utils/bare-latex";
 import { normalizeString, replaceEmDashes, segmentWords } from "@zoonk/utils/string";
 import { findPlaceholderText } from "@zoonk/utils/text-flaws";
 import { findUnrenderedText } from "@zoonk/utils/unrendered-text";
+import { getChartProblems } from "../quality/_utils/visual-references";
 
 export const MIN_SET_QUESTIONS = 2;
 
@@ -32,9 +33,8 @@ export function repairWrittenItemSet(set: WrittenItemSet): WrittenItemSet {
   };
 }
 
-function isInStimulus({ evidence, text }: { evidence: string; text: string }): boolean {
-  const quoted = normalizeString(evidence).replace(/[.…]+$/u, "");
-  return quoted.length > 0 && normalizeString(text).includes(quoted);
+function normalizeEvidence(text: string): string {
+  return normalizeString(text).replace(/[.…]+$/u, "");
 }
 
 function checkStimulus(set: WrittenItemSet): string[] {
@@ -43,6 +43,7 @@ function checkStimulus(set: WrittenItemSet): string[] {
 
   return [
     set.kind === "chart" && !set.visual && "A chart set has no chart.",
+    set.visual ? getChartProblems(set.visual) : [],
     set.kind !== "chart" && findPlaceholderText(set.text),
     words < limits.min && `The ${set.kind} has ${words} words, fewer than ${limits.min}.`,
     words > limits.max && `The ${set.kind} has ${words} words, more than ${limits.max}.`,
@@ -50,6 +51,25 @@ function checkStimulus(set: WrittenItemSet): string[] {
   ]
     .flat()
     .filter((problem) => typeof problem === "string");
+}
+
+function hasEvidence({ evidence, set }: { evidence: string; set: WrittenItemSet }): boolean {
+  const visual = set.visual;
+  const quoted = normalizeEvidence(evidence);
+
+  if (visual?.kind === "plot") {
+    const labels = visual.series.flatMap((series) => [
+      series.name,
+      ...series.points.flatMap((point) => (point.label === null ? [] : [point.label])),
+    ]);
+
+    return (
+      quoted.length > 0 &&
+      labels.some((label) => normalizeEvidence(repairQuotable(label)) === quoted)
+    );
+  }
+
+  return set.kind === "chart" || (quoted.length > 0 && normalizeString(set.text).includes(quoted));
 }
 
 function checkQuestion({
@@ -64,9 +84,7 @@ function checkQuestion({
   return [
     (question.skill < 1 || question.skill > skillCount) &&
       `Tests skill ${question.skill}, which isn't one of the ${skillCount} skills.`,
-    set.kind !== "chart" &&
-      !isInStimulus({ evidence: question.evidence, text: set.text }) &&
-      "Its evidence isn't in the stimulus.",
+    !hasEvidence({ evidence: question.evidence, set }) && "Its evidence isn't in the stimulus.",
   ].filter((problem) => typeof problem === "string");
 }
 

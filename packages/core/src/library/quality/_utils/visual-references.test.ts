@@ -1,5 +1,6 @@
+import { challengePlotFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { describe, expect, it } from "vitest";
-import { getVisualProblems, pointsAtFigure } from "./visual-references";
+import { getChartProblems, getVisualProblems, pointsAtFigure } from "./visual-references";
 
 const CHART = {
   axisStart: null,
@@ -148,7 +149,91 @@ describe("what a screen's words point at", () => {
   });
 });
 
+describe(getChartProblems, () => {
+  it("accepts a position-time line sampled at irregular intervals", () => {
+    const plot = {
+      ...challengePlotFixture(),
+      references: [],
+      series: [
+        {
+          mark: "line" as const,
+          name: "Cart",
+          points: [
+            { label: null, x: 1, y: 2 },
+            { label: "Stop", x: 2, y: 5 },
+            { label: null, x: 9, y: 5 },
+          ],
+        },
+      ],
+      title: "Position over time",
+      yLabel: "Position",
+      yUnit: "m",
+    };
+
+    expect(getChartProblems(plot)).toStrictEqual([]);
+  });
+
+  it("permits repeated x coordinates for scatter, while a line follows increasing x", () => {
+    const plot = challengePlotFixture();
+
+    const points = [
+      { label: null, x: 2, y: 5 },
+      { label: "Peak", x: 2, y: 9 },
+    ];
+
+    const series = { name: "Position", points };
+
+    expect(getChartProblems({ ...plot, series: [{ ...series, mark: "points" }] })).toStrictEqual(
+      [],
+    );
+
+    expect(getChartProblems({ ...plot, series: [{ ...series, mark: "line" }] })).toStrictEqual([
+      expect.stringContaining("strictly increasing x"),
+    ]);
+  });
+
+  it("checks every series, point and reference even before a chart is stored", () => {
+    const plot = challengePlotFixture();
+
+    expect(getChartProblems({ ...plot, series: [] })).toStrictEqual([
+      "The chart needs at least one series.",
+    ]);
+
+    const flaws = getChartProblems({
+      ...plot,
+      references: [{ label: "Control", y: Number.NaN }],
+      series: [
+        { mark: "line", name: "Assembly A", points: [{ label: "Peak", x: 1, y: Infinity }] },
+        { mark: "points", name: "assembly A", points: [{ label: "peak", x: 3, y: 4 }] },
+        { mark: "points", name: "Assembly B", points: [] },
+      ],
+    });
+
+    expect(flaws).toStrictEqual([
+      "Chart series names must be unique.",
+      expect.stringContaining("without finite x and y"),
+      expect.stringContaining("at least two points"),
+      expect.stringContaining("has no points"),
+      expect.stringContaining("without a finite y"),
+      "Plot point labels must be unique.",
+    ]);
+  });
+});
+
 describe(getVisualProblems, () => {
+  it("satisfies a chart reference with a numeric plot", () => {
+    const problems = getVisualProblems({
+      language: "en",
+      shown: {
+        hasImage: false,
+        texts: ["Read the chart to see when the pressure falls."],
+        visual: challengePlotFixture(),
+      },
+    });
+
+    expect(problems).toStrictEqual([]);
+  });
+
   it("asks for the visual a screen points at but doesn't show", () => {
     const problems = getVisualProblems({
       language: "pt",

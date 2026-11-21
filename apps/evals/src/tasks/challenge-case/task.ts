@@ -17,6 +17,7 @@ async function generateFirstChallengeDraft(params: ChallengeCaseParams) {
   const plan = await generateChallengePlan(params);
 
   const problems = checkChallengePlan({
+    language: params.language,
     plan: plan.data,
     skills: params.skills,
     variant: params.variant,
@@ -41,9 +42,9 @@ async function generateFirstChallengeDraft(params: ChallengeCaseParams) {
   };
 }
 
-function checkOutput(output: string, variant: ChallengeCaseParams["variant"]): CodeCheckResult {
+function checkOutput(output: string, { language, variant }: ChallengeCaseParams): CodeCheckResult {
   const written = JSON.parse(output) as WrittenChallengeCase;
-  const { problems } = checkWrittenChallenge({ variant, written });
+  const { problems } = checkWrittenChallenge({ language, variant, written });
 
   return { judgedOutput: output, passed: problems.length === 0 ? 1 : 0, problems, total: 1 };
 }
@@ -56,7 +57,7 @@ export const challengeCaseTask: Task<OptionalCountry<ChallengeCaseParams>, Writt
   name: "Challenge case",
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
-      check: (text) => checkOutput(text, (testCase.userInput as ChallengeCaseParams).variant),
+      check: (text) => checkOutput(text, testCase.userInput as ChallengeCaseParams),
       output,
       scoreCategories: CHALLENGE_CASE_SCORE_CATEGORIES,
       testCase,

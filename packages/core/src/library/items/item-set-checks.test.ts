@@ -1,3 +1,4 @@
+import { challengePlotFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { describe, expect, it } from "vitest";
 import { writtenItemSet } from "./_test-utils/generated-items";
 import { checkWrittenItemSet, repairWrittenItemSet } from "./item-set-checks";
@@ -82,6 +83,27 @@ describe(checkWrittenItemSet, () => {
         [],
       ],
       set: ["Has 1 askable questions, fewer than 2."],
+    });
+  });
+
+  it("uses series names or point labels as evidence for plot questions", () => {
+    const set = writtenItemSet({ kind: "chart", text: "", visual: challengePlotFixture() });
+    const evidence = ["Scan A", "Valley", "An unmarked peak"];
+
+    const check = checkWrittenItemSet({
+      set: {
+        ...set,
+        questions: set.questions.map((question, index) => ({
+          ...question,
+          evidence: evidence[index] ?? "",
+        })),
+      },
+      skillCount: 2,
+    });
+
+    expect(check).toStrictEqual({
+      questions: [[], [], ["Its evidence isn't in the stimulus."]],
+      set: [],
     });
   });
 

@@ -1,6 +1,9 @@
-import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
+import {
+  challengePlotFixture,
+  writtenChallengeCaseFixture,
+} from "@zoonk/testing/fixtures/challenge-written-case";
 import { describe, expect, it } from "vitest";
-import { type PlotVisual, safeParseStepContent } from "../steps/contract/step-contract";
+import { safeParseStepContent } from "../steps/contract/step-contract";
 import { checkWrittenChallenge } from "./challenge-case-content";
 
 type WrittenCase = ReturnType<typeof writtenChallengeCaseFixture>;
@@ -18,7 +21,7 @@ function withStrongestFirst(written: WrittenCase): WrittenCase {
 }
 
 function choiceIdsByNode(written: WrittenCase): string[][] {
-  const { content } = checkWrittenChallenge({ variant: "work", written });
+  const { content } = checkWrittenChallenge({ language: "en", variant: "work", written });
   return content?.nodes.map((node) => node.choices.map((choice) => choice.id)) ?? [];
 }
 
@@ -26,28 +29,10 @@ describe(checkWrittenChallenge, () => {
   it("round-trips a decision's plot and leaves other decisions without a visual", () => {
     const written = writtenChallengeCaseFixture();
 
-    const visual: PlotVisual = {
-      kind: "plot",
-      references: [{ label: "Limit", y: 12 }],
-      series: [
-        {
-          mark: "lineWithPoints",
-          name: "Line A",
-          points: [
-            { label: null, x: 1, y: 8 },
-            { label: "Peak", x: 6, y: 11 },
-          ],
-        },
-      ],
-      source: null,
-      title: "Pressure over time",
-      xLabel: "Time",
-      xUnit: "s",
-      yLabel: "Pressure",
-      yUnit: "kPa",
-    };
+    const visual = challengePlotFixture();
 
     const { content } = checkWrittenChallenge({
+      language: "en",
       variant: "work",
       written: {
         ...written,
@@ -65,9 +50,59 @@ describe(checkWrittenChallenge, () => {
     );
   });
 
+  it("requires the chart each decision points to and rejects references in endings", () => {
+    const written = writtenChallengeCaseFixture();
+
+    const nodes = written.nodes.map((node) => ({
+      ...node,
+      prompt: node.id === written.startNodeId ? "Was steht im Diagramm?" : node.prompt,
+    }));
+
+    const missing = checkWrittenChallenge({
+      language: "de",
+      variant: "work",
+      written: { ...written, nodes },
+    });
+
+    expect(missing.problems).toStrictEqual([
+      expect.stringContaining("points at a chart but shows none"),
+    ]);
+
+    const withChart = {
+      ...written,
+      nodes: nodes.map((node) =>
+        node.id === written.startNodeId ? { ...node, visual: challengePlotFixture() } : node,
+      ),
+    };
+
+    expect(
+      checkWrittenChallenge({ language: "de", variant: "work", written: withChart }).problems,
+    ).toStrictEqual([]);
+
+    const endings = withChart.endings.map((ending, index) =>
+      index === 0 ? { ...ending, outcome: "Das Diagramm zeigt den Druck." } : ending,
+    );
+
+    expect(
+      checkWrittenChallenge({ language: "de", variant: "work", written: { ...withChart, endings } })
+        .problems,
+    ).toStrictEqual([expect.stringContaining("the ending has no chart")]);
+  });
+
+  it.each(["Pressure: ███", "y | * * *", "Pressure: ###"])(
+    "rejects a one-line drawing in learner text (%s)",
+    (drawing) => {
+      const written = { ...writtenChallengeCaseFixture(), summary: [drawing] };
+      const checked = checkWrittenChallenge({ language: "en", variant: "work", written });
+
+      expect(checked.content).toBeNull();
+      expect(checked.problems).toStrictEqual([expect.stringContaining("with characters")]);
+    },
+  );
+
   it("doesn't keep the strongest choice first in every decision", () => {
     const written = withStrongestFirst(writtenChallengeCaseFixture());
-    const { content } = checkWrittenChallenge({ variant: "work", written });
+    const { content } = checkWrittenChallenge({ language: "en", variant: "work", written });
 
     expect(written.nodes.every((node) => node.choices[0]?.quality === "strong")).toBe(true);
 
@@ -105,7 +140,9 @@ describe(checkWrittenChallenge, () => {
       team: [...written.team, ...colleagues],
     };
 
-    expect(checkWrittenChallenge({ variant: "work", written: long }).problems).toStrictEqual([]);
+    expect(
+      checkWrittenChallenge({ language: "en", variant: "work", written: long }).problems,
+    ).toStrictEqual([]);
   });
 
   it("keeps every choice and the same order on every check", () => {
@@ -155,13 +192,14 @@ describe(checkWrittenChallenge, () => {
       panels: [{ ...panel, metrics: [plot] }],
     };
 
-    const checked = checkWrittenChallenge({ variant: "work", written: drawn });
+    const checked = checkWrittenChallenge({ language: "en", variant: "work", written: drawn });
 
     expect(checked.content).toBeNull();
 
     expect(checked.problems).toStrictEqual([
       expect.stringContaining('"Dose vs. response" runs over several lines'),
       expect.stringContaining('"Week\nSales" runs over several lines'),
+      expect.stringContaining("with characters"),
     ]);
   });
 });

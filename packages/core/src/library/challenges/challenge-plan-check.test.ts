@@ -29,6 +29,7 @@ function plan(): ChallengePlan {
         pull: "The manager wants an answer now",
         situation: "Version B is ahead",
         skills: ["chance"],
+        visual: null,
       },
       {
         choices: [
@@ -40,6 +41,7 @@ function plan(): ChallengePlan {
         pull: "The manager wants one line",
         situation: "The manager asks what to tell the team",
         skills: ["chance"],
+        visual: null,
       },
     ],
     endings: [
@@ -55,20 +57,22 @@ function plan(): ChallengePlan {
     startDecisionId: "start",
     team: [{ ai: true, expertise: "Runs checks", id: "ai", role: "AI assistant" }],
     title: "Is version B ready?",
+    visuals: [],
   };
 }
 
 describe(checkChallengePlan, () => {
   it("passes a plan whose graph and facts hold, before any prose exists", () => {
-    expect(checkChallengePlan({ plan: plan(), skills: ["chance"], variant: "work" })).toStrictEqual(
-      [],
-    );
+    expect(
+      checkChallengePlan({ language: "en", plan: plan(), skills: ["chance"], variant: "work" }),
+    ).toStrictEqual([]);
   });
 
   it("finds a broken graph in the plan", () => {
     const broken = plan();
 
     const problems = checkChallengePlan({
+      language: "en",
       plan: {
         ...broken,
         decisions: broken.decisions.map((decision) => ({
@@ -92,7 +96,9 @@ describe(checkChallengePlan, () => {
   it("finds a plan that dropped a skill it was given", () => {
     const given = ["chance", "sample", "explain", "plan", "report"];
 
-    expect(checkChallengePlan({ plan: plan(), skills: given, variant: "work" })).toStrictEqual([
+    expect(
+      checkChallengePlan({ language: "en", plan: plan(), skills: given, variant: "work" }),
+    ).toStrictEqual([
       "The plan trains 1 of the 5 skills it must: `skills` needs one entry for each skill in SKILLS, in the same order, each trained by a decision",
     ]);
   });
@@ -101,6 +107,7 @@ describe(checkChallengePlan, () => {
     const base = plan();
 
     const problems = checkChallengePlan({
+      language: "en",
       plan: {
         ...base,
         endings: base.endings.map((ending) => ({ ...ending, restsOn: ["test"] })),

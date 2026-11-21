@@ -47,7 +47,8 @@ function showsPicture({ screen }: VisualInput): boolean {
 }
 
 const SHOWS_PLANNED: Readonly<Record<LessonVisualKind, (input: VisualInput) => boolean>> = {
-  chart: showsDrawing,
+  chart: (input) =>
+    showsDrawing(input) || ("visual" in input.screen && input.screen.visual?.kind === "plot"),
   none: () => true,
   picture: showsPicture,
   table: ({ screen }) => showsTable(screen),
