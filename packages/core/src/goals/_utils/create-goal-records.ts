@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { claimBundleInWrite, openUsageLedgerInWrite } from "../../entitlements/bundle-claims";
@@ -64,7 +64,21 @@ export type CourseGoalOrigin = {
   sourceCourseId?: string;
 };
 
+export type CardPlace = { draftId: string; place: number };
+
+export function getCardPlace(
+  goal: Pick<Goal, "onboardingDraftId" | "onboardingPlace">,
+): CardPlace | undefined {
+  const { onboardingDraftId: draftId, onboardingPlace: place } = goal;
+  return draftId === null || place === null ? undefined : { draftId, place };
+}
+
+function toCardColumns(card?: CardPlace) {
+  return { onboardingDraftId: card?.draftId ?? null, onboardingPlace: card?.place ?? null };
+}
+
 type GoalRecord = {
+  card?: CardPlace;
   courseStart?: CourseGoalOrigin;
   dailyMinutes: number;
   draft: GoalDraft;
@@ -78,6 +92,7 @@ type GoalRecord = {
 export async function insertGoalWithPlan(
   tx: TransactionClient,
   {
+    card,
     courseStart,
     dailyMinutes,
     draft,
@@ -117,6 +132,7 @@ export async function insertGoalWithPlan(
       id,
       kind: draft.kind,
       language: draft.language,
+      ...toCardColumns(card),
       planRevealedAt: planShown ? new Date() : null,
       primaryCourseId: draft.primaryCourseId ?? null,
       prompt: draft.prompt,
@@ -160,10 +176,31 @@ async function pauseGoal(
   }
 }
 
+/** An archived goal frees its place, so the card can start it again. */
+async function findCardGoal(
+  tx: TransactionClient,
+  { card, userId }: { card: CardPlace; userId: string },
+): Promise<{ card?: CardPlace; goalId?: string }> {
+  const draft = await tx.onboardingDraft.findFirst({
+    select: {
+      goals: {
+        orderBy: { createdAt: "desc" },
+        select: { id: true },
+        take: 1,
+        where: { onboardingPlace: card.place, status: { not: "archived" } },
+      },
+    },
+    where: { id: card.draftId, userId },
+  });
+
+  return draft ? { card, goalId: draft.goals[0]?.id } : {};
+}
+
 /**
  * Claims the goal in its own write, under the plan→user lock, so the claim's active-goal count is
  * the one the insert sees and a refused start charges nothing and leaves the goal it would have
- * paused active.
+ * paused active. The same lock makes the card lookup and the insert one step, so a card confirmed
+ * twice, at once or after a lost response, gets the goal the first confirm made.
  */
 export async function createGoal(
   record: GoalRecord & { input: GoalCreateInput; viewer: EntitlementViewer },
@@ -183,6 +220,14 @@ export async function createGoal(
         }
       }
 
+      const { card, goalId } = record.card
+        ? await findCardGoal(transaction, { card: record.card, userId })
+        : {};
+
+      if (goalId) {
+        return unchanged({ goalId, status: "existing" });
+      }
+
       if (!isExplanation) {
         await pauseGoal(transaction, { goalId: input.pauseGoalId, userId });
       }
@@ -198,7 +243,7 @@ export async function createGoal(
         return unchanged(decision);
       }
 
-      await insertGoalWithPlan(transaction, record);
+      await insertGoalWithPlan(transaction, { ...record, card });
       return decision;
     },
   );

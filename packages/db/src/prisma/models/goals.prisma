@@ -108,6 +108,11 @@ model Goal {
   replacesGoalId        String?                @unique @map("replaces_goal_id") @db.Uuid
   replaces              Goal?                  @relation("GoalReplacement", fields: [replacesGoalId], references: [id], onDelete: SetNull)
   replacedBy            Goal?                  @relation("GoalReplacement")
+  /// The onboarding card the goal started from and its place on it, written only from a card the
+  /// learner owns, so confirming that card again returns this goal instead of making another.
+  onboardingDraftId     String?                @map("onboarding_draft_id") @db.Uuid
+  onboardingDraft       OnboardingDraft?       @relation(fields: [onboardingDraftId], references: [id], onDelete: SetNull)
+  onboardingPlace       Int?                   @map("onboarding_place") @db.SmallInt
   generationRunId       String?                @map("generation_run_id")
   /// Asking for research again follows this run instead of paying again, unless it failed.
   researchRunId         String?                @map("research_run_id")
@@ -140,6 +145,7 @@ model Goal {
   @@index([openingLessonId])
   @@index([productId])
   @@index([productReleaseId])
+  @@index([onboardingDraftId, onboardingPlace])
   @@map("goals")
 }
 
