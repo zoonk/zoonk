@@ -16,10 +16,10 @@ final class BlockTitleTests: XCTestCase {
       block.label, "1 more topic", "the title names the first topic; the line counts the rest")
   }
 
-  func testAnExtraPracticeIsNamedAfterItsFirstTopic() throws {
+  func testAnExtraPracticeKeepsItsTitleAndOnlyTheTagMarksIt() throws {
     let block: StudyBlock = try decode(practice(topics: topics, extra: true))
 
-    XCTAssertEqual(block.displayTitle, "Bonus practice: Reading slope as a rate")
+    XCTAssertEqual(block.displayTitle, "Practice: Reading slope as a rate")
   }
 
   func testAPracticeOnOneTopicShowsItsSubjectUnderIt() throws {
