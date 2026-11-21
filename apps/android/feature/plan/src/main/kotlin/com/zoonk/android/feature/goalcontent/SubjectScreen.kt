@@ -458,7 +458,7 @@ private fun WriteButton(
     }
     val choice = pendingChoice(written)
     if (choice?.all == true) {
-        ChooseOnToday(choice.groups, onChoose = openToday, modifier = modifier.heightIn(min = 48.dp))
+        Button(onClick = openToday, modifier = modifier, size = ButtonSize.Large) { Text(stringResource(R.string.essay_choose_on_today)) }
         return
     }
     val returns = returnsOn(actions)

@@ -58,7 +58,6 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.feature.subscription.GateWords
-import com.zoonk.android.feature.writing.ChooseOnToday
 import com.zoonk.android.feature.writing.choiceLine
 import com.zoonk.android.feature.writing.gradingReturnsLine
 import com.zoonk.android.navigation.AppNavigator
@@ -89,7 +88,7 @@ import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.android.ui.theme.balanced
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
 import com.zoonk.api.models.MockOptionSectionsInner
@@ -136,9 +135,12 @@ internal fun PracticeChooser(
     // The bar's button becomes Subscribe once a Start met the lock, until a purchase opens the mocks.
     val triedLocked by viewModel.triedLocked.collectAsStateWithLifecycle()
     val gated = triedLocked && !open
+    // A pick whose questions wait for an exam choice has nothing to start: its row says why, and the bar leads to the choice.
     val mainAction = {
         if (gated) {
             navigator.open(AppRoute.Subscription)
+        } else if (pickedChoice != null) {
+            navigator.showRoot(AppTab.Today)
         } else if (option != null && !busy && !blocked) {
             onStart()
             if (open) viewModel.start(option.shape, option.key) else viewModel.tryLocked()
@@ -148,6 +150,10 @@ internal fun PracticeChooser(
         if (gated) {
             Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
                 Text(stringResource(R.string.subscription_subscribe))
+            }
+        } else if (pickedChoice != null) {
+            Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
+                Text(stringResource(R.string.essay_choose_on_today))
             }
         } else {
             Button(
@@ -165,14 +171,8 @@ internal fun PracticeChooser(
         note =
             when {
                 gated -> ({ MockGate() })
-
                 shown is ChooserStatus.Refused -> ({ Refusal(shown, navigator) })
-
                 shown is ChooserStatus.Failed -> ({ StartFailed(shown) })
-
-                // What the picked option needs first: its row already says why it can't start.
-                pickedChoice != null -> ({ ChooseOnToday(pickedChoice, onChoose = { navigator.showRoot(AppTab.Today) }) })
-
                 else -> null
             },
         bar = { TaskActions { main -> action(main) } },
@@ -546,7 +546,7 @@ private fun ChoiceSize(
         choice.trailing,
         modifier = modifier,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = style.withTabularFigures(),
+        style = MaterialTheme.zoonkType.data.copy(fontSize = style.fontSize, lineHeight = style.lineHeight),
     )
 }
 

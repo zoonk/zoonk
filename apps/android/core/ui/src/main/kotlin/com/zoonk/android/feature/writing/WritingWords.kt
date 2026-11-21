@@ -13,8 +13,8 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.ButtonEdge
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatList
@@ -84,7 +84,8 @@ fun choiceLine(choiceGroups: List<String>): String =
 
 /**
  * Today asks the exam's open choices ("which one will you take?"), so a written task waiting for
- * one leads there. [task] names the one question that waits when others don't.
+ * one leads there, beside what can still be written. [task] names the one question that waits when
+ * others don't. When nothing can be written before the choice, "Choose on Today" is the main action.
  */
 @Composable
 fun ChooseOnToday(
@@ -108,6 +109,6 @@ fun ChooseOnToday(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        TextButton(onClick = onChoose, edge = ButtonEdge.Start) { Text(stringResource(R.string.essay_choose_on_today)) }
+        OutlinedButton(onClick = onChoose, size = ButtonSize.Small) { Text(stringResource(R.string.essay_choose_on_today)) }
     }
 }
