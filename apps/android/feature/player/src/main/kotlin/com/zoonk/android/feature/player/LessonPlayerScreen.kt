@@ -262,7 +262,8 @@ fun LessonPlayer(
         if (shownStep != null) viewModel.firstSceneVisible()
         onPauseOrDispose {}
     }
-    language.prompt?.let { PromptAudioEffect(shownStep, viewModel.cantTalk, viewModel.cantListen, it) }
+    val promptStep = shownStep?.takeIf { viewModel.todayChoicesRead }
+    language.prompt?.let { PromptAudioEffect(promptStep, viewModel.cantTalk, viewModel.cantListen, it) }
     val activity = LocalActivity.current
     LifecycleStartEffect(viewModel) {
         viewModel.resume()

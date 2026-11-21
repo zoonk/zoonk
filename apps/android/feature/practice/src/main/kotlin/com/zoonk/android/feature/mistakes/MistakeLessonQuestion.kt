@@ -22,6 +22,7 @@ import com.zoonk.android.feature.player.ResultNext
 import com.zoonk.android.feature.player.TodayChoice
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.screen
+import com.zoonk.android.feature.player.language.PromptAudioStopEffect
 import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toApi
@@ -201,6 +202,7 @@ internal fun MistakeLessonQuestion(
     ) { part, _, _ ->
         CompositionLocalProvider(LocalLessonSpeech provides app.speech) {
             val language = rememberLessonLanguage(task.language, task.targetLanguage)
+            language.prompt?.let { PromptAudioStopEffect(task.step, cannotTalk, cannotListen, it) }
             if (ideas) {
                 if (part.showsScreen) DrillIdeas(task.drill, onOpenLesson = null)
                 return@CompositionLocalProvider

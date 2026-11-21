@@ -345,6 +345,8 @@ class LessonPlayerViewModel(
         writingExampleLines = false
         mutableEnding.value = LessonEnding(inSession = studySessionId != null)
         mutableExplanations.value = emptyMap()
+        todayChoicesRead = false
+        work.launch { readTodayChoices(session) }
         // Written content is usable while admission runs; server work still waits for its run.
         openedAt = now()
         mutableState.value = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = openedAt).withFirstAnswer(openedAt)
@@ -563,6 +565,16 @@ class LessonPlayerViewModel(
     fun setCantListen(chosen: Boolean) {
         listenDay.value = choices.today().takeIf { chosen }
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantListen, chosen) } }
+    }
+
+    /** Whether this learner's choices for the day are read yet; until they are, no screen plays its sound on its own. */
+    var todayChoicesRead by mutableStateOf(false)
+        private set
+
+    private suspend fun readTodayChoices(session: AuthenticatedSession?) {
+        talkDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
+        listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
+        todayChoicesRead = true
     }
 
     /**
@@ -887,8 +899,6 @@ class LessonPlayerViewModel(
         if (session != null && choices.isChosen(session, TodayChoice.CantWrite)) {
             state = reduce(state, LessonAction.SkipWriting(opening = true), started)
         }
-        talkDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantTalk) }
-        listenDay.value = choices.today().takeIf { session != null && choices.isChosen(session, TodayChoice.CantListen) }
 
         // After the server's answers rebuild the run, what the learner did and hadn't checked comes back on the screens the
         // run has no answer for, under the round it was saved in, when Android closed the app in the background; what they

@@ -122,6 +122,21 @@ fun PromptAudioEffect(
     }
 }
 
+/**
+ * Where a screen's sound plays only from its button, as in practice, it still stops once the
+ * learner switches to reading or typing what it says.
+ */
+@Composable
+fun PromptAudioStopEffect(
+    step: LessonStep,
+    cantTalk: Boolean,
+    cantListen: Boolean,
+    prompt: PromptAudio,
+) {
+    val quiet = shownPromptUrl(step, cantTalk, cantListen) == null
+    LaunchedEffect(quiet) { if (quiet) prompt.cancel() }
+}
+
 internal fun shownPromptUrl(
     step: LessonStep,
     cantTalk: Boolean,
