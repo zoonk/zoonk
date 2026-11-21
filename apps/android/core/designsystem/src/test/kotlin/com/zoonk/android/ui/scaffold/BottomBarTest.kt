@@ -34,6 +34,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -88,6 +89,7 @@ class BottomBarTest {
                 focus = LocalFocusManager.current
                 inputMode = LocalInputModeManager.current
                 Column(Modifier.fillMaxSize()) {
+                    Button(onClick = {}) { Text("Previous") }
                     Spacer(Modifier.weight(1f))
                     BottomBar(note = { Button(onClick = {}) { Text("Subscribe") } }) { Button(onClick = {}) { Text("Start") } }
                 }
@@ -96,6 +98,7 @@ class BottomBarTest {
 
         compose.onNodeWithText("Subscribe").assertIsDisplayed()
         compose.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
+        compose.onNodeWithText("Previous").requestFocus().assertIsFocused()
         compose.runOnIdle { focus.moveFocus(FocusDirection.Next) }
         compose.onNodeWithText("Subscribe").assertIsFocused()
         compose.runOnIdle { focus.moveFocus(FocusDirection.Next) }
