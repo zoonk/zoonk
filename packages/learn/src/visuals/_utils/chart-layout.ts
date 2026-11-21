@@ -2,16 +2,21 @@ import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import {
   type LinearScale,
   type NumericDomain,
+  type TickFormatter,
   createLinearScale,
   fittingTickIndices,
+  formatTicks,
   getChartValueAxis,
 } from "@zoonk/utils/plot-scale";
 import {
   type CategoryLabelLayout,
+  type LabelWidth,
+  type TextWidth,
   clampLabelCenter,
+  estimateTextWidth,
   fitsUnderBars,
   getCategoryLabels,
-  getLabelWidth,
+  toLabelWidth,
   wrapLabel,
 } from "./category-labels";
 
@@ -42,6 +47,8 @@ export type ColumnLayout = {
   center: (index: number) => number;
   height: number;
   labels: CategoryLabelLayout;
+  /** Where each name is centered: under its mark, moved in so it stays inside the chart. */
+  labelCenters: number[];
   left: number;
   orientation: "vertical";
   y: LinearScale;
@@ -63,8 +70,17 @@ export type RowLayout = {
   xTicks: PlacedTick[];
 };
 
-export function fitsLabel(label: string, room: number): boolean {
-  return getLabelWidth(label) <= room + LABEL_GAP;
+/** Values beside marks are drawn in medium weight. */
+export function fitsLabel({
+  label,
+  room,
+  textWidth = estimateTextWidth,
+}: {
+  label: string;
+  room: number;
+  textWidth?: TextWidth;
+}): boolean {
+  return textWidth(label, "medium") <= room;
 }
 
 /** Upright bars share their category's band, so each series thins them; past this they're slivers. */
@@ -72,26 +88,32 @@ function fitsBarsSideBySide({ band, seriesCount }: { band: number; seriesCount: 
   return (band * GROUP_SHARE) / seriesCount - BAR_GAP >= MIN_BAR_WIDTH;
 }
 
-function getWidestLabel(labels: string[]): number {
-  return Math.max(0, ...labels.map((label) => getLabelWidth(label)));
+function getWidestLabel(labels: string[], labelWidth: LabelWidth): number {
+  return Math.max(0, ...labels.map((label) => labelWidth(label)));
 }
 
 function getValueRoom({
   formatValue,
   origin,
+  textWidth,
   values,
 }: {
   formatValue: (value: number) => string;
   origin: number;
+  textWidth: TextWidth;
   values: number[];
 }) {
+  const valueWidth = toLabelWidth((text) => textWidth(text, "medium"));
+
+  const widest = (side: number[]) =>
+    getWidestLabel(
+      side.map((value) => formatValue(value)),
+      valueWidth,
+    );
+
   return {
-    left: getWidestLabel(
-      values.filter((value) => value < origin).map((value) => formatValue(value)),
-    ),
-    right: getWidestLabel(
-      values.filter((value) => value >= origin).map((value) => formatValue(value)),
-    ),
+    left: widest(values.filter((value) => value < origin)),
+    right: widest(values.filter((value) => value >= origin)),
   };
 }
 
@@ -128,15 +150,17 @@ function sum(values: number[]): number {
 
 function placeRows({
   categories,
+  labelWidth,
   seriesCount,
   width,
 }: {
   categories: string[];
+  labelWidth: LabelWidth;
   seriesCount: number;
   width: number;
 }): BarRow[] {
   const names = categories.map((name) => ({
-    lines: wrapLabel({ label: name, room: width }),
+    lines: wrapLabel({ label: name, labelWidth, room: width }),
     name,
   }));
 
@@ -149,23 +173,23 @@ function placeRows({
 
 /** Keeps every Nth tick label, the fewest skipped that leaves none touching where they're drawn. */
 function thinTicks({
-  start,
+  labelWidth,
   ticks,
   width,
   x,
 }: {
-  start?: number;
+  labelWidth: LabelWidth;
   ticks: Tick[];
   width: number;
   x: LinearScale;
 }): PlacedTick[] {
   const placed = ticks.map((tick) => ({
     ...tick,
-    center: clampLabelCenter({ lines: [tick.label], start, width, x: x.toPixel(tick.value) }),
+    center: clampLabelCenter({ labelWidth, lines: [tick.label], width, x: x.toPixel(tick.value) }),
   }));
 
   const bounds = placed.map(({ center, label }) => {
-    const half = getLabelWidth(label) / 2;
+    const half = labelWidth(label) / 2;
     return { left: center - half, right: center + half };
   });
 
@@ -176,22 +200,26 @@ function thinTicks({
 function getRowLayout({
   axis,
   formatValue,
+  textWidth,
   visual,
   width,
 }: {
   axis: ValueAxis;
   formatValue: (value: number) => string;
+  textWidth: TextWidth;
   visual: ChartVisual;
   width: number;
 }): RowLayout {
+  const labelWidth = toLabelWidth(textWidth);
   const origin = Math.max(axis.domain[0], 0);
-  const room = getValueRoom({ formatValue, origin, values: axis.values });
+  const room = getValueRoom({ formatValue, origin, textWidth, values: axis.values });
   const showValues = Math.max(room.left, room.right) <= width * MAX_VALUE_SHARE;
   const range = showValues ? ([room.left, width - room.right] as const) : ([0, width] as const);
   const x = createLinearScale({ domain: axis.domain, range });
 
   const rows = placeRows({
     categories: visual.categories,
+    labelWidth,
     seriesCount: visual.series.length,
     width,
   });
@@ -209,47 +237,66 @@ function getRowLayout({
     showValues,
     tickY,
     x,
-    xTicks: thinTicks({ ticks: axis.ticks, width, x }),
+    xTicks: thinTicks({ labelWidth, ticks: axis.ticks, width, x }),
   };
 }
 
+/**
+ * Lays out a category chart. `formatTick` prints one value tick in the chart's notation, and
+ * `formatTicks` picks the decimals and the short form that keep every tick distinct. Labels are
+ * measured with `textWidth`, estimated where the chart's font can't be measured.
+ */
 export function getLayout({
   formatTick,
   formatValue,
+  textWidth = estimateTextWidth,
   visual,
   width,
 }: {
-  formatTick: (tick: number) => string;
+  formatTick: TickFormatter;
   formatValue: (value: number) => string;
+  textWidth?: TextWidth;
   visual: ChartVisual;
   width: number;
 }): ColumnLayout | RowLayout {
   const { domain, ticks, values } = getChartValueAxis(visual);
+  const labelWidth = toLabelWidth(textWidth);
+  const tickLabels = formatTicks({ axis: "y", format: formatTick, ticks });
 
   const axis = {
     domain,
-    ticks: ticks.map((value) => ({ label: formatTick(value), value })),
+    ticks: ticks.map((value, index) => ({ label: tickLabels[index] ?? "", value })),
     values,
   };
 
-  const left = Math.max(PADDING.left, getWidestLabel(axis.ticks.map((tick) => tick.label)));
+  const left = Math.max(PADDING.left, getWidestLabel(tickLabels, labelWidth));
   const plotWidth = Math.max(width - left - PADDING.right, 1);
   const band = plotWidth / visual.categories.length;
-  const labels = getCategoryLabels({ band, categories: visual.categories });
+  const labels = getCategoryLabels({ band, categories: visual.categories, labelWidth });
 
   const upright =
     fitsUnderBars(labels) && fitsBarsSideBySide({ band, seriesCount: visual.series.length });
 
   if (visual.chart === "bar" && !upright) {
-    return getRowLayout({ axis, formatValue, visual, width });
+    return getRowLayout({ axis, formatValue, textWidth, visual, width });
   }
 
   const lines = Math.max(...labels.lines.map((label) => label.length));
+  const center = (index: number) => left + band * index + band / 2;
 
   return {
     band,
-    center: (index) => left + band * index + band / 2,
+    center,
     height: HEIGHT + (lines - 1) * LABEL_LINE_HEIGHT,
+    labelCenters: visual.categories.map((category, index) =>
+      clampLabelCenter({
+        labelWidth,
+        lines: labels.lines[index] ?? [category],
+        start: left,
+        width,
+        x: center(index),
+      }),
+    ),
     labels,
     left,
     orientation: "vertical",

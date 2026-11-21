@@ -1,4 +1,4 @@
-/** About how wide one character of a 12px label is, to keep category labels from overlapping. */
+/** About how wide one character of a 12px Latin label is, where the chart's font can't be measured. */
 const LABEL_CHAR_WIDTH = 6.6;
 const LABEL_GAP = 6;
 const MAX_LINES_UNDER_BAR = 2;
@@ -10,15 +10,18 @@ export type TextWidth = (text: string, weight?: "medium") => number;
 
 export const estimateTextWidth: TextWidth = (text) => text.length * LABEL_CHAR_WIDTH;
 
-export function getLabelWidth(text: string): number {
-  return estimateTextWidth(text) + LABEL_GAP;
+/** The room a label takes: its drawn width and the gap that keeps it off its neighbor. */
+export type LabelWidth = (text: string) => number;
+
+export function toLabelWidth(textWidth: TextWidth): LabelWidth {
+  return (text) => textWidth(text) + LABEL_GAP;
 }
+
+export const getLabelWidth = toLabelWidth(estimateTextWidth);
 
 function splitWords(label: string): string[] {
   return label.split(/(?<=[\s-])/u);
 }
-
-type LabelWidth = (text: string) => number;
 
 function breakWord({
   labelWidth,
@@ -88,14 +91,19 @@ export function wrapLabel({
 export function getCategoryLabels({
   band,
   categories,
+  labelWidth = getLabelWidth,
 }: {
   band: number;
   categories: readonly string[];
+  labelWidth?: LabelWidth;
 }): CategoryLabelLayout {
-  const widestWord = getWidestWord(categories);
+  const widestWord = getWidestWord(categories, labelWidth);
   const step = Math.min(Math.max(Math.ceil(widestWord / band), 1), categories.length);
 
-  return { lines: categories.map((label) => wrapLabel({ label, room: band * step })), step };
+  return {
+    lines: categories.map((label) => wrapLabel({ label, labelWidth, room: band * step })),
+    step,
+  };
 }
 
 export function fitsUnderBars({ lines, step }: CategoryLabelLayout): boolean {
@@ -103,16 +111,18 @@ export function fitsUnderBars({ lines, step }: CategoryLabelLayout): boolean {
 }
 
 export function clampLabelCenter({
+  labelWidth = getLabelWidth,
   lines,
   start = 0,
   width,
   x,
 }: {
+  labelWidth?: LabelWidth;
   lines: string[];
   start?: number;
   width: number;
   x: number;
 }): number {
-  const half = Math.max(...lines.map((line) => getLabelWidth(line))) / 2;
+  const half = Math.max(...lines.map((line) => labelWidth(line))) / 2;
   return Math.min(Math.max(x, start + half), width - half);
 }

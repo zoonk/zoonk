@@ -1,4 +1,5 @@
 import { type ChartVisual } from "@zoonk/core/library/steps/contract";
+import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { assert, integer, property, stringMatching, uniqueArray } from "fast-check";
 import { describe, expect, it } from "vitest";
 import { getLabelWidth } from "./category-labels";
@@ -22,6 +23,9 @@ const REGIONS = ["Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste"];
 /** How wide the chart draws inside its card on a 320 and a 390 px phone. */
 const NARROW = 254;
 const WIDE = 324;
+
+/** How wide a 12px Japanese label is drawn: every character is a full em. */
+const fullWidth = (text: string) => text.length * 12;
 
 function seriesOf(count: number) {
   return Array.from({ length: count }, (_, index) => ({
@@ -84,6 +88,48 @@ describe(getLayout, () => {
 
     expect(layout.left).toBeGreaterThan(PADDING.left);
     expect(layout.yTicks.every((tick) => getLabelWidth(tick.label) <= layout.left)).toBe(true);
+  });
+
+  it("prints a cropped axis's ticks with the decimals that tell them apart", () => {
+    const layout = columns(
+      getLayout({
+        formatTick: (value, options) => formatLocalizedNumber({ ...options, locale: "en", value }),
+        formatValue: String,
+        visual: {
+          ...visual,
+          axisStart: 10_000,
+          chart: "line",
+          series: [{ name: "Visitors", values: [10_050, 10_200, 10_380] }],
+        },
+        width: WIDE,
+      }),
+    );
+
+    expect(layout.yTicks.map((tick) => tick.label)).toStrictEqual([
+      "10K",
+      "10.1K",
+      "10.2K",
+      "10.3K",
+      "10.4K",
+    ]);
+  });
+
+  it("sizes names by how wide they're drawn, so wide scripts lie on their side", () => {
+    const regions = {
+      ...visual,
+      categories: ["北海道地方", "東北地方", "関東地方", "中部地方", "近畿地方"],
+      series: [{ name: "A", values: [18, 42, 64, 30, 22] }],
+    };
+
+    expect(
+      getLayout({
+        formatTick: String,
+        formatValue: String,
+        textWidth: fullWidth,
+        visual: regions,
+        width: NARROW,
+      }).orientation,
+    ).toBe("horizontal");
   });
 
   it("keeps short names under upright bars on a narrow phone", () => {
@@ -307,7 +353,7 @@ describe(getLayout, () => {
 
 describe(fitsLabel, () => {
   it("fits a label only when it's no wider than its room", () => {
-    expect(fitsLabel("40", 30)).toBe(true);
-    expect(fitsLabel("40 hours/day", 30)).toBe(false);
+    expect(fitsLabel({ label: "40", room: 30 })).toBe(true);
+    expect(fitsLabel({ label: "40 hours/day", room: 30 })).toBe(false);
   });
 });

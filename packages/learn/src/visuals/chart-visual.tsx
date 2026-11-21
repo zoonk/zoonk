@@ -3,7 +3,7 @@
 import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import { placeChartUnit } from "@zoonk/core/library/steps/contract/chart-unit";
 import { useFormatNumber } from "../_utils/use-format-number";
-import { clampLabelCenter } from "./_utils/category-labels";
+import { type TextWidth } from "./_utils/category-labels";
 import {
   AXIS_LABEL_OFFSET,
   BAR_GAP,
@@ -18,6 +18,7 @@ import {
 } from "./_utils/chart-layout";
 import { getSeriesMark } from "./_utils/series-marks";
 import { useChartSize } from "./_utils/use-chart-size";
+import { useTextWidth } from "./_utils/use-text-width";
 import { BarRows } from "./chart-bar-rows";
 import { ChartDrawing, ChartFigure, ScreenReaderData, ValueGrid } from "./chart-frame";
 import { SeriesBar, SeriesLegend, SeriesLine, SeriesPoint } from "./series-marks";
@@ -26,26 +27,12 @@ const MIN_LABEL_WIDTH = 30;
 const MIN_POINT_LABEL_BAND = 45;
 const POINT_RADIUS = 3.5;
 
-function CategoryLabels({
-  layout,
-  visual,
-  width,
-}: {
-  layout: ColumnLayout;
-  visual: ChartVisual;
-  width: number;
-}) {
+function CategoryLabels({ layout, visual }: { layout: ColumnLayout; visual: ChartVisual }) {
   const { lines, step } = layout.labels;
 
   return visual.categories.map((category, index) => {
     const label = lines[index] ?? [category];
-
-    const x = clampLabelCenter({
-      lines: label,
-      start: layout.left,
-      width,
-      x: layout.center(index),
-    });
+    const x = layout.labelCenters[index] ?? layout.center(index);
 
     return index % step === 0 ? (
       <text
@@ -71,10 +58,12 @@ function CategoryLabels({
 
 function Bars({
   layout,
+  textWidth,
   unit,
   visual,
 }: {
   layout: ColumnLayout;
+  textWidth: TextWidth;
   unit: string | null;
   visual: ChartVisual;
 }) {
@@ -87,7 +76,7 @@ function Bars({
     barWidth >= MIN_LABEL_WIDTH &&
     visual.series.every((series) =>
       series.values.every((value) =>
-        fitsLabel(format(value, { unit: unit ?? undefined }), barWidth),
+        fitsLabel({ label: format(value, { unit: unit ?? undefined }), room: barWidth, textWidth }),
       ),
     );
 
@@ -124,10 +113,12 @@ function Bars({
 
 function Lines({
   layout,
+  textWidth,
   unit,
   visual,
 }: {
   layout: ColumnLayout;
+  textWidth: TextWidth;
   unit: string | null;
   visual: ChartVisual;
 }) {
@@ -137,7 +128,11 @@ function Lines({
     visual.series.length === 1 &&
     layout.band >= MIN_POINT_LABEL_BAND &&
     visual.series[0]?.values.every((value) =>
-      fitsLabel(format(value, { unit: unit ?? undefined }), layout.band),
+      fitsLabel({
+        label: format(value, { unit: unit ?? undefined }),
+        room: layout.band,
+        textWidth,
+      }),
     );
 
   return visual.series.map((series, seriesIndex) => {
@@ -217,11 +212,13 @@ export function ChartVisualView({
 }) {
   const format = useFormatNumber();
   const { boxWidth, ref, scale, width } = useChartSize();
+  const textWidth = useTextWidth(ref);
   const { numberUnit, valueLabel } = placeChartUnit(visual);
 
   const layout = getLayout({
-    formatTick: (tick) => format(tick, { compact: true, unit: numberUnit ?? undefined }),
+    formatTick: (tick, options) => format(tick, { ...options, unit: numberUnit ?? undefined }),
     formatValue: (value) => format(value, { unit: numberUnit ?? undefined }),
+    textWidth,
     visual,
     width,
   });
@@ -261,11 +258,11 @@ export function ChartVisualView({
                 y={layout.y}
               />
               {visual.chart === "bar" ? (
-                <Bars layout={layout} unit={numberUnit} visual={visual} />
+                <Bars layout={layout} textWidth={textWidth} unit={numberUnit} visual={visual} />
               ) : (
-                <Lines layout={layout} unit={numberUnit} visual={visual} />
+                <Lines layout={layout} textWidth={textWidth} unit={numberUnit} visual={visual} />
               )}
-              <CategoryLabels layout={layout} visual={visual} width={width} />
+              <CategoryLabels layout={layout} visual={visual} />
             </>
           )}
         </ChartDrawing>
