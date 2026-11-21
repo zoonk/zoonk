@@ -278,7 +278,7 @@ export const studyBlockCompletionSchema = z
       .boolean()
       .meta({
         description:
-          "Whether the day's session first finished, including while extra work remains.",
+          "Whether nothing is left to play: the session is completed and no block is next. A finished day with extra work next stays false; dayProgress says the day is complete.",
       }),
     testOutOffer: z
       .object({

@@ -696,14 +696,37 @@ describe("completion refits today's lessons", () => {
     };
 
     await expect(read()).resolves.toMatchObject(expected);
-    const extra = await finish({ block: added.block, elapsedMinutes: 10, sessionId: session.id });
+
+    const extras = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { sessionId: session.id, status: "pending" },
+    });
+
+    expect(extras.map((block) => readBlockPayload(block).extra)).toStrictEqual([true, true]);
+    const [firstExtra, lastExtra] = extras;
+
+    if (!firstExtra || !lastExtra) {
+      throw new Error("Expected two extra lessons");
+    }
+
+    const extra = await finish({ block: firstExtra, elapsedMinutes: 10, sessionId: session.id });
 
     expect(extra.completion).toMatchObject({
       dayProgress: { lead: "complete", percent: 100 },
+      next: { block: { id: lastExtra.id } },
       sessionBar: { completed: 2, total: 2 },
+      sessionCompleted: false,
     });
 
     await expect(read()).resolves.toMatchObject(expected);
+    const last = await finish({ block: lastExtra, elapsedMinutes: 10, sessionId: session.id });
+
+    expect(last.completion).toMatchObject({
+      dayProgress: { lead: "complete", percent: 100 },
+      next: null,
+      sessionBar: { completed: 2, total: 2 },
+      sessionCompleted: true,
+    });
 
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),

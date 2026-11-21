@@ -58,6 +58,41 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(moment.finishedSegment, "An extra fills no part of the day")
   }
 
+  func testFinishingTheDaysLastBlockMarksItDoneWhileAnExtraIsNext() throws {
+    let session = try day(
+      blocks: [
+        block(position: 0, kind: "learn", id: "b0", lessonID: "l0"),
+        block(position: 1, id: "b1"),
+      ],
+      nextPosition: 0, id: "s1")
+    let lesson = blockJSON(
+      position: 0, kind: "learn", status: "completed", id: "b0", lessonID: "l0", planItemID: nil,
+      checkpoint: nil)
+    let extra = blockJSON(
+      position: 1, kind: "practice", status: "pending", id: "b1", lessonID: nil, planItemID: nil,
+      checkpoint: nil
+    )
+    .replacingOccurrences(of: "\"extra\":false", with: "\"extra\":true")
+    let moment: BlockMoment = try decode(
+      """
+      {"blockId":"b0","brainPower":10,"ceremony":null,"certificates":[],
+      "blocks":[\(lesson),\(extra)],
+      "dayProgress":{"catchUp":null,"lead":"complete","lessonsComing":false,"percent":100},
+      "sessionBar":{"completed":1,"total":1},"sessionId":"s1","goalId":null,
+      "finishedChapterId":null,"deferredLessonsCount":0,
+      "minutes":{"dailyGoal":30,"done":10,"left":0,"planned":30},
+      "next":{"block":\(extra),"opensInPlayer":false,"target":{"kind":"block","blockId":"b1"}},
+      "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],
+      "nextBlockId":"b1","reached":null,"sessionCompleted":false,"total":1}
+      """)
+
+    let finished = session.finishing(moment)
+
+    XCTAssertEqual(finished.state, .done)
+    XCTAssertEqual(finished.nextBlock?.id, "b1")
+    XCTAssertEqual(moment.upNext?.id, "b1", "The lesson end's Continue opens the extra")
+  }
+
   func testAWeekDayFillsByItsListNeverByMinutes() throws {
     func day(completed: Int, total: Int, hitGoal: Bool, minutes: Int) throws -> StudyWeek.Day {
       try decode(

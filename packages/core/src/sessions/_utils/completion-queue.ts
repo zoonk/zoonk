@@ -140,7 +140,7 @@ export async function loadCompletionQueue({
   const nextBlockId = getNextBlockId(session.blocks);
   const nextBlock = projection.blocks.find((block) => block.id === nextBlockId) ?? null;
   const sessionBar = getSessionBar(session.blocks);
-  const sessionCompleted = session.endedAt !== null;
+  const sessionCompleted = session.status === "completed" && nextBlockId === null;
 
   return {
     blocks: projection.blocks,
@@ -154,7 +154,7 @@ export async function loadCompletionQueue({
         freshStart: session.freshStart,
         items: plan?.items ?? [],
       }),
-      complete: sessionCompleted,
+      complete: session.endedAt !== null,
       lessonsComing,
       reserved,
       sessionBar,

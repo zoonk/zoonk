@@ -127,7 +127,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
     day.minutes = moment.minutes
     day.nextBlockId = moment.next?.block.id
     day.nextPosition = moment.next?.block.position
-    if moment.sessionCompleted { day.state = .done }
+    if moment.dayProgress.lead == .complete { day.state = .done }
 
     return day
   }
