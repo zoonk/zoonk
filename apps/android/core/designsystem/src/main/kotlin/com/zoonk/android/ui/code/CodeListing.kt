@@ -88,8 +88,8 @@ private const val TAB_SIZE = 4
 /** With no line numbers to mark a wrapped line's extra rows, they start a little further in. */
 private const val SNIPPET_HANG = 2
 
-/** A phone's column wraps a program's lines; a wider one keeps their shape and scrolls, as main does from its `sm` width. */
-private val WRAPS_BELOW = 480.dp
+/** A phone's column wraps a program's lines; a wider one keeps their shape and scrolls (main's `@lg` container width). */
+private val WRAPS_BELOW = 512.dp
 
 /** Half the room between a line's number and its code; the other half pads the line's tone. */
 private val NUMBER_GAP = 6.dp
@@ -211,7 +211,6 @@ fun styledCodeLine(
         }
     }
 
-/** How many columns a line's leading spaces and tabs take. */
 internal fun indentOf(tokens: List<CodeToken>): Int =
     codeLineText(tokens).takeWhile { it == ' ' || it == '\t' }.fold(0) { column, char ->
         if (char == '\t') column + TAB_SIZE - column % TAB_SIZE else column + 1
@@ -509,7 +508,6 @@ fun CodeListing(
     }
 }
 
-/** A fenced block in a lesson's or a question's text, on its own panel. */
 @Composable
 fun CodeBlock(
     code: String,

@@ -21,8 +21,8 @@ struct CodeFrame<Content: View>: View {
   var variant = CodeFrameVariant.inset
   @ViewBuilder let content: Content
 
-  /// Main's `30rem`: from this width a program keeps its lines' shape.
-  private static var keepsShapeFrom: CGFloat { 480 }
+  /// Main's `@lg` container width: from it a program keeps its lines' shape.
+  private static var keepsShapeFrom: CGFloat { 512 }
 
   @State private var width: CGFloat = 0
   @State private var gutter: CGFloat = 0

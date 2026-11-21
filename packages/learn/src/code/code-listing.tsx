@@ -116,7 +116,7 @@ function wrapIndent(indent: number): React.CSSProperties | undefined {
 }
 
 /** Below this, a block wraps its lines; from it, they keep their shape and the block scrolls. */
-const KEEPS_SHAPE = "@min-[30rem]:whitespace-pre";
+const KEEPS_SHAPE = "@lg:whitespace-pre";
 
 /**
  * A numbered line. In a narrow block it wraps, its extra rows marked under its number and starting
@@ -221,7 +221,7 @@ export function CodeFrame({
     >
       <div
         className={cn(
-          "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] @min-[30rem]:w-max",
+          "grid w-full min-w-full grid-cols-[max-content_minmax(0,1fr)] @lg:w-max",
           variant === "inset" ? "pr-2 pb-1" : "py-2.5 pr-3",
         )}
         data-slot="code-lines"
@@ -247,7 +247,6 @@ function TranslatedCodeListing(props: CodeListingProps) {
   return <CodeListing {...props} speakLine={line} />;
 }
 
-/** A program with its lines numbered. `language` is a fence's name for it, or null. */
 export function CodeListing(props: CodeListingProps) {
   const { code, label, language, speakLine, toneOf, variant } = props;
 
@@ -341,7 +340,6 @@ export function InlineCode({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** A fenced block in a lesson's or a question's text. */
 export function CodeBlock({ code, language }: { code: string; language: string | null }) {
   const t = useExtracted();
 
