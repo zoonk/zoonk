@@ -69,8 +69,7 @@ export function useTimeAnswerTexts() {
       ? t({
           description:
             "{share} is a share of the whole exam, by how much it asks, not a share of its topics.",
-          message:
-            "{time} a day covers the first lessons of about {share} of your exam",
+          message: "{time} a day covers the first lessons of about {share} of your exam",
           values,
         })
       : t("{time} a day covers the first lessons of about {share} of your goal", values);

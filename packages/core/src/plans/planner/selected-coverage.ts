@@ -1,12 +1,12 @@
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
+import { getSkillValue, measureDepth, measureReach } from "./coverage-measures";
 import { readTopicMembership } from "./feasibility-topics";
 import { getHarderStartSkillIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
-import { getSkillValue, measureDepth, measureReach } from "./coverage-measures";
 import { type SkillRequirement, isCompleted } from "./selected-requirement";
 
 export type ExamSubjectShare = { areas: readonly string[]; share: number };
@@ -61,7 +61,9 @@ function listScope({
 
   const skills = whole.filter((skill) => !skippedAreas.has(skill.area));
   const examWorth = examSubjects ? getExamWorth({ examSubjects, skills }) : null;
-  const wholeWorth = examSubjects && examWorth ? getExamWorth({ examSubjects, skills: whole }) : null;
+
+  const wholeWorth =
+    examSubjects && examWorth ? getExamWorth({ examSubjects, skills: whole }) : null;
 
   return {
     measure: examWorth ? ("exam" as const) : ("goal" as const),

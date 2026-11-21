@@ -1,4 +1,7 @@
-import { planTimeAdviceSchema, planTimeToCoverSchema } from "@zoonk/core/plans/time-advice-contract";
+import {
+  planTimeAdviceSchema,
+  planTimeToCoverSchema,
+} from "@zoonk/core/plans/time-advice-contract";
 import { describe, expect, it } from "vitest";
 import {
   LINE,

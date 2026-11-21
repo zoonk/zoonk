@@ -93,7 +93,10 @@ describe(readPlanSummary, () => {
       selected: { ...summary.selected, coverage: { ...coverage, reachedShare: null } },
     });
 
-    expect(readSavedFeasibility({ skippedAreas: [], summary: read })).toMatchObject({ coveredShare: 0.5, reachedShare: null });
+    expect(readSavedFeasibility({ skippedAreas: [], summary: read })).toMatchObject({
+      coveredShare: 0.5,
+      reachedShare: null,
+    });
   });
 
   it.each([{ id: "plan-b" }, { userId: "learner-b" }, { version: 8 }])(

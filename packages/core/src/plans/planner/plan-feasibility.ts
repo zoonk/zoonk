@@ -2,6 +2,7 @@ import { once } from "@zoonk/utils/once";
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
+import { getSkillValue } from "./coverage-measures";
 import {
   type StudyScheduleAt,
   findFittingMinutes,
@@ -13,7 +14,6 @@ import { findFittingDate } from "./fitting-date";
 import { getFittingFloor } from "./fitting-floor";
 import { type MostCoverage, findMostCoverage } from "./most-coverage";
 import { fromIsoDate } from "./plan-calendar";
-import { getSkillValue } from "./coverage-measures";
 import { type ExamSubjectShare } from "./selected-coverage";
 import { getSelectedCoverage } from "./selected-plan-summary";
 
