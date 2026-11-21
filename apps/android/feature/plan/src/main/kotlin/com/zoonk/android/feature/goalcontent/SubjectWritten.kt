@@ -301,27 +301,35 @@ private fun WrittenTrend(written: WrittenPracticeSubjectsInner) {
 /** One small bar per answer, oldest first, the latest in full color. */
 @Composable
 private fun TrendBars(values: List<Double?>) {
-    val peak = maxOf(1.0, values.maxOf { it ?: 0.0 })
+    val shares = writtenTrendBarShares(values)
+    if (shares.isEmpty()) return
     val green = MaterialTheme.colorScheme.tertiary
     val empty = MaterialTheme.colorScheme.surfaceContainerHighest
 
     Row(Modifier.height(BAR_HEIGHT), horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.Bottom) {
-        values.forEachIndexed { index, value ->
+        shares.forEachIndexed { index, share ->
             val color =
                 when {
-                    value == null -> empty
+                    values[index] == null -> empty
                     index == values.lastIndex -> green
                     else -> green.copy(alpha = OLDER_ALPHA)
                 }
             Box(
                 Modifier
                     .width(6.dp)
-                    .height(BAR_HEIGHT * maxOf(MIN_BAR_SHARE, ((value ?: 0.0) / peak).toFloat()))
+                    .height(BAR_HEIGHT * share)
                     .clip(RoundedCornerShape(2.dp))
                     .background(color),
             )
         }
     }
+}
+
+internal fun writtenTrendBarShares(values: List<Double?>): List<Float> {
+    if (values.size < 2) return emptyList()
+
+    val peak = maxOf(1.0, values.maxOf { it ?: 0.0 })
+    return values.map { maxOf(MIN_BAR_SHARE, ((it ?: 0.0) / peak).toFloat()) }
 }
 
 private const val TREND_SAMPLES = 4
