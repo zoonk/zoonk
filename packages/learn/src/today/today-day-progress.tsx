@@ -45,7 +45,8 @@ export function DayProgress({ className }: { className?: string }) {
     rows: getSessionQueue({ blocks, nextPosition }),
   });
 
-  const focusPosition = next?.position ?? parts[0]?.block.position;
+  const focusPosition = (parts.find((part) => part.state === "current") ?? parts[0])?.block
+    .position;
 
   if (!drawsDayMeter({ held: held > 0, parts })) {
     return null;
