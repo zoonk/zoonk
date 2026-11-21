@@ -186,7 +186,11 @@ function ScoreStep({ result }: { result: MockResult }) {
         </div>
       )}
 
-      <MockReview review={runner.view.review} trueFalseLabels={runner.view.trueFalseLabels} />
+      <MockReview
+        review={runner.view.review}
+        sections={runner.view.sections}
+        trueFalseLabels={runner.view.trueFalseLabels}
+      />
     </StepCard>
   );
 }

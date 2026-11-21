@@ -43,6 +43,8 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.mock.mockQuestionPlace
+import com.zoonk.android.feature.mock.mockSectionTitle
 import com.zoonk.android.feature.mock.runner.trueFalseWords
 import com.zoonk.android.feature.questions.Citation
 import com.zoonk.android.feature.questions.ItemCitationNote
@@ -154,6 +156,7 @@ private fun ReviewList(
     onToggle: (String) -> Unit,
 ) {
     val words = view.trueFalseWords
+    val severalQuestionSections = view.sections.count { it.questions > 0 } > 1
     val scope = rememberCoroutineScope()
     val requesters = remember(view.review.size) { List(view.review.size) { BringIntoViewRequester() } }
     val restore = remember { Restore(place.restoring()) }
@@ -162,8 +165,13 @@ private fun ReviewList(
         view.review.forEachIndexed { index, entry ->
             if (index > 0) HorizontalDivider()
             val key = "$REVIEW${entry.itemId}"
+            val section =
+                entry.section?.let { sectionIndex ->
+                    view.sections.firstOrNull { severalQuestionSections && it.index == sectionIndex }
+                }
             ReviewEntry(
                 entry,
+                sectionTitle = section?.let { mockSectionTitle(it) },
                 open = key in opened,
                 onToggle = { onToggle(key) },
                 numbered = view.scoring != MockExam.Scoring.NET,
@@ -193,10 +201,14 @@ private class Restore(
 
 /** The row says which question it is and how it went; a wrong answer needs no word, the list is of them. */
 @Composable
-private fun entryFacts(entry: MockExamReviewInner): String =
+private fun entryFacts(
+    entry: MockExamReviewInner,
+    sectionTitle: String?,
+): String =
     factsLine(
-        stringResource(R.string.mock_result_question, entry.number.toInt()),
-        entry.area,
+        entry.total?.let { mockQuestionPlace(entry.number.toInt(), it.toInt()) }
+            ?: stringResource(R.string.mock_result_question, entry.number.toInt()),
+        sectionTitle ?: entry.area,
         when (entry.outcome) {
             MockExamReviewInner.Outcome.BLANK -> stringResource(R.string.mock_result_blank)
             MockExamReviewInner.Outcome.PARTIAL -> stringResource(R.string.mock_result_partly_right)
@@ -207,6 +219,7 @@ private fun entryFacts(entry: MockExamReviewInner): String =
 @Composable
 private fun ReviewEntry(
     entry: MockExamReviewInner,
+    sectionTitle: String?,
     open: Boolean,
     onToggle: () -> Unit,
     numbered: Boolean,
@@ -222,7 +235,7 @@ private fun ReviewEntry(
             modifier = Modifier.bleed(LIST_ITEM_INSET),
             onClick = onToggle,
             expanded = open,
-            supporting = { Text(entryFacts(entry)) },
+            supporting = { Text(entryFacts(entry, sectionTitle)) },
         )
         if (open) {
             Column(Modifier.padding(top = 4.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {

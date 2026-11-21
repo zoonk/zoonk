@@ -6,7 +6,6 @@
     <string name="profile_questions_skip_all_label">Skip the rest of the questions about you</string>
     <string name="profile_questions_never_ask">Don\'t ask me these again</string>
     <string name="profile_questions_never_ask_help">You can still answer them anytime in Settings › About you.</string>
-    <string name="profile_questions_cap">Pick up to 3.</string>
     <string name="profile_questions_work_title">What do you do now?</string>
     <string name="profile_questions_work_description">We\'ll use situations from your day in your examples.</string>
     <string name="profile_questions_job">Your job (optional)</string>
@@ -14,15 +13,13 @@
     <string name="profile_questions_earlier_answer">From your earlier answer</string>
     <string name="profile_questions_prefer_not">I\'d rather not say</string>
     <string name="profile_questions_tools_title">Which apps and tools do you use most?</string>
-    <string name="profile_questions_tools_description">Pick up to 3. We\'ll use them in your examples.</string>
     <string name="profile_questions_tools_other">Others (optional)</string>
     <string name="profile_questions_tools_placeholder">E.g., Photoshop, Python, SAP</string>
     <string name="profile_questions_studies_title">What have you studied?</string>
-    <string name="profile_questions_studies_description">Past or present, finished or not. It can be different from your work.</string>
+    <string name="profile_questions_studies_description">Past or present, finished or not.</string>
     <string name="profile_questions_subject">%1$s: course or subject (optional)</string>
     <string name="profile_questions_which_field">Which field?</string>
     <string name="profile_questions_subject_placeholder">E.g., journalism</string>
-    <string name="profile_questions_interest_description">Pick up to 3. We\'ll use them for examples in your lessons.</string>
     <string name="profile_questions_watch_title">What do you like to watch?</string>
     <string name="profile_questions_watch_favorites">Favorite shows, films, teams or channels (optional)</string>
     <string name="profile_questions_watch_placeholder">E.g., Star Trek, Formula 1</string>
@@ -80,6 +77,8 @@
     <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Saved</string>
     <string name="profile_questions_add">Add</string>
+    <!-- Removes a tool the learner typed. {tool} is its name, such as Photoshop. -->
+    <string name="profile_questions_remove_tool">Remove %1$s</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d saved</item>
         <item quantity="other">%1$d saved</item>
