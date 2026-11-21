@@ -286,6 +286,29 @@ class MockResultScreenshots {
         capture("result-essay-graded")
     }
 
+    /** An essay the learner marked not sure, graded and still waiting for its grade. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun essayGradedUnsure() {
+        show(essaysOnly(gradedEssay(unsure = true)))
+        capture("result-essay-graded-unsure")
+    }
+
+    @Test
+    @Config(qualifiers = "w360dp-h740dp-night-xxhdpi")
+    fun essayGradedUnsureSmallDark() {
+        show(essaysOnly(gradedEssay(unsure = true)), dark = true)
+        capture("result-essay-graded-unsure-small-dark")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xhdpi")
+    fun essayPendingUnsureAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show(essaysOnly(pendingEssay(unsure = true)))
+        capture("result-essay-pending-unsure-font200")
+    }
+
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun essayNextStep() {

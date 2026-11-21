@@ -203,13 +203,10 @@ private class Restore(
     var done = false
 }
 
-/**
- * The row says which question it is, how it went and, in amber with its bookmark, whether the learner
- * wasn't sure; a wrong answer needs no word, the list is mostly of them.
- */
+/** The row says which question it is, how it went and, in amber with its bookmark, whether the learner wasn't sure. */
 @Composable
 private fun EntryFacts(entry: MockExamReviewInner) {
-    val facts =
+    UnsureFacts(
         factsLine(
             stringResource(R.string.mock_result_question, entry.number.toInt()),
             entry.area,
@@ -217,25 +214,35 @@ private fun EntryFacts(entry: MockExamReviewInner) {
                 MockExamReviewInner.Outcome.BLANK -> stringResource(R.string.mock_result_blank)
                 MockExamReviewInner.Outcome.PARTIAL -> stringResource(R.string.mock_result_partly_right)
                 MockExamReviewInner.Outcome.RIGHT -> stringResource(R.string.mock_result_right)
-                MockExamReviewInner.Outcome.WRONG -> null
+                MockExamReviewInner.Outcome.WRONG -> stringResource(R.string.mock_result_wrong)
             },
-        )
-    if (!entry.unsure) {
-        Text(facts)
+        ),
+        unsure = entry.unsure,
+    )
+}
+
+/** [facts] followed, when the learner marked it, by Not sure in amber with its bookmark, which a wrapped line keeps together. */
+@Composable
+internal fun UnsureFacts(
+    facts: String,
+    unsure: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    if (!unsure) {
+        if (facts.isNotEmpty()) Text(facts, modifier)
         return
     }
     val amber = MaterialTheme.zoonk.warningText
     Text(
         buildAnnotatedString {
-            append(facts)
-            append(FACT_SEPARATOR)
+            if (facts.isNotEmpty()) append(facts + FACT_SEPARATOR)
             withStyle(SpanStyle(color = amber)) {
                 appendInlineContent(UNSURE_MARK, " ")
-                // A no-break space keeps the bookmark with its words when the line wraps.
                 append("\u00A0")
                 append(stringResource(R.string.mock_not_sure))
             }
         },
+        modifier,
         inlineContent =
             mapOf(
                 UNSURE_MARK to
