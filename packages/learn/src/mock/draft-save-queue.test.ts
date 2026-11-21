@@ -273,7 +273,7 @@ describe(createDraftSaveQueue, () => {
     expect(statuses.at(-1)).toBe("saved");
   });
 
-  it("sends nothing more once stopped, until another answer comes", async () => {
+  it("drops what's in line once stopped, and sends only the answers given after", async () => {
     const { queue, requests } = setup();
 
     queue.add({ answer: "A", itemId: "q1" });
@@ -288,6 +288,6 @@ describe(createDraftSaveQueue, () => {
     queue.add({ answer: "C", itemId: "q3" });
     await flushPromises();
 
-    expect(requests.map((request) => request.draft.answer)).toStrictEqual(["A", "A"]);
+    expect(requests.map((request) => request.draft.answer)).toStrictEqual(["A", "C"]);
   });
 });

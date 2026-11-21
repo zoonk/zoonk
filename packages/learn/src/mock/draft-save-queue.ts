@@ -107,9 +107,8 @@ export function createDraftSaveQueue<TDraft>({
     }
 
     if (stored === null) {
-      keepForRetry(draft);
-
       if (!stopped) {
+        keepForRetry(draft);
         scheduleRetry();
       }
 
@@ -173,9 +172,13 @@ export function createDraftSaveQueue<TDraft>({
       retryTimer = null;
       void sendNext();
     },
-    /** Holds sends until the next answer, so a closed screen's can't land after a reopened one's. */
+    /**
+     * Holds sends until the next answer, so a closed screen's can't land after a reopened one's.
+     * What was in line stays on the device, and a screen shown again sends it in the device's order.
+     */
     stop() {
       stopped = true;
+      waiting.length = 0;
 
       if (retryTimer) {
         clearTimeout(retryTimer);
