@@ -1257,125 +1257,6 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional research workplace, detector-run recommendation, 3:00 p.m. deadline, acquisition-slot constraint, and competing colleague priorities create a credible work task. Reading detector plots belongs naturally in this role, and no real laboratory is invoked.",
-          "score": 9,
-          "label": "Real work (or a fun What if)",
-          "weight": 20
-        },
-        {
-          "categoryId": "decisions",
-          "reasoning": "The strongest answer is apparent at every step from the stated request and option wording, triggering the explicit cap of 6. There are nevertheless meaningful meter changes, different replies, three endings, a middle option, and new measurement data after the time jump. Strong choices are not always first or most cautious.",
-          "score": 6,
-          "label": "Decisions that matter",
-          "weight": 20
-        },
-        {
-          "categoryId": "team",
-          "reasoning": "Two colleagues have distinct expertise and priorities: the lead protects capacity and wants a reusable recommendation, while the scientist favors measurement checks. Asking the AI is an explicit, valued choice, and its answer correctly uses supplied data while distinguishing estimates from measurements. Colleague references use placeholders, and the learner is unnamed.",
-          "score": 10,
-          "label": "Team and asking for help",
-          "weight": 15
-        },
-        {
-          "categoryId": "debrief",
-          "reasoning": "Feedback is kind, decision-specific, and focused on strategies rather than talent. Practice activities are short and actionable, and the summaries capture the main lessons. However, the values-only improvement example is an instruction to compare rather than a better sentence communicating the actual comparison.",
-          "score": 8,
-          "label": "Debrief: specific and kind",
-          "weight": 20
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The arithmetic and distinctions are correct: the midpoint estimates are 230 and 250 counts, the original endpoint increase is 20 counts, and heights above a 200-count baseline double without the readings doubling. The new 249-count acquisition remains separate from the original scan. All requested readings are available as text, with no drawn charts or display instructions. However, the required axis metadata is incomplete: the horizontal range and tick interval are absent.",
-          "score": 8,
-          "label": "Accuracy",
-          "weight": 15
-        },
-        {
-          "categoryId": "depth",
-          "reasoning": "The English, number formats, arithmetic, and scope generally suit a beginner, and there are no outcome guarantees. The chat usefully explains why a curve is not a measurement and why a cropped baseline can mislead. However, it leaves 'ns,' the physical meaning of the setting, and terms such as 'acquisition' insufficiently explained for the requested beginner level.",
-          "score": 8,
-          "label": "Depth, language and honesty",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 5990,
-          "outputTokens": 1194,
-          "reasoningTokens": 366
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The strongest choice is obvious at every decision: use measured dots for the explicitly requested measured result, obtain the requested estimate without an unnecessary acquisition, and report the correct difference rather than doubling or omitting it. This triggers the decisions category's cap of 6. The panels also omit the horizontal axis range and tick interval, despite the explicit requirement to supply axis ranges and intervals as metrics.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Beginner-facing terms such as 'ns,' 'acquisition,' and 'fitted curve' are not adequately explained in the chat. The improvement example for the values-only choice tells the learner to compare the readings rather than supplying the improved wording of the requested comparison.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make an early choice influence a later practical constraint or colleague response instead of automatically repairing both initial recommendations at the next node. Briefly explain what the nanosecond setting controls, and give a ready-to-use comparison example: 'The measured count increased by 20, from 220 to 240.'",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The app shows a panel's metrics as short lines of text, never a drawn plot, so every value a decision asks the learner to read comes as metrics: the plotted points, the curve's readings and the axis ranges and intervals, each a short label and value. No metric value or label is a chart, table or picture drawn in text, no note tells anyone how to draw or display something, and no decision asks for a value the panels, messages and replies never give. General to the field, with no real lab.",
-        "id": "en-plot-reading-field-research-1",
-        "userInput": {
-          "chapterDescription": "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",
-          "chapterTitle": "Reading quantum experiment plots",
-          "courseTitle": "Quantum physics from scratch",
-          "field": "research",
-          "language": "en",
-          "level": "beginner",
-          "skills": [
-            {
-              "description": null,
-              "name": "Read values from an experimental plot"
-            },
-            {
-              "description": null,
-              "name": "Estimate values between axis ticks"
-            },
-            {
-              "description": null,
-              "name": "Read values from plotted data points"
-            },
-            {
-              "description": null,
-              "name": "Estimate values from a plotted curve"
-            },
-            {
-              "description": null,
-              "name": "Read values on a truncated axis"
-            },
-            {
-              "description": null,
-              "name": "Interpret axis intervals"
-            }
-          ],
-          "variant": "work"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "realism",
           "reasoning": "The fictional clinic, medication distribution workload, original documents, pharmacy concentration, and scheduled dose create a credible nursing task. However, a hospital ward is not explicitly established, and the deadline remains background information rather than a concrete operational constraint.",
           "score": 8,
           "label": "Real work (or a fun What if)",
@@ -1695,42 +1576,42 @@
       "categoryScores": [
         {
           "categoryId": "realism",
-          "reasoning": "The fictional research workplace has a concrete scan-request deliverable, plausible detector readings, a 2:00 p.m. deadline, and pressure around shared instrument capacity. Reading measured and fitted rates is relevant to the job, and the submission, correction, and deferral outcomes establish a credible work context.",
-          "score": 9,
+          "reasoning": "Choosing a repeat setting before 3:00 p.m. is credible research work, and the competing demands on the next run give the fictional lab a concrete problem. The evidence review is less authentic: the researcher receives a verbal inventory of the dots instead of the detector display they are supposed to inspect.",
+          "score": 8,
           "label": "Real work (or a fun What if)",
           "weight": 20
         },
         {
           "categoryId": "decisions",
-          "reasoning": "Choices change replies, meters, routes, and endings; the strongest option changes position, and cautious deferral is not automatically rewarded. However, every decision makes the correct strategy obvious through the explicit field requirements and conspicuously unsuitable alternatives. This triggers the category's maximum score of 6.",
+          "reasoning": "Choices change replies, meters, acquisition time, and the final report. However, the preferred option is signposted at every step: the mission explicitly requests a measured setting, the extra acquisition is unnecessary for a curve estimate, and the final strong option supplies the finished arithmetic. None requires the learner to resolve a reading from visual evidence.",
           "score": 6,
           "label": "Decisions that matter",
           "weight": 20
         },
         {
           "categoryId": "team",
-          "reasoning": "Two colleagues have distinct methodological and instrument-scheduling responsibilities, express competing priorities, and use only ID placeholders. Asking the AI is an explicit, valued option, and its answers provide useful scale calculations and readings while leaving approval with people.",
+          "reasoning": "The lead wants a reusable recommendation without losing a slot; the research scientist wants a fresh reading to check the estimate. Their disagreement gives the AI check a useful role, and its answer distinguishes an estimate from a measurement. Roles and placeholders are used consistently.",
           "score": 10,
           "label": "Team and asking for help",
           "weight": 15
         },
         {
           "categoryId": "debrief",
-          "reasoning": "Feedback identifies the specific strategy used, explains errors kindly, and supplies actionable alternatives. Communication-related corrections include example wording. Each skill has a small practice activity suitable for roughly five minutes, and the summary captures the scale, interval, and source-selection ideas practiced.",
-          "score": 10,
+          "reasoning": "The feedback is kind and specific, especially the explanation of why doubling the visible height does not double the count. The practice lines are short and actionable. Some praise is unearned because the learner never supplied the positions being praised, and the values-only improvement example requests a comparison rather than modeling the finished sentence.",
+          "score": 8,
           "label": "Debrief: specific and kind",
           "weight": 20
         },
         {
           "categoryId": "accuracy",
-          "reasoning": "The supplied metrics support every requested reading without a drawn chart: the 100-count labeled gap contains five spaces, so each space is 20 counts/s; the dot reads 980, the curve at 1.2 V reads 960, and the curve at 1.3 V reads 940. The midpoint calculation, truncated baseline, replies, and endings remain consistent. No note instructs the app to draw or display a plot.",
-          "score": 10,
+          "reasoning": "The stated arithmetic is consistent: halfway between 240 and 260 is 250, and the move from 220 to 240 adds 20 counts while doubling the height above 200. The new reading of 249 is clearly separate from the estimate. No wrong numerical fact is taught, but without plotted data the central claims about what the display shows cannot be checked.",
+          "score": 7,
           "label": "Accuracy",
           "weight": 15
         },
         {
           "categoryId": "depth",
-          "reasoning": "The case is in English with appropriate number formatting and generally accessible explanations, including a definition of the fitted curve. However, 'acquisition' and 'nominal-rate field' are not explained for this beginner audience, and the latter unnecessarily changes terminology for the same entry. There are no promises of results, jobs, or grades.",
+          "reasoning": "The English is clear, and the distinction between a smooth guide and a measured dot is explained at beginner level. “Acquisition” and the time unit “ns” lack beginner-friendly introductions, and the supplied readings leave little practice in estimating a value independently.",
           "score": 8,
           "label": "Depth, language and honesty",
           "weight": 10
@@ -1744,34 +1625,153 @@
         }
       ],
       "judge": {
-        "modelId": "openai/gpt-6-astra",
+        "modelId": "openai/gpt-6.2-astra",
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 7107,
-          "outputTokens": 1240,
-          "reasoningTokens": 459
+          "inputTokens": 6024,
+          "outputTokens": 846,
+          "reasoningTokens": 0
         }
       },
       "steps": [
         {
-          "conclusion": "The intended answer is obvious at every decision: check the scale, use the dot for an explicitly observed field, and use the curve for an explicitly fitted field. The repair decision repeats that distinction. Although choices have consequences, the learner mostly selects the clearly endorsed procedure rather than weighing credible alternatives. The decisions category therefore receives its explicit maximum of 6.",
+          "conclusion": "No decision on any path shows an app-drawn visual. There is no `visuals` entry, no numeric time-versus-counts `plot`, and no cropped `chart` with `axisStart`. Instead, the panels spell out the tick labels, each dot’s position, and the curve’s halfway position. A learner can finish without reading a plot, and there is no plotted series against which to verify the reported values.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Some beginner-facing terminology remains unexplained, notably 'acquisition' and 'nominal-rate field.' The latter also introduces a different label for the fitted-rate field in the returned ending.",
+          "conclusion": "Several choices select a procedure rather than a reading, yet their feedback credits the learner with work the script supplied. For example, the AI option praises the learner for supplying tick positions. “Acquisition” is also used without a plain-language introduction, and a quick caption adds scan capacity without explaining how it frees detector time.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make at least one decision less signposted by offering plausible competing readings or submission strategies whose consequences depend on checking the supplied metrics. Providing a small, self-contained example for the follow-up practice would also reduce the need to find a suitable external plot.",
+          "conclusion": "Show the measured points and named curve on a numeric plot at the first two decisions, then show the endpoints on a chart starting at 200 counts. Keep collection conditions and the genuinely new 249-count reading in panels, but remove the textual reconstruction of the plots. Let the learner propose a setting and a curve estimate before asking for a check, so the feedback can address the reading they actually made.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 6
         }
       ],
       "testCase": {
-        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The app shows a panel's metrics as short lines of text, never a drawn plot, so every value a decision asks the learner to read comes as metrics: the plotted points, the curve's readings and the axis ranges and intervals, each a short label and value. No metric value or label is a chart, table or picture drawn in text, no note tells anyone how to draw or display something, and no decision asks for a value the panels, messages and replies never give. General to the field, with no real lab.",
+        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The decisions that need a plot show one from the plan's `visuals`, drawn by the app: a `plot` for numbers on both axes (counts against voltage or time), a `chart` with `axisStart` for a cropped axis. Every path reaches a decision that shows a plot. A value the text states from a plot matches its data, the text names points by label and series by name (never \"the third point\"), and every value the learner must read sits on a round value or a label, never finer than the ticks. No panel repeats a plot's data, and no metric or message draws a chart in text. General to the field, with no real lab.",
+        "id": "en-plot-reading-field-research-1",
+        "userInput": {
+          "chapterDescription": "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",
+          "chapterTitle": "Reading quantum experiment plots",
+          "courseTitle": "Quantum physics from scratch",
+          "field": "research",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": null,
+              "name": "Read values from an experimental plot"
+            },
+            {
+              "description": null,
+              "name": "Estimate values between axis ticks"
+            },
+            {
+              "description": null,
+              "name": "Read values from plotted data points"
+            },
+            {
+              "description": null,
+              "name": "Estimate values from a plotted curve"
+            },
+            {
+              "description": null,
+              "name": "Read values on a truncated axis"
+            },
+            {
+              "description": null,
+              "name": "Interpret axis intervals"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "A shared instrument session and a 2:00 p.m. scan request give the researchers a credible reason to distinguish a measurement from a fitted estimate. But without their working plot, the task plays as a procedure quiz rather than the research job it describes.",
+          "score": 6,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "The repair branch, capacity costs, and three submission outcomes give choices consequences. However, the mission explicitly requests a fitted value, and the options repeatedly contrast doing exactly what the field asks with ignoring its label or voltage. The strong answer is apparent throughout without inspecting data.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The instrument researcher wants to keep the queue moving, while the research scientist checks what the entries claim. Both use role placeholders, and asking the assistant for a scale check yields a useful calculation. Its purported transcription is less useful as checked advice because the learner cannot inspect the source figure.",
+          "score": 8,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Notes are kind and specific: for example, the repair feedback explains why correcting the 1.2 V observation does not fill the 1.3 V field. Practice tasks are short and the summary is actionable. Some praise overstates what was practiced: selecting “follow the measured dot” is not the same as independently reading 980 counts/s.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The stated arithmetic is consistent: five spaces span 100 counts/s, giving 20 per space, so the described positions yield 980, 960, and 940 counts/s. No wrong numerical fact is taught, but there is no plotted dataset to establish that those descriptions match the measurements or fit.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English, number formatting, and explanation of a fitted curve suit a beginner. The case makes no unsupported promises. “Acquisition” and “nominal-rate field” are less accessible than the plain-language terms used elsewhere for the same ideas.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7141,
+          "outputTokens": 821,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "No decision on any path displays a figure: there is no `visuals` entry, numeric `plot`, or cropped `chart` with `axisStart`. Instead, the panels transcribe the ticks and trace positions, including “One space below 1,000 counts/s.” A learner can finish by choosing the stated procedure without reading a point or following a curve. There are also no plotted point labels or series names against which to check the references in the text.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The mission and dialogue make the strong choice apparent at each decision. Some feedback then credits the learner with obtaining a numerical reading when they only selected a method and the assistant supplied the number. “Acquisition” is also unnecessary jargon for a beginner; “new measurement” would suffice.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Show a cropped chart starting at 800 counts/s for the scale decision and a numeric voltage–rate plot for the observation, estimate, and repair decisions. Label the measured point, name the fitted series, and mark the target voltage so each requested reading is supported by a tick or label. Remove the trace-position panels and let the learner choose an actual form entry before the assistant explains it.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The decisions that need a plot show one from the plan's `visuals`, drawn by the app: a `plot` for numbers on both axes (counts against voltage or time), a `chart` with `axisStart` for a cropped axis. Every path reaches a decision that shows a plot. A value the text states from a plot matches its data, the text names points by label and series by name (never \"the third point\"), and every value the learner must read sits on a round value or a label, never finer than the ticks. No panel repeats a plot's data, and no metric or message draws a chart in text. General to the field, with no real lab.",
         "id": "en-plot-reading-field-research-2",
         "userInput": {
           "chapterDescription": "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",
