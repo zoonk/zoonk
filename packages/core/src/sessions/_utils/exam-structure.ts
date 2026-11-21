@@ -12,7 +12,11 @@ export async function loadExamStructure(
     blueprint: knownBlueprint,
     dayMinutes,
     picks: knownPicks,
-  }: { blueprint?: ExamBlueprint | null; dayMinutes?: number | null; picks?: ExamPicks } = {},
+  }: {
+    blueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>;
+    dayMinutes?: number | null;
+    picks?: ExamPicks;
+  } = {},
 ): Promise<ExamStructure | null> {
   if (!goal.examBlueprintId) {
     return null;

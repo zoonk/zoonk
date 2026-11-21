@@ -6,6 +6,7 @@ import {
   writingNeedsChoiceSchema,
   writingRangeSchema,
   writingScaleSchema,
+  writingTaskSchema,
   writingUnitSchema,
 } from "../exams/essays/writing-contract";
 import { writtenPartPointsSchema } from "../exams/scoring/written-points-contract";
@@ -55,6 +56,7 @@ const writtenSubjectSchema = z.object({
           .optional()
           .describe("An unfinished extra writing block for this task"),
         taskKey: z.string(),
+        writingTask: writingTaskSchema.optional(),
       }),
     )
     .optional(),

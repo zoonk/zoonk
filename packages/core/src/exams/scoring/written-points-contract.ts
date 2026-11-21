@@ -4,6 +4,7 @@ import {
   writingDecimalsSchema,
   writingRangeSchema,
   writingScaleSchema,
+  writingTaskSchema,
 } from "../essays/writing-contract";
 
 export const writtenPartPointsSchema = z
@@ -21,6 +22,7 @@ export const writtenPartPointsSchema = z
         max: z.number().positive().nullable(),
         name: z.string(),
         range: writingRangeSchema.nullable(),
+        writingTask: writingTaskSchema.optional(),
       }),
     ),
   })

@@ -14,9 +14,11 @@ import { readBlueprintContent, saveExamBlueprint } from "../../library/exams/sav
 import { getWritingPromptId, writeWritingItem } from "../../library/items/write-writing-item";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
+import { getStudyBlock } from "../../sessions/get-study-block";
 import { getStudySession } from "../../sessions/get-study-session";
 import { openStudyBlock } from "../../sessions/open-block";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
+import { getTodayView } from "../../view-models/today/get-today-view";
 import { CGU } from "../mocks/_test-utils/cgu-written";
 import { pickWrittenTestDays } from "../mocks/written-test-schedule";
 import { loadSessionProduce } from "./_utils/load-produce";
@@ -38,7 +40,7 @@ const DAY_MS = 86_400_000;
 const TEXT =
   "An audit recommendation should address the cause of the finding. The report should explain which control failed, how the failure affected the result, and what evidence supports the proposed correction.";
 
-async function setup() {
+async function setup(structure = CGU) {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(NOW);
 
@@ -48,8 +50,8 @@ async function setup() {
       board: "Cebraspe",
       name: "CGU",
       structure: {
-        ...CGU,
-        subjects: CGU.subjects.map((subject) =>
+        ...structure,
+        subjects: structure.subjects.map((subject) =>
           subject.name === "Writing" ? { ...subject, topics: ["Government auditing"] } : subject,
         ),
       },
@@ -158,6 +160,21 @@ describe("CGU written exam preparation", () => {
 
   it("names a refused extra task before issuing its prompt and marks it unavailable on read", async () => {
     const { goal, user } = await setup();
+    const short = { distinctLines: true, lines: 30, number: 1, points: 30, total: 2 };
+    const long = { distinctLines: true, lines: 60, number: 2, points: 70, total: 2 };
+
+    await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      status: "ready",
+      today: {
+        session: {
+          blocks: expect.arrayContaining([
+            expect.objectContaining({ title: "Short question", writingTask: short }),
+          ]),
+          status: "unstarted",
+        },
+      },
+    });
+
     const scheduled = await openWritingDay(goal.id);
     const created = await createWritingBlock({ goalId: goal.id, taskKey: "long" });
 
@@ -167,14 +184,26 @@ describe("CGU written exam preparation", () => {
 
     const { blockId } = created;
     const readSyllabus = () => getSyllabusView({ goalId: goal.id });
+    expect(scheduled.block).toMatchObject({ title: "Short question", writingTask: short });
 
     await expect(readSyllabus()).resolves.toMatchObject({
       syllabus: {
         writtenPractice: {
           subjects: [
             {
+              points: {
+                tasks: [
+                  { key: "short", writingTask: short },
+                  { key: "long", writingTask: long },
+                ],
+              },
               writeActions: expect.arrayContaining([
-                { availability: { status: "available" }, blockId, taskKey: "long" },
+                {
+                  availability: { status: "available" },
+                  blockId,
+                  taskKey: "long",
+                  writingTask: long,
+                },
               ]),
             },
           ],
@@ -197,10 +226,13 @@ describe("CGU written exam preparation", () => {
       status: "limitReached",
       task: {
         description: "Long question",
+        distinctLines: true,
         lines: 60,
         minutes: 140,
+        number: 2,
         points: 70,
         taskKey: "long",
+        total: 2,
         unit: "answer",
       },
       unit: "answer",
@@ -215,10 +247,15 @@ describe("CGU written exam preparation", () => {
     ).resolves.toMatchObject({
       session: {
         blocks: expect.arrayContaining([
-          expect.objectContaining({ id: blockId, writingAvailability: tomorrow }),
+          expect.objectContaining({
+            id: blockId,
+            writingAvailability: tomorrow,
+            writingTask: long,
+          }),
           expect.objectContaining({
             id: scheduled.block.id,
             writingAvailability: { status: "available" },
+            writingTask: short,
           }),
         ]),
       },
@@ -230,7 +267,7 @@ describe("CGU written exam preparation", () => {
           subjects: [
             {
               writeActions: expect.arrayContaining([
-                { availability: tomorrow, blockId, taskKey: "long" },
+                { availability: tomorrow, blockId, taskKey: "long", writingTask: long },
               ]),
             },
           ],
@@ -241,6 +278,60 @@ describe("CGU written exam preparation", () => {
     const stranger = await userFixture();
     mockSession(stranger.id);
     await expect(startWriting({ blockId })).resolves.toStrictEqual({ status: "notFound" });
+  });
+
+  it("numbers repeated questions in notice order, including questions with equal or unstated limits", async () => {
+    const structure = structuredClone(CGU);
+    const written = structure.mock?.sections.find(({ kind }) => kind === "written");
+
+    if (!written) {
+      throw new Error("Expected a written section");
+    }
+
+    written.tasks = [
+      { count: 2, description: "Two audit questions", key: "audit", lines: 30, points: 15 },
+      { count: 1, description: "A policy question", key: "policy", lines: 40, points: 30 },
+      { count: 1, description: "A budget question", key: "budget", lines: 40, points: 40 },
+      { count: 1, description: "An open response", key: "open" },
+    ];
+
+    const { goal } = await setup(structure);
+
+    await expect(getSyllabusView({ goalId: goal.id })).resolves.toMatchObject({
+      syllabus: {
+        writtenPractice: {
+          subjects: [
+            {
+              questions: 5,
+              writeActions: [
+                {
+                  taskKey: "audit",
+                  writingTask: { distinctLines: false, lines: 30, number: 1, points: 15, total: 5 },
+                },
+                {
+                  taskKey: "policy",
+                  writingTask: { distinctLines: false, lines: 40, number: 3, points: 30, total: 5 },
+                },
+                {
+                  taskKey: "budget",
+                  writingTask: { distinctLines: false, lines: 40, number: 4, points: 40, total: 5 },
+                },
+                {
+                  taskKey: "open",
+                  writingTask: {
+                    distinctLines: false,
+                    lines: null,
+                    number: 5,
+                    points: null,
+                    total: 5,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
   });
 
   it("keeps the issued CGU basis, credits only written evidence, and grades a completed block's rewrite once", async () => {
@@ -513,6 +604,15 @@ describe("CGU written exam preparation", () => {
     await expect(
       openStudyBlock({ target: { expectedBlockId: block.id, kind: "next", sessionId } }),
     ).resolves.toMatchObject({ opening: { blockId: next?.id, kind: "essay" } });
+
+    const detail = await getStudyBlock({ blockId: block.id, sessionId });
+
+    expect(detail).toMatchObject({
+      detail: { block: { title: "Short question", writingUnit: "answer" } },
+      status: "ready",
+    });
+
+    expect(detail.status === "ready" && detail.detail.block).not.toHaveProperty("writingTask");
 
     await expect(startWriting({ blockId: block.id })).resolves.toMatchObject({
       status: "taskRemoved",
