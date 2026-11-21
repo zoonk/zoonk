@@ -2117,16 +2117,16 @@ msgctxt "L_nv1C"
 msgid "After today's lessons"
 msgstr "Nach den heutigen Lektionen"
 
+#: src/challenge/challenge-footer.tsx
+msgctxt "X_k-eo"
+msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}"
+msgstr "{lessons, plural, =0 {Morgen noch einmal.} one {Morgen noch einmal, nach # kurzen Lektion.} other {Morgen noch einmal, nach # kurzen Lektionen.}}"
+
 #. Over the scheduled mock exam's buttons when its questions aren't ready yet: we're still preparing them.
 #: src/challenge/challenge-footer.tsx
 msgctxt "jk5nI6"
 msgid "Your mock exam is being prepared"
 msgstr "Wir bereiten deine Probeprüfung vor"
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "X_k-eo"
-msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}"
-msgstr "{lessons, plural, =0 {Morgen noch einmal.} one {Morgen noch einmal, nach # kurzen Lektion.} other {Morgen noch einmal, nach # kurzen Lektionen.}}"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
