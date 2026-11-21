@@ -73,7 +73,7 @@ class AppLinkTest {
             "/challenge/item-1?session=session-1" to AppRoute.Challenge("item-1", "session-1"),
             "/checkpoint/block-1?session=session-1" to AppRoute.Checkpoint("block-1", "session-1"),
             "/essay/block-1" to AppRoute.Essay("block-1"),
-            "/essay/block-1?writing=wrun_1" to AppRoute.Essay("block-1", writing = "wrun_1"),
+            "/essay/block-1?writing=limit" to AppRoute.Essay("block-1"),
             "/essay/answers/attempt-1" to AppRoute.WritingAnswer("attempt-1"),
             "/mock/block-1" to AppRoute.Mock("block-1"),
             "/mock/block-1?session=session-1" to AppRoute.Mock("block-1", "session-1"),

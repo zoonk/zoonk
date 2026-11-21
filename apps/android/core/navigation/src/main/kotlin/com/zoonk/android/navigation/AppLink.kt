@@ -288,7 +288,8 @@ object AppLink {
 
                     "checkpoint" -> AppRoute.Checkpoint(blockId = second, sessionId = session)
 
-                    "essay" -> AppRoute.Essay(blockId = second, writing = query["writing"])
+                    // What stood before the question is the learner's own tap's answer, never a link's: a link starts nothing.
+                    "essay" -> AppRoute.Essay(blockId = second)
 
                     "conversation" -> AppRoute.Conversation(conversationId = second, from = query["from"], mock = query["mock"])
 
