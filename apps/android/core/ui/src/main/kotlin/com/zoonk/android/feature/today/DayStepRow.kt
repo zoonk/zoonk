@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
@@ -29,6 +30,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.StudyBlock
 
@@ -123,6 +125,7 @@ private fun StepLines(
     step: DayStep,
 ) {
     val count = step.questions.toInt()
+    val extra = step.subjectExtra
     val line =
         when {
             !writingStalled && step.isBeingWritten(lessonStatus) -> stringResource(R.string.today_step_being_written)
@@ -130,11 +133,17 @@ private fun StepLines(
             step.practisesTopics -> shortTopicList(step.topics, named = 1)
             step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
             step.fullReview -> stringResource(R.string.today_step_every_topic)
+            extra != null -> stepExtraLabel(extra)
             else -> step.subject
         }
 
     if (line != null) SubLine(line)
 }
+
+/** Today doesn't read whether the exam's document is a notice or a guide, so a lesson beyond it takes the notice's words. */
+@Composable
+private fun stepExtraLabel(extra: StudyBlock.SubjectExtra): String =
+    optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = ExamDocument.NOTICE)
 
 @Composable
 private fun SubLine(text: String) {

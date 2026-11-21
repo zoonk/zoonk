@@ -35,6 +35,15 @@ class SyllabusRulesTest {
     )
 
     @Test
+    fun optionalStudyGroupsLastAndAnAreaOutsideTheNoticeTakesNoGroupOfItsOwn() {
+        val groups = groupSubjects(examSyllabus(strategy = true).subjects, modules = false)
+
+        assertEquals(listOf(false to "Day 1", false to "Day 2", false to null, true to null), groups.map { it.extra to it.name })
+        assertEquals(listOf("Study skills"), groups[2].subjects.map { it.shortName })
+        assertEquals(listOf("Exam strategy"), groups[3].subjects.map { it.shortName })
+    }
+
+    @Test
     fun aNoticeNumberSplitsFromItsWords() {
         assertEquals(NumberedTopic(0, "1", "Mechanics"), splitTopicNumber("1 Mechanics"))
         assertEquals(NumberedTopic(2, "5.7.1", "Waves on strings"), splitTopicNumber("5.7.1. Waves on strings"))

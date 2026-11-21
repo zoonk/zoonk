@@ -23,6 +23,7 @@ import com.zoonk.android.ui.components.SuggestionMenu
 import com.zoonk.android.ui.components.SuggestionMenuItem
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.PlanTimeToCover
@@ -351,6 +352,52 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                 repriced = true,
                 roomLines = FIT_ROOM_LINES,
                 heldRoom = room,
+            )
+        }
+    }
+}
+
+/**
+ * Optional exam strategy, offered only when all of it fits before the exam and nothing the exam tests moves out. It
+ * adds as the fit offer does: at once when its numbers are today's, after a check otherwise.
+ */
+@Composable
+internal fun ExtraOfferSuggestion(slot: Slot) {
+    val page = slot.page
+    val offer = page.plan.extraOffer ?: return
+    val preview = slot.host.preview.of(offer.operations.map { it.op }, page.plan)
+    val lessons = offer.lessons.toInt()
+    val label = optionalStudyLabel(page.plan.hasNotice == true, page.plan.examDocument)
+    val line = factsLine(pluralStringResource(R.plurals.plan_far_lessons, lessons, lessons), label)
+    val pending = slot.edits.isPending(PlanPart.Suggestion)
+    val checking = preview is PlanPreviewState.Loading
+    val add = { slot.host.addExtraOffer(offer) }
+    val checkingWords = stringResource(R.string.plan_checking_changes)
+
+    PlanChangeSuggestion(SlotItem.ExtraOffer, stringResource(R.string.plan_extra_offer_title), slot) {
+        // The card asks: its check adds only while the card shows, so one paged away adds nothing.
+        VisitOf(slot.edits.outcomes.suggestion)
+        if (preview == PlanPreviewState.Idle || checking) {
+            SuggestionDescription(line)
+            SuggestionActions {
+                SuggestionAction(
+                    onClick = add,
+                    modifier = if (checking) Modifier.semantics { stateDescription = checkingWords } else Modifier,
+                    busy = pending || checking,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+                ) { Text(stringResource(R.string.plan_add_to_my_plan)) }
+                SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(SlotItem.ExtraOffer) }, secondary = true)
+            }
+        } else {
+            PlanPreviewResult(
+                state = preview,
+                onApply = add,
+                onRetry = add,
+                onDismiss = slot.host.clearPreview,
+                pending = pending,
+                dateKind = page.dateKind,
+                repriced = true,
+                roomLines = 1,
             )
         }
     }

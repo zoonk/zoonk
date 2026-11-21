@@ -353,6 +353,8 @@
     <string name="plan_change_date_moved">Date moved to %1$s.</string>
     <string name="plan_change_phase_dates_moved">Your phase dates moved.</string>
     <string name="plan_change_fit_lessons">Lessons added to your plan.</string>
+    <!-- Exam strategy: optional lessons on how to take the exam, such as using its time limit and when to leave an item blank. -->
+    <string name="plan_change_extras_added">Exam strategy added to your plan.</string>
     <string name="plan_change_exam_choice">%1$s: %2$s.</string>
     <string name="plan_change_no_deadline">Your plan has no end date.</string>
     <string name="plan_change_full_course">Your plan goes on after the exam.</string>
@@ -659,6 +661,8 @@
     <string name="plan_couldnt_check_changes">We couldn\'t check what changes.</string>
     <string name="plan_apply">Change my plan</string>
     <string name="plan_add_to_my_plan">Add to plan</string>
+    <!-- Offers to add optional lessons on how to take the exam, such as using its time limit and when to leave an item blank. -->
+    <string name="plan_extra_offer_title">Study exam strategy too?</string>
     <string name="plan_not_now">Not now</string>
     <string name="plan_suggestion_previous">Previous</string>
     <string name="plan_suggestion_next">Next</string>

@@ -16,6 +16,7 @@ import com.zoonk.api.models.PlanOperationOneOf15ChoicesInner
 import com.zoonk.api.models.PlanOperationOneOf16
 import com.zoonk.api.models.PlanOperationOneOf17
 import com.zoonk.api.models.PlanOperationOneOf18
+import com.zoonk.api.models.PlanOperationOneOf19
 import com.zoonk.api.models.PlanOperationOneOf2
 import com.zoonk.api.models.PlanOperationOneOf3
 import com.zoonk.api.models.PlanOperationOneOf4
@@ -145,6 +146,11 @@ sealed interface PlanOp {
 
     data class Aim(
         val aim: String,
+    ) : PlanOp
+
+    /** The optional exam study the learner asked for, such as exam strategy, by its skills. */
+    data class Extras(
+        val skillIds: List<String>,
     ) : PlanOp
 
     data object Unknown : PlanOp
@@ -283,6 +289,10 @@ fun PlanOp.Companion.of(json: JsonObject): PlanOp =
             PlanOp.ExamChoice(json.string("group").orEmpty(), json.strings("subjects"))
         }
 
+        "setExtras" -> {
+            PlanOp.Extras(json.strings("skillIds"))
+        }
+
         else -> {
             PlanOp.Unknown
         }
@@ -405,6 +415,10 @@ fun PlanOp.toOperation(): PlanOperation? =
             PlanOperation.PlanOperationOneOf17Value(
                 PlanOperationOneOf17(contractEnum(aim), PlanOperationOneOf17.Kind.SET_AIM),
             )
+        }
+
+        is PlanOp.Extras -> {
+            PlanOperation.PlanOperationOneOf19Value(PlanOperationOneOf19(kind = PlanOperationOneOf19.Kind.SET_EXTRAS, skillIds = skillIds))
         }
 
         is PlanOp.AddSkills, is PlanOp.Tools, PlanOp.FollowNotice, is PlanOp.NoticeDate, PlanOp.FitPhaseDates, is PlanOp.ExamChoice,

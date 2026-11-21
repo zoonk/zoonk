@@ -5,7 +5,6 @@
   "goalcontent_adjust_plan": "c7ef27a85a867a7656cee2052ec496e3e535125e33b1ab09cb307810b15b937c",
   "goalcontent_also_in_exam_count": "9dbeb871cf82fbefb89916da19bd8ea7c0104c10cc441a2c901462e94594d155",
   "goalcontent_also_in_exams": "06a7196e96cd2c422024c7d45b187129ce2f2f3fa40772d183951c27fe13285a",
-  "goalcontent_also_in_plan": "6b9fbc6d6a09382b62a2e01bf4bb8d5bb0e1bac0eea61a5de4febda9998d52dd",
   "goalcontent_asked_a_lot": "e523cd4f3af78d7f105ec2698faccd2c98066245aa8e59b2b912586d7ba601e8",
   "goalcontent_chapter_number": "f7982656cf56019f6c641d3bac304b1e0185e2ab75d9d90069b531df582e4064",
   "goalcontent_chapter_summary": "a8bbc8a83d45de89ec6d5726e93b4e5c3c02e0fa816a98d3879bee959b56bcca",
@@ -160,8 +159,6 @@
     <string name="goalcontent_preparation">Przygotowanie</string>
     <string name="goalcontent_coverage">Przerobiony materiał</string>
     <string name="goalcontent_not_in_plan">Poza twoim planem</string>
-    <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">Także w twoim planie</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="goalcontent_questions_source_edition">Liczba pytań z każdego przedmiotu. Edycja: %1$s. Zestawienie: %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
