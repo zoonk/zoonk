@@ -393,10 +393,10 @@ class MistakePracticeScreenshots {
                         "expected" to JsonNull,
                         "feedback" to JsonPrimitive(if (isCorrect) "That's the order." else "The subject comes first."),
                         "isCorrect" to JsonPrimitive(isCorrect),
-                        "keyPoints" to JsonArray(emptyList()),
+                        "keyPoints" to JsonNull,
                         "savedMistake" to JsonPrimitive(false),
                         "score" to JsonPrimitive(if (isCorrect) 1 else 0),
-                        "spelling" to JsonPrimitive(""),
+                        "spelling" to JsonNull,
                     ),
                 ),
         )
