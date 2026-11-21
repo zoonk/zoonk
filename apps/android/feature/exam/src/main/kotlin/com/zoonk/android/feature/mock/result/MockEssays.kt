@@ -54,7 +54,13 @@ internal fun EssayStepContent(
     val writing = essay.writing
     if (grade != null && writing != null) {
         val shown = remember(grade) { grade.toGrade() }
-        WritingResultView(shown, writing, essay.text.orEmpty(), eyebrow = writing.title, note = if (essay.unsure) ({ EssayUnsure() }) else null)
+        WritingResultView(
+            shown,
+            writing,
+            essay.text.orEmpty(),
+            eyebrow = writing.title,
+            note = if (essay.unsure) ({ EssayUnsure() }) else null,
+        )
         return
     }
 
