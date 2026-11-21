@@ -121,7 +121,13 @@ struct PlacementTestFlow: View {
     question.placement = true
 
     return PlacementQuestionScreen(
-      subject: subject, number: asked.answered + 1, progress: asked.progress,
+      subject: subject, number: asked.answered + 1,
+      position: asked.attempt.length == .wholeCourse
+        ? Text(
+          "Part \(asked.attempt.part)", tableName: "Onboarding",
+          comment: "Over a whole-course test's question: which of its parts this is")
+        : nil,
+      progress: asked.progress,
       question: question, labels: asked.labels, isSaving: isAnswering,
       failures: questionFailures, onReport: { showsSaveReport = true },
       onAnswer: { submit($0, to: asked) }, onStop: { stop(asked.attempt) }
