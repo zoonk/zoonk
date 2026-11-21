@@ -48,6 +48,7 @@ import com.zoonk.android.feature.profile.ProfileQuestionBody
 import com.zoonk.android.feature.profile.ProfileQuestionsStore
 import com.zoonk.android.feature.profile.profileQuestionDescription
 import com.zoonk.android.feature.profile.profileQuestionTitle
+import com.zoonk.android.feature.profile.splitProfileFavorites
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
@@ -172,6 +173,7 @@ private fun profileSummary(question: ProfileQuestionView): String {
             ProfileQuestion.WORK -> question.saved.text.ifBlank { labelsSummary }
             ProfileQuestion.STUDIES -> labelsSummary
             ProfileQuestion.LEARNING_SUPPORT -> labelsSummary.ifBlank { question.saved.text }
+            ProfileQuestion.TOOLS -> (selected + splitProfileFavorites(question.saved.text)).joinToString(", ")
             else -> factsLine(labelsSummary, question.saved.text)
         }
     return summary.ifEmpty {
