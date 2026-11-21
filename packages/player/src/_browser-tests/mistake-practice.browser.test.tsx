@@ -69,6 +69,28 @@ describe("exact lesson mistake practice", () => {
     });
   });
 
+  it("puts a word bank's feedback above the bank, which holds still, on a phone", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      openPractice(languageStep("reading"));
+
+      const bank = page.getByRole("group", { name: "Word bank" });
+      await expect.element(bank).toBeVisible();
+      const before = bank.element().getBoundingClientRect();
+
+      await page.getByRole("button", { exact: true, name: "I don't know yet" }).click();
+      const verdict = page.getByRole("region", { name: "Answer feedback" });
+      await expect.element(verdict).toBeVisible();
+
+      await expect
+        .element(verdict.getByText("Mistake fixed. It leaves your notebook."))
+        .toBeVisible();
+
+      const after = bank.element().getBoundingClientRect();
+      expect(verdict.element().getBoundingClientRect().bottom).toBeLessThanOrEqual(after.top);
+      expect(after.bottom).toBe(before.bottom);
+    });
+  });
+
   it("keeps a typed draft and resends the same attempt after a lost response", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
