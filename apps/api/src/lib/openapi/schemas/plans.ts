@@ -268,13 +268,13 @@ export const planChangeResultSchema = z
       .optional()
       .meta({
         description:
-          "Why a change of focus changed nothing (`unchanged`): `alreadyIn` (the subjects it focuses on already have every lesson in the plan) or `cantMove` (they already start as early as what they build on allows, and more of them doesn't fit)",
+          "Why the change changed nothing (`unchanged`): `alreadyIn` (the plan already holds what it asks: the exam strategy it adds, or every lesson of the subjects it focuses on) or `cantMove` (the subjects it focuses on already start as early as what they build on allows, and more of them doesn't fit)",
       }),
     status: z
       .enum(["applied", "proposed", "unchanged"])
       .meta({
         description:
-          "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: a change of focus alone wouldn't do what it asks (focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved",
+          "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: the change wouldn't do what it asks (the plan already holds the exam strategy it adds, focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved",
       }),
   })
   .meta({ id: "PlanChangeResult" });
