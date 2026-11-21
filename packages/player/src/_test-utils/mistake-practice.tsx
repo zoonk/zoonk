@@ -80,7 +80,16 @@ export function openPractice(
     <LearnProvider
       adapters={{
         analytics: { track: vi.fn() },
-        linkComponent: ({ children, href, ...props }) => (
+        linkComponent: ({
+          children,
+          href,
+          lessonWritten: _lessonWritten,
+          onNavigate: _onNavigate,
+          prefetch: _prefetch,
+          scroll: _scroll,
+          unstable_dynamicOnHover: _dynamicOnHover,
+          ...props
+        }) => (
           <a href={href} {...props}>
             {children}
           </a>

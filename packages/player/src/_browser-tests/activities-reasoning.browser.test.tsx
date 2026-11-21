@@ -1,4 +1,5 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import { act } from "react";
 import { describe, expect, it } from "vitest";
 import { type Locator, page } from "vitest/browser";
 import {
@@ -201,23 +202,25 @@ describe("reasoning activities", () => {
   });
 
   it("categorize: math cards and groups are heard in words and drawn as math, never LaTeX", async () => {
-    openActivity({
-      content: {
-        ...activityContentFixtures.categorize,
-        fields: {
-          groups: [
-            { id: "half", label: String.raw`Equals $\frac{1}{2}$`, rule: "Half of one." },
-            { id: "two", label: "Equals $2$", rule: "Twice one." },
-          ],
-          items: [
-            { groupId: "half", id: "i1", text: String.raw`$\frac{2}{4}$`, why: "Two of four." },
-            { groupId: "two", id: "i2", text: String.raw`$\sqrt{4}$`, why: "Two times two." },
-            { groupId: "two", id: "i3", text: String.raw`$\frac{4}{2}$`, why: "Four split." },
-          ],
+    await act(async () => {
+      openActivity({
+        content: {
+          ...activityContentFixtures.categorize,
+          fields: {
+            groups: [
+              { id: "half", label: String.raw`Equals $\frac{1}{2}$`, rule: "Half of one." },
+              { id: "two", label: "Equals $2$", rule: "Twice one." },
+            ],
+            items: [
+              { groupId: "half", id: "i1", text: String.raw`$\frac{2}{4}$`, why: "Two of four." },
+              { groupId: "two", id: "i2", text: String.raw`$\sqrt{4}$`, why: "Two times two." },
+              { groupId: "two", id: "i3", text: String.raw`$\frac{4}{2}$`, why: "Four split." },
+            ],
+          },
+          prompt: "Sort each expression by its value.",
         },
-        prompt: "Sort each expression by its value.",
-      },
-      template: "categorize",
+        template: "categorize",
+      });
     });
 
     await expectHeard("Sort 3 cards into Equals 1 over 2, Equals 2, one at a time.");
