@@ -17,6 +17,7 @@ export function toLabelWidth(textWidth: TextWidth): LabelWidth {
   return (text) => textWidth(text) + LABEL_GAP;
 }
 
+/** @internal */
 export const getLabelWidth = toLabelWidth(estimateTextWidth);
 
 function splitWords(label: string): string[] {
