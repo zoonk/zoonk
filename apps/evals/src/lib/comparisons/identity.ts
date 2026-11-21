@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 export const hash = (value: string | Uint8Array) =>
   createHash("sha256").update(value).digest("hex");
 
+export const caseRunKey = ({ caseId, run }: { caseId: string; run: number }) => `${caseId}-${run}`;
+
 /** A chained task records each step's prompt joined by `---`; later steps include earlier outputs, so only the first step's prompt identifies the input. */
 export const promptHash = (userPrompt: string) =>
   hash(userPrompt.split("\n---\n")[0] ?? userPrompt);

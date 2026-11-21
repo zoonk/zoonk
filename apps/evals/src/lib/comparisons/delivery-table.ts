@@ -1,6 +1,11 @@
 import { meetsLatencyBudget, summarizeLatency } from "../latency";
 import { type caseVotes, opposite, sides, type verifiedClaims } from "./evidence";
+import { caseRunKey } from "./identity";
 import { type Comparison } from "./schemas";
+
+function affectedRuns(claims: ReturnType<typeof verifiedClaims>) {
+  return new Map(claims.map(({ caseId, run }) => [caseRunKey({ caseId, run }), { caseId, run }]));
+}
 
 export function deliveryTable(
   comparison: Comparison,
@@ -55,32 +60,27 @@ export function deliveryTable(
               claim.observation.criterion === criterion,
           );
 
-          const onSide = (value: typeof subject) => [
-            ...new Set(
-              relevant
-                .filter(
-                  (claim) =>
-                    claim.finding === "holds for both" ||
-                    (claim.finding === "holds" && claim.side === value),
-                )
-                .map((claim) => claim.caseId),
-            ),
-          ];
+          const onSide = (value: typeof subject) =>
+            affectedRuns(
+              relevant.filter(
+                (claim) =>
+                  claim.finding === "holds for both" ||
+                  (claim.finding === "holds" && claim.side === value),
+              ),
+            );
 
-          const affected = onSide(subject);
-          const other = new Set(onSide(opposite(subject)));
+          const affected = [...onSide(subject).values()];
+          const other = onSide(opposite(subject));
 
           const ownerAffected = [
-            ...new Set(
-              relevant
-                .filter((claim) => claim.source === "owner" && claim.side === subject)
-                .map((claim) => claim.caseId),
-            ),
+            ...affectedRuns(
+              relevant.filter((claim) => claim.source === "owner" && claim.side === subject),
+            ).values(),
           ];
 
           return {
             affected,
-            both: affected.filter((caseId) => other.has(caseId)),
+            both: affected.filter((run) => other.has(caseRunKey(run))),
             criterion,
             language,
             ...(ownerAffected.length > 0 && { ownerAffected }),

@@ -136,7 +136,10 @@
       "quality": [
         {
           "affected": [
-            "en-python-range-beginner"
+            {
+              "caseId": "en-python-range-beginner",
+              "run": 2
+            }
           ],
           "both": [],
           "criterion": "accuracy",
@@ -150,7 +153,14 @@
         },
         {
           "affected": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 1
+            },
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            }
           ],
           "both": [],
           "criterion": "clarity",
@@ -158,27 +168,42 @@
         },
         {
           "affected": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            }
           ],
           "both": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            }
           ],
           "criterion": "checks",
           "language": "en"
         },
         {
           "affected": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 1
+            }
           ],
           "both": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 1
+            }
           ],
           "criterion": "fitAndApplication",
           "language": "en"
         },
         {
           "affected": [
-            "pt-estabilidade-sourced"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "accuracy",
@@ -192,17 +217,26 @@
         },
         {
           "affected": [
-            "pt-estabilidade-sourced"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
           ],
           "both": [
-            "pt-estabilidade-sourced"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
           ],
           "criterion": "clarity",
           "language": "pt"
         },
         {
           "affected": [
-            "pt-glicolise-from-slides"
+            {
+              "caseId": "pt-glicolise-from-slides",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "checks",
@@ -210,13 +244,32 @@
         },
         {
           "affected": [
-            "pt-glicolise-from-slides",
-            "pt-estabilidade-sourced",
-            "pt-patrimonio-liquido-dense-brief"
+            {
+              "caseId": "pt-glicolise-from-slides",
+              "run": 1
+            },
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            },
+            {
+              "caseId": "pt-patrimonio-liquido-dense-brief",
+              "run": 1
+            },
+            {
+              "caseId": "pt-patrimonio-liquido-dense-brief",
+              "run": 2
+            }
           ],
           "both": [
-            "pt-glicolise-from-slides",
-            "pt-patrimonio-liquido-dense-brief"
+            {
+              "caseId": "pt-glicolise-from-slides",
+              "run": 1
+            },
+            {
+              "caseId": "pt-patrimonio-liquido-dense-brief",
+              "run": 1
+            }
           ],
           "criterion": "fitAndApplication",
           "language": "pt"
@@ -276,27 +329,42 @@
         },
         {
           "affected": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            }
           ],
           "both": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 2
+            }
           ],
           "criterion": "checks",
           "language": "en"
         },
         {
           "affected": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 1
+            }
           ],
           "both": [
-            "en-particle-in-a-box-advanced"
+            {
+              "caseId": "en-particle-in-a-box-advanced",
+              "run": 1
+            }
           ],
           "criterion": "fitAndApplication",
           "language": "en"
         },
         {
           "affected": [
-            "pt-glicolise-from-slides"
+            {
+              "caseId": "pt-glicolise-from-slides",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "accuracy",
@@ -310,17 +378,26 @@
         },
         {
           "affected": [
-            "pt-estabilidade-sourced"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
           ],
           "both": [
-            "pt-estabilidade-sourced"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
           ],
           "criterion": "clarity",
           "language": "pt"
         },
         {
           "affected": [
-            "pt-patrimonio-liquido-dense-brief"
+            {
+              "caseId": "pt-patrimonio-liquido-dense-brief",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "checks",
@@ -328,12 +405,24 @@
         },
         {
           "affected": [
-            "pt-glicolise-from-slides",
-            "pt-patrimonio-liquido-dense-brief"
+            {
+              "caseId": "pt-glicolise-from-slides",
+              "run": 1
+            },
+            {
+              "caseId": "pt-patrimonio-liquido-dense-brief",
+              "run": 1
+            }
           ],
           "both": [
-            "pt-glicolise-from-slides",
-            "pt-patrimonio-liquido-dense-brief"
+            {
+              "caseId": "pt-glicolise-from-slides",
+              "run": 1
+            },
+            {
+              "caseId": "pt-patrimonio-liquido-dense-brief",
+              "run": 1
+            }
           ],
           "criterion": "fitAndApplication",
           "language": "pt"

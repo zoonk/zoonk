@@ -223,27 +223,60 @@
         },
         {
           "affected": [
-            "visual-en-brain-lobes"
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            }
           ],
           "both": [
-            "visual-en-brain-lobes"
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            }
           ],
           "criterion": "screenPlan",
           "language": "en"
         },
         {
           "affected": [
-            "visual-en-brain-lobes",
-            "visual-en-water-cycle",
-            "visual-en-lever",
-            "visual-en-soccer-formation",
-            "visual-en-contour-lines"
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-water-cycle",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-lever",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-soccer-formation",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-contour-lines",
+              "run": 1
+            }
           ],
           "both": [
-            "visual-en-brain-lobes",
-            "visual-en-water-cycle",
-            "visual-en-lever",
-            "visual-en-soccer-formation"
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-water-cycle",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-lever",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-soccer-formation",
+              "run": 1
+            }
           ],
           "criterion": "activitiesAndVisuals",
           "language": "en"
@@ -256,7 +289,10 @@
         },
         {
           "affected": [
-            "visual-pt-ligacao-covalente"
+            {
+              "caseId": "visual-pt-ligacao-covalente",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "oneIdea",
@@ -264,25 +300,52 @@
         },
         {
           "affected": [
-            "pt-estabilidade-sourced",
-            "visual-pt-ligacao-covalente"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-ligacao-covalente",
+              "run": 1
+            }
           ],
           "both": [
-            "pt-estabilidade-sourced"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
           ],
           "criterion": "screenPlan",
           "language": "pt"
         },
         {
           "affected": [
-            "visual-pt-mapa-imperio-romano",
-            "visual-pt-circuito-serie-paralelo",
-            "visual-pt-partes-da-flor"
+            {
+              "caseId": "visual-pt-mapa-imperio-romano",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-circuito-serie-paralelo",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-partes-da-flor",
+              "run": 1
+            }
           ],
           "both": [
-            "visual-pt-mapa-imperio-romano",
-            "visual-pt-circuito-serie-paralelo",
-            "visual-pt-partes-da-flor"
+            {
+              "caseId": "visual-pt-mapa-imperio-romano",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-circuito-serie-paralelo",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-partes-da-flor",
+              "run": 1
+            }
           ],
           "criterion": "activitiesAndVisuals",
           "language": "pt"
@@ -336,27 +399,60 @@
         },
         {
           "affected": [
-            "visual-en-brain-lobes"
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            }
           ],
           "both": [
-            "visual-en-brain-lobes"
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            }
           ],
           "criterion": "screenPlan",
           "language": "en"
         },
         {
           "affected": [
-            "visual-en-brain-lobes",
-            "visual-en-water-cycle",
-            "visual-en-lever",
-            "visual-en-syntax-tree",
-            "visual-en-soccer-formation"
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-water-cycle",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-lever",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-syntax-tree",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-soccer-formation",
+              "run": 1
+            }
           ],
           "both": [
-            "visual-en-brain-lobes",
-            "visual-en-water-cycle",
-            "visual-en-lever",
-            "visual-en-soccer-formation"
+            {
+              "caseId": "visual-en-brain-lobes",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-water-cycle",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-lever",
+              "run": 1
+            },
+            {
+              "caseId": "visual-en-soccer-formation",
+              "run": 1
+            }
           ],
           "criterion": "activitiesAndVisuals",
           "language": "en"
@@ -375,25 +471,52 @@
         },
         {
           "affected": [
-            "pt-estabilidade-sourced"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
           ],
           "both": [
-            "pt-estabilidade-sourced"
+            {
+              "caseId": "pt-estabilidade-sourced",
+              "run": 1
+            }
           ],
           "criterion": "screenPlan",
           "language": "pt"
         },
         {
           "affected": [
-            "visual-pt-mapa-imperio-romano",
-            "visual-pt-juros-compostos",
-            "visual-pt-circuito-serie-paralelo",
-            "visual-pt-partes-da-flor"
+            {
+              "caseId": "visual-pt-mapa-imperio-romano",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-juros-compostos",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-circuito-serie-paralelo",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-partes-da-flor",
+              "run": 1
+            }
           ],
           "both": [
-            "visual-pt-mapa-imperio-romano",
-            "visual-pt-circuito-serie-paralelo",
-            "visual-pt-partes-da-flor"
+            {
+              "caseId": "visual-pt-mapa-imperio-romano",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-circuito-serie-paralelo",
+              "run": 1
+            },
+            {
+              "caseId": "visual-pt-partes-da-flor",
+              "run": 1
+            }
           ],
           "criterion": "activitiesAndVisuals",
           "language": "pt"

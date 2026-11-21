@@ -141,10 +141,16 @@
       "quality": [
         {
           "affected": [
-            "en-plot-reading-field-research"
+            {
+              "caseId": "en-plot-reading-field-research",
+              "run": 1
+            }
           ],
           "both": [
-            "en-plot-reading-field-research"
+            {
+              "caseId": "en-plot-reading-field-research",
+              "run": 1
+            }
           ],
           "criterion": "realism",
           "language": "en"
@@ -169,7 +175,10 @@
         },
         {
           "affected": [
-            "en-career-change-data-cleaning"
+            {
+              "caseId": "en-career-change-data-cleaning",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "accuracy",
@@ -177,8 +186,14 @@
         },
         {
           "affected": [
-            "en-ab-test-work",
-            "en-plot-reading-field-research"
+            {
+              "caseId": "en-ab-test-work",
+              "run": 1
+            },
+            {
+              "caseId": "en-plot-reading-field-research",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "depth",
@@ -186,7 +201,10 @@
         },
         {
           "affected": [
-            "en-ab-test-work"
+            {
+              "caseId": "en-ab-test-work",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "plainLanguage",
@@ -271,11 +289,24 @@
       "quality": [
         {
           "affected": [
-            "en-career-change-data-cleaning",
-            "en-plot-reading-field-research"
+            {
+              "caseId": "en-career-change-data-cleaning",
+              "run": 1
+            },
+            {
+              "caseId": "en-career-change-data-cleaning",
+              "run": 2
+            },
+            {
+              "caseId": "en-plot-reading-field-research",
+              "run": 1
+            }
           ],
           "both": [
-            "en-plot-reading-field-research"
+            {
+              "caseId": "en-plot-reading-field-research",
+              "run": 1
+            }
           ],
           "criterion": "realism",
           "language": "en"
@@ -300,7 +331,10 @@
         },
         {
           "affected": [
-            "en-plot-reading-field-research"
+            {
+              "caseId": "en-plot-reading-field-research",
+              "run": 1
+            }
           ],
           "both": [],
           "criterion": "accuracy",

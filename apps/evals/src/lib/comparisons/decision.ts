@@ -1,6 +1,7 @@
 import { type Decision, decisionSchema } from "./decision-schema";
 import { deliveryTable } from "./delivery-table";
 import { acceptedReads, caseVotes, readerRecords, settle, sides, verifiedClaims } from "./evidence";
+import { caseRunKey } from "./identity";
 import { type Comparison } from "./schemas";
 
 export { decisionSchema, type Decision } from "./decision-schema";
@@ -74,15 +75,16 @@ function decisionWith(comparison: Comparison, cases: Cases, claims: Claims): Dec
   return decisionSchema.parse({ cases, readers, rows: classified, ...choice });
 }
 export function decisiveClaims(comparison: Comparison) {
+  const { manifest } = comparison;
   const cases = caseVotes(comparison, acceptedReads(comparison));
   const claims = verifiedClaims(comparison);
-  const rules = comparison.manifest.priorities.comparison;
+  const rules = manifest.priorities.comparison;
 
   const pending = claims.filter(
     (claim) => claim.finding === "unsure" && rules?.criteria[claim.observation.criterion],
   );
 
-  if (!comparison.manifest.variants.incumbent || !rules || pending.length === 0) {
+  if (!manifest.variants.incumbent || !rules || pending.length === 0) {
     return [];
   }
 
@@ -98,12 +100,13 @@ export function decisiveClaims(comparison: Comparison) {
     return hard;
   }
 
-  const affected = (subject: "incumbent" | "challenger", caseId: string) =>
+  const affected = (subject: "incumbent" | "challenger", key: string) =>
     table
       .find((row) => row.side === subject)
       ?.quality.some(
         (metric) =>
-          rules.criteria[metric.criterion] === "counts" && metric.affected.includes(caseId),
+          rules.criteria[metric.criterion] === "counts" &&
+          metric.affected.some((run) => caseRunKey(run) === key),
       );
 
   const potential = (favored: "incumbent" | "challenger") =>
@@ -118,7 +121,7 @@ export function decisiveClaims(comparison: Comparison) {
 
       return {
         ...claim,
-        finding: affected(favored, claim.caseId)
+        finding: affected(favored, caseRunKey(claim))
           ? ("holds for both" as const)
           : ("doesn't hold" as const),
       };
@@ -151,6 +154,7 @@ export function decisiveClaims(comparison: Comparison) {
             languages: [language],
             pending: [],
             rules,
+            runs: manifest.runs,
           })?.outcome,
       );
 
@@ -158,11 +162,14 @@ export function decisiveClaims(comparison: Comparison) {
     }),
   );
 
-  return pending.filter(
-    (claim) =>
+  return pending.filter((claim) => {
+    const key = caseRunKey(claim);
+
+    return (
       cases.some((item) => item.caseId === claim.caseId && decisive.has(item.language)) &&
-      !(affected("incumbent", claim.caseId) && affected("challenger", claim.caseId)),
-  );
+      !(affected("incumbent", key) && affected("challenger", key))
+    );
+  });
 }
 
 export function decisiveUnresolved(comparison: Comparison) {
@@ -351,16 +358,24 @@ function choose({
   const seconds = (incumbent.p95 ?? 0) - (challenger.p95 ?? 0);
 
   if (incumbent.status === "disqualified") {
-    return eligibleChoice({ cases, incumbent, priorities: manifest.priorities, savings, seconds });
+    return eligibleChoice({ cases, incumbent, manifest, savings, seconds });
   }
 
-  const limits = evaluateTrades({ cases, challenger, incumbent, languages, pending, rules });
+  const limits = evaluateTrades({
+    cases,
+    challenger,
+    incumbent,
+    languages,
+    pending,
+    rules,
+    runs: manifest.runs,
+  });
 
   if (limits) {
     return result(limits.outcome, limits.reason);
   }
 
-  return eligibleChoice({ cases, incumbent, priorities: manifest.priorities, savings, seconds });
+  return eligibleChoice({ cases, incumbent, manifest, savings, seconds });
 }
 
 function eligibleChoice({
@@ -368,14 +383,16 @@ function eligibleChoice({
   incumbent,
   savings,
   seconds,
-  priorities,
+  manifest,
 }: {
   cases: ReturnType<typeof caseVotes>;
   incumbent: TableRow;
   savings: number;
   seconds: number;
-  priorities: Comparison["manifest"]["priorities"];
+  manifest: Comparison["manifest"];
 }) {
+  const { priorities } = manifest;
+
   const votes = cases.map((item) =>
     item.result === "unresolved" ? item.legacyOwner : item.result,
   );
@@ -417,10 +434,11 @@ function eligibleChoice({
   }
 
   const cost = savings > 0 ? " It costs less per successful delivery." : "";
+  const unit = manifest.runs > 1 ? "runs" : "cases";
 
   return result(
     "switch",
-    `The challenger has no more cases with a confirmed major problem in any language.${cost}`,
+    `The challenger has no more ${unit} with a confirmed major problem in any language.${cost}`,
   );
 }
 
@@ -437,6 +455,7 @@ function evaluateTrades({
   pending,
   incumbent,
   challenger,
+  runs,
 }: {
   languages: string[];
   cases: Decision["cases"];
@@ -444,8 +463,10 @@ function evaluateTrades({
   pending: ReturnType<typeof verifiedClaims>;
   incumbent: TableRow;
   challenger: TableRow;
+  runs: number;
 }) {
   const trade = rules.trade;
+  const unit = runs > 1 ? "runs" : "cases";
 
   for (const language of languages) {
     const before = incumbent.deliveryByLanguage[language];
@@ -472,21 +493,22 @@ function evaluateTrades({
             (qualityRow) =>
               qualityRow.language === language && rules.criteria[qualityRow.criterion] === "counts",
           )
-          .flatMap((qualityRow) => qualityRow.affected),
+          .flatMap((qualityRow) => qualityRow.affected.map((run) => caseRunKey(run))),
       );
 
+    const baseline = count(incumbent).size;
     const known = count(challenger);
 
     const possible = new Set([
       ...known,
-      ...pending.filter((mapping) => ids.has(mapping.caseId)).map((mapping) => mapping.caseId),
+      ...pending.filter((mapping) => ids.has(mapping.caseId)).map((claim) => caseRunKey(claim)),
     ]);
 
     const allowed = (affectedCount: number) =>
-      affectedCount <= count(incumbent).size ||
+      affectedCount <= baseline ||
       Boolean(
         trade &&
-        (affectedCount - count(incumbent).size) * 100 <= trade.majorIncreasePer100 * ids.size &&
+        (affectedCount - baseline) * 100 <= trade.majorIncreasePer100 * (before?.successful ?? 0) &&
         ((trade.saveCostShare !== null && costShare !== null && costShare >= trade.saveCostShare) ||
           (trade.saveSeconds !== null && seconds !== null && seconds >= trade.saveSeconds)),
       );
@@ -497,13 +519,13 @@ function evaluateTrades({
             "insufficient evidence",
             trade
               ? "Outstanding major claims together could exceed the accepted trade."
-              : `Outstanding major claims could give the challenger more affected cases in ${language}.`,
+              : `Outstanding major claims could give the challenger more affected ${unit} in ${language}.`,
           )
         : result(
             "retain",
             trade
               ? `The confirmed quality deficit exceeds the accepted trade in ${language}.`
-              : `The challenger has more cases with a confirmed major problem in ${language}.`,
+              : `The challenger has more ${unit} with a confirmed major problem in ${language}.`,
           );
     }
   }

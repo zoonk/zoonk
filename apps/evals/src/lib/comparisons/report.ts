@@ -4,6 +4,7 @@ import { type Comparison } from "./schemas";
 
 export function formatDecision(decision: Decision, comparison: Comparison) {
   const { manifest } = comparison;
+  const showRun = manifest.runs > 1;
 
   return [
     `## ${decision.outcome}\n\n${decision.reason}`,
@@ -17,8 +18,12 @@ export function formatDecision(decision: Decision, comparison: Comparison) {
     ...decision.rows.flatMap((row) =>
       row.quality.map(
         (item) =>
-          `${row.side}, ${item.language}, ${item.criterion}: ${item.affected.length} major-affected cases (${item.both.length} on both).${
-            item.ownerAffected ? ` Owner findings: ${item.ownerAffected.join(", ")}.` : ""
+          `${row.side}, ${item.language}, ${item.criterion}: ${item.affected.length} major-affected ${showRun ? "runs" : "cases"} (${item.both.length} on both).${
+            item.ownerAffected
+              ? ` Owner findings: ${item.ownerAffected
+                  .map(({ caseId, run }) => (showRun ? `${caseId} (run ${run})` : caseId))
+                  .join(", ")}.`
+              : ""
           }`,
       ),
     ),

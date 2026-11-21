@@ -3,12 +3,14 @@ import { adjudicationSchema, side } from "./schemas";
 
 const direction = z.enum(["incumbent", "challenger", "tie", "split", "unresolved"]);
 export type Direction = z.infer<typeof direction>;
+const caseRun = z.object({ caseId: z.string(), run: z.int().positive() });
+
 const qualitySchema = z.object({
-  affected: z.array(z.string()),
-  both: z.array(z.string()),
+  affected: z.array(caseRun),
+  both: z.array(caseRun),
   criterion: z.string(),
   language: z.string(),
-  ownerAffected: z.array(z.string()).optional(),
+  ownerAffected: z.array(caseRun).optional(),
 });
 
 const deliverySchema = z.object({

@@ -1,4 +1,5 @@
 import { type Decision } from "@/lib/comparisons/decision";
+import { caseRunKey } from "@/lib/comparisons/identity";
 import { type Comparison } from "@/lib/comparisons/schemas";
 import { formatDollars, formatSeconds } from "@/lib/format";
 import { SCROLL_LABELS } from "@/lib/scroll-labels";
@@ -21,6 +22,7 @@ import {
 import { plural } from "../_utils/words";
 
 type Row = Decision["rows"][number];
+type CaseRuns = Row["quality"][number]["affected"];
 
 function caseNote({ both, owner }: { both: boolean; owner: boolean }): string | null {
   const notes = [both && "both sides", owner && "you found it"].filter(Boolean);
@@ -28,44 +30,62 @@ function caseNote({ both, owner }: { both: boolean; owner: boolean }): string | 
 }
 
 function CaseLinks({
+  affected,
   both,
-  caseIds,
   owner,
+  showRun,
 }: {
-  both: string[];
-  caseIds: string[];
-  owner: string[];
+  affected: CaseRuns;
+  both: CaseRuns;
+  owner: CaseRuns;
+  showRun: boolean;
 }) {
-  if (caseIds.length === 0) {
+  if (affected.length === 0) {
     return <span className="text-muted-foreground">None</span>;
   }
 
+  const bothKeys = new Set(both.map((run) => caseRunKey(run)));
+  const ownerKeys = new Set(owner.map((run) => caseRunKey(run)));
+
   return (
     <span className="flex flex-col gap-1">
-      {caseIds.map((caseId) => (
-        <a
-          className="font-mono text-xs underline underline-offset-4"
-          href={`#case-${encodeURIComponent(caseId)}`}
-          key={caseId}
-        >
-          {caseId}
-          <span className="text-muted-foreground">
-            {caseNote({ both: both.includes(caseId), owner: owner.includes(caseId) })}
-          </span>
-        </a>
-      ))}
+      {affected.map(({ caseId, run }) => {
+        const key = caseRunKey({ caseId, run });
+
+        return (
+          <a
+            className="font-mono text-xs underline underline-offset-4"
+            href={`#case-${encodeURIComponent(caseId)}`}
+            key={key}
+          >
+            {showRun ? `${caseId} · Run ${run}` : caseId}
+            <span className="text-muted-foreground">
+              {caseNote({ both: bothKeys.has(key), owner: ownerKeys.has(key) })}
+            </span>
+          </a>
+        );
+      })}
     </span>
   );
 }
 
-function qualityCell(row: Row, criterion: string) {
+function qualityCell({
+  row,
+  criterion,
+  showRun,
+}: {
+  row: Row;
+  criterion: string;
+  showRun: boolean;
+}) {
   const metrics = row.quality.filter((metric) => metric.criterion === criterion);
 
   return (
     <CaseLinks
+      affected={metrics.flatMap((metric) => metric.affected)}
       both={metrics.flatMap((metric) => metric.both)}
-      caseIds={metrics.flatMap((metric) => metric.affected)}
       owner={metrics.flatMap((metric) => metric.ownerAffected ?? [])}
+      showRun={showRun}
     />
   );
 }
@@ -175,6 +195,7 @@ export function DecisionTable({
 
   const [first] = rows;
   const counts = first ? Object.entries(first.casesByLanguage) : [];
+  const showRun = manifest.runs > 1;
 
   return (
     <div className="flex flex-col gap-2">
@@ -210,10 +231,10 @@ export function DecisionTable({
           <FactRow cell={preferredCell} label="Readers preferred it" rows={rows} />
           <FactRow cell={deliveredCell} label="Runs delivered" rows={rows} />
 
-          <GroupRow label="Cases with a confirmed major problem" />
+          <GroupRow label={`${showRun ? "Runs" : "Cases"} with a confirmed major problem`} />
           {manifest.criteria.map((criterion) => (
             <FactRow
-              cell={(row) => qualityCell(row, criterion.id)}
+              cell={(row) => qualityCell({ criterion: criterion.id, row, showRun })}
               key={criterion.id}
               label={criterion.label}
               rows={rows}
