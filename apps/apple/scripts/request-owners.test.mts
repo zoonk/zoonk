@@ -78,8 +78,8 @@ const OWNERS: Record<string, string> = {
   "Features/Session/SessionScreen.swift: action":
     "The next stop, above the split NextStopWait draws.",
   "Features/Session/SessionScreen.swift: playback": "The session's screen, which has no split.",
-  "Features/Session/SessionSummaryView.swift: action":
-    "The session's summary, which holds its PaneSplit.",
+  "Features/Session/SessionSummaryView.swift: action, visit":
+    "The session's summary owns the visit and its study actions, above its PaneSplit.",
   "Features/Settings/MemoryView.swift: changes":
     "Memory, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
   "Features/Settings/PreferencesView.swift: buddySave, homeSave, soundsSave":

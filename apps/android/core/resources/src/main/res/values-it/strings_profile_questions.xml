@@ -11,7 +11,7 @@
   "profile_questions_conditions_description_settings": "b0cc43dd364b2a1674d49ce4b4a523cc215291e1ac216c6085f7da7f76430188",
   "profile_questions_conditions_saved": "944d126cd6ba0141843292a67d85e1141e4614a820ac9c1adb66e49148bdb5c5",
   "profile_questions_conditions_title": "815ebe52dfd6c6856aca732b9d141ae918633c5a3f254418328ec1a27ff72c92",
-  "profile_questions_description": "f305602c8c7b6094f60892a2853f7b43b66eaa039ae42743b7f7389ef7f935f8",
+  "profile_questions_description": "2326097377b0dd55760f00422611cac8499fca13786de658a8612162daceb22c",
   "profile_questions_earlier_answer": "45259297f910641d7eb6b04c9c733f2ef9cea9e2beed9bf7e62c7ae85536b659",
   "profile_questions_for_fun": "792fbce0db2fb8226c862656650022a47bf82b04bb05c8bfc48245460ab45b82",
   "profile_questions_how_learn": "d3de11fdf7b710851eb6919de6ad5a010cb02b73bf7a719623720ec33121dbbc",
@@ -78,7 +78,7 @@
 -->
 <resources>
     <string name="profile_questions_title">Su di te</string>
-    <string name="profile_questions_description">Useremo quello che ci racconti qui per personalizzare gli esempi e il tuo compagno. È tutto facoltativo.</string>
+    <string name="profile_questions_description">Useremo quello che ci racconti qui per personalizzare gli esempi e il tuo socio. È tutto facoltativo.</string>
     <string name="profile_questions_skip_all">Salta tutto</string>
     <string name="profile_questions_skip_all_label">Salta le altre domande su di te</string>
     <string name="profile_questions_never_ask">Non farmi più queste domande</string>

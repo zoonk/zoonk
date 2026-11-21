@@ -1,11 +1,11 @@
 import {
-  MAX_PROFILE_FAVORITES_LENGTH,
   MAX_PROFILE_JOB_LENGTH,
   type ProfileAnswerInput,
   type ProfileQuestionView,
   profileAnswerInputSchema,
 } from "@zoonk/core/profile/questions/contract";
 import { splitProfileFavorites } from "@zoonk/core/profile/questions/favorites";
+import { TYPED_SEPARATOR, addTypedTools } from "./typed-tools";
 
 export type ProfileQuestion = ProfileQuestionView["id"];
 
@@ -28,8 +28,6 @@ export type ProfileDraft = {
   studies: ProfileStudyDraft[];
   exclusive: ProfileExclusive | null;
 };
-
-const TYPED_SEPARATOR = ", ";
 
 const JOB_STATUSES = new Set(["work", "workAndStudy"]);
 
@@ -88,41 +86,6 @@ export function toProfileDraft(view: ProfileQuestionView): ProfileDraft {
     text: view.id === "tools" ? "" : view.saved.text,
     typed,
   };
-}
-
-/** How many more characters the tools field takes before the typed tools reach the saved limit. */
-export function getTypedToolsRoom(typed: readonly string[]): number {
-  const used = typed.length === 0 ? 0 : typed.join(TYPED_SEPARATOR).length + TYPED_SEPARATOR.length;
-  return Math.max(0, MAX_PROFILE_FAVORITES_LENGTH - used);
-}
-
-/**
- * Turns the tools field's text into chips and empties it. A name an offered chip already has picks
- * that chip, a name already typed is left out, and a name that would pass the limit is dropped.
- */
-export function addTypedTools({
-  draft,
-  options,
-}: {
-  draft: ProfileDraft;
-  options: ProfileQuestionView["options"];
-}): ProfileDraft {
-  const picks = [...draft.picks];
-  const typed = [...draft.typed];
-
-  for (const name of splitProfileFavorites(draft.text)) {
-    const key = name.toLowerCase();
-    const offered = options.find((option) => option.label.toLowerCase() === key);
-    const fits = [...typed, name].join(TYPED_SEPARATOR).length <= MAX_PROFILE_FAVORITES_LENGTH;
-
-    if (offered && !picks.includes(offered.id)) {
-      picks.push(offered.id);
-    } else if (!offered && fits && !typed.some((tool) => tool.toLowerCase() === key)) {
-      typed.push(name);
-    }
-  }
-
-  return { ...draft, exclusive: null, picks, text: "", typed };
 }
 
 export function getPrecheckedSupports(conditions: readonly string[]): string[] {
@@ -220,6 +183,11 @@ function isComplete({ draft, question }: { draft: ProfileDraft; question: Profil
 
   if (question === "conditions") {
     return !draft.picks.includes("other") || draft.text.trim() !== "";
+  }
+
+  // Names that didn't fit stay in the tools field; sending would drop them.
+  if (question === "tools") {
+    return draft.text.trim() === "";
   }
 
   return true;

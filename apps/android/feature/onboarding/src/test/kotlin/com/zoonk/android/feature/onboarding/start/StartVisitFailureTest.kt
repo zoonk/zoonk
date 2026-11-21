@@ -123,7 +123,7 @@ class StartVisitFailureTest {
     private fun courseStart(leaveFirst: Boolean) =
         check(leaveFirst) { store ->
             val vm = CourseStartViewModel(store, SavedStateHandle()).kept()
-            vm.visit to ({ vm.start("course", null, null) } to { vm.failure })
+            vm.visit to ({ vm.start("course", null, null, "en") } to { vm.failure })
         }
 
     @Test

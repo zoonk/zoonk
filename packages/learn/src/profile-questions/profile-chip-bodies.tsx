@@ -5,7 +5,6 @@ import {
   MAX_PROFILE_JOB_LENGTH,
   MAX_PROFILE_SUBJECT_LENGTH,
 } from "@zoonk/core/profile/questions/contract";
-import { PROFILE_FAVORITES_SEPARATOR } from "@zoonk/core/profile/questions/favorites";
 import { InputGroupButton } from "@zoonk/ui/components/input-group";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
@@ -14,13 +13,8 @@ import { ChoiceList } from "../onboarding/choice-list";
 import { TextField } from "../onboarding/steps/text-field";
 import { type BodyProps, setText, useExclusiveLabels, usePicker } from "./profile-body-parts";
 import { ProfileChips, TypedChips } from "./profile-chips";
-import {
-  type ChipQuestion,
-  addTypedTools,
-  getTypedToolsRoom,
-  toggleProfileExclusive,
-  toggleProfilePick,
-} from "./profile-draft";
+import { type ChipQuestion, toggleProfileExclusive, toggleProfilePick } from "./profile-draft";
+import { addTypedTools, canAddTypedTools, typeInToolsField } from "./typed-tools";
 
 function useFavoritesField(question: ChipQuestion) {
   const t = useExtracted();
@@ -87,8 +81,7 @@ function ToolsBody(props: BodyProps & { label: string }) {
   // A removed chip's control takes focus with it; the field gets it back.
   useFocusOnRemovedControl(typing, () => input.current);
 
-  const add = (text: string) =>
-    onChange(addTypedTools({ draft: { ...draft, text }, options: question.options }));
+  const add = () => onChange(addTypedTools({ draft, options: question.options }));
 
   return (
     <>
@@ -98,9 +91,10 @@ function ToolsBody(props: BodyProps & { label: string }) {
         <TextField
           action={
             <InputGroupButton
-              disabled={!hasText}
+              className="text-foreground"
+              disabled={!canAddTypedTools({ draft, options: question.options })}
               onClick={() => {
-                add(draft.text);
+                add();
                 input.current?.focus();
               }}
               size="sm"
@@ -114,14 +108,13 @@ function ToolsBody(props: BodyProps & { label: string }) {
           autoFocus={false}
           inputRef={input}
           label={field.label}
-          maxLength={getTypedToolsRoom(draft.typed)}
           onChange={(text) =>
-            PROFILE_FAVORITES_SEPARATOR.test(text) ? add(text) : setText(props, text)
+            onChange(typeInToolsField({ draft, options: question.options, text }))
           }
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.nativeEvent.isComposing && hasText) {
               event.preventDefault();
-              add(draft.text);
+              add();
             }
           }}
           placeholder={field.placeholder}

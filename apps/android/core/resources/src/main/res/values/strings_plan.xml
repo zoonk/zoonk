@@ -79,7 +79,7 @@
     <string name="plan_short_map_and_gaps">Exam map and gaps</string>
     <string name="plan_short_mock_and_practice">Mock and practice</string>
     <string name="plan_short_full_review_and_practice">Full review and practice</string>
-    <string name="plan_short_mock_and_review">Short mock and review</string>
+    <string name="plan_short_mock">Short mock</string>
     <string name="plan_short_full_review">Full review</string>
     <string name="plan_short_light_review">Light review</string>
     <string name="plan_short_day">Day %1$d of %2$d</string>

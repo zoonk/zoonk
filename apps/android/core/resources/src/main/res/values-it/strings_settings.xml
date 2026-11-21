@@ -31,9 +31,9 @@
   "settings_memory": "c42e4ecb1e69b6c1c0a6aa9870bd7d90e2999703615ce098f72267c2ad6ac27a",
   "settings_preferences": "381235baa885150a5fd9efba317270d4ac17187cb8841ea1d78e1fd18743f032",
   "settings_preferences_app_language": "e1cad3448e52be3dc6e91f3fe047cdcb39b6ec42369082eff51c2a2785d14e7e",
-  "settings_preferences_buddy": "1929232eb2a7d9f5d75f6a7594e62d4807b07bdf833148670a28740f10acc721",
+  "settings_preferences_buddy": "ae9be7f27d3e6fa33a283f1be5782df7c6ce27bc9db2c2267fed83fccdd7129d",
   "settings_preferences_change": "9f1939ee4baed836f1d3aff15f65cbebea01f6758cb62e6b9689e37a112391d9",
-  "settings_preferences_choose_buddy": "f58feaaad9940984244be7962ecf3dd88bbaf4d49114a982110894394efaf5a9",
+  "settings_preferences_choose_buddy": "580182250282b294fcf2760b961f05f7dc14a5678fd102962adb12d8e4078e39",
   "settings_preferences_language": "edfab310a5b3c88a6b195af5a11c0a7bdc3fe72ea55be46f7f92a4f9258cc19d",
   "settings_preferences_lessons": "e7813dd22498703bd5c4ab94ece4fff8d2cd8d58ae40be82f532ea01d3ebafe2",
   "settings_preferences_save_failed": "54cae5401fc71611d084862ec475f1d3e7aa5634d82d6d0c196666708d0d8888",
@@ -84,9 +84,9 @@
     <string name="settings_apple_not_revoked">I tuoi dati su Zoonk sono stati eliminati, ma Apple non ha potuto confermare la rimozione di Zoonk dal tuo Apple ID. Rimuovi Zoonk da Accedi con Apple per completare l’operazione.</string>
     <string name="settings_manage_apple">Gestisci Accedi con Apple</string>
     <string name="settings_done">Termina</string>
-    <string name="settings_preferences_buddy">Il tuo compagno</string>
+    <string name="settings_preferences_buddy">Il tuo socio</string>
     <string name="settings_preferences_change">Cambia</string>
-    <string name="settings_preferences_choose_buddy">Scegli il tuo compagno</string>
+    <string name="settings_preferences_choose_buddy">Scegli il tuo socio</string>
     <string name="settings_preferences_lessons">Lezioni</string>
     <string name="settings_preferences_sounds">Suoni</string>
     <string name="settings_preferences_sounds_description">Quando rispondi bene o finisci</string>

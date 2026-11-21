@@ -11308,9 +11308,9 @@ msgid "Full review"
 msgstr "총복습"
 
 #: src/plan/use-short-plan.ts
-msgctxt "jzXhpt"
-msgid "Short mock and review"
-msgstr "짧은 모의고사와 복습"
+msgctxt "0zXviI"
+msgid "Short mock"
+msgstr "짧은 모의고사"
 
 #: src/plan/use-short-plan.ts
 msgctxt "FTIL8p"
@@ -11689,7 +11689,7 @@ msgstr "지금은 어떤 일을 하고 있나요?"
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "lxu-IX"
 msgid "Which apps and tools do you use most?"
-msgstr "가장 자주 쓰는 앱과 도구는 무엇인가요?"
+msgstr "어떤 앱과 도구를 가장 자주 쓰나요?"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "McuAl7"
@@ -12727,7 +12727,7 @@ msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "학습 탭"
 
-#. The search button at the end of the phone's tab bar, after the tabs.
+#. The search item at the end of the phone's tab bar, after the tabs.
 #: src/shell/learn-navigation.tsx
 msgctxt "xmcVZ0"
 msgid "Search"
@@ -13062,6 +13062,7 @@ msgstr "{minutes}분 연습하기"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "vjjzth"
 msgid "Get lessons"
 msgstr "레슨 준비하기"
@@ -13094,12 +13095,6 @@ msgid "What changed"
 msgstr "변경 사항"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "지금 레슨 준비하기"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "다음 레슨"
@@ -13110,12 +13105,6 @@ msgstr "다음 레슨"
 msgctxt "5CkyMG"
 msgid "Not ready yet"
 msgstr "아직 준비되지 않았어요"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Bhd3E-"
-msgid "Taking longer than usual"
-msgstr "평소보다 오래 걸리고 있어요"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13156,16 +13145,6 @@ msgstr "공부하고 싶다면 아래에서 다음 레슨을 시작해 보세요
 msgctxt "MdRa2K"
 msgid "Enjoy your day off!"
 msgstr "편히 쉬세요!"
-
-#: src/today/today-day-status.tsx
-msgctxt "Pg7r31"
-msgid "Today's lessons are taking longer than usual."
-msgstr "오늘 레슨을 준비하는 데 평소보다 시간이 더 걸리고 있어요."
-
-#: src/today/today-day-status.tsx
-msgctxt "z5blyu"
-msgid "Come back in a few minutes."
-msgstr "몇 분 뒤에 다시 와 보세요."
 
 #: src/today/today-day-status.tsx
 msgctxt "POTKUA"

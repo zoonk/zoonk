@@ -77,6 +77,7 @@ describe(getGoalCourseFormat, () => {
   it("makes a learner's own course personalized, a language goal's a language course, others core", () => {
     expect(getGoalCourseFormat({ kind: "language", ownerId: randomUUID() })).toBe("personalized");
     expect(getGoalCourseFormat({ kind: "language", ownerId: null })).toBe("language");
+    expect(getGoalCourseFormat({ kind: "exam", ownerId: null, wholeExam: true })).toBe("exam");
     expect(getGoalCourseFormat({ kind: "exam", ownerId: null })).toBe("core");
     expect(getGoalCourseFormat({ kind: "learn", ownerId: null })).toBe("core");
   });

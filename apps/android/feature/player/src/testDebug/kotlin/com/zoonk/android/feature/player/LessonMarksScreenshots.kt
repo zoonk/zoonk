@@ -218,7 +218,7 @@ class LessonMarksScreenshots {
             )
         var index by mutableIntStateOf(0)
         val simpler = TutorSuggestion("Explique de um jeito mais simples", "simpler")
-        val tutor = LessonTutor(TutorIdentity("Sam", BuddyLook()), listOf(simpler)) { _, _, _, _, _, _ -> }
+        val tutor = LessonTutor(TutorIdentity("Sam", BuddyLook()), listOf(simpler)) { _, _, _, _, _ -> }
         val exits =
             object : LessonPlayerExits {
                 override fun close() = Unit

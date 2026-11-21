@@ -6,7 +6,6 @@ import { assert, property, string } from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
   type ProfileDraft,
-  addTypedTools,
   canSendProfileDraft,
   getPrecheckedSupports,
   getProfileJobPrefill,
@@ -349,31 +348,6 @@ const TOOLS = [
   { description: null, id: "Tasy", label: "Tasy" },
 ];
 
-describe(addTypedTools, () => {
-  it("each typed name becomes a chip and the field empties", () => {
-    expect(
-      addTypedTools({ draft: draft({ text: "ClinicalKey; Whitebook," }), options: TOOLS }),
-    ).toStrictEqual(draft({ typed: ["ClinicalKey", "Whitebook"] }));
-  });
-
-  it("an offered name picks its chip, and a name already typed is left out", () => {
-    expect(
-      addTypedTools({
-        draft: draft({ picks: ["Tasy"], text: "excel, tasy, whitebook", typed: ["Whitebook"] }),
-        options: TOOLS,
-      }),
-    ).toStrictEqual(draft({ picks: ["Tasy", "excel"], typed: ["Whitebook"] }));
-  });
-
-  it("a name that would pass the saved limit is dropped", () => {
-    const typed = ["a".repeat(113)];
-
-    expect(
-      addTypedTools({ draft: draft({ text: "Python, R", typed }), options: TOOLS }).typed,
-    ).toStrictEqual([...typed, "R"]);
-  });
-});
-
 describe(toProfileInput, () => {
   const tools = view({ id: "tools", options: TOOLS });
 
@@ -389,6 +363,17 @@ describe(toProfileInput, () => {
       answer: { declined: false, favorites: "Whitebook, UpToDate", picks: ["Tasy", "excel"] },
       question: "tools",
     });
+  });
+
+  it("a name that doesn't fit holds the screen until the learner makes room", () => {
+    expect(
+      toProfileInput({
+        draft: draft({ picks: ["Tasy"], text: "Python", typed: ["a".repeat(118)] }),
+        from: "onboarding",
+        memoryEnabled: true,
+        question: tools,
+      }),
+    ).toBeNull();
   });
 
   it("onboarding can't send a tools screen with nothing on it", () => {

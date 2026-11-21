@@ -61,6 +61,13 @@ const learnerSummaryGoalSchema = z
         description:
           "The countries a language goal can set as `targetRegion`, named in the goal's language and sorted by name; empty for other goals and languages without countries",
       }),
+    startCourseIds: z
+      .array(uuidSchema())
+      .optional()
+      .meta({
+        description:
+          "Courses whose start opens this goal, including its source and their editions.",
+      }),
     status: z.enum(GoalStatus),
     targetDate: z.iso.date().nullable(),
     targetDateEstimated: z.boolean(),

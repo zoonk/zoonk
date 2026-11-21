@@ -68,6 +68,7 @@ export const planGraphSchema = z.object({
       startChapterId: z.string().nullable(),
     })
     .optional(),
+  editionCandidate: z.boolean().optional(),
   optionSkills: z.array(optionSkillSchema).optional(),
   phases: z.array(graphPhaseSchema).default([]),
   skills: z.array(graphSkillSchema).default([]),

@@ -4,7 +4,7 @@ import { Essay } from "./lang-essay";
 import { Pattern } from "./lang-pattern";
 import { LanguageUnit } from "./lang-unit";
 
-export type View = (p: { lang: Lang; state: string; q: URLSearchParams }) => any;
+export type View = (p: { lang: Lang; state: string; q: URLSearchParams }) => React.ReactNode;
 
 export const views: Record<string, View> = {
   "language-unit": ({ lang, q }) => <LanguageUnit lang={lang} q={q} />,

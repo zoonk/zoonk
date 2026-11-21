@@ -12,7 +12,7 @@ import { getAllowance } from "../../entitlements/get-allowance";
 import { getLessonVariety } from "../../goals/_utils/content-country-view";
 import { hasCountryReading, isCountryGoal } from "../../goals/_utils/goal-content-country";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
-import { loadGoalMemberSkillIds } from "../../learner/_utils/goal-skill-graph";
+import { loadGoalMistakeSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { buildSyllabus } from "../../view-models/syllabus/_utils/build-syllabus";
 import { loadSyllabusInput } from "../../view-models/syllabus/_utils/load-syllabus";
 import { type TutorToolOffer } from "../tutor-tool-offer-contract";
@@ -113,7 +113,7 @@ export async function offerEssay(goal: Goal): Promise<TutorToolResult> {
 }
 
 export async function offerMistakes(goal: Goal): Promise<TutorToolResult> {
-  const skillIds = await loadGoalMemberSkillIds(goal.id);
+  const skillIds = await loadGoalMistakeSkillIds(goal.id);
 
   const open = await prisma.mistake.count({
     where: { skillId: { in: skillIds }, status: "open", userId: goal.userId },

@@ -61,6 +61,36 @@ async function loadInputs(goalId: string) {
 }
 
 describe(decideGoalScopeStep, () => {
+  it("keeps the source subject of an unpinned language course", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({
+        format: "language",
+        isPublished: true,
+        targetLanguage: "ja",
+        title: "Japanese for nurses",
+      }),
+    ]);
+
+    const started = await goalFixture({
+      kind: "language",
+      language: "pt",
+      sourceCourseId: course.id,
+      targetLanguage: "ja",
+      userId: user.id,
+    });
+
+    const inputs = await loadInputs(started.id);
+    expect(inputs.startedCourse).toBeNull();
+
+    await expect(decideGoalScopeStep({ inputs, workflowRunId: "run" })).resolves.toMatchObject({
+      generalGoal: course.title,
+      language: "pt",
+      ownerId: null,
+      targetLanguage: "ja",
+    });
+  });
+
   it("shares a language goal's content by the language it teaches, never by the title the learner gave it", async () => {
     const user = await userFixture();
 

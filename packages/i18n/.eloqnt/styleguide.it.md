@@ -19,7 +19,6 @@
 - “flag” (a mock question to come back to): “contrassegnare”, never “segnalare”, which reports a problem
 - “trap” (in a Trickster question): “trappola”; the “Trap hunter” badge: “Caccia alle trappole”
 - “Quick explanation”: “Spiegazione rapida”
-- “AI study buddy”: “compagno di studio con l'IA”
 - “speaking practice”: “esercitazione orale”; a practice “call”: “conversazione di allenamento”; “Speaking” as a skill label: “Parlato”, but in sentences “prova orale”, “parte orale” or “come parli”
 - “feedback” the learner sends Zoonk: “feedback”; feedback on an essay or a call: “commenti”
 - “set up” (Zoonk setting up a goal or a plan): “configurare”, since “Preparazione” is the readiness score
@@ -53,7 +52,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Compagno”; “study buddy”: “compagno di studio”
+- “Buddy”: “Socio”; “your buddy”: “il tuo socio”; “study buddy”: “socio di studio”; “AI study buddy”: “socio di studio con l'IA”. Never “compagno”, which reads as a romantic partner
 - Buddy stages “Baby” / “Young” / “Adult”: “Piccolo” / “Giovane” / “Adulto”
 - “mission”: “missione”
 - “call” (speaking practice): “conversazione”, not “chiamata”

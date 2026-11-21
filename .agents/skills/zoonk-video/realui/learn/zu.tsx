@@ -1,19 +1,20 @@
+import { type LessonQuestionResource } from "@repo/packages/core/src/lesson-questions/contract.ts";
 import { getGlassesProgress } from "@repo/packages/core/src/milestones/milestone-rules.ts";
+// The buddy tab (/buddy) on a phone: Zu's conversation with "I want to study less this week",
+// Zu's answer, and the real "Change to your plan" card (proposed, or applied with Undo).
+import { type PlanChangeView } from "@repo/packages/core/src/plans/plan-view-contract.ts";
 import { BRAIN_POWER_BONUS } from "@repo/packages/core/src/sessions/brain-power.ts";
 import {
   BuddyScreen,
   type BuddyStatusView,
   useBuddyTutor,
 } from "@repo/packages/learn/src/buddies/buddy-screen.tsx";
+import { type TutorToolActions } from "@repo/packages/learn/src/conversation/tutor-tool-offer.tsx";
 import { type LessonTutorConfig } from "@repo/packages/player/src/lesson/tutor/lesson-tutor-context.ts";
 import { TutorConversation } from "@repo/packages/player/src/questions/tutor-conversation.tsx";
-import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
-// The buddy tab (/buddy) on a phone: Zu's conversation with "I want to study less this week",
-// Zu's answer, and the real "Change to your plan" card (proposed, or applied with Undo).
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useEffect, useMemo } from "react";
 import { buddyGrowth } from "../goals/buddy-energy";
-import { CAREER_GOAL_ID, S, TabShell, type ViewProps } from "./common";
+import { CAREER_GOAL_ID, MISSION_LINKS, S, TabShell, actions, type ViewProps } from "./common";
 
 const TODAY_ISO = "2026-11-03";
 
@@ -49,7 +50,7 @@ function buddyStatus(): BuddyStatusView {
         { done: 0, kind: "askBuddy", opens: { kind: "buddy" }, status: "todo", total: 1 },
       ],
     },
-  } as BuddyStatusView;
+  };
 }
 
 function planChange(applied: boolean): PlanChangeView {
@@ -71,12 +72,13 @@ function planChange(applied: boolean): PlanChangeView {
     lessonsSkipped: 0,
     officialDate: null,
     operations: [{ kind: "addLightWeek", startDate: TODAY_ISO }],
+    quote: "light-week-2026-11-03",
     reason: null,
     seen: false,
     source: "tutor",
     status: applied ? "applied" : "proposed",
     todaySession: applied ? "changed" : null,
-  } as PlanChangeView;
+  };
 }
 
 function question(lang: "en" | "pt", applied: boolean): LessonQuestionResource {
@@ -84,7 +86,7 @@ function question(lang: "en" | "pt", applied: boolean): LessonQuestionResource {
 
   return {
     answer: REPLY[lang],
-    context: { kind: "plan" } as any,
+    context: { kind: "plan" },
     createdAt: at,
     id: "0b6f8f62-5f0e-4f8e-8f7a-6a3f0e1c2d34",
     planChange: planChange(applied),
@@ -114,7 +116,7 @@ function Link({
 const TUTOR: LessonTutorConfig = {
   buddy: null,
   canAsk: true,
-  connection: { apiUrl: "http://localhost:5199/__no-api/", getHeaders: async () => ({}) },
+  connection: { apiUrl: `${location.origin}/__no-api/`, getHeaders: async () => ({}) },
   navigation: { linkComponent: Link, loginHref: "/login", subscriptionHref: "/subscription" },
 };
 
@@ -179,7 +181,7 @@ function ZuTab({ lang, q, state }: ViewProps) {
       goal={{
         dailyMinutes: 60,
         id: CAREER_GOAL_ID,
-        kind: "career",
+        kind: "learn",
         targetDate: career.date,
         title: career.title,
       }}
@@ -188,22 +190,13 @@ function ZuTab({ lang, q, state }: ViewProps) {
     >
       <BuddyScreen
         actions={{
-          decidePlanChange: async ({ status: decided }) =>
-            ({ ...planChange(decided === "applied"), status: decided }) as PlanChangeView,
-          missionLinks: {
-            hrefs: {
-              areaPractice: noopHref,
-              buddy: "/buddy",
-              call: noopHref,
-              mistakesPractice: "/mistakes",
-              mockChooser: "/mock/new",
-              pattern: noopHref,
-              pronunciation: "/speaking",
-            },
-            openBlock: async () => false,
+          decidePlanChange: async ({ status: decided }) => {
+            const change = planChange(decided === "applied");
+            return decided === "seen" ? { ...change, seen: true } : { ...change, status: decided };
           },
+          missionLinks: MISSION_LINKS,
           saveBuddy: async () => true,
-          tools: {
+          tools: actions<TutorToolActions>({
             hrefs: {
               chooseFocus: "#",
               chooseMock: "#",
@@ -216,7 +209,7 @@ function ZuTab({ lang, q, state }: ViewProps) {
               stats: "/stats",
               subject: noopHref,
             },
-          } as any,
+          }),
         }}
         hrefs={{
           energy: "/energy",
@@ -234,4 +227,4 @@ function ZuTab({ lang, q, state }: ViewProps) {
   );
 }
 
-export const views: Record<string, (p: ViewProps) => any> = { "zu-tab": ZuTab };
+export const views: Record<string, (p: ViewProps) => React.ReactNode> = { "zu-tab": ZuTab };

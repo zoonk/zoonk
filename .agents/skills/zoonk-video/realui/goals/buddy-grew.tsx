@@ -29,7 +29,7 @@ export function BuddyGrew({ lang, q }: { lang: Lang; q: URLSearchParams }) {
 
   return (
     <Learn>
-      <MilestoneCeremony buddy={buddy as any} milestone={milestone as any} onShown={NOOP} />
+      <MilestoneCeremony buddy={buddy} milestone={milestone} onShown={NOOP} />
       <DropFocusRing />
     </Learn>
   );

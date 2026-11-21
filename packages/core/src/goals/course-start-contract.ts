@@ -1,7 +1,7 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { ownLevelSchema } from "../learner/placement/placement-contract";
-import { goalCreateInputSchema } from "./goal-contract";
+import { goalCreateInputSchema, goalDraftSchema } from "./goal-contract";
 
 export const courseGoalStartInputSchema = goalCreateInputSchema
   .pick({ studyDays: true, studyTime: true, timeZone: true })
@@ -12,6 +12,12 @@ export const courseGoalStartInputSchema = goalCreateInputSchema
     dailyMinutes: goalCreateInputSchema.shape.dailyMinutes
       .optional()
       .meta({ description: "Minutes a day; 15 until the schedule screen asks" }),
+    language: goalDraftSchema.shape.language
+      .optional()
+      .meta({
+        description:
+          "The language the learner studies in. When omitted, the course’s language is used",
+      }),
     level: ownLevelSchema
       .nullable()
       .optional()

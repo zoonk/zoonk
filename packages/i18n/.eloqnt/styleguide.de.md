@@ -46,7 +46,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Kumpel”
+- “Buddy”: “Buddy”, the English word German already uses (“dein Buddy”, “deines Buddys”); “study buddy”: “Lernbuddy”; “AI study buddy”: “KI-Lernbuddy”. Never “Kumpel”, “Freund” or “Partner”
 - “Content”: “Inhalte”
 - Mission names and unlock conditions (missions list, first steps, rewards): infinitive: “Deine erste Lektion abschließen”
 - “call” (speaking practice): “Gespräch”, not “Anruf”

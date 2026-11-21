@@ -1,9 +1,10 @@
 "use client";
 
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
-import { BarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MapIcon, SunIcon } from "lucide-react";
+import { MapIcon, SearchIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../_utils/locale";
 import { BuddyArt } from "../buddies/buddy-art";
@@ -148,6 +149,20 @@ function NavigationRoot({ ...props }: React.ComponentProps<"nav">) {
 const TAB_ITEM_CLASS =
   "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground has-data-link-pending:bg-muted has-data-link-pending:text-foreground press font-medium outline-none focus-visible:ring-[3px]";
 
+/**
+ * Every item shares the bar's rows (room above, icon, title, room below), so the icons stay on one
+ * row when a title wraps and each item's fill keeps its content in the middle.
+ */
+const BOTTOM_TAB_ITEM_CLASS = cn(
+  TAB_ITEM_CLASS,
+  "text-2xs row-span-4 grid min-w-0 grid-cols-1 grid-rows-subgrid content-center justify-items-center rounded-xl px-1 @max-xs/tabs:min-w-[44px]",
+);
+
+const BOTTOM_TAB_ICON_CLASS = "row-start-2 flex h-6 items-center justify-center";
+
+const BOTTOM_TAB_TITLE_CLASS =
+  "row-start-3 mt-0.5 max-w-full overflow-clip text-center text-balance hyphens-auto whitespace-nowrap [hyphenate-limit-chars:5_2_2] @max-xs/tabs:overflow-visible @max-xs/tabs:whitespace-normal";
+
 const SIDE_TAB_ITEM_CLASS = cn(
   SIDEBAR_ITEM_CLASS,
   "has-data-link-pending:bg-muted has-data-link-pending:text-foreground",
@@ -212,15 +227,23 @@ function TabBarSearch({ onSearch }: { onSearch: () => void }) {
   const t = useExtracted();
 
   return (
-    <BarSearch
-      className="text-muted-foreground"
-      label={t({
-        description: "The search button at the end of the phone's tab bar, after the tabs.",
-        message: "Search",
-      })}
+    <button
+      aria-haspopup="dialog"
+      aria-keyshortcuts={shortcutKeys("search")}
+      className={BOTTOM_TAB_ITEM_CLASS}
       onClick={onSearch}
-      variant="outline"
-    />
+      type="button"
+    >
+      <span className={BOTTOM_TAB_ICON_CLASS}>
+        <SearchIcon aria-hidden="true" className="size-5" />
+      </span>
+      <span className={cn(BOTTOM_TAB_TITLE_CLASS, "@max-xs/tabs:sr-only")} data-slot="tab-title">
+        {t({
+          description: "The search item at the end of the phone's tab bar, after the tabs.",
+          message: "Search",
+        })}
+      </span>
+    </button>
   );
 }
 
@@ -237,13 +260,10 @@ function BottomTab({
   return (
     <LearnLink
       aria-current={tab === activeTab ? "page" : undefined}
-      className={cn(
-        TAB_ITEM_CLASS,
-        "text-2xs flex min-h-11 w-full min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 @max-xs/tabs:min-w-[44px] @max-xs/tabs:px-0",
-      )}
+      className={BOTTOM_TAB_ITEM_CLASS}
       href={routes[tab]}
     >
-      <span className="flex h-6 items-center justify-center">
+      <span className={BOTTOM_TAB_ICON_CLASS}>
         <TabIcon
           buddy={buddy}
           missions={missions}
@@ -254,7 +274,7 @@ function BottomTab({
       </span>
       <span
         className={cn(
-          "max-w-full overflow-clip text-center text-balance hyphens-auto whitespace-nowrap [hyphenate-limit-chars:5_2_2] @max-xs/tabs:min-h-[2lh] @max-xs/tabs:overflow-visible @max-xs/tabs:whitespace-normal",
+          BOTTOM_TAB_TITLE_CLASS,
           customName &&
             "truncate @max-xs/tabs:line-clamp-2 @max-xs/tabs:max-h-[2lh] @max-xs/tabs:overflow-hidden @max-xs/tabs:text-wrap @max-xs/tabs:wrap-anywhere @max-xs/tabs:hyphens-none",
         )}
@@ -268,11 +288,17 @@ function BottomTab({
   );
 }
 
-/** Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). */
+const BOTTOM_TAB_SLOT_CLASS = "row-span-4 grid min-w-0 grid-cols-1 grid-rows-subgrid";
+
+/**
+ * Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). On a narrow bar the
+ * buddy's column takes what Today, the Plan and search leave, and search keeps only its icon: with
+ * large text, four titles don't fit across a phone.
+ */
 export function LearnBottomNavigation({
   onSearch,
   ...props
-}: LearnNavigationProps & { onSearch?: () => void }) {
+}: LearnNavigationProps & { onSearch: () => void }) {
   return (
     <NavigationRoot
       className={cn(
@@ -282,22 +308,16 @@ export function LearnBottomNavigation({
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
-      <div className="mx-auto flex h-16 items-center gap-[calc((100%-16.25rem)/3)] px-(--page-gutter) py-2.5 sm:max-w-3xl @max-xs/tabs:px-2 @max-xs/tabs:py-0">
-        <ul className="flex min-w-0 flex-1 justify-between @max-xs/tabs:gap-1">
-          {LEARN_TABS.map((tab) => (
-            <li
-              className={cn(
-                "flex max-w-18 min-w-0 flex-1",
-                tab !== "buddy" && "@max-xs/tabs:min-w-max @max-xs/tabs:flex-none",
-              )}
-              key={tab}
-            >
-              <BottomTab {...props} tab={tab} />
-            </li>
-          ))}
-        </ul>
-        {onSearch && <TabBarSearch onSearch={onSearch} />}
-      </div>
+      <ul className="mx-auto grid h-16 auto-cols-18 grid-flow-col grid-rows-[1fr_auto_auto_1fr] justify-between px-(--page-gutter) py-1 sm:max-w-3xl @max-xs/tabs:grid-cols-[max-content_max-content_minmax(--spacing(11),1fr)_max-content] @max-xs/tabs:gap-x-1 @max-xs/tabs:px-2 @max-xs/tabs:py-0">
+        {LEARN_TABS.map((tab) => (
+          <li className={BOTTOM_TAB_SLOT_CLASS} key={tab}>
+            <BottomTab {...props} tab={tab} />
+          </li>
+        ))}
+        <li className={BOTTOM_TAB_SLOT_CLASS}>
+          <TabBarSearch onSearch={onSearch} />
+        </li>
+      </ul>
     </NavigationRoot>
   );
 }

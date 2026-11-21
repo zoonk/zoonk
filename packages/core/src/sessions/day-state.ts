@@ -13,7 +13,8 @@ type DayStateInput = Pick<StudySessionView, "emptyDay" | "minutes" | "nextPositi
 /**
  * A day with no blocks is a rest day, one still being outlined (`waiting`), one whose lessons wait
  * for the learner to ask for them (`prepare`), or one with nothing new (`ahead`): never a finished
- * session.
+ * session. A started day whose time holds lessons not written yet waits only while someone is
+ * outlining them; otherwise it asks, so it never waits on nobody.
  */
 function getDayState(day: DayStateInput): DayState {
   const empty = day.blocks.length === 0;
@@ -32,8 +33,12 @@ function getDayState(day: DayStateInput): DayState {
     return "underway";
   }
 
-  if (day.lessonsComing || day.lessonsToPrepare) {
+  if (day.lessonsComing) {
     return "waiting";
+  }
+
+  if (day.lessonsToPrepare) {
+    return "prepare";
   }
 
   if (studyDay) {

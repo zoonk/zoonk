@@ -1,11 +1,15 @@
 // The Mistakes notebook (/mistakes) with story.exam.mistakes and their causes.
 import { MistakesNotebook } from "@repo/packages/learn/src/mistakes/mistakes-notebook.tsx";
+import { type ComponentProps } from "react";
 import { story, type Lang } from "../story";
 import { useTapOnMount } from "./plan";
 import { AppFrame } from "./shell";
 
+type Notebook = Extract<ComponentProps<typeof MistakesNotebook>["notebook"], { status: "ready" }>;
+type Cause = NonNullable<Notebook["mistakes"][number]["cause"]>;
+
 /** The story's cause hints, as core names them (MistakeCause). */
-const CAUSE: Record<string, string> = {
+const CAUSE: Record<string, Cause> = {
   contentGap: "gap",
   guessed: "guess",
   misread: "misread",
@@ -41,32 +45,38 @@ const DETAILS: Record<Lang, [string, string, string][]> = {
 
 const DAYS_AGO = [1, 1, 2, 4, 6];
 
-function notebook(lang: Lang) {
-  const mistakes = story[lang].exam.mistakes.map(([question, hint], index) => {
-    const [skill, answer, correctAnswer] = DETAILS[lang][index];
-    const created = new Date("2026-11-03T12:00:00-03:00");
-    created.setDate(created.getDate() - DAYS_AGO[index]);
+function notebook(lang: Lang): Notebook {
+  const mistakes = story[lang].exam.mistakes.map(
+    ([question, hint], index): Notebook["mistakes"][number] => {
+      const [skill, answer, correctAnswer] = DETAILS[lang][index] ?? ["", "", ""];
+      const created = new Date("2026-11-03T12:00:00-03:00");
+      created.setDate(created.getDate() - (DAYS_AGO[index] ?? 0));
 
-    return {
-      cause: CAUSE[hint],
-      createdAt: created,
-      fixedAt: null,
-      id: `mistake-${index}`,
-      itemId: `item-${index}`,
-      lesson: { id: `lesson-${index}`, title: skill },
-      practiceAvailable: true,
-      practiceAvailableTomorrow: false,
-      skill: { id: `skill-${skill}`, name: skill },
-      snapshot: { answer, correctAnswer, question },
-      status: "open",
-    };
-  });
+      return {
+        cause: CAUSE[hint] ?? null,
+        createdAt: created,
+        fixedAt: null,
+        id: `mistake-${index}`,
+        itemId: `item-${index}`,
+        lesson: { id: `lesson-${index}`, title: skill },
+        practiceAvailable: true,
+        practiceAvailableTomorrow: false,
+        skill: { id: `skill-${skill}`, name: skill },
+        snapshot: { answer, correctAnswer, question },
+        status: "open",
+      };
+    },
+  );
 
-  const byCause = { gap: 0, guess: 0, misread: 0, time: 0, trap: 0, unsorted: 0 } as Record<
-    string,
-    number
-  >;
-  for (const mistake of mistakes) byCause[mistake.cause] += 1;
+  const byCause: Notebook["counts"]["byCause"] = {
+    gap: 0,
+    guess: 0,
+    misread: 0,
+    time: 0,
+    trap: 0,
+    unsorted: 0,
+  };
+  for (const mistake of mistakes) byCause[mistake.cause ?? "unsorted"] += 1;
 
   return {
     availability: { ready: mistakes.length, tomorrow: 0 },
@@ -74,8 +84,8 @@ function notebook(lang: Lang) {
     hasMore: false,
     mistakes,
     status: "ready",
-    trueFalseLabels: { false: "False", true: "True" },
-  } as any;
+    trueFalseLabels: "trueFalse",
+  };
 }
 
 /** `open=<n>` opens the skill of the story's mistake n (0-based), as a tap on its row does. */

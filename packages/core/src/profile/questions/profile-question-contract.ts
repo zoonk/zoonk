@@ -57,6 +57,7 @@ export const profileQuestionSchema = z
   .meta({ description: "The optional question about the learner", id: "ProfileQuestion" });
 
 export const MAX_PROFILE_FAVORITES_LENGTH = 120;
+export const MAX_PROFILE_TOOL_PICKS = 100;
 export const MAX_PROFILE_JOB_LENGTH = 80;
 export const MAX_PROFILE_SUBJECT_LENGTH = 80;
 export const MAX_CONDITION_NOTE_LENGTH = 120;
@@ -130,7 +131,7 @@ export const profileAnswerInputSchema = z
         answer: picksAnswer(z.string()).extend({
           picks: z
             .array(z.string().trim().min(1).max(MAX_PROFILE_FAVORITES_LENGTH))
-            .max(100)
+            .max(MAX_PROFILE_TOOL_PICKS)
             .default([])
             .meta({ description: "Distinct tool names or general tool option ids" }),
         }),

@@ -1,7 +1,7 @@
 import "server-only";
 import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/tutor/goal-tutor-lookup";
 import { type Goal, prisma } from "@zoonk/db";
-import { getMemberSkillIds, loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
+import { getMistakeSkillIds, loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
 import { readMistakeSnapshot } from "../../../mistakes/mistake-snapshot";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
@@ -40,7 +40,7 @@ async function loadSkillIds({ area, goal }: { area: string | null; goal: Goal })
     area ? loadAreaSkillIds({ area, goal }) : null,
   ]);
 
-  return getMemberSkillIds(
+  return getMistakeSkillIds(
     areaSkillIds ? plan.skills.filter((skill) => areaSkillIds.has(skill.id)) : plan.skills,
   );
 }

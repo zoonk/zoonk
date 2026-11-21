@@ -48,7 +48,7 @@ function isSelection(fixIds: readonly string[]): boolean {
  * Starts approving the selected fixes of a batch: one single-use challenge, stored on exactly
  * those fixes, that one of the approver's own passkeys signs with user verification. Asking again
  * replaces it. `changed` means the selection no longer matches the batch's proposed fixes ready to
- * approve (a fix still waiting for its clip isn't), so the approver reads the page again before
+ * approve (a fix still waiting for its media isn't), so the approver reads the page again before
  * signing.
  */
 export async function getContentFixApprovalOptions({
@@ -91,7 +91,7 @@ export async function getContentFixApprovalOptions({
         approvalChallenge: options.challenge,
         approvalExpiresAt: new Date(Date.now() + options.timeout),
       },
-      where: { ...proposed, id: { in: selected }, voiceOwedAt: null },
+      where: { ...proposed, id: { in: selected }, mediaOwedAt: null },
     });
 
     if (count !== selected.length) {
@@ -231,6 +231,7 @@ async function approve({
       approvalChallenge: pending.approvalChallenge,
       approvalExpiresAt: { gt: now },
       batchId,
+      mediaOwedAt: null,
       status: "proposed",
     },
   });

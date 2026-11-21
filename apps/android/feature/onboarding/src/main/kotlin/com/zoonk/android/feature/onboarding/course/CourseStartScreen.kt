@@ -66,6 +66,8 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.FACT_SEPARATOR
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -81,6 +83,15 @@ fun CourseStartScreen(
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val summary by app.learnerSummary.summary.collectShown()
+    val retryScope = rememberCoroutineScope()
+    if (session is SessionState.SignedIn && summary.value == null) {
+        when (summary) {
+            is LoadState.Failed -> LoadFailedMessage(onRetry = { retryScope.launch { app.learnerSummary.summary.refresh() } })
+            LoadState.Loading, LoadState.Idle -> PageLoading()
+            else -> Unit
+        }
+        if (summary !is LoadState.Empty) return
+    }
     CourseStartScreen(
         route = route,
         catalog = app.catalog,
@@ -93,6 +104,7 @@ fun CourseStartScreen(
                 ?.id
                 ?.toString(),
         navigator = navigator,
+        existingGoalActive = summary.value?.goalOnCourse(route.courseId)?.isActive != false,
     )
 }
 
@@ -106,10 +118,16 @@ internal fun CourseStartScreen(
     signedIn: Boolean,
     existingGoalId: String?,
     navigator: AppNavigator,
+    existingGoalActive: Boolean = true,
 ) {
     val vm = viewModel { CourseStartViewModel(store, createSavedStateHandle()) }
     VisitOf(vm.visit)
-    val resource = catalog.course[route.courseId]
+    val language = currentLocale().language
+    val opened = catalog.course[route.courseId]
+    val openedState by opened.collectShown()
+    val startLanguage = openedState.value?.course?.startLanguage(language) ?: CourseStartLanguage.Same
+    // The learner never sees the other language's version: its start loads the one in theirs.
+    val resource = (startLanguage as? CourseStartLanguage.Edition)?.let { catalog.course[it.edition.id.toString()] } ?: opened
     val state by resource.collectShown()
     val caps by allowance.collectShown()
     val scope = rememberCoroutineScope()
@@ -122,7 +140,7 @@ internal fun CourseStartScreen(
     if (started != null) {
         LaunchedEffect(started) { openGoal(started.goalId, started.inSetup) }
     } else if (existingGoalId != null && !vm.isStarting) {
-        LaunchedEffect(existingGoalId) { openGoal(existingGoalId, store.inSetup(existingGoalId)) }
+        LaunchedEffect(existingGoalId) { openGoal(existingGoalId, !existingGoalActive || store.inSetup(existingGoalId)) }
     }
 
     PageScaffold(
@@ -137,7 +155,18 @@ internal fun CourseStartScreen(
                     if (existingGoalId == null) {
                         BeforeFold { beforeFold ->
                             Box(beforeFold.fillMaxSize()) {
-                                CourseStartForm(shown.value, route, vm, caps.value?.goalStartLimit(), signedIn, navigator)
+                                CourseStartForm(
+                                    shown.value,
+                                    route.takeIf { startLanguage == CourseStartLanguage.Same }?.chapterId,
+                                    route.dailyMinutes,
+                                    (startLanguage as? CourseStartLanguage.LearnerLanguage)?.let {
+                                        languageNote(shown.value.course.language, it.language)
+                                    },
+                                    vm,
+                                    caps.value?.goalStartLimit(),
+                                    signedIn,
+                                    navigator,
+                                )
                             }
                         }
                     } else {
@@ -168,27 +197,30 @@ internal fun CourseStartScreen(
 @Composable
 private fun CourseStartForm(
     detail: CourseDetail,
-    route: AppRoute.CourseStart,
+    chapterId: String?,
+    dailyMinutes: Int?,
+    languageNote: String?,
     vm: CourseStartViewModel,
     upFront: GoalLimitReason?,
     signedIn: Boolean,
     navigator: AppNavigator,
 ) {
     val course = detail.course
-    val chapter = detail.chapters.find { it.id.toString() == route.chapterId && it.lessonCount > 0 }
+    val chapter = detail.chapters.find { it.id.toString() == chapterId && it.lessonCount > 0 }
     val planned = chapter?.let { detail.chapters.drop(detail.chapters.indexOf(it)) } ?: detail.chapters
     // A cap whose day came while the page is open gives the choices and Build my plan back; the server decides again.
     val limit =
         ((vm.failure as? CourseStartFailure.Limit)?.reason ?: upFront.takeIf { vm.failure == null })
             ?.takeUnless { GoalError.Limit(it).lifted() }
     val blocked = limit != null && (limit.needsAccount || limit.isPlusLimit)
-    val minutes = route.dailyMinutes?.takeIf { it in MIN_DAILY_MINUTES..MAX_DAILY_MINUTES }
-    val start = { vm.start(course.id.toString(), chapter?.id?.toString(), minutes) }
+    val minutes = dailyMinutes?.takeIf { it in MIN_DAILY_MINUTES..MAX_DAILY_MINUTES }
+    val language = currentLocale().language
+    val start = { vm.start(course.id.toString(), chapter?.id?.toString(), minutes, language) }
     val remedy = { to: AppRoute -> navigator.open(to) }
 
     SetupColumn {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CourseStartHeading(course.title, chapter?.title, gate = limit?.takeIf { blocked })
+            CourseStartHeading(course.title, chapter?.title, languageNote, gate = limit?.takeIf { blocked })
             if (!blocked) {
                 minutes?.let {
                     Text(
@@ -260,6 +292,7 @@ private fun CourseStartForm(
 private fun CourseStartHeading(
     course: String,
     chapter: String?,
+    languageNote: String?,
     gate: GoalLimitReason?,
 ) {
     when {
@@ -276,13 +309,19 @@ private fun CourseStartHeading(
         }
 
         else -> {
-            StepHeading(
-                stringResource(R.string.onboarding_level_title),
-                stringResource(R.string.onboarding_level_description),
-                subject = course,
-            )
+            StepHeading(stringResource(R.string.onboarding_level_title), languageNote, subject = course)
         }
     }
+}
+
+/** Main's: a course with no version in the app's language says the lessons will be in it. */
+@Composable
+private fun languageNote(
+    courseLanguage: String,
+    language: String,
+): String {
+    val locale = currentLocale()
+    return stringResource(R.string.onboarding_course_language_note, languageName(courseLanguage, locale), languageName(language, locale))
 }
 
 /** The chapters a chapter's start plans, the first few by name. */

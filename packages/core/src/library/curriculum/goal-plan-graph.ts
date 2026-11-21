@@ -6,6 +6,15 @@ export type PlannedSkillGraph = Omit<GoalSkillGraph, "skills"> & {
   skills: (GoalSkillGraph["skills"][number] & { outlined?: boolean; topicsUnknown?: boolean })[];
 };
 
+export function getSinglePlanCourseId({ skills, optionSkills = [] }: PlanGraph): string | null {
+  const all = [...skills, ...optionSkills];
+  const id = all[0]?.courseIds?.[0];
+
+  return id && all.every(({ courseIds }) => courseIds?.length === 1 && courseIds[0] === id)
+    ? id
+    : null;
+}
+
 function mergeTopics(copies: readonly PlanGraphSkill[]): string[] | undefined {
   const listed = [...new Set(copies.flatMap((copy) => copy.topics ?? []))];
 

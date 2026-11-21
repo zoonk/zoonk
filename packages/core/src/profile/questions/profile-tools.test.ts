@@ -84,6 +84,90 @@ describe("profile tools", () => {
     });
   });
 
+  it("reopens a typed tool as a selected option after a rewrite", async () => {
+    const userId = await learner();
+    await save({ answer: { favorites: "sap, LibreLink" }, question: "tools" });
+    await learningProfileFixture({ suggestedTools: ["SAP", "Tasy"], userId });
+
+    await expect(toolsView()).resolves.toMatchObject({
+      options: [
+        { id: "SAP", label: "SAP" },
+        { id: "Tasy", label: "Tasy" },
+      ],
+      saved: { picks: ["SAP"], text: "LibreLink" },
+    });
+
+    await expect(
+      save({ answer: { favorites: "LibreLink", picks: ["SAP"] }, question: "tools" }),
+    ).resolves.toMatchObject({ changed: true, status: "saved" });
+
+    await expect(
+      prisma.memoryFact.findMany({ where: { status: "active", userId } }),
+    ).resolves.toMatchObject([
+      {
+        profileAnswer: { favorites: ["LibreLink"], picks: ["SAP"] },
+        statement: "Uses SAP and LibreLink",
+      },
+    ]);
+  });
+
+  it("saves each tool once across typed names, current picks and stale picks", async () => {
+    const userId = await learner();
+    await learningProfileFixture({ suggestedTools: ["Excel", "SAP", "Tasy"], userId });
+
+    const input = {
+      answer: {
+        favorites: "TASY; librelink; sAp; EXCEL; Other Tool",
+        picks: ["sap", "excel", "Excel", "LibreLink", "librelink"],
+      },
+      question: "tools",
+    };
+
+    await expect(save(input)).resolves.toMatchObject({
+      question: {
+        options: [{ id: "excel" }, { id: "SAP" }, { id: "Tasy" }, { id: "LibreLink" }],
+        saved: { picks: ["excel", "SAP", "Tasy", "LibreLink"], text: "Other Tool" },
+      },
+      status: "saved",
+    });
+
+    await expect(
+      prisma.memoryFact.findMany({ where: { status: "active", userId } }),
+    ).resolves.toMatchObject([
+      {
+        profileAnswer: { favorites: ["Other Tool"], picks: ["LibreLink", "SAP", "Tasy", "excel"] },
+        statement: "Uses LibreLink, SAP, Tasy, Excel, and Other Tool",
+      },
+    ]);
+
+    await expect(save(input)).resolves.toMatchObject({ changed: false, status: "saved" });
+  });
+
+  it("keeps a matching typed name editable when all 100 pick slots are used", async () => {
+    const userId = await learner();
+    const picks = ["Tasy", ...Array.from({ length: 99 }, (_, index) => `Tool ${index}`)];
+    await learningProfileFixture({ suggestedTools: ["Tasy", "SAP"], userId });
+
+    await expect(
+      save({ answer: { favorites: "SAP", picks }, question: "tools" }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    const view = await toolsView();
+    expect(view?.options.some(({ id }) => id === "SAP")).toBe(false);
+
+    expect(view?.saved).toMatchObject({
+      picks: ["Tasy", ...picks.slice(1).toSorted()],
+      text: "SAP",
+    });
+
+    await expect(
+      save({
+        answer: { favorites: view?.saved.text, picks: view?.saved.picks },
+        question: "tools",
+      }),
+    ).resolves.toMatchObject({ changed: false, status: "saved" });
+  });
+
   it.each([
     { picks: ["excel"], sensitive: false, statement: "Uses Excel" },
     { picks: ["LibreLink"], sensitive: true, statement: "Uses LibreLink" },

@@ -1,6 +1,6 @@
 import { LINK_CLASS } from "@/lib/link-class";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
-import { RestoredClip } from "./content-fix-voice";
+import { RestoredClip } from "./content-fix-media";
 
 function RestoredPicture({ change }: { change: StoredChange }) {
   const restored = "picture" in change ? change.picture.after : null;

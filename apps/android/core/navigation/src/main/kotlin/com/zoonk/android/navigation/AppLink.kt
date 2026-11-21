@@ -221,6 +221,7 @@ object AppLink {
                             blockId = query["block"],
                             goalId = query["goal"],
                             stopped = !query["stopped"].isNullOrEmpty(),
+                            summaryRequested = query["summary"] == "1",
                         )
                     }
 

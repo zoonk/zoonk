@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
+import { BLOG_URL } from "@zoonk/utils/url";
 import { getExtracted } from "next-intl/server";
 import { FooterLanguages } from "./footer-languages";
 import { FOOTER_LINKS_CLASS, FOOTER_LINK_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
@@ -30,6 +31,10 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
               <Link className={FOOTER_LINK_CLASS} href="/pricing">
                 {t("Pricing")}
               </Link>
+              {/* oxlint-disable-next-line next/no-html-link-for-pages -- the blog is its own site */}
+              <a className={FOOTER_LINK_CLASS} href={BLOG_URL}>
+                {t("Blog")}
+              </a>
               <Link className={FOOTER_LINK_CLASS} href="/support">
                 {t("Help")}
               </Link>

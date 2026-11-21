@@ -11,7 +11,7 @@
   "profile_questions_conditions_description_settings": "f6c745ff6b5c99b76f48183d359771ee59a72a9bd4e26cf84e2f1a04729fa1ca",
   "profile_questions_conditions_saved": "7189c180a7d0043230c6c034495d81a18d345a00112f52ce15b4e3a1087e7256",
   "profile_questions_conditions_title": "970e3bb29ab4c23004a4a0020f91ea6b78053afac270199a16df7ca9442489ff",
-  "profile_questions_description": "44c5942860fad854a397121ef78580190164d40180c9d399c51217a6717795ce",
+  "profile_questions_description": "56a465e66bc1931e80a9e140fae002f8267e554467a6bd87d1df87ece3c80f57",
   "profile_questions_earlier_answer": "74b7bf7ab4054ab4eecc12fd13daaac606775a4fbacf5faf78b0df55b8d2c486",
   "profile_questions_for_fun": "1beec177cc6ef02374d152e2dccb60cf99a17fa0ab3383e8eeb2a4490d675d96",
   "profile_questions_how_learn": "dcc7a663289c25163e525c16b093d02fce1f0634bc4e6bb8686f7d2832f31c33",
@@ -78,7 +78,7 @@
 -->
 <resources>
     <string name="profile_questions_title">Sobre ti</string>
-    <string name="profile_questions_description">Lo que nos cuentes aquí nos ayuda a personalizar tus ejemplos y a tu compañero. Todo es opcional.</string>
+    <string name="profile_questions_description">Lo que nos cuentes aquí nos ayuda a personalizar tus ejemplos y a tu compa. Todo es opcional.</string>
     <string name="profile_questions_skip_all">Saltar todo</string>
     <string name="profile_questions_skip_all_label">Saltar el resto de las preguntas sobre ti</string>
     <string name="profile_questions_never_ask">No volver a hacerme estas preguntas</string>

@@ -71,8 +71,13 @@ final class PlanAskingTests: XCTestCase {
     private let current = Mutex(Instant(offset: .zero))
     private let step: Duration
     private let expireFirstTimeout: Mutex<Bool>
+    private let onInterval: @Sendable () async throws -> Void
 
-    init(step: Duration, expireFirstTimeout: Bool = false) {
+    init(
+      step: Duration, expireFirstTimeout: Bool = false,
+      onInterval: @escaping @Sendable () async throws -> Void = {}
+    ) {
+      self.onInterval = onInterval
       self.step = step
       self.expireFirstTimeout = Mutex(expireFirstTimeout)
     }
@@ -90,6 +95,8 @@ final class PlanAskingTests: XCTestCase {
           try await waitForCancellation()
           return
         }
+      } else {
+        try await onInterval()
       }
 
       current.withLock { $0 = max($0, deadline) }
@@ -302,17 +309,22 @@ final class PlanAskingTests: XCTestCase {
   }
 
   func testAnAnswerAfterATimeoutClearsTheFailureWhileItKeepsAsking() async {
-    final class Asks {
+    @MainActor final class Asks {
+      var firstReturned = false
       var count = 0
       var statusOnRetry: PlanAsking<String, Answer, StepClock>.Status?
     }
 
-    let asking = PlanAsking<String, Answer, StepClock>(
-      clock: StepClock(step: .seconds(3), expireFirstTimeout: true),
-      interval: .seconds(3), settle: .milliseconds(300), timeout: .seconds(45))
     let asks = Asks()
+    let clock = StepClock(step: .seconds(3), expireFirstTimeout: true) {
+      try await waitForTestCondition("The first answer did not arrive between asks") {
+        asks.firstReturned
+      }
+    }
+    let asking = PlanAsking<String, Answer, StepClock>(
+      clock: clock,
+      interval: .seconds(3), settle: .milliseconds(300), timeout: .seconds(45))
 
-    // The clock expires only the first timeout, so scheduler speed cannot expire the retry.
     await asking.ask("a", when: true) {
       asks.count += 1
 
@@ -320,6 +332,7 @@ final class PlanAskingTests: XCTestCase {
         try await waitForTestCondition("The first ask did not time out") {
           asking.status == .failed
         }
+        asks.firstReturned = true
         return Answer(id: 1, ready: false)
       }
 
@@ -327,6 +340,7 @@ final class PlanAskingTests: XCTestCase {
       return Answer(id: 2, ready: true)
     }
 
+    XCTAssertEqual(asks.count, 2)
     XCTAssertEqual(asks.statusOnRetry, .asking)
     XCTAssertEqual(asking.status, .idle)
   }

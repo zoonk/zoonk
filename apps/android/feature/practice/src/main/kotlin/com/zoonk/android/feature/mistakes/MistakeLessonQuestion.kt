@@ -193,7 +193,7 @@ internal fun MistakeLessonQuestion(
                             } else {
                                 TutorScope.Step(task.lessonId, task.step.id, task.step.position + 1, task.mistakeId)
                             }
-                        TutorAskButton(scope, app, navigator, worded = checked && state.lessonGrade?.isCorrect == false)
+                        TutorAskButton(scope, app, navigator)
                     }
                 }
             }

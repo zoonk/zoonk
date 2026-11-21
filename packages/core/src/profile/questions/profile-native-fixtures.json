@@ -204,11 +204,11 @@
           "declined": false,
           "favorites": "ClinicalKey, Notion",
           "picks": [
-            "Medscape",
-            "Tasy",
-            "UpToDate",
             "Whitebook",
-            "excel"
+            "Medscape",
+            "UpToDate",
+            "excel",
+            "Tasy"
           ]
         },
         "question": "tools"
@@ -249,11 +249,11 @@
         ],
         "saved": {
           "picks": [
-            "Medscape",
-            "Tasy",
-            "UpToDate",
             "Whitebook",
-            "excel"
+            "Medscape",
+            "UpToDate",
+            "excel",
+            "Tasy"
           ],
           "studies": [],
           "text": "ClinicalKey, Notion"
@@ -370,8 +370,8 @@
           "declined": false,
           "favorites": "Star Trek, Fringe",
           "picks": [
-            "anime",
-            "sciFi"
+            "sciFi",
+            "anime"
           ]
         },
         "question": "watch"
@@ -422,8 +422,8 @@
         ],
         "saved": {
           "picks": [
-            "anime",
-            "sciFi"
+            "sciFi",
+            "anime"
           ],
           "studies": [],
           "text": "Star Trek, Fringe"
@@ -932,8 +932,8 @@
         "answer": {
           "declined": false,
           "needs": [
-            "shorterDays",
-            "stepByStep"
+            "stepByStep",
+            "shorterDays"
           ],
           "note": "I understand diagrams better than text",
           "soundEffects": false
@@ -976,8 +976,8 @@
         ],
         "saved": {
           "picks": [
-            "shorterDays",
             "stepByStep",
+            "shorterDays",
             "noSoundEffects"
           ],
           "studies": [],
