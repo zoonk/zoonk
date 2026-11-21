@@ -243,7 +243,7 @@ describe("exams sharing a primary course", () => {
 
   it("times a shared language course as a language level test", async () => {
     const { course } = await sharedCourse({ attrs: { format: "language", targetLanguage: "es" } });
-    await expect(getCourseQuickTestMinutes(course)).resolves.toBe(3);
+    await expect(getCourseQuickTestMinutes(course)).resolves.toBe(4);
   });
 
   it("prepares a course-start plan with the goal's exam graph", async () => {
