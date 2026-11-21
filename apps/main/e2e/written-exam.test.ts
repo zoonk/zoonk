@@ -166,7 +166,7 @@ test.describe("Written exam practice", () => {
     try {
       await page.goto("/today");
       await expect(page.getByText("Short writing exercise").first()).toBeVisible();
-      await expect(page.getByText("The 30-line question").first()).toBeVisible();
+      await expect(page.getByText("Write the 30-line question", { exact: true })).toBeVisible();
     } finally {
       await page.context().close();
     }
@@ -182,7 +182,7 @@ test.describe("Written exam practice", () => {
     try {
       await page.goto("/today");
       await expect(page.getByText("Short writing exercise").first()).toBeVisible();
-      await expect(page.getByText("The 30-line question")).toBeHidden();
+      await expect(page.getByText(/30-line question/u)).toBeHidden();
 
       // An address a start answered before the notice was read again: trying it again is a start.
       await page.goto(`/essay/${day.blockId}?writing=failed`);
