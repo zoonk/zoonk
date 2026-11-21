@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import z from "zod";
+import { applyCheckPolicy } from "./check-policy";
 import { caseRunKey, hash } from "./identity";
 import {
   type Comparison,
@@ -225,9 +226,11 @@ export async function loadComparison(taskId: string, id: string): Promise<Compar
     checks: checks.map((check) => {
       const blockingProblems = replayedChecks.get(`${caseRunKey(check)}:${check.side}`);
 
-      return check.name === "code checks" && blockingProblems
-        ? { ...check, blockingProblems }
-        : check;
+      return applyCheckPolicy({
+        check:
+          check.name === "code checks" && blockingProblems ? { ...check, blockingProblems } : check,
+        taskId,
+      });
     }),
     manifest: replay ? { ...manifest, priorities: replay.priorities } : manifest,
     outputs,

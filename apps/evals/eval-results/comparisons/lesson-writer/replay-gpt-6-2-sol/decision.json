@@ -65,7 +65,7 @@
       }
     }
   ],
-  "outcome": "neither qualifies",
+  "outcome": "insufficient evidence",
   "readers": [
     {
       "failedPackets": 0,
@@ -104,7 +104,7 @@
       "ownerCompared": 0
     }
   ],
-  "reason": "Both variants failed a hard requirement.",
+  "reason": "Some unresolved cases are awaiting qualified model reads.",
   "replay": {
     "checks": [
       {
@@ -426,7 +426,7 @@
         }
       ],
       "side": "incumbent",
-      "status": "disqualified",
+      "status": "eligible",
       "succeeded": 12,
       "ties": 0,
       "unresolved": 6,
@@ -627,7 +627,7 @@
         }
       ],
       "side": "challenger",
-      "status": "disqualified",
+      "status": "eligible",
       "succeeded": 12,
       "ties": 0,
       "unresolved": 6,

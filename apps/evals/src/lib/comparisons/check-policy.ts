@@ -47,6 +47,23 @@ export function hasBlockingCheck(check: Check) {
   return (check.blockingProblems?.length ?? 0) > 0;
 }
 
+export function applyCheckPolicy({ check, taskId }: { check: Check; taskId: string }): Check {
+  if (
+    taskId !== "lesson-writer" ||
+    check.name !== "code checks" ||
+    !check.blockingProblems?.length
+  ) {
+    return check;
+  }
+
+  // The writer comparison samples first drafts, which production sends to a fixer on gate failure.
+  return {
+    ...check,
+    blockingProblems: undefined,
+    problems: [...new Set([...check.problems, ...check.blockingProblems])],
+  };
+}
+
 export function criterionWeight(rules: Rules | undefined, criterion: string) {
   return rules?.criteria[criterion] === "disqualifies" ? null : (rules?.weights?.[criterion] ?? 1);
 }
