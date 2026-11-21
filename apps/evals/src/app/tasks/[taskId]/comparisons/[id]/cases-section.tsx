@@ -5,20 +5,23 @@ import { canAdjudicate } from "@/lib/comparisons/evidence";
 import { type Comparison } from "@/lib/comparisons/schemas";
 import { CaseInput } from "../_components/case-input";
 import { CaseRuns } from "../_components/case-view";
-import { caseRuns, orderCases } from "../_utils/case-evidence";
+import { awaitedReaders, caseRuns, orderCases } from "../_utils/case-evidence";
 import { DIRECTION_LABELS, familyLabel } from "../_utils/labels";
 import { RulingForm } from "./ruling-form";
 
 type Case = Decision["cases"][number];
 
-function resultText(item: Case): string {
+function resultText(item: Case, manifest: Comparison["manifest"]): string {
+  const awaited = awaitedReaders(manifest, item);
+
+  const result =
+    awaited.length > 0 ? `Waiting for ${awaited.join(" and ")}` : DIRECTION_LABELS[item.result];
+
   if (item.adjudication) {
-    return `${DIRECTION_LABELS[item.result]}, your ruling`;
+    return `${result}, your ruling`;
   }
 
-  return item.owner
-    ? `${DIRECTION_LABELS[item.result]}, your blind read: ${DIRECTION_LABELS[item.owner]}`
-    : DIRECTION_LABELS[item.result];
+  return item.owner ? `${result}, your blind read: ${DIRECTION_LABELS[item.owner]}` : result;
 }
 
 function Vote({ children, label }: React.PropsWithChildren<{ label: string }>) {
@@ -88,7 +91,7 @@ export function CasesSection({
                 isOpen={!unread.includes(item.caseId) && item.result !== "tie"}
                 title={
                   <FoldRowTitle title={item.caseId}>
-                    {!audit && <span className="font-sans">{resultText(item)}</span>}
+                    {!audit && <span className="font-sans">{resultText(item, manifest)}</span>}
                   </FoldRowTitle>
                 }
               >

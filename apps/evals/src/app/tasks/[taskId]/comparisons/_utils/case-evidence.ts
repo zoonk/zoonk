@@ -7,7 +7,7 @@ import {
   type Reader,
   type SealedPacket,
 } from "@/lib/comparisons/schemas";
-import { type Side } from "./labels";
+import { type Side, familyLabel } from "./labels";
 
 type Read = ReturnType<typeof acceptedReads>[number];
 type Claim = ReturnType<typeof verifiedClaims>[number];
@@ -172,6 +172,23 @@ const RESULT_ORDER: Record<Direction, number> = {
   tie: 2,
   unresolved: 0,
 };
+
+/** The required model readers an unresolved case has no qualified vote from yet; until they read it, nothing can settle it. */
+export function awaitedReaders(
+  manifest: Comparison["manifest"],
+  item: Pick<Decision["cases"][number], "result" | "votes">,
+): string[] {
+  if (item.result !== "unresolved") {
+    return [];
+  }
+
+  return manifest.readers
+    .filter((reader) => reader.channel !== "owner" && !reader.reserve)
+    .map((reader) => reader.family)
+    .filter((family, index, families) => families.indexOf(family) === index)
+    .filter((family) => !Object.hasOwn(item.votes, family))
+    .map((family) => familyLabel(family));
+}
 
 /** Cases that still need a call first, then the ones that went one way, then ties. */
 export function orderCases(cases: Decision["cases"]): Decision["cases"] {

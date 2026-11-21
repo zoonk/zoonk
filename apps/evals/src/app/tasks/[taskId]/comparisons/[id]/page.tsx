@@ -6,7 +6,7 @@ import { ContainerBody, ContainerDescription } from "@zoonk/ui/components/contai
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { MainActionBar } from "../_components/main-action-link";
-import { nextOwnerPacket, ownerReads } from "../_utils/case-evidence";
+import { awaitedReaders, nextOwnerPacket, ownerReads } from "../_utils/case-evidence";
 import { type ComparisonRoute, getComparisonRoute } from "../_utils/comparison-route";
 import { readPath } from "../_utils/paths";
 import { comparisonTitle, outcomeText } from "../_utils/titles";
@@ -42,11 +42,26 @@ function ownerProgress(route: ComparisonRoute) {
   };
 }
 
+function CaseLink({ caseId, note }: { caseId: string; note?: string }) {
+  return (
+    <a className="font-mono text-xs underline underline-offset-4" href={`#case-${caseId}`}>
+      {caseId}
+      {note && <span className="text-muted-foreground"> ({note})</span>}
+    </a>
+  );
+}
+
 function OwnerStatus({ route }: { route: ComparisonRoute }) {
   const progress = ownerProgress(route);
+  const { manifest } = route.comparison;
+
+  const waiting = route.decision.cases.flatMap((item) => {
+    const awaited = awaitedReaders(manifest, item);
+    return awaited.length > 0 ? [{ awaited, caseId: item.caseId }] : [];
+  });
 
   const needCall = route.decision.cases.filter(
-    (item) => item.result === "unresolved" && canAdjudicate(route.comparison.manifest, item),
+    (item) => item.result === "unresolved" && canAdjudicate(manifest, item),
   );
 
   if (progress.cases === 0) {
@@ -64,16 +79,23 @@ function OwnerStatus({ route }: { route: ComparisonRoute }) {
           {needCall.map((item, index) => (
             <span key={item.caseId}>
               {index > 0 && ", "}
-              <a
-                className="font-mono text-xs underline underline-offset-4"
-                href={`#case-${item.caseId}`}
-              >
-                {item.caseId}
-              </a>
+              <CaseLink caseId={item.caseId} />
             </span>
           ))}
           . Your blind read can settle {needCall.length === 1 ? "it" : "them"}. You can also rule
           with the model names shown.
+        </p>
+      )}
+      {waiting.length > 0 && (
+        <p className="text-sm">
+          Still waiting for a model reader on{" "}
+          {waiting.map((item, index) => (
+            <span key={item.caseId}>
+              {index > 0 && ", "}
+              <CaseLink caseId={item.caseId} note={item.awaited.join(" and ")} />
+            </span>
+          ))}
+          . {waiting.length === 1 ? "It" : "They"} can’t be settled until then.
         </p>
       )}
     </>
