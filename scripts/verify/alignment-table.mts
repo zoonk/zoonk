@@ -277,7 +277,7 @@ export type AlignmentException = {
   configuration: string;
   piece: string;
   reason: string;
-  relation: Relation | "one-filled" | "pinned" | (typeof PAGE_RULES)[number];
+  relation: Relation | "one-filled" | (typeof PAGE_RULES)[number];
   scenario: string;
 } & ({ grantedBy: "user" } | { issue: number });
 
@@ -298,13 +298,5 @@ export const EXCEPTIONS: AlignmentException[] = [
       "An out-of-plan subject's facts line wraps in the meter's column on the Plan, on main too",
     relation: "lone-word",
     scenario: "/plan",
-  },
-  {
-    configuration: "laptop keys pt",
-    issue: 2843,
-    piece: "page",
-    reason: "The buddy's suggestion button leaves a word alone on its last line, on main too",
-    relation: "lone-word",
-    scenario: "/pt/learn/5b3c5a16-014a-8708-8542-85118dccfd75",
   },
 ];
