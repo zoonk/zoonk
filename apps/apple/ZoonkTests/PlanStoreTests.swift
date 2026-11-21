@@ -253,6 +253,38 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(applied.count, 1)
   }
 
+  func testAnOfferThePlanNoLongerTakesReadsThePlanAgainSoItLeaves() async throws {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    var applied: [[PlanEdit]] = []
+
+    let check = await store.addOffer(try fitOffer(), goalId: "goal") { applied.append($0) }
+    await api.setChanged(true)
+    await plan.load()
+
+    XCTAssertEqual(check, .refused)
+    XCTAssertEqual(applied, [])
+    let calls = await api.calls
+    XCTAssertEqual(calls.plan, 2)
+  }
+
+  func testARefusedChangeReadsThePlanAgain() async {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    await api.setChangeOutcome(.invalid)
+
+    await PlanEditor(goalId: "goal", store: store).change([.dailyMinutes(20)], sentence: "")
+    await api.setChanged(true)
+    await plan.load()
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.plan, 2)
+  }
+
   func testAFitOfferPutOffWhileItsCheckWaitsChangesNothing() async throws {
     let api = PlanAPIStub()
     let offer = try fitOffer()

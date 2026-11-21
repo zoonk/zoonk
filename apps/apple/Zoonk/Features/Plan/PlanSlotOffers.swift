@@ -653,7 +653,7 @@ struct PlanOfferSlot: View {
     switch await store.addOffer(offer, goalId: context.goal.id, apply: landing) {
     case .repriced(let repriced): check.repriced = repriced
     case .failed: check.failed = true
-    case .applied, nil: break
+    case .applied, .refused, nil: break
     }
   }
 }
@@ -664,6 +664,9 @@ enum OfferCheck: Equatable {
   case applied
   /// Other numbers, shown before the next tap applies them.
   case repriced(PlanSlotRepriced)
+  /// The plan changed since, elsewhere, so the offer no longer applies: the plan is read again and
+  /// shows without it, as a stale change on Today does.
+  case refused
   case failed
 }
 
@@ -684,7 +687,10 @@ extension PlanStore {
       return .applied
     case .done(let preview?):
       return .repriced(PlanSlotRepriced(edits: edits, preview: preview))
-    case .done(nil), .failed:
+    case .done(nil):
+      cache.invalidate([.goals, .learnerModel])
+      return .refused
+    case .failed:
       return .failed
     case .obsolete:
       return nil
