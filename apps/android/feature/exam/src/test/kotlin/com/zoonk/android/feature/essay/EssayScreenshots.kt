@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -192,4 +193,28 @@ class EssayScreenshots {
     @Test
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")
     fun taskRemoved() = show("13-task-removed") { _, _, _ -> WritingRemoved("Written answer", onClose = {}) }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun questionFailed() =
+        show("11b-question-failed") { _, _, _ -> WritingFailed("Written answer", drill = false, busy = false, onRetry = {}, onClose = {}) }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun exerciseFailed() =
+        show(
+            "11c-drill-exercise-failed",
+        ) { _, _, _ -> WritingFailed("Writing practice", drill = true, busy = false, onRetry = {}, onClose = {}) }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun signUpRequired() = show("11d-sign-up-required") { _, _, _ -> WritingSignUp("Written answer", onCreateAccount = {}, onClose = {}) }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun draftConflict() {
+        rule.setContent { ZoonkTheme { DraftConflictDialog(onKeepThis = {}, onUseOther = {}) } }
+        rule.waitForIdle()
+        writeRender(File(folder, "04c-draft-conflict.png"), rule.onNode(isDialog()).captureRender().asAndroidBitmap())
+    }
 }

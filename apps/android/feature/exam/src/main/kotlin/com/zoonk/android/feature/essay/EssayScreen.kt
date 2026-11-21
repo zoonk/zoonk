@@ -79,7 +79,6 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LocalStepHeading
@@ -247,21 +246,37 @@ private fun WritingStart(
         }
 
         WritingStartState.SignUpRequired -> {
-            RunPage(onClose = navigator::closeTask, title = { BarTitle(header) }) {
-                LimitNotice(
-                    Limit.SignUpRequired,
-                    LimitSubject.Help,
-                    onCreateAccount = { navigator.open(AppRoute.Login) },
-                    onSubscribe = {},
-                )
-            }
+            WritingSignUp(header, onCreateAccount = { navigator.open(AppRoute.Login) }, onClose = navigator::closeTask)
         }
+    }
+}
+
+/** A guest's question would cost a model call: an account funds it, so its way on is creating one. */
+@Composable
+internal fun WritingSignUp(
+    header: String,
+    onCreateAccount: () -> Unit,
+    onClose: () -> Unit,
+) {
+    // The same page a failed question gets, as the web's: the title says what's needed, the bar's one action gives it.
+    RunPage(
+        onClose = onClose,
+        title = { BarTitle(header) },
+        bottomBar = {
+            TaskActionBar {
+                TaskActions { width ->
+                    Button(onClick = onCreateAccount, modifier = width) { Text(stringResource(R.string.limit_create_account)) }
+                }
+            }
+        },
+    ) {
+        Text(stringResource(R.string.limit_sign_up_required), Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
     }
 }
 
 /** The question couldn't be written, whether its start or its run failed: nothing was lost, and Try again asks again. */
 @Composable
-private fun WritingFailed(
+internal fun WritingFailed(
     header: String,
     drill: Boolean,
     busy: Boolean,
@@ -551,7 +566,7 @@ internal fun WriteScreen(
  * until the learner picks, so the dialog only closes with a choice.
  */
 @Composable
-private fun DraftConflictDialog(
+internal fun DraftConflictDialog(
     onKeepThis: () -> Unit,
     onUseOther: () -> Unit,
 ) {
