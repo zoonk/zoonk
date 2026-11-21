@@ -315,5 +315,5 @@ export function BaseMapView({
 }
 
 export function MapFrame(props: React.ComponentProps<"div">) {
-  return <div className="-mx-4" {...props} />;
+  return <div className="-mx-4" data-slot="map-frame" {...props} />;
 }
