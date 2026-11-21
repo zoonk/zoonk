@@ -70,6 +70,13 @@ class LessonVisualScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "w320dp-h1600dp-xxhdpi")
+    fun smallPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("320-light-font200", CHARTS.filterKeys { it in LARGE_FONT })
+    }
+
+    @Test
     @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
     fun phoneAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
@@ -107,7 +114,18 @@ class LessonVisualScreenshots {
     private companion object {
         const val TAG = "chart"
 
-        val LARGE_FONT = setOf("regions", "plot-scatter", "plot-control", "plot-fine-scan", "plot-german", "plot-close-lines")
+        val LARGE_FONT =
+            setOf(
+                "regions",
+                "unit-km",
+                "unit-long",
+                "money-brl",
+                "plot-scatter",
+                "plot-control",
+                "plot-fine-scan",
+                "plot-german",
+                "plot-close-lines",
+            )
 
         private val REGIONS = listOf("Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste")
 
@@ -342,6 +360,17 @@ class LessonVisualScreenshots {
                 "cropped-line-ten-thousand" to
                     bars("Visitors per day", "Day", "Visitors", listOf("Mon", "Tue", "Wed"), null, 10_050, 10_200, 10_380)
                         .copy(chart = Chart.Kind.Line, axisStart = 10_000.0),
+                "unit-km" to bars("Distance run this week", "Runner", "Distance", listOf("Ana", "Bruno", "Carla"), "km", 35, 42, 28),
+                "unit-long" to
+                    amounts("Time to sort mail", "Desk", "Sorting time", "hours per 1,000 letters", 3.5, 2.8, 4.1)
+                        .copy(categories = listOf("Desk A", "Desk B", "Desk C")),
+                "money-brl" to amounts("Hourly pay", "Month", "Pay", "R$ per hour", 12.5, 14.0, 15.75),
+                "money-usd" to
+                    amounts("Monthly price by plan", "Plan", "Price", "USD", 4.99, 9.99, 24.0)
+                        .copy(categories = listOf("Basic", "Plus", "Team")),
+                "cropped-line-visits" to
+                    bars("Visitors per day", "Day", "Visitors", listOf("Mon", "Tue", "Wed"), "visits", 10_050, 10_200, 10_380)
+                        .copy(chart = Chart.Kind.Line, axisStart = 10_000.0),
                 "japanese-names" to
                     bars("地方別の割合", "地方", "割合", listOf("北海道地方", "東北地方", "関東地方", "中部地方", "近畿地方"), "%", 18, 42, 64, 30, 22),
                 "five-series" to months(5),
@@ -369,6 +398,22 @@ class LessonVisualScreenshots {
                         Chart.Series("Litoral", listOf(24.0, 31.0, 35.0, 40.0)),
                     ).take(series),
             )
+
+        private fun amounts(
+            title: String,
+            categoryLabel: String,
+            valueLabel: String,
+            unit: String,
+            vararg values: Double,
+        ) = Chart(
+            chart = Chart.Kind.Bar,
+            title = title,
+            categoryLabel = categoryLabel,
+            valueLabel = valueLabel,
+            categories = listOf("Jan", "Feb", "Mar"),
+            series = listOf(Chart.Series(valueLabel, values.toList())),
+            unit = unit,
+        )
 
         private fun plot(
             title: String,

@@ -106,15 +106,29 @@ internal fun ChartCard(
     }
 }
 
+internal data class ChartUnit(
+    val currency: String?,
+    val valueLabel: String,
+)
+
 /**
- * Core's `placeChartUnit`: a unit past its target is shown once beside the value label, not after every number,
- * except that money keeps its currency on each number.
+ * Core's `placeChartUnit`: money keeps its currency on each number, since only the currency's own format shows cents.
+ * Any other unit, and the rest of a money unit ("per hour"), is shown once beside the value label.
  */
-private val LessonVisual.Chart.numberUnit: String?
-    get() = unit?.let { if (it.length <= UNIT_TARGET) it else moneyUnit(it)?.currency }
+internal fun placeChartUnit(
+    unit: String?,
+    valueLabel: String,
+): ChartUnit {
+    val money = moneyUnit(unit)
+    val labelUnit = money?.rest ?: unit
+    return ChartUnit(money?.currency, if (labelUnit.isNullOrEmpty()) valueLabel else "$valueLabel ($labelUnit)")
+}
+
+private val LessonVisual.Chart.currency: String?
+    get() = placeChartUnit(unit, valueLabel).currency
 
 private val LessonVisual.Chart.unitLabel: String
-    get() = unit?.takeIf { it.length > UNIT_TARGET }?.let { "$valueLabel (${moneyUnit(it)?.rest ?: it})" } ?: valueLabel
+    get() = placeChartUnit(unit, valueLabel).valueLabel
 
 @Composable
 private fun Legend(visual: LessonVisual.Chart) {
@@ -303,10 +317,10 @@ private class ValueAxis(
 
     val ticks =
         niceTicks(domain).filter { !wholeNumbers || it == Math.floor(it) }.let { ticks ->
-            ticks.zip(formatTicks(ticks, text.locale, unit = visual.numberUnit).map(text::label))
+            ticks.zip(formatTicks(ticks, text.locale, unit = visual.currency).map(text::label))
         }
 
-    val valueLabels = visual.series.map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.numberUnit)) } }
+    val valueLabels = visual.series.map { series -> series.values.map { text.value(formatAmount(it, text.locale, visual.currency)) } }
 }
 
 private class UprightLayout(
@@ -699,7 +713,6 @@ internal val CHART_LABEL_GAP = 6.dp
 internal val CHART_PLOT_END = 8.dp
 internal val CHART_PLOT_HEIGHT = 160.dp
 internal const val CHART_PLOT_LINES = 6
-private const val UNIT_TARGET = 12
 private val BAR_RADIUS = 3.dp
 private val SWATCH_RADIUS = 2.dp
 private val DOT_RADIUS = 3.5.dp
