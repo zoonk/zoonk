@@ -18,6 +18,8 @@ type ReservationBlock = Pick<
   "estimatedMinutes" | "lessonId" | "payload" | "status"
 >;
 
+type ReservationGoal = Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
+
 type ReservationPlan = { graph: unknown; settings: unknown; items: readonly SessionPlanItem[] };
 
 export function getSessionLessonCandidates({
@@ -31,7 +33,7 @@ export function getSessionLessonCandidates({
 }: {
   access: ExamPrepAccess;
   freshStart: StudyFreshStart | null;
-  goal: Pick<Goal, "dailyMinutes" | "kind" | "targetDate">;
+  goal: ReservationGoal;
   localDate: Date;
   plan: ReservationPlan;
   blocks: readonly ReservationBlock[];
@@ -79,8 +81,9 @@ function getReservedCandidates({
   prerequisites,
 }: {
   access: ExamPrepAccess;
-  session: Pick<StudySessionRow, "goal" | "freshStart" | "localDate" | "plannedMinutes"> & {
+  session: Pick<StudySessionRow, "freshStart" | "localDate" | "plannedMinutes"> & {
     blocks: readonly ReservationBlock[];
+    goal: ReservationGoal | null;
     status?: StudySessionRow["status"];
   };
   plan: ReservationPlan | null;
