@@ -65,7 +65,6 @@ async function chromeNames(role: string): Promise<string[]> {
     .map((node) => String(node.name?.value ?? ""));
 }
 
-/** Picking a code option keeps its tag on its last line at the card's end, with nothing moving. */
 async function expectTagOnLastLineAtEnd(name: string) {
   const option = page.getByRole("radio", { name });
   await expect.element(option).toBeVisible();

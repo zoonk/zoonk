@@ -183,7 +183,6 @@ const CodeLabelsContext = createContext<TutorCodeLabels | undefined>(undefined);
 const FENCE_LANGUAGE = /language-(?<name>\S+)/u;
 const TRAILING_LINE_BREAKS = /\n+$/u;
 
-/** A fenced block in an answer, drawn as lessons draw code. */
 function AnswerCodeBlock(props: ComponentProps<"code"> & ExtraProps) {
   const diagramsReady = use(DiagramsReadyContext);
   const labels = use(CodeLabelsContext);

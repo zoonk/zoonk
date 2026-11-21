@@ -173,7 +173,6 @@ const BY_NAME = new Map(
 
 const UNKNOWN_SPEC = toSpec(UNKNOWN);
 
-/** `name` is a fence's name for the language (`py`, `JavaScript`), or null when it has none. */
 export function findCodeLanguage(name: string | null): CodeLanguageSpec {
   return BY_NAME.get(name?.toLowerCase() ?? "") ?? UNKNOWN_SPEC;
 }

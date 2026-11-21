@@ -18,7 +18,6 @@ private val OPENING_FENCE = Regex("( {0,3})(`{3,}(?=[^`]*$)|~{3,})(.*)")
 private val CLOSING_FENCE = Regex(" {0,3}(`{3,}|~{3,}) *")
 private val WHITESPACE = Regex("\\s+")
 
-/** A fence's name for its language: its info string's first word, in lowercase. */
 internal fun readLanguage(info: String): String? =
     info
         .trim()
@@ -27,7 +26,6 @@ internal fun readLanguage(info: String): String? =
         .lowercase()
         .ifEmpty { null }
 
-/** Code lines stay exactly as written, less the opening fence's own indentation. */
 fun readCodeFence(
     lines: List<String>,
     index: Int,
@@ -67,13 +65,11 @@ fun oneLineCode(code: String): String =
         .filter { it.isNotEmpty() }
         .joinToString(" ")
 
-/** A text that is one closed code block and nothing else, such as an answer option that is code. */
 fun readWholeCodeFence(text: String): CodeFence? {
     val lines = text.trim().split(LINE_END)
     return readCodeFence(lines, 0)?.takeIf { it.closed && it.end == lines.size }
 }
 
-/** Every fence in order. */
 fun findCodeFences(lines: List<String>): List<CodeFence> {
     val found = mutableListOf<CodeFence>()
     var index = 0

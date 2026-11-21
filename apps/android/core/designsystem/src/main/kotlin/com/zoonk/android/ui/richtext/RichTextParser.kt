@@ -39,7 +39,6 @@ sealed interface RichBlock {
         val rows: List<List<List<RichSegment>>>,
     ) : RichBlock
 
-    /** A fenced block's code exactly as written, with the fence's name for its language. */
     data class Code(
         val code: String,
         val language: String?,

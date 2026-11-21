@@ -42,7 +42,6 @@ internal sealed interface ItemBlock {
         val rows: List<List<List<RichSegment>>>,
     ) : ItemBlock
 
-    /** A fenced block's code exactly as written. */
     data class Code(
         val code: String,
         val language: String?,

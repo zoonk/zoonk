@@ -3,7 +3,6 @@ import Foundation
 /// Main's `readCodeLine`: a line of code as a screen reader says it, its indentation apart from
 /// its code.
 struct SpokenCodeLine: Equatable {
-  /// A run of the same character in a line's indentation, in the order written.
   struct Run: Equatable {
     let count: Int
     let isTab: Bool
@@ -41,7 +40,6 @@ struct SpokenCodeLine: Equatable {
 /// indentation, which the eye reads from where its code starts. Without them, a program whose
 /// `print` is indented under its `for` and one where it isn't read the same.
 enum SpokenCode {
-  /// One numbered line, as each line of a block reads.
   static func line(_ text: some StringProtocol, number: Int) -> String {
     let line = SpokenCodeLine(text)
     let code = line.code

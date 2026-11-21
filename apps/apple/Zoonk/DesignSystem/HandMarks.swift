@@ -14,7 +14,6 @@ struct InlineMarks: Equatable {
   /// word, not at the space after it.
   var underline: [Range<Int>] = []
   var terms: [Range<Int>] = []
-  /// Inline code runs, each on its chip.
   var code: [Range<Int>] = []
 
   var isEmpty: Bool { underline.isEmpty && terms.isEmpty && code.isEmpty }

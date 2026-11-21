@@ -29,7 +29,6 @@ export function withBreakPoints(text: string): React.ReactNode[] {
   });
 }
 
-/** Inline code in a sentence: only a word too long to fit on a line splits, at its break points. */
 export function withWordBreakPoints(text: string): React.ReactNode[] {
   return text.split(WORDS).map((word, index) => {
     const key = `${index}:${word}`;
@@ -42,7 +41,6 @@ export function withWordBreakPoints(text: string): React.ReactNode[] {
   });
 }
 
-/** Whether a wrapped line may split where one run of code ends and the next begins. */
 export function breaksBetween(before: string, after: string): boolean {
   return before !== "" && `${before.slice(-1)}${after.charAt(0)}`.split(BREAK_POINTS).length > 1;
 }

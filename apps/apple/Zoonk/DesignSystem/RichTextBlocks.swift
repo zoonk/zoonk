@@ -202,7 +202,6 @@ enum RichTextBlock: Equatable {
   /// block or an example's frame number on; `start` is nil for bullets.
   case list(items: [String], start: Int?)
   case table(header: [String], alignments: [ColumnAlignment], rows: [[String]])
-  /// Its code exactly as written.
   case code(code: String, language: String?)
 
   var scrollsSideways: Bool {

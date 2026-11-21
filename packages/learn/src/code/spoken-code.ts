@@ -1,9 +1,7 @@
 import { useExtracted } from "next-intl";
 
-/** A run of the same character in a line's indentation, in the order written. */
 export type IndentRun = { count: number; kind: "space" | "tab" };
 
-/** A line of code as a screen reader says it: its indentation, then its code without it. */
 export type SpokenCodeLine = { code: string; indent: IndentRun[] };
 
 const INDENTATION = /^[ \t]*/u;
@@ -48,7 +46,6 @@ export function useSpokenCode() {
       )
       .join(", ");
 
-  /** One numbered line, as each line of a block reads. */
   const line = (text: string, number: number): string => {
     const { code, indent } = readCodeLine(text);
     const at = String(number);

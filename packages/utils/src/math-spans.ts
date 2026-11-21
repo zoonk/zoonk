@@ -201,7 +201,6 @@ export function hideMath(text: string): string {
   return replaceMath(text, ({ end, start }) => " ".repeat(end - start));
 }
 
-/** Like `hideMath`, and inline code too, for checks that read only a line's words. */
 export function hideMathAndCode(line: string): string {
   const withoutMath = hideMath(line);
 

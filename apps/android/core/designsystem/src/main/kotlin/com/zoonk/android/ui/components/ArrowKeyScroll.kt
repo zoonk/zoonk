@@ -78,7 +78,6 @@ private fun endOf(
         else -> null
     }
 
-/** How a region scrolled by [arrowKeyScroll] shows it holds focus: a ring on its [shape]. */
 @Composable
 fun Modifier.focusRing(
     focused: Boolean,

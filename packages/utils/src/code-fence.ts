@@ -27,7 +27,6 @@ function unindent({ indent, line }: { indent: number; line: string }): string {
   return line.slice(Math.min(indent, LEADING_SPACES.exec(line)?.[0].length ?? 0));
 }
 
-/** Code lines stay exactly as written, less the opening fence's own indentation. */
 export function readCodeFence(lines: readonly string[], index: number): CodeFence | null {
   const { fence, indent = "", info = "" } = OPENING_FENCE.exec(lines[index] ?? "")?.groups ?? {};
 
@@ -48,7 +47,6 @@ export function readCodeFence(lines: readonly string[], index: number): CodeFenc
   };
 }
 
-/** A text that is one closed code block and nothing else, such as an answer option that is code. */
 export function readWholeCodeFence(text: string): CodeFence | null {
   const lines = text.trim().split(/\r?\n/u);
   const fence = readCodeFence(lines, 0);
@@ -56,7 +54,6 @@ export function readWholeCodeFence(text: string): CodeFence | null {
   return fence?.closed && fence.end === lines.length ? fence : null;
 }
 
-/** Every fence in order, with `start` at its opening line. */
 export function findCodeFences(lines: readonly string[]): (CodeFence & { start: number })[] {
   return lines.reduce<(CodeFence & { start: number })[]>((found, _, index) => {
     if (index < (found.at(-1)?.end ?? 0)) {
@@ -82,7 +79,6 @@ export function findCodeFenceLines(lines: readonly string[]): ReadonlySet<number
   );
 }
 
-/** The text a learner reads as prose, for checks that would misread code. */
 export function removeCodeFences(text: string): string {
   const lines = text.split(/\r?\n/u);
   const code = findCodeFenceLines(lines);

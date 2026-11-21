@@ -7,7 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalResources
 import com.zoonk.android.R
 
-/** A run of the same character in a line's indentation, in the order written. */
 data class IndentRun(
     val count: Int,
     val tab: Boolean,
@@ -42,7 +41,6 @@ class SpokenCode internal constructor(
             resources.getQuantityString(if (tab) R.plurals.richtext_code_tabs else R.plurals.richtext_code_spaces, count, count)
         }
 
-    /** One numbered line, as each line of a block reads. */
     fun line(
         text: String,
         number: Int,

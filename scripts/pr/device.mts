@@ -26,10 +26,6 @@ const MS_PER_SECOND = 1000;
  */
 export type Installed = { commit: string; dirty: boolean } | { installedAt: Date; version: string };
 
-/**
- * What the command asks a booted device: its own description, the scheme it shows, its picture,
- * its app's build.
- */
 export type DeviceBridge = {
   appearance: (id: string) => Promise<"dark" | "light">;
   describe: (id: string) => Promise<string | null>;

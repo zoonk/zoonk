@@ -20,7 +20,6 @@ internal class CodeLanguageSpec(
     val keywords: Set<String>,
     val builtins: Set<String>,
     val ignoreCase: Boolean,
-    /** Tried in order at each position. */
     val rules: List<TokenRule>,
 )
 
@@ -195,5 +194,4 @@ private val BY_NAME = LANGUAGES.flatMap { language -> language.spec().let { spec
 
 private val UNKNOWN_SPEC = UNKNOWN.spec()
 
-/** `name` is a fence's name for the language (`py`, `JavaScript`), or null when it has none. */
 internal fun findCodeLanguage(name: String?): CodeLanguageSpec = BY_NAME[name?.lowercase()] ?: UNKNOWN_SPEC

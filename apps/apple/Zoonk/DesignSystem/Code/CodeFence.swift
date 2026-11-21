@@ -6,10 +6,8 @@ import Foundation
 struct CodeFence: Equatable {
   /// The lines between the fences as written, less the opening fence's own indentation.
   let code: String
-  /// The info string's first word, lowercased, such as `python`.
   let language: String?
   let isClosed: Bool
-  /// The opening fence's line.
   let start: Int
   /// The line after the closing fence; a fence that never closes runs to the text's end.
   let end: Int
@@ -36,7 +34,6 @@ struct CodeFence: Equatable {
       isClosed: close != nil, start: index, end: close.map { $0 + 1 } ?? lines.count)
   }
 
-  /// A text that is one closed code block and nothing else, such as an answer option that is code.
   static func whole(_ text: String) -> CodeFence? {
     let lines = RichTextBlock.lines(text.trimmingCharacters(in: .whitespacesAndNewlines))
 
@@ -93,7 +90,6 @@ struct CodeFence: Equatable {
       }
   }
 
-  /// The code as one run of inline code, for a line that can't show a block.
   var inlineCode: AttributedString {
     var run = AttributedString(CodeBreaks.insertedInLongWords(into: Self.oneLine(code)))
     run.inlinePresentationIntent = .code
