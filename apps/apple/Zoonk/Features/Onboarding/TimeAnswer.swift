@@ -165,8 +165,15 @@ struct TimeAnswer: View {
         month
           ? String(
             localized: "Covers everything in your plan by the start of \(date).",
-            table: "Onboarding")
-          : String(localized: "Covers everything in your plan by \(date).", table: "Onboarding")
+            table: "Onboarding",
+            comment:
+              "In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+          )
+          : String(
+            localized: "Covers everything in your plan by \(date).", table: "Onboarding",
+            comment:
+              "In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+          )
       }
     case .share(let share):
       return shown.map { Self.shareWords(share, exam: exam, month: month, date: $0) }
