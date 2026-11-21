@@ -3,6 +3,7 @@ import SwiftUI
 /// When the language pair's questions don't exist yet, only the learner's Start asks for them.
 struct LevelTestStep: View {
   let goalID: String
+  let language: String
   let targetLanguage: String
   let subject: String
   let onDone: (String?) async throws -> Void
@@ -23,7 +24,7 @@ struct LevelTestStep: View {
   private enum Phase {
     case loading
     case loadFailed
-    case intro
+    case intro(showAlphabetNote: Bool)
     case assessment(LevelTest, generationId: String? = nil)
     case topics(GoalPlacement)
     case preparing(generationID: String)
@@ -41,9 +42,11 @@ struct LevelTestStep: View {
         PracticeLoadFailureView(error: .unavailable) {
           finishing.run { await resume() }
         }
-      case .intro:
+      case .intro(let showAlphabetNote):
         PlacementLengthChoice(
           wholeCourseMinutes: wholeCourseMinutes,
+          languageNotes: LevelTestLanguageNotes(
+            language: language, showAlphabetNote: showAlphabetNote),
           isSaving: isSaving || isStarting, failed: saveFailures > 0, onSkip: skip,
           onStart: { choice in
             guard case .length(let length) = choice else { return }
@@ -197,7 +200,7 @@ struct LevelTestStep: View {
       {
         show(test)
       } else {
-        phase = .intro
+        phase = .intro(showAlphabetNote: test.showAlphabetNote)
       }
     } catch is CancellationError {
     } catch {
@@ -429,6 +432,52 @@ struct LevelTestQuestionScreen: View {
           ListeningMessage(question: question, language: targetLanguage, owner: owner)
         }
       })
+  }
+}
+
+struct LevelTestLanguageNotes: View {
+  let language: String
+  let showAlphabetNote: Bool
+
+  @Environment(\.openURL) private var openURL
+
+  var body: some View {
+    if showAlphabetNote {
+      Section {
+        Text(
+          "New to its alphabet? Skip the test. Your first lesson teaches you to read it.",
+          tableName: "Onboarding",
+          comment:
+            "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .listRowBackground(Color.clear)
+      }
+    }
+
+    if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
+      Section {
+        Button {
+          openURL(settings)
+        } label: {
+          Text(
+            "Use the app in \(Locale(identifier: language).localizedString(forLanguageCode: language) ?? language)",
+            tableName: "Onboarding",
+            comment: "Opens the app's settings to switch its language: the language's own name")
+        }
+      }
+    }
+  }
+
+  private var offersOwnLanguage: Bool {
+    let base = baseLanguage(language)
+    let shown = Bundle.main.preferredLocalizations.first.map(baseLanguage)
+    return base != shown && Bundle.main.localizations.contains(base)
+  }
+
+  private func baseLanguage(_ code: String) -> String {
+    String(code.lowercased().prefix { $0 != "-" && $0 != "_" })
   }
 }
 

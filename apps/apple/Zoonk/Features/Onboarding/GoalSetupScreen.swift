@@ -564,7 +564,8 @@ private struct StepScreen: View {
       Group {
         if view.goal.kind == .language, let targetLanguage = view.goal.targetLanguage {
           LevelTestStep(
-            goalID: view.goal.id, targetLanguage: targetLanguage, subject: subject,
+            goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
+            subject: subject,
             onDone: onPlacementDone)
         } else if view.goal.kind == .exam {
           FocusTestFlow(

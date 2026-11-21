@@ -18,6 +18,7 @@ struct PlacementLengthChoice: View {
   let wholeCourseMinutes: Int
   /// A language course's next level the learner can test out of.
   let testOutLevel: String?
+  let languageNotes: LevelTestLanguageNotes?
   let isSaving: Bool
   let failed: Bool
   let onStart: (PlacementTestChoice) -> Void
@@ -27,11 +28,13 @@ struct PlacementLengthChoice: View {
 
   init(
     wholeCourseMinutes: Int, testOutLevel: String? = nil,
-    initialChoice: PlacementTestChoice = .length(.quick), isSaving: Bool, failed: Bool,
+    initialChoice: PlacementTestChoice = .length(.quick),
+    languageNotes: LevelTestLanguageNotes? = nil, isSaving: Bool, failed: Bool,
     onSkip: (() -> Void)? = nil, onStart: @escaping (PlacementTestChoice) -> Void
   ) {
     self.wholeCourseMinutes = wholeCourseMinutes
     self.testOutLevel = testOutLevel
+    self.languageNotes = languageNotes
     self.isSaving = isSaving
     self.failed = failed
     self.onStart = onStart
@@ -59,6 +62,8 @@ struct PlacementLengthChoice: View {
         .foregroundStyle(.mutedForeground)
         .listRowBackground(Color.clear)
       }
+
+      languageNotes
     }
     .bottomBar(note: failed && !isSaving ? BarNote(saveFailure) : nil) {
       StepButtons(
