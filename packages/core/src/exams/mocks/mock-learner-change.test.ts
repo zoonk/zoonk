@@ -6,7 +6,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   LEARNER_LOCK,
   holdLearnerLock,
@@ -492,5 +492,89 @@ describe("mock writes under the learner's lock", () => {
     await expect(
       prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } }),
     ).resolves.toMatchObject({ result: { correct: 1 }, status: "finished" });
+  });
+
+  it("uses an answer change to fill a skipped question in the review", async () => {
+    const itemIds = await choiceItems(3);
+    const [first = "", second = "", last = ""] = itemIds;
+
+    const { mock } = await sittingFixture([
+      {
+        itemIds,
+        navigation: { answerChanges: 1, forwardOnly: true, itemSeconds: null, mustAnswer: false },
+        questions: itemIds.length,
+      },
+    ]);
+
+    await pick({ index: 0, itemId: last, mockId: mock.id });
+
+    await expect(pick({ index: 0, itemId: first, mockId: mock.id })).resolves.toStrictEqual({
+      status: "saved",
+    });
+
+    await expect(pick({ index: 0, itemId: second, mockId: mock.id })).resolves.toStrictEqual({
+      status: "locked",
+    });
+  });
+
+  describe("with the clock moving while a hand-in waits for the lock", () => {
+    const MINUTE_MS = 60_000;
+    const START = new Date("2031-03-04T12:00:00Z");
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    async function handInAcross<T>(
+      userId: string,
+      { after, before, request }: { after: number; before: number; request: () => Promise<T> },
+    ): Promise<T> {
+      vi.setSystemTime(START.getTime() + before);
+      const held = holdLearnerLock({ userId });
+      const pid = await held.pid;
+      const result = request();
+
+      try {
+        await waitForBlockedStatement(pid, LEARNER_LOCK);
+        vi.setSystemTime(START.getTime() + after);
+      } finally {
+        held.release();
+        await held.done;
+      }
+
+      return result;
+    }
+
+    it("answers expired when the mock runs out of time while its section is handed in", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(START);
+      const { mock, user } = await sittingFixture([{ questions: 1 }, { questions: 1 }]);
+      const expiresAfter = 30 * MINUTE_MS;
+
+      await expect(
+        handInAcross(user.id, {
+          after: expiresAfter + 1,
+          before: expiresAfter - 1,
+          request: () => submitMockSection({ blockId: mock.id, input: {}, section: 0 }),
+        }),
+      ).resolves.toStrictEqual({ status: "expired" });
+    });
+
+    it("counts the last section as timed out when its clock runs out while it's handed in", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(START);
+      const { mock, user } = await sittingFixture([{}]);
+      const deadline = 20 * MINUTE_MS;
+
+      await handInAcross(user.id, {
+        after: deadline + 1,
+        before: deadline - 1,
+        request: () => finishMock({ blockId: mock.id, input: {} }),
+      });
+
+      const stored = await prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } });
+
+      expect(mockConditionsSchema.parse(stored.conditions).timedOutSections).toStrictEqual([0]);
+    });
   });
 });

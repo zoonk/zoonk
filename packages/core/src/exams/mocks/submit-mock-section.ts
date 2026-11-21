@@ -86,6 +86,20 @@ function advanceConditions({
 
 const MS_PER_MINUTE = 60_000;
 
+function refuseHandIn({
+  mock,
+  section,
+}: {
+  mock: MockSitting | null;
+  section: number;
+}): "expired" | "finished" | "notRunning" | null {
+  if (mock?.status === "expired" || mock?.status === "finished") {
+    return mock.status;
+  }
+
+  return mock?.status === "active" && mock.sectionIndex === section ? null : "notRunning";
+}
+
 /** Scores and moves the section from the sitting read under the learner's lock, which saves take too. */
 export async function submitMockSection({
   blockId,
@@ -104,13 +118,10 @@ export async function submitMockSection({
 
   const { owned } = found;
   const { mock } = owned;
+  const refused = refuseHandIn({ mock, section });
 
-  if (mock?.status === "expired") {
-    return { status: "expired" };
-  }
-
-  if (mock?.status !== "active" || mock.sectionIndex !== section) {
-    return { status: mock?.status === "finished" ? "finished" : "notRunning" };
+  if (refused || !mock) {
+    return { status: refused ?? "notRunning" };
   }
 
   if (section >= mock.conditions.sections.length - 1) {
@@ -121,11 +132,12 @@ export async function submitMockSection({
   const routed = findRoutedModule(mock);
   const items = routed ? await loadMockItems(routed.itemIds) : new Map<string, MockItem>();
 
-  const moved = await writeLearnerChange({ userId: owned.userId }, async (tx) => {
+  const status = await writeLearnerChange({ userId: owned.userId }, async (tx) => {
     const current = await findMockSitting(tx, mock.id);
+    const refusedNow = refuseHandIn({ mock: current, section });
 
-    if (current?.status !== "active" || current.sectionIndex !== section) {
-      return unchanged(false);
+    if (refusedNow || !current) {
+      return unchanged(refusedNow ?? "notRunning");
     }
 
     const now = new Date();
@@ -140,8 +152,8 @@ export async function submitMockSection({
       where: { id: mock.id },
     });
 
-    return true;
+    return "next" as const;
   });
 
-  return { status: moved ? "next" : "notRunning" };
+  return { status };
 }

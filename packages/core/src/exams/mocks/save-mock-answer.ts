@@ -151,7 +151,12 @@ export async function saveMockAnswer({
     };
 
     await tx.mockExamAnswer.upsert({
-      create: { ...draft, itemId: input.itemId, mockExamId: mockId },
+      create: {
+        ...draft,
+        changes: judged.changed ? 1 : 0,
+        itemId: input.itemId,
+        mockExamId: mockId,
+      },
       update: { ...draft, ...(judged.changed ? { changes: { increment: 1 } } : {}) },
       where: { mockItem: { itemId: input.itemId, mockExamId: mockId } },
     });

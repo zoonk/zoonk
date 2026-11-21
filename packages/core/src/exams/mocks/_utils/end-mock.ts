@@ -42,9 +42,10 @@ export function withSectionTimeout({
 
 async function claimHandIn(current: MockSitting): Promise<ClaimedMock | null> {
   const handedIn = current.conditions.sections.length;
-  const now = new Date();
 
   if (current.sectionIndex >= handedIn) {
+    const now = new Date();
+
     const { count } = await prisma.mockExam.updateMany({
       data: { handInClaimedAt: now },
       where: {
@@ -67,6 +68,7 @@ async function claimHandIn(current: MockSitting): Promise<ClaimedMock | null> {
       return unchanged(null);
     }
 
+    const now = new Date();
     const conditions = withSectionTimeout({ mock: locked, now });
 
     await tx.mockExam.update({
