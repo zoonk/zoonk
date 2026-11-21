@@ -2,14 +2,13 @@
 
 import { type WrittenProjection } from "@zoonk/core/exams/scoring/written-points-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
 import { useFormatScore } from "../../essay/essay-labels";
 import { useWriteNow } from "../../learn-context";
-import { PointsReadout } from "../../writing/points-readout";
+import { PointsMeter, PointsReadout, getMinimumShare } from "../../writing/points-readout";
 import { useFormatPointsRange } from "../../writing/writing-labels";
 
 type Range = { high: number; low: number };
@@ -18,51 +17,16 @@ type Part = WrittenProjection["parts"][number];
 
 const PERCENT = 100;
 
-/** The range on the part's own scale, its minimum as a tick, and nothing drawn while unmeasured. */
-function RangeMeter({
-  max,
-  minimum,
-  range,
-}: {
-  max: number;
-  minimum: number | null;
-  range: Range | null;
-}) {
-  if (!range) {
-    return <div className="border-border rounded-meter h-1.5 border border-dashed" />;
-  }
-
-  const low = range.low / max;
-  const high = range.high / max;
-
-  return (
-    <div className="relative">
-      <MeterParts>
-        {low > 0 && <MeterPart className="bg-success" weight={low} />}
-        {high > low && <MeterPart className="bg-success/40" weight={high - low} />}
-        {high < 1 && <MeterPart weight={1 - high} />}
-      </MeterParts>
-      {minimum !== null && (
-        <span
-          aria-hidden="true"
-          className="bg-foreground absolute -top-1 h-3.5 w-0.5 -translate-x-1/2 rounded-full"
-          style={{ left: `${(minimum / max) * PERCENT}%` }}
-        />
-      )}
-    </div>
-  );
-}
-
 function ScoreRow({
   children,
   max,
-  minimum = null,
+  minimumShare = null,
   name,
   range,
 }: {
   children?: React.ReactNode;
   max: number | null;
-  minimum?: number | null;
+  minimumShare?: number | null;
   name: string;
   range: Range | null;
 }) {
@@ -85,7 +49,7 @@ function ScoreRow({
             : t("Not measured yet")}
         </span>
       </p>
-      {max !== null && <RangeMeter max={max} minimum={minimum} range={range} />}
+      {max !== null && <PointsMeter max={max} minimumShare={minimumShare} range={range} />}
       {children}
     </div>
   );
@@ -134,20 +98,40 @@ function Standing({ part }: { part: Part }) {
 
 function useHeadline(projection: WrittenProjection) {
   const t = useExtracted();
+  const format = useFormatter();
+  const formatScore = useFormatScore();
+
+  const minimumDetail = ({
+    minimum,
+    part,
+  }: {
+    minimum: NonNullable<WrittenProjection["parts"][number]["minimum"]>;
+    part: string;
+  }) =>
+    minimum.unit === "percent"
+      ? t("{part} asks for {share} of its points, whatever your other scores.", {
+          part,
+          share: format.number(minimum.value / PERCENT, {
+            maximumFractionDigits: 0,
+            style: "percent",
+          }),
+        })
+      : t("{part} asks for {minimum} points, whatever your other scores.", {
+          minimum: formatScore(minimum.value),
+          part,
+        });
+
   const below = projection.parts.find(({ standing }) => standing === "below");
 
   const unmeasured = projection.parts.find(
     ({ standing, range }) => standing === "unmeasured" || !range,
   );
 
+  // A part's name comes from the notice, so it opens a sentence rather than sitting inside one.
   if (below) {
     return {
-      detail: below.minimum
-        ? t("It asks for {minimum} points, whatever your other scores.", {
-            minimum: String(below.minimum.value),
-          })
-        : null,
-      title: t("Below the minimum: {part}", { part: below.name }),
+      detail: below.minimum && minimumDetail({ minimum: below.minimum, part: below.name }),
+      title: t("Below the minimum to pass"),
     };
   }
 
@@ -230,7 +214,7 @@ export function WrittenProjectionScore({
           <ScoreRow
             key={part.name}
             max={part.max}
-            minimum={part.minimum?.value ?? null}
+            minimumShare={part.minimum && getMinimumShare({ max: part.max, minimum: part.minimum })}
             name={part.name}
             range={part.range}
           >

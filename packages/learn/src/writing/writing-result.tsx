@@ -2,9 +2,9 @@
 
 import { type WritingPrompt, type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
-import { Meter, MeterFill, MeterPart, MeterParts } from "@zoonk/ui/components/meter";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { Eyebrow } from "../_components/eyebrow";
 import { PageSectionFooter, PageSectionTitle } from "../_components/page";
@@ -15,10 +15,10 @@ import {
   StepHeader,
   StepRow,
   StepRows,
-  StepTitleNumber,
-  renderStepNumber,
 } from "../_components/step-card";
+import { useFormatRange } from "../_utils/range";
 import { ESSAY_QUOTE_CLASS, useFormatScore } from "../essay/essay-labels";
+import { MinimumLegend, PointsMeter, PointsReadout, getMinimumShare } from "./points-readout";
 import {
   LEVEL_CELLS,
   LEVEL_CELL_COUNT,
@@ -30,49 +30,71 @@ import { WritingMarkedText } from "./writing-text";
 
 type Points = Extract<WritingResult, { kind: "points" }>;
 
+/** "−0.3–0.6": what language errors take away, as a range like the rest. */
+function useFormatDeduction() {
+  const formatRange = useFormatPointsRange();
+
+  return (deduction: Points["deduction"]) =>
+    deduction.high > 0 ? `−${formatRange(deduction)}` : formatRange(deduction);
+}
+
+/** The written test's minimum, drawn on this question's scale at the same share of its points. */
+function PartMinimum({ prompt }: { prompt: WritingPrompt }) {
+  const t = useExtracted();
+  const format = useFormatter();
+  const share = prompt.partMinimum && getMinimumShare(prompt.partMinimum);
+
+  if (share === null || share === undefined) {
+    return null;
+  }
+
+  return (
+    <MinimumLegend>
+      {t("Minimum to pass the written test: {share} of the points", {
+        share: format.number(share, { maximumFractionDigits: 0, style: "percent" }),
+      })}
+    </MinimumLegend>
+  );
+}
+
 /** The total as a range on the question's scale, then what it's made of, so the parts never contradict it. */
 function PointsHeader({
   grade,
-  text,
   prompt,
+  text,
 }: {
   grade: Points;
   prompt: WritingPrompt;
   text: string;
 }) {
   const t = useExtracted();
-  const formatScore = useFormatScore();
   const formatRange = useFormatPointsRange();
-
-  const { estimatedLines } = countWritingLines({
-    charactersPerLine: prompt.charactersPerLine,
-    limit: prompt.lines,
-    text,
-  });
-
-  const low = grade.total.low / grade.max;
-  const high = grade.total.high / grade.max;
+  const formatDeduction = useFormatDeduction();
+  const minimum = prompt.partMinimum;
   const errors = grade.errors.length;
+
+  const estimatedLines =
+    grade.estimatedLines ??
+    countWritingLines({ charactersPerLine: prompt.charactersPerLine, limit: prompt.lines, text })
+      .estimatedLines;
 
   return (
     <StepCard className="items-stretch">
       <StepHeader>
         <LabeledStepTitle label={t("Your answer")}>
-          <StepTitleNumber>{formatRange(grade.total)}</StepTitleNumber>
+          <PointsReadout max={grade.max} range={grade.total} />
         </LabeledStepTitle>
-        <StepDetail className="text-sm">
-          {t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
-            max: formatScore(grade.max),
-            mono: renderStepNumber,
-          })}
-        </StepDetail>
+        <StepDetail className="text-sm">{t("Estimated score")}</StepDetail>
       </StepHeader>
 
-      <MeterParts>
-        {low > 0 && <MeterPart className="bg-success" weight={low} />}
-        {high > low && <MeterPart className="bg-success/40" weight={high - low} />}
-        {high < 1 && <MeterPart weight={1 - high} />}
-      </MeterParts>
+      <div className="flex flex-col gap-3">
+        <PointsMeter
+          max={grade.max}
+          minimumShare={minimum ? getMinimumShare(minimum) : null}
+          range={grade.total}
+        />
+        <PartMinimum prompt={prompt} />
+      </div>
 
       {grade.zeroReason ? (
         <p className="text-pretty" role="note">
@@ -97,9 +119,7 @@ function PointsHeader({
               </span>
             </span>
             <span className="font-mono text-xs tabular-nums">
-              {grade.deduction.high > 0
-                ? `−${formatRange(grade.deduction)}`
-                : formatRange(grade.deduction)}
+              {formatDeduction(grade.deduction)}
             </span>
           </StepRow>
         </StepRows>
@@ -161,6 +181,20 @@ function WritingProgress({ grade }: { grade: WritingResult }) {
   );
 }
 
+/** A criterion's points: what's sure in full, what the range leaves open in light. */
+function RowMeter({ max, range }: { max: number; range: { high: number; low: number } }) {
+  const low = Math.min(1, range.low / max);
+  const high = Math.min(1, range.high / max);
+
+  return (
+    <MeterParts className="w-16 shrink-0 sm:w-20">
+      {low > 0 && <MeterPart className="bg-foreground" weight={low} />}
+      {high > low && <MeterPart className="bg-foreground/30" weight={high - low} />}
+      {high < 1 && <MeterPart weight={1 - high} />}
+    </MeterParts>
+  );
+}
+
 function LevelCells({ level }: { level: WritingResult["criteria"][number]["level"] }) {
   return (
     <span aria-hidden="true" className="flex shrink-0 gap-0.5">
@@ -217,6 +251,7 @@ function useCriteriaSource(prompt: WritingPrompt, grade: WritingResult): string 
 function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: WritingPrompt }) {
   const t = useExtracted();
   const formatScore = useFormatScore();
+  const formatRange = useFormatRange();
   const levelName = useLevelName();
   const source = useCriteriaSource(prompt, grade);
 
@@ -233,13 +268,16 @@ function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: Writ
               <span className="min-w-0 flex-1 text-pretty">{criterion.name}</span>
               {row ? (
                 <>
-                  <Meter className="w-16 shrink-0 sm:w-20">
-                    <MeterFill share={row.earned / row.max} />
-                  </Meter>
+                  <RowMeter
+                    max={row.max}
+                    range={row.range ?? { high: row.earned, low: row.earned }}
+                  />
                   <span className="shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums">
                     {t("{score} of {max}", {
                       max: formatScore(row.max),
-                      score: formatScore(row.earned),
+                      score: row.range
+                        ? formatRange(formatScore(row.range.low), formatScore(row.range.high))
+                        : formatScore(row.earned),
                     })}
                   </span>
                 </>
