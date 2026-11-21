@@ -17,8 +17,12 @@ const MS_PER_SECOND = 1000;
  */
 export type Installed = { commit: string; dirty: boolean } | { installedAt: Date; version: string };
 
-/** What the command asks a booted device: its own description, its picture, its app's build. */
+/**
+ * What the command asks a booted device: its own description, the scheme it shows, its picture,
+ * its app's build.
+ */
 export type DeviceBridge = {
+  appearance: (id: string) => Promise<"dark" | "light">;
   describe: (id: string) => Promise<string | null>;
   installed: (id: string) => Promise<Installed>;
   screenshot: (id: string, file: string) => Promise<void>;
@@ -40,6 +44,10 @@ const SCREENSHOT_BYTES = 67_108_864;
 
 /** A booted simulator, by its udid. */
 const simulator: DeviceBridge = {
+  appearance: async (udid) => {
+    const { stdout } = await run("xcrun", ["simctl", "ui", udid, "appearance"]);
+    return stdout.trim() === "dark" ? "dark" : "light";
+  },
   describe: async (udid) => {
     const { stdout } = await run("xcrun", ["simctl", "list", "devices", "booted", "-j"]);
     const { devices } = BOOTED.parse(JSON.parse(stdout));
@@ -71,6 +79,10 @@ const simulator: DeviceBridge = {
 
 /** A booted emulator, by its adb serial. */
 const emulator: DeviceBridge = {
+  appearance: async (serial) => {
+    const { stdout } = await run("adb", ["-s", serial, "shell", "cmd", "uimode", "night"]);
+    return stdout.includes("Night mode: yes") ? "dark" : "light";
+  },
   describe: async (serial) => {
     const state = await run("adb", ["-s", serial, "get-state"]).then(
       ({ stdout }) => stdout.trim(),
@@ -219,9 +231,10 @@ export async function takeDevicePicture({
     );
   }
 
-  const [{ current: _current, ...checkout }, installed] = await Promise.all([
+  const [{ current: _current, ...checkout }, installed, scheme] = await Promise.all([
     readCheckoutBuild({ app: platform, repository }),
     bridge.installed(deviceId),
+    bridge.appearance(deviceId),
   ]);
 
   const why = await refusal({
@@ -257,7 +270,7 @@ export async function takeDevicePicture({
     platform,
     pointer: "coarse",
     scale: 1,
-    scheme: "light",
+    scheme,
     sha256: "",
     shows: name,
     side: "after",

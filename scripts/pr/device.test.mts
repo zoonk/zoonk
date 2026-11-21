@@ -13,6 +13,7 @@ import { formatCheck } from "./report.mts";
 /** A booted device that draws `bytes` and reports `installed` as its app's build. */
 function bridge(installed: Installed, booted = true): DeviceBridge {
   return {
+    appearance: async () => "light",
     describe: async () => (booted ? "iPhone 17, iOS 26.1" : null),
     installed: async () => installed,
     screenshot: async (_id, file) => writeFileSync(file, "the simulator's picture"),
@@ -92,6 +93,25 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
       take(repository, { installedAt: at(-1), version: "1.0" }, "android"),
       /installed .* before this checkout's last change/u,
     );
+  });
+
+  it("records the scheme the device shows, so a picture in dark mode is labeled dark", async () => {
+    const { repository } = checkFixture();
+    const to = mkdtempSync(join(repository, "device-"));
+
+    const item = await takeDevicePicture({
+      bridge: {
+        ...bridge({ commit: head(repository), dirty: false }),
+        appearance: async () => "dark",
+      },
+      deviceId: "booted-device",
+      name: "sheet in dark mode",
+      platform: "apple",
+      repository,
+      to,
+    });
+
+    assert.equal(item.scheme, "dark");
   });
 
   it("refuses a device that isn't booted", async () => {
