@@ -29,7 +29,6 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.api.models.GoalContentGoal
@@ -218,12 +217,8 @@ private fun sectionCount(syllabus: Syllabus): String {
 /** Optional study isn't on the exam, so its row counts the lessons done instead of a readiness share. */
 @Composable
 private fun lessonsDoneText(subject: SyllabusSubject): String {
-    val locale = currentLocale()
-    return stringResource(
-        R.string.plan_done_of_total,
-        formatNumber(subject.lessonsDone.toDouble(), locale),
-        formatNumber(subject.lessonsTotal.toDouble(), locale),
-    )
+    val total = subject.lessonsTotal.toInt()
+    return pluralStringResource(R.plurals.plan_lessons_of, total, subject.lessonsDone.toInt(), total)
 }
 
 @Composable

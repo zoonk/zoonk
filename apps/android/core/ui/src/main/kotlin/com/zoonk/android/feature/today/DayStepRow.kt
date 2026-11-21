@@ -50,6 +50,7 @@ fun DayStepRow(
     day: DayView,
     step: DayStep,
     isNext: Boolean,
+    examDocument: ExamDocument,
     modifier: Modifier = Modifier,
     lessonStatus: Map<String, LessonGenerationStatus> = emptyMap(),
     writingStalled: Boolean = false,
@@ -85,7 +86,7 @@ fun DayStepRow(
                     if (openFailed) StepOpenFailed()
                     if (!finished) {
                         tag?.invoke()
-                        StepLines(lessonStatus, writingStalled, step)
+                        StepLines(lessonStatus, writingStalled, step, examDocument)
                         testOut?.invoke()
                     }
                 }
@@ -123,6 +124,7 @@ private fun StepLines(
     lessonStatus: Map<String, LessonGenerationStatus>,
     writingStalled: Boolean,
     step: DayStep,
+    examDocument: ExamDocument,
 ) {
     val count = step.questions.toInt()
     val extra = step.subjectExtra
@@ -133,17 +135,12 @@ private fun StepLines(
             step.practisesTopics -> shortTopicList(step.topics, named = 1)
             step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
             step.fullReview -> stringResource(R.string.today_step_every_topic)
-            extra != null -> stepExtraLabel(extra)
+            extra != null -> optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
             else -> step.subject
         }
 
     if (line != null) SubLine(line)
 }
-
-/** Today doesn't read whether the exam's document is a notice or a guide, so a lesson beyond it takes the notice's words. */
-@Composable
-private fun stepExtraLabel(extra: StudyBlock.SubjectExtra): String =
-    optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = ExamDocument.NOTICE)
 
 @Composable
 private fun SubLine(text: String) {
