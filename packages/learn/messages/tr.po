@@ -598,14 +598,12 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Bu işlem normalden uzun sürüyor. Kendiliğinden açılacak, tekrar dokunmana gerek yok."
 
 #: src/_components/page-tabs.tsx
-#: src/code/code-listing.tsx
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Sola kaydır"
 
 #: src/_components/page-tabs.tsx
-#: src/code/code-listing.tsx
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
@@ -2593,6 +2591,42 @@ msgstr "Rövanş bir sonraki çalışmanda"
 msgctxt "h2vipu"
 msgid "Code"
 msgstr "Kod"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”.
+#: src/code/spoken-code.ts
+msgctxt "kpbRGD"
+msgid "{count, plural, one {# tab} other {# tabs}}"
+msgstr "{count, plural, one {# sekme} other {# sekme karakteri}}"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”.
+#: src/code/spoken-code.ts
+msgctxt "yjyNvP"
+msgid "{count, plural, one {# space} other {# spaces}}"
+msgstr "{count, plural, one {# boşluk} other {# boşluk karakteri}}"
+
+#. Read by screen readers for an empty line of a program.
+#: src/code/spoken-code.ts
+msgctxt "wrB4QU"
+msgid "Line {number}: blank"
+msgstr "Satır {number}: boş"
+
+#. Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "2gsZ99"
+msgid "Line {number}, indented {indent}: {code}"
+msgstr "Satır {number}, {indent} girintili: {code}"
+
+#. Read by screen readers for a line of a program: its number, then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "B_BMju"
+msgid "Line {number}: {code}"
+msgstr "Satır {number}: {code}"
+
+#. Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "W3ZnQw"
+msgid "Indented {indent}: {code}"
+msgstr "{indent} girintili: {code}"
 
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx

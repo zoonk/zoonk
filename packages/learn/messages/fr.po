@@ -598,14 +598,12 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Cela prend plus de temps que d’habitude. L’ouverture se fera toute seule, inutile d’appuyer à nouveau."
 
 #: src/_components/page-tabs.tsx
-#: src/code/code-listing.tsx
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "jzFcrt"
 msgid "Scroll left"
 msgstr "Faire défiler vers la gauche"
 
 #: src/_components/page-tabs.tsx
-#: src/code/code-listing.tsx
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "-lsh8v"
 msgid "Scroll right"
@@ -2593,6 +2591,42 @@ msgstr "Revanche à ta prochaine séance"
 msgctxt "h2vipu"
 msgid "Code"
 msgstr "Code"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”.
+#: src/code/spoken-code.ts
+msgctxt "kpbRGD"
+msgid "{count, plural, one {# tab} other {# tabs}}"
+msgstr "{count, plural, one {# tabulation} other {# tabulations}}"
+
+#. How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”.
+#: src/code/spoken-code.ts
+msgctxt "yjyNvP"
+msgid "{count, plural, one {# space} other {# spaces}}"
+msgstr "{count, plural, one {# espace} other {# espaces}}"
+
+#. Read by screen readers for an empty line of a program.
+#: src/code/spoken-code.ts
+msgctxt "wrB4QU"
+msgid "Line {number}: blank"
+msgstr "Ligne {number} : vide"
+
+#. Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "2gsZ99"
+msgid "Line {number}, indented {indent}: {code}"
+msgstr "Ligne {number}, en retrait de {indent} : {code}"
+
+#. Read by screen readers for a line of a program: its number, then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "B_BMju"
+msgid "Line {number}: {code}"
+msgstr "Ligne {number} : {code}"
+
+#. Read by screen readers for a one-line program that is indented: how far (such as “4 spaces”), then its code as written.
+#: src/code/spoken-code.ts
+msgctxt "W3ZnQw"
+msgid "Indented {indent}: {code}"
+msgstr "En retrait de {indent} : {code}"
 
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
