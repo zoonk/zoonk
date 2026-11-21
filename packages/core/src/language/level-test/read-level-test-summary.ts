@@ -2,6 +2,7 @@ import { type Goal } from "@zoonk/db";
 import { CEFR_LEVELS, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
+import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
 import {
   levelTestOutLevelSchema,
   levelTestProgressSchema,
@@ -27,8 +28,7 @@ export function readLevelTestAttempts(goal: Pick<Goal, "details">) {
 }
 
 export function hasOpenLanguageTopicWalk(goal: Pick<Goal, "details">): boolean {
-  const placement = isJsonObject(goal.details) ? goal.details.placementTest : null;
-  return isJsonObject(placement) && isJsonObject(placement.attempt);
+  return readPlacementAttempt(goal).attempt !== null;
 }
 
 function readOpenAttempt({ attempt, testOut }: ReturnType<typeof readLevelTestAttempts>) {
