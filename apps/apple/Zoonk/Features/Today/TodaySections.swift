@@ -464,17 +464,9 @@ struct TodayPlanChangeSection: View {
   }
 
   private func behindSentence(_ behind: TodayView.PlanChange.Behind) -> String {
-    let time = studyDuration(minutes: behind.currentMinutes)
-    let after = behind.coveredAfter.formatted(.percent.precision(.fractionLength(0)))
-    let before = behind.coveredBefore.formatted(.percent.precision(.fractionLength(0)))
-
-    return behind.measure == "exam"
-      ? String(
-        localized: "\(time) a day now covers \(after) of the exam, down from \(before).",
-        table: "Today", comment: "Missed days left an exam plan covering less")
-      : String(
-        localized: "\(time) a day now covers \(after) of your goal, down from \(before).",
-        table: "Today", comment: "Missed days left a plan covering less of its goal")
+    behind.measure == "exam"
+      ? String(localized: "Some lessons no longer fit before your exam.", table: "Today")
+      : String(localized: "Some lessons no longer fit before your date.", table: "Today")
   }
 
   private func result(_ decision: PlanChangeDecision) -> String {

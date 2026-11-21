@@ -119,136 +119,6 @@
         }
       }
     },
-    "%@ a day now covers %@ of the exam, down from %@." : {
-      "comment" : "Missed days left an exam plan covering less",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %1$@ pro Tag deckst du jetzt %2$@ des Prüfungsstoffs ab, vorher waren es %3$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ a day now covers %2$@ of the exam, down from %3$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al día, ahora cubres el %2$@ del examen, menos que el %3$@ de antes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %1$@ par jour, tu couvres maintenant %2$@ de l’examen, contre %3$@ avant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al giorno, ora copri una parte più piccola dell’esame: %2$@ invece di %3$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%1$@で学べる試験範囲は%2$@に減りました。以前は%3$@でした。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %1$@씩 공부하면 이제 시험 범위의 %2$@까지 학습할 수 있어요. 이전의 %3$@보다 줄었어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przy %1$@ dziennie plan obejmuje teraz %2$@ materiału do egzaminu zamiast wcześniejszych %3$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %1$@ por dia, seu plano agora cobre %2$@ da prova, abaixo dos %3$@ de antes."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %1$@ ile artık sınavın %2$@ kadarı planına sığıyor; önceden bu oran %3$@ idi."
-          }
-        }
-      }
-    },
-    "%@ a day now covers %@ of your goal, down from %@." : {
-      "comment" : "Missed days left a plan covering less of its goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit %1$@ pro Tag deckst du jetzt %2$@ deines Ziels ab, vorher waren es %3$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ a day now covers %2$@ of your goal, down from %3$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al día, ahora cubres el %2$@ de tu objetivo, menos que el %3$@ de antes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %1$@ par jour, tu couvres maintenant %2$@ de ton objectif, contre %3$@ avant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %1$@ al giorno, ora copri una parte più piccola del tuo obiettivo: %2$@ invece di %3$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%1$@で学べる範囲は、目標の%2$@に減りました。以前は%3$@でした。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %1$@씩 공부하면 이제 목표의 %2$@까지 학습할 수 있어요. 이전의 %3$@보다 줄었어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przy %1$@ dziennie plan obejmuje teraz %2$@ materiału potrzebnego do osiągnięcia twojego celu zamiast wcześniejszych %3$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com %1$@ por dia, seu plano agora cobre %2$@ do seu objetivo, abaixo dos %3$@ de antes."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %1$@ ile artık hedefinin %2$@ kadarı planına sığıyor; önceden bu oran %3$@ idi."
-          }
-        }
-      }
-    },
     "%@ and %lld more" : {
       "comment" : "A short list of topics and how many more",
       "localizations" : {
@@ -10186,6 +10056,8 @@
         }
       }
     },
+    "Some lessons no longer fit before your date." : {},
+    "Some lessons no longer fit before your exam." : {},
     "Start" : {
       "comment" : "Accepts the suggested goal\nStarts the Focus test\nStarts today's session",
       "localizations" : {
