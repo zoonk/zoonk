@@ -138,7 +138,7 @@ export function WritingMarkedText({
               </span>
               <span className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-pretty">{error.correction}</span>
-                <span className="text-muted-foreground text-xs text-pretty">
+                <span className="text-muted-foreground text-xs text-balance">
                   <FactSegments
                     facts={[t("You wrote “{quote}”", { quote: error.quote }), error.kind]}
                   />
