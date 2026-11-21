@@ -2,10 +2,6 @@ import Accessibility
 import Charts
 import SwiftUI
 
-/// Numbers against numbers in a lesson, a question or a challenge, main's `PlotVisualView`: x spaced
-/// by value, each series as points, a line, or both, named points beside their dots (numbered with a
-/// key when they'd collide), and dashed references named in a gutter past the plot, where they never
-/// cover data. Laid out by `LessonPlotLayout` for 12-point labels; a larger text size scales it all.
 struct LessonPlotView: View {
   let plot: LessonPlot
 
@@ -16,7 +12,6 @@ struct LessonPlotView: View {
   private static let label = TypeStyle.meta
   private static let pointLabel = TypeStyle.meta.weight(.medium)
 
-  /// Main's `useTextScale`: the drawing grows with its labels.
   private var scale: Double {
     Self.label.uiFont(textSize, legibility: legibility).pointSize / 12
   }
@@ -100,7 +95,7 @@ struct LessonPlotView: View {
           let y = reference.top + LessonPlotLayout.lineHeight * (Double(index) + 0.5)
           context.draw(
             text(line, label, .mutedForeground),
-            at: at(layout.plotRight + LessonPlotLayout.labelGap, y), anchor: .leading)
+            at: at(layout.referenceLeft, y), anchor: .leading)
         }
       }
 
@@ -118,17 +113,7 @@ struct LessonPlotView: View {
           index: pointIndex, mark: series.mark, pointCount: points.count,
           seriesCount: plot.series.count)
         {
-          let size = LessonSeriesMark.pointSize * scale
-          let box = CGRect(x: point.x - size / 2, y: point.y - size / 2, width: size, height: size)
-          let path = mark.shape.path(in: box)
-
-          if mark.isOpen {
-            context.fill(path, with: .color(.card))
-            context.stroke(
-              path, with: .color(mark.tone), lineWidth: LessonSeriesMark.openStroke * scale)
-          } else {
-            context.fill(path, with: .color(mark.tone))
-          }
+          mark.drawPoint(at: point, scale: scale, in: context)
         }
       }
 
@@ -144,30 +129,41 @@ struct LessonPlotView: View {
       }
 
       for tick in layout.xTicks {
-        let center = layout.tickCenter(tick, textWidth: tickWidth(tick.label))
+        let number = text(tick.label, label, .mutedForeground)
+        let size = number.measure(in: CGSize(width: Double.infinity, height: .infinity))
+        let baseline = at(
+          layout.tickCenter(tick, textWidth: tickWidth(tick.label)),
+          layout.plotBottom + LessonPlotLayout.tickOffset)
         context.draw(
-          text(tick.label, label, .mutedForeground),
-          at: at(center, layout.plotBottom + LessonPlotLayout.tickOffset), anchor: .bottom)
+          number,
+          in: CGRect(
+            origin: CGPoint(
+              x: baseline.x - size.width / 2, y: baseline.y - number.firstBaseline(in: size)),
+            size: size))
       }
     }
   }
 
-  /// Main's legend draws each series as the plot does: a dot, or a line through one.
   private var legend: some View {
     FlowLayout(spacing: 12, rowSpacing: 4) {
       ForEach(Array(plot.series.enumerated()), id: \.offset) { index, series in
         let mark = LessonSeriesMark(index)
 
         HStack(spacing: 6) {
-          ZStack {
+          Canvas { context, size in
+            let middle = CGPoint(x: size.width / 2, y: size.height / 2)
+
             if series.mark != .points {
-              Rectangle().fill(mark.tone).frame(width: 16, height: 2)
+              context.stroke(
+                Path { path in
+                  path.move(to: CGPoint(x: 0, y: middle.y))
+                  path.addLine(to: CGPoint(x: size.width, y: middle.y))
+                }, with: .color(mark.tone), style: mark.lineStyle)
             }
 
-            mark.swatch(.line)
-              .frame(width: 8, height: 8)
+            mark.drawPoint(at: middle, scale: 1, in: context)
           }
-          .frame(width: 16)
+          .frame(width: series.mark == .points ? 10 : 16, height: 10)
 
           Text(series.name)
             .typeStyle(.meta)
@@ -199,8 +195,6 @@ struct LessonPlotView: View {
     unit.map { "\(label) (\($0))" } ?? label
   }
 
-  /// What VoiceOver reads, as main's hidden data: each axis's range, each series' points, then the
-  /// reference lines.
   @ViewBuilder
   private func spoken(_ layout: LessonPlotLayout) -> some View {
     let scale = LessonPlotScale(plot)
@@ -232,7 +226,6 @@ struct LessonPlotView: View {
   }
 }
 
-/// Audio Graphs for a plot, with each axis's range and every series' points.
 private struct LessonPlotDescriptor: AXChartDescriptorRepresentable {
   let plot: LessonPlot
 
@@ -252,5 +245,55 @@ private struct LessonPlotDescriptor: AXChartDescriptorRepresentable {
           name: series.name, isContinuous: series.mark != .points,
           dataPoints: series.points.map { AXDataPoint(x: $0.x, y: $0.y, label: $0.label) })
       })
+  }
+}
+
+extension LessonSeriesMark {
+  fileprivate func drawPoint(at center: CGPoint, scale: Double, in context: GraphicsContext) {
+    let path = pointShape.path.applying(
+      CGAffineTransform(translationX: center.x, y: center.y).scaledBy(x: scale, y: scale))
+
+    if pointShape == .cross {
+      context.stroke(
+        path, with: .color(tone), style: StrokeStyle(lineWidth: 2 * scale, lineCap: .round))
+    } else if isOpen {
+      context.fill(path, with: .color(.card))
+      context.stroke(
+        path, with: .color(tone),
+        style: StrokeStyle(lineWidth: Self.openStroke * scale, lineJoin: .round))
+    } else {
+      context.fill(path, with: .color(tone))
+    }
+  }
+}
+
+extension LessonSeriesMark.PointShape {
+  /// Around the point's center, sized so each shape weighs about the same as the 3.5-point dot.
+  fileprivate var path: Path {
+    let polygon = { (corners: [CGPoint]) in
+      Path {
+        $0.addLines(corners)
+        $0.closeSubpath()
+      }
+    }
+
+    return switch self {
+    case .circle: Path(ellipseIn: CGRect(x: -3.5, y: -3.5, width: 7, height: 7))
+    case .square: Path(CGRect(x: -3.1, y: -3.1, width: 6.2, height: 6.2))
+    case .diamond:
+      polygon([
+        CGPoint(x: 0, y: -4.5), CGPoint(x: 4.5, y: 0), CGPoint(x: 0, y: 4.5),
+        CGPoint(x: -4.5, y: 0),
+      ])
+    case .triangle:
+      polygon([CGPoint(x: 0, y: -4.2), CGPoint(x: 4.4, y: 3.2), CGPoint(x: -4.4, y: 3.2)])
+    case .cross:
+      Path { path in
+        path.move(to: CGPoint(x: -3, y: -3))
+        path.addLine(to: CGPoint(x: 3, y: 3))
+        path.move(to: CGPoint(x: -3, y: 3))
+        path.addLine(to: CGPoint(x: 3, y: -3))
+      }
+    }
   }
 }

@@ -89,7 +89,7 @@ extension FillStyle {
 }
 
 /// How a chart or a plot draws one series so it stays apart from the others without relying on
-/// color, as main's `getSeriesMark`: points take a shape, and once the six colors are used they come
+/// color: points take a shape, and once the six colors are used they come
 /// back drawn open (outlined bars, dashed lines with hollow points).
 struct LessonSeriesMark {
   static let openStroke = 1.5
@@ -98,18 +98,29 @@ struct LessonSeriesMark {
   private static let tones: [Color] = [
     .vizAccent, .vizSecondary, .vizHighlight, .vizSeries4, .vizSeries5, .vizSeries6,
   ]
-  private static let shapes: [BasicChartSymbolShape] = [
-    .circle, .square, .diamond, .triangle, .cross,
-  ]
+
+  enum PointShape: CaseIterable {
+    case circle, square, diamond, triangle, cross
+  }
 
   let tone: Color
-  let shape: BasicChartSymbolShape
+  let pointShape: PointShape
   let isOpen: Bool
 
   init(_ index: Int) {
     tone = Self.tones[index % Self.tones.count]
-    shape = Self.shapes[index % Self.shapes.count]
+    pointShape = PointShape.allCases[index % PointShape.allCases.count]
     isOpen = (index / Self.tones.count) % 2 == 1
+  }
+
+  var shape: BasicChartSymbolShape {
+    switch pointShape {
+    case .circle: .circle
+    case .square: .square
+    case .diamond: .diamond
+    case .triangle: .triangle
+    case .cross: .cross
+    }
   }
 
   var lineStyle: StrokeStyle {
@@ -205,7 +216,6 @@ private struct LessonChartFormat {
   }
 }
 
-/// Swift Charts' bars or lines, with the names under them, on the value axis main draws.
 private struct UprightChart: View {
   let chart: LessonChart
   let format: LessonChartFormat
@@ -270,7 +280,6 @@ private struct UprightChart: View {
         .frame(minHeight: 200)
 
       LessonChartCaption(text: chart.categoryLabel)
-        .frame(maxWidth: .infinity)
     }
   }
 
@@ -463,7 +472,7 @@ private struct SidewaysBars: View {
   }
 }
 
-/// An axis's name beside a chart's or a plot's axis; VoiceOver reads it with the axis instead.
+/// VoiceOver reads it with the axis instead.
 struct LessonChartCaption: View {
   let text: String
 
@@ -475,7 +484,6 @@ struct LessonChartCaption: View {
   }
 }
 
-/// Where a chart's numbers come from; a made-up example has none.
 struct LessonChartSource: View {
   let source: String
 

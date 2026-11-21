@@ -1,8 +1,7 @@
 import Foundation
 
-/// Where a plot draws everything, as main's `getPlotLayout` and `getPointLabels` place it, in
-/// points for 12-point labels; a larger text size scales the whole drawing. `textWidth` measures a
-/// label at that size.
+/// In points for 12-point labels; a larger text size scales the whole drawing, and `textWidth`
+/// measures a label at that size.
 struct LessonPlotLayout {
   static let height = 208.0
   static let top = 22.0
@@ -13,12 +12,12 @@ struct LessonPlotLayout {
   static let lineHeight = 14.0
   static let tickOffset = 16.0
   static let dotRadius = 4.5
+  private static let referenceGap = dotRadius + labelGap
   private static let labelOffset = dotRadius + 3
   private static let clearance = 1.0
   private static let maxKeyMarkerLength = 2
   private static let maxGutterShare = 0.3
   private static let referenceSpacing = 2.0
-  /// Main's `COMPACT_FROM`: an axis whose numbers reach this writes them short.
   private static let compactFrom = 10_000.0
 
   struct Tick {
@@ -26,7 +25,7 @@ struct LessonPlotLayout {
     let value: Double
   }
 
-  /// A level's name in the gutter past the plot, `top` being its first line's top.
+  /// `top` is its first line's top.
   struct Reference {
     let lines: [String]
     let top: Double
@@ -59,16 +58,15 @@ struct LessonPlotLayout {
 
   let left: Double
   let plotRight: Double
+  let referenceLeft: Double
   let plotBottom: Double
   let xTicks: [Tick]
   let yTicks: [Tick]
-  /// Each series' points, in the drawing's points.
   let series: [[Pixel]]
   let references: [Reference]
   let labels: [Label]
-  /// Numbered names, when a name beside its dot would cover another dot or name.
   let key: [KeyEntry]
-  /// Large x numbers are written short and grouped; others, like years, in full without grouping.
+  /// Only large x numbers group their digits, so years don't read as "2,024".
   let groupsX: Bool
 
   private let scale: LessonPlotScale
@@ -102,7 +100,7 @@ struct LessonPlotLayout {
             labelWidth(String($0))
           }.max() ?? 0))
 
-    let plotRight = max(width - (room > 0 ? room + Self.labelGap : Self.right), left + 1)
+    let plotRight = max(width - (room > 0 ? room + Self.referenceGap : Self.right), left + 1)
     let plotBottom = Self.height - Self.bottom
     let toPoint = { (x: Double, y: Double) in
       Pixel(
@@ -115,6 +113,7 @@ struct LessonPlotLayout {
     self.groupsX = compactX
     self.left = left
     self.plotRight = plotRight
+    self.referenceLeft = plotRight + Self.referenceGap
     self.plotBottom = plotBottom
     self.yTicks = yTicks
 
@@ -166,25 +165,31 @@ struct LessonPlotLayout {
     }
     let frames = xTicks.map { tick in
       let half = labelWidth(tick.label) / 2
-      let center = min(max(toPoint(tick.value, scale.y.domain.lowerBound).x, half), width - half)
+      let center = Self.tickCenter(
+        toPoint(tick.value, scale.y.domain.lowerBound).x, half: half, left: left, width: width)
       return (left: center - half, right: center + half)
     }
     self.xTicks = LessonChartTicks.labeled(frames, gap: 0).map { xTicks[$0] }
   }
 
-  /// Where a tick's number centers, kept inside the drawing as main's `clampLabelCenter`.
   func tickCenter(_ tick: Tick, textWidth: Double) -> Double {
-    let half = (textWidth + Self.labelGap) / 2
-    let x = Self.position(tick.value, domain: scale.x.domain, range: left...plotRight)
+    Self.tickCenter(
+      Self.position(tick.value, domain: scale.x.domain, range: left...plotRight),
+      half: (textWidth + Self.labelGap) / 2, left: left, width: width)
+  }
 
-    return min(max(x, half), width - half)
+  /// Past the y axis's numbers and inside the drawing, so the corner where the axes meet never
+  /// crowds.
+  private static func tickCenter(_ x: Double, half: Double, left: Double, width: Double) -> Double {
+    max(min(x, width - half), left + half)
   }
 
   func y(_ value: Double) -> Double {
     Self.position(value, domain: scale.y.domain, range: Self.top...plotBottom, flipped: true)
   }
 
-  /// A dotted series draws every point; a bare line draws its shape once, at its end, beside others.
+  /// A bare line marks its end with its series' shape only when there are other series to tell it
+  /// from.
   static func drawsDot(index: Int, mark: LessonPlot.Mark, pointCount: Int, seriesCount: Int)
     -> Bool
   {
@@ -195,7 +200,6 @@ struct LessonPlotLayout {
     (values.map(abs).max() ?? 0) >= compactFrom
   }
 
-  /// A flat domain maps everything to the middle, as main's `createLinearScale`.
   private static func position(
     _ value: Double, domain: ClosedRange<Double>, range: ClosedRange<Double>, flipped: Bool = false
   ) -> Double {
@@ -207,7 +211,7 @@ struct LessonPlotLayout {
       ? (start + end) / 2 : start + (value - domain.lowerBound) / span * (end - start)
   }
 
-  /// Main's `wrapLabel`: lines at spaces and hyphens, a word too wide broken by characters.
+  /// Breaks at spaces and hyphens, and inside a word only when it's wider than `room`.
   static func wrap(_ label: String, room: Double, labelWidth: (String) -> Double) -> [String] {
     let words = LessonChartNames.pieces(label).flatMap { word in
       word.reduce(into: [""]) { pieces, character in
@@ -231,8 +235,6 @@ struct LessonPlotLayout {
     return lines.map(\.trimmed).filter { !$0.isEmpty }
   }
 
-  /// Stacks names top to bottom so close lines don't overlap, then lifts them back above the x
-  /// axis's numbers.
   private static func stack(_ marks: [Reference], bottom: Double) -> [Reference] {
     let height = { (mark: Reference) in Double(mark.lines.count) * lineHeight }
     let stacked = marks.sorted { $0.y < $1.y }.reduce(into: [Reference]()) { stacked, mark in
@@ -251,9 +253,9 @@ struct LessonPlotLayout {
     let segments: [(Pixel, Pixel)]
   }
 
-  /// Main's `getPointLabels`: every labeled point keeps its label. Names go beside their dots where
-  /// there's room; when one can't fit without covering another dot or label, every name moves to a
-  /// numbered key and the dots carry the numbers. Names as short as a number stay put.
+  /// Every labeled point keeps its name: beside its dot where there's room, and when one can't fit
+  /// without covering another dot or name, every name moves to a numbered key and the dots carry the
+  /// numbers. Names as short as a number gain nothing from a key, so they stay put.
   static func pointLabels(
     named: [(dot: Pixel, text: String)], scene: Scene, textWidth: (String) -> Double
   ) -> (labels: [Label], key: [KeyEntry]) {
@@ -271,8 +273,6 @@ struct LessonPlotLayout {
     return (place(markers, scene: scene, textWidth: textWidth).map(\.label), key)
   }
 
-  /// Takes the first side that stays inside the plot and covers no dot or earlier label, preferring
-  /// one that crosses the fewest lines.
   private static func place(
     _ named: [(dot: Pixel, text: String)], scene: Scene, textWidth: (String) -> Double
   ) -> [(label: Label, placed: Bool)] {
@@ -305,7 +305,6 @@ struct LessonPlotLayout {
     }
   }
 
-  /// Beside the dot first, then above and below it, so a label reads as its dot's name.
   private static func candidates(dot: Pixel, text: String) -> [Label] {
     let above = dot.y - labelOffset - lineHeight / 2
     let below = dot.y + labelOffset + lineHeight / 2
@@ -345,7 +344,6 @@ struct LessonPlotLayout {
       && b.top < a.bottom + clearance
   }
 
-  /// Clips the segment to the box's x range, then checks the clipped part's y span against it.
   static func crosses(_ segment: (Pixel, Pixel), _ box: Box) -> Bool {
     let (from, to) = segment
     let low = max(min(from.x, to.x), box.left)

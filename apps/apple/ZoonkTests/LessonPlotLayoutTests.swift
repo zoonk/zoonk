@@ -2,10 +2,8 @@ import XCTest
 
 @testable import Zoonk
 
-/// Main's `plot-layout.test.ts`, so a plot places its names as web and Android do.
 final class LessonPlotLayoutTests: XCTestCase {
-  /// How wide the plot draws inside its card on a 390-point phone.
-  private let phone = 324.0
+  private let plotWidthOnAPhone = 324.0
   private let textWidth = { (text: String) in Double(text.count) * 6.5 }
 
   func testPointsSpaceByTheirXValueAndKeepRepeatedX() throws {
@@ -70,7 +68,7 @@ final class LessonPlotLayoutTests: XCTestCase {
     let tops = control.references.map(\.top)
 
     XCTAssertLessThanOrEqual(
-      control.plotRight + LessonPlotLayout.labelGap + textWidth("Upper limit"), phone)
+      control.referenceLeft + textWidth("Upper limit"), plotWidthOnAPhone)
     XCTAssertEqual(tops.count, 3)
     XCTAssertGreaterThanOrEqual(tops[1] - tops[0], 14)
     XCTAssertGreaterThanOrEqual(tops[2] - tops[1], 14)
@@ -85,6 +83,26 @@ final class LessonPlotLayoutTests: XCTestCase {
     XCTAssertLessThanOrEqual(last.top + Double(last.lines.count) * 14, narrow.plotBottom)
   }
 
+  func testAPointOnThePlotsRightEdgeKeepsClearOfTheReferenceNames() throws {
+    let control = layout(try controlPlot())
+    let last = try XCTUnwrap(control.series[0].last)
+
+    XCTAssertEqual(last.x, control.plotRight)
+    XCTAssertGreaterThanOrEqual(control.referenceLeft - (last.x + LessonPlotLayout.dotRadius), 4)
+  }
+
+  func testTheXAxisFirstNumberStaysClearOfTheYAxisNumbers() throws {
+    let control = layout(try controlPlot())
+    let first = try XCTUnwrap(control.xTicks.first)
+    let lowest = try XCTUnwrap(control.yTicks.first)
+    let center = control.tickCenter(first, textWidth: textWidth(first.label))
+
+    XCTAssertEqual(control.y(lowest.value), control.plotBottom)
+    XCTAssertGreaterThanOrEqual(
+      center - textWidth(first.label) / 2 - (control.left - LessonPlotLayout.labelGap),
+      LessonPlotLayout.labelGap)
+  }
+
   func testANarrowGutterNeverBreaksAReferenceNameInsideAWord() throws {
     let narrow = layout(try controlPlot(), width: 100)
     let words = Set(["Upper", "limit", "Target", "Lower"])
@@ -96,7 +114,7 @@ final class LessonPlotLayoutTests: XCTestCase {
 
   func testAPlotWithoutReferencesUsesTheFullWidth() throws {
     let scan = layout(try plot(series: [series("points", (1, 2, nil), (3, 4, nil))]))
-    XCTAssertEqual(scan.plotRight, phone - LessonPlotLayout.right)
+    XCTAssertEqual(scan.plotRight, plotWidthOnAPhone - LessonPlotLayout.right)
   }
 
   func testDotsShowOnEveryDottedPointAndOnlyALinesLastBesideOtherSeries() {
@@ -110,7 +128,8 @@ final class LessonPlotLayoutTests: XCTestCase {
 
   private func layout(_ plot: LessonPlot, width: Double? = nil) -> LessonPlotLayout {
     LessonPlotLayout(
-      plot, width: width ?? phone, textWidth: textWidth, locale: Locale(identifier: "en_US"))
+      plot, width: width ?? plotWidthOnAPhone, textWidth: textWidth,
+      locale: Locale(identifier: "en_US"))
   }
 
   private func box(_ label: LessonPlotLayout.Label) -> LessonPlotLayout.Box {
