@@ -222,7 +222,7 @@ describe("a saved day whose last scheduled mock becomes unavailable", () => {
     const waiting = await getSessionPageView({ goalId: goal.id, timeZone: "UTC" });
 
     expect(waiting).toMatchObject({
-      session: { nextBlockId: null, state: "waiting", waitingFor: "mock" },
+      session: { nextBlockId: null, state: "waiting" },
       status: "ready",
     });
 
@@ -242,7 +242,7 @@ describe("a saved day whose last scheduled mock becomes unavailable", () => {
     await prisma.item.update({ data: { retiredAt: null }, where: { id: reserve.id } });
 
     await expect(getSessionPageView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
-      session: { nextBlockId: mock.id, waitingFor: null },
+      session: { nextBlockId: mock.id, state: "underway" },
       status: "ready",
     });
 

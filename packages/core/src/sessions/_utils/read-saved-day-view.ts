@@ -142,7 +142,7 @@ export async function readSavedDayView({
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 
-  return withDayState<Omit<UnstartedDayView, "state" | "waitingFor">>({
+  return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
     blocks,
     catchUp: catchUp

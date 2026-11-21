@@ -133,7 +133,7 @@ export async function loadUnstartedDayView({
     }),
   );
 
-  return withDayState<Omit<UnstartedDayView, "state" | "waitingFor">>({
+  return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
     blocks: views,
     catchUp: previewCatchUp,

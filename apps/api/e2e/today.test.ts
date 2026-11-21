@@ -379,7 +379,7 @@ test.describe("Today API", () => {
 
     const next = session.blocks.find((block) => block.position === session.nextPosition);
     expect(next).toMatchObject({ kind: "review", mockPreparationReview: true, status: "pending" });
-    expect(session).toMatchObject({ state: "underway", waitingFor: null });
+    expect(session).toMatchObject({ state: "underway" });
 
     await expect(
       prisma.studySession.count({
@@ -445,11 +445,7 @@ test.describe("Today API", () => {
       }),
     ]);
 
-    expect(today.session).toMatchObject({
-      nextPosition: null,
-      state: "waiting",
-      waitingFor: "mock",
-    });
+    expect(today.session).toMatchObject({ nextPosition: null, state: "waiting" });
 
     expect(summary).toMatchObject({ finished: true, status: "active" });
     await api.dispose();

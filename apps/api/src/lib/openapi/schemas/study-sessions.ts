@@ -14,7 +14,6 @@ import {
   lessonPlaceholderSchema,
   lessonsComingSchema,
   lessonsToPrepareSchema,
-  waitingForSchema,
 } from "./day-lessons";
 import { listeningTranscriptSchema } from "./item-set";
 import { studyBlockQuestionSchema } from "./study-block-question";
@@ -134,7 +133,6 @@ export const studySessionResponseSchema = z
       .meta({ description: "One step per block still in the day, filled as blocks are done" }),
     state: dayStateSchema,
     status: z.enum(StudySessionStatus),
-    waitingFor: waitingForSchema,
     week: z
       .object({
         days: z.array(studyWeekDaySchema),

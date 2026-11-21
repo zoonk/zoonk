@@ -93485,7 +93485,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined, or its scheduled mock is being prepared; see `waitingFor` and read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined, or its scheduled mock is being prepared; read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -93502,15 +93502,6 @@
               "planned",
               "active",
               "completed"
-            ]
-          },
-          "waitingFor": {
-            "nullable": true,
-            "description": "What the learner is waiting for when the day has no next step to open. Null unless the day state is `waiting`.",
-            "type": "string",
-            "enum": [
-              "lessons",
-              "mock"
             ]
           },
           "week": {
@@ -93564,7 +93555,6 @@
           "sessionBar",
           "state",
           "status",
-          "waitingFor",
           "week"
         ],
         "additionalProperties": false
@@ -93795,7 +93785,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined, or its scheduled mock is being prepared; see `waitingFor` and read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (lessons it holds time for are still being outlined, or its scheduled mock is being prepared; read it again), `prepare` (lessons it holds time for wait for the learner to ask for them, see `emptyDay` and `lessonsToPrepare`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -93804,15 +93794,6 @@
               "rest",
               "underway",
               "waiting"
-            ]
-          },
-          "waitingFor": {
-            "nullable": true,
-            "description": "What the learner is waiting for when the day has no next step to open. Null unless the day state is `waiting`.",
-            "type": "string",
-            "enum": [
-              "lessons",
-              "mock"
             ]
           },
           "week": {
@@ -94596,7 +94577,6 @@
           "pauseSuggested",
           "sessionBar",
           "state",
-          "waitingFor",
           "week",
           "blocks",
           "catchUp",

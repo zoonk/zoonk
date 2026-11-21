@@ -64,7 +64,7 @@ export function toDayViewFields({
   week,
 }: DayViewFieldsInput): Omit<
   StudySessionView,
-  "blocks" | "id" | "missions" | "nextBlockId" | "nextPosition" | "state" | "status" | "waitingFor"
+  "blocks" | "id" | "missions" | "nextBlockId" | "nextPosition" | "state" | "status"
 > {
   const streak = scoreAnswers({ answers }).streak;
   const lessons = getDayLessons({ blocks: session.blocks, dayMinutes, lessonRoom, outlines });

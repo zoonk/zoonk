@@ -48,7 +48,7 @@ describe("Today on a preparing mock day", () => {
       expect.objectContaining({ kind: "checkpoint", preparing: true }),
     );
 
-    expect(day).toMatchObject({ state: "underway", waitingFor: null });
+    expect(day).toMatchObject({ state: "underway" });
     const review = day.blocks.find((block) => block.position === day.nextPosition);
     expect(review).toMatchObject({ kind: "review", status: "pending" });
     expect(review?.questions).toBeGreaterThan(0);

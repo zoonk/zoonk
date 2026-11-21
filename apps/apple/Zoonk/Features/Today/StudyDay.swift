@@ -14,11 +14,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
     case nothingNew
   }
 
-  enum WaitingFor: String, Decodable, Sendable {
-    case lessons
-    case mock
-  }
-
   enum FreshStart: String, Decodable, Sendable {
     case newPhase
     case newWeek
@@ -83,7 +78,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
   var nextPosition: Int?
   var state: DayState
   let status: Status
-  let waitingFor: WaitingFor?
   let week: StudyWeek
 
   var nextBlock: StudyBlock? {
